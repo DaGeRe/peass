@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!--
+
+        This file is part of PerAn.
+
+        PerAn is free software: you can redistribute it and/or modify
+        it under the terms of the Affero GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        PerAn is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        Affero GNU General Public License for more details.
+
+        You should have received a copy of the Affero GNU General Public License
+        along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<!--
+
+        This file is part of PerAn.
+
+        PerAn is free software: you can redistribute it and/or modify
+        it under the terms of the GNU General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        PerAn is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU General Public License for more details.
+
+        You should have received a copy of the GNU General Public License
+        along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:equals="http://jaxb2-commons.dev.java.net/basic/equals">
+	<xs:element name="versiondependencies">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="url" type="xs:string" maxOccurs="1" />
+				<xs:element name="initialversion" maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="initialdependency" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="dependentclass" type="xs:string"
+											maxOccurs="unbounded" />
+									</xs:sequence>
+									<xs:attribute name="testclass" type="xs:string" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+						<xs:attribute name="version" type="xs:string" />
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="versions"  maxOccurs="1">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="version" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="dependency" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="testcase" maxOccurs="unbounded" >
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="method" type="xs:string"
+																	maxOccurs="unbounded" />
+															</xs:sequence>
+															<xs:attribute name="class" type="xs:string" />
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+												<xs:attribute name="changedclass" type="xs:string" />
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+									<xs:attribute name="revision" type="xs:string" />
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

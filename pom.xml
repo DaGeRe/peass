@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.peran</groupId>
+    <artifactId>peran-parent</artifactId>
+    <packaging>pom</packaging>
+    <version>0.1-SNAPSHOT</version>
+    <name>PerAn - Parent</name>
+    <description>Analyseframework für Softwareperformanz</description>
+
+    <modules>
+	<module>dependency</module>
+        <module>measurement</module>
+	<module>analysis</module>
+    </modules>
+
+    <developers>
+	<developer>
+		<id>DaGeRe</id>
+		<name>David Georg Reichelt</name>
+		<email>kopeme@dagere.de</email>
+	</developer>
+    </developers>
+
+</project>
