@@ -1,0 +1,36 @@
+/**
+ * Example comment with minor change
+ * @author reichelt
+ *
+ */
+class Test{
+	
+	public static final int y = 438;
+	public int w = 48;
+
+	/**
+	 * Comment 1 with minor change
+	 */
+	public Test() {
+		int a = 3 + 5 - 8;
+		System.out.println(a);
+	}
+	
+	public static void doStaticThing(int i){
+		//new line comment
+		int y = i + 1;
+		System.out.println(y);
+	}
+	
+	/**
+	 * Comment 3
+	 * @param this param never has been there
+	 */
+	public void doNonStaticThing(){
+		/**
+		 * New Inline comment 
+		 * with multine stuff
+		 */
+		System.out.println("a");
+	}
+}
