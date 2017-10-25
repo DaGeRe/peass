@@ -1,7 +1,7 @@
-PerAn
+PeASS
 ===================
 
-PerAn (from Performance Analysation) is a tool to analyse the evolution of performance during various versions. Base of this analysis is the transformation of junit (3 and 4) tests to performance tests. Since performance measurements usually take a high count of repetitions and therefore time, first of all in the `dependency`-module, the tests that may have changed their performance are determined. Afterwards, the `measurement`-module allows to execute the measurement on given projects. This measurements can be analyzed using the `analysis`-module later.
+PeASS (from Performance Analysis of Software System versions) is a tool to analyse the evolution of performance during various versions. Base of this analysis is the transformation of junit (3 and 4) tests to performance tests. Since performance measurements usually take a high count of repetitions and therefore time, first of all in the `dependency`-module, the tests that may have changed their performance are determined. Afterwards, the `measurement`-module allows to execute the measurement on given projects. This measurements can be analyzed using the `analysis`-module later.
 
 
 

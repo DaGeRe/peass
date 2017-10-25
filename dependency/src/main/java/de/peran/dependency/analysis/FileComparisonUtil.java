@@ -2,16 +2,16 @@
  *     This file is part of PerAn.
  *
  *     PerAn is free software: you can redistribute it and/or modify
- *     it under the terms of the Affero GNU General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     PerAn is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     Affero GNU General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the Affero GNU General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
 package de.peran.dependency.analysis;
@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +40,7 @@ import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
 
-import de.peran.dependency.changes.ClazzChangeData;
+import de.peran.dependency.analysis.data.ClazzChangeData;
 
 /**
  * Helps to compare whether two versions of a file may have changed performance (and whether this change is for the use of the whole file or only some methods).
@@ -51,10 +52,11 @@ public class FileComparisonUtil {
 	private static final Logger LOG = LogManager.getLogger(FileComparisonUtil.class);
 
 	public static void clearComments(final Node node) {
-		final Comment comment = node.getComment();
-		if (comment != null) {
-			if (comment.getComment() != null) {
-				comment.setContent("");
+		final Optional<Comment> comment = node.getComment();
+		if (comment.isPresent()) {
+			final Comment realComment = comment.get();
+			if (realComment.getComment() != null) {
+				realComment.setContent("");
 			}
 			node.setComment(null);
 		}
@@ -89,7 +91,7 @@ public class FileComparisonUtil {
 		final List<Node> childs2 = cleanUnneccessary(node2.getChildNodes());
 		
 		if (node1.getChildNodes().size() != node2.getChildNodes().size() && childs1.size() != childs2.size()) {
-			LOG.info("Size of change: " + node1 + "(" + node1.getChildNodes().size() + ") " + node2 + "(" + node2.getChildNodes().size() + ") ");
+			LOG.info("Size of change: " + node1.hashCode() + "(" + node1.getChildNodes().size() + ") " + node2.hashCode() + "(" + node2.getChildNodes().size() + ") ");
 			changes.add(node1);
 			changes.add(node2);
 		} else {
@@ -154,8 +156,8 @@ public class FileComparisonUtil {
 		final ClazzChangeData changedata = new ClazzChangeData(newFile.getName());
 		try {
 			clearComments(newCu);
-
 			clearComments(oldCu);
+			
 			final List<Node> changes = comparePairwise(newCu, oldCu);
 
 			if (changes.size() == 0) {

@@ -1,40 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-        This file is part of PerAn.
-
-        PerAn is free software: you can redistribute it and/or modify
-        it under the terms of the Affero GNU General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
-
-        PerAn is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        Affero GNU General Public License for more details.
-
-        You should have received a copy of the Affero GNU General Public License
-        along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
-
--->
-<!--
-
-        This file is part of PerAn.
-
-        PerAn is free software: you can redistribute it and/or modify
-        it under the terms of the GNU General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
-
-        PerAn is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU General Public License for more details.
-
-        You should have received a copy of the GNU General Public License
-        along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
-
--->
+<!-- This file is part of PerAn. PerAn is free software: you can redistribute 
+	it and/or modify it under the terms of the GNU General Public License as 
+	published by the Free Software Foundation, either version 3 of the License, 
+	or (at your option) any later version. PerAn is distributed in the hope that 
+	it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+	of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General 
+	Public License for more details. You should have received a copy of the GNU 
+	General Public License along with PerAn. If not, see <http://www.gnu.org/licenses/>. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -54,6 +26,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.0.0</version>
 				<executions>
 					<execution>
 						<phase>generate-sources</phase>
@@ -90,18 +63,42 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>jaxb2-maven-plugin</artifactId>
-				<version>2.3</version>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.20</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>integration-test</goal>
+							<goal>verify</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jvnet.jaxb2.maven2</groupId>
+				<artifactId>maven-jaxb2-plugin</artifactId>
+				<version>0.13.2</version>
 				<configuration>
-					<packageName>de.peran.generated</packageName>
-					<outputDirectory>src/main/generated</outputDirectory>
+					<extension>true</extension>
+					<args>
+						<arg>-XtoString</arg>
+					</args>
+					<generatePackage>de.peran.generated</generatePackage>
+					<generateDirectory>src/main/generated</generateDirectory>
+					<schemaDirectory>src/main/xsd</schemaDirectory>
+					<plugins>
+						<plugin>
+							<groupId>org.jvnet.jaxb2_commons</groupId>
+							<artifactId>jaxb2-basics</artifactId>
+							<version>0.11.1</version>
+						</plugin>
+					</plugins>
 				</configuration>
 				<executions>
 					<execution>
-						<id>xjc</id>
 						<goals>
-							<goal>xjc</goal>
+							<goal>generate</goal>
 						</goals>
 					</execution>
 				</executions>
@@ -127,14 +124,23 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+			</plugin>
 		</plugins>
 	</build>
 
 	<dependencies>
 		<dependency>
+			<groupId>org.jvnet.jaxb2_commons</groupId>
+			<artifactId>jaxb2-basics-runtime</artifactId>
+			<version>0.11.1</version>
+		</dependency>
+		<dependency>
 			<groupId>commons-cli</groupId>
 			<artifactId>commons-cli</artifactId>
-			<version>1.3.1</version>
+			<version>1.4</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -144,7 +150,7 @@
 		<dependency>
 			<groupId>com.github.javaparser</groupId>
 			<artifactId>javaparser-core</artifactId>
-			<version>3.0.0</version>
+			<version>3.4.1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
@@ -154,7 +160,7 @@
 		<dependency>
 			<groupId>org.tmatesoft.svnkit</groupId>
 			<artifactId>svnkit</artifactId>
-			<version>1.8.12</version>
+			<version>1.9.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -169,13 +175,21 @@
 
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
-			<artifactId>log4j-api</artifactId>
-			<version>2.5</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
 			<version>2.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.8.8</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>2.0.2-beta</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -189,9 +203,9 @@
 
 	<licenses>
 		<license>
-			<name>Affero GNU General Public License (GPL) version 3.0</name>
-			<url>https://www.gnu.org/licenses/agpl-3.0.txt</url>
-			<comments>License can be found in misc/agpl-3.0.txt</comments>
+			<name>GNU General Public License (GPL) version 2.0</name>
+			<url>https://www.gnu.org/licenses/gpl-2.0.html</url>
+			<comments>License can be found in misc/gpl-2.0.txt</comments>
 		</license>
 	</licenses>
 

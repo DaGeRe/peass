@@ -1,0 +1,107 @@
+package de.peran.reduceddependency;
+
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+
+import de.peran.dependency.analysis.data.TestCase;
+import de.peran.dependency.analysis.data.TestSet;
+import de.peran.dependencyprocessors.VersionComparator;
+
+/**
+ * Saves all tests where traces have changed and therefore a performance change could have taken place.
+ * 
+ * Used for JSON Serialisation.
+ * @author reichelt
+ *
+ */
+public class ChangedTraceTests {
+	
+	public static class Deserializer extends StdDeserializer<ChangedTraceTests>{
+
+		public Deserializer() { 
+	        this(null); 
+	    } 
+	 
+	    public Deserializer(Class<?> vc) { 
+	        super(vc); 
+	    }
+		
+		@Override
+		public ChangedTraceTests deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+			ChangedTraceTests tests = new ChangedTraceTests();
+			JsonNode root = p.getCodec().readTree(p);
+			JsonNode versions = root.get("versions");
+			for (Iterator<Entry<String, JsonNode>> iterator = versions.fields(); iterator.hasNext(); ){
+				Entry<String, JsonNode> value = iterator.next();
+				String version = value.getKey();
+				value.getValue().forEach(testInChild -> {
+					TestSet testcase = new TestSet();
+					String clazz = testInChild.get("testclazz").asText();
+					JsonNode methods = testInChild.get("testmethod");
+					methods.forEach(method -> {
+						testcase.addTest(clazz, method.asText());
+					});
+					tests.addCall(version, testcase);
+				});
+			}
+			return tests;
+		}
+		
+	}
+	
+	private final Map<String, TestSet> versions = new LinkedHashMap<>();
+
+	public void addCall(final String version, final TestSet tests) {
+		TestSet executes = versions.get(version);
+		if (executes == null) {
+			versions.put(version, tests);
+		}else{
+			executes.addTestSet(tests);
+		}
+	}
+	
+	public void addCall(final String version, final TestCase testcase) {
+		TestSet executes = versions.get(version);
+		if (executes == null) {
+			executes = new TestSet();
+			versions.put(version, executes);
+		}
+		executes.addTest(testcase.getClazz(), testcase.getMethod());
+	}
+	
+
+	public Map<String, TestSet> getVersions() {
+		return versions;
+	}
+
+	@JsonIgnore
+	public boolean versionContainsTest(final String version, final TestCase currentIterationTest) {
+		final TestSet clazzExecutions = versions.get(version);
+		if (clazzExecutions != null){
+			for (final Map.Entry<String, List<String>> clazz : clazzExecutions.entrySet()){
+				String testclazz = clazz.getKey();
+				List<String> methods = clazz.getValue();
+				if (testclazz.equals(currentIterationTest.getClazz())){
+					if (methods.contains(currentIterationTest.getMethod())){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+}

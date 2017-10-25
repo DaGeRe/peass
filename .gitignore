@@ -12,6 +12,8 @@ tags.txt
 .idea/
 **/fertig.txt
 **/dependency-reduced-pom.xml
+dependency/debug/
+dependency/results/
 measurement/dependencies/
 measurement/dependencies.xml
 src/test/resources/antprojekt2/**/*

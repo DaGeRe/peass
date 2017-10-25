@@ -2,16 +2,16 @@
  *     This file is part of PerAn.
  *
  *     PerAn is free software: you can redistribute it and/or modify
- *     it under the terms of the Affero GNU General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     PerAn is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     Affero GNU General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the Affero GNU General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
 package de.peran.vcs;
@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peran.dependency.analysis.data.VersionDiff;
 import de.peran.utils.StreamGobbler;
 
 /**
@@ -36,7 +37,7 @@ import de.peran.utils.StreamGobbler;
  */
 public class GitUtils {
 
-	private static Logger LOG = LogManager.getLogger(GitUtils.class);
+	private static final Logger LOG = LogManager.getLogger(GitUtils.class);
 
 	/**
 	 * Only utility-clazz, no instantiation needed.
@@ -51,12 +52,11 @@ public class GitUtils {
 	 * @param url
 	 * @param folder
 	 */
-	public void downloadProject(final String url, final File folder) {
+	public static void downloadProject(final String url, final File folder) {
 		final String command = "git clone " + url + " " + folder.getAbsolutePath();
-		Process p;
 		try {
 			LOG.debug("Command: " + command);
-			p = Runtime.getRuntime().exec(command);
+			Process p = Runtime.getRuntime().exec(command);
 			StreamGobbler.showFullProcess(p);
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
@@ -77,13 +77,13 @@ public class GitUtils {
 		final List<GitCommit> notRelevantCommits = new LinkedList<>();
 		for (final GitCommit commit : commits) {
 			LOG.trace("Processing " + commit.getTag() + " " + commit.getDate() + " " + inRange);
-			if (startversion != null && commit.getTag().equals(startversion)) {
+			if (startversion != null && commit.getTag().startsWith(startversion)) {
 				inRange = true;
 			}
 			if (!inRange) {
 				notRelevantCommits.add(commit);
 			}
-			if (endversion != null && commit.getTag().equals(endversion)) {
+			if (endversion != null && commit.getTag().startsWith(endversion)) {
 				inRange = false;
 			}
 		}
@@ -93,16 +93,14 @@ public class GitUtils {
 	/**
 	 * Returns the commits of the git repo in ascending order.
 	 * 
-	 * @param ordner
+	 * @param folder
 	 * @return
 	 */
-	public static List<GitCommit> getCommits(final File ordner) {
+	public static List<GitCommit> getCommits(final File folder) {
 		final List<GitCommit> commits = new LinkedList<>();
 		try {
-			final Process p = Runtime.getRuntime().exec("git log --all",
-					new String[0], ordner);
-			final BufferedReader input = new BufferedReader(new InputStreamReader(
-					p.getInputStream()));
+			final Process p = Runtime.getRuntime().exec("git log --all", new String[0], folder);
+			final BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			String line;
 			while ((line = input.readLine()) != null) {
 				if (line.startsWith("commit")) {
@@ -133,6 +131,31 @@ public class GitUtils {
 		System.out.println("Commits: " + commits.size());
 		return commits;
 	}
+	
+	/**
+	 * Gets diff between current revision and previous revision of repo.
+	 * 
+	 * @param projectFolder Local working copy of the repo.
+	 * @return
+	 */
+	public static VersionDiff getChangedClasses(final File projectFolder) {
+		try {
+			final Process p = Runtime.getRuntime().exec("git diff --name-only HEAD^ HEAD", null, projectFolder);
+			return getDiffFromProcess(p);
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	private static VersionDiff getDiffFromProcess(final Process p) {
+		final VersionDiff diff = new VersionDiff();
+		final String output = StreamGobbler.getFullProcess(p, false);
+		for (final String line : output.split("\n")) {
+			diff.addChange(line);
+		}
+		return diff;
+	}
 
 	/**
 	 * Lets the project go to the given state by resetting it to revert potential changes and by checking out the given version.
@@ -142,16 +165,16 @@ public class GitUtils {
 	 */
 	public static void goToTag(final String tag, final File projectFolder) {
 		try {
-			LOG.info("Gehe zu Tag: " + tag + " Ordner: "
-					+ projectFolder.getAbsolutePath());
+			// final Process showCommit = Runtime.getRuntime().exec("git branch", new String[0], projectFolder);
+			// final String branch = StreamGobbler.getFullProcess(showCommit, false);
+			LOG.debug("Going to tag {} folder: {}", tag, projectFolder.getAbsolutePath());
 			Process p = Runtime.getRuntime().exec("git reset --hard", new String[0], projectFolder);
 			StreamGobbler.showFullProcess(p);
 			p.waitFor();
 
 			final String gitCommand = "git checkout " + tag;
-			LOG.info(gitCommand);
+			LOG.trace(gitCommand);
 			p = Runtime.getRuntime().exec(gitCommand, new String[0], projectFolder);
-			StreamGobbler.showFullProcess(p);
 			p.waitFor();
 			LOG.trace("Ausführung beendet");
 		} catch (final IOException e) {
@@ -159,6 +182,17 @@ public class GitUtils {
 		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static String getURL(final File projectFolder) {
+		try {
+			final Process process = Runtime.getRuntime().exec("git config --get remote.origin.url", new String[0], projectFolder);
+			final String url = StreamGobbler.getFullProcess(process, false);
+			return url;
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

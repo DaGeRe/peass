@@ -2,26 +2,24 @@
  *     This file is part of PerAn.
  *
  *     PerAn is free software: you can redistribute it and/or modify
- *     it under the terms of the Affero GNU General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     PerAn is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     Affero GNU General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the Affero GNU General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
 package de.peran.dependency.reader;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.xml.bind.JAXBContext;
@@ -31,50 +29,43 @@ import javax.xml.bind.Marshaller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peran.dependency.ChangedTestClassesHandler;
-import de.peran.dependency.TestDependencies;
+import de.peran.dependency.analysis.data.CalledMethods;
+import de.peran.dependency.analysis.data.ChangeTestMapping;
+import de.peran.dependency.analysis.data.TestCase;
+import de.peran.dependency.analysis.data.TestExistenceChanges;
+import de.peran.dependency.analysis.data.TestDependencies;
 import de.peran.generated.Versiondependencies;
 import de.peran.generated.Versiondependencies.Versions.Version;
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency;
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency.Testcase;
 
+/**
+ * Utility function for reading dependencies
+ * @author reichelt
+ *
+ */
 public class DependencyReaderUtil {
 
 	private static final Logger LOG = LogManager.getLogger(DependencyReaderUtil.class);
 
-	/**
-	 * Determines the tests that may have got new dependencies, writes that changes (i.e. the tests that need to be run in that version) and re-runs the tests in order to get the updated test
-	 * dependencies.
-	 * 
-	 * @param dependencyFile
-	 * @param handler
-	 * @param dependencies
-	 * @param dependencyResult
-	 * @param version
-	 * @return
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	public static Map<String, List<String>> analyseVersion(final File dependencyFile, final ChangedTestClassesHandler handler, final TestDependencies dependencies,
-			final Versiondependencies dependencyResult, final String version)
-			throws IOException, InterruptedException {
-		final Map<String, Set<String>> changedClassNames = handler.getChangedClassesCleaned();
-		handler.saveOldClasses();
-
-		final Map<String, Set<String>> changeTestMap = getChangeTestMap(dependencies, changedClassNames);
-
-		final Version newVersionInfo = addVersionFromChangeMap(version, changedClassNames, changeTestMap);
-
-		LOG.debug("Aktuallisiere Abhängigkeiten..");
-
-		final Map<String, List<String>> testsToRun = handler.getTestsToRun(changedClassNames);
-		if (testsToRun.size() > 0) {
-			final Map<String, Set<String>> newTestcases = handler.updateDependencies(testsToRun);
-			addNewTestcases(dependencyResult, newVersionInfo, newTestcases);
-
-			write(dependencyResult, dependencyFile);
+	static void removeDeletedTestcases(final Version newVersionInfo, final TestExistenceChanges testExistenceChanges) {
+		for (final TestCase removedTest : testExistenceChanges.getRemovedTests()) {
+			for (final Dependency dependency : newVersionInfo.getDependency()) {
+				if (removedTest.getMethod().length() > 0) {
+					for (final Testcase testcase : dependency.getTestcase()) {
+						testcase.getMethod().remove(removedTest.getMethod());
+					}
+				} else {
+					Testcase removeTestcase = null;
+					for (final Testcase testcase : dependency.getTestcase()) {
+						if (testcase.getClazz().equals(removedTest.getClazz())) {
+							removeTestcase = testcase;
+						}
+					}
+					dependency.getTestcase().remove(removeTestcase);
+				}
+			}
 		}
-		return testsToRun;
 	}
 
 	public static Testcase findOrAddTestcase(final Dependency dependency, final String testclass) {
@@ -93,13 +84,17 @@ public class DependencyReaderUtil {
 		return tc;
 	}
 
-	private static void addNewTestcases(final Versiondependencies dependencyResult, final Version newVersionInfo, final Map<String, Set<String>> newTestcases) {
+	static void addNewTestcases(final Version newVersionInfo, final Map<String, Set<String>> newTestcases) {
 		for (final Map.Entry<String, Set<String>> newTestcase : newTestcases.entrySet()) {
 			final String changedClazz = newTestcase.getKey();
 			Dependency correctDependency = null;
 			for (final Dependency dependency : newVersionInfo.getDependency()) {
 				if (dependency.getChangedclass().equals(changedClazz)) {
 					correctDependency = dependency;
+					// correctDependency.setChangedclass(changedClazz);
+					// findOrAddTestcase(correctDependency, testclass)
+					// correctDependency.getTestcase().add(dependency.getTestcase().get(0));
+					// correctDependency = dependency;
 				}
 			}
 			if (correctDependency == null) {
@@ -107,11 +102,11 @@ public class DependencyReaderUtil {
 				correctDependency.setChangedclass(changedClazz);
 				newVersionInfo.getDependency().add(correctDependency);
 			}
+			// addTestcase(correctDependency, newTestcase.getKey());
 			for (final String testcase : newTestcase.getValue()) {
 				addTestcase(correctDependency, testcase);
 			}
 		}
-		dependencyResult.getVersions().getVersion().add(newVersionInfo);
 	}
 
 	private static void addTestcase(final Dependency correctDependency, final String testcase) {
@@ -121,52 +116,69 @@ public class DependencyReaderUtil {
 		testcaseObject.getMethod().add(testmethod);
 	}
 
-	private static Version addVersionFromChangeMap(final String revision, final Map<String, Set<String>> changedClassNames, final Map<String, Set<String>> changeTestMap) {
+	static Version createVersionFromChangeMap(final String revision, final Map<String, Set<String>> changedClassNames, final ChangeTestMapping changeTestMap) {
 		final Version version = new Version();
-		version.setRevision(revision);
+		version.setVersion(revision);
 		LOG.debug("Beginne schreiben");
 		// changeTestMap.keySet ist fast wie changedClassNames, bloß dass
 		// Klassen ohne Abhängigkeit drin sind
-		for (final Map.Entry<String, Set<String>> className : changedClassNames.entrySet()) {
-			final Dependency dependency = new Dependency();
-			if (className.getValue().isEmpty()) {
-				dependency.setChangedclass(className.getKey());// TODO: Statt für die Klasse für alle Methoden Änderung eintragen
-				if (changeTestMap.containsKey(className.getKey())) {
-					for (final String testcase : changeTestMap.get(className.getKey())) {
-						if (testcase.contains(".")){
-							addTestcase(dependency, testcase);
-						}
-					}
-				}
-				version.getDependency().add(dependency);
+		for (final Map.Entry<String, Set<String>> changedClassName : changedClassNames.entrySet()) {
+			if (changedClassName.getValue().isEmpty()) { // class changed as a whole
+				handleWholeClassChange(changeTestMap, version, changedClassName);
 			} else {
-				for (final String method : className.getValue()) {
-					final String changedEntryFullName = className.getKey() + "." + method;
-					dependency.setChangedclass(changedEntryFullName);
-					if (changeTestMap.containsKey(changedEntryFullName)) {
-						for (final String testClass : changeTestMap.get(changedEntryFullName)) {
-							addTestcase(dependency, testClass);
-						}
-					}
-					version.getDependency().add(dependency);
-				}
-
+				handleMethodChange(changeTestMap, version, changedClassName);
 			}
-
 		}
 		System.out.println("Testrevision: " + revision);
 		return version;
 
 	}
 
-	private static void addChangeEntry(final String fullname, final String currentTestcase, final Map<String, Set<String>> changeTestMap) {
-		Set<String> changedClasses = changeTestMap.get(fullname);
+	private static void handleMethodChange(final ChangeTestMapping changeTestMap, final Version version, final Map.Entry<String, Set<String>> changedClassName) {
+		for (final String method : changedClassName.getValue()) {
+			final String changedEntryFullName = changedClassName.getKey() + "." + method;
+			boolean contained = false;
+			for (final Dependency currentDependency : version.getDependency()) {
+				if (currentDependency.getChangedclass().equals(changedEntryFullName)) {
+					contained = true;
+				}
+			}
+			if (!contained) {
+				final Dependency dependency = new Dependency();
+				dependency.setChangedclass(changedEntryFullName);
+				if (changeTestMap.getChanges().containsKey(changedEntryFullName)) {
+					for (final String testClass : changeTestMap.getChanges().get(changedEntryFullName)) {
+						addTestcase(dependency, testClass);
+					}
+				}
+				version.getDependency().add(dependency);
+			}
+		}
+	}
+
+	private static void handleWholeClassChange(final ChangeTestMapping changeTestMap, final Version version, final Map.Entry<String, Set<String>> changedClassName) {
+		final Dependency dependency = new Dependency();
+		dependency.setChangedclass(changedClassName.getKey());
+		if (changeTestMap.getChanges().containsKey(changedClassName.getKey())) {
+			for (final String testcase : changeTestMap.getChanges().get(changedClassName.getKey())) {
+				if (testcase.contains(".")) {
+					addTestcase(dependency, testcase);
+				} else {
+					throw new RuntimeException("Testcase without method detected: " + testcase + " " + dependency);
+				}
+			}
+		} 
+		version.getDependency().add(dependency);
+	}
+
+	private static void addChangeEntry(final String changedFullname, final String currentTestcase, final Map<String, Set<String>> changeTestMap) {
+		Set<String> changedClasses = changeTestMap.get(changedFullname);
 		if (changedClasses == null) {
 			changedClasses = new HashSet<>();
-			changeTestMap.put(fullname, changedClasses);
+			changeTestMap.put(changedFullname, changedClasses);
 			// TODO: Statt einfach die Klasse nehmen prüfen, ob die Methode genutzt wird
 		}
-		LOG.debug("Füge {} zu {} hinzu", currentTestcase, fullname);
+		LOG.debug("Füge {} zu {} hinzu", currentTestcase, changedFullname);
 		changedClasses.add(currentTestcase);
 	}
 
@@ -178,23 +190,24 @@ public class DependencyReaderUtil {
 	 * @param changedClassNames
 	 * @return Map from changed class to the influenced tests
 	 */
-	private static Map<String, Set<String>> getChangeTestMap(final TestDependencies dependencies, final Map<String, Set<String>> changedClassNames) {
-		final Map<String, Set<String>> changeTestMap = new HashMap<>();
-		for (final Map.Entry<String, Map<String, Set<String>>> dependencyEntry : dependencies.getDependencyMap().entrySet()) {
+	static ChangeTestMapping getChangeTestMap(final TestDependencies dependencies, final Map<String, Set<String>> changedClassNames) {
+		final ChangeTestMapping changeTestMap = new ChangeTestMapping();
+		for (final Entry<String, CalledMethods> dependencyEntry : dependencies.getDependencyMap().entrySet()) {
 			final String currentTestcase = dependencyEntry.getKey();
-			final Map<String, Set<String>> currentTestDependencies = dependencyEntry.getValue();
+			final CalledMethods currentTestDependencies = dependencyEntry.getValue();
 
 			for (final Map.Entry<String, Set<String>> changedEntry : changedClassNames.entrySet()) {
 				LOG.debug("Prüfe Abhängigkeiten für {} von {}", changedEntry, currentTestcase);
 				final String changedClass = changedEntry.getKey();
-				if (currentTestDependencies.keySet().contains(changedClass)) {
+				Set<String> calledClasses = currentTestDependencies.getCalledClasses();
+				if (calledClasses.contains(changedClass)) {
 					if (changedEntry.getValue().isEmpty()) {
-						addChangeEntry(changedClass, currentTestcase, changeTestMap);
+						addChangeEntry(changedClass, currentTestcase, changeTestMap.getChanges());
 					} else {
 						for (final String method : changedEntry.getValue()) {
-							final String fullname = changedClass + "." + method;
-							if (currentTestDependencies.get(changedClass).contains(method)) {
-								addChangeEntry(fullname, currentTestcase, changeTestMap);
+							final String changedFullname = changedClass + "." + method;
+							if (currentTestDependencies.getCalledMethods().get(changedClass).contains(method)) {
+								addChangeEntry(changedFullname, currentTestcase, changeTestMap.getChanges());
 							}
 						}
 					}
@@ -202,13 +215,12 @@ public class DependencyReaderUtil {
 				}
 			}
 		}
-		for (final String changedClass : changedClassNames.keySet()) {
-			if (!changeTestMap.containsKey(changedClass) && changedClass.toLowerCase().contains("test")) {
-				changeTestMap.put(changedClass, new HashSet<>());
-				changeTestMap.get(changedClass).add(changedClass);
-			}
-		}
-		for (final Map.Entry<String, Set<String>> element : changeTestMap.entrySet()) {
+//		for (final String changedClass : changedClassNames.keySet()) {
+//			if (!changeTestMap.getChanges().containsKey(changedClass) && changedClass.toLowerCase().contains("test")) {
+//				changeTestMap.addAddedTest(changedClass);
+//			}
+//		}
+		for (final Map.Entry<String, Set<String>> element : changeTestMap.getChanges().entrySet()) {
 			LOG.debug("Element: {} Dependencies: {} {}", element.getKey(), element.getValue().size(), element.getValue());
 		}
 
@@ -216,6 +228,17 @@ public class DependencyReaderUtil {
 	}
 
 	public static void write(final Versiondependencies deps, final File file) {
+		// Collections.sort(deps.getInitialversion().getInitialdependency(), new Comparator<Initialdependency>() {
+		//
+		// @Override
+		// public int compare(Initialdependency o1, Initialdependency o2) {
+		// return o1.getTestclass().compareTo(o2.getTestclass());
+		// }
+		// });
+		// for (Initialdependency dependency : deps.getInitialversion().getInitialdependency()){
+		// Collections.sort(dependency.getDependentclass());
+		// }
+
 		JAXBContext jaxbContext;
 		try {
 			LOG.debug("Schreibe in: {}", file);

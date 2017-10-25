@@ -2,16 +2,16 @@
  *     This file is part of PerAn.
  *
  *     PerAn is free software: you can redistribute it and/or modify
- *     it under the terms of the Affero GNU General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     PerAn is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     Affero GNU General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the Affero GNU General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
 package de.peran;
@@ -63,7 +63,6 @@ public class TestTransformation {
 	public static void initFolder() throws URISyntaxException, IOException {
 		RESOURCE_FOLDER = Paths.get(SOURCE.toURI()).toFile();
 		SOURCE_FOLDER = new File(testFolder.getRoot(), "src/test/java");
-
 	}
 
 	@Test
@@ -116,8 +115,20 @@ public class TestTransformation {
 			System.out.println(n);
 		}
 	}
+	
+	@Test
+	public void testJUnit4TransformationRunner() throws IOException {
+		final File old2 = new File(RESOURCE_FOLDER, "TestMe3.java");
+		final File testFile2 = new File(SOURCE_FOLDER, "TestMe3.java");
+		FileUtils.copyFile(old2, testFile2);
 
-	private Matcher<List<Node>> hasAnnotation(final String annotationName) {
+		final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), true, false);
+		tt.transformTests();
+		
+		Assert.assertTrue(FileUtils.contentEquals(old2, testFile2));
+	}
+
+	public static Matcher<List<Node>> hasAnnotation(final String annotationName) {
 		return new BaseMatcher<List<Node>>() {
 			@Override
 			public boolean matches(final Object item) {

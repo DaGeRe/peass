@@ -2,16 +2,16 @@
  *     This file is part of PerAn.
  *
  *     PerAn is free software: you can redistribute it and/or modify
- *     it under the terms of the Affero GNU General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     PerAn is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     Affero GNU General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the Affero GNU General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
 package de.peran.dependency.analysis;
@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -53,12 +54,12 @@ public class CalledMethodLoader {
 			System.out.println(clazz);
 		}
 	}
-	
+
 	private TraceReconstructionFilter traceReconstructionFilter;
 	private final AnalysisController analysisController = new AnalysisController();
 	private final File kiekerTraceFile;
-	
-	public CalledMethodLoader(final File kiekerTraceFile){
+
+	public CalledMethodLoader(final File kiekerTraceFile) {
 		this.kiekerTraceFile = kiekerTraceFile;
 	}
 
@@ -72,9 +73,9 @@ public class CalledMethodLoader {
 		try {
 			initialiseTraceReading();
 
-			final PerAnFilter kopemeFilter = new PerAnFilter(null, new Configuration(), analysisController);
+			final PeASSFilter kopemeFilter = new PeASSFilter(null, new Configuration(), analysisController);
 			analysisController.connect(traceReconstructionFilter, TraceReconstructionFilter.OUTPUT_PORT_NAME_EXECUTION_TRACE,
-					kopemeFilter, PerAnFilter.INPUT_EXECUTION_TRACE);
+					kopemeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
 
 			analysisController.run();
 
@@ -96,15 +97,23 @@ public class CalledMethodLoader {
 	 */
 	public List<TraceElement> getShortTrace(final String prefix) {
 		try {
-			initialiseTraceReading();
+			final long size = FileUtils.sizeOfDirectory(kiekerTraceFile);
+			final long sizeInMB = size / (1024 * 1024);
 
-			final PerAnFilter kopemeFilter = new PerAnFilter(prefix, new Configuration(), analysisController);
-			analysisController.connect(traceReconstructionFilter, TraceReconstructionFilter.OUTPUT_PORT_NAME_EXECUTION_TRACE,
-					kopemeFilter, PerAnFilter.INPUT_EXECUTION_TRACE);
+			LOG.debug("Größe: {} ({}) Ordner: {}", sizeInMB, size, kiekerTraceFile);
+			if (sizeInMB < 2000) {
+				initialiseTraceReading();
 
-			analysisController.run();
+				final PeASSFilter kopemeFilter = new PeASSFilter(prefix, new Configuration(), analysisController);
+				analysisController.connect(traceReconstructionFilter, TraceReconstructionFilter.OUTPUT_PORT_NAME_EXECUTION_TRACE,
+						kopemeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
 
-			return kopemeFilter.getCalls();
+				analysisController.run();
+
+				return kopemeFilter.getCalls();
+			} else {
+				return null;
+			}
 		} catch (IllegalStateException | AnalysisConfigurationException e) {
 			e.printStackTrace();
 			return null;

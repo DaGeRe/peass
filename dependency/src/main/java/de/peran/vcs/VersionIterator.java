@@ -2,16 +2,16 @@
  *     This file is part of PerAn.
  *
  *     PerAn is free software: you can redistribute it and/or modify
- *     it under the terms of the Affero GNU General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     PerAn is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     Affero GNU General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the Affero GNU General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
 package de.peran.vcs;
@@ -41,8 +41,14 @@ public abstract class VersionIterator {
 
 	public abstract boolean hasNextCommit();
 
-	public abstract void goToNextCommit();
+	public abstract boolean goToNextCommit();
 
-	public abstract void goToFirstCommit();
+	public abstract boolean goToFirstCommit();
+
+	/**
+	 * 
+	 * @return Whether the 0th commit is not equal to the current commit
+	 */
+	public abstract boolean goTo0thCommit();
 
 }

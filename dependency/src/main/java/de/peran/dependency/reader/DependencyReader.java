@@ -2,112 +2,110 @@
  *     This file is part of PerAn.
  *
  *     PerAn is free software: you can redistribute it and/or modify
- *     it under the terms of the Affero GNU General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     PerAn is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     Affero GNU General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the Affero GNU General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
 package de.peran.dependency.reader;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.tmatesoft.svn.core.SVNLogEntry;
 
 import com.github.javaparser.ParseProblemException;
 
-import de.peran.dependency.ChangedTestClassesHandler;
-import de.peran.dependency.TestDependencies;
+import de.peran.dependency.ChangeManager;
+import de.peran.dependency.DependencyManager;
+import de.peran.dependency.analysis.data.TestDependencies;
+import de.peran.dependency.execution.TestExecutor;
 import de.peran.generated.Versiondependencies;
 import de.peran.generated.Versiondependencies.Initialversion;
-import de.peran.generated.Versiondependencies.Initialversion.Initialdependency;
 import de.peran.generated.Versiondependencies.Versions;
-import de.peran.utils.StreamGobbler;
-import de.peran.vcs.GitCommit;
+import de.peran.generated.Versiondependencies.Initialversion.Initialdependency;
+import de.peran.generated.Versiondependencies.Versions.Version;
+import de.peran.generated.Versiondependencies.Versions.Version.Dependency;
+import de.peran.generated.Versiondependencies.Versions.Version.Dependency.Testcase;
 import de.peran.vcs.VersionIterator;
-import de.peran.vcs.VersionIteratorGit;
-import de.peran.vcs.VersionIteratorSVN;
 
 /**
  * Reads the dependencies of a project
+ * 
  * @author reichelt
  *
  */
-public class DependencyReader {
-	
+public class DependencyReader extends DependencyReaderBase {
+
 	private static final Logger LOG = LogManager.getLogger(DependencyReader.class);
 	
-	private final VersionIterator iterator;
-	private final File projectFolder;
-	private final File dependencyFile;
-	private final Versiondependencies dependencyResult = new Versiondependencies();
-	
-	public DependencyReader(final File projectFolder, final File dependencyFile, final List<GitCommit> entries) {
-		this.projectFolder = projectFolder;
-		this.dependencyFile = dependencyFile;
-		
-		iterator = new VersionIteratorGit(entries, projectFolder);
+	boolean init = false;
 
-		dependencyResult.setUrl("git-URL"); // TODO
-		dependencyResult.setVersions(new Versions());
+	public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator) {
+		super(new Versiondependencies(), projectFolder, dependencyFile);
 
-		searchFirstRunningCommit(projectFolder);
-	}
-	
-	public DependencyReader(final File projectFolder, final String url, final File dependencyFile, final List<SVNLogEntry> entries) {
-		this.projectFolder = projectFolder;
-		this.dependencyFile = dependencyFile;
-		
-		iterator = new VersionIteratorSVN(projectFolder, entries, url);
+		this.iterator = iterator;
+
 		dependencyResult.setUrl(url);
 		dependencyResult.setVersions(new Versions());
+
+		handler = new DependencyManager(projectFolder);
+
+		searchFirstRunningCommit(iterator, handler.getExecutor(), projectFolder);
+	}
+	
+	public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final Versiondependencies initialdependencies) {
+		super(new Versiondependencies(), projectFolder, dependencyFile);
+
+		this.iterator = iterator;
+
+		dependencyResult.setUrl(url);
+		dependencyResult.setVersions(initialdependencies.getVersions());
+		dependencyResult.setInitialversion(initialdependencies.getInitialversion());
+
+		handler = new DependencyManager(projectFolder);
+		readCompletedVersions();
+		init = true;
 	}
 	
 	
+
 	/**
 	 * Searches the first commit where a mvn clean packages runs correct, i.e. returns 1
+	 * 
 	 * @param projectFolder
 	 */
-	private void searchFirstRunningCommit(final File projectFolder) {
-		iterator.goToFirstCommit();
+	public static void searchFirstRunningCommit(final VersionIterator iterator, final TestExecutor executor, final File projectFolder) {
+		boolean successGettingCommit = iterator.goToFirstCommit();
+		while (!successGettingCommit && iterator.hasNextCommit()) {
+			successGettingCommit = iterator.goToNextCommit();
+		}
+		if (!successGettingCommit) {
+			throw new RuntimeException("Repository does not contain usable commit - maybe SVN and path has changed?");
+		} else {
+			LOG.info("Found first commit: " + iterator.getTag());
+		}
 		boolean getTracesSuccess = false;
 		while (!getTracesSuccess) {
-			final File potentialPom = new File(projectFolder, "pom.xml");
-			LOG.debug(potentialPom);
-			getTracesSuccess = potentialPom.exists();
-			if (getTracesSuccess) {
-				LOG.debug("pom.xml existiert");
-				final ProcessBuilder pb = new ProcessBuilder("mvn", "clean", "package", "-DskipTests=true");
-				pb.directory(projectFolder);
-				try {
-					final Process process = pb.start();
-					final String result = StreamGobbler.getFullProcess(process, true, 5000);
-					System.out.println(result);
-					process.waitFor();
-					final int returncode = process.exitValue();
-					if (returncode != 0) {
-						getTracesSuccess = false;
-					}
-				} catch (final IOException | InterruptedException e) {
-					e.printStackTrace();
-					getTracesSuccess = false;
-				}
-			}
-			
-			if (!getTracesSuccess){
-				LOG.debug("pom.xml nicht valide/existiert nicht in {}", iterator.getTag());
+			getTracesSuccess = executor.isVersionRunning();
+
+			if (!getTracesSuccess) {
+				LOG.debug("pom.xml does not exist / version is not running {}", iterator.getTag());
 				iterator.goToNextCommit();
 			}
 		}
@@ -118,32 +116,35 @@ public class DependencyReader {
 	 */
 	public void readDependencies() {
 		try {
-			final ChangedTestClassesHandler handler = new ChangedTestClassesHandler(projectFolder);
-			handler.initialyGetTraces();
-			final TestDependencies dependencyMap = handler.getDependencyMap();
-			writeInitialDependency(iterator.getTag(), dependencyMap);
-			
+			if (!init){
+				if (!readInitialVersion()) {
+					return;
+				}
+			}
+
 			LOG.debug("Analysiere {} Einträge", iterator.getSize());
 
 			int overallSize = 0, prunedSize = 0;
 			prunedSize += dependencyMap.size();
 
-			handler.saveOldClasses();
-			while (iterator.hasNextCommit()){
+			final ChangeManager changeManager = new ChangeManager(projectFolder);
+			changeManager.saveOldClasses();
+			while (iterator.hasNextCommit()) {
 				iterator.goToNextCommit();
-				
+
 				try {
-					final Map<String, List<String>> testsToRun = DependencyReaderUtil.analyseVersion(dependencyFile,
-							handler, dependencyMap, dependencyResult, iterator.getTag());
+					final int tests = analyseVersion(changeManager);
+					DependencyReaderUtil.write(dependencyResult, dependencyFile);
 					overallSize += dependencyMap.size();
-					prunedSize += testsToRun.size();
+					prunedSize += tests;
 				} catch (final ParseProblemException ppe) {
 					ppe.printStackTrace();
 				}
 
 				LOG.info("Overall-tests: {} Executed tests with pruning: {}", overallSize, prunedSize);
+
+				deleteTemporaryFiles();
 			}
-			
 
 			LOG.debug("Finished dependency-reading");
 
@@ -151,34 +152,42 @@ public class DependencyReader {
 			e.printStackTrace();
 		}
 	}
-	
-	/**
-	 * Writes the initial dependency, where the order of changedclass and testclass is changed.
-	 * @param url
-	 * @param startVersion
-	 * @param dependencyMap
-	 * @return
-	 */
-	public void writeInitialDependency(final String startVersion, final TestDependencies dependencyMap) { //TODO Neues XSD Format
-		final Initialversion initialversion = new Initialversion();
-		initialversion.setVersion(startVersion);
-		LOG.debug("Starting writing: {}", dependencyMap.getDependencyMap().size());
-		for (final Map.Entry<String, Map<String, Set<String>>> dependencyEntry : dependencyMap.getDependencyMap().entrySet()) {
-			final Initialdependency dependency = new Initialdependency();
-			dependency.setTestclass(dependencyEntry.getKey());
-			for (final Map.Entry<String, Set<String>> dependentClassEntry : dependencyEntry.getValue().entrySet()) {
-				final String dependentclass = dependentClassEntry.getKey();
-				if (!dependentclass.contains("junit") && !dependentclass.contains("log4j")){
-					for (final String dependentmethod : dependentClassEntry.getValue()){
-						dependency.getDependentclass().add(dependentclass + "." + dependentmethod);
-					}
-				}
-					
-			}
-			initialversion.getInitialdependency().add(dependency);
+
+	public boolean readInitialVersion() throws IOException, InterruptedException {
+		if (!handler.initialyGetTraces()) {
+			return false;
 		}
+		dependencyMap = handler.getDependencyMap();
+		final Initialversion initialversion = createInitialVersion(iterator.getTag(), dependencyMap, handler.getExecutor().getJDKVersion());
 		dependencyResult.setInitialversion(initialversion);
-		
 		DependencyReaderUtil.write(dependencyResult, dependencyFile);
+
+		return true;
 	}
+
+	/**
+	 * Deletes temporary files, in order to not get memory problems
+	 */
+	private void deleteTemporaryFiles() {
+		try {
+			final File lastTmpFile = handler.getExecutor().getLastTmpFile();
+			if (lastTmpFile != null) {
+				final File[] tmpKiekerStuff = lastTmpFile.listFiles((FilenameFilter) new WildcardFileFilter("kieker*"));
+				for (final File kiekerFolder : tmpKiekerStuff) {
+					LOG.debug("Deleting: {}", kiekerFolder.getAbsolutePath());
+					FileUtils.deleteDirectory(kiekerFolder);
+				}
+			}
+
+		} catch (final IOException | IllegalArgumentException e) {
+			LOG.info("Problems deleting last temp file..");
+			e.printStackTrace();
+		}
+	}
+
+	public Versiondependencies getDependencies() {
+		return dependencyResult;
+	}
+
+
 }

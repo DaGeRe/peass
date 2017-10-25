@@ -2,23 +2,29 @@
  *     This file is part of PerAn.
  *
  *     PerAn is free software: you can redistribute it and/or modify
- *     it under the terms of the Affero GNU General Public License as published by
+ *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
  *
  *     PerAn is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     Affero GNU General Public License for more details.
+ *     GNU General Public License for more details.
  *
- *     You should have received a copy of the Affero GNU General Public License
+ *     You should have received a copy of the GNU General Public License
  *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
 package de.peran.vcs;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,18 +41,15 @@ import org.tmatesoft.svn.core.wc.SVNInfo;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc2.SvnCheckout;
 import org.tmatesoft.svn.core.wc2.SvnOperationFactory;
-import org.tmatesoft.svn.core.wc2.SvnTarget;
 
 /**
- * Helps using git by calling svnkit.
+ * Helps using svn by calling svnkit.
  * 
  * @author reichelt
  *
  */
 public class SVNUtils {
 	private static Logger LOG = LogManager.getLogger(SVNUtils.class);
-	
-	private final static int TRIES_CHECKOUT = 100;
 
 	private static SVNUtils instance;
 
@@ -90,7 +93,7 @@ public class SVNUtils {
 		}
 		return "";
 	}
-	
+
 	/**
 	 * Returns all SVN-Versions of the given repository
 	 * 
@@ -173,58 +176,41 @@ public class SVNUtils {
 			System.out.println("error while collecting log information for '" + url + "': " + svne.getMessage());
 			System.exit(1);
 		}
-		LOG.info("LogEntries: {} Erster: {} ",logEntries.size(), logEntries.get(0).getRevision());
+		LOG.info("LogEntries: {} Erster: {} ", logEntries.size(), logEntries.get(0).getRevision());
 
 		return logEntries;
 	}
 
-	
-	public void checkout(final String url, final File projectFolder, final SVNRevision revision) {
-		final Runnable runnable = () -> {
-			LOG.debug("Loading: " + revision.getNumber());
-			final SvnOperationFactory svnOperationFactory = new SvnOperationFactory();
-			try {
-				final SvnCheckout checkout = svnOperationFactory.createCheckout();
-				final Process p = Runtime.getRuntime().exec("svn revert -R .", null, projectFolder);
-				p.waitFor();
-				LOG.debug("Folder: {} Revision: {}", projectFolder.getAbsolutePath(), revision.getNumber());
-				checkout.setSingleTarget(SvnTarget.fromFile(projectFolder));
-				final SVNURL url2 = SVNURL.parseURIDecoded(url);
-				checkout.setSource(SvnTarget.fromURL(url2));
-				checkout.setRevision(revision);
-				final long ergebnis = checkout.run();
-				LOG.debug("Finished checkout: {}", ergebnis);
-			} catch (final SVNException e) {
-				e.printStackTrace();
-			} catch (final IOException e) {
-				e.printStackTrace();
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			} finally {
-				svnOperationFactory.dispose();
+	public boolean checkout(final String url, final File projectFolder, final SVNRevision revision) {
+		LOG.debug("Loading: " + revision.getNumber());
+		final SvnOperationFactory svnOperationFactory = new SvnOperationFactory();
+		try {
+			final SvnCheckout checkout = svnOperationFactory.createCheckout();
+			final Process revertProcess = Runtime.getRuntime().exec("svn revert -R .", null, projectFolder);
+			revertProcess.waitFor(60, TimeUnit.SECONDS);
+			final Process p2 = Runtime.getRuntime().exec("svn update -r " + revision.getNumber(), null, projectFolder);
+			String fullProcess = de.peran.utils.StreamGobbler.getFullProcess(p2, true);
+			boolean success = p2.waitFor(60, TimeUnit.SECONDS);
+			if (success) {
+				int returncode = p2.waitFor();
+				return returncode == 0;
+			} else {
+				return false;
 			}
-		};
-		final Thread checkoutThread = new Thread(runnable);
-		checkoutThread.start();
-		int tries = 0;
-		while (checkoutThread.isAlive() && tries < TRIES_CHECKOUT) {
-			tries++;
-			LOG.debug("Waiting for checkout-end");
-			try {
-				checkoutThread.join(60000);
-			} catch (final InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+
+		} catch (final IOException e) {
+			e.printStackTrace();
+		} catch (final InterruptedException e) {
+			e.printStackTrace();
+		} finally {
+			svnOperationFactory.dispose();
 		}
-		if (tries == TRIES_CHECKOUT) {
-			LOG.debug("Stopping waiting for checkout-end");
-		}
+		return false;
 	}
 
-	public void checkout(final String url, final File folder, final long revision) {
+	public boolean checkout(final String url, final File folder, final long revision) {
 		final SVNRevision revision2 = SVNRevision.create(revision);
-		checkout(url, folder, revision2);
+		return checkout(url, folder, revision2);
 	}
 
 	public void revert(final File projectFolder) {
@@ -239,6 +225,28 @@ public class SVNUtils {
 			e.printStackTrace();
 		}
 
+	}
+
+	public List<SVNLogEntry> getVersions(File folder) {
+		List<SVNLogEntry> entries = new LinkedList<>();
+		try {
+			final Process p = Runtime.getRuntime().exec("svn log", new String[0], folder);
+
+			final BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			String line;
+			while ((line = input.readLine()) != null) {
+				if (line.startsWith("r") && line.contains("|") && line.substring(0, line.indexOf("|")).matches("r[0-9]+ ")) {
+					LOG.info(line);
+					int revision = Integer.parseInt(line.substring(1, line.indexOf(" ")));
+					String author = line.substring(line.indexOf("|"), line.lastIndexOf("|"));
+					entries.add(0, new SVNLogEntry(new HashMap<>(), revision, author, new Date(), ""));
+				}
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return entries;
 	}
 
 }
