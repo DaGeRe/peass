@@ -23,4 +23,14 @@
 	</developer>
     </developers>
 
+	<licenses>
+		<license>
+			<name>GNU Affero General Public License</name>
+			<url>https://www.gnu.org/licenses/agpl.txt</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	
+	<inceptionYear>2015</inceptionYear>
 </project>
