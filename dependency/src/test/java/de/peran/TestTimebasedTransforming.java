@@ -48,7 +48,7 @@ public class TestTimebasedTransforming {
 		final File testFile = new File(SOURCE_FOLDER, "TestMe1.java");
 		FileUtils.copyFile(old, testFile);
 
-		final JUnitTestTransformer tt = new TimeBasedTestTransformer(testFolder.getRoot(), true, false);
+		final JUnitTestTransformer tt = new TimeBasedTestTransformer(testFolder.getRoot());
 		tt.setDatacollectorlist(DataCollectorList.ONLYTIME);
 		tt.transformTests();
 
@@ -70,7 +70,7 @@ public class TestTimebasedTransforming {
 		final File testFile2 = new File(SOURCE_FOLDER, "TestMe2.java");
 		FileUtils.copyFile(old2, testFile2);
 
-		final JUnitTestTransformer tt = new TimeBasedTestTransformer(testFolder.getRoot(), true, false);
+		final JUnitTestTransformer tt = new TimeBasedTestTransformer(testFolder.getRoot());
 		tt.transformTests();
 
 		final CompilationUnit cu = JavaParser.parse(testFile2);

@@ -50,6 +50,8 @@ import de.peran.vcs.VersionIteratorSVN;
 public class DependencyReadingStarter {
 	private static final Logger LOG = LogManager.getLogger(DependencyReadingStarter.class);
 
+	
+	
 	public static void main(final String[] args) throws ParseException,
 			FileNotFoundException {
 		final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.STARTVERSION, OptionConstants.ENDVERSION, OptionConstants.OUT);
@@ -59,13 +61,7 @@ public class DependencyReadingStarter {
 
 		final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
 
-		final File dependencyFile;
-		if (line.hasOption(OptionConstants.OUT.getName())) {
-			dependencyFile = new File(line.getOptionValue(OptionConstants.OUT.getName()));
-		} else {
-			final File resultFolder = getResultFolder();
-			dependencyFile = new File(resultFolder, "deps_" + projectFolder.getName() + ".xml");
-		}
+		final File dependencyFile = getDependencyFile(line, projectFolder);
 
 		File outputFile = projectFolder.getParentFile();
 		if (outputFile.isDirectory()) {
@@ -95,6 +91,17 @@ public class DependencyReadingStarter {
 			throw new RuntimeException("Unknown version control system");
 		}
 		reader.readDependencies();
+	}
+
+	public static File getDependencyFile(final CommandLine line, final File projectFolder) {
+		final File dependencyFile;
+		if (line.hasOption(OptionConstants.OUT.getName())) {
+			dependencyFile = new File(line.getOptionValue(OptionConstants.OUT.getName()));
+		} else {
+			final File resultFolder = getResultFolder();
+			dependencyFile = new File(resultFolder, "deps_" + projectFolder.getName() + ".xml");
+		}
+		return dependencyFile;
 	}
 
 	public static File getResultFolder() {

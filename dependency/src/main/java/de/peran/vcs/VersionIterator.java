@@ -18,8 +18,13 @@ package de.peran.vcs;
 
 import java.io.File;
 
+/**
+ * Iterator for VCS, moving always the position of the iterator alongside with the version saved in the folder.
+ * @author reichelt
+ *
+ */
 public abstract class VersionIterator {
-	
+
 	protected final File projectFolder;
 	protected int tagid = 0;
 
@@ -29,24 +34,38 @@ public abstract class VersionIterator {
 
 	/**
 	 * Returns the count of commits
+	 * 
 	 * @return count of commits
 	 */
 	public abstract int getSize();
 
 	/**
 	 * Returns the current tag
+	 * 
 	 * @return current tag
 	 */
 	public abstract String getTag();
 
+	/**
+	 * Whether a next commit is present
+	 * @return True, if a next commit is present, false otherwise
+	 */
 	public abstract boolean hasNextCommit();
 
+	/**
+	 * Goes to next commit, also checking out next version in the folder
+	 * @return True for success, false otherwise
+	 */
 	public abstract boolean goToNextCommit();
 
+	/**
+	 * Goes to first commit, both in the iterator and the folder
+	 * @return True for success, false otherwise
+	 */
 	public abstract boolean goToFirstCommit();
 
 	/**
-	 * 
+	 * Checkout the Commit before the start (if no one is given, just move the iterator and do not change folder state)
 	 * @return Whether the 0th commit is not equal to the current commit
 	 */
 	public abstract boolean goTo0thCommit();

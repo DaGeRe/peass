@@ -17,15 +17,8 @@
 package de.peran.dependency.reader;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,15 +26,9 @@ import com.github.javaparser.ParseProblemException;
 
 import de.peran.dependency.ChangeManager;
 import de.peran.dependency.DependencyManager;
-import de.peran.dependency.analysis.data.TestDependencies;
 import de.peran.dependency.execution.TestExecutor;
 import de.peran.generated.Versiondependencies;
-import de.peran.generated.Versiondependencies.Initialversion;
 import de.peran.generated.Versiondependencies.Versions;
-import de.peran.generated.Versiondependencies.Initialversion.Initialdependency;
-import de.peran.generated.Versiondependencies.Versions.Version;
-import de.peran.generated.Versiondependencies.Versions.Version.Dependency;
-import de.peran.generated.Versiondependencies.Versions.Version.Dependency.Testcase;
 import de.peran.vcs.VersionIterator;
 
 /**
@@ -143,44 +130,12 @@ public class DependencyReader extends DependencyReaderBase {
 
 				LOG.info("Overall-tests: {} Executed tests with pruning: {}", overallSize, prunedSize);
 
-				deleteTemporaryFiles();
+				handler.getExecutor().deleteTemporaryFiles();
 			}
 
 			LOG.debug("Finished dependency-reading");
 
 		} catch (IOException | InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public boolean readInitialVersion() throws IOException, InterruptedException {
-		if (!handler.initialyGetTraces()) {
-			return false;
-		}
-		dependencyMap = handler.getDependencyMap();
-		final Initialversion initialversion = createInitialVersion(iterator.getTag(), dependencyMap, handler.getExecutor().getJDKVersion());
-		dependencyResult.setInitialversion(initialversion);
-		DependencyReaderUtil.write(dependencyResult, dependencyFile);
-
-		return true;
-	}
-
-	/**
-	 * Deletes temporary files, in order to not get memory problems
-	 */
-	private void deleteTemporaryFiles() {
-		try {
-			final File lastTmpFile = handler.getExecutor().getLastTmpFile();
-			if (lastTmpFile != null) {
-				final File[] tmpKiekerStuff = lastTmpFile.listFiles((FilenameFilter) new WildcardFileFilter("kieker*"));
-				for (final File kiekerFolder : tmpKiekerStuff) {
-					LOG.debug("Deleting: {}", kiekerFolder.getAbsolutePath());
-					FileUtils.deleteDirectory(kiekerFolder);
-				}
-			}
-
-		} catch (final IOException | IllegalArgumentException e) {
-			LOG.info("Problems deleting last temp file..");
 			e.printStackTrace();
 		}
 	}

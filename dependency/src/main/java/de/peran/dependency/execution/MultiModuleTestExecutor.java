@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.ProcessBuilder.Redirect;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -19,11 +18,16 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peran.utils.StreamGobbler;
 
+/**
+ * Executes maven-multi-module projects by only executing one module
+ * @author reichelt
+ *
+ */
 public class MultiModuleTestExecutor extends MavenKiekerTestExecutor {
 
 	private static final Logger LOG = LogManager.getLogger(MultiModuleTestExecutor.class);
 
-	public MultiModuleTestExecutor(File projectFolder, File moduleFolder, File resultsFolder) {
+	public MultiModuleTestExecutor(final File projectFolder, final File moduleFolder, final File resultsFolder) {
 		super(projectFolder, moduleFolder, resultsFolder);
 	}
 
@@ -50,8 +54,9 @@ public class MultiModuleTestExecutor extends MavenKiekerTestExecutor {
 		return isRunning;
 	}
 	
+	@Override
 	protected void compileVersion(final File logFile){
-		final ProcessBuilder pb = new ProcessBuilder("mvn", 
+		compileVersion(logFile, "mvn", 
 				"clean", 
 				"install",
 				"-DskipITs",
@@ -62,31 +67,9 @@ public class MultiModuleTestExecutor extends MavenKiekerTestExecutor {
 				"-Drat.skip=true", 
 				"-Dlicense.skip=true",
 				"-Dpmd.skip=true");
-//		final ProcessBuilder pb = new ProcessBuilder("mvn", "clean", "install", "--am", "--pl", moduleFolder.getName(), "-Denforcer.skip", "-Drat.skip", );
-
-		pb.directory(projectFolder);
-		if (logFile != null) {
-			pb.redirectOutput(Redirect.appendTo(logFile));
-			pb.redirectError(Redirect.appendTo(logFile));
-		}
-
-		try {
-			Process process = pb.start();
-			int result = process.waitFor();
-			if (result != 0){
-				throw new RuntimeException("Compilation failed, see" + logFile.getAbsolutePath());
-			}
-			
-			generateAOPXML();
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Compilation failed, see" + logFile.getAbsolutePath());
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Compilation failed, see" + logFile.getAbsolutePath());
-		}
 	}
 
+	@Override
 	protected boolean testRunning() {
 		boolean isRunning;
 		final ProcessBuilder pb = new ProcessBuilder("mvn", "clean", "test-compile", "-Drat.skip=true", "--am", "-Dmaven.test.skip.exec", "--pl", moduleFolder.getName());
@@ -110,10 +93,12 @@ public class MultiModuleTestExecutor extends MavenKiekerTestExecutor {
 		return isRunning;
 	}
 
+	@Override
 	public void preparePom() {
+		final boolean update = false;
 		final MavenXpp3Reader reader = new MavenXpp3Reader();
 		try {
-			File pomFile = new File(moduleFolder, "pom.xml");
+			final File pomFile = new File(moduleFolder, "pom.xml");
 			final Model model = reader.read(new FileInputStream(pomFile));
 			if (model.getBuild() == null) {
 				model.setBuild(new Build());
@@ -122,8 +107,8 @@ public class MultiModuleTestExecutor extends MavenKiekerTestExecutor {
 			
 			final Path tempFiles = Files.createTempDirectory("kiekerTemp");
 			lastTmpFile = tempFiles.toFile();
-			final String argline = KIEKER_ARG_LINE + " -Djava.io.tmpdir=" + tempFiles.toString() + " -Dorg.aspectj.weaver.loadtime.configuration=file:target/test-classes/META-INF/aop.xml";
-			extendSurefire(argline, surefire, false);
+			final String argline = KIEKER_ARG_LINE + " -Djava.io.tmpdir=" + tempFiles.toString() + " ";
+			extendSurefire(argline, surefire, update);
 			extendDependencies(model);
 
 			setJDK(model);

@@ -19,7 +19,6 @@ package de.peran.testtransformation;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 
 import org.apache.logging.log4j.LogManager;
@@ -36,7 +35,6 @@ import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
 
-import de.dagere.kopeme.datacollection.DataCollectorList;
 
 /**
  * Transforms JUnit-Tests to timebased performance tests.
@@ -45,19 +43,25 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
  */
 public class TimeBasedTestTransformer extends JUnitTestTransformer {
 
+	private static final int DEFAULT_DURATION = 60000;
+
 	private static final Logger LOG = LogManager.getLogger(TimeBasedTestTransformer.class);
 
-	private int duration = 60000;
+	private int duration = DEFAULT_DURATION;
 
-	public TimeBasedTestTransformer(File path, boolean logFulldata, boolean useKieker) {
-		super(path, logFulldata, useKieker);
+	/**
+	 * Creates Transformer with path.
+	 * @param path Path where to transform the tests
+	 */
+	public TimeBasedTestTransformer(final File path) {
+		super(path);
 	}
 
 	public int getDuration() {
 		return duration;
 	}
 
-	public void setDuration(int duration) {
+	public void setDuration(final int duration) {
 		this.duration = duration;
 	}
 
@@ -68,8 +72,7 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 	 * KoPeMeTestcase-changes have been made yet. Classes, that already extend
 	 * KoPeMeTestcase are not changed.
 	 * 
-	 * @param javaFile
-	 * @param logFullData
+	 * @param javaFile File to edit
 	 */
 	protected void editJUnit3(final File javaFile) {
 		try {
@@ -101,8 +104,7 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 	 * Edits Java so that the class is run with the KoPeMe-Testrunner and the
 	 * methods are annotated additionally with @PerformanceTest.
 	 * 
-	 * @param javaFile
-	 * @param logFullData
+	 * @param javaFile File to edit
 	 */
 	protected void editJUnit4(final File javaFile) {
 		try {
@@ -111,7 +113,6 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 			unit.addImport("de.dagere.kopeme.annotations.Assertion");
 			unit.addImport("de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation");
 			unit.addImport("de.dagere.kopeme.annotations.PerformanceTest");
-//			unit.addImport("de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit");
 			unit.addImport("de.dagere.kopeme.junit.testrunner.time.TimeBasedTestRunner");
 			unit.addImport("org.junit.runner.RunWith");
 

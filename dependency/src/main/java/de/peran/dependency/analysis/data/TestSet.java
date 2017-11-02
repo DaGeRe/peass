@@ -103,6 +103,10 @@ public class TestSet {
 		return testcases.keySet();
 	}
 
+	public Map<String, List<String>> getTestcases() {
+		return testcases;
+	}
+
 	public void removeTest(final String testClassName, final String testMethodName) {
 		testcases.get(testClassName).remove(testMethodName);
 	}

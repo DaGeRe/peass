@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
@@ -31,10 +30,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.tmatesoft.svn.core.SVNLogEntry;
 
 import de.peran.debugtools.DependencyReadingContinueStarter;
-import de.peran.dependency.reader.DependencyReader;
 import de.peran.dependency.reader.DependencyReaderMultiModule;
 import de.peran.dependencyprocessors.VersionComparator;
 import de.peran.generated.Versiondependencies;
@@ -42,11 +39,9 @@ import de.peran.generated.Versiondependencies.Versions.Version;
 import de.peran.utils.OptionConstants;
 import de.peran.vcs.GitCommit;
 import de.peran.vcs.GitUtils;
-import de.peran.vcs.SVNUtils;
 import de.peran.vcs.VersionControlSystem;
 import de.peran.vcs.VersionIterator;
 import de.peran.vcs.VersionIteratorGit;
-import de.peran.vcs.VersionIteratorSVN;
 
 /**
  * Creates dependency information and statics for a project by running all tests
@@ -67,16 +62,10 @@ public class DependencyReadingStarterMultiModule {
 
 		final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
 
-		final File dependencyFile;
-		if (line.hasOption(OptionConstants.OUT.getName())) {
-			dependencyFile = new File(line.getOptionValue(OptionConstants.OUT.getName()));
-		} else {
-			final File resultFolder = DependencyReadingStarter.getResultFolder();
-			dependencyFile = new File(resultFolder, "deps_" + projectFolder.getName() + ".xml");
-		}
+		final File dependencyFile = DependencyReadingStarter.getDependencyFile(line, projectFolder);
 
-		String module = line.getOptionValue(OptionConstants.MODULE.getName());
-		File moduleFolder = new File(projectFolder, module);
+		final String module = line.getOptionValue(OptionConstants.MODULE.getName());
+		final File moduleFolder = new File(projectFolder, module);
 
 		File outputFile = projectFolder.getParentFile();
 		if (outputFile.isDirectory()) {
@@ -100,9 +89,9 @@ public class DependencyReadingStarterMultiModule {
 				String previousVersion;
 				if (line.hasOption(OptionConstants.STARTVERSION.getName())) {
 					final String startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName());
-					List<Version> versionList = dependencies.getVersions().getVersion();
+					final List<Version> versionList = dependencies.getVersions().getVersion();
 					DependencyReadingContinueStarter.truncateVersions(startversion, versionList);
-					int index = versionList.size() - 1;
+					final int index = versionList.size() - 1;
 					previousVersion = (index >= 0) ? versionList.get(index).getVersion() : dependencies.getInitialversion().getVersion();
 				} else {
 					

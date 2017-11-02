@@ -1,4 +1,4 @@
-package de.peran.utils;
+package de.peran.debugtools;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,8 +7,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
+import de.peran.utils.StreamGobbler;
+
 /**
  * Compares two traces, given in as command line parameters, for debugging purposes
+ * 
  * @author reichelt
  *
  */
@@ -38,8 +41,8 @@ public class TraceComparator {
 				fileIndex++;
 			}
 		}
-		for (int i = 0; i < fileIndex-1; i++){
-			System.out.println("diff -y -W 200 compareFolder/file_"+i+" compareFolder/file_"+(i+1));
+		for (int i = 0; i < fileIndex - 1; i++) {
+			System.out.println("diff -y -W 200 compareFolder/file_" + i + " compareFolder/file_" + (i + 1));
 		}
 	}
 }

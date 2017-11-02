@@ -11,8 +11,8 @@ import org.junit.Test;
 import com.github.javaparser.ParseException;
 
 import de.peran.dependency.analysis.CalledMethodLoader;
-import de.peran.measurement.traces.TraceMethodReader;
-import de.peran.measurement.traces.TraceWithMethods;
+import de.peran.dependency.traces.TraceMethodReader;
+import de.peran.dependency.traces.TraceWithMethods;
 import de.peran.utils.StreamGobbler;
 
 /**

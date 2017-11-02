@@ -1,4 +1,4 @@
-package de.peran.measurement.traces;
+package de.peran.dependency.traces;
 
 import java.io.File;
 import java.util.Arrays;

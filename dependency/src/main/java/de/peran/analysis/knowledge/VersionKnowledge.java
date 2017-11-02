@@ -1,4 +1,4 @@
-package de.peran.measurement.analysis.knowledge;
+package de.peran.analysis.knowledge;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -7,7 +7,6 @@ import java.util.TreeMap;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.peran.dependencyprocessors.VersionComparator;
-import de.peran.generated.Versiondependencies.Versions.Version;
 
 public class VersionKnowledge {
 	

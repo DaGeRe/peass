@@ -47,13 +47,10 @@ public class DependencyTester {
 	private static final Logger LOG = LogManager.getLogger(DependencyTester.class);
 
 	private final File projectFolder, moduleFolder;
-	// private final File resultFolder, fullResultFolder, logFolder;
 	private final int warmup, iterations;
-	private final int duration;
 	private final int vms;
 	private final FileWriter resultFileWriter;
 	private final boolean runInitial;
-	// private final File fullResult_fullMeasurementFolder;
 
 	private final String url;
 	private final VersionControlSystem vcs;
@@ -69,7 +66,6 @@ public class DependencyTester {
 		this.warmup = 0;
 		this.iterations = 0;
 		this.vms = vms;
-		this.duration = duration;
 		this.runInitial = runInitial;
 		resultFileWriter = new FileWriter(new File("fertig.txt"));
 
@@ -82,7 +78,7 @@ public class DependencyTester {
 		}
 		PeASSFolderUtil.setProjectFolder(projectFolder);
 
-		tg = new TimeBasedTestTransformer(moduleFolder, false, false);
+		tg = new TimeBasedTestTransformer(moduleFolder);
 		((TimeBasedTestTransformer) tg).setDuration(duration);
 		if (repetitions != 1) {
 			tg.setRepetitions(150);
@@ -100,7 +96,6 @@ public class DependencyTester {
 		this.moduleFolder = projectFolder;
 		this.warmup = warmup;
 		this.iterations = iterations;
-		this.duration = 0;
 		this.vms = vms;
 		this.runInitial = runInitial;
 		resultFileWriter = new FileWriter(new File("fertig.txt"));
@@ -114,7 +109,7 @@ public class DependencyTester {
 		}
 		PeASSFolderUtil.setProjectFolder(projectFolder);
 
-		tg = new JUnitTestTransformer(projectFolder, false, false);
+		tg = new JUnitTestTransformer(projectFolder);
 		if (repetitions != 1) {
 			tg.setRepetitions(repetitions);
 		}
@@ -231,43 +226,42 @@ public class DependencyTester {
 		}
 	}
 
-	public void evaluateOnce(final TestSet testset, final String version, final int vmid, File logFolder) throws IOException, InterruptedException, JAXBException {
+	public void evaluateOnce(final TestSet testset, final String version, final int vmid, final File logFolder) throws IOException, InterruptedException, JAXBException {
 		if (vcs.equals(VersionControlSystem.SVN)) {
 			SVNUtils.getInstance().checkout(url, projectFolder, Long.parseLong(version));
 		} else {
 			GitUtils.goToTag(version, projectFolder);
 		}
 
-
 		File vmidFolder = new File(logFolder, "vm_" + vmid);
 		if (vmidFolder.exists()) {
 			vmidFolder = new File(logFolder, "vm_" + vmid + "_new");
 		}
 		vmidFolder.mkdir();
-		
+
 		LOG.info("Initialer Checkout beendet");
 
 		tg.setLogFullData(true);
 		pim.generateTests("-Xms1g");
-		
+
 		if (!projectFolder.equals(moduleFolder)) {
-			String args[] = new String[] { "mvn", "clean", 
-					"install", "-fn", 
-					"--no-snapshot-updates", 
-					"-Dcheckstyle.skip=true", 
+			String[] args = new String[] { "mvn", "clean",
+					"install", "-fn",
+					"--no-snapshot-updates",
+					"-Dcheckstyle.skip=true",
 					"-Dmaven.compiler.source=1.7",
-					"-Dmaven.compiler.target=1.7", 
-					"-Dmaven.javadoc.skip=true", "-Denforcer.skip=true", 
-					"-Drat.skip=true", "-DskipTests=true", 
+					"-Dmaven.compiler.target=1.7",
+					"-Dmaven.javadoc.skip=true", "-Denforcer.skip=true",
+					"-Drat.skip=true", "-DskipTests=true",
 					"--pl", "jetty-servlet",
 					"--am",
 					"-Dpmd.skip=true",
-					"-Dlicense.skip=true", "-X"};
+					"-Dlicense.skip=true", "-X" };
 			File logFile = new File(vmidFolder, "compilation.txt");
 			Process compileProcess = pim.executeProcess(logFile, args, projectFolder);
 			compileProcess.waitFor();
 		}
-		
+
 		pim.executeTests(testset, vmidFolder);
 
 		LOG.info("Ändere " + testset.entrySet().size() + " Klassen durch Ergänzung des Gitversion-Elements.");

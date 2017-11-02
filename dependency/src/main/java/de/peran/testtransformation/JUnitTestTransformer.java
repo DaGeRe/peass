@@ -60,27 +60,40 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
  */
 public class JUnitTestTransformer {
 
+	private static final int DEFAULT_EXECUTIONS = 10;
+	private static final int DEFAULT_TIMEOUT = 30 * 60 * 1000;
+
 	private static final Logger LOG = LogManager.getLogger(JUnitTestTransformer.class);
 
 	protected DataCollectorList datacollectorlist;
 	protected int warmupExecutions, executions;
 	protected int sumTime;
-	protected boolean logFullData;
+	protected boolean logFullData = true;
 	protected File projectFolder;
-	protected final boolean useKieker;
+	protected boolean useKieker = false;
 	protected Charset charset = StandardCharsets.UTF_8;
+	protected int repetitions = 1;
 
-	public JUnitTestTransformer(final File projectFolder, final boolean logFulldata, final boolean useKieker) {
+	/**
+	 * Initializes TestTransformer with folder.
+	 * 
+	 * @param projectFolder Folder, where tests should be transformed
+	 */
+	public JUnitTestTransformer(final File projectFolder) {
 		this.projectFolder = projectFolder;
 		datacollectorlist = DataCollectorList.STANDARD;
-		executions = 10;
-		warmupExecutions = 10;
-		sumTime = 30 * 60 * 1000; // Default: half hour
-		this.logFullData = logFulldata;
-		this.useKieker = useKieker;
+		executions = DEFAULT_EXECUTIONS;
+		warmupExecutions = DEFAULT_EXECUTIONS;
+		sumTime = DEFAULT_TIMEOUT;
 	}
 
-	protected int repetitions = 1;
+	public boolean isUseKieker() {
+		return useKieker;
+	}
+
+	public void setUseKieker(boolean useKieker) {
+		this.useKieker = useKieker;
+	}
 
 	public int getRepetitions() {
 		return repetitions;
@@ -112,10 +125,6 @@ public class JUnitTestTransformer {
 					editJUnit4(version.getKey());
 				}
 			}
-
-			// for (final File javaFile : FileUtils.listFiles(testFolder, javaFilter, TrueFileFilter.INSTANCE)) {
-			// editJUnitClazz(javaFile);
-			// }
 		} else {
 			LOG.error("Test folder " + testFolder.getAbsolutePath() + " does not exist.");
 		}
@@ -185,8 +194,7 @@ public class JUnitTestTransformer {
 	 * Edits Java so that the class extends KoPeMeTestcase instead of TestCase and that the methods for specifying the performance test are added. It is assumed that every class is in it's original
 	 * state, i.e. no KoPeMeTestcase-changes have been made yet. Classes, that already extend KoPeMeTestcase are not changed.
 	 * 
-	 * @param javaFile
-	 * @param logFullData
+	 * @param javaFile File for editing
 	 */
 	protected void editJUnit3(final File javaFile) {
 		try {
@@ -220,6 +228,13 @@ public class JUnitTestTransformer {
 		}
 	}
 
+	/**
+	 * Adds the given method to the Classdeclaration
+	 * @param clazz	Clazz where method should be added
+	 * @param name	Name of the new method
+	 * @param source Source of the new method
+	 * @param type Returntype of the new method
+	 */
 	protected void addMethod(final ClassOrInterfaceDeclaration clazz, final String name, final String source, final Type type) {
 		final MethodDeclaration addedMethod = clazz.addMethod(name, Modifier.PUBLIC);
 		addedMethod.setType(type);
@@ -233,8 +248,7 @@ public class JUnitTestTransformer {
 	/**
 	 * Edits Java so that the class is run with the KoPeMe-Testrunner and the methods are annotated additionally with @PerformanceTest.
 	 * 
-	 * @param javaFile
-	 * @param logFullData
+	 * @param javaFile File for editing
 	 */
 	protected void editJUnit4(final File javaFile) {
 		try {
@@ -242,19 +256,19 @@ public class JUnitTestTransformer {
 
 			unit.addImport("de.dagere.kopeme.annotations.Assertion");
 			unit.addImport("de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation");
-//			unit.addImport("de.dagere.kopeme.annotations.PerformanceTest");
+			// unit.addImport("de.dagere.kopeme.annotations.PerformanceTest");
 			unit.addImport("de.dagere.kopeme.junit.testrunner.PerformanceTestRunnerJUnit");
 			unit.addImport("org.junit.runner.RunWith");
 
 			final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
-			if (clazz.getAnnotations().size() > 0){
+			if (clazz.getAnnotations().size() > 0) {
 				boolean otherTestRunner = false;
-				for (final AnnotationExpr annotation : clazz.getAnnotations()){
-					if (annotation.getNameAsString().contains("RunWith")){
+				for (final AnnotationExpr annotation : clazz.getAnnotations()) {
+					if (annotation.getNameAsString().contains("RunWith")) {
 						otherTestRunner = true;
 					}
 				}
-				if (otherTestRunner){
+				if (otherTestRunner) {
 					return;
 				}
 			}

@@ -2,10 +2,13 @@ package de.peran.measurement.analysis;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.stat.inference.TestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,13 +36,13 @@ public class MutipleVMTestUtil {
 		final File resultFile = new File(args[0]);
 		analyseOneRun(resultFile);
 	}
-	
-	public static void analyseOneRun(final File resultFile) throws JAXBException{
+
+	public static void analyseOneRun(final File resultFile) throws JAXBException {
 		final XMLDataLoader fullDataLoader = new XMLDataLoader(resultFile);
 		final Kopemedata fullResultData = fullDataLoader.getFullData();
 		final Datacollector oneRunDatacollector = getTimeDataCollector(fullResultData);
 		final SummaryStatistics st = new SummaryStatistics();
-		for (final Result r : oneRunDatacollector.getResult()){
+		for (final Result r : oneRunDatacollector.getResult()) {
 			st.addValue(r.getValue());
 		}
 		LOG.info("Durchschnitt: " + st.getMean());
@@ -57,7 +60,6 @@ public class MutipleVMTestUtil {
 		}
 		return oneRunDatacollector;
 	}
-	
 
 	/**
 	 * Takes the given result and the given verion and creates a file containing the aggregated result.
@@ -97,8 +99,8 @@ public class MutipleVMTestUtil {
 			final SummaryStatistics st = new SummaryStatistics();
 			createStatistics(st, realData, values);
 
-//			final File chartfile = getFirstFreeFile(fullResultFile.getParentFile(), fullResultFile.getName(), ".png");
-//			HistogramUtil.createHistogram(chartfile, values);
+			// final File chartfile = getFirstFreeFile(fullResultFile.getParentFile(), fullResultFile.getName(), ".png");
+			// HistogramUtil.createHistogram(chartfile, values);
 
 			final Result result = createResultFromStatistic(version, st);
 			// result.setFulldata(new Fulldata());
@@ -133,13 +135,35 @@ public class MutipleVMTestUtil {
 		}
 	}
 
-	private static final File getFirstFreeFile(final File fullResultFolder, final String name, final String suffix) {
-		int i = 0;
-		File file = new File(fullResultFolder, name + "_" + i + ".png");
-		while (file.exists()) {
-			i++;
-			file = new File(fullResultFolder, name + "_" + i + ".png");
-		}
-		return file;
+	public static List<Double> getAverages(final List<Result> before) {
+		return before.stream()
+				.mapToDouble(beforeVal -> beforeVal.getFulldata().getValue().stream()
+						.mapToDouble(val -> Double.parseDouble(val.getValue())).sum()
+						/ beforeVal.getFulldata().getValue().size())
+				.boxed().sorted().collect(Collectors.toList());
 	}
+
+	public static SummaryStatistics getStatistic(List<Result> results) {
+		SummaryStatistics statistisc = new SummaryStatistics();
+		results.forEach(result -> statistisc.addValue(result.getValue()));
+		return statistisc;
+	}
+
+	public static int compareDouble(final List<Double> before, final List<Double> after) {
+		boolean change = TestUtils.tTest(ArrayUtils.toPrimitive(before.toArray(new Double[0])), ArrayUtils.toPrimitive(after.toArray(new Double[0])), 0.05);
+		SummaryStatistics statisticBefore = new SummaryStatistics();
+		before.forEach(result -> statisticBefore.addValue(result));
+
+		SummaryStatistics statisticAfter = new SummaryStatistics();
+		after.forEach(result -> statisticAfter.addValue(result));
+		if (change) {
+			if (statisticBefore.getMean() < statisticAfter.getMean())
+				return -1;
+			else
+				return 1;
+		} else {
+			return 0;
+		}
+	}
+
 }

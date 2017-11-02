@@ -24,28 +24,26 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import de.peran.analysis.knowledge.Changes;
+import de.peran.analysis.knowledge.VersionKnowledge;
 import de.peran.dependency.TestResultManager;
 import de.peran.dependency.analysis.CalledMethodLoader;
 import de.peran.dependency.analysis.data.TestCase;
 import de.peran.dependency.analysis.data.TestSet;
 import de.peran.dependency.analysis.data.TraceElement;
+import de.peran.dependency.traces.TraceMethodReader;
+import de.peran.dependency.traces.TraceWithMethods;
 import de.peran.dependencyprocessors.PairProcessor;
 import de.peran.dependencyprocessors.VersionComparator;
 import de.peran.dependencyprocessors.ViewNotFoundException;
 import de.peran.generated.Versiondependencies.Versions.Version;
-import de.peran.measurement.analysis.knowledge.Changes;
-import de.peran.measurement.analysis.knowledge.VersionKnowledge;
-import de.peran.measurement.traces.TraceMethodReader;
-import de.peran.measurement.traces.TraceWithMethods;
 import de.peran.reduceddependency.ChangedTraceTests;
 import de.peran.utils.OptionConstants;
 import de.peran.utils.StreamGobbler;
 import de.peran.vcs.GitUtils;
 
 /**
- * Generates a) Trace-Method-Diff and b) Trace-Method-Source-Diff from a project
- * by loading every version, executing it with instrumentation and afterwards
- * closing it.
+ * Generates a) Trace-Method-Diff and b) Trace-Method-Source-Diff from a project by loading every version, executing it with instrumentation and afterwards closing it.
  * 
  * @author reichelt
  *
@@ -73,15 +71,15 @@ public class ViewPrintStarter extends PairProcessor {
 			traceFolder.mkdir();
 		}
 		executeFile = new File(traceFolder, "execute" + projectName + ".json");
-		
-		if (line.hasOption(OptionConstants.CHANGEFILE.getName())){
+
+		if (line.hasOption(OptionConstants.CHANGEFILE.getName())) {
 			File changeFile = new File(line.getOptionValue(OptionConstants.CHANGEFILE.getName()));
 			VersionKnowledge knowledge = new ObjectMapper().readValue(changeFile, VersionKnowledge.class);
-			
-			for (Iterator<Version> iterator = dependencies.getVersions().getVersion().iterator(); iterator.hasNext(); ){
+
+			for (Iterator<Version> iterator = dependencies.getVersions().getVersion().iterator(); iterator.hasNext();) {
 				Version v = iterator.next();
 				Changes changes = knowledge.getVersion(v.getVersion());
-				if (changes.getTestcaseChanges().size() == 0){
+				if (changes.getTestcaseChanges().size() == 0) {
 					iterator.remove();
 				}
 			}
@@ -150,8 +148,7 @@ public class ViewPrintStarter extends PairProcessor {
 		}
 	}
 
-	private boolean generateTraces(final String version, final TestCase testcase, final String versionOld,
-			final File clazzDir, final Map<String, List<File>> traceFileMap)
+	private boolean generateTraces(final String version, final TestCase testcase, final String versionOld, final File clazzDir, final Map<String, List<File>> traceFileMap)
 			throws IOException, InterruptedException, com.github.javaparser.ParseException, ViewNotFoundException {
 		for (final String githash : new String[] { versionOld, version }) {
 			LOG.debug("Checkout...");
@@ -169,12 +166,21 @@ public class ViewPrintStarter extends PairProcessor {
 			if (!worked) {
 				return false;
 			}
+
+			tracereader.deleteTempFiles();
 		}
 		return true;
 	}
 
-	private boolean generateDiffFiles(final TestCase testcase, final File diffFolder,
-			final Map<String, List<File>> traceFileMap) throws IOException {
+	/**
+	 * Generates a human-analysable diff-file from traces
+	 * @param testcase	Name of the testcase
+	 * @param diffFolder Goal-folder for the diff
+	 * @param traceFileMap	Map for place where traces are saved
+	 * @return	Whether a change happened
+	 * @throws IOException If files can't be read of written
+	 */
+	private boolean generateDiffFiles(final TestCase testcase, final File diffFolder, final Map<String, List<File>> traceFileMap) throws IOException {
 		final File diffFile = new File(diffFolder, testcase.getMethod() + ".txt");
 		final File diffFileMethod = new File(diffFolder, testcase.getMethod() + "_method.txt");
 		final List<File> traceFiles = traceFileMap.get(testcase.getMethod());
@@ -203,8 +209,7 @@ public class ViewPrintStarter extends PairProcessor {
 		}
 	}
 
-	private boolean analyseTrace(final TestCase testcase, final File clazzDir,
-			final Map<String, List<File>> traceFileMap, final String githash, final File resultsFolder)
+	private boolean analyseTrace(final TestCase testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File resultsFolder)
 			throws com.github.javaparser.ParseException, IOException, ViewNotFoundException {
 		final File projectResultFolder = new File(resultsFolder, testcase.getClazz());
 		final File[] listFiles = projectResultFolder.listFiles(new FileFilter() {
@@ -215,7 +220,7 @@ public class ViewPrintStarter extends PairProcessor {
 		});
 		if (listFiles == null || listFiles.length != 1) {
 			throw new ViewNotFoundException("Result folder: " + Arrays.toString(listFiles) + " ("
-					+ (listFiles != null ? listFiles.length : "null") + ") should only be exactly one folder!");
+					+ (listFiles != null ? listFiles.length : "null") + ") in " + projectResultFolder.getAbsolutePath() + " should only be exactly one folder!");
 		}
 
 		final File methodResult = new File(listFiles[0], testcase.getMethod());

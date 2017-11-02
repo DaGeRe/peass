@@ -35,7 +35,6 @@ import org.tmatesoft.svn.core.SVNLogEntry;
 import de.peran.DependencyReadingStarter;
 import de.peran.DependencyStatisticAnalyzer;
 import de.peran.dependency.reader.DependencyReader;
-import de.peran.dependency.reader.DependencyReadingContinuer;
 import de.peran.dependencyprocessors.VersionComparator;
 import de.peran.generated.Versiondependencies;
 import de.peran.generated.Versiondependencies.Versions.Version;

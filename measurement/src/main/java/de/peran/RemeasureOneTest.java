@@ -2,7 +2,6 @@ package de.peran;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
 import javax.xml.bind.JAXBException;
 
@@ -18,8 +17,14 @@ import de.peran.dependency.analysis.data.TestSet;
 import de.peran.dependencyprocessors.DependencyTester;
 import de.peran.utils.OptionConstants;
 
+/**
+ * Remeasures one testcase for the given versions
+ * 
+ * @author reichelt
+ *
+ */
 public class RemeasureOneTest {
-	public static void main(String[] args) throws ParseException, IOException, InterruptedException, JAXBException {
+	public static void main(final String[] args) throws ParseException, IOException, InterruptedException, JAXBException {
 		final Options options = OptionConstants.createOptions(OptionConstants.REPETITIONS, OptionConstants.VMS, OptionConstants.DURATION, OptionConstants.DURATION,
 				OptionConstants.TEST, OptionConstants.ENDVERSION, OptionConstants.FOLDER);
 		final CommandLineParser parser = new DefaultParser();

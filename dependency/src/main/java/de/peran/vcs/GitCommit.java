@@ -18,13 +18,14 @@ package de.peran.vcs;
 
 /**
  * Holds data of a git commit.
+ * 
  * @author reichelt
  *
  */
 public class GitCommit {
 	private String tag, comitter;
 	private String date, message;
-	
+
 	public GitCommit(final String tag, final String comitter, final String date, final String message) {
 		super();
 		this.tag = tag;
@@ -32,32 +33,39 @@ public class GitCommit {
 		this.date = date;
 		this.message = message;
 	}
-	
+
 	public String getTag() {
 		return tag;
 	}
+
 	public void setTag(final String tag) {
 		this.tag = tag;
 	}
+
 	public String getComitter() {
 		return comitter;
 	}
+
 	public void setComitter(final String comitter) {
 		this.comitter = comitter;
 	}
+
 	public String getDate() {
 		return date;
 	}
+
 	public void setDate(final String date) {
 		this.date = date;
 	}
+
 	public String getMessage() {
 		return message;
 	}
+
 	public void setMessage(final String message) {
 		this.message = message;
 	}
-	
+
 	@Override
 	public String toString() {
 		return tag;

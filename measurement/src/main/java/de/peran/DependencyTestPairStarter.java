@@ -2,8 +2,6 @@ package de.peran;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -11,10 +9,12 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -29,9 +29,8 @@ import de.peran.reduceddependency.ChangedTraceTests;
 import de.peran.utils.OptionConstants;
 
 /**
- * Runs the dependency test by running the test, where something could have
- * changed, pairwise for every new version. This makes it faster to get
- * potential change candidates, but it takes longer for a whole project.
+ * Runs the dependency test by running the test, where something could have changed, pairwise for every new version. This makes it faster to get potential change candidates, but it takes longer for a
+ * whole project.
  * 
  * @author reichelt
  *
@@ -45,18 +44,45 @@ public class DependencyTestPairStarter extends PairProcessor {
 	private final int startindex, endindex;
 	private final ChangedTraceTests changedTests;
 
-	public DependencyTestPairStarter(final String args[]) throws ParseException, JAXBException, IOException {
+	public DependencyTestPairStarter(final String[] args) throws ParseException, JAXBException, IOException {
 		super(args);
 		final int vms = Integer.parseInt(line.getOptionValue(OptionConstants.VMS.getName(), "15"));
 		final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "1"));
+		this.changedTests = loadChangedTests(line);
+
+		if (line.hasOption(OptionConstants.DURATION.getName())) {
+			final int duration = Integer.parseInt(line.getOptionValue(OptionConstants.DURATION.getName()));
+			if (dependencies.getModule() != null) {
+				final File moduleFolder = new File(projectFolder, dependencies.getModule());
+				tester = new DependencyTester(projectFolder, moduleFolder, duration, vms, true, repetitions);
+			} else {
+				tester = new DependencyTester(projectFolder, projectFolder, duration, vms, true, repetitions);
+			}
+
+		} else {
+			final int warmup = Integer.parseInt(line.getOptionValue(OptionConstants.WARMUP.getName(), "10"));
+			final int iterationen = Integer.parseInt(line.getOptionValue(OptionConstants.ITERATIONS.getName(), "10"));
+			tester = new DependencyTester(projectFolder, warmup, iterationen, vms, true, repetitions);
+		}
+
+		versions.add(dependencies.getInitialversion().getVersion());
+
+		dependencies.getVersions().getVersion().forEach(version -> versions.add(version.getVersion()));
+
+		startindex = getStartVersionIndex();
+		endindex = getEndVersion();
+	}
+
+	public static ChangedTraceTests loadChangedTests(final CommandLine line) throws IOException, JsonParseException, JsonMappingException {
+		final ChangedTraceTests changedTests;
 		if (line.hasOption(OptionConstants.EXECUTIONFILE.getName())) {
 			final ObjectMapper mapper = new ObjectMapper();
 			ChangedTraceTests testsTemp;
 			try {
 				testsTemp = mapper.readValue(new File(line.getOptionValue(OptionConstants.EXECUTIONFILE.getName())), ChangedTraceTests.class);
-			} catch (JsonMappingException e) {
-				ObjectMapper objectMapper = new ObjectMapper();
-				SimpleModule module = new SimpleModule();
+			} catch (final JsonMappingException e) {
+				final ObjectMapper objectMapper = new ObjectMapper();
+				final SimpleModule module = new SimpleModule();
 				module.addDeserializer(ChangedTraceTests.class, new ChangedTraceTests.Deserializer());
 				objectMapper.registerModule(module);
 				testsTemp = objectMapper.readValue(new File(line.getOptionValue(OptionConstants.EXECUTIONFILE.getName())), ChangedTraceTests.class);
@@ -65,39 +91,23 @@ public class DependencyTestPairStarter extends PairProcessor {
 		} else {
 			changedTests = null;
 		}
-
-		if (line.hasOption(OptionConstants.DURATION.getName())) {
-			int duration = Integer.parseInt(line.getOptionValue(OptionConstants.DURATION.getName()));
-			if (dependencies.getModule() != null){
-				File moduleFolder = new File(projectFolder, dependencies.getModule());
-				tester = new DependencyTester(projectFolder, moduleFolder, duration, vms, true, repetitions);
-			} else {
-				tester = new DependencyTester(projectFolder, projectFolder, duration, vms, true, repetitions);
-			}
-
-		} else {
-			final int warmup = Integer.parseInt(line.getOptionValue(OptionConstants.WARMUP.getName()), 10);
-			final int iterationen = Integer.parseInt(line.getOptionValue(OptionConstants.ITERATIONS.getName()), 10);
-			tester = new DependencyTester(projectFolder, warmup, iterationen, vms, true, repetitions);
-		}
-
-		versions.add(dependencies.getInitialversion().getVersion());
-
-		dependencies.getVersions().getVersion().forEach(version -> versions.add(version.getVersion()));
-
-		startindex = getStartVersion();
-		endindex = getEndVersion();
+		return changedTests;
 	}
 
-	private int getStartVersion() {
-		int startindex = startversion != null ? versions.indexOf(startversion) : 0;
+	/**
+	 * Calculates the index of the start version
+	 * 
+	 * @return index of the start version
+	 */
+	private int getStartVersionIndex() {
+		int currentStartindex = startversion != null ? versions.indexOf(startversion) : 0;
 		// Only bugfix if dependencyfile and executefile do not fully match
 		if (changedTests != null) {
-			if (startversion != null && startindex == -1) {
+			if (startversion != null && currentStartindex == -1) {
 				String potentialStart = "";
 				if (changedTests.getVersions().containsKey(startversion)) {
-					for (String sicVersion : changedTests.getVersions().keySet()) {
-						for (Version ticVersion : dependencies.getVersions().getVersion()) {
+					for (final String sicVersion : changedTests.getVersions().keySet()) {
+						for (final Version ticVersion : dependencies.getVersions().getVersion()) {
 							if (ticVersion.getVersion().equals(sicVersion)) {
 								potentialStart = ticVersion.getVersion();
 								break;
@@ -109,22 +119,27 @@ public class DependencyTestPairStarter extends PairProcessor {
 					}
 				}
 				LOG.debug("Version only in executefile, next version in dependencyfile: {}", potentialStart);
-				startindex = versions.indexOf(potentialStart);
+				currentStartindex = versions.indexOf(potentialStart);
 			}
 		}
-		return startindex;
+		return currentStartindex;
 	}
 
+	/**
+	 * Calculates the index of the end version.
+	 * 
+	 * @return index of the end version
+	 */
 	private int getEndVersion() {
-		int endindex = endversion != null ? versions.indexOf(endversion) : versions.size();
+		int currentEndindex = endversion != null ? versions.indexOf(endversion) : versions.size();
 		// Only bugfix if dependencyfile and executefile do not fully match
 		if (changedTests != null) {
-			if (endversion != null && endindex == -1) {
+			if (endversion != null && currentEndindex == -1) {
 				String potentialStart = "";
 				if (changedTests.getVersions().containsKey(endversion)) {
-					for (String sicVersion : changedTests.getVersions().keySet()) {
+					for (final String sicVersion : changedTests.getVersions().keySet()) {
 						boolean next = false;
-						for (Version ticVersion : dependencies.getVersions().getVersion()) {
+						for (final Version ticVersion : dependencies.getVersions().getVersion()) {
 							if (next) {
 								potentialStart = ticVersion.getVersion();
 								break;
@@ -139,10 +154,10 @@ public class DependencyTestPairStarter extends PairProcessor {
 					}
 				}
 				LOG.debug("Version only in executefile, next version in dependencyfile: {}", potentialStart);
-				endindex = versions.indexOf(potentialStart);
+				currentEndindex = versions.indexOf(potentialStart);
 			}
 		}
-		return endindex;
+		return currentEndindex;
 	}
 
 	@Override
@@ -186,6 +201,13 @@ public class DependencyTestPairStarter extends PairProcessor {
 		}
 	}
 
+	/**
+	 * Compares the given testcase for the given versions.
+	 * 
+	 * @param version Current version to test
+	 * @param versionOld Old version to test
+	 * @param testcase Testcase to test
+	 */
 	protected void executeCompareTests(final String version, final String versionOld, final TestCase testcase) throws IOException, InterruptedException, JAXBException {
 		LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", versionOld, version);
 

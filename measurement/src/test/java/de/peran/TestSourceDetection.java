@@ -18,10 +18,8 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
-import de.peran.dependency.analysis.FileComparisonUtil;
-import de.peran.dependency.analysis.data.ClazzChangeData;
 import de.peran.dependency.analysis.data.TraceElement;
-import de.peran.measurement.traces.TraceReadUtils;
+import de.peran.dependency.traces.TraceReadUtils;
 
 public class TestSourceDetection {
 	private static final File SOURCE = new File("src/test/resources/detection/");

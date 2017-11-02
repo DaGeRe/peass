@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.stat.inference.TestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,7 +19,6 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
 import de.peran.dependency.PeASSFolderUtil;
 import de.peran.dependency.analysis.data.TestCase;
 import de.peran.dependency.analysis.data.TestSet;
-import de.peran.measurement.analysis.statistics.ANOVATest;
 
 /**
  * Executes test and skips those where results clearly indicate a performance change
@@ -71,10 +72,8 @@ public class AdaptiveTestStarter extends DependencyTestPairStarter {
 								after.add(result.getValue());
 							}
 						}
-						final int currentlyEqual = ANOVATest.compareDouble(before, after);
-						if (currentlyEqual != 0) {
-							unequal = true;
-						}
+						boolean change = TestUtils.tTest(ArrayUtils.toPrimitive(before.toArray(new Double[0])), ArrayUtils.toPrimitive(after.toArray(new Double[0])), 0.05);
+						unequal = !change;
 					}
 				}
 

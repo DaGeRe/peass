@@ -18,31 +18,27 @@ import de.peran.vcs.GitUtils;
  * @author reichelt
  *
  */
-public class VersionRunStarter {
+public class VersionRunStarter extends VersionProcessor {
 
-	static class VersionRuner extends VersionProcessor {
+	VersionRunStarter(final String[] args) throws ParseException, JAXBException {
+		super(args);
+	}
 
-		public VersionRuner(final String[] args) throws ParseException, JAXBException {
-			super(args);
-		}
-
-		@Override
-		protected void processVersion(final Version version) {
-			GitUtils.goToTag(version.getVersion(), projectFolder);
-			try {
-				final Process p = Runtime.getRuntime().exec("mvn clean package -DskipTests=true", null, projectFolder);
-				StreamGobbler.showFullProcess(p);
-			} catch (final IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
+	@Override
+	protected void processVersion(final Version version) {
+		GitUtils.goToTag(version.getVersion(), projectFolder);
+		try {
+			final Process p = Runtime.getRuntime().exec("mvn clean package -DskipTests=true", null, projectFolder);
+			StreamGobbler.showFullProcess(p);
+		} catch (final IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 
 	}
 
 	public static void main(final String[] args) throws ParseException, JAXBException {
-		final VersionRuner vr = new VersionRuner(args);
+		final VersionRunStarter vr = new VersionRunStarter(args);
 		vr.processCommandline();
 	}
 }

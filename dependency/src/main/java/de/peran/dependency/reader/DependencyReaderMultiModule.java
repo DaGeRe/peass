@@ -1,11 +1,8 @@
 package de.peran.dependency.reader;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -13,19 +10,19 @@ import com.github.javaparser.ParseProblemException;
 
 import de.peran.dependency.ChangeManager;
 import de.peran.dependency.DependencyManager;
-import de.peran.dependency.analysis.data.TestDependencies;
-import de.peran.dependency.execution.TestExecutor;
 import de.peran.generated.Versiondependencies;
-import de.peran.generated.Versiondependencies.Initialversion;
 import de.peran.generated.Versiondependencies.Versions;
 import de.peran.vcs.VersionIterator;
 
+/**
+ * Reads multi-module dependencies by reading only one module and compiling the depentent modules.
+ */
 public class DependencyReaderMultiModule extends DependencyReaderBase {
 	private static final Logger LOG = LogManager.getLogger(DependencyReader.class);
 
 	private final File moduleFolder;
 
-	public DependencyReaderMultiModule(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, File moduleFolder) {
+	public DependencyReaderMultiModule(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final File moduleFolder) {
 		super(new Versiondependencies(), projectFolder, dependencyFile);
 		this.moduleFolder = moduleFolder;
 
@@ -40,7 +37,7 @@ public class DependencyReaderMultiModule extends DependencyReaderBase {
 		DependencyReader.searchFirstRunningCommit(iterator, handler.getExecutor(), projectFolder);
 	}
 
-	public DependencyReaderMultiModule(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, File moduleFolder,
+	public DependencyReaderMultiModule(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final File moduleFolder,
 			final Versiondependencies initialdependencies) {
 		super(initialdependencies, projectFolder, dependencyFile);
 		this.moduleFolder = moduleFolder;
@@ -68,10 +65,10 @@ public class DependencyReaderMultiModule extends DependencyReaderBase {
 			int overallSize = 0, prunedSize = 0;
 			prunedSize += dependencyMap.size();
 
-			if (iterator.goTo0thCommit()){
-//				while ()
+			if (iterator.goTo0thCommit()) {
+				// while ()
 			}
-			
+
 			final ChangeManager changeManager = new ChangeManager(projectFolder, moduleFolder);
 			changeManager.saveOldClasses();
 			while (iterator.hasNextCommit()) {
@@ -88,7 +85,7 @@ public class DependencyReaderMultiModule extends DependencyReaderBase {
 
 				LOG.info("Overall-tests: {} Executed tests with pruning: {}", overallSize, prunedSize);
 
-				deleteTemporaryFiles();
+				handler.getExecutor().deleteTemporaryFiles();
 			}
 
 			LOG.debug("Finished dependency-reading");
@@ -97,37 +94,4 @@ public class DependencyReaderMultiModule extends DependencyReaderBase {
 			e.printStackTrace();
 		}
 	}
-
-	public boolean readInitialVersion() throws IOException, InterruptedException {
-		if (!handler.initialyGetTraces()) {
-			return false;
-		}
-		dependencyMap = handler.getDependencyMap();
-		final Initialversion initialversion = createInitialVersion(iterator.getTag(), dependencyMap, handler.getExecutor().getJDKVersion());
-		dependencyResult.setInitialversion(initialversion);
-		DependencyReaderUtil.write(dependencyResult, dependencyFile);
-
-		return true;
-	}
-
-	/**
-	 * Deletes temporary files, in order to not get memory problems
-	 */
-	private void deleteTemporaryFiles() {// TODO: Move to handler
-		try {
-			final File lastTmpFile = handler.getExecutor().getLastTmpFile();
-			if (lastTmpFile != null) {
-				final File[] tmpKiekerStuff = lastTmpFile.listFiles((FilenameFilter) new WildcardFileFilter("kieker*"));
-				for (final File kiekerFolder : tmpKiekerStuff) {
-					LOG.debug("Deleting: {}", kiekerFolder.getAbsolutePath());
-					FileUtils.deleteDirectory(kiekerFolder);
-				}
-			}
-
-		} catch (final IOException | IllegalArgumentException e) {
-			LOG.info("Problems deleting last temp file..");
-			e.printStackTrace();
-		}
-	}
-
 }

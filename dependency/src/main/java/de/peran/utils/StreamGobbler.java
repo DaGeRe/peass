@@ -51,8 +51,7 @@ public class StreamGobbler extends Thread {
 			final InputStreamReader isr = new InputStreamReader(is);
 			final BufferedReader br = new BufferedReader(isr);
 			String line = null;
-			while ((line = br.readLine()) != null)
-			{
+			while ((line = br.readLine()) != null) {
 				if (summarize) {
 					output += line + "\n";
 				}
@@ -71,9 +70,10 @@ public class StreamGobbler extends Thread {
 
 	/**
 	 * Combines the streams of the process and eventually shows the output. Parallel calls to this method will lead to mixed outputs.
-	 * @param process	The process that should be printed
-	 * @param showOutput	Whether the output should be printed directly to System.out
-	 * @return	The combined output of the streams of the process
+	 * 
+	 * @param process The process that should be printed
+	 * @param showOutput Whether the output should be printed directly to System.out
+	 * @return The combined output of the streams of the process
 	 */
 	public static String getFullProcess(final Process process, final boolean showOutput) {
 		return getFullProcess(process, showOutput, 0);
@@ -81,10 +81,11 @@ public class StreamGobbler extends Thread {
 
 	/**
 	 * Combines the streams of the process and eventually shows the output. Parallel calls to this method will lead to mixed outputs.
-	 * @param process	The process that should be printed
-	 * @param showOutput	Whether the output should be printed directly to System.out
-	 * @param timeout 	Timeout for the proces
-	 * @return	The combined output of the streams of the process
+	 * 
+	 * @param process The process that should be printed
+	 * @param showOutput Whether the output should be printed directly to System.out
+	 * @param timeout Timeout for the proces
+	 * @return The combined output of the streams of the process
 	 */
 	public static String getFullProcess(final Process process, final boolean showOutput, final int timeout) {
 		final StreamGobbler errorGobbler = new StreamGobbler(process.getErrorStream(), true, showOutput);

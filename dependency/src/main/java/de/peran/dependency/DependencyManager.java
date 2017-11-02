@@ -45,7 +45,6 @@ import de.peran.dependency.analysis.data.TestExistenceChanges;
 import de.peran.dependency.analysis.data.TestDependencies;
 import de.peran.dependency.analysis.data.TestSet;
 import de.peran.dependency.execution.MavenKiekerTestExecutor;
-import de.peran.vcs.VersionIterator;
 
 /**
  * Runs tests with kieker and reads the dependencies of tests for each version
@@ -59,7 +58,6 @@ public class DependencyManager extends TestResultManager {
 
 	private final TestDependencies dependencies = new TestDependencies();
 	private List<String> existingClasses;
-	private File projectFolder;
 
 	/**
 	 * Creates a new ChangeTestClassesHandler for the given folder with the

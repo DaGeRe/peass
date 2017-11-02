@@ -20,6 +20,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.nio.charset.Charset;
@@ -31,6 +32,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.model.Build;
@@ -42,7 +45,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.peran.dependency.PackageFinder;
+import de.peran.dependency.ClazzFinder;
 import de.peran.dependency.analysis.data.TestSet;
 import de.peran.testtransformation.JUnitTestTransformer;
 
@@ -76,8 +79,11 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 	}
 
 	protected void compileVersion(final File logFile) {
-		final ProcessBuilder pb = new ProcessBuilder("mvn", "clean", "test-compile");
-
+		compileVersion(logFile, "mvn", "clean", "test-compile");
+	}
+	
+	protected void compileVersion(final File logFile, final String... compilationArgs){
+		final ProcessBuilder pb = new ProcessBuilder(compilationArgs);
 		pb.directory(projectFolder);
 		if (logFile != null) {
 			pb.redirectOutput(Redirect.appendTo(logFile));
@@ -85,33 +91,37 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 		} 
 
 		try {
-			Process process = pb.start();
-			int result = process.waitFor();
+			final Process process = pb.start();
+			final int result = process.waitFor();
 			if (result != 0) {
 				throw new RuntimeException("Compilation failed, see" + logFile.getAbsolutePath());
 			}
 
 			generateAOPXML();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Compilation failed, see" + logFile.getAbsolutePath());
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Compilation failed, see" + logFile.getAbsolutePath());
 		}
 	}
 
 	protected void generateAOPXML() throws IOException {
-		String lowestPackage = PackageFinder.getLowestPackageOverall(moduleFolder);
-		File metainf = new File(moduleFolder, "target/test-classes/META-INF");
+		final List<String> classes = ClazzFinder.getLowestPackageOverall(moduleFolder);
+		final File metainf = new File(moduleFolder, "target/test-classes/META-INF");
 		metainf.mkdir(); 
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File(metainf, "aop.xml")))) {
 			// <!DOCTYPE aspectj PUBLIC "-//AspectJ//DTD//EN"
 			// "http://www.aspectj.org/dtd/aspectj_1_5_0.dtd">
 			writer.write("<!DOCTYPE aspectj PUBLIC \"-//AspectJ//DTD//EN\" \"http://www.aspectj.org/dtd/aspectj_1_5_0.dtd\">\n");
 			writer.write("<aspectj>\n");
-			writer.write("	<weaver options=\"-verbose\">");
-			writer.write("<include within=\"" + lowestPackage + "..*\" />");
+			writer.write("	<weaver options=\"-verbose\">\n");
+
+//			writer.write("   <include within=\"" + clazz + "..*\" />\n");
+			for (final String clazz : classes){
+				writer.write("   <include within=\"" + clazz + "\" />\n");
+			}
 			writer.write("	</weaver>\n");
 			writer.write("	<aspects>");
 			writer.write("		<aspect ");
@@ -124,7 +134,9 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 
 	protected Process buildProcess(final File logFile, final String... commandLineAddition) throws IOException {
 		final String[] originals = new String[] { "mvn", 
-				"surefire:test", "-fn", 
+				"surefire:test", 
+				"-fn",
+				"-o",
 				"-Dcheckstyle.skip=true", 
 				"-Dmaven.compiler.source=1.7", 
 				"-Dmaven.compiler.target=1.7",
@@ -185,7 +197,7 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 	 * @param tests
 	 *            Name of the test that should be run
 	 */
-	public void executeTests(final TestSet tests, File logFolder) {
+	public void executeTests(final TestSet tests, final File logFolder) {
 		preparePom();
 		prepareTests();
 
@@ -233,18 +245,20 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 	 * KoPeMe.
 	 */
 	public void prepareTests() {
-		final JUnitTestTransformer testGenerator = new JUnitTestTransformer(moduleFolder, false, true);
+		final JUnitTestTransformer testGenerator = new JUnitTestTransformer(moduleFolder);
+		testGenerator.setUseKieker(true);
+		testGenerator.setLogFullData(false);
 		testGenerator.setEncoding(lastEncoding);
 		testGenerator.setIterations(1);
 		testGenerator.setWarmupExecutions(0);
 		testGenerator.transformTests();
 	}
 
-	public static Charset getEncoding(Model model) {
+	public static Charset getEncoding(final Model model) {
 		Charset value = StandardCharsets.UTF_8;
-		Properties properties = model.getProperties();
+		final Properties properties = model.getProperties();
 		if (properties != null) {
-			String encoding = (String) properties.get("project.build.sourceEncoding");
+			final String encoding = (String) properties.get("project.build.sourceEncoding");
 			if (encoding != null) {
 				if (encoding.equals("ISO-8859-1")) {
 					value = StandardCharsets.ISO_8859_1;
@@ -276,7 +290,7 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 			final MavenXpp3Writer writer = new MavenXpp3Writer();
 			writer.write(new FileWriter(pomFile), model);
 
-			Charset encoding = MavenKiekerTestExecutor.getEncoding(model);
+			final Charset encoding = MavenKiekerTestExecutor.getEncoding(model);
 			return encoding;
 		} catch (IOException | XmlPullParserException e1) {
 			e1.printStackTrace();
@@ -285,9 +299,10 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 	}
 
 	public void preparePom() {
+		final boolean update = true;
 		final MavenXpp3Reader reader = new MavenXpp3Reader();
 		try {
-			File pomFile = new File(moduleFolder, "pom.xml");
+			final File pomFile = new File(moduleFolder, "pom.xml");
 			final Model model = reader.read(new FileInputStream(pomFile));
 			if (model.getBuild() == null) {
 				model.setBuild(new Build());
@@ -297,7 +312,7 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 			final Path tempFiles = Files.createTempDirectory("kiekerTemp");
 			lastTmpFile = tempFiles.toFile();
 			final String argline = KIEKER_ARG_LINE + " -Djava.io.tmpdir=" + tempFiles.toString();
-			extendSurefire(argline, surefire, true);
+			extendSurefire(argline, surefire, update);
 			extendDependencies(model);
 
 			setJDK(model);
@@ -345,7 +360,7 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 		dependencies.add(kopeme_dependency2);
 	}
 
-	public static void extendSurefire(final String additionalArgLine, final Plugin plugin, boolean updateVersion) {
+	public static void extendSurefire(final String additionalArgLine, final Plugin plugin, final boolean updateVersion) {
 		if (plugin.getConfiguration() == null) {
 			plugin.setConfiguration(new Xpp3Dom("configuration"));
 		}
@@ -369,7 +384,23 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 		}
 	}
 
-	public File getLastTmpFile() {
-		return lastTmpFile;
+	/**
+	 * Deletes temporary files, in order to not get memory problems
+	 */
+	public void deleteTemporaryFiles() {
+		try {
+			if (lastTmpFile != null && lastTmpFile.exists()) {
+				final File[] tmpKiekerStuff = lastTmpFile.listFiles((FilenameFilter) new WildcardFileFilter("kieker*"));
+				for (final File kiekerFolder : tmpKiekerStuff) {
+					LOG.debug("Deleting: {}", kiekerFolder.getAbsolutePath());
+					FileUtils.deleteDirectory(kiekerFolder);
+				}
+				FileUtils.deleteDirectory(lastTmpFile);
+			}
+
+		} catch (final IOException | IllegalArgumentException e) {
+			LOG.info("Problems deleting last temp file..");
+			e.printStackTrace();
+		}
 	}
 }

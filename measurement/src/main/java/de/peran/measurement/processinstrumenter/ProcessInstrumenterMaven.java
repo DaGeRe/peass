@@ -20,27 +20,36 @@ import de.peran.dependency.analysis.data.TestSet;
 import de.peran.dependency.execution.MavenKiekerTestExecutor;
 import de.peran.testtransformation.JUnitTestTransformer;
 
+/**
+ * Instruments a maven project in order to execute its unit tests as performance tests.
+ * 
+ * @author reichelt
+ *
+ */
 public class ProcessInstrumenterMaven implements ProcessInstrumenter {
+
+	private static final int DEFAULT_TIMEOUT = 30 * 60 * 1000;
 
 	private static final Logger LOG = LogManager.getLogger(ProcessInstrumenterMaven.class);
 
 	private final File projectFolder;
 	private final File resultFolder;
 	private final JUnitTestTransformer atg;
-	private int timeout = 30 * 60 * 1000; // default 30 Minutes timeout
+	private int timeout = DEFAULT_TIMEOUT; // default 30 Minutes timeout
 
 	public ProcessInstrumenterMaven(final JUnitTestTransformer atg, final File resultFolder) {
 		this.projectFolder = atg.getProjectFolder();
 		this.atg = atg;
 		this.resultFolder = resultFolder;
 	}
-	
+
 	/**
 	 * Sets timeout in milliseconds
+	 * 
 	 * @param timeout timeout in milliseconds
 	 * @return
 	 */
-	public void setTimeout(int timeout){
+	public void setTimeout(final int timeout) {
 		this.timeout = timeout;
 	}
 
@@ -146,12 +155,15 @@ public class ProcessInstrumenterMaven implements ProcessInstrumenter {
 	}
 
 	private Process buildProcess(final File logFile, final String... commandLineAddition) throws IOException {
-		final String[] originals = new String[] { "mvn", "clean", "test", "-fn", "--no-snapshot-updates", "-Dcheckstyle.skip=true",
+		final String[] originals = new String[] { "mvn", "clean", "test", 
+				"-fn", 
+				"--no-snapshot-updates", 
+				"-Dcheckstyle.skip=true",
 				"-Dmaven.compiler.source=1.7",
 				"-Dmaven.compiler.target=1.7",
 				"-Dmaven.javadoc.skip=true",
 				"-Denforcer.skip=true",
-				"-Drat.skip=true"};
+				"-Drat.skip=true" };
 		final String[] vars = new String[commandLineAddition.length + originals.length];
 		for (int i = 0; i < originals.length; i++) {
 			vars[i] = originals[i];
@@ -164,7 +176,7 @@ public class ProcessInstrumenterMaven implements ProcessInstrumenter {
 		return process;
 	}
 
-	public Process executeProcess(final File logFile, final String[] vars, File directory) throws IOException {
+	public Process executeProcess(final File logFile, final String[] vars, final File directory) throws IOException {
 		final ProcessBuilder pb = new ProcessBuilder(vars);
 		pb.environment().put("KOPEME_HOME", resultFolder.getAbsolutePath());
 		if (System.getenv("MAVEN_OPTS") != null) {

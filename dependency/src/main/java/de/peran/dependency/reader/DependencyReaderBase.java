@@ -19,8 +19,8 @@ import de.peran.dependency.ChangeManager;
 import de.peran.dependency.DependencyManager;
 import de.peran.dependency.analysis.data.CalledMethods;
 import de.peran.dependency.analysis.data.ChangeTestMapping;
-import de.peran.dependency.analysis.data.TestExistenceChanges;
 import de.peran.dependency.analysis.data.TestDependencies;
+import de.peran.dependency.analysis.data.TestExistenceChanges;
 import de.peran.dependency.analysis.data.TestSet;
 import de.peran.generated.Versiondependencies;
 import de.peran.generated.Versiondependencies.Initialversion;
@@ -32,6 +32,7 @@ import de.peran.vcs.VersionIterator;
 
 /**
  * Shared functions for dependency reading, which are both used if dependencies are read fully or if one continues a dependency reading process.
+ * 
  * @author reichelt
  *
  */
@@ -59,14 +60,19 @@ public abstract class DependencyReaderBase {
 	protected VersionIterator iterator;
 	protected TestDependencies dependencyMap;
 
-	public DependencyReaderBase(final Versiondependencies dependencyResult, File projectFolder, final File dependencyFile) {
+	/**
+	 * Initializes the reader with the given result-object, the folder to examine an the file to write to
+	 * @param dependencyResult	Object to write results to
+	 * @param projectFolder	Folder to examine
+	 * @param dependencyFile	File to write results to
+	 */
+	public DependencyReaderBase(final Versiondependencies dependencyResult, final File projectFolder, final File dependencyFile) {
 		super();
 		this.dependencyResult = dependencyResult;
 		this.dependencyFile = dependencyFile;
 		this.projectFolder = projectFolder;
 
 	}
-
 
 	protected static Initialversion createInitialVersion(final String startVersion, final TestDependencies dependencyMap, final int jdkversion) {
 		final Initialversion initialversion = new Initialversion();
@@ -89,9 +95,9 @@ public abstract class DependencyReaderBase {
 		}
 		return initialversion;
 	}
-	
+
 	protected DependencyManager readCompletedVersions() {
-//		final DependencyManager handler = ;
+		// final DependencyManager handler = ;
 		for (final Initialdependency dependency : dependencyResult.getInitialversion().getInitialdependency()) {
 			for (final String dependentClass : dependency.getDependentclass()) {
 				final Map<String, Set<String>> dependents = handler.getDependencyMap().getDependenciesForTest(dependency.getTestclass());
@@ -109,9 +115,9 @@ public abstract class DependencyReaderBase {
 		final Initialversion initialversion = createInitialVersion(iterator.getTag(), dependencyMap, dependencyResult.getInitialversion().getJdk().intValue());
 		dependencyResult.setInitialversion(initialversion);
 		DependencyReaderUtil.write(dependencyResult, dependencyFile);
-//		writeInitialDependency(, dependencyMap, );
+		// writeInitialDependency(, dependencyMap, );
 
-		if (dependencyResult.getVersions().getVersion().size() > 0){
+		if (dependencyResult.getVersions().getVersion().size() > 0) {
 			for (final Version version : dependencyResult.getVersions().getVersion()) {
 				for (final Dependency dependency : version.getDependency()) {
 					for (final Testcase testcase : dependency.getTestcase()) {
@@ -129,7 +135,6 @@ public abstract class DependencyReaderBase {
 			}
 			DependencyReaderUtil.write(dependencyResult, dependencyFile);
 		}
-		
 
 		LOG.debug("Analysiere {} Einträge", iterator.getSize());
 		return handler;
@@ -154,7 +159,7 @@ public abstract class DependencyReaderBase {
 			LOG.error("Version not running");
 			return 0;
 		}
-		
+
 		final Map<String, Set<String>> changes = changeManager.getChanges();
 		changeManager.saveOldClasses();
 
@@ -202,5 +207,17 @@ public abstract class DependencyReaderBase {
 			return 0;
 		}
 
+	}
+	
+	public boolean readInitialVersion() throws IOException, InterruptedException {
+		if (!handler.initialyGetTraces()) {
+			return false;
+		}
+		dependencyMap = handler.getDependencyMap();
+		final Initialversion initialversion = createInitialVersion(iterator.getTag(), dependencyMap, handler.getExecutor().getJDKVersion());
+		dependencyResult.setInitialversion(initialversion);
+		DependencyReaderUtil.write(dependencyResult, dependencyFile);
+
+		return true;
 	}
 }

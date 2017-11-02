@@ -16,12 +16,9 @@
  */
 package de.peran.dependency;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -92,6 +89,10 @@ public class TestResultManager {
 		final String artifactId = projectInfo.getArtifactId();
 		final File xmlFileFolder = new File(resultsFolder, groupId + File.separator + artifactId);
 		return xmlFileFolder;
+	}
+
+	public void deleteTempFiles() {
+		executor.deleteTemporaryFiles();
 	}
 
 }

@@ -56,7 +56,7 @@ public class CompareDependencies {
 
 	}
 
-	private static List<String> getDifference(Initialdependency initialDepOld, Initialdependency initialDepNew) {
+	private static List<String> getDifference(final Initialdependency initialDepOld, final Initialdependency initialDepNew) {
 		List<String> missing = new LinkedList<>();
 		missing.addAll(initialDepOld.getDependentclass());
 		missing.removeAll(initialDepNew.getDependentclass());

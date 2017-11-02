@@ -22,11 +22,15 @@ import org.jfree.data.statistics.HistogramType;
  * @author reichelt
  *
  */
-public class HistogramUtil {
+public final class HistogramUtil {
+	
+	private HistogramUtil(){
+		
+	}
 
 	private static final Logger LOG = LogManager.getLogger(HistogramUtil.class);
 
-	public static void createHistogram(final File chartfile, final double allDoubleValues[][]) {
+	public static void createHistogram(final File chartfile, final double[][] allDoubleValues) {
 		for (int i = 0; i < allDoubleValues.length; i++) {
 			if (allDoubleValues[i].length == 0) {
 				throw new RuntimeException("Leeres Array übergeben: " + i);

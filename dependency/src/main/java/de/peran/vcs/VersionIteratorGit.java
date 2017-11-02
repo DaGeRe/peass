@@ -19,12 +19,23 @@ package de.peran.vcs;
 import java.io.File;
 import java.util.List;
 
+/**
+ * Allows iteration over git-versions
+ * @author reichelt
+ *
+ */
 public class VersionIteratorGit extends VersionIterator {
 
 	private final List<GitCommit> entries;
 	private final GitCommit previous;
 	private final int previousIndex;
 
+	/**
+	 * Initializes the iterator with a project, which is changed when the iterator moves, a list of commits and the previous commit for starting.
+	 * @param projectFolder	Folder, where versions should be checked out
+	 * @param entries	List of commits
+	 * @param previousCommit	Previous commit before start (NO_BEFORE, if it is the first one)
+	 */
 	public VersionIteratorGit(final File projectFolder, final List<GitCommit> entries, final GitCommit previousCommit) {
 		super(projectFolder);
 		this.entries = entries;
@@ -72,14 +83,14 @@ public class VersionIteratorGit extends VersionIterator {
 
 	@Override
 	public boolean goTo0thCommit() {
-		if (previousIndex != -1){
+		if (previousIndex != -1) {
 			GitUtils.goToTag(previous.getTag(), projectFolder);
 			tagid = previousIndex;
 			return true;
-		}else{
+		} else {
 			return false;
 		}
-		
+
 	}
 
 }

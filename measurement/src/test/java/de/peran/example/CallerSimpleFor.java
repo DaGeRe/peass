@@ -1,9 +1,6 @@
 package de.peran.example;
 
 import java.io.File;
-import java.io.FileFilter;
-
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.writer.filesystem.ChangeableFolderSyncFsWriter;

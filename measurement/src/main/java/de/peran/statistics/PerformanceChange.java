@@ -2,6 +2,7 @@ package de.peran.statistics;
 
 /**
  * Represents a performance change, i.e. changed measured values between two versions in one testcase.
+ * 
  * @author reichelt
  *
  */
@@ -11,7 +12,8 @@ public class PerformanceChange {
 	private final String revision;
 	private final String revisionOld;
 
-	public PerformanceChange(final ConfidenceInterval intervalOld, final ConfidenceInterval intervalNew, final String testClass, final String testMethod, final String revisionOld, final String revision) {
+	public PerformanceChange(final ConfidenceInterval intervalOld, final ConfidenceInterval intervalNew, final String testClass, final String testMethod, final String revisionOld,
+			final String revision) {
 		super();
 		this.intervalOld = intervalOld;
 		this.intervalNew = intervalNew;
@@ -69,12 +71,13 @@ public class PerformanceChange {
 		final double intervalLength = (intervalNew.getLength() + intervalOld.getLength()) / 2;
 		return getDifference() / intervalLength;
 	}
-	
+
 	/**
 	 * Returns the difference between the ends of both confidence intervals.
+	 * 
 	 * @return
 	 */
-	public double getDifference(){
+	public double getDifference() {
 		if (intervalNew.getMax() < intervalOld.getMin()) {
 			return (intervalOld.getMin() - intervalNew.getMax());
 		} else if (intervalNew.getMin() > intervalOld.getMax()) {

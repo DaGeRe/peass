@@ -9,7 +9,7 @@ package de.peran.dependency.analysis.data;
 public class TestCase {
 	private final String clazz;
 	private final String method;
-	
+
 	public TestCase(final String clazz, final String method) {
 		super();
 		this.clazz = clazz;
@@ -49,23 +49,30 @@ public class TestCase {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		final TestCase other = (TestCase) obj;
 		if (clazz == null) {
-			if (other.clazz != null)
+			if (other.clazz != null) {
 				return false;
-		} else if (!clazz.equals(other.clazz))
+			}
+		} else if (!clazz.equals(other.clazz)) {
 			return false;
+		}
 		if (method == null) {
-			if (other.method != null)
+			if (other.method != null) {
 				return false;
-		} else if (!method.equals(other.method))
+			}
+		} else if (!method.equals(other.method)) {
 			return false;
+		}
 		return true;
 	}
 

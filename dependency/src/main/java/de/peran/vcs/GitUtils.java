@@ -35,7 +35,7 @@ import de.peran.utils.StreamGobbler;
  * @author reichelt
  *
  */
-public class GitUtils {
+public final class GitUtils {
 
 	private static final Logger LOG = LogManager.getLogger(GitUtils.class);
 
@@ -49,8 +49,8 @@ public class GitUtils {
 	/**
 	 * Downloads a project to the given folder
 	 * 
-	 * @param url
-	 * @param folder
+	 * @param url Project-URL
+	 * @param folder Goal-folder for download
 	 */
 	public static void downloadProject(final String url, final File folder) {
 		final String command = "git clone " + url + " " + folder.getAbsolutePath();
@@ -67,9 +67,9 @@ public class GitUtils {
 	/**
 	 * Removes all commits from a list that are before the given start version or after the given end version.
 	 * 
-	 * @param startversion
-	 * @param endversion
-	 * @param commits
+	 * @param startversion Version to start
+	 * @param endversion Version to end
+	 * @param commits List of commits for filtering
 	 */
 	public static void filterList(final String startversion, final String endversion, final List<GitCommit> commits) {
 		LOG.info("Count of Commits: {}", commits.size());
@@ -165,8 +165,6 @@ public class GitUtils {
 	 */
 	public static void goToTag(final String tag, final File projectFolder) {
 		try {
-			// final Process showCommit = Runtime.getRuntime().exec("git branch", new String[0], projectFolder);
-			// final String branch = StreamGobbler.getFullProcess(showCommit, false);
 			LOG.debug("Going to tag {} folder: {}", tag, projectFolder.getAbsolutePath());
 			Process p = Runtime.getRuntime().exec("git reset --hard", new String[0], projectFolder);
 			StreamGobbler.showFullProcess(p);

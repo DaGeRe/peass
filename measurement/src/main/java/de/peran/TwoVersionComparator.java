@@ -7,11 +7,10 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
@@ -35,25 +34,18 @@ public class TwoVersionComparator {
 
 	private static final Logger LOG = LogManager.getLogger(TwoVersionComparator.class);
 
-	// public final static String START = "start";
-	// public final static String END = "end";
-	public final static String TEST = "test";
+	public static final String TEST = "test";
 
 	public static void main(final String args[]) throws JAXBException, ParseException, IOException, InterruptedException {
 
 		final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.STARTVERSION, OptionConstants.ENDVERSION, OptionConstants.ITERATIONS,
-				OptionConstants.WARMUP, OptionConstants.DEPENDENCYFILE, OptionConstants.REPETITIONS);
-		final Option vmOption = OptionBuilder.isRequired(false).hasArg().withDescription("Anzahl der VM-Ausführungen für die Tests").create(OptionConstants.VMS.getName());
-		options.addOption(vmOption);
+				OptionConstants.WARMUP, OptionConstants.DEPENDENCYFILE, OptionConstants.REPETITIONS, OptionConstants.VMS);
 
-		// final Option start = OptionBuilder.isRequired(true).hasArg().withDescription("Startrevision zur Analyse").create(START);
-		// options.addOption(start);
-		// final Option end = OptionBuilder.isRequired(true).hasArg().withDescription("Endrevision zur Analyse").create(END);
-		// options.addOption(end);
-		final Option test = OptionBuilder.isRequired(true).hasArg().withDescription("Testfall zur Analyse").create(TEST);
+		final Option test = new Option(TEST, "test", true, "testcase for analysis");
+		test.setRequired(true);
 		options.addOption(test);
 
-		final CommandLineParser clp = new BasicParser();
+		final CommandLineParser clp = new DefaultParser();
 
 		final CommandLine line = clp.parse(options, args);
 
@@ -61,16 +53,10 @@ public class TwoVersionComparator {
 		final String startrevision = line.getOptionValue(OptionConstants.STARTVERSION.getName());
 		final String endrevision = line.getOptionValue(OptionConstants.ENDVERSION.getName());
 		final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "150"));
-		// if (startrevision > endrevision) {
-		// LOG.error("Achtung: Startversion {} nach Endversion {}", startrevision, endrevision);
-		// System.exit(1);
-		// }
-		// final long revisions[] = new long[2];
+
 		final int iterations = Integer.parseInt(line.getOptionValue(OptionConstants.ITERATIONS.getName(), "3000"));
 		final int warmup = Integer.parseInt(line.getOptionValue(OptionConstants.WARMUP.getName(), "3000"));
 		final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
-		// revisions[0] = startrevision;
-		// revisions[1] = endrevision;
 		final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
 		if (!projectFolder.exists()) {
 			System.out.println("Projektordner " + projectFolder + " existiert nicht.");
@@ -118,8 +104,8 @@ public class TwoVersionComparator {
 				final String name = testcase.getClazz();
 				if (!name.startsWith(selectedTest.getClazz())) {
 					it.remove();
-				}else if (selectedTest.getMethod() != null ){
-					for (final Iterator<String> methodIterator = testcase.getMethod().iterator(); methodIterator.hasNext();){
+				} else if (selectedTest.getMethod() != null) {
+					for (final Iterator<String> methodIterator = testcase.getMethod().iterator(); methodIterator.hasNext();) {
 						final String method = methodIterator.next();
 						if (!method.equals(selectedTest.getMethod())) {
 							methodIterator.remove();

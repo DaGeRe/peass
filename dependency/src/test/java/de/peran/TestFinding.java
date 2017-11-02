@@ -11,7 +11,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
 import de.peran.dependency.analysis.data.TraceElement;
-import de.peran.measurement.traces.TraceReadUtils;
+import de.peran.dependency.traces.TraceReadUtils;
 
 public class TestFinding {
 	

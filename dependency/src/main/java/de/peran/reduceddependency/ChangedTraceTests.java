@@ -3,11 +3,9 @@ package de.peran.reduceddependency;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonParser;
@@ -18,33 +16,35 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 import de.peran.dependency.analysis.data.TestCase;
 import de.peran.dependency.analysis.data.TestSet;
-import de.peran.dependencyprocessors.VersionComparator;
 
 /**
  * Saves all tests where traces have changed and therefore a performance change could have taken place.
  * 
  * Used for JSON Serialisation.
+ * 
  * @author reichelt
  *
  */
 public class ChangedTraceTests {
-	
-	public static class Deserializer extends StdDeserializer<ChangedTraceTests>{
 
-		public Deserializer() { 
-	        this(null); 
-	    } 
-	 
-	    public Deserializer(Class<?> vc) { 
-	        super(vc); 
-	    }
-		
+	public static class Deserializer extends StdDeserializer<ChangedTraceTests> {
+
+		private static final long serialVersionUID = 1L;
+
+		public Deserializer() {
+			this(null);
+		}
+
+		public Deserializer(Class<?> vc) {
+			super(vc);
+		}
+
 		@Override
-		public ChangedTraceTests deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+		public ChangedTraceTests deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
 			ChangedTraceTests tests = new ChangedTraceTests();
 			JsonNode root = p.getCodec().readTree(p);
 			JsonNode versions = root.get("versions");
-			for (Iterator<Entry<String, JsonNode>> iterator = versions.fields(); iterator.hasNext(); ){
+			for (Iterator<Entry<String, JsonNode>> iterator = versions.fields(); iterator.hasNext();) {
 				Entry<String, JsonNode> value = iterator.next();
 				String version = value.getKey();
 				value.getValue().forEach(testInChild -> {
@@ -59,20 +59,24 @@ public class ChangedTraceTests {
 			}
 			return tests;
 		}
-		
+
 	}
-	
-	private final Map<String, TestSet> versions = new LinkedHashMap<>();
+
+	private Map<String, TestSet> versions = new LinkedHashMap<>();
+
+	public void setVersions(Map<String, TestSet> versions) {
+		this.versions = versions;
+	}
 
 	public void addCall(final String version, final TestSet tests) {
 		TestSet executes = versions.get(version);
 		if (executes == null) {
 			versions.put(version, tests);
-		}else{
+		} else {
 			executes.addTestSet(tests);
 		}
 	}
-	
+
 	public void addCall(final String version, final TestCase testcase) {
 		TestSet executes = versions.get(version);
 		if (executes == null) {
@@ -81,7 +85,6 @@ public class ChangedTraceTests {
 		}
 		executes.addTest(testcase.getClazz(), testcase.getMethod());
 	}
-	
 
 	public Map<String, TestSet> getVersions() {
 		return versions;
@@ -90,12 +93,12 @@ public class ChangedTraceTests {
 	@JsonIgnore
 	public boolean versionContainsTest(final String version, final TestCase currentIterationTest) {
 		final TestSet clazzExecutions = versions.get(version);
-		if (clazzExecutions != null){
-			for (final Map.Entry<String, List<String>> clazz : clazzExecutions.entrySet()){
+		if (clazzExecutions != null) {
+			for (final Map.Entry<String, List<String>> clazz : clazzExecutions.entrySet()) {
 				String testclazz = clazz.getKey();
 				List<String> methods = clazz.getValue();
-				if (testclazz.equals(currentIterationTest.getClazz())){
-					if (methods.contains(currentIterationTest.getMethod())){
+				if (testclazz.equals(currentIterationTest.getClazz())) {
+					if (methods.contains(currentIterationTest.getMethod())) {
 						return true;
 					}
 				}

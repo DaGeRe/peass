@@ -13,8 +13,8 @@ import org.junit.Test;
 import com.github.javaparser.ParseException;
 
 import de.peran.dependency.analysis.data.TraceElement;
-import de.peran.measurement.traces.TraceMethodReader;
-import de.peran.measurement.traces.TraceWithMethods;
+import de.peran.dependency.traces.TraceMethodReader;
+import de.peran.dependency.traces.TraceWithMethods;
 
 /**
  * Tests whether trace reading for the purpose of experiment result analysis is working corretly.

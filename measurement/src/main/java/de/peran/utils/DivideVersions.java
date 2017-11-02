@@ -13,15 +13,15 @@ import org.apache.commons.cli.ParseException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import de.peran.DependencyStatisticAnalyzer;
+import de.peran.DependencyTestPairStarter;
 import de.peran.generated.Versiondependencies;
 import de.peran.reduceddependency.ChangedTraceTests;
 
 /**
  * Divides the versions of a dependencyfile (and optionally an executionfile) in order to start slurm test executions.
+ * 
  * @author reichelt
  *
  */
@@ -34,26 +34,10 @@ public class DivideVersions {
 
 		final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
 		final Versiondependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
-		String url = dependencies.getUrl().replaceAll("\n", "").replaceAll(" ", "");
+		final String url = dependencies.getUrl().replaceAll("\n", "").replaceAll(" ", "");
 
-		ChangedTraceTests changedTests;
-		if (line.hasOption(OptionConstants.EXECUTIONFILE.getName())) {
-			final ObjectMapper mapper = new ObjectMapper();
-			ChangedTraceTests testsTemp;
-			try {
-				testsTemp = mapper.readValue(new File(line.getOptionValue(OptionConstants.EXECUTIONFILE.getName())), ChangedTraceTests.class);
-			} catch (JsonMappingException e) {
-				ObjectMapper objectMapper = new ObjectMapper();
-				SimpleModule module = new SimpleModule();
-				module.addDeserializer(ChangedTraceTests.class, new ChangedTraceTests.Deserializer());
-				objectMapper.registerModule(module);
-				testsTemp = objectMapper.readValue(new File(line.getOptionValue(OptionConstants.EXECUTIONFILE.getName())), ChangedTraceTests.class);
-			}
-			changedTests = testsTemp;
-		} else {
-			changedTests = null;
-		}
-		
+		final ChangedTraceTests changedTests = DependencyTestPairStarter.loadChangedTests(line);
+
 		System.out.println("timestamp=$(date +%s)");
 		for (int i = 0; i < dependencies.getVersions().getVersion().size(); i++) {
 			final String endversion = dependencies.getVersions().getVersion().get(i).getVersion();
@@ -62,9 +46,9 @@ public class DivideVersions {
 				System.out.println(
 						"sbatch --nice=1000000 --time=10-0 "
 								+ "--output=/newnfs/user/do820mize/processlogs/process_" + i + "_$timestamp.out "
-						+ "--workdir=/newnfs/user/do820mize "
-						+ "--export=PROJECT="+url+",HOME=/newnfs/user/do820mize,START="
-								+ endversion + ",END=" + endversion + ",INDEX="+i+" executeTests.sh");
+								+ "--workdir=/newnfs/user/do820mize "
+								+ "--export=PROJECT=" + url + ",HOME=/newnfs/user/do820mize,START="
+								+ endversion + ",END=" + endversion + ",INDEX=" + i + " executeTests.sh");
 			}
 		}
 	}

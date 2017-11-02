@@ -71,7 +71,7 @@ public class TestTransformation {
 		final File testFile = new File(SOURCE_FOLDER, "TestMe1.java");
 		FileUtils.copyFile(old, testFile);
 
-		final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), true, false);
+		final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
 		tt.transformTests();
 
 		final CompilationUnit cu = JavaParser.parse(testFile);
@@ -92,7 +92,7 @@ public class TestTransformation {
 		final File testFile2 = new File(SOURCE_FOLDER, "TestMe2.java");
 		FileUtils.copyFile(old2, testFile2);
 
-		final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), true, false);
+		final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
 		tt.transformTests();
 
 		final CompilationUnit cu = JavaParser.parse(testFile2);
@@ -122,7 +122,7 @@ public class TestTransformation {
 		final File testFile2 = new File(SOURCE_FOLDER, "TestMe3.java");
 		FileUtils.copyFile(old2, testFile2);
 
-		final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), true, false);
+		final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
 		tt.transformTests();
 		
 		Assert.assertTrue(FileUtils.contentEquals(old2, testFile2));

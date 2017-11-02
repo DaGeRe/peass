@@ -47,10 +47,17 @@ import de.peran.dependency.analysis.data.ClazzChangeData;
  * @author reichelt
  *
  */
-public class FileComparisonUtil {
+public final class FileComparisonUtil {
 	
 	private static final Logger LOG = LogManager.getLogger(FileComparisonUtil.class);
 
+	/**
+	 * Util class should not be initialized
+	 */
+	private FileComparisonUtil(){
+		
+	}
+	
 	public static void clearComments(final Node node) {
 		final Optional<Comment> comment = node.getComment();
 		if (comment.isPresent()) {
@@ -67,7 +74,6 @@ public class FileComparisonUtil {
 			final Node child = begin.next();
 			if (child instanceof LineComment) {
 				((LineComment) child).setContent("");
-//				begin.remove();
 			} else if (child instanceof JavadocComment){
 				((JavadocComment) child).setContent("");
 			}else {
@@ -76,14 +82,12 @@ public class FileComparisonUtil {
 		}
 	}
 
-	public static void printStuff(final Node node) {
-		for (final Iterator<Node> begin = node.getChildNodes().iterator(); begin.hasNext();) {
-			final Node child = begin.next();
-			System.out.println(child.getClass());
-			printStuff(child);
-		}
-	}
-
+	/**
+	 * Compares two nodes and returns eventually happened changes
+	 * @param node1 First node for comparison
+	 * @param node2 Second node for comparison
+	 * @return Eventually empty List of changed Nodes
+	 */
 	public static List<Node> comparePairwise(final Node node1, final Node node2) {
 		final List<Node> changes = new LinkedList<>();
 
@@ -116,11 +120,6 @@ public class FileComparisonUtil {
 						 * as well)
 						 */
 
-						// if (child instanceof MethodDeclaration || child instanceof ConstructorDeclaration
-						// || child2 instanceof MethodDeclaration || child2 instanceof ConstructorDeclaration){
-						// }
-
-//						System.out.println("Unequal: " + child + " " + child2 + " " + child.getClass());
 						changes.addAll(comparePairwise(child, child2));
 					} else {
 						LOG.trace("Equal: {} {}", child , child2);
@@ -149,6 +148,14 @@ public class FileComparisonUtil {
 		return result;
 	}
 
+	/**
+	 * Returns the information whether the source has changed
+	 * @param newFile	Old File to check
+	 * @param oldFile	New File to check
+	 * @return Changedata, i.e. if a change happened and if it was class- or method-wide
+	 * @throws ParseException If Class can't be parsed
+	 * @throws IOException If class can't be read
+	 */
 	public static ClazzChangeData getChangedMethods(final File newFile, final File oldFile) throws ParseException, IOException {
 		final CompilationUnit newCu = JavaParser.parse(newFile);
 		final CompilationUnit oldCu = JavaParser.parse(oldFile);
