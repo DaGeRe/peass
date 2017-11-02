@@ -6,12 +6,13 @@
     <packaging>pom</packaging>
     <version>0.1-SNAPSHOT</version>
     <name>PerAn - Parent</name>
-    <description>Analyseframework für Softwareperformanz</description>
+    <description>Tool for Analysing the Performance Changes in a Project</description>
 
     <modules>
 	<module>dependency</module>
         <module>measurement</module>
 	<module>analysis</module>
+	<module>evaluation</module>
     </modules>
 
     <developers>
