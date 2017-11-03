@@ -5,7 +5,7 @@
     <artifactId>peran-parent</artifactId>
     <packaging>pom</packaging>
     <version>0.1-SNAPSHOT</version>
-    <name>PerAn - Parent</name>
+    <name>PeASS - Parent</name>
     <description>Tool for Analysing the Performance Changes in a Project</description>
 
     <modules>
@@ -33,4 +33,8 @@
 
 	
 	<inceptionYear>2015</inceptionYear>
+	<properties>
+		<project.organization.name>DaGeRe</project.organization.name>
+		<license.licenseName>agpl_v3</license.licenseName>
+	</properties>
 </project>

@@ -11,7 +11,7 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>evaluation</artifactId>
-	<name>peran-evaluation</name>
+	<name>peass-evaluation</name>
 
 	<inceptionYear>2017</inceptionYear>
 
@@ -40,18 +40,6 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<groupId>com.mycila</groupId>
-				<artifactId>license-maven-plugin</artifactId>
-				<version>3.0</version>
-				<configuration>
-					<header>../misc/HEADER</header>
-					<properties>
-						<owner>DaGeRe</owner>
-						<email>kopeme@dagere.de</email>
-					</properties>
-				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
