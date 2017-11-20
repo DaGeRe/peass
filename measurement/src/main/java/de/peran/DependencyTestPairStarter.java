@@ -1,27 +1,5 @@
 package de.peran;
 
-/*-
- * #%L
- * peran-measurement
- * %%
- * Copyright (C) 2015 - 2017 DaGeRe
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * #L%
- */
-
-
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -65,6 +43,7 @@ public class DependencyTestPairStarter extends PairProcessor {
 	private final List<String> versions = new LinkedList<>();
 	private final int startindex, endindex;
 	private final ChangedTraceTests changedTests;
+	private final TestCase test;
 
 	public DependencyTestPairStarter(final String[] args) throws ParseException, JAXBException, IOException {
 		super(args);
@@ -80,11 +59,16 @@ public class DependencyTestPairStarter extends PairProcessor {
 			} else {
 				tester = new DependencyTester(projectFolder, projectFolder, duration, vms, true, repetitions);
 			}
-
 		} else {
 			final int warmup = Integer.parseInt(line.getOptionValue(OptionConstants.WARMUP.getName(), "10"));
 			final int iterationen = Integer.parseInt(line.getOptionValue(OptionConstants.ITERATIONS.getName(), "10"));
 			tester = new DependencyTester(projectFolder, warmup, iterationen, vms, true, repetitions);
+		}
+
+		if (line.hasOption(OptionConstants.TEST.getName())) {
+			test = new TestCase(line.getOptionValue(OptionConstants.TEST.getName()));
+		} else {
+			test = null;
 		}
 
 		versions.add(dependencies.getInitialversion().getVersion());
@@ -194,7 +178,13 @@ public class DependencyTestPairStarter extends PairProcessor {
 			final Set<TestCase> testcases = findTestcases(versioninfo);
 
 			for (final TestCase testcase : testcases) {
-				if (executeThisVersion && lastTestcaseCalls.containsKey(testcase)) {
+				boolean executeThisTest = true;
+				if (test != null) {
+					if (!test.equals(testcase)) {
+						executeThisTest = false;
+					}
+				}
+				if (executeThisTest && executeThisVersion && lastTestcaseCalls.containsKey(testcase)) {
 					if (changedTests != null) {
 						final TestSet calls = changedTests.getVersions().get(version);
 						boolean hasChanges = false;

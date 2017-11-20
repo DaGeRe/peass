@@ -1,27 +1,5 @@
 package de.peran.evaluation.infinitest;
 
-/*-
- * #%L
- * peran-evaluation
- * %%
- * Copyright (C) 2017 DaGeRe
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * #L%
- */
-
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -44,6 +22,7 @@ import org.infinitest.parser.ClassFileIndex;
 import org.infinitest.parser.JavaClass;
 
 import de.peran.dependency.execution.MavenKiekerTestExecutor;
+import de.peran.dependency.execution.MavenPomUtil;
 import de.peran.dependency.execution.TestExecutor;
 import de.peran.evaluation.base.EvaluationVersion;
 import de.peran.evaluation.base.Evaluator;
@@ -83,8 +62,8 @@ public class InfinitestEvaluator extends Evaluator {
 					if (model.getBuild() == null) {
 						model.setBuild(new Build());
 					}
-					final Plugin compiler = MavenKiekerTestExecutor.findPlugin(model, MavenKiekerTestExecutor.COMPILER_ARTIFACTID, MavenKiekerTestExecutor.ORG_APACHE_MAVEN_PLUGINS);
-					TestExecutor.setIncrementalBuild(compiler, false);
+					final Plugin compiler = MavenPomUtil.findPlugin(model, MavenKiekerTestExecutor.COMPILER_ARTIFACTID, MavenKiekerTestExecutor.ORG_APACHE_MAVEN_PLUGINS);
+					MavenPomUtil.setIncrementalBuild(compiler, false);
 
 					final MavenXpp3Writer writer = new MavenXpp3Writer();
 					writer.write(new FileWriter(pomFile), model);

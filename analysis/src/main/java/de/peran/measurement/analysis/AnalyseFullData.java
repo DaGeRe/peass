@@ -1,27 +1,5 @@
 package de.peran.measurement.analysis;
 
-/*-
- * #%L
- * peran-analysis
- * %%
- * Copyright (C) 2015 - 2017 DaGeRe
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * #L%
- */
-
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -127,17 +105,17 @@ public class AnalyseFullData {
 				return;
 			}
 
-			int warmup, end;
-			if (previus.get(0).getFulldata().getValue().size() == 10000) {
-				warmup = 5000;
-				end = 10000;
-				LOG.debug("Values: {} {}", warmup, end);
-				previus = MinimalExecutionDeterminer.shortenValues(previus, warmup, end);
-				current = MinimalExecutionDeterminer.shortenValues(current, warmup, end);
-			} else {
+//			int warmup, end;
+//			if (previus.get(0).getFulldata().getValue().size() == 10000) {
+//				warmup = 5000;
+//				end = 10000;
+//				LOG.debug("Values: {} {}", warmup, end);
+//				previus = MinimalExecutionDeterminer.shortenValues(previus, warmup, end);
+//				current = MinimalExecutionDeterminer.shortenValues(current, warmup, end);
+//			} else {
 				previus = MinimalExecutionDeterminer.cutValuesMiddle(previus);
 				current = MinimalExecutionDeterminer.cutValuesMiddle(current);
-			}
+//			}
 
 			final int resultslength = Math.min(previus.size(), current.size());
 
@@ -148,8 +126,8 @@ public class AnalyseFullData {
 				final List<Result> currentResults = current.subList(0, resultslength);
 				final Relation confidenceResult = ConfidenceIntervalInterpretion.compare(prevResults, currentResults);
 				// final Relation anovaResult = ANOVATestWrapper.compare(prevResults, currentResults);
-				final List<Double> before_double = MutipleVMTestUtil.getAverages(prevResults);
-				final List<Double> after_double = MutipleVMTestUtil.getAverages(currentResults);
+				final List<Double> before_double = MultipleVMTestUtil.getAverages(prevResults);
+				final List<Double> after_double = MultipleVMTestUtil.getAverages(currentResults);
 				final boolean change = TestUtils.tTest(ArrayUtils.toPrimitive(before_double.toArray(new Double[0])), ArrayUtils.toPrimitive(after_double.toArray(new Double[0])), 0.05);
 
 				final double mean1 = ConfidenceIntervalInterpretion.getMean(prevResults);
@@ -158,7 +136,7 @@ public class AnalyseFullData {
 				// double anovaDeviation = ANOVATestWrapper.getANOVADeviation(prevResults, currentResults);
 				LOG.debug("Means: {} {} Diff: {} % ", mean1, mean2, ((double) diff) / 100);
 
-				if (change) {
+				if (change || Math.abs(diff) > 500) {
 					Relation tRelation;
 					if (diff > 0) {
 						tRelation = Relation.LESS_THAN;

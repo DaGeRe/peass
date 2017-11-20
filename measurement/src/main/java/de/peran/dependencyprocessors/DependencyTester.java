@@ -1,27 +1,5 @@
 package de.peran.dependencyprocessors;
 
-/*-
- * #%L
- * peran-measurement
- * %%
- * Copyright (C) 2015 - 2017 DaGeRe
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * #L%
- */
-
-
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileWriter;
@@ -50,7 +28,7 @@ import de.peran.generated.Versiondependencies.Initialversion.Initialdependency;
 import de.peran.generated.Versiondependencies.Versions.Version;
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency;
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency.Testcase;
-import de.peran.measurement.analysis.MutipleVMTestUtil;
+import de.peran.measurement.analysis.MultipleVMTestUtil;
 import de.peran.measurement.processinstrumenter.ProcessInstrumenterMaven;
 import de.peran.testtransformation.JUnitTestTransformer;
 import de.peran.testtransformation.TimeBasedTestTransformer;
@@ -320,7 +298,7 @@ public class DependencyTester {
 							final TestcaseType oneRundata = testcaseList.get(0);
 							final File fullResultFile = new File(PeASSFolderUtil.getFullMeasurementFolder(), methodname + ".xml");
 							LOG.info("Schreibe in Ergebnisdatei: {}", fullResultFile);
-							MutipleVMTestUtil.fillOtherData(fullResultFile, oneRundata, clazz, methodname, version);
+							MultipleVMTestUtil.fillOtherData(fullResultFile, oneRundata, clazz, methodname, version);
 							final File destFolder = new File(PeASSFolderUtil.getDetailResultFolder(), testcaseEntry.getKey());
 							final File destFile = new File(destFolder, methodname + "_" + vmid + "_" + version + ".xml");
 							LOG.info("Verschiebe nach: {}", destFile);

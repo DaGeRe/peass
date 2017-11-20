@@ -1,26 +1,20 @@
-
-package de.peran.dependency;
-
-/*-
- * #%L
- * peran-dependency
- * %%
- * Copyright (C) 2017 Hanns-Seidel-Stiftung
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * #L%
+/**
+ *     This file is part of PerAn.
+ *
+ *     PerAn is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     PerAn is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
+package de.peran.dependency;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,8 +25,10 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.PomProjectNameReader;
 import de.dagere.kopeme.PomProjectNameReader.ProjectInfo;
 import de.peran.dependency.analysis.data.TestSet;
+import de.peran.dependency.execution.GradleTestExecutor;
 import de.peran.dependency.execution.MavenKiekerTestExecutor;
 import de.peran.dependency.execution.MultiModuleTestExecutor;
+import de.peran.dependency.execution.TestExecutor;
 
 /**
  * Handles the running of tests
@@ -46,17 +42,25 @@ public class TestResultManager {
 
 	protected final File projectFolder, moduleFolder;
 	protected final File resultsFolder, logFolder;
-	protected final MavenKiekerTestExecutor executor;
+	protected final TestExecutor executor;
 
 	public TestResultManager(final File projectFolder) {
 		super();
 		this.projectFolder = projectFolder;
 		this.moduleFolder = projectFolder;
-		
+
 		PeASSFolderUtil.setProjectFolder(projectFolder);
 		resultsFolder = PeASSFolderUtil.getResultFolder();
 		logFolder = PeASSFolderUtil.getLogFolder();
-		executor = new MavenKiekerTestExecutor(projectFolder, projectFolder, resultsFolder);
+
+		File pom = new File(projectFolder, "pom.xml");
+		if (pom.exists()) {
+			executor = new MavenKiekerTestExecutor(projectFolder, projectFolder, resultsFolder);
+		}else{
+			executor = new GradleTestExecutor(projectFolder, projectFolder, resultsFolder);
+				
+		}
+		
 	}
 
 	public TestResultManager(File projectFolder, File moduleFolder) {

@@ -1,27 +1,5 @@
 package de.peran.evaluation.base;
 
-/*-
- * #%L
- * peran-evaluation
- * %%
- * Copyright (C) 2017 DaGeRe
- * %%
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- * #L%
- */
-
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -42,6 +20,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.peran.dependency.analysis.data.TestSet;
 import de.peran.dependency.execution.TestExecutor;
 
 /**
@@ -63,7 +42,7 @@ public class SysoutTestExecutor extends TestExecutor {
 	public static final String COMPILER_ARTIFACTID = "maven-compiler-plugin";
 
 	public SysoutTestExecutor(final File projectFolder) {
-		super(projectFolder, projectFolder);
+		super(projectFolder, projectFolder, new File(projectFolder.getParent(), projectFolder.getName() + "_sysout"));
 	}
 
 	private Process buildProcess(final File logFile, final String... commandLineAddition) throws IOException {
@@ -89,15 +68,8 @@ public class SysoutTestExecutor extends TestExecutor {
 		return process;
 	}
 
-	/**
-	 * Runs all tests and saves the results to the given result folder
-	 * 
-	 * @param specialResultFolder
-	 *            Folder for saving the results
-	 * @param tests
-	 *            Name of the test that should be run
-	 */
-	public void executeTests(final File logFile) {
+	@Override
+	public void executeAllTests(final File logFile) {
 		try {
 			final Process process = buildProcess(logFile);
 			waitForProcess(process);
@@ -158,6 +130,16 @@ public class SysoutTestExecutor extends TestExecutor {
 		} catch (IOException | XmlPullParserException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void executeTests(TestSet tests, File logFolder) {
+		throw new RuntimeException("Not implemented yet");
+	}
+
+	@Override
+	public boolean isVersionRunning() {
+		throw new RuntimeException("Not implemented yet");
 	}
 
 }
