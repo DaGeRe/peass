@@ -50,19 +50,20 @@ public class DependencyTestPairStarter extends PairProcessor {
 		final int vms = Integer.parseInt(line.getOptionValue(OptionConstants.VMS.getName(), "15"));
 		final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "1"));
 		this.changedTests = loadChangedTests(line);
+		boolean useKieker = Boolean.parseBoolean(line.getOptionValue(OptionConstants.USEKIEKER.getName(), "false"));
 
 		if (line.hasOption(OptionConstants.DURATION.getName())) {
 			final int duration = Integer.parseInt(line.getOptionValue(OptionConstants.DURATION.getName()));
 			if (dependencies.getModule() != null) {
 				final File moduleFolder = new File(projectFolder, dependencies.getModule());
-				tester = new DependencyTester(projectFolder, moduleFolder, duration, vms, true, repetitions);
+				tester = new DependencyTester(projectFolder, moduleFolder, duration, vms, true, repetitions, useKieker);
 			} else {
-				tester = new DependencyTester(projectFolder, projectFolder, duration, vms, true, repetitions);
+				tester = new DependencyTester(projectFolder, projectFolder, duration, vms, true, repetitions, useKieker);
 			}
 		} else {
 			final int warmup = Integer.parseInt(line.getOptionValue(OptionConstants.WARMUP.getName(), "10"));
 			final int iterationen = Integer.parseInt(line.getOptionValue(OptionConstants.ITERATIONS.getName(), "10"));
-			tester = new DependencyTester(projectFolder, warmup, iterationen, vms, true, repetitions);
+			tester = new DependencyTester(projectFolder, warmup, iterationen, vms, true, repetitions, useKieker);
 		}
 
 		if (line.hasOption(OptionConstants.TEST.getName())) {
@@ -84,14 +85,19 @@ public class DependencyTestPairStarter extends PairProcessor {
 		if (line.hasOption(OptionConstants.EXECUTIONFILE.getName())) {
 			final ObjectMapper mapper = new ObjectMapper();
 			ChangedTraceTests testsTemp;
+			File executionFile = new File(line.getOptionValue(OptionConstants.EXECUTIONFILE.getName()));
+			if (!executionFile.exists()){
+				throw new RuntimeException("Executionfile needs to exist");
+			}
 			try {
-				testsTemp = mapper.readValue(new File(line.getOptionValue(OptionConstants.EXECUTIONFILE.getName())), ChangedTraceTests.class);
+				testsTemp = mapper.readValue(executionFile, ChangedTraceTests.class);
 			} catch (final JsonMappingException e) {
+				e.printStackTrace();
 				final ObjectMapper objectMapper = new ObjectMapper();
 				final SimpleModule module = new SimpleModule();
-				module.addDeserializer(ChangedTraceTests.class, new ChangedTraceTests.Deserializer());
+				module.addDeserializer(ChangedTraceTests.class, new ChangedTraceTests.OldVersionDeserializer());
 				objectMapper.registerModule(module);
-				testsTemp = objectMapper.readValue(new File(line.getOptionValue(OptionConstants.EXECUTIONFILE.getName())), ChangedTraceTests.class);
+				testsTemp = objectMapper.readValue(executionFile, ChangedTraceTests.class);
 			}
 			changedTests = testsTemp;
 		} else {

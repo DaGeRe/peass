@@ -14,10 +14,14 @@ public class ConfidenceIntervalInterpretion {
 	
 	private static final Logger LOG = LogManager.getLogger(ConfidenceIntervalInterpretion.class);
 	
-	public static double getMean(final List<Result> results) {
+	public static DescriptiveStatistics getStatistics(final List<Result> results) {
 		final DescriptiveStatistics ds = new DescriptiveStatistics();
 		results.forEach(result -> ds.addValue(result.getValue()));
-		return ds.getMean();
+		return ds;
+	}
+	
+	public static double getMean(final List<Result> results) {
+		return getStatistics(results).getMean();
 	}
 
 	/**

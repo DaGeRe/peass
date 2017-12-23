@@ -50,12 +50,12 @@ public class TestResultManager {
 		this.moduleFolder = projectFolder;
 
 		PeASSFolderUtil.setProjectFolder(projectFolder);
-		resultsFolder = PeASSFolderUtil.getResultFolder();
+		resultsFolder = PeASSFolderUtil.getKiekerResultFolder();
 		logFolder = PeASSFolderUtil.getLogFolder();
 
 		File pom = new File(projectFolder, "pom.xml");
 		if (pom.exists()) {
-			executor = new MavenKiekerTestExecutor(projectFolder, projectFolder, resultsFolder);
+			executor = new MavenKiekerTestExecutor(projectFolder, projectFolder, resultsFolder, true);
 		}else{
 			executor = new GradleTestExecutor(projectFolder, projectFolder, resultsFolder);
 				
@@ -68,7 +68,7 @@ public class TestResultManager {
 		this.moduleFolder = moduleFolder;
 
 		PeASSFolderUtil.setProjectFolder(projectFolder);
-		resultsFolder = PeASSFolderUtil.getResultFolder();
+		resultsFolder = PeASSFolderUtil.getKiekerResultFolder();
 		logFolder = PeASSFolderUtil.getLogFolder();
 		executor = new MultiModuleTestExecutor(projectFolder, moduleFolder, resultsFolder);
 	}

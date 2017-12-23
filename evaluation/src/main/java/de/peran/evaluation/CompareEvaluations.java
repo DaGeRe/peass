@@ -45,7 +45,7 @@ public final class CompareEvaluations {
 					try {
 						final ObjectMapper objectMapper = new ObjectMapper();
 						final SimpleModule module = new SimpleModule();
-						module.addDeserializer(ChangedTraceTests.class, new ChangedTraceTests.Deserializer());
+						module.addDeserializer(ChangedTraceTests.class, new ChangedTraceTests.OldVersionDeserializer());
 						objectMapper.registerModule(module);
 
 						final ChangedTraceTests changedTraceTests = objectMapper.readValue(executefile, ChangedTraceTests.class);

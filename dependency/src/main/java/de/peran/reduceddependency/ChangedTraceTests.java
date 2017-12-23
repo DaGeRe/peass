@@ -27,15 +27,15 @@ import de.peran.dependency.analysis.data.TestSet;
  */
 public class ChangedTraceTests {
 
-	public static class Deserializer extends StdDeserializer<ChangedTraceTests> {
+	public static class OldVersionDeserializer extends StdDeserializer<ChangedTraceTests> {
 
 		private static final long serialVersionUID = 1L;
 
-		public Deserializer() {
+		public OldVersionDeserializer() {
 			this(null);
 		}
 
-		public Deserializer(Class<?> vc) {
+		public OldVersionDeserializer(Class<?> vc) {
 			super(vc);
 		}
 
@@ -67,7 +67,12 @@ public class ChangedTraceTests {
 	public void setVersions(Map<String, TestSet> versions) {
 		this.versions = versions;
 	}
+	
+	public Map<String, TestSet> getVersions() {
+		return versions;
+	}
 
+	@JsonIgnore
 	public void addCall(final String version, final TestSet tests) {
 		TestSet executes = versions.get(version);
 		if (executes == null) {
@@ -77,6 +82,7 @@ public class ChangedTraceTests {
 		}
 	}
 
+	@JsonIgnore
 	public void addCall(final String version, final TestCase testcase) {
 		TestSet executes = versions.get(version);
 		if (executes == null) {
@@ -84,10 +90,6 @@ public class ChangedTraceTests {
 			versions.put(version, executes);
 		}
 		executes.addTest(testcase.getClazz(), testcase.getMethod());
-	}
-
-	public Map<String, TestSet> getVersions() {
-		return versions;
 	}
 
 	@JsonIgnore

@@ -39,7 +39,7 @@ public class PeASSFolderUtil {
 		tempResultFolder.mkdir();
 	}
 
-	public static File getResultFolder() {
+	public static File getKiekerResultFolder() {
 		return resultFolder;
 	}
 

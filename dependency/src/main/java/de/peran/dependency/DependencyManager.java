@@ -44,7 +44,6 @@ import de.peran.dependency.analysis.data.TestCase;
 import de.peran.dependency.analysis.data.TestExistenceChanges;
 import de.peran.dependency.analysis.data.TestDependencies;
 import de.peran.dependency.analysis.data.TestSet;
-import de.peran.dependency.execution.MavenKiekerTestExecutor;
 import de.peran.dependency.execution.TestExecutor;
 
 /**

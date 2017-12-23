@@ -1,25 +1,16 @@
 package de.peran.dependency.execution;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.maven.model.Build;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peran.utils.StreamGobbler;
 
 /**
  * Executes maven-multi-module projects by only executing one module
+ * 
  * @author reichelt
  *
  */
@@ -28,7 +19,7 @@ public class MultiModuleTestExecutor extends MavenKiekerTestExecutor {
 	private static final Logger LOG = LogManager.getLogger(MultiModuleTestExecutor.class);
 
 	public MultiModuleTestExecutor(final File projectFolder, final File moduleFolder, final File resultsFolder) {
-		super(projectFolder, moduleFolder, resultsFolder);
+		super(projectFolder, moduleFolder, resultsFolder, true);
 	}
 
 	@Override
@@ -41,7 +32,7 @@ public class MultiModuleTestExecutor extends MavenKiekerTestExecutor {
 		if (potentialPom.exists() && rootPom.exists()) {
 			if (testFolder.exists()) {
 				isRunning = testVersion(potentialPom) && testVersion(rootPom);
-				if (isRunning){
+				if (isRunning) {
 					LOG.debug("pom.xml existing");
 					isRunning = testRunning();
 					if (isRunning) {
@@ -53,18 +44,18 @@ public class MultiModuleTestExecutor extends MavenKiekerTestExecutor {
 		}
 		return isRunning;
 	}
-	
+
 	@Override
-	protected boolean compileVersion(final File logFile){
-		return compileVersion(logFile, "mvn", 
-				"clean", 
+	protected boolean compileVersion(final File logFile) {
+		return compileVersion(logFile, "mvn",
+				"clean",
 				"install",
 				"-DskipITs",
 				"-DskipTests",
-				"--am", 
-				"-Dmaven.test.skip.exec", 
+				"--am",
+				"-Dmaven.test.skip.exec",
 				"--pl", moduleFolder.getName(),
-				"-Drat.skip=true", 
+				"-Drat.skip=true",
 				"-Dlicense.skip=true",
 				"-Dpmd.skip=true");
 	}
@@ -95,31 +86,7 @@ public class MultiModuleTestExecutor extends MavenKiekerTestExecutor {
 
 	@Override
 	public void preparePom() {
-		final boolean update = false;
-		final MavenXpp3Reader reader = new MavenXpp3Reader();
-		try {
-			final File pomFile = new File(moduleFolder, "pom.xml");
-			final Model model = reader.read(new FileInputStream(pomFile));
-			if (model.getBuild() == null) {
-				model.setBuild(new Build());
-			}
-			final Plugin surefire = MavenPomUtil.findPlugin(model, SUREFIRE_ARTIFACTID, ORG_APACHE_MAVEN_PLUGINS);
-			
-			final Path tempFiles = Files.createTempDirectory("kiekerTemp");
-			lastTmpFile = tempFiles.toFile();
-			final String argline = KIEKER_ARG_LINE + " -Djava.io.tmpdir=" + tempFiles.toString() + " ";
-			MavenPomUtil.extendSurefire(argline, surefire, update);
-			MavenPomUtil.extendDependencies(model);
-
-			setJDK(model);
-
-			final MavenXpp3Writer writer = new MavenXpp3Writer();
-			writer.write(new FileWriter(pomFile), model);
-			
-			lastEncoding = MavenPomUtil.getEncoding(model);
-		} catch (IOException | XmlPullParserException e) {
-			e.printStackTrace();
-		}
+		preparePom(false);
 	}
 
 }

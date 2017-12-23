@@ -62,7 +62,7 @@ public class TwoVersionComparator {
 			System.out.println("Projektordner " + projectFolder + " existiert nicht.");
 			System.exit(1);
 		}
-		final DependencyTester tester = new DependencyTester(projectFolder, warmup, iterations, vms, false, repetitions);
+		final DependencyTester tester = new DependencyTester(projectFolder, warmup, iterations, vms, false, repetitions, false);
 		final Versiondependencies versiondependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
 		final List<Version> allVersions = versiondependencies.getVersions().getVersion();
 		Version v1 = null, v2 = null;

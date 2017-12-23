@@ -23,13 +23,13 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.peran.dependency.PeASSFolderUtil;
 import de.peran.dependency.analysis.data.TestSet;
+import de.peran.dependency.execution.MavenKiekerTestExecutor;
 import de.peran.generated.Versiondependencies;
 import de.peran.generated.Versiondependencies.Initialversion.Initialdependency;
 import de.peran.generated.Versiondependencies.Versions.Version;
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency;
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency.Testcase;
 import de.peran.measurement.analysis.MultipleVMTestUtil;
-import de.peran.measurement.processinstrumenter.ProcessInstrumenterMaven;
 import de.peran.testtransformation.JUnitTestTransformer;
 import de.peran.testtransformation.TimeBasedTestTransformer;
 import de.peran.vcs.GitUtils;
@@ -55,11 +55,11 @@ public class DependencyTester {
 	private final String url;
 	private final VersionControlSystem vcs;
 
-	final JUnitTestTransformer tg;
-	final ProcessInstrumenterMaven pim;
+	final JUnitTestTransformer testgenerator;
+	final MavenKiekerTestExecutor pim;
 
-	public DependencyTester(final File projectFolder, final File moduleFolder, final int duration, final int vms, final boolean runInitial, final int repetitions)
-			throws IOException {
+	public DependencyTester(final File projectFolder, final File moduleFolder, final int duration, final int vms,
+			final boolean runInitial, final int repetitions, boolean useKieker) throws IOException {
 		super();
 		this.projectFolder = projectFolder;
 		this.moduleFolder = moduleFolder;
@@ -78,19 +78,21 @@ public class DependencyTester {
 		}
 		PeASSFolderUtil.setProjectFolder(projectFolder);
 
-		tg = new TimeBasedTestTransformer(moduleFolder);
-		((TimeBasedTestTransformer) tg).setDuration(duration);
+		testgenerator = new TimeBasedTestTransformer(moduleFolder);
+		((TimeBasedTestTransformer) testgenerator).setDuration(duration);
 		if (repetitions != 1) {
-			tg.setRepetitions(150);
+			testgenerator.setRepetitions(150);
 		}
-		tg.setDatacollectorlist(DataCollectorList.ONLYTIME);
-		tg.setIterations(iterations);
-		tg.setWarmupExecutions(warmup);
-		pim = new ProcessInstrumenterMaven(tg, PeASSFolderUtil.getTempMeasurementFolder());
-		pim.setTimeout(60000 + duration * 2);
+		testgenerator.setDatacollectorlist(DataCollectorList.ONLYTIME);
+		testgenerator.setIterations(iterations);
+		testgenerator.setWarmupExecutions(warmup);
+		testgenerator.setUseKieker(useKieker);
+		pim = new MavenKiekerTestExecutor(projectFolder, moduleFolder, PeASSFolderUtil.getTempMeasurementFolder(),
+				testgenerator);
 	}
 
-	public DependencyTester(final File projectFolder, final int warmup, final int iterations, final int vms, final boolean runInitial, final int repetitions) throws IOException {
+	public DependencyTester(final File projectFolder, final int warmup, final int iterations, final int vms,
+			final boolean runInitial, final int repetitions, boolean useKieker) throws IOException {
 		super();
 		this.projectFolder = projectFolder;
 		this.moduleFolder = projectFolder;
@@ -109,14 +111,16 @@ public class DependencyTester {
 		}
 		PeASSFolderUtil.setProjectFolder(projectFolder);
 
-		tg = new JUnitTestTransformer(projectFolder);
+		testgenerator = new JUnitTestTransformer(projectFolder);
 		if (repetitions != 1) {
-			tg.setRepetitions(repetitions);
+			testgenerator.setRepetitions(repetitions);
 		}
-		tg.setDatacollectorlist(DataCollectorList.ONLYTIME);
-		tg.setIterations(iterations);
-		tg.setWarmupExecutions(warmup);
-		pim = new ProcessInstrumenterMaven(tg, PeASSFolderUtil.getTempMeasurementFolder());
+		testgenerator.setDatacollectorlist(DataCollectorList.ONLYTIME);
+		testgenerator.setIterations(iterations);
+		testgenerator.setWarmupExecutions(warmup);
+		testgenerator.setUseKieker(useKieker);
+		pim = new MavenKiekerTestExecutor(projectFolder, moduleFolder, PeASSFolderUtil.getTempMeasurementFolder(),
+				testgenerator);
 	}
 
 	/**
@@ -128,7 +132,8 @@ public class DependencyTester {
 	 * @throws InterruptedException
 	 * @throws JAXBException
 	 */
-	public void testProject(final Versiondependencies versions) throws IOException, InterruptedException, JAXBException {
+	public void testProject(final Versiondependencies versions)
+			throws IOException, InterruptedException, JAXBException {
 		LOG.debug("Geändert: {} Versionen: {}", versions.getVersions().getVersion().size());
 
 		if (runInitial) {
@@ -139,11 +144,6 @@ public class DependencyTester {
 				final String classname = testclass.substring(0, testclass.lastIndexOf("."));
 				final String methodname = testclass.substring(testclass.lastIndexOf(".") + 1);
 				initialTestSet.addTest(classname, methodname);
-				// if
-				// (classname.equals("org.apache.commons.io.filefilter.FileFilterTestCase"))
-				// {
-				// LOG.info("Methode: " + methodname);
-				// }
 			}
 			evaluateTestset(versions.getInitialversion().getVersion(), initialTestSet);
 		} else {
@@ -164,7 +164,7 @@ public class DependencyTester {
 	/**
 	 * Runs the test the planned amount of counts for the given TestSet
 	 * 
-	 * @param tg
+	 * @param testgenerator
 	 * @param pim
 	 * @param version
 	 * @param testset
@@ -172,7 +172,8 @@ public class DependencyTester {
 	 * @throws InterruptedException
 	 * @throws JAXBException
 	 */
-	private void evaluateTestset(final String version, final TestSet testset) throws IOException, InterruptedException, JAXBException {
+	private void evaluateTestset(final String version, final TestSet testset)
+			throws IOException, InterruptedException, JAXBException {
 		File logFile = new File(PeASSFolderUtil.getLogFolder(), version);
 		if (logFile.exists()) {
 			logFile = new File(PeASSFolderUtil.getLogFolder(), version + "_new");
@@ -190,7 +191,8 @@ public class DependencyTester {
 		resultFileWriter.flush();
 	}
 
-	public void compareVersions(final String start, final Version end) throws IOException, InterruptedException, JAXBException {
+	public void compareVersions(final String start, final Version end)
+			throws IOException, InterruptedException, JAXBException {
 		final TestSet testset = new TestSet();
 
 		readDependencyToMap(end, testset);
@@ -226,7 +228,8 @@ public class DependencyTester {
 		}
 	}
 
-	public void evaluateOnce(final TestSet testset, final String version, final int vmid, final File logFolder) throws IOException, InterruptedException, JAXBException {
+	public void evaluateOnce(final TestSet testset, final String version, final int vmid, final File logFolder)
+			throws IOException, InterruptedException, JAXBException {
 		if (vcs.equals(VersionControlSystem.SVN)) {
 			SVNUtils.getInstance().checkout(url, projectFolder, Long.parseLong(version));
 		} else {
@@ -241,25 +244,18 @@ public class DependencyTester {
 
 		LOG.info("Initialer Checkout beendet");
 
-		tg.setLogFullData(true);
-		pim.generateTests("-Xms1g");
+		testgenerator.setLogFullData(true);
 
 		if (!projectFolder.equals(moduleFolder)) {
-			String[] args = new String[] { "mvn", "clean",
-					"install", "-fn",
-					"--no-snapshot-updates",
-					"-Dcheckstyle.skip=true",
-					"-Dmaven.compiler.source=1.7",
-					"-Dmaven.compiler.target=1.7",
-					"-Dmaven.javadoc.skip=true", "-Denforcer.skip=true",
-					"-Drat.skip=true", "-DskipTests=true",
-					"--pl", "jetty-servlet",
-					"--am",
-					"-Dpmd.skip=true",
-					"-Dlicense.skip=true", "-X" };
+			String[] args = new String[] { "mvn", "clean", "install", "-fn", "--no-snapshot-updates",
+					"-Dcheckstyle.skip=true", "-Dmaven.compiler.source=1.7", "-Dmaven.compiler.target=1.7",
+					"-Dmaven.javadoc.skip=true", "-Denforcer.skip=true", "-Drat.skip=true", "-DskipTests=true", "--pl",
+					"jetty-servlet", "--am", "-Dpmd.skip=true", "-Dlicense.skip=true", "-X" };
 			File logFile = new File(vmidFolder, "compilation.txt");
-			Process compileProcess = pim.executeProcess(logFile, args, projectFolder);
-			compileProcess.waitFor();
+			// TODO Fix multimodule
+			// pim.executeTests(testset, logFolder);
+			// Process compileProcess = pim.executeProcess(logFile, args, projectFolder);
+			// compileProcess.waitFor();
 		}
 
 		pim.executeTests(testset, vmidFolder);
@@ -270,11 +266,13 @@ public class DependencyTester {
 		Thread.sleep(1);
 	}
 
-	private void saveResultFiles(final TestSet testset, final String version, final int vmid) throws JAXBException, IOException {
+	private void saveResultFiles(final TestSet testset, final String version, final int vmid)
+			throws JAXBException, IOException {
 		for (final Map.Entry<String, List<String>> testcaseEntry : testset.entrySet()) {
 			LOG.info("Teste Methoden: {}", testcaseEntry.getValue().size());
 			final String expectedFolderName = "*" + testcaseEntry.getKey();
-			final Collection<File> folderCandidates = findFolder(PeASSFolderUtil.getTempMeasurementFolder(), new WildcardFileFilter(expectedFolderName));
+			final Collection<File> folderCandidates = findFolder(PeASSFolderUtil.getTempMeasurementFolder(),
+					new WildcardFileFilter(expectedFolderName));
 			if (folderCandidates.size() != 1) {
 				LOG.error("Ordner {} ist {} mal vorhanden.", expectedFolderName, folderCandidates.size());
 			} else {
@@ -290,31 +288,31 @@ public class DependencyTester {
 						final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
 						final String clazz = oneResultData.getTestcases().getClazz();
 						if (testcaseList.size() > 0) {
-							// Update testname, in case it has been set to
-							// testRepetition
-							testcaseList.get(0).setName(methodname);
-							XMLDataStorer.storeData(oneResultFile, oneResultData);
-
-							final TestcaseType oneRundata = testcaseList.get(0);
-							final File fullResultFile = new File(PeASSFolderUtil.getFullMeasurementFolder(), methodname + ".xml");
-							LOG.info("Schreibe in Ergebnisdatei: {}", fullResultFile);
-							MultipleVMTestUtil.fillOtherData(fullResultFile, oneRundata, clazz, methodname, version);
-							final File destFolder = new File(PeASSFolderUtil.getDetailResultFolder(), testcaseEntry.getKey());
-							final File destFile = new File(destFolder, methodname + "_" + vmid + "_" + version + ".xml");
-							LOG.info("Verschiebe nach: {}", destFile);
-							if (!destFile.exists()) {
-								FileUtils.moveFile(oneResultFile, destFile);
-							} else {
-								final File destFileAlternative = new File(destFolder, methodname + "_" + vmid + "_" + version + "_new.xml");
-								if (!destFileAlternative.exists()) {
-									FileUtils.moveFile(oneResultFile, destFileAlternative);
-								} else {
-									throw new RuntimeException("Moving failed: " + destFile + " and " + destFileAlternative + " already exist.");
-								}
-							}
-							// oneResultFile.delete();
+							saveResults(version, vmid, methodname, oneResultFile, oneResultData, testcaseList, clazz);
 						} else {
 							LOG.error("Keine Daten vorhanden - Messung fehlgeschlagen?");
+						}
+					}
+					if (testgenerator.isUseKieker()) {
+						File methodFolder = new File(PeASSFolderUtil.getKiekerResultFolder(),
+								testcaseEntry.getKey() + "." + methodname);
+						if (!methodFolder.exists()) {
+							methodFolder.mkdir();
+						}
+						File versionFolder = new File(methodFolder, version);
+						if (!versionFolder.exists()) {
+							versionFolder.mkdir();
+						}
+
+						File dest = new File(versionFolder, "" + vmid);
+
+						try {
+							Process process = new ProcessBuilder("tar", "-czf", dest.getAbsolutePath(),
+									folder.getAbsolutePath()).start();
+							process.waitFor();
+							FileUtils.deleteDirectory(folder);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
 						}
 					}
 				}
@@ -323,6 +321,36 @@ public class DependencyTester {
 				FileUtils.forceDelete(file);
 			}
 		}
+	}
+
+	private void saveResults(final String version, final int vmid, final String methodname, final File oneResultFile,
+			final Kopemedata oneResultData, final List<TestcaseType> testcaseList, final String clazz)
+			throws JAXBException, IOException {
+		// Update testname, in case it has been set to
+		// testRepetition
+		testcaseList.get(0).setName(methodname);
+		XMLDataStorer.storeData(oneResultFile, oneResultData);
+
+		final TestcaseType oneRundata = testcaseList.get(0);
+		final File fullResultFile = new File(PeASSFolderUtil.getFullMeasurementFolder(), methodname + ".xml");
+		LOG.info("Schreibe in Ergebnisdatei: {}", fullResultFile);
+		MultipleVMTestUtil.fillOtherData(fullResultFile, oneRundata, clazz, methodname, version);
+		final File destFolder = new File(PeASSFolderUtil.getDetailResultFolder(), clazz);
+		final File destFile = new File(destFolder, methodname + "_" + vmid + "_" + version + ".xml");
+		LOG.info("Verschiebe nach: {}", destFile);
+		if (!destFile.exists()) {
+			FileUtils.moveFile(oneResultFile, destFile);
+		} else {
+			final File destFileAlternative = new File(destFolder, methodname + "_" + vmid + "_" + version + "_new.xml");
+			if (!destFileAlternative.exists()) {
+				FileUtils.moveFile(oneResultFile, destFileAlternative);
+			} else {
+				throw new RuntimeException(
+						"Moving failed: " + destFile + " and " + destFileAlternative + " already exist.");
+			}
+		}
+
+		// oneResultFile.delete();
 	}
 
 	private static List<File> findFolder(final File baseFolder, final FileFilter folderFilter) {

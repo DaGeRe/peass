@@ -13,9 +13,11 @@ public class TestPackageFinder {
 	
 	@Test
 	public void testDependencyModule(){
-		List<String> lowestPackage = ClazzFinder.getLowestPackageOverall(new File("."));
+		List<String> lowestPackage = ClazzFinder.getClasses(new File("."));
 		System.out.println(lowestPackage);
 		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.peran.DependencyReadingStarter"));
+		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.peran.DependencyStatisticAnalyzer"));
+		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.peran.DependencyStatisticAnalyzer.Statistics"));
 		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.peran.TestPackageFinder"));
 	}
 }

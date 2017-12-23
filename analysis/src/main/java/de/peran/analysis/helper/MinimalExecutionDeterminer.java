@@ -47,6 +47,9 @@ public class MinimalExecutionDeterminer extends MinimalValueDeterminer {
 		if (start > size) {
 			throw new RuntimeException("Start (" + start + ") is after end of data (" + size + ").");
 		}
+		if (end > size) {
+			throw new RuntimeException("End (" + end + ") is after end of data (" + size + ").");
+		}
 		// LOG.debug("Size: {}", j);
 		for (int i = start; i < size; i++) {
 			final Value value = result.getFulldata().getValue().get(i);

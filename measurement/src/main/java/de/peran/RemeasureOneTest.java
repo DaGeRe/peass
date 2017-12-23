@@ -40,7 +40,7 @@ public class RemeasureOneTest {
 
 		String endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName(), null);
 
-		DependencyTester tester = new DependencyTester(projectFolder, projectFolder, duration, vms, true, repetitions);
+		DependencyTester tester = new DependencyTester(projectFolder, projectFolder, duration, vms, true, repetitions, false);
 
 		TestCase testcase = new TestCase(test);
 

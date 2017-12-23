@@ -1,9 +1,8 @@
-package de.peran;
+package de.peran.dependencytests;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -25,55 +24,6 @@ import de.peran.generated.Versiondependencies.Versions.Version.Dependency.Testca
 import de.peran.vcs.VersionIterator;
 
 public class DependencyDetectorIT {
-
-	static class FakeIterator extends VersionIterator {
-		List<File> commits;
-
-		public FakeIterator(final List<File> commits) {
-			super(CURRENT);
-			this.commits = commits;
-		}
-
-		int tag = 0;
-
-		@Override
-		public int getSize() {
-			return commits.size();
-		}
-
-		@Override
-		public String getTag() {
-			return "" + tag;
-		}
-
-		@Override
-		public boolean hasNextCommit() {
-			return tag < commits.size() + 1;
-		}
-
-		@Override
-		public boolean goToNextCommit() {
-			tag++;
-			try {
-				FileUtils.deleteDirectory(CURRENT);
-				FileUtils.copyDirectory(commits.get(tag - 1), CURRENT);
-			} catch (final IOException e) {
-				e.printStackTrace();
-			}
-			return true;
-		}
-
-		@Override
-		public boolean goToFirstCommit() {
-			tag = 0;
-			return true;
-		}
-
-		@Override
-		public boolean goTo0thCommit() {
-			throw new RuntimeException("Not implemented on purpose.");
-		}
-	}
 
 	private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT");
 	private static final File CURRENT = new File(VERSIONS_FOLDER, "current");
@@ -112,7 +62,7 @@ public class DependencyDetectorIT {
 		final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
 		Mockito.when(changeManager.getChanges()).thenReturn(changes);
 
-		final VersionIterator fakeIterator = new FakeIterator(Arrays.asList(secondVersion));
+		final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion));
 
 		final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator);
 		reader.readInitialVersion();
@@ -128,8 +78,7 @@ public class DependencyDetectorIT {
 		Assert.assertEquals("testMe", testcase.getMethod().get(0));
 	}
 
-	private Dependency findDependency(final Versiondependencies dependencies, final String changedClass, final String version) {
-
+	static Dependency findDependency(final Versiondependencies dependencies, final String changedClass, final String version) {
 		Version secondVersionDependencies = null;
 		for (final Version candidate : dependencies.getVersions().getVersion()) {
 			if (candidate.getVersion().equals(version)) {
@@ -158,7 +107,7 @@ public class DependencyDetectorIT {
 		final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
 		Mockito.when(changeManager.getChanges()).thenReturn(changes);
 
-		final VersionIterator fakeIterator = new FakeIterator(Arrays.asList(secondVersion));
+		final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion));
 
 		final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator);
 		reader.readInitialVersion();
@@ -185,7 +134,7 @@ public class DependencyDetectorIT {
 		final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
 		Mockito.when(changeManager.getChanges()).thenReturn(changes);
 
-		final VersionIterator fakeIterator = new FakeIterator(Arrays.asList(secondVersion));
+		final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion));
 
 		final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator);
 		reader.readInitialVersion();
@@ -219,7 +168,7 @@ public class DependencyDetectorIT {
 		final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
 		Mockito.when(changeManager.getChanges()).thenReturn(changes);
 
-		final VersionIterator fakeIterator = new FakeIterator(Arrays.asList(secondVersion, thirdVersion));
+		final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion, thirdVersion));
 
 		final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator);
 		reader.readInitialVersion();

@@ -1,12 +1,18 @@
 package de.peran.dependency;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
 /**
  * Searches for all classes in a maven project. Used for instrumeting them.
@@ -22,7 +28,7 @@ public class ClazzFinder {
 	 * @param projectFolder Folder where to search for classes
 	 * @return list of classes
 	 */
-	public static List<String> getLowestPackageOverall(final File projectFolder) {
+	public static List<String> getClasses(final File projectFolder) {
 		List<String> clazzes = new LinkedList<>();
 		File src = new File(projectFolder, "src");
 		File main = new File(src, "main");
@@ -63,9 +69,35 @@ public class ClazzFinder {
 			String path = clazzFile.getAbsolutePath();
 			path = path.replace(folder.getAbsolutePath() + File.separator, "");
 			path = path.substring(0, path.length() - 5);
-			String clazz = path.replace(File.separator, ".");
+			final String clazz = path.replace(File.separator, ".");
 			clazzes.add(clazz);
+			
+			try {
+				final CompilationUnit cu = JavaParser.parse(clazzFile);
+				for (Node node : cu.getChildNodes()){
+					clazzes.addAll(getClazzes(node, clazz));
+				}
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 		}
+	}
+	
+	private static List<String> getClazzes(final Node node, final String parent){
+		List<String> clazzes = new LinkedList<>();
+		if (node instanceof ClassOrInterfaceDeclaration){
+			ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) node;
+			if (clazz.getParentNode().isPresent()){
+				String clazzname = parent + "." + clazz.getName().getIdentifier();
+				clazzes.add(clazzname);
+			}
+		}
+		for (Node child : node.getChildNodes()){
+			clazzes.addAll(getClazzes(child, parent));
+		}
+		return clazzes;
 	}
 
 }

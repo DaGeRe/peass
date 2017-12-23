@@ -10,6 +10,7 @@ public class Change {
 	private String diff;
 	private String clazz;
 	private double changePercent;
+	private double tvalue;
 	private String correctness;
 	private String type;
 
@@ -51,5 +52,13 @@ public class Change {
 
 	public void setChangePercent(final double changePercent) {
 		this.changePercent = changePercent;
+	}
+
+	public double getTvalue() {
+		return tvalue;
+	}
+
+	public void setTvalue(double tvalue) {
+		this.tvalue = tvalue;
 	}
 }

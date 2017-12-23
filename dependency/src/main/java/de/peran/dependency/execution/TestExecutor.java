@@ -1,27 +1,17 @@
 package de.peran.dependency.execution;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
-import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peran.dependency.analysis.data.TestSet;
-import de.peran.utils.StreamGobbler;
 
 /**
  * Base functionality for executing tests

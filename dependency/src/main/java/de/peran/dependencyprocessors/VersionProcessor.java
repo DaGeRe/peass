@@ -7,7 +7,6 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
@@ -43,7 +42,7 @@ public abstract class VersionProcessor {
 		final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.DEPENDENCYFILE, OptionConstants.WARMUP, OptionConstants.ITERATIONS, OptionConstants.VMS,
 				OptionConstants.STARTVERSION, OptionConstants.ENDVERSION,
 				OptionConstants.EXECUTIONFILE, OptionConstants.REPETITIONS, OptionConstants.DURATION, 
-				OptionConstants.CHANGEFILE,	OptionConstants.TEST);
+				OptionConstants.CHANGEFILE,	OptionConstants.TEST, OptionConstants.USEKIEKER);
 		final CommandLineParser parser = new DefaultParser();
 
 		line = parser.parse(options, args);

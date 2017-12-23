@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency;
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency.Testcase;
 
@@ -91,14 +93,17 @@ public class TestSet {
 		}
 	}
 
+	@JsonIgnore
 	public Set<Entry<String, List<String>>> entrySet() {
 		return testcases.entrySet();
 	}
 
+	@JsonIgnore
 	public int size() {
 		return testcases.size();
 	}
 
+	@JsonIgnore
 	public Set<String> getClasses() {
 		return testcases.keySet();
 	}
@@ -107,6 +112,7 @@ public class TestSet {
 		return testcases;
 	}
 
+	@JsonIgnore
 	public void removeTest(final String testClassName, final String testMethodName) {
 		testcases.get(testClassName).remove(testMethodName);
 	}
@@ -116,6 +122,7 @@ public class TestSet {
 		return testcases.toString();
 	}
 
+	@JsonIgnore
 	public List<String> getMethods(String clazz) {
 		return testcases.get(clazz);
 	}

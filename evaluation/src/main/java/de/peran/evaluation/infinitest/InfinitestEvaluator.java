@@ -23,7 +23,6 @@ import org.infinitest.parser.JavaClass;
 
 import de.peran.dependency.execution.MavenKiekerTestExecutor;
 import de.peran.dependency.execution.MavenPomUtil;
-import de.peran.dependency.execution.TestExecutor;
 import de.peran.evaluation.base.EvaluationVersion;
 import de.peran.evaluation.base.Evaluator;
 

@@ -20,20 +20,16 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.model.Build;
@@ -44,6 +40,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
 
 import de.peran.dependency.ClazzFinder;
 import de.peran.dependency.analysis.data.TestSet;
@@ -68,12 +65,25 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 	 */
 	protected static final String KIEKER_ARG_LINE = "-javaagent:" + System.getProperty("user.home") + "/.m2/repository/net/kieker-monitoring/kieker/1.12/kieker-1.12-aspectj.jar";
 
-//	private final File resultsFolder;
+	// private final File resultsFolder;
 	protected Charset lastEncoding = StandardCharsets.UTF_8;
+	protected final JUnitTestTransformer testGenerator;
 
-	public MavenKiekerTestExecutor(final File projectFolder, final File moduleFolder, final File resultsFolder) {
+	public MavenKiekerTestExecutor(final File projectFolder, final File moduleFolder, final File resultsFolder, boolean useKieker) {
 		super(projectFolder, moduleFolder, resultsFolder);
-//		this.resultsFolder = resultsFolder;
+		testGenerator = new JUnitTestTransformer(moduleFolder);
+		testGenerator.setUseKieker(useKieker);
+		testGenerator.setLogFullData(false);
+		testGenerator.setEncoding(lastEncoding);
+		testGenerator.setIterations(1);
+		testGenerator.setWarmupExecutions(0);
+		// this.resultsFolder = resultsFolder;
+	}
+
+	public MavenKiekerTestExecutor(final File projectFolder, final File moduleFolder, final File resultsFolder, JUnitTestTransformer testtransformer) {
+		super(projectFolder, moduleFolder, resultsFolder);
+		this.testGenerator = testtransformer;
+		// this.resultsFolder = resultsFolder;
 	}
 
 	protected boolean compileVersion(final File logFile) {
@@ -108,7 +118,7 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 	}
 
 	protected void generateAOPXML() throws IOException {
-		final List<String> classes = ClazzFinder.getLowestPackageOverall(moduleFolder);
+		final List<String> classes = ClazzFinder.getClasses(moduleFolder);
 		final File metainf = new File(moduleFolder, "target/test-classes/META-INF");
 		metainf.mkdir();
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(new File(metainf, "aop.xml")))) {
@@ -241,12 +251,6 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 	 * Prepares the tests by changing their source, so they are executed with KoPeMe.
 	 */
 	public void prepareTests() {
-		final JUnitTestTransformer testGenerator = new JUnitTestTransformer(moduleFolder);
-		testGenerator.setUseKieker(true);
-		testGenerator.setLogFullData(false);
-		testGenerator.setEncoding(lastEncoding);
-		testGenerator.setIterations(1);
-		testGenerator.setWarmupExecutions(0);
 		testGenerator.transformTests();
 	}
 
@@ -273,7 +277,6 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 		return isRunning;
 	}
 
-	
 	public boolean isVersionRunning() {
 		final File potentialPom = new File(projectFolder, "pom.xml");
 		final File testFolder = new File(projectFolder, "src/test");
@@ -319,19 +322,18 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 		return isRunning;
 	}
 
-
-	public static Charset rewriteSurefire(final File pomFile, final String additionalArgLine) {
-		final MavenXpp3Reader reader = new MavenXpp3Reader();
+	public static void rewriteSurefire(final File pomFile, final String additionalArgLine) {
 		try {
+			final MavenXpp3Reader reader = new MavenXpp3Reader();
 			final Model model = reader.read(new FileInputStream(pomFile));
 			if (model.getBuild() == null) {
 				model.setBuild(new Build());
 			}
-			MavenPomUtil.extendDependencies(model);
 
 			final Plugin surefire = MavenPomUtil.findPlugin(model, MavenKiekerTestExecutor.SUREFIRE_ARTIFACTID, MavenKiekerTestExecutor.ORG_APACHE_MAVEN_PLUGINS);
 
 			MavenPomUtil.extendSurefire(additionalArgLine, surefire, true);
+			MavenPomUtil.extendDependencies(model);
 
 			for (final Dependency dependency : model.getDependencies()) {
 				if ("junit".equals(dependency.getArtifactId())) {
@@ -341,20 +343,19 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 
 			final MavenXpp3Writer writer = new MavenXpp3Writer();
 			writer.write(new FileWriter(pomFile), model);
-
-			final Charset encoding = MavenPomUtil.getEncoding(model);
-			return encoding;
 		} catch (IOException | XmlPullParserException e1) {
 			e1.printStackTrace();
 		}
-		return StandardCharsets.UTF_8;
 	}
 
 	public void preparePom() {
-		final boolean update = true;
+		preparePom(true);
+	}
+	
+	public void preparePom(boolean update) {
+		final File pomFile = new File(moduleFolder, "pom.xml");
 		final MavenXpp3Reader reader = new MavenXpp3Reader();
 		try {
-			final File pomFile = new File(moduleFolder, "pom.xml");
 			final Model model = reader.read(new FileInputStream(pomFile));
 			if (model.getBuild() == null) {
 				model.setBuild(new Build());
@@ -363,7 +364,13 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 
 			final Path tempFiles = Files.createTempDirectory("kiekerTemp");
 			lastTmpFile = tempFiles.toFile();
-			final String argline = KIEKER_ARG_LINE + " -Djava.io.tmpdir=" + tempFiles.toString();
+			final String argline;
+			if (testGenerator.isUseKieker()) {
+				argline = KIEKER_ARG_LINE + " -Djava.io.tmpdir=" + tempFiles.toString();
+			} else {
+				argline = "";
+			}
+
 			MavenPomUtil.extendSurefire(argline, surefire, update);
 			MavenPomUtil.extendDependencies(model);
 
@@ -377,7 +384,7 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected boolean testVersion(final File potentialPom) {
 		try {
 			final MavenXpp3Reader reader2 = new MavenXpp3Reader();
@@ -422,4 +429,4 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 		return lastEncoding;
 	}
 
-	}
+}

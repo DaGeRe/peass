@@ -32,6 +32,7 @@ public enum OptionConstants {
 	ITERATIONS("iterations", "Iterationen, wie oft jeder Testfall ausgeführt werden soll", false),
 	WARMUP("warmup", "Iterationen, wie oft jeder Testfall als Aufwärm-Ausführung ausgeführt werden soll", false),
 	DURATION("duration", "Test duration, if a timebased testcase should be used", false),
+	USEKIEKER("usekieker", "Whether to instrument the tests with kieker (slows down execution, but delivers kieker traces)", false),
 	REPETITIONS("repetitions", "Count every testcase should be repeated", false),
 	DEPENDENCYFILE("dependencyfile", "Dependency-Datei, aus der die auzuführenden Tests auszulesen sind", false),
 	OUT("out", "Folder for output", false),
