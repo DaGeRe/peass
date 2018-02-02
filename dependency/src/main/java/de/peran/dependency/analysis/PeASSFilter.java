@@ -43,7 +43,7 @@ public class PeASSFilter extends AbstractFilterPlugin {
 	public static final String INPUT_EXECUTION_TRACE = "INPUT_EXECUTION_TRACE";
 
 	private final Map<String, Set<String>> classes = new HashMap<>();
-	private final List<TraceElement> calls = new ArrayList<>();
+	private final ArrayList<TraceElement> calls = new ArrayList<>();
 	private final String prefix;
 	
 	private final static int CALLCOUNT = 1000000;
@@ -108,7 +108,7 @@ public class PeASSFilter extends AbstractFilterPlugin {
 		LOG.info("Finished");
 	}
 
-	public List<TraceElement> getCalls() {
+	public ArrayList<TraceElement> getCalls() {
 		return calls;
 	}
 

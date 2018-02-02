@@ -25,7 +25,7 @@ public class SuperclassDetectorIT {
 
 
 	private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT");
-	private static final File CURRENT = new File(VERSIONS_FOLDER, "current");
+	private static final File CURRENT = new File("target", "current");
 	private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "superclass_old");
 
 	private DependencyManager handler;

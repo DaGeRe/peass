@@ -182,11 +182,8 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 	 * @param tests Name of the test that should be run
 	 */
 	public void executeAllTests(final File logFile) {
-		preparePom();
-		prepareTests();
-
 		try {
-			boolean compiled = compileVersion(logFile);
+			boolean compiled = prepareRunning(logFile);
 			if (compiled) {
 				final Process process = buildProcess(logFile);
 				LOG.info("Starting Process");
@@ -198,6 +195,16 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 			e.printStackTrace();
 		}
 	}
+	
+	public boolean prepareRunning(final File logFile){
+		preparePom();
+		LOG.debug("Starting Test Transformation");
+		prepareTests();
+		
+		LOG.debug("Starting Compilation");
+		boolean compiled = compileVersion(logFile);
+		return compiled;
+	}
 
 	/**
 	 * Runs the given tests and saves the results to the given result folder
@@ -206,10 +213,7 @@ public class MavenKiekerTestExecutor extends TestExecutor {
 	 * @param tests Name of the test that should be run
 	 */
 	public void executeTests(final TestSet tests, final File logFolder) {
-		preparePom();
-		prepareTests();
-
-		boolean compiled = compileVersion(new File(logFolder, "log_compilation.txt"));
+		boolean compiled = prepareRunning(new File(logFolder, "log_compilation.txt"));
 		if (compiled) {
 			for (final Map.Entry<String, List<String>> clazzEntry : tests.entrySet()) {
 				final File logFile = new File(logFolder, "log_" + clazzEntry.getKey() + ".txt");

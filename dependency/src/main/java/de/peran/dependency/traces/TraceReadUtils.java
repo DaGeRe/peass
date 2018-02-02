@@ -25,6 +25,7 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 
 import de.peran.dependency.analysis.data.TraceElement;
+import de.peran.dependency.traces.requitur.content.TraceElementContent;
 
 /**
  * Utility for parsing java source by javaparser
@@ -51,7 +52,7 @@ public class TraceReadUtils {
 	 * @param te
 	 * @return
 	 */
-	public static String getClassFileName(final TraceElement te) {
+	public static String getClassFileName(final TraceElementContent te) {
 		final String javaClazzName = te.getClazz();
 
 		String clazzFilePart = findDotPattern
@@ -74,7 +75,7 @@ public class TraceReadUtils {
 	 * @param clazzFolder
 	 * @return
 	 */
-	public static File getClazzFile(final TraceElement traceelement, final File... clazzFolder) {
+	public static File getClazzFile(final TraceElementContent traceelement, final File[] clazzFolder) {
 		File clazzFile = null;
 		final String clazzFileName = TraceReadUtils.getClassFileName(traceelement);
 		for (final File clazzFolderCandidate : clazzFolder) {
@@ -122,7 +123,7 @@ public class TraceReadUtils {
 		return foundDeclaredClasses;
 	}
 
-	public static Node getMethod(final TraceElement currentTraceElement, final CompilationUnit cu) {
+	public static Node getMethod(final TraceElementContent currentTraceElement, final CompilationUnit cu) {
 		if (currentTraceElement.getClazz().contains("$")) {
 			final String indexString = currentTraceElement.getClazz().split("\\$")[1];
 			if (indexString.matches("[0-9]+")) {
@@ -157,7 +158,7 @@ public class TraceReadUtils {
 		return method;
 	}
 
-	public static Node getMethod(final Node node, final TraceElement currentTraceElement) {
+	public static Node getMethod(final Node node, final TraceElementContent currentTraceElement) {
 		if (node != null && node.getParentNode().isPresent()) {
 			final Node parent = node.getParentNode().get();
 
@@ -204,7 +205,7 @@ public class TraceReadUtils {
 		return null;
 	}
 
-	private static boolean parametersEqual(final TraceElement te, final MethodDeclaration method) {
+	private static boolean parametersEqual(final TraceElementContent te, final MethodDeclaration method) {
 		int parameterIndex = 0;
 		for (final Parameter parameter : method.getParameters()) {
 			final Type type = parameter.getType();

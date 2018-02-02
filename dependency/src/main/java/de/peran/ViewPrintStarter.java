@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -52,7 +53,7 @@ public class ViewPrintStarter extends PairProcessor {
 
 	private static final Logger LOG = LogManager.getLogger(ViewPrintStarter.class);
 
-	private static final ObjectMapper MAPPER = new ObjectMapper();
+	private static  final ObjectMapper MAPPER = new ObjectMapper();
 	static {
 		MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
 	}
@@ -73,12 +74,12 @@ public class ViewPrintStarter extends PairProcessor {
 		executeFile = new File(traceFolder, "execute" + projectName + ".json");
 
 		if (line.hasOption(OptionConstants.CHANGEFILE.getName())) {
-			File changeFile = new File(line.getOptionValue(OptionConstants.CHANGEFILE.getName()));
-			VersionKnowledge knowledge = new ObjectMapper().readValue(changeFile, VersionKnowledge.class);
+			final File changeFile = new File(line.getOptionValue(OptionConstants.CHANGEFILE.getName()));
+			final VersionKnowledge knowledge = new ObjectMapper().readValue(changeFile, VersionKnowledge.class);
 
-			for (Iterator<Version> iterator = dependencies.getVersions().getVersion().iterator(); iterator.hasNext();) {
-				Version v = iterator.next();
-				Changes changes = knowledge.getVersion(v.getVersion());
+			for (final Iterator<Version> iterator = dependencies.getVersions().getVersion().iterator(); iterator.hasNext();) {
+				final Version v = iterator.next();
+				final Changes changes = knowledge.getVersion(v.getVersion());
 				if (changes.getTestcaseChanges().size() == 0) {
 					iterator.remove();
 				}
@@ -90,7 +91,7 @@ public class ViewPrintStarter extends PairProcessor {
 	@Override
 	protected void processVersion(final Version versioninfo) {
 		final String version = versioninfo.getVersion();
-		LOG.info("Bearbeite {}", version);
+		LOG.info("View-Generation for Version {}", version);
 		final Set<TestCase> testcases = findTestcases(versioninfo);
 
 		if (!VersionComparator.isBefore(version, startversion)) {
@@ -113,12 +114,10 @@ public class ViewPrintStarter extends PairProcessor {
 						diffFolder.mkdirs();
 					}
 					try {
-						final boolean tracesWorked = generateTraces(version, testcase, versionOld, clazzDir,
-								traceFileMap);
+						final boolean tracesWorked = generateTraces(version, testcase, versionOld, clazzDir, traceFileMap);
 
 						if (tracesWorked) {
-							LOG.debug("Generiere Diff für " + testcase.getClazz() + "#" + testcase.getMethod() + " "
-									+ versionOld + ".." + version);
+							LOG.debug("Generating Diff " + testcase.getClazz() + "#" + testcase.getMethod() + " " + versionOld + ".." + version);
 							final boolean somethingChanged = generateDiffFiles(testcase, diffFolder, traceFileMap);
 
 							if (somethingChanged) {
@@ -174,10 +173,11 @@ public class ViewPrintStarter extends PairProcessor {
 
 	/**
 	 * Generates a human-analysable diff-file from traces
-	 * @param testcase	Name of the testcase
+	 * 
+	 * @param testcase Name of the testcase
 	 * @param diffFolder Goal-folder for the diff
-	 * @param traceFileMap	Map for place where traces are saved
-	 * @return	Whether a change happened
+	 * @param traceFileMap Map for place where traces are saved
+	 * @return Whether a change happened
 	 * @throws IOException If files can't be read of written
 	 */
 	private boolean generateDiffFiles(final TestCase testcase, final File diffFolder, final Map<String, List<File>> traceFileMap) throws IOException {
@@ -234,12 +234,12 @@ public class ViewPrintStarter extends PairProcessor {
 			if (sizeInMB < 2000) {
 				final File[] possiblyMethodFolder = methodResult.listFiles();
 				final File kiekerResultFolder = possiblyMethodFolder[0];
-				final List<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder).getShortTrace("");
+				final ArrayList<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder).getShortTrace("");
 				LOG.debug("Short Trace: {}", shortTrace.size());
-				TraceMethodReader traceMethodReader = new TraceMethodReader(shortTrace);
-				final TraceWithMethods trace = traceMethodReader.getTraceWithMethods(
+				final TraceMethodReader traceMethodReader = new TraceMethodReader(shortTrace, 
 						new File(projectFolder, "src/main/java"), new File(projectFolder, "src/java"),
 						new File(projectFolder, "src/test/java"), new File(projectFolder, "src/test"));
+				final TraceWithMethods trace = traceMethodReader.getTraceWithMethods();
 				List<File> traceFile = traceFileMap.get(testcase.getMethod());
 				if (traceFile == null) {
 					traceFile = new LinkedList<>();

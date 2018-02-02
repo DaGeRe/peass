@@ -17,6 +17,7 @@
 package de.peran.dependency.analysis;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -95,7 +96,7 @@ public class CalledMethodLoader {
 	 * @param prefix
 	 * @return
 	 */
-	public List<TraceElement> getShortTrace(final String prefix) {
+	public ArrayList<TraceElement> getShortTrace(final String prefix) {
 		try {
 			final long size = FileUtils.sizeOfDirectory(kiekerTraceFile);
 			final long sizeInMB = size / (1024 * 1024);

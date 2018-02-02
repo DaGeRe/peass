@@ -103,6 +103,8 @@ public class JUnitTestTransformer {
 		this.repetitions = repetitions;
 	}
 
+	private Map<File, CompilationUnit> loadedFiles;
+	
 	/**
 	 * Generates Performance-Test, i.e. transforms the current unit-tests to performance tests by adding annotations to the Java-files.
 	 * 
@@ -117,7 +119,9 @@ public class JUnitTestTransformer {
 		final File testFolder = new File(projectFolder, "src/test/");
 
 		if (testFolder.exists()) {
+			loadedFiles = new HashMap<>();
 			final Map<File, Integer> junitVersions = determineVersions(testFolder);
+			LOG.debug("JUnit Versions Determined");
 			for (final Map.Entry<File, Integer> version : junitVersions.entrySet()) {
 				if (version.getValue() == 3) {
 					editJUnit3(version.getKey());
@@ -136,9 +140,11 @@ public class JUnitTestTransformer {
 		for (final File javaFile : FileUtils.listFiles(testFolder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE)) {
 			try {
 				final CompilationUnit unit = JavaParser.parse(javaFile);
+				loadedFiles.put(javaFile, unit);
 				final boolean isJUnit4 = isJUnit4(unit);
 				if (isJUnit4) {
 					junitVersions.put(javaFile, 4);
+					editJUnit4(javaFile);
 				}
 				final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
 				if (clazz != null) { // for @interface cases
@@ -146,10 +152,11 @@ public class JUnitTestTransformer {
 					LOG.trace("Transforming: {}", clazz.getNameAsString());
 					if (clazz.getExtendedTypes().size() == 1) {
 						final ClassOrInterfaceType extend = clazz.getExtendedTypes(0);
-						List<File> extensionsOfBase = extensions.get(extend.getNameAsString().intern());
+						final String extensionName = extend.getNameAsString().intern();
+						List<File> extensionsOfBase = extensions.get(extensionName);
 						if (extensionsOfBase == null) {
 							extensionsOfBase = new LinkedList<>();
-							extensions.put(extend.getNameAsString().intern(), extensionsOfBase);
+							extensions.put(extensionName, extensionsOfBase);
 						}
 						extensionsOfBase.add(javaFile);
 					}
@@ -198,7 +205,7 @@ public class JUnitTestTransformer {
 	 */
 	protected void editJUnit3(final File javaFile) {
 		try {
-			final CompilationUnit unit = JavaParser.parse(javaFile);
+			final CompilationUnit unit = loadedFiles.get(javaFile);
 			unit.addImport("de.dagere.kopeme.junit3.KoPeMeTestcase");
 			unit.addImport("de.dagere.kopeme.datacollection.DataCollectorList");
 
@@ -230,8 +237,9 @@ public class JUnitTestTransformer {
 
 	/**
 	 * Adds the given method to the Classdeclaration
-	 * @param clazz	Clazz where method should be added
-	 * @param name	Name of the new method
+	 * 
+	 * @param clazz Clazz where method should be added
+	 * @param name Name of the new method
 	 * @param source Source of the new method
 	 * @param type Returntype of the new method
 	 */
@@ -252,7 +260,7 @@ public class JUnitTestTransformer {
 	 */
 	protected void editJUnit4(final File javaFile) {
 		try {
-			final CompilationUnit unit = JavaParser.parse(javaFile);
+			final CompilationUnit unit = loadedFiles.get(javaFile);
 
 			unit.addImport("de.dagere.kopeme.annotations.Assertion");
 			unit.addImport("de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation");

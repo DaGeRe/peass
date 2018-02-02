@@ -65,7 +65,10 @@ public class DependencyStatisticSummarizer {
 
 				final Statistics statistics = DependencyStatisticAnalyzer.getChangeStatistics(xmlFile, changedTests);
 
-				System.out.println(projektName + " & " + statistics.size + " & " + statistics.overallRunTests + " & " + statistics.pruningRunTests + " & " + statistics.changedTraceTests + "\\");
+				double percent = 10000d * statistics.changedTraceTests / statistics.overallRunTests;
+				System.out.println(percent);
+				System.out.println(projektName + " & " + statistics.size + " & " + statistics.overallRunTests + " & " + statistics.pruningRunTests + " & " + statistics.changedTraceTests  + " & " + Math.round(percent)/100d+ " %\\");
+				
 			}
 		}
 	}

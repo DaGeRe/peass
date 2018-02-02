@@ -52,7 +52,7 @@ public class DependencyStatisticAnalyzer {
 		List<TestCase> multipleChangedTest = new LinkedList<>();
 		List<TestCase> onceChangedTests = new LinkedList<>();
 	}
-
+ 
 	private static final Logger LOG = LogManager.getLogger(DependencyStatisticAnalyzer.class);
 
 	public static void main(final String[] args) throws JAXBException, ParseException, JsonParseException, JsonMappingException, IOException {

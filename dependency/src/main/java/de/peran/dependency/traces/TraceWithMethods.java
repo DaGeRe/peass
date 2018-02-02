@@ -1,31 +1,47 @@
 package de.peran.dependency.traces;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
-import de.peran.dependency.analysis.data.TraceElement;
+import de.peran.dependency.traces.requitur.ReducedTraceElement;
+import de.peran.dependency.traces.requitur.content.Content;
+import de.peran.dependency.traces.requitur.content.RuleContent;
+import de.peran.dependency.traces.requitur.content.TraceElementContent;
 
 /**
  * Represents a trace, i.e. a sorted list of all calls of a testcase, and the source code of the calls.
+ * 
  * @author reichelt
  *
  */
 public class TraceWithMethods {
 
-	private final List<TraceElement> elements = new ArrayList<>();
-	private final List<String> methods = new ArrayList<>();
+	private final List<ReducedTraceElement> elements;
+	private final Map<TraceElementContent, String> methods = new HashMap<>();
 
-	public void addElement(final TraceElement traceElement, final String method) {
-		elements.add(traceElement);
-		methods.add(method);
+	public TraceWithMethods(final List<ReducedTraceElement> rleTrace) {
+		this.elements = rleTrace;
 	}
 
-	public TraceElement getTraceElement(final int position) {
-		return elements.get(position);
+	public void setElementSource(final TraceElementContent traceElement, final String method) {
+		methods.put(traceElement, method);
+	}
+
+	public Content getTraceElement(final int position) {
+		final ReducedTraceElement reducedTraceElement = elements.get(position);
+		return reducedTraceElement.getValue();
+	}
+
+	public int getTraceOccurences(final int position) {
+		final ReducedTraceElement reducedTraceElement = elements.get(position);
+		return reducedTraceElement.getOccurences();
 	}
 
 	public String getMethod(final int position) {
-		return methods.get(position);
+		final ReducedTraceElement method = elements.get(position);
+		return methods.get(method.getValue());
 	}
 
 	public int getLength() {
@@ -34,30 +50,62 @@ public class TraceWithMethods {
 
 	public String getWholeTrace() {
 		String result = "";
-		for (int i = 0; i < elements.size(); i++) {
-			result += elements.get(i) != null ? elements.get(i) + "\n" : "";
-			result += methods.get(i) + "\n";
+		List<Integer> currentDepth = new LinkedList<>();
+		for (final ReducedTraceElement te : elements) {
+			final List<Integer> newDepth = new LinkedList<>();
+			String spaceString = "";
+			for (final Integer depth : currentDepth) {
+				spaceString += " ";
+				if (depth > 1) {
+					newDepth.add(depth - 1);
+				}
+			}
+			result += spaceString;
+			currentDepth = newDepth;
+			if (te.getOccurences() != 1) {
+				result += te.getOccurences() + " x ";
+			}
+			result += te.getValue().toString() + "\n";
+			if (te.getValue() instanceof RuleContent) {
+				final int count = ((RuleContent) te.getValue()).getCount();
+				currentDepth.add(count);
+			} else if (te.getValue() instanceof TraceElementContent) {
+				final TraceElementContent traceContent = (TraceElementContent) te.getValue();
+				final String source = methods.get(traceContent);
+				if (source != null) {
+					result += spaceString + source.replaceAll("\n", "\n" + spaceString) + "\n";
+				}
+			}
 		}
 		return result;
-	}
-
-	public void removeElement(int removeIndex) {
-		elements.remove(removeIndex);
-		methods.remove(removeIndex);
 	}
 
 	public String getTraceMethods() {
+		return toString();
+	}
+
+	@Override
+	public String toString() {
 		String result = "";
-		for (int i = 0; i < elements.size(); i++) {
-			for (int spaceCount = 0; spaceCount < elements.get(i).getDepth(); spaceCount++) {
+		List<Integer> currentDepth = new LinkedList<>();
+		for (final ReducedTraceElement te : elements) {
+			final List<Integer> newDepth = new LinkedList<>();
+			for (final Integer depth : currentDepth) {
 				result += " ";
+				if (depth > 1) {
+					newDepth.add(depth - 1);
+				}
 			}
-			result += elements.get(i).getClazz() + "." + elements.get(i).getMethod() + "\n";
+			currentDepth = newDepth;
+			if (te.getOccurences() != 1) {
+				result += te.getOccurences() + " x ";
+			}
+			result += te.getValue().toString() + "\n";
+			if (te.getValue() instanceof RuleContent) {
+				final int count = ((RuleContent) te.getValue()).getCount();
+				currentDepth.add(count);
+			}
 		}
 		return result;
-	}
-	
-	public String toString(){
-		return elements.toString();
 	}
 }

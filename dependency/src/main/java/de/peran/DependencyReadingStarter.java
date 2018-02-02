@@ -49,8 +49,6 @@ import de.peran.vcs.VersionIteratorSVN;
  */
 public class DependencyReadingStarter {
 	private static final Logger LOG = LogManager.getLogger(DependencyReadingStarter.class);
-
-	
 	
 	public static void main(final String[] args) throws ParseException,
 			FileNotFoundException {

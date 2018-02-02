@@ -52,7 +52,7 @@ import de.peran.vcs.VersionIteratorGit;
  */
 public class DependencyReadingStarterMultiModule {
 	private static final Logger LOG = LogManager.getLogger(DependencyReadingStarterMultiModule.class);
-
+ 
 	public static void main(final String[] args) throws ParseException, FileNotFoundException, JAXBException {
 		final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.STARTVERSION, OptionConstants.ENDVERSION, OptionConstants.OUT,
 				OptionConstants.MODULE, OptionConstants.DEPENDENCYFILE);

@@ -26,6 +26,7 @@ import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.peran.testtransformation.JUnitTestTransformer;
 import de.peran.testtransformation.ParseUtil;
+import de.peran.transformation.TestTransformation;
 
 public class TestRepetitionTransforming {
 	@ClassRule

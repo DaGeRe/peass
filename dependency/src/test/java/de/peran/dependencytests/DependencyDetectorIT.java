@@ -26,7 +26,7 @@ import de.peran.vcs.VersionIterator;
 public class DependencyDetectorIT {
 
 	private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT");
-	private static final File CURRENT = new File(VERSIONS_FOLDER, "current");
+	private static final File CURRENT = new File(new File("target"), "current");
 	private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
 
 	private DependencyManager handler;
