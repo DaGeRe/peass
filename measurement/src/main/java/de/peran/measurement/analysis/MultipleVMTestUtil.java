@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.inference.TestUtils;
 import org.apache.logging.log4j.LogManager;
@@ -38,14 +39,19 @@ public class MultipleVMTestUtil {
 	}
 
 	public static void analyseOneRun(final File resultFile) throws JAXBException {
+		final DescriptiveStatistics st = getStatistics(resultFile);
+		LOG.info("Durchschnitt: " + st.getMean());
+	}
+
+	public static DescriptiveStatistics getStatistics(final File resultFile) throws JAXBException {
 		final XMLDataLoader fullDataLoader = new XMLDataLoader(resultFile);
 		final Kopemedata fullResultData = fullDataLoader.getFullData();
 		final Datacollector oneRunDatacollector = getTimeDataCollector(fullResultData);
-		final SummaryStatistics st = new SummaryStatistics();
+		final DescriptiveStatistics st = new DescriptiveStatistics();
 		for (final Result r : oneRunDatacollector.getResult()) {
 			st.addValue(r.getValue());
 		}
-		LOG.info("Durchschnitt: " + st.getMean());
+		return st;
 	}
 
 	public static Datacollector getTimeDataCollector(final Kopemedata fullResultData) {
@@ -144,17 +150,17 @@ public class MultipleVMTestUtil {
 	}
 
 	public static SummaryStatistics getStatistic(List<Result> results) {
-		SummaryStatistics statistisc = new SummaryStatistics();
+		final SummaryStatistics statistisc = new SummaryStatistics();
 		results.forEach(result -> statistisc.addValue(result.getValue()));
 		return statistisc;
 	}
 
 	public static int compareDouble(final List<Double> before, final List<Double> after) {
-		boolean change = TestUtils.tTest(ArrayUtils.toPrimitive(before.toArray(new Double[0])), ArrayUtils.toPrimitive(after.toArray(new Double[0])), 0.05);
-		SummaryStatistics statisticBefore = new SummaryStatistics();
+		final boolean change = TestUtils.tTest(ArrayUtils.toPrimitive(before.toArray(new Double[0])), ArrayUtils.toPrimitive(after.toArray(new Double[0])), 0.05);
+		final SummaryStatistics statisticBefore = new SummaryStatistics();
 		before.forEach(result -> statisticBefore.addValue(result));
 
-		SummaryStatistics statisticAfter = new SummaryStatistics();
+		final SummaryStatistics statisticAfter = new SummaryStatistics();
 		after.forEach(result -> statisticAfter.addValue(result));
 		if (change) {
 			if (statisticBefore.getMean() < statisticAfter.getMean())

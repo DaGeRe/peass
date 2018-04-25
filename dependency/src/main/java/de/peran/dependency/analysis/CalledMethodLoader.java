@@ -18,7 +18,6 @@ package de.peran.dependency.analysis;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +25,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peran.dependency.analysis.data.ChangedEntity;
 import de.peran.dependency.analysis.data.TraceElement;
 import kieker.analysis.AnalysisController;
 import kieker.analysis.exception.AnalysisConfigurationException;
@@ -47,21 +47,14 @@ public class CalledMethodLoader {
 
 	private static final Logger LOG = LogManager.getLogger(CalledMethodLoader.class);
 
-	public static void main(final String[] args) throws IllegalStateException, AnalysisConfigurationException {
-		final String beginFile = args[0];
-
-		final Map<String, Set<String>> calledClasses = new CalledMethodLoader(new File(beginFile)).getCalledMethods();
-		for (final String clazz : calledClasses.keySet()) {
-			System.out.println(clazz);
-		}
-	}
-
 	private TraceReconstructionFilter traceReconstructionFilter;
 	private final AnalysisController analysisController = new AnalysisController();
 	private final File kiekerTraceFile;
+	private final File projectFolder;
 
-	public CalledMethodLoader(final File kiekerTraceFile) {
+	public CalledMethodLoader(final File kiekerTraceFile, final File projectFolder) {
 		this.kiekerTraceFile = kiekerTraceFile;
+		this.projectFolder = projectFolder;
 	}
 
 	/**
@@ -70,17 +63,17 @@ public class CalledMethodLoader {
 	 * @param kiekerTraceFile
 	 * @return
 	 */
-	public Map<String, Set<String>> getCalledMethods() {
+	public Map<ChangedEntity, Set<String>> getCalledMethods() {
 		try {
 			initialiseTraceReading();
 
-			final PeASSFilter kopemeFilter = new PeASSFilter(null, new Configuration(), analysisController);
+			final PeASSFilter peassFilter = new PeASSFilter(null, new Configuration(), analysisController, projectFolder);
 			analysisController.connect(traceReconstructionFilter, TraceReconstructionFilter.OUTPUT_PORT_NAME_EXECUTION_TRACE,
-					kopemeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
+					peassFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
 
 			analysisController.run();
 
-			final Map<String, Set<String>> calledClasses = kopemeFilter.getCalledClasses();
+			final Map<ChangedEntity, Set<String>> calledClasses = peassFilter.getCalledMethods();
 			return calledClasses;
 		} catch (IllegalStateException | AnalysisConfigurationException e) {
 			e.printStackTrace();
@@ -105,7 +98,7 @@ public class CalledMethodLoader {
 			if (sizeInMB < 2000) {
 				initialiseTraceReading();
 
-				final PeASSFilter kopemeFilter = new PeASSFilter(prefix, new Configuration(), analysisController);
+				final PeASSFilter kopemeFilter = new PeASSFilter(prefix, new Configuration(), analysisController, projectFolder);
 				analysisController.connect(traceReconstructionFilter, TraceReconstructionFilter.OUTPUT_PORT_NAME_EXECUTION_TRACE,
 						kopemeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
 

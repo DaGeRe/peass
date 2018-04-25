@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import de.peran.dependency.analysis.data.ChangedEntity;
 import de.peran.dependency.analysis.data.TestSet;
 import de.peran.reduceddependency.ChangedTraceTests;
 
@@ -24,8 +25,8 @@ public final class CompareUtil {
 		for (final Entry<String, TestSet> version : changedTraceTests.getVersions().entrySet()) {
 			final EvaluationVersion evalVersion = new EvaluationVersion();
 			// version.set
-			for (final Map.Entry<String, List<String>> clazz : version.getValue().entrySet()) {
-				evalVersion.getTestcaseExecutions().put(clazz.getKey(), clazz.getValue().size());
+			for (final Map.Entry<ChangedEntity, List<String>> clazz : version.getValue().entrySet()) {
+				evalVersion.getTestcaseExecutions().put(clazz.getKey().getJavaClazzName(), clazz.getValue().size());
 			}
 			ticData.getVersions().put(version.getKey(), evalVersion);
 		}

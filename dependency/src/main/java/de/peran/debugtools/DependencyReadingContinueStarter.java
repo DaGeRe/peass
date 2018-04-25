@@ -33,13 +33,14 @@ import org.apache.logging.log4j.Logger;
 import org.tmatesoft.svn.core.SVNLogEntry;
 
 import de.peran.DependencyReadingStarter;
-import de.peran.DependencyStatisticAnalyzer;
 import de.peran.dependency.reader.DependencyReader;
 import de.peran.dependencyprocessors.VersionComparator;
 import de.peran.generated.Versiondependencies;
 import de.peran.generated.Versiondependencies.Versions.Version;
+import de.peran.statistics.DependencyStatisticAnalyzer;
 import de.peran.utils.OptionConstants;
 import de.peran.vcs.GitCommit;
+import de.peran.vcs.GitUtils;
 import de.peran.vcs.SVNUtils;
 import de.peran.vcs.VersionControlSystem;
 import de.peran.vcs.VersionIterator;
@@ -82,10 +83,11 @@ public class DependencyReadingContinueStarter {
 		String previousVersion;
 		if (line.hasOption(OptionConstants.STARTVERSION.getName())) {
 			final String startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName());
-			List<Version> versionList = dependencies.getVersions().getVersion();
-			truncateVersions(startversion, versionList);
-			int index = versionList.size() - 1;
-			previousVersion = (index >= 0) ? versionList.get(index).getVersion() : dependencies.getInitialversion().getVersion();
+//			final List<Version> versionList = dependencies.getVersions().getVersion();
+//			truncateVersions(startversion, versionList);
+//			final int index = versionList.size() - 1;
+//			previousVersion = (index >= 0) ? versionList.get(index).getVersion() : dependencies.getInitialversion().getVersion();
+		   previousVersion = GitUtils.getPrevious(startversion, projectFolder);
 		} else {
 			previousVersion = VersionComparator.getPreviousVersion(dependencies.getInitialversion().getVersion());
 		}
@@ -103,10 +105,12 @@ public class DependencyReadingContinueStarter {
 		final DependencyReader reader;
 		if (vcs.equals(VersionControlSystem.GIT)) {
 			final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(line, projectFolder);
+			commits.add(0, new GitCommit(previousVersion, "", "", ""));
 			VersionComparator.setVersions(commits);
 			final GitCommit previous = new GitCommit(previousVersion, "", "", "");
 			final VersionIterator iterator = new VersionIteratorGit(projectFolder, commits, previous);
 			reader = new DependencyReader(projectFolder, dependencyFile, dependencies.getUrl(), iterator, dependencies);
+			iterator.goTo0thCommit();
 		} else if (vcs.equals(VersionControlSystem.SVN)) {
 			final List<SVNLogEntry> commits = DependencyReadingStarter.getSVNCommits(line, projectFolder);
 			final String url = SVNUtils.getInstance().getWCURL(projectFolder);
@@ -123,7 +127,7 @@ public class DependencyReadingContinueStarter {
 	public static void truncateVersions(final String startversion, final List<Version> versions) {
 		for (final java.util.Iterator<Version> it = versions.iterator(); it.hasNext();) {
 			final Version version = it.next();
-			if (VersionComparator.isBefore(startversion, version.getVersion()) || startversion.equals(version.getVersion())) {
+			if (VersionComparator.isBefore(startversion, version.getVersion())) {
 				it.remove();
 			}
 		}

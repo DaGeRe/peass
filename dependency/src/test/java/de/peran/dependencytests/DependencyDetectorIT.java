@@ -14,8 +14,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.peran.dependency.ChangeManager;
-import de.peran.dependency.DependencyManager;
+import de.peran.dependency.analysis.data.ChangedEntity;
 import de.peran.dependency.reader.DependencyReader;
 import de.peran.generated.Versiondependencies;
 import de.peran.generated.Versiondependencies.Versions.Version;
@@ -29,19 +31,12 @@ public class DependencyDetectorIT {
 	private static final File CURRENT = new File(new File("target"), "current");
 	private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
 
-	private DependencyManager handler;
-
 	@Before
 	public void initialize() throws IOException, InterruptedException {
 		Assert.assertTrue(VERSIONS_FOLDER.exists());
 
 		FileUtils.deleteDirectory(CURRENT);
 		FileUtils.copyDirectory(BASIC_STATE, CURRENT);
-
-		handler = new DependencyManager(CURRENT);
-		final boolean success = handler.initialyGetTraces();
-
-		Assert.assertTrue(success);
 	}
 
 	// @org.junit.After
@@ -54,10 +49,10 @@ public class DependencyDetectorIT {
 	public void testNormalChange() throws IOException, InterruptedException {
 		final File secondVersion = new File(VERSIONS_FOLDER, "normal_change");
 
-		final Map<String, Set<String>> changes = new TreeMap<>();
+		final Map<ChangedEntity, Set<String>> changes = new TreeMap<>();
 		final TreeSet<String> methodChanges = new TreeSet<>();
 		methodChanges.add("executeThing");
-		changes.put("defaultpackage.NormalDependency", methodChanges);
+		changes.put(new ChangedEntity("defaultpackage.NormalDependency", ""), methodChanges);
 
 		final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
 		Mockito.when(changeManager.getChanges()).thenReturn(changes);
@@ -65,7 +60,8 @@ public class DependencyDetectorIT {
 		final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion));
 
 		final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator);
-		reader.readInitialVersion();
+		final boolean success = reader.readInitialVersion();
+		Assert.assertTrue(success);
 		fakeIterator.goToNextCommit();
 
 		reader.analyseVersion(changeManager);
@@ -77,6 +73,35 @@ public class DependencyDetectorIT {
 		Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
 		Assert.assertEquals("testMe", testcase.getMethod().get(0));
 	}
+	
+	@Test
+   public void testTestChange() throws IOException, InterruptedException {
+      final File secondVersion = new File(VERSIONS_FOLDER, "changed_test");
+
+      final Map<ChangedEntity, Set<String>> changes = new TreeMap<>();
+      final TreeSet<String> methodChanges = new TreeSet<>();
+      methodChanges.add("testMe");
+      changes.put(new ChangedEntity("defaultpackage.TestMe", ""), methodChanges);
+
+      final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
+      Mockito.when(changeManager.getChanges()).thenReturn(changes);
+
+      final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion));
+
+      final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator);
+      final boolean success = reader.readInitialVersion();
+      Assert.assertTrue(success);
+      fakeIterator.goToNextCommit();
+
+      reader.analyseVersion(changeManager);
+
+      System.out.println(reader.getDependencies());
+
+      final Dependency testMe = findDependency(reader.getDependencies(), "defaultpackage.TestMe.testMe", "1");
+      final Testcase testcase = testMe.getTestcase().get(0);
+      Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
+      Assert.assertEquals("testMe", testcase.getMethod().get(0));
+   }
 
 	static Dependency findDependency(final Versiondependencies dependencies, final String changedClass, final String version) {
 		Version secondVersionDependencies = null;
@@ -85,24 +110,26 @@ public class DependencyDetectorIT {
 				secondVersionDependencies = candidate;
 			}
 		}
+		Assert.assertNotNull(secondVersionDependencies);
 
 		Assert.assertEquals(version, secondVersionDependencies.getVersion());
-		Dependency testMe = null;
+		Dependency testcase = null;
 		for (final Dependency candidate : secondVersionDependencies.getDependency()) {
-			if (candidate.getChangedclass().equals(changedClass)) {
-				testMe = candidate;
+			final String changeclassInDependencies = candidate.getChangedclass();
+         if (changeclassInDependencies.equals(changedClass)) {
+				testcase = candidate;
 			}
 		}
-		return testMe;
+		return testcase;
 	}
 
 	@Test
 	public void testAddedClass() throws IOException, InterruptedException {
 		final File secondVersion = new File(VERSIONS_FOLDER, "added_class");
 
-		final Map<String, Set<String>> changes = new TreeMap<>();
-		changes.put("defaultpackage.NormalDependency", new TreeSet<>());
-		changes.put("defaultpackage.TestMeAlso", new TreeSet<>());
+		final Map<ChangedEntity, Set<String>> changes = new TreeMap<>();
+		changes.put(new ChangedEntity("defaultpackage.NormalDependency", ""), new TreeSet<>());
+		changes.put(new ChangedEntity("defaultpackage.TestMeAlso", ""), new TreeSet<>());
 
 		final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
 		Mockito.when(changeManager.getChanges()).thenReturn(changes);
@@ -110,7 +137,11 @@ public class DependencyDetectorIT {
 		final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion));
 
 		final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator);
-		reader.readInitialVersion();
+		final boolean success = reader.readInitialVersion();
+		Assert.assertTrue(success);
+		
+		System.out.println(new ObjectMapper().writeValueAsString(reader.getDependencies()));
+		
 		fakeIterator.goToNextCommit();
 
 		reader.analyseVersion(changeManager);
@@ -128,8 +159,8 @@ public class DependencyDetectorIT {
 	public void testClassChange() throws IOException, InterruptedException {
 		final File secondVersion = new File(VERSIONS_FOLDER, "changed_class");
 
-		final Map<String, Set<String>> changes = new TreeMap<>();
-		changes.put("defaultpackage.NormalDependency", new TreeSet<>());
+		final Map<ChangedEntity, Set<String>> changes = new TreeMap<>();
+		changes.put(new ChangedEntity("defaultpackage.NormalDependency", ""), new TreeSet<>());
 
 		final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
 		Mockito.when(changeManager.getChanges()).thenReturn(changes);
@@ -137,7 +168,11 @@ public class DependencyDetectorIT {
 		final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion));
 
 		final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator);
-		reader.readInitialVersion();
+		final boolean success = reader.readInitialVersion();
+		Assert.assertTrue(success);
+		
+		System.out.println(reader.getDependencies());
+		
 		fakeIterator.goToNextCommit();
 
 		reader.analyseVersion(changeManager);
@@ -162,8 +197,8 @@ public class DependencyDetectorIT {
 		final File secondVersion = new File(VERSIONS_FOLDER, "removed_method");
 		final File thirdVersion = new File(VERSIONS_FOLDER, "removed_method_change");
 
-		final Map<String, Set<String>> changes = new TreeMap<>();
-		changes.put("defaultpackage.TestMe", new TreeSet<>());
+		final Map<ChangedEntity, Set<String>> changes = new TreeMap<>();
+		changes.put(new ChangedEntity("defaultpackage.TestMe", ""), new TreeSet<>());
 
 		final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
 		Mockito.when(changeManager.getChanges()).thenReturn(changes);
@@ -171,7 +206,8 @@ public class DependencyDetectorIT {
 		final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion, thirdVersion));
 
 		final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator);
-		reader.readInitialVersion();
+		final boolean success = reader.readInitialVersion();
+		Assert.assertTrue(success);
 
 		fakeIterator.goToNextCommit();
 		reader.analyseVersion(changeManager);

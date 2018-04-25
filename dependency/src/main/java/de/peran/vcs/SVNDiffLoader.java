@@ -19,6 +19,7 @@ package de.peran.vcs;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.LinkedList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -82,7 +83,7 @@ public class SVNDiffLoader {
 	}
 
 	private VersionDiff getDiffFromProcess(final Process p) {
-		final VersionDiff diff = new VersionDiff();
+		final VersionDiff diff = new VersionDiff(new LinkedList<>());//TODO Für multmodulprojekte anpassen
 		final String output = StreamGobbler.getFullProcess(p, false);
 
 		final InputSource is = new InputSource(new StringReader(output));

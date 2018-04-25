@@ -20,14 +20,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency;
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency.Testcase;
-
-import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * Represents a set of tests which are executed for one version by its class and its list of methods.
@@ -36,21 +35,27 @@ import java.util.TreeMap;
  *
  */
 public class TestSet {
-	private final Map<String, List<String>> testcases = new TreeMap<>();
+	private final Map<ChangedEntity, List<String>> testcases = new TreeMap<>();
 
 	public TestSet() {
 
 	}
 
 	public TestSet(List<Dependency> dependencies) {
-		for (Dependency dependency : dependencies) {
-			for (Testcase testcase : dependency.getTestcase()) {
-				String clazz = testcase.getClazz();
-				for (String method : testcase.getMethod()) {
-					addTest(clazz, method);
+		for (final Dependency dependency : dependencies) {
+			for (final Testcase testcase : dependency.getTestcase()) {
+				final String clazz = testcase.getClazz();
+				for (final String method : testcase.getMethod()) {
+					final ChangedEntity entity = new ChangedEntity(clazz, testcase.getModule());
+					addTest(entity, method);
 				}
 			}
 		}
+	}
+	
+	public void addTest(final TestCase classname) {
+		final ChangedEntity entity = new ChangedEntity(classname.getClazz(), "");
+		addTest(entity, classname.getMethod());
 	}
 
 	/**
@@ -62,14 +67,17 @@ public class TestSet {
 	 * @param classname
 	 * @param methodname
 	 */
-	public void addTest(final String classname, final String methodname) {
+	public void addTest(final ChangedEntity classname, final String methodname) {
+		if (classname.getMethod() != null && classname.getMethod() != ""){
+			throw new RuntimeException("A testset should only get Changed Entities with empty method");
+		}
 		List<String> methods = testcases.get(classname);
 		if (methods == null) {
 			methods = new LinkedList<>();
-			testcases.put(classname.intern(), methods);
+			testcases.put(classname.copy(), methods);
 		}
 		if (methodname != null) {
-			String internalizedMethodName = methodname.intern();
+			final String internalizedMethodName = methodname.intern();
 			if (!methods.contains(internalizedMethodName)) {
 				methods.add(internalizedMethodName);
 			}
@@ -77,11 +85,11 @@ public class TestSet {
 	}
 
 	public void addTestSet(final TestSet testSet) {
-		for (final Map.Entry<String, List<String>> newTestEntry : testSet.entrySet()) {
+		for (final Map.Entry<ChangedEntity, List<String>> newTestEntry : testSet.entrySet()) {
 			List<String> methods = testcases.get(newTestEntry.getKey());
 			if (methods == null) {
 				methods = new LinkedList<>();
-				testcases.put(newTestEntry.getKey().intern(), methods);
+				testcases.put(newTestEntry.getKey().copy(), methods);
 			}
 			if (newTestEntry.getValue().size() != 0 && methods.size() != 0) {
 				methods.addAll(newTestEntry.getValue());
@@ -94,7 +102,7 @@ public class TestSet {
 	}
 
 	@JsonIgnore
-	public Set<Entry<String, List<String>>> entrySet() {
+	public Set<Entry<ChangedEntity, List<String>>> entrySet() {
 		return testcases.entrySet();
 	}
 
@@ -104,16 +112,19 @@ public class TestSet {
 	}
 
 	@JsonIgnore
-	public Set<String> getClasses() {
+	public Set<ChangedEntity> getClasses() {
 		return testcases.keySet();
 	}
 
-	public Map<String, List<String>> getTestcases() {
+	public Map<ChangedEntity, List<String>> getTestcases() {
 		return testcases;
 	}
 
 	@JsonIgnore
-	public void removeTest(final String testClassName, final String testMethodName) {
+	public void removeTest(final ChangedEntity testClassName, final String testMethodName) {
+		if (testClassName.getMethod() != null && testClassName.getMethod() != ""){
+			throw new RuntimeException("Testset class removal should only be done with empty method of ChangedEntity!");
+		}
 		testcases.get(testClassName).remove(testMethodName);
 	}
 

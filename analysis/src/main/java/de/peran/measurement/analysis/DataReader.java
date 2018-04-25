@@ -37,9 +37,9 @@ public final class DataReader {
 
 	public static final TestData POISON_PILL = new TestData(null);
 	private static int size = 0;
-	
-	private DataReader(){
-		
+
+	private DataReader() {
+
 	}
 
 	public static LinkedBlockingQueue<TestData> startReadVersionDataMap(final File fullDataFolder) {

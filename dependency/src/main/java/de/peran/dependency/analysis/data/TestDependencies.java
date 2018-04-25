@@ -36,13 +36,13 @@ public class TestDependencies {
 	/**
 	 * Map from testcase (package.clazz.method) to dependent class to the list of called methods of this class
 	 */
-	private final Map<String, CalledMethods> dependencyMap = new HashMap<>();
+	private final Map<ChangedEntity, CalledMethods> dependencyMap = new HashMap<>();
 	
 	public TestDependencies(){
 		
 	}
 
-	public Map<String, CalledMethods> getDependencyMap() {
+	public Map<ChangedEntity, CalledMethods> getDependencyMap() {
 		return dependencyMap;
 	}
 
@@ -51,7 +51,7 @@ public class TestDependencies {
 	 * 
 	 * @param test
 	 */
-	public Map<String, Set<String>> getDependenciesForTest(final String test) {
+	public Map<ChangedEntity, Set<String>> getDependenciesForTest(final ChangedEntity test) {
 		CalledMethods tests = dependencyMap.get(test);
 		if (tests == null) {
 			tests = new CalledMethods();
@@ -60,19 +60,20 @@ public class TestDependencies {
 		return tests.getCalledMethods();
 	}
 
-	public void removeTest(String clazz, String method) {
-		dependencyMap.remove(clazz +"."+ method);
+	public void removeTest(ChangedEntity entity) {
+		dependencyMap.remove(entity);
+//		dependencyMap.remove(clazz +"."+ method);
 	}
 
 	public int size() {
 		return dependencyMap.size();
 	}
 
-	public Map<String, Map<String, Set<String>>> getCopiedDependencies() {
-		final Map<String, Map<String, Set<String>>> copy = new HashMap<>();
-		for (final Map.Entry<String, CalledMethods> entry : dependencyMap.entrySet()) {
-			final Map<String, Set<String>> dependencies = new HashMap<>();
-			for (final Map.Entry<String, Set<String>> testcase : entry.getValue().getCalledMethods().entrySet()) {
+	public Map<ChangedEntity, Map<ChangedEntity, Set<String>>> getCopiedDependencies() {
+		final Map<ChangedEntity, Map<ChangedEntity, Set<String>>> copy = new HashMap<>();
+		for (final Map.Entry<ChangedEntity, CalledMethods> entry : dependencyMap.entrySet()) {
+			final Map<ChangedEntity, Set<String>> dependencies = new HashMap<>();
+			for (final Map.Entry<ChangedEntity, Set<String>> testcase : entry.getValue().getCalledMethods().entrySet()) {
 				final Set<String> copiedMethods = new HashSet<>();
 				copiedMethods.addAll(testcase.getValue());
 				dependencies.put(entry.getKey(), copiedMethods);

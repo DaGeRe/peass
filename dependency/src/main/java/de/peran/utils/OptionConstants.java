@@ -33,16 +33,17 @@ public enum OptionConstants {
 	WARMUP("warmup", "Iterationen, wie oft jeder Testfall als Aufwärm-Ausführung ausgeführt werden soll", false),
 	DURATION("duration", "Test duration, if a timebased testcase should be used", false),
 	USEKIEKER("usekieker", "Whether to instrument the tests with kieker (slows down execution, but delivers kieker traces)", false),
+	VMS("vms", "Count of virtual machines that should be started (after each other, in order to get reliable test results)", false),
 	REPETITIONS("repetitions", "Count every testcase should be repeated", false),
 	DEPENDENCYFILE("dependencyfile", "Dependency-Datei, aus der die auzuführenden Tests auszulesen sind", false),
 	OUT("out", "Folder for output", false),
-	INITIAL("initial", "Whether the initial version should be tested", false), 
-	VMS("vms", "Count of virtual machines that should be started (after each other, in order to get reliable test results)", false),
 	EXECUTIONFILE("executionfile", "JSON-file telling which tests to execute in each version", false),
 	FULLRESULTFOLDER("fullresultfolder", "Folder to save the full results of the tests", false), 
+	CHANGEFILE("changefile", "changefile for processing", false),
+	KNOWLEDGEFILE("knowledgefile", "knowledgefile for processing", false),
 	TEST("test", "the test to execute", false),
-	MODULE("module", "the module to research", false),
-	CHANGEFILE("changefile", "changefile for processing", false);
+	MODULE("module", "the module to research", false);
+	
 
 	private final String name, description;
 	private final boolean required;

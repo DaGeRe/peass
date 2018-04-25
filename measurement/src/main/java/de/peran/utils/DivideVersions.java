@@ -16,10 +16,10 @@ import org.apache.commons.cli.ParseException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peran.DependencyStatisticAnalyzer;
-import de.peran.DependencyTestPairStarter;
+import de.peran.dependency.analysis.data.ChangedEntity;
 import de.peran.generated.Versiondependencies;
 import de.peran.reduceddependency.ChangedTraceTests;
+import de.peran.statistics.DependencyStatisticAnalyzer;
 
 /**
  * Divides the versions of a dependencyfile (and optionally an executionfile) in order to start slurm test executions.
@@ -38,7 +38,7 @@ public class DivideVersions {
 		final Versiondependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
 		final String url = dependencies.getUrl().replaceAll("\n", "").replaceAll(" ", "");
 
-		final ChangedTraceTests changedTests = DependencyTestPairStarter.loadChangedTests(line);
+		final ChangedTraceTests changedTests = TestLoadUtil.loadChangedTests(line);
 
 		System.out.println("timestamp=$(date +%s)");
 		for (int i = 0; i < dependencies.getVersions().getVersion().size(); i++) {
@@ -47,22 +47,22 @@ public class DivideVersions {
 			if (changedTests == null) {
 				System.out.println(
 						"sbatch --nice=1000000 --time=10-0 "
-								+ "--output=/newnfs/user/do820mize/processlogs/process_" + i + "_$timestamp.out "
-								+ "--workdir=/newnfs/user/do820mize "
+								+ "--output=/nfs/user/do820mize/processlogs/process_" + i + "_$timestamp.out "
+								+ "--workdir=/nfs/user/do820mize "
 								+ "--export=PROJECT=" + url + ",HOME=/newnfs/user/do820mize,START="
 								+ endversion + ",END=" + endversion + ",INDEX=" + i + " executeTests.sh");
 			} else if (changedTests != null && changedTests.getVersions().containsKey(endversion)) {
-				for (Map.Entry<String, List<String>> testcase : changedTests.getVersions().get(endversion).getTestcases().entrySet()) {
-					for (String method : testcase.getValue()) {
+				for (final Map.Entry<ChangedEntity, List<String>> testcase : changedTests.getVersions().get(endversion).getTestcases().entrySet()) {
+					for (final String method : testcase.getValue()) {
 						System.out.println(
 								"sbatch --nice=1000000 --time=10-0 "
-										+ "--output=/newnfs/user/do820mize/processlogs/process_" + i + "_" + method + "_$timestamp.out "
-										+ "--workdir=/newnfs/user/do820mize "
+										+ "--output=/nfs/user/do820mize/processlogs/process_" + i + "_" + method + "_$timestamp.out "
+										+ "--workdir=/nfs/user/do820mize "
 										+ "--export=PROJECT=" + url + ",HOME=/newnfs/user/do820mize,"
 										+ "START=" + endversion + ","
 										+ "END=" + endversion + ","
 										+ "INDEX=" + i + ","
-										+ "TEST=" + testcase.getKey() + "#" + method + " executeTests.sh");
+										+ "TEST=" + testcase.getKey().getJavaClazzName() + "#" + method + " executeTests.sh");
 					}
 				}
 			}

@@ -21,10 +21,18 @@
 							<xs:element name="initialdependency" maxOccurs="unbounded">
 								<xs:complexType>
 									<xs:sequence>
-										<xs:element name="dependentclass" type="xs:string"
-											maxOccurs="unbounded" />
+										<xs:element name="dependentclass" maxOccurs="unbounded">
+											<xs:complexType>
+												<xs:simpleContent>
+													<xs:extension base="xs:string">
+														<xs:attribute name="module" type="xs:string" />
+													</xs:extension>
+												</xs:simpleContent>
+											</xs:complexType>
+										</xs:element>
 									</xs:sequence>
 									<xs:attribute name="testclass" type="xs:string" />
+									<xs:attribute name="module" type="xs:string" />
 								</xs:complexType>
 							</xs:element>
 						</xs:sequence>
@@ -48,10 +56,12 @@
 																	maxOccurs="unbounded" />
 															</xs:sequence>
 															<xs:attribute name="class" type="xs:string" />
+															<xs:attribute name="module" type="xs:string" />
 														</xs:complexType>
 													</xs:element>
 												</xs:sequence>
 												<xs:attribute name="changedclass" type="xs:string" />
+												<xs:attribute name="module" type="xs:string" />
 											</xs:complexType>
 										</xs:element>
 									</xs:sequence>

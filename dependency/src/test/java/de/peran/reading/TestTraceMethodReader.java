@@ -28,8 +28,10 @@ import de.peran.utils.StreamGobbler;
 public class TestTraceMethodReader {
 
 	private final File tmpFolder = new File("target/kieker_results_test/");
-	private final String repo = System.getenv("HOME") + "/.m2/repository";
-	
+	private final String KOPEME_VERSION = "0.8.1";
+	private final String REPO = System.getenv("HOME") + "/.m2/repository";
+	private final String KOPEME_JAR = REPO + "/de/dagere/kopeme/kopeme-core/" + KOPEME_VERSION + "/kopeme-core-" + KOPEME_VERSION + ".jar";
+
 	@Before
 	public void init() {
 		tmpFolder.mkdirs();
@@ -47,8 +49,9 @@ public class TestTraceMethodReader {
 
 	@Test
 	public void testTraceLengthSimpleFor() throws ParseException, IOException {
-		final ProcessBuilder builder = new ProcessBuilder("java", "-javaagent:" + repo + "/net/kieker-monitoring/kieker/1.12/kieker-1.12-aspectj.jar", "-cp",
-				repo + "/de/dagere/kopeme/kopeme-core/0.11/kopeme-core-0.11.jar:target/test-classes/",
+		final ProcessBuilder builder = new ProcessBuilder("java",
+				"-javaagent:" + REPO + "/net/kieker-monitoring/kieker/1.12/kieker-1.12-aspectj.jar",
+				"-cp", KOPEME_JAR + ":target/test-classes/",
 				"de.peran.example.CallerSimpleFor");
 		final Process process = builder.start();
 
@@ -58,7 +61,7 @@ public class TestTraceMethodReader {
 
 		final File traceFolder = kiekerFolders[0];
 		//
-		final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder).getShortTrace(""), new File("src/test/java"));
+		final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder, tmpFolder).getShortTrace(""), new File("src/test/java"));
 		final TraceWithMethods trace = reader.getTraceWithMethods();
 
 		System.out.println(trace.getWholeTrace());
@@ -71,8 +74,8 @@ public class TestTraceMethodReader {
 
 	@Test
 	public void testTraceLengthLongFor() throws ParseException, IOException {
-		final ProcessBuilder builder = new ProcessBuilder("java", "-javaagent:" + repo + "/net/kieker-monitoring/kieker/1.12/kieker-1.12-aspectj.jar", "-cp",
-				repo + "/de/dagere/kopeme/kopeme-core/0.11/kopeme-core-0.11.jar:target/test-classes/",
+		final ProcessBuilder builder = new ProcessBuilder("java", "-javaagent:" + REPO + "/net/kieker-monitoring/kieker/1.12/kieker-1.12-aspectj.jar", "-cp",
+				KOPEME_JAR + ":target/test-classes/",
 				"de.peran.example.CallerLongFor");
 		final Process process = builder.start();
 
@@ -81,7 +84,7 @@ public class TestTraceMethodReader {
 
 		final File traceFolder = kiekerFolders[0];
 
-		final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder).getShortTrace(""), new File("src/test/java"));
+		final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder, tmpFolder).getShortTrace(""), new File("src/test/java"));
 		final TraceWithMethods trace = reader.getTraceWithMethods();
 
 		System.out.println(trace.getWholeTrace());

@@ -8,14 +8,13 @@ import java.io.File;
  *
  */
 public class PeASSFolderUtil {
-	static File projectFolder;
-	static File resultFolder;
-	static File fullResultFolder;
-	static File tempResultFolder;
-	static File logFolder;
-	static File lastSourceFolder;
-	static File measurementLogFolder;
-	static File detailFolder;
+	private static File projectFolder;
+	private static File resultFolder;
+	private static File fullResultFolder;
+	private static File tempResultFolder;
+	private static File logFolder;
+	private static File lastSourceFolder;
+	private static File detailFolder;
 
 	public static void setProjectFolder(final File folder) {
 		projectFolder = folder;
@@ -31,8 +30,6 @@ public class PeASSFolderUtil {
 		lastSourceFolder.mkdir();
 		fullResultFolder = new File(peassFolder, "measurementsFull");
 		fullResultFolder.mkdir();
-//		measurementLogFolder = new File(fullResultFolder, "logs");
-//		measurementLogFolder.mkdir();
 		detailFolder = new File(fullResultFolder, "measurements");
 		detailFolder.mkdir();
 		tempResultFolder = new File(peassFolder, "measurementsTemp");

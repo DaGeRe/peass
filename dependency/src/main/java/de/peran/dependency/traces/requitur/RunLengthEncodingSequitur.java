@@ -45,13 +45,13 @@ public class RunLengthEncodingSequitur {
 
 	private void subReduce(final Symbol containingSymbol) {
 		if (containingSymbol.isRule()) {
-			System.out.println("Reduce: " + containingSymbol);
+			LOG.trace("Reduce: {}", containingSymbol);
 			final Rule rule = containingSymbol.getRule();
 			final Symbol iterator = rule.getAnchor();
 			reduce(iterator);
 			final Symbol firstSymbolOfRule = iterator.getSucessor();
-			System.out.println("Reduced: " + rule.getName());
-			System.out.println("Rule-Length: " + rule.getElements().size() + " " + (firstSymbolOfRule.getSucessor() == iterator));
+			LOG.trace("Reduced: {}", rule.getName());
+			LOG.trace("Rule-Length: {}", rule.getElements().size() + " " + (firstSymbolOfRule.getSucessor() == iterator));
 			if (firstSymbolOfRule.getSucessor() == iterator) { // Irgendwie entsteht hier die Zuordnung #1 auf Regel #0
 				containingSymbol.setValue(firstSymbolOfRule.getValue());
 				containingSymbol.setOccurences(containingSymbol.getOccurences() * firstSymbolOfRule.getOccurences());
@@ -61,12 +61,11 @@ public class RunLengthEncodingSequitur {
 				} else {
 					firstSymbolOfRule.setRule(null);
 				}
-				 
+
 			}
 			// TraceStateTester.testTrace(sequitur);
 		}
 	}
-
 
 	public List<ReducedTraceElement> getReadableRLETrace() {
 		Symbol iterator = sequitur.getStartSymbol().getSucessor();
@@ -80,7 +79,7 @@ public class RunLengthEncodingSequitur {
 
 	private int addReadableElement(final Symbol iterator, final List<ReducedTraceElement> trace) {
 		final Content content = iterator.getValue();
-		LOG.debug("Add: " + content + " " + content.getClass());
+		LOG.trace("Add: {} {}", content, content.getClass());
 		final ReducedTraceElement newElement = new ReducedTraceElement(content, iterator.getOccurences());
 		if (content instanceof RuleContent) {
 			final RuleContent currentContent = (RuleContent) content;

@@ -21,6 +21,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peran.dependency.analysis.data.TestSet;
+import de.peran.dependency.execution.MavenPomUtil;
 import de.peran.dependency.execution.TestExecutor;
 
 /**
@@ -42,7 +43,7 @@ public class SysoutTestExecutor extends TestExecutor {
 	public static final String COMPILER_ARTIFACTID = "maven-compiler-plugin";
 
 	public SysoutTestExecutor(final File projectFolder) {
-		super(projectFolder, projectFolder, new File(projectFolder.getParent(), projectFolder.getName() + "_sysout"));
+		super(projectFolder, new File(projectFolder.getParent(), projectFolder.getName() + "_sysout"));
 	}
 
 	private Process buildProcess(final File logFile, final String... commandLineAddition) throws IOException {
@@ -139,7 +140,7 @@ public class SysoutTestExecutor extends TestExecutor {
 
 	@Override
 	public boolean isVersionRunning() {
-		throw new RuntimeException("Not implemented yet");
+		return MavenPomUtil.testRunning(projectFolder);
 	}
 
 }

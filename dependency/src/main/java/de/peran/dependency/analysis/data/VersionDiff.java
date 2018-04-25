@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Holds data of the difference between two versions, i.e. which classes are changed and whether the pom has changed or not.
+ * 
  * @author reichelt
  *
  */
@@ -32,11 +33,13 @@ public class VersionDiff {
 	private static final Logger LOG = LogManager.getLogger(VersionDiff.class);
 
 	private boolean pomChanged;
-	private final List<String> changedClasses;
+	private final List<ChangedEntity> changedClasses;
+	private final List<String> modules;
 
-	public VersionDiff() {
+	public VersionDiff(List<String> modules) {
 		changedClasses = new LinkedList<>();
 		pomChanged = false;
+		this.modules = modules;
 	}
 
 	/**
@@ -53,15 +56,8 @@ public class VersionDiff {
 		this.pomChanged = pomChanged;
 	}
 
-	public List<String> getChangedClasses() {
+	public List<ChangedEntity> getChangedClasses() {
 		return changedClasses;
-	}
-
-	/**
-	 * @param changedClasses the changedClasses to set
-	 */
-	public void addChangedClass(final String changedClass) {
-		changedClasses.add(changedClass);
 	}
 
 	public void addChange(final String currentFileName) {
@@ -73,8 +69,19 @@ public class VersionDiff {
 				if (indexOf == -1) {
 					LOG.error("Index von src nicht gefunden: " + currentFileName);
 				} else {
-					final String classPath = currentFileName.substring(indexOf);
-					addChangedClass(classPath);
+					if (indexOf != 0) {
+						final String classPath = currentFileName.substring(indexOf);
+						final String modulePath = currentFileName.substring(0, indexOf - 1);
+						if (modules.contains(modulePath)){
+						   changedClasses.add(new ChangedEntity(classPath, modulePath));
+						}else{
+						   LOG.error("Unexpected Module: {} Ignoring {}", modulePath, currentFileName);
+						}
+					
+					} else {
+						changedClasses.add(new ChangedEntity(currentFileName, ""));
+					}
+
 				}
 			}
 		}
@@ -83,9 +90,18 @@ public class VersionDiff {
 	@Override
 	public String toString() {
 		String ret = "Pom: " + pomChanged + " Klassen: ";
-		for (final String cl : changedClasses) {
-			ret += cl + "\n";
+		for (final ChangedEntity cl : changedClasses) {
+			if (cl.getModule().length() > 0) {
+				ret += cl.getClazz() + "\n";
+			} else {
+				ret += cl.getModule() + "-" + cl.getClazz() + "\n";
+			}
 		}
 		return ret;
 	}
+
+   public void addChange(String line, List<String> modules) {
+      // TODO Auto-generated method stub
+      
+   }
 }

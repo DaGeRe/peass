@@ -25,8 +25,10 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peran.dependency.analysis.data.VersionDiff;
+import de.peran.dependency.execution.MavenPomUtil;
 import de.peran.utils.StreamGobbler;
 
 /**
@@ -56,7 +58,7 @@ public final class GitUtils {
 		final String command = "git clone " + url + " " + folder.getAbsolutePath();
 		try {
 			LOG.debug("Command: " + command);
-			Process p = Runtime.getRuntime().exec(command);
+			final Process p = Runtime.getRuntime().exec(command);
 			StreamGobbler.showFullProcess(p);
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
@@ -88,6 +90,12 @@ public final class GitUtils {
 			}
 		}
 		commits.removeAll(notRelevantCommits);
+	}
+	
+	public static List<GitCommit> getCommits(final File folder, final String startversion, final String endversion){
+		final List<GitCommit> commits = getCommits(folder);
+		GitUtils.filterList(startversion, endversion, commits);
+		return commits;
 	}
 
 	/**
@@ -141,15 +149,16 @@ public final class GitUtils {
 	public static VersionDiff getChangedClasses(final File projectFolder) {
 		try {
 			final Process p = Runtime.getRuntime().exec("git diff --name-only HEAD^ HEAD", null, projectFolder);
-			return getDiffFromProcess(p);
-		} catch (final IOException e) {
+			final List<String> moduleNames = MavenPomUtil.getModuleNames(new File(projectFolder, "pom.xml"));
+			return getDiffFromProcess(p, moduleNames);
+		} catch (final IOException | XmlPullParserException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
 
-	private static VersionDiff getDiffFromProcess(final Process p) {
-		final VersionDiff diff = new VersionDiff();
+	private static VersionDiff getDiffFromProcess(final Process p, List<String> modules) {
+		final VersionDiff diff = new VersionDiff(modules);
 		final String output = StreamGobbler.getFullProcess(p, false);
 		for (final String line : output.split("\n")) {
 			diff.addChange(line);
@@ -185,12 +194,27 @@ public final class GitUtils {
 	public static String getURL(final File projectFolder) {
 		try {
 			final Process process = Runtime.getRuntime().exec("git config --get remote.origin.url", new String[0], projectFolder);
-			final String url = StreamGobbler.getFullProcess(process, false);
+			final String url = StreamGobbler.getFullProcess(process, false).replace("\n", "");
 			return url;
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 		return null;
 	}
+	
+	public static String getName(String gitCommit, File projectFolder){
+	   try {
+         final Process process = Runtime.getRuntime().exec("git rev-parse "+ gitCommit, new String[0], projectFolder);
+         final String tag = StreamGobbler.getFullProcess(process, false).replace("\n", "");
+         return tag;
+      } catch (final IOException e) {
+         e.printStackTrace();
+      }
+      return null;
+	}
+
+   public static String getPrevious(String gitCommit, File projectFolder) {
+      return getName(gitCommit+"~1", projectFolder);
+   }
 
 }

@@ -7,9 +7,10 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
-import de.peran.DependencyStatisticAnalyzer;
 import de.peran.generated.Versiondependencies;
 import de.peran.generated.Versiondependencies.Initialversion.Initialdependency;
+import de.peran.generated.Versiondependencies.Initialversion.Initialdependency.Dependentclass;
+import de.peran.statistics.DependencyStatisticAnalyzer;
 /**
  * Compares two dependency files in order to find whether one is missing some testcases
  * @author reichelt
@@ -27,12 +28,12 @@ public class CompareDependencies {
 		
 		final List<Initialdependency> notFoundNewDependencies = new LinkedList<>();
 		notFoundNewDependencies.addAll(newDependencies.getInitialversion().getInitialdependency());
-		for (Initialdependency initialDepOld : oldDependencies.getInitialversion().getInitialdependency()) {
-			for (Initialdependency initialDepNew : newDependencies.getInitialversion().getInitialdependency()) {
+		for (final Initialdependency initialDepOld : oldDependencies.getInitialversion().getInitialdependency()) {
+			for (final Initialdependency initialDepNew : newDependencies.getInitialversion().getInitialdependency()) {
 				if (initialDepNew.getTestclass().equals(initialDepOld.getTestclass())) {
-					List<String> missing = getDifference(initialDepOld, initialDepNew);
+					final List<String> missing = getDifference(initialDepOld, initialDepNew);
 
-					List<String> added = getDifference(initialDepNew, initialDepOld);
+					final List<String> added = getDifference(initialDepNew, initialDepOld);
 					if (missing.size() > 0 || added.size() > 0) {
 						System.out.println("Test: " + initialDepNew.getTestclass() + "(" + initialDepNew.getDependentclass().size() +" " + initialDepOld.getDependentclass().size() + ")");
 						System.out.println("Missing: " + missing);
@@ -50,18 +51,22 @@ public class CompareDependencies {
 
 		System.out.println("Missing testcases: " + notFoundNewDependencies.size());
 
-		for (Initialdependency change : notFoundNewDependencies) {
+		for (final Initialdependency change : notFoundNewDependencies) {
 			System.out.println("Missing: " + change.getTestclass());
 		}
 
 	}
 
 	private static List<String> getDifference(final Initialdependency initialDepOld, final Initialdependency initialDepNew) {
-		List<String> missing = new LinkedList<>();
-		missing.addAll(initialDepOld.getDependentclass());
-		missing.removeAll(initialDepNew.getDependentclass());
-		for (Iterator<String> it = missing.iterator(); it.hasNext();) {
-			String current = it.next();
+		final List<String> missing = new LinkedList<>();
+		for (final Dependentclass clazz : initialDepOld.getDependentclass()){
+			missing.add(clazz.getValue());
+		}
+		for (final Dependentclass clazz : initialDepNew.getDependentclass()){
+			missing.remove(clazz.getValue());
+		}
+		for (final Iterator<String> it = missing.iterator(); it.hasNext();) {
+			final String current = it.next();
 			if (current.endsWith("getMaximalTime") || current.endsWith("getExecutionTimes") || current.endsWith("getWarmupExecutions")) {
 				it.remove();
 			}

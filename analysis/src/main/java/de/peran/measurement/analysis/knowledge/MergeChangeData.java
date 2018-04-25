@@ -17,13 +17,13 @@ import de.peran.analysis.knowledge.VersionKnowledge;
 
 public class MergeChangeData {
 
-	private final static ObjectMapper objectMapper = new ObjectMapper();
+	private final static ObjectMapper MAPPER = new ObjectMapper();
 
 	public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
 		VersionKnowledge merged = new VersionKnowledge();
 		for (File json : AnalyseOneTest.RESULTFOLDER.listFiles()) {
 			if (json.getName().endsWith(".json")) {
-				VersionKnowledge knowledge = objectMapper.readValue(json, VersionKnowledge.class);
+				VersionKnowledge knowledge = MAPPER.readValue(json, VersionKnowledge.class);
 				for (Map.Entry<String, Changes> entry : knowledge.getVersionChanges().entrySet()) {
 					if (!merged.getVersionChanges().containsKey(entry.getKey())) {
 						merged.getVersionChanges().put(entry.getKey(), entry.getValue());
@@ -69,7 +69,7 @@ public class MergeChangeData {
 
 		File mergedFile = new File(AnalyseOneTest.RESULTFOLDER, "merged.json");
 
-		objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-		objectMapper.writeValue(mergedFile, merged);
+		MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
+		MAPPER.writeValue(mergedFile, merged);
 	}
 }

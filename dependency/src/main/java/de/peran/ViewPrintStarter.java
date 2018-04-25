@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,6 +18,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -32,6 +32,7 @@ import de.peran.dependency.analysis.CalledMethodLoader;
 import de.peran.dependency.analysis.data.TestCase;
 import de.peran.dependency.analysis.data.TestSet;
 import de.peran.dependency.analysis.data.TraceElement;
+import de.peran.dependency.execution.MavenPomUtil;
 import de.peran.dependency.traces.TraceMethodReader;
 import de.peran.dependency.traces.TraceWithMethods;
 import de.peran.dependencyprocessors.PairProcessor;
@@ -53,7 +54,8 @@ public class ViewPrintStarter extends PairProcessor {
 
 	private static final Logger LOG = LogManager.getLogger(ViewPrintStarter.class);
 
-	private static  final ObjectMapper MAPPER = new ObjectMapper();
+	private static final ObjectMapper MAPPER = new ObjectMapper();
+	
 	static {
 		MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
 	}
@@ -66,6 +68,8 @@ public class ViewPrintStarter extends PairProcessor {
 		super(args);
 		final File resultFolder = DependencyReadingStarter.getResultFolder();
 		final String projectName = projectFolder.getName();
+		final String url = GitUtils.getURL(projectFolder);
+		changedTraceMethods.setUrl(url);
 
 		traceFolder = new File(resultFolder, "views_" + projectName);
 		if (!traceFolder.exists()) {
@@ -78,14 +82,13 @@ public class ViewPrintStarter extends PairProcessor {
 			final VersionKnowledge knowledge = new ObjectMapper().readValue(changeFile, VersionKnowledge.class);
 
 			for (final Iterator<Version> iterator = dependencies.getVersions().getVersion().iterator(); iterator.hasNext();) {
-				final Version v = iterator.next();
-				final Changes changes = knowledge.getVersion(v.getVersion());
+				final Version version = iterator.next();
+				final Changes changes = knowledge.getVersion(version.getVersion());
 				if (changes.getTestcaseChanges().size() == 0) {
 					iterator.remove();
 				}
 			}
 		}
-
 	}
 
 	@Override
@@ -94,9 +97,15 @@ public class ViewPrintStarter extends PairProcessor {
 		LOG.info("View-Generation for Version {}", version);
 		final Set<TestCase> testcases = findTestcases(versioninfo);
 
-		if (!VersionComparator.isBefore(version, startversion)) {
+		final boolean beforeEndVersion = endversion == null || version.equals(endversion) || VersionComparator.isBefore(version, endversion);
+		LOG.debug("Before End Version {}: {}", endversion, beforeEndVersion);
+      if (!VersionComparator.isBefore(version, startversion) && beforeEndVersion) {
 			for (final TestCase testcase : testcases) {
 				if (lastTestcaseCalls.containsKey(testcase)) {
+				   if (!testcase.getClazz().endsWith("IOUtilsCopyTestCase")){
+				      continue;
+				   }
+				   
 					final String versionOld = lastTestcaseCalls.get(testcase);
 
 					final File viewResultsFolder = new File(traceFolder, "view_" + version);
@@ -124,13 +133,10 @@ public class ViewPrintStarter extends PairProcessor {
 								changedTraceMethods.addCall(version, testcase);
 							}
 						}
-
-					} catch (IOException | InterruptedException | com.github.javaparser.ParseException e) {
+					} catch (final ViewNotFoundException | XmlPullParserException | IOException | InterruptedException | com.github.javaparser.ParseException e) {
 						e.printStackTrace();
-					} catch (final ViewNotFoundException e) {
-						e.printStackTrace();
-					}
-
+					} 
+					System.exit(1);
 				}
 				try (FileWriter fw = new FileWriter(executeFile)) {
 					fw.write(MAPPER.writeValueAsString(changedTraceMethods));
@@ -147,8 +153,8 @@ public class ViewPrintStarter extends PairProcessor {
 		}
 	}
 
-	private boolean generateTraces(final String version, final TestCase testcase, final String versionOld, final File clazzDir, final Map<String, List<File>> traceFileMap)
-			throws IOException, InterruptedException, com.github.javaparser.ParseException, ViewNotFoundException {
+	protected boolean generateTraces(final String version, final TestCase testcase, final String versionOld, final File clazzDir, final Map<String, List<File>> traceFileMap)
+			throws IOException, InterruptedException, com.github.javaparser.ParseException, ViewNotFoundException, XmlPullParserException {
 		for (final String githash : new String[] { versionOld, version }) {
 			LOG.debug("Checkout...");
 			GitUtils.goToTag(githash, projectFolder);
@@ -156,12 +162,17 @@ public class ViewPrintStarter extends PairProcessor {
 			LOG.debug("Calling Maven-Kieker...");
 			final TestResultManager tracereader = new TestResultManager(projectFolder);
 			final TestSet testset = new TestSet();
-			testset.addTest(testcase.getClazz(), testcase.getMethod());
+			testset.addTest(testcase);
 			tracereader.executeKoPeMeKiekerRun(testset, githash);
 
 			LOG.debug("Trace-Analysis..");
-			final boolean worked = analyseTrace(testcase, clazzDir, traceFileMap, githash,
-					tracereader.getXMLFileFolder());
+			final File moduleFolder;
+			if (testcase.getModule() != null) {
+				moduleFolder = tracereader.getXMLFileFolder(new File(projectFolder, testcase.getModule()));
+			} else {
+				moduleFolder = tracereader.getXMLFileFolder(projectFolder);
+			}
+			final boolean worked = analyseTrace(testcase, clazzDir, traceFileMap, githash, moduleFolder);
 			if (!worked) {
 				return false;
 			}
@@ -180,7 +191,7 @@ public class ViewPrintStarter extends PairProcessor {
 	 * @return Whether a change happened
 	 * @throws IOException If files can't be read of written
 	 */
-	private boolean generateDiffFiles(final TestCase testcase, final File diffFolder, final Map<String, List<File>> traceFileMap) throws IOException {
+	protected boolean generateDiffFiles(final TestCase testcase, final File diffFolder, final Map<String, List<File>> traceFileMap) throws IOException {
 		final File diffFile = new File(diffFolder, testcase.getMethod() + ".txt");
 		final File diffFileMethod = new File(diffFolder, testcase.getMethod() + "_method.txt");
 		final List<File> traceFiles = traceFileMap.get(testcase.getMethod());
@@ -210,7 +221,7 @@ public class ViewPrintStarter extends PairProcessor {
 	}
 
 	private boolean analyseTrace(final TestCase testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File resultsFolder)
-			throws com.github.javaparser.ParseException, IOException, ViewNotFoundException {
+			throws com.github.javaparser.ParseException, IOException, ViewNotFoundException, XmlPullParserException {
 		final File projectResultFolder = new File(resultsFolder, testcase.getClazz());
 		final File[] listFiles = projectResultFolder.listFiles(new FileFilter() {
 			@Override
@@ -234,11 +245,18 @@ public class ViewPrintStarter extends PairProcessor {
 			if (sizeInMB < 2000) {
 				final File[] possiblyMethodFolder = methodResult.listFiles();
 				final File kiekerResultFolder = possiblyMethodFolder[0];
-				final ArrayList<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder).getShortTrace("");
+				final List<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, projectFolder).getShortTrace("");
 				LOG.debug("Short Trace: {}", shortTrace.size());
-				final TraceMethodReader traceMethodReader = new TraceMethodReader(shortTrace, 
-						new File(projectFolder, "src/main/java"), new File(projectFolder, "src/java"),
-						new File(projectFolder, "src/test/java"), new File(projectFolder, "src/test"));
+				final List<File> modules = MavenPomUtil.getModules(new File(projectFolder, "pom.xml"));
+				final File[] files = new File[modules.size() * 4];
+				for (int i = 0; i < modules.size(); i++) {
+					files[i] = new File(modules.get(i), "src/main/java");
+					files[i + 1] = new File(modules.get(i), "src/java");
+					files[i + 2] = new File(modules.get(i), "src/test/java");
+					files[i + 3] = new File(modules.get(i), "src/test");
+				}
+
+				final TraceMethodReader traceMethodReader = new TraceMethodReader(shortTrace, files);
 				final TraceWithMethods trace = traceMethodReader.getTraceWithMethods();
 				List<File> traceFile = traceFileMap.get(testcase.getMethod());
 				if (traceFile == null) {

@@ -8,16 +8,17 @@ import java.util.TreeSet;
 
 /**
  * Manages data about test existence changes, i.e. tests that are added or removed
+ * 
  * @author reichelt
  *
  */
 public class TestExistenceChanges {
 	
 	//Map from dependency (fqn) -> testcase
-	private final Map<String, Set<String>> addedTests = new TreeMap<>();
+	private final Map<ChangedEntity, Set<ChangedEntity>> addedTests = new TreeMap<>();
 	private final Set<TestCase> removedTests = new HashSet<>();
 
-	public Map<String, Set<String>> getAddedTests() {
+	public Map<ChangedEntity, Set<ChangedEntity>> getAddedTests() {
 		return addedTests;
 	}
 
@@ -29,11 +30,11 @@ public class TestExistenceChanges {
 		removedTests.add(testcase);
 	}
 
-	public void addAddedTest(String changedclass, String changedMethod, String testcase) {
-		Set<String> testcaseSet = addedTests.get(changedclass+"."+changedMethod);
+	public void addAddedTest(ChangedEntity changedEntity, ChangedEntity testcase) {
+		Set<ChangedEntity> testcaseSet = addedTests.get(changedEntity);
 		if (testcaseSet == null) {
 			testcaseSet = new TreeSet<>();
-			addedTests.put(changedclass, testcaseSet);
+			addedTests.put(changedEntity, testcaseSet);
 		}
 		testcaseSet.add(testcase);
 		

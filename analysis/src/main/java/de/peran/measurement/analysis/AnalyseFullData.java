@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -39,31 +38,31 @@ import de.peran.measurement.analysis.statistics.TestData;
  * @author reichelt
  *
  */
-public class AnalyseFullData {
+public class AnalyseFullData extends DataAnalyser {
 
 	private static final Logger LOG = LogManager.getLogger(AnalyseFullData.class);
 
 	public static Set<String> versions = new HashSet<>();
 	public static int testcases = 0, changes = 0;
 
-	public static void analyseFolder(final File fullDataFolder) throws InterruptedException {
-		LOG.info("Loading: {}", fullDataFolder);
-
-		if (!fullDataFolder.exists()) {
-			LOG.error("Ordner existiert nicht!");
-			System.exit(1);
-		}
-
-		final LinkedBlockingQueue<TestData> measurements = DataReader.startReadVersionDataMap(fullDataFolder);
-
-		TestData measurementEntry = measurements.take();
-
-		while (measurementEntry != DataReader.POISON_PILL) {
-			processTestdata(measurementEntry);
-
-			measurementEntry = measurements.take();
-		}
-	}
+//	public static void analyseFolder(final File fullDataFolder) throws InterruptedException {
+//		LOG.info("Loading: {}", fullDataFolder);
+//
+//		if (!fullDataFolder.exists()) {
+//			LOG.error("Ordner existiert nicht!");
+//			System.exit(1);
+//		}
+//
+//		final LinkedBlockingQueue<TestData> measurements = DataReader.startReadVersionDataMap(fullDataFolder);
+//
+//		TestData measurementEntry = measurements.take();
+//
+//		while (measurementEntry != DataReader.POISON_PILL) {
+//			processTestdata(measurementEntry);
+//
+//			measurementEntry = measurements.take();
+//		}
+//	}
 
 	private static File myFile = new File("results_summary.csv");
 
@@ -76,22 +75,22 @@ public class AnalyseFullData {
 	static {
 		try {
 			csvResultWriter = new BufferedWriter(new FileWriter(myFile));
-			for (File potentialKnowledgeFile : AnalyseOneTest.RESULTFOLDER.listFiles()) {
+			for (final File potentialKnowledgeFile : AnalyseOneTest.RESULTFOLDER.listFiles()) {
 				if (!potentialKnowledgeFile.isDirectory()) {
-					VersionKnowledge knowledge = new ObjectMapper().readValue(potentialKnowledgeFile, VersionKnowledge.class);
-					for (Map.Entry<String, Changes> oldFileEntry : knowledge.getVersionChanges().entrySet()) {
-						Changes version = oldKnowledge.getVersion(oldFileEntry.getKey());
+					final VersionKnowledge knowledge = new ObjectMapper().readValue(potentialKnowledgeFile, VersionKnowledge.class);
+					for (final Map.Entry<String, Changes> oldFileEntry : knowledge.getVersionChanges().entrySet()) {
+						final Changes version = oldKnowledge.getVersion(oldFileEntry.getKey());
 						if (version == null) {
 							oldKnowledge.getVersionChanges().put(oldFileEntry.getKey(), oldFileEntry.getValue());
 						} else {
-							for (Map.Entry<String, List<Change>> versionEntry : oldFileEntry.getValue().getTestcaseChanges().entrySet()) {
-								List<Change> changes = version.getTestcaseChanges().get(versionEntry.getKey());
+							for (final Map.Entry<String, List<Change>> versionEntry : oldFileEntry.getValue().getTestcaseChanges().entrySet()) {
+								final List<Change> changes = version.getTestcaseChanges().get(versionEntry.getKey());
 								if (changes == null) {
 									version.getTestcaseChanges().put(versionEntry.getKey(), versionEntry.getValue());
 								} else {
-									for (Change oldChange : versionEntry.getValue()) {
+									for (final Change oldChange : versionEntry.getValue()) {
 										boolean found = false;
-										for (Change change : changes) {
+										for (final Change change : changes) {
 											if (change.getDiff().equals(oldChange.getDiff())) {
 												found = true;
 												if (oldChange.getType() != null) {
@@ -120,14 +119,14 @@ public class AnalyseFullData {
 			}
 
 		} catch (final IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
+
 	private static final double CONFIDENCE = 0.01;
 
-	private static void processTestdata(final TestData measurementEntry) {
+	@Override
+	public void processTestdata(final TestData measurementEntry) {
 		for (final Entry<String, EvaluationPair> entry : measurementEntry.getMeasurements().entrySet()) {
 			final Changes changeList = knowledge.getVersion(entry.getKey());
 			LOG.debug("Analysing: {} ({}#{}) Complete: {}", entry.getKey(), measurementEntry.getTestClass(), measurementEntry.getTestMethod(), entry.getValue().isComplete());
@@ -158,8 +157,6 @@ public class AnalyseFullData {
 			previus = MinimalExecutionDeterminer.cutValuesMiddle(previus);
 			current = MinimalExecutionDeterminer.cutValuesMiddle(current);
 			// }
-			
-			
 
 			final int resultslength = Math.min(previus.size(), current.size());
 
@@ -170,23 +167,22 @@ public class AnalyseFullData {
 				removeOutliers(current);
 				final DescriptiveStatistics statistics1 = ConfidenceIntervalInterpretion.getStatistics(previus);
 				final DescriptiveStatistics statistics2 = ConfidenceIntervalInterpretion.getStatistics(current);
-				
+
 				final List<Double> before_double = MultipleVMTestUtil.getAverages(previus);
 				final List<Double> after_double = MultipleVMTestUtil.getAverages(current);
-				
-//				final List<Result> prevResults = previus.subList(0, resultslength);
-//				final List<Result> currentResults = current.subList(0, resultslength);
+
+				// final List<Result> prevResults = previus.subList(0, resultslength);
+				// final List<Result> currentResults = current.subList(0, resultslength);
 				final Relation confidenceResult = ConfidenceIntervalInterpretion.compare(previus, current);
 				// final Relation anovaResult = ANOVATestWrapper.compare(prevResults, currentResults);
-				
-				DescriptiveStatistics ds = new DescriptiveStatistics(ArrayUtils.toPrimitive(before_double.toArray(new Double[0])));
-				DescriptiveStatistics ds2 = new DescriptiveStatistics(ArrayUtils.toPrimitive(after_double.toArray(new Double[0])));
-				System.out.println(ds.getMean() + " " + ds2.getMean() + " " + ds.getStandardDeviation() + " " + ds2.getStandardDeviation());
-				
-				double tValue = TestUtils.t(ArrayUtils.toPrimitive(before_double.toArray(new Double[0])), ArrayUtils.toPrimitive(after_double.toArray(new Double[0])));
+
+				final DescriptiveStatistics ds = new DescriptiveStatistics(ArrayUtils.toPrimitive(before_double.toArray(new Double[0])));
+				final DescriptiveStatistics ds2 = new DescriptiveStatistics(ArrayUtils.toPrimitive(after_double.toArray(new Double[0])));
+				LOG.debug(ds.getMean() + " " + ds2.getMean() + " " + ds.getStandardDeviation() + " " + ds2.getStandardDeviation());
+
+				final double tValue = TestUtils.t(ArrayUtils.toPrimitive(before_double.toArray(new Double[0])), ArrayUtils.toPrimitive(after_double.toArray(new Double[0])));
 				final boolean change = TestUtils.tTest(ArrayUtils.toPrimitive(before_double.toArray(new Double[0])), ArrayUtils.toPrimitive(after_double.toArray(new Double[0])), CONFIDENCE);
 
-				
 				final int diff = (int) (((statistics1.getMean() - statistics2.getMean()) * 10000) / statistics1.getMean());
 				// double anovaDeviation = ANOVATestWrapper.getANOVADeviation(prevResults, currentResults);
 				LOG.debug("Means: {} {} Diff: {} % T-Value: {} Change: {}", statistics1.getMean(), statistics2.getMean(), ((double) diff) / 100, tValue, change);
@@ -221,12 +217,12 @@ public class AnalyseFullData {
 
 	private static void removeOutliers(List<Result> previus) {
 		final DescriptiveStatistics statistics1 = ConfidenceIntervalInterpretion.getStatistics(previus);
-		for (Iterator<Result> result = previus.iterator(); result.hasNext(); ){
+		for (final Iterator<Result> result = previus.iterator(); result.hasNext();) {
 			final Result r = result.next();
 			final double diff = Math.abs(r.getValue() - statistics1.getPercentile(50));
 			final double z = diff / statistics1.getStandardDeviation();
-			LOG.debug("Val: {} Z: {} Remove: {}", r.getValue() , z, z > 3);
-			if (z > 3){
+			LOG.debug("Val: {} Z: {} Remove: {}", r.getValue(), z, z > 3);
+			if (z > 3) {
 				result.remove();
 			}
 		}

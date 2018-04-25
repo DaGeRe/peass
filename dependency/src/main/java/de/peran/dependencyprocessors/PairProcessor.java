@@ -48,7 +48,7 @@ public abstract class PairProcessor extends VersionProcessor{
 		for (final Dependency dependency : versioninfo.getDependency()) {
 			for (final Testcase testcaseXML : dependency.getTestcase()) {
 				for (final String method : testcaseXML.getMethod()) {
-					final TestCase testcase = new TestCase(testcaseXML.getClazz(), method);
+					final TestCase testcase = new TestCase(testcaseXML.getClazz(), method, testcaseXML.getModule());
 					testcases.add(testcase);
 				}
 			}

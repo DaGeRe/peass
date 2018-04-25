@@ -40,6 +40,7 @@ public class TestTimebasedTransforming {
 	public static void initFolder() throws URISyntaxException, IOException {
 		RESOURCE_FOLDER = Paths.get(SOURCE.toURI()).toFile();
 		SOURCE_FOLDER = new File(testFolder.getRoot(), "src/test/java");
+		FileUtils.copyFile(new File(RESOURCE_FOLDER, "pom.xml"), new File(testFolder.getRoot(), "pom.xml"));
 	}
 
 	@Test

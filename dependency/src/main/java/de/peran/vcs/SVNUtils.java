@@ -115,8 +115,7 @@ public class SVNUtils {
 			final long endrevision = repository.getLatestRevision();
 			logEntries = (List<SVNLogEntry>) repository.log(new String[] { "" }, null, startrevision, endrevision, false, true);
 		} catch (final SVNException svne) {
-			System.out.println("error while collecting log information for '" + url + "': " + svne.getMessage());
-			System.exit(1);
+			throw new RuntimeException("error while collecting log information for '" + url + "': " + svne.getMessage());
 		}
 		LOG.info("LogEntries: " + logEntries.size());
 
@@ -189,10 +188,10 @@ public class SVNUtils {
 			final Process revertProcess = Runtime.getRuntime().exec("svn revert -R .", null, projectFolder);
 			revertProcess.waitFor(60, TimeUnit.SECONDS);
 			final Process p2 = Runtime.getRuntime().exec("svn update -r " + revision.getNumber(), null, projectFolder);
-			String fullProcess = de.peran.utils.StreamGobbler.getFullProcess(p2, true);
-			boolean success = p2.waitFor(60, TimeUnit.SECONDS);
+			final String fullProcess = de.peran.utils.StreamGobbler.getFullProcess(p2, true);
+			final boolean success = p2.waitFor(60, TimeUnit.SECONDS);
 			if (success) {
-				int returncode = p2.waitFor();
+				final int returncode = p2.waitFor();
 				return returncode == 0;
 			} else {
 				return false;
@@ -228,7 +227,7 @@ public class SVNUtils {
 	}
 
 	public List<SVNLogEntry> getVersions(File folder) {
-		List<SVNLogEntry> entries = new LinkedList<>();
+		final List<SVNLogEntry> entries = new LinkedList<>();
 		try {
 			final Process p = Runtime.getRuntime().exec("svn log", new String[0], folder);
 
@@ -237,12 +236,12 @@ public class SVNUtils {
 			while ((line = input.readLine()) != null) {
 				if (line.startsWith("r") && line.contains("|") && line.substring(0, line.indexOf("|")).matches("r[0-9]+ ")) {
 					LOG.info(line);
-					int revision = Integer.parseInt(line.substring(1, line.indexOf(" ")));
-					String author = line.substring(line.indexOf("|"), line.lastIndexOf("|"));
+					final int revision = Integer.parseInt(line.substring(1, line.indexOf(" ")));
+					final String author = line.substring(line.indexOf("|"), line.lastIndexOf("|"));
 					entries.add(0, new SVNLogEntry(new HashMap<>(), revision, author, new Date(), ""));
 				}
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

@@ -18,12 +18,14 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.peran.DependencyStatisticAnalyzer.Statistics;
 import de.peran.reduceddependency.ChangedTraceTests;
+import de.peran.statistics.DependencyStatisticAnalyzer;
+import de.peran.statistics.DependencyStatistics;
 import de.peran.utils.OptionConstants;
 
 /**
  * Reads multiple dependency files and prints its statistics.
+ * 
  * @author reichelt
  *
  */
@@ -47,10 +49,10 @@ public class DependencyStatisticSummarizer {
 			if (xmlFile.exists() && executeFile.exists()){
 				final ChangedTraceTests changedTests = mapper.readValue(executeFile, ChangedTraceTests.class);
 
-				final Statistics statistics = DependencyStatisticAnalyzer.getChangeStatistics(xmlFile, changedTests);
+				final DependencyStatistics statistics = DependencyStatisticAnalyzer.getChangeStatistics(xmlFile, changedTests);
 
-				System.out.println(projektName + ";" + statistics.size + ";" + statistics.overallRunTests + ";" + statistics.pruningRunTests + ";" + statistics.changedTraceTests + ";"
-						+ statistics.onceChangedTests.size() + ";" + statistics.multipleChangedTest.size());
+				System.out.println(projektName + ";" + statistics.getSize() + ";" + statistics.getOverallRunTests() + ";" + statistics.getPruningRunTests() + ";" + statistics.getChangedTraceTests() + ";"
+						+ statistics.getOnceChangedTests().size() + ";" + statistics.getMultipleChangedTest().size());
 			}
 		}
 
@@ -63,11 +65,11 @@ public class DependencyStatisticSummarizer {
 			if (xmlFile.exists() && executeFile.exists()) {
 				final ChangedTraceTests changedTests = mapper.readValue(executeFile, ChangedTraceTests.class);
 
-				final Statistics statistics = DependencyStatisticAnalyzer.getChangeStatistics(xmlFile, changedTests);
+				final DependencyStatistics statistics = DependencyStatisticAnalyzer.getChangeStatistics(xmlFile, changedTests);
 
-				double percent = 10000d * statistics.changedTraceTests / statistics.overallRunTests;
+				final double percent = 10000d * statistics.getChangedTraceTests() / statistics.getOverallRunTests();
 				System.out.println(percent);
-				System.out.println(projektName + " & " + statistics.size + " & " + statistics.overallRunTests + " & " + statistics.pruningRunTests + " & " + statistics.changedTraceTests  + " & " + Math.round(percent)/100d+ " %\\");
+				System.out.println(projektName + " & " + statistics.getSize() + " & " + statistics.getOverallRunTests() + " & " + statistics.getPruningRunTests()+ " & " + statistics.getChangedTraceTests()  + " & " + Math.round(percent)/100d+ " %\\");
 				
 			}
 		}

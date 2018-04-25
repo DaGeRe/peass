@@ -29,7 +29,7 @@
 	   <Logger name="de.peran.measurement.analysis.DataReader" level="info">
 	  	 <AppenderRef ref="Console" />
 	   </Logger>
-	   <Logger name="de.peran.measurement.analysis.statistics.TestData" level="info">
+	   <Logger name="de.peran.measurement.analysis.statistics.TestData" level="debug">
 	  	 <AppenderRef ref="Console" />
 	   </Logger>
 		<Logger name="org.apache.logging.log4j2" level="info">

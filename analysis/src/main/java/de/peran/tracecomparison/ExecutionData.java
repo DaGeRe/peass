@@ -1,6 +1,5 @@
 package de.peran.tracecomparison;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,8 +23,8 @@ public class ExecutionData {
 	List<List<Execution>> iterations = new LinkedList<>();
 	List<Execution> currentExecutions = null;
 
-	public void addExecution(Execution execution) {
-		String easySignature = execution.getAllocationComponent().getAssemblyComponent().getType().getFullQualifiedName() + "." + execution.getOperation().getSignature().getName();
+	public void addExecution(final Execution execution) {
+		final String easySignature = execution.getAllocationComponent().getAssemblyComponent().getType().getFullQualifiedName() + "." + execution.getOperation().getSignature().getName();
 		synchronized (iterations) {
 			if (easySignature.equals(testMethod)) {
 				currentExecutions = new LinkedList<>();
@@ -40,9 +39,9 @@ public class ExecutionData {
 
 	public List<Execution> popExecution() {
 		LOG.debug("Popping {}", this);
-		List<Execution> popExecutions = new LinkedList<>();
+		final List<Execution> popExecutions = new LinkedList<>();
 		synchronized (iterations) {
-			for (List<Execution> execution : iterations) {
+			for (final List<Execution> execution : iterations) {
 				popExecutions.add(execution.remove(0));
 			}
 		}
@@ -59,7 +58,7 @@ public class ExecutionData {
 		} else {
 			int popable = Integer.MAX_VALUE;
 			synchronized (iterations) {
-				for (List<Execution> execution : iterations) {
+				for (final List<Execution> execution : iterations) {
 					LOG.debug(execution.size());
 					popable = Math.min(popable, execution.size());
 				}
@@ -76,9 +75,9 @@ public class ExecutionData {
 
 
 	public List<Execution> getExecutions(Integer index) {
-		List<Execution> executions = new LinkedList<>();
+		final List<Execution> executions = new LinkedList<>();
 		synchronized (iterations) {
-			for (List<Execution> execution : iterations) {
+			for (final List<Execution> execution : iterations) {
 				if (execution.size() > index){
 					executions.add(execution.get(index));
 				}
@@ -92,12 +91,12 @@ public class ExecutionData {
 
 
 	public Map<Integer, Execution> getChildren(Integer index) {
-		Map<Integer, Execution> children = new LinkedHashMap<>();
+		final Map<Integer, Execution> children = new LinkedHashMap<>();
 		synchronized (iterations) {
-			for (List<Execution> execution : iterations) {
+			for (final List<Execution> execution : iterations) {
 				if (execution.size() > index){
-					Execution ex = execution.get(index);
-					for (Execution possibleChildExecutions : execution) {
+					final Execution ex = execution.get(index);
+					for (final Execution possibleChildExecutions : execution) {
 						if (possibleChildExecutions.getEss() == ex.getEss() + 1){
 							
 						}

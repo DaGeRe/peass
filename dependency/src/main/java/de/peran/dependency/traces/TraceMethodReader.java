@@ -33,10 +33,8 @@ public class TraceMethodReader {
 
 	private static final Logger LOG = LogManager.getLogger(TraceMethodReader.class);
 
-	final List<TraceElement> calls;
+	private final List<TraceElement> calls;
 	private final File[] clazzFolder;
-
-	private final int LOOKBACK_LENGTH = 15;
 
 	final Map<File, CompilationUnit> loadedUnits = new HashMap<>();
 
@@ -46,11 +44,12 @@ public class TraceMethodReader {
 	}
 
 	public TraceMethodReader(final File traceFolder, final File... clazzFolder) {
-		this.calls = new CalledMethodLoader(traceFolder).getShortTrace(null);
+		this.calls = new CalledMethodLoader(traceFolder, clazzFolder[0]).getShortTrace(null);
 		this.clazzFolder = clazzFolder;
 	}
 
 	public TraceWithMethods getTraceWithMethods() throws ParseException, IOException {
+		LOG.debug("Trace Length: {}", calls.size());
 		final Sequitur seq = new Sequitur();
 		seq.addTraceElements(calls);
 		final RunLengthEncodingSequitur runLengthEncodingSequitur = new RunLengthEncodingSequitur(seq);

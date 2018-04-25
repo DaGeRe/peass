@@ -25,13 +25,12 @@ public abstract class TestExecutor {
 
 	public static final String COMPILER_ARTIFACTID = "maven-compiler-plugin";
 
-	protected final File projectFolder, moduleFolder, resultsFolder;
+	protected final File projectFolder, resultsFolder;
 	protected File lastTmpFile;
 	protected int jdk_version = 8;
 
-	public TestExecutor(final File projectFolder, final File moduleFolder, final File resultsFolder) {
+	public TestExecutor(final File projectFolder, final File resultsFolder) {
 		this.projectFolder = projectFolder;
-		this.moduleFolder = moduleFolder;
 		this.resultsFolder = resultsFolder;
 	}
 

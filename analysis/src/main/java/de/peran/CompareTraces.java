@@ -11,17 +11,10 @@ import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.jgrapht.Graph;
 import org.jgrapht.alg.interfaces.MatchingAlgorithm.Matching;
-import org.jgrapht.alg.matching.HopcroftKarpBipartiteMatching;
-import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 import org.jgrapht.alg.matching.MaximumWeightBipartiteMatching;
-import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultWeightedEdge;
-import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
-
-import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 
 import de.peran.dependency.analysis.PeASSFilter;
 import de.peran.tracecomparison.ExecutionConsumer;
@@ -56,11 +49,11 @@ public class CompareTraces {
 		final Matching<Execution, DefaultWeightedEdge> matchs = matching.getMatching();
 
 		final Map<Integer, Integer> indexMatching = new HashMap<>();
-		for (DefaultWeightedEdge edge : matchs.getEdges()) {
-			Execution start = graph.getEdgeSource(edge);
-			Execution end = graph.getEdgeTarget(edge);
-			int startIndex = first.indexOf(start);
-			int endIndex = second.indexOf(end);
+		for (final DefaultWeightedEdge edge : matchs.getEdges()) {
+			final Execution start = graph.getEdgeSource(edge);
+			final Execution end = graph.getEdgeTarget(edge);
+			final int startIndex = first.indexOf(start);
+			final int endIndex = second.indexOf(end);
 			LOG.trace(startIndex + " " + endIndex + " " + start.getOperation().getSignature().getName() + " " + end.getOperation().getSignature().getName());
 			indexMatching.put(startIndex, endIndex);
 		}
@@ -71,19 +64,19 @@ public class CompareTraces {
 	}
 
 	private static SimpleWeightedGraph<Execution, DefaultWeightedEdge> initGraph(List<Execution> first, List<Execution> second) {
-		SimpleWeightedGraph<Execution, DefaultWeightedEdge> graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
+		final SimpleWeightedGraph<Execution, DefaultWeightedEdge> graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 
-		for (Execution ex : first) {
+		for (final Execution ex : first) {
 			graph.addVertex(ex);
 		}
-		for (Execution ex : second) {
+		for (final Execution ex : second) {
 			graph.addVertex(ex);
 		}
 
-		for (Execution ex : first) {
-			for (Execution ex2 : second) {
-				String clazz1 = ex.getAllocationComponent().getAssemblyComponent().getType().getFullQualifiedName();
-				String clazz2 = ex2.getAllocationComponent().getAssemblyComponent().getType().getFullQualifiedName();
+		for (final Execution ex : first) {
+			for (final Execution ex2 : second) {
+				final String clazz1 = ex.getAllocationComponent().getAssemblyComponent().getType().getFullQualifiedName();
+				final String clazz2 = ex2.getAllocationComponent().getAssemblyComponent().getType().getFullQualifiedName();
 				int basicValue = 100;
 				if (clazz1.equals(clazz2)) {
 					basicValue += 10000;
@@ -98,7 +91,7 @@ public class CompareTraces {
 					basicValue -= Math.abs(ex.getEss() - ex2.getEss()) * 10;
 				}
 
-				DefaultWeightedEdge edge = graph.addEdge(ex, ex2);
+				final DefaultWeightedEdge edge = graph.addEdge(ex, ex2);
 				graph.setEdgeWeight(edge, basicValue);
 			}
 		}
@@ -109,33 +102,33 @@ public class CompareTraces {
 		final List<Thread> threads = new LinkedList<>();
 
 		if (args.length == 1) {
-			File folder = new File(args[0]);
+			final File folder = new File(args[0]);
 			if (!folder.exists()) {
 				LOG.error("Folder " + folder.getAbsolutePath() + " does not exist");
 				System.exit(1);
 			}
 
-			File version1Folder = folder.listFiles()[0].listFiles()[0]; // only take 0th vm
-			File version2Folder = folder.listFiles()[1].listFiles()[0];
+			final File version1Folder = folder.listFiles()[0].listFiles()[0]; // only take 0th vm
+			final File version2Folder = folder.listFiles()[1].listFiles()[0];
 
-			File trace1Folder = version1Folder.listFiles()[0].listFiles()[0].listFiles()[0];
-			File trace2Folder = version2Folder.listFiles()[0].listFiles()[0].listFiles()[0];
+			final File trace1Folder = version1Folder.listFiles()[0].listFiles()[0].listFiles()[0];
+			final File trace2Folder = version2Folder.listFiles()[0].listFiles()[0].listFiles()[0];
 
-			String testmethod = "org.apache.commons.io.IOUtilsCopyTestCase.testCopy_inputStreamToWriter_Encoding_nullEncoding";
+			final String testmethod = "org.apache.commons.io.IOUtilsCopyTestCase.testCopy_inputStreamToWriter_Encoding_nullEncoding";
 			compareExecutions.put(0, new ExecutionData(testmethod));
 			compareExecutions.put(1, new ExecutionData(testmethod));
 
 			final CompareTraces cp = new CompareTraces(trace1Folder, compareExecutions.get(0));
 			final CompareTraces cp2 = new CompareTraces(trace2Folder, compareExecutions.get(1));
 
-			Thread t1 = new Thread(() -> {
+			final Thread t1 = new Thread(() -> {
 				try {
 					cp.start();
 				} catch (IllegalStateException | AnalysisConfigurationException e) {
 					e.printStackTrace();
 				}
 			});
-			Thread t2 = new Thread(() -> {
+			final Thread t2 = new Thread(() -> {
 				try {
 					cp2.start();
 				} catch (IllegalStateException | AnalysisConfigurationException e) {
@@ -150,22 +143,22 @@ public class CompareTraces {
 			t2.start();
 		}
 
-		for (Thread thread : threads) {
+		for (final Thread thread : threads) {
 			thread.join();
 		}
 
-		Map<Integer, Integer> matches = createMatching(compareExecutions.get(0).getFirstExecution(), compareExecutions.get(1).getFirstExecution());
+		final Map<Integer, Integer> matches = createMatching(compareExecutions.get(0).getFirstExecution(), compareExecutions.get(1).getFirstExecution());
 		createComparison(matches);
 	}
 
 	private static void createComparison(Map<Integer, Integer> matches) {
-		for (Map.Entry<Integer, Integer> match : matches.entrySet()) {
+		for (final Map.Entry<Integer, Integer> match : matches.entrySet()) {
 			LOG.debug("Match: " + match.getKey() + " " + match.getValue());
-			ExecutionData first = compareExecutions.get(0);
-			List<Execution> executions = first.getExecutions(match.getKey());
-			Map<Integer, Execution> children = first.getChildren(match.getKey());
-			ExecutionData second = compareExecutions.get(1);
-			List<Execution> executions2 = second.getExecutions(match.getValue());
+			final ExecutionData first = compareExecutions.get(0);
+			final List<Execution> executions = first.getExecutions(match.getKey());
+			final Map<Integer, Execution> children = first.getChildren(match.getKey());
+			final ExecutionData second = compareExecutions.get(1);
+			final List<Execution> executions2 = second.getExecutions(match.getValue());
 			ExecutionConsumer.compareExecutions(executions, executions2);
 		}
 	}
@@ -213,7 +206,7 @@ public class CompareTraces {
 	public void start() throws IllegalStateException, AnalysisConfigurationException {
 		initialiseTraceReading();
 
-		TraceCompareReadFilter filter = new TraceCompareReadFilter(new Configuration(), analysisController, executions);
+		final TraceCompareReadFilter filter = new TraceCompareReadFilter(new Configuration(), analysisController, executions);
 		analysisController.connect(traceReconstructionFilter, TraceReconstructionFilter.OUTPUT_PORT_NAME_EXECUTION_TRACE,
 				filter, PeASSFilter.INPUT_EXECUTION_TRACE);
 

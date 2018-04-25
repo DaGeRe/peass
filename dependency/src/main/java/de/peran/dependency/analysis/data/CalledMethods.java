@@ -6,24 +6,21 @@ import java.util.Set;
 
 /**
  * Map from called classes to the methods of the classes that are called
+ * 
  * @author reichelt
  *
  */
-public class CalledMethods{
-	Map<String, Set<String>> calledMethods = new HashMap<>();
+public class CalledMethods {
+	private final Map<ChangedEntity, Set<String>> calledMethods = new HashMap<>();
 
-	public Map<String, Set<String>> getCalledMethods() {
+	public Map<ChangedEntity, Set<String>> getCalledMethods() {
 		return calledMethods;
 	}
 
-	public void setCalledMethods(final Map<String, Set<String>> calledMethods) {
-		this.calledMethods = calledMethods;
-	}
-	
-	public Set<String> getCalledClasses(){
+	public Set<ChangedEntity> getCalledClasses() {
 		return calledMethods.keySet();
 	}
-	
+
 	@Override
 	public String toString() {
 		return calledMethods.toString();

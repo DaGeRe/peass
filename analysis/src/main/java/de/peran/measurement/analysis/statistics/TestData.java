@@ -26,7 +26,6 @@ public class TestData {
 	private final SortedMap<String, EvaluationPair> data = new TreeMap<>(VersionComparator.INSTANCE);
 
 	public TestData(final TestCase testcase) {
-		super();
 		this.testcase = testcase;
 	}
 
@@ -39,15 +38,20 @@ public class TestData {
 		if (currentPair == null) {
 			final String predecessor = isNew ? version : VersionComparator.getPreviousVersionForTestcase(testcase, version);
 			LOG.debug("Version: {} Predecessor: {}", versionOfPair, predecessor);
-			currentPair = new EvaluationPair(versionOfPair, predecessor);
-			data.put(versionOfPair, currentPair);
+			// TODO Workaround if data are incomplete, e.g. because of build error
+			if (versionOfPair != null){
+				currentPair = new EvaluationPair(versionOfPair, predecessor);
+				data.put(versionOfPair, currentPair);
+			}
 		}
-
-		final Result result = resultData.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);
-		if (!isNew) {
-			currentPair.getCurrent().add(result);
-		} else {
-			currentPair.getPrevius().add(result);
+		
+		if (currentPair != null){
+			final Result result = resultData.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);
+			if (!isNew) {
+				currentPair.getCurrent().add(result);
+			} else {
+				currentPair.getPrevius().add(result);
+			}
 		}
 
 	}

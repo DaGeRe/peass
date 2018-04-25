@@ -7,6 +7,7 @@ package de.peran.dependency.analysis.data;
  *
  */
 public class TestCase {
+	private final String module;
 	private final String clazz;
 	private final String method;
 
@@ -14,6 +15,14 @@ public class TestCase {
 		super();
 		this.clazz = clazz;
 		this.method = method;
+		module = null;
+	}
+	
+	public TestCase(final String clazz, final String method, final String module) {
+		super();
+		this.clazz = clazz;
+		this.method = method;
+		this.module = module;
 	}
 
 	public TestCase(final String testcase) {
@@ -28,6 +37,7 @@ public class TestCase {
 			clazz = testcase.substring(0, index);
 			method = testcase.substring(index + 1);
 		}
+		module = null;
 	}
 
 	public String getClazz() {
@@ -36,6 +46,10 @@ public class TestCase {
 
 	public String getMethod() {
 		return method;
+	}
+	
+	public String getModule() {
+		return module;
 	}
 
 	@Override
@@ -80,5 +94,7 @@ public class TestCase {
 	public String toString() {
 		return "TestCase [clazz=" + clazz + ", method=" + method + "]";
 	}
+
+	
 
 }

@@ -48,140 +48,118 @@ import de.peran.vcs.VersionIteratorSVN;
  *
  */
 public class DependencyReadingStarter {
-	private static final Logger LOG = LogManager.getLogger(DependencyReadingStarter.class);
-	
-	public static void main(final String[] args) throws ParseException,
-			FileNotFoundException {
-		final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.STARTVERSION, OptionConstants.ENDVERSION, OptionConstants.OUT);
+   private static final Logger LOG = LogManager.getLogger(DependencyReadingStarter.class);
 
-		final CommandLineParser parser = new DefaultParser();
-		final CommandLine line = parser.parse(options, args);
+   public static void main(final String[] args) throws ParseException, FileNotFoundException {
+      final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.STARTVERSION, OptionConstants.ENDVERSION, OptionConstants.OUT);
 
-		final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
+      final CommandLineParser parser = new DefaultParser();
+      final CommandLine line = parser.parse(options, args);
 
-		final File dependencyFile = getDependencyFile(line, projectFolder);
+      final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
+      if (!projectFolder.exists()) {
+         throw new RuntimeException("Folder " + projectFolder.getAbsolutePath() + " does not exist.");
+      }
 
-		File outputFile = projectFolder.getParentFile();
-		if (outputFile.isDirectory()) {
-			outputFile = new File(projectFolder.getParentFile(), "ausgabe.txt");
-		}
+      final File dependencyFile = getDependencyFile(line, projectFolder);
 
-		LOG.debug("Lese {}", projectFolder.getAbsolutePath());
-		final VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
+      File outputFile = projectFolder.getParentFile();
+      if (outputFile.isDirectory()) {
+         outputFile = new File(projectFolder.getParentFile(), "ausgabe.txt");
+      }
 
-		System.setOut(new PrintStream(outputFile));
+      LOG.debug("Lese {}", projectFolder.getAbsolutePath());
+      final VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
 
-		final DependencyReader reader;
-		if (vcs.equals(VersionControlSystem.SVN)) {
-			final String url = SVNUtils.getInstance().getWCURL(projectFolder);
-			final List<SVNLogEntry> entries = getSVNCommits(line, projectFolder);
-			LOG.debug("SVN commits: " + entries.stream().map(entry -> entry.getRevision()).collect(Collectors.toList()));
-			final VersionIterator iterator = new VersionIteratorSVN(projectFolder, entries, url);
-			reader = new DependencyReader(projectFolder, dependencyFile, url, iterator);
-		} else if (vcs.equals(VersionControlSystem.GIT)) {
-			final String url = GitUtils.getURL(projectFolder);
-			final List<GitCommit> commits = getGitCommits(line, projectFolder);
-			System.out.println(url);
-			final VersionIterator iterator = new VersionIteratorGit(projectFolder, commits, null);
-			reader = new DependencyReader(projectFolder, dependencyFile, url, iterator);
-			LOG.debug("Reader initalized");
-		} else {
-			throw new RuntimeException("Unknown version control system");
-		}
-		reader.readDependencies();
-	}
+      System.setOut(new PrintStream(outputFile));
 
-	public static File getDependencyFile(final CommandLine line, final File projectFolder) {
-		final File dependencyFile;
-		if (line.hasOption(OptionConstants.OUT.getName())) {
-			dependencyFile = new File(line.getOptionValue(OptionConstants.OUT.getName()));
-		} else {
-			final File resultFolder = getResultFolder();
-			dependencyFile = new File(resultFolder, "deps_" + projectFolder.getName() + ".xml");
-		}
-		return dependencyFile;
-	}
+      final DependencyReader reader;
+      if (vcs.equals(VersionControlSystem.SVN)) {
+         final String url = SVNUtils.getInstance().getWCURL(projectFolder);
+         final List<SVNLogEntry> entries = getSVNCommits(line, projectFolder);
+         LOG.debug("SVN commits: " + entries.stream().map(entry -> entry.getRevision()).collect(Collectors.toList()));
+         final VersionIterator iterator = new VersionIteratorSVN(projectFolder, entries, url);
+         reader = new DependencyReader(projectFolder, dependencyFile, url, iterator);
+      } else if (vcs.equals(VersionControlSystem.GIT)) {
+         final String url = GitUtils.getURL(projectFolder);
+         final List<GitCommit> commits = getGitCommits(line, projectFolder);
+         System.out.println(url);
+         final VersionIterator iterator = new VersionIteratorGit(projectFolder, commits, null);
+         reader = new DependencyReader(projectFolder, dependencyFile, url, iterator);
+         LOG.debug("Reader initalized");
+      } else {
+         throw new RuntimeException("Unknown version control system");
+      }
+      reader.readDependencies();
+   }
 
-	public static File getResultFolder() {
-		final File resultFolder = new File("results");
-		if (!resultFolder.exists()){
-			resultFolder.mkdir();
-		}
-		return resultFolder;
-	}
-	
-	/**
-	 * Reads the list of all SVN commits from the given URL using start- and endversion from the given CommandLine.
-	 * 
-	 * @param line
-	 * @param url
-	 * @return
-	 */
-	public static List<SVNLogEntry> getSVNCommits(final CommandLine line, final File folder) {
-		final List<SVNLogEntry> entries;
-		if (line.hasOption(OptionConstants.STARTVERSION.getName())) {
-			entries = null;
-//			final int startversion = Integer.parseInt(line.getOptionValue(OptionConstants.STARTVERSION.getName()));
-//			if (line.hasOption(OptionConstants.ENDVERSION.getName())) {
-//				final int endversion = Integer.parseInt(line.getOptionValue(OptionConstants.ENDVERSION.getName()));
-//				entries = SVNUtils.getInstance().getVersions(url, startversion, endversion);
-//			} else {
-//				entries = SVNUtils.getInstance().getVersions(url, startversion);
-//			}
+   public static File getDependencyFile(final CommandLine line, final File projectFolder) {
+      final File dependencyFile;
+      if (line.hasOption(OptionConstants.OUT.getName())) {
+         dependencyFile = new File(line.getOptionValue(OptionConstants.OUT.getName()));
+      } else {
+         final File resultFolder = getResultFolder();
+         dependencyFile = new File(resultFolder, "deps_" + projectFolder.getName() + ".xml");
+      }
+      return dependencyFile;
+   }
 
-		} else {
-			entries = SVNUtils.getInstance().getVersions(folder);
-		}
-		return entries;
-	}
+   public static File getResultFolder() {
+      final File resultFolder = new File("results");
+      if (!resultFolder.exists()) {
+         resultFolder.mkdir();
+      }
+      return resultFolder;
+   }
 
-	/**
-	 * Reads the list of all SVN commits from the given URL using start- and endversion from the given CommandLine.
-	 * 
-	 * @param line
-	 * @param url
-	 * @return
-	 */
-	public static List<SVNLogEntry> getSVNCommits(final CommandLine line, final String url) {
-		final List<SVNLogEntry> entries;
-		if (line.hasOption(OptionConstants.STARTVERSION.getName())) {
-			final int startversion = Integer.parseInt(line.getOptionValue(OptionConstants.STARTVERSION.getName()));
-			if (line.hasOption(OptionConstants.ENDVERSION.getName())) {
-				final int endversion = Integer.parseInt(line.getOptionValue(OptionConstants.ENDVERSION.getName()));
-				entries = SVNUtils.getInstance().getVersions(url, startversion, endversion);
-			} else {
-				entries = SVNUtils.getInstance().getVersions(url, startversion);
-			}
+   /**
+    * Reads the list of all SVN commits from the given URL using start- and endversion from the given CommandLine.
+    * 
+    * @param line
+    * @param url
+    * @return
+    */
+   public static List<SVNLogEntry> getSVNCommits(final CommandLine line, final File folder) {
+      final List<SVNLogEntry> entries;
+      if (line.hasOption(OptionConstants.STARTVERSION.getName())) {
+         entries = null;
+         // final int startversion = Integer.parseInt(line.getOptionValue(OptionConstants.STARTVERSION.getName()));
+         // if (line.hasOption(OptionConstants.ENDVERSION.getName())) {
+         // final int endversion = Integer.parseInt(line.getOptionValue(OptionConstants.ENDVERSION.getName()));
+         // entries = SVNUtils.getInstance().getVersions(url, startversion, endversion);
+         // } else {
+         // entries = SVNUtils.getInstance().getVersions(url, startversion);
+         // }
 
-		} else {
-			entries = SVNUtils.getInstance().getVersions(url);
-		}
-		return entries;
-	}
+      } else {
+         entries = SVNUtils.getInstance().getVersions(folder);
+      }
+      return entries;
+   }
 
-	/**
-	 * Reads the list of all git commits from the given URL using start- and endversion from the given CommandLine.
-	 * 
-	 * @param line
-	 * @param url
-	 * @return
-	 */
-	public static List<GitCommit> getGitCommits(final CommandLine line, final File projectFolder) {
-		final List<GitCommit> commits = GitUtils.getCommits(projectFolder);
-		LOG.info("Processing git repo, commits: {}", commits.size());
-		if (line.hasOption(OptionConstants.STARTVERSION.getName())) {
-			final String startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName());
-			if (line.hasOption(OptionConstants.ENDVERSION.getName())) {
-				final String endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName());
-				GitUtils.filterList(startversion, endversion, commits);
-			} else {
-				GitUtils.filterList(startversion, null, commits);
-			}
-		} else if (line.hasOption(OptionConstants.ENDVERSION.getName())) {
-			final String endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName());
-			GitUtils.filterList(null, endversion, commits);
-		}
-		LOG.info(commits);
-		return commits;
-	}
+   /**
+    * Reads the list of all git commits from the given URL using start- and endversion from the given CommandLine.
+    * 
+    * @param line
+    * @param url
+    * @return
+    */
+   public static List<GitCommit> getGitCommits(final CommandLine line, final File projectFolder) {
+      final List<GitCommit> commits = GitUtils.getCommits(projectFolder);
+      LOG.info("Processing git repo, commits: {}", commits.size());
+      if (line.hasOption(OptionConstants.STARTVERSION.getName())) {
+         final String startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName());
+         if (line.hasOption(OptionConstants.ENDVERSION.getName())) {
+            final String endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName());
+            GitUtils.filterList(startversion, endversion, commits);
+         } else {
+            GitUtils.filterList(startversion, null, commits);
+         }
+      } else if (line.hasOption(OptionConstants.ENDVERSION.getName())) {
+         final String endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName());
+         GitUtils.filterList(null, endversion, commits);
+      }
+      LOG.info(commits);
+      return commits;
+   }
 }

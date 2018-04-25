@@ -7,13 +7,20 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import de.peran.DependencyReadingStarter;
 import de.peran.dependency.reader.DependencyReader;
+import de.peran.utils.OptionConstants;
 import de.peran.vcs.GitCommit;
 import de.peran.vcs.GitUtils;
 import de.peran.vcs.VersionIterator;
@@ -41,17 +48,26 @@ public abstract class Evaluator {
 	protected final EvaluationProject evaluation;
 	protected final SysoutTestExecutor executor;
 
-	public Evaluator(final File projectFolder, final String type) {
+	public Evaluator(String type, String[] args) throws ParseException {
+		final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.STARTVERSION, OptionConstants.ENDVERSION, OptionConstants.OUT);
+
+		final CommandLineParser parser = new DefaultParser();
+		final CommandLine line = parser.parse(options, args);
+
+		final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
+
+		File outputFile = projectFolder.getParentFile();
+		if (outputFile.isDirectory()) {
+			outputFile = new File(projectFolder.getParentFile(), "ausgabe.txt");
+		}
+
+		LOG.debug("Lese {}", projectFolder.getAbsolutePath());
 		this.projectFolder = projectFolder;
 
 		final String url = GitUtils.getURL(projectFolder);
-		final List<GitCommit> commits = GitUtils.getCommits(projectFolder);
+		final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(line, projectFolder);
 
 		iterator = new VersionIteratorGit(projectFolder, commits, null);
-
-		// while (!iterator.getTag().startsWith("956")) {
-		// iterator.goToNextCommit();
-		// }
 
 		executor = new SysoutTestExecutor(projectFolder);
 		DependencyReader.searchFirstRunningCommit(iterator, executor, projectFolder);

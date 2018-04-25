@@ -22,6 +22,7 @@ import de.peran.generated.Versiondependencies;
 import de.peran.generated.Versiondependencies.Versions.Version;
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency;
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency.Testcase;
+import de.peran.statistics.DependencyStatisticAnalyzer;
 import de.peran.utils.OptionConstants;
 
 /**

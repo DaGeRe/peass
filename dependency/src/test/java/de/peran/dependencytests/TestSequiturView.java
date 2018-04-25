@@ -22,7 +22,7 @@ public class TestSequiturView {
 	public void testRepetitionRepetition() throws ParseException, IOException, ViewNotFoundException {
 		final File clazzDir = new File("target/viewtest/");
 		clazzDir.mkdirs();
-		ViewGeneratorIT.executeReading(new TestCase("viewtest.TestMe", "test"), clazzDir, new HashMap<>(), "5", new File("src/test/resources/exampletrace"));
+		ViewGeneratorIT.executeReading(new TestCase("viewtest.TestMe", "test"), clazzDir, new HashMap<>(), "5", new File("src/test/resources/exampletrace/test"));
 
 		final File viewFile = new File(clazzDir, "test_hash_5_method");
 

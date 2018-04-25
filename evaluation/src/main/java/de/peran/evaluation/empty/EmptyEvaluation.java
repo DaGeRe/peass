@@ -3,6 +3,8 @@ package de.peran.evaluation.empty;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.cli.ParseException;
+
 import de.peran.evaluation.base.EvaluationVersion;
 import de.peran.evaluation.base.Evaluator;
 
@@ -14,14 +16,13 @@ import de.peran.evaluation.base.Evaluator;
  */
 public class EmptyEvaluation extends Evaluator {
 
-	public static void main(final String[] args) {
-		final File projectFolder = new File(args[0]);
-		final Evaluator evaluator = new EmptyEvaluation(projectFolder);
+	public static void main(final String[] args) throws ParseException {
+		final Evaluator evaluator = new EmptyEvaluation(args);
 		evaluator.evaluate();
 	}
 
-	public EmptyEvaluation(final File projectFolder) {
-		super(projectFolder, "empty");
+	public EmptyEvaluation(final String[] args) throws ParseException {
+		super("empty", args);
 	}
 
 	@Override

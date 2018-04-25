@@ -18,10 +18,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
-import de.peran.DependencyStatisticAnalyzer;
 import de.peran.dependencyprocessors.VersionComparator;
 import de.peran.generated.Versiondependencies;
 import de.peran.measurement.analysis.statistics.TestData;
+import de.peran.statistics.DependencyStatisticAnalyzer;
 import de.peran.utils.OptionConstants;
 
 /**

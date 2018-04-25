@@ -10,11 +10,11 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-import de.peran.DependencyStatisticAnalyzer;
 import de.peran.dependency.PeASSFolderUtil;
 import de.peran.generated.Versiondependencies;
 import de.peran.generated.Versiondependencies.Initialversion;
 import de.peran.generated.Versiondependencies.Versions.Version;
+import de.peran.statistics.DependencyStatisticAnalyzer;
 import de.peran.utils.OptionConstants;
 import de.peran.vcs.GitUtils;
 import de.peran.vcs.VersionControlSystem;

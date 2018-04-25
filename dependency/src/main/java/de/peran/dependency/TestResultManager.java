@@ -18,17 +18,19 @@ package de.peran.dependency;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.PomProjectNameReader;
 import de.dagere.kopeme.PomProjectNameReader.ProjectInfo;
+import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.peran.dependency.analysis.data.TestSet;
 import de.peran.dependency.execution.GradleTestExecutor;
 import de.peran.dependency.execution.MavenKiekerTestExecutor;
-import de.peran.dependency.execution.MultiModuleTestExecutor;
 import de.peran.dependency.execution.TestExecutor;
+import de.peran.testtransformation.JUnitTestTransformer;
 
 /**
  * Handles the running of tests
@@ -40,37 +42,38 @@ public class TestResultManager {
 
 	private static final Logger LOG = LogManager.getLogger(TestResultManager.class);
 
-	protected final File projectFolder, moduleFolder;
+	protected final File projectFolder;
 	protected final File resultsFolder, logFolder;
 	protected final TestExecutor executor;
 
 	public TestResultManager(final File projectFolder) {
 		super();
 		this.projectFolder = projectFolder;
-		this.moduleFolder = projectFolder;
 
 		PeASSFolderUtil.setProjectFolder(projectFolder);
 		resultsFolder = PeASSFolderUtil.getKiekerResultFolder();
 		logFolder = PeASSFolderUtil.getLogFolder();
 
-		File pom = new File(projectFolder, "pom.xml");
+		final JUnitTestTransformer testGenerator = createTestTransformer();
+
+		final File pom = new File(projectFolder, "pom.xml");
 		if (pom.exists()) {
-			executor = new MavenKiekerTestExecutor(projectFolder, projectFolder, resultsFolder, true);
-		}else{
-			executor = new GradleTestExecutor(projectFolder, projectFolder, resultsFolder);
-				
+			executor = new MavenKiekerTestExecutor(projectFolder, resultsFolder, testGenerator);
+		} else {
+			executor = new GradleTestExecutor(projectFolder, resultsFolder);
+
 		}
-		
 	}
 
-	public TestResultManager(File projectFolder, File moduleFolder) {
-		this.projectFolder = projectFolder;
-		this.moduleFolder = moduleFolder;
-
-		PeASSFolderUtil.setProjectFolder(projectFolder);
-		resultsFolder = PeASSFolderUtil.getKiekerResultFolder();
-		logFolder = PeASSFolderUtil.getLogFolder();
-		executor = new MultiModuleTestExecutor(projectFolder, moduleFolder, resultsFolder);
+	private JUnitTestTransformer createTestTransformer() {
+		final JUnitTestTransformer testGenerator = new JUnitTestTransformer(projectFolder);
+		testGenerator.setUseKieker(true);
+		testGenerator.setLogFullData(false);
+		testGenerator.setEncoding(StandardCharsets.UTF_8);
+		testGenerator.setIterations(1);
+		testGenerator.setWarmupExecutions(0);
+		testGenerator.setDatacollectorlist(DataCollectorList.ONLYTIME);
+		return testGenerator;
 	}
 
 	/**
@@ -81,14 +84,14 @@ public class TestResultManager {
 	 * @throws InterruptedException
 	 */
 	public void executeKoPeMeKiekerRun(final TestSet testsToUpdate, final String versionName) throws IOException {
-		File logVersionFolder = new File(logFolder, versionName);
+		final File logVersionFolder = new File(logFolder, versionName);
 		if (!logVersionFolder.exists()) {
 			logVersionFolder.mkdir();
 		}
 		executor.executeTests(testsToUpdate, logVersionFolder);
 	}
 
-	public File getXMLFileFolder() {
+	public File getXMLFileFolder(File moduleFolder) {
 		final File pomXmlFile = new File(moduleFolder, "pom.xml");
 		LOG.debug("POM: {} Existing: {}", pomXmlFile.getAbsolutePath(), pomXmlFile.exists());
 		if (!pomXmlFile.exists()) {

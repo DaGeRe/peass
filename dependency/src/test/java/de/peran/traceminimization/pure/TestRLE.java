@@ -6,8 +6,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peran.dependency.traces.requitur.ReducedTraceElement;
-import de.peran.dependency.traces.requitur.Rule;
 import de.peran.dependency.traces.requitur.RunLengthEncodingSequitur;
 import de.peran.dependency.traces.requitur.Sequitur;
 import de.peran.dependency.traces.requitur.TraceStateTester;
@@ -50,7 +48,7 @@ public class TestRLE {
 		mytrace.add("E");
 		seg.addElements(mytrace);
 
-		RunLengthEncodingSequitur runLengthEncodingSequitur = new RunLengthEncodingSequitur(seg);
+		final RunLengthEncodingSequitur runLengthEncodingSequitur = new RunLengthEncodingSequitur(seg);
 		runLengthEncodingSequitur.reduce();
 		final List<Content> unexpandedTrace = seg.getUncompressedTrace();
 		System.out.println(unexpandedTrace);
@@ -72,7 +70,7 @@ public class TestRLE {
 		}
 		seg.addElements(mytrace);
 
-		RunLengthEncodingSequitur runLengthEncodingSequitur = new RunLengthEncodingSequitur(seg);
+		final RunLengthEncodingSequitur runLengthEncodingSequitur = new RunLengthEncodingSequitur(seg);
 		runLengthEncodingSequitur.reduce();
 		final List<Content> unexpandedTrace = seg.getUncompressedTrace();
 		System.out.println(unexpandedTrace);

@@ -5,14 +5,19 @@ import java.util.Set;
 import java.util.TreeMap;
 
 /**
- * Map from changed classes fqn to testcases that might have changed
+ * Map from changed classes full-qualified-name to testcases that might have changed
  * @author reichelt
  *
  */
 public class ChangeTestMapping {
-	private final Map<String, Set<String>> changes = new TreeMap<>();
+	private final Map<ChangedEntity, Set<ChangedEntity>> changes = new TreeMap<>();
 
-	public Map<String, Set<String>> getChanges() {
+	public Map<ChangedEntity, Set<ChangedEntity>> getChanges() {
 		return changes;
+	}
+	
+	@Override
+	public String toString() {
+		return changes.toString();
 	}
 }

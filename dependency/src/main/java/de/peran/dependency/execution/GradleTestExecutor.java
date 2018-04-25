@@ -6,8 +6,8 @@ import de.peran.dependency.analysis.data.TestSet;
 
 public class GradleTestExecutor extends TestExecutor {
 
-	public GradleTestExecutor(File projectFolder, File moduleFolder, File resultsFolder) {
-		super(projectFolder, moduleFolder, resultsFolder);
+	public GradleTestExecutor(File projectFolder, File resultsFolder) {
+		super(projectFolder, resultsFolder);
 	}
 
 	@Override

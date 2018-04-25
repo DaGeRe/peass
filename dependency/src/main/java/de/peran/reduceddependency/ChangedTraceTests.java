@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
+import de.peran.dependency.analysis.data.ChangedEntity;
 import de.peran.dependency.analysis.data.TestCase;
 import de.peran.dependency.analysis.data.TestSet;
 
@@ -41,18 +42,19 @@ public class ChangedTraceTests {
 
 		@Override
 		public ChangedTraceTests deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
-			ChangedTraceTests tests = new ChangedTraceTests();
-			JsonNode root = p.getCodec().readTree(p);
-			JsonNode versions = root.get("versions");
-			for (Iterator<Entry<String, JsonNode>> iterator = versions.fields(); iterator.hasNext();) {
-				Entry<String, JsonNode> value = iterator.next();
-				String version = value.getKey();
+			final ChangedTraceTests tests = new ChangedTraceTests();
+			final JsonNode root = p.getCodec().readTree(p);
+			final JsonNode versions = root.get("versions");
+			for (final Iterator<Entry<String, JsonNode>> iterator = versions.fields(); iterator.hasNext();) {
+				final Entry<String, JsonNode> value = iterator.next();
+				final String version = value.getKey();
 				value.getValue().forEach(testInChild -> {
-					TestSet testcase = new TestSet();
-					String clazz = testInChild.get("testclazz").asText();
-					JsonNode methods = testInChild.get("testmethod");
+					final TestSet testcase = new TestSet();
+					final String clazz = testInChild.get("testclazz").asText();
+					final JsonNode methods = testInChild.get("testmethod");
 					methods.forEach(method -> {
-						testcase.addTest(clazz, method.asText());
+						final ChangedEntity entity = new ChangedEntity(clazz, "");
+						testcase.addTest(entity, method.asText());
 					});
 					tests.addCall(version, testcase);
 				});
@@ -62,19 +64,29 @@ public class ChangedTraceTests {
 
 	}
 
+	private String url;
+
 	private Map<String, TestSet> versions = new LinkedHashMap<>();
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
 
 	public void setVersions(Map<String, TestSet> versions) {
 		this.versions = versions;
 	}
-	
+
 	public Map<String, TestSet> getVersions() {
 		return versions;
 	}
 
 	@JsonIgnore
 	public void addCall(final String version, final TestSet tests) {
-		TestSet executes = versions.get(version);
+		final TestSet executes = versions.get(version);
 		if (executes == null) {
 			versions.put(version, tests);
 		} else {
@@ -89,16 +101,16 @@ public class ChangedTraceTests {
 			executes = new TestSet();
 			versions.put(version, executes);
 		}
-		executes.addTest(testcase.getClazz(), testcase.getMethod());
+		executes.addTest(testcase);
 	}
 
 	@JsonIgnore
 	public boolean versionContainsTest(final String version, final TestCase currentIterationTest) {
 		final TestSet clazzExecutions = versions.get(version);
 		if (clazzExecutions != null) {
-			for (final Map.Entry<String, List<String>> clazz : clazzExecutions.entrySet()) {
-				String testclazz = clazz.getKey();
-				List<String> methods = clazz.getValue();
+			for (final Map.Entry<ChangedEntity, List<String>> clazz : clazzExecutions.entrySet()) {
+				final ChangedEntity testclazz = clazz.getKey();
+				final List<String> methods = clazz.getValue();
 				if (testclazz.equals(currentIterationTest.getClazz())) {
 					if (methods.contains(currentIterationTest.getMethod())) {
 						return true;

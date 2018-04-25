@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBException;
 
@@ -28,62 +27,59 @@ import de.peran.dependency.analysis.data.TestSet;
  */
 public class AdaptiveTestStarter extends DependencyTestPairStarter {
 
-	private static final Logger LOG = LogManager.getLogger(AdaptiveTestStarter.class);
+   private static final Logger LOG = LogManager.getLogger(AdaptiveTestStarter.class);
 
-	public AdaptiveTestStarter(final String[] args) throws ParseException, JAXBException, IOException {
-		super(args);
-	}
+   public AdaptiveTestStarter(final String[] args) throws ParseException, JAXBException, IOException {
+      super(args);
+   }
 
-	public static void main(final String[] args) throws ParseException, JAXBException, IOException {
-		final AdaptiveTestStarter starter = new AdaptiveTestStarter(args);
-		starter.processCommandline();
-	}
+   public static void main(final String[] args) throws ParseException, JAXBException, IOException {
+      final AdaptiveTestStarter starter = new AdaptiveTestStarter(args);
+      starter.processCommandline();
+   }
+   
+   //TODO: Should be method of tester instead of TestStarter -> is not used currently
+   protected void executeCompareTests(final String version, final String versionOld, final TestCase testcase) throws IOException, InterruptedException, JAXBException {
+      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", versionOld, version);
 
-	@Override
-	protected void executeCompareTests(final String version, final String versionOld, final TestCase testcase) throws IOException, InterruptedException, JAXBException {
-		LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", versionOld, version);
+      File logFile = new File(PeASSFolderUtil.getLogFolder(), version);
+      if (logFile.exists()) {
+         logFile = new File(PeASSFolderUtil.getLogFolder(), version + "_new");
+      }
+      logFile.mkdir();
 
-		File logFile = new File(PeASSFolderUtil.getLogFolder(), version);
-		if (logFile.exists()) {
-			logFile = new File(PeASSFolderUtil.getLogFolder(), version + "_new");
-		}
-		logFile.mkdir();
-		
-		final TestSet testset = new TestSet();
-		testset.addTest(testcase.getClazz(), testcase.getMethod());
-		for (int vmid = 0; vmid < tester.getVMCount(); vmid++) {
-			tester.evaluateOnce(testset, versionOld, vmid, logFile);
-			tester.evaluateOnce(testset, version, vmid, logFile);
+      final TestSet testset = new TestSet();
+      testset.addTest(testcase);
+      for (int vmid = 0; vmid < tester.getVMCount(); vmid++) {
+         tester.evaluateOnce(testset, versionOld, vmid, logFile);
+         tester.evaluateOnce(testset, version, vmid, logFile);
 
-			if (vmid > 2) {
-				boolean unequal = false;
+         if (vmid > 10) {
+            boolean savelyDecidable = false;
 
-				for (final Entry<String, List<String>> entry : testset.entrySet()) {
-					for (final String method : entry.getValue()) {
-						final File kopemeFile = new File(PeASSFolderUtil.getFullMeasurementFolder(), method + ".xml");
-						final XMLDataLoader loader = new XMLDataLoader(kopemeFile);
-						final List<Double> before = new LinkedList<>();
-						final List<Double> after = new LinkedList<>();
-						for (final Result result : loader.getFullData().getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult()) {
-							if (result.getVersion().getGitversion().equals(versionOld)) {
-								before.add(result.getValue());
-							}
-							if (result.getVersion().getGitversion().equals(version)) {
-								after.add(result.getValue());
-							}
-						}
-						boolean change = TestUtils.tTest(ArrayUtils.toPrimitive(before.toArray(new Double[0])), ArrayUtils.toPrimitive(after.toArray(new Double[0])), 0.05);
-						unequal = !change;
-					}
-				}
+            final File kopemeFile = new File(PeASSFolderUtil.getFullMeasurementFolder(), testcase.getMethod() + ".xml");
+            final XMLDataLoader loader = new XMLDataLoader(kopemeFile);
+            final List<Double> before = new LinkedList<>();
+            final List<Double> after = new LinkedList<>();
+            for (final Result result : loader.getFullData().getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult()) {
+               if (result.getVersion().getGitversion().equals(versionOld)) {
+                  before.add(result.getValue());
+               }
+               if (result.getVersion().getGitversion().equals(version)) {
+                  after.add(result.getValue());
+               }
+            }
+            final double tvalue = TestUtils.t(ArrayUtils.toPrimitive(before.toArray(new Double[0])), ArrayUtils.toPrimitive(after.toArray(new Double[0])));
+            if (Math.abs(tvalue) > 10 || Math.abs(tvalue) < 0.01) {
+               LOG.info("In vm iteration {}, t-value was {} - skipping rest of vm executions.", vmid, tvalue);
+               savelyDecidable = true;
+            }
 
-				if (unequal) {
-					LOG.info("In vm iteration {}, all test results seemed to be equal - skipping rest of vm executions.");
-					break;
-				}
-			}
-		}
-	}
-
+            if (savelyDecidable) {
+               break;
+            }
+         }
+      }
+   }
 
 }

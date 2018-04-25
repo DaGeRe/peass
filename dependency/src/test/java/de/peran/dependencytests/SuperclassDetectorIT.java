@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import de.peran.dependency.ChangeManager;
-import de.peran.dependency.DependencyManager;
+import de.peran.dependency.analysis.data.ChangedEntity;
 import de.peran.dependency.reader.DependencyReader;
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency;
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency.Testcase;
@@ -28,29 +28,20 @@ public class SuperclassDetectorIT {
 	private static final File CURRENT = new File("target", "current");
 	private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "superclass_old");
 
-	private DependencyManager handler;
-
 	@Before
 	public void initialize() throws IOException, InterruptedException {
 		Assert.assertTrue(VERSIONS_FOLDER.exists());
 
 		FileUtils.deleteDirectory(CURRENT);
 		FileUtils.copyDirectory(BASIC_STATE, CURRENT);
-
-		handler = new DependencyManager(CURRENT);
-		final boolean success = handler.initialyGetTraces();
-
-		Assert.assertTrue(success);
 	}
 
 	@Test
 	public void testSuperclassChange() throws IOException, InterruptedException {
 		final File secondVersion = new File(VERSIONS_FOLDER, "superclass_changed");
 
-		final Map<String, Set<String>> changes = new TreeMap<>();
-//		final TreeSet<String> methodChanges = new TreeSet<>();
-//		methodChanges.add("executeThing");
-		changes.put("defaultpackage.NormalSuperclass", new TreeSet<>());
+		final Map<ChangedEntity, Set<String>> changes = new TreeMap<>();
+		changes.put(new ChangedEntity("defaultpackage.NormalSuperclass", ""), new TreeSet<>());
 
 		final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
 		Mockito.when(changeManager.getChanges()).thenReturn(changes);

@@ -27,6 +27,7 @@ import de.peran.measurement.analysis.DataReader;
 import de.peran.measurement.analysis.statistics.EvaluationPair;
 import de.peran.measurement.analysis.statistics.MeanCoVData;
 import de.peran.measurement.analysis.statistics.TestData;
+import de.peran.statistics.DependencyStatisticAnalyzer;
 import de.peran.utils.OptionConstants;
 
 public class AnalyseOneTest {

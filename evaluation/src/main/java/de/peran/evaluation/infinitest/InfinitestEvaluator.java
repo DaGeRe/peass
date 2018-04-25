@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.model.Build;
@@ -35,8 +36,8 @@ public class InfinitestEvaluator extends Evaluator {
 
 	private static final Logger LOG = LogManager.getLogger(InfinitestEvaluator.class);
 
-	public InfinitestEvaluator(final File projectFolder) {
-		super(projectFolder, "infinitest");
+	public InfinitestEvaluator(final String[] args) throws ParseException {
+		super("infinitest", args);
 	}
 
 	@Override
@@ -121,8 +122,8 @@ public class InfinitestEvaluator extends Evaluator {
 		return changedClasses;
 	}
 	
-	public static void main(final String[] args) throws IOException, XmlPullParserException, InterruptedException {
-		final InfinitestEvaluator evaluator = new InfinitestEvaluator(new File(args[0]));
+	public static void main(final String[] args) throws IOException, XmlPullParserException, InterruptedException, ParseException {
+		final InfinitestEvaluator evaluator = new InfinitestEvaluator(args);
 		evaluator.evaluate();
 	}
 

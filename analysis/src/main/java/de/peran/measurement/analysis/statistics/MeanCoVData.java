@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,6 +64,8 @@ public class MeanCoVData {
 			}
 		}
 	}
+	
+	private static final NumberFormat FORMAT = NumberFormat.getInstance();
 
 	public void printTestcaseData(final File folder) throws IOException {
 		for (final Result result : results) {
@@ -74,7 +77,7 @@ public class MeanCoVData {
 					statistics.addValue(Double.parseDouble(value.getValue()));
 					if (statistics.getValues().length == avgCount) {
 						final double cov = statistics.getVariance() / statistics.getMean();
-						writer.write(statistics.getMean() + ";" + cov + "\n");
+						writer.write(FORMAT.format(statistics.getMean()) + ";" + FORMAT.format(cov) + "\n");
 						statistics = new DescriptiveStatistics();
 					}
 				}
@@ -102,7 +105,7 @@ public class MeanCoVData {
 		final File summaryFile = new File(folder, "result_" + clazzname + "_" + name + "_all.csv");
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter(summaryFile))) {
 			for (int i = 0; i < allMeans.size(); i++) {
-				writer.write(allMeans.get(i).getMean() + ";" + allCoVs.get(i).getMean() + "\n");
+				writer.write(NumberFormat.getInstance().format(allMeans.get(i).getMean()) + ";" + NumberFormat.getInstance().format(allCoVs.get(i).getMean()) + "\n");
 			}
 			writer.flush();
 

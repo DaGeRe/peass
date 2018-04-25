@@ -84,12 +84,12 @@ public class FolderSearcher {
 	 * @param folder Folder to process
 	 */
 	private static void processFolder(final File folder) {
-		for (final File file : folder.listFiles()) {
-			if (file.isDirectory()) {
-				if (file.getName().equals("measurements")) {
-					LOG.info("Analysing: {}", file.getAbsolutePath());
+		for (final File measurementFolder : folder.listFiles()) {
+			if (measurementFolder.isDirectory()) {
+				if (measurementFolder.getName().equals("measurements")) {
+					LOG.info("Analysing: {}", measurementFolder.getAbsolutePath());
 					try {
-						AnalyseFullData.analyseFolder(file);
+						new AnalyseFullData().analyseFolder(measurementFolder);
 					} catch (final InterruptedException e) {
 						e.printStackTrace();
 					} catch (final RuntimeException e) {
@@ -98,7 +98,7 @@ public class FolderSearcher {
 						// caused by long-running testcases..
 					}
 				} else {
-					processFolder(file);
+					processFolder(measurementFolder);
 				}
 			}
 		}

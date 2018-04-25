@@ -16,14 +16,16 @@
  */
 package de.peran.dependency.analysis;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.peran.dependency.ClazzFinder;
+import de.peran.dependency.analysis.data.ChangedEntity;
 import de.peran.dependency.analysis.data.TraceElement;
 import kieker.analysis.IProjectContext;
 import kieker.analysis.plugin.annotation.InputPort;
@@ -38,19 +40,21 @@ import kieker.tools.traceAnalysis.systemModel.ExecutionTrace;
  * @author reichelt
  *
  */
-@Plugin(description = "A filter to transform PerAn-Traces")
+@Plugin(description = "A filter to transform PeASS-Traces")
 public class PeASSFilter extends AbstractFilterPlugin {
 	public static final String INPUT_EXECUTION_TRACE = "INPUT_EXECUTION_TRACE";
 
-	private final Map<String, Set<String>> classes = new HashMap<>();
+	private final Map<ChangedEntity, Set<String>> classes = new HashMap<>();
 	private final ArrayList<TraceElement> calls = new ArrayList<>();
 	private final String prefix;
+	private final File projectFolder;
 	
-	private final static int CALLCOUNT = 1000000;
+	private final static int CALLCOUNT = 10000000;
 
-	public PeASSFilter(final String prefix, final Configuration configuration, final IProjectContext projectContext) {
+	public PeASSFilter(final String prefix, final Configuration configuration, final IProjectContext projectContext, final File projectFolder) {
 		super(configuration, projectContext);
 		this.prefix = prefix;
+		this.projectFolder = projectFolder;
 	}
 
 	@Override
@@ -63,18 +67,18 @@ public class PeASSFilter extends AbstractFilterPlugin {
 		LOG.info("Trace: " + trace.getTraceId());
 
 		for (final Execution execution : trace.getTraceAsSortedExecutionSet()) {
-			
 			if (calls.size() > CALLCOUNT ){
 				calls.add(new TraceElement("ATTENTION", "TO MUCH CALLS", 0));
+				LOG.info("Trace Reading Aborted, Cause More Than "+CALLCOUNT+" Appeared");
 				break;
 			}
 			
-			final String classname = execution.getOperation().getComponentType().getFullQualifiedName().intern();
-			if (prefix == null || prefix != null && classname.startsWith(prefix)) {
-				if (!classname.contains("junit") && !classname.contains("log4j")) {
+			final String fullClassname = execution.getOperation().getComponentType().getFullQualifiedName().intern();
+			if (prefix == null || prefix != null && fullClassname.startsWith(prefix)) {
+				if (!fullClassname.contains("junit") && !fullClassname.contains("log4j")) {
 					final String methodname = execution.getOperation().getSignature().getName().intern();
 
-					final TraceElement traceelement = new TraceElement(classname, methodname, execution.getEss());
+					final TraceElement traceelement = new TraceElement(fullClassname, methodname, execution.getEss());
 					if (Arrays.asList(execution.getOperation().getSignature().getModifier()).contains("static")) {
 						traceelement.setStatic(true);
 					}
@@ -85,20 +89,22 @@ public class PeASSFilter extends AbstractFilterPlugin {
 					}
 					traceelement.setParameterTypes(paramTypeList);
 					
-//					System.out.println(execution);
-
 					// KoPeMe-methods are not relevant
 					if (!methodname.equals("logFullData") 
 							&& !methodname.equals("useKieker") 
 							&& !methodname.equals("getWarmupExecutions") 
 							&& !methodname.equals("getExecutionTimes") 
 							&& !methodname.equals("getMaximalTime")
-							&& !methodname.equals("getRepetitions")) {
+							&& !methodname.equals("getRepetitions")
+							&& !methodname.equals("getDataCollectors") ) {
 						calls.add(traceelement);
-						Set<String> currentMethodSet = classes.get(classname);
+						final String clazzFilename = ClazzFinder.getClassFilename(projectFolder, fullClassname);
+                  final String outerClazzName = ClazzFinder.getOuterClass(fullClassname);
+                  final ChangedEntity fullClassEntity = new ChangedEntity(clazzFilename, ModuleClassMapping.getModuleOfClass(outerClazzName));
+						Set<String> currentMethodSet = classes.get(fullClassEntity);
 						if (currentMethodSet == null) {
 							currentMethodSet = new HashSet<>();
-							classes.put(classname, currentMethodSet);
+                     classes.put(fullClassEntity, currentMethodSet);
 						}
 						currentMethodSet.add(methodname);
 					}
@@ -112,10 +118,8 @@ public class PeASSFilter extends AbstractFilterPlugin {
 		return calls;
 	}
 
-	public Map<String, Set<String>> getCalledClasses() {
+	public Map<ChangedEntity, Set<String>> getCalledMethods() {
 		return classes;
 	}
-
-	// public Map<Strin>
 
 }

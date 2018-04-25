@@ -2,8 +2,6 @@ package de.peran.reading;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +10,6 @@ import org.junit.Test;
 
 import com.github.javaparser.ParseException;
 
-import de.peran.dependency.analysis.data.TraceElement;
 import de.peran.dependency.traces.TraceMethodReader;
 import de.peran.dependency.traces.TraceWithMethods;
 
@@ -68,7 +65,7 @@ public class TestTraceReading {
 
 		Assert.assertEquals("public static void main(final String[] args) {", trace.getMethod(0).substring(0, trace.getMethod(0).indexOf("\n")));
 		Assert.assertEquals("public void callMe() {", trace.getMethod(2).substring(0, trace.getMethod(2).indexOf("\n")));
-		String sourceMethod5 = trace.getMethod(6);
+		final String sourceMethod5 = trace.getMethod(6);
 		Assert.assertEquals("private int callMe4() {", sourceMethod5.substring(0, sourceMethod5.indexOf("\n")));
 	}
 

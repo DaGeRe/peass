@@ -62,7 +62,8 @@ public class VersionIteratorGit extends VersionIterator {
 	@Override
 	public boolean goToNextCommit() {
 		tagid++;
-		GitUtils.goToTag(entries.get(tagid).getTag(), projectFolder);
+		final String nextTag = entries.get(tagid).getTag();
+      GitUtils.goToTag(nextTag, projectFolder);
 		return true;
 	}
 

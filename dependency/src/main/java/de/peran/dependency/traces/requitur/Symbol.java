@@ -5,7 +5,6 @@ import org.apache.logging.log4j.Logger;
 
 import de.peran.dependency.traces.requitur.content.Content;
 import de.peran.dependency.traces.requitur.content.RuleContent;
-import de.peran.dependency.traces.requitur.content.StringContent;
 
 class Symbol {
 

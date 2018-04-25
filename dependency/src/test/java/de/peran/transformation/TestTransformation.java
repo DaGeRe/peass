@@ -63,10 +63,12 @@ public class TestTransformation {
 	public static void initFolder() throws URISyntaxException, IOException {
 		RESOURCE_FOLDER = Paths.get(SOURCE.toURI()).toFile();
 		SOURCE_FOLDER = new File(testFolder.getRoot(), "src/test/java");
+		FileUtils.copyFile(new File(RESOURCE_FOLDER, "pom.xml"), new File(testFolder.getRoot(), "pom.xml"));
 	}
-
+	
 	@Test
 	public void testJUnit3Transformation() throws IOException {
+		
 		final File old = new File(RESOURCE_FOLDER, "TestMe1.java");
 		final File testFile = new File(SOURCE_FOLDER, "TestMe1.java");
 		FileUtils.copyFile(old, testFile);

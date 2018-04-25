@@ -1,4 +1,4 @@
-package de.peran;
+package de.peran.statistics;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,24 +35,13 @@ import de.peran.reduceddependency.ChangedTraceTests;
 import de.peran.utils.OptionConstants;
 
 /**
- * Analyzes a depedency file and prints some statistical information about it.
+ * Analyzes a dependency file and prints some statistical information about it.
  * 
  * @author reichelt
  *
  */
 public class DependencyStatisticAnalyzer {
 
-	static class Statistics {
-		int overallRunTests = 0;
-		int changedTraceTests = 0;
-		int pruningRunTests = 0;
-		
-		int size = 0;
-		
-		List<TestCase> multipleChangedTest = new LinkedList<>();
-		List<TestCase> onceChangedTests = new LinkedList<>();
-	}
- 
 	private static final Logger LOG = LogManager.getLogger(DependencyStatisticAnalyzer.class);
 
 	public static void main(final String[] args) throws JAXBException, ParseException, JsonParseException, JsonMappingException, IOException {
@@ -77,14 +66,14 @@ public class DependencyStatisticAnalyzer {
 			changedTests = null;
 		}
 
-		final Statistics statistics = getChangeStatistics(dependenciesFile, changedTests);
+		final DependencyStatistics statistics = getChangeStatistics(dependenciesFile, changedTests);
 
 		LOG.info("Versions: {} Bei Pruning ausgeführte Tests: {} Trace-Changed Tests: {}", statistics.size, statistics.pruningRunTests, statistics.changedTraceTests);
 		LOG.info("Gesamt-Tests: {} Bei Pruning (ggf. mehrmals) genutzte Tests: {} Nur einmal ausgeführte Tests (d.h. keine Veränderung möglich): {}", statistics.overallRunTests,
 				statistics.multipleChangedTest.size(), statistics.onceChangedTests.size());
 	}
 
-	public static Statistics getChangeStatistics(final File dependenciesFile, final ChangedTraceTests changedTests) throws JAXBException {
+	public static DependencyStatistics getChangeStatistics(final File dependenciesFile, final ChangedTraceTests changedTests) throws JAXBException {
 		final Versiondependencies dependencies = readVersions(dependenciesFile);
 		final List<Version> versions = dependencies.getVersions().getVersion();
 
@@ -96,7 +85,7 @@ public class DependencyStatisticAnalyzer {
 
 		LOG.trace("StartTest: {}", startTestCound);
 //		final List<TestCase> sometimesChangedTest = new LinkedList<>(); // Nicht nur Vorkommen, auch Anzahl relevant
-		final Statistics statistics = new Statistics();
+		final DependencyStatistics statistics = new DependencyStatistics();
 //		final List<TestCase> onlyOnceChangedTests = new LinkedList<>();
 		statistics.onceChangedTests.addAll(currentContainedTests);
 		

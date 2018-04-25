@@ -22,6 +22,7 @@ import de.peran.measurement.analysis.CompareByFulldata;
 import de.peran.measurement.analysis.DataReader;
 import de.peran.measurement.analysis.MultipleVMTestUtil;
 import de.peran.measurement.analysis.statistics.TestData;
+import de.peran.statistics.DependencyStatisticAnalyzer;
 import de.peran.utils.OptionConstants;
 
 public class FindLowestPossibleIterations {

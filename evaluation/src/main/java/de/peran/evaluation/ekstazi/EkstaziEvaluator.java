@@ -3,6 +3,7 @@ package de.peran.evaluation.ekstazi;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,8 +19,8 @@ public class EkstaziEvaluator extends Evaluator {
 
 	private static final Logger LOG = LogManager.getLogger(EkstaziEvaluator.class);
 
-	public EkstaziEvaluator(final File projectFolder) {
-		super(projectFolder, "ekstazi");
+	public EkstaziEvaluator(final String[] args) throws ParseException {
+		super("ekstazi", args);
 	}
 
 	@Override
@@ -47,9 +48,8 @@ public class EkstaziEvaluator extends Evaluator {
 		}
 	}
 	
-	public static void main(final String[] args) {
-		final File projectFolder = new File(args[0]); // TODO CLI
-		final Evaluator evaluator = new EkstaziEvaluator(projectFolder);
+	public static void main(final String[] args) throws ParseException {
+		final Evaluator evaluator = new EkstaziEvaluator(args);
 		evaluator.evaluate();
 	}
 

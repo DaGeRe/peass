@@ -18,13 +18,13 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
-import de.peran.DependencyStatisticAnalyzer;
 import de.peran.dependency.analysis.data.TestCase;
 import de.peran.dependencyprocessors.PairProcessor;
 import de.peran.dependencyprocessors.VersionComparator;
 import de.peran.generated.Versiondependencies;
 import de.peran.generated.Versiondependencies.Versions.Version;
 import de.peran.measurement.analysis.statistics.TestData;
+import de.peran.statistics.DependencyStatisticAnalyzer;
 import de.peran.utils.OptionConstants;
 
 public class VersionDataAnalyzer extends PairProcessor {
