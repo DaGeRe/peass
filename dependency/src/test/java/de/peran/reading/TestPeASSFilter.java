@@ -11,7 +11,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.peran.dependency.PeASSFolderUtil;
+import de.peran.dependency.PeASSFolders;
 import de.peran.dependency.TestResultManager;
 import de.peran.dependency.analysis.CalledMethodLoader;
 import de.peran.dependency.analysis.data.TestCase;
@@ -54,7 +54,7 @@ public class TestPeASSFilter {
 
       for (int i = 1; i <= 10; i++) {
          cleanup();
-         PeASSFolderUtil.setProjectFolder(CURRENT);
+         new PeASSFolders(CURRENT);
          manager.executeKoPeMeKiekerRun(ts, ""+i);
          final File kiekerFolderComparison = ViewGeneratorIT.getMethodFolder(testcase, manager.getXMLFileFolder(CURRENT));
          LOG.debug("Searching: " + kiekerFolderComparison);

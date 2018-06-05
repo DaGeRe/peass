@@ -26,9 +26,9 @@ public class VersionRunStarter extends VersionProcessor {
 
 	@Override
 	protected void processVersion(final Version version) {
-		GitUtils.goToTag(version.getVersion(), projectFolder);
+		GitUtils.goToTag(version.getVersion(), folders.getProjectFolder());
 		try {
-			final Process p = Runtime.getRuntime().exec("mvn clean package -DskipTests=true", null, projectFolder);
+			final Process p = Runtime.getRuntime().exec("mvn clean package -DskipTests=true", null, folders.getProjectFolder());
 			StreamGobbler.showFullProcess(p);
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block

@@ -16,6 +16,7 @@
  */
 package de.peran.dependency.analysis.data;
 
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +25,10 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.KeyDeserializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency;
 import de.peran.generated.Versiondependencies.Versions.Version.Dependency.Testcase;
@@ -35,6 +40,22 @@ import de.peran.generated.Versiondependencies.Versions.Version.Dependency.Testca
  *
  */
 public class TestSet {
+   
+   public static class ChangedEntitityDeserializer extends KeyDeserializer {
+      
+      public ChangedEntitityDeserializer() {
+      }
+      
+      @Override
+      public ChangedEntity deserializeKey(String key, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+         final String value = key;
+         final ChangedEntity entity = new ChangedEntity(value.substring(value.indexOf("-")+1), value.substring(0,value.indexOf("-")));
+         
+         return entity;
+      }
+  }
+   
+   @JsonDeserialize(keyUsing=ChangedEntitityDeserializer.class)
 	private final Map<ChangedEntity, List<String>> testcases = new TreeMap<>();
 
 	public TestSet() {

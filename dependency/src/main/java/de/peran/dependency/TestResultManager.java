@@ -42,31 +42,33 @@ public class TestResultManager {
 
 	private static final Logger LOG = LogManager.getLogger(TestResultManager.class);
 
-	protected final File projectFolder;
-	protected final File resultsFolder, logFolder;
+//	protected final File projectFolder;
+//	protected final File resultsFolder, logFolder;
 	protected final TestExecutor executor;
+	protected final PeASSFolders folders;
 
 	public TestResultManager(final File projectFolder) {
 		super();
-		this.projectFolder = projectFolder;
+		folders = new PeASSFolders(projectFolder);
+//		this.projectFolder = projectFolder;
 
-		PeASSFolderUtil.setProjectFolder(projectFolder);
-		resultsFolder = PeASSFolderUtil.getKiekerResultFolder();
-		logFolder = PeASSFolderUtil.getLogFolder();
+//		PeASSFolders.setProjectFolder(projectFolder);
+//		resultsFolder = PeASSFolders.getKiekerResultFolder();
+//		logFolder = PeASSFolders.getLogFolder();
 
 		final JUnitTestTransformer testGenerator = createTestTransformer();
 
 		final File pom = new File(projectFolder, "pom.xml");
 		if (pom.exists()) {
-			executor = new MavenKiekerTestExecutor(projectFolder, resultsFolder, testGenerator);
+			executor = new MavenKiekerTestExecutor(projectFolder, folders.getKiekerResultFolder(), testGenerator);
 		} else {
-			executor = new GradleTestExecutor(projectFolder, resultsFolder);
+			executor = new GradleTestExecutor(projectFolder, folders.getKiekerResultFolder());
 
 		}
 	}
 
 	private JUnitTestTransformer createTestTransformer() {
-		final JUnitTestTransformer testGenerator = new JUnitTestTransformer(projectFolder);
+		final JUnitTestTransformer testGenerator = new JUnitTestTransformer(folders.getProjectFolder());
 		testGenerator.setUseKieker(true);
 		testGenerator.setLogFullData(false);
 		testGenerator.setEncoding(StandardCharsets.UTF_8);
@@ -84,7 +86,7 @@ public class TestResultManager {
 	 * @throws InterruptedException
 	 */
 	public void executeKoPeMeKiekerRun(final TestSet testsToUpdate, final String versionName) throws IOException {
-		final File logVersionFolder = new File(logFolder, versionName);
+		final File logVersionFolder = new File(folders.getLogFolder(), versionName);
 		if (!logVersionFolder.exists()) {
 			logVersionFolder.mkdir();
 		}
@@ -100,7 +102,7 @@ public class TestResultManager {
 		final ProjectInfo projectInfo = new PomProjectNameReader().getProjectInfo(pomXmlFile);
 		final String groupId = projectInfo.getGroupId();
 		final String artifactId = projectInfo.getArtifactId();
-		final File xmlFileFolder = new File(resultsFolder, groupId + File.separator + artifactId);
+		final File xmlFileFolder = new File(folders.getKiekerResultFolder(), groupId + File.separator + artifactId);
 		return xmlFileFolder;
 	}
 

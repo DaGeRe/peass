@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
-import de.peran.dependency.PeASSFolderUtil;
 import de.peran.dependency.analysis.data.TestCase;
 import de.peran.dependency.analysis.data.TestSet;
 
@@ -42,9 +41,9 @@ public class AdaptiveTestStarter extends DependencyTestPairStarter {
    protected void executeCompareTests(final String version, final String versionOld, final TestCase testcase) throws IOException, InterruptedException, JAXBException {
       LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", versionOld, version);
 
-      File logFile = new File(PeASSFolderUtil.getLogFolder(), version);
+      File logFile = new File(folders.getLogFolder(), version);
       if (logFile.exists()) {
-         logFile = new File(PeASSFolderUtil.getLogFolder(), version + "_new");
+         logFile = new File(folders.getLogFolder(), version + "_new");
       }
       logFile.mkdir();
 
@@ -57,7 +56,7 @@ public class AdaptiveTestStarter extends DependencyTestPairStarter {
          if (vmid > 10) {
             boolean savelyDecidable = false;
 
-            final File kopemeFile = new File(PeASSFolderUtil.getFullMeasurementFolder(), testcase.getMethod() + ".xml");
+            final File kopemeFile = new File(folders.getFullMeasurementFolder(), testcase.getMethod() + ".xml");
             final XMLDataLoader loader = new XMLDataLoader(kopemeFile);
             final List<Double> before = new LinkedList<>();
             final List<Double> after = new LinkedList<>();

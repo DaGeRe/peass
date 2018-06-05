@@ -21,7 +21,7 @@ import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.TestcaseType;
-import de.peran.dependency.PeASSFolderUtil;
+import de.peran.dependency.PeASSFolders;
 import de.peran.dependency.analysis.data.ChangedEntity;
 import de.peran.dependency.analysis.data.TestCase;
 import de.peran.dependency.analysis.data.TestSet;
@@ -48,7 +48,7 @@ public class DependencyTester {
 
 	private static final Logger LOG = LogManager.getLogger(DependencyTester.class);
 
-	private final File projectFolder;
+	private final PeASSFolders folders;
 	private final int warmup, iterations;
 	private final int vms;
 	private final FileWriter resultFileWriter;
@@ -60,26 +60,25 @@ public class DependencyTester {
 	final JUnitTestTransformer testgenerator;
 	final MavenKiekerTestExecutor mavenKiekerExecutor;
 
-	public DependencyTester(final File projectFolder, final int duration, final int vms,
+	public DependencyTester(final PeASSFolders folders, final int duration, final int vms,
 			final boolean runInitial, final int repetitions, boolean useKieker) throws IOException {
 		super();
-		this.projectFolder = projectFolder;
+		this.folders = folders;
 		this.warmup = 0;
 		this.iterations = 0;
 		this.vms = vms;
 		this.runInitial = runInitial;
 		resultFileWriter = new FileWriter(new File("fertig.txt"));
 
-		vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
+		vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
 		if (vcs.equals(VersionControlSystem.SVN)) {
-			url = SVNUtils.getInstance().getWCURL(projectFolder);
-			SVNUtils.getInstance().revert(projectFolder);
+			url = SVNUtils.getInstance().getWCURL(folders.getProjectFolder());
+			SVNUtils.getInstance().revert(folders.getProjectFolder());
 		} else {
 			url = null;
 		}
-		PeASSFolderUtil.setProjectFolder(projectFolder);
 
-		testgenerator = new TimeBasedTestTransformer(projectFolder);
+		testgenerator = new TimeBasedTestTransformer(folders.getProjectFolder());
 		((TimeBasedTestTransformer) testgenerator).setDuration(duration);
 		if (repetitions != 1) {
 			testgenerator.setRepetitions(150);
@@ -89,30 +88,28 @@ public class DependencyTester {
 		testgenerator.setWarmupExecutions(warmup);
 		testgenerator.setUseKieker(useKieker);
 		testgenerator.setLogFullData(true);
-		mavenKiekerExecutor = new MavenKiekerTestExecutor(projectFolder, PeASSFolderUtil.getTempMeasurementFolder(),
-				testgenerator);
+		mavenKiekerExecutor = new MavenKiekerTestExecutor(folders.getProjectFolder(), folders.getTempMeasurementFolder(), testgenerator);
 	}
 
-	public DependencyTester(final File projectFolder, final int warmup, final int iterations, final int vms,
+	public DependencyTester(final PeASSFolders folders, final int warmup, final int iterations, final int vms,
 			final boolean runInitial, final int repetitions, boolean useKieker) throws IOException {
 		super();
-		this.projectFolder = projectFolder;
+		this.folders = folders;
 		this.warmup = warmup;
 		this.iterations = iterations;
 		this.vms = vms;
 		this.runInitial = runInitial;
 		resultFileWriter = new FileWriter(new File("fertig.txt"));
 
-		vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
+		vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
 		if (vcs.equals(VersionControlSystem.SVN)) {
-			url = SVNUtils.getInstance().getWCURL(projectFolder);
-			SVNUtils.getInstance().revert(projectFolder);
+			url = SVNUtils.getInstance().getWCURL(folders.getProjectFolder());
+			SVNUtils.getInstance().revert(folders.getProjectFolder());
 		} else {
 			url = null;
 		}
-		PeASSFolderUtil.setProjectFolder(projectFolder);
 
-		testgenerator = new JUnitTestTransformer(projectFolder);
+		testgenerator = new JUnitTestTransformer(folders.getProjectFolder());
 		if (repetitions != 1) {
 			testgenerator.setRepetitions(repetitions);
 		}
@@ -121,7 +118,7 @@ public class DependencyTester {
 		testgenerator.setWarmupExecutions(warmup);
 		testgenerator.setUseKieker(useKieker);
 		testgenerator.setLogFullData(true);
-		mavenKiekerExecutor = new MavenKiekerTestExecutor(projectFolder, PeASSFolderUtil.getTempMeasurementFolder(), testgenerator);
+		mavenKiekerExecutor = new MavenKiekerTestExecutor(folders.getProjectFolder(), folders.getTempMeasurementFolder(), testgenerator);
 	}
 
 	/**
@@ -176,9 +173,9 @@ public class DependencyTester {
 	 */
 	private void evaluateTestset(final String version, final TestSet testset)
 			throws IOException, InterruptedException, JAXBException {
-		File logFile = new File(PeASSFolderUtil.getLogFolder(), version);
+		File logFile = new File(folders.getLogFolder(), version);
 		if (logFile.exists()) {
-			logFile = new File(PeASSFolderUtil.getLogFolder(), version + "_new");
+			logFile = new File(folders.getLogFolder(), version + "_new");
 		}
 		logFile.mkdir();
 		for (int run = 0; run < vms; run++) {
@@ -199,9 +196,9 @@ public class DependencyTester {
 
 		readDependencyToMap(end, testset);
 
-		File logFile = new File(PeASSFolderUtil.getLogFolder(), start);
+		File logFile = new File(folders.getLogFolder(), start);
 		if (logFile.exists()) {
-			logFile = new File(PeASSFolderUtil.getLogFolder(), end + "_new");
+			logFile = new File(folders.getLogFolder(), end + "_new");
 		}
 		logFile.mkdir();
 		LOG.info("Teste: " + testset);
@@ -241,9 +238,9 @@ public class DependencyTester {
    public void evaluate(final String version, final String versionOld, final TestCase testcase) throws IOException, InterruptedException, JAXBException {
       LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", versionOld, version);
 
-      File logFile = new File(PeASSFolderUtil.getLogFolder(), version);
+      File logFile = new File(folders.getLogFolder(), version);
       if (logFile.exists()) {
-         logFile = new File(PeASSFolderUtil.getLogFolder(), version + "_new");
+         logFile = new File(folders.getLogFolder(), version + "_new");
       }
       logFile.mkdir();
 
@@ -258,9 +255,9 @@ public class DependencyTester {
 	public void evaluateOnce(final TestSet testset, final String version, final int vmid, final File logFolder)
 			throws IOException, InterruptedException, JAXBException {
 		if (vcs.equals(VersionControlSystem.SVN)) {
-			SVNUtils.getInstance().checkout(url, projectFolder, Long.parseLong(version));
+			SVNUtils.getInstance().checkout(url, folders.getProjectFolder(), Long.parseLong(version));
 		} else {
-			GitUtils.goToTag(version, projectFolder);
+			GitUtils.goToTag(version, folders.getProjectFolder());
 		}
 
 		File vmidFolder = new File(logFolder, "vm_" + vmid);
@@ -298,7 +295,7 @@ public class DependencyTester {
 		for (final Map.Entry<ChangedEntity, List<String>> testcaseEntry : testset.entrySet()) {
 			LOG.info("Teste Methoden: {}", testcaseEntry.getValue().size());
 			final String expectedFolderName = "*" + testcaseEntry.getKey().getJavaClazzName();
-			final Collection<File> folderCandidates = findFolder(PeASSFolderUtil.getTempMeasurementFolder(), new WildcardFileFilter(expectedFolderName));
+			final Collection<File> folderCandidates = findFolder(folders.getTempMeasurementFolder(), new WildcardFileFilter(expectedFolderName));
 			if (folderCandidates.size() != 1) {
 				LOG.error("Ordner {} ist {} mal vorhanden.", expectedFolderName, folderCandidates.size());
 			} else {
@@ -320,7 +317,7 @@ public class DependencyTester {
 						}
 					}
 					if (testgenerator.isUseKieker()) {
-						final File methodFolder = new File(PeASSFolderUtil.getKiekerResultFolder(),
+						final File methodFolder = new File(folders.getKiekerResultFolder(),
 								testcaseEntry.getKey() + "." + methodname);
 						if (!methodFolder.exists()) {
 							methodFolder.mkdir();
@@ -343,7 +340,7 @@ public class DependencyTester {
 					}
 				}
 			}
-			for (final File file : PeASSFolderUtil.getTempMeasurementFolder().listFiles()) {
+			for (final File file : folders.getTempMeasurementFolder().listFiles()) {
 				FileUtils.forceDelete(file);
 			}
 		}
@@ -358,10 +355,10 @@ public class DependencyTester {
 		XMLDataStorer.storeData(oneResultFile, oneResultData);
 
 		final TestcaseType oneRundata = testcaseList.get(0);
-		final File fullResultFile = new File(PeASSFolderUtil.getFullMeasurementFolder(), methodname + ".xml");
+		final File fullResultFile = new File(folders.getFullMeasurementFolder(), methodname + ".xml");
 		LOG.info("Schreibe in Ergebnisdatei: {}", fullResultFile);
 		MultipleVMTestUtil.fillOtherData(fullResultFile, oneRundata, clazz, methodname, version);
-		final File destFolder = new File(PeASSFolderUtil.getDetailResultFolder(), clazz);
+		final File destFolder = new File(folders.getDetailResultFolder(), clazz);
 		final File destFile = new File(destFolder, methodname + "_" + vmid + "_" + version + ".xml");
 		LOG.info("Verschiebe nach: {}", destFile);
 		if (!destFile.exists()) {

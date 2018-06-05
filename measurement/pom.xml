@@ -37,23 +37,6 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<version>2.10</version>
-				<executions>
-					<execution>
-						<id>resources</id>
-						<phase>process-resources</phase>
-						<goals>
-							<goal>get</goal>
-						</goals>
-						<configuration>
-							<artifact>de.dagere.kopeme:kopeme-core:0.11</artifact>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>2.17</version>
 				<configuration>
@@ -108,19 +91,9 @@
 			<classifier>aspectj</classifier>
 		</dependency>
 		<dependency>
-			<groupId>org.jfree</groupId>
-			<artifactId>jfreechart</artifactId>
-			<version>1.0.19</version>
-		</dependency>
-		<dependency>
-			<groupId>de.dagere.kopeme</groupId>
-			<artifactId>kopeme-junit</artifactId>
-			<version>0.8-SNAPSHOT</version>
-		</dependency>
-		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
-			<version>3.6</version>
+			<version>3.7</version>
 		</dependency>
 
 		<dependency>

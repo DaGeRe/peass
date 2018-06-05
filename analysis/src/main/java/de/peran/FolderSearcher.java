@@ -40,17 +40,18 @@ public class FolderSearcher {
 		final CommandLine line = parser.parse(options, args);
 
 		AnalyseOneTest.loadDependencies(line);
-
+		
+		final AnalyseFullData afd = new AnalyseFullData();
 		for (int i = 0; i < line.getOptionValues(CompareByFulldata.DATA).length; i++) {
 			final File folder = new File(line.getOptionValues(CompareByFulldata.DATA)[i]);
 			LOG.info("Searching in " + folder);
-			processFolder(folder);
+			processFolder(folder, afd);
 		}
 		LOG.info("Versions: {} Testcases: {} Changes: {}", AnalyseFullData.versions.size(), AnalyseFullData.testcases,
 				AnalyseFullData.changes);
 
-		for (final Entry<String, Changes> entry : AnalyseFullData.oldKnowledge.getVersionChanges().entrySet()) {
-			final Changes newChanges = AnalyseFullData.knowledge.getVersion(entry.getKey());
+		for (final Entry<String, Changes> entry : afd.oldKnowledge.getVersionChanges().entrySet()) {
+			final Changes newChanges = afd.knowledge.getVersion(entry.getKey());
 			if (newChanges == null) {
 			} else {
 				for (final Entry<String, List<Change>> changeTests : entry.getValue().getTestcaseChanges().entrySet()) {
@@ -83,13 +84,13 @@ public class FolderSearcher {
 	 * Process a found folder, i.e. a folder containing measurements.
 	 * @param folder Folder to process
 	 */
-	private static void processFolder(final File folder) {
+	private static void processFolder(final File folder, AnalyseFullData afd) {
 		for (final File measurementFolder : folder.listFiles()) {
 			if (measurementFolder.isDirectory()) {
 				if (measurementFolder.getName().equals("measurements")) {
 					LOG.info("Analysing: {}", measurementFolder.getAbsolutePath());
 					try {
-						new AnalyseFullData().analyseFolder(measurementFolder);
+						afd.analyseFolder(measurementFolder);
 					} catch (final InterruptedException e) {
 						e.printStackTrace();
 					} catch (final RuntimeException e) {
@@ -98,7 +99,7 @@ public class FolderSearcher {
 						// caused by long-running testcases..
 					}
 				} else {
-					processFolder(measurementFolder);
+					processFolder(measurementFolder, afd);
 				}
 			}
 		}

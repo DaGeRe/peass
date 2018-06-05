@@ -32,7 +32,7 @@ public class VersionDataAnalyzer extends PairProcessor {
 	private static final Logger LOG = LogManager.getLogger(VersionDataAnalyzer.class);
 
 	public VersionDataAnalyzer(final String[] args) throws ParseException, JAXBException {
-		super(args, false);
+		super(args);
 	} 
 
 	@Override
@@ -64,7 +64,7 @@ public class VersionDataAnalyzer extends PairProcessor {
 		addData(versionOld, testcase, oldFiles, myTestdata);
 		myData.put(revision, myTestdata);
 
-		final CompareByFulldata comperator = new CompareByFulldata(projectFolder);
+		final CompareByFulldata comperator = new CompareByFulldata(folders.getProjectFolder());
 		comperator.analyzeData(myData);
 	}
 

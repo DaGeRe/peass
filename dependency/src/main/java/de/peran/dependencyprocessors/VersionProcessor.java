@@ -1,6 +1,9 @@
 package de.peran.dependencyprocessors;
 
 import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBException;
 
@@ -9,8 +12,10 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-import de.peran.dependency.PeASSFolderUtil;
+import de.peran.dependency.PeASSFolders;
 import de.peran.generated.Versiondependencies;
 import de.peran.generated.Versiondependencies.Initialversion;
 import de.peran.generated.Versiondependencies.Versions.Version;
@@ -27,63 +32,103 @@ import de.peran.vcs.VersionControlSystem;
  */
 public abstract class VersionProcessor {
 
-	protected File projectFolder;
-	protected VersionControlSystem vcs;
-	protected final Versiondependencies dependencies;
-	protected final CommandLine line;
-	protected final String startversion;
-	protected final String endversion;
+   private static final Logger LOG = LogManager.getLogger(VersionProcessor.class);
 
-	public VersionProcessor(final String[] args) throws ParseException, JAXBException {
-		this(args, true);
-	}
+   protected PeASSFolders folders;
+   protected VersionControlSystem vcs;
+   protected final Versiondependencies dependencies;
+   protected final CommandLine line;
+   protected String startversion;
+   protected String endversion;
+   private final int threads;
 
-	public VersionProcessor(final String[] args, final boolean isProjectFolder) throws ParseException, JAXBException {
-		final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.DEPENDENCYFILE, OptionConstants.WARMUP, OptionConstants.ITERATIONS, OptionConstants.VMS,
-				OptionConstants.STARTVERSION, OptionConstants.ENDVERSION,
-				OptionConstants.EXECUTIONFILE, OptionConstants.REPETITIONS, OptionConstants.DURATION, 
-				OptionConstants.CHANGEFILE,	OptionConstants.TEST, OptionConstants.USEKIEKER);
-		final CommandLineParser parser = new DefaultParser();
+   public VersionProcessor(File projectFolder, Versiondependencies dependencies) {
+      this.folders = new PeASSFolders(projectFolder);
+      this.dependencies = dependencies;
+      line = null;
+      startversion = null;
+      endversion = null;
+      threads = 1;
+   }
 
-		line = parser.parse(options, args);
+   public void setStartversion(String startversion) {
+      this.startversion = startversion;
+   }
 
-		final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
-		dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+   public void setEndversion(String endversion) {
+      this.endversion = endversion;
+   }
 
-		projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
-		if (!projectFolder.exists()) {
-			GitUtils.downloadProject(dependencies.getUrl(), projectFolder);
-		}
-		PeASSFolderUtil.setProjectFolder(projectFolder);
+   public VersionProcessor(final String[] args) throws ParseException, JAXBException {
+      final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.DEPENDENCYFILE, OptionConstants.WARMUP, OptionConstants.ITERATIONS,
+            OptionConstants.VMS,
+            OptionConstants.STARTVERSION, OptionConstants.ENDVERSION,
+            OptionConstants.EXECUTIONFILE, OptionConstants.REPETITIONS, OptionConstants.DURATION,
+            OptionConstants.CHANGEFILE, OptionConstants.TEST, OptionConstants.USEKIEKER, OptionConstants.THREADS);
+      final CommandLineParser parser = new DefaultParser();
 
-		startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName(), null);
-		endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName(), null);
+      line = parser.parse(options, args);
 
-		VersionComparator.setDependencies(dependencies);
-		if (isProjectFolder) {
-			vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
-		} else {
-			vcs = null;
-		}
+      final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
+      dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
 
-		VersionComparator.setDependencies(dependencies);
-	}
+      final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
+      this.folders = new PeASSFolders(projectFolder);
+      if (!projectFolder.exists()) {
+         GitUtils.downloadProject(dependencies.getUrl(), projectFolder);
+      }
 
-	public void processCommandline() throws ParseException, JAXBException {
-		processInitialVersion(dependencies.getInitialversion());
+      startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName(), null);
+      endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName(), null);
 
-		for (final Version version : dependencies.getVersions().getVersion()) {
-			processVersion(version);
-		}
-	}
+      VersionComparator.setDependencies(dependencies);
+      vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
 
-	protected void processInitialVersion(final Initialversion version) {
+      threads = Integer.parseInt(line.getOptionValue(OptionConstants.THREADS.getName(), "1"));
+   }
 
-	}
+   public void processCommandline() throws ParseException, JAXBException {
+      processInitialVersion(dependencies.getInitialversion());
 
-	protected abstract void processVersion(Version version);
+      if (threads != 1) {
+         final ExecutorService service = Executors.newFixedThreadPool(threads);
+         int index = 0;
+         for (final Version versioninfo : dependencies.getVersions().getVersion()) {
+            final boolean beforeEndVersion = endversion == null || versioninfo.getVersion().equals(endversion) || VersionComparator.isBefore(versioninfo.getVersion(), endversion);
+            if (!VersionComparator.isBefore(versioninfo.getVersion(), startversion) && beforeEndVersion) {
+               final File projectFolderTemp = new File(folders.getTempProjectFolder(), "" + index);
+               final Runnable runVersion = processVersionParallel(versioninfo, projectFolderTemp);
+               service.submit(runVersion);
+            }
 
-	protected CommandLine getLine() {
-		return line;
-	}
+            index++;
+         }
+         service.shutdown();
+         try {
+            service.awaitTermination(Long.MAX_VALUE, TimeUnit.HOURS);
+         } catch (final InterruptedException e) {
+            e.printStackTrace();
+         }
+         
+      } else {
+         for (final Version version : dependencies.getVersions().getVersion()) {
+            processVersion(version);
+         }
+      }
+
+   }
+   
+   protected Runnable processVersionParallel(Version version, final File projectFolderTemp) {
+      throw new RuntimeException("Parallel processing is not possible or implemented; do not set threads!");
+   }
+
+   protected void processInitialVersion(final Initialversion version) {
+
+   }
+
+   protected abstract void processVersion(Version version);
+
+   protected CommandLine getLine() {
+      return line;
+   }
 }

@@ -7,16 +7,16 @@ import java.io.File;
  * @author reichelt
  *
  */
-public class PeASSFolderUtil {
-	private static File projectFolder;
-	private static File resultFolder;
-	private static File fullResultFolder;
-	private static File tempResultFolder;
-	private static File logFolder;
-	private static File lastSourceFolder;
-	private static File detailFolder;
+public class PeASSFolders {
+	private final File projectFolder;
+	private final File resultFolder;
+	private final File fullResultFolder;
+	private final File tempResultFolder, tempProjectFolder;
+	private final File logFolder;
+	private final File lastSourceFolder;
+	private final File detailFolder;
 
-	public static void setProjectFolder(final File folder) {
+	public PeASSFolders(final File folder) {
 		projectFolder = folder;
 		final File peassFolder = new File(projectFolder.getParentFile(), projectFolder.getName() + "_peass");
 		if (!peassFolder.exists()) {
@@ -34,30 +34,40 @@ public class PeASSFolderUtil {
 		detailFolder.mkdir();
 		tempResultFolder = new File(peassFolder, "measurementsTemp");
 		tempResultFolder.mkdir();
+		tempProjectFolder = new File(peassFolder, "projectTemp");
+		tempProjectFolder.mkdir();
 	}
 
-	public static File getKiekerResultFolder() {
+	public File getProjectFolder() {
+	   return projectFolder;
+	}
+	
+	public File getKiekerResultFolder() {
 		return resultFolder;
 	}
 
-	public static File getLogFolder() {
+	public File getLogFolder() {
 		return logFolder;
 	}
 
-	public static File getLastSources() {
+	public File getLastSources() {
 		return lastSourceFolder;
 	}
 
-	public static File getFullMeasurementFolder() {
+	public File getFullMeasurementFolder() {
 		return fullResultFolder;
 	}
 
-	public static File getTempMeasurementFolder() {
+	public File getTempMeasurementFolder() {
 		return tempResultFolder;
 	}
 
-	public static File getDetailResultFolder() {
+	public File getDetailResultFolder() {
 		return detailFolder;
 	}
+
+   public File getTempProjectFolder() {
+      return tempProjectFolder;
+   }
 
 }

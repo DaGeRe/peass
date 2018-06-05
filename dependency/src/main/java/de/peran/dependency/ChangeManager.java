@@ -37,24 +37,23 @@ public class ChangeManager {
 
 	private static final Logger LOG = LogManager.getLogger(ChangeManager.class);
 
-	private final File projectFolder;
-	private final File lastSourcesFolder;
+	private final PeASSFolders folders;
+//	private final File lastSourcesFolder;
 	private final VersionControlSystem vcs;
 
 	public ChangeManager(final File projectFolder, final File moduleFolder) {
-		this.projectFolder = projectFolder;
+		this.folders = new PeASSFolders(projectFolder);
 		// this.moduleFolder = moduleFolder;
-		PeASSFolderUtil.setProjectFolder(projectFolder);
+//		PeASSFolders.setProjectFolder(projectFolder);
 		vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
-		lastSourcesFolder = PeASSFolderUtil.getLastSources();
 	}
 
 	public ChangeManager(final File projectFolder) {
-		this.projectFolder = projectFolder;
+	   this.folders = new PeASSFolders(projectFolder);
 		// this.moduleFolder = projectFolder;
-		PeASSFolderUtil.setProjectFolder(projectFolder);
+//		PeASSFolders.setProjectFolder(projectFolder);
 		vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
-		lastSourcesFolder = PeASSFolderUtil.getLastSources();
+//		lastSourcesFolder = PeASSFolders.getLastSources();
 	}
 
 	/**
@@ -65,9 +64,9 @@ public class ChangeManager {
 	private List<ChangedEntity> getChangedClasses() {
 		final VersionDiff diff;
 		if (vcs.equals(VersionControlSystem.SVN)) {
-			diff = new SVNDiffLoader().getChangedClasses(projectFolder);
+			diff = new SVNDiffLoader().getChangedClasses(folders.getProjectFolder());
 		} else if (vcs.equals(VersionControlSystem.GIT)) {
-			diff = GitUtils.getChangedClasses(projectFolder);
+			diff = GitUtils.getChangedClasses(folders.getProjectFolder());
 		} else {
 			throw new RuntimeException(".git or .svn not there - Can only happen if .git or .svn is deleted between constructor and method call ");
 		}
@@ -78,13 +77,13 @@ public class ChangeManager {
 
 	public void saveOldClasses() {
 		try {
-			if (lastSourcesFolder.exists()) {
-				FileUtils.deleteDirectory(lastSourcesFolder);
+			if (folders.getLastSources().exists()) {
+				FileUtils.deleteDirectory(folders.getLastSources());
 			}
-			lastSourcesFolder.mkdir();
-			for (final File module : MavenPomUtil.getModules(new File(projectFolder, "pom.xml"))) {
+			folders.getLastSources().mkdir();
+			for (final File module : MavenPomUtil.getModules(new File(folders.getProjectFolder(), "pom.xml"))) {
 				final String moduleName = module.getName();
-				FileUtils.copyDirectory(new File(module, "src"), new File(lastSourcesFolder, moduleName + File.separator + "main"));
+				FileUtils.copyDirectory(new File(module, "src"), new File(folders.getLastSources(), moduleName + File.separator + "main"));
 			}
 		} catch (final IOException e) {
 			e.printStackTrace();
@@ -103,17 +102,17 @@ public class ChangeManager {
 		final Map<ChangedEntity, Set<String>> changedClassesMethods = new TreeMap<>();
 		final List<ChangedEntity> changedClasses = getChangedClasses();
 		LOG.debug("Before Cleaning: {}", changedClasses);
-		if (lastSourcesFolder.exists()) {
+		if (folders.getLastSources().exists()) {
 			for (final Iterator<ChangedEntity> clazzIterator = changedClasses.iterator(); clazzIterator.hasNext();) {
 				final ChangedEntity clazz = clazzIterator.next();
 				final String onlyClassName = clazz.getJavaClazzName().substring(clazz.getJavaClazzName().lastIndexOf(".") + 1);
 				final File src;
 				if (clazz.getModule().length() > 0) {
-					final File moduleFolder = new File(projectFolder, clazz.getModule());
+					final File moduleFolder = new File(folders.getProjectFolder(), clazz.getModule());
 					LOG.debug("Module: {}", clazz.getModule());
 					src = new File(moduleFolder, "src");
 				} else {
-					src = new File(projectFolder, "src");
+					src = new File(folders.getProjectFolder(), "src");
 				}
 
 				LOG.debug("Suche nach {} in {}", clazz.getJavaClazzName(), src);
@@ -121,7 +120,7 @@ public class ChangeManager {
 					final Iterator<File> newFileIterator = FileUtils.listFiles(src, new WildcardFileFilter(onlyClassName + ".java"), TrueFileFilter.INSTANCE).iterator();
 					if (newFileIterator.hasNext()) {
 						final File newFile = newFileIterator.next();
-						final Iterator<File> oldFileIterator = FileUtils.listFiles(lastSourcesFolder, new WildcardFileFilter(onlyClassName + ".java"), TrueFileFilter.INSTANCE)
+						final Iterator<File> oldFileIterator = FileUtils.listFiles(folders.getLastSources(), new WildcardFileFilter(onlyClassName + ".java"), TrueFileFilter.INSTANCE)
 								.iterator();
 						if (oldFileIterator.hasNext()) {
 							final File oldFile = oldFileIterator.next();

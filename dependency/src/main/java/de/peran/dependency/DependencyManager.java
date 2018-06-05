@@ -78,16 +78,16 @@ public class DependencyManager extends TestResultManager {
    }
 
    public boolean initialyGetTraces() throws IOException, InterruptedException {
-      if (resultsFolder.exists()) {
-         FileUtils.deleteDirectory(resultsFolder);
+      if (folders.getKiekerResultFolder().exists()) {
+         FileUtils.deleteDirectory(folders.getKiekerResultFolder());
       }
 
-      ModuleClassMapping.loadClasses(projectFolder);
-      executor.executeAllTests(new File(logFolder, "init_log.txt"));
+      ModuleClassMapping.loadClasses(folders.getProjectFolder());
+      executor.executeAllTests(new File(folders.getLogFolder(), "init_log.txt"));
 
       loadClasses();
-      if (resultsFolder.exists()) {
-         final Collection<File> xmlFiles = FileUtils.listFiles(resultsFolder, new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE);
+      if (folders.getKiekerResultFolder().exists()) {
+         final Collection<File> xmlFiles = FileUtils.listFiles(folders.getKiekerResultFolder(), new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE);
          LOG.debug("Initial test execution finished, starting result collection, analyzing {} files", xmlFiles.size());
          for (final File testResultFile : xmlFiles) {
             final String testClassName = testResultFile.getParentFile().getName();
@@ -103,12 +103,12 @@ public class DependencyManager extends TestResultManager {
          }
          LOG.debug("Result collection finished");
 
-         resultsFolder.renameTo(new File(resultsFolder.getParentFile(), "initialresults_kieker"));
+         folders.getKiekerResultFolder().renameTo(new File(folders.getKiekerResultFolder().getParentFile(), "initialresults_kieker"));
          return true;
       } else {
          try {
             boolean sourceFound = false;
-            for (final File module : MavenPomUtil.getModules(new File(projectFolder, "pom.xml"))) {
+            for (final File module : MavenPomUtil.getModules(new File(folders.getProjectFolder(), "pom.xml"))) {
                final File testSourceFolder = new File(module, "src/test");
                final Collection<File> javaTestFiles = FileUtils.listFiles(testSourceFolder, new WildcardFileFilter("*test*.java", IOCase.INSENSITIVE), TrueFileFilter.INSTANCE);
                if (javaTestFiles.size() > 0) {
@@ -136,7 +136,7 @@ public class DependencyManager extends TestResultManager {
    private void loadClasses() {
       existingClasses = new LinkedList<>();
       try {
-         for (final File module : MavenPomUtil.getModules(new File(projectFolder, "pom.xml"))) {
+         for (final File module : MavenPomUtil.getModules(new File(folders.getProjectFolder(), "pom.xml"))) {
             final Collection<File> files = FileUtils.listFiles(module, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE);
             for (final File file : files) {
                final String withoutProjectPrefixPath = file.getAbsolutePath().replaceAll(module.getAbsolutePath(), "");
@@ -182,12 +182,12 @@ public class DependencyManager extends TestResultManager {
       final PrintStream out = System.out;
       final PrintStream err = System.err;
 
-      final File kiekerOutputFile = new File(logFolder, "ausgabe_kieker.txt");
+      final File kiekerOutputFile = new File(folders.getLogFolder(), "ausgabe_kieker.txt");
 
       try {
          System.setOut(new PrintStream(kiekerOutputFile));
          System.setErr(new PrintStream(kiekerOutputFile));
-         final Map<ChangedEntity, Set<String>> calledClasses = new CalledMethodLoader(kiekerResultFolder, projectFolder).getCalledMethods();
+         final Map<ChangedEntity, Set<String>> calledClasses = new CalledMethodLoader(kiekerResultFolder, folders.getProjectFolder()).getCalledMethods();
 
          for (final Iterator<ChangedEntity> iterator = calledClasses.keySet().iterator(); iterator.hasNext();) {
             final ChangedEntity entity = iterator.next();
@@ -282,7 +282,7 @@ public class DependencyManager extends TestResultManager {
 
       truncateKiekerResults();
 
-      LOG.debug("Führe Tests neu aus für Abhängigkeiten-Aktuallisierung, Ergebnisordner: {}", resultsFolder);
+      LOG.debug("Führe Tests neu aus für Abhängigkeiten-Aktuallisierung, Ergebnisordner: {}", folders.getKiekerResultFolder());
       final TestSet tests = new TestSet();
       for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {
          tests.addTest(clazzname, "");
@@ -299,10 +299,10 @@ public class DependencyManager extends TestResultManager {
          final String testClassName = entry.getKey().getJavaClazzName();
          final File testclazzFolder;
          if (entry.getKey().getModule().equals("")) {
-            final File xmlFileFolder = getXMLFileFolder(projectFolder);
+            final File xmlFileFolder = getXMLFileFolder(folders.getProjectFolder());
             testclazzFolder = new File(xmlFileFolder, entry.getKey().getJavaClazzName());
          } else {
-            final File moduleFolder = new File(projectFolder, entry.getKey().getModule());
+            final File moduleFolder = new File(folders.getProjectFolder(), entry.getKey().getModule());
             final File xmlFileFolder = getXMLFileFolder(moduleFolder);
             testclazzFolder = new File(xmlFileFolder, entry.getKey().getJavaClazzName());
          }
@@ -360,14 +360,14 @@ public class DependencyManager extends TestResultManager {
    }
 
    private void truncateKiekerResults() {
-      LOG.debug("Truncating: {}", resultsFolder.getAbsolutePath());
+      LOG.debug("Truncating: {}", folders.getKiekerResultFolder().getAbsolutePath());
       try {
-         FileUtils.deleteDirectory(resultsFolder);
+         FileUtils.deleteDirectory(folders.getKiekerResultFolder());
       } catch (final IOException e) {
          e.printStackTrace();
-         if (resultsFolder.exists()) {
+         if (folders.getKiekerResultFolder().exists()) {
             try {
-               FileUtils.deleteDirectory(resultsFolder);
+               FileUtils.deleteDirectory(folders.getKiekerResultFolder());
             } catch (final IOException e1) {
                e1.printStackTrace();
             }

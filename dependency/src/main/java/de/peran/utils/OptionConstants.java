@@ -42,7 +42,8 @@ public enum OptionConstants {
 	CHANGEFILE("changefile", "changefile for processing", false),
 	KNOWLEDGEFILE("knowledgefile", "knowledgefile for processing", false),
 	TEST("test", "the test to execute", false),
-	MODULE("module", "the module to research", false);
+	MODULE("module", "the module to research", false),
+	THREADS("threads", "count of threads, default 1", false);
 	
 
 	private final String name, description;

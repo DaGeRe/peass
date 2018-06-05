@@ -16,6 +16,7 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peran.dependency.PeASSFolders;
 import de.peran.dependency.analysis.data.TestCase;
 import de.peran.dependencyprocessors.DependencyTester;
 import de.peran.generated.Versiondependencies;
@@ -63,7 +64,7 @@ public class TwoVersionComparator {
 			System.out.println("Projektordner " + projectFolder + " existiert nicht.");
 			System.exit(1);
 		}
-		final DependencyTester tester = new DependencyTester(projectFolder, warmup, iterations, vms, false, repetitions, false);
+		final DependencyTester tester = new DependencyTester(new PeASSFolders(projectFolder), warmup, iterations, vms, false, repetitions, false);
 		final Versiondependencies versiondependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
 		final List<Version> allVersions = versiondependencies.getVersions().getVersion();
 		Version v1 = null, v2 = null;

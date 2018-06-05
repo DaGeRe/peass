@@ -17,11 +17,11 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peran.ViewPrintStarter;
 import de.peran.dependency.analysis.data.TestCase;
+import de.peran.dependency.traces.ViewGenerator;
 import de.peran.dependencyprocessors.ViewNotFoundException;
 
-public class ReadOneTrace extends ViewPrintStarter {
+public class ReadOneTrace extends ViewGenerator {
 
    public ReadOneTrace(String[] args) throws ParseException, JAXBException, JsonParseException, JsonMappingException, IOException {
       super(args);

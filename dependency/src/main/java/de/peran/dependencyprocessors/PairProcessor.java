@@ -1,5 +1,6 @@
 package de.peran.dependencyprocessors;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -10,6 +11,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.cli.ParseException;
 
 import de.peran.dependency.analysis.data.TestCase;
+import de.peran.generated.Versiondependencies;
 import de.peran.generated.Versiondependencies.Initialversion;
 import de.peran.generated.Versiondependencies.Initialversion.Initialdependency;
 import de.peran.generated.Versiondependencies.Versions.Version;
@@ -25,12 +27,12 @@ public abstract class PairProcessor extends VersionProcessor{
 
 	protected final Map<TestCase, String> lastTestcaseCalls = new HashMap<>();
 	
-	public PairProcessor(final String[] args, boolean isProjectFolder) throws ParseException, JAXBException {
-		super(args, isProjectFolder);
+	public PairProcessor(File projectFolder, Versiondependencies dependencies){
+      super(projectFolder, dependencies);
 	}
 	
 	public PairProcessor(final String[] args) throws ParseException, JAXBException {
-		super(args, true);
+		super(args);
 	}
 
 	@Override

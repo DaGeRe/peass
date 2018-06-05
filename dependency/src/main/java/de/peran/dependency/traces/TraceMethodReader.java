@@ -29,52 +29,65 @@ import de.peran.dependency.traces.requitur.content.TraceElementContent;
  */
 public class TraceMethodReader {
 
-	public static final String CYCLE_PREFIX = "#Generated$";
+   public static final String CYCLE_PREFIX = "#Generated$";
 
-	private static final Logger LOG = LogManager.getLogger(TraceMethodReader.class);
+   private static final Logger LOG = LogManager.getLogger(TraceMethodReader.class);
 
-	private final List<TraceElement> calls;
-	private final File[] clazzFolder;
+   private final List<TraceElement> calls;
+   private final File[] clazzFolder;
 
-	final Map<File, CompilationUnit> loadedUnits = new HashMap<>();
+   final Map<File, CompilationUnit> loadedUnits = new HashMap<>();
 
-	public TraceMethodReader(final List<TraceElement> calls, final File... clazzFolder) {
-		this.calls = calls;
-		this.clazzFolder = clazzFolder;
-	}
+   public TraceMethodReader(final List<TraceElement> calls, final File... clazzFolder) {
+      this.calls = calls;
+      this.clazzFolder = clazzFolder;
+   }
 
-	public TraceMethodReader(final File traceFolder, final File... clazzFolder) {
-		this.calls = new CalledMethodLoader(traceFolder, clazzFolder[0]).getShortTrace(null);
-		this.clazzFolder = clazzFolder;
-	}
+   public TraceMethodReader(final File traceFolder, final File... clazzFolder) {
+      this.calls = new CalledMethodLoader(traceFolder, clazzFolder[0]).getShortTrace(null);
+      this.clazzFolder = clazzFolder;
+   }
 
-	public TraceWithMethods getTraceWithMethods() throws ParseException, IOException {
-		LOG.debug("Trace Length: {}", calls.size());
-		final Sequitur seq = new Sequitur();
-		seq.addTraceElements(calls);
-		final RunLengthEncodingSequitur runLengthEncodingSequitur = new RunLengthEncodingSequitur(seq);
-		runLengthEncodingSequitur.reduce();
-		final List<ReducedTraceElement> rleTrace = runLengthEncodingSequitur.getReadableRLETrace();
-		final TraceWithMethods trace = new TraceWithMethods(rleTrace);
-		for (final ReducedTraceElement traceElement : rleTrace) {
-			if (traceElement.getValue() instanceof TraceElementContent) {
-				final TraceElementContent te = (TraceElementContent) traceElement.getValue();
-				final File clazzFile = TraceReadUtils.getClazzFile(te, clazzFolder);
-				if (clazzFile != null) {
-					CompilationUnit cu = loadedUnits.get(clazzFile);
-					if (cu == null) {
-						LOG.info("CU " + clazzFile + " not imported yet");
-						cu = JavaParser.parse(clazzFile);
-						loadedUnits.put(clazzFile, cu);
-					}
-					final Node method = TraceReadUtils.getMethod(te, cu);
-					trace.setElementSource(te, method != null ? method.toString().intern() : null);
-				}
-			}
-		}
-		
+   public TraceWithMethods getTraceWithMethods() throws ParseException, IOException {
+      LOG.debug("Trace Length: {}", calls.size());
+      final Sequitur seq = new Sequitur();
+      seq.addTraceElements(calls);
+      final RunLengthEncodingSequitur runLengthEncodingSequitur = new RunLengthEncodingSequitur(seq);
+      runLengthEncodingSequitur.reduce();
+      final List<ReducedTraceElement> rleTrace = runLengthEncodingSequitur.getReadableRLETrace();
+      final TraceWithMethods trace = new TraceWithMethods(rleTrace);
+      for (final ReducedTraceElement traceElement : rleTrace) {
+         if (traceElement.getValue() instanceof TraceElementContent) {
+            final TraceElementContent te = (TraceElementContent) traceElement.getValue();
+            final File clazzFile = TraceReadUtils.getClazzFile(te, clazzFolder);
+            if (clazzFile != null) {
+               CompilationUnit cu = loadedUnits.get(clazzFile);
+               if (cu == null) {
+                  LOG.info("CU " + clazzFile + " not imported yet");
+                  cu = JavaParser.parse(clazzFile);
+                  loadedUnits.put(clazzFile, cu);
+               }
+               final Node method = TraceReadUtils.getMethod(te, cu);
+               trace.setElementSource(te, method != null ? method.toString().intern() : null);
+            }
+         }
+      }
 
-		return trace;
-	}
+      return trace;
+   }
+
+   public static void main(String[] args) throws ParseException, IOException {
+      final File traceFolder = new File(args[0]);
+      final File projectFolder = new File(args[1]);
+      final File clazzFolder[] = new File[4];
+
+      clazzFolder[0] = new File(projectFolder, "src/main/java");
+      clazzFolder[1] = new File(projectFolder, "src/java");
+      clazzFolder[2] = new File(projectFolder, "src/test/java");
+      clazzFolder[3] = new File(projectFolder, "src/test");
+      
+      final TraceMethodReader reader = new TraceMethodReader(traceFolder, clazzFolder);
+      reader.getTraceWithMethods();
+   }
 
 }

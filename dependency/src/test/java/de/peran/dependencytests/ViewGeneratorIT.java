@@ -40,6 +40,7 @@ public class ViewGeneratorIT {
    private static final File REPETITION_MULTIPLE = new File("src/test/resources/viewtests/repetition_multiple");
    private static final File REPETITION_DEEP = new File("src/test/resources/viewtests/repetition_deep");
    private static final File REPETITION_REPETITION = new File("src/test/resources/viewtests/repetition_of_repetition");
+
    private static final File projectFolder = new File(VIEW_IT, "current");
    private static final File viewFolder = new File(VIEW_IT, "views");
 

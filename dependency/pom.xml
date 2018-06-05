@@ -143,7 +143,7 @@
 		<dependency>
 			<groupId>com.github.javaparser</groupId>
 			<artifactId>javaparser-core</artifactId>
-			<version>3.6.2</version>
+			<version>3.6.6</version>
 		</dependency>
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
@@ -163,7 +163,7 @@
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-junit</artifactId>
-			<version>0.8</version>
+			<version>0.9-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

@@ -58,7 +58,7 @@ public class DivideVersions {
 								"sbatch --nice=1000000 --time=10-0 "
 										+ "--output=/nfs/user/do820mize/processlogs/process_" + i + "_" + method + "_$timestamp.out "
 										+ "--workdir=/nfs/user/do820mize "
-										+ "--export=PROJECT=" + url + ",HOME=/newnfs/user/do820mize,"
+										+ "--export=PROJECT=" + url + ",HOME=/nfs/user/do820mize,"
 										+ "START=" + endversion + ","
 										+ "END=" + endversion + ","
 										+ "INDEX=" + i + ","

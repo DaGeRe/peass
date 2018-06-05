@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peran.dependency.PeASSFolderUtil;
+import de.peran.dependency.PeASSFolders;
 import de.peran.dependency.analysis.data.ChangedEntity;
 import de.peran.dependency.analysis.data.TestCase;
 import de.peran.dependency.analysis.data.TestSet;
@@ -35,7 +35,7 @@ public class ExecutionFileTester {
 
 	private static final Logger LOG = LogManager.getLogger(ExecutionFileTester.class);
 	
-	protected File projectFolder;
+	protected PeASSFolders folders;
 	protected VersionControlSystem vcs;
 	protected final CommandLine line;
 	protected final String startversion;
@@ -53,14 +53,14 @@ public class ExecutionFileTester {
 
 		line = parser.parse(options, args);
 
-		final File executionFile = new File(line.getOptionValue(OptionConstants.EXECUTIONFILE.getName()));
+//		final File executionFile = new File(line.getOptionValue(OptionConstants.EXECUTIONFILE.getName()));
 		tests = TestLoadUtil.loadChangedTests(line);
 
-		projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
+		final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
+		folders = new PeASSFolders(projectFolder);
 		if (!projectFolder.exists()) {
 			GitUtils.downloadProject(tests.getUrl(), projectFolder);
 		}
-		PeASSFolderUtil.setProjectFolder(projectFolder);
 
 		startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName(), null);
 		endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName(), null);
@@ -70,7 +70,7 @@ public class ExecutionFileTester {
 		final int vms = Integer.parseInt(line.getOptionValue(OptionConstants.VMS.getName(), "15"));
 		final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "1"));
 		final boolean useKieker = Boolean.parseBoolean(line.getOptionValue(OptionConstants.USEKIEKER.getName(), "false"));
-		tester = new DependencyTester(projectFolder, warmup, iterationen, vms, true, repetitions, useKieker);
+		tester = new DependencyTester(folders, warmup, iterationen, vms, true, repetitions, useKieker);
 
 	}
 
@@ -104,9 +104,9 @@ public class ExecutionFileTester {
 	protected void executeCompareTests(final String version, final String versionOld, final TestCase testcase) throws IOException, InterruptedException, JAXBException {
 		LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", versionOld, version);
 
-		File logFile = new File(PeASSFolderUtil.getLogFolder(), version);
+		File logFile = new File(folders.getLogFolder(), version);
 		if (logFile.exists()) {
-			logFile = new File(PeASSFolderUtil.getLogFolder(), version + "_new");
+			logFile = new File(folders.getLogFolder(), version + "_new");
 		}
 		logFile.mkdir();
 

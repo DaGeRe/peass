@@ -47,11 +47,11 @@ public class DependencyTestPairStarter extends PairProcessor {
 
       if (line.hasOption(OptionConstants.DURATION.getName())) {
          final int duration = Integer.parseInt(line.getOptionValue(OptionConstants.DURATION.getName()));
-         tester = new DependencyTester(projectFolder, duration, vms, true, repetitions, useKieker);
+         tester = new DependencyTester(folders, duration, vms, true, repetitions, useKieker);
       } else {
          final int warmup = Integer.parseInt(line.getOptionValue(OptionConstants.WARMUP.getName(), "10"));
          final int iterationen = Integer.parseInt(line.getOptionValue(OptionConstants.ITERATIONS.getName(), "10"));
-         tester = new DependencyTester(projectFolder, warmup, iterationen, vms, true, repetitions, useKieker);
+         tester = new DependencyTester(folders, warmup, iterationen, vms, true, repetitions, useKieker);
       }
 
       if (line.hasOption(OptionConstants.TEST.getName())) {

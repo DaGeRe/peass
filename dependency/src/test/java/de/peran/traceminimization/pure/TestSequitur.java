@@ -12,7 +12,11 @@ import de.peran.dependency.traces.requitur.TraceStateTester;
 import de.peran.dependency.traces.requitur.content.Content;
 import de.peran.dependency.traces.requitur.content.RuleContent;
 import de.peran.dependency.traces.requitur.content.StringContent;
-
+/**
+ * Tests only sequitur on artificial examples given by manually constructed traces.
+ * @author reichelt
+ *
+ */
 public class TestSequitur {
 
 	public static List<String> contentToStringTrace(final List<Content> expandedTrace) {
@@ -37,6 +41,42 @@ public class TestSequitur {
 		final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
 		Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
 	}
+	
+	@Test
+   public void testOverlappingPredecessor() {
+      final Sequitur seg = new Sequitur();
+      final List<String> mytrace = new LinkedList<>();
+      for (final String c : new String[] {"f","e","f","e","f","f", "f","e","f","g","h","c","d","f","e","f","f", "x"}) {
+         mytrace.add(c);
+      }
+      seg.addElements(mytrace);
+
+      final List<Content> trace = seg.getUncompressedTrace();
+      System.out.println(trace);
+      Assert.assertEquals(9, trace.size());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
+   }
+	
+	@Test
+   public void testOverlappingSuccessor() {
+      final Sequitur seg = new Sequitur();
+      final List<String> mytrace = new LinkedList<>();
+      for (final String c : new String[] {"D","E","G","K","I","J","I","J","I","J","X","M","L","N","O","P","T","Q","R","S","R","S","R","S","U","V","W","V","X","M","L","N","O","P","T","Q","R","S"}) {
+         mytrace.add(c);
+      }
+      seg.addElements(mytrace);
+
+      final List<Content> trace = seg.getUncompressedTrace();
+      System.out.println(trace);
+      Assert.assertEquals(15, trace.size());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
+   }
+	
+	
+	
+	
 
 	@Test
 	public void testViewExample() {
