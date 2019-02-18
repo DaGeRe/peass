@@ -2,7 +2,6 @@ package de.peran.example;
 
 import java.io.File;
 
-import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.writer.filesystem.ChangeableFolderWriter;
 
 public class CallerSimpleFor {
@@ -12,7 +11,7 @@ public class CallerSimpleFor {
     public static void main(final String[] args) {
 		try {
 			final File tmpFolder = new File("target/kieker_results_test/");
-			ChangeableFolderWriter.getInstance(MonitoringController.getInstance()).setFolder(tmpFolder);
+			ChangeableFolderWriter.getInstance().setFolder(tmpFolder);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}

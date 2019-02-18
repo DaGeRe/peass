@@ -18,15 +18,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
+import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
 import de.peran.statistics.ConfidenceInterval;
 import de.peran.statistics.PerformanceChange;
 
@@ -198,10 +197,11 @@ public final class MeasurementAnalysationUtil {
 		final DescriptiveStatistics statistics = new DescriptiveStatistics();
 		for (int i = 0; i < repetitions; i++) {
 			final double[] tempValues = getBootstrapValues(values, count);
-			final SummaryStatistics st = new SummaryStatistics();
+			final DescriptiveStatistics st = new DescriptiveStatistics();
 			for (final double value : tempValues) {
 				st.addValue(value);
 			}
+//			final double bootstrapMean = st.getPercentile(0.5);
 			final double bootstrapMean = st.getMean();
 			statistics.addValue(bootstrapMean);
 		}

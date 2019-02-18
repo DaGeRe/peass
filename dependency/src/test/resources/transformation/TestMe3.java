@@ -21,7 +21,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
-public class TestMe2 {
+public class TestMe3 {
 
 	@Test
 	public void testMethod1() {

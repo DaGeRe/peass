@@ -1,12 +1,13 @@
 package de.dagere.kopeme.deviation;
 
-import de.dagere.kopeme.junit3.KoPeMeTestcase;
-import de.dagere.kopeme.datacollection.DataCollectorList;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+
+import de.dagere.kopeme.datacollection.DataCollectorList;
+import de.dagere.kopeme.junit3.KoPeMeTestcase;
 
 public class RealExampleTestCase extends KoPeMeTestcase {
 	protected DataCollectorList getDataCollectors() {

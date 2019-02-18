@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<versiondependencies>
+    <url></url>
+    <initialversion version="000000" jdk="8">
+        <initialdependency testclass="viewtest.TestMe.test" module="">
+            <dependentclass module="">viewtest.TestMe$InnerClass.method</dependentclass>
+            <dependentclass module="">viewtest.TestMe$InnerClass.&lt;init&gt;</dependentclass>
+            <dependentclass module="">viewtest.TestMe.test</dependentclass>
+        </initialdependency>
+    </initialversion>
+    <versions>
+        <version version="000001" jdk="8" running="true">
+            <dependency changedclass="viewtest.TestMe" module="">
+                <testcase class="viewtest.TestMe" module="">
+                    <method>test</method>
+                </testcase>
+            </dependency>
+        </version>
+    </versions>
+</versiondependencies>

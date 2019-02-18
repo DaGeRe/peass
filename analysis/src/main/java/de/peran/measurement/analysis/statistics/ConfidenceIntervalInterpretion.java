@@ -6,7 +6,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
+import de.dagere.kopeme.generated.Result;
 import de.peran.statistics.ConfidenceInterval;
 import de.peran.statistics.PerformanceChange;
 
@@ -65,7 +65,7 @@ public class ConfidenceIntervalInterpretion {
 //		System.out.println(before);
 		final double[] valuesBefore = MeasurementAnalysationUtil.getAveragesArrayFromResults(before);
 //		LOG.info(valuesBefore + " " + valuesBefore.length);
-		final ConfidenceInterval intervalBefore = MeasurementAnalysationUtil.getBootstrapConfidenceInterval(valuesBefore, 20, 1000, 96);
+		final ConfidenceInterval intervalBefore = MeasurementAnalysationUtil.getBootstrapConfidenceInterval(valuesBefore, before.size(), 1000, 96);
 		return intervalBefore;
 	}
 }

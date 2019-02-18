@@ -10,9 +10,9 @@ import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
+import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result.Fulldata.Value;
 
 /**
  * Saves all data, its means and its coefficient of variation (CoV) for different executions of one test in one version.
@@ -22,6 +22,12 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result.Fulldata.Val
  */
 public class MeanCoVData {
 
+   public static final NumberFormat FORMAT = NumberFormat.getInstance();
+
+   static {
+      FORMAT.setGroupingUsed(false);
+   }
+   
    private final int avgCount;
 
    protected final List<DescriptiveStatistics> allMeans = new LinkedList<>();
@@ -50,7 +56,7 @@ public class MeanCoVData {
    public MeanCoVData(final String name, final List<Result> results) {
       this.testMethodName = name;
       this.results = results;
-      avgCount = 100;
+      avgCount = 10;
       addTestcaseData();
    }
 
@@ -85,12 +91,6 @@ public class MeanCoVData {
          meanSummary = statistics.get(index);
       }
       meanSummary.addValue(value);
-   }
-
-   static final NumberFormat FORMAT = NumberFormat.getInstance();
-
-   static {
-      FORMAT.setGroupingUsed(false);
    }
 
    public void printTestcaseData(final File folder) throws IOException {

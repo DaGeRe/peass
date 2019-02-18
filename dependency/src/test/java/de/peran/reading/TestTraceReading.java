@@ -10,8 +10,9 @@ import org.junit.Test;
 
 import com.github.javaparser.ParseException;
 
-import de.peran.dependency.traces.TraceMethodReader;
-import de.peran.dependency.traces.TraceWithMethods;
+import de.peass.dependency.analysis.ModuleClassMapping;
+import de.peass.dependency.traces.TraceMethodReader;
+import de.peass.dependency.traces.TraceWithMethods;
 
 /**
  * Tests whether trace reading for the purpose of experiment result analysis is working corretly.
@@ -29,7 +30,7 @@ public class TestTraceReading {
 
    @Test
    public void testSimpleTraceReading() throws ParseException, IOException {
-      final TraceMethodReader tmr = new TraceMethodReader(new File("src/test/resources/kieker-example/simple/"), new File("src/test/java"));
+      final TraceMethodReader tmr = new TraceMethodReader(new File("src/test/resources/kieker-example/simple/"), ModuleClassMapping.SINGLE_MODULE_MAPPING, new File("src/test/java"));
       // The path to the kieker-trace-data (first argument) and the path to the classes must match
       final TraceWithMethods trace = tmr.getTraceWithMethods();
       LOG.info("Trace length: " + trace.getLength());
@@ -47,7 +48,7 @@ public class TestTraceReading {
 
    @Test
    public void testLongTraceReading() throws ParseException, IOException {
-      final TraceMethodReader tmr = new TraceMethodReader(new File("src/test/resources/kieker-example/long/"), new File("src/test/java"));
+      final TraceMethodReader tmr = new TraceMethodReader(new File("src/test/resources/kieker-example/long/"), ModuleClassMapping.SINGLE_MODULE_MAPPING, new File("src/test/java"));
       // The path to the kieker-trace-data (first argument) and the path to the classes must match
       final TraceWithMethods trace = tmr.getTraceWithMethods();
       LOG.info("Trace length: " + trace.getLength());

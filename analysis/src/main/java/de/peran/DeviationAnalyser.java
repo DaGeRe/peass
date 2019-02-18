@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -12,19 +11,19 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peran.measurement.analysis.CompareByFulldata;
-import de.peran.measurement.analysis.DataAnalyser;
+import de.peass.dependency.reader.DependencyReaderUtil;
+import de.peass.measurement.analysis.DataAnalyser;
+import de.peass.measurement.analysis.statistics.EvaluationPair;
+import de.peass.measurement.analysis.statistics.TestData;
+import de.peass.utils.OptionConstants;
 import de.peran.measurement.analysis.statistics.ConfidenceIntervalInterpretion;
-import de.peran.measurement.analysis.statistics.EvaluationPair;
-import de.peran.measurement.analysis.statistics.TestData;
-import de.peran.utils.OptionConstants;
+import de.peran.measurement.analysis.statistics.MeanCoVData;
 
 /**
  * Analyzes data from all subfolders of one folder. It is assumed that the typical PeASS-folder-structure is given.
@@ -34,24 +33,19 @@ import de.peran.utils.OptionConstants;
  */
 public class DeviationAnalyser extends DataAnalyser {
 	
-	private static final NumberFormat format = NumberFormat.getInstance();
-	
 	private static final Logger LOG = LogManager.getLogger(DeviationAnalyser.class);
-
-	public static final Option DATAOPTION = Option.builder(CompareByFulldata.DATA).required(true).hasArgs()
-			.desc("Daten der zu analysierenden Ergebnisdaten bzw. Ergebnisdateien-Ordner").build();
 
 	public static void main(final String[] args) throws ParseException, JAXBException, InterruptedException {
 		final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE);
-		options.addOption(DATAOPTION);
+		options.addOption(FolderSearcher.DATAOPTION);
 
 		final CommandLineParser parser = new DefaultParser();
 		final CommandLine line = parser.parse(options, args);
 
-		AnalyseOneTest.loadDependencies(line);
+		DependencyReaderUtil.loadDependencies(line);
 
-		for (int i = 0; i < line.getOptionValues(CompareByFulldata.DATA).length; i++) {
-			final File folder = new File(line.getOptionValues(CompareByFulldata.DATA)[i]);
+		for (int i = 0; i < line.getOptionValues(FolderSearcher.DATA).length; i++) {
+			final File folder = new File(line.getOptionValues(FolderSearcher.DATA)[i]);
 			LOG.info("Searching in " + folder);
 			processFolder(folder);
 		}
@@ -103,10 +97,10 @@ public class DeviationAnalyser extends DataAnalyser {
 		try {
 			for (final Map.Entry<String, EvaluationPair> entry : measurementEntry.getMeasurements().entrySet()) {
 				final DescriptiveStatistics statistics1 = ConfidenceIntervalInterpretion.getStatistics(entry.getValue().getPrevius());
-				writer.write(format.format(statistics1.getMean()) + ";" + format.format(statistics1.getStandardDeviation()) + ";" + format.format(statistics1.getStandardDeviation() / statistics1.getMean()));
+				writer.write(MeanCoVData.FORMAT.format(statistics1.getMean()) + ";" + MeanCoVData.FORMAT.format(statistics1.getStandardDeviation()) + ";" + MeanCoVData.FORMAT.format(statistics1.getStandardDeviation() / statistics1.getMean()));
 				writer.write("\n");
 				final DescriptiveStatistics statistics2 = ConfidenceIntervalInterpretion.getStatistics(entry.getValue().getCurrent());
-				writer.write(format.format(statistics2.getMean()) + ";" + format.format(statistics2.getStandardDeviation()) + ";" + format.format(statistics2.getStandardDeviation() / statistics2.getMean()));
+				writer.write(MeanCoVData.FORMAT.format(statistics2.getMean()) + ";" + MeanCoVData.FORMAT.format(statistics2.getStandardDeviation()) + ";" + MeanCoVData.FORMAT.format(statistics2.getStandardDeviation() / statistics2.getMean()));
 				writer.write("\n");
 			}
 			writer.flush();

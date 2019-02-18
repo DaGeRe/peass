@@ -7,18 +7,20 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.peran.dependency.PeASSFolders;
-import de.peran.dependency.TestResultManager;
-import de.peran.dependency.analysis.CalledMethodLoader;
-import de.peran.dependency.analysis.data.TestCase;
-import de.peran.dependency.analysis.data.TestSet;
-import de.peran.dependency.analysis.data.TraceElement;
-import de.peran.dependencyprocessors.ViewNotFoundException;
-import de.peran.dependencytests.ViewGeneratorIT;
+import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.TestResultManager;
+import de.peass.dependency.analysis.CalledMethodLoader;
+import de.peass.dependency.analysis.ModuleClassMapping;
+import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.analysis.data.TraceElement;
+import de.peass.dependencyprocessors.ViewNotFoundException;
+import de.peass.dependencytests.ViewGeneratorIT;
 
 public class TestPeASSFilter {
    
@@ -41,24 +43,27 @@ public class TestPeASSFilter {
    }
 
    @Test
-   public void testExecution() throws ViewNotFoundException, IOException {
-      final TestResultManager manager = new TestResultManager(CURRENT);
+   public void testExecution() throws ViewNotFoundException, IOException, XmlPullParserException, InterruptedException {
+      final TestResultManager manager = new TestResultManager(CURRENT, 5000);
       final TestSet ts = new TestSet();
-      final TestCase testcase = new TestCase("defaultpackage.TestMe", "testMe");
+      final TestCase testcase = new TestCase("defaultpackage.TestMe", "testMe", "");
       ts.addTest(testcase);
+      manager.getExecutor().loadClasses();
       manager.executeKoPeMeKiekerRun(ts, "0");
       
       final File kiekerFolder = ViewGeneratorIT.getMethodFolder(testcase, manager.getXMLFileFolder(CURRENT));
       LOG.debug("Searching: " + kiekerFolder);
-      final List<TraceElement> referenceTrace = new CalledMethodLoader(kiekerFolder, CURRENT).getShortTrace("");
+      final ModuleClassMapping mapping = new ModuleClassMapping(manager.getExecutor());
+      final List<TraceElement> referenceTrace = new CalledMethodLoader(kiekerFolder, mapping).getShortTrace("");
 
       for (int i = 1; i <= 10; i++) {
          cleanup();
          new PeASSFolders(CURRENT);
+         manager.getExecutor().loadClasses();
          manager.executeKoPeMeKiekerRun(ts, ""+i);
          final File kiekerFolderComparison = ViewGeneratorIT.getMethodFolder(testcase, manager.getXMLFileFolder(CURRENT));
          LOG.debug("Searching: " + kiekerFolderComparison);
-         final List<TraceElement> compareTrace = new CalledMethodLoader(kiekerFolderComparison, CURRENT).getShortTrace("");
+         final List<TraceElement> compareTrace = new CalledMethodLoader(kiekerFolderComparison, mapping).getShortTrace("");
          
          LOG.debug("Old");
          for (final TraceElement reference : referenceTrace){

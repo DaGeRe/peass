@@ -15,8 +15,24 @@ public class AnonymousClassExample {
 			System.out.println("Constructor!");
 		}
 		
+		public MyPrivateClass(int secondConstructorParameter) {
+         System.out.println("Parameter: " + secondConstructorParameter);
+      }
+		
 		public void doSomething(){
 			System.out.println("My method");
 		}
+	}
+
+	public int parameterMethod(int a){
+
+	}
+
+	public int parameterMethod(String a){
+
+	}
+
+	public int parameterMethod(Object a, String... b){
+
 	}
 }

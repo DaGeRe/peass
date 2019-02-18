@@ -29,8 +29,8 @@ import org.junit.Test;
 
 import com.github.javaparser.ParseException;
 
-import de.peran.dependency.analysis.FileComparisonUtil;
-import de.peran.dependency.analysis.data.ClazzChangeData;
+import de.peass.dependency.analysis.FileComparisonUtil;
+import de.peass.dependency.analysis.data.ClazzChangeData;
 
 /**
  * Tests whether the class comparison works for the given files, i.e. returns whether the class and its method have changed correct.
@@ -153,4 +153,31 @@ public class TestClassComparison {
 		
 		Assert.assertTrue(changedMethods.isChange());
 	}
+	
+	@Test
+   public void test11() throws ParseException, IOException{
+      final File file1 = new File(FOLDER, "Test1_1_Equal.java");
+      final File file2 = new File(FOLDER, "Test11_ChangeAndAddition.java");
+      
+      final ClazzChangeData changedMethods = FileComparisonUtil.getChangedMethods(file1, file2);
+      
+      Assert.assertTrue(changedMethods.isChange());
+      Assert.assertFalse(changedMethods.isOnlyMethodChange());
+      Assert.assertThat(changedMethods.getChangedMethods(), Matchers.contains("<init>"));
+      
+   }
+	
+	@Test
+   public void test12() throws ParseException, IOException{
+      final File file1 = new File(FOLDER, "Test1_1_Equal.java");
+      final File file2 = new File(FOLDER, "Test12_ChangeAndAddition2.java");
+      
+      final ClazzChangeData changedMethods = FileComparisonUtil.getChangedMethods(file1, file2);
+      
+      Assert.assertTrue(changedMethods.isChange());
+      Assert.assertFalse(changedMethods.isOnlyMethodChange());
+      System.out.println(changedMethods.getChangedMethods());
+      Assert.assertThat(changedMethods.getChangedMethods(), Matchers.containsInAnyOrder("<init>", "doNonStaticThing"));
+      
+   }
 }

@@ -18,27 +18,29 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
-import de.peran.dependencyprocessors.VersionComparator;
-import de.peran.generated.Versiondependencies;
+import de.dagere.kopeme.generated.Result;
+import de.peass.dependency.reader.DependencyReaderUtil;
+import de.peass.measurement.analysis.DataReader;
+import de.peass.measurement.analysis.statistics.EvaluationPair;
+import de.peass.measurement.analysis.statistics.TestData;
+import de.peass.utils.OptionConstants;
 import de.peran.measurement.analysis.AnalyseFullData;
-import de.peran.measurement.analysis.CompareByFulldata;
-import de.peran.measurement.analysis.DataReader;
-import de.peran.measurement.analysis.statistics.EvaluationPair;
 import de.peran.measurement.analysis.statistics.MeanCoVData;
-import de.peran.measurement.analysis.statistics.TestData;
-import de.peran.statistics.DependencyStatisticAnalyzer;
-import de.peran.utils.OptionConstants;
 
 public class AnalyseOneTest {
 
 	private static final Logger LOG = LogManager.getLogger(AnalyseFullData.class);
 
-	public final static File RESULTFOLDER = new File("results");
-	public final static File DIFFFOLDER = new File(RESULTFOLDER, "diff");
+	public static File RESULTFOLDER;
+	public static File DIFFFOLDER;
 
 	static {
-		DIFFFOLDER.mkdir();
+		setResultFolder(new File("results"));
+	}
+	
+	public static void setResultFolder(final File folder){
+		RESULTFOLDER = folder;
+		DIFFFOLDER = new File(RESULTFOLDER, "diff");
 		DIFFFOLDER.mkdirs();
 	}
 
@@ -49,9 +51,9 @@ public class AnalyseOneTest {
 		final CommandLineParser parser = new DefaultParser();
 		final CommandLine line = parser.parse(options, args);
 
-		loadDependencies(line);
+		DependencyReaderUtil.loadDependencies(line);
 
-		final File fullDataFolder = new File(line.getOptionValues(CompareByFulldata.DATA)[0]);
+		final File fullDataFolder = new File(line.getOptionValues(FolderSearcher.DATA)[0]);
 
 		final LinkedBlockingQueue<TestData> measurements = DataReader.startReadVersionDataMap(fullDataFolder);
 
@@ -59,16 +61,6 @@ public class AnalyseOneTest {
 		while (measurementEntry != DataReader.POISON_PILL) {
 			processTestdata(measurementEntry);
 			measurementEntry = measurements.take();
-		}
-	}
-
-	public static void loadDependencies(final CommandLine line) throws JAXBException {
-		if (line.hasOption(OptionConstants.DEPENDENCYFILE.getName())) {
-			final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
-			final Versiondependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
-			VersionComparator.setDependencies(dependencies);
-		} else {
-			LOG.error("No dependencyfile information passed.");
 		}
 	}
 

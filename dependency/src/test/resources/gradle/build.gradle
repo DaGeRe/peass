@@ -1,0 +1,34 @@
+buildscript {
+    repositories {
+	jcenter()
+        mavenCentral()
+    }
+
+    ext {
+        buildConfig = [
+                'compileSdk': 27,
+                'minSdk': 15,
+                'buildTools': '19.0.3'
+        ]
+    }
+}
+
+
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+sourceCompatibility = 1.8
+version = '2.13'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven{
+		url 'https://oss.sonatype.org/content/repositories/snapshots'
+	}
+}
+
+dependencies {
+  testCompile 'junit:junit:4.12'
+}

@@ -16,7 +16,7 @@ import org.jgrapht.alg.matching.MaximumWeightBipartiteMatching;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
-import de.peran.dependency.analysis.PeASSFilter;
+import de.peass.dependency.analysis.PeASSFilter;
 import de.peran.tracecomparison.ExecutionConsumer;
 import de.peran.tracecomparison.ExecutionData;
 import de.peran.tracecomparison.TraceCompareReadFilter;
@@ -63,7 +63,7 @@ public class CompareTraces {
 		return sortedMatching;
 	}
 
-	private static SimpleWeightedGraph<Execution, DefaultWeightedEdge> initGraph(List<Execution> first, List<Execution> second) {
+	private static SimpleWeightedGraph<Execution, DefaultWeightedEdge> initGraph(final List<Execution> first, final List<Execution> second) {
 		final SimpleWeightedGraph<Execution, DefaultWeightedEdge> graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 
 		for (final Execution ex : first) {
@@ -98,7 +98,7 @@ public class CompareTraces {
 		return graph;
 	}
 
-	public static void main(String[] args) throws IllegalStateException, AnalysisConfigurationException, InterruptedException {
+	public static void main(final String[] args) throws IllegalStateException, AnalysisConfigurationException, InterruptedException {
 		final List<Thread> threads = new LinkedList<>();
 
 		if (args.length == 1) {
@@ -151,7 +151,7 @@ public class CompareTraces {
 		createComparison(matches);
 	}
 
-	private static void createComparison(Map<Integer, Integer> matches) {
+	private static void createComparison(final Map<Integer, Integer> matches) {
 		for (final Map.Entry<Integer, Integer> match : matches.entrySet()) {
 			LOG.debug("Match: " + match.getKey() + " " + match.getValue());
 			final ExecutionData first = compareExecutions.get(0);
@@ -168,7 +168,7 @@ public class CompareTraces {
 	private final File kiekerTraceFile;
 	private final ExecutionData executions;
 
-	public CompareTraces(File kiekerTraceFile, ExecutionData executions) {
+	public CompareTraces(final File kiekerTraceFile, final ExecutionData executions) {
 		this.kiekerTraceFile = kiekerTraceFile;
 		this.executions = executions;
 

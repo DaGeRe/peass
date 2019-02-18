@@ -6,7 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Result;
+import de.dagere.kopeme.generated.Result;
+
 
 public class MeanHistData {
    private final List<Result> values;

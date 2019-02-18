@@ -6,8 +6,8 @@
 	<name>peass-analysis</name>
 
 	<parent>
-		<groupId>de.peran</groupId>
-		<artifactId>peran-parent</artifactId>
+		<groupId>de.peass</groupId>
+		<artifactId>peass-parent</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
 
@@ -64,7 +64,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>de.peran</groupId>
+			<groupId>de.peass</groupId>
 			<artifactId>measurement</artifactId>
 			<version>0.1-SNAPSHOT</version>
 		</dependency>

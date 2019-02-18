@@ -1,0 +1,14 @@
+description = 'An Android library to display OpenStreetMap views.'
+apply plugin: 'com.android.library'
+apply from: "https://raw.githubusercontent.com/gradle-fury/gradle-fury/v1.1.4/gradle/android-support.gradle"
+
+android {
+    lintOptions {
+        abortOnError false
+    }
+}
+
+dependencies {
+    testCompile "junit:junit:${project.property('junit.version')}"
+    testCompile "org.robolectric:robolectric:${project.property('robolectric.version')}"
+}
