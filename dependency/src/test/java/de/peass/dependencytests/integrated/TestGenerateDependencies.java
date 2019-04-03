@@ -22,8 +22,8 @@ import de.peass.dependency.analysis.data.ClazzChangeData;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependency.reader.VersionKeeper;
-import de.peass.dependencytests.FakeIterator;
 import de.peass.dependencytests.ViewGeneratorIT;
+import de.peass.dependencytests.helper.FakeFileIterator;
 import de.peass.vcs.VersionControlSystem;
 
 @RunWith(PowerMockRunner.class)
@@ -44,8 +44,8 @@ public class TestGenerateDependencies {
          }
       }).when(VersionControlSystem.class);
       
-      final FakeIterator iterator = new FakeIterator(ViewGeneratorIT.projectFolder, Arrays.asList(ViewGeneratorIT.REPETITION));
-      final File dependencyFile = new File(ViewGeneratorIT.VIEW_IT, "dependencies.xml");
+      final FakeFileIterator iterator = new FakeFileIterator(ViewGeneratorIT.projectFolder, Arrays.asList(ViewGeneratorIT.REPETITION));
+      final File dependencyFile = new File(ViewGeneratorIT.VIEW_IT, "dependencies.json");
       final DependencyReader reader = new DependencyReader(ViewGeneratorIT.projectFolder, dependencyFile, "", iterator, 5000, VersionKeeper.INSTANCE, VersionKeeper.INSTANCE);
       
       final boolean success = reader.readInitialVersion();
@@ -55,7 +55,8 @@ public class TestGenerateDependencies {
       
       final ChangeManager manager = Mockito.mock(ChangeManager.class);
       final HashMap<ChangedEntity, ClazzChangeData> value = new HashMap<>();
-      value.put(new ChangedEntity("viewtest.TestMe", ""), new ClazzChangeData("viewtest.TestMe", false));
+      ChangedEntity testMeEntity = new ChangedEntity("viewtest.TestMe", "");
+      value.put(testMeEntity, new ClazzChangeData(testMeEntity, false));
       Mockito.when(manager.getChanges(Mockito.any())).thenReturn(value);
       
       final int tests = reader.analyseVersion(manager);

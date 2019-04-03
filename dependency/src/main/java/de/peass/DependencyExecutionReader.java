@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.parallel.Merger;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.traces.ViewGenerator;
 import de.peass.dependencyprocessors.VersionComparator;
@@ -49,12 +50,13 @@ public class DependencyExecutionReader {
          final int threads = Integer.parseInt(line.getOptionValue(OptionConstants.THREADS.getName(), "4"));
 
          final File resultBaseFolder = new File(line.getOptionValue(OptionConstants.OUT.getName(), "results"));
-         final File[] outFiles = DependencyParallelReader.getDependencies(projectFolder, resultBaseFolder, project, commits, timeout, threads);
+         DependencyParallelReader reader = new DependencyParallelReader(projectFolder, resultBaseFolder, project, commits, threads, timeout);
+         final File[] outFiles = reader.readDependencies();
 
          LOG.debug("Files: {}", outFiles);
 
          final File out = new File(resultBaseFolder, "deps_" + project + ".json");
-         final Dependencies all = DependencyParallelReader.mergeVersions(out, outFiles);
+         final Dependencies all = Merger.mergeVersions(out, outFiles);
 
          final PeASSFolders folders = new PeASSFolders(projectFolder);
          final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");

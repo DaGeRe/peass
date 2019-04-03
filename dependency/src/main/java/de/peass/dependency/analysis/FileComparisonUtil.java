@@ -45,7 +45,7 @@ import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
 
-import de.peass.dependency.ChangeManager;
+import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.ClazzChangeData;
 
@@ -110,6 +110,10 @@ public final class FileComparisonUtil {
             final List<MethodDeclaration> secondDeclarations = node2.findAll(MethodDeclaration.class);
             if (firstDeclarations.size() == secondDeclarations.size()) {
                compareNodeList(changes, firstDeclarations, secondDeclarations);
+            } else if (firstDeclarations.size() == 0) {
+               changes.addAll(firstDeclarations);
+            } else if (secondDeclarations.size() == 0) {
+               changes.addAll(secondDeclarations);
             } else {
                compareUnequalNodeList(changes, firstDeclarations, secondDeclarations);
             }
@@ -143,7 +147,7 @@ public final class FileComparisonUtil {
       final Iterator<? extends Node> node1iterator = childs1.iterator();
       Node last1 = node1iterator.next();
       Node last2 = node2iterator.next();
-      for (; node1iterator.hasNext() && node2iterator.hasNext();) {
+      while (node1iterator.hasNext() && node2iterator.hasNext()) {
          Node child1 = node1iterator.next();
          Node child2 = node2iterator.next();
          if (child1.getClass() != child2.getClass()) {
@@ -240,50 +244,67 @@ public final class FileComparisonUtil {
       return result;
    }
 
-   public static String getMethod(final File projectFolder, final ChangedEntity entity, final String method) throws FileNotFoundException {
-      final File file = ChangeManager.getSourceFile(projectFolder, entity);
-      LOG.debug("Found: {}", file);
-      if (file != null) {
-         final CompilationUnit newCu = JavaParser.parse(file);
-         ClassOrInterfaceDeclaration declaration = findClazz(entity, newCu.getChildNodes());
-         if (declaration == null) {
-            return "";
-         }
-         if (method.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
-            final String outerClazz = method.substring(0, method.indexOf(ChangedEntity.CLAZZ_SEPARATOR));
-            System.out.println("Searching: " + outerClazz + " " + method);
-            declaration = findClazz(new ChangedEntity(outerClazz, ""), declaration.getChildNodes());
-            System.out.println("Suche: " + outerClazz + " " + declaration);
-         }
-         if (declaration == null) {
-            return "";
-         }
+   private final static ThreadLocal<JavaParser> javaParser = new ThreadLocal<JavaParser>() {
+      protected JavaParser initialValue() {
+         return new JavaParser();
+      };
+   };
 
-         if (method.equals("<init>")) {
-            final List<ConstructorDeclaration> methods = declaration.getConstructors();
-            System.out.println("Searching: " + method);
-            return methods.size() > 0 ? methods.get(0).toString() : "";
-         } else {
-            List<MethodDeclaration> methods;
-            if (method.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
-               final String methodName = method.substring(method.indexOf(ChangedEntity.CLAZZ_SEPARATOR) + 1);
-               System.out.println("Suche: " + methodName + " " + method);
-               methods = declaration.getMethodsByName(methodName);
-            } else {
-               methods = declaration.getMethodsByName(method);
-            }
-            return methods.size() > 0 ? methods.get(0).toString() : "";
-         }
+   public synchronized static CompilationUnit parse(final File file) throws FileNotFoundException {
+      final JavaParser parser = javaParser.get();
+      final Optional<CompilationUnit> result = parser.parse(file).getResult();
+      return result.get();
+   }
+
+   public static String getMethod(final File projectFolder, final ChangedEntity entity, final String method) throws FileNotFoundException {
+      final File file = ClazzFinder.getSourceFile(projectFolder, entity);
+      if (file != null) {
+         LOG.debug("Found: {} {}", file, file.exists());
+
+         final CompilationUnit newCu = parse(file);
+         return getMethod(entity, method, newCu);
       } else {
          return "";
       }
    }
 
-   private static ClassOrInterfaceDeclaration findClazz(final ChangedEntity entity, final List<Node> nodes) {
+   public static String getMethod(final ChangedEntity entity, final String method, final CompilationUnit newCu) {
+      ClassOrInterfaceDeclaration declaration = findClazz(entity, newCu.getChildNodes());
+      if (declaration == null) {
+         return "";
+      }
+      if (method.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
+         final String outerClazz = method.substring(0, method.indexOf(ChangedEntity.CLAZZ_SEPARATOR));
+         System.out.println("Searching: " + outerClazz + " " + method);
+         declaration = findClazz(new ChangedEntity(outerClazz, ""), declaration.getChildNodes());
+         System.out.println("Suche: " + outerClazz + " " + declaration);
+      }
+      if (declaration == null) {
+         return "";
+      }
+
+      if (method.equals("<init>")) {
+         final List<ConstructorDeclaration> methods = declaration.getConstructors();
+         System.out.println("Searching: " + method);
+         return methods.size() > 0 ? methods.get(0).toString() : "";
+      } else {
+         List<MethodDeclaration> methods;
+         if (method.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
+            final String methodName = method.substring(method.indexOf(ChangedEntity.CLAZZ_SEPARATOR) + 1);
+            System.out.println("Suche: " + methodName + " " + method);
+            methods = declaration.getMethodsByName(methodName);
+         } else {
+            methods = declaration.getMethodsByName(method);
+         }
+         return methods.size() > 0 ? methods.get(0).toString() : "";
+      }
+   }
+
+   public static ClassOrInterfaceDeclaration findClazz(final ChangedEntity entity, final List<Node> nodes) {
       ClassOrInterfaceDeclaration declaration = null;
       for (final Node node : nodes) {
          if (node instanceof ClassOrInterfaceDeclaration) {
-            final ClassOrInterfaceDeclaration temp = ((ClassOrInterfaceDeclaration) node);
+            final ClassOrInterfaceDeclaration temp = (ClassOrInterfaceDeclaration) node;
             final String nameAsString = temp.getNameAsString();
             if (nameAsString.equals(entity.getSimpleClazzName())) {
                declaration = (ClassOrInterfaceDeclaration) node;
@@ -303,33 +324,18 @@ public final class FileComparisonUtil {
     * @throws ParseException If Class can't be parsed
     * @throws IOException If class can't be read
     */
-   public static ClazzChangeData getChangedMethods(final File newFile, final File oldFile) throws ParseException, IOException {
-      // String clazzName = newFile.getName().substring(0, newFile.getName().length() - 5);
-      final CompilationUnit newCu = JavaParser.parse(newFile);
-      final CompilationUnit oldCu = JavaParser.parse(oldFile);
-      if (newFile.getAbsolutePath().contains("LevenshteinDistanceTest")) {
-         System.out.println("here");
-      }
-      final ClazzChangeData changedata = new ClazzChangeData(newFile.getName());
+   public static void getChangedMethods(final File newFile, final File oldFile, ClazzChangeData changedata) throws ParseException, IOException {
+      final CompilationUnit newCu = parse(newFile);
+      final CompilationUnit oldCu = parse(oldFile);
       try {
          clearComments(newCu);
          clearComments(oldCu);
-
-         final Optional<ClassOrInterfaceDeclaration> firstClazz = newCu.findFirst(ClassOrInterfaceDeclaration.class);
-         String clazzName;
-         if (firstClazz.isPresent()) {
-            final ClassOrInterfaceDeclaration clazz = firstClazz.get();
-            clazzName = clazz.getNameAsString();
-         } else {
-            final Optional<EnumDeclaration> firstEnum = newCu.findFirst(EnumDeclaration.class);
-            clazzName = firstEnum.get().getNameAsString();
-         }
 
          final List<Node> changes = comparePairwise(newCu, oldCu);
 
          if (changes.size() == 0) {
             changedata.setChange(false);
-            return changedata;
+            return;
          }
 
          boolean onlyLineCommentOrImportChanges = true;
@@ -339,33 +345,18 @@ public final class FileComparisonUtil {
             }
          }
          if (onlyLineCommentOrImportChanges) {
-            return changedata;
+            return;
          }
-
-         if (newFile.getAbsolutePath().contains("LevenshteinDistanceTest")) {
-            System.out.println("here");
-         }
-
+         
          for (final Node node : changes) {
-            if (node instanceof Statement) {
-               final Statement statement = (Statement) node;
-               handleStatement(changedata, clazzName, statement);
-            } else if (node instanceof Expression) {
-               final Expression expr = (Expression) node;
-               Node parent = expr.getParentNode().get();
-               while (!(parent instanceof Statement) && parent.getParentNode().isPresent()) {
-                  LOG.debug("Parent: " + parent.getClass());
-                  parent = parent.getParentNode().get();
-               }
-               if (parent instanceof Statement) {
-                  handleStatement(changedata, clazzName, (Statement) parent);
-               } else {
-                  LOG.debug("Parent: " + parent.getClass() + " -> Classchange");
-                  changedata.setOnlyMethodChange(false);
-               }
+            if (node instanceof Statement || node instanceof Expression) {
+               handleStatement(changedata, node);
             } else if (node instanceof ClassOrInterfaceDeclaration) {
+               ClassOrInterfaceDeclaration declaration = (ClassOrInterfaceDeclaration) node;
+               changedata.addClazzChange(getClazz(declaration));
                changedata.setOnlyMethodChange(false);
             } else {
+               changedata.addClazzChange(getClazz(node));
                changedata.setOnlyMethodChange(false);
             }
          }
@@ -373,45 +364,58 @@ public final class FileComparisonUtil {
          e.printStackTrace();
          LOG.info("Found full-class change");
          changedata.setOnlyMethodChange(false);
+         throw new ParseException("Parsing was not successfull");
       }
 
-      return changedata;
+      return;
    }
 
-   private static void handleStatement(final ClazzChangeData changedata, final String name, final Statement statement) {
+   private static void handleStatement(final ClazzChangeData changedata, final Node statement) {
       Node parent = statement.getParentNode().get();
       boolean finished = false;
       while (!finished && parent.getParentNode() != null && !(parent instanceof CompilationUnit)) {
          if (parent instanceof ConstructorDeclaration) {
             final String parameters = getParameters(((ConstructorDeclaration) parent).getParameters());
-            changedata.getChangedMethods().add("<init>" + parameters);
+            String clazz = getClazz(parent);
+            changedata.addChange(clazz, "<init>" + parameters);
             finished = true;
          }
          if (parent instanceof MethodDeclaration) {
             final MethodDeclaration methodDeclaration = (MethodDeclaration) parent;
-            final Node parentClazz = methodDeclaration.getParentNode().get();
             final NodeList<Parameter> parameterDeclaration = methodDeclaration.getParameters();
             final String parameters = getParameters(parameterDeclaration);
-
-            if (parentClazz instanceof ClassOrInterfaceDeclaration && !((ClassOrInterfaceDeclaration) parentClazz).getNameAsString().equals(name)) {
-               System.out.println(methodDeclaration.getDeclarationAsString());
-               final String fullName = ((ClassOrInterfaceDeclaration) parentClazz).getNameAsString() + "#" + methodDeclaration.getNameAsString() + parameters;
-               changedata.getChangedMethods().add(fullName);
-            } else {
-               System.out.println(methodDeclaration.getDeclarationAsString());
-               changedata.getChangedMethods().add(methodDeclaration.getNameAsString() + parameters);
-            }
+            String clazz = getClazz(parent);
+            changedata.addChange(clazz, methodDeclaration.getNameAsString() + parameters);
             finished = true;
          }
-         final Optional<Node> node2 = parent.getParentNode();
-         if (!node2.isPresent()) {
-            System.out.println("No Parent: " + node2);
+         final Optional<Node> newParent = parent.getParentNode();
+         if (!newParent.isPresent()) {
+            System.out.println("No Parent: " + newParent);
          }
-         parent = node2.get();
+         parent = newParent.get();
       }
       if (!finished) {
          changedata.setOnlyMethodChange(false);
       }
+   }
+
+   public static String getClazz(Node statement) {
+      String clazz = "";
+      Node current = statement;
+      while (current.getParentNode().isPresent()) {
+         if (current instanceof ClassOrInterfaceDeclaration) {
+            ClassOrInterfaceDeclaration declaration = (ClassOrInterfaceDeclaration) current;
+            String name = declaration.getNameAsString();
+            if (!clazz.isEmpty()) {
+               clazz = name + "$" + clazz;
+            } else {
+               clazz = name;
+            }
+         }
+         current = current.getParentNode().get();
+         
+      }
+      return clazz;
    }
 
    private static String getParameters(final NodeList<Parameter> parameterDeclaration) {

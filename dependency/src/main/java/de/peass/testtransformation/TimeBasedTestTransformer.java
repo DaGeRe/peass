@@ -24,7 +24,6 @@ import java.nio.file.Files;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -34,6 +33,8 @@ import com.github.javaparser.ast.expr.ClassExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
+
+import de.peass.dependency.analysis.FileComparisonUtil;
 
 
 /**
@@ -76,7 +77,7 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 	 */
 	protected void editJUnit3(final File javaFile) {
 		try {
-			final CompilationUnit unit = JavaParser.parse(javaFile);
+			final CompilationUnit unit = FileComparisonUtil.parse(javaFile);
 			unit.addImport("de.dagere.kopeme.junit3.TimeBasedTestcase");
 
 			final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
@@ -108,7 +109,7 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 	 */
 	protected void editJUnit4(final File javaFile) {
 		try {
-			final CompilationUnit unit = JavaParser.parse(javaFile);
+			final CompilationUnit unit = FileComparisonUtil.parse(javaFile);
 
 			unit.addImport("de.dagere.kopeme.annotations.Assertion");
 			unit.addImport("de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation");
@@ -119,7 +120,7 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 			final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
 			if (clazz.getAnnotations().size() > 0) {
 				boolean otherTestRunner = false;
-				for (AnnotationExpr annotation : clazz.getAnnotations()) {
+				for (final AnnotationExpr annotation : clazz.getAnnotations()) {
 					if (annotation.getNameAsString().contains("RunWith")) {
 						otherTestRunner = true;
 					}

@@ -50,7 +50,6 @@ public class DependencyReader extends DependencyReaderBase {
    private int overallSize = 0, prunedSize = 0;
 
    private final VersionKeeper nonRunning;
-//   private final VersionKeeper skippedNoChange;
 
    public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final int timeout,
          final ChangeManager changeManager) {
@@ -64,7 +63,6 @@ public class DependencyReader extends DependencyReaderBase {
 
       this.changeManager = changeManager;
       nonRunning = new VersionKeeper(new File("/dev/null"));
-//      skippedNoChange = new VersionKeeper(new File("/dev/null"));
    }
 
    /**
@@ -75,7 +73,8 @@ public class DependencyReader extends DependencyReaderBase {
     * @param url
     * @param iterator
     */
-   public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final int timeout, final VersionKeeper nonRunning, final VersionKeeper nochange) {
+   public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final int timeout, final VersionKeeper nonRunning,
+         final VersionKeeper nochange) {
       super(new Dependencies(), projectFolder, dependencyFile, timeout, nochange);
 
       this.iterator = iterator;
@@ -106,7 +105,10 @@ public class DependencyReader extends DependencyReaderBase {
       dependencyResult.setVersions(initialdependencies.getVersions());
       dependencyResult.setInitialversion(initialdependencies.getInitialversion());
 
-      readCompletedVersions();
+      InitialVersionReader initialVersionReader = new InitialVersionReader(initialdependencies, dependencyManager, iterator);
+      initialVersionReader.readCompletedVersions();
+      DependencyReaderUtil.write(dependencyResult, dependencyFile);
+      lastRunningVersion = iterator.getTag();
       init = true;
    }
 
@@ -157,7 +159,7 @@ public class DependencyReader extends DependencyReaderBase {
 
          LOG.debug("Analysiere {} Einträge", iterator.getSize());
 
-         prunedSize += dependencyMap.size();
+         prunedSize += dependencyManager.getDependencyMap().size();
 
          changeManager.saveOldClasses();
          lastRunningVersion = iterator.getTag();
@@ -178,7 +180,7 @@ public class DependencyReader extends DependencyReaderBase {
       try {
          final int tests = analyseVersion(changeManager);
          DependencyReaderUtil.write(dependencyResult, dependencyFile);
-         overallSize += dependencyMap.size();
+         overallSize += dependencyManager.getDependencyMap().size();
          prunedSize += tests;
 
          LOG.info("Overall-tests: {} Executed tests with pruning: {}", overallSize, prunedSize);
@@ -193,7 +195,6 @@ public class DependencyReader extends DependencyReaderBase {
       } catch (final XmlPullParserException e) {
          e.printStackTrace();
       } catch (final InterruptedException e) {
-         // TODO Auto-generated catch block
          e.printStackTrace();
       }
    }
@@ -202,7 +203,7 @@ public class DependencyReader extends DependencyReaderBase {
       return dependencyResult;
    }
 
-   public void setIterator(final VersionIteratorGit reserveIterator) {
+   public void setIterator(final VersionIterator reserveIterator) {
       this.iterator = reserveIterator;
    }
 

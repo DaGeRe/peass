@@ -23,8 +23,8 @@ import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
-import de.peass.dependency.analysis.data.TestCase;
 import de.dagere.kopeme.generated.Versioninfo;
+import de.peass.dependency.analysis.data.TestCase;
 
 /**
  * Provides utilities for reading KoPeMe-data from multiple runs which should be summarized into one file.
@@ -77,7 +77,7 @@ public class MultipleVMTestUtil {
 	 * @param version
 	 * @throws JAXBException
 	 */
-	public static void fillOtherData(final File fullResultFile, final TestcaseType oneRunData, final TestCase testcase, final String version, long currentChunkStart) throws JAXBException {
+	public static void fillOtherData(final File fullResultFile, final TestcaseType oneRunData, final TestCase testcase, final String version, final long currentChunkStart) throws JAXBException {
 	   LOG.info("Writing to merged result file: {}", fullResultFile);
 	   final XMLDataLoader fullDataLoader = new XMLDataLoader(fullResultFile);
 		final Kopemedata fullResultData = fullDataLoader.getFullData();
@@ -123,7 +123,7 @@ public class MultipleVMTestUtil {
 		}
 	}
 
-   public static Chunk findChunk(long currentChunkStart, final Datacollector fullFileDatacollector) {
+   public static Chunk findChunk(final long currentChunkStart, final Datacollector fullFileDatacollector) {
       Chunk realChunk = null;
       for (final Chunk chunk : fullFileDatacollector.getChunk()) {
          if (chunk.getChunkStartTime() == currentChunkStart) {
@@ -133,8 +133,17 @@ public class MultipleVMTestUtil {
       }
       return realChunk;
    }
+   
+   public static long getMinExecutionTime(final List<Result> results) {
+      long minExecutionTime = Long.MAX_VALUE;
+      for (final Result result : results) {
+         final long currentResultSize = result.getExecutionTimes();
+         minExecutionTime = Long.min(minExecutionTime, currentResultSize);
+      }
+      return minExecutionTime;
+   }
 
-	private static Result createResultFromStatistic(final String version, final SummaryStatistics st, long repetitions) {
+	private static Result createResultFromStatistic(final String version, final SummaryStatistics st, final long repetitions) {
 		final Result result = new Result();
 		result.setValue(st.getMean());
 		result.setMin((long) st.getMin());
@@ -166,7 +175,7 @@ public class MultipleVMTestUtil {
 				.boxed().sorted().collect(Collectors.toList());
 	}
 
-	public static SummaryStatistics getStatistic(List<Result> results) {
+	public static SummaryStatistics getStatistic(final List<Result> results) {
 		final SummaryStatistics statistisc = new SummaryStatistics();
 		results.forEach(result -> statistisc.addValue(result.getValue()));
 		return statistisc;

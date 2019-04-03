@@ -18,12 +18,11 @@ package de.peass.dependency.analysis.data;
 
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -71,8 +70,8 @@ public class TestSet {
       }
    }
 
-   @JsonDeserialize(keyUsing = ChangedEntitityDeserializer.class)
-   private final Map<ChangedEntity, List<String>> testcases = new TreeMap<>();
+   @JsonDeserialize(keyUsing = ChangedEntitityDeserializer.class, contentAs = TreeSet.class)
+   private final Map<ChangedEntity, Set<String>> testcases = new TreeMap<>();
    private String predecessor;
 
    public TestSet() {
@@ -99,9 +98,9 @@ public class TestSet {
       if (classname.getMethod() != null && classname.getMethod() != "") {
          throw new RuntimeException("A testset should only get Changed Entities with empty method");
       }
-      List<String> methods = testcases.get(classname);
+      Set<String> methods = testcases.get(classname);
       if (methods == null) {
-         methods = new LinkedList<>();
+         methods = new TreeSet<>();
          testcases.put(classname.copy(), methods);
       }
       if (methodname != null) {
@@ -114,10 +113,10 @@ public class TestSet {
 
    @JsonIgnore
    public void addTestSet(final TestSet testSet) {
-      for (final Map.Entry<ChangedEntity, List<String>> newTestEntry : testSet.entrySet()) {
-         List<String> methods = testcases.get(newTestEntry.getKey());
+      for (final Map.Entry<ChangedEntity, Set<String>> newTestEntry : testSet.entrySet()) {
+         Set<String> methods = testcases.get(newTestEntry.getKey());
          if (methods == null) {
-            methods = new LinkedList<>();
+            methods = new TreeSet<>();
             methods.addAll(newTestEntry.getValue());
             testcases.put(newTestEntry.getKey().copy(), methods);
          } else {
@@ -133,7 +132,7 @@ public class TestSet {
    }
 
    @JsonIgnore
-   public Set<Entry<ChangedEntity, List<String>>> entrySet() {
+   public Set<Entry<ChangedEntity, Set<String>>> entrySet() {
       return testcases.entrySet();
    }
 
@@ -150,7 +149,7 @@ public class TestSet {
    @JsonIgnore
    public Set<TestCase> getTests() {
       final Set<TestCase> testcases = new HashSet<>();
-      for (final Entry<ChangedEntity, List<String>> classTests : getTestcases().entrySet()) {
+      for (final Entry<ChangedEntity, Set<String>> classTests : getTestcases().entrySet()) {
          if (classTests.getValue().size() > 0) {
             for (final String method : classTests.getValue()) {
                final TestCase testcase = new TestCase(classTests.getKey().getClazz(), method, classTests.getKey().getModule());
@@ -163,7 +162,7 @@ public class TestSet {
       return testcases;
    }
 
-   public Map<ChangedEntity, List<String>> getTestcases() {
+   public Map<ChangedEntity, Set<String>> getTestcases() {
       return testcases;
    }
 
@@ -179,7 +178,7 @@ public class TestSet {
       if (testClassName.getMethod() != null && testClassName.getMethod() != "") {
          throw new RuntimeException("Testset class removal should only be done with empty method of ChangedEntity!");
       }
-      final List<String> testMethods = testcases.get(testClassName);
+      final Set<String> testMethods = testcases.get(testClassName);
       if (testMethods != null) {
          System.out.println("Remove: " + testClassName + "#" + testMethodName);
          if (!testMethods.remove(testMethodName)) {
@@ -189,7 +188,7 @@ public class TestSet {
          if (testMethods.size() == 0) {
             testcases.remove(testClassName);
          }
-      }else {
+      } else {
          Log.error("Testclass " + testClassName + " missing");
       }
    }
@@ -200,7 +199,7 @@ public class TestSet {
    }
 
    @JsonIgnore
-   public List<String> getMethods(final ChangedEntity clazz) {
+   public Set<String> getMethods(final ChangedEntity clazz) {
       return testcases.get(clazz);
    }
 
@@ -212,5 +211,4 @@ public class TestSet {
    public void setPredecessor(final String predecessor) {
       this.predecessor = predecessor;
    }
-
 }

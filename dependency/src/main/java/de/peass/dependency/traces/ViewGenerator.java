@@ -28,10 +28,10 @@ import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Version;
-import de.peass.dependency.reader.DependencyReaderBase;
 import de.peass.dependencyprocessors.PairProcessor;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.dependencyprocessors.ViewNotFoundException;
+import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 import de.peass.utils.StreamGobbler;
 import de.peass.vcs.GitUtils;
@@ -194,7 +194,7 @@ public class ViewGenerator extends PairProcessor {
                synchronized (changedTraceMethods) {
                   LOG.debug("Writing");
                   try (FileWriter fw = new FileWriter(executeFile)) {
-                     fw.write(DependencyReaderBase.OBJECTMAPPER.writeValueAsString(changedTraceMethods));
+                     fw.write(Constants.OBJECTMAPPER.writeValueAsString(changedTraceMethods));
                      fw.flush();
                   } catch (final IOException e) {
                      e.printStackTrace();

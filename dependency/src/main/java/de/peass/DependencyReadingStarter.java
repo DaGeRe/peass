@@ -119,6 +119,7 @@ public class DependencyReadingStarter {
     */
    public static List<GitCommit> getGitCommits(final CommandLine line, final File projectFolder) {
       final List<GitCommit> commits = GitUtils.getCommits(projectFolder);
+      
       LOG.info("Processing git repo, commits: {}", commits.size());
 //      LOG.debug("First Commits: {}", commits.subList(0, 10));
       if (line.hasOption(OptionConstants.STARTVERSION.getName())) {

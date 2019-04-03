@@ -67,26 +67,13 @@ public class DependencyReadingContinueStarter {
 
 		final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
 
-		final File dependencyFile;
-		if (line.hasOption(OptionConstants.OUT.getName())) {
-			dependencyFile = new File(line.getOptionValue(OptionConstants.OUT.getName()));
-		} else {
-			final File resultFolder = DependencyReadingStarter.getResultFolder();
-			dependencyFile = new File(resultFolder, "deps_" + projectFolder.getName() + ".xml");
-		}
+		final File dependencyFile = DependencyReadingStarter.getDependencyFile(line, projectFolder);
 
 		final File dependencyFileIn = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
 		final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFileIn);
 		VersionComparator.setVersions(GitUtils.getCommits(projectFolder));
 
-		String previousVersion;
-		if (line.hasOption(OptionConstants.STARTVERSION.getName())) {
-			final String startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName());
-			truncateVersions(startversion, dependencies.getVersions());
-		   previousVersion = GitUtils.getPrevious(startversion, projectFolder);
-		} else {
-			previousVersion = VersionComparator.getPreviousVersion(dependencies.getInitialversion().getVersion());
-		}
+		String previousVersion = getPreviousVersion(line, projectFolder, dependencies);
 
 		File outputFile = projectFolder.getParentFile();
 		if (outputFile.isDirectory()) {
@@ -100,7 +87,27 @@ public class DependencyReadingContinueStarter {
 
 		System.setOut(new PrintStream(outputFile));
 
-		final DependencyReader reader;
+		final DependencyReader reader = createReader(line, projectFolder, dependencyFile, dependencies, previousVersion, timeout, vcs);
+		reader.readDependencies();
+		LOG.debug("Reader initalized");
+
+	}
+
+   static String getPreviousVersion(final CommandLine line, final File projectFolder, final Dependencies dependencies) {
+      String previousVersion;
+		if (line.hasOption(OptionConstants.STARTVERSION.getName())) {
+			final String startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName());
+			truncateVersions(startversion, dependencies.getVersions());
+		   previousVersion = GitUtils.getPrevious(startversion, projectFolder);
+		} else {
+			previousVersion = VersionComparator.getPreviousVersion(dependencies.getInitialversion().getVersion());
+		}
+      return previousVersion;
+   }
+
+   static DependencyReader createReader(final CommandLine line, final File projectFolder, final File dependencyFile, final Dependencies dependencies, String previousVersion,
+         final int timeout, final VersionControlSystem vcs) {
+      final DependencyReader reader;
 		if (vcs.equals(VersionControlSystem.GIT)) {
 			final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(line, projectFolder);
 			commits.add(0, new GitCommit(previousVersion, "", "", ""));
@@ -114,10 +121,8 @@ public class DependencyReadingContinueStarter {
 		} else {
 			throw new RuntimeException("Unknown version control system");
 		}
-		reader.readDependencies();
-		LOG.debug("Reader initalized");
-
-	}
+      return reader;
+   }
 
 	public static void truncateVersions(final String startversion, final Map<String,Version> versions) {
 	   for (final java.util.Iterator<Entry<String, Version>> it = versions.entrySet().iterator(); it.hasNext();) {

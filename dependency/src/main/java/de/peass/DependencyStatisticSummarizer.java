@@ -18,9 +18,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.persistence.ExecutionData;
-import de.peass.dependency.reader.DependencyReaderBase;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.statistics.DependencyStatistics;
+import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 
 /**
@@ -46,7 +46,7 @@ public class DependencyStatisticSummarizer {
 			final File executeFile = new File(xmlFile.getParentFile(), "views_" + projektName + "/execute" + projektName + ".json");
 			
 			if (xmlFile.exists() && executeFile.exists()){
-				final ExecutionData changedTests = DependencyReaderBase.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
+				final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
 
 				final DependencyStatistics statistics = DependencyStatisticAnalyzer.getChangeStatistics(xmlFile, changedTests);
 
@@ -62,7 +62,7 @@ public class DependencyStatisticSummarizer {
 			final File executeFile = new File(xmlFile.getParentFile(), "views_" + projektName + "/execute" + projektName + ".json");
 
 			if (xmlFile.exists() && executeFile.exists()) {
-				final ExecutionData changedTests = DependencyReaderBase.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
+				final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
 
 				final DependencyStatistics statistics = DependencyStatisticAnalyzer.getChangeStatistics(xmlFile, changedTests);
 

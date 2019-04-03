@@ -13,7 +13,7 @@ public class PeASSFolders {
 	private final File projectFolder;
 //	private final File resultFolder;
 	private final File fullResultFolder;
-	private final File tempResultFolder, tempProjectFolder;
+	private final File tempResultFolder, tempProjectFolder, tempFolder;;
 	private final File logFolder;
 	private final File oldSourceFolder;
 	private final File detailFolder;
@@ -32,6 +32,8 @@ public class PeASSFolders {
 		oldSourceFolder.mkdir();
 		fullResultFolder = new File(peassFolder, "measurementsFull");
 		fullResultFolder.mkdir();
+		tempFolder = new File(peassFolder, "temp");
+		tempFolder.mkdir();
 		cleanFolder = new File(peassFolder, "clean");
 //		cleanFolder.mkdir();
 		detailFolder = new File(fullResultFolder, "measurements");
@@ -47,7 +49,7 @@ public class PeASSFolders {
          final File peassFolder = new File(projectFolder.getParentFile(), projectFolder.getName() + "_peass");
          gradleHome = new File(peassFolder, "gradleHome");
          gradleHome.mkdir();
-         File init = new File(gradleHome, "init.gradle");
+         final File init = new File(gradleHome, "init.gradle");
          GradleParseUtil.writeInitGradle(init);
       }
       return gradleHome;
@@ -86,6 +88,10 @@ public class PeASSFolders {
          tempProjectFolder.mkdir();
       }
       return tempProjectFolder;
+   }
+
+   public File getTempDir() {
+      return tempFolder;
    }
 
 }

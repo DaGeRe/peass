@@ -29,12 +29,12 @@ public class TestSequiturView {
 		final List<String> expectedCalls = new LinkedList<>();
 		expectedCalls.add("viewtest.TestMe#test");
 		expectedCalls.add("viewtest.TestMe$InnerClass#<init>([viewtest.TestMe])");
-		expectedCalls.add("5x#0(2)");
+		expectedCalls.add("5x(2)");
 		expectedCalls.add("viewtest.TestMe$InnerClass#method");
 		expectedCalls.add("viewtest.TestMe#staticMethod");
-		expectedCalls.add("2x#4(4)");
+		expectedCalls.add("2x(4)");
 		expectedCalls.add("viewtest.TestMe#staticMethod");
-		expectedCalls.add("5x#0(2)");
+		expectedCalls.add("5x(2)");
 		expectedCalls.add("viewtest.TestMe$InnerClass#method");
 		expectedCalls.add("viewtest.TestMe#staticMethod");
 		expectedCalls.add("viewtest.TestMe#staticMethod");

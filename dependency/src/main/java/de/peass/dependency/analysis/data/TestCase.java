@@ -23,7 +23,7 @@ public class TestCase {
       }
       this.clazz = clazz;
       this.method = method;
-      module = null;
+      module = "";
    }
 
    public TestCase(final String clazz, final String method, final String module) {

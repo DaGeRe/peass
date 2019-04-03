@@ -42,39 +42,70 @@ public class AdaptiveTester extends DependencyTester {
       for (int vmid = 0; vmid < vms; vmid++) {
          runOneComparison(version, versionOld, logFolder, testcase, vmid);
 
-         final boolean savelyDecidable = isBreakPossible(folders.getFullMeasurementFolder(), version, versionOld, testcase, vmid, currentChunkStart);
+         final boolean savelyDecidable = isBreakPossible(folders.getFullMeasurementFolder(), version, versionOld,
+               testcase, vmid, currentChunkStart);
 
          if (savelyDecidable) {
+            LOG.debug("Savely decidable - finishing testing");
             break;
          }
 
-         final Result v1Result = getLastResult(versionOld, testcase, vmid);
-         final Result v2Result = getLastResult(version, testcase, vmid);
-         if (v1Result == null || v2Result == null || v1Result.getExecutionTimes() < testTransformer.getIterations() || v2Result.getExecutionTimes() < testTransformer.getIterations()) {
-            if (v1Result != null && v2Result != null) {
-               final String problemReason = "Measurement executions: Old: " + v1Result.getExecutionTimes() + " New: " + v2Result.getExecutionTimes();
-               LOG.error(problemReason);
-            }
-            final int lessIterations = testTransformer.getIterations() / 5;
-            if (lessIterations > 5) {
-               LOG.info("Reducing iterations too: {}", lessIterations);
-               testTransformer.setIterations(lessIterations);
-               testTransformer.setWarmupExecutions(0);
-            } else {
-               if (testTransformer.getRepetitions() > 10) {
-                  testTransformer.setRepetitions(10);
-               } else {
-                  break;
-               }
-            }
-         } else if ((v1Result.getValue() > 10E7 || v1Result.getValue() > 10E7) && testTransformer.getIterations() > 50) {
-            final int lessIterations = testTransformer.getIterations() / 5;
-            LOG.info("Reducing iterations too: {}", lessIterations);
-            testTransformer.setIterations(lessIterations);
+         final boolean shouldBreak = updateExecutions(version, versionOld, testcase, vmid);
+         if (shouldBreak) {
+            LOG.debug("Too less executions possible - finishing testing.");
+            break;
          }
       }
    }
 
+   boolean updateExecutions(final String version, final String versionOld, final TestCase testcase, final int vmid) throws JAXBException {
+      boolean shouldBreak = false;
+      final Result versionOldResult = getLastResult(versionOld, testcase, vmid);
+      final Result versionNewResult = getLastResult(version, testcase, vmid);
+      if (vmid < 10) {
+         if (versionOldResult == null || versionNewResult == null) {
+            final int lessIterations = testTransformer.getIterations() / 5;
+            if (versionOldResult == null) {
+               final String problemReason = "Measurement for " + versionOld + " is null";
+               LOG.error(problemReason);
+            } else if (versionNewResult == null) {
+               final String problemReason = "Measurement for " + version + " is null";
+               LOG.error(problemReason);
+            } else {
+               LOG.error("Both null!");
+            }
+            shouldBreak = reduceExecutions(shouldBreak, lessIterations);
+         } else if (versionOldResult.getExecutionTimes() < testTransformer.getIterations()
+               || versionNewResult.getExecutionTimes() < testTransformer.getIterations()) {
+            final int lessIterations;
+            final String problemReason = "Measurement executions: Old: " + versionOldResult.getExecutionTimes() + " New: " + versionNewResult.getExecutionTimes();
+            LOG.error(problemReason);
+            final int minOfExecuted = (int) Math.min(versionOldResult.getExecutionTimes(), versionNewResult.getExecutionTimes()) - 2;
+            lessIterations = Math.min(minOfExecuted, testTransformer.getIterations() / 2);
+            // final int lessIterations = testTransformer.getIterations() / 5;
+            shouldBreak = reduceExecutions(shouldBreak, lessIterations);
+         } else if ((versionOldResult.getValue() > 10E7 || versionOldResult.getValue() > 10E7) && testTransformer.getIterations() > 10) {
+            shouldBreak = reduceExecutions(shouldBreak, testTransformer.getIterations() / 5);
+         }
+      }
+      
+      return shouldBreak;
+   }
+
+   boolean reduceExecutions(boolean shouldBreak, final int lessIterations) {
+      if (lessIterations > 3) {
+         LOG.info("Reducing iterations too: {}", lessIterations);
+         testTransformer.setIterations(lessIterations);
+         testTransformer.setWarmupExecutions(0);
+      } else {
+         if (testTransformer.getRepetitions() > 10) {
+            testTransformer.setRepetitions(10);
+         } else {
+            shouldBreak = true;
+         }
+      }
+      return shouldBreak;
+   }
 
    private Result getLastResult(final String versionCurrent, final TestCase testcase, final int vmid) throws JAXBException {
       final File resultFile = getResultFile(testcase, vmid, versionCurrent);
@@ -83,12 +114,13 @@ public class AdaptiveTester extends DependencyTester {
          final Result lastResult = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);
          return lastResult;
       } else {
+         LOG.debug("Resultfile {} does not exist", resultFile);
          return null;
       }
    }
 
-   public static boolean isBreakPossible(final File measurementFolder, final String version, final String versionOld, final TestCase testcase, final int vmid,
-         final long currentChunkStart)
+   public boolean isBreakPossible(final File measurementFolder, final String version,
+         final String versionOld, final TestCase testcase, final int vmid, final long currentChunkStart)
          throws JAXBException {
 
       boolean savelyDecidable = false;
@@ -99,18 +131,27 @@ public class AdaptiveTester extends DependencyTester {
          final List<Double> after = new LinkedList<>();
          final Chunk realChunk = MultipleVMTestUtil.findChunk(currentChunkStart, loader.getFullData().getTestcases().getTestcase().get(0).getDatacollector().get(0));
          for (final Result result : realChunk.getResult()) {
-            if (result.getVersion().getGitversion().equals(versionOld)) {
-               before.add(result.getValue());
-            }
-            if (result.getVersion().getGitversion().equals(version)) {
-               after.add(result.getValue());
+            if (result.getExecutionTimes() == testTransformer.getIterations() && result.getRepetitions() == testTransformer.getRepetitions()) {
+               if (result.getVersion().getGitversion().equals(versionOld)) {
+                  before.add(result.getValue());
+               }
+               if (result.getVersion().getGitversion().equals(version)) {
+                  after.add(result.getValue());
+               }
             }
          }
 
+         LOG.debug("T: {} {}", before, after);
+         if ((before.size() > 3 && after.size() > 3)) {
+            final double[] valsBefore = ArrayUtils.toPrimitive(before.toArray(new Double[0]));
+            final double[] valsAfter = ArrayUtils.toPrimitive(after.toArray(new Double[0]));
+            savelyDecidable = isSavelyDecidable2(vmid, valsBefore, valsAfter);
+         } else if (vmid > 10) {
+            LOG.debug("More than 10 executions and only {} / {} measurements - aborting", before.size(), after.size());
+            return true;
+         }
          // T statistic can not be determined if less than 2 values (produces exception..)
-         final double[] valsBefore = ArrayUtils.toPrimitive(before.toArray(new Double[0]));
-         final double[] valsAfter = ArrayUtils.toPrimitive(after.toArray(new Double[0]));
-         savelyDecidable = isSavelyDecidable2(vmid, valsBefore, valsAfter);
+
       }
       return savelyDecidable;
    }
@@ -122,7 +163,8 @@ public class AdaptiveTester extends DependencyTester {
       final double tvalue = TestUtils.t(valsBefore, valsAfter);
       final double deviationBefore = statisticsBefore.getStandardDeviation() / statisticsBefore.getMean();
       final double deviationAfter = statisticsAfter.getStandardDeviation() / statisticsAfter.getMean();
-      if (vmid > 10) {
+      final int correctExecutions = valsBefore.length;
+      if (correctExecutions > 10) {
          if (Math.abs(tvalue) > 6 || Math.abs(tvalue) < 0.1) {
             LOG.info("In VM iteration {}, t-value was {} - skipping rest of vm executions.", vmid, tvalue);
             savelyDecidable = true;
@@ -134,7 +176,7 @@ public class AdaptiveTester extends DependencyTester {
             LOG.info("Savely decidable by deviations");
          }
       }
-      if (vmid > 3) {
+      if (correctExecutions > 3) {
          if (deviationBefore < THRESHOLD_BREAK && deviationAfter < THRESHOLD_BREAK && Math.abs(tvalue) > 6) {
             savelyDecidable = true;
             LOG.info("Savely decidable by deviations and big T-Value: {}", tvalue);
@@ -147,7 +189,7 @@ public class AdaptiveTester extends DependencyTester {
     * When adjusting this value, it needs to be considered that measurement overhead and iterations multiplicate this value.
     */
    private static final int BIG_TESTCASE_THRESHOLD_MIKROSECONDS = 5000;
-   
+
    public static boolean isSavelyDecidable2(final int vmid, final double[] valsBefore, final double[] valsAfter) {
       boolean savelyDecidable = false;
       final DescriptiveStatistics statisticsBefore = new DescriptiveStatistics(valsBefore);

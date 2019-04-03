@@ -38,13 +38,8 @@ public class StreamGobbler extends Thread {
    private final boolean showOutput;
    private final StringBuffer output;
 
-   public StreamGobbler(final InputStream is, final boolean showOutput) {
-      this.is = is;
-      this.showOutput = showOutput;
-      output = null;
-   }
-
-   public StreamGobbler(final InputStream is, final boolean showOutput, final StringBuffer output) {
+   private StreamGobbler(final InputStream is, final boolean showOutput, final StringBuffer output) {
+      super("Gobbler");
       this.is = is;
       this.showOutput = showOutput;
       this.output = output;

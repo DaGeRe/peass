@@ -2,6 +2,7 @@ package de.peass.dependency;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,13 +12,15 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
+import de.peass.dependency.analysis.FileComparisonUtil;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.traces.TraceReadUtils;
+import de.peass.dependency.traces.requitur.content.TraceElementContent;
 
 /**
  * Searches for all classes in a maven project. Used for instrumeting them.
@@ -99,43 +102,63 @@ public class ClazzFinder {
          path = path.replace(folder.getAbsolutePath() + File.separator, "");
          path = path.substring(0, path.length() - 5);
          final String clazz = path.replace(File.separator, ".");
-         clazzes.add(clazz);
+         String packageName = clazz.lastIndexOf('.') != -1 ? clazz.substring(0, clazz.lastIndexOf('.')) : clazz;
+         // clazzes.add(clazz);
 
          try {
-            final CompilationUnit cu = JavaParser.parse(clazzFile);
+            final CompilationUnit cu = FileComparisonUtil.parse(clazzFile);
             for (final Node node : cu.getChildNodes()) {
-               clazzes.addAll(getClazzes(node, clazz));
+               clazzes.addAll(getClazzes(node, packageName));
             }
 
          } catch (final ParseProblemException e) {
-            throw new RuntimeException("Problem parsing " + clazz + " from " + clazzFile.getAbsolutePath(), e);
+            throw new RuntimeException("Problem parsing " + clazz + " from " + clazzFile.getAbsolutePath() + " Existing: " + clazzFile.exists(), e);
          } catch (final FileNotFoundException e) {
             e.printStackTrace();
          }
-
       }
    }
 
    private static List<String> getClazzes(final Node node, final String parent) {
-      final String ownClazzName = parent.substring(parent.lastIndexOf('.')+1);
       final List<String> clazzes = new LinkedList<>();
       if (node instanceof ClassOrInterfaceDeclaration) {
          final ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) node;
-         if (clazz.getParentNode().isPresent() && !clazz.getName().getIdentifier().equals(ownClazzName)) {
-            final String clazzname = parent + "." + clazz.getName().getIdentifier();
-            clazzes.add(clazzname);
+         final String clazzname = parent + "." + clazz.getName().getIdentifier();
+         clazzes.add(clazzname);
+         for (final Node child : node.getChildNodes()) {
+            clazzes.addAll(getClazzes(child, clazzname));
+         }
+      } else {
+         for (final Node child : node.getChildNodes()) {
+            clazzes.addAll(getClazzes(child, parent));
          }
       }
-      for (final Node child : node.getChildNodes()) {
-         clazzes.addAll(getClazzes(child, parent));
-      }
       return clazzes;
+   }
+
+   /**
+    * Finds the given class file in a list of possible folders
+    * 
+    * @param traceelement
+    * @param clazzFolder
+    * @return
+    */
+   public static File getClazzFile(final TraceElementContent traceelement, final File[] clazzFolder) {
+      File clazzFile = null;
+      final String clazzFileName = TraceReadUtils.getClassFileName(traceelement);
+      for (final File clazzFolderCandidate : clazzFolder) {
+         final File clazzFileCandidate = new File(clazzFolderCandidate, clazzFileName);
+         if (clazzFileCandidate.exists()) {
+            clazzFile = clazzFileCandidate;
+         }
+      }
+      return clazzFile;
    }
 
    public static File getClazzFile(final File module, final ChangedEntity name) {
       LOG.debug("Searching: {} in {}", name, module.getAbsolutePath());
       File potentialFile = null;
-      final String clazzFileName = (name.getClazz().endsWith(".java")) ? name.getClazz() : name.getClazz().replace('.', File.separatorChar) + ".java";
+      final String clazzFileName = name.getClazz().endsWith(".java") ? name.getClazz() : name.getClazz().replace('.', File.separatorChar) + ".java";
       final File naturalCandidate = new File(module, clazzFileName);
       if (naturalCandidate.exists()) {
          potentialFile = naturalCandidate;
@@ -147,6 +170,52 @@ public class ClazzFinder {
          }
       }
       return potentialFile;
+   }
+
+   public static File getSourceFile(final File folder, final ChangedEntity clazz) {
+      final ChangedEntity sourceContainingClazz = clazz.getSourceContainingClazz();
+
+      File moduleFolder;
+      if (sourceContainingClazz.getModule().length() > 0) {
+         moduleFolder = new File(folder, sourceContainingClazz.getModule());
+         LOG.debug("Module: {}", sourceContainingClazz.getModule());
+      } else {
+         moduleFolder = folder;
+      }
+      return getClazzFile(moduleFolder, clazz);
+
+      // for (final String potentialClassFolder : ChangedEntity.potentialClassFolders) {
+      // final File src;
+      // if (sourceContainingClazz.getModule().length() > 0) {
+      // final File moduleFolder = new File(folder, sourceContainingClazz.getModule());
+      // LOG.debug("Module: {}", sourceContainingClazz.getModule());
+      // src = new File(moduleFolder, potentialClassFolder);
+      // } else {
+      // src = new File(folder, potentialClassFolder);
+      // }
+      //
+      // final String onlyClassName = sourceContainingClazz.getJavaClazzName().substring(clazz.getJavaClazzName().lastIndexOf(".") + 1);
+      // LOG.debug("Suche nach {} in {}", onlyClassName, src);
+      //
+      // if (src.exists()) {
+      // final Iterator<File> newFileIterator = FileUtils.listFiles(src, new WildcardFileFilter(onlyClassName + ".java"), TrueFileFilter.INSTANCE).iterator();
+      // while (newFileIterator.hasNext()) {
+      // final File file = newFileIterator.next();
+      // final String relative = src.toURI().relativize(file.toURI()).getPath();
+      // LOG.debug("Searching: " + sourceContainingClazz.getFilename() + " in path: " + relative); // Asure correct package
+      // final String currentClazzName = potentialClassFolder + relative;
+      // final String partPath = sourceContainingClazz.getJavaClazzName().replace('.', File.separatorChar);
+      // LOG.debug(sourceContainingClazz.getFilename() + " " + currentClazzName);
+      // if (relative.contains(partPath)) {
+      // // if (clazz.getFilename().equals(currentClazzName)) {
+      // LOG.debug("Found: {}", file.getAbsolutePath());
+      // return file;
+      // }
+      // }
+      // }
+      // }
+
+      // return null;
    }
 
 }

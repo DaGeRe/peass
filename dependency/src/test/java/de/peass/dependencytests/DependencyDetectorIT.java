@@ -25,6 +25,7 @@ import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.reader.DependencyReader;
+import de.peass.dependencytests.helper.FakeFileIterator;
 import de.peass.vcs.VersionIterator;
 
 //@RunWith(PowerMockRunner.class)
@@ -48,27 +49,15 @@ public class DependencyDetectorIT {
 
    @Test
    public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException {
-//      PowerMockito.mockStatic(VersionControlSystem.class);
-//      PowerMockito.doAnswer(new Answer<Void>() {
-//
-//         @Override
-//         public Void answer(final InvocationOnMock invocation) throws Throwable {
-//            System.out.println("Changed!");
-//            return null;
-//         }
-//      }).when(VersionControlSystem.class);
-      
       final File secondVersion = new File(VERSIONS_FOLDER, "normal_change");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
-      final ClazzChangeData methodChanges = new ClazzChangeData("defaultpackage.NormalDependency");
-      methodChanges.getChangedMethods().add("executeThing");
-      changes.put(new ChangedEntity("defaultpackage.NormalDependency", ""), methodChanges);
+      addChange(changes, "", "defaultpackage.NormalDependency", "executeThing");
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
 
-      final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion));
+      final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(secondVersion));
 
       final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
       final boolean success = reader.readInitialVersion();
@@ -90,14 +79,12 @@ public class DependencyDetectorIT {
       final File secondVersion = new File(VERSIONS_FOLDER, "changed_test");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
-      final ClazzChangeData methodChanges = new ClazzChangeData("defaultpackage.NormalDependency");
-      methodChanges.getChangedMethods().add("testMe");
-      changes.put(new ChangedEntity("defaultpackage.TestMe", ""), methodChanges);
+      addChange(changes, "", "defaultpackage.TestMe", "testMe");
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
 
-      final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion));
+      final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(secondVersion));
 
       final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
       final boolean success = reader.readInitialVersion();
@@ -106,31 +93,35 @@ public class DependencyDetectorIT {
 
       reader.analyseVersion(changeManager);
 
-      System.out.println(reader.getDependencies());
+      System.out.println(reader.getDependencies().getVersions().get(VERSION_1));
 
       final TestSet testMe = findDependency(reader.getDependencies(), "defaultpackage.TestMe#testMe", VERSION_1);
+      System.out.println(testMe);
       final TestCase testcase = testMe.getTests().iterator().next();
       Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
       Assert.assertEquals("testMe", testcase.getMethod());
    }
 
    static TestSet findDependency(final Dependencies dependencies, final String changedClass, final String version) {
-      final Version secondVersionDependencies = dependencies.getVersions().get(version);
-//      for (final Version candidate : dependencies.getVersions().getVersion()) {
-//         if (candidate.getVersion().equals(version)) {
-//            secondVersionDependencies = candidate;
-//         }
-//      }
-      Assert.assertNotNull("Searching for " + changedClass + " in " + version, secondVersionDependencies);
+      final Version versionDependencies = dependencies.getVersions().get(version);
+      System.out.println(dependencies.getVersions().keySet());
+      Assert.assertNotNull("Searching for " + changedClass + " in " + version, versionDependencies);
 
       TestSet testcase = null;
-      for (final Entry<ChangedEntity, TestSet> candidate : secondVersionDependencies.getChangedClazzes().entrySet()) {
+      for (final Entry<ChangedEntity, TestSet> candidate : versionDependencies.getChangedClazzes().entrySet()) {
          final String changeclassInDependencies = candidate.getKey().toString();
          if (changeclassInDependencies.equals(changedClass)) {
             testcase = candidate.getValue();
          }
       }
       return testcase;
+   }
+   
+   public static void addChange(final Map<ChangedEntity, ClazzChangeData> changes, String module, String clazz, String method) {
+      ChangedEntity baseChangedClazz = new ChangedEntity(clazz, module);
+      final ClazzChangeData methodChanges = new ClazzChangeData(baseChangedClazz);
+      methodChanges.addChange(clazz.substring(clazz.lastIndexOf('.') + 1), method);
+      changes.put(baseChangedClazz, methodChanges);
    }
 
    @Test
@@ -144,7 +135,7 @@ public class DependencyDetectorIT {
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
 
-      final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion));
+      final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(secondVersion));
 
       final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
       final boolean success = reader.readInitialVersion();
@@ -176,7 +167,7 @@ public class DependencyDetectorIT {
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
 
-      final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion));
+      final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(secondVersion));
 
       final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
       final boolean success = reader.readInitialVersion();
@@ -218,7 +209,7 @@ public class DependencyDetectorIT {
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
 
-      final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion, thirdVersion));
+      final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(secondVersion, thirdVersion));
 
       final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
       final boolean success = reader.readInitialVersion();
@@ -248,12 +239,13 @@ public class DependencyDetectorIT {
       final File secondVersion = new File(VERSIONS_FOLDER, "removed_class");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
-      changes.put(new ChangedEntity("src/test/java/defaultpackage/TestMe.java", ""), new ClazzChangeData("defaultpackage.TestMe", false));
+      ChangedEntity changedEntity = new ChangedEntity("src/test/java/defaultpackage/TestMe.java", "");
+      changes.put(changedEntity, new ClazzChangeData(changedEntity, false));
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
 
-      final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion));
+      final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(secondVersion));
 
       final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
       final boolean success = reader.readInitialVersion();

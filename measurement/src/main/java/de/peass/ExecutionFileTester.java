@@ -3,9 +3,9 @@ package de.peass;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -93,7 +93,7 @@ public class ExecutionFileTester {
 			final boolean executeThisTest = true;
 			if (executeThisTest) {
 				final TestSet calls = version.getValue();
-				for (final Map.Entry<ChangedEntity, List<String>> tests : calls.getTestcases().entrySet()) {
+				for (final Map.Entry<ChangedEntity, Set<String>> tests : calls.getTestcases().entrySet()) {
 					for (final String method : tests.getValue()) {
 						final TestCase testcase = new TestCase(tests.getKey().getJavaClazzName(), method, tests.getKey().getModule());
 						final String versionOld = lastTestcaseCalls.get(testcase);

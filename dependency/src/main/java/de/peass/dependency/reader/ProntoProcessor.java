@@ -38,7 +38,7 @@ public class ProntoProcessor extends DependencyReader {
 			LOG.debug("Analysiere {} Einträge", iterator.getSize());
 
 			int overallSize = 0, prunedSize = 0;
-			prunedSize += dependencyMap.size();
+			prunedSize += dependencyManager.getDependencyMap().size();
 
 			final ChangeManager changeManager = new ChangeManager(folders);
 			changeManager.saveOldClasses();
@@ -48,7 +48,7 @@ public class ProntoProcessor extends DependencyReader {
 				try {
 					final int tests = analyseVersion(changeManager);
 					DependencyReaderUtil.write(dependencyResult, dependencyFile);
-					overallSize += dependencyMap.size();
+					overallSize += dependencyManager.getDependencyMap().size();
 					prunedSize += tests;
 					
 					LOG.info("Overall-tests: {} Executed tests with pruning: {}", overallSize, prunedSize);

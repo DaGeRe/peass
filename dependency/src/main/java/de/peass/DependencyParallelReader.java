@@ -23,12 +23,14 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.parallel.Merger;
+import de.peass.dependency.parallel.OneReader;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.reader.DependencyReader;
-import de.peass.dependency.reader.DependencyReaderBase;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependency.reader.VersionKeeper;
 import de.peass.dependencyprocessors.VersionComparator;
+import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
@@ -58,74 +60,57 @@ public class DependencyParallelReader {
       final int threads = Integer.parseInt(line.getOptionValue(OptionConstants.THREADS.getName(), "4"));
 
       final File resultBaseFolder = new File(line.getOptionValue(OptionConstants.OUT.getName(), "results"));
-      final File[] outFiles = getDependencies(projectFolder, resultBaseFolder, project, commits, timeout, threads);
+      DependencyParallelReader reader = new DependencyParallelReader(projectFolder, resultBaseFolder, project, commits, threads, timeout);
+      final File[] outFiles = reader.readDependencies();
 
       final File dependencyOut = DependencyReadingStarter.getDependencyFile(line, projectFolder);
 
-      mergeVersions(dependencyOut, outFiles);
-
+      Merger.mergeVersions(dependencyOut, outFiles);
    }
 
-   public static File[] getDependencies(final File projectFolder, final File resultBaseFolder, final String project, final List<GitCommit> commits, final int timeout, final int count)
-         throws InterruptedException, IOException {
-      final String url = GitUtils.getURL(projectFolder);
-      LOG.debug(url);
+   private final String url;
+   private final int timeout;
+   private final VersionKeeper nonRunning;
+   private final VersionKeeper nonChanges;
+   private final List<GitCommit> commits;
+   private final PeASSFolders folders;
+   private final int size;
+   private final File[] outFiles;
+   private final File tempResultFolder;
+   private final String project;
 
-      final File[] outFiles = new File[count];
-      final PeASSFolders folders = new PeASSFolders(projectFolder);
-      final ExecutorService service = Executors.newFixedThreadPool(count);
-      // final File resultsFolder = new File("results");
-      // if (!resultsFolder.exists()) {
-      // resultsFolder.mkdirs();
-      // }
-      final File tempResultFolder = new File(resultBaseFolder, "temp_" + project);
+   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, String project, final List<GitCommit> commits, int count, final int timeout) {
+      url = GitUtils.getURL(projectFolder);
+      LOG.debug(url);
+      folders = new PeASSFolders(projectFolder);
+      this.commits = commits;
+      this.project = project;
+
+      tempResultFolder = new File(resultBaseFolder, "temp_" + project);
       if (!tempResultFolder.exists()) {
          tempResultFolder.mkdirs();
       }
+      LOG.info("Writing to: {}", tempResultFolder.getAbsolutePath());
 
-      final VersionKeeper nonRunning = new VersionKeeper(new File(tempResultFolder, "nonRunning_" + project + ".json"));
-      final VersionKeeper nonChanges = new VersionKeeper(new File(tempResultFolder, "nonChanges_" + project + ".json"));
+      nonRunning = new VersionKeeper(new File(tempResultFolder, "nonRunning_" + project + ".json"));
+      nonChanges = new VersionKeeper(new File(tempResultFolder, "nonChanges_" + project + ".json"));
 
-      final int size = commits.size() / count;
-      for (int i = 0; i < count; i++) {
+      size = commits.size() > 2 * count ? commits.size() / count : 2;
+
+      outFiles = new File[count];
+
+      this.timeout = timeout;
+   }
+
+   public File[] readDependencies() throws InterruptedException, IOException {
+      final ExecutorService service = Executors.newFixedThreadPool(outFiles.length);
+
+      for (int i = 0; i < outFiles.length; i++) {
          outFiles[i] = new File(tempResultFolder, "deps_" + project + "_" + i + ".json");
          final File projectFolderTemp = new File(folders.getTempProjectFolder(), "" + i);
          GitUtils.clone(folders, projectFolderTemp);
-         final int max = Math.min((i + 1) * size + 3, commits.size() - 1);// Assuming one in three commits should contain a source-change
-         final List<GitCommit> currentCommits = commits.subList(i * size, max);
-         final List<GitCommit> reserveCommits = commits.subList(max, commits.size() - 1);
-         final GitCommit minimumCommit = commits.get(i * size);
          final File currentOutFile = outFiles[i];
-         final Runnable current = new Runnable() {
-            @Override
-            public void run() {
-               try {
-                  final VersionIterator iterator = new VersionIteratorGit(projectFolderTemp, currentCommits, null);
-
-                  final DependencyReader reader = new DependencyReader(projectFolderTemp, currentOutFile, url, iterator, timeout, nonRunning, nonChanges);
-                  LOG.debug("Reader initalized: " + currentOutFile);
-                  final boolean readingSuccess = reader.readDependencies();
-                  if (readingSuccess) {
-                     String newest = reader.getDependencies().getNewestVersion();
-                     final VersionIteratorGit reserveIterator = new VersionIteratorGit(projectFolderTemp, reserveCommits, null);
-                     reader.setIterator(reserveIterator);
-                     while (reserveIterator.hasNextCommit() && VersionComparator.isBefore(newest, minimumCommit.getTag())) {
-                        reserveIterator.goToNextCommit();
-                        try {
-                           reader.readVersion();
-                        } catch (final IOException e) {
-                           e.printStackTrace();
-                        }
-                        newest = reader.getDependencies().getNewestVersion();
-                     }
-                  }
-               } catch (final Throwable e) {
-                  e.printStackTrace();
-               }
-            }
-         };
-         service.submit(current);
-         Thread.sleep(5);
+         startPartProcess(currentOutFile, service, i, projectFolderTemp);
       }
       service.shutdown();
       try {
@@ -139,43 +124,27 @@ public class DependencyParallelReader {
       return outFiles;
    }
 
-   public static Dependencies mergeVersions(final File out, final File[] partFiles) throws IOException, JsonGenerationException, JsonMappingException {
-      final List<Dependencies> deps = new LinkedList<>();
-      for (int i = 0; i < partFiles.length; i++) {
-         try {
-            LOG.debug("Reading: {}", partFiles[i]);
-            final Dependencies currentDependencies = DependencyReaderBase.OBJECTMAPPER.readValue(partFiles[i], Dependencies.class);
-            deps.add(currentDependencies);
-            LOG.debug("Size: {}", deps.get(deps.size() - 1).getVersions().size());
-         } catch (final IOException e) {
-            e.printStackTrace();
-         }
+   public void startPartProcess(final File currentOutFile, final ExecutorService service, final int i, final File projectFolderTemp) throws InterruptedException {
+      int min = i * size;
+      final int max = Math.min((i + 1) * size + 3, commits.size());// Assuming one in three commits should contain a source-change
+      LOG.debug("Min: {} Max: {} Size: {}", min, max, commits.size());
+      final List<GitCommit> currentCommits = commits.subList(min, max);
+      final List<GitCommit> reserveCommits = commits.subList(max - 1, commits.size());
+      final GitCommit minimumCommit = commits.get(Math.min(max, commits.size() - 1));
+
+      if (currentCommits.size() > 0) {
+         processCommits(currentOutFile, service, projectFolderTemp, currentCommits, reserveCommits, minimumCommit);
       }
-
-      LOG.debug("Sorting {} files", deps.size());
-      deps.sort(new Comparator<Dependencies>() {
-
-         @Override
-         public int compare(final Dependencies o1, final Dependencies o2) {
-            final int indexOf = VersionComparator.getVersionIndex(o1.getInitialversion().getVersion());
-            final int indexOf2 = VersionComparator.getVersionIndex(o2.getInitialversion().getVersion());
-            return indexOf - indexOf2;
-         }
-      });
-      Dependencies merged;
-      if (deps.size() > 1) {
-         merged = DependencyReaderUtil.mergeDependencies(deps.get(0), deps.get(1));
-         for (int i = 2; i < deps.size(); i++) {
-            LOG.debug("Merge: {}", i);
-            if (deps.get(i) != null) {
-               merged = DependencyReaderUtil.mergeDependencies(merged, deps.get(i));
-            }
-         }
-      } else {
-         merged = deps.get(0);
-      }
-
-      DependencyReaderBase.OBJECTMAPPER.writeValue(out, merged);
-      return merged;
    }
+
+   void processCommits(final File currentOutFile, final ExecutorService service, final File projectFolderTemp, final List<GitCommit> currentCommits,
+         final List<GitCommit> reserveCommits, final GitCommit minimumCommit) throws InterruptedException {
+      final VersionIterator iterator = new VersionIteratorGit(projectFolderTemp, currentCommits, null);
+      DependencyReader reader = new DependencyReader(projectFolderTemp, currentOutFile, url, iterator, timeout, nonRunning, nonChanges);
+      VersionIteratorGit reserveIterator = new VersionIteratorGit(projectFolderTemp, reserveCommits, null);
+      final Runnable current = new OneReader(minimumCommit, currentOutFile, reserveIterator, reader);
+      service.submit(current);
+      Thread.sleep(5);
+   }
+   
 }

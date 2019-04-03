@@ -166,7 +166,7 @@ public class DependencyTestPairStarter extends PairProcessor {
          final int currentIndex = versions.indexOf(version);
          final boolean executeThisVersion = currentIndex >= startindex && currentIndex <= endindex;
 
-         LOG.info("Processing Version {} Executing Tests: {}", version, executeThisVersion);
+         LOG.trace("Processing Version {} Executing Tests: {}", version, executeThisVersion);
 
          final Set<TestCase> testcases = versioninfo.getTests().getTests();
          final String versionOld = versioninfo.getPredecessor();
@@ -190,7 +190,7 @@ public class DependencyTestPairStarter extends PairProcessor {
                         final TestSet calls = changedTests.getVersions().get(version);
                         boolean hasChanges = false;
                         if (calls != null) {
-                           for (final Map.Entry<ChangedEntity, List<String>> clazzCalls : calls.entrySet()) {
+                           for (final Map.Entry<ChangedEntity, Set<String>> clazzCalls : calls.entrySet()) {
                               final String changedClazz = clazzCalls.getKey().getJavaClazzName();
                               if (changedClazz.equals(testcase.getClazz()) && clazzCalls.getValue().contains(testcase.getMethod())) {
                                  hasChanges = true;
@@ -206,8 +206,8 @@ public class DependencyTestPairStarter extends PairProcessor {
                      } else {
 //                        final String versionOld = lastTestcaseCalls.get(testcase);
                         tester.evaluate(version, versionOld, testcase);
+                        tester.postEvaluate();
                      }
-                     tester.postEvaluate();
                   }
                }
             }

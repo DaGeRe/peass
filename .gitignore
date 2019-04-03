@@ -19,6 +19,7 @@ measurement/ausgabe.txt
 **/dependency-reduced-pom.xml
 dependency/dependencies.xml
 dependency/dependencies/
+dependency/debug/
 measurement/dependencies/
 measurement/dependencies.xml
 dependency/src/test/resources/dependencyIT/current/

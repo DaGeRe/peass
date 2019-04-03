@@ -10,12 +10,13 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
+import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.analysis.CalledMethodLoader;
+import de.peass.dependency.analysis.FileComparisonUtil;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TraceElement;
 import de.peass.dependency.traces.requitur.ReducedTraceElement;
@@ -66,12 +67,12 @@ public class TraceMethodReader {
       for (final ReducedTraceElement traceElement : rleTrace) {
          if (traceElement.getValue() instanceof TraceElementContent) {
             final TraceElementContent te = (TraceElementContent) traceElement.getValue();
-            final File clazzFile = TraceReadUtils.getClazzFile(te, clazzFolder);
+            final File clazzFile = ClazzFinder.getClazzFile(te, clazzFolder);
             if (clazzFile != null) {
                CompilationUnit cu = loadedUnits.get(clazzFile);
                if (cu == null) {
                   LOG.trace("CU {} not imported yet", clazzFile);
-                  cu = JavaParser.parse(clazzFile);
+                  cu = FileComparisonUtil.parse(clazzFile);
                   loadedUnits.put(clazzFile, cu);
                }
                final Node method = TraceReadUtils.getMethod(te, cu);

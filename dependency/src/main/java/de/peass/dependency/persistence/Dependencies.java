@@ -6,6 +6,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public class Dependencies {
+   
    private String url;
    private boolean isAndroid = false;
    private InitialVersion initialversion = new InitialVersion();
@@ -60,6 +61,12 @@ public class Dependencies {
 
    public void setAndroid(final boolean isAndroid) {
       this.isAndroid = isAndroid;
+   }
+
+   @JsonIgnore
+   public String getName() {
+      String name = url.substring(url.lastIndexOf('/')+1, url.lastIndexOf('.'));
+      return name;
    }
 
 }

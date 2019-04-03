@@ -79,7 +79,8 @@ public class TestTraceMinimization {
 		System.out.println(trace);
 
 		Assert.assertEquals("CalleeSimpleFor#methodA", trace.getTraceElement(0).toString());
-		Assert.assertEquals("#0 (2)", trace.getTraceElement(1).toString());
+		Assert.assertEquals(" (2)", trace.getTraceElement(1).toString());
+//		Assert.assertEquals("#0 (2)", trace.getTraceElement(1).toString());
 		Assert.assertEquals("CalleeSimpleFor#methodB", trace.getTraceElement(2).toString());
 		Assert.assertEquals("CalleeSimpleFor#methodC", trace.getTraceElement(3).toString());
 //		Assert.assertEquals("methodB", trace.getTraceElement(1).getMethod());
@@ -105,9 +106,9 @@ public class TestTraceMinimization {
 		System.out.println(trace);
 
 
-		Assert.assertEquals("#1 (4)", trace.getTraceElement(0).toString());
+		Assert.assertEquals(" (4)", trace.getTraceElement(0).toString());
 		Assert.assertEquals(3, trace.getTraceOccurences(0));
-		Assert.assertEquals("#0 (2)", trace.getTraceElement(1).toString());
+		Assert.assertEquals(" (2)", trace.getTraceElement(1).toString());
 		Assert.assertEquals(3, trace.getTraceOccurences(1));
 		Assert.assertEquals("CalleeSimpleFor#methodA", trace.getTraceElement(2).toString());
 		Assert.assertEquals("CalleeSimpleFor#methodB", trace.getTraceElement(3).toString());
@@ -130,8 +131,10 @@ public class TestTraceMinimization {
 		final TraceWithMethods trace = reader.getTraceWithMethods();
 		System.out.println(trace);
 
-		Assert.assertEquals("#2 (5)", trace.getTraceElement(0).toString());
-		Assert.assertEquals("#1 (3)", trace.getTraceElement(1).toString());
+//		Assert.assertEquals("#2 (5)", trace.getTraceElement(0).toString());
+//		Assert.assertEquals("#1 (3)", trace.getTraceElement(1).toString());
+		Assert.assertEquals(" (5)", trace.getTraceElement(0).toString());
+      Assert.assertEquals(" (3)", trace.getTraceElement(1).toString());
 		Assert.assertEquals("CalleeSimpleFor#methodA", trace.getTraceElement(2).toString());
 		Assert.assertEquals("CalleeSimpleFor#methodB", trace.getTraceElement(3).toString());
 		Assert.assertEquals("CalleeSimpleFor#methodC", trace.getTraceElement(4).toString());
@@ -155,9 +158,9 @@ public class TestTraceMinimization {
 		System.out.println("trace");
 		System.out.println(trace);
 
-		Assert.assertEquals("#1 (6)", trace.getTraceElement(0).toString());
+		Assert.assertEquals(" (6)", trace.getTraceElement(0).toString());
 		Assert.assertEquals(3, trace.getTraceOccurences(0));
-		Assert.assertEquals("#0 (4)", trace.getTraceElement(1).toString());
+		Assert.assertEquals(" (4)", trace.getTraceElement(1).toString());
 		Assert.assertEquals(3, trace.getTraceOccurences(1));
 		Assert.assertEquals("CalleeSimpleFor#methodA", trace.getTraceElement(2).toString());
 		Assert.assertEquals("CalleeSimpleFor#methodB", trace.getTraceElement(3).toString());

@@ -35,6 +35,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.testtransformation.JUnitTestTransformer;
 
@@ -119,7 +120,9 @@ public class MavenTestExecutor extends TestExecutor {
             "-Dmaven.javadoc.skip=true",
             "-Danimal.sniffer.skip=true",
             "-Denforcer.skip=true",
-            "-DfailIfNoTests=false" };
+            "-DfailIfNoTests=false",
+            "-Djacoco.skip=true",
+            "-Djava.io.tmpdir="+folders.getTempDir().getAbsolutePath()};
 
       final String[] vars = new String[commandLineAddition.length + originals.length];
       for (int i = 0; i < originals.length; i++) {
@@ -159,11 +162,9 @@ public class MavenTestExecutor extends TestExecutor {
 
    @Override
    public void executeTest(final TestCase test, final File logFolder, final long timeout) {
-      final File logFile = new File(logFolder, "log_" + test.getClazz() + File.separator + test.getMethod() + ".txt");
-      if (!logFile.getParentFile().exists()) {
-         logFile.getParentFile().mkdir();
-      }
-      runTest(logFile, test.getClazz() + "#" + test.getMethod(), timeout);
+      final File module = new File(folders.getProjectFolder(), test.getModule());
+      final ChangedEntity testClazzEntity = new ChangedEntity(test.getClazz(), test.getModule());
+      runMethod(logFolder, testClazzEntity, module, test.getMethod(), timeout);
    }
 
    /**
@@ -172,7 +173,7 @@ public class MavenTestExecutor extends TestExecutor {
     * @param specialResultFolder Folder for saving the results
     * @param testname Name of the test that should be run
     */
-   private void runTest(final File logFile, final String testname, final long timeout) {
+   protected void runTest(final File module, final File logFile, final String testname, final long timeout) {
       try {
          final Process process = buildProcess(logFile, "-Dtest=" + testname);
          execute(testname, timeout, process);
@@ -202,6 +203,7 @@ public class MavenTestExecutor extends TestExecutor {
                            "-Dmaven.compiler.target=" + JAVA_VERSION,
                            "-Dmaven.javadoc.skip=true",
                            "-Danimal.sniffer.skip=true",
+                           "-Djacoco.skip=true",
                            "-Denforcer.skip=true",
                            "-DfailIfNoTests=false" });
             } else {

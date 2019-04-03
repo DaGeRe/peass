@@ -36,89 +36,90 @@ import kieker.tools.traceAnalysis.systemModel.ExecutionTrace;
 
 /**
  * Loads all methods for parsing the trace
+ * 
  * @author reichelt
  *
  */
 @Plugin(description = "A filter to transform PeASS-Traces")
 public class PeASSFilter extends AbstractFilterPlugin {
-	public static final String INPUT_EXECUTION_TRACE = "INPUT_EXECUTION_TRACE";
+   public static final String INPUT_EXECUTION_TRACE = "INPUT_EXECUTION_TRACE";
 
-	private final Map<ChangedEntity, Set<String>> classes = new HashMap<>();
-	private final ArrayList<TraceElement> calls = new ArrayList<>();
-	private final String prefix;
-	private final ModuleClassMapping mapping;
-	
-	private final static int CALLCOUNT = 10000000;
+   private final Map<ChangedEntity, Set<String>> classes = new HashMap<>();
+   private final ArrayList<TraceElement> calls = new ArrayList<>();
+   private final String prefix;
+   private final ModuleClassMapping mapping;
 
-	public PeASSFilter(final String prefix, final Configuration configuration, final IProjectContext projectContext, final ModuleClassMapping mapping) {
-		super(configuration, projectContext);
-		this.prefix = prefix;
-		this.mapping = mapping;
-	}
+   private final static int CALLCOUNT = 10000000;
 
-	@Override
-	public Configuration getCurrentConfiguration() {
-		return super.configuration;
-	}
+   public PeASSFilter(final String prefix, final Configuration configuration, final IProjectContext projectContext, final ModuleClassMapping mapping) {
+      super(configuration, projectContext);
+      this.prefix = prefix;
+      this.mapping = mapping;
+   }
 
-	@InputPort(name = INPUT_EXECUTION_TRACE, eventTypes = { ExecutionTrace.class })
-	public void handleInputs(final ExecutionTrace trace) {
-		LOG.info("Trace: " + trace.getTraceId());
+   @Override
+   public Configuration getCurrentConfiguration() {
+      return super.configuration;
+   }
 
-		for (final Execution execution : trace.getTraceAsSortedExecutionSet()) {
-			if (calls.size() > CALLCOUNT ){
-				calls.add(new TraceElement("ATTENTION", "TO MUCH CALLS", 0));
-				LOG.info("Trace Reading Aborted, Cause More Than "+CALLCOUNT+" Appeared");
-				break;
-			}
-			
-			final String fullClassname = execution.getOperation().getComponentType().getFullQualifiedName().intern();
-			if (prefix == null || prefix != null && fullClassname.startsWith(prefix)) {
-				if (!fullClassname.contains("junit") && !fullClassname.contains("log4j")) {
-					final String methodname = execution.getOperation().getSignature().getName().intern();
+   @InputPort(name = INPUT_EXECUTION_TRACE, eventTypes = { ExecutionTrace.class })
+   public void handleInputs(final ExecutionTrace trace) {
+      LOG.info("Trace: " + trace.getTraceId());
 
-					final TraceElement traceelement = new TraceElement(fullClassname, methodname, execution.getEss());
-					if (Arrays.asList(execution.getOperation().getSignature().getModifier()).contains("static")) {
-						traceelement.setStatic(true);
-					}
-					final String[] paramTypeList = execution.getOperation().getSignature().getParamTypeList();
-					final String[] internParamTypeList = new String[paramTypeList.length];
-					for (int i = 0; i < paramTypeList.length; i++){
-						internParamTypeList[i] = paramTypeList[i].intern();
-					}
-					traceelement.setParameterTypes(paramTypeList);
-					
-					// KoPeMe-methods are not relevant
-					if (!methodname.equals("logFullData") 
-							&& !methodname.equals("useKieker") 
-							&& !methodname.equals("getWarmupExecutions") 
-							&& !methodname.equals("getExecutionTimes") 
-							&& !methodname.equals("getMaximalTime")
-							&& !methodname.equals("getRepetitions")
-							&& !methodname.equals("getDataCollectors") ) {
-						calls.add(traceelement);
-//						final String clazzFilename = ClazzFinder.getClassFilename(projectFolder, fullClassname);
-                  final String outerClazzName = ClazzFinder.getOuterClass(fullClassname);
-                  final ChangedEntity fullClassEntity = new ChangedEntity(fullClassname, mapping.getModuleOfClass(outerClazzName));
-						Set<String> currentMethodSet = classes.get(fullClassEntity);
-						if (currentMethodSet == null) {
-							currentMethodSet = new HashSet<>();
-                     classes.put(fullClassEntity, currentMethodSet);
-						}
-						currentMethodSet.add(methodname);
-					}
-				}
-			}
-		}
-		LOG.info("Finished");
-	}
+      for (final Execution execution : trace.getTraceAsSortedExecutionSet()) {
+         if (calls.size() > CALLCOUNT) {
+            calls.add(new TraceElement("ATTENTION", "TO MUCH CALLS", 0));
+            LOG.info("Trace Reading Aborted, Cause More Than " + CALLCOUNT + " Appeared");
+            break;
+         }
 
-	public ArrayList<TraceElement> getCalls() {
-		return calls;
-	}
+         final String fullClassname = execution.getOperation().getComponentType().getFullQualifiedName().intern();
+         if ((prefix == null || prefix != null && fullClassname.startsWith(prefix))
+               && !fullClassname.contains("junit") && !fullClassname.contains("log4j")
+               && !fullClassname.equals("de.peass.generated.GeneratedTest")) {
+            final String methodname = execution.getOperation().getSignature().getName().intern();
 
-	public Map<ChangedEntity, Set<String>> getCalledMethods() {
-		return classes;
-	}
+            final TraceElement traceelement = new TraceElement(fullClassname, methodname, execution.getEss());
+            if (Arrays.asList(execution.getOperation().getSignature().getModifier()).contains("static")) {
+               traceelement.setStatic(true);
+            }
+            final String[] paramTypeList = execution.getOperation().getSignature().getParamTypeList();
+            final String[] internParamTypeList = new String[paramTypeList.length];
+            for (int i = 0; i < paramTypeList.length; i++) {
+               internParamTypeList[i] = paramTypeList[i].intern();
+            }
+            traceelement.setParameterTypes(paramTypeList);
+
+            // KoPeMe-methods are not relevant
+            if (!methodname.equals("logFullData")
+                  && !methodname.equals("useKieker")
+                  && !methodname.equals("getWarmupExecutions")
+                  && !methodname.equals("getExecutionTimes")
+                  && !methodname.equals("getMaximalTime")
+                  && !methodname.equals("getRepetitions")
+                  && !methodname.equals("getDataCollectors")) {
+               calls.add(traceelement);
+               // final String clazzFilename = ClazzFinder.getClassFilename(projectFolder, fullClassname);
+               final String outerClazzName = ClazzFinder.getOuterClass(fullClassname);
+               final ChangedEntity fullClassEntity = new ChangedEntity(fullClassname, mapping.getModuleOfClass(outerClazzName));
+               Set<String> currentMethodSet = classes.get(fullClassEntity);
+               if (currentMethodSet == null) {
+                  currentMethodSet = new HashSet<>();
+                  classes.put(fullClassEntity, currentMethodSet);
+               }
+               currentMethodSet.add(methodname);
+            }
+         }
+      }
+      LOG.info("Finished");
+   }
+
+   public ArrayList<TraceElement> getCalls() {
+      return calls;
+   }
+
+   public Map<ChangedEntity, Set<String>> getCalledMethods() {
+      return classes;
+   }
 
 }

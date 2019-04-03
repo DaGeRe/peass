@@ -36,6 +36,8 @@ import org.apache.commons.cli.CommandLine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.github.javaparser.printer.lexicalpreservation.changes.Change;
+
 import de.peass.dependency.analysis.data.CalledMethods;
 import de.peass.dependency.analysis.data.ChangeTestMapping;
 import de.peass.dependency.analysis.data.ChangedEntity;
@@ -48,6 +50,7 @@ import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.statistics.DependencyStatisticAnalyzer;
+import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 
 /**
@@ -67,14 +70,14 @@ public class DependencyReaderUtil {
          for (final Entry<ChangedEntity, TestSet> dependency : newVersionInfo.getChangedClazzes().entrySet()) {
             final TestSet testSet = dependency.getValue();
             if (removedTest.getMethod().length() > 0) {
-               for (final Entry<ChangedEntity, List<String>> testcase : testSet.getTestcases().entrySet()) {
+               for (final Entry<ChangedEntity, Set<String>> testcase : testSet.getTestcases().entrySet()) {
                   if (testcase.getKey().getJavaClazzName().equals(removedTest.getClazz())) {
                      testcase.getValue().remove(removedTest.getMethod());
                   }
                }
             } else {
                ChangedEntity removeTestcase = null;
-               for (final Entry<ChangedEntity, List<String>> testcase : testSet.getTestcases().entrySet()) {
+               for (final Entry<ChangedEntity, Set<String>> testcase : testSet.getTestcases().entrySet()) {
                   if (testcase.getKey().getClazz().equals(removedTest.getClazz())) {
                      removeTestcase = testcase.getKey();
                   }
@@ -91,29 +94,21 @@ public class DependencyReaderUtil {
    static void addNewTestcases(final Version newVersionInfo, final Map<ChangedEntity, Set<ChangedEntity>> newTestcases) {
       for (final Map.Entry<ChangedEntity, Set<ChangedEntity>> newTestcase : newTestcases.entrySet()) {
          final ChangedEntity changedClazz = newTestcase.getKey();
-         TestSet correctDependency = null;
+         TestSet testsetForChange = null;
          for (final Entry<ChangedEntity, TestSet> dependency : newVersionInfo.getChangedClazzes().entrySet()) {
-            if (dependency.getKey().equals(changedClazz)) {
-               correctDependency = dependency.getValue();
+            ChangedEntity dependencyChangedClazz = dependency.getKey();
+            if (dependencyChangedClazz.equals(changedClazz)) {
+               testsetForChange = dependency.getValue();
             }
          }
-         if (correctDependency == null) {
-            correctDependency = new TestSet();
-            // correctDependency.setModule(changedClazz.getModule());
-            // correctDependency.setChangedclass(changedClazz.getJavaClazzName());
-            // newVersionInfo.getDependency().add(correctDependency);
-            newVersionInfo.getChangedClazzes().put(changedClazz, correctDependency);
+         if (testsetForChange == null) {
+            testsetForChange = new TestSet();
+            newVersionInfo.getChangedClazzes().put(changedClazz, testsetForChange);
          }
          for (final ChangedEntity testcase : newTestcase.getValue()) {
-            final ChangedEntity methodEntity = testcase.copy();
-            methodEntity.setMethod(testcase.getMethod());
-            addTestcase(correctDependency, methodEntity);
+            testsetForChange.addTest(testcase.onlyClazz(), testcase.getMethod());
          }
       }
-   }
-
-   private static void addTestcase(final TestSet correctDependency, final ChangedEntity testcase) {
-      correctDependency.addTest(testcase.onlyClazz(), testcase.getMethod());
    }
 
    static Version createVersionFromChangeMap(final String revision, final Map<ChangedEntity, ClazzChangeData> changedClassNames, final ChangeTestMapping changeTestMap) {
@@ -123,10 +118,11 @@ public class DependencyReaderUtil {
       // changeTestMap.keySet ist fast wie changedClassNames, bloß dass
       // Klassen ohne Abhängigkeit drin sind
       for (final Map.Entry<ChangedEntity, ClazzChangeData> changedClassName : changedClassNames.entrySet()) {
-         if (!changedClassName.getValue().isOnlyMethodChange()) { // class changed as a whole
-            handleWholeClassChange(changeTestMap, newVersionInfo, changedClassName.getKey());
+         ClazzChangeData changedClazzInsideFile = changedClassName.getValue();
+         if (!changedClazzInsideFile.isOnlyMethodChange()) { // class changed as a whole
+            handleWholeClassChange(changeTestMap, newVersionInfo, changedClazzInsideFile);
          } else {
-            handleMethodChange(changeTestMap, newVersionInfo, changedClassName);
+            handleMethodChange(changeTestMap, newVersionInfo, changedClazzInsideFile);
          }
       }
       LOG.debug("Testrevision: " + revision);
@@ -134,13 +130,11 @@ public class DependencyReaderUtil {
 
    }
 
-   private static void handleMethodChange(final ChangeTestMapping changeTestMap, final Version version, final Map.Entry<ChangedEntity, ClazzChangeData> changedClassName) {
-      for (final String method : changedClassName.getValue().getChangedMethods()) {
-         final ChangedEntity underminedChange = changedClassName.getKey().copy();
-         underminedChange.setMethod(method);
+   private static void handleMethodChange(final ChangeTestMapping changeTestMap, final Version version, final ClazzChangeData changedClassName) {
+      for (ChangedEntity underminedChange : changedClassName.getChanges()) {
          boolean contained = false;
 
-         final ChangedEntity changedEntryFullName = new ChangedEntity(changedClassName.getKey().getJavaClazzName(), changedClassName.getKey().getModule(), method);
+         final ChangedEntity changedEntryFullName = new ChangedEntity(underminedChange.getJavaClazzName(), underminedChange.getModule(), underminedChange.getMethod());
          for (final Entry<ChangedEntity, TestSet> currentDependency : version.getChangedClazzes().entrySet()) {
             if (currentDependency.getKey().equals(changedEntryFullName)) {
                contained = true;
@@ -148,8 +142,6 @@ public class DependencyReaderUtil {
          }
          if (!contained) {
             final TestSet tests = new TestSet();
-            // dependency.setChangedclass(changedEntryFullName);
-            // dependency.setModule(changedClassName.getKey().getModule());
             if (changeTestMap.getChanges().containsKey(underminedChange)) {
                for (final ChangedEntity testClass : changeTestMap.getChanges().get(underminedChange)) {
                   tests.addTest(testClass.onlyClazz(), testClass.getMethod());
@@ -160,18 +152,25 @@ public class DependencyReaderUtil {
       }
    }
 
-   private static void handleWholeClassChange(final ChangeTestMapping changeTestMap, final Version version, final ChangedEntity changedClassName) {
-      final TestSet tests = new TestSet();
-      if (changeTestMap.getChanges().containsKey(changedClassName)) {
-         for (final ChangedEntity testcase : changeTestMap.getChanges().get(changedClassName)) {
-            if (testcase.getMethod() != null) {
-               addTestcase(tests, testcase);
-            } else {
-               throw new RuntimeException("Testcase without method detected: " + testcase + " Dependency: " + tests);
+   private static void handleWholeClassChange(final ChangeTestMapping changeTestMap, final Version version, final ClazzChangeData changedClassName) {
+      for (ChangedEntity underminedChange : changedClassName.getUniqueChanges()) {
+         final TestSet tests = new TestSet();
+         ChangedEntity realChange = underminedChange.onlyClazz();
+         Set<ChangedEntity> testEntities = changeTestMap.getTests(realChange);
+         if (testEntities != null) {
+            for (final ChangedEntity testcase : testEntities) {
+               if (testcase.getMethod() != null) {
+                  tests.addTest(testcase.onlyClazz(), testcase.getMethod());
+               } else {
+                  throw new RuntimeException("Testcase without method detected: " + testcase + " Dependency: " + tests);
+               }
             }
          }
+         if (version.getChangedClazzes().containsKey(realChange)) {
+            throw new RuntimeException("Clazz FQNs are unique in Java, but " + realChange.getJavaClazzName() + " was added twice!");
+         }
+         version.getChangedClazzes().put(realChange, tests);
       }
-      version.getChangedClazzes().put(changedClassName, tests);
    }
 
    private static void addChangeEntry(final ChangedEntity changedFullname, final ChangedEntity currentTestcase, final ChangeTestMapping changeTestMap) {
@@ -198,20 +197,18 @@ public class DependencyReaderUtil {
       for (final Entry<ChangedEntity, CalledMethods> dependencyEntry : dependencies.getDependencyMap().entrySet()) {
          final ChangedEntity currentTestcase = dependencyEntry.getKey();
          final CalledMethods currentTestDependencies = dependencyEntry.getValue();
-         if (currentTestcase.getJavaClazzName().contains("ServletFileUploadTest")) {
-            System.out.println("Test");
-         }
-         for (final Map.Entry<ChangedEntity, ClazzChangeData> changedEntry : changes.entrySet()) {
-            final ChangedEntity changedClass = changedEntry.getKey();
-            final Set<ChangedEntity> calledClasses = currentTestDependencies.getCalledClasses();
-            if (calledClasses.contains(changedClass)) {
-               if (!changedEntry.getValue().isOnlyMethodChange()) {
-                  addChangeEntry(changedClass, currentTestcase, changeTestMap);
-               } else { 
-                  for (final String method : changedEntry.getValue().getChangedMethods()) {
+         for (ClazzChangeData changedEntry : changes.values()) {
+            for (ChangedEntity change : changedEntry.getChanges()) {
+               final ChangedEntity changedClass = change.onlyClazz();
+               final Set<ChangedEntity> calledClasses = currentTestDependencies.getCalledClasses();
+               if (calledClasses.contains(changedClass)) {
+                  if (!changedEntry.isOnlyMethodChange()) {
+                     addChangeEntry(changedClass, currentTestcase, changeTestMap);
+                  } else {
+                     String method = change.getMethod();
                      final Map<ChangedEntity, Set<String>> calledMethods = currentTestDependencies.getCalledMethods();
                      final Set<String> calledMethodsInChangeClass = calledMethods.get(changedClass);
-                     final int parameterIndex = method.indexOf("(");
+                     final int parameterIndex = method.indexOf("("); // TODO Parameter korrekt prüfen
                      final String methodWithoutParameters = parameterIndex != -1 ? method.substring(0, parameterIndex) : method;
                      if (calledMethodsInChangeClass.contains(methodWithoutParameters)) {
                         final ChangedEntity classWithMethod = new ChangedEntity(changedClass.getClazz(), changedClass.getModule(), method);
@@ -230,33 +227,10 @@ public class DependencyReaderUtil {
    }
 
    public static void write(final Dependencies deps, final File file) {
-      // try {
       LOG.debug("Schreibe in: {}", file);
       try {
-         DependencyReaderBase.OBJECTMAPPER.writeValue(file, deps);
+         Constants.OBJECTMAPPER.writeValue(file, deps);
       } catch (final IOException e) {
-         e.printStackTrace();
-      }
-      // final JAXBContext jaxbContext = JAXBContext.newInstance(Dependencies.class);
-      // final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-      // jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-      // jaxbMarshaller.marshal(deps, file);
-      // } catch (final JAXBException e) {
-      // e.printStackTrace();
-      // }
-   }
-
-   public static void write(final Version deps, final File file) {
-      try {
-         final JAXBContext jaxbContext = JAXBContext.newInstance(Version.class);
-         final Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
-         jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-
-         final QName qName = new QName("com.codenotfound.jaxb.root", "root");
-         final JAXBElement<Version> root = new JAXBElement<>(qName, Version.class, deps);
-
-         jaxbMarshaller.marshal(root, file);
-      } catch (final JAXBException e) {
          e.printStackTrace();
       }
    }
@@ -267,9 +241,6 @@ public class DependencyReaderUtil {
          final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
          VersionComparator.setDependencies(dependencies);
       } else {
-//         final File dependencyFile = new File("../dependency/deps_commons-io.xml");
-//         final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
-//         VersionComparator.setDependencies(dependencies);
          LOG.error("No dependencyfile information passed.");
          throw new RuntimeException("No dependencyfile information passed.");
       }

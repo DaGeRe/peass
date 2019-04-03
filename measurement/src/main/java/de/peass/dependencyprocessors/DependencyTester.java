@@ -106,10 +106,11 @@ public class DependencyTester {
    }
 
    public void postEvaluate() {
+      final Cleaner cleaner = new Cleaner(folders.getCleanFolder());
       for (final File clazzFile : folders.getDetailResultFolder().listFiles()) {
          final Map<String, TestData> testdata = DataReader.readClassFolder(clazzFile);
          for (final Map.Entry<String, TestData> entry : testdata.entrySet()) {
-            new Cleaner(folders.getCleanFolder()).processTestdata(entry.getValue());
+            cleaner.processTestdata(entry.getValue());
          }
       }
 
@@ -158,13 +159,28 @@ public class DependencyTester {
 
       LOG.info("Ändere eine Klassen durch Ergänzung des Gitversion-Elements.");
       saveResultFiles(testcase, version, vmid);
+
+      cleanup();
+   }
+
+   void cleanup() throws InterruptedException {
+      for (final File createdTempFile : folders.getTempDir().listFiles()) {
+         try {
+            if (createdTempFile.isDirectory()) {
+               FileUtils.deleteDirectory(createdTempFile);
+            } else {
+               createdTempFile.delete();
+            }
+         } catch (final IOException e) {
+            e.printStackTrace();
+         }
+      }
       System.gc();
       Thread.sleep(1);
    }
 
    private void saveResultFiles(final TestCase testset, final String version, final int vmid)
          throws JAXBException, IOException {
-      // for (final Map.Entry<ChangedEntity, List<String>> testcaseEntry : testset.entrySet()) {
       LOG.info("Teste Methoden: {}", 1);
       final String expectedFolderName = "*" + testset.getClazz();
       final Collection<File> folderCandidates = findFolder(folders.getTempMeasurementFolder(), new WildcardFileFilter(expectedFolderName));
@@ -189,29 +205,33 @@ public class DependencyTester {
             }
          }
          if (testTransformer.isUseKieker()) {
-            final File methodFolder = new File(folders.getTempMeasurementFolder(), testset.getClazz() + "." + methodname);
-            if (!methodFolder.exists()) {
-               methodFolder.mkdir();
-            }
-            final File versionFolder = new File(methodFolder, version);
-            if (!versionFolder.exists()) {
-               versionFolder.mkdir();
-            }
-
-            final File dest = new File(versionFolder, vmid + ".tar.gz");
-
-            try {
-               final Process process = new ProcessBuilder("tar", "-czf", dest.getAbsolutePath(),
-                     folder.getAbsolutePath()).start();
-               process.waitFor();
-               FileUtils.deleteDirectory(folder);
-            } catch (final InterruptedException e) {
-               e.printStackTrace();
-            }
+            saveKiekerFiles(testset, version, vmid, folder, methodname);
          }
       }
       for (final File file : folders.getTempMeasurementFolder().listFiles()) {
          FileUtils.forceDelete(file);
+      }
+   }
+
+   private void saveKiekerFiles(final TestCase testset, final String version, final int vmid, final File folder, final String methodname) throws IOException {
+      final File methodFolder = new File(folders.getTempMeasurementFolder(), testset.getClazz() + "." + methodname);
+      if (!methodFolder.exists()) {
+         methodFolder.mkdir();
+      }
+      final File versionFolder = new File(methodFolder, version);
+      if (!versionFolder.exists()) {
+         versionFolder.mkdir();
+      }
+
+      final File dest = new File(versionFolder, vmid + ".tar.gz");
+
+      try {
+         final Process process = new ProcessBuilder("tar", "-czf", dest.getAbsolutePath(),
+               folder.getAbsolutePath()).start();
+         process.waitFor();
+         FileUtils.deleteDirectory(folder);
+      } catch (final InterruptedException e) {
+         e.printStackTrace();
       }
    }
 

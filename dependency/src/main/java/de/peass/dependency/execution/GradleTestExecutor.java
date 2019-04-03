@@ -6,17 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.TestcaseType;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
@@ -24,8 +18,6 @@ import de.peass.dependency.execution.GradleParseUtil.FindDependencyVisitor;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 public class GradleTestExecutor extends TestExecutor {
-
-   public static final String GENERATED_TEST_NAME = "de.peass.generated.GeneratedTest";
 
    private static final Logger LOG = LogManager.getLogger(GradleTestExecutor.class);
 
@@ -132,50 +124,8 @@ public class GradleTestExecutor extends TestExecutor {
          } catch (final IOException e) {
             e.printStackTrace();
          }
-      }else {
-         LOG.debug("Cleaning not necessary: {}", testFolder);
-      }
-   }
-
-   void runMethod(final File logFolder, final ChangedEntity clazz, final File module, final String method, final long timeout) {
-      testTransformer.generateClazz(module, "GeneratedTest", clazz, method);
-
-      final File logFile = new File(logFolder, "log_" + clazz.getJavaClazzName() + File.separator + method + ".txt");
-      if (!logFile.getParentFile().exists()) {
-         logFile.getParentFile().mkdir();
-      }
-      runTest(module, logFile, GENERATED_TEST_NAME, timeout);
-      final File assumedResultFolder = new File(folders.getTempMeasurementFolder(), clazz.getModule() + File.separator + GENERATED_TEST_NAME);
-      if (assumedResultFolder.exists()) {
-         LOG.debug("Renaming: {}", assumedResultFolder);
-         final File dest = new File(folders.getTempMeasurementFolder(), clazz.getModule() + File.separator + clazz.getClazz());
-         if (assumedResultFolder.renameTo(dest)) {
-            final File resultFile = new File(dest, method + ".xml");
-
-            LOG.debug(resultFile.exists());
-            if (resultFile.exists()) {
-               try {
-                  final Kopemedata data = new XMLDataLoader(resultFile).getFullData();
-                  if (!data.getTestcases().getClazz().equals(GENERATED_TEST_NAME)) {
-                     throw new RuntimeException("Fatal error: Wrong class executed: " + data.getTestcases().getClazz());
-                  }
-                  data.getTestcases().setClazz(clazz.getClazz());
-                  final List<TestcaseType> testcases = data.getTestcases().getTestcase();
-                  if (testcases.size() != 1) {
-                     throw new RuntimeException("Fatal error: More than one testcase was executed!");
-                  }
-                  XMLDataStorer.storeData(resultFile, data);
-               } catch (final JAXBException e) {
-                  e.printStackTrace();
-               }
-            } else {
-               LOG.error("Resultfile did not exist: {}", resultFile.getAbsolutePath());
-            }
-         } else {
-            LOG.error("Old resultfile was not cleaned: {}", dest.getAbsolutePath());
-         }
       } else {
-         LOG.error("Problem: {} does not exist", assumedResultFolder.getAbsolutePath());
+         LOG.debug("Cleaning not necessary: {}", testFolder);
       }
    }
 
@@ -183,13 +133,8 @@ public class GradleTestExecutor extends TestExecutor {
    public void executeTest(final TestCase test, final File logFolder, final long timeout) {
       final File module = new File(folders.getProjectFolder(), test.getModule());
       cleanLastTest(module);
-      runMethod(logFolder, new ChangedEntity(test.getClazz(), test.getModule()), module, test.getMethod(), timeout);
-      // final File module = new File(folders.getProjectFolder(), test.getModule());
-      // final File logFile = new File(logFolder, "log_" + test.getClazz() + File.separator + test.getMethod() + ".txt");
-      // if (!logFile.getParentFile().exists()) {
-      // logFile.getParentFile().mkdir();
-      // }
-      // runTest(module, logFile, test.getClazz() + "#" + test.getMethod(), timeout);
+      final ChangedEntity testClazzEntity = new ChangedEntity(test.getClazz(), test.getModule());
+      runMethod(logFolder, testClazzEntity, module, test.getMethod(), timeout);
    }
 
    /**
@@ -198,7 +143,7 @@ public class GradleTestExecutor extends TestExecutor {
     * @param specialResultFolder Folder for saving the results
     * @param testname Name of the test that should be run
     */
-   private void runTest(final File module, final File logFile, final String testname, final long timeout) {
+   protected void runTest(final File module, final File logFile, final String testname, final long timeout) {
       try {
          final Process process = buildProcess(module, logFile, "--tests", testname);
          execute(testname, timeout, process);
@@ -221,6 +166,9 @@ public class GradleTestExecutor extends TestExecutor {
                final FindDependencyVisitor visitor = GradleParseUtil.setAndroidTools(buildfile);
                if (visitor.isAndroid()) {
                   isAndroid = true;
+                  if (!visitor.hasVersion()) {
+                     return false;
+                  }
                }
             }
             this.isAndroid = isAndroid;

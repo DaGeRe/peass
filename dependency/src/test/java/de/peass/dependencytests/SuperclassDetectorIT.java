@@ -19,6 +19,7 @@ import de.peass.dependency.analysis.data.ClazzChangeData;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.reader.DependencyReader;
+import de.peass.dependencytests.helper.FakeFileIterator;
 import de.peass.vcs.VersionIterator;
 
 public class SuperclassDetectorIT {
@@ -46,7 +47,7 @@ public class SuperclassDetectorIT {
 		final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
 		Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
 
-		final VersionIterator fakeIterator = new FakeIterator(CURRENT, Arrays.asList(secondVersion));
+		final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(secondVersion));
 
 		final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
 		reader.readInitialVersion();

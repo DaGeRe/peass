@@ -85,19 +85,20 @@ public class GradleParseUtil {
       int buildTools = -1;
       int buildToolsVersion = -1;
       boolean useJava = false;
+      boolean hasVersion = true;
 
       @Override
       public void visitMethodCallExpression(final MethodCallExpression call) {
          // LOG.info("Call: " + call.getMethodAsString());
          if (call != null && call.getMethodAsString() != null) {
-//            System.out.println(call.getMethodAsString());
+            // System.out.println(call.getMethodAsString());
             if (call.getMethodAsString().equals("apply")) {
                final String text = call.getArguments().getText();
                if (text.contains("plugin:java") || text.contains("plugin:com.android.library") || text.contains("plugin:com.android.application")) {
                   useJava = true;
                }
             } else if (call.getMethodAsString().equals("dependencies")) {
-//               System.out.println(call);
+               // System.out.println(call);
                dependencyLine = call.getLastLineNumber();
             } else if (call.getMethodAsString().equals("test")) {
                testLine = call.getLastLineNumber();
@@ -129,12 +130,26 @@ public class GradleParseUtil {
          return buildTools != -1 || androidLine != -1 || buildToolsVersion != -1;
       }
 
+      public void setHasVersion(final boolean hasVersion) {
+         this.hasVersion = hasVersion;
+      }
+
+      public boolean hasVersion() {
+         return hasVersion;
+      }
+
    }
 
    public static int getMajorVersion(final String versionString) {
-      final String part = versionString.substring(0, versionString.indexOf('.'));
-      final int parsed = Integer.parseInt(part);
-      return parsed;
+      final int dotIndex = versionString.indexOf('.');
+      if (dotIndex != -1) {
+         final String part = versionString.substring(0, dotIndex);
+         final int parsed = Integer.parseInt(part);
+         return parsed;
+      } else {
+         return Integer.parseInt(versionString);
+      }
+
    }
 
    public static FindDependencyVisitor setAndroidTools(final File buildfile) {
@@ -158,6 +173,8 @@ public class GradleParseUtil {
                final String runningVersion = versions.get(version);
                if (runningVersion != null) {
                   gradleFileContents.set(visitor.buildTools - 1, "'buildTools': '" + runningVersion + "'");
+               } else {
+                  visitor.setHasVersion(false);
                }
             }
          }
@@ -172,6 +189,8 @@ public class GradleParseUtil {
                final String runningVersion = versions.get(version);
                if (runningVersion != null) {
                   gradleFileContents.set(visitor.buildToolsVersion - 1, "buildToolsVersion " + runningVersion);
+               } else {
+                  visitor.setHasVersion(false);
                }
             }
          }

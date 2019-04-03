@@ -1,5 +1,6 @@
-import org.junit.Test;
+package de;
 
+import org.junit.Test;
 import de.dagere.base.BaseChangeable;
 import de.dagere.base.NextBaseChangeable;
 

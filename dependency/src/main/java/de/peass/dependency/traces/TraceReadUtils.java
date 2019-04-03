@@ -72,25 +72,6 @@ public class TraceReadUtils {
       return clazzFileName;
    }
 
-   /**
-    * Finds the given class file in a list of possible folders
-    * 
-    * @param traceelement
-    * @param clazzFolder
-    * @return
-    */
-   public static File getClazzFile(final TraceElementContent traceelement, final File[] clazzFolder) {
-      File clazzFile = null;
-      final String clazzFileName = TraceReadUtils.getClassFileName(traceelement);
-      for (final File clazzFolderCandidate : clazzFolder) {
-         final File clazzFileCandidate = new File(clazzFolderCandidate, clazzFileName);
-         if (clazzFileCandidate.exists()) {
-            clazzFile = clazzFileCandidate;
-         }
-      }
-      return clazzFile;
-   }
-
    public static List<NodeList<BodyDeclaration<?>>> getAnonymusClasses(final Node parent) {
       final List<NodeList<BodyDeclaration<?>>> foundAnonymousClasses = new LinkedList<>();
       for (final Node child : parent.getChildNodes()) {
@@ -273,7 +254,7 @@ public class TraceReadUtils {
    private static boolean testParameter(final String traceParameterTypes[], final int parameterIndex, final Type type, final boolean varArgAllowed) {
       final String traceParameterType = traceParameterTypes[parameterIndex];
       final String simpleTraceParameterType = traceParameterType.substring(traceParameterType.lastIndexOf('.') + 1);
-      final String typeString = (type instanceof ClassOrInterfaceType) ? ((ClassOrInterfaceType) type).getNameAsString() : type.toString();
+      final String typeString = type instanceof ClassOrInterfaceType ? ((ClassOrInterfaceType) type).getNameAsString() : type.toString();
       // ClassOrInterfaceType
       if (typeString.equals(simpleTraceParameterType)) {
          return true;

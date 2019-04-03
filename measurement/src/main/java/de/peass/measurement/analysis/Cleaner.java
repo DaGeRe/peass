@@ -1,6 +1,7 @@
 package de.peass.measurement.analysis;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -67,6 +68,16 @@ public class Cleaner extends DataAnalyser {
    }
 
    private final File measurementsFull;
+   private int correct = 0;
+   private int read = 0;
+
+   public int getCorrect() {
+      return correct;
+   }
+
+   public int getRead() {
+      return read;
+   }
 
    public Cleaner(final File measurementsFull) {
       this.measurementsFull = measurementsFull;
@@ -86,35 +97,31 @@ public class Cleaner extends DataAnalyser {
    @Override
    public void processTestdata(final TestData measurementEntry) {
       for (final Entry<String, EvaluationPair> entry : measurementEntry.getMeasurements().entrySet()) {
+         read++;
          final String clazz = entry.getValue().getTestcase().getClazz();
+         final String method = entry.getValue().getTestcase().getMethod();
          final Chunk currentChunk = new Chunk();
          if (entry.getValue().getPrevius().size() >= 2 && entry.getValue().getCurrent().size() >= 2) {
-            List<Result> previous = entry.getValue().getPrevius();
-            previous = ConfidenceInterval.cutValuesMiddle(previous);
-            for (final Result result : previous) {
-               result.setVersion(new Versioninfo());
-               result.getVersion().setGitversion(entry.getValue().getPreviousVersion());
-               result.setWarmupExecutions(result.getFulldata().getValue().size());
-               result.setExecutionTimes(result.getFulldata().getValue().size());
-               result.setFulldata(new Fulldata());
-            }
+            final long minExecutionTime = MultipleVMTestUtil.getMinExecutionTime(entry.getValue().getPrevius());
+
+            final List<Result> previous = getChunk(entry.getValue().getPreviousVersion(), minExecutionTime, entry.getValue().getPrevius());
             currentChunk.getResult().addAll(previous);
-            List<Result> current = entry.getValue().getCurrent();
-            current = ConfidenceInterval.cutValuesMiddle(current);
-            for (final Result result : current) {
-               cleanResult(entry.getValue().getVersion(), result);
-            }
+
+            final List<Result> current = getChunk(entry.getValue().getVersion(), minExecutionTime, entry.getValue().getCurrent());
             currentChunk.getResult().addAll(current);
+
             final String shortClazz = clazz.substring(clazz.lastIndexOf('.') + 1);
             final File measurementFile = new File(measurementsFull, shortClazz + "_" + entry.getValue().getTestcase().getMethod() + ".xml");
             try {
                final XMLDataLoader xdl = new XMLDataLoader(measurementFile);
                final Kopemedata oneResultData = xdl.getFullData();
-               oneResultData.getTestcases().setClazz(clazz);
+               if (oneResultData.getTestcases().getClazz() != null) {
+                  oneResultData.getTestcases().setClazz(clazz);
+               }
                final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
                Datacollector datacollector = null;
                for (final TestcaseType testcase : testcaseList) {
-                  if (testcase.getName().equals(clazz)) {
+                  if (testcase.getName().equals(method)) {
                      datacollector = testcase.getDatacollector().get(0);
                   }
                }
@@ -125,13 +132,45 @@ public class Cleaner extends DataAnalyser {
                   datacollector = new Datacollector();
                   testcase.getDatacollector().add(datacollector);
                }
-               datacollector.getChunk().add(currentChunk);
-               XMLDataStorer.storeData(measurementFile, oneResultData);
+               if (currentChunk.getResult().size() > 2) {
+                  datacollector.getChunk().add(currentChunk);
+                  XMLDataStorer.storeData(measurementFile, oneResultData);
+                  correct++;
+               } else {
+                  for (final Result r : entry.getValue().getPrevius()) {
+                     LOG.debug("Value: {} Executions: {} Repetitions: {}", r.getValue(), r.getExecutionTimes(), r.getRepetitions());
+                  }
+                  for (final Result r : entry.getValue().getCurrent()) {
+                     LOG.debug("Value:  {} Executions: {} Repetitions: {}", r.getValue(), r.getExecutionTimes(), r.getRepetitions());
+                  }
+                  LOG.debug("Too few correct measurements: {} ", measurementFile.getAbsolutePath());
+                  LOG.debug("Measurements: {} / {}", currentChunk.getResult().size(), entry.getValue().getPrevius().size() + entry.getValue().getCurrent().size());
+               }
             } catch (final JAXBException e) {
                e.printStackTrace();
             }
          }
       }
+   }
+
+   private static final long ceilDiv(final long x, final long y) {
+      return -Math.floorDiv(-x, y);
+   }
+
+   private List<Result> getChunk(final String version, final long minExecutionTime, List<Result> previous) {
+      previous = ConfidenceInterval.cutValuesMiddle(previous);
+      for (final Iterator<Result> it = previous.iterator(); it.hasNext();) {
+         final Result result = it.next();
+         final int resultSize = result.getFulldata().getValue().size();
+         final long expectedSize = ceilDiv(minExecutionTime, 2);
+         if (resultSize == expectedSize && !Double.isNaN(result.getValue())) {
+            cleanResult(version, result);
+         } else {
+            LOG.debug("Wrong size: {} Expected: {}", resultSize, expectedSize);
+            it.remove();
+         }
+      }
+      return previous;
    }
 
    private void cleanResult(final String version, final Result result) {
@@ -143,7 +182,6 @@ public class Cleaner extends DataAnalyser {
       result.setMin(null);
       result.setMax(null);
       result.setFirst10Percentile(null);
-      result.setFulldata(null);
+      result.setFulldata(new Fulldata());
    }
-
 }

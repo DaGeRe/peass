@@ -33,6 +33,7 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.VersionDiff;
 import de.peass.dependencyprocessors.VersionComparator;
+import de.peass.utils.Constants;
 import de.peass.utils.StreamGobbler;
 
 /**
@@ -53,11 +54,24 @@ public final class GitUtils {
    }
    
    public static void getCommitsForURL(final String url) throws IOException {
-      final File tempDir = Files.createTempDirectory("gitTemp").toFile();
-      GitUtils.downloadProject(url, tempDir);
-      final List<GitCommit> commits = GitUtils.getCommits(tempDir);
-      VersionComparator.setVersions(commits);
-      FileUtils.deleteDirectory(tempDir);
+      boolean repoFound = false;
+      if (System.getenv(Constants.PEASS_PROJECTS) != null) {
+         System.out.println(url);
+         String project = url.substring(url.lastIndexOf('/')+1, url.lastIndexOf("."));
+         File candidate = new File(System.getenv(Constants.PEASS_PROJECTS), project);
+         if (candidate.exists()) {
+            repoFound = true;
+            final List<GitCommit> commits = GitUtils.getCommits(candidate);
+            VersionComparator.setVersions(commits);
+         }
+      }
+      if (!repoFound) {
+         final File tempDir = Files.createTempDirectory("gitTemp").toFile();
+         GitUtils.downloadProject(url, tempDir);
+         final List<GitCommit> commits = GitUtils.getCommits(tempDir);
+         VersionComparator.setVersions(commits);
+         FileUtils.deleteDirectory(tempDir);
+      }
    }
 
    public static String getDiff(final File file1, final File file2) throws IOException {
@@ -102,7 +116,6 @@ public final class GitUtils {
     */
    public static void filterList(final String startversion, final String endversion, final List<GitCommit> commits) {
       LOG.info("Count of Commits: {}", commits.size());
-      // boolean inRange = startversion == null ? true : false;
       boolean beforeStart = startversion == null ? false : true;
       boolean afterEnd = false;
       final List<GitCommit> notRelevantCommits = new LinkedList<>();
@@ -116,6 +129,9 @@ public final class GitUtils {
          }
          if (endversion != null && commit.getTag().startsWith(endversion)) {
             afterEnd = true;
+            if (beforeStart == true) {
+               throw new RuntimeException("Startversion " + startversion + " before endversion " + endversion);
+            }
          }
       }
       commits.removeAll(notRelevantCommits);

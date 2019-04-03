@@ -7,6 +7,8 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.peass.utils.Constants;
+
 public class VersionKeeper {
    
    public final static VersionKeeper INSTANCE = new VersionKeeper();
@@ -37,7 +39,7 @@ public class VersionKeeper {
    public synchronized void addVersion(final String version, final String reason) {
       nonRunableReasons.put(version, reason);
       try {
-         DependencyReaderBase.OBJECTMAPPER.writeValue(goal, this);
+         Constants.OBJECTMAPPER.writeValue(goal, this);
       } catch (final IOException e) {
          e.printStackTrace();
       }

@@ -25,10 +25,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Dependencies;
+import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Version;
-import de.peass.dependency.reader.DependencyReaderBase;
+import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 
 /**
@@ -57,7 +57,7 @@ public class DependencyStatisticAnalyzer {
 		ExecutionData changedTests;
 		if (line.hasOption(OptionConstants.EXECUTIONFILE.getName())) {
 			final File executeFile = new File(line.getOptionValue(OptionConstants.EXECUTIONFILE.getName()));
-			changedTests = DependencyReaderBase.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
+			changedTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
 		} else {
 			changedTests = null;
 		}
@@ -91,7 +91,7 @@ public class DependencyStatisticAnalyzer {
 		for (final Entry<String, Version> version : versions.entrySet()) {
 			final Set<TestCase> currentIterationTests = new HashSet<>();
 			for (final Map.Entry<ChangedEntity, TestSet> dependency : version.getValue().getChangedClazzes().entrySet()) {
-				for (final Entry<ChangedEntity, List<String>> testcase : dependency.getValue().getTestcases().entrySet()) {
+				for (final Entry<ChangedEntity, Set<String>> testcase : dependency.getValue().getTestcases().entrySet()) {
 					final String testclass = testcase.getKey().getClazz();
 					for (final String method : testcase.getValue()) {
 						final TestCase testcase2 = new TestCase(testclass, method);
@@ -142,7 +142,7 @@ public class DependencyStatisticAnalyzer {
 	public static Dependencies readVersions(final File dependencyFile) throws JAXBException {
 	   Dependencies deps = null;
 	   try {
-         deps = DependencyReaderBase.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+         deps = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       } catch (final IOException e) {
          e.printStackTrace();
       }

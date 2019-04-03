@@ -18,11 +18,11 @@ package de.peass.dependency;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -84,51 +84,63 @@ public class DependencyManager extends TestResultManager {
       executor.executeAllKoPeMeTests(logFile);
 
       if (folders.getTempMeasurementFolder().exists()) {
-         final Collection<File> xmlFiles = FileUtils.listFiles(folders.getTempMeasurementFolder(), new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE);
-         LOG.debug("Initial test execution finished, starting result collection, analyzing {} files", xmlFiles.size());
-         for (final File testResultFile : xmlFiles) {
-            final String testClassName = testResultFile.getParentFile().getName();
-            final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - 4); // remove
-            // .xml
-            final File parent = testResultFile.getParentFile();
-            final String moduleOfClass = mapping.getModuleOfClass(testClassName);
-            if (moduleOfClass == null) {
-               throw new RuntimeException("Module of class " + testClassName + " is null");
-            }
-            final ChangedEntity entity = new ChangedEntity(testClassName, moduleOfClass, testMethodName);
-            updateDependenciesOnce(entity, parent, mapping);
-         }
-         LOG.debug("Result collection finished");
-
-         final File movedInitialResults = new File(folders.getTempMeasurementFolder().getParentFile(), "initialresults_kieker");
-         folders.getTempMeasurementFolder().renameTo(movedInitialResults);
-         cleanAboveSize(movedInitialResults, 100, "dat");
-         return true;
+         return readResultFules(mapping);
       } else {
-         try {
-            boolean sourceFound = false;
-            for (final File module : executor.getModules()) {
-               final File testSourceFolder = new File(module, "src/test");
-               if (testSourceFolder.exists()) {
-                  final Collection<File> javaTestFiles = FileUtils.listFiles(testSourceFolder, new WildcardFileFilter("*test*.java", IOCase.INSENSITIVE), TrueFileFilter.INSTANCE);
-                  if (javaTestFiles.size() > 0) {
-                     sourceFound = true;
-                  }
-               }
-            }
-            if (sourceFound) {
-               LOG.debug("No result data available - error occured?");
-               return false;
-            } else {
-               LOG.debug("No result data available, but no test-classes existing - so it is ok.");
-               return true;
-            }
-         } catch (final XmlPullParserException e) {
-            e.printStackTrace();
-            return false;
-         }
-
+         return printErrors();
       }
+   }
+
+   boolean printErrors() throws IOException {
+      try {
+         boolean sourceFound = false;
+         sourceFound = searchTestFiles(sourceFound);
+         if (sourceFound) {
+            LOG.debug("No result data available - error occured?");
+            return false;
+         } else {
+            LOG.debug("No result data available, but no test-classes existing - so it is ok.");
+            return true;
+         }
+      } catch (final XmlPullParserException e) {
+         e.printStackTrace();
+         return false;
+      }
+   }
+
+   boolean searchTestFiles(boolean sourceFound) throws IOException, XmlPullParserException {
+      for (final File module : executor.getModules()) {
+         final File testSourceFolder = new File(module, "src/test");
+         if (testSourceFolder.exists()) {
+            final Collection<File> javaTestFiles = FileUtils.listFiles(testSourceFolder, new WildcardFileFilter("*test*.java", IOCase.INSENSITIVE), TrueFileFilter.INSTANCE);
+            if (javaTestFiles.size() > 0) {
+               sourceFound = true;
+            }
+         }
+      }
+      return sourceFound;
+   }
+
+   boolean readResultFules(final ModuleClassMapping mapping) {
+      final Collection<File> xmlFiles = FileUtils.listFiles(folders.getTempMeasurementFolder(), new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE);
+      LOG.debug("Initial test execution finished, starting result collection, analyzing {} files", xmlFiles.size());
+      for (final File testResultFile : xmlFiles) {
+         final String testClassName = testResultFile.getParentFile().getName();
+         final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - 4); // remove
+         // .xml
+         final File parent = testResultFile.getParentFile();
+         final String moduleOfClass = mapping.getModuleOfClass(testClassName);
+         if (moduleOfClass == null) {
+            throw new RuntimeException("Module of class " + testClassName + " is null");
+         }
+         final ChangedEntity entity = new ChangedEntity(testClassName, moduleOfClass, testMethodName);
+         updateDependenciesOnce(entity, parent, mapping);
+      }
+      LOG.debug("Result collection finished");
+
+      final File movedInitialResults = new File(folders.getTempMeasurementFolder().getParentFile(), "initialresults_kieker");
+      folders.getTempMeasurementFolder().renameTo(movedInitialResults);
+      cleanAboveSize(movedInitialResults, 100, "dat");
+      return true;
    }
 
    /**
@@ -206,7 +218,7 @@ public class DependencyManager extends TestResultManager {
             final File kiekerResultFolder = kiekerNextFolder.listFiles()[0];
             LOG.debug("Test: " + testMethodName);
             return kiekerResultFolder;
-         } 
+         }
       }
       return null;
    }
@@ -221,7 +233,7 @@ public class DependencyManager extends TestResultManager {
    public void addDependencies(final ChangedEntity testClassName, final Map<ChangedEntity, Set<String>> calledClasses) {
       final Map<ChangedEntity, Set<String>> testDependencies = dependencies.getDependenciesForTest(testClassName);
       for (final Map.Entry<ChangedEntity, Set<String>> calledEntity : calledClasses.entrySet()) {
-         LOG.debug("adding: " + calledEntity.getKey() + " Module: "+ calledEntity.getKey().getModule());
+         LOG.debug("adding: " + calledEntity.getKey() + " Module: " + calledEntity.getKey().getModule());
          LOG.debug(testDependencies.keySet());
          final Set<String> oldSet = testDependencies.get(calledEntity.getKey());
          if (oldSet != null) {
@@ -251,7 +263,7 @@ public class DependencyManager extends TestResultManager {
       final Map<ChangedEntity, Map<ChangedEntity, Set<String>>> oldDepdendencies = dependencies.getCopiedDependencies();
       // Remove all old dependencies where changes happened, because they may
       // have been deleted
-      for (final Entry<ChangedEntity, List<String>> className : testsToUpdate.entrySet()) {
+      for (final Entry<ChangedEntity, Set<String>> className : testsToUpdate.entrySet()) {
          for (final String method : className.getValue()) {
             final ChangedEntity methodEntity = className.getKey().copy();
             methodEntity.setMethod(method);
@@ -263,61 +275,74 @@ public class DependencyManager extends TestResultManager {
 
       final TestExistenceChanges changes = new TestExistenceChanges();
 
-      for (final Entry<ChangedEntity, List<String>> entry : testsToUpdate.entrySet()) {
+      for (final Entry<ChangedEntity, Set<String>> entry : testsToUpdate.entrySet()) {
          final String testClassName = entry.getKey().getJavaClazzName();
-         final File testclazzFolder;
-         if (entry.getKey().getModule().equals("")) {
-            final File xmlFileFolder = getXMLFileFolder(folders.getProjectFolder());
-            testclazzFolder = new File(xmlFileFolder, entry.getKey().getJavaClazzName());
-         } else {
-            final File moduleFolder = new File(folders.getProjectFolder(), entry.getKey().getModule());
-            final File xmlFileFolder = getXMLFileFolder(moduleFolder);
-            testclazzFolder = new File(xmlFileFolder, entry.getKey().getJavaClazzName());
-         }
+         final File testclazzFolder = getTestclazzFolder(entry);
          LOG.debug("Suche in {} Existiert: {} Ordner: {} Tests: {} ", testclazzFolder.getAbsolutePath(), testclazzFolder.exists(), testclazzFolder.isDirectory(), entry.getValue());
          if (testclazzFolder.exists()) {
-            // update method(s)
-            final Set<String> notFound = new TreeSet<>();
-            notFound.addAll(entry.getValue());
-            for (final File testResultFile : testclazzFolder.listFiles((FileFilter) new WildcardFileFilter("*.xml"))) {
-               final String testClassName2 = testResultFile.getParentFile().getName();
-               if (!testClassName2.equals(testClassName)) {
-                  LOG.error("Testclass " + testClassName + " != " + testClassName2);
-               }
-               final File parent = testResultFile.getParentFile();
-               final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - 4);
-               final String module = mapping.getModuleOfClass(testClassName);
-               updateDependenciesOnce(new ChangedEntity(testClassName, module, testMethodName), parent, mapping);
-               notFound.remove(testMethodName);
-            }
-            LOG.debug("Removed tests: {}", notFound);
-            for (final String testMethodName : notFound) {
-               final ChangedEntity entity = entry.getKey().copy();
-               entity.setMethod(testMethodName);
-               dependencies.removeTest(entity);
-               // testsToUpdate.removeTest(entry.getKey(), testMethodName);
-               changes.addRemovedTest(new TestCase(testClassName, testMethodName, entry.getKey().getModule()));
-            }
+            updateMethods(mapping, changes, entry, testClassName, testclazzFolder);
          } else {
-            LOG.error("Testclass {} does not exist anymore or does not create results. Folder: {}", entry.getKey(), testclazzFolder);
-            final TestCase testclass = new TestCase(testClassName, "", entry.getKey().getModule());
-            boolean oldContained = false;
-            for (final ChangedEntity oldTest : oldDepdendencies.keySet()) {
-               if (testclass.getClazz().equals(oldTest.getClazz()) && testclass.getModule().equals(oldTest.getModule())) {
-                  oldContained = true;
-               }
-            }
-            if (oldContained) {
-               changes.addRemovedTest(testclass);
-            } else {
-               LOG.error("Test was only added incorrect, no removing necessary.");
-            }
-
+            checkRemoved(oldDepdendencies, changes, entry, testClassName, testclazzFolder);
          }
       }
 
       findAddedTests(oldDepdendencies, changes);
       return changes;
+   }
+
+   File getTestclazzFolder(final Entry<ChangedEntity, Set<String>> entry) throws FileNotFoundException, IOException, XmlPullParserException {
+      final File testclazzFolder;
+      if (entry.getKey().getModule().equals("")) {
+         final File xmlFileFolder = getXMLFileFolder(folders.getProjectFolder());
+         testclazzFolder = new File(xmlFileFolder, entry.getKey().getJavaClazzName());
+      } else {
+         final File moduleFolder = new File(folders.getProjectFolder(), entry.getKey().getModule());
+         final File xmlFileFolder = getXMLFileFolder(moduleFolder);
+         testclazzFolder = new File(xmlFileFolder, entry.getKey().getJavaClazzName());
+      }
+      return testclazzFolder;
+   }
+
+   void updateMethods(final ModuleClassMapping mapping, final TestExistenceChanges changes, final Entry<ChangedEntity, Set<String>> entry, final String testClassName,
+         final File testclazzFolder) {
+      final Set<String> notFound = new TreeSet<>();
+      notFound.addAll(entry.getValue());
+      for (final File testResultFile : testclazzFolder.listFiles((FileFilter) new WildcardFileFilter("*.xml"))) {
+         final String testClassName2 = testResultFile.getParentFile().getName();
+         if (!testClassName2.equals(testClassName)) {
+            LOG.error("Testclass " + testClassName + " != " + testClassName2);
+         }
+         final File parent = testResultFile.getParentFile();
+         final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - 4);
+         final String module = mapping.getModuleOfClass(testClassName);
+         updateDependenciesOnce(new ChangedEntity(testClassName, module, testMethodName), parent, mapping);
+         notFound.remove(testMethodName);
+      }
+      LOG.debug("Removed tests: {}", notFound);
+      for (final String testMethodName : notFound) {
+         final ChangedEntity entity = entry.getKey().copy();
+         entity.setMethod(testMethodName);
+         dependencies.removeTest(entity);
+         // testsToUpdate.removeTest(entry.getKey(), testMethodName);
+         changes.addRemovedTest(new TestCase(testClassName, testMethodName, entry.getKey().getModule()));
+      }
+   }
+
+   void checkRemoved(final Map<ChangedEntity, Map<ChangedEntity, Set<String>>> oldDepdendencies, final TestExistenceChanges changes, final Entry<ChangedEntity, Set<String>> entry,
+         final String testClassName, final File testclazzFolder) {
+      LOG.error("Testclass {} does not exist anymore or does not create results. Folder: {}", entry.getKey(), testclazzFolder);
+      final TestCase testclass = new TestCase(testClassName, "", entry.getKey().getModule());
+      boolean oldContained = false;
+      for (final ChangedEntity oldTest : oldDepdendencies.keySet()) {
+         if (testclass.getClazz().equals(oldTest.getClazz()) && testclass.getModule().equals(oldTest.getModule())) {
+            oldContained = true;
+         }
+      }
+      if (oldContained) {
+         changes.addRemovedTest(testclass);
+      } else {
+         LOG.error("Test was only added incorrect, no removing necessary.");
+      }
    }
 
    /**
@@ -366,11 +391,7 @@ public class DependencyManager extends TestResultManager {
             LOG.trace("Abhängig: {} Abhängig von Testklasse: {}", currentTestDependencies.contains(changedClass), changedClass.equals(testDependencies.getKey()));
             if (currentTestDependencies.contains(changedClass)) {
                LOG.info("Test " + testDependencies.getKey() + " benötigt geänderte Klasse " + changedClass);
-               // final String javaEntityName = testDependencies.getKey().getJavaClazzName();
-               // final String testClassName = testDependencies.getKey().getJavaClazzName();
                final String testMethodName = testDependencies.getKey().getMethod();
-               // final String testClassName = testDependencies.getKey().substring(0, testDependencies.getKey().lastIndexOf('.'));
-               // final String testMethodName = testDependencies.getKey().substring(testDependencies.getKey().lastIndexOf('.') + 1);
                final ChangedEntity entity = testDependencies.getKey().copy();
                entity.setMethod(null);
                testsToRun.addTest(entity, testMethodName);

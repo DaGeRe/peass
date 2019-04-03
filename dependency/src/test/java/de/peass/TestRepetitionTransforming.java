@@ -16,7 +16,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -25,6 +24,7 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
+import de.peass.dependency.analysis.FileComparisonUtil;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.testtransformation.ParseUtil;
 import de.peass.transformation.TestTransformation;
@@ -56,7 +56,7 @@ public class TestRepetitionTransforming {
 		tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
 		tt.transformTests();
 
-		final CompilationUnit cu = JavaParser.parse(testFile);
+		final CompilationUnit cu = FileComparisonUtil.parse(testFile);
 
 		final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMe1").get();
 		Assert.assertNotNull(clazz);
@@ -78,7 +78,7 @@ public class TestRepetitionTransforming {
 		tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       tt.transformTests();
 
-		final CompilationUnit cu = JavaParser.parse(testFile2);
+		final CompilationUnit cu = FileComparisonUtil.parse(testFile2);
 
 		final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMe2").get();
 		Assert.assertNotNull(clazz);
@@ -108,7 +108,7 @@ public class TestRepetitionTransforming {
 	public void testMe() throws IOException {
 		final File old2 = new File(RESOURCE_FOLDER, "TestMe2.java");
 
-		final CompilationUnit unit = JavaParser.parse(old2);
+		final CompilationUnit unit = FileComparisonUtil.parse(old2);
 
 		final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
 

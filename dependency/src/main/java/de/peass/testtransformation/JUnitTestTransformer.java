@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -55,13 +56,13 @@ import com.github.javaparser.ast.expr.ThisExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
-import com.github.javaparser.ast.type.ReferenceType;
 import com.github.javaparser.ast.type.Type;
-import com.github.javaparser.ast.type.VoidType;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.peass.dependency.ClazzFinder;
+import de.peass.dependency.analysis.FileComparisonUtil;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import javassist.compiler.ast.MethodDecl;
 
 /**
  * Transforms JUnit-Tests to performance tests.
@@ -85,6 +86,8 @@ public class JUnitTestTransformer {
    protected boolean useKieker = false;
    protected Charset charset = StandardCharsets.UTF_8;
    protected int repetitions = 1;
+
+   private final JavaParser javaParser = new JavaParser();
 
    /**
     * Initializes TestTransformer with folder.
@@ -115,7 +118,7 @@ public class JUnitTestTransformer {
       this.repetitions = repetitions;
    }
 
-   private Map<File, CompilationUnit> loadedFiles;
+   Map<File, CompilationUnit> loadedFiles;
    private Map<File, Integer> junitVersions;
 
    public void determineVersions(final List<File> modules) {
@@ -161,7 +164,7 @@ public class JUnitTestTransformer {
       final Map<String, List<File>> extensions = new HashMap<>();
       for (final File javaFile : FileUtils.listFiles(testFolder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE)) {
          try {
-            final CompilationUnit unit = JavaParser.parse(javaFile);
+            final CompilationUnit unit = FileComparisonUtil.parse(javaFile);
             loadedFiles.put(javaFile, unit);
             final boolean isJUnit4 = isJUnit(unit, 4);
             if (isJUnit4) {
@@ -284,34 +287,40 @@ public class JUnitTestTransformer {
    protected void editJUnit3(final File javaFile) {
       try {
          final CompilationUnit unit = loadedFiles.get(javaFile);
-         unit.addImport("de.dagere.kopeme.junit3.KoPeMeTestcase");
-         unit.addImport("de.dagere.kopeme.datacollection.DataCollectorList");
-
-         final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
-
-         if (!clazz.getExtendedTypes(0).getNameAsString().equals("KoPeMeTestcase")) {
-            if (clazz.getExtendedTypes(0).getNameAsString().equals("TestCase")) {
-               clazz.setExtendedTypes(new NodeList<>());
-               clazz.addExtendedType("KoPeMeTestcase");
-            }
-
-            addMethod(clazz, "getWarmupExecutions", "return " + warmupExecutions + ";", PrimitiveType.intType());
-            addMethod(clazz, "getExecutionTimes", "return " + iterations + ";", PrimitiveType.intType());
-            addMethod(clazz, "logFullData", "return " + logFullData + ";", PrimitiveType.booleanType());
-            addMethod(clazz, "useKieker", "return " + useKieker + ";", PrimitiveType.booleanType());
-            addMethod(clazz, "getMaximalTime", "return " + timeoutTime + ";", PrimitiveType.longType());
-            addMethod(clazz, "getRepetitions", "return " + repetitions + ";", PrimitiveType.intType());
-
-            if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
-               addMethod(clazz, "getDataCollectors", "return DataCollectorList.ONLYTIME;", JavaParser.parseClassOrInterfaceType("DataCollectorList"));
-            }
-
-            Files.write(javaFile.toPath(), unit.toString().getBytes(charset));
-         }
+         editJUnit3(unit);
+         Files.write(javaFile.toPath(), unit.toString().getBytes(charset));
       } catch (final FileNotFoundException e) {
          e.printStackTrace();
       } catch (final IOException e) {
          e.printStackTrace();
+      }
+   }
+
+   void editJUnit3(final CompilationUnit unit) {
+      unit.addImport("de.dagere.kopeme.junit3.KoPeMeTestcase");
+      unit.addImport("de.dagere.kopeme.datacollection.DataCollectorList");
+
+      final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
+
+      if (!clazz.getExtendedTypes(0).getNameAsString().equals("KoPeMeTestcase")) {
+         if (clazz.getExtendedTypes(0).getNameAsString().equals("TestCase")) {
+            clazz.setExtendedTypes(new NodeList<>());
+            clazz.addExtendedType("KoPeMeTestcase");
+         }
+
+         addMethod(clazz, "getWarmupExecutions", "return " + warmupExecutions + ";", PrimitiveType.intType());
+         addMethod(clazz, "getExecutionTimes", "return " + iterations + ";", PrimitiveType.intType());
+         addMethod(clazz, "logFullData", "return " + logFullData + ";", PrimitiveType.booleanType());
+         addMethod(clazz, "useKieker", "return " + useKieker + ";", PrimitiveType.booleanType());
+         addMethod(clazz, "getMaximalTime", "return " + timeoutTime + ";", PrimitiveType.longType());
+         addMethod(clazz, "getRepetitions", "return " + repetitions + ";", PrimitiveType.intType());
+
+         if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
+            synchronized (javaParser) {
+               final ClassOrInterfaceType type = javaParser.parseClassOrInterfaceType("DataCollectorList").getResult().get();
+               addMethod(clazz, "getDataCollectors", "return DataCollectorList.ONLYTIME;", type);
+            }
+         }
       }
    }
 
@@ -336,78 +345,6 @@ public class JUnitTestTransformer {
       }
    }
 
-   public void generateClazz(final File module, final String name, final ChangedEntity extension, final String method) {
-      final File clazzFile = ClazzFinder.getClazzFile(module, extension);
-
-      final File generatedClass = new File(module, "src/test/java/de/peass/generated/" + name + ".java");
-      generatedClass.getParentFile().mkdirs();
-      final CompilationUnit cu = new CompilationUnit();
-      cu.setPackageDeclaration("de.peass.generated");
-
-      final CompilationUnit unit = loadedFiles.get(clazzFile);
-      cu.getImports().addAll(unit.getImports());
-
-      final ClassOrInterfaceDeclaration type = cu.addClass(name);
-      type.getExtendedTypes().add(new ClassOrInterfaceType(extension.getJavaClazzName()));
-
-      final NodeList<Modifier> modifiers = new NodeList<>(Modifier.publicModifier());
-      final MethodDeclaration methodDeclaration = new MethodDeclaration(modifiers, new VoidType(), method);
-      methodDeclaration.setModifiers(modifiers);
-      methodDeclaration.getThrownExceptions().add(new ClassOrInterfaceType("java.lang.Throwable"));
-      type.addMember(methodDeclaration);
-
-      final BlockStmt block = new BlockStmt();
-      block.addStatement("super." + method + "();");
-      methodDeclaration.setBody(block);
-
-      final NodeList<ReferenceType> thrownExceptions = untestifyJUnit4(clazzFile, method);
-      methodDeclaration.setThrownExceptions(thrownExceptions);
-
-      final int version = getVersion(clazzFile);
-      if (version == 4) {
-         final NormalAnnotationExpr performanceTestAnnotation = new NormalAnnotationExpr();
-         performanceTestAnnotation.setName("org.junit.Test");
-         methodDeclaration.addAnnotation(performanceTestAnnotation);
-         addAnnotation(methodDeclaration);
-      }
-
-      try {
-         FileUtils.writeStringToFile(generatedClass, cu.toString(), Charset.defaultCharset());
-      } catch (final IOException e) {
-         e.printStackTrace();
-      }
-   }
-
-   public NodeList<ReferenceType> untestifyJUnit4(final File clazzFile, final String methodName) {
-      NodeList<ReferenceType> throwDeclarations = null;
-      try {
-         final CompilationUnit unit = loadedFiles.get(clazzFile);
-
-         final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
-
-         for (final MethodDeclaration method : clazz.getMethods()) {
-            AnnotationExpr removeAnnotation = null;
-            for (final AnnotationExpr annotation : method.getAnnotations()) {
-               final String currentName = annotation.getNameAsString();
-               if (currentName.equals("org.junit.Test") || currentName.equals("Test")) {
-                  removeAnnotation = annotation;
-               }
-            }
-            if (method.getNameAsString().equals(methodName)) {
-               throwDeclarations = method.getThrownExceptions();
-            }
-            method.getAnnotations().remove(removeAnnotation);
-         }
-
-         Files.write(clazzFile.toPath(), unit.toString().getBytes(charset));
-      } catch (final FileNotFoundException e) {
-         e.printStackTrace();
-      } catch (final IOException e) {
-         e.printStackTrace();
-      }
-      return throwDeclarations;
-   }
-
    /**
     * Edits Java so that the class is run with the KoPeMe-Testrunner and the methods are annotated additionally with @PerformanceTest.
     * 
@@ -417,38 +354,7 @@ public class JUnitTestTransformer {
       try {
          final CompilationUnit unit = loadedFiles.get(javaFile);
 
-         unit.addImport("de.dagere.kopeme.annotations.Assertion");
-         unit.addImport("de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation");
-         unit.addImport("org.junit.rules.TestRule");
-         unit.addImport("org.junit.Rule");
-         unit.addImport("de.dagere.kopeme.junit.rule.KoPeMeRule");
-
-         final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
-
-         final boolean fieldFound = hasKoPeMeRule(clazz) || hasKoPeMeRunner(clazz);
-         if (!fieldFound) {
-            addRule(clazz);
-         }
-
-         for (final MethodDeclaration method : clazz.getMethods()) {
-            boolean performanceTestFound = false;
-            boolean testFound = false;
-            for (final AnnotationExpr annotation : method.getAnnotations()) {
-               final String currentName = annotation.getNameAsString();
-               if (currentName.equals("de.dagere.kopeme.annotations.PerformanceTest") || currentName.equals("PerformanceTest")) {
-                  performanceTestFound = true;
-               }
-               if (currentName.equals("org.junit.Test") || currentName.equals("org.junit.jupiter.api.Test") || currentName.equals("Test")) {
-                  testFound = true;
-               }
-            }
-            if (testFound && !performanceTestFound) {
-               if (!method.isPublic()) {
-                  method.setPublic(true);
-               }
-               addAnnotation(method);
-            }
-         }
+         editJUnit4(unit);
 
          Files.write(javaFile.toPath(), unit.toString().getBytes(charset));
       } catch (final FileNotFoundException e) {
@@ -458,7 +364,49 @@ public class JUnitTestTransformer {
       }
    }
 
+   void editJUnit4(final CompilationUnit unit) {
+      unit.addImport("de.dagere.kopeme.annotations.Assertion");
+      unit.addImport("de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation");
+      unit.addImport("org.junit.rules.TestRule");
+      unit.addImport("org.junit.Rule");
+      unit.addImport("de.dagere.kopeme.junit.rule.KoPeMeRule");
+
+      final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
+
+      final boolean fieldFound = hasKoPeMeRule(clazz) || hasKoPeMeRunner(clazz);
+      if (!fieldFound) {
+         addRule(clazz);
+      }
+
+      for (final MethodDeclaration method : clazz.getMethods()) {
+         boolean performanceTestFound = false;
+         boolean testFound = false;
+         for (final AnnotationExpr annotation : method.getAnnotations()) {
+            final String currentName = annotation.getNameAsString();
+            if (currentName.equals("de.dagere.kopeme.annotations.PerformanceTest") || currentName.equals("PerformanceTest")) {
+               performanceTestFound = true;
+            }
+            if (currentName.equals("org.junit.Test") || currentName.equals("org.junit.jupiter.api.Test") || currentName.equals("Test")) {
+               testFound = true;
+            }
+         }
+         if (testFound && !performanceTestFound) {
+            if (!method.isPublic()) {
+               method.setPublic(true);
+            }
+            addAnnotation(method);
+         }
+      }
+   }
+
    public void addAnnotation(final MethodDeclaration method) {
+      for (final AnnotationExpr annotation : method.getAnnotations()) {
+         if (annotation.getNameAsString().contains("PerformanceTest")) {
+            LOG.info("Found annotation " + annotation.getNameAsString() + " - do not add annotation");
+            return;
+         }
+      }
+
       final NormalAnnotationExpr performanceTestAnnotation = new NormalAnnotationExpr();
       performanceTestAnnotation.setName("de.dagere.kopeme.annotations.PerformanceTest");
       performanceTestAnnotation.addPair("executionTimes", "" + iterations);
@@ -509,13 +457,11 @@ public class JUnitTestTransformer {
       boolean kopemeTestrunner = false;
       if (clazz.getAnnotations().size() > 0) {
          for (final AnnotationExpr annotation : clazz.getAnnotations()) {
-            if (annotation.getNameAsString().contains("RunWith")) {
-               if (annotation instanceof SingleMemberAnnotationExpr) {
-                  final SingleMemberAnnotationExpr singleMember = (SingleMemberAnnotationExpr) annotation;
-                  final Expression expr = singleMember.getMemberValue();
-                  if (expr.toString().equals("PerformanceTestRunnerJUnit.class")) {
-                     kopemeTestrunner = true;
-                  }
+            if (annotation.getNameAsString().contains("RunWith") && annotation instanceof SingleMemberAnnotationExpr) {
+               final SingleMemberAnnotationExpr singleMember = (SingleMemberAnnotationExpr) annotation;
+               final Expression expr = singleMember.getMemberValue();
+               if (expr.toString().equals("PerformanceTestRunnerJUnit.class")) {
+                  kopemeTestrunner = true;
                }
             }
          }
@@ -595,6 +541,68 @@ public class JUnitTestTransformer {
          }
       }
       return junit3;
+   }
+
+   public File generateClazz(final File module, final ChangedEntity generatedClazz, final ChangedEntity callee, final String method) {
+      return new JUnitTestGenerator(module, generatedClazz, callee, method, this).generateClazz();
+   }
+
+   
+   private File lastShortened = null;
+   private File lastFile = null;
+   
+   public void shortenClazz(final File module, final ChangedEntity callee, final String method) {
+      final File calleeClazzFile = ClazzFinder.getClazzFile(module, callee);
+      final int version = getVersion(calleeClazzFile);
+      
+      try {
+         lastShortened = Files.createTempFile("Temp", ".java").toFile();
+         FileUtils.copyFile(calleeClazzFile, lastShortened);
+         lastFile = calleeClazzFile;
+      } catch (IOException e1) {
+         e1.printStackTrace();
+      }
+      
+
+      final CompilationUnit calleeUnit = loadedFiles.get(calleeClazzFile);
+      final ClassOrInterfaceDeclaration clazz = FileComparisonUtil.findClazz(callee, calleeUnit.getChildNodes());
+
+      List<Node> remove = new LinkedList<>();
+      for (MethodDeclaration methodDeclaration : clazz.getMethods()) {
+         if (!methodDeclaration.getNameAsString().equals(method) && methodDeclaration.getModifiers().contains(Modifier.publicModifier()) &&
+               methodDeclaration.getParameters().size() == 0) {
+            if (version != 4) {
+               if (methodDeclaration.getNameAsString().contains("test")) {
+                  remove.add(methodDeclaration);
+               }
+            } else {
+               if (methodDeclaration.getAnnotationByName("Test").isPresent() || methodDeclaration.getAnnotationByName("org.junit.Test").isPresent()) {
+                  remove.add(methodDeclaration);
+               }
+            }
+         }
+      }
+      for (Node removeN : remove) {
+         clazz.remove(removeN);
+      }
+
+      try {
+         FileUtils.writeStringToFile(calleeClazzFile, calleeUnit.toString(), Charset.defaultCharset());
+      } catch (final IOException e) {
+         e.printStackTrace();
+      }
+   }
+   
+   public void resetShortenedFile() {
+      try {
+         FileUtils.copyFile(lastShortened, lastFile);
+         final CompilationUnit unit = FileComparisonUtil.parse(lastFile);
+         loadedFiles.put(lastFile, unit);
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
+      lastFile = null;
+      lastShortened = null;
    }
 
 }

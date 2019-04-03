@@ -16,6 +16,10 @@ public class ChangeTestMapping {
 		return changes;
 	}
 	
+	public Set<ChangedEntity> getTests(ChangedEntity change){
+	   return changes.get(change);
+	}
+	
 	@Override
 	public String toString() {
 		return changes.toString();

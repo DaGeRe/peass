@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -26,7 +27,7 @@ public class ExecutionData {
 
    private String url;
    private boolean isAndroid = false;
-   
+
    private Map<String, TestSet> versions = new TreeMap<>(new VersionComparator());
 
    public String getUrl() {
@@ -54,7 +55,7 @@ public class ExecutionData {
          executes.addTestSet(tests);
       }
    }
-   
+
    @JsonIgnore
    public void addCall(final String version, final String predecessor, final TestCase testcase) {
       TestSet executes = versions.get(version);
@@ -69,27 +70,25 @@ public class ExecutionData {
       executes.addTest(testcase);
    }
 
-//   @JsonIgnore
-//   public void addCall(final String version, final TestCase testcase) {
-//      TestSet executes = versions.get(version);
-//      if (executes == null) {
-//         executes = new TestSet();
-//         versions.put(version, executes);
-//      }
-//      executes.addTest(testcase);
-//   }
+   // @JsonIgnore
+   // public void addCall(final String version, final TestCase testcase) {
+   // TestSet executes = versions.get(version);
+   // if (executes == null) {
+   // executes = new TestSet();
+   // versions.put(version, executes);
+   // }
+   // executes.addTest(testcase);
+   // }
 
    @JsonIgnore
    public boolean versionContainsTest(final String version, final TestCase currentIterationTest) {
       final TestSet clazzExecutions = versions.get(version);
       if (clazzExecutions != null) {
-         for (final Map.Entry<ChangedEntity, List<String>> clazz : clazzExecutions.entrySet()) {
+         for (final Map.Entry<ChangedEntity, Set<String>> clazz : clazzExecutions.entrySet()) {
             final ChangedEntity testclazz = clazz.getKey();
-            final List<String> methods = clazz.getValue();
-            if (testclazz.getClazz().equals(currentIterationTest.getClazz())) {
-               if (methods.contains(currentIterationTest.getMethod())) {
-                  return true;
-               }
+            final Set<String> methods = clazz.getValue();
+            if (testclazz.getClazz().equals(currentIterationTest.getClazz()) && methods.contains(currentIterationTest.getMethod())) {
+               return true;
             }
          }
       }
@@ -112,11 +111,10 @@ public class ExecutionData {
          }
       }
    }
-   
+
    public void setAndroid(final boolean isAndroid) {
       this.isAndroid = isAndroid;
    }
-
 
    public boolean isAndroid() {
       return isAndroid;

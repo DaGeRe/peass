@@ -9,7 +9,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.persistence.ExecutionData;
-import de.peass.dependency.reader.DependencyReaderBase;
 
 public class TestLoadUtil {
    
@@ -23,7 +22,7 @@ public class TestLoadUtil {
 				throw new RuntimeException("Executionfile needs to exist");
 			}
 			try {
-				testsTemp = DependencyReaderBase.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
+				testsTemp = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
 			} catch (final JsonMappingException e) {
 				e.printStackTrace();
 				testsTemp = null;

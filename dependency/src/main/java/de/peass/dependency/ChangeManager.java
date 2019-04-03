@@ -7,11 +7,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -58,7 +57,7 @@ public class ChangeManager {
       final VersionDiff diff;
       if (vcs.equals(VersionControlSystem.GIT)) {
          diff = GitUtils.getChangedClasses(folders.getProjectFolder(), MavenPomUtil.getGenericModules(folders.getProjectFolder()), lastVersion);
-      }else if (vcs.equals(VersionControlSystem.SVN)) {
+      } else if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");
       } else {
          throw new RuntimeException(".git or .svn not there - Can only happen if .git or .svn is deleted between constructor and method call ");
@@ -75,21 +74,24 @@ public class ChangeManager {
          }
          folders.getOldSources().mkdir();
          for (final File module : MavenPomUtil.getGenericModules(folders.getProjectFolder())) {
-            if (!module.equals(folders.getProjectFolder())) {
-               final String relative = folders.getProjectFolder().toURI().relativize(module.toURI()).getPath();
-
-               // final String moduleName = module.getName();
-               FileUtils.copyDirectory(new File(module, "src"), new File(folders.getOldSources(), relative + File.separator + "src"));
-            } else {
-               FileUtils.copyDirectory(new File(module, "src"), new File(folders.getOldSources(), "src"));
-            }
-
+            saveModule(module);
          }
       } catch (final IOException e) {
          e.printStackTrace();
       } catch (final XmlPullParserException e) {
          e.printStackTrace();
       }
+   }
+
+   void saveModule(final File module) throws IOException {
+      File destModuleDir;
+      if (!module.equals(folders.getProjectFolder())) {
+         final String relative = folders.getProjectFolder().toURI().relativize(module.toURI()).getPath();
+         destModuleDir = new File(folders.getOldSources(), relative + File.separator + "src");
+      } else {
+         destModuleDir = new File(folders.getOldSources(), "src");
+      }
+      FileUtils.copyDirectory(new File(module, "src"), destModuleDir);
    }
 
    public Map<ChangedEntity, ClazzChangeData> getChanges(final String version1, final String version2) {
@@ -128,12 +130,13 @@ public class ChangeManager {
          if (folders.getOldSources().exists()) {
             for (final Iterator<ChangedEntity> clazzIterator = changedClasses.iterator(); clazzIterator.hasNext();) {
                final ChangedEntity clazz = clazzIterator.next();
+               ClazzChangeData changeData = new ClazzChangeData(clazz);
                try {
-                  final File newFile = getSourceFile(folders.getProjectFolder(), clazz);
-                  final File oldFile = getSourceFile(folders.getOldSources(), clazz);
+                  final File newFile = ClazzFinder.getSourceFile(folders.getProjectFolder(), clazz);
+                  final File oldFile = ClazzFinder.getSourceFile(folders.getOldSources(), clazz);
                   LOG.info("Vergleiche {}", newFile, oldFile);
                   if (newFile != null && newFile.exists() && oldFile != null) {
-                     final ClazzChangeData changeData = FileComparisonUtil.getChangedMethods(newFile, oldFile);
+                     FileComparisonUtil.getChangedMethods(newFile, oldFile, changeData);
                      if (!changeData.isChange()) {
                         clazzIterator.remove();
                         LOG.debug("Dateien gleich: {}", clazz);
@@ -142,15 +145,18 @@ public class ChangeManager {
                      }
                   } else {
                      LOG.info("Class did not exist before: {}", clazz);
-                     changedClassesMethods.put(clazz, new ClazzChangeData(clazz, false));
+                     changeData.addClazzChange(clazz);
+                     changedClassesMethods.put(clazz, changeData);
                   }
-               } catch (final ParseException pe) {
+               } catch (final ParseException | NoSuchElementException pe) {
                   LOG.info("Class is unparsable for java parser, so to be sure it is added to the changed classes: {}", clazz);
-                  changedClassesMethods.put(clazz, new ClazzChangeData(clazz, false));
+                  changeData.addClazzChange(clazz);
+                  changedClassesMethods.put(clazz, changeData);
                   pe.printStackTrace();
                } catch (final IOException e) {
                   LOG.info("Class is unparsable for java parser, so to be sure it is added to the changed classes: {}", clazz);
-                  changedClassesMethods.put(clazz, new ClazzChangeData(clazz, false));
+                  changeData.addClazzChange(clazz);
+                  changedClassesMethods.put(clazz, changeData);
                   e.printStackTrace();
                }
             }
@@ -164,42 +170,6 @@ public class ChangeManager {
       LOG.debug("After cleaning: {}", changedClassesMethods);
 
       return changedClassesMethods;
-   }
-
-   public static File getSourceFile(final File folder, final ChangedEntity clazz) {
-      final ChangedEntity sourceContainingClazz = clazz.getSourceContainingClazz();
-      for (final String potentialClassFolder : ChangedEntity.potentialClassFolders) {
-         final File src;
-         if (sourceContainingClazz.getModule().length() > 0) {
-            final File moduleFolder = new File(folder, sourceContainingClazz.getModule());
-            LOG.debug("Module: {}", sourceContainingClazz.getModule());
-            src = new File(moduleFolder, potentialClassFolder);
-         } else {
-            src = new File(folder, potentialClassFolder);
-         }
-
-         final String onlyClassName = sourceContainingClazz.getJavaClazzName().substring(clazz.getJavaClazzName().lastIndexOf(".") + 1);
-         LOG.debug("Suche nach {} in {}", onlyClassName, src);
-         
-         if (src.exists()) {
-            final Iterator<File> newFileIterator = FileUtils.listFiles(src, new WildcardFileFilter(onlyClassName + ".java"), TrueFileFilter.INSTANCE).iterator();
-            while (newFileIterator.hasNext()) {
-               final File file = newFileIterator.next();
-               final String relative = src.toURI().relativize(file.toURI()).getPath();
-               LOG.debug("Searching: " + sourceContainingClazz.getFilename() + " in path: " + relative); // Asure correct package
-               final String currentClazzName = potentialClassFolder + relative;
-               final String partPath = sourceContainingClazz.getJavaClazzName().replace('.', File.separatorChar);
-               LOG.debug(sourceContainingClazz.getFilename() + " " + currentClazzName);
-               if (relative.contains(partPath)) {
-//               if (clazz.getFilename().equals(currentClazzName)) {
-                  LOG.debug("Found");
-                  return file;
-               }
-            }
-         }
-      }
-      
-      return null;
    }
 
 }

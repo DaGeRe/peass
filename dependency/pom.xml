@@ -105,17 +105,12 @@
 		<dependency>
 			<groupId>com.github.javaparser</groupId>
 			<artifactId>javaparser-core</artifactId>
-			<version>3.11.0</version>
+			<version>3.13.2</version>
 		</dependency>
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
 			<artifactId>kieker</artifactId>
 			<version>1.13</version>
-		</dependency>
-		<dependency>
-			<groupId>org.tmatesoft.svnkit</groupId>
-			<artifactId>svnkit</artifactId>
-			<version>1.9.3</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

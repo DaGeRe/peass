@@ -40,9 +40,10 @@ public class OneTraceGenerator {
    private final Map<String, List<File>> traceFileMap;
    private final String version;
    private final File resultsFolder;
-   final List<File> modules;
+   private final List<File> modules;
 
-   public OneTraceGenerator(final File viewFolder, final PeASSFolders folders, final TestCase testcase, final Map<String, List<File>> traceFileMap, final String version, final File resultsFolder, final List<File> modules) {
+   public OneTraceGenerator(final File viewFolder, final PeASSFolders folders, final TestCase testcase, final Map<String, List<File>> traceFileMap, final String version,
+         final File resultsFolder, final List<File> modules) {
       super();
       this.viewFolder = viewFolder;
       this.folders = folders;
@@ -53,7 +54,7 @@ public class OneTraceGenerator {
       this.modules = modules;
    }
 
-   File getClazzDir(final String version, final TestCase testcase) {
+   private File getClazzDir(final String version, final TestCase testcase) {
       final File viewResultsFolder = new File(viewFolder, "view_" + version);
       if (!viewResultsFolder.exists()) {
          viewResultsFolder.mkdir();
@@ -65,8 +66,7 @@ public class OneTraceGenerator {
       return clazzDir;
    }
 
-   public boolean generateTrace(final String versionCurrent)
-         throws com.github.javaparser.ParseException, IOException, ViewNotFoundException, XmlPullParserException {
+   public static File getClazzMethodFolder(final TestCase testcase, final File resultsFolder) throws ViewNotFoundException {
       final File projectResultFolder = new File(resultsFolder, testcase.getClazz());
       final File[] listFiles = projectResultFolder.listFiles(new FileFilter() {
          @Override
@@ -75,29 +75,45 @@ public class OneTraceGenerator {
          }
       });
       if (listFiles == null) {
-         LOG.error("Result folder: " + Arrays.toString(listFiles) + " ("
-               + (listFiles != null ? listFiles.length : "null") + ") in " + projectResultFolder.getAbsolutePath() + " should only at least exactly one folder!");
-         return false;
-      }
-      File methodResult = null;
-      for (final File kiekerFolder : listFiles) {
-         final File kiekerStartFolder = new File(kiekerFolder, testcase.getMethod());
-         if (kiekerStartFolder.exists()) {
-            methodResult = kiekerStartFolder;
-         }
-      }
-      if (methodResult == null) {
-         LOG.error("Testcase " + testcase.getMethod() + " can not be found in " + projectResultFolder.getAbsolutePath() + ".");
-         return false;
+         throw new ViewNotFoundException("Result folder: " + Arrays.toString(listFiles) + " ("
+               + (listFiles != null ? listFiles.length : "null") + ") in " + projectResultFolder.getAbsolutePath() + " should exist!");
       }
 
-      boolean success = false;
+      File methodResult = getMethodFolder(testcase, listFiles);
 
       LOG.debug("Searching for: {}", methodResult);
+
       if (methodResult.exists() && methodResult.isDirectory()) {
-         success = generateTraceFiles(versionCurrent, methodResult);
+         return methodResult;
       } else {
-         LOG.error("Error: {} does not produce {}", versionCurrent, methodResult.getAbsolutePath());
+         throw new RuntimeException("Folder " + methodResult + " is no Kieker result folder!");
+      }
+   }
+
+   private static File getMethodFolder(final TestCase testcase, final File[] listFiles) {
+      File methodResult = new File(listFiles[0], testcase.getMethod());
+      for (final File test : listFiles) {
+         final File candidate = new File(test, testcase.getMethod());
+         if (candidate.exists()) {
+            methodResult = candidate;
+         }
+      }
+      return methodResult;
+   }
+
+   public boolean generateTrace(final String versionCurrent)
+         throws com.github.javaparser.ParseException, IOException, ViewNotFoundException, XmlPullParserException {
+      boolean success = false;
+      try {
+         File methodResult = getClazzMethodFolder(testcase, resultsFolder);
+         LOG.debug("Searching for: {}", methodResult);
+         if (methodResult.exists() && methodResult.isDirectory()) {
+            success = generateTraceFiles(versionCurrent, methodResult);
+         } else {
+            LOG.error("Error: {} does not produce {}", versionCurrent, methodResult.getAbsolutePath());
+         }
+      } catch (final RuntimeException e) {
+         e.printStackTrace();
       }
       return success;
    }
@@ -115,15 +131,16 @@ public class OneTraceGenerator {
          final List<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, mapping).getShortTrace("");
          if (shortTrace != null) {
             LOG.debug("Short Trace: {} Folder: {} Project: {}", shortTrace.size(), methodResult.getAbsolutePath(), folders.getProjectFolder());
-            final File[] files = new File[modules.size() * ChangedEntity.potentialClassFolders.length];
+            final List<File> files = new LinkedList<>();
             for (int i = 0; i < modules.size(); i++) {
+               final File module = modules.get(i);
                for (int folderIndex = 0; folderIndex < ChangedEntity.potentialClassFolders.length; folderIndex++) {
                   final String path = ChangedEntity.potentialClassFolders[folderIndex];
-                  files[i + folderIndex] = new File(modules.get(i), path);
+                  files.add(new File(module, path));
                }
             }
             if (shortTrace.size() > 0) {
-               final TraceMethodReader traceMethodReader = new TraceMethodReader(shortTrace, files);
+               final TraceMethodReader traceMethodReader = new TraceMethodReader(shortTrace, files.toArray(new File[0]));
                final TraceWithMethods trace = traceMethodReader.getTraceWithMethods();
                List<File> traceFiles = traceFileMap.get(testcase.toString());
                if (traceFiles == null) {
@@ -141,28 +158,19 @@ public class OneTraceGenerator {
                final File currentTraceFile = new File(methodDir, shortVersion);
                traceFiles.add(currentTraceFile);
                Files.write(currentTraceFile.toPath(), trace.getWholeTrace().getBytes());
-//               try (final FileWriter fw = new FileWriter(currentTraceFile)) {
-//                  fw.write(trace.getWholeTrace());
-//                  fw.flush();
-//               }
                final File commentlessTraceFile = new File(methodDir, shortVersion + NOCOMMENT);
                Files.write(commentlessTraceFile.toPath(), trace.getCommentlessTrace().getBytes());
-//               try (final FileWriter fw = new FileWriter(commentlessTraceFile)) {
-//                  fw.write(trace.getCommentlessTrace());
-//                  fw.flush();
-//               }
                final File methodTrace = new File(methodDir, shortVersion + METHOD);
                Files.write(methodTrace.toPath(), trace.getTraceMethods().getBytes());
-//               try (final FileWriter fw = new FileWriter(methodTrace)) {
-//                  LOG.debug("Methoden: " + trace.getTraceMethods().length());
-//                  fw.write(trace.getTraceMethods());
-//                  fw.flush();
-//               }
-               final File methodExpandedTrace = new File(methodDir, shortVersion + METHOD_EXPANDED);
-               Files.write(methodExpandedTrace.toPath(), traceMethodReader.getExpandedTrace()
-                     .stream()
-                     .filter(value -> !(value instanceof RuleContent))
-                     .map(value -> value.toString()).collect(Collectors.toList()));
+               if (sizeInMB < 10) {
+                  final File methodExpandedTrace = new File(methodDir, shortVersion + METHOD_EXPANDED);
+                  Files.write(methodExpandedTrace.toPath(), traceMethodReader.getExpandedTrace()
+                        .stream()
+                        .filter(value -> !(value instanceof RuleContent))
+                        .map(value -> value.toString()).collect(Collectors.toList()));
+               } else {
+                  LOG.debug("Do not write expanded trace - size: {} MB", sizeInMB);
+               }
                LOG.debug("Datei {} existiert: {}", methodTrace.getAbsolutePath(), methodTrace.exists());
                success = true;
             }

@@ -50,7 +50,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          javaClazzName = editedName;
       } else {
          if (clazz.contains(File.separator)) {
-            LOG.error("Classfolder not found: " + clazz);
+            LOG.error("Classfolder not found: " + clazz + " Module: " + module);
          }
          javaClazzName = clazz;
       }
@@ -71,7 +71,13 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
 
    @JsonIgnore
    public String getSimpleClazzName() {
-      return javaClazzName.substring(javaClazzName.lastIndexOf(".") + 1);
+      return javaClazzName.substring(javaClazzName.lastIndexOf('.') + 1);
+   }
+
+   @JsonIgnore
+   public String getPackage() {
+      final String result = javaClazzName.substring(0, javaClazzName.lastIndexOf('.'));
+      return result;
    }
 
    public String getFilename() {
@@ -127,6 +133,10 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
             if (!other.method.equals(method)) {
                return false;
             }
+         } else {
+            if (other.method != null) {
+               return false;
+            }
          }
          if (module != null) {
             return other.module.equals(module) && other.javaClazzName.equals(javaClazzName);
@@ -155,11 +165,12 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       copy.setMethod(this.method);
       return copy;
    }
-
+   
+   @JsonIgnore
    public ChangedEntity onlyClazz() {
       return new ChangedEntity(filename, module);
    }
-
+   
    @JsonIgnore
    public ChangedEntity getSourceContainingClazz() {
       if (!javaClazzName.contains(CLAZZ_SEPARATOR)) {

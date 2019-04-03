@@ -23,6 +23,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -53,19 +54,12 @@ public class TestResultManager {
 
    protected final TestExecutor executor;
    protected final PeASSFolders folders;
-   protected final Map<String, File> versionKiekerMap = new HashMap<>();
-   final JUnitTestTransformer testTransformer;
+   protected final JUnitTestTransformer testTransformer;
    
-//   public static TestExecutor getExecutor(PeASSFolders folders, JUnitTestTransformer testTransformer, long timeout) {
-//      
-//   }
-
    public TestResultManager(final File projectFolder, final long timeout) {
       super();
       folders = new PeASSFolders(projectFolder);
-
       testTransformer = createTestTransformer();
-
       executor = createExecutor(folders, timeout, testTransformer);
    }
 
@@ -141,17 +135,11 @@ public class TestResultManager {
       }
 
       executor.prepareKoPeMeExecution(new File(logVersionFolder, "clean.txt"));
-      for (final Map.Entry<ChangedEntity, List<String>> test : testsToUpdate.getTestcases().entrySet()) {
+      for (final Map.Entry<ChangedEntity, Set<String>> test : testsToUpdate.getTestcases().entrySet()) {
          for (final String method : test.getValue()) {
             final TestCase testcase = new TestCase(test.getKey().getJavaClazzName(), method, test.getKey().getModule());
             executor.executeTest(testcase, logVersionFolder, executor.getTimeout());
          }
-        
-//         final TestSet singleVM = new TestSet();
-//         for (final String method : test.getValue()) {
-//            singleVM.addTest(test.getKey(), method);
-//         }
-//         executor.executeTests(singleVM, logVersionFolder);
       }
       cleanAboveSize(logVersionFolder, 500, "txt");
    }

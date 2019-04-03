@@ -96,6 +96,8 @@ public class ConfidenceInterval {
       }
       resultShort.setValue(statistics.getMean());
       resultShort.setDeviation(statistics.getStandardDeviation());
+      resultShort.setExecutionTimes(end-start);
+      resultShort.setWarmupExecutions(start);
       return resultShort;
    }
 }

@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.DependencyParallelReader;
 import de.peass.DependencyReadingStarter;
+import de.peass.dependency.parallel.Merger;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitCommit;
@@ -36,6 +37,6 @@ public class OnlyMerge {
       final File merge = new File("/home/reichelt/daten3/diss/chunk2/commons-pool");
       final File[] files = merge.listFiles((FilenameFilter) new WildcardFileFilter("*.json"));
       
-      DependencyParallelReader.mergeVersions(new File(merge, "merged.json"), files);
+      Merger.mergeVersions(new File(merge, "merged.json"), files);
    }
 }

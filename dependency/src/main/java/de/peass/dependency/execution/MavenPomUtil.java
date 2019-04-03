@@ -54,7 +54,6 @@ public class MavenPomUtil {
                         dep.setVersion(dep.getVersion().replaceAll("-SNAPSHOT", ""));
                      }
                   }
-
                }
             }
          }

@@ -1,4 +1,4 @@
-package de.peass.dependencytests;
+package de.peass.dependencytests.helper;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,15 +37,15 @@ class CopyFileVisitor extends SimpleFileVisitor<Path> {
    }
 }
 
-public class FakeIterator extends VersionIterator {
+public class FakeFileIterator extends VersionIterator {
 
-   static void copy(File src, File dest) throws IOException {
+   public static void copy(File src, File dest) throws IOException {
       Files.walkFileTree(src.toPath(), new CopyFileVisitor(dest.toPath()));
    }
 
    List<File> commits;
 
-   public FakeIterator(final File folder, final List<File> commits) {
+   public FakeFileIterator(final File folder, final List<File> commits) {
       super(folder);
       this.commits = commits;
    }

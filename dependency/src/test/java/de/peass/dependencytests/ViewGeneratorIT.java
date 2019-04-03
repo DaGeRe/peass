@@ -2,12 +2,10 @@ package de.peass.dependencytests;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,6 +26,7 @@ import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.analysis.data.TraceElement;
+import de.peass.dependency.traces.OneTraceGenerator;
 import de.peass.dependency.traces.TraceMethodReader;
 import de.peass.dependency.traces.TraceWithMethods;
 import de.peass.dependencyprocessors.ViewNotFoundException;
@@ -102,12 +101,12 @@ public class ViewGeneratorIT {
       final List<String> expectedCalls = new LinkedList<>();
       expectedCalls.add("viewtest.TestMe#test");
       expectedCalls.add("viewtest.TestMe$InnerClass#<init>([viewtest.TestMe])");
-      expectedCalls.add("5x#0(2)");
+      expectedCalls.add("5x(2)");
       expectedCalls.add("viewtest.TestMe$InnerClass#method");
       expectedCalls.add("viewtest.TestMe#staticMethod");
-      expectedCalls.add("2x#4(4)");
+      expectedCalls.add("2x(4)");
       expectedCalls.add("viewtest.TestMe#staticMethod");
-      expectedCalls.add("5x#0(2)");
+      expectedCalls.add("5x(2)");
       expectedCalls.add("viewtest.TestMe$InnerClass#method");
       expectedCalls.add("viewtest.TestMe#staticMethod");
       expectedCalls.add("viewtest.TestMe#staticMethod");
@@ -120,7 +119,8 @@ public class ViewGeneratorIT {
       }
    }
 
-   private void executeTraceGetting(final File project, final String githash) throws IOException, ParseException, ViewNotFoundException, XmlPullParserException, InterruptedException {
+   private void executeTraceGetting(final File project, final String githash)
+         throws IOException, ParseException, ViewNotFoundException, XmlPullParserException, InterruptedException {
       init(project);
       final TestResultManager tracereader = new TestResultManager(projectFolder, 5000);
       final TestSet testset = new TestSet();
@@ -138,7 +138,11 @@ public class ViewGeneratorIT {
 
    public static boolean analyseTrace(final TestCase testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File resultsFolder)
          throws com.github.javaparser.ParseException, IOException, ViewNotFoundException {
-      final File kiekerResultFolder = getMethodFolder(testcase, resultsFolder);
+      final File methodResult = OneTraceGenerator.getClazzMethodFolder(testcase, resultsFolder);
+      final File[] possiblyMethodFolder = methodResult.listFiles();
+      final File kiekerResultFolder = possiblyMethodFolder[0];
+      // return kiekerResultFolder;
+      // final File kiekerResultFolder = getMethodFolder(testcase, resultsFolder);
 
       boolean success = false;
       final long size = FileUtils.sizeOfDirectory(kiekerResultFolder.getParentFile());
@@ -153,37 +157,6 @@ public class ViewGeneratorIT {
       }
       FileUtils.deleteDirectory(resultsFolder);
       return success;
-   }
-
-   public static File getMethodFolder(final TestCase testcase, final File resultsFolder) throws ViewNotFoundException {
-      final File projectResultFolder = new File(resultsFolder, testcase.getClazz());
-      final File[] listFiles = projectResultFolder.listFiles(new FileFilter() {
-         @Override
-         public boolean accept(final File pathname) {
-            return pathname.getName().matches("[0-9]*");
-         }
-      });
-      if (listFiles == null) {
-         throw new ViewNotFoundException("Result folder: " + Arrays.toString(listFiles) + " ("
-               + (listFiles != null ? listFiles.length : "null") + ") in " + projectResultFolder.getAbsolutePath() + " should exist!");
-      }
-      if (listFiles.length != 1) {
-         throw new ViewNotFoundException("Result folder: " + Arrays.toString(listFiles) + " ("
-               + (listFiles != null ? listFiles.length : "null") + ") in " + projectResultFolder.getAbsolutePath() + " should only be exactly one folder, but is "
-               + listFiles.length + "!");
-      }
-
-      final File methodResult = new File(listFiles[0], testcase.getMethod());
-
-      LOG.debug("Searching for: {}", methodResult);
-
-      if (methodResult.exists() && methodResult.isDirectory()) {
-         final File[] possiblyMethodFolder = methodResult.listFiles();
-         final File kiekerResultFolder = possiblyMethodFolder[0];
-         return kiekerResultFolder;
-      } else {
-         throw new RuntimeException("Folder " + methodResult + " is no Kieker result folder!");
-      }
    }
 
    public static void executeReading(final TestCase testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File kiekerResultFolder)
@@ -209,5 +182,12 @@ public class ViewGeneratorIT {
          LOG.debug("Methoden: " + trace.getTraceMethods().length());
          fw.write(trace.getTraceMethods());
       }
+   }
+
+   public static File getMethodFolder(final TestCase testcase, final File xmlFileFolder) throws ViewNotFoundException {
+      final File methodResult = OneTraceGenerator.getClazzMethodFolder(testcase, xmlFileFolder);
+      final File[] possiblyMethodFolder = methodResult.listFiles();
+      final File kiekerResultFolder = possiblyMethodFolder[0];
+      return kiekerResultFolder;
    }
 }
