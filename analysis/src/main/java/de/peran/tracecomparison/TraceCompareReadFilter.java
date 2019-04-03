@@ -14,9 +14,9 @@ public class TraceCompareReadFilter extends AbstractFilterPlugin {
 	private static final Logger LOG = LogManager.getLogger(TraceCompareReadFilter.class);
 
 	public static final String INPUT_EXECUTION_TRACE = "INPUT_EXECUTION_TRACE";
-	private final ExecutionData executions;
+	private final ExecutionTraceData executions;
 
-	public TraceCompareReadFilter(final Configuration configuration, final IProjectContext projectContext, ExecutionData executions) {
+	public TraceCompareReadFilter(final Configuration configuration, final IProjectContext projectContext, ExecutionTraceData executions) {
 		super(configuration, projectContext);
 		this.executions = executions;
 	}

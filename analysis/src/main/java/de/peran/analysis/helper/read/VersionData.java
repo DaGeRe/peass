@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import de.peass.dependency.analysis.data.TestCase;
-import de.peran.measurement.analysis.Statistic;
+import de.peran.measurement.analysis.TestcaseStatistic;
 
 public class VersionData {
    private Map<String, TestcaseData> data = new LinkedHashMap<>();
@@ -13,12 +13,12 @@ public class VersionData {
       return data;
    }
 
-   public void setData(Map<String, TestcaseData> data) {
+   public void setData(final Map<String, TestcaseData> data) {
       this.data = data;
    }
 
    public void addStatistic(final String version, final TestCase testcase, final String fileName,
-         final Statistic stat1, boolean isTChange, boolean isConfidenceChange) {
+         final TestcaseStatistic stat1, final boolean isTChange, final boolean isConfidenceChange) {
       TestcaseData testcaseData = data.get(version);
       if (testcaseData == null) {
          testcaseData = new TestcaseData();

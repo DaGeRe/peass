@@ -3,10 +3,10 @@ package de.peran.analysis.helper.read;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import de.peran.measurement.analysis.Statistic;
+import de.peran.measurement.analysis.TestcaseStatistic;
 
 public class FolderValues {
-   private Map<String, Statistic> values = new LinkedHashMap<>();
+   private Map<String, TestcaseStatistic> values = new LinkedHashMap<>();
    private Map<String, Boolean> isTChange = new LinkedHashMap<>();
    private Map<String, Boolean> isConfidenceChange = new LinkedHashMap<>();
 
@@ -14,11 +14,11 @@ public class FolderValues {
       return isTChange;
    }
 
-   public Map<String, Statistic> getValues() {
+   public Map<String, TestcaseStatistic> getValues() {
       return values;
    }
 
-   public void setValues(Map<String, Statistic> values) {
+   public void setValues(Map<String, TestcaseStatistic> values) {
       this.values = values;
    }
 

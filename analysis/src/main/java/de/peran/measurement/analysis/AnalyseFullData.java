@@ -49,9 +49,9 @@ public class AnalyseFullData extends DataAnalyser {
    public final ProjectChanges knowledge = new ProjectChanges();
 //   public final VersionKnowledge oldKnowledge;
 
-   private StatisticInfo info;
+   private ProjectStatistics info;
 
-   public AnalyseFullData(final StatisticInfo info) {
+   public AnalyseFullData(final ProjectStatistics info) {
       this(new File(AnalyseOneTest.RESULTFOLDER, "changes.json"));
       this.info = info;
    }
@@ -236,7 +236,7 @@ public class AnalyseFullData extends DataAnalyser {
       final File dependencyFile = new File(args[1]);
       final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
       VersionComparator.setDependencies(dependencies);
-      final AnalyseFullData analyseFullData = new AnalyseFullData(new StatisticInfo());
+      final AnalyseFullData analyseFullData = new AnalyseFullData(new ProjectStatistics());
       analyseFullData.analyseFolder(folder);
 
    }

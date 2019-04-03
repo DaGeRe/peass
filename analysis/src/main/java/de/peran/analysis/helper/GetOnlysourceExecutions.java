@@ -4,8 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -22,8 +22,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.peass.analysis.changes.Change;
 import de.peass.analysis.properties.ChangeProperty;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Dependencies;
+import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.OptionConstants;
@@ -32,7 +32,7 @@ import de.peran.analysis.helper.read.PropertyReadHelper;
 
 public class GetOnlysourceExecutions {
    public static void main(final String[] args) throws JAXBException, ParseException, JsonParseException, JsonMappingException, IOException {
-      Option experimentIdOption = Option.builder("experiment_id").hasArg().build();
+      final Option experimentIdOption = Option.builder("experiment_id").hasArg().build();
       final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE, OptionConstants.EXECUTIONFILE, OptionConstants.FOLDER, OptionConstants.VIEWFOLDER);
       options.addOption(experimentIdOption);
       final CommandLineParser parser = new DefaultParser();
@@ -59,7 +59,7 @@ public class GetOnlysourceExecutions {
          // writer.write("export REPETITIONS=1000\n");
          // writer.write("export ITERATIONS=100\n");
          System.out.println("timestamp=$(date +%s)");
-         String[] versions = dependencies.getVersionNames();
+         final String[] versions = dependencies.getVersionNames();
          for (int i = 0; i < dependencies.getVersions().size(); i++) {
             final String endversion = versions[i];
             // System.out.println("-startversion " + startversion + " -endversion " + endversion);
@@ -71,11 +71,11 @@ public class GetOnlysourceExecutions {
                            + "--export=PROJECT=" + url + ",HOME=/newnfs/user/do820mize,START="
                            + endversion + ",END=" + endversion + ",INDEX=" + i + " executeTests.sh");
             } else if (changedTests != null && changedTests.getVersions().containsKey(endversion)) {
-               for (final Map.Entry<ChangedEntity, List<String>> testcase : changedTests.getVersions().get(endversion).getTestcases().entrySet()) {
+               for (final Map.Entry<ChangedEntity, Set<String>> testcase : changedTests.getVersions().get(endversion).getTestcases().entrySet()) {
                   for (final String method : testcase.getValue()) {
                      final Change c = new Change();
                      System.out.println(endversion);
-                     PropertyReadHelper helper = new PropertyReadHelper(endversion, VersionComparator.getPreviousVersion(endversion), testcase.getKey(), c,
+                     final PropertyReadHelper helper = new PropertyReadHelper(endversion, VersionComparator.getPreviousVersion(endversion), testcase.getKey(), c,
                            projectFolder, viewFolder);
                      final ChangeProperty prop = new ChangeProperty();
                      prop.setMethod(method);

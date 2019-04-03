@@ -20,8 +20,8 @@ import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
-import de.peass.dependency.reader.DependencyReaderBase;
 import de.peass.dependencyprocessors.VersionComparator;
+import de.peass.utils.Constants;
 import de.peass.utils.DivideVersions;
 
 public class FindMissingExecutions {
@@ -35,11 +35,11 @@ public class FindMissingExecutions {
       
       
       final File dependencyfile = new File("/home/reichelt/daten3/diss/repos/dependencies-final/deps_"+project+".json");
-      final Dependencies dependencies = DependencyReaderBase.OBJECTMAPPER.readValue(dependencyfile, Dependencies.class);
+      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, Dependencies.class);
       VersionComparator.setDependencies(dependencies);
       
       final File executefile = new File("/home/reichelt/daten3/diss/repos/dependencies-final/execute_"+project+".json");
-      final ExecutionData tests = DependencyReaderBase.OBJECTMAPPER.readValue(executefile, ExecutionData.class);
+      final ExecutionData tests = Constants.OBJECTMAPPER.readValue(executefile, ExecutionData.class);
 
       final File folder = new File("/home/reichelt/daten3/diss/repos/measurementdata/cleanData/"+project);
 

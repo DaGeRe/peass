@@ -16,10 +16,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import com.github.javaparser.ast.CompilationUnit;
+
 import de.peass.analysis.changes.Change;
 import de.peass.analysis.properties.ChangeProperty;
 import de.peass.analysis.properties.ChangeProperty.TraceChange;
 import de.peass.dependency.ChangeManager;
+import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.FileComparisonUtil;
 import de.peass.dependency.analysis.data.ChangedEntity;
@@ -54,7 +57,7 @@ public class PropertyReadHelper {
    private final File projectFolder;
 
    private final File viewFolder;
-   
+
    public static void main(final String[] args) throws IOException {
       final ChangedEntity ce = new ChangedEntity("org.apache.commons.fileupload.ServletFileUploadTest", "");
       final Change change = new Change();
@@ -79,11 +82,6 @@ public class PropertyReadHelper {
    }
 
    public ChangeProperty read() throws IOException {
-      if (version.equals("abb29f08629aa42ff44934c334de8cbc684a34ec")) {
-         System.out.println("Test");
-      }
-      
-      
       final ChangeProperty property = new ChangeProperty(change);
 
       getSourceInfos(property);
@@ -95,7 +93,7 @@ public class PropertyReadHelper {
          return property;
       } else {
          LOG.error("Folder {} does not exist", folder);
-         return null;
+         return property;
       }
    }
 
@@ -113,6 +111,7 @@ public class PropertyReadHelper {
       final File fileOld = new File(folder, getShortPrevVersion() + "_method");
       final Set<String> calls = new HashSet<>();
       if (fileCurrent.exists() && fileOld.exists()) {
+
          final PeASSFolders folders = new PeASSFolders(projectFolder);
          final ChangeManager changeManager = new ChangeManager(folders);
          final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(prevVersion, version);
@@ -202,12 +201,13 @@ public class PropertyReadHelper {
          throws FileNotFoundException {
       final ClazzChangeData clazzChangeData = changes.get(clazz);
       if (clazzChangeData != null) {
-         final Set<String> changedMethods = clazzChangeData.getChangedMethods();
-         if (changedMethods.contains(property.getMethod())) {
-            property.setAffectsTestSource(true);
+         for (Set<String> methodsOfClazz : clazzChangeData.getChangedMethods().values()) {
+            if (methodsOfClazz.contains(property.getMethod())) {
+               property.setAffectsTestSource(true);
+            }
          }
       }
-      
+
       // Prinzipiell: Man müsste schauen, wo der Quelltext liegt, nicht, wie er heißt..
       for (final Entry<ChangedEntity, ClazzChangeData> changedEntity : changes.entrySet()) {
          final Set<String> guessedTypes = getGuesses(folders, changedEntity);
@@ -221,15 +221,17 @@ public class PropertyReadHelper {
                }
             }
          } else {
-            for (final String changedMethod : changedEntity.getValue().getChangedMethods()) {
-               String fqn;
-               if (changedMethod.contains(ChangedEntity.METHOD_SEPARATOR)) {
-                  fqn = changedEntity.getKey() + ChangedEntity.CLAZZ_SEPARATOR + changedMethod;
-               } else {
-                  fqn = changedEntity.getKey() + ChangedEntity.METHOD_SEPARATOR + changedMethod;
-               }
-               if (calls.contains(fqn)) {
-                  processFoundCall(property, changedEntity);
+            for (Map.Entry<String, Set<String>> changedClazz : changedEntity.getValue().getChangedMethods().entrySet()) {
+               for (String changedMethod : changedClazz.getValue()) {
+                  String fqn;
+                  if (changedMethod.contains(ChangedEntity.METHOD_SEPARATOR)) {
+                     fqn = changedEntity.getKey() + ChangedEntity.CLAZZ_SEPARATOR + changedMethod;
+                  } else {
+                     fqn = changedEntity.getKey() + ChangedEntity.METHOD_SEPARATOR + changedMethod;
+                  }
+                  if (calls.contains(fqn)) {
+                     processFoundCall(property, changedEntity);
+                  }
                }
             }
          }
@@ -237,16 +239,25 @@ public class PropertyReadHelper {
    }
 
    private Set<String> getGuesses(final PeASSFolders folders, final Entry<ChangedEntity, ClazzChangeData> changedEntity) throws FileNotFoundException {
-
       final Set<String> guessedTypes = new HashSet<>();
-      for (final String method : changedEntity.getValue().getChangedMethods()) {
-         final String source = FileComparisonUtil.getMethod(folders.getProjectFolder(), changedEntity.getKey(), method);
-         final String sourceOld = FileComparisonUtil.getMethod(folders.getOldSources(), changedEntity.getKey(), method);
-         final Patch<String> changedLinesMethod = DiffUtils.diff(Arrays.asList(sourceOld.split("\n")), Arrays.asList(source.split("\n")));
+      final File file = ClazzFinder.getSourceFile(folders.getProjectFolder(), changedEntity.getKey());
+      final File fileOld = ClazzFinder.getSourceFile(folders.getOldSources(), changedEntity.getKey());
 
-         for (final Delta<String> delta : changedLinesMethod.getDeltas()) {
-            getDeltaGuess(guessedTypes, (delta.getOriginal().getLines()));
-            getDeltaGuess(guessedTypes, (delta.getRevised().getLines()));
+      if (file != null && fileOld != null && file.exists() && fileOld.exists()) {
+         final CompilationUnit clazzUnit = FileComparisonUtil.parse(file);
+         final CompilationUnit clazzUnitOld = FileComparisonUtil.parse(fileOld);
+
+         for (Map.Entry<String, Set<String>> changedClazz : changedEntity.getValue().getChangedMethods().entrySet()) {
+            for (String method : changedClazz.getValue()) {
+               final String source = FileComparisonUtil.getMethod(changedEntity.getKey(), method, clazzUnit);
+               final String sourceOld = FileComparisonUtil.getMethod(changedEntity.getKey(), method, clazzUnitOld);
+               final Patch<String> changedLinesMethod = DiffUtils.diff(Arrays.asList(sourceOld.split("\n")), Arrays.asList(source.split("\n")));
+
+               for (final Delta<String> delta : changedLinesMethod.getDeltas()) {
+                  getDeltaGuess(guessedTypes, (delta.getOriginal().getLines()));
+                  getDeltaGuess(guessedTypes, (delta.getRevised().getLines()));
+               }
+            }
          }
       }
       return guessedTypes;
@@ -262,41 +273,47 @@ public class PropertyReadHelper {
          }
       }
    }
-   
+
    /**
     * Determines how the trace has changed viewed from trace1, e.g. ADDED_CALLS means that trace2 has more calls than trace1.
+    * 
     * @param property
     * @param traceCurrent
     * @param traceOld
     * @throws IOException
     */
    public static void determineTraceSizeChanges(final ChangeProperty property, final List<String> traceCurrent, final List<String> traceOld) throws IOException {
-      final Patch<String> patch = DiffUtils.diff(traceOld, traceCurrent);
+      LOG.debug("Trace sizes: {}, {}", traceCurrent.size(), traceOld.size());
+      if (traceCurrent.size() + traceOld.size() < 10000) {
+         final Patch<String> patch = DiffUtils.diff(traceOld, traceCurrent);
 
-      System.out.println(patch);
-      
-      int added = 0, removed = 0;
-      for (final Delta<String> delta : patch.getDeltas()) {
-         if (delta.getType().equals(TYPE.DELETE)) {
-            removed++;
-         } else if (delta.getType().equals(TYPE.INSERT)) {
-            added++;
-         } else if (delta.getType().equals(TYPE.CHANGE)) {
-            added++;
-            removed++;
+         System.out.println(patch);
+
+         int added = 0, removed = 0;
+         for (final Delta<String> delta : patch.getDeltas()) {
+            if (delta.getType().equals(TYPE.DELETE)) {
+               removed++;
+            } else if (delta.getType().equals(TYPE.INSERT)) {
+               added++;
+            } else if (delta.getType().equals(TYPE.CHANGE)) {
+               added++;
+               removed++;
+            }
          }
+
+         if (added > 0 && removed > 0) {
+            property.setTraceChangeType(TraceChange.BOTH);
+         } else if (added > 0) {
+            property.setTraceChangeType(TraceChange.ADDED_CALLS);
+         } else if (removed > 0) {
+            property.setTraceChangeType(TraceChange.REMOVED_CALLS);
+         } else {
+            property.setTraceChangeType(TraceChange.NO_CALL_CHANGE);
+         }
+      } else {
+         property.setTraceChangeType(TraceChange.UNKNOWN);
       }
 
-      if (added > 0 && removed > 0) {
-         property.setTraceChangeType(TraceChange.BOTH);
-      } else if (added > 0) {
-         property.setTraceChangeType(TraceChange.ADDED_CALLS);
-      } else if (removed > 0) {
-         property.setTraceChangeType(TraceChange.REMOVED_CALLS);
-      } else {
-         property.setTraceChangeType(TraceChange.NO_CALL_CHANGE);
-      }
-      
       property.setCalls(traceCurrent.size());
       property.setCallsOld(traceOld.size());
    }

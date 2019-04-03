@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -24,6 +25,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.analysis.all.ReadAllProperties;
 import de.peass.analysis.changes.Change;
 import de.peass.analysis.changes.Changes;
 import de.peass.analysis.changes.ProjectChanges;
@@ -39,7 +41,6 @@ import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitUtils;
 import de.peran.analysis.helper.AnalysisUtil;
-import de.peran.analysis.helper.all.ReadAllProperties;
 import de.peran.analysis.helper.read.PropertyReadHelper;
 
 /**
@@ -114,12 +115,13 @@ public class ReadProperties {
          changeProperties.setCommitText(GitUtils.getCommitText(projectFolder, version.getKey()));
          changeProperties.setCommitter(GitUtils.getCommitter(projectFolder, version.getKey()));
          versionProperties.getVersions().put(version.getKey(), changeProperties);
-         for (final Entry<ChangedEntity, List<String>> testclazz : version.getValue().getTestcases().entrySet()) {
+         for (final Entry<ChangedEntity, Set<String>> testclazz : version.getValue().getTestcases().entrySet()) {
             final List<ChangeProperty> properties = new LinkedList<>();
             changeProperties.getProperties().put(testclazz.getKey().getJavaClazzName(), properties);
             for (final String testmethod : testclazz.getValue()) {
                final Change testcaseChange = new Change();
                testcaseChange.setMethod(testmethod);
+               
                final PropertyReadHelper reader = new PropertyReadHelper(version.getKey(), version.getValue().getPredecessor(), testclazz.getKey(), testcaseChange,
                      projectFolder,
                      viewFolder);
@@ -138,28 +140,28 @@ public class ReadProperties {
 
    public static void readChangeProperties(final File changefile, final File projectFolder, final File resultFile, final File viewFolder, final ExecutionData changedTests)
          throws IOException, JsonParseException, JsonMappingException, JsonGenerationException {
-      final File resultCSV = new File(AnalysisUtil.getProjectResultFolder(), projectFolder.getName() + ".csv");
+      final File resultCSV = new File(resultFile.getParentFile(), projectFolder.getName() + ".csv");
 
       try (BufferedWriter csvWriter = new BufferedWriter(new FileWriter(resultCSV))) {
          writeCSVHeadline(csvWriter);
          final VersionChangeProperties versionProperties = new VersionChangeProperties();
 
-         final ProjectChanges knowledge = FolderSearcher.MAPPER.readValue(changefile, ProjectChanges.class);
-         // knowledge.sync();
+         final ProjectChanges changes = FolderSearcher.MAPPER.readValue(changefile, ProjectChanges.class);
 
-         int count = 0;
-         for (final Entry<String, Changes> versionChanges : knowledge.getVersionChanges().entrySet()) {
+         int versionCount = 0, testcaseCount = 0;
+         for (final Entry<String, Changes> versionChanges : changes.getVersionChanges().entrySet()) {
             final String version = versionChanges.getKey();
             final TestSet tests = changedTests.getVersions().get(version);
-            if (tests != null) {
-               final String predecessor = tests.getPredecessor();
-               count += detectVersionProperty(projectFolder, resultFile, viewFolder, csvWriter, versionProperties, versionChanges, predecessor);
-            } else {
-               LOG.error("Version fehlt: " + version);
+            //
+            final String predecessor = tests != null ? tests.getPredecessor() : version+"~1";
+            testcaseCount += detectVersionProperty(projectFolder, resultFile, viewFolder, csvWriter, versionProperties, versionChanges, predecessor);
+            if (tests == null) {
+               LOG.error("Version not contained in runfile: " + version);
             }
+            versionCount++;
          }
          // writeOnlySource(versionProperties, ProjectChanges.getOldChanges());
-         System.out.println("Analyzed: " + count + " versions");
+         System.out.println("Analyzed: " + testcaseCount + " testcases in " + versionCount + " versions");
       }
    }
 
@@ -167,7 +169,6 @@ public class ReadProperties {
          final VersionChangeProperties versionProperties,
          final Entry<String, Changes> versionChanges, final String predecessor) throws IOException, JsonGenerationException, JsonMappingException {
       final String version = versionChanges.getKey();
-      // String prevVersion = VersionComparator.getPreviousVersion(version);
       final ChangeProperties changeProperties = new ChangeProperties();
       changeProperties.setCommitText(GitUtils.getCommitText(projectFolder, version));
       changeProperties.setCommitter(GitUtils.getCommitter(projectFolder, version));
@@ -180,11 +181,11 @@ public class ReadProperties {
          for (final Change testcaseChange : changes.getValue()) {
             final PropertyReadHelper reader = new PropertyReadHelper(version, predecessor, new ChangedEntity(testclazz, ""), testcaseChange, projectFolder, viewFolder);
             final ChangeProperty currentProperty = reader.read();
-            if (currentProperty != null) {
-               properties.add(currentProperty);
-               FolderSearcher.MAPPER.writeValue(resultFile, versionProperties);
-               writeCSVLine(csvWriter, currentProperty);
-            }
+            // if (currentProperty != null) {
+            properties.add(currentProperty);
+            FolderSearcher.MAPPER.writeValue(resultFile, versionProperties);
+            writeCSVLine(csvWriter, currentProperty, projectFolder.getName());
+            // }
 
             count++;
          }
@@ -245,7 +246,7 @@ public class ReadProperties {
       System.out.println(line2.substring(0, line2.length() - 1) + ")");
    }
 
-   private static void writeCSVLine(final BufferedWriter csvWriter, final ChangeProperty currentProperty) throws IOException {
+   private static void writeCSVLine(final BufferedWriter csvWriter, final ChangeProperty currentProperty, final String project) throws IOException {
       String testChange;
       if (currentProperty.isAffectsSource() && currentProperty.isAffectsTestSource()) {
          testChange = "AFFECTSBOTH";
@@ -257,7 +258,7 @@ public class ReadProperties {
          testChange = "NONE";
       }
 
-      String line = currentProperty.getDiff() + ";" + AnalysisUtil.getProjectName() + ";" + currentProperty.getMethod() + ";" + currentProperty.getChangePercent() + ";"
+      String line = currentProperty.getDiff() + ";" + project + ";" + currentProperty.getMethod() + ";" + currentProperty.getChangePercent() + ";"
             + testChange + ";"
             + currentProperty.getTraceChangeType() + ";";
       line += currentProperty.getCalls() + ";" + currentProperty.getCallsOld() + ";" + currentProperty.getOldTime() + ";";

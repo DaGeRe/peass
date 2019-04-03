@@ -10,7 +10,7 @@ import de.peass.analysis.changes.Change;
 public class ChangeProperty {
    
    public enum TraceChange{
-      NO_CALL_CHANGE, ADDED_CALLS, REMOVED_CALLS, BOTH;
+      NO_CALL_CHANGE, ADDED_CALLS, REMOVED_CALLS, BOTH, UNKNOWN;
    }
    
    private String method;

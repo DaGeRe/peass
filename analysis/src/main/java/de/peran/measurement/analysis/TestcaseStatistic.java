@@ -3,17 +3,26 @@ package de.peran.measurement.analysis;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.inference.TestUtils;
 
-public class Statistic {
+public class TestcaseStatistic {
    private double meanOld, meanCurrent;
    private double deviationOld, deviationCurrent;
    private long executions;
    private double tvalue;
-   
-   public Statistic() {
-      
+   private String predecessor;
+
+   public String getPredecessor() {
+      return predecessor;
    }
 
-   public Statistic(double mean1, double mean2, double deviation1, double deviation2, long executions, double tvalue) {
+   public void setPredecessor(final String predecessor) {
+      this.predecessor = predecessor;
+   }
+
+   public TestcaseStatistic() {
+
+   }
+
+   public TestcaseStatistic(final double mean1, final double mean2, final double deviation1, final double deviation2, final long executions, final double tvalue) {
       super();
       this.meanOld = mean1;
       this.meanCurrent = mean2;
@@ -27,7 +36,7 @@ public class Statistic {
       return meanOld;
    }
 
-   public void setMeanOld(double mean1) {
+   public void setMeanOld(final double mean1) {
       this.meanOld = mean1;
    }
 
@@ -35,7 +44,7 @@ public class Statistic {
       return meanCurrent;
    }
 
-   public void setMeanCurrent(double mean2) {
+   public void setMeanCurrent(final double mean2) {
       this.meanCurrent = mean2;
    }
 
@@ -43,7 +52,7 @@ public class Statistic {
       return deviationOld;
    }
 
-   public void setDeviationOld(double deviation1) {
+   public void setDeviationOld(final double deviation1) {
       this.deviationOld = deviation1;
    }
 
@@ -51,7 +60,7 @@ public class Statistic {
       return deviationCurrent;
    }
 
-   public void setDeviationCurrent(double deviation2) {
+   public void setDeviationCurrent(final double deviation2) {
       this.deviationCurrent = deviation2;
    }
 
@@ -59,7 +68,7 @@ public class Statistic {
       return executions;
    }
 
-   public void setExecutions(long executions) {
+   public void setExecutions(final long executions) {
       this.executions = executions;
    }
 
@@ -67,7 +76,7 @@ public class Statistic {
       return tvalue;
    }
 
-   public void setTvalue(double tvalue) {
+   public void setTvalue(final double tvalue) {
       this.tvalue = tvalue;
    }
 
@@ -76,12 +85,12 @@ public class Statistic {
       return meanOld + " " + meanCurrent + " " + deviationOld / meanOld + " " + deviationCurrent / meanCurrent + " " + executions + " " + tvalue;
    }
 
-   public static void main(String[] args) {
-      double[] sample1 = new double[] { 1.0, 2.0, 3.0 };
-      double[] sample2 = new double[] { 1.0, 2.0, 2.5 };
+   public static void main(final String[] args) {
+      final double[] sample1 = new double[] { 1.0, 2.0, 3.0 };
+      final double[] sample2 = new double[] { 1.0, 2.0, 2.5 };
 
-      DescriptiveStatistics stat1 = new DescriptiveStatistics(sample1);
-      DescriptiveStatistics stat2 = new DescriptiveStatistics(sample2);
+      final DescriptiveStatistics stat1 = new DescriptiveStatistics(sample1);
+      final DescriptiveStatistics stat2 = new DescriptiveStatistics(sample2);
 
       System.out.println(TestUtils.tTest(sample1, sample2));
       System.out.println(TestUtils.t(sample1, sample2));

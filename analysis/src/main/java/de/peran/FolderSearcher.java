@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.utils.OptionConstants;
 import de.peran.measurement.analysis.AnalyseFullData;
-import de.peran.measurement.analysis.StatisticInfo;
+import de.peran.measurement.analysis.ProjectStatistics;
 
 /**
  * Analyzes data from all subfolders of one folder. It is assumed that the typical PeASS-folder-structure is given.
@@ -52,7 +52,7 @@ public class FolderSearcher {
 
       DependencyReaderUtil.loadDependencies(line);
 
-      final StatisticInfo info = new StatisticInfo();
+      final ProjectStatistics info = new ProjectStatistics();
 
       final AnalyseFullData afd = new AnalyseFullData(info);
       for (int i = 0; i < line.getOptionValues(DATA).length; i++) {

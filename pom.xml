@@ -12,7 +12,6 @@
 	<module>dependency</module>
         <module>measurement</module>
 	<module>analysis</module>
-	<module>evaluation</module>
     </modules>
 
     <developers>

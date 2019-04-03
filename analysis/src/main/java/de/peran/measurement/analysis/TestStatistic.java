@@ -35,7 +35,7 @@ public class TestStatistic {
       this(data, null);
    }
 
-   public TestStatistic(final EvaluationPair data, final StatisticInfo info) {
+   public TestStatistic(final EvaluationPair data, final ProjectStatistics info) {
       List<Result> previous = data.getPrevius();
       List<Result> current = data.getCurrent();
 

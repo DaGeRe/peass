@@ -18,7 +18,7 @@ import org.jgrapht.graph.SimpleWeightedGraph;
 
 import de.peass.dependency.analysis.PeASSFilter;
 import de.peran.tracecomparison.ExecutionConsumer;
-import de.peran.tracecomparison.ExecutionData;
+import de.peran.tracecomparison.ExecutionTraceData;
 import de.peran.tracecomparison.TraceCompareReadFilter;
 import kieker.analysis.AnalysisController;
 import kieker.analysis.exception.AnalysisConfigurationException;
@@ -35,7 +35,7 @@ public class CompareTraces {
 
 	private static final Logger LOG = LogManager.getLogger(CompareTraces.class);
 
-	private final static Map<Integer, ExecutionData> compareExecutions = new HashMap<>();
+	private final static Map<Integer, ExecutionTraceData> compareExecutions = new HashMap<>();
 
 	public static Map<Integer, Integer> createMatching(final List<Execution> first, final List<Execution> second) {
 		final SimpleWeightedGraph<Execution, DefaultWeightedEdge> graph = initGraph(first, second);
@@ -115,8 +115,8 @@ public class CompareTraces {
 			final File trace2Folder = version2Folder.listFiles()[0].listFiles()[0].listFiles()[0];
 
 			final String testmethod = "org.apache.commons.io.IOUtilsCopyTestCase.testCopy_inputStreamToWriter_Encoding_nullEncoding";
-			compareExecutions.put(0, new ExecutionData(testmethod));
-			compareExecutions.put(1, new ExecutionData(testmethod));
+			compareExecutions.put(0, new ExecutionTraceData(testmethod));
+			compareExecutions.put(1, new ExecutionTraceData(testmethod));
 
 			final CompareTraces cp = new CompareTraces(trace1Folder, compareExecutions.get(0));
 			final CompareTraces cp2 = new CompareTraces(trace2Folder, compareExecutions.get(1));
@@ -154,10 +154,10 @@ public class CompareTraces {
 	private static void createComparison(final Map<Integer, Integer> matches) {
 		for (final Map.Entry<Integer, Integer> match : matches.entrySet()) {
 			LOG.debug("Match: " + match.getKey() + " " + match.getValue());
-			final ExecutionData first = compareExecutions.get(0);
+			final ExecutionTraceData first = compareExecutions.get(0);
 			final List<Execution> executions = first.getExecutions(match.getKey());
 			final Map<Integer, Execution> children = first.getChildren(match.getKey());
-			final ExecutionData second = compareExecutions.get(1);
+			final ExecutionTraceData second = compareExecutions.get(1);
 			final List<Execution> executions2 = second.getExecutions(match.getValue());
 			ExecutionConsumer.compareExecutions(executions, executions2);
 		}
@@ -166,9 +166,9 @@ public class CompareTraces {
 	private TraceReconstructionFilter traceReconstructionFilter;
 	private final AnalysisController analysisController = new AnalysisController();
 	private final File kiekerTraceFile;
-	private final ExecutionData executions;
+	private final ExecutionTraceData executions;
 
-	public CompareTraces(final File kiekerTraceFile, final ExecutionData executions) {
+	public CompareTraces(final File kiekerTraceFile, final ExecutionTraceData executions) {
 		this.kiekerTraceFile = kiekerTraceFile;
 		this.executions = executions;
 

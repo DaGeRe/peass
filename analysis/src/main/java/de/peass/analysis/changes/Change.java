@@ -13,6 +13,8 @@ public class Change {
    private double changePercent;
    private double tvalue;
 
+   
+
    public String getDiff() {
       return diff;
    }

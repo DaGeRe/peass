@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import de.peass.dependency.analysis.data.ChangedEntity;
 
 public class Classification {
@@ -18,14 +20,14 @@ public class Classification {
       this.versions = versions;
    }
 
-   public void addChange(final String version, final ChangedEntity test, final Set<String> guessedTypes, final String direction) {
+   @JsonIgnore
+   public TestcaseClass addChange(final String version, final ChangedEntity test, final Set<String> guessedTypes, final String direction) {
       VersionClass versionClazz = versions.get(version);
       if (versionClazz == null) {
          versionClazz = new VersionClass();
          versions.put(version, versionClazz);
       }
-      versionClazz.addTestcase(test, guessedTypes, direction);
-      
+      return versionClazz.addTestcase(test, guessedTypes, direction);
    }
    
    public void merge(final Classification other) {

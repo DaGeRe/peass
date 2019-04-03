@@ -12,7 +12,7 @@ import de.peass.analysis.changes.Change;
 import de.peass.analysis.changes.Changes;
 import de.peass.analysis.changes.ProjectChanges;
 import de.peran.FolderSearcher;
-import de.peran.measurement.analysis.StatisticInfo;
+import de.peran.measurement.analysis.ProjectStatistics;
 
 public class WriteCorrectness {
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
@@ -22,7 +22,7 @@ public class WriteCorrectness {
 
       final ProjectChanges correctChanges = FolderSearcher.MAPPER.readValue(changesSaveFile, ProjectChanges.class);
       final ProjectChanges unsaveChanges = FolderSearcher.MAPPER.readValue(changesUnsaveFile, ProjectChanges.class);
-      final StatisticInfo info = FolderSearcher.MAPPER.readValue(statisticsFile, StatisticInfo.class);
+      final ProjectStatistics info = FolderSearcher.MAPPER.readValue(statisticsFile, ProjectStatistics.class);
 
       int correct = 0;
       final int incorrect = 0;

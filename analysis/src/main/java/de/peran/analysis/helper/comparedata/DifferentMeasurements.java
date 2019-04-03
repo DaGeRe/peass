@@ -3,16 +3,16 @@ package de.peran.analysis.helper.comparedata;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import de.peran.measurement.analysis.Statistic;
+import de.peran.measurement.analysis.TestcaseStatistic;
 
 public class DifferentMeasurements {
-   Map<String, Statistic> measurements = new LinkedHashMap<>();
+   Map<String, TestcaseStatistic> measurements = new LinkedHashMap<>();
 
-   public Map<String, Statistic> getMeasurements() {
+   public Map<String, TestcaseStatistic> getMeasurements() {
       return measurements;
    }
 
-   public void setMeasurements(final Map<String, Statistic> measurements) {
+   public void setMeasurements(final Map<String, TestcaseStatistic> measurements) {
       this.measurements = measurements;
    }
 }

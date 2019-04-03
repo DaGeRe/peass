@@ -4,13 +4,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import de.peass.dependency.analysis.data.TestCase;
-import de.peran.measurement.analysis.Statistic;
+import de.peran.measurement.analysis.TestcaseStatistic;
 
 public class BigDiffs {
    Map<String, TestcaseDiff> diffs = new LinkedHashMap<>();
    Map<String, DecissionCount> diffCount = new LinkedHashMap<>();
 
-   public void addDifferingValue(final String version, final TestCase testCase, final String folder, final Statistic statistic) {
+   public void addDifferingValue(final String version, final TestCase testCase, final String folder, final TestcaseStatistic statistic) {
       TestcaseDiff versionDiff = diffs.get(version);
       if (versionDiff == null) {
          versionDiff = new TestcaseDiff();
@@ -24,7 +24,7 @@ public class BigDiffs {
       measurements.getMeasurements().put(folder, statistic);
    }
    
-   public void addChange(String folder, String version, TestCase testcase, Statistic statistic) {
+   public void addChange(String folder, String version, TestCase testcase, TestcaseStatistic statistic) {
       // TODO Auto-generated method stub
       
    }

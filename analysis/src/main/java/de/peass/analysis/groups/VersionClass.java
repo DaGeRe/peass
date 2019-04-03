@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
@@ -22,11 +23,13 @@ public class VersionClass {
       return testcases;
    }
 
-   public void addTestcase(final ChangedEntity test, final Set<String> guessedTypes, final String direction) {
+   @JsonIgnore
+   public TestcaseClass addTestcase(final ChangedEntity test, final Set<String> guessedTypes, final String direction) {
       final TestcaseClass data = new TestcaseClass();
       data.setGuessedTypes(guessedTypes);
       data.setDirection(direction);
       testcases.put(test, data);
+      return data;
    }
 
 }

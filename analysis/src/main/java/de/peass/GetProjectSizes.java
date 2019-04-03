@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.ExecutionData;
-import de.peass.dependency.reader.DependencyReaderBase;
 import de.peass.dependency.reader.VersionKeeper;
+import de.peass.utils.Constants;
 import de.peass.vcs.GitUtils;
 import de.peran.analysis.helper.all.CleanAll;
 
@@ -32,7 +32,7 @@ public class GetProjectSizes {
          int tests = 0;
          int executionTests = 0;
          if (executionFile.exists()) {
-            final ExecutionData executionData = DependencyReaderBase.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
+            final ExecutionData executionData = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
             executionTests = executionData.getVersions().size();
             for (final TestSet test : executionData.getVersions().values()) {
                tests += test.getTests().size();
@@ -44,10 +44,10 @@ public class GetProjectSizes {
          
          int changes = 0; 
          if (nonRunning.exists()) {
-            final VersionKeeper vk = DependencyReaderBase.OBJECTMAPPER.readValue(nonRunning, VersionKeeper.class);
+            final VersionKeeper vk = Constants.OBJECTMAPPER.readValue(nonRunning, VersionKeeper.class);
             analyzable = commits - vk.getNonRunableReasons().size();
             if (nonChanges.exists()) {
-               final VersionKeeper vk2 = DependencyReaderBase.OBJECTMAPPER.readValue(nonChanges, VersionKeeper.class);
+               final VersionKeeper vk2 = Constants.OBJECTMAPPER.readValue(nonChanges, VersionKeeper.class);
                changes = analyzable - vk2.getNonRunableReasons().size();
             }
          }

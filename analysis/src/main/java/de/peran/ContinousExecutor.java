@@ -27,8 +27,8 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Dependencies;
+import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependency.reader.VersionKeeper;
@@ -106,7 +106,7 @@ public class ContinousExecutor {
 
          if (useViews) {
             final TestSet traceTestSet = getViewTests(threads, localFolder, projectFolder, folders, dependencies, versionName);
-            for (final Map.Entry<ChangedEntity, List<String>> test : traceTestSet.getTestcases().entrySet()) {
+            for (final Map.Entry<ChangedEntity, Set<String>> test : traceTestSet.getTestcases().entrySet()) {
                for (final String method : test.getValue()) {
                   tests.add(new TestCase(test.getKey().getClazz(), method));
                }
@@ -193,7 +193,7 @@ public class ContinousExecutor {
 //      final VersionKeeper nrv = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonrunning.json"));
       if (!dependencyFile.exists()) {
          needToLoad = true;
-         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, Integer.MAX_VALUE, nonRunning, nonChanges);
+         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, 10, nonRunning, nonChanges);
          reader.readDependencies();
          dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
       } else {
@@ -210,7 +210,7 @@ public class ContinousExecutor {
          }
       }
       if (needToLoad) {
-         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, Integer.MAX_VALUE, nonRunning, nonChanges);
+         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, 10, nonRunning, nonChanges);
          reader.readDependencies();
          dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
       }

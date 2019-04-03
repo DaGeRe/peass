@@ -10,13 +10,13 @@ import org.apache.logging.log4j.Logger;
 
 import kieker.tools.traceAnalysis.systemModel.Execution;
 
-public class ExecutionData {
+public class ExecutionTraceData {
 	
-	private static final Logger LOG = LogManager.getLogger(ExecutionData.class);
+	private static final Logger LOG = LogManager.getLogger(ExecutionTraceData.class);
 
 	private final String testMethod;
 
-	public ExecutionData(String testMethod) {
+	public ExecutionTraceData(String testMethod) {
 		this.testMethod = testMethod;
 	}
 

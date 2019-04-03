@@ -15,44 +15,20 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.Cleaner;
+import de.peass.statistics.DependencyStatisticAnalyzer;
+import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitUtils;
 import de.peran.FolderSearcher;
 
 public class TestCleaner {
 
-   public static Map<String, String> defaultUrls = new HashMap<>();
 
-   static {
-      // Chunk 1
-      defaultUrls.put("commons-compress", "https://github.com/apache/commons-compress.git");
-      defaultUrls.put("commons-csv", "https://github.com/apache/commons-csv.git");
-      defaultUrls.put("commons-dbcp", "https://github.com/apache/commons-dbcp.git");
-      defaultUrls.put("commons-fileupload", "https://github.com/apache/commons-fileupload.git");
-      defaultUrls.put("commons-imaging", "https://github.com/apache/commons-imaging.git");
-      defaultUrls.put("commons-io", "https://github.com/apache/commons-io.git");
-      defaultUrls.put("commons-text", "https://github.com/apache/commons-text.git");
-      
-      // Chunk 2
-      defaultUrls.put("commons-pool", "https://github.com/apache/commons-pool.git");
-      defaultUrls.put("commons-numbers", "https://github.com/apache/commons-numbers.git");
-      defaultUrls.put("commons-jcs", "https://github.com/apache/commons-jcs.git");
-      defaultUrls.put("httpcomponents-core", "https://github.com/apache/httpcomponents-core.git");
-      defaultUrls.put("k-9", "https://github.com/k9mail/k-9.git");
-
-      // Future candidates
-      defaultUrls.put("commons-math", "https://github.com/apache/commons-math.git");
-      defaultUrls.put("commons-lang", "https://github.com/apache/commons-lang.git");
-      defaultUrls.put("jackson-core", "https://github.com/FasterXML/jackson-core.git");
-      defaultUrls.put("spring-framework", "https://github.com/spring-projects/spring-framework.git");
-      defaultUrls.put("maven", "https://github.com/apache/maven.git");
-      defaultUrls.put("okhttp", "https://github.com/square/okhttp.git");
-   }
-
-   private static final Logger LOG = LogManager.getLogger(Cleaner.class);
+   private static final Logger LOG = LogManager.getLogger(TestCleaner.class);
 
    public static void main(final String[] args) throws ParseException, JAXBException, IOException {
       final Options options = OptionConstants.createOptions(OptionConstants.OUT, OptionConstants.URL, OptionConstants.DEPENDENCYFILE);
@@ -69,7 +45,8 @@ public class TestCleaner {
       }
 
       if (!line.hasOption(OptionConstants.URL.getName()) && !line.hasOption(OptionConstants.DEPENDENCYFILE.getName())) {
-         LOG.error("You should pass either an URL or an dependencyfile, since the cleaner needs to know the commits order. If the project is contained in the default URLs, it will also work.");
+         LOG.error(
+               "You should pass either an URL or an dependencyfile, since the cleaner needs to know the commits order. If the project is contained in the default URLs, it will also work.");
          // System.exit(1);
       }
 
@@ -86,11 +63,7 @@ public class TestCleaner {
       for (int i = 0; i < line.getOptionValues(FolderSearcher.DATA).length; i++) {
          final File dataFolder = new File(line.getOptionValues(FolderSearcher.DATA)[i]);
          final File projectNameFolder = dataFolder.getParentFile();
-         final String url = defaultUrls.get(projectNameFolder.getName());
-         LOG.debug("Analyzing: {} Name: {} URL: {}", dataFolder.getAbsolutePath(), projectNameFolder.getName(), url);
-         if (url != null) {
-            GitUtils.getCommitsForURL(url);
-         }
+         getCommitOrder(dataFolder, projectNameFolder.getName());
 
          if (VersionComparator.hasVersions()) {
             LOG.info("Searching in " + dataFolder);
@@ -107,13 +80,32 @@ public class TestCleaner {
             }
 
             final Cleaner transformer = new Cleaner(fulldataFolder);
-            LOG.info("Start");
+            LOG.info("Start: " + dataFolder.getAbsolutePath());
             transformer.processDataFolder(dataFolder);
-            LOG.info("Finish");
+            LOG.info("Finish, read: " + transformer.getRead() + " correct: " + transformer.getCorrect());
          } else {
             LOG.error("No URL defined.");
          }
       }
    }
-  
+
+   static void getCommitOrder(final File dataFolder, final String projectName) throws JAXBException, IOException {
+      if (System.getenv(Constants.PEASS_REPOS) != null) {
+         final String repofolder = System.getenv(Constants.PEASS_REPOS);
+         final File folder = new File(repofolder);
+         if (folder.exists()) {
+            final File dependencyFile = new File(folder, "dependencies-final" + File.separator + "deps_" + projectName + ".json");
+            final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+            VersionComparator.setDependencies(dependencies);
+         }
+      }
+      if (!VersionComparator.hasVersions()) {
+         final String url = Constants.defaultUrls.get(projectName);
+         LOG.debug("Analyzing: {} Name: {} URL: {}", dataFolder.getAbsolutePath(), projectName, url);
+         if (url != null) {
+            GitUtils.getCommitsForURL(url);
+         }
+      }
+   }
+
 }
