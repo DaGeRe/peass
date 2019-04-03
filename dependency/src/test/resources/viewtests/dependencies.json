@@ -1,0 +1,37 @@
+{
+  "url" : null,
+  "initialversion" : {
+    "version" : "000000",
+    "jdk" : 8,
+    "initialDependencies" : {
+      "viewtest.TestMe#test" : {
+        "entities" : [ {
+          "clazz" : "viewtest.TestMe",
+          "filename" : "viewtest.TestMe",
+          "method" : "test"
+        }, {
+          "clazz" : "viewtest.TestMe$InnerClass",
+          "filename" : "viewtest.TestMe$InnerClass",
+          "method" : "<init>"
+        }, {
+          "clazz" : "viewtest.TestMe$InnerClass",
+          "filename" : "viewtest.TestMe$InnerClass",
+          "method" : "method"
+        } ]
+      }
+    }
+  },
+  "versions" : {
+    "000001" : {
+      "running" : false,
+      "jdk" : 8,
+      "changedClazzes" : {
+        "viewtest.TestMe#test" : {
+          "testcases" : {
+            "viewtest.TestMe" : [ "test" ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -20,6 +20,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import de.peass.dependency.reader.DependencyReaderUtil;
 
 /**
  * Represents information about the tests and their dependencies, i.e. the classes they call.
@@ -29,6 +35,8 @@ import java.util.Set;
  */
 public class TestDependencies {
 	
+   private static final Logger LOG = LogManager.getLogger(TestDependencies.class);
+   
 	/**
 	 * Map from testcase (package.clazz.method) to dependent class to the list of called methods of this class
 	 */
@@ -86,5 +94,63 @@ public class TestDependencies {
 	public String toString() {
 		return dependencyMap.toString();
 	}
+	
+	/**
+    * Returns a list of all tests that changed based on given changed classes and the dependencies of the current version. So the result mapping is changedclass to a set of tests,
+    * that could have been changed by this changed class.
+    * 
+    * @param dependencies
+    * @param changes
+    * @return Map from changed class to the influenced tests
+    */
+   public ChangeTestMapping getChangeTestMap(final Map<ChangedEntity, ClazzChangeData> changes) {
+      final ChangeTestMapping changeTestMap = new ChangeTestMapping();
+      for (final Entry<ChangedEntity, CalledMethods> dependencyEntry : dependencyMap.entrySet()) {
+         final ChangedEntity currentTestcase = dependencyEntry.getKey();
+         final CalledMethods currentTestDependencies = dependencyEntry.getValue();
+         for (ClazzChangeData changedEntry : changes.values()) {
+            for (ChangedEntity change : changedEntry.getChanges()) {
+               final ChangedEntity changedClass = change.onlyClazz();
+               final Set<ChangedEntity> calledClasses = currentTestDependencies.getCalledClasses();
+               if (calledClasses.contains(changedClass)) {
+                  addCall(changeTestMap, currentTestcase, currentTestDependencies, changedEntry, change, changedClass);
+               }
+            }
+         }
+      }
+      for (final Map.Entry<ChangedEntity, Set<ChangedEntity>> element : changeTestMap.getChanges().entrySet()) {
+         LOG.debug("Element: {} Dependencies: {} {}", element.getKey(), element.getValue().size(), element.getValue());
+      }
+
+      return changeTestMap;
+   }
+
+   public void addCall(final ChangeTestMapping changeTestMap, final ChangedEntity currentTestcase, final CalledMethods currentTestDependencies, ClazzChangeData changedEntry,
+         ChangedEntity change, final ChangedEntity changedClass) {
+      if (!changedEntry.isOnlyMethodChange()) {
+         addChangeEntry(changedClass, currentTestcase, changeTestMap);
+      } else {
+         String method = change.getMethod();
+         final Map<ChangedEntity, Set<String>> calledMethods = currentTestDependencies.getCalledMethods();
+         final Set<String> calledMethodsInChangeClass = calledMethods.get(changedClass);
+         final int parameterIndex = method.indexOf("("); // TODO Parameter korrekt prüfen
+         final String methodWithoutParameters = parameterIndex != -1 ? method.substring(0, parameterIndex) : method;
+         if (calledMethodsInChangeClass.contains(methodWithoutParameters)) {
+            final ChangedEntity classWithMethod = new ChangedEntity(changedClass.getClazz(), changedClass.getModule(), method);
+            addChangeEntry(classWithMethod, currentTestcase, changeTestMap);
+         }
+      }
+   }
+   
+   private static void addChangeEntry(final ChangedEntity changedFullname, final ChangedEntity currentTestcase, final ChangeTestMapping changeTestMap) {
+      Set<ChangedEntity> changedClasses = changeTestMap.getChanges().get(changedFullname);
+      if (changedClasses == null) {
+         changedClasses = new HashSet<>();
+         changeTestMap.getChanges().put(changedFullname, changedClasses);
+         // TODO: Statt einfach die Klasse nehmen prüfen, ob die Methode genutzt wird
+      }
+      LOG.debug("Füge {} zu {} hinzu", currentTestcase, changedFullname);
+      changedClasses.add(currentTestcase);
+   }
 
 }

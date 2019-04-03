@@ -98,17 +98,10 @@ public abstract class DependencyReaderBase {
    public int analyseVersion(final ChangeManager changeManager) throws IOException, XmlPullParserException, InterruptedException {
       final String version = iterator.getTag();
       if (!dependencyManager.getExecutor().isVersionRunning(iterator.getTag())) {
-         if (dependencyManager.getExecutor().isAndroid()) {
-            dependencyResult.setAndroid(true);
-         }
-         LOG.error("Version not running");
-         final Version newVersionInfo = new Version();
-         newVersionInfo.setRunning(false);
-         dependencyResult.getVersions().put(version, newVersionInfo);
+         documentFailure(version);
          return 0;
       }
 
-      final ModuleClassMapping mapping = new ModuleClassMapping(dependencyManager.getExecutor());
       dependencyManager.getExecutor().loadClasses();
 
       final Map<ChangedEntity, ClazzChangeData> changes;
@@ -129,7 +122,7 @@ public abstract class DependencyReaderBase {
       }
 
       if (changes.size() > 0) {
-         final ChangeTestMapping changeTestMap = DependencyReaderUtil.getChangeTestMap(dependencyManager.getDependencyMap(), changes); // tells which tests need to be run, and
+         final ChangeTestMapping changeTestMap = dependencyManager.getDependencyMap().getChangeTestMap(changes); // tells which tests need to be run, and
                                                                                                                                        // because of
          LOG.debug("Change test mapping (without added tests): " + changeTestMap);
          // which change they need to be run
@@ -150,7 +143,7 @@ public abstract class DependencyReaderBase {
          final TestSet testsToRun = dependencyManager.getTestsToRun(changes); // contains only the tests that need to be run -> could be changeTestMap.values() und dann umwandeln
          Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "toRun_" + version + ".json"), testsToRun.entrySet());
          if (testsToRun.classCount() > 0) {
-            return analyzeTests(version, mapping, newVersionInfo, testsToRun);
+            return analyzeTests(version, newVersionInfo, testsToRun);
          } else {
             return testsToRun.classCount();
          }
@@ -160,8 +153,20 @@ public abstract class DependencyReaderBase {
       }
    }
 
-   int analyzeTests(final String version, final ModuleClassMapping mapping, final Version newVersionInfo, final TestSet testsToRun)
+
+   public void documentFailure(final String version) {
+      if (dependencyManager.getExecutor().isAndroid()) {
+         dependencyResult.setAndroid(true);
+      }
+      LOG.error("Version not running");
+      final Version newVersionInfo = new Version();
+      newVersionInfo.setRunning(false);
+      dependencyResult.getVersions().put(version, newVersionInfo);
+   }
+
+   int analyzeTests(final String version, final Version newVersionInfo, final TestSet testsToRun)
          throws IOException, XmlPullParserException, InterruptedException, JsonGenerationException, JsonMappingException {
+      final ModuleClassMapping mapping = new ModuleClassMapping(dependencyManager.getExecutor());
       dependencyManager.runTraceTests(testsToRun, version);
       final TestExistenceChanges testExistenceChanges = dependencyManager.updateDependencies(testsToRun, version, mapping);
       final Map<ChangedEntity, Set<ChangedEntity>> newTestcases = testExistenceChanges.getAddedTests();

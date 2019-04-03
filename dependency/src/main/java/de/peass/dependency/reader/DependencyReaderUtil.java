@@ -173,58 +173,6 @@ public class DependencyReaderUtil {
       }
    }
 
-   private static void addChangeEntry(final ChangedEntity changedFullname, final ChangedEntity currentTestcase, final ChangeTestMapping changeTestMap) {
-      Set<ChangedEntity> changedClasses = changeTestMap.getChanges().get(changedFullname);
-      if (changedClasses == null) {
-         changedClasses = new HashSet<>();
-         changeTestMap.getChanges().put(changedFullname, changedClasses);
-         // TODO: Statt einfach die Klasse nehmen prüfen, ob die Methode genutzt wird
-      }
-      LOG.debug("Füge {} zu {} hinzu", currentTestcase, changedFullname);
-      changedClasses.add(currentTestcase);
-   }
-
-   /**
-    * Returns a list of all tests that changed based on given changed classes and the dependencies of the current version. So the result mapping is changedclass to a set of tests,
-    * that could have been changed by this changed class.
-    * 
-    * @param dependencies
-    * @param changes
-    * @return Map from changed class to the influenced tests
-    */
-   static ChangeTestMapping getChangeTestMap(final TestDependencies dependencies, final Map<ChangedEntity, ClazzChangeData> changes) {
-      final ChangeTestMapping changeTestMap = new ChangeTestMapping();
-      for (final Entry<ChangedEntity, CalledMethods> dependencyEntry : dependencies.getDependencyMap().entrySet()) {
-         final ChangedEntity currentTestcase = dependencyEntry.getKey();
-         final CalledMethods currentTestDependencies = dependencyEntry.getValue();
-         for (ClazzChangeData changedEntry : changes.values()) {
-            for (ChangedEntity change : changedEntry.getChanges()) {
-               final ChangedEntity changedClass = change.onlyClazz();
-               final Set<ChangedEntity> calledClasses = currentTestDependencies.getCalledClasses();
-               if (calledClasses.contains(changedClass)) {
-                  if (!changedEntry.isOnlyMethodChange()) {
-                     addChangeEntry(changedClass, currentTestcase, changeTestMap);
-                  } else {
-                     String method = change.getMethod();
-                     final Map<ChangedEntity, Set<String>> calledMethods = currentTestDependencies.getCalledMethods();
-                     final Set<String> calledMethodsInChangeClass = calledMethods.get(changedClass);
-                     final int parameterIndex = method.indexOf("("); // TODO Parameter korrekt prüfen
-                     final String methodWithoutParameters = parameterIndex != -1 ? method.substring(0, parameterIndex) : method;
-                     if (calledMethodsInChangeClass.contains(methodWithoutParameters)) {
-                        final ChangedEntity classWithMethod = new ChangedEntity(changedClass.getClazz(), changedClass.getModule(), method);
-                        addChangeEntry(classWithMethod, currentTestcase, changeTestMap);
-                     }
-                  }
-               }
-            }
-         }
-      }
-      for (final Map.Entry<ChangedEntity, Set<ChangedEntity>> element : changeTestMap.getChanges().entrySet()) {
-         LOG.debug("Element: {} Dependencies: {} {}", element.getKey(), element.getValue().size(), element.getValue());
-      }
-
-      return changeTestMap;
-   }
 
    public static void write(final Dependencies deps, final File file) {
       LOG.debug("Schreibe in: {}", file);
