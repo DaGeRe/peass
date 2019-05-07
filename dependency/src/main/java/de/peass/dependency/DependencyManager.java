@@ -40,11 +40,11 @@ import de.peass.dependency.analysis.CalledMethodLoader;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.CalledMethods;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.ClazzChangeData;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestDependencies;
 import de.peass.dependency.analysis.data.TestExistenceChanges;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.changesreading.ClazzChangeData;
 
 /**
  * Runs tests with kieker and reads the dependencies of tests for each version
@@ -90,7 +90,7 @@ public class DependencyManager extends TestResultManager {
       }
    }
 
-   boolean printErrors() throws IOException {
+   private boolean printErrors() throws IOException {
       try {
          boolean sourceFound = false;
          sourceFound = searchTestFiles(sourceFound);
@@ -107,7 +107,7 @@ public class DependencyManager extends TestResultManager {
       }
    }
 
-   boolean searchTestFiles(boolean sourceFound) throws IOException, XmlPullParserException {
+   private boolean searchTestFiles(boolean sourceFound) throws IOException, XmlPullParserException {
       for (final File module : executor.getModules()) {
          final File testSourceFolder = new File(module, "src/test");
          if (testSourceFolder.exists()) {
@@ -120,7 +120,7 @@ public class DependencyManager extends TestResultManager {
       return sourceFound;
    }
 
-   boolean readResultFules(final ModuleClassMapping mapping) {
+   private boolean readResultFules(final ModuleClassMapping mapping) {
       final Collection<File> xmlFiles = FileUtils.listFiles(folders.getTempMeasurementFolder(), new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE);
       LOG.debug("Initial test execution finished, starting result collection, analyzing {} files", xmlFiles.size());
       for (final File testResultFile : xmlFiles) {
@@ -231,7 +231,7 @@ public class DependencyManager extends TestResultManager {
     * @param calledClasses Map from name of the called class to the methods of the class that are called
     */
    public void addDependencies(final ChangedEntity testClassName, final Map<ChangedEntity, Set<String>> calledClasses) {
-      final Map<ChangedEntity, Set<String>> testDependencies = dependencies.getDependenciesForTest(testClassName);
+      final Map<ChangedEntity, Set<String>> testDependencies = dependencies.getOrAddDependenciesForTest(testClassName);
       for (final Map.Entry<ChangedEntity, Set<String>> calledEntity : calledClasses.entrySet()) {
          LOG.debug("adding: " + calledEntity.getKey() + " Module: " + calledEntity.getKey().getModule());
          LOG.debug(testDependencies.keySet());
@@ -245,7 +245,7 @@ public class DependencyManager extends TestResultManager {
    }
 
    public void setDependencies(final ChangedEntity testClassName, final Map<ChangedEntity, Set<String>> calledClasses) {
-      final Map<ChangedEntity, Set<String>> testDependencies = dependencies.getDependenciesForTest(testClassName);
+      final Map<ChangedEntity, Set<String>> testDependencies = dependencies.getOrAddDependenciesForTest(testClassName);
       testDependencies.putAll(calledClasses);
    }
 
@@ -261,6 +261,7 @@ public class DependencyManager extends TestResultManager {
     */
    public TestExistenceChanges updateDependencies(final TestSet testsToUpdate, final String version, final ModuleClassMapping mapping) throws IOException, XmlPullParserException {
       final Map<ChangedEntity, Map<ChangedEntity, Set<String>>> oldDepdendencies = dependencies.getCopiedDependencies();
+      
       // Remove all old dependencies where changes happened, because they may
       // have been deleted
       for (final Entry<ChangedEntity, Set<String>> className : testsToUpdate.entrySet()) {
@@ -356,6 +357,7 @@ public class DependencyManager extends TestResultManager {
          // testclass -> depending class -> method
          final ChangedEntity testcase = newDependency.getKey();
          if (!oldDepdendencies.containsKey(testcase)) {
+            changes.addAddedTest(testcase.onlyClazz(), testcase);
             for (final Map.Entry<ChangedEntity, Set<String>> newCallees : newDependency.getValue().getCalledMethods().entrySet()) {
                final ChangedEntity changedclass = newCallees.getKey();
                for (final String changedMethod : newCallees.getValue()) {

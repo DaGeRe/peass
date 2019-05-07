@@ -121,6 +121,7 @@ public class MavenTestExecutor extends TestExecutor {
             "-Danimal.sniffer.skip=true",
             "-Denforcer.skip=true",
             "-DfailIfNoTests=false",
+            "-Drat.skip=true",
             "-Djacoco.skip=true",
             "-Djava.io.tmpdir="+folders.getTempDir().getAbsolutePath()};
 
@@ -135,7 +136,7 @@ public class MavenTestExecutor extends TestExecutor {
       return buildFolderProcess(folders.getProjectFolder(), logFile, vars);
    }
 
-   private void clean(final File logFile) throws IOException, InterruptedException {
+   protected void clean(final File logFile) throws IOException, InterruptedException {
       final String[] originalsClean = new String[] { "mvn", "clean" };
       final ProcessBuilder pbClean = new ProcessBuilder(originalsClean);
       pbClean.directory(folders.getProjectFolder());
@@ -204,6 +205,7 @@ public class MavenTestExecutor extends TestExecutor {
                            "-Dmaven.javadoc.skip=true",
                            "-Danimal.sniffer.skip=true",
                            "-Djacoco.skip=true",
+                           "-Drat.skip=true",
                            "-Denforcer.skip=true",
                            "-DfailIfNoTests=false" });
             } else {

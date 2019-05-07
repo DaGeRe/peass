@@ -53,8 +53,8 @@ public class TestStatistic {
          throw new RuntimeException("Data contained NaN - not handling result");
       }
 
-      previous = ConfidenceInterval.cutValuesMiddle(previous);
-      current = ConfidenceInterval.cutValuesMiddle(current);
+      previous = ConfidenceInterval.getWarmedUpData(previous);
+      current = ConfidenceInterval.getWarmedUpData(current);
 
       confidenceResult = ConfidenceIntervalInterpretion.compare(previous, current);
 

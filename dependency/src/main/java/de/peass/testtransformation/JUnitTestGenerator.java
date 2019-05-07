@@ -26,8 +26,8 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VoidType;
 
 import de.peass.dependency.ClazzFinder;
-import de.peass.dependency.analysis.FileComparisonUtil;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.changesreading.FileComparisonUtil;
 import jline.internal.Log;
 
 public class JUnitTestGenerator {
@@ -59,7 +59,7 @@ public class JUnitTestGenerator {
       final CompilationUnit generatedCu = new CompilationUnit();
       generatedCu.setPackageDeclaration(generatedName.getPackage());
 
-      final CompilationUnit calleeUnit = transformer.loadedFiles.get(calleeClazzFile);
+      final CompilationUnit calleeUnit = transformer.getLoadedFiles().get(calleeClazzFile);
       generatedCu.getImports().addAll(calleeUnit.getImports());
       generatedCu.getImports().add(new ImportDeclaration(callee.getJavaClazzName(), false, false));
 
@@ -107,7 +107,7 @@ public class JUnitTestGenerator {
             } // TODO Other module, same package, asterix-import
             ChangedEntity superEntity = new ChangedEntity(superPackage != null ? superPackage : superclass.getNameAsString(), callee.getModule());
             final File superClazzFile = ClazzFinder.getClazzFile(module, superEntity);
-            CompilationUnit superUnit = transformer.loadedFiles.get(superClazzFile);
+            CompilationUnit superUnit = transformer.getLoadedFiles().get(superClazzFile);
             final ClassOrInterfaceDeclaration superClass = FileComparisonUtil.findClazz(superEntity, superUnit.getChildNodes());
             makeSetUpPublic(superClazzFile, superUnit, superClass);
 
@@ -166,7 +166,7 @@ public class JUnitTestGenerator {
 
    public MethodDeclaration findMethod(final File clazzFile, final String methodName) {
       MethodDeclaration methodOld = null;
-      final CompilationUnit unit = transformer.loadedFiles.get(clazzFile);
+      final CompilationUnit unit = transformer.getLoadedFiles().get(clazzFile);
       final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
 
       for (final MethodDeclaration method : clazz.getMethods()) {

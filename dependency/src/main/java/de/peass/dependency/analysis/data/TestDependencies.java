@@ -25,6 +25,7 @@ import java.util.Map.Entry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.dependency.changesreading.ClazzChangeData;
 import de.peass.dependency.reader.DependencyReaderUtil;
 
 /**
@@ -55,7 +56,7 @@ public class TestDependencies {
 	 * 
 	 * @param test
 	 */
-	public Map<ChangedEntity, Set<String>> getDependenciesForTest(final ChangedEntity test) {
+	public Map<ChangedEntity, Set<String>> getOrAddDependenciesForTest(final ChangedEntity test) {
 		CalledMethods tests = dependencyMap.get(test);
 		if (tests == null) {
 			tests = new CalledMethods();

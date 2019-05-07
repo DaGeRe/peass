@@ -20,6 +20,7 @@ import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.dependencyprocessors.AdaptiveTester;
+import de.peass.measurement.analysis.EarlyBreakDecider;
 
 public class IsThereTimeReductionVM {
 
@@ -98,7 +99,7 @@ public class IsThereTimeReductionVM {
 
             final double[] valsBefore = ArrayUtils.toPrimitive(before.toArray(new Double[0]));
             final double[] valsAfter = ArrayUtils.toPrimitive(after.toArray(new Double[0]));
-            final boolean decidable = AdaptiveTester.isSavelyDecidable2(vmid - 1, valsBefore, valsAfter);
+            final boolean decidable = EarlyBreakDecider.isSavelyDecidable2(vmid - 1, valsBefore, valsAfter);
             // AdaptiveDependencyTester.isBreakPossible(measurementFolder, version, versionOld, testcase, vmid)
 
             if (decidable) {

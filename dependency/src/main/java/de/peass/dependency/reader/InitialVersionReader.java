@@ -20,6 +20,7 @@ import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.InitialDependency;
 import de.peass.dependency.persistence.InitialVersion;
 import de.peass.dependency.persistence.Version;
+import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.vcs.VersionIterator;
 
 public class InitialVersionReader {
@@ -79,8 +80,12 @@ public class InitialVersionReader {
       dependencyResult.setInitialversion(initialversion);
 
       if (dependencyResult.getVersions().size() > 0) {
-         for (final Version version : dependencyResult.getVersions().values()) {
-            addVersionTestDependencies(version);
+         for (final Map.Entry<String, Version> version : dependencyResult.getVersions().entrySet()) {
+            String tag = version.getKey();
+            String startTag = iterator.getTag();
+            if (VersionComparator.isBefore(tag, startTag) || tag.equals(startTag)) {
+               addVersionTestDependencies(version.getValue());
+            }
          }
       }
       checkCorrectness();
@@ -100,7 +105,6 @@ public class InitialVersionReader {
                calledClasses.put(new ChangedEntity(callee.getClazz(), callee.getModule()), methods);
                final ChangedEntity testClazz = testcase.getKey();
                dependencyManager.addDependencies(new ChangedEntity(testClazz.getClazz(), testClazz.getModule(), testMethod), calledClasses);
-
             }
          }
       }
@@ -109,7 +113,7 @@ public class InitialVersionReader {
    private void fillInitialTestDependencies() {
       for (final Entry<ChangedEntity, InitialDependency> dependency : dependencyResult.getInitialversion().getInitialDependencies().entrySet()) {
          for (final ChangedEntity dependentClass : dependency.getValue().getEntities()) {
-            final Map<ChangedEntity, Set<String>> dependents = dependencyMap.getDependenciesForTest(dependency.getKey());
+            final Map<ChangedEntity, Set<String>> dependents = dependencyMap.getOrAddDependenciesForTest(dependency.getKey());
             final ChangedEntity dependencyEntity = new ChangedEntity(dependentClass.getClazz(), dependentClass.getModule());
             Set<String> methods = dependents.get(dependencyEntity);
             if (methods == null) {

@@ -63,7 +63,7 @@ public class Rule {
       final List<ReducedTraceElement> result = new LinkedList<>();
       Symbol iterator = anchor.getSucessor();
       while (iterator != anchor) {
-         LOG.debug(iterator);
+         LOG.trace(iterator);
          result.add(new ReducedTraceElement(iterator.getValue(), iterator.getOccurences()));
          iterator = iterator.getSucessor();
       }

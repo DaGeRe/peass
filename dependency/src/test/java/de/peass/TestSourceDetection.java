@@ -17,7 +17,7 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 
-import de.peass.dependency.analysis.FileComparisonUtil;
+import de.peass.dependency.changesreading.FileComparisonUtil;
 import de.peass.dependency.traces.TraceReadUtils;
 import de.peass.dependency.traces.requitur.content.TraceElementContent;
 

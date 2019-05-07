@@ -18,7 +18,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.ClazzChangeData;
+import de.peass.dependency.changesreading.ClazzChangeData;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependency.reader.VersionKeeper;

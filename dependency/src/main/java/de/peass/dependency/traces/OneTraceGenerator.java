@@ -112,7 +112,7 @@ public class OneTraceGenerator {
          } else {
             LOG.error("Error: {} does not produce {}", versionCurrent, methodResult.getAbsolutePath());
          }
-      } catch (final RuntimeException e) {
+      } catch (final RuntimeException | ViewNotFoundException e) {
          e.printStackTrace();
       }
       return success;
@@ -162,7 +162,7 @@ public class OneTraceGenerator {
                Files.write(commentlessTraceFile.toPath(), trace.getCommentlessTrace().getBytes());
                final File methodTrace = new File(methodDir, shortVersion + METHOD);
                Files.write(methodTrace.toPath(), trace.getTraceMethods().getBytes());
-               if (sizeInMB < 10) {
+               if (sizeInMB < 5) {
                   final File methodExpandedTrace = new File(methodDir, shortVersion + METHOD_EXPANDED);
                   Files.write(methodExpandedTrace.toPath(), traceMethodReader.getExpandedTrace()
                         .stream()
@@ -173,6 +173,8 @@ public class OneTraceGenerator {
                }
                LOG.debug("Datei {} existiert: {}", methodTrace.getAbsolutePath(), methodTrace.exists());
                success = true;
+            } else {
+               LOG.error("Trace empty!");
             }
          }
       } else {

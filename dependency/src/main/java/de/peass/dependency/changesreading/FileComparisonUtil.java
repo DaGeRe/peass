@@ -14,15 +14,19 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.peass.dependency.analysis;
+package de.peass.dependency.changesreading;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.management.RuntimeErrorException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,21 +37,23 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.AnnotationDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import com.sun.xml.bind.v2.schemagen.xmlschema.Import;
 
 import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.ClazzChangeData;
 
 /**
  * Helps to compare whether two versions of a file may have changed performance (and whether this change is for the use of the whole file or only some methods).
@@ -115,14 +121,15 @@ public final class FileComparisonUtil {
             } else if (secondDeclarations.size() == 0) {
                changes.addAll(secondDeclarations);
             } else {
-               compareUnequalNodeList(changes, firstDeclarations, secondDeclarations);
+               NodeListComparator nodeListComparator = new NodeListComparator(changes, firstDeclarations, secondDeclarations);
+               nodeListComparator.compareUnequalNodeList();
             }
             final List<ConstructorDeclaration> firstDeclarationsConstructor = node1.findAll(ConstructorDeclaration.class);
             final List<ConstructorDeclaration> secondDeclarationsConstructor = node2.findAll(ConstructorDeclaration.class);
             if (firstDeclarationsConstructor.size() == secondDeclarationsConstructor.size()) {
                compareNodeList(changes, firstDeclarationsConstructor, secondDeclarationsConstructor);
             }
-         }
+         } 
 
          LOG.info("Size of change: " + node1.hashCode() + "(" + node1.getChildNodes().size() + ") " + node2.hashCode() + "(" + node2.getChildNodes().size() + ") ");
          changes.add(node1);
@@ -134,73 +141,15 @@ public final class FileComparisonUtil {
       return changes;
    }
 
-   /**
-    * Helps getting the changes of a node list of unequal length, e.g. if old version has 5 methods and new 6, it tells whether the old 5 methods, if they are still there and in
-    * the same order, are changed.
-    * 
-    * @param changes
-    * @param childs1
-    * @param childs2
-    */
-   private static void compareUnequalNodeList(final List<Node> changes, final List<? extends Node> childs1, final List<? extends Node> childs2) {
-      final Iterator<? extends Node> node2iterator = childs2.iterator();
-      final Iterator<? extends Node> node1iterator = childs1.iterator();
-      Node last1 = node1iterator.next();
-      Node last2 = node2iterator.next();
-      while (node1iterator.hasNext() && node2iterator.hasNext()) {
-         Node child1 = node1iterator.next();
-         Node child2 = node2iterator.next();
-         if (child1.getClass() != child2.getClass()) {
-            changes.add(child1);
-            changes.add(child2);
-         } else {
-            if (!child1.equals(child2)) {
-               if (child1 instanceof MethodDeclaration && child2 instanceof MethodDeclaration && last1 instanceof MethodDeclaration && last2 instanceof MethodDeclaration) {
-                  final MethodDeclaration md1 = (MethodDeclaration) child1;
-                  final MethodDeclaration md2 = (MethodDeclaration) child2;
-                  final MethodDeclaration last1Method = (MethodDeclaration) last1;
-                  final MethodDeclaration last2Method = (MethodDeclaration) last2;
-                  if (md2.getDeclarationAsString().equals(last1Method.getDeclarationAsString())) {
-                     changes.addAll(comparePairwise(last1Method, md2));
-                     child2 = node2iterator.next();
-                     changes.addAll(comparePairwise(md1, child2));
-                  }
-                  if (md1.getDeclarationAsString().equals(last2Method.getDeclarationAsString())) {
-                     changes.addAll(comparePairwise(md1, last2Method));
-                     child1 = node1iterator.next();
-                     changes.addAll(comparePairwise(child1, md1));
-                  }
-
-                  // md1.getDeclarationAsString()
-               }
-
-               if (child1 instanceof BlockStmt || child2 instanceof BlockStmt) {
-                  changes.add(child1);
-                  changes.add(child2);
-               }
-
-               /*
-                * Currently, nothing is done in this case, as a declaration change should cause an call change (which will be an BlockStmt-Change), or the method is not called,
-                * than the declaration change will not be relevant. TODO Is it detected, if the e.g. a public static ClassA asd = new ClassA(1) instead of new ClassA(2)? (cause
-                * this is a declaration as well)
-                */
-
-               changes.addAll(comparePairwise(child1, child2));
-            } else {
-               LOG.trace("Equal: {} {}", child1, child2);
-            }
-         }
-         last1 = child1;
-         last2 = child2;
-      }
-   }
-
    private static void compareNodeList(final List<Node> changes, final List<? extends Node> childs1, final List<? extends Node> childs2) {
+      if (childs1.size() != childs2.size()) {
+         throw new RuntimeException("Need to pass equal child count!");
+      }
       final Iterator<? extends Node> node2iterator = childs2.iterator();
       for (final Iterator<? extends Node> node1iterator = childs1.iterator(); node1iterator.hasNext();) {
          final Node child = node1iterator.next();
          if (!node2iterator.hasNext()) {
-            System.out.println("Unexpected!");
+            LOG.error("Unexpected!");
          }
          final Node child2 = node2iterator.next();
          if (child.getClass() != child2.getClass()) {
@@ -213,14 +162,19 @@ public final class FileComparisonUtil {
                   changes.add(child);
                   changes.add(child2);
                }
+               if (child instanceof ImportDeclaration || child2 instanceof ImportDeclaration) {
+                  changes.add(child);
+                  changes.add(child2);
+               } else {
+                  /*
+                   * Currently, nothing is done in this case, as a declaration change should cause an call change (which will be an BlockStmt-Change), or the method is not called,
+                   * than the declaration change will not be relevant. TODO Is it detected, if the e.g. a public static ClassA asd = new ClassA(1) instead of new ClassA(2)? (cause
+                   * this is a declaration as well)
+                   */
 
-               /*
-                * Currently, nothing is done in this case, as a declaration change should cause an call change (which will be an BlockStmt-Change), or the method is not called,
-                * than the declaration change will not be relevant. TODO Is it detected, if the e.g. a public static ClassA asd = new ClassA(1) instead of new ClassA(2)? (cause
-                * this is a declaration as well)
-                */
+                  changes.addAll(comparePairwise(child, child2));
+               }
 
-               changes.addAll(comparePairwise(child, child2));
             } else {
                LOG.trace("Equal: {} {}", child, child2);
             }
@@ -330,12 +284,24 @@ public final class FileComparisonUtil {
       try {
          clearComments(newCu);
          clearComments(oldCu);
-
+         
          final List<Node> changes = comparePairwise(newCu, oldCu);
+         Set<ImportDeclaration> unequalImports = new ImportComparator(newCu.getImports(), oldCu.getImports()).getNotInBoth();
+         changes.addAll(unequalImports);
 
          if (changes.size() == 0) {
             changedata.setChange(false);
             return;
+         }
+
+         for (Node node : changes) {
+            if (node instanceof ImportDeclaration) {
+               ImportDeclaration currentImport = (ImportDeclaration) node;
+               if (!currentImport.isAsterisk()) {
+                  ChangedEntity changedEntity = new ChangedEntity(currentImport.getNameAsString(), "");
+                  changedata.getImportChanges().add(changedEntity);
+               }
+            }
          }
 
          boolean onlyLineCommentOrImportChanges = true;
@@ -347,17 +313,14 @@ public final class FileComparisonUtil {
          if (onlyLineCommentOrImportChanges) {
             return;
          }
-         
+
          for (final Node node : changes) {
             if (node instanceof Statement || node instanceof Expression) {
                handleStatement(changedata, node);
             } else if (node instanceof ClassOrInterfaceDeclaration) {
-               ClassOrInterfaceDeclaration declaration = (ClassOrInterfaceDeclaration) node;
-               changedata.addClazzChange(getClazz(declaration));
-               changedata.setOnlyMethodChange(false);
+               handleClassChange(changedata, node);
             } else {
-               changedata.addClazzChange(getClazz(node));
-               changedata.setOnlyMethodChange(false);
+               handleClassChange(changedata, node);
             }
          }
       } catch (final Exception e) {
@@ -368,6 +331,14 @@ public final class FileComparisonUtil {
       }
 
       return;
+   }
+
+   public static void handleClassChange(ClazzChangeData changedata, final Node node) {
+      String clazz = getClazz(node);
+      if (!clazz.isEmpty()) {
+         changedata.addClazzChange(clazz);
+         changedata.setOnlyMethodChange(false);
+      }
    }
 
    private static void handleStatement(final ClazzChangeData changedata, final Node statement) {
@@ -403,8 +374,8 @@ public final class FileComparisonUtil {
       String clazz = "";
       Node current = statement;
       while (current.getParentNode().isPresent()) {
-         if (current instanceof ClassOrInterfaceDeclaration) {
-            ClassOrInterfaceDeclaration declaration = (ClassOrInterfaceDeclaration) current;
+         if (current instanceof ClassOrInterfaceDeclaration || current instanceof EnumDeclaration || current instanceof AnnotationDeclaration) {
+            TypeDeclaration<?> declaration = (TypeDeclaration<?>) current;
             String name = declaration.getNameAsString();
             if (!clazz.isEmpty()) {
                clazz = name + "$" + clazz;
@@ -413,7 +384,7 @@ public final class FileComparisonUtil {
             }
          }
          current = current.getParentNode().get();
-         
+
       }
       return clazz;
    }

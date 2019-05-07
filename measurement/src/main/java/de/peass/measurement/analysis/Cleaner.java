@@ -42,7 +42,7 @@ import de.peran.statistics.ConfidenceInterval;
 public class Cleaner extends DataAnalyser {
 
    private static final Logger LOG = LogManager.getLogger(Cleaner.class);
-
+   
    public static void main(final String[] args) throws ParseException, JAXBException {
       final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE, OptionConstants.DATA);
 
@@ -158,8 +158,9 @@ public class Cleaner extends DataAnalyser {
    }
 
    private List<Result> getChunk(final String version, final long minExecutionTime, List<Result> previous) {
-      previous = ConfidenceInterval.cutValuesMiddle(previous);
-      for (final Iterator<Result> it = previous.iterator(); it.hasNext();) {
+      final List<Result> previousClean = ConfidenceInterval.getWarmedUpData(previous);
+//      final List<Result> previousClean = ConfidenceInterval.getWarmupData(previous);
+      for (final Iterator<Result> it = previousClean.iterator(); it.hasNext();) {
          final Result result = it.next();
          final int resultSize = result.getFulldata().getValue().size();
          final long expectedSize = ceilDiv(minExecutionTime, 2);
@@ -170,7 +171,7 @@ public class Cleaner extends DataAnalyser {
             it.remove();
          }
       }
-      return previous;
+      return previousClean;
    }
 
    private void cleanResult(final String version, final Result result) {

@@ -55,7 +55,17 @@ public class ConfidenceInterval {
 		return percentage + "-Interval: " + min + " - " + max;
 	}
 	
-	public static List<Result> cutValuesMiddle(final List<Result> values) {
+	public static List<Result> getWarmupData(final List<Result> values) {
+      final List<Result> shortenedValues = new LinkedList<>();
+      for (final Result result : values) {
+         final int start = result.getFulldata().getValue().size() / 2;
+         final Result resultShort = shortenResult(result, 0, start);
+         shortenedValues.add(resultShort);
+      }
+      return shortenedValues;
+   }
+	
+	public static List<Result> getWarmedUpData(final List<Result> values) {
       final List<Result> shortenedValues = new LinkedList<>();
       for (final Result result : values) {
          final int start = result.getFulldata().getValue().size() / 2;

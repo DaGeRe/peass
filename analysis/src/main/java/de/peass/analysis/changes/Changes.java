@@ -33,12 +33,13 @@ public class Changes {
 	 * @param percent	How much the performance was changed
 	 * @return	Added Change
 	 */
-	public Change addChange(final TestCase testcase, final String viewName, final double oldTime, final double percent, final double tvalue) {
+	public Change addChange(final TestCase testcase, final String viewName, final double oldTime, final double percent, final double tvalue, long vms) {
 		Change change = new Change();
 		change.setDiff(viewName);
 		change.setTvalue(tvalue);
 		change.setOldTime(oldTime);
 		change.setChangePercent(percent);
+		change.setVms(vms);
 		change.setMethod(testcase.getMethod());
 		addChange(testcase.getClazz(), change);
 		return change;

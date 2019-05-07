@@ -14,9 +14,9 @@ import org.mockito.Mockito;
 
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.ClazzChangeData;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.changesreading.ClazzChangeData;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependencytests.helper.FakeFileIterator;
 import de.peass.vcs.VersionIterator;
@@ -66,7 +66,7 @@ public class DependencyDetectorITGradle {
 
       System.out.println(reader.getDependencies());
 
-      final TestSet testMe = DependencyDetectorIT.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency.executeThing", VERSION_1);
+      final TestSet testMe = DependencyDetectorIT.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", VERSION_1);
       final TestCase testcase = testMe.getTests().iterator().next();
       Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
       Assert.assertEquals("testMe", testcase.getMethod());
@@ -93,7 +93,7 @@ public class DependencyDetectorITGradle {
 
       System.out.println(reader.getDependencies());
 
-      final TestSet testMe = DependencyDetectorIT.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency.executeThing", VERSION_1);
+      final TestSet testMe = DependencyDetectorIT.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", VERSION_1);
       final TestCase testcase = testMe.getTests().iterator().next();
       Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
       Assert.assertEquals("testMe", testcase.getMethod());

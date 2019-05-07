@@ -9,8 +9,8 @@ import org.junit.Test;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
-import de.peass.dependency.analysis.FileComparisonUtil;
 import de.peass.dependency.analysis.data.TraceElement;
+import de.peass.dependency.changesreading.FileComparisonUtil;
 import de.peass.dependency.traces.TraceReadUtils;
 import de.peass.dependency.traces.requitur.content.TraceElementContent;
 

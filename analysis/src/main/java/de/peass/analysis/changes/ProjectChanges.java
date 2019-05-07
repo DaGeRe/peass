@@ -67,11 +67,12 @@ public class ProjectChanges {
    public void addChange(final TestCase testCase, final String versionTag,
          final Relation confidenceResult,
          final Relation tTestResult, final double oldTime,
-         final double diffPercent, final double tvalue) {
+         final double diffPercent, final double tvalue, 
+         long vms) {
       final Changes changeList = getVersion(versionTag);
       final String viewName = "view_" + versionTag + "/diffs/" + testCase.getShortClazz() + "#" + testCase.getMethod() + ".txt";
       LOG.trace("Adding change: " + testCase);
-      changeList.addChange(testCase, viewName, oldTime, diffPercent, tvalue);
+      changeList.addChange(testCase, viewName, oldTime, diffPercent, tvalue, vms);
 
       changeCount++;
    }

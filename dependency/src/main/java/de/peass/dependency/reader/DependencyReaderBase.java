@@ -23,10 +23,10 @@ import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.CalledMethods;
 import de.peass.dependency.analysis.data.ChangeTestMapping;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.ClazzChangeData;
 import de.peass.dependency.analysis.data.TestDependencies;
 import de.peass.dependency.analysis.data.TestExistenceChanges;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.changesreading.ClazzChangeData;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.InitialDependency;
 import de.peass.dependency.persistence.InitialVersion;
@@ -60,7 +60,7 @@ public abstract class DependencyReaderBase {
    protected DependencyManager dependencyManager;
    protected final PeASSFolders folders;
    protected VersionIterator iterator;
-//   protected TestDependencies dependencyMap;
+   // protected TestDependencies dependencyMap;
    protected String lastRunningVersion;
    protected final int timeout;
    private final VersionKeeper skippedNoChange;
@@ -79,7 +79,6 @@ public abstract class DependencyReaderBase {
       this.timeout = timeout;
       this.skippedNoChange = skippedNoChange;
    }
-
 
    /**
     * Determines the tests that may have got new dependencies, writes that changes (i.e. the tests that need to be run in that version) and re-runs the tests in order to get the
@@ -123,7 +122,7 @@ public abstract class DependencyReaderBase {
 
       if (changes.size() > 0) {
          final ChangeTestMapping changeTestMap = dependencyManager.getDependencyMap().getChangeTestMap(changes); // tells which tests need to be run, and
-                                                                                                                                       // because of
+                                                                                                                 // because of
          LOG.debug("Change test mapping (without added tests): " + changeTestMap);
          // which change they need to be run
 
@@ -152,7 +151,6 @@ public abstract class DependencyReaderBase {
          return 0;
       }
    }
-
 
    public void documentFailure(final String version) {
       if (dependencyManager.getExecutor().isAndroid()) {
@@ -188,14 +186,16 @@ public abstract class DependencyReaderBase {
       })
             .sum();
    }
-   
+
    public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException {
       InitialVersionReader initialVersionReader = new InitialVersionReader(dependencyResult, dependencyManager, iterator);
-      initialVersionReader.readInitialVersion();
-//      dependencyMap = dependencyManager.getDependencyMap();
-      DependencyReaderUtil.write(dependencyResult, dependencyFile);
-      lastRunningVersion = iterator.getTag();
-      return true;
+      if (initialVersionReader.readInitialVersion()) {
+         DependencyReaderUtil.write(dependencyResult, dependencyFile);
+         lastRunningVersion = iterator.getTag();
+         return true;
+      } else {
+         return false;
+      }
    }
 
 }

@@ -3,13 +3,20 @@ package de.peass.analysis.groups;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.peass.analysis.changes.ChangeReader;
 import de.peass.dependency.analysis.data.ChangedEntity;
 
 public class Classification {
+   private static final Logger LOG = LogManager.getLogger(Classification.class);
+
    private Map<String, VersionClass> versions = new LinkedHashMap<>();
 
    public Map<String, VersionClass> getVersions() {
@@ -29,22 +36,50 @@ public class Classification {
       }
       return versionClazz.addTestcase(test, guessedTypes, direction);
    }
-   
+
    public void merge(final Classification other) {
-      for (final Map.Entry<String, VersionClass> version : other.getVersions().entrySet()) {
-         final VersionClass mergedVersion = getVersions().get(version.getKey());
+      for (final Map.Entry<String, VersionClass> otherVersion : other.getVersions().entrySet()) {
+         if (otherVersion.getKey().equals("3ac3b9c39c2637fd92ce89caf066e3058bb17d3c")) {
+            System.out.println("here");
+         }
+         final VersionClass mergedVersion = versions.get(otherVersion.getKey());
          if (mergedVersion != null) {
-            for (final Entry<ChangedEntity, TestcaseClass> testcase : version.getValue().getTestcases().entrySet()) {
+            for (final Entry<ChangedEntity, TestcaseClass> testcase : otherVersion.getValue().getTestcases().entrySet()) {
                final TestcaseClass data = mergedVersion.getTestcases().get(testcase.getKey());
                if (data != null) {
-                  data.merge(testcase.getValue());
-                  
+                  if (data.getDirection() != null) {
+                     data.merge(testcase.getValue());
+                  } else {
+                     LOG.error("Raw data contained null-direction: {}", testcase.getKey());
+                  }
+               } else {
+                  LOG.error("Version only present in input-data: {}", testcase.getKey());
+               }
+            }
+         } else {
+            LOG.info("Input data contained version with change that could not be measured: {}", otherVersion.getKey());
+         }
+      }
+   }
+   
+   public void mergeAll(final Classification other) {
+      for (final Map.Entry<String, VersionClass> otherVersion : other.getVersions().entrySet()) {
+         final VersionClass mergedVersion = versions.get(otherVersion.getKey());
+         if (mergedVersion != null) {
+            for (final Entry<ChangedEntity, TestcaseClass> testcase : otherVersion.getValue().getTestcases().entrySet()) {
+               final TestcaseClass data = mergedVersion.getTestcases().get(testcase.getKey());
+               if (data != null) {
+                  if (data.getDirection() != null) {
+                     data.merge(testcase.getValue());
+                  } else {
+                     LOG.error("Raw data contained null-direction: {}", testcase.getKey());
+                  }
                } else {
                   mergedVersion.getTestcases().put(testcase.getKey(), testcase.getValue());
                }
             }
          } else {
-            getVersions().put(version.getKey(), version.getValue());
+            versions.put(otherVersion.getKey(), otherVersion.getValue());
          }
       }
    }

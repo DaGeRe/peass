@@ -9,10 +9,10 @@ import java.util.List;
 import de.dagere.kopeme.generated.Result;
 
 
-public class MeanHistData {
+public class MeanHistogramData {
    private final List<Result> values;
 
-   public MeanHistData(List<Result> values) {
+   public MeanHistogramData(List<Result> values) {
       this.values = values;
    }
 

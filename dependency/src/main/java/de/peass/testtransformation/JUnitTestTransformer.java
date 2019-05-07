@@ -59,9 +59,10 @@ import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
+import de.dagere.kopeme.parsing.JUnitParseUtil;
 import de.peass.dependency.ClazzFinder;
-import de.peass.dependency.analysis.FileComparisonUtil;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.changesreading.FileComparisonUtil;
 import javassist.compiler.ast.MethodDecl;
 
 /**
@@ -118,7 +119,11 @@ public class JUnitTestTransformer {
       this.repetitions = repetitions;
    }
 
-   Map<File, CompilationUnit> loadedFiles;
+   private Map<File, CompilationUnit> loadedFiles;
+   public Map<File, CompilationUnit> getLoadedFiles() {
+      return loadedFiles;
+   }
+
    private Map<File, Integer> junitVersions;
 
    public void determineVersions(final List<File> modules) {
@@ -157,6 +162,7 @@ public class JUnitTestTransformer {
    }
 
    public int getVersion(final File clazzFile) {
+      LOG.debug("Loading: {} {}", clazzFile, junitVersions);
       return junitVersions.get(clazzFile);
    }
 
@@ -248,9 +254,9 @@ public class JUnitTestTransformer {
                   }
                }
             } else if (junit == 4) {
-               getAnnotatedMethods(methods, clazz, 4);
+               methods.addAll(getAnnotatedMethods(clazz, 4));
             } else if (junit == 5) {
-               getAnnotatedMethods(methods, clazz, 5);
+               methods.addAll(getAnnotatedMethods(clazz, 5));
             }
          } else {
             LOG.error("Clazz {} has no JUnit version", clazzFile);
@@ -262,20 +268,10 @@ public class JUnitTestTransformer {
       return methods;
    }
 
-   void getAnnotatedMethods(final List<String> methods, final ClassOrInterfaceDeclaration clazz, final int version) {
+   private List<String> getAnnotatedMethods(final ClassOrInterfaceDeclaration clazz, final int version) {
       final String importNameVersion = junitTestAnnotations.get(version);
-      for (final MethodDeclaration method : clazz.getMethods()) {
-         boolean found = false;
-         for (final AnnotationExpr annotation : method.getAnnotations()) {
-            final String currentName = annotation.getNameAsString();
-            if (currentName.equals(importNameVersion) || currentName.equals("Test")) {
-               found = true;
-            }
-         }
-         if (found) {
-            methods.add(method.getNameAsString());
-         }
-      }
+      final List<String> methods = JUnitParseUtil.getAnnotatedMethods(clazz, importNameVersion, "Test");
+      return methods;
    }
 
    /**
@@ -545,64 +541,6 @@ public class JUnitTestTransformer {
 
    public File generateClazz(final File module, final ChangedEntity generatedClazz, final ChangedEntity callee, final String method) {
       return new JUnitTestGenerator(module, generatedClazz, callee, method, this).generateClazz();
-   }
-
-   
-   private File lastShortened = null;
-   private File lastFile = null;
-   
-   public void shortenClazz(final File module, final ChangedEntity callee, final String method) {
-      final File calleeClazzFile = ClazzFinder.getClazzFile(module, callee);
-      final int version = getVersion(calleeClazzFile);
-      
-      try {
-         lastShortened = Files.createTempFile("Temp", ".java").toFile();
-         FileUtils.copyFile(calleeClazzFile, lastShortened);
-         lastFile = calleeClazzFile;
-      } catch (IOException e1) {
-         e1.printStackTrace();
-      }
-      
-
-      final CompilationUnit calleeUnit = loadedFiles.get(calleeClazzFile);
-      final ClassOrInterfaceDeclaration clazz = FileComparisonUtil.findClazz(callee, calleeUnit.getChildNodes());
-
-      List<Node> remove = new LinkedList<>();
-      for (MethodDeclaration methodDeclaration : clazz.getMethods()) {
-         if (!methodDeclaration.getNameAsString().equals(method) && methodDeclaration.getModifiers().contains(Modifier.publicModifier()) &&
-               methodDeclaration.getParameters().size() == 0) {
-            if (version != 4) {
-               if (methodDeclaration.getNameAsString().contains("test")) {
-                  remove.add(methodDeclaration);
-               }
-            } else {
-               if (methodDeclaration.getAnnotationByName("Test").isPresent() || methodDeclaration.getAnnotationByName("org.junit.Test").isPresent()) {
-                  remove.add(methodDeclaration);
-               }
-            }
-         }
-      }
-      for (Node removeN : remove) {
-         clazz.remove(removeN);
-      }
-
-      try {
-         FileUtils.writeStringToFile(calleeClazzFile, calleeUnit.toString(), Charset.defaultCharset());
-      } catch (final IOException e) {
-         e.printStackTrace();
-      }
-   }
-   
-   public void resetShortenedFile() {
-      try {
-         FileUtils.copyFile(lastShortened, lastFile);
-         final CompilationUnit unit = FileComparisonUtil.parse(lastFile);
-         loadedFiles.put(lastFile, unit);
-      } catch (IOException e) {
-         e.printStackTrace();
-      }
-      lastFile = null;
-      lastShortened = null;
    }
 
 }

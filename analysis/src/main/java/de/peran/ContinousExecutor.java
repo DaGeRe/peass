@@ -91,7 +91,7 @@ public class ContinousExecutor {
 
       final PeASSFolders folders = new PeASSFolders(projectFolder);
 
-      final File dependencyFile = new File(localFolder, "dependencies.xml");
+      final File dependencyFile = new File(localFolder, "dependencies.json");
       final String previousName = GitUtils.getName("HEAD~1", projectFolder);
       final GitCommit headCommit = new GitCommit(GitUtils.getName("HEAD", projectFolder), "", "", "");
       //

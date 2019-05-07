@@ -34,7 +34,7 @@ import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
 
-import de.peass.dependency.analysis.FileComparisonUtil;
+import de.peass.dependency.changesreading.FileComparisonUtil;
 
 
 /**

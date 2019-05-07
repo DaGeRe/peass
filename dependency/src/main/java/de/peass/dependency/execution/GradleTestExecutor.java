@@ -14,7 +14,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.GradleParseUtil.FindDependencyVisitor;
+import de.peass.dependency.execution.gradle.FindDependencyVisitor;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 public class GradleTestExecutor extends TestExecutor {
@@ -189,5 +189,11 @@ public class GradleTestExecutor extends TestExecutor {
    @Override
    public boolean isAndroid() {
       return isAndroid;
+   }
+
+   @Override
+   protected void clean(File logFile) throws IOException, InterruptedException {
+      // TODO Auto-generated method stub
+      
    }
 }

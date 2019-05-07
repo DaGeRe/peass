@@ -16,6 +16,7 @@ import de.peass.analysis.groups.VersionClass;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.utils.Constants;
 import de.peass.utils.DivideVersions;
+import de.peass.utils.RunCommandWriter;
 import de.peran.FolderSearcher;
 
 public class FindWrong {
@@ -27,10 +28,11 @@ public class FindWrong {
       final File folder = new File("/home/reichelt/daten3/diss/repos/properties/classification");
       int index = 0;
       for (final File project : folder.listFiles()) {
+         
          if (project.getName().endsWith(".json")) {
             final String projectName = project.getName().substring(0, project.getName().indexOf('.'));
             final String url = Constants.defaultUrls.get(projectName);
-
+            RunCommandWriter writer = new RunCommandWriter(goal, true, "wrong_rerun", projectName, url);
             if (url != null) {
                final Classification data = FolderSearcher.MAPPER.readValue(project, Classification.class);
                for (final Map.Entry<String, VersionClass> version : data.getVersions().entrySet()) {
@@ -38,8 +40,7 @@ public class FindWrong {
                      if (method.getValue().getTypes().contains("WRONG") || method.getValue().getTypes().contains("WRONGTEST")) {
 //                        System.out.println(version.getKey() + " " + method.getKey());
 
-                        final String simple = method.getKey().getSimpleClazzName() + method.getKey().getMethod();
-                        DivideVersions.createSingleSBatch("wrong_rerun", goal, url, index, version.getKey(), method.getKey().toString(), simple);
+                        writer.createSingleMethodCommand(index, version.getKey(), method.getKey().toString());
                         index++;
                      }
                   }

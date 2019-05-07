@@ -26,11 +26,6 @@ public class TestLoadUtil {
 			} catch (final JsonMappingException e) {
 				e.printStackTrace();
 				testsTemp = null;
-//				final ObjectMapper objectMapper = new ObjectMapper();
-//				final SimpleModule module = new SimpleModule();
-//				module.addDeserializer(ChangedTraceTests.class, new ChangedTraceTests.OldVersionDeserializer());
-//				objectMapper.registerModule(module);
-//				testsTemp = objectMapper.readValue(executionFile, ChangedTraceTests.class);
 			}
 			changedTests = testsTemp;
 		} else {

@@ -21,13 +21,8 @@ public class ReadAllProperties {
    public static final boolean readAll = System.getenv("read_all") != null ? Boolean.parseBoolean(System.getenv("read_all")) : false;
 
    public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, JsonGenerationException, IOException, InterruptedException {
-      final File repos = args.length > 0 ? new File(args[0]) : new File("/home/reichelt/daten3/diss/repos/");
-      final File dependencyFolder = new File(repos, "dependencies-final");
-      final File resultsFolder = new File(repos, "measurementdata/results");
-      final File allViewFolder = new File(repos, "views-final");
-      final File propertyFolder = new File(repos, "properties/properties/");
-      resultsFolder.mkdirs();
-
+      final RepoFolders folders = new RepoFolders(args);
+      
       final ExecutorService service = Executors.newFixedThreadPool(9);
 
       for (final String project : new String[] { "commons-compress", "commons-csv", "commons-dbcp", "commons-fileupload", "commons-jcs",
@@ -37,7 +32,7 @@ public class ReadAllProperties {
             @Override
             public void run() {
                try {
-                  getProperties(dependencyFolder, resultsFolder, allViewFolder, propertyFolder, project);
+                  getProperties(folders, project);
                } catch (final Throwable e) {
                   e.printStackTrace();
                }
@@ -55,15 +50,15 @@ public class ReadAllProperties {
       }
    }
 
-   static void getProperties(final File dependencyFolder, final File resultsFolder, final File allViewFolder, final File propertyFolder, final String project)
+   static void getProperties(RepoFolders folders, final String project)
          throws JAXBException, IOException, JsonParseException, JsonMappingException, JsonGenerationException {
 //      final File dependencyFile = new File(dependencyFolder, "deps_" + project + ".json");
 //      final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
 //      VersionComparator.setDependencies(dependencies);
 //      AnalysisUtil.setProjectName(resultsFolder, project);
-      final File viewFolder = new File(allViewFolder, "views_" + project);
+      final File viewFolder = new File(folders.getAllViewFolder(), "views_" + project);
 
-      final File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
+      final File executionFile = new File(folders.getDependencyFolder(), "execute_" + project + ".json");
       final ExecutionData changedTests = FolderSearcher.MAPPER.readValue(executionFile, ExecutionData.class);
 
       final File projectFolder = new File("../../projekte/" + project);
@@ -72,9 +67,9 @@ public class ReadAllProperties {
       }
       
       if (!readAll) {
-         final File changeFile = new File(resultsFolder, project + File.separator + project + ".json");
+         final File changeFile = new File(folders.getResultsFolder(), project + File.separator + project + ".json");
          if (changeFile.exists()) {
-            final File resultFile = new File(propertyFolder, project + File.separator + project + ".json");
+            final File resultFile = new File(folders.getPropertiesFolder(), project + File.separator + project + ".json");
             if (!resultFile.getParentFile().exists()) {
                resultFile.getParentFile().mkdir();
             }
@@ -83,7 +78,7 @@ public class ReadAllProperties {
             System.err.println("Error: " + changeFile.getAbsolutePath() + " does not exist");
          }
       } else {
-         final File resultFile = new File(propertyFolder, project + File.separator + "properties_alltests.json");
+         final File resultFile = new File(folders.getPropertiesFolder(), project + File.separator + "properties_alltests.json");
          ReadProperties.readAllTestsProperties(projectFolder, resultFile, viewFolder, changedTests);
       }
    }

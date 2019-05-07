@@ -7,14 +7,10 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peran.measurement.analysis.TestcaseStatistic;
 
 public class VersionData {
-   private Map<String, TestcaseData> data = new LinkedHashMap<>();
+   private final Map<String, TestcaseData> data = new LinkedHashMap<>();
 
    public Map<String, TestcaseData> getData() {
       return data;
-   }
-
-   public void setData(final Map<String, TestcaseData> data) {
-      this.data = data;
    }
 
    public void addStatistic(final String version, final TestCase testcase, final String fileName,

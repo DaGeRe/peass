@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBException;
@@ -103,7 +104,16 @@ public class DependencyParallelReader {
    }
 
    public File[] readDependencies() throws InterruptedException, IOException {
-      final ExecutorService service = Executors.newFixedThreadPool(outFiles.length);
+      final ExecutorService service = Executors.newFixedThreadPool(outFiles.length, new ThreadFactory() {
+
+         int threadcount = 0;
+
+         @Override
+         public Thread newThread(Runnable r) {
+            threadcount++;
+            return new Thread(r, "dependencypool-" + threadcount);
+         }
+      });
 
       for (int i = 0; i < outFiles.length; i++) {
          outFiles[i] = new File(tempResultFolder, "deps_" + project + "_" + i + ".json");
@@ -146,5 +156,5 @@ public class DependencyParallelReader {
       service.submit(current);
       Thread.sleep(5);
    }
-   
+
 }

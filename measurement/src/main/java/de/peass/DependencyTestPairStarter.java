@@ -25,6 +25,7 @@ import de.peass.dependencyprocessors.PairProcessor;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.OptionConstants;
 import de.peass.utils.TestLoadUtil;
+import groovy.util.Eval;
 
 /**
  * Runs the dependency test by running the test, where something could have changed, pairwise for every new version. This makes it faster to get potential change candidates, but it
@@ -36,10 +37,10 @@ import de.peass.utils.TestLoadUtil;
 public class DependencyTestPairStarter extends PairProcessor {
    
    static JUnitTestTransformer getTestTransformer(final CommandLine line, final PeASSFolders folders) {
-      final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "1"));
+      final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "100"));
       final boolean useKieker = Boolean.parseBoolean(line.getOptionValue(OptionConstants.USEKIEKER.getName(), "false"));
       final int warmup = Integer.parseInt(line.getOptionValue(OptionConstants.WARMUP.getName(), "10"));
-      final int iterations = Integer.parseInt(line.getOptionValue(OptionConstants.ITERATIONS.getName(), "10"));
+      final int iterations = Integer.parseInt(line.getOptionValue(OptionConstants.ITERATIONS.getName(), "1000"));
       final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder());
       testgenerator.setDatacollectorlist(DataCollectorList.ONLYTIME);
       testgenerator.setIterations(iterations);
@@ -59,13 +60,13 @@ public class DependencyTestPairStarter extends PairProcessor {
    protected DependencyTester tester;
    private final List<String> versions = new LinkedList<>();
    private final int startindex, endindex;
-   private final ExecutionData changedTests;
+   private final ExecutionData executionData;
    private TestCase test;
 
    public DependencyTestPairStarter(final String[] args) throws ParseException, JAXBException, IOException {
       super(args);
-      final int vms = Integer.parseInt(line.getOptionValue(OptionConstants.VMS.getName(), "15"));
-      final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "1"));
+      final int vms = Integer.parseInt(line.getOptionValue(OptionConstants.VMS.getName(), "100"));
+      final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "100"));
       final boolean useKieker = Boolean.parseBoolean(line.getOptionValue(OptionConstants.USEKIEKER.getName(), "false"));
 
       if (line.hasOption(OptionConstants.DURATION.getName())) {
@@ -83,7 +84,7 @@ public class DependencyTestPairStarter extends PairProcessor {
       }
       LOG.info("Testcase: " + test);
       
-      this.changedTests = TestLoadUtil.loadChangedTests(line);
+      executionData = TestLoadUtil.loadChangedTests(line);
 
       versions.add(dependencies.getInitialversion().getVersion());
 
@@ -102,11 +103,11 @@ public class DependencyTestPairStarter extends PairProcessor {
    private int getStartVersionIndex() {
       int currentStartindex = startversion != null ? versions.indexOf(startversion) : 0;
       // Only bugfix if dependencyfile and executefile do not fully match
-      if (changedTests != null) {
+      if (executionData != null) {
          if (startversion != null && currentStartindex == -1) {
             String potentialStart = "";
-            if (changedTests.getVersions().containsKey(startversion)) {
-               for (final String sicVersion : changedTests.getVersions().keySet()) {
+            if (executionData.getVersions().containsKey(startversion)) {
+               for (final String sicVersion : executionData.getVersions().keySet()) {
                   for (final String ticVersion : dependencies.getVersions().keySet()) {
                      if (ticVersion.equals(sicVersion)) {
                         potentialStart = ticVersion;
@@ -133,11 +134,11 @@ public class DependencyTestPairStarter extends PairProcessor {
    private int getEndVersion() {
       int currentEndindex = endversion != null ? versions.indexOf(endversion) : versions.size();
       // Only bugfix if dependencyfile and executefile do not fully match
-      if (changedTests != null) {
+      if (executionData != null) {
          if (endversion != null && currentEndindex == -1) {
             String potentialStart = "";
-            if (changedTests.getVersions().containsKey(endversion)) {
-               for (final String sicVersion : changedTests.getVersions().keySet()) {
+            if (executionData.getVersions().containsKey(endversion)) {
+               for (final String sicVersion : executionData.getVersions().keySet()) {
                   boolean next = false;
                   for (final String ticVersion : dependencies.getVersions().keySet()) {
                      if (next) {
@@ -176,38 +177,14 @@ public class DependencyTestPairStarter extends PairProcessor {
                if (lastTestcaseCalls.containsKey(testcase)) {
                   boolean executeThisTest = true;
                   if (test != null) {
-                     LOG.debug("Checking " + test + " " + testcase);
-                     if (!test.equals(testcase)) {
-                        executeThisTest = false;
-                        LOG.debug("Skipping: " + testcase);
-                     }else {
-                        LOG.debug("Success!");
-                     }
+                     executeThisTest = checkTestName(testcase, executeThisTest);
                   }
                  
                   if (executeThisTest) {
-                     if (changedTests != null) {
-                        final TestSet calls = changedTests.getVersions().get(version);
-                        boolean hasChanges = false;
-                        if (calls != null) {
-                           for (final Map.Entry<ChangedEntity, Set<String>> clazzCalls : calls.entrySet()) {
-                              final String changedClazz = clazzCalls.getKey().getJavaClazzName();
-                              if (changedClazz.equals(testcase.getClazz()) && clazzCalls.getValue().contains(testcase.getMethod())) {
-                                 hasChanges = true;
-                              }
-                           }
-                        }
-                        if (hasChanges) {
-//                           final String versionOld = lastTestcaseCalls.get(testcase);
-                           tester.evaluate(version, versionOld, testcase);
-                        } else {
-                           LOG.debug("Skipping " + testcase + " because of execution-JSON in " + version);
-                        }
-                     } else {
-//                        final String versionOld = lastTestcaseCalls.get(testcase);
-                        tester.evaluate(version, versionOld, testcase);
-                        tester.postEvaluate();
-                     }
+                     executeThisTest = checkExecutionData(version, testcase, executeThisTest); 
+                  }
+                  if (executeThisTest) {
+                     tester.evaluate(version, versionOld, testcase);
                   }
                }
             }
@@ -216,6 +193,42 @@ public class DependencyTestPairStarter extends PairProcessor {
       } catch (IOException | InterruptedException | JAXBException e) {
          e.printStackTrace();
       }
+   }
+   
+   @Override
+   protected void postEvaluate() {
+      tester.postEvaluate();
+   }
+
+   public boolean checkExecutionData(final String version, final TestCase testcase, boolean executeThisTest) {
+      if (executionData != null) {
+         final TestSet calls = executionData.getVersions().get(version);
+         boolean hasChanges = false;
+         if (calls != null) {
+            for (final Map.Entry<ChangedEntity, Set<String>> clazzCalls : calls.entrySet()) {
+               final String changedClazz = clazzCalls.getKey().getJavaClazzName();
+               if (changedClazz.equals(testcase.getClazz()) && clazzCalls.getValue().contains(testcase.getMethod())) {
+                  hasChanges = true;
+               }
+            }
+         }
+         if (!hasChanges) {
+            LOG.debug("Skipping " + testcase + " because of execution-JSON in " + version);
+            executeThisTest = false;
+         }
+      }
+      return executeThisTest;
+   }
+
+   public boolean checkTestName(final TestCase testcase, boolean executeThisTest) {
+      LOG.debug("Checking " + test + " " + testcase);
+      if (!test.equals(testcase)) {
+         executeThisTest = false;
+         LOG.debug("Skipping: " + testcase);
+      }else {
+         LOG.debug("Success!");
+      }
+      return executeThisTest;
    }
 
    public static void main(final String[] args) throws ParseException, JAXBException, IOException {

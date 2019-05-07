@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class Constants {
 
@@ -42,4 +43,8 @@ public class Constants {
    }
 
    public final static ObjectMapper OBJECTMAPPER = new ObjectMapper();
+   
+   static {
+      OBJECTMAPPER.enable(SerializationFeature.INDENT_OUTPUT);
+   }
 }

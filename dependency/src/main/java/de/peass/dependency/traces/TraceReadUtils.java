@@ -212,12 +212,12 @@ public class TraceReadUtils {
          final String outerClazz = te.getOuterClass();
          final String firstType = te.getParameterTypes()[0];
          if (outerClazz.equals(firstType)) {
-            traceParameterTypes = new String[te.getParameterTypes().length-1];
-            System.arraycopy(te.getParameterTypes(), 1, traceParameterTypes, 0, te.getParameterTypes().length-1);
-         }else {
+            traceParameterTypes = new String[te.getParameterTypes().length - 1];
+            System.arraycopy(te.getParameterTypes(), 1, traceParameterTypes, 0, te.getParameterTypes().length - 1);
+         } else {
             traceParameterTypes = te.getParameterTypes();
          }
-      }else {
+      } else {
          traceParameterTypes = te.getParameterTypes();
       }
       if (traceParameterTypes.length != parameters.size() && !parameters.get(parameters.size() - 1).isVarArgs()) {
@@ -225,9 +225,9 @@ public class TraceReadUtils {
       } else if (parameters.get(parameters.size() - 1).isVarArgs()) {
          if (traceParameterTypes.length < parameters.size() - 1) {
             return false;
-         } 
+         }
       }
- 
+
       for (final Parameter parameter : parameters) {
          final Type type = parameter.getType();
          LOG.trace(type + " " + type.getClass());

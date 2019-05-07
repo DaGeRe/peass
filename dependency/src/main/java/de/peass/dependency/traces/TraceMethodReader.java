@@ -1,12 +1,16 @@
 package de.peass.dependency.traces;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sound.midi.Synthesizer;
+
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,9 +20,9 @@ import com.github.javaparser.ast.Node;
 
 import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.analysis.CalledMethodLoader;
-import de.peass.dependency.analysis.FileComparisonUtil;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TraceElement;
+import de.peass.dependency.changesreading.FileComparisonUtil;
 import de.peass.dependency.traces.requitur.ReducedTraceElement;
 import de.peass.dependency.traces.requitur.RunLengthEncodingSequitur;
 import de.peass.dependency.traces.requitur.Sequitur;
@@ -56,7 +60,7 @@ public class TraceMethodReader {
       this.clazzFolder = clazzFolder;
       trace = loadTrace();
    }
-   
+
    private TraceWithMethods loadTrace() throws FileNotFoundException {
       LOG.debug("Trace Length: {}", calls.size());
       seq.addTraceElements(calls);
@@ -67,14 +71,13 @@ public class TraceMethodReader {
       for (final ReducedTraceElement traceElement : rleTrace) {
          if (traceElement.getValue() instanceof TraceElementContent) {
             final TraceElementContent te = (TraceElementContent) traceElement.getValue();
-            final File clazzFile = ClazzFinder.getClazzFile(te, clazzFolder);
+            File clazzFile = ClazzFinder.getClazzFile(te, clazzFolder);
+            if (clazzFile == null) {
+               clazzFile = findAlternativeClassfile(te, clazzFile);
+            }
+
             if (clazzFile != null) {
-               CompilationUnit cu = loadedUnits.get(clazzFile);
-               if (cu == null) {
-                  LOG.trace("CU {} not imported yet", clazzFile);
-                  cu = FileComparisonUtil.parse(clazzFile);
-                  loadedUnits.put(clazzFile, cu);
-               }
+               CompilationUnit cu = getCU(clazzFile);
                final Node method = TraceReadUtils.getMethod(te, cu);
 
                if (method != null) {
@@ -89,12 +92,41 @@ public class TraceMethodReader {
                   trace.setElementSource(te, null);
                   trace.setElementSourceNoComment(te, null);
                }
+            } else {
+               LOG.error("Not found: " + clazzFile);
             }
          }
       }
       return trace;
    }
-   
+
+   public File findAlternativeClassfile(final TraceElementContent te, File clazzFile) throws FileNotFoundException {
+      for (File clazzFolderCandidate : clazzFolder) {
+         String packageName = te.getPackage().replaceAll("\\.", "/");
+         File packageFolder = new File(clazzFolderCandidate, packageName);
+         if (packageFolder.exists()) {
+            for (File candidate : packageFolder.listFiles((FileFilter) new WildcardFileFilter("*.java"))) {
+               CompilationUnit cu = getCU(candidate);
+               List<String> clazzes = ClazzFinder.getClazzes(cu);
+               if (clazzes.contains(te.getPackagelessClazz())) {
+                  clazzFile = candidate;
+               }
+            }
+         }
+      }
+      return clazzFile;
+   }
+
+   public CompilationUnit getCU(File clazzFile) throws FileNotFoundException {
+      CompilationUnit cu = loadedUnits.get(clazzFile);
+      if (cu == null) {
+         LOG.debug("CU {} not imported yet", clazzFile);
+         cu = FileComparisonUtil.parse(clazzFile);
+         loadedUnits.put(clazzFile, cu);
+      }
+      return cu;
+   }
+
    public List<Content> getExpandedTrace() {
       return TraceStateTester.expandContentTrace(seq.getUncompressedTrace(), seq.getRules());
    }

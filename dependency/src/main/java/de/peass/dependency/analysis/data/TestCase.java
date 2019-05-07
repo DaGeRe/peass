@@ -12,7 +12,7 @@ import de.dagere.kopeme.generated.Kopemedata.Testcases;
  * @author reichelt
  *
  */
-public class TestCase {
+public class TestCase implements Comparable<TestCase>{
    private final String module;
    private final String clazz;
    private final String method;
@@ -126,6 +126,11 @@ public class TestCase {
    @JsonIgnore
    public String getShortClazz() {
       return clazz.substring(clazz.lastIndexOf('.') + 1, clazz.length());
+   }
+
+   @Override
+   public int compareTo(TestCase arg0) {
+      return toString().compareTo(arg0.toString());
    }
 
 }

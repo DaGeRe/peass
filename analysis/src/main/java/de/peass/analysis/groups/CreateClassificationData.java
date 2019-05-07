@@ -27,7 +27,7 @@ public class CreateClassificationData {
          if (!candidate.getName().endsWith(".swp") && candidate.getName().startsWith(project)) {
             try {
                final Classification foundData = FolderSearcher.MAPPER.readValue(candidate, Classification.class);
-               merged.merge(foundData);
+               merged.mergeAll(foundData);
 
             } catch (final IOException e) {
                System.out.println("File unreadable: " + candidate);
@@ -39,19 +39,52 @@ public class CreateClassificationData {
    }
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
-      final File propertyFile = new File(args[0]);
+      boolean isProperty = false;
       final File goalFile = new File(args[1]);
       final String project = goalFile.getName().substring(0, goalFile.getName().indexOf('.'));
-      createClassificationData(propertyFile, goalFile, project);
+      if (isProperty) {
+         final File propertyFile = new File(args[0]);
+         final VersionChangeProperties properties = FolderSearcher.MAPPER.readValue(propertyFile, VersionChangeProperties.class);
+         createClassificationData(properties, goalFile, project);
+      }else {
+         final File changeFile = new File(args[0]);
+         final ProjectChanges changes = FolderSearcher.MAPPER.readValue(changeFile, ProjectChanges.class);
+         createClassificationData(changes, goalFile, project);
+      }
+      
    }
    
    public static void createClassificationData(final ProjectChanges changes, final File goalFile, final String project)
          throws IOException, JsonParseException, JsonMappingException, JsonGenerationException {
-      System.out.println("Project: " + project);
-      final Classification merged = getOldData(goalFile.getParentFile(), project);
-      
-      final File moved = moveToUnnamed(goalFile);
+      final Classification manualTemplate = readCurrentData(changes, goalFile);
+      mergeOldData(goalFile, project, manualTemplate);
+   }
+   
+   public static void createClassificationData(final VersionChangeProperties properties, final File goalFile, final String project)
+         throws IOException, JsonParseException, JsonMappingException, JsonGenerationException {
+      final Classification manualTemplate = readChangesFromProperties(properties);
+      FolderSearcher.MAPPER.writeValue(new File(goalFile.getParent(), "temp.json"), manualTemplate);
+      mergeOldData(goalFile, project, manualTemplate);
+   }
 
+   public static void mergeOldData(final File goalFile, final String project, final Classification manualTemplate)
+         throws IOException, JsonGenerationException, JsonMappingException {
+      System.out.println("Project: " + project);
+      final Classification oldMergedData = getOldData(goalFile.getParentFile(), project);
+      
+      final File lastOldFile = moveToUnnamed(goalFile);
+      manualTemplate.merge(oldMergedData);
+      
+      FolderSearcher.MAPPER.writeValue(goalFile, manualTemplate);
+      
+      if (lastOldFile != null) {
+         if (FileUtils.contentEquals(lastOldFile, goalFile)) {
+            lastOldFile.delete();
+         }
+      }
+   }
+
+   public static Classification readCurrentData(final ProjectChanges changes, final File goalFile) throws IOException, JsonGenerationException, JsonMappingException {
       final Classification manualTemplate = new Classification();
       
       changes.executeProcessor((final String version, final String testcase, final Change change) -> {
@@ -61,27 +94,12 @@ public class CreateClassificationData {
       });
       
       FolderSearcher.MAPPER.writeValue(new File(goalFile.getParent(), "temp.json"), manualTemplate);
-      
-      manualTemplate.merge(merged);
-      
-      FolderSearcher.MAPPER.writeValue(goalFile, manualTemplate);
-      
-      if (moved != null) {
-         if (FileUtils.contentEquals(moved, goalFile)) {
-            moved.delete();
-         }
-      }
+      return manualTemplate;
    }
 
-   public static void createClassificationData(final File propertyFile, final File goalFile, final String project)
-         throws IOException, JsonParseException, JsonMappingException, JsonGenerationException {
-      System.out.println("Project: " + project);
-      final Classification merged = getOldData(goalFile.getParentFile(), project);
-      
-      final File moved = moveToUnnamed(goalFile);
+   
 
-      final VersionChangeProperties properties = FolderSearcher.MAPPER.readValue(propertyFile, VersionChangeProperties.class);
-
+   public static Classification readChangesFromProperties(final VersionChangeProperties properties) throws IOException, JsonParseException, JsonMappingException {
       final Classification manualTemplate = new Classification();
       
       properties.executeProcessor((version, test, testcaseProperties, versionProperties) -> {
@@ -93,17 +111,7 @@ public class CreateClassificationData {
             classification.setFunctionalChange(false);
          }
       });
-      FolderSearcher.MAPPER.writeValue(new File(goalFile.getParent(), "temp.json"), manualTemplate);
-      
-      manualTemplate.merge(merged);
-      
-      FolderSearcher.MAPPER.writeValue(goalFile, manualTemplate);
-      
-      if (moved != null) {
-         if (FileUtils.contentEquals(moved, goalFile)) {
-            moved.delete();
-         }
-      }
+      return manualTemplate;
    }
 
    static File moveToUnnamed(final File goalFile) {

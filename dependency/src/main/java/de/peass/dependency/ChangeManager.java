@@ -1,8 +1,10 @@
 package de.peass.dependency;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -17,10 +19,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.github.javaparser.ParseException;
 
-import de.peass.dependency.analysis.FileComparisonUtil;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.ClazzChangeData;
 import de.peass.dependency.analysis.data.VersionDiff;
+import de.peass.dependency.changesreading.ClazzChangeData;
+import de.peass.dependency.changesreading.FileComparisonUtil;
 import de.peass.dependency.execution.MavenPomUtil;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
@@ -69,6 +71,7 @@ public class ChangeManager {
 
    public void saveOldClasses() {
       try {
+         LOG.debug("Saving old classes");
          if (folders.getOldSources().exists()) {
             FileUtils.deleteDirectory(folders.getOldSources());
          }
@@ -76,9 +79,8 @@ public class ChangeManager {
          for (final File module : MavenPomUtil.getGenericModules(folders.getProjectFolder())) {
             saveModule(module);
          }
-      } catch (final IOException e) {
-         e.printStackTrace();
-      } catch (final XmlPullParserException e) {
+      } catch (final IOException | XmlPullParserException e) {
+         LOG.debug("Could not save (all) old files");
          e.printStackTrace();
       }
    }
@@ -91,7 +93,16 @@ public class ChangeManager {
       } else {
          destModuleDir = new File(folders.getOldSources(), "src");
       }
-      FileUtils.copyDirectory(new File(module, "src"), destModuleDir);
+      final File srcDir = new File(module, "src");
+      LOG.debug("Copying from {} to {}", srcDir.getAbsolutePath(), destModuleDir.getAbsolutePath());
+//      Files.copy(srcDir.toPath(), destModuleDir.toPath());
+       FileUtils.copyDirectory(srcDir, destModuleDir, new FileFilter() {
+         
+         @Override
+         public boolean accept(File pathname) {
+            return pathname.canRead() && pathname.canWrite();
+         }
+      });
    }
 
    public Map<ChangedEntity, ClazzChangeData> getChanges(final String version1, final String version2) {
@@ -130,14 +141,25 @@ public class ChangeManager {
          if (folders.getOldSources().exists()) {
             for (final Iterator<ChangedEntity> clazzIterator = changedClasses.iterator(); clazzIterator.hasNext();) {
                final ChangedEntity clazz = clazzIterator.next();
-               ClazzChangeData changeData = new ClazzChangeData(clazz);
+               final ClazzChangeData changeData = new ClazzChangeData(clazz);
                try {
                   final File newFile = ClazzFinder.getSourceFile(folders.getProjectFolder(), clazz);
                   final File oldFile = ClazzFinder.getSourceFile(folders.getOldSources(), clazz);
                   LOG.info("Vergleiche {}", newFile, oldFile);
                   if (newFile != null && newFile.exists() && oldFile != null) {
                      FileComparisonUtil.getChangedMethods(newFile, oldFile, changeData);
-                     if (!changeData.isChange()) {
+                     boolean isImportChange = false;
+                     for (ChangedEntity entity : changeData.getImportChanges()) {
+                        final File entityFile = ClazzFinder.getSourceFile(folders.getProjectFolder(), entity);
+                        if (entityFile != null && entityFile.exists()) {
+                           isImportChange = true;
+                           changeData.setChange(true);
+                           changeData.setOnlyMethodChange(false);
+                           changeData.addClazzChange(clazz);
+                        }
+                     }
+                     
+                     if (!changeData.isChange() && !isImportChange) {
                         clazzIterator.remove();
                         LOG.debug("Dateien gleich: {}", clazz);
                      } else {

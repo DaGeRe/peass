@@ -31,9 +31,9 @@ import org.junit.Test;
 
 import com.github.javaparser.ParseException;
 
-import de.peass.dependency.analysis.FileComparisonUtil;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.ClazzChangeData;
+import de.peass.dependency.changesreading.ClazzChangeData;
+import de.peass.dependency.changesreading.FileComparisonUtil;
 
 /**
  * Tests whether the class comparison works for the given files, i.e. returns whether the class and its method have changed correct.

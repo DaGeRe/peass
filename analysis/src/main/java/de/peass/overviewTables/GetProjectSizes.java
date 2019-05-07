@@ -1,4 +1,4 @@
-package de.peass;
+package de.peass.overviewTables;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,12 +20,22 @@ import de.peran.analysis.helper.all.CleanAll;
  */
 public class GetProjectSizes {
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
+      
+      File dependencyFolder;
+      if (System.getenv(Constants.PEASS_REPOS) != null) {
+         final String repofolder = System.getenv(Constants.PEASS_REPOS);
+         final File folder = new File(repofolder);
+         dependencyFolder = new File(folder, "dependencies-final");
+      }else {
+         dependencyFolder = new File(CleanAll.defaultDependencyFolder);
+      }
+      
       System.out.println("Projekt & Versionen & Analysierbar & Geändert & Selektiert & Tests\\\\ \\hline");
       for (final String project: CleanAll.allProjects) {
          final File projectFolder = new File("../../projekte/" + project);
          final int commits = GitUtils.getCommits(projectFolder).size();
          
-         final File executionFile = new File("/home/reichelt/daten3/diss/repos/dependencies-final", "execute_" + project+".json");
+         final File executionFile = new File(dependencyFolder, "execute_" + project+".json");
          
          int analyzable = 0;
          
@@ -39,8 +49,8 @@ public class GetProjectSizes {
             }
          }
          
-         final File nonRunning = new File("/home/reichelt/daten3/diss/repos/dependencies-final", "nonRunning_" + project+".json");
-         final File nonChanges = new File("/home/reichelt/daten3/diss/repos/dependencies-final", "nonChanges_" + project+".json");
+         final File nonRunning = new File(dependencyFolder, "nonRunning_" + project+".json");
+         final File nonChanges = new File(dependencyFolder, "nonChanges_" + project+".json");
          
          int changes = 0; 
          if (nonRunning.exists()) {

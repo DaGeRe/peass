@@ -1,6 +1,7 @@
 package de.peass.dependencyprocessors;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -18,11 +19,13 @@ import org.apache.logging.log4j.Logger;
 
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.persistence.Dependencies;
+import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.InitialVersion;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.traces.ViewGenerator;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.OptionConstants;
+import de.peass.utils.TestLoadUtil;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 
@@ -64,9 +67,10 @@ public abstract class VersionProcessor {
    }
 
    public VersionProcessor(final String[] args) throws ParseException, JAXBException {
-      final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.DEPENDENCYFILE, OptionConstants.WARMUP, OptionConstants.ITERATIONS,
+      final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.DEPENDENCYFILE,
+            OptionConstants.WARMUP, OptionConstants.ITERATIONS,
             OptionConstants.VMS,
-            OptionConstants.STARTVERSION, OptionConstants.ENDVERSION,
+            OptionConstants.STARTVERSION, OptionConstants.ENDVERSION, OptionConstants.VERSION,
             OptionConstants.EXECUTIONFILE, OptionConstants.REPETITIONS, OptionConstants.DURATION,
             OptionConstants.CHANGEFILE, OptionConstants.TEST, OptionConstants.USEKIEKER, OptionConstants.THREADS,
             OptionConstants.TIMEOUT, OptionConstants.OUT);
@@ -74,8 +78,22 @@ public abstract class VersionProcessor {
 
       line = parser.parse(options, args);
 
-      final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
-      dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+      if (line.hasOption(OptionConstants.DEPENDENCYFILE.getName())) {
+         final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
+         dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+      } else {
+         try {
+            ExecutionData changedTests = TestLoadUtil.loadChangedTests(line);
+            if (changedTests != null) {
+               dependencies = new Dependencies(changedTests);
+            } else {
+               throw new RuntimeException("Dependencyfile and executionfile not defined - one needs to be defined!");
+            }
+         } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!", e);
+         }
+      }
 
       final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
       this.folders = new PeASSFolders(projectFolder);
@@ -83,8 +101,14 @@ public abstract class VersionProcessor {
          GitUtils.downloadProject(dependencies.getUrl(), projectFolder);
       }
 
-      startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName(), null);
-      endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName(), null);
+      if (line.hasOption(OptionConstants.VERSION.getName())) {
+         startversion = line.getOptionValue(OptionConstants.VERSION.getName(), null);
+         endversion = line.getOptionValue(OptionConstants.VERSION.getName(), null);
+      } else {
+         startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName(), null);
+         endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName(), null);
+      }
+
       if (startversion != null || endversion != null) {
          LOG.info("Version: " + startversion + " - " + endversion);
       }
@@ -97,6 +121,7 @@ public abstract class VersionProcessor {
    }
 
    public void processCommandline() throws ParseException, JAXBException {
+      LOG.debug("Processing initial");
       processInitialVersion(dependencies.getInitialversion());
 
       if (threads != 1) {
@@ -106,10 +131,10 @@ public abstract class VersionProcessor {
             for (final Map.Entry<String, Version> version : dependencies.getVersions().entrySet()) {
                generator.processVersion(version.getKey(), version.getValue(), service);
             }
-         }else {
+         } else {
             throw new RuntimeException("Parallel processing is not possible or implemented; do not set threads!");
          }
-         
+
          service.shutdown();
          try {
             service.awaitTermination(Long.MAX_VALUE, TimeUnit.HOURS);
@@ -119,10 +144,11 @@ public abstract class VersionProcessor {
 
       } else {
          for (final Map.Entry<String, Version> version : dependencies.getVersions().entrySet()) {
+            LOG.debug("Processing {}", version);
             processVersion(version.getKey(), version.getValue());
          }
       }
-
+      postEvaluate();
    }
 
    protected void processInitialVersion(final InitialVersion version) {
@@ -130,6 +156,10 @@ public abstract class VersionProcessor {
    }
 
    protected abstract void processVersion(String key, Version version);
+
+   protected void postEvaluate() {
+
+   }
 
    protected CommandLine getLine() {
       return line;

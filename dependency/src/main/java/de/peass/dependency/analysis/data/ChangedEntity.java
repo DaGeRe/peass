@@ -76,7 +76,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
 
    @JsonIgnore
    public String getPackage() {
-      final String result = javaClazzName.substring(0, javaClazzName.lastIndexOf('.'));
+      final String result = javaClazzName.contains(".") ? javaClazzName.substring(0, javaClazzName.lastIndexOf('.')) : "";
       return result;
    }
 

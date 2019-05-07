@@ -12,8 +12,15 @@ public class Change {
    private double oldTime;
    private double changePercent;
    private double tvalue;
-
+   private long vms;
    
+   public long getVms() {
+      return vms;
+   }
+
+   public void setVms(long vms) {
+      this.vms = vms;
+   }
 
    public String getDiff() {
       return diff;

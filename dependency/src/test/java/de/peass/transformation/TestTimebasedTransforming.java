@@ -24,7 +24,7 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
-import de.peass.dependency.analysis.FileComparisonUtil;
+import de.peass.dependency.changesreading.FileComparisonUtil;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.testtransformation.ParseUtil;
 import de.peass.testtransformation.TimeBasedTestTransformer;

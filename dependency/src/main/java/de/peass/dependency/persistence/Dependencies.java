@@ -5,12 +5,35 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.analysis.data.TestSet;
+
 public class Dependencies {
-   
+
    private String url;
    private boolean isAndroid = false;
    private InitialVersion initialversion = new InitialVersion();
    private Map<String, Version> versions = new LinkedHashMap<>();
+
+   public Dependencies() {
+
+   }
+
+   public Dependencies(ExecutionData executiondata) {
+      setUrl(executiondata.getUrl());
+      String first = executiondata.getVersions().values().iterator().next().getPredecessor();
+      initialversion.setVersion(first);
+      for (Map.Entry<String, TestSet> version : executiondata.getVersions().entrySet()) {
+         Version version2 = new Version();
+         version2.setPredecessor(version.getValue().getPredecessor());
+         version2.getChangedClazzes().put(new ChangedEntity("unknown", ""), version.getValue());
+         versions.put(version.getKey(), version2);
+         for (TestCase test : version.getValue().getTests()) {
+            initialversion.addDependency(new ChangedEntity(test.getClazz(), "", test.getMethod()), new ChangedEntity(test.getClazz(), ""));
+         }
+      }
+   }
 
    public String getUrl() {
       return url;
@@ -65,7 +88,7 @@ public class Dependencies {
 
    @JsonIgnore
    public String getName() {
-      String name = url.substring(url.lastIndexOf('/')+1, url.lastIndexOf('.'));
+      String name = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
       return name;
    }
 

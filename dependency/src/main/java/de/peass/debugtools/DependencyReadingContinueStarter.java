@@ -111,7 +111,7 @@ public class DependencyReadingContinueStarter {
 		if (vcs.equals(VersionControlSystem.GIT)) {
 			final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(line, projectFolder);
 			commits.add(0, new GitCommit(previousVersion, "", "", ""));
-			VersionComparator.setVersions(commits);
+//			VersionComparator.setVersions(commits);
 			final GitCommit previous = new GitCommit(previousVersion, "", "", "");
 			final VersionIterator iterator = new VersionIteratorGit(projectFolder, commits, previous);
 			reader = new DependencyReader(projectFolder, dependencyFile, dependencies.getUrl(), iterator, dependencies, timeout);

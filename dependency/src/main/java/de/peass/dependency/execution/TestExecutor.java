@@ -18,16 +18,17 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.kopeme.BuildtoolProjectNameReader;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.TestcaseType;
+import de.dagere.kopeme.parsing.BuildtoolProjectNameReader;
 import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.testtransformation.JUnitTestShortener;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.StreamGobbler;
 import de.peass.vcs.GitUtils;
@@ -124,101 +125,22 @@ public abstract class TestExecutor {
    protected abstract void runTest(File module, final File logFile, final String testname, final long timeout);
 
    void runMethod(final File logFolder, final ChangedEntity clazz, final File module, final String method, final long timeout) {
-      testTransformer.shortenClazz(module, clazz, method);
+      JUnitTestShortener shortener = new JUnitTestShortener(testTransformer);
+      shortener.shortenClazz(module, clazz, method);
 
-      // final ChangedEntity generatedClazz = new ChangedEntity(clazz.getPackage() + "." + GENERATED_TEST_NAME, "");
-      // final File generatedClazzFile = testTransformer.generateClazz(module, generatedClazz, clazz, method);
-      //
       final File logFile = new File(logFolder, "log_" + clazz.getJavaClazzName() + File.separator + method + ".txt");
       if (!logFile.getParentFile().exists()) {
          logFile.getParentFile().mkdir();
       }
-      runTest(module, logFile, clazz.getJavaClazzName() + "#" + method, timeout);
-      
-      testTransformer.resetShortenedFile();
-      
-//      GitUtils.reset(folders.getProjectFolder(), calleeClazzFile);
-      
-      //
-      // renameGeneratedData(module, generatedClazz, clazz, method);
-      // generatedClazzFile.delete();
-   }
-
-   void renameGeneratedData(final File module, final ChangedEntity generatedClazz, final ChangedEntity clazz, final String method) {
-      final BuildtoolProjectNameReader reader = new BuildtoolProjectNameReader();
-      final File assumedResultFolder;
-      final File dest;
-      if (reader.foundPomXml(module, 1)) {
-         // final ProjectInfo info = reader.getProjectInfo();
-         final File projectFolder = new File(folders.getTempMeasurementFolder(), reader.getGroupId() + File.separator + reader.getArtifactId());
-         assumedResultFolder = new File(projectFolder, generatedClazz.getJavaClazzName());
-         dest = new File(projectFolder, clazz.getClazz());
-      } else {
-         assumedResultFolder = new File(folders.getTempMeasurementFolder(), clazz.getModule() + File.separator + generatedClazz.getJavaClazzName());
-         dest = new File(folders.getTempMeasurementFolder(), clazz.getModule() + File.separator + clazz.getClazz());
-      }
-
-      if (assumedResultFolder.exists()) {
-         renameFromFolder(clazz, method, assumedResultFolder, dest);
-      } else {
-         LOG.error("Problem: {} does not exist", assumedResultFolder.getAbsolutePath());
-      }
-   }
-
-   void renameFromFolder(final ChangedEntity clazz, final String method, final File assumedResultFolder, final File dest) {
-      LOG.debug("Renaming: {}", assumedResultFolder);
-
-      dest.getParentFile().mkdirs();
-      LOG.debug("Dest: {}", dest.getAbsolutePath());
-      if (!dest.exists() && assumedResultFolder.renameTo(dest)) {
-         final File resultFile = new File(dest, method + ".xml");
-         LOG.debug(resultFile.exists());
-         if (resultFile.exists()) {
-            renameFileContents(clazz, resultFile);
-         } else {
-            LOG.error("Resultfile did not exist: {}", resultFile.getAbsolutePath());
-         }
-      } else {
-         final File resultFile = new File(assumedResultFolder, method + ".xml");
-         if (resultFile.exists()) {
-            final File destResultFile = new File(dest, method + ".xml");
-            LOG.debug("Dest: {}", destResultFile.getAbsolutePath());
-            if (!destResultFile.exists()) {
-               if (resultFile.renameTo(destResultFile)) {
-                  renameFileContents(clazz, destResultFile);
-                  for (final File otherFile : assumedResultFolder.listFiles()) {
-                     if (otherFile.getName().matches("[0-9]+")) {
-                        final File destKiekerFile = new File(dest, otherFile.getName());
-                        otherFile.renameTo(destKiekerFile);
-                     }
-                  }
-               } else {
-                  throw new RuntimeException("Fatal error: Renaiming failed!");
-               }
-            } else {
-               LOG.error("Resultfile {} does not exist", resultFile.getAbsolutePath());
-            }
-         } else {
-            LOG.error("Old resultfile was not cleaned: {}", dest.getAbsolutePath());
-         }
-      }
-   }
-
-   void renameFileContents(final ChangedEntity clazz, final File resultFile) {
       try {
-         final Kopemedata data = new XMLDataLoader(resultFile).getFullData();
-         if (!data.getTestcases().getClazz().equals(clazz.getPackage() + "." + GENERATED_TEST_NAME)) {
-            throw new RuntimeException("Fatal error:  Wrong class executed: " + data.getTestcases().getClazz());
-         }
-         data.getTestcases().setClazz(clazz.getClazz());
-         final List<TestcaseType> testcases = data.getTestcases().getTestcase();
-         if (testcases.size() != 1) {
-            throw new RuntimeException("Fatal error: More than one testcase was executed!");
-         }
-         XMLDataStorer.storeData(resultFile, data);
-      } catch (final JAXBException e) {
+         clean(new File(logFolder, "log_" + clazz.getJavaClazzName() + File.separator + method + "_clean.txt"));
+      } catch (IOException | InterruptedException e) {
          e.printStackTrace();
       }
+      runTest(module, logFile, clazz.getJavaClazzName(), timeout);
+
+      shortener.resetShortenedFile();
+
    }
 
    public synchronized static int getProcessCount() {
@@ -343,11 +265,14 @@ public abstract class TestExecutor {
       return existingClasses;
    }
 
+   protected abstract void clean(final File logFile) throws IOException, InterruptedException;
+
    public void loadClasses() {
       existingClasses = new LinkedList<>();
       try {
          for (final File module : getModules()) {
-            existingClasses.addAll(ClazzFinder.getClasses(module));
+            List<String> currentClasses = ClazzFinder.getClasses(module);
+            existingClasses.addAll(currentClasses);
          }
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();

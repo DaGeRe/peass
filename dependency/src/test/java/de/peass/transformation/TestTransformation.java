@@ -43,7 +43,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.MemberValuePair;
 
-import de.peass.dependency.analysis.FileComparisonUtil;
+import de.peass.dependency.changesreading.FileComparisonUtil;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 /**

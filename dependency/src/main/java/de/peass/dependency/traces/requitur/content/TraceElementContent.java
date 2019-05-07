@@ -75,6 +75,11 @@ public class TraceElementContent extends Content {
 	public String getMethod() {
 		return method;
 	}
+	
+	public String getPackagelessClazz() {
+      final String simpleClazz = clazz.substring(clazz.lastIndexOf('.') + 1);
+      return simpleClazz;
+   }
 
 	public String getSimpleClazz() {
 		if (clazz.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
@@ -98,6 +103,11 @@ public class TraceElementContent extends Content {
 
    public String getOuterClass() {
       return clazz.substring(0, clazz.lastIndexOf(ChangedEntity.CLAZZ_SEPARATOR));
+   }
+
+   public String getPackage() {
+      final String result = clazz.contains(".") ? clazz.substring(0, clazz.lastIndexOf('.')) : "";
+      return result;
    }
 
 	// public String getSource() {

@@ -27,14 +27,15 @@ public class ProjectStatistics {
 
 	public void addMeasurement(final String version, final TestCase test, final double meanOld, final double meanCurrent, final double deviationOld, final double deviationCurrent, final int executions,
 			final double tvalue) {
-		final TestcaseStatistic statistic = new TestcaseStatistic(meanOld, meanCurrent, deviationOld, deviationCurrent, executions, tvalue);
+	   //TODO t-value based on count of values, not only >3.2 (>3.2 means 99% significance with more than 10 values)
+		final TestcaseStatistic statistic = new TestcaseStatistic(meanOld, meanCurrent, deviationOld, deviationCurrent, executions, tvalue, Math.abs(tvalue) > 3.2);
 		addMeasurement(version, test, statistic);
 	}
 
 	public void addMeasurement(final String version, final TestCase test, final TestcaseStatistic statistic) {
 		Map<TestCase, TestcaseStatistic> versionMap = statistics.get(version);
 		if (versionMap == null) {
-			versionMap = new HashMap<>();
+			versionMap = new TreeMap<>();
 			statistics.put(version, versionMap);
 		}
 		if (versionMap.containsKey(test)) {

@@ -145,6 +145,7 @@ public class ViewGenerator extends PairProcessor {
          }
          lastTestcaseCalls.put(testcase, version);
       }
+      LOG.debug("Testcases for {}: {}", version, tests.classCount());
       if (tests.classCount() > 0) {
          final String predecessor = getRunningPredecessor(version);
          final Runnable currentVersionAnalyser = createGeneratorRunnable(version, predecessor, tests);
@@ -156,186 +157,13 @@ public class ViewGenerator extends PairProcessor {
 
    private Runnable createGeneratorRunnable(final String version, final String predecessor, final TestSet testset) {
       LOG.info("Starting {}", version);
-      final Runnable currentVersionAnalyser = new Runnable() {
-
-         @Override
-         public void run() {
-            try {
-               final File viewResultsFolder = new File(viewFolder, "view_" + version);
-               if (!viewResultsFolder.exists()) {
-                  viewResultsFolder.mkdir();
-               }
-
-               final File diffFolder = new File(viewResultsFolder, "diffs");
-               if (!diffFolder.exists()) {
-                  diffFolder.mkdirs();
-               }
-               final File projectFolderTemp = new File(folders.getTempProjectFolder(), "" + VersionComparator.getVersionIndex(version));
-               GitUtils.clone(folders, projectFolderTemp);
-               final PeASSFolders folders = new PeASSFolders(projectFolderTemp);
-               final Map<String, List<File>> traceFileMap = new HashMap<>();
-               final boolean tracesWorked = generateTraces(folders, version, testset, predecessor, traceFileMap);
-
-               for (final TestCase testcase : testset.getTests()) {
-                  if (tracesWorked && traceFileMap.size() > 0) {
-                     LOG.debug("Generating Diff " + testcase.getClazz() + "#" + testcase.getMethod() + " " + predecessor + " .." + version + " " + traceFileMap.size());
-                     final boolean somethingChanged = generateDiffFiles(testcase, diffFolder, traceFileMap);
-
-                     if (somethingChanged) {
-                        synchronized (changedTraceMethods) {
-                           changedTraceMethods.addCall(version, predecessor, testcase);
-                        }
-                     }
-                  } else {
-                     LOG.debug("Missing: " + testcase + " Worked: " + tracesWorked);
-                  }
-               }
-
-               synchronized (changedTraceMethods) {
-                  LOG.debug("Writing");
-                  try (FileWriter fw = new FileWriter(executeFile)) {
-                     fw.write(Constants.OBJECTMAPPER.writeValueAsString(changedTraceMethods));
-                     fw.flush();
-                  } catch (final IOException e) {
-                     e.printStackTrace();
-                  }
-               }
-            } catch (final Throwable t) {
-               LOG.error("There appeared an error in {} compared to {}, Test {}", version, predecessor, testset);
-               t.printStackTrace();
-            }
-         }
-
-      };
-      return currentVersionAnalyser;
-   }
-
-   protected boolean generateTraces(final PeASSFolders folders, final String version, final TestSet testset, final String versionOld, final Map<String, List<File>> traceFileMap)
-         throws IOException, InterruptedException, com.github.javaparser.ParseException, ViewNotFoundException, XmlPullParserException {
-      boolean gotAllData = true;
-
-      final TestResultManager resultsManager = new TestResultManager(folders.getProjectFolder(), timeout);
-      for (final String githash : new String[] { versionOld, version }) {
-         LOG.debug("Checkout... {}", folders.getProjectFolder());
-         GitUtils.goToTag(githash, folders.getProjectFolder());
-
-         LOG.debug("Calling Maven-Kieker...");
-
-         resultsManager.getExecutor().loadClasses();
-         resultsManager.executeKoPeMeKiekerRun(testset, githash);
-
-         LOG.debug("Trace-Analysis..");
-
-         boolean worked = false;
-         final File xmlFileFolder = resultsManager.getXMLFileFolder(folders.getProjectFolder());
-         for (final TestCase testcase : testset.getTests()) {
-            File moduleFolder;
-            if (testcase.getModule() != null) {
-               moduleFolder = resultsManager.getXMLFileFolder(new File(folders.getProjectFolder(), testcase.getModule()));
-            } else {
-               moduleFolder = xmlFileFolder;
-            }
-            final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(viewFolder, folders, testcase, traceFileMap, version, moduleFolder,
-                  resultsManager.getExecutor().getModules());
-            final boolean workedLocal = oneViewGenerator.generateTrace(githash);
-            if (!workedLocal) {
-               LOG.error("Problem in " + testcase);
-            } else {
-               worked = true;
-            }
-         }
-
-         if (!worked) {
-            gotAllData = false;
-         }
-
-         resultsManager.deleteTempFiles();
-         for (final File moduleFolder : resultsManager.getExecutor().getModules()) {
-            final File xmlFileFolder2 = resultsManager.getXMLFileFolder(moduleFolder);
-            LOG.debug("Deleting folder: {}", xmlFileFolder2);
-            FileUtils.deleteDirectory(xmlFileFolder2);
-         }
-      }
-      LOG.debug("Finished: {} (Part-)Success: {}", version, gotAllData);
-      return gotAllData;
-   }
-
-   /**
-    * Generates a human-analysable diff-file from traces
-    * 
-    * @param testcase Name of the testcase
-    * @param diffFolder Goal-folder for the diff
-    * @param traceFileMap Map for place where traces are saved
-    * @return Whether a change happened
-    * @throws IOException If files can't be read of written
-    */
-   protected boolean generateDiffFiles(final TestCase testcase, final File diffFolder, final Map<String, List<File>> traceFileMap) throws IOException {
-      final long size = FileUtils.sizeOfDirectory(diffFolder);
-      final long sizeInMB = size / (1024 * 1024);
-      LOG.debug("Filesize: {} ({})", sizeInMB, size);
-      if (sizeInMB < 2000) {
-         final List<File> traceFiles = traceFileMap.get(testcase.toString());
-         if (traceFiles != null) {
-            LOG.debug("Trace-Files: {}", traceFiles);
-            if (traceFiles.size() > 1) {
-               // final Process checkDiff = Runtime.getRuntime()
-               // .exec("diff --ignore-all-space " + traceFiles.get(0).getAbsolutePath() + OneTraceGenerator.NOCOMMENT + " " + traceFiles.get(1).getAbsolutePath()
-               // + OneTraceGenerator.NOCOMMENT);
-               // final String isDifferent = StreamGobbler.getFullProcess(checkDiff, false);
-               final String isDifferent = GitUtils.getDiff(new File(traceFiles.get(0).getAbsolutePath() + OneTraceGenerator.NOCOMMENT), new File(traceFiles.get(1).getAbsolutePath()
-                     + OneTraceGenerator.NOCOMMENT));
-               System.out.println(isDifferent);
-               if (isDifferent.length() > 0) {
-                  generateDiffFile(new File(diffFolder, testcase.getShortClazz() + "#" + testcase.getMethod() + ".txt"), traceFiles, "");
-                  generateDiffFile(new File(diffFolder, testcase.getShortClazz() + "#" + testcase.getMethod() + OneTraceGenerator.METHOD), traceFiles, OneTraceGenerator.METHOD);
-                  generateDiffFile(new File(diffFolder, testcase.getShortClazz() + "#" + testcase.getMethod() + OneTraceGenerator.NOCOMMENT), traceFiles,
-                        OneTraceGenerator.NOCOMMENT);
-                  generateDiffFile(new File(diffFolder, testcase.getShortClazz() + "#" + testcase.getMethod() + OneTraceGenerator.METHOD_EXPANDED), traceFiles,
-                        OneTraceGenerator.METHOD_EXPANDED);
-                  return true;
-               } else {
-                  LOG.info("No change; traces equal.");
-                  return false;
-               }
-            } else {
-               LOG.info("Traces not existing: {}", testcase);
-               return false;
-            }
-         } else {
-            LOG.info("Traces not existing: {}", testcase);
-            return false;
-         }
-
-      } else {
-         LOG.info("Tracefolder too big: {}", sizeInMB);
-         return false;
-      }
-   }
-
-   private void generateDiffFile(final File goalFile, final List<File> traceFiles, final String appendix) throws IOException {
-      final ProcessBuilder processBuilder2 = new ProcessBuilder("diff",
-            "--minimal", "--ignore-all-space", "-y", "-W", "200",
-            traceFiles.get(0).getAbsolutePath() + appendix,
-            traceFiles.get(1).getAbsolutePath() + appendix);
-      final Process p2 = processBuilder2.start();
-      final String result2 = StreamGobbler.getFullProcess(p2, false);
-      try (final FileWriter fw = new FileWriter(goalFile)) {
-         fw.write(result2);
-      }
+      return new ViewGeneratorThread(version, predecessor, folders, 
+            viewFolder, executeFile, 
+            testset, changedTraceMethods, timeout);
    }
 
    public File getExecuteFile() {
       return executeFile;
    }
    
-   public static void main(final String[] args) throws IOException, InterruptedException, com.github.javaparser.ParseException, ViewNotFoundException, XmlPullParserException {
-      final File projectFolder = new File("../../projekte/commons-io");
-      final File viewFolder2 = new File("temp_views");
-      viewFolder2.mkdirs();
-      final ViewGenerator generator = new ViewGenerator(projectFolder, new Dependencies(), new File("temp.json"), viewFolder2, 1, 3);
-      
-      final TestSet testset = new TestSet();
-      testset.addTest(new TestCase("org.apache.commons.io.DirectoryWalkerTestCase", "testFilterDirAndFile1", ""));
-      generator.generateTraces(new PeASSFolders(projectFolder), "cecd08", testset, "d4c5044c7b7697d944a444470a296dcd15911595", new HashMap<>());
-   }
 }

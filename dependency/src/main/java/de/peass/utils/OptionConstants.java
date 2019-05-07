@@ -28,6 +28,7 @@ public enum OptionConstants {
 
 	STARTVERSION("startversion", "Version, where the process should be started", false),
 	ENDVERSION("endversion", "Version, where the process should be finished", false),
+	VERSION("version", "Only version execute", false),
 	FOLDER("folder", "Folder of the project that should be analyzed", true),
 	ITERATIONS("iterations", "Iterationen, wie oft jeder Testfall ausgeführt werden soll", false),
 	WARMUP("warmup", "Iterationen, wie oft jeder Testfall als Aufwärm-Ausführung ausgeführt werden soll", false),

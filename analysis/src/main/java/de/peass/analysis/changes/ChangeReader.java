@@ -29,11 +29,18 @@ import de.peran.measurement.analysis.ProjectStatistics;
 import de.peran.measurement.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peran.measurement.analysis.statistics.Relation;
 
+/**
+ * Reads changes of fulldata - data need to be cleaned!
+ * @author reichelt
+ *
+ */
 public class ChangeReader {
    
    private static final Logger LOG = LogManager.getLogger(ChangeReader.class);
 
    private int folderMeasurements = 0;
+   int measurements = 0;
+   int testcases = 0;
 
    private final VersionData allData = new VersionData();
    // private static VersionKnowledge oldKnowledge;
@@ -50,22 +57,20 @@ public class ChangeReader {
    public ProjectChanges readFile(final File measurementFolder) throws JAXBException {
       final ProjectChanges changes = new ProjectChanges();
       final ProjectStatistics info = new ProjectStatistics();
-      int measurements = 0;
-      int testcases = 0;
       LOG.debug("Reading from " + measurementFolder.getAbsolutePath());
       for (final File file : measurementFolder.listFiles()) {
          if (file.getName().endsWith(".xml")) {
-            final Kopemedata data = new XMLDataLoader(file).getFullData();
-            for (final TestcaseType testcaseMethod : data.getTestcases().getTestcase()) {
-               System.out.println(file.getAbsolutePath());
-               readTestcase(measurementFolder.getName(), data, testcaseMethod, changes, info);
-               measurements += testcaseMethod.getDatacollector().get(0).getChunk().size();
-               testcases++;
-            }
+            readFile(measurementFolder, changes, info, file);
          }
       }
       changes.setTestcaseCount(measurements);
       changes.setVersionCount(info.getStatistics().size());
+      writeResults(measurementFolder, changes, info);
+      System.out.println("Measurements: " + folderMeasurements + " Tests: " + testcases + " (last read: " + measurementFolder + ")");
+      return changes;
+   }
+
+   private void writeResults(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info) {
       final String executorName = measurementFolder.getName().substring(measurementFolder.getName().lastIndexOf(File.separator) + 1);
       final File resultfile = new File(AnalysisUtil.getProjectResultFolder(), executorName + ".json");
       final File statisticFile = new File(statisticsFolder, executorName + ".json");
@@ -75,13 +80,22 @@ public class ChangeReader {
       } catch (final IOException e) {
          e.printStackTrace();
       }
-      System.out.println("Measurements: " + folderMeasurements + " Tests: " + testcases + " (last read: " + measurementFolder + ")");
-      return changes;
+   }
+
+   private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File file) throws JAXBException {
+      final Kopemedata data = new XMLDataLoader(file).getFullData();
+      for (final TestcaseType testcaseMethod : data.getTestcases().getTestcase()) {
+         System.out.println(file.getAbsolutePath());
+         readTestcase(measurementFolder.getName(), data, testcaseMethod, changes, info);
+         measurements += testcaseMethod.getDatacollector().get(0).getChunk().size();
+         testcases++;
+      }
    }
 
    private int readTestcase(final String fileName, final Kopemedata data, final TestcaseType testcaseMethod, final ProjectChanges changeKnowledge,
          final ProjectStatistics info) {
       for (final Chunk chunk : testcaseMethod.getDatacollector().get(0).getChunk()) {
+         
          folderMeasurements++;
          final String[] versions = new String[2];
          final Iterator<Result> iterator = chunk.getResult().iterator();
@@ -109,32 +123,40 @@ public class ChangeReader {
                   current.add(result);
                }
             }
-            if (desc1.getN() > 3) {
-               final TestcaseStatistic statistic = new TestcaseStatistic(desc1.getMean(), desc2.getMean(),
-                     desc1.getStandardDeviation() / desc1.getMean(), desc2.getStandardDeviation() / desc2.getMean(), desc1.getN(),
-                     desc1.getN() > 2 ? TestUtils.t(desc1, desc2) : 0);
-               statistic.setPredecessor(versions[0]);
-               // if (! (statistic.getTvalue() == Double.NaN)){
-               final boolean isTChange = new TTest().tTest(desc1, desc2, 0.01);
-               final Relation confidenceResult = ConfidenceIntervalInterpretion.compare(previous, current);
-               final TestCase testcase = new TestCase(data.getTestcases().getClazz(), testcaseMethod.getName());
-               allData.addStatistic(versions[1], testcase, fileName, statistic,
-                     isTChange,
-                     !confidenceResult.equals(Relation.EQUAL));
-               if (isTChange || !confidenceResult.equals(Relation.EQUAL)) {
-                  final double diff = (((desc1.getMean() - desc2.getMean()) * 10000) / desc1.getMean()) / 100;
-                  changeKnowledge.addChange(testcase, versions[1],
-                        confidenceResult,
-                        isTChange ? Relation.GREATER_THAN : Relation.EQUAL,
-                        desc1.getMean(), diff, statistic.getTvalue());
-               }
-               info.addMeasurement(versions[1], testcase, statistic);
+            if (desc1.getN() > 3 && desc2.getN() > 3) {
+               getIsChange(fileName, data, testcaseMethod, changeKnowledge, info, versions, desc1, desc2, previous, current);
             }else {
                System.out.println("Too few measurements: " + desc1.getN() + " " + versions[0] + " " + versions[1] );
             }
          }
       }
       return folderMeasurements;
+   }
+
+   public void getIsChange(final String fileName, final Kopemedata data, final TestcaseType testcaseMethod, final ProjectChanges changeKnowledge, final ProjectStatistics info,
+         final String[] versions, final DescriptiveStatistics desc1, final DescriptiveStatistics desc2, final List<Result> previous, final List<Result> current) {
+      boolean isChange = TestUtils.tTest(desc1, desc2, 0.005);
+      System.out.println(data.getTestcases().getClazz());
+      final TestcaseStatistic statistic = new TestcaseStatistic(desc1.getMean(), desc2.getMean(),
+            desc1.getStandardDeviation() / desc1.getMean(), desc2.getStandardDeviation() / desc2.getMean(), desc1.getN(),
+            desc1.getN() > 2 ? TestUtils.t(desc1, desc2) : 0, isChange);
+      statistic.setPredecessor(versions[0]);
+      // if (! (statistic.getTvalue() == Double.NaN)){
+      final boolean isTChange = new TTest().tTest(desc1, desc2, 0.01);
+      final Relation confidenceResult = ConfidenceIntervalInterpretion.compare(previous, current);
+      final TestCase testcase = new TestCase(data.getTestcases().getClazz(), testcaseMethod.getName());
+      allData.addStatistic(versions[1], testcase, fileName, statistic,
+            isTChange,
+            !confidenceResult.equals(Relation.EQUAL));
+      if (isTChange) {
+         final double diff = (((desc1.getMean() - desc2.getMean()) * 10000) / desc1.getMean()) / 100;
+         changeKnowledge.addChange(testcase, versions[1],
+               confidenceResult,
+               isTChange ? Relation.GREATER_THAN : Relation.EQUAL,
+               desc1.getMean(), diff, statistic.getTvalue(), 
+               statistic.getExecutions());
+      }
+      info.addMeasurement(versions[1], testcase, statistic);
    }
 
    public VersionData getAllData() {

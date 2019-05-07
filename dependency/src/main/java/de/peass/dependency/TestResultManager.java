@@ -32,8 +32,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.kopeme.BuildtoolProjectNameReader;
 import de.dagere.kopeme.datacollection.DataCollectorList;
+import de.dagere.kopeme.parsing.BuildtoolProjectNameReader;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
@@ -55,7 +55,7 @@ public class TestResultManager {
    protected final TestExecutor executor;
    protected final PeASSFolders folders;
    protected final JUnitTestTransformer testTransformer;
-   
+
    public TestResultManager(final File projectFolder, final long timeout) {
       super();
       folders = new PeASSFolders(projectFolder);
@@ -95,7 +95,7 @@ public class TestResultManager {
       testTransformer.determineVersions(executor.getModules());
       for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {
          final File moduleFolder = new File(folders.getProjectFolder(), clazzname.getModule());
-         
+
          final List<String> methods = testTransformer.getTests(moduleFolder, clazzname);
          for (final String method : methods) {
             tests.addTest(clazzname, method);
@@ -146,10 +146,11 @@ public class TestResultManager {
 
    /**
     * Deletes files which are bigger than sizeInMb Mb, since they pollute the disc space and will not be analyzable
+    * 
     * @param folderToClean
     */
    void cleanAboveSize(final File folderToClean, final int sizeInMb, final String ending) {
-      for (final File logFile : FileUtils.listFiles(folderToClean, new WildcardFileFilter("*."+ending), TrueFileFilter.INSTANCE)) {
+      for (final File logFile : FileUtils.listFiles(folderToClean, new WildcardFileFilter("*." + ending), TrueFileFilter.INSTANCE)) {
          final long size = logFile.length() / (1024 * sizeInMb);
          LOG.debug("File: {} Size: {}", logFile, size);
          if (size > 1024) {

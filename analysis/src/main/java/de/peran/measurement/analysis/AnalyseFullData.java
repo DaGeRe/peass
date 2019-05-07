@@ -28,7 +28,7 @@ import de.peran.Environment;
 import de.peran.FolderSearcher;
 import de.peran.measurement.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peran.measurement.analysis.statistics.MeanCoVData;
-import de.peran.measurement.analysis.statistics.MeanHistData;
+import de.peran.measurement.analysis.statistics.MeanHistogramData;
 import de.peran.measurement.analysis.statistics.Relation;
 import de.peran.statistics.ConfidenceInterval;
 
@@ -102,7 +102,9 @@ public class AnalyseFullData extends DataAnalyser {
 
             final double diffPercent = ((double) teststatistic.getDiff()) / 100;
             knowledge.addChange(measurementEntry.getTestCase(), version,
-                  teststatistic.getConfidenceResult(), tRelation, teststatistic.getPreviousStatistic().getMean(), diffPercent, teststatistic.getTValue());
+                  teststatistic.getConfidenceResult(), tRelation, teststatistic.getPreviousStatistic().getMean(), 
+                  diffPercent, teststatistic.getTValue(),
+                  teststatistic.getCurrentStatistic().getN());
             knowledge.setVersionCount(versions.size());
             knowledge.setTestcaseCount(testcases);
 
@@ -127,14 +129,16 @@ public class AnalyseFullData extends DataAnalyser {
    }
 
    private File generatePlots(final TestData measurementEntry, final Entry<String, EvaluationPair> entry, final boolean change) {
-      final List<Result> currentValues = ConfidenceInterval.cutValuesMiddle(entry.getValue().getCurrent());
-      final List<Result> previousValues = ConfidenceInterval.cutValuesMiddle(entry.getValue().getPrevius());
+//      final List<Result> currentValues = ConfidenceInterval.getWarmupData(entry.getValue().getCurrent());
+//      final List<Result> previousValues = ConfidenceInterval.getWarmupData(entry.getValue().getPrevius());
+      final List<Result> currentValues = entry.getValue().getCurrent();
+      final List<Result> previousValues = entry.getValue().getPrevius();
 
       final MeanCoVData data = new MeanCoVData(measurementEntry.getTestMethod(), currentValues);
       final MeanCoVData dataPrev = new MeanCoVData(measurementEntry.getTestMethod(), previousValues);
 
-      final MeanHistData histData = new MeanHistData(currentValues);
-      final MeanHistData histDataPrev = new MeanHistData(previousValues);
+      final MeanHistogramData histData = new MeanHistogramData(currentValues);
+      final MeanHistogramData histDataPrev = new MeanHistogramData(previousValues);
 
       final File folder = new File(AnalyseOneTest.RESULTFOLDER,
             "graphs" + File.separator + entry.getKey() + File.separator + measurementEntry.getTestClass() + File.separator + measurementEntry.getTestMethod());
@@ -152,60 +156,66 @@ public class AnalyseFullData extends DataAnalyser {
       }
 
       try {
-         histData.printHistData(new File(folder, "current_hist.csv"));
-         histDataPrev.printHistData(new File(folder, "prev_hist.csv"));
-
-         data.printAverages(new File(folder, "current.csv"));
-         dataPrev.printAverages(new File(folder, "prev.csv"));
-
-         final double binwidth = histData.getSpan() / 10;
-
-         final String init = "set datafile separator ';';set decimalsign locale; set decimalsign \",\";set term png;";
-
-         executeGnuplot(folder, "gnuplot", "-e",
-               init + "set output 'graph.png'; plot 'current.csv' u ($0*" + data.getAvgCount() + "):1, 'prev.csv' u ($0*" + data.getAvgCount() + "):1");
-         executeGnuplot(folder, "gnuplot", "-e", init
-               + "set output 'histogram.png'; binwidth=" + binwidth + "; set boxwidth binwidth;"
-               + "bin(x,width)=width*floor(x/width); plot 'current_hist.csv' using (bin($1,binwidth)):(1.0) smooth freq with boxes, 'prev_hist.csv' using (bin($1,binwidth)):(1.0) smooth freq with boxes");
-         executeGnuplot(folder, "gnuplot", "-e", init
-               + "set output 'histogram_first.png'; binwidth=" + binwidth + "; set boxwidth binwidth;"
-               + "bin(x,width)=width*floor(x/width); plot 'current_hist.csv' using (bin($1,binwidth)):(1.0) smooth freq with boxes");
-         executeGnuplot(folder, "gnuplot", "-e", init
-               + "set output 'histogram_second.png'; binwidth=" + ((histDataPrev.getSpan() / 10)) + "; set boxwidth binwidth;"
-               + "bin(x,width)=width*floor(x/width); plot 'prev_hist.csv' using (bin($1,binwidth)):(1.0) smooth freq with boxes");
-
-         final String filename = entry.getKey().substring(0, 6) + "_" + measurementEntry.getTestClass() + "." + measurementEntry.getTestMethod() + ".png";
-         final String name = entry.getKey().substring(0, 6) + "_" + measurementEntry.getTestClass() + "." + measurementEntry.getTestMethod() + "_1.png";
-         final String name2 = entry.getKey().substring(0, 6) + "_" + measurementEntry.getTestClass() + "." + measurementEntry.getTestMethod() + "_2.png";
-         if (MultimodalUtil.isRInstalled()) {
-            if (MultimodalUtil.isMultimodalSilverman(entry.getValue().getCurrent()) || MultimodalUtil.isMultimodalSilverman(entry.getValue().getPrevius())) {
-               if (change) {
-                  FileUtils.copyFile(new File(folder, "histogram.png"), new File(multmimodalChange, filename));
-                  FileUtils.copyFile(new File(folder, "histogram_first.png"), new File(multmimodalChange, name));
-                  FileUtils.copyFile(new File(folder, "histogram_second.png"), new File(multmimodalChange, name2));
-               } else {
-                  FileUtils.copyFile(new File(folder, "histogram.png"), new File(multmimodal, filename));
-                  FileUtils.copyFile(new File(folder, "histogram_first.png"), new File(multmimodal, name));
-                  FileUtils.copyFile(new File(folder, "histogram_second.png"), new File(multmimodal, name2));
-               }
-            } else {
-               if (change) {
-                  FileUtils.copyFile(new File(folder, "histogram.png"), new File(unimodalChange, filename));
-                  FileUtils.copyFile(new File(folder, "histogram_first.png"), new File(unimodalChange, name));
-                  FileUtils.copyFile(new File(folder, "histogram_second.png"), new File(unimodalChange, name2));
-               } else {
-                  FileUtils.copyFile(new File(folder, "histogram.png"), new File(unimodal, filename));
-                  FileUtils.copyFile(new File(folder, "histogram_first.png"), new File(unimodal, name));
-                  FileUtils.copyFile(new File(folder, "histogram_second.png"), new File(unimodal, name2));
-               }
-            }
-         }
+         createGraphs(measurementEntry, entry, change, data, dataPrev, histData, histDataPrev, folder, multmimodal, multmimodalChange, unimodal, unimodalChange);
 
          return new File(folder, "graph.png");
       } catch (final IOException e) {
          e.printStackTrace();
       }
       return null;
+   }
+
+   public void createGraphs(final TestData measurementEntry, final Entry<String, EvaluationPair> entry, final boolean change, final MeanCoVData data, final MeanCoVData dataPrev,
+         final MeanHistogramData histData, final MeanHistogramData histDataPrev, final File folder, final File multmimodal, final File multmimodalChange, final File unimodal,
+         final File unimodalChange) throws IOException {
+      histData.printHistData(new File(folder, "current_hist.csv"));
+      histDataPrev.printHistData(new File(folder, "prev_hist.csv"));
+
+      data.printAverages(new File(folder, "current.csv"));
+      dataPrev.printAverages(new File(folder, "prev.csv"));
+
+      final double binwidth = histData.getSpan() / 10;
+
+      final String init = "set datafile separator ';';set decimalsign locale; set decimalsign \",\";set term png;";
+
+      executeGnuplot(folder, "gnuplot", "-e",
+            init + "set output 'graph.png'; plot 'current.csv' u ($0*" + data.getAvgCount() + "):1, 'prev.csv' u ($0*" + data.getAvgCount() + "):1");
+      executeGnuplot(folder, "gnuplot", "-e", init
+            + "set output 'histogram.png'; binwidth=" + binwidth + "; set boxwidth binwidth;"
+            + "bin(x,width)=width*floor(x/width); plot 'current_hist.csv' using (bin($1,binwidth)):(1.0) smooth freq with boxes, 'prev_hist.csv' using (bin($1,binwidth)):(1.0) smooth freq with boxes");
+      executeGnuplot(folder, "gnuplot", "-e", init
+            + "set output 'histogram_first.png'; binwidth=" + binwidth + "; set boxwidth binwidth;"
+            + "bin(x,width)=width*floor(x/width); plot 'current_hist.csv' using (bin($1,binwidth)):(1.0) smooth freq with boxes");
+      executeGnuplot(folder, "gnuplot", "-e", init
+            + "set output 'histogram_second.png'; binwidth=" + ((histDataPrev.getSpan() / 10)) + "; set boxwidth binwidth;"
+            + "bin(x,width)=width*floor(x/width); plot 'prev_hist.csv' using (bin($1,binwidth)):(1.0) smooth freq with boxes");
+
+      final String filename = entry.getKey().substring(0, 6) + "_" + measurementEntry.getTestClass() + "." + measurementEntry.getTestMethod() + ".png";
+      final String name = entry.getKey().substring(0, 6) + "_" + measurementEntry.getTestClass() + "." + measurementEntry.getTestMethod() + "_1.png";
+      final String name2 = entry.getKey().substring(0, 6) + "_" + measurementEntry.getTestClass() + "." + measurementEntry.getTestMethod() + "_2.png";
+      if (MultimodalUtil.isRInstalled()) {
+         if (MultimodalUtil.isMultimodalSilverman(entry.getValue().getCurrent()) || MultimodalUtil.isMultimodalSilverman(entry.getValue().getPrevius())) {
+            if (change) {
+               FileUtils.copyFile(new File(folder, "histogram.png"), new File(multmimodalChange, filename));
+               FileUtils.copyFile(new File(folder, "histogram_first.png"), new File(multmimodalChange, name));
+               FileUtils.copyFile(new File(folder, "histogram_second.png"), new File(multmimodalChange, name2));
+            } else {
+               FileUtils.copyFile(new File(folder, "histogram.png"), new File(multmimodal, filename));
+               FileUtils.copyFile(new File(folder, "histogram_first.png"), new File(multmimodal, name));
+               FileUtils.copyFile(new File(folder, "histogram_second.png"), new File(multmimodal, name2));
+            }
+         } else {
+            if (change) {
+               FileUtils.copyFile(new File(folder, "histogram.png"), new File(unimodalChange, filename));
+               FileUtils.copyFile(new File(folder, "histogram_first.png"), new File(unimodalChange, name));
+               FileUtils.copyFile(new File(folder, "histogram_second.png"), new File(unimodalChange, name2));
+            } else {
+               FileUtils.copyFile(new File(folder, "histogram.png"), new File(unimodal, filename));
+               FileUtils.copyFile(new File(folder, "histogram_first.png"), new File(unimodal, name));
+               FileUtils.copyFile(new File(folder, "histogram_second.png"), new File(unimodal, name2));
+            }
+         }
+      }
    }
 
    private void executeGnuplot(final File folder, final String... command) throws IOException {
@@ -233,6 +243,7 @@ public class AnalyseFullData extends DataAnalyser {
       if (!folder.getName().equals("measurements")) {
          throw new RuntimeException("Can only be executed with measurements-folder! For searching folders, use FolderSearcher");
       }
+      LOG.info("Draw results: " + Environment.DRAW_RESULTS);
       final File dependencyFile = new File(args[1]);
       final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
       VersionComparator.setDependencies(dependencies);

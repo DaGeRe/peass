@@ -1,4 +1,4 @@
-package de.peass.analysis.all;
+package de.peass.overviewTables;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,10 +18,17 @@ import de.peass.analysis.properties.ChangeProperty;
 import de.peass.analysis.properties.VersionChangeProperties;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.ExecutionData;
+import de.peass.utils.Constants;
 import de.peass.vcs.GitUtils;
 import de.peran.FolderSearcher;
+import de.peran.analysis.helper.all.CleanAll;
 import de.peran.measurement.analysis.changes.processors.PropertyProcessor;
 
+/**
+ * Creates overview-table for ESEC-paper
+ * @author reichelt
+ *
+ */
 public class CreateOverviewStatistics {
    static class ProjectStatistics implements PropertyProcessor {
       DescriptiveStatistics affectedLines = new DescriptiveStatistics();
@@ -39,10 +46,17 @@ public class CreateOverviewStatistics {
    }
 
    public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
-      // final File dependencyFolder = new File(CleanAll.defaultDependencyFolder);
+      File dependencyFolder;
+      final File repos;
+      if (System.getenv(Constants.PEASS_REPOS) != null) {
+         final String repofolder = System.getenv(Constants.PEASS_REPOS);
+         repos = new File(repofolder);
+         dependencyFolder = new File(repos, "dependencies-final");
+      } else {
+         dependencyFolder = new File(CleanAll.defaultDependencyFolder);
+         repos = dependencyFolder.getParentFile();
+      }
 
-      final File repos = new File("/home/reichelt/daten3/diss/repos/");
-      final File dependencyFolder = new File(repos, "dependencies-final/");
       final File propertyFolder = new File(repos, "properties/properties");
       final File changeFolder = new File(repos, "measurementdata/results");
       final File projectsFolder = new File("../../projekte");
@@ -51,11 +65,11 @@ public class CreateOverviewStatistics {
       for (int i = 0; i < 9; i++) {
          stats[i] = new DescriptiveStatistics();
       }
-      //raus: 
-//      for (final String project : new String[] { "commons-compress", "commons-csv", "commons-dbcp", "commons-fileupload", "commons-jcs",
-//            "commons-imaging", "commons-io", "commons-numbers", "commons-pool", "commons-text", "httpcomponents-core", "k-9" }) {
+      // raus:
+      // for (final String project : new String[] { "commons-compress", "commons-csv", "commons-dbcp", "commons-fileupload", "commons-jcs",
+      // "commons-imaging", "commons-io", "commons-numbers", "commons-pool", "commons-text", "httpcomponents-core", "k-9" }) {
       for (final String project : new String[] { "commons-csv", "commons-dbcp", "commons-fileupload", "commons-jcs",
-          "commons-imaging", "commons-io", "commons-numbers", "commons-pool", "commons-text" }) {
+            "commons-imaging", "commons-io", "commons-numbers", "commons-pool", "commons-text" }) {
          System.out.print(project + " & ");
          final int versions = GitUtils.getVersions(new File(projectsFolder, project));
          System.out.print(versions + " & ");
@@ -80,7 +94,7 @@ public class CreateOverviewStatistics {
                final File changefile = new File(potentialChangeFolder, project + ".json");
                final ProjectChanges measuredChanges = FolderSearcher.MAPPER.readValue(changefile, ProjectChanges.class);
                changes = measuredChanges.getChangeCount();
-               
+
                final File changefileOnlysource = new File(propertyFolder, project + "/" + project + ".json");
                if (changefileOnlysource.exists()) {
                   final VersionChangeProperties measuredChangesOnlysource = FolderSearcher.MAPPER.readValue(changefileOnlysource, VersionChangeProperties.class);
@@ -93,7 +107,7 @@ public class CreateOverviewStatistics {
                         }
                      }
                   }
-//                  sourceChanges = measuredChangesOnlysource.getChangeCount();
+                  // sourceChanges = measuredChangesOnlysource.getChangeCount();
                }
             }
 
@@ -103,8 +117,8 @@ public class CreateOverviewStatistics {
                sourceTests = properties.getSourceChanges();
             }
 
-//            System.out.print(sourceTests + " & ");
-//            stats[3].addValue(sourceTests);
+            // System.out.print(sourceTests + " & ");
+            // stats[3].addValue(sourceTests);
 
             System.out.print(changes + " & ");
             stats[4].addValue(changes);

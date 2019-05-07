@@ -9,6 +9,7 @@ public class TestcaseStatistic {
    private long executions;
    private double tvalue;
    private String predecessor;
+   private boolean isChange;
 
    public String getPredecessor() {
       return predecessor;
@@ -22,7 +23,7 @@ public class TestcaseStatistic {
 
    }
 
-   public TestcaseStatistic(final double mean1, final double mean2, final double deviation1, final double deviation2, final long executions, final double tvalue) {
+   public TestcaseStatistic(final double mean1, final double mean2, final double deviation1, final double deviation2, final long executions, final double tvalue, boolean isChange) {
       super();
       this.meanOld = mean1;
       this.meanCurrent = mean2;
@@ -30,6 +31,7 @@ public class TestcaseStatistic {
       this.deviationCurrent = deviation2;
       this.executions = executions;
       this.tvalue = tvalue;
+      this.setChange(isChange);
    }
 
    public double getMeanOld() {
@@ -100,6 +102,14 @@ public class TestcaseStatistic {
       System.out.println(TestUtils.t(stat1, stat2));
       System.out.println(TestUtils.tTest(stat1, stat2, 0.02));
 
+   }
+
+   public boolean isChange() {
+      return isChange;
+   }
+
+   public void setChange(boolean isChange) {
+      this.isChange = isChange;
    }
 
 }

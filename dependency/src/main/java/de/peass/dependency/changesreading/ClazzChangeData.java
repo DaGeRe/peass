@@ -14,12 +14,16 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.peass.dependency.analysis.data;
+package de.peass.dependency.changesreading;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import de.peass.dependency.analysis.data.ChangedEntity;
 
 /**
  * Represents the relevant data of changes between two versions, i.e. whether there was a change, whether the change only affected methods, and if so, which methods where affected.
@@ -31,6 +35,7 @@ public class ClazzChangeData {
    private boolean isChange = false;
    private boolean isOnlyMethodChange = true;
    private final Map<String, Set<String>> changedMethods = new HashMap<>();
+   private final Set<ChangedEntity> importChanges = new HashSet<>();
    private ChangedEntity containingFile;
    // private final Set<String> changedMethods = new HashSet<>();
 
@@ -82,6 +87,9 @@ public class ClazzChangeData {
       if (clazzWithoutPackage.contains(".")) {
          throw new RuntimeException("Clazz " + clazzWithoutPackage + " must not contain package!");
       }
+      if (clazzWithoutPackage.equals("")) {
+         throw new RuntimeException("Changed clazz must not be empty!");
+      }
       isChange = true;
       Set<String> methods = changedMethods.get(clazzWithoutPackage);
       if (methods == null) {
@@ -95,6 +103,9 @@ public class ClazzChangeData {
       if (clazzWithoutPackage.contains(".")) {
          throw new RuntimeException("Clazz " + clazzWithoutPackage + " must not contain package!");
       }
+      if (clazzWithoutPackage.equals("")) {
+         throw new RuntimeException("Changed clazz must not be empty!");
+      }
       if (!changedMethods.containsKey(clazzWithoutPackage)) {
          changedMethods.put(clazzWithoutPackage, null);
       }
@@ -107,22 +118,25 @@ public class ClazzChangeData {
       addClazzChange(clazz.getSimpleClazzName());
    }
 
-   public Set<ChangedEntity> getUniqueChanges(){
+   @JsonIgnore
+   public Set<ChangedEntity> getUniqueChanges() {
       Set<ChangedEntity> entities = new HashSet<>();
       for (Map.Entry<String, Set<String>> change : changedMethods.entrySet()) {
+         String fullClassName = containingFile.getPackage() + "." + change.getKey();
          if (isOnlyMethodChange) {
             for (String method : change.getValue()) {
-               ChangedEntity entitity = new ChangedEntity(containingFile.getPackage() + "." + change.getKey(), containingFile.getModule(), method);
+               ChangedEntity entitity = new ChangedEntity(fullClassName, containingFile.getModule(), method);
                entities.add(entitity);
             }
          } else {
-            ChangedEntity entitity = new ChangedEntity(containingFile.getPackage() + "." + change.getKey(), containingFile.getModule());
+            ChangedEntity entitity = new ChangedEntity(fullClassName, containingFile.getModule());
             entities.add(entitity);
          }
       }
       return entities;
    }
-   
+
+   @JsonIgnore
    public Set<ChangedEntity> getChanges() {
       Set<ChangedEntity> entities = new HashSet<>();
       for (Map.Entry<String, Set<String>> change : changedMethods.entrySet()) {
@@ -138,4 +152,9 @@ public class ClazzChangeData {
       }
       return entities;
    }
+
+   public Set<ChangedEntity> getImportChanges() {
+      return importChanges;
+   }
+
 }
