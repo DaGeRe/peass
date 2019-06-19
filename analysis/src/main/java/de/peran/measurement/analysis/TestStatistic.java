@@ -13,10 +13,10 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.generated.Result;
 import de.peass.measurement.analysis.MultipleVMTestUtil;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
+import de.peass.statistics.ConfidenceInterval;
 import de.peran.FolderSearcher;
 import de.peran.measurement.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peran.measurement.analysis.statistics.Relation;
-import de.peran.statistics.ConfidenceInterval;
 
 public class TestStatistic {
    private static final Logger LOG = LogManager.getLogger(TestStatistic.class);

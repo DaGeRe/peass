@@ -57,6 +57,8 @@ public abstract class VersionIterator {
 	 * @return True for success, false otherwise
 	 */
 	public abstract boolean goToNextCommit();
+	
+	public abstract boolean goToNextCommitSoft();
 
 	/**
 	 * Goes to first commit, both in the iterator and the folder

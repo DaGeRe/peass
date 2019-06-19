@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.VersionComparator;
+import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 
 public class ProjectStatistics {
 

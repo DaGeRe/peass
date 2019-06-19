@@ -1,4 +1,4 @@
-package de.peran.statistics;
+package de.peass.statistics;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -68,12 +68,17 @@ public class ConfidenceInterval {
 	public static List<Result> getWarmedUpData(final List<Result> values) {
       final List<Result> shortenedValues = new LinkedList<>();
       for (final Result result : values) {
-         final int start = result.getFulldata().getValue().size() / 2;
-         final int end = result.getFulldata().getValue().size();
-         final Result resultShort = shortenResult(result, start, end);
+         final Result resultShort = shortenValues(result);
          shortenedValues.add(resultShort);
       }
       return shortenedValues;
+   }
+
+   public static Result shortenValues(final Result result) {
+      final int start = result.getFulldata().getValue().size() / 2;
+      final int end = result.getFulldata().getValue().size();
+      final Result resultShort = shortenResult(result, start, end);
+      return resultShort;
    }
 	
 	public static List<Result> shortenValues(final List<Result> values, final int start, final int end) {
@@ -108,6 +113,7 @@ public class ConfidenceInterval {
       resultShort.setDeviation(statistics.getStandardDeviation());
       resultShort.setExecutionTimes(end-start);
       resultShort.setWarmupExecutions(start);
+      resultShort.setRepetitions(result.getRepetitions());
       return resultShort;
    }
 }

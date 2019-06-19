@@ -61,4 +61,9 @@ public class FakeVersionIterator extends VersionIterator {
    public boolean isPredecessor(String lastRunningVersion) {
       throw new RuntimeException("Not implemented on purpose.");
    }
+   
+   @Override
+   public boolean goToNextCommitSoft() {
+      throw new RuntimeException("Not implemented on purpose.");
+   }
 }

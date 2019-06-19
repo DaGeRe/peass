@@ -24,7 +24,7 @@ public class GenerateAllExecutecommands {
             final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
             VersionComparator.setDependencies(dependencies);
             final ExecutionData changedTests = FolderSearcher.MAPPER.readValue(new File(dependencyFolder, "views_"+project+File.separator + "execute-"+project+".json"), ExecutionData.class);
-            DivideVersions.generateExecuteCommands(dependencies, changedTests, "generated", new File("../measurement/scripts/execute-" + project + ".sh"), System.out);
+            DivideVersions.generateExecuteCommands(dependencies, changedTests, "generated", System.out);
          }
       }
    }

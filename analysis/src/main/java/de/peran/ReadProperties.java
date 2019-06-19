@@ -23,9 +23,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.analysis.all.ReadAllProperties;
+import de.peass.analysis.all.RepoFolders;
 import de.peass.analysis.changes.Change;
 import de.peass.analysis.changes.Changes;
 import de.peass.analysis.changes.ProjectChanges;
@@ -35,9 +37,11 @@ import de.peass.analysis.properties.VersionChangeProperties;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependencyprocessors.VersionComparator;
+import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitUtils;
 import de.peran.analysis.helper.AnalysisUtil;
@@ -54,39 +58,43 @@ public class ReadProperties {
    private static final Logger LOG = LogManager.getLogger(ReadProperties.class);
 
    public static void main(final String[] args) throws ParseException, JsonParseException, JsonMappingException, IOException, JAXBException {
-      final Options options = OptionConstants.createOptions(OptionConstants.CHANGEFILE, OptionConstants.VIEWFOLDER, OptionConstants.DEPENDENCYFILE, OptionConstants.FOLDER,
+      final Options options = OptionConstants.createOptions(OptionConstants.CHANGEFILE, OptionConstants.DEPENDENCYFILE, OptionConstants.FOLDER,
             OptionConstants.OUT);
 
       final CommandLineParser parser = new DefaultParser();
       final CommandLine commandLine = parser.parse(options, args);
-
-      DependencyReaderUtil.loadDependencies(commandLine);
-      final String projectName = VersionComparator.getProjectName();
-      AnalysisUtil.setProjectName(projectName);
 
       final File projectFolder = new File(commandLine.getOptionValue(OptionConstants.FOLDER.getName()));
       if (!projectFolder.exists()) {
          GitUtils.downloadProject(VersionComparator.getDependencies().getUrl(), projectFolder);
       }
 
-      final File dependencyFile = new File(commandLine.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
-      final File viewFolder = new File(commandLine.getOptionValue(OptionConstants.VIEWFOLDER.getName()));
-      final File executionFile = new File(dependencyFile.getParentFile(), "execute_" + projectName + ".json");
-      final ExecutionData changedTests = FolderSearcher.MAPPER.readValue(executionFile, ExecutionData.class);
+      RepoFolders folders = new RepoFolders();
+
+      String projectName = projectFolder.getName();
+
+      File dependencyFile = folders.getDependencyFile(projectName);
+      final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+      VersionComparator.setDependencies(dependencies);
+
+      // final File viewFolder = new File(commandLine.getOptionValue(OptionConstants.VIEWFOLDER.getName()));
+      final File viewFolder = folders.getViewFolder(projectName);
+      final ExecutionData changedTests = folders.getExecutionData(projectName);
       if (ReadAllProperties.readAll) {
          final File resultFile = new File("results" + File.separator + projectName + File.separator + "properties_alltests.json");
          readAllTestsProperties(projectFolder, resultFile, viewFolder, changedTests);
       } else {
-         final File changefile = new File(commandLine.getOptionValue(OptionConstants.CHANGEFILE.getName()));
+         final File changefile = folders.getChangeFile(projectName);
+         // final File changefile = new File(commandLine.getOptionValue(OptionConstants.CHANGEFILE.getName()));
 
-         if (commandLine.hasOption(OptionConstants.OUT.getName())) {
-            final File resultsFolder = new File(commandLine.getOptionValue(OptionConstants.OUT.getName()));
-            AnalysisUtil.setProjectName(resultsFolder, projectFolder.getName());
-         } else {
-            AnalysisUtil.setProjectName(changefile.getParentFile().getParentFile(), projectFolder.getName());
-         }
+         // if (commandLine.hasOption(OptionConstants.OUT.getName())) {
+         // final File resultsFolder = new File(commandLine.getOptionValue(OptionConstants.OUT.getName()));
+         // AnalysisUtil.setProjectName(resultsFolder, projectFolder.getName());
+         // } else {
+         // AnalysisUtil.setProjectName(changefile.getParentFile().getParentFile(), projectFolder.getName());
+         // }
 
-         final File resultFile = new File(AnalysisUtil.getProjectResultFolder(), projectFolder.getName() + ".json");
+         final File resultFile = folders.getProjectPropertyFile(projectName);
          if (!resultFile.getParentFile().exists()) {
             resultFile.getParentFile().mkdirs();
          }
@@ -121,7 +129,6 @@ public class ReadProperties {
             for (final String testmethod : testclazz.getValue()) {
                final Change testcaseChange = new Change();
                testcaseChange.setMethod(testmethod);
-               
                final PropertyReadHelper reader = new PropertyReadHelper(version.getKey(), version.getValue().getPredecessor(), testclazz.getKey(), testcaseChange,
                      projectFolder,
                      viewFolder);
@@ -129,6 +136,7 @@ public class ReadProperties {
                if (currentProperty != null) {
                   properties.add(currentProperty);
                }
+
                count++;
             }
          }
@@ -153,7 +161,7 @@ public class ReadProperties {
             final String version = versionChanges.getKey();
             final TestSet tests = changedTests.getVersions().get(version);
             //
-            final String predecessor = tests != null ? tests.getPredecessor() : version+"~1";
+            final String predecessor = tests != null ? tests.getPredecessor() : version + "~1";
             testcaseCount += detectVersionProperty(projectFolder, resultFile, viewFolder, csvWriter, versionProperties, versionChanges, predecessor);
             if (tests == null) {
                LOG.error("Version not contained in runfile: " + version);

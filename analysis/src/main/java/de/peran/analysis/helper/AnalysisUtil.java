@@ -2,6 +2,12 @@ package de.peran.analysis.helper;
 
 import java.io.File;
 
+/**
+ * @deprecated Use RepoFolders instead!
+ * @author reichelt
+ *
+ */
+@Deprecated
 public class AnalysisUtil {
    
    static File projectResultFolder;
@@ -22,9 +28,5 @@ public class AnalysisUtil {
    
    public static File getProjectResultFolder() {
       return projectResultFolder;
-   }
-
-   public static String getProjectName() {
-      return projectResultFolder.getName();
    }
 }

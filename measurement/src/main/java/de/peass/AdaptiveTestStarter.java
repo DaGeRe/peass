@@ -24,7 +24,7 @@ public class AdaptiveTestStarter extends DependencyTestPairStarter {
       final int vms = Integer.parseInt(line.getOptionValue(OptionConstants.VMS.getName(), "100"));
       final long timeout = Integer.parseInt(line.getOptionValue(OptionConstants.TIMEOUT.getName(), "120")); // Default: 2 Hours
       final JUnitTestTransformer testgenerator = DependencyTestPairStarter.getTestTransformer(line, folders);
-      tester = new AdaptiveTester(folders, true, testgenerator, vms);
+      tester = new AdaptiveTester(folders, testgenerator, vms);
       tester.setTimeout(timeout);
    }
 

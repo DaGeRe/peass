@@ -7,18 +7,25 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.analysis.all.RepoFolders;
 import de.peass.analysis.changes.Change;
 import de.peass.analysis.changes.ProjectChanges;
 import de.peass.analysis.properties.VersionChangeProperties;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.testtransformation.JUnitTestTransformer;
 import de.peran.FolderSearcher;
+import jline.internal.Log;
 
 public class CreateClassificationData {
+   
+   private static final Logger LOG = LogManager.getLogger(CreateClassificationData.class);
 
    public static Classification getOldData(final File folder, final String project) {
       final Classification merged = new Classification();
@@ -39,19 +46,25 @@ public class CreateClassificationData {
    }
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
-      boolean isProperty = false;
-      final File goalFile = new File(args[1]);
-      final String project = goalFile.getName().substring(0, goalFile.getName().indexOf('.'));
-      if (isProperty) {
-         final File propertyFile = new File(args[0]);
+      RepoFolders folders = new RepoFolders();
+      String project = args[0];
+      
+      File goalFile = new File(folders.getClassificationFolder(), project + ".json");
+      
+      File propertyFile = folders.getProjectPropertyFile(project);
+      if (propertyFile.exists()) {
          final VersionChangeProperties properties = FolderSearcher.MAPPER.readValue(propertyFile, VersionChangeProperties.class);
          createClassificationData(properties, goalFile, project);
       }else {
-         final File changeFile = new File(args[0]);
-         final ProjectChanges changes = FolderSearcher.MAPPER.readValue(changeFile, ProjectChanges.class);
-         createClassificationData(changes, goalFile, project);
+         final File changeFile = new File(folders.getResultsFolder(), project + File.separator + project + ".json");
+         if (changeFile.exists()) {
+            final ProjectChanges changes = FolderSearcher.MAPPER.readValue(changeFile, ProjectChanges.class);
+            createClassificationData(changes, goalFile, project);
+         }else {
+            LOG.error("Can not write classification data, both change file and property file are not defined!");
+         }
+         
       }
-      
    }
    
    public static void createClassificationData(final ProjectChanges changes, final File goalFile, final String project)

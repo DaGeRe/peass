@@ -10,7 +10,7 @@ import de.peass.dependency.execution.GradleParseUtil;
  *
  */
 public class PeASSFolders {
-	private final File projectFolder;
+	protected final File projectFolder;
 //	private final File resultFolder;
 	private final File fullResultFolder;
 	private final File tempResultFolder, tempProjectFolder, tempFolder;;
@@ -19,10 +19,12 @@ public class PeASSFolders {
 	private final File detailFolder;
 	private final File cleanFolder;
 	private File gradleHome;
+	
+	protected final File peassFolder;
 
    public PeASSFolders(final File folder) {
 		projectFolder = folder;
-		final File peassFolder = new File(projectFolder.getParentFile(), projectFolder.getName() + "_peass");
+		peassFolder = new File(projectFolder.getParentFile(), projectFolder.getName() + "_peass");
 		if (!peassFolder.exists()) {
 			peassFolder.mkdir();
 		}

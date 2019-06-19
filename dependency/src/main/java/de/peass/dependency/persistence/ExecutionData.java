@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.Map.Entry;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -26,20 +27,9 @@ import de.peass.dependencyprocessors.VersionComparator;
  * @author reichelt
  *
  */
-public class ExecutionData {
-
-   private String url;
-   private boolean isAndroid = false;
+public class ExecutionData extends SelectedTests {
 
    private Map<String, TestSet> versions = new TreeMap<>(new VersionComparator());
-
-   public String getUrl() {
-      return url;
-   }
-
-   public void setUrl(final String url) {
-      this.url = url;
-   }
 
    public void setVersions(final Map<String, TestSet> versions) {
       this.versions = versions;
@@ -114,13 +104,16 @@ public class ExecutionData {
          }
       }
    }
-
-   public void setAndroid(final boolean isAndroid) {
-      this.isAndroid = isAndroid;
-   }
-
-   public boolean isAndroid() {
-      return isAndroid;
+   
+   @JsonIgnore
+   public int getAllExecutions() {
+         int count2 = 0;
+         for (final Entry<String, TestSet> entry : getVersions().entrySet()) {
+            System.out.println(entry.getKey());
+            System.out.println(entry.getValue());
+            count2 += entry.getValue().getTests().size();
+         }
+         return count2;
    }
 
 }

@@ -51,7 +51,7 @@ public class PropertyReadHelper {
          "try", "void", "volatile", "while",
          "System.out.println", "System.gc", "Thread.sleep" };
 
-   private final ChangedEntity clazz;
+   private final ChangedEntity testClazz;
    private final String version, prevVersion;
    private final Change change;
    private final File projectFolder;
@@ -75,19 +75,23 @@ public class PropertyReadHelper {
       if (clazz.getMethod() != null) {
          throw new RuntimeException("Method must not be set!");
       }
-      this.clazz = clazz;
+      this.testClazz = clazz;
       this.change = change;
       this.projectFolder = projectFolder;
       this.viewFolder = viewFolder;
    }
 
    public ChangeProperty read() throws IOException {
+      if (version.equals("9492b3cb0e323635ec1ce4b372c9f3281c6fd29c")) {
+         System.out.println("Test");
+      }
+      
       final ChangeProperty property = new ChangeProperty(change);
 
       getSourceInfos(property);
 
       LOG.debug("Comparing " + version + " " + property.getMethod());
-      final File folder = new File(viewFolder, "view_" + version + File.separator + clazz + File.separator + property.getMethod());
+      final File folder = new File(viewFolder, "view_" + version + File.separator + testClazz + File.separator + property.getMethod());
       if (folder.exists()) {
          // analyseTraceChange(folder, property);
          return property;
@@ -106,7 +110,7 @@ public class PropertyReadHelper {
    }
 
    public void getSourceInfos(final ChangeProperty property) throws FileNotFoundException, IOException {
-      final File folder = new File(viewFolder, "view_" + version + File.separator + clazz + File.separator + property.getMethod());
+      final File folder = new File(viewFolder, "view_" + version + File.separator + testClazz + File.separator + property.getMethod());
       final File fileCurrent = new File(folder, version.substring(0, 6) + "_method");
       final File fileOld = new File(folder, getShortPrevVersion() + "_method");
       final Set<String> calls = new HashSet<>();
@@ -120,68 +124,13 @@ public class PropertyReadHelper {
          final List<String> traceOld = Sequitur.getExpandedTrace(fileOld);
          determineTraceSizeChanges(property, traceCurrent, traceOld);
 
-         final Set<String> intersection = new HashSet<>(traceCurrent);
-         final Set<String> calledCurrent = new HashSet<>(traceCurrent);
-         final Set<String> calledOld = new HashSet<>(traceOld);
-         calls.addAll(calledCurrent);
-         calls.addAll(calledOld);
+         final Set<String> intersection = getEqualCalls(calls, traceCurrent, traceOld);
 
-         intersection.retainAll(calledOld);
-
-         for (final String calledInBoth : intersection) {
-            final String clazz = calledInBoth.substring(0, calledInBoth.indexOf("#"));
-            final int openingParenthesis = calledInBoth.indexOf("(");
-            String method;
-            if (openingParenthesis != -1) {
-               method = calledInBoth.substring(calledInBoth.indexOf("#") + 1, openingParenthesis);
-            } else {
-               method = calledInBoth.substring(calledInBoth.indexOf("#") + 1);
-            }
-            System.out.println(calledInBoth);
-
-            final ChangedEntity entity = new ChangedEntity(clazz, "", method);
-            final Patch<String> patch = changeManager.getKeywordChanges(entity);
-
-            final Map<String, Integer> vNewkeywords = new HashMap<>();
-            final Map<String, Integer> vOldkeywords = new HashMap<>();
-            for (final Delta<String> changeSet : patch.getDeltas()) {
-               for (final String line : changeSet.getOriginal().getLines()) {
-                  getKeywordCount(vOldkeywords, line);
-               }
-               for (final String line : changeSet.getRevised().getLines()) {
-                  getKeywordCount(vNewkeywords, line);
-               }
-            }
-            for (final Map.Entry<String, Integer> vNew : vNewkeywords.entrySet()) {
-               property.getAddedMap().put(vNew.getKey(), vNew.getValue());
-            }
-            for (final Map.Entry<String, Integer> vOld : vOldkeywords.entrySet()) {
-               // System.out.println("Removed: " + v2.getKey() + " " + v2.getValue());
-               property.getRemovedMap().put(vOld.getKey(), vOld.getValue());
-            }
-
+         for (final String calledInBothMethod : intersection) {
+            analyzeCall(property, changeManager, calledInBothMethod);
          }
 
-         try {
-            final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, MavenPomUtil.getGenericModules(projectFolder), version);
-            for (final Iterator<ChangedEntity> it = diff.getChangedClasses().iterator(); it.hasNext();) {
-               final ChangedEntity entity = it.next();
-               boolean called = false;
-               for (final String call : calls) {
-                  if (call.startsWith(entity.getJavaClazzName())) {
-                     called = true;
-                     break;
-                  }
-               }
-               if (!called)
-                  it.remove();
-            }
-            property.setAffectedClasses(diff.getChangedClasses().size());
-            final int changedLines = GitUtils.getChangedLines(projectFolder, version, diff.getChangedClasses());
-            property.setAffectedLines(changedLines);
-         } catch (final XmlPullParserException e) {
-            e.printStackTrace();
-         }
+         identifyAffectedClasses(property, calls);
 
          System.out.println("Calls: " + calls);
 
@@ -197,14 +146,93 @@ public class PropertyReadHelper {
 
    }
 
+   private void identifyAffectedClasses(final ChangeProperty property, final Set<String> calls) throws FileNotFoundException, IOException {
+      try {
+         final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, MavenPomUtil.getGenericModules(projectFolder), version);
+         for (final Iterator<ChangedEntity> it = diff.getChangedClasses().iterator(); it.hasNext();) {
+            final ChangedEntity entity = it.next();
+            boolean called = false;
+            for (final String call : calls) {
+               if (call.startsWith(entity.getJavaClazzName())) {
+                  called = true;
+                  break;
+               }
+            }
+            if (!called)
+               it.remove();
+         }
+         property.setAffectedClasses(diff.getChangedClasses().size());
+         final int changedLines = GitUtils.getChangedLines(projectFolder, version, diff.getChangedClasses());
+         property.setAffectedLines(changedLines);
+      } catch (final XmlPullParserException e) {
+         e.printStackTrace();
+      }
+   }
+
+   public void analyzeCall(final ChangeProperty property, final ChangeManager changeManager, final String calledInBothMethod) throws FileNotFoundException {
+      final ChangedEntity entity = determineEntity(calledInBothMethod);
+      final Patch<String> patch = changeManager.getKeywordChanges(entity);
+
+      final Map<String, Integer> vNewkeywords = new HashMap<>();
+      final Map<String, Integer> vOldkeywords = new HashMap<>();
+      for (final Delta<String> changeSet : patch.getDeltas()) {
+         for (final String line : changeSet.getOriginal().getLines()) {
+            getKeywordCount(vOldkeywords, line);
+         }
+         for (final String line : changeSet.getRevised().getLines()) {
+            getKeywordCount(vNewkeywords, line);
+         }
+      }
+      for (final Map.Entry<String, Integer> vNew : vNewkeywords.entrySet()) {
+         property.getAddedMap().put(vNew.getKey(), vNew.getValue());
+      }
+      for (final Map.Entry<String, Integer> vOld : vOldkeywords.entrySet()) {
+         // System.out.println("Removed: " + v2.getKey() + " " + v2.getValue());
+         property.getRemovedMap().put(vOld.getKey(), vOld.getValue());
+      }
+   }
+
+   public ChangedEntity determineEntity(final String calledInBothMethod) {
+      final String clazz = calledInBothMethod.substring(0, calledInBothMethod.indexOf("#"));
+      final int openingParenthesis = calledInBothMethod.indexOf("(");
+      String method;
+      if (openingParenthesis != -1) {
+         method = calledInBothMethod.substring(calledInBothMethod.indexOf("#") + 1, openingParenthesis);
+      } else {
+         method = calledInBothMethod.substring(calledInBothMethod.indexOf("#") + 1);
+      }
+      System.out.println(calledInBothMethod);
+
+      final ChangedEntity entity = new ChangedEntity(clazz, "", method);
+      return entity;
+   }
+
+   public Set<String> getEqualCalls(final Set<String> calls, final List<String> traceCurrent, final List<String> traceOld) {
+      final Set<String> intersection = new HashSet<>(traceCurrent);
+      final Set<String> calledCurrent = new HashSet<>(traceCurrent);
+      final Set<String> calledOld = new HashSet<>(traceOld);
+      calls.addAll(calledCurrent);
+      calls.addAll(calledOld);
+
+      intersection.retainAll(calledOld);
+      return intersection;
+   }
+
    void getTestSourceAffection(final ChangeProperty property, final Set<String> calls, final PeASSFolders folders, final Map<ChangedEntity, ClazzChangeData> changes)
          throws FileNotFoundException {
-      final ClazzChangeData clazzChangeData = changes.get(clazz);
+      if (version.equals("9492b3cb0e323635ec1ce4b372c9f3281c6fd29c")) {
+         System.out.println("Test");
+      }
+      final ClazzChangeData clazzChangeData = changes.get(testClazz);
       if (clazzChangeData != null) {
-         for (Set<String> methodsOfClazz : clazzChangeData.getChangedMethods().values()) {
-            if (methodsOfClazz.contains(property.getMethod())) {
-               property.setAffectsTestSource(true);
+         if (clazzChangeData.isOnlyMethodChange()) {
+            for (Set<String> methodsOfClazz : clazzChangeData.getChangedMethods().values()) {
+               if (methodsOfClazz.contains(property.getMethod())) {
+                  property.setAffectsTestSource(true);
+               }
             }
+         } else {
+            property.setAffectsTestSource(true);
          }
       }
 
@@ -248,16 +276,20 @@ public class PropertyReadHelper {
          final CompilationUnit clazzUnitOld = FileComparisonUtil.parse(fileOld);
 
          for (Map.Entry<String, Set<String>> changedClazz : changedEntity.getValue().getChangedMethods().entrySet()) {
-            for (String method : changedClazz.getValue()) {
-               final String source = FileComparisonUtil.getMethod(changedEntity.getKey(), method, clazzUnit);
-               final String sourceOld = FileComparisonUtil.getMethod(changedEntity.getKey(), method, clazzUnitOld);
-               final Patch<String> changedLinesMethod = DiffUtils.diff(Arrays.asList(sourceOld.split("\n")), Arrays.asList(source.split("\n")));
+            // If only method change..
+            if (changedClazz.getValue() != null) {
+               for (String method : changedClazz.getValue()) {
+                  final String source = FileComparisonUtil.getMethod(changedEntity.getKey(), method, clazzUnit);
+                  final String sourceOld = FileComparisonUtil.getMethod(changedEntity.getKey(), method, clazzUnitOld);
+                  final Patch<String> changedLinesMethod = DiffUtils.diff(Arrays.asList(sourceOld.split("\n")), Arrays.asList(source.split("\n")));
 
-               for (final Delta<String> delta : changedLinesMethod.getDeltas()) {
-                  getDeltaGuess(guessedTypes, (delta.getOriginal().getLines()));
-                  getDeltaGuess(guessedTypes, (delta.getRevised().getLines()));
+                  for (final Delta<String> delta : changedLinesMethod.getDeltas()) {
+                     getDeltaGuess(guessedTypes, (delta.getOriginal().getLines()));
+                     getDeltaGuess(guessedTypes, (delta.getRevised().getLines()));
+                  }
                }
             }
+            
          }
       }
       return guessedTypes;

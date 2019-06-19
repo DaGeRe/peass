@@ -52,6 +52,7 @@ public class DependencyTester {
    protected final TestExecutor testExecutor;
 
    protected String currentVersion;
+   protected ResultOrganizer currentOrganizer;
    protected long currentChunkStart = 0;
    private long timeout = 5;
 
@@ -77,7 +78,7 @@ public class DependencyTester {
       // testExecutor = new MavenKiekerTestExecutor(folders, testTransformer, Integer.MAX_VALUE);
    }
 
-   public DependencyTester(final PeASSFolders folders, final boolean runInitial, final JUnitTestTransformer testgenerator, final int vms) throws IOException {
+   public DependencyTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator, final int vms) throws IOException {
       super();
       this.folders = folders;
       this.vms = vms;
@@ -158,7 +159,9 @@ public class DependencyTester {
       testExecutor.executeTest(testcase, vmidFolder, timeout);
 
       LOG.info("Ändere eine Klassen durch Ergänzung des Gitversion-Elements.");
-      saveResultFiles(testcase, version, vmid);
+      
+      currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart, testTransformer.isUseKieker());
+      currentOrganizer.saveResultFiles(testcase, version, vmid);
 
       cleanup();
    }
@@ -178,112 +181,7 @@ public class DependencyTester {
       System.gc();
       Thread.sleep(1);
    }
-
-   private void saveResultFiles(final TestCase testset, final String version, final int vmid)
-         throws JAXBException, IOException {
-      LOG.info("Teste Methoden: {}", 1);
-      final String expectedFolderName = "*" + testset.getClazz();
-      final Collection<File> folderCandidates = findFolder(folders.getTempMeasurementFolder(), new WildcardFileFilter(expectedFolderName));
-      if (folderCandidates.size() != 1) {
-         LOG.error("Ordner {} ist {} mal vorhanden.", expectedFolderName, folderCandidates.size());
-      } else {
-         final File folder = folderCandidates.iterator().next();
-         final String methodname = testset.getMethod();
-         final File oneResultFile = new File(folder, methodname + ".xml");
-         if (!oneResultFile.exists()) {
-            LOG.debug("Datei {} existiert nicht.", oneResultFile.getAbsolutePath());
-         } else {
-            LOG.debug("Lese: {}", oneResultFile);
-            final XMLDataLoader xdl = new XMLDataLoader(oneResultFile);
-            final Kopemedata oneResultData = xdl.getFullData();
-            final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
-            final String clazz = oneResultData.getTestcases().getClazz();
-            if (testcaseList.size() > 0) {
-               saveResults(version, vmid, new TestCase(clazz, methodname), oneResultFile, oneResultData, testcaseList);
-            } else {
-               LOG.error("Keine Daten vorhanden - Messung fehlgeschlagen?");
-            }
-         }
-         if (testTransformer.isUseKieker()) {
-            saveKiekerFiles(testset, version, vmid, folder, methodname);
-         }
-      }
-      for (final File file : folders.getTempMeasurementFolder().listFiles()) {
-         FileUtils.forceDelete(file);
-      }
-   }
-
-   private void saveKiekerFiles(final TestCase testset, final String version, final int vmid, final File folder, final String methodname) throws IOException {
-      final File methodFolder = new File(folders.getTempMeasurementFolder(), testset.getClazz() + "." + methodname);
-      if (!methodFolder.exists()) {
-         methodFolder.mkdir();
-      }
-      final File versionFolder = new File(methodFolder, version);
-      if (!versionFolder.exists()) {
-         versionFolder.mkdir();
-      }
-
-      final File dest = new File(versionFolder, vmid + ".tar.gz");
-
-      try {
-         final Process process = new ProcessBuilder("tar", "-czf", dest.getAbsolutePath(),
-               folder.getAbsolutePath()).start();
-         process.waitFor();
-         FileUtils.deleteDirectory(folder);
-      } catch (final InterruptedException e) {
-         e.printStackTrace();
-      }
-   }
-
-   public File getResultFile(final TestCase testcase, final int vmid, final String version) {
-      final File destFolder = new File(folders.getDetailResultFolder(), testcase.getClazz());
-      final File currentVersionFolder = new File(destFolder, currentVersion);
-      if (!currentVersionFolder.exists()) {
-         currentVersionFolder.mkdir();
-      }
-      final File compareVersionFolder = new File(currentVersionFolder, version);
-      if (!compareVersionFolder.exists()) {
-         compareVersionFolder.mkdir();
-      }
-      final File destFile = new File(compareVersionFolder, testcase.getMethod() + "_" + vmid + "_" + version + ".xml");
-      return destFile;
-   }
-
-   private void saveResults(final String version, final int vmid, final TestCase testcase, final File oneResultFile,
-         final Kopemedata oneResultData, final List<TestcaseType> testcaseList)
-         throws JAXBException, IOException {
-      // Update testname, in case it has been set to
-      // testRepetition
-      testcaseList.get(0).setName(testcase.getMethod());
-      XMLDataStorer.storeData(oneResultFile, oneResultData);
-
-      final TestcaseType oneRundata = testcaseList.get(0);
-      final String shortClazzName = testcase.getShortClazz();
-      final File fullResultFile = new File(folders.getFullMeasurementFolder(), shortClazzName + "_" + testcase.getMethod() + ".xml");
-      MultipleVMTestUtil.fillOtherData(fullResultFile, oneRundata, testcase, version, currentChunkStart);
-      final File destFile = getResultFile(testcase, vmid, version);
-      LOG.info("Verschiebe nach: {}", destFile);
-      if (!destFile.exists()) {
-         FileUtils.moveFile(oneResultFile, destFile);
-      } else {
-         throw new RuntimeException("Moving failed: " + destFile + " already exist.");
-      }
-   }
-
-   private static List<File> findFolder(final File baseFolder, final FileFilter folderFilter) {
-      final List<File> files = new LinkedList<>();
-      for (final File f : baseFolder.listFiles()) {
-         if (f.isDirectory()) {
-            if (folderFilter.accept(f)) {
-               files.add(f);
-            } else {
-               files.addAll(findFolder(f, folderFilter));
-            }
-         }
-      }
-      return files;
-   }
-
+   
    public int getVMCount() {
       return vms;
    }

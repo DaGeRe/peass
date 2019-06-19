@@ -1,5 +1,6 @@
 package de.peass.measurement.analysis.statistics;
 
+import java.io.File;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -22,11 +23,13 @@ public class TestData {
 	private static final Logger LOG = LogManager.getLogger(TestData.class);
 
 	private final TestCase testcase;
+	private final File origin;
 
 	private final SortedMap<String, EvaluationPair> data = new TreeMap<>(VersionComparator.INSTANCE);
 
-	public TestData(final TestCase testcase) {
+	public TestData(final TestCase testcase, final File origin) {
 		this.testcase = testcase;
+		this.origin = origin;
 	}
 	
 	public void addMeasurement(final String versionOfPair, final String currentVersion, final String predecessor, final Kopemedata resultData) {
@@ -71,6 +74,10 @@ public class TestData {
 
    public TestCase getTestCase() {
       return testcase;
+   }
+
+   public File getOrigin() {
+      return origin;
    }
 
 }

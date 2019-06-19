@@ -95,4 +95,9 @@ public class FakeFileIterator extends VersionIterator {
    public boolean isPredecessor(String lastRunningVersion) {
       return lastRunningVersion.equals("00000" + (tag - 1));
    }
+
+   @Override
+   public boolean goToNextCommitSoft() {
+      throw new RuntimeException("Not implemented on purpose.");
+   }
 }

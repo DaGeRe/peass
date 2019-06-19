@@ -21,7 +21,7 @@ public class ReadAllProperties {
    public static final boolean readAll = System.getenv("read_all") != null ? Boolean.parseBoolean(System.getenv("read_all")) : false;
 
    public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, JsonGenerationException, IOException, InterruptedException {
-      final RepoFolders folders = new RepoFolders(args);
+      final RepoFolders folders = new RepoFolders();
       
       final ExecutorService service = Executors.newFixedThreadPool(9);
 

@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import de.peass.dependency.analysis.data.TestCase;
-import de.peran.measurement.analysis.TestcaseStatistic;
+import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 
 public class VersionData {
    private final Map<String, TestcaseData> data = new LinkedHashMap<>();

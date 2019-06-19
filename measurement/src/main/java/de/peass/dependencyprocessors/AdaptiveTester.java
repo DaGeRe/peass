@@ -2,34 +2,27 @@ package de.peass.dependencyprocessors;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.stat.inference.TestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.measurement.analysis.EarlyBreakDecider;
-import de.peass.measurement.analysis.MultipleVMTestUtil;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 public class AdaptiveTester extends DependencyTester {
 
    private static final Logger LOG = LogManager.getLogger(AdaptiveTester.class);
 
-   public AdaptiveTester(final PeASSFolders folders, final boolean runInitial, final JUnitTestTransformer testgenerator, final int vms)
+   public AdaptiveTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator, final int vms)
          throws IOException {
-      super(folders, runInitial, testgenerator, vms);
+      super(folders, testgenerator, vms);
    }
 
    @Override
@@ -109,7 +102,7 @@ public class AdaptiveTester extends DependencyTester {
    }
 
    private Result getLastResult(final String versionCurrent, final TestCase testcase, final int vmid) throws JAXBException {
-      final File resultFile = getResultFile(testcase, vmid, versionCurrent);
+      final File resultFile = currentOrganizer.getResultFile(testcase, vmid, versionCurrent);
       if (resultFile.exists()) {
          final Kopemedata data = new XMLDataLoader(resultFile).getFullData();
          final Result lastResult = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);

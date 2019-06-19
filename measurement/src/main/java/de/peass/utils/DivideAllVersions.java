@@ -1,6 +1,7 @@
 package de.peass.utils;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -44,7 +45,7 @@ public class DivideAllVersions {
             final File executeCommands = new File(resultFolder, "execute-" + project + ".sh");
             final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
             final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
-            DivideVersions.generateExecuteCommands(dependencies, changedTests, "validation", executeCommands, new PrintStream("/dev/null"));
+            DivideVersions.generateExecuteCommands(dependencies, changedTests, "validation", new PrintStream(new FileOutputStream(executeCommands)));
          } else {
             LOG.error("File not existing: " + project + " " + Constants.defaultUrls.get(project) + " " + dependencyFile.getAbsolutePath());
          }

@@ -22,6 +22,7 @@ import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.DataAnalyser;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.TestData;
+import de.peass.statistics.ConfidenceInterval;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peran.AnalyseOneTest;
 import de.peran.Environment;
@@ -30,7 +31,6 @@ import de.peran.measurement.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peran.measurement.analysis.statistics.MeanCoVData;
 import de.peran.measurement.analysis.statistics.MeanHistogramData;
 import de.peran.measurement.analysis.statistics.Relation;
-import de.peran.statistics.ConfidenceInterval;
 
 /**
  * Analyzes full data and tells which version contain changes based upon given statistical tests (confidence interval, MannWhitney, ..)

@@ -86,23 +86,28 @@ public class VersionComparator implements Comparator<String> {
 
    public static String getProjectName() {
       final String url = dependencies.getUrl();
-      final String projectName = url.substring(url.lastIndexOf('/') + 1, url.length() - 4);
-      return projectName;
+      if (url.length() > 0) {
+         final String projectName = url.substring(url.lastIndexOf('/') + 1, url.length() - 4);
+         return projectName;
+      } else {
+         return "noremote";
+      }
    }
 
    public static Dependencies getDependencies() {
       return dependencies;
    }
 
-   public Map<String, String> sort(Map<String, String> commits) {
-      List<Map.Entry<String, String>> entries = new ArrayList<Map.Entry<String, String>>(commits.entrySet());
+   public Map<String, String> sort(final Map<String, String> commits) {
+      final List<Map.Entry<String, String>> entries = new ArrayList<>(commits.entrySet());
       Collections.sort(entries, new Comparator<Map.Entry<String, String>>() {
-         public int compare(Map.Entry<String, String> a, Map.Entry<String, String> b) {
+         @Override
+         public int compare(final Map.Entry<String, String> a, final Map.Entry<String, String> b) {
             return VersionComparator.this.compare(a.getKey(), b.getKey());
          }
       });
-      Map<String, String> sortedMap = new LinkedHashMap<String, String>();
-      for (Map.Entry<String, String> entry : entries) {
+      final Map<String, String> sortedMap = new LinkedHashMap<>();
+      for (final Map.Entry<String, String> entry : entries) {
          sortedMap.put(entry.getKey(), entry.getValue());
       }
       return sortedMap;

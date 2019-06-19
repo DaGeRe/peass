@@ -79,7 +79,7 @@ public class ExecutionFileTester {
       testgenerator.setLogFullData(true);
       testgenerator.setWarmupExecutions(warmup);
       testgenerator.setUseKieker(useKieker);
-		tester = new DependencyTester(folders, true, testgenerator, vms);
+		tester = new DependencyTester(folders, testgenerator, vms);
 
 	}
 

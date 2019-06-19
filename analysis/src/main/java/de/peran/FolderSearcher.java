@@ -41,7 +41,7 @@ public class FolderSearcher {
    public static final String DATA = "data";
 
    public static final Option DATAOPTION = Option.builder(DATA).required(true).hasArgs()
-         .desc("Daten der zu analysierenden Ergebnisdaten bzw. Ergebnisdateien-Ordner").build();
+         .desc("Data folders that should be analyzed").build();
 
    public static void main(final String[] args) throws ParseException, JAXBException, InterruptedException, JsonGenerationException, JsonMappingException, IOException {
       final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE);

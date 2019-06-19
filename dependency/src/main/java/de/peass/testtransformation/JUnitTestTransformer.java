@@ -23,7 +23,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +62,6 @@ import de.dagere.kopeme.parsing.JUnitParseUtil;
 import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.changesreading.FileComparisonUtil;
-import javassist.compiler.ast.MethodDecl;
 
 /**
  * Transforms JUnit-Tests to performance tests.
@@ -127,11 +125,15 @@ public class JUnitTestTransformer {
    private Map<File, Integer> junitVersions;
 
    public void determineVersions(final List<File> modules) {
+	   determineVersions(modules, "src/test/");
+   }
+   
+   public void determineVersions(final List<File> modules, final String testPath) {
       loadedFiles = new HashMap<>();
       junitVersions = new HashMap<>();
 
       for (final File module : modules) {
-         final File testFolder = new File(module, "src/test/");
+         final File testFolder = new File(module, testPath);
          if (testFolder.exists()) {
             determineVersions(testFolder);
          } else {

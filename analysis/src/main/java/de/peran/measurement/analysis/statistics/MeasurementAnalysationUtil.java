@@ -26,8 +26,8 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.peran.statistics.ConfidenceInterval;
-import de.peran.statistics.PerformanceChange;
+import de.peass.statistics.ConfidenceInterval;
+import de.peass.statistics.PerformanceChange;
 
 public final class MeasurementAnalysationUtil {
 

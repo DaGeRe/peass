@@ -1,4 +1,4 @@
-package de.peran.measurement.analysis;
+package de.peass.measurement.analysis.statistics;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.inference.TestUtils;
@@ -6,7 +6,7 @@ import org.apache.commons.math3.stat.inference.TestUtils;
 public class TestcaseStatistic {
    private double meanOld, meanCurrent;
    private double deviationOld, deviationCurrent;
-   private long executions;
+   private long vms;
    private double tvalue;
    private String predecessor;
    private boolean isChange;
@@ -29,7 +29,7 @@ public class TestcaseStatistic {
       this.meanCurrent = mean2;
       this.deviationOld = deviation1;
       this.deviationCurrent = deviation2;
-      this.executions = executions;
+      this.vms = executions;
       this.tvalue = tvalue;
       this.setChange(isChange);
    }
@@ -66,12 +66,12 @@ public class TestcaseStatistic {
       this.deviationCurrent = deviation2;
    }
 
-   public long getExecutions() {
-      return executions;
+   public long getVMs() {
+      return vms;
    }
 
-   public void setExecutions(final long executions) {
-      this.executions = executions;
+   public void setVMs(final long vms) {
+      this.vms = vms;
    }
 
    public double getTvalue() {
@@ -84,7 +84,7 @@ public class TestcaseStatistic {
 
    @Override
    public String toString() {
-      return meanOld + " " + meanCurrent + " " + deviationOld / meanOld + " " + deviationCurrent / meanCurrent + " " + executions + " " + tvalue;
+      return meanOld + " " + meanCurrent + " " + deviationOld / meanOld + " " + deviationCurrent / meanCurrent + " " + vms + " " + tvalue;
    }
 
    public static void main(final String[] args) {

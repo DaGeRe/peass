@@ -21,6 +21,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependencyprocessors.VersionComparator;
@@ -36,7 +37,7 @@ public class DivideVersions {
 
    public static void main(final String[] args) throws JAXBException, ParseException, JsonParseException, JsonMappingException, IOException {
       final Option experimentIdOption = Option.builder("experiment_id").hasArg().build();
-      final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE, OptionConstants.EXECUTIONFILE);
+      final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE, OptionConstants.EXECUTIONFILE, OptionConstants.USE_SLURM);
       options.addOption(experimentIdOption);
       final CommandLineParser parser = new DefaultParser();
 
@@ -52,18 +53,47 @@ public class DivideVersions {
       if (!resultFolder.exists()) {
          resultFolder.mkdirs();
       }
-      final String experimentid = line.getOptionValue("experiment_id", "unknown");
+      final String experimentId = line.getOptionValue("experiment_id", "unknown");
 
-      final File executeCommands = new File(resultFolder, "execute-" + VersionComparator.getProjectName() + ".sh");
-      generateExecuteCommands(dependencies, changedTests, experimentid, executeCommands, System.out);
+      boolean useSlurm = Boolean.parseBoolean(line.getOptionValue(OptionConstants.USE_SLURM.getName(), "true"));
 
+      PrintStream destination = System.out;
+      RunCommandWriter writer;
+      if (useSlurm) {
+         destination.println("timestamp=$(date +%s)");
+         writer = new RunCommandWriterSlurm(System.out, experimentId, dependencies);
+      } else {
+         writer = new RunCommandWriter(destination, experimentId, dependencies);
+      }
+
+      generateExecuteCommands(dependencies, changedTests, experimentId, writer);
    }
 
-   public static void generateExecuteCommands(final Dependencies dependencies, final ExecutionData changedTests, final String experimentId,
-         final File executeCommands, final PrintStream goal) throws IOException {
-      RunCommandWriter writer = new RunCommandWriter(goal, true, experimentId, dependencies);
+   public static void generateExecuteCommands(final Dependencies dependencies, final ExecutionData changedTests, final String experimentId, PrintStream goal) throws IOException {
+      generateExecuteCommands(dependencies, changedTests, experimentId, new RunCommandWriterSlurm(goal, experimentId, dependencies));
+   }
 
-      goal.println("timestamp=$(date +%s)");
+   public static void generateExecuteCommands(final ExecutionData changedTests, final String experimentId, PrintStream goal) throws IOException {
+      generateExecuteCommands(changedTests, experimentId, new RunCommandWriterSlurm(goal, experimentId, changedTests));
+   }
+
+   public static void generateExecuteCommands(final ExecutionData changedTests, final String experimentId, RunCommandWriter writer)
+         throws IOException {
+      int i = 0;
+      for (Map.Entry<String, TestSet> entry : changedTests.getVersions().entrySet()) {
+         for (final Map.Entry<ChangedEntity, Set<String>> testcase : entry.getValue().getTestcases().entrySet()) {
+            for (final String method : testcase.getValue()) {
+               final String testcaseName = testcase.getKey().getJavaClazzName() + "#" + method;
+               writer.createSingleMethodCommand(i, entry.getKey(), testcaseName);
+
+            }
+         }
+         i++;
+      }
+   }
+
+   public static void generateExecuteCommands(final Dependencies dependencies, final ExecutionData changedTests, final String experimentId, RunCommandWriter writer)
+         throws IOException {
       final String[] versions = dependencies.getVersionNames();
       for (int i = 0; i < dependencies.getVersions().size(); i++) {
          final String endversion = versions[i];

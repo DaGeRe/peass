@@ -10,19 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.kopeme.parsing.BuildtoolProjectNameReader;
 import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.ModuleClassMapping;
@@ -31,7 +24,6 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.testtransformation.JUnitTestShortener;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.StreamGobbler;
-import de.peass.vcs.GitUtils;
 
 /**
  * Base functionality for executing tests with KoPeMe. The executor automates changing the buildfile, changing the tests both with and without Kieker.
@@ -125,8 +117,8 @@ public abstract class TestExecutor {
    protected abstract void runTest(File module, final File logFile, final String testname, final long timeout);
 
    void runMethod(final File logFolder, final ChangedEntity clazz, final File module, final String method, final long timeout) {
-      JUnitTestShortener shortener = new JUnitTestShortener(testTransformer);
-      shortener.shortenClazz(module, clazz, method);
+      final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer);
+      shortener.shortenTest(module, clazz, method);
 
       final File logFile = new File(logFolder, "log_" + clazz.getJavaClazzName() + File.separator + method + ".txt");
       if (!logFile.getParentFile().exists()) {
@@ -140,7 +132,6 @@ public abstract class TestExecutor {
       runTest(module, logFile, clazz.getJavaClazzName(), timeout);
 
       shortener.resetShortenedFile();
-
    }
 
    public synchronized static int getProcessCount() {
@@ -159,7 +150,7 @@ public abstract class TestExecutor {
    public void transformTests() {
       try {
          final List<File> modules = getModules();
-         testTransformer.determineVersions(modules);
+         testTransformer.determineVersions(modules, "src/test/");
          testTransformer.transformTests();
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();
@@ -271,7 +262,7 @@ public abstract class TestExecutor {
       existingClasses = new LinkedList<>();
       try {
          for (final File module : getModules()) {
-            List<String> currentClasses = ClazzFinder.getClasses(module);
+            final List<String> currentClasses = ClazzFinder.getClasses(module);
             existingClasses.addAll(currentClasses);
          }
       } catch (IOException | XmlPullParserException e) {

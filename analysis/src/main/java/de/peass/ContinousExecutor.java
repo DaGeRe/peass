@@ -1,4 +1,4 @@
-package de.peran;
+package de.peass;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +42,7 @@ import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIteratorGit;
+import de.peran.AnalyseOneTest;
 import de.peran.measurement.analysis.AnalyseFullData;
 
 /**
@@ -144,7 +145,7 @@ public class ContinousExecutor {
          testgenerator.setWarmupExecutions(warmup);
          testgenerator.setRepetitions(repetitions);
          testgenerator.setUseKieker(false);
-         final DependencyTester tester = new AdaptiveTester(folders, false, testgenerator, vms);
+         final DependencyTester tester = new AdaptiveTester(folders, testgenerator, vms);
          for (final TestCase test : tests) {
             tester.evaluate(headCommit.getTag(), previousName, test);
          }
@@ -185,12 +186,11 @@ public class ContinousExecutor {
       entries.add(headCommit);
       final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, entries, prevCommit);
       boolean needToLoad = false;
-      
-      final VersionKeeper nonRunning = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonRunning_" +projectFolder.getName()+".json"));
-      final VersionKeeper nonChanges = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonChanges_" +projectFolder.getName()+".json"));
-      
-      
-//      final VersionKeeper nrv = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonrunning.json"));
+
+      final VersionKeeper nonRunning = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonRunning_" + projectFolder.getName() + ".json"));
+      final VersionKeeper nonChanges = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonChanges_" + projectFolder.getName() + ".json"));
+
+      // final VersionKeeper nrv = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonrunning.json"));
       if (!dependencyFile.exists()) {
          needToLoad = true;
          final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, 10, nonRunning, nonChanges);

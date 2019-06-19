@@ -30,6 +30,7 @@ import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.OptionConstants;
 import de.peass.utils.RunCommandWriter;
+import de.peass.utils.RunCommandWriterSlurm;
 import de.peass.utils.TestLoadUtil;
 import de.peran.analysis.helper.read.PropertyReadHelper;
 
@@ -58,7 +59,7 @@ public class GetOnlysourceExecutions {
       final String projectName = VersionComparator.getProjectName();
       final File executeCommands = new File(resultFolder, "execute-" + projectName + "-onlysource.sh");
 
-      RunCommandWriter writer = new RunCommandWriter(new PrintStream(new FileOutputStream(executeCommands)), true, experimentid, dependencies);
+      RunCommandWriter writer = new RunCommandWriterSlurm(new PrintStream(new FileOutputStream(executeCommands)), experimentid, dependencies);
       final String[] versions = dependencies.getVersionNames();
       for (int versionIndex = 0; versionIndex < dependencies.getVersions().size(); versionIndex++) {
          final String endversion = versions[versionIndex];

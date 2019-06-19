@@ -9,14 +9,15 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.TestCleaner;
 import de.peass.analysis.groups.Classification;
 import de.peass.analysis.groups.TestcaseClass;
 import de.peass.analysis.groups.VersionClass;
+import de.peass.clean.TestCleaner;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.utils.Constants;
 import de.peass.utils.DivideVersions;
 import de.peass.utils.RunCommandWriter;
+import de.peass.utils.RunCommandWriterSlurm;
 import de.peran.FolderSearcher;
 
 public class FindWrong {
@@ -32,7 +33,7 @@ public class FindWrong {
          if (project.getName().endsWith(".json")) {
             final String projectName = project.getName().substring(0, project.getName().indexOf('.'));
             final String url = Constants.defaultUrls.get(projectName);
-            RunCommandWriter writer = new RunCommandWriter(goal, true, "wrong_rerun", projectName, url);
+            RunCommandWriter writer = new RunCommandWriterSlurm(goal, "wrong_rerun", projectName, url);
             if (url != null) {
                final Classification data = FolderSearcher.MAPPER.readValue(project, Classification.class);
                for (final Map.Entry<String, VersionClass> version : data.getVersions().entrySet()) {

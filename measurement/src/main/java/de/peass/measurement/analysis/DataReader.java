@@ -26,7 +26,7 @@ public final class DataReader {
 
    private static final Logger LOG = LogManager.getLogger(DataReader.class);
 
-   public static final TestData POISON_PILL = new TestData(null);
+   public static final TestData POISON_PILL = new TestData(null, null);
    private static int size = 0;
 
    private DataReader() {
@@ -40,7 +40,7 @@ public final class DataReader {
          @Override
          public void run() {
             size = 0;
-            LOG.debug("Starting data-reading");
+            LOG.debug("Starting data-reading from: {}", fullDataFolder);
             readDataToQueue(fullDataFolder, myQueue);
             myQueue.add(POISON_PILL);
             LOG.debug("Finished data-reading, testcase-changes: {}", size);
@@ -96,7 +96,8 @@ public final class DataReader {
          final String testmethod = resultData.getTestcases().getTestcase().get(0).getName();
          TestData testData = currentMeasurement.get(testmethod);
          if (testData == null) {
-            testData = new TestData(new TestCase(testclazz, testmethod));
+            final File originFile = measurementFile.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
+            testData = new TestData(new TestCase(testclazz, testmethod), originFile);
             currentMeasurement.put(testmethod, testData);
          }
          

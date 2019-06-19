@@ -3,7 +3,7 @@ package de.peran.analysis.helper.read;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import de.peran.measurement.analysis.TestcaseStatistic;
+import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 
 public class FolderValues {
    private Map<String, TestcaseStatistic> values = new LinkedHashMap<>();

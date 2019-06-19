@@ -5,10 +5,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.analysis.changes.Change;
+import de.peass.analysis.changes.ChangeReader;
 import de.peass.analysis.changes.Changes;
 import de.peass.analysis.changes.ProjectChanges;
 import de.peass.dependency.persistence.Dependencies;
@@ -22,6 +26,8 @@ import de.peran.FolderSearcher;
 import de.peran.measurement.analysis.ProjectStatistics;
 
 public class Validator {
+
+   private static final Logger LOG = LogManager.getLogger(Validator.class);
 
    private final ExecutionData changedTests;
    private final String firstVersion;
@@ -44,6 +50,9 @@ public class Validator {
       if (!changeFile.exists()) {
          changeFile = new File(changeFolder, project + File.separator + "raw.json");
       }
+      if (!changeFile.exists()) {
+         changeFile = new File(changeFolder, project + ".json");
+      }
       if (changeFile.exists()) {
          changes = FolderSearcher.MAPPER.readValue(changeFile, ProjectChanges.class);
       } else {
@@ -52,6 +61,9 @@ public class Validator {
       File statisticFile = new File(changeFolder, project + File.separator + "statistics" + File.separator + project + ".json");
       if (!statisticFile.exists()) {
          statisticFile = new File(changeFolder, project + File.separator + "statistics" + File.separator + "raw.json");
+      }
+      if (!statisticFile.exists()) {
+         statisticFile = new File(changeFolder, "statistics" + File.separator + project + ".json");
       }
       if (statisticFile.exists()) {
          statistics = FolderSearcher.MAPPER.readValue(statisticFile, ProjectStatistics.class);
@@ -66,7 +78,7 @@ public class Validator {
          throws IOException, JsonParseException, JsonMappingException {
       final ProjectValidation projectValidation = new ProjectValidation();
 
-      System.out.println("Project: " + projectName);
+      LOG.info("Project: " + projectName);
 
       GitUtils.getCommitsForURL(changedTests.getUrl());
 
@@ -87,10 +99,10 @@ public class Validator {
                      boolean correct = hasMeasuredImprovemend(changes);
                      if (correct) {
                         change.setType("MEASURED_CORRECT");
-                     }else {
+                     } else {
                         change.setType("MEASURED_UNCORRECT");
                      }
-                    
+
                      change.setCorrect(correct);
                   } else {
                      if (statistics.getStatistics().get(commit.getKey()) != null) {

@@ -52,12 +52,12 @@ public final class GitUtils {
    private GitUtils() {
 
    }
-   
+
    public static void getCommitsForURL(final String url) throws IOException {
       boolean repoFound = false;
       if (System.getenv(Constants.PEASS_PROJECTS) != null) {
          System.out.println(url);
-         String project = url.substring(url.lastIndexOf('/')+1, url.lastIndexOf("."));
+         String project = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf("."));
          File candidate = new File(System.getenv(Constants.PEASS_PROJECTS), project);
          if (candidate.exists()) {
             repoFound = true;
@@ -81,7 +81,7 @@ public final class GitUtils {
    }
 
    public static void clone(final PeASSFolders folders, final File projectFolderTemp) throws InterruptedException, IOException {
-      //TODO Branches klonen
+      // TODO Branches klonen
       final String clonedProject = folders.getProjectFolder().getAbsolutePath();
       final String goalFolder = projectFolderTemp.getName();
       final ProcessBuilder builder = new ProcessBuilder("git", "clone", clonedProject, goalFolder);
@@ -158,21 +158,9 @@ public final class GitUtils {
          while ((line = input.readLine()) != null) {
             if (line.startsWith("commit")) {
                final String tag = line.substring(7);
-               line = input.readLine();
-               if (line.startsWith("Merge: ")) {
-                  line = input.readLine();
-               }
-               if (line.startsWith("Author:")) {
-                  final String author = line.substring(8);
-                  line = input.readLine();
-                  if (line.startsWith("Date: ")) {
-                     final String date = line.substring(8);
-                     // log.debug("Git Commit: {}", tag);
-                     final GitCommit gc = new GitCommit(tag, author, date, "");
-                     commits.add(0, gc);
-                  }
-               } else {
-                  LOG.error("Achtung, falsche Zeile Autor: " + line);
+               String nextTag = readCommit(commits, input, tag);
+               while (nextTag != null) {
+                  nextTag = readCommit(commits, input, nextTag);
                }
             }
          }
@@ -181,8 +169,38 @@ public final class GitUtils {
          e.printStackTrace();
       }
 
-//      System.out.println("Commits: " + commits.size());
+      // System.out.println("Commits: " + commits.size());
       return commits;
+   }
+
+   public static String readCommit(final List<GitCommit> commits, final BufferedReader input, final String tag) throws IOException {
+      String nextTag = null;
+      String line;
+      line = input.readLine();
+      if (line.startsWith("Merge: ")) {
+         line = input.readLine();
+      }
+      if (line.startsWith("Author:")) {
+         final String author = line.substring(8);
+         line = input.readLine();
+         if (line.startsWith("Date: ")) {
+            final String date = line.substring(8);
+            String message = "";
+            while ((line = input.readLine()) != null) {
+               message += line + " ";
+               if (line.startsWith("commit")) {
+                  nextTag = line.substring(7);
+                  break;
+               }
+            }
+            // log.debug("Git Commit: {}", tag);
+            final GitCommit gc = new GitCommit(tag, author, date, message);
+            commits.add(0, gc);
+         }
+      } else {
+         LOG.error("Author tag missing - wrong default git log format? " + line);
+      }
+      return nextTag;
    }
 
    public static VersionDiff getChangedClasses(final File projectFolder, final List<File> modules, final String lastVersion) {
@@ -278,6 +296,31 @@ public final class GitUtils {
 
             System.out.println(out);
             System.out.println(outClean);
+            System.out.println(outCheckout);
+            LOG.trace("Ausführung beendet");
+         }
+      } catch (final IOException e) {
+         e.printStackTrace();
+      } catch (final InterruptedException e) {
+         e.printStackTrace();
+      }
+   }
+
+   public static void goToTagSoft(final String tag, final File projectFolder) {
+      try {
+         synchronized (projectFolder) {
+            LOG.debug("Going to tag {} folder: {}", tag, projectFolder.getAbsolutePath());
+            final Process pReset = Runtime.getRuntime().exec("git reset --hard", new String[0], projectFolder);
+            final String out = StreamGobbler.getFullProcess(pReset, false);
+            pReset.waitFor();
+
+            final String gitCommand = "git checkout " + tag;
+            LOG.trace(gitCommand);
+            final Process pCheckout = Runtime.getRuntime().exec(gitCommand, new String[0], projectFolder);
+            final String outCheckout = StreamGobbler.getFullProcess(pCheckout, false);
+            pCheckout.waitFor();
+
+            System.out.println(out);
             System.out.println(outCheckout);
             LOG.trace("Ausführung beendet");
          }

@@ -25,16 +25,17 @@ import de.peass.analysis.changes.ChangeReader;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependencyprocessors.VersionComparator;
+import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.utils.DivideVersions;
 import de.peass.utils.OptionConstants;
 import de.peass.utils.RunCommandWriter;
+import de.peass.utils.RunCommandWriterSlurm;
 import de.peran.FolderSearcher;
 import de.peran.analysis.helper.AnalysisUtil;
 import de.peran.analysis.helper.comparedata.BigDiffs;
 import de.peran.analysis.helper.read.FolderValues;
 import de.peran.analysis.helper.read.TestcaseData;
 import de.peran.analysis.helper.read.VersionData;
-import de.peran.measurement.analysis.TestcaseStatistic;
 
 /**
  * Compares measurements of same versions and testcases in order to find out whether there results differ.
@@ -90,7 +91,7 @@ public class GetChangesBetweenSameMeasurements {
       int instances = 0;
       final BigDiffs diffs = new BigDiffs();
       // Map<String, >
-      RunCommandWriter writer = new RunCommandWriter(reexecuteWriter, true, "reexecute", VersionComparator.getDependencies());
+      RunCommandWriter writer = new RunCommandWriterSlurm(reexecuteWriter, "reexecute", VersionComparator.getDependencies());
       for (final Entry<String, TestcaseData> versionEntry : allData.getData().entrySet()) {
          System.out.println(versionEntry.getKey());
          for (final Entry<TestCase, FolderValues> testcaseentry : versionEntry.getValue().getTestcaseData().entrySet()) {

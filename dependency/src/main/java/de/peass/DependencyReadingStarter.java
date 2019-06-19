@@ -48,7 +48,8 @@ public class DependencyReadingStarter {
    private static final Logger LOG = LogManager.getLogger(DependencyReadingStarter.class);
 
    public static void main(final String[] args) throws ParseException, FileNotFoundException {
-      final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.STARTVERSION, OptionConstants.ENDVERSION, OptionConstants.OUT, OptionConstants.TIMEOUT);
+      final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.STARTVERSION, OptionConstants.ENDVERSION, OptionConstants.OUT,
+            OptionConstants.TIMEOUT);
 
       final CommandLineParser parser = new DefaultParser();
       final CommandLine line = parser.parse(options, args);
@@ -69,12 +70,12 @@ public class DependencyReadingStarter {
       final VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
 
       final int timeout = Integer.parseInt(line.getOptionValue(OptionConstants.TIMEOUT.getName(), "5"));
-      
+
       System.setOut(new PrintStream(outputFile));
 
-      final VersionKeeper nonRunning = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonRunning_" +projectFolder.getName()+".json"));
-      final VersionKeeper nonChanges = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonChanges_" +projectFolder.getName()+".json"));
-      
+      final VersionKeeper nonRunning = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonRunning_" + projectFolder.getName() + ".json"));
+      final VersionKeeper nonChanges = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonChanges_" + projectFolder.getName() + ".json"));
+
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");
@@ -119,9 +120,9 @@ public class DependencyReadingStarter {
     */
    public static List<GitCommit> getGitCommits(final CommandLine line, final File projectFolder) {
       final List<GitCommit> commits = GitUtils.getCommits(projectFolder);
-      
+
       LOG.info("Processing git repo, commits: {}", commits.size());
-//      LOG.debug("First Commits: {}", commits.subList(0, 10));
+      // LOG.debug("First Commits: {}", commits.subList(0, 10));
       if (line.hasOption(OptionConstants.STARTVERSION.getName())) {
          final String startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName());
          if (line.hasOption(OptionConstants.ENDVERSION.getName())) {
@@ -129,7 +130,7 @@ public class DependencyReadingStarter {
             GitUtils.filterList(startversion, endversion, commits);
          } else {
             GitUtils.filterList(startversion, null, commits);
-            LOG.debug("First Commits: {}", commits.subList(0, 10));
+            LOG.debug("First Commits: {}", commits.size() > 10 ? commits.subList(0, 10) : commits.subList(0, commits.size() - 1));
          }
       } else if (line.hasOption(OptionConstants.ENDVERSION.getName())) {
          final String endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName());

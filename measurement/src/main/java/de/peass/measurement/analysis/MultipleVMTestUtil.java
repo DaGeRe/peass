@@ -1,6 +1,7 @@
 package de.peass.measurement.analysis;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,7 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.kopeme.generated.Versioninfo;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.statistics.ConfidenceInterval;
 
 /**
  * Provides utilities for reading KoPeMe-data from multiple runs which should be summarized into one file.
@@ -72,21 +74,42 @@ public class MultipleVMTestUtil {
 	/**
 	 * Takes the given result and the given version and creates a file containing the aggregated result.
 	 * 
-	 * @param fullResultFile
+	 * @param summaryResultFile
 	 * @param oneRunData
 	 * @param version
 	 * @throws JAXBException
 	 */
-	public static void fillOtherData(final File fullResultFile, final TestcaseType oneRunData, final TestCase testcase, final String version, final long currentChunkStart) throws JAXBException {
-	   LOG.info("Writing to merged result file: {}", fullResultFile);
-	   final XMLDataLoader fullDataLoader = new XMLDataLoader(fullResultFile);
+	public static void saveSummaryData(final File summaryResultFile, final TestcaseType oneRunData, final TestCase testcase, final String version, final long currentChunkStart) throws JAXBException {
+	   LOG.info("Writing to merged result file: {}", summaryResultFile);
+	   final XMLDataLoader fullDataLoader = new XMLDataLoader(summaryResultFile);
 		final Kopemedata fullResultData = fullDataLoader.getFullData();
 		if (fullResultData.getTestcases().getTestcase().size() == 0) {
 			fullResultData.getTestcases().setClazz(testcase.getClazz());
 			fullResultData.getTestcases().getTestcase().add(new TestcaseType());
 			fullResultData.getTestcases().getTestcase().get(0).setName(testcase.getMethod());
 		}
-		Datacollector oneRunDatacollector = null;
+		Datacollector oneRunDatacollector = getOnedataCollector(oneRunData);
+		Chunk realChunk = findChunk(currentChunkStart, fullResultData, oneRunDatacollector);
+
+		final Result oneResult = oneRunDatacollector.getResult().get(0);
+		final Result cleaned = ConfidenceInterval.shortenValues(oneResult);
+      final Fulldata realData = cleaned.getFulldata();
+		if (realData != null && realData.getValue() != null && realData.getValue().size() > 0) {
+			final SummaryStatistics st = new SummaryStatistics();
+			createStatistics(st, realData);
+			final Result result = createResultFromStatistic(version, st, cleaned.getRepetitions());
+			result.setDate(cleaned.getDate());
+			result.setWarmupExecutions(cleaned.getWarmupExecutions());
+
+			realChunk.getResult().add(result);
+			XMLDataStorer.storeData(summaryResultFile, fullResultData);
+		} else {
+			LOG.error("Achtung: Fulldata von " + summaryResultFile + " leer!");
+		}
+	}
+
+   public static Datacollector getOnedataCollector(final TestcaseType oneRunData) {
+      Datacollector oneRunDatacollector = null;
 		for (final Datacollector collector : oneRunData.getDatacollector()) {
 			if (collector.getName().equals(TimeDataCollector.class.getName())) {
 				oneRunDatacollector = collector;
@@ -95,7 +118,11 @@ public class MultipleVMTestUtil {
 		if (oneRunDatacollector == null) {
 			throw new RuntimeException("Achtung: Kein " + TimeDataCollector.class.getName() + " gefunden");
 		}
-		final List<Datacollector> fullResultFileDatacollectorList = fullResultData.getTestcases().getTestcase().get(0).getDatacollector();
+      return oneRunDatacollector;
+   }
+
+   public static Chunk findChunk(final long currentChunkStart, final Kopemedata fullResultData, Datacollector oneRunDatacollector) {
+      final List<Datacollector> fullResultFileDatacollectorList = fullResultData.getTestcases().getTestcase().get(0).getDatacollector();
 		if (fullResultFileDatacollectorList.size() == 0) {
 			fullResultFileDatacollectorList.add(new Datacollector());
 			fullResultFileDatacollectorList.get(0).setName(oneRunDatacollector.getName());
@@ -107,21 +134,8 @@ public class MultipleVMTestUtil {
          realChunk.setChunkStartTime(currentChunkStart);
          fullFileDatacollector.getChunk().add(realChunk);
       }
-
-		final Result oneResult = oneRunDatacollector.getResult().get(0);
-      final Fulldata realData = oneResult.getFulldata();
-		if (realData != null && realData.getValue() != null && realData.getValue().size() > 0) {
-			final SummaryStatistics st = new SummaryStatistics();
-			createStatistics(st, realData);
-			final Result result = createResultFromStatistic(version, st, oneResult.getRepetitions());
-			result.setDate(oneResult.getDate());
-
-			realChunk.getResult().add(result);
-			XMLDataStorer.storeData(fullResultFile, fullResultData);
-		} else {
-			LOG.error("Achtung: Fulldata von " + fullResultFile + " leer!");
-		}
-	}
+      return realChunk;
+   }
 
    public static Chunk findChunk(final long currentChunkStart, final Datacollector fullFileDatacollector) {
       Chunk realChunk = null;
@@ -134,7 +148,17 @@ public class MultipleVMTestUtil {
       return realChunk;
    }
    
-   public static long getMinExecutionTime(final List<Result> results) {
+   public static DescriptiveStatistics getChunkData(Chunk chunk, String version) {
+      final DescriptiveStatistics desc1 = new DescriptiveStatistics();
+      for (final Result result : chunk.getResult()) {
+         if (result.getVersion().getGitversion().equals(version) && !Double.isNaN(result.getValue())) {
+            desc1.addValue(result.getValue());
+         }
+      }
+      return desc1;
+   }
+   
+   public static long getMinExecutionCount(final List<Result> results) {
       long minExecutionTime = Long.MAX_VALUE;
       for (final Result result : results) {
          final long currentResultSize = result.getExecutionTimes();

@@ -4,6 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import de.peass.dependency.analysis.data.TestCase;
 
@@ -14,7 +15,7 @@ import de.peass.dependency.analysis.data.TestCase;
  *
  */
 public class Changes {
-	private Map<String, List<Change>> testcaseChanges = new LinkedHashMap<>();
+	private Map<String, List<Change>> testcaseChanges = new TreeMap<>();
 
 	public Map<String, List<Change>> getTestcaseChanges() {
 		return testcaseChanges;

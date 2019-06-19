@@ -2,8 +2,6 @@ package de.peass;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,12 +24,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.parallel.Merger;
 import de.peass.dependency.parallel.OneReader;
-import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.reader.DependencyReader;
-import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependency.reader.VersionKeeper;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
@@ -61,7 +56,7 @@ public class DependencyParallelReader {
       final int threads = Integer.parseInt(line.getOptionValue(OptionConstants.THREADS.getName(), "4"));
 
       final File resultBaseFolder = new File(line.getOptionValue(OptionConstants.OUT.getName(), "results"));
-      DependencyParallelReader reader = new DependencyParallelReader(projectFolder, resultBaseFolder, project, commits, threads, timeout);
+      final DependencyParallelReader reader = new DependencyParallelReader(projectFolder, resultBaseFolder, project, commits, threads, timeout);
       final File[] outFiles = reader.readDependencies();
 
       final File dependencyOut = DependencyReadingStarter.getDependencyFile(line, projectFolder);
@@ -80,7 +75,7 @@ public class DependencyParallelReader {
    private final File tempResultFolder;
    private final String project;
 
-   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, String project, final List<GitCommit> commits, int count, final int timeout) {
+   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<GitCommit> commits, final int count, final int timeout) {
       url = GitUtils.getURL(projectFolder);
       LOG.debug(url);
       folders = new PeASSFolders(projectFolder);
@@ -98,7 +93,7 @@ public class DependencyParallelReader {
 
       size = commits.size() > 2 * count ? commits.size() / count : 2;
 
-      outFiles = new File[count];
+      outFiles = commits.size() > 2 ? new File[count] : new File[1];
 
       this.timeout = timeout;
    }
@@ -109,7 +104,7 @@ public class DependencyParallelReader {
          int threadcount = 0;
 
          @Override
-         public Thread newThread(Runnable r) {
+         public Thread newThread(final Runnable r) {
             threadcount++;
             return new Thread(r, "dependencypool-" + threadcount);
          }
@@ -135,7 +130,7 @@ public class DependencyParallelReader {
    }
 
    public void startPartProcess(final File currentOutFile, final ExecutorService service, final int i, final File projectFolderTemp) throws InterruptedException {
-      int min = i * size;
+      final int min = i * size;
       final int max = Math.min((i + 1) * size + 3, commits.size());// Assuming one in three commits should contain a source-change
       LOG.debug("Min: {} Max: {} Size: {}", min, max, commits.size());
       final List<GitCommit> currentCommits = commits.subList(min, max);
@@ -150,8 +145,8 @@ public class DependencyParallelReader {
    void processCommits(final File currentOutFile, final ExecutorService service, final File projectFolderTemp, final List<GitCommit> currentCommits,
          final List<GitCommit> reserveCommits, final GitCommit minimumCommit) throws InterruptedException {
       final VersionIterator iterator = new VersionIteratorGit(projectFolderTemp, currentCommits, null);
-      DependencyReader reader = new DependencyReader(projectFolderTemp, currentOutFile, url, iterator, timeout, nonRunning, nonChanges);
-      VersionIteratorGit reserveIterator = new VersionIteratorGit(projectFolderTemp, reserveCommits, null);
+      final DependencyReader reader = new DependencyReader(projectFolderTemp, currentOutFile, url, iterator, timeout, nonRunning, nonChanges);
+      final VersionIteratorGit reserveIterator = new VersionIteratorGit(projectFolderTemp, reserveCommits, null);
       final Runnable current = new OneReader(minimumCommit, currentOutFile, reserveIterator, reader);
       service.submit(current);
       Thread.sleep(5);

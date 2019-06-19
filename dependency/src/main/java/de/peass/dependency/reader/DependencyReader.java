@@ -190,12 +190,30 @@ public class DependencyReader extends DependencyReaderBase {
          if (xmlFileFolder != null) {
             FileUtils.deleteDirectory(xmlFileFolder);
          }
+         cleanTooBigLogs();
       } catch (final ParseProblemException ppe) {
          ppe.printStackTrace();
       } catch (final XmlPullParserException e) {
          e.printStackTrace();
       } catch (final InterruptedException e) {
          e.printStackTrace();
+      }
+   }
+
+   public static final int MAX_SIZE_IN_MB = 10;
+   
+   public void cleanTooBigLogs() {
+      File logFolder = folders.getLogFolder();
+      File versionFolder = new File(logFolder, iterator.getTag());
+      for (File clazzFolder : versionFolder.listFiles()) {
+         if (clazzFolder.isDirectory()) {
+            for (File methodLog : clazzFolder.listFiles()) {
+               long sizeInMb = (methodLog.length() / (1024*1024));
+               if (sizeInMb > MAX_SIZE_IN_MB) {
+                  methodLog.delete();
+               }
+            }
+         }
       }
    }
 

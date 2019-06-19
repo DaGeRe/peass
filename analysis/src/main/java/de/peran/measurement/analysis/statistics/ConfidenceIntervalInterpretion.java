@@ -7,8 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
-import de.peran.statistics.ConfidenceInterval;
-import de.peran.statistics.PerformanceChange;
+import de.peass.statistics.ConfidenceInterval;
+import de.peass.statistics.PerformanceChange;
 
 public class ConfidenceIntervalInterpretion {
 	

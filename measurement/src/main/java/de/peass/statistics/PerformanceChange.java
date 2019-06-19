@@ -1,4 +1,4 @@
-package de.peran.statistics;
+package de.peass.statistics;
 
 /**
  * Represents a performance change, i.e. changed measured values between two versions in one testcase.

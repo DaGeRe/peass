@@ -9,10 +9,8 @@ import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 
-public class Dependencies {
+public class Dependencies extends SelectedTests {
 
-   private String url;
-   private boolean isAndroid = false;
    private InitialVersion initialversion = new InitialVersion();
    private Map<String, Version> versions = new LinkedHashMap<>();
 
@@ -33,14 +31,6 @@ public class Dependencies {
             initialversion.addDependency(new ChangedEntity(test.getClazz(), "", test.getMethod()), new ChangedEntity(test.getClazz(), ""));
          }
       }
-   }
-
-   public String getUrl() {
-      return url;
-   }
-
-   public void setUrl(final String url) {
-      this.url = url;
    }
 
    public InitialVersion getInitialversion() {
@@ -77,19 +67,4 @@ public class Dependencies {
       }
 
    }
-
-   public boolean isAndroid() {
-      return isAndroid;
-   }
-
-   public void setAndroid(final boolean isAndroid) {
-      this.isAndroid = isAndroid;
-   }
-
-   @JsonIgnore
-   public String getName() {
-      String name = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
-      return name;
-   }
-
 }

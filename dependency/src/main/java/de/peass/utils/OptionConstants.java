@@ -25,30 +25,35 @@ import org.apache.commons.cli.Options;
  *
  */
 public enum OptionConstants {
-
+   // Generic
 	STARTVERSION("startversion", "Version, where the process should be started", false),
 	ENDVERSION("endversion", "Version, where the process should be finished", false),
 	VERSION("version", "Only version execute", false),
 	FOLDER("folder", "Folder of the project that should be analyzed", true),
-	ITERATIONS("iterations", "Iterationen, wie oft jeder Testfall ausgeführt werden soll", false),
-	WARMUP("warmup", "Iterationen, wie oft jeder Testfall als Aufwärm-Ausführung ausgeführt werden soll", false),
-	DURATION("duration", "Test duration, if a timebased testcase should be used", false),
-	USEKIEKER("usekieker", "Whether to instrument the tests with kieker (slows down execution, but delivers kieker traces)", false),
-	VMS("vms", "Count of virtual machines that should be started (after each other, in order to get reliable test results)", false),
-	REPETITIONS("repetitions", "Count every testcase should be repeated", false),
-	DEPENDENCYFILE("dependencyfile", "Dependency-Datei, aus der die auzuführenden Tests auszulesen sind", false),
-	OUT("out", "Folder for output", false),
-	DATA("data", "Data for processing", false),
+	DEPENDENCYFILE("dependencyfile", "Dependencyfile specifying the tests which should be executed", false),
 	EXECUTIONFILE("executionfile", "JSON-file telling which tests to execute in each version", false),
+	VIEWFOLDER("viewfolder", "Viewfolder containing th views of the json", true),
+	USE_SLURM("useslurm", "Whether to use slurm or simple bash execution files", false),
+	OUT("out", "Folder for output", false),
 	FULLRESULTFOLDER("fullresultfolder", "Folder to save the full results of the tests", false), 
 	CHANGEFILE("changefile", "changefile for processing", false),
 	KNOWLEDGEFILE("knowledgefile", "knowledgefile for processing", false),
-	TEST("test", "the test to execute", false),
 	MODULE("module", "the module to research", false),
-	THREADS("threads", "count of threads, default 1", false),
-	VIEWFOLDER("viewfolder", "Viewfolder containing th views of the json", true),
+	THREADS("threads", "count of threads, default 1", false),	
+	URL("url", "URL of the project to analyze", false),
+	// Measurement
 	TIMEOUT("timeout", "Timeout, after that one test is finished in minutes.", false),
-	URL("url", "URL of the project to analyze", false);
+	DURATION("duration", "Test duration, if a timebased testcase should be used", false),
+   USEKIEKER("usekieker", "Whether to instrument the tests with kieker (slows down execution, but delivers kieker traces)", false),
+   ITERATIONS("iterations", "Number of measurement iterations", false),
+   WARMUP("warmup", "Number of warmup iterations", false),
+   VMS("vms", "Count of virtual machines that should be started (after each other, in order to get reliable test results)", false),
+   REPETITIONS("repetitions", "Count every testcase should be repeated", false),
+   TEST("test", "the test to execute", false),
+	
+	// Analysis
+   DATA("data", "Data for processing", false),
+	CONFIDENCE("confidence", "Confidence level for analysis with t-test, default 0.01", false);
 	
 
 	private final String name, description;

@@ -17,7 +17,13 @@
 package de.peass.vcs;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import de.peass.utils.StreamGobbler;
 
 /**
  * Allows iteration over git-versions
@@ -25,6 +31,8 @@ import java.util.List;
  *
  */
 public class VersionIteratorGit extends VersionIterator {
+   
+   private static final Logger LOG = LogManager.getLogger(GitUtils.class);
 
 	private final List<GitCommit> entries;
 	private final GitCommit previous;
@@ -66,6 +74,14 @@ public class VersionIteratorGit extends VersionIterator {
       GitUtils.goToTag(nextTag, projectFolder);
 		return true;
 	}
+	
+	@Override
+   public boolean goToNextCommitSoft() {
+	   tagid++;
+      final String nextTag = entries.get(tagid).getTag();
+      GitUtils.goToTagSoft(nextTag, projectFolder);
+      return true;
+   }
 
 	@Override
 	public boolean hasNextCommit() {

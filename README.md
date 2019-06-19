@@ -1,51 +1,63 @@
 PeASS
 ===================
 
-PeASS (from Performance Analysis of Software System versions) is a tool to analyse the evolution of performance during various versions. Base of this analysis is the transformation of junit (3 and 4) tests to performance tests. Since performance measurements usually take a high count of repetitions and therefore time, first of all in the `dependency`-module, the tests that may have changed their performance are determined. Afterwards, the `measurement`-module allows to execute the measurement on given projects. This measurements can be analyzed using the `analysis`-module later.
+PeASS (from Performance Analysis of Software System versions) is a tool to analyse the evolution of performance during its versions. Base of this analysis is the transformation of junit (3 and 4) tests to performance tests. Since performance measurements need to be repeated often in order to produce statistically reliable results, they need much time. In order to reduce measurement time as far as possible, the regression test selection PRONTO (PeRfOrmance regressiON Test selectiOn) should be executed first. This is done in the `dependency`-module. Afterwards, the `measurement`-module supports execution of the measurements in the selected tests and versions. This measurements can be analyzed using the `analysis`-module later.
 
 All modules should be built with mvn clean package before execution.
 
 # Dependency
 
-The dependency-module makes it possible to determine which tests are likely to have changed performance based on static and and dynamic analysis of a projects sources. 
+The dependency-module makes it possible to determine which tests may have changed performance based on static and and dynamic analysis of a projects sources. 
 
-First, one determines whether test performance may have changed because a source that is called, a dependency, is changed. With a call to de.peran.DependencyReadingStarter -folder $PROJECTFOLDER the reading of dependencies is started for a checked-out-project. Therefore, all tests are converted to KoPeMe-tests using Kieker, because Kieker allows to generate traces and KoPeMe allows to save the relation between test-call and Kieker-Trace-Folder. Afterwards, they are executed for every version. By parsing the sources and the version-control-system-diffs, it is determined where changes have taken place. The generated dependencies are saved afterwards into results/ as XML-file.
+The easiest way to determine the changes tests is using de.peass.DependencyExecutionReader -folder $PROJECTFOLDER. In order to parallelize the process, it is possible to further specify the count of parallel threads using -threads .. . 
 
-Since those may contain dependencies that do not change performance, e.g. non-called added methods to called classes, in a second step it is possible to determine whether tests have changed based on their traces, i.e. the called methods, their order and their source. Therefore, call -dependencyfile $DEPENDENCYFILE -folder $PROJECTFOLDER. As a result, in results/ a JSON-file containing the tests where the source has changed is saved.
+This executes two steps: The static test selection and the trace analysis. These are described in the following.
+
+## Static Test Selection
+
+Static test selection determines whether a tests performance may have changed because a source that is called, a dependency, is changed. With a call to de.peass.DependencyReadingStarter -folder $PROJECTFOLDER the reading of dependencies is started for a checked-out-project. Therefore, all tests are converted to KoPeMe-tests using Kieker, because Kieker allows to generate traces and KoPeMe allows to save the relation between test-call and Kieker-Trace-Folder. Afterwards, they are executed for every version. By parsing the sources and the version-control-system-diffs, it is determined where changes have taken place. The generated dependencies are saved afterwards into results/ as JSON-file, the $DEPENDENCYFILE (which is named deps_$PROJECT.json).
+
+## Trace Analysis
+
+Since the static selected changes may contain dependencies that do not change performance, e.g. non-called added methods to called classes, it is possible to determine whether tests have changed based on their traces, i.e. the called methods, their order and their source. Therefore, call de.peass.ViewPrintStarter -dependencyfile $DEPENDENCYFILE -folder $PROJECTFOLDER. As a result, in results/ a JSON-file, the executionfile (which is named execute_$PROJECT.json), containing the tests where the source has changed is created.
+
+## Evaluation
+
+The selection rate of PRONTO can be evaluated against the selection rate of EKSTAZI and Infinitest using the pronto-evaluation project (http://github.com/dagere/pronto-evaluation).
 
 # Measurement
 
-After determining the dependencies, tests should be executed. Testing can be manually started by 
+After creation of the dependencyfile or the executionfile, tests can be executed. Testing can be manually started by 
 
 java -jar target/measurement-0.1-SNAPSHOT.jar -folder .. -dependencyfile .. -executionfile .. -repetitions .. -vms .. -warmup .. -iterations .. -test ..
 
-where all parameters should be filled in by the correct values. This starts, for every version each test which is marked in the executionfile for this version. The executionfile can be left out, then the executed tests are determined by the dependencyfile. Repetitions defines, how many times each test should be executed between two measurements, warmup defines the count of warmup executions and iterations defines how many measurement iterations (measurement start, repetition count execution, measurement stop) should be executed.
+where all parameters should be filled in by the correct values. This starts, for every version each test which is contained in the executionfile for this version (if it is the given test or there is no test given). The executionfile can be left out, then the executed tests are determined by the dependencyfile. Repetitions defines, how many times each test should be executed between two measurements, warmup defines the count of warmup executions and iterations defines how many measurement iterations (measurement start, repetition count execution, measurement stop) should be executed.
 
-Since execution of tests normally takes much time, it is reasonable to start the tests on different computers. As an example, tests via slurm are enabled. Therefore, run
+Since execution of tests normally takes much time, it is reasonable to start the tests on different computers. As an example, test may be distributed via slurm. Therefore, run
 
-java -cp target/measurement-0.1-SNAPSHOT.jar de.peran.utils.DivideVersions -dependencyfile .. -executionfile .. > ../misc/scripts/slurm/runall.sh
+java -cp target/measurement-0.1-SNAPSHOT.jar de.peass.utils.DivideVersions -dependencyfile .. -executionfile .. > ../misc/scripts/slurm/runall.sh
 chmod +x ../misc/scripts/slurm/runall.sh
 
 in order to produce a list of calls, which is executable. Every call produces a slurm job executing one test. Afterwards switch to ../misc/scripts/slurm/ and run ./runall. It starts executeTests.sh on every cluster. If the count of warmup iterations, measurement iterations, repetitions or vms should be changed, edit executeTests.sh. 
 
 # Analysis
 
-Analysis enables determination of performance changes based on measurement values. Therefore, first copy all measurements (assuming your project is $PROJECT; those are in ../$PROJECT_peass/measurementsFull) from the measurement computers to your computer. If you executed the tests with slurm, those are all in /newnfs/user/do820mize/fertig/ and can be extracted with 
+Analysis enables determination of performance changes based on measurement values. Therefore, two steps are executed: The cleanup and the determination of changes.
 
-find . -name "*.tar" -exec tar --one-top-level -xvf {} \;
+## Cleanup
 
-Afterwards, execute 
+First, the measurements should be cleaned up, i.e. warmup periods are removed and values are saved into one measurement file per test method. This is done by calling java -cp target/analysis-0.1-SNAPSHOT.jar de.peass.TestCleaner -dependencyfile $DEPENDENCYFILE -data $DATAFOLDER, where $DATAFOLDER should contain all measurements.
 
-java -cp target/analysis-0.1-SNAPSHOT.jar -dependencyfile .. -data ..
+## Determination of changes
 
-This produces results/changes.json, which contains all changes, the diff-folder for the trace comparison and the possibility to add information to this change, e.g. a type. 
+In order to get all changes, execute java -cp target/analysis-0.1-SNAPSHOT.jar de.peass.GetChanges -dependencyfile $DEPENDENCYFILE -out $OUTFOLDER -data $DATAFOLDER; where $DATAFOLDER should be the folder containing your cleaned data. Afterwards, two files are created:
+- The changefile in $OUTFOLDER, containing all versions and test cases where measurement values changed based on t-test
+- The statisticsfils in $OUTFOLDER/statistics, containing all versions and test cases, including the measurements with no changes
 
-# Evaluation
+# General Options
 
-Infinitest needs to be installed in the local maven repository. This can be done by calling ./startEvaluation in misc/scripts/evaluation. In order to evaluate the Apache Commons Repositories, call ./evaluateAllGit.sh. If only one defined repository $REPO needs to be called, call ./evaluteGitRepo.sh $REPO. 
-
-Afterwards, the count of tests executed by executing all tests, only Infinitest-selected, ekstazi-selected or DePeC-selected tests can be determined. Assuming, that the DePeC-Results are stored in $DEPEC and the evaluation-results are stored in $EVALUATION, this can be done by running java -cp target/evaluation.jar de.peran.evaluation.CompareEvaluations $DEPEC $EVALUATION 
+For dependency and measurement, by providing -startversion and/or -endversion, only certain areas of the version history are analyzed / measured.
 
 # Funding
 
-The creation of this project was funded by Hanns-Seidel-Stiftung (https://www.hss.de/).
+The creation of this project was funded by a PhD scholarship of Hanns-Seidel-Stiftung (https://www.hss.de/).

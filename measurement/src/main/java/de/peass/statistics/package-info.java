@@ -5,4 +5,4 @@
  * @author reichelt
  *
  */
-package de.peran.statistics;
+package de.peass.statistics;

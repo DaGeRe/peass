@@ -74,7 +74,7 @@ public class DependencyTestPairStarter extends PairProcessor {
          tester = new DependencyTester(folders, duration, vms, true, repetitions, useKieker);
       } else {
          final JUnitTestTransformer testgenerator = getTestTransformer(line, folders);
-         tester = new DependencyTester(folders, true, testgenerator, vms);
+         tester = new DependencyTester(folders, testgenerator, vms);
       }
       
       if (line.hasOption(OptionConstants.TEST.getName())) {

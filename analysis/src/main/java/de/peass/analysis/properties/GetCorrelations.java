@@ -1,4 +1,4 @@
-package de.peass;
+package de.peass.analysis.properties;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,9 +12,6 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.analysis.properties.ChangeProperties;
-import de.peass.analysis.properties.ChangeProperty;
-import de.peass.analysis.properties.VersionChangeProperties;
 import de.peran.FolderSearcher;
 import de.peran.analysis.helper.read.PropertyReadHelper;
 

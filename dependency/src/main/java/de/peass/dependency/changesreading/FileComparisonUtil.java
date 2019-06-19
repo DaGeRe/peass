@@ -38,9 +38,11 @@ import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.AnnotationDeclaration;
+import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
+import com.github.javaparser.ast.body.InitializerDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
@@ -129,7 +131,7 @@ public final class FileComparisonUtil {
             if (firstDeclarationsConstructor.size() == secondDeclarationsConstructor.size()) {
                compareNodeList(changes, firstDeclarationsConstructor, secondDeclarationsConstructor);
             }
-         } 
+         }
 
          LOG.info("Size of change: " + node1.hashCode() + "(" + node1.getChildNodes().size() + ") " + node2.hashCode() + "(" + node2.getChildNodes().size() + ") ");
          changes.add(node1);
@@ -229,9 +231,9 @@ public final class FileComparisonUtil {
       }
       if (method.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
          final String outerClazz = method.substring(0, method.indexOf(ChangedEntity.CLAZZ_SEPARATOR));
-         System.out.println("Searching: " + outerClazz + " " + method);
+         LOG.debug("Searching: " + outerClazz + " " + method);
          declaration = findClazz(new ChangedEntity(outerClazz, ""), declaration.getChildNodes());
-         System.out.println("Suche: " + outerClazz + " " + declaration);
+         LOG.debug("Suche: " + outerClazz + " " + declaration);
       }
       if (declaration == null) {
          return "";
@@ -284,7 +286,7 @@ public final class FileComparisonUtil {
       try {
          clearComments(newCu);
          clearComments(oldCu);
-         
+
          final List<Node> changes = comparePairwise(newCu, oldCu);
          Set<ImportDeclaration> unequalImports = new ImportComparator(newCu.getImports(), oldCu.getImports()).getNotInBoth();
          changes.addAll(unequalImports);
@@ -292,16 +294,6 @@ public final class FileComparisonUtil {
          if (changes.size() == 0) {
             changedata.setChange(false);
             return;
-         }
-
-         for (Node node : changes) {
-            if (node instanceof ImportDeclaration) {
-               ImportDeclaration currentImport = (ImportDeclaration) node;
-               if (!currentImport.isAsterisk()) {
-                  ChangedEntity changedEntity = new ChangedEntity(currentImport.getNameAsString(), "");
-                  changedata.getImportChanges().add(changedEntity);
-               }
-            }
          }
 
          boolean onlyLineCommentOrImportChanges = true;
@@ -346,17 +338,21 @@ public final class FileComparisonUtil {
       boolean finished = false;
       while (!finished && parent.getParentNode() != null && !(parent instanceof CompilationUnit)) {
          if (parent instanceof ConstructorDeclaration) {
-            final String parameters = getParameters(((ConstructorDeclaration) parent).getParameters());
+            ConstructorDeclaration constructorDeclaration = (ConstructorDeclaration) parent;
+            final String parameters = getParameters(constructorDeclaration);
             String clazz = getClazz(parent);
             changedata.addChange(clazz, "<init>" + parameters);
             finished = true;
-         }
-         if (parent instanceof MethodDeclaration) {
+         } else if (parent instanceof MethodDeclaration) {
             final MethodDeclaration methodDeclaration = (MethodDeclaration) parent;
-            final NodeList<Parameter> parameterDeclaration = methodDeclaration.getParameters();
-            final String parameters = getParameters(parameterDeclaration);
+            final String parameters = getParameters(methodDeclaration);
             String clazz = getClazz(parent);
             changedata.addChange(clazz, methodDeclaration.getNameAsString() + parameters);
+            finished = true;
+         } else if (parent instanceof InitializerDeclaration) {
+            InitializerDeclaration initializerDeclaration = (InitializerDeclaration) parent;
+            String clazz = getClazz(initializerDeclaration);
+            changedata.addChange(clazz, "<init>");
             finished = true;
          }
          final Optional<Node> newParent = parent.getParentNode();
@@ -366,6 +362,8 @@ public final class FileComparisonUtil {
          parent = newParent.get();
       }
       if (!finished) {
+         LOG.debug("No containing method found!");
+         changedata.addClazzChange(getClazz(statement));
          changedata.setOnlyMethodChange(false);
       }
    }
@@ -389,7 +387,8 @@ public final class FileComparisonUtil {
       return clazz;
    }
 
-   private static String getParameters(final NodeList<Parameter> parameterDeclaration) {
+   private static String getParameters(final CallableDeclaration callable) {
+      NodeList<Parameter> parameterDeclaration = callable.getParameters();
       String parameters;
       if (parameterDeclaration.size() > 0) {
          parameters = "(";
