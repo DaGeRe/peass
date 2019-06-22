@@ -9,7 +9,7 @@ All modules should be built with mvn clean package before execution.
 
 The dependency-module makes it possible to determine which tests may have changed performance based on static and and dynamic analysis of a projects sources. 
 
-The easiest way to determine the changes tests is using de.peass.DependencyExecutionReader -folder $PROJECTFOLDER. In order to parallelize the process, it is possible to further specify the count of parallel threads using -threads .. . 
+The easiest way to determine the changes tests is using `./peass select -folder $PROJECTFOLDER`. In order to parallelize the process, it is possible to further specify the count of parallel threads using -threads .. . 
 
 This executes two steps: The static test selection and the trace analysis. These are described in the following.
 
@@ -29,9 +29,9 @@ The selection rate of PRONTO can be evaluated against the selection rate of EKST
 
 After creation of the dependencyfile or the executionfile, tests can be executed. Testing can be manually started by 
 
-java -jar target/measurement-0.1-SNAPSHOT.jar -folder .. -dependencyfile .. -executionfile .. -repetitions .. -vms .. -warmup .. -iterations .. -test ..
+`./peass measure -folder ..  -executionfile .. (-dependencyfile .. -repetitions .. -vms .. -warmup .. -iterations .. -test ..)`
 
-where all parameters should be filled in by the correct values. This starts, for every version each test which is contained in the executionfile for this version (if it is the given test or there is no test given). The executionfile can be left out, then the executed tests are determined by the dependencyfile. Repetitions defines, how many times each test should be executed between two measurements, warmup defines the count of warmup executions and iterations defines how many measurement iterations (measurement start, repetition count execution, measurement stop) should be executed.
+where all parameters should be filled in by the correct values, and after parameter after dependencyfile is optionally. This starts, for every version each test which is contained in the executionfile for this version (if it is the given test or there is no test given). The dependencyfile can be left out, then the executed tests are determined by the executionfile. Repetitions defines, how many times each test should be executed between two measurements, warmup defines the count of warmup executions and iterations defines how many measurement iterations (measurement start, repetition count execution, measurement stop) should be executed.
 
 Since execution of tests normally takes much time, it is reasonable to start the tests on different computers. As an example, test may be distributed via slurm. Therefore, run
 
@@ -46,11 +46,11 @@ Analysis enables determination of performance changes based on measurement value
 
 ## Cleanup
 
-First, the measurements should be cleaned up, i.e. warmup periods are removed and values are saved into one measurement file per test method. This is done by calling java -cp target/analysis-0.1-SNAPSHOT.jar de.peass.TestCleaner -dependencyfile $DEPENDENCYFILE -data $DATAFOLDER, where $DATAFOLDER should contain all measurements.
+The resultfolder of your project is $PROJECTNAME_peass. In general, a clean/ folder is created in the resultfolder of your project. It contains measurementfiles only containing the statistical information about the second half of each VM start; the first half is seen as warmup. If you want to clean your data differently, e.g. remove different size of warmup, you can use the de.peass.TestCleaner. This is done by calling java -cp target/analysis-0.1-SNAPSHOT.jar de.peass.TestCleaner -dependencyfile $DEPENDENCYFILE -data $DATAFOLDER, where $DATAFOLDER should contain all measurements.
 
 ## Determination of changes
 
-In order to get all changes, execute java -cp target/analysis-0.1-SNAPSHOT.jar de.peass.GetChanges -dependencyfile $DEPENDENCYFILE -out $OUTFOLDER -data $DATAFOLDER; where $DATAFOLDER should be the folder containing your cleaned data. Afterwards, two files are created:
+In order to get all changes, execute `./peass getchanges -dependencyfile $DEPENDENCYFILE -out $OUTFOLDER -data $DATAFOLDER`; where $DATAFOLDER should be the folder containing your cleaned data. Afterwards, two files are created:
 - The changefile in $OUTFOLDER, containing all versions and test cases where measurement values changed based on t-test
 - The statisticsfils in $OUTFOLDER/statistics, containing all versions and test cases, including the measurements with no changes
 
