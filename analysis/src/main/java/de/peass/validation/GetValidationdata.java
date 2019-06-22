@@ -44,8 +44,8 @@ public class GetValidationdata {
       final File commitFile = new File(commitFolder, "performance_commits.json");
 
       final Map<String, Map<String, String>> data = FolderSearcher.MAPPER.readValue(commitFile, Map.class);
-      data.remove("commons-compress");
-      data.remove("commons-jcs");
+//      data.remove("commons-compress");
+//      data.remove("commons-jcs");
 
       Validation old;
       if (validationFile.exists()) {

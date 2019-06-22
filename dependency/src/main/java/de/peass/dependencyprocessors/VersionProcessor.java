@@ -3,6 +3,7 @@ package de.peass.dependencyprocessors;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -17,6 +18,9 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
@@ -24,10 +28,13 @@ import de.peass.dependency.persistence.InitialVersion;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.traces.ViewGenerator;
 import de.peass.statistics.DependencyStatisticAnalyzer;
+import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 import de.peass.utils.TestLoadUtil;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
  * Basic class for all classes that operate somehow on an folder and it's dependencyfile.
@@ -35,23 +42,42 @@ import de.peass.vcs.VersionControlSystem;
  * @author reichelt
  *
  */
-public abstract class VersionProcessor {
+public abstract class VersionProcessor implements Callable<Void> {
 
    private static final Logger LOG = LogManager.getLogger(VersionProcessor.class);
 
+   @Option(names = { "-folder", "--folder" }, description = "Folder that should be analyzed", required = true)
+   protected File projectFolder;
+
    protected PeASSFolders folders;
    protected VersionControlSystem vcs;
-   protected final Dependencies dependencies;
-   protected final CommandLine line;
+   protected Dependencies dependencies;
+   protected ExecutionData executionData;
+
+   @Option(names = { "-startversion", "--startversion" }, description = "First version that should be analysed")
    protected String startversion;
+
+   @Option(names = { "-endversion", "--endversion" }, description = "Last version that should be analysed")
    protected String endversion;
-   protected int threads;
-   protected final int timeout;
+   
+   @Option(names = { "-version", "--version" }, description = "Only version to analyze - do not use together with startversion and endversion!")
+   protected String version;
+
+   @Option(names = { "-timeout", "--timeout" }, description = "Timeout for each VM start")
+   protected int timeout = 5;
+
+   @Option(names = { "-threads", "--threads" }, description = "Number of parallel threads for analysis")
+   protected int threads = 1;
+
+   @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Path to the dependencyfile")
+   protected File dependencyFile;
+
+   @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
+   protected File executionfile;
 
    public VersionProcessor(final File projectFolder, final Dependencies dependencies, final int timeout) {
       this.folders = new PeASSFolders(projectFolder);
       this.dependencies = dependencies;
-      line = null;
       startversion = null;
       endversion = null;
       threads = 1;
@@ -66,61 +92,12 @@ public abstract class VersionProcessor {
       this.endversion = endversion;
    }
 
-   public VersionProcessor(final String[] args) throws ParseException, JAXBException {
-      final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.DEPENDENCYFILE,
-            OptionConstants.WARMUP, OptionConstants.ITERATIONS,
-            OptionConstants.VMS,
-            OptionConstants.STARTVERSION, OptionConstants.ENDVERSION, OptionConstants.VERSION,
-            OptionConstants.EXECUTIONFILE, OptionConstants.REPETITIONS, OptionConstants.DURATION,
-            OptionConstants.CHANGEFILE, OptionConstants.TEST, OptionConstants.USEKIEKER, OptionConstants.THREADS,
-            OptionConstants.TIMEOUT, OptionConstants.OUT);
-      final CommandLineParser parser = new DefaultParser();
-
-      line = parser.parse(options, args);
-
-      if (line.hasOption(OptionConstants.DEPENDENCYFILE.getName())) {
-         final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
-         dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
-      } else {
-         try {
-            ExecutionData changedTests = TestLoadUtil.loadChangedTests(line);
-            if (changedTests != null) {
-               dependencies = new Dependencies(changedTests);
-            } else {
-               throw new RuntimeException("Dependencyfile and executionfile not defined - one needs to be defined!");
-            }
-         } catch (IOException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!", e);
-         }
-      }
-
-      final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
-      this.folders = new PeASSFolders(projectFolder);
-      if (!projectFolder.exists()) {
-         GitUtils.downloadProject(dependencies.getUrl(), projectFolder);
-      }
-
-      if (line.hasOption(OptionConstants.VERSION.getName())) {
-         startversion = line.getOptionValue(OptionConstants.VERSION.getName(), null);
-         endversion = line.getOptionValue(OptionConstants.VERSION.getName(), null);
-      } else {
-         startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName(), null);
-         endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName(), null);
-      }
-
-      if (startversion != null || endversion != null) {
-         LOG.info("Version: " + startversion + " - " + endversion);
-      }
-
-      VersionComparator.setDependencies(dependencies);
-      vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
-
-      threads = Integer.parseInt(line.getOptionValue(OptionConstants.THREADS.getName(), "1"));
-      timeout = Integer.parseInt(line.getOptionValue(OptionConstants.TIMEOUT.getName(), "60000"));
+   public VersionProcessor()  {
+      
    }
 
-   public void processCommandline() throws ParseException, JAXBException {
+
+   public void processCommandline() throws JAXBException {
       LOG.debug("Processing initial");
       processInitialVersion(dependencies.getInitialversion());
 
@@ -161,7 +138,39 @@ public abstract class VersionProcessor {
 
    }
 
-   protected CommandLine getLine() {
-      return line;
+   @Override
+   public Void call() throws Exception {
+      if (dependencyFile != null) {
+         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+      }
+      if (executionfile != null) {
+         executionData = Constants.OBJECTMAPPER.readValue(executionfile, ExecutionData.class);
+         dependencies = new Dependencies(executionData);
+      }
+      if (executionData == null && dependencies == null) {
+         throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");
+      }
+      
+      folders = new PeASSFolders(projectFolder);
+      if (!projectFolder.exists()) {
+         GitUtils.downloadProject(dependencies.getUrl(), projectFolder);
+      }
+      
+      if (startversion != null || endversion != null) {
+         LOG.info("Version: " + startversion + " - " + endversion);
+      }
+      
+      if (version != null) {
+         if (startversion != null || endversion != null) {
+            throw new RuntimeException("Both, version and (startversion or endversion), are defined - define version, or startversion/endversion!");
+         }
+         startversion = version;
+         endversion = version;
+         LOG.info("Version: " + startversion + " - " + endversion);
+      }
+      
+      VersionComparator.setDependencies(dependencies);
+      vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
+      return null;
    }
 }

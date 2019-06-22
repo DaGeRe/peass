@@ -20,20 +20,24 @@ import de.peass.measurement.analysis.ConfidenceCleaner;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.Constants;
 import de.peass.vcs.GitUtils;
+import picocli.CommandLine.Command;
 
+@Command(name = "clean", description = "Cleans the data for faster analysis and transfer", mixinStandardHelpOptions = true)
 public class TestCleaner {
-   
+
    private static final Logger LOG = LogManager.getLogger(TestCleaner.class);
 
    public static void main(final String[] args) throws ParseException, JAXBException, IOException {
+      clean(args);
+   }
+
+   public static void clean(final String[] args) throws ParseException, JAXBException, IOException {
       CleaningData data = new CleaningData(args);
 
       LOG.debug("Data: {}", data.getDataValue().length);
-      
-      
-      
+
       Map<File, List<File>> commonParentFiles = new HashMap<>();
-      
+
       for (int i = 0; i < data.getDataValue().length; i++) {
          final File dataFolder = new File(data.getDataValue()[i]);
          final File projectNameFolder = dataFolder.getParentFile();
@@ -44,12 +48,12 @@ public class TestCleaner {
          }
          fileList.add(dataFolder);
       }
-      
+
       for (Map.Entry<File, List<File>> entry : commonParentFiles.entrySet()) {
          File projectNameFolder = entry.getKey();
-         
+
          final Cleaner transformer = createCleaner(data.getOut(), null, projectNameFolder);
-         
+
          for (File dataFolder : entry.getValue()) {
             LOG.info("Searching in " + dataFolder);
 
@@ -88,7 +92,7 @@ public class TestCleaner {
       final Cleaner transformer = new Cleaner(fulldataFolder);
       return transformer;
    }
-   
+
    public static void cleanFolderConfidence(final File out, final File dataFolder, final File projectNameFolder, double type1error, double type2error) {
       LOG.info("Searching in " + dataFolder);
       final File cleanFolder, fulldataFolder;

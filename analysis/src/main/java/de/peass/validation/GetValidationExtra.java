@@ -30,11 +30,11 @@ public class GetValidationExtra {
          LOG.error("Folder " + repoFolder.getAbsolutePath() + " should exist!");
       }
 
-      final File commitFolder = new File(repoFolder, "properties/validation/");
+      final File commitFolder = new File(repoFolder, "measurementdata" + File.separator + "validation");
 
       File dependencyFolder = new File(repoFolder, "dependencies-final");
-      File changeFolder = new File(repoFolder, "measurementdata/validation/results");
-      File validationFile = new File(repoFolder, "measurementdata/validation/validation.json");
+      File changeFolder = new File(commitFolder, "results");
+      File validationFile = new File(commitFolder, "validation.json");
       GetValidationdata.getValidation(changeFolder, dependencyFolder, commitFolder, validationFile);
    }
 }

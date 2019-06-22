@@ -46,25 +46,13 @@ public class Validator {
       final Dependencies dependencies = FolderSearcher.MAPPER.readValue(dependencyFile, Dependencies.class);
       firstVersion = dependencies.getVersionNames()[0];
 
-      File changeFile = new File(changeFolder, project + File.separator + project + ".json");
-      if (!changeFile.exists()) {
-         changeFile = new File(changeFolder, project + File.separator + "raw.json");
-      }
-      if (!changeFile.exists()) {
-         changeFile = new File(changeFolder, project + ".json");
-      }
+      File changeFile = getChangefile(changeFolder, project);
       if (changeFile.exists()) {
          changes = FolderSearcher.MAPPER.readValue(changeFile, ProjectChanges.class);
       } else {
          changes = null;
       }
-      File statisticFile = new File(changeFolder, project + File.separator + "statistics" + File.separator + project + ".json");
-      if (!statisticFile.exists()) {
-         statisticFile = new File(changeFolder, project + File.separator + "statistics" + File.separator + "raw.json");
-      }
-      if (!statisticFile.exists()) {
-         statisticFile = new File(changeFolder, "statistics" + File.separator + project + ".json");
-      }
+      File statisticFile = getStatisticsFile(changeFolder, project);
       if (statisticFile.exists()) {
          statistics = FolderSearcher.MAPPER.readValue(statisticFile, ProjectStatistics.class);
       } else {
@@ -72,6 +60,28 @@ public class Validator {
       }
 
       projectName = project;
+   }
+
+   public File getStatisticsFile(final File changeFolder, String project) {
+      File statisticFile = new File(changeFolder, project + File.separator + "statistics" + File.separator + project + ".json");
+      if (!statisticFile.exists()) {
+         statisticFile = new File(changeFolder, project + File.separator + "statistics" + File.separator + "raw.json");
+      }
+      if (!statisticFile.exists()) {
+         statisticFile = new File(changeFolder, "statistics" + File.separator + project + ".json");
+      }
+      return statisticFile;
+   }
+
+   public File getChangefile(final File changeFolder, String project) {
+      File changeFile = new File(changeFolder, project + File.separator + project + ".json");
+      if (!changeFile.exists()) {
+         changeFile = new File(changeFolder, project + File.separator + "raw.json");
+      }
+      if (!changeFile.exists()) {
+         changeFile = new File(changeFolder, project + ".json");
+      }
+      return changeFile;
    }
 
    ProjectValidation validateProject(Validation old, final Map<String, String> commits)
@@ -96,7 +106,10 @@ public class Validator {
                if (changes != null) {
                   if (changes.getVersionChanges().containsKey(commit.getKey())) {
                      measured++;
-                     boolean correct = hasMeasuredImprovemend(changes);
+                     if (commit.getKey().contains("59ffcad15d220c2bc1f70f01d58bc31dec04b423")) {
+                        System.out.println("Test");
+                     }
+                     boolean correct = hasMeasuredImprovemend(commit.getKey());
                      if (correct) {
                         change.setType("MEASURED_CORRECT");
                      } else {
@@ -141,17 +154,18 @@ public class Validator {
       }
    }
 
-   private boolean hasMeasuredImprovemend(final ProjectChanges changes) {
+   private boolean hasMeasuredImprovemend(final String version) {
       boolean correct = false;
-      for (Changes testcaseValues : changes.getVersionChanges().values()) {
-         for (List<Change> methodChanges : testcaseValues.getTestcaseChanges().values()) {
-            for (Change methodChange : methodChanges) {
-               if (methodChange.getChangePercent() > 0) {
-                  correct = true;
-               }
+      Changes testcaseValues = changes.getVersionChanges().get(version);
+      // for (Changes testcaseValues : changes.getVersionChanges().values()) {
+      for (List<Change> methodChanges : testcaseValues.getTestcaseChanges().values()) {
+         for (Change methodChange : methodChanges) {
+            if (methodChange.getChangePercent() > 0) {
+               correct = true;
             }
          }
       }
+      // }
       return correct;
    }
 }

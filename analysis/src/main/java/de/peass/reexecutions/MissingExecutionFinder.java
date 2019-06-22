@@ -66,12 +66,13 @@ public class MissingExecutionFinder {
    public void removeFinishedExecutions(final File folder) throws JAXBException {
       for (final File measurementFile : folder.listFiles()) {
          if (measurementFile.getName().endsWith(".xml")) {
-            System.out.println("File:" + measurementFile);
+            LOG.info("File:" + measurementFile);
             final Kopemedata data = new XMLDataLoader(measurementFile).getFullData();
             for (final TestcaseType testcase : data.getTestcases().getTestcase()) {
                final String testmethod = testcase.getName();
                for (final Chunk c : testcase.getDatacollector().get(0).getChunk()) {
                   final String version = findVersion(c);
+                  LOG.debug("Removing {}", version);
                   final TestSet testSet = tests.getVersions().get(version);
                   if (testSet != null) {
                      removeTestFromTestSet(data, testmethod, testSet);

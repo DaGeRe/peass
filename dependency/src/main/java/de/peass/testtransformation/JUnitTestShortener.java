@@ -5,9 +5,12 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -19,6 +22,7 @@ import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 import de.peass.dependency.ClazzFinder;
@@ -31,61 +35,100 @@ public class JUnitTestShortener {
    private static final Logger LOG = LogManager.getLogger(JUnitTestShortener.class);
 
    private JUnitTestTransformer transformer;
+   final File module; final ChangedEntity callee; final String method;
 
-   public JUnitTestShortener(JUnitTestTransformer transformer) {
+   public JUnitTestShortener(JUnitTestTransformer transformer, final File module, final ChangedEntity callee, final String method) {
       this.transformer = transformer;
+      this.module = module;
+      this.callee = callee;
+      this.method = method;
    }
 
-   private Map<File, File> lastShortenedMap = null;
+   private final Map<File, File> lastShortenedMap = new HashMap<>();
+   private final Set<File> subclasses = new HashSet<>();
 
-   public void shortenTest(final File module, final ChangedEntity callee, final String method) {
-      lastShortenedMap = new HashMap<>();
-
+   public void shortenTest() {
+      if (!lastShortenedMap.isEmpty()) {
+         throw new RuntimeException("Only use TestShortener once!");
+      }
       final File calleeClazzFile = ClazzFinder.getClazzFile(module, callee);
       if (calleeClazzFile != null) {
          try {
             File tempFile = Files.createTempFile("Temp", ".java").toFile();
             FileUtils.copyFile(calleeClazzFile, tempFile);
             lastShortenedMap.put(tempFile, calleeClazzFile);
-            
-            shortenTestClazz(module, callee, method, calleeClazzFile);
-            
+
+            shortenTestClazz(callee, calleeClazzFile);
+
+            for (File subclass : subclasses) {
+               if (!lastShortenedMap.containsValue(subclass)) {
+                  // A rather dirty hack..
+                  final ChangedEntity callee = new ChangedEntity(subclass.getName().replaceAll(".java", ""), this.callee.getModule());
+                  LOG.debug("Shortening: " + callee);
+                  shortenTestClazz(callee, subclass);
+               }
+            }
          } catch (IOException e1) {
             e1.printStackTrace();
          }
-
       }
    }
 
-   private void shortenTestClazz(final File module, final ChangedEntity callee, final String method, final File calleeClazzFile) throws IOException {
+   private void shortenTestClazz(ChangedEntity callee, final File calleeClazzFile) throws IOException {
       final int version = transformer.getVersion(calleeClazzFile);
-      
-      final CompilationUnit calleeUnit = transformer.getLoadedFiles().get(calleeClazzFile);
-      final ClassOrInterfaceDeclaration clazz = FileComparisonUtil.findClazz(callee, calleeUnit.getChildNodes());
 
-      shortenParent(module, callee, calleeUnit, clazz); 
-      removeNonWanted(method, version, clazz);
+      if (version != 0) {
+         final CompilationUnit calleeUnit = transformer.getLoadedFiles().get(calleeClazzFile);
+         final ClassOrInterfaceDeclaration clazz = FileComparisonUtil.findClazz(callee, calleeUnit.getChildNodes());
 
-      FileUtils.writeStringToFile(calleeClazzFile, calleeUnit.toString(), Charset.defaultCharset());
+         shortenParent(module, callee, calleeClazzFile, calleeUnit, clazz);
+         removeNonWanted(method, version, clazz);
+
+         FileUtils.writeStringToFile(calleeClazzFile, calleeUnit.toString(), Charset.defaultCharset());
+      }
    }
 
-   public void shortenParent(final File module, final ChangedEntity callee, final CompilationUnit calleeUnit, final ClassOrInterfaceDeclaration clazz) throws IOException {
+   public void shortenParent(final File module, final ChangedEntity callee, final File calleeClazzFile, final CompilationUnit calleeUnit, final ClassOrInterfaceDeclaration clazz) throws IOException {
+      LOG.debug("Shortening: {}", callee);
       if (clazz.getExtendedTypes().size() > 0) {
-         ChangedEntity parentEntity = null;
-         for (ClassOrInterfaceType parent : clazz.getExtendedTypes()) {
-            LOG.debug("Must also shorten " + parent);
-            String parentName = parent.getName().toString();
-            String fqn = findFQN(calleeUnit, parentName);
-            if (fqn == parentName) {
-               fqn = callee.getPackage() + "." + parentName;
-            }
-            parentEntity = new ChangedEntity(fqn, callee.getModule());
-         }
+         ChangedEntity parentEntity = getParentEntity(callee, calleeUnit, clazz);
          final File parentClazzFile = ClazzFinder.getClazzFile(module, parentEntity);
          if (parentClazzFile != null) {
-            shortenTestClazz(module, parentEntity, "", parentClazzFile);
+            shortenTestClazz(parentEntity, parentClazzFile);
+         }
+         
+         final int version = transformer.getVersion(calleeClazzFile);
+         if (version == 3 || version == 34) {
+            String simpleClazzName = callee.getSimpleClazzName();
+            addSubclasses(simpleClazzName);
          }
       }
+   }
+
+   public void addSubclasses(String simpleClazzName) {
+      List<File> thisSubclasses = transformer.getExtensions().get(simpleClazzName);
+      if (thisSubclasses != null) {
+         LOG.debug("Must shorten suclasses: {}", thisSubclasses);
+         subclasses.addAll(thisSubclasses);
+         for (File subclass : thisSubclasses) {
+            String subsubclass = subclass.getName().substring(0, subclass.getName().lastIndexOf('.'));
+            addSubclasses(subsubclass);
+         }
+      }
+   }
+
+   public ChangedEntity getParentEntity(final ChangedEntity callee, final CompilationUnit calleeUnit, final ClassOrInterfaceDeclaration clazz) {
+      ChangedEntity parentEntity = null;
+      for (ClassOrInterfaceType parent : clazz.getExtendedTypes()) {
+         LOG.debug("Must also shorten " + parent);
+         String parentName = parent.getName().toString();
+         String fqn = findFQN(calleeUnit, parentName);
+         if (fqn == parentName) {
+            fqn = callee.getPackage() + "." + parentName;
+         }
+         parentEntity = new ChangedEntity(fqn, callee.getModule());
+      }
+      return parentEntity;
    }
 
    private void removeNonWanted(final String method, final int version, final ClassOrInterfaceDeclaration clazz) {
@@ -98,8 +141,13 @@ public class JUnitTestShortener {
                   remove.add(methodDeclaration);
                }
             } else {
-               if (methodDeclaration.getAnnotationByName("Test").isPresent() || methodDeclaration.getAnnotationByName("org.junit.Test").isPresent()) {
-                  remove.add(methodDeclaration);
+               Optional<AnnotationExpr> testAnnotation = methodDeclaration.getAnnotationByName("Test");
+               Optional<AnnotationExpr> testAnnotation2 = methodDeclaration.getAnnotationByName("org.junit.Test");
+               if (testAnnotation.isPresent()) {
+                  methodDeclaration.getAnnotations().remove(testAnnotation.get());
+               }
+               if (testAnnotation2.isPresent()) {
+                  methodDeclaration.getAnnotations().remove(testAnnotation2.get());
                }
             }
          }
@@ -129,20 +177,8 @@ public class JUnitTestShortener {
             } catch (IOException e) {
                e.printStackTrace();
             }
-            
+
          }
       }
-      
-//      if (lastShortened != null) {
-//         try {
-//            FileUtils.copyFile(lastShortened, lastFile);
-//            final CompilationUnit unit = FileComparisonUtil.parse(lastFile);
-//            transformer.getLoadedFiles().put(lastFile, unit);
-//         } catch (IOException e) {
-//            e.printStackTrace();
-//         }
-//      }
-      lastShortenedMap = null;
-//      lastShortened = null;
    }
 }

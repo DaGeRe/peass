@@ -32,6 +32,7 @@ import org.apache.logging.log4j.Logger;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.VersionDiff;
+import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.Constants;
 import de.peass.utils.StreamGobbler;
@@ -65,6 +66,20 @@ public final class GitUtils {
             VersionComparator.setVersions(commits);
          }
       }
+      if (repoFound == false && System.getenv(Constants.PEASS_REPOS) != null) {
+         final String repofolderName = System.getenv(Constants.PEASS_REPOS);
+         File repoFolder = new File(repofolderName);
+         File dependencyFolder = new File(repoFolder, "dependencies-final");
+         String project = url.substring(url.lastIndexOf("/")+1, url.lastIndexOf('.'));
+         File dependencyfile = new File(dependencyFolder, "deps_" + project + ".json");
+         LOG.debug("Searching: {}", dependencyfile);
+         if (dependencyfile.exists()) {
+            final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, Dependencies.class);
+            VersionComparator.setDependencies(dependencies);
+            repoFound = true;
+         }
+      }
+      
       if (!repoFound) {
          final File tempDir = Files.createTempDirectory("gitTemp").toFile();
          GitUtils.downloadProject(url, tempDir);
@@ -187,10 +202,11 @@ public final class GitUtils {
             final String date = line.substring(8);
             String message = "";
             while ((line = input.readLine()) != null) {
-               message += line + " ";
                if (line.startsWith("commit")) {
                   nextTag = line.substring(7);
                   break;
+               } else {
+                  message += line + " ";
                }
             }
             // log.debug("Git Commit: {}", tag);

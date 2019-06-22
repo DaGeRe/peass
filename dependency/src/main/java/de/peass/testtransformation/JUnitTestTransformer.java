@@ -85,6 +85,7 @@ public class JUnitTestTransformer {
    protected boolean useKieker = false;
    protected Charset charset = StandardCharsets.UTF_8;
    protected int repetitions = 1;
+   private Map<String, List<File>> extensions = null;
 
    private final JavaParser javaParser = new JavaParser();
 
@@ -118,6 +119,7 @@ public class JUnitTestTransformer {
    }
 
    private Map<File, CompilationUnit> loadedFiles;
+
    public Map<File, CompilationUnit> getLoadedFiles() {
       return loadedFiles;
    }
@@ -125,9 +127,9 @@ public class JUnitTestTransformer {
    private Map<File, Integer> junitVersions;
 
    public void determineVersions(final List<File> modules) {
-	   determineVersions(modules, "src/test/");
+      determineVersions(modules, "src/test/");
    }
-   
+
    public void determineVersions(final List<File> modules, final String testPath) {
       loadedFiles = new HashMap<>();
       junitVersions = new HashMap<>();
@@ -163,13 +165,23 @@ public class JUnitTestTransformer {
       }
    }
 
+   /**
+    * Returns the version of the JUnit test. If the file is no JUnit test, 0 is returned.
+    * @param clazzFile
+    * @return
+    */
    public int getVersion(final File clazzFile) {
       LOG.debug("Loading: {} {}", clazzFile, junitVersions);
-      return junitVersions.get(clazzFile);
-   }
+      if (junitVersions.containsKey(clazzFile)) {
+         return junitVersions.get(clazzFile);
+      } else {
+         return 0;
+      }
 
+   }
+   
    private void determineVersions(final File testFolder) {
-      final Map<String, List<File>> extensions = new HashMap<>();
+      extensions = new HashMap<>();
       for (final File javaFile : FileUtils.listFiles(testFolder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE)) {
          try {
             final CompilationUnit unit = FileComparisonUtil.parse(javaFile);
@@ -189,6 +201,9 @@ public class JUnitTestTransformer {
                // We only need to consider classes with one extends, since classes can not have multiple extends and we search for classes that may extend TestCase (indirectly)
                LOG.trace("Transforming: {}", clazz.getNameAsString());
                if (clazz.getExtendedTypes().size() == 1) {
+                  if (javaFile.getName().contains("TestSharedPoolData")) {
+                     System.out.println("test");
+                  }
                   final ClassOrInterfaceType extend = clazz.getExtendedTypes(0);
                   final String extensionName = extend.getNameAsString().intern();
                   List<File> extensionsOfBase = extensions.get(extensionName);
@@ -204,10 +219,10 @@ public class JUnitTestTransformer {
          }
       }
 
-      addJUnit3Test("TestCase", extensions, junitVersions);
+      addJUnit3Test("TestCase", junitVersions);
    }
 
-   Map<Integer, String> junitTestAnnotations = new HashMap<>();
+   private final Map<Integer, String> junitTestAnnotations = new HashMap<>();
    {
       junitTestAnnotations.put(5, "org.junit.jupiter.api.Test");
       junitTestAnnotations.put(4, "org.junit.Test");
@@ -225,7 +240,7 @@ public class JUnitTestTransformer {
       return isJUnitVersion;
    }
 
-   public void addJUnit3Test(final String clazzName, final Map<String, List<File>> extensions, final Map<File, Integer> junitVersions) {
+   public void addJUnit3Test(final String clazzName, final Map<File, Integer> junitVersions) {
       final List<File> extending = extensions.get(clazzName);
       if (extending != null) {
          for (final File foundTest : extending) {
@@ -236,9 +251,13 @@ public class JUnitTestTransformer {
             } else {
                junitVersions.put(foundTest, 3);
             }
-            addJUnit3Test(foundTest.getName().replaceAll(".java", ""), extensions, junitVersions);
+            addJUnit3Test(foundTest.getName().replaceAll(".java", ""), junitVersions);
          }
       }
+   }
+   
+   public Map<String, List<File>> getExtensions() {
+      return extensions;
    }
 
    public List<String> getTests(final File module, final ChangedEntity clazzname) {

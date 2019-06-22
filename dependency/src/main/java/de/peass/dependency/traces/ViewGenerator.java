@@ -35,14 +35,19 @@ import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 import de.peass.utils.StreamGobbler;
 import de.peass.vcs.GitUtils;
+import picocli.CommandLine;
+import picocli.CommandLine.Option;
 
 public class ViewGenerator extends PairProcessor {
 
    private static final Logger LOG = LogManager.getLogger(ViewGenerator.class);
 
-   private final File viewFolder;
-   private final File executeFile;
-   private final ExecutionData changedTraceMethods = new ExecutionData();
+   @Option(names = { "-out", "--out" }, description = "Path for saving the executionfile")
+   File out;
+
+   private File viewFolder;
+   private File executeFile;
+   private ExecutionData changedTraceMethods = new ExecutionData();
    // private final TestResultManager resultsManager;
 
    public ViewGenerator(final File projectFolder, final Dependencies dependencies, final File executefile, final File viewFolder, final int threads, final int timeout) {
@@ -55,22 +60,8 @@ public class ViewGenerator extends PairProcessor {
       init();
    }
 
-   //
-   public ViewGenerator(final String[] args) throws ParseException, JAXBException, JsonParseException, JsonMappingException, IOException {
-      super(args);
-      final File resultFolder = DependencyReadingStarter.getResultFolder();
-      final String projectName = folders.getProjectFolder().getName();
-      init();
+   public ViewGenerator() throws ParseException, JAXBException, JsonParseException, JsonMappingException, IOException {
 
-      viewFolder = new File(resultFolder, "views_" + projectName);
-      if (!viewFolder.exists()) {
-         viewFolder.mkdir();
-      }
-      if (line.hasOption(OptionConstants.OUT.getName())) {
-         executeFile = new File(line.getOptionValue(OptionConstants.OUT.getName()));
-      } else {
-         executeFile = new File(viewFolder, "execute-" + projectName + ".json");
-      }
    }
 
    public void init() {
@@ -157,13 +148,38 @@ public class ViewGenerator extends PairProcessor {
 
    private Runnable createGeneratorRunnable(final String version, final String predecessor, final TestSet testset) {
       LOG.info("Starting {}", version);
-      return new ViewGeneratorThread(version, predecessor, folders, 
-            viewFolder, executeFile, 
+      return new ViewGeneratorThread(version, predecessor, folders,
+            viewFolder, executeFile,
             testset, changedTraceMethods, timeout);
    }
 
    public File getExecuteFile() {
       return executeFile;
    }
-   
+
+   public static void main(String[] args) throws JsonParseException, JsonMappingException, ParseException, JAXBException, IOException {
+      CommandLine commandLine = new CommandLine(new ViewGenerator());
+      commandLine.execute(args);
+   }
+
+   @Override
+   public Void call() throws Exception {
+      super.call();
+      // final File resultFolder = DependencyReadingStarter.getResultFolder();
+      final String projectName = folders.getProjectFolder().getName();
+      init();
+
+      if (out == null) {
+         out = DependencyReadingStarter.getResultFolder();
+      }
+
+      executeFile = new File(out, "execute-" + projectName + ".json");
+      viewFolder = new File(out, "views_" + projectName);
+      if (!viewFolder.exists()) {
+         viewFolder.mkdir();
+      }
+
+      return null;
+   }
+
 }

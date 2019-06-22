@@ -128,18 +128,14 @@ public class DependencyStatisticAnalyzer {
 		return statistics;
 	}
 
-//	public static Map<String, Version> readVersionMap(final File dependenciesFile) throws JAXBException {
-//		final Dependencies data = readVersions(dependenciesFile);
-//
-//		final List<Version> versions = data.getVersions().getVersion();
-//
-//		final Map<String, Version> versionMap = new LinkedHashMap<>();
-//		versions.forEach(version -> versionMap.put(version.getVersion(), version));
-//
-//		return versionMap;
-//	}
-
-	public static Dependencies readVersions(final File dependencyFile) throws JAXBException {
+	/**
+	 * 
+	 * @param dependencyFile
+	 * @return
+	 * @deprecated read JSON directly with Jackson
+	 */
+	@Deprecated
+	public static Dependencies readVersions(final File dependencyFile) {
 	   Dependencies deps = null;
 	   try {
          deps = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
@@ -147,11 +143,5 @@ public class DependencyStatisticAnalyzer {
          e.printStackTrace();
       }
 	   return deps;
-//		LOG.trace("Reading versions: {}", dependencyFile.getAbsolutePath());
-//		final JAXBContext jc = JAXBContext.newInstance(Versiondependencies.class);
-//		final Unmarshaller unmarshaller = jc.createUnmarshaller();
-//		final Versiondependencies data = (Versiondependencies) unmarshaller.unmarshal(dependencyFile);
-//
-//		return data;
 	}
 }

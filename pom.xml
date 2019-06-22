@@ -12,6 +12,7 @@
 	<module>dependency</module>
         <module>measurement</module>
 	<module>analysis</module>
+	<module>distribution</module>
     </modules>
 
     <developers>

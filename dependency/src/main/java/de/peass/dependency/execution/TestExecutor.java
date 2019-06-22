@@ -117,8 +117,8 @@ public abstract class TestExecutor {
    protected abstract void runTest(File module, final File logFile, final String testname, final long timeout);
 
    void runMethod(final File logFolder, final ChangedEntity clazz, final File module, final String method, final long timeout) {
-      final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer);
-      shortener.shortenTest(module, clazz, method);
+      final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, module, clazz, method);
+      shortener.shortenTest();
 
       final File logFile = new File(logFolder, "log_" + clazz.getJavaClazzName() + File.separator + method + ".txt");
       if (!logFile.getParentFile().exists()) {

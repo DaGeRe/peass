@@ -20,6 +20,10 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -41,6 +45,8 @@ import jline.internal.Log;
  *
  */
 public class TestSet {
+
+   private static final Logger LOG = LogManager.getLogger(TestSet.class);
 
    public static class ChangedEntitityDeserializer extends KeyDeserializer {
 
@@ -70,7 +76,7 @@ public class TestSet {
       }
    }
 
-   @JsonDeserialize(keyUsing = ChangedEntitityDeserializer.class, contentAs = TreeSet.class, as=TreeMap.class)
+   @JsonDeserialize(keyUsing = ChangedEntitityDeserializer.class, contentAs = TreeSet.class, as = TreeMap.class)
    private final Map<ChangedEntity, Set<String>> testcases = new TreeMap<>();
    private String predecessor;
 
@@ -180,16 +186,32 @@ public class TestSet {
       }
       final Set<String> testMethods = testcases.get(testClassName);
       if (testMethods != null) {
-         System.out.println("Remove: " + testClassName + "#" + testMethodName);
-         if (!testMethods.remove(testMethodName)) {
-            System.out.println("Problem: " + testMethodName + " can not be removed.");
-            // throw new RuntimeException("Test " + testMethodName + " was not in TestSet!");
-         }
-         if (testMethods.size() == 0) {
-            testcases.remove(testClassName);
-         }
+         removeMethod(testClassName, testMethodName, testMethods);
       } else {
-         Log.error("Testclass " + testClassName + " missing");
+         ChangedEntity other = null;
+         for (ChangedEntity entity : testcases.keySet()) {
+            if (entity.getClazz().equals(testClassName.getClazz())) {
+               other = entity;
+            }
+         }
+         if (other != null) {
+            LOG.warn("{} not found - found {} instead. Modules should be saved in ChangedEntity-instances!", testClassName, other);
+            removeMethod(other, testMethodName, testcases.get(other));
+         } else {
+            LOG.error("Testclass " + testClassName + " missing");
+         }
+
+      }
+   }
+
+   private void removeMethod(final ChangedEntity testClassName, final String testMethodName, final Set<String> testMethods) {
+      LOG.debug("Removing: " + testClassName + "#" + testMethodName);
+      if (!testMethods.remove(testMethodName)) {
+         LOG.error("Problem: " + testMethodName + " can not be removed.");
+         // throw new RuntimeException("Test " + testMethodName + " was not in TestSet!");
+      }
+      if (testMethods.size() == 0) {
+         testcases.remove(testClassName);
       }
    }
 

@@ -8,7 +8,6 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,6 +25,9 @@ import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.OptionConstants;
 import de.peass.utils.TestLoadUtil;
 import groovy.util.Eval;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
  * Runs the dependency test by running the test, where something could have changed, pairwise for every new version. This makes it faster to get potential change candidates, but it
@@ -34,13 +36,35 @@ import groovy.util.Eval;
  * @author reichelt
  *
  */
+@Command(description = "Measures the defined tests and versions exactly until the number of VMs is reached", name = "measureExact")
 public class DependencyTestPairStarter extends PairProcessor {
    
-   static JUnitTestTransformer getTestTransformer(final CommandLine line, final PeASSFolders folders) {
-      final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "100"));
-      final boolean useKieker = Boolean.parseBoolean(line.getOptionValue(OptionConstants.USEKIEKER.getName(), "false"));
-      final int warmup = Integer.parseInt(line.getOptionValue(OptionConstants.WARMUP.getName(), "10"));
-      final int iterations = Integer.parseInt(line.getOptionValue(OptionConstants.ITERATIONS.getName(), "1000"));
+   @Option(names = { "-vms", "--vms" }, description = "Number of VMs to start")
+   int vms = 100;
+   
+   @Option(names = { "-duration", "--duration" }, description = "Which duration to use - if duration is specified, warmup and iterations are ignored")
+   int duration = 0;
+   
+   @Option(names = { "-warmup", "--warmup" }, description = "Number of warmup iterations")
+   int warmup = 10;
+   
+   @Option(names = { "-iterations", "--iterations" }, description = "Number of iterations")
+   int iterations = 1000;
+   
+   @Option(names = { "-repetitions", "--repetitions" }, description = "Last version that should be analysed")
+   int repetitions = 100;
+   
+   @Option(names = { "-useKieker", "--useKieker", "-usekieker", "--usekieker"}, description = "Whether Kieker should be used")
+   boolean useKieker = false;
+
+   @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
+   String testName;
+
+   JUnitTestTransformer getTestTransformer() {
+//      final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "100"));
+//      final boolean useKieker = Boolean.parseBoolean(line.getOptionValue(OptionConstants.USEKIEKER.getName(), "false"));
+//      final int warmup = Integer.parseInt(line.getOptionValue(OptionConstants.WARMUP.getName(), "10"));
+//      final int iterations = Integer.parseInt(line.getOptionValue(OptionConstants.ITERATIONS.getName(), "1000"));
       final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder());
       testgenerator.setDatacollectorlist(DataCollectorList.ONLYTIME);
       testgenerator.setIterations(iterations);
@@ -48,8 +72,7 @@ public class DependencyTestPairStarter extends PairProcessor {
       testgenerator.setWarmupExecutions(warmup);
       testgenerator.setUseKieker(useKieker);
       testgenerator.setRepetitions(repetitions);
-      if (line.hasOption(OptionConstants.TIMEOUT.getName())) {
-         final long timeout = Long.parseLong(line.getOptionValue(OptionConstants.TIMEOUT.getName()));
+      if (timeout != 0) {
          testgenerator.setSumTime(timeout);
       }
       return testgenerator;
@@ -59,32 +82,25 @@ public class DependencyTestPairStarter extends PairProcessor {
 
    protected DependencyTester tester;
    private final List<String> versions = new LinkedList<>();
-   private final int startindex, endindex;
-   private final ExecutionData executionData;
+   private int startindex, endindex;
    private TestCase test;
 
-   public DependencyTestPairStarter(final String[] args) throws ParseException, JAXBException, IOException {
-      super(args);
-      final int vms = Integer.parseInt(line.getOptionValue(OptionConstants.VMS.getName(), "100"));
-      final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "100"));
-      final boolean useKieker = Boolean.parseBoolean(line.getOptionValue(OptionConstants.USEKIEKER.getName(), "false"));
-
-      if (line.hasOption(OptionConstants.DURATION.getName())) {
-         final int duration = Integer.parseInt(line.getOptionValue(OptionConstants.DURATION.getName()));
+   @Override
+   public Void call() throws Exception {
+      super.call();
+      if (duration != 0) {
          tester = new DependencyTester(folders, duration, vms, true, repetitions, useKieker);
       } else {
-         final JUnitTestTransformer testgenerator = getTestTransformer(line, folders);
+         final JUnitTestTransformer testgenerator = getTestTransformer();
          tester = new DependencyTester(folders, testgenerator, vms);
       }
-      
-      if (line.hasOption(OptionConstants.TEST.getName())) {
-         test = new TestCase(line.getOptionValue(OptionConstants.TEST.getName()));
+
+      if (testName != null) {
+         test = new TestCase(testName);
+         LOG.info("Test: {}", test);
       } else {
          test = null;
       }
-      LOG.info("Testcase: " + test);
-      
-      executionData = TestLoadUtil.loadChangedTests(line);
 
       versions.add(dependencies.getInitialversion().getVersion());
 
@@ -92,7 +108,10 @@ public class DependencyTestPairStarter extends PairProcessor {
 
       startindex = getStartVersionIndex();
       endindex = getEndVersion();
-
+      return null;
+   }
+   
+   public DependencyTestPairStarter() {
    }
 
    /**
@@ -179,9 +198,9 @@ public class DependencyTestPairStarter extends PairProcessor {
                   if (test != null) {
                      executeThisTest = checkTestName(testcase, executeThisTest);
                   }
-                 
+
                   if (executeThisTest) {
-                     executeThisTest = checkExecutionData(version, testcase, executeThisTest); 
+                     executeThisTest = checkExecutionData(version, testcase, executeThisTest);
                   }
                   if (executeThisTest) {
                      tester.evaluate(version, versionOld, testcase);
@@ -194,7 +213,7 @@ public class DependencyTestPairStarter extends PairProcessor {
          e.printStackTrace();
       }
    }
-   
+
    @Override
    protected void postEvaluate() {
       tester.postEvaluate();
@@ -225,15 +244,19 @@ public class DependencyTestPairStarter extends PairProcessor {
       if (!test.equals(testcase)) {
          executeThisTest = false;
          LOG.debug("Skipping: " + testcase);
-      }else {
+      } else {
          LOG.debug("Success!");
       }
       return executeThisTest;
    }
 
-   public static void main(final String[] args) throws ParseException, JAXBException, IOException {
-      final DependencyTestPairStarter starter = new DependencyTestPairStarter(args);
-      starter.processCommandline();
+   public static void main(final String[] args) throws JAXBException, IOException {
+      DependencyTestPairStarter command = new DependencyTestPairStarter();
+      CommandLine commandLine = new CommandLine(command);
+      commandLine.execute(args);
+      command.processCommandline();
+      // final DependencyTestPairStarter starter = new DependencyTestPairStarter(args);
+      // starter.processCommandline();
    }
 
 }

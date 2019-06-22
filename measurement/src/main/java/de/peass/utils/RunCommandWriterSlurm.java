@@ -6,21 +6,19 @@ import de.peass.dependency.persistence.SelectedTests;
 
 public class RunCommandWriterSlurm extends RunCommandWriter {
 
+   boolean inited = false;
+
    public RunCommandWriterSlurm(PrintStream goal, String experimentId, SelectedTests dependencies) {
       super(goal, experimentId, dependencies);
       slurmOutputFolder = "/nfs/user/do820mize/processlogs/" + dependencies.getName();
-
-      init(goal);
    }
 
    public RunCommandWriterSlurm(PrintStream goal, String experimentId, String name, String url) {
       super(goal, experimentId, name, url);
       slurmOutputFolder = "/nfs/user/do820mize/processlogs/" + name;
-      
-      init(goal);
    }
-   
-   public void init(PrintStream goal) {
+
+   public void init() {
       goal.println("timestamp=$(date +%s)");
       goal.println("mkdir -p " + slurmOutputFolder);
    }
@@ -28,6 +26,10 @@ public class RunCommandWriterSlurm extends RunCommandWriter {
    private final String slurmOutputFolder;
 
    public void createFullVersionCommand(int versionIndex, final String endversion) {
+      if (!inited) {
+         init();
+         inited = true;
+      }
       goal.println(
             "sbatch --nice=" + nice + " --time=10-0 "
                   + "--output=" + slurmOutputFolder + "/process_" + versionIndex + "_$timestamp.out "
@@ -37,6 +39,10 @@ public class RunCommandWriterSlurm extends RunCommandWriter {
    }
 
    public void createSingleMethodCommand(final int versionIndex, final String endversion, final String testcaseName) {
+      if (!inited) {
+         init();
+         inited = true;
+      }
       final String simpleTestName = testcaseName.substring(testcaseName.lastIndexOf('.') + 1);
       goal.println(
             "sbatch --partition=galaxy-low-prio --nice=" + nice + " --time=10-0 "

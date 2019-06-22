@@ -4,11 +4,11 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.cli.ParseException;
-
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.OptionConstants;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
 
 /**
  * Executes test and skips those where results clearly indicate a performance change
@@ -16,21 +16,29 @@ import de.peass.utils.OptionConstants;
  * @author reichelt
  *
  */
-public class AdaptiveTestStarter extends DependencyTestPairStarter {
+@Command(description = "Measures the defined tests and versions until agnostic t-test makes a non-agnostic decission", name = "measure")
+public final class AdaptiveTestStarter extends DependencyTestPairStarter {
 
-   public AdaptiveTestStarter(final String[] args) throws ParseException, JAXBException, IOException {
-      super(args);
-      //TODO Code duplication is not good style..
-      final int vms = Integer.parseInt(line.getOptionValue(OptionConstants.VMS.getName(), "100"));
-      final long timeout = Integer.parseInt(line.getOptionValue(OptionConstants.TIMEOUT.getName(), "120")); // Default: 2 Hours
-      final JUnitTestTransformer testgenerator = DependencyTestPairStarter.getTestTransformer(line, folders);
-      tester = new AdaptiveTester(folders, testgenerator, vms);
-      tester.setTimeout(timeout);
+   public AdaptiveTestStarter() throws JAXBException, IOException {
+
    }
 
-   public static void main(final String[] args) throws ParseException, JAXBException, IOException {
-      final AdaptiveTestStarter starter = new AdaptiveTestStarter(args);
-      starter.processCommandline();
+   public static void main(final String[] args) throws JAXBException, IOException {
+      AdaptiveTestStarter command = new AdaptiveTestStarter();
+      CommandLine commandLine = new CommandLine(command);
+      commandLine.execute(args);
+      
+   }
+
+   @Override
+   public Void call() throws Exception {
+      super.call();
+      final JUnitTestTransformer testgenerator = getTestTransformer();
+      tester = new AdaptiveTester(folders, testgenerator, vms);
+      tester.setTimeout(timeout);
+      
+      processCommandline();
+      return null;
    }
 
 }

@@ -119,21 +119,25 @@ public class DependencyReadingStarter {
     * @return
     */
    public static List<GitCommit> getGitCommits(final CommandLine line, final File projectFolder) {
+      final String startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName(), null);
+      final String endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName(), null);
+      
+      return getGitCommits(startversion, endversion, projectFolder);
+   }
+
+   public static List<GitCommit> getGitCommits(String startversion, String endversion, final File projectFolder) {
       final List<GitCommit> commits = GitUtils.getCommits(projectFolder);
 
       LOG.info("Processing git repo, commits: {}", commits.size());
       // LOG.debug("First Commits: {}", commits.subList(0, 10));
-      if (line.hasOption(OptionConstants.STARTVERSION.getName())) {
-         final String startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName());
-         if (line.hasOption(OptionConstants.ENDVERSION.getName())) {
-            final String endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName());
+      if (startversion != null) {
+         if (endversion != null) {
             GitUtils.filterList(startversion, endversion, commits);
          } else {
             GitUtils.filterList(startversion, null, commits);
             LOG.debug("First Commits: {}", commits.size() > 10 ? commits.subList(0, 10) : commits.subList(0, commits.size() - 1));
          }
-      } else if (line.hasOption(OptionConstants.ENDVERSION.getName())) {
-         final String endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName());
+      } else if (endversion != null) {
          GitUtils.filterList(null, endversion, commits);
       }
       LOG.info(commits);

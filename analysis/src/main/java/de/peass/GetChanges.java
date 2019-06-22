@@ -1,57 +1,83 @@
 package de.peass;
 
 import java.io.File;
-
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
+import java.io.IOException;
+import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import de.peass.analysis.changes.ChangeReader;
-import de.peass.dependency.reader.DependencyReaderUtil;
+import de.peass.dependency.persistence.Dependencies;
+import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.utils.OptionConstants;
+import de.peass.utils.Constants;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
-public class GetChanges {
+@Command(name = "getchanges", description = "Determines changes based on measurement values using agnostic t-test", mixinStandardHelpOptions = true)
+public class GetChanges implements Callable<Void> {
 
-	private static final Logger LOG = LogManager.getLogger(GetChanges.class);
+   private static final Logger LOG = LogManager.getLogger(GetChanges.class);
 
-	public static void main(final String[] args) throws JAXBException, ParseException {
-		final Options options = OptionConstants.createOptions(OptionConstants.OUT, OptionConstants.URL, OptionConstants.DATA, OptionConstants.DEPENDENCYFILE, OptionConstants.EXECUTIONFILE, OptionConstants.CONFIDENCE);
+   @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Path to the dependencyfile")
+   protected File dependencyFile;
 
-		final CommandLineParser parser = new DefaultParser();
-		final CommandLine line = parser.parse(options, args);
+   @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
+   protected File executionfile;
 
-		if (!line.hasOption(OptionConstants.URL.getName()) && !line.hasOption(OptionConstants.DEPENDENCYFILE.getName())) {
-			LOG.error(
-					"You should pass either an URL or an dependencyfile, since the cleaner needs to know the commits order. If the project is contained in the default URLs, it will also work.");
-		}
+   @Option(names = { "-data", "--data" }, description = "Path to datafolder")
+   protected File data;
 
-		if (line.hasOption(OptionConstants.DEPENDENCYFILE.getName())) {
-			DependencyReaderUtil.loadDependencies(line);
-		}
+   @Option(names = { "-out", "--out" }, description = "Path for saving the changefile")
+   File out = new File("results");
 
-		final File resultFolder = new File(line.getOptionValue(OptionConstants.OUT.getName(), "results"));
-		if (!resultFolder.exists()) {
-			resultFolder.mkdirs();
-		}
-		final File statisticFolder = new File(resultFolder, "statistics");
-		if (!statisticFolder.exists()) {
-			statisticFolder.mkdir();
-		}
+   @Option(names = { "-confidence", "--confidence" }, description = "Confidence level for agnostic t-test")
+   private double confidence = 0.01;
 
-		final ChangeReader reader = new ChangeReader(statisticFolder, VersionComparator.getProjectName());
-		if (line.hasOption(OptionConstants.CONFIDENCE.getName())) {
-		   final String confidenceValue = line.getOptionValue(OptionConstants.CONFIDENCE.getName());
-         reader.setConfidence(Double.parseDouble(confidenceValue));
-		}
+   public GetChanges() {
 
-		final File measurementFolder = new File(line.getOptionValue(OptionConstants.DATA.getName()));
-		reader.readFile(measurementFolder);
-	}
+   }
+
+   public static void main(final String[] args) {
+      CommandLine commandLine = new CommandLine(new GetChanges());
+      commandLine.execute(args);
+   }
+
+   @Override
+   public Void call() throws Exception {
+      getVersionOrder();
+
+      if (!out.exists()) {
+         out.mkdirs();
+      }
+      final File statisticFolder = new File(out, "statistics");
+      if (!statisticFolder.exists()) {
+         statisticFolder.mkdir();
+      }
+
+      final ChangeReader reader = new ChangeReader(statisticFolder, VersionComparator.getProjectName());
+      reader.setConfidence(confidence);
+
+      reader.readFile(data);
+      return null;
+   }
+
+   public void getVersionOrder() throws IOException, JsonParseException, JsonMappingException {
+      Dependencies dependencies = null;
+      ExecutionData executionData = null;
+      if (dependencyFile != null) {
+         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+         VersionComparator.setDependencies(dependencies);
+      }
+      if (executionfile != null) {
+         executionData = Constants.OBJECTMAPPER.readValue(executionfile, ExecutionData.class);
+         dependencies = new Dependencies(executionData);
+         VersionComparator.setDependencies(dependencies);
+      }
+      if (executionData == null && dependencies == null) {
+         throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined and valid!");
+      }
+   }
 }
