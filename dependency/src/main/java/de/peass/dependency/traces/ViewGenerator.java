@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.DependencyReadingStarter;
 import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.TestResultManager;
+import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.Dependencies;
@@ -178,6 +178,8 @@ public class ViewGenerator extends PairProcessor {
       if (!viewFolder.exists()) {
          viewFolder.mkdir();
       }
+      
+      processCommandline();
 
       return null;
    }

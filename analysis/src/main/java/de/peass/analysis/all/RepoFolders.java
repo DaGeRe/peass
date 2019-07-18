@@ -18,7 +18,6 @@ public class RepoFolders {
    private final File dependencyFolder;
    private final File dataFolder;
    private final File reexecuteFolder;
-   
 
    private final File propertiesRepo;
    private final File classificationFolder;
@@ -52,11 +51,11 @@ public class RepoFolders {
    public File getCleanDataFolder() {
       return dataFolder;
    }
-   
+
    public File getValidationDataFolder(String project) {
       return new File(dataFolder.getParentFile(), "validation" + File.separator + "clean" + File.separator + project);
    }
-   
+
    public File getReexecuteFolder() {
       return reexecuteFolder;
    }
@@ -92,7 +91,7 @@ public class RepoFolders {
    public File getDependencyFile(String project) {
       return new File(dependencyFolder, "deps_" + project + ".json");
    }
-   
+
    public ExecutionData getExecutionData(String project) throws JsonParseException, JsonMappingException, IOException {
       File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
       ExecutionData changedTests = FolderSearcher.MAPPER.readValue(executionFile, ExecutionData.class);
@@ -100,11 +99,15 @@ public class RepoFolders {
    }
 
    public File getChangeFile(String project) {
-      return new File(resultsFolder, project + File.separator + project + ".json");
+      File candidate = new File(resultsFolder, project + File.separator + project + ".json");
+      if (!candidate.exists()) {
+         candidate = new File(resultsFolder, project + ".json");
+      }
+      return candidate;
    }
 
    public File getViewFolder(String project) {
       return new File(allViewFolder, "views_" + project);
    }
-   
+
 }

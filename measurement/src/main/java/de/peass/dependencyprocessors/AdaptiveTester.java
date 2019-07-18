@@ -14,15 +14,16 @@ import de.dagere.kopeme.generated.Result;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.measurement.analysis.EarlyBreakDecider;
+import de.peass.measurement.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 public class AdaptiveTester extends DependencyTester {
-
+   
    private static final Logger LOG = LogManager.getLogger(AdaptiveTester.class);
 
-   public AdaptiveTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator, final int vms)
+   public AdaptiveTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator, final MeasurementConfiguration configuration)
          throws IOException {
-      super(folders, testgenerator, vms);
+      super(folders, testgenerator, configuration);
    }
 
    @Override
@@ -32,11 +33,13 @@ public class AdaptiveTester extends DependencyTester {
       final File logFolder = getLogFolder(version, testcase);
 
       currentChunkStart = System.currentTimeMillis();
-      for (int vmid = 0; vmid < vms; vmid++) {
+      for (int vmid = 0; vmid < configuration.getVms(); vmid++) {
          runOneComparison(version, versionOld, logFolder, testcase, vmid);
 
          EarlyBreakDecider decider = new EarlyBreakDecider(testTransformer, folders.getFullMeasurementFolder(), version, versionOld,
                testcase, currentChunkStart);
+         decider.setType1error(configuration.getType1error());
+         decider.setType2error(configuration.getType2error());
          final boolean savelyDecidable = decider.isBreakPossible(vmid);
 
          if (savelyDecidable) {

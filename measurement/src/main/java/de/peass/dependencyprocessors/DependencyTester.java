@@ -1,32 +1,23 @@
 package de.peass.dependencyprocessors;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.TestcaseType;
+import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.TestResultManager;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.TestExecutor;
+import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.analysis.Cleaner;
 import de.peass.measurement.analysis.DataReader;
-import de.peass.measurement.analysis.MultipleVMTestUtil;
 import de.peass.measurement.analysis.statistics.TestData;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.testtransformation.TimeBasedTestTransformer;
@@ -44,7 +35,8 @@ public class DependencyTester {
    private static final Logger LOG = LogManager.getLogger(DependencyTester.class);
 
    protected final PeASSFolders folders;
-   protected final int vms;
+   protected final MeasurementConfiguration configuration;
+   // protected final int vms;
 
    private final VersionControlSystem vcs;
 
@@ -54,13 +46,12 @@ public class DependencyTester {
    protected String currentVersion;
    protected ResultOrganizer currentOrganizer;
    protected long currentChunkStart = 0;
-   private long timeout = 5;
 
    public DependencyTester(final PeASSFolders folders, final int duration, final int vms,
          final boolean runInitial, final int repetitions, final boolean useKieker) throws IOException {
       super();
       this.folders = folders;
-      this.vms = vms;
+      this.configuration = null;
 
       vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
 
@@ -74,18 +65,18 @@ public class DependencyTester {
       testTransformer.setWarmupExecutions(0);
       testTransformer.setUseKieker(useKieker);
       testTransformer.setLogFullData(true);
-      testExecutor = TestResultManager.createExecutor(folders, Integer.MAX_VALUE, testTransformer);
+      testExecutor = KiekerResultManager.createExecutor(folders, Integer.MAX_VALUE, testTransformer);
       // testExecutor = new MavenKiekerTestExecutor(folders, testTransformer, Integer.MAX_VALUE);
    }
 
-   public DependencyTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator, final int vms) throws IOException {
+   public DependencyTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator, final MeasurementConfiguration configuration) throws IOException {
       super();
       this.folders = folders;
-      this.vms = vms;
+      this.configuration = configuration;
 
       vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
       this.testTransformer = testgenerator;
-      testExecutor = TestResultManager.createExecutor(folders, Integer.MAX_VALUE, testTransformer);
+      testExecutor = KiekerResultManager.createExecutor(folders, Integer.MAX_VALUE, testTransformer);
    }
 
    /**
@@ -101,7 +92,7 @@ public class DependencyTester {
       final File logFolder = getLogFolder(version, testcase);
 
       currentChunkStart = System.currentTimeMillis();
-      for (int vmid = 0; vmid < vms; vmid++) {
+      for (int vmid = 0; vmid < configuration.getVms(); vmid++) {
          runOneComparison(version, versionOld, logFolder, testcase, vmid);
       }
    }
@@ -146,6 +137,24 @@ public class DependencyTester {
          GitUtils.goToTag(version, folders.getProjectFolder());
       }
 
+      File vmidFolder = initVMFolder(version, vmid, logFolder);
+
+      if (testTransformer.isUseKieker()) {
+         testExecutor.loadClasses();
+      }
+      testExecutor.prepareKoPeMeExecution(new File(logFolder, "clean.txt"));
+      final long timeout = 5 + (int) (this.configuration.getTimeout() * 1.1);
+      testExecutor.executeTest(testcase, vmidFolder, timeout);
+
+      LOG.info("Ändere eine Klassen durch Ergänzung des Gitversion-Elements.");
+
+      currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart, testTransformer.isUseKieker());
+      currentOrganizer.saveResultFiles(testcase, version, vmid);
+
+      cleanup();
+   }
+
+   private File initVMFolder(final String version, final int vmid, final File logFolder) {
       File vmidFolder = new File(logFolder, "vm_" + vmid + "_" + version);
       if (vmidFolder.exists()) {
          vmidFolder = new File(logFolder, "vm_" + vmid + "_" + version + "_new");
@@ -153,17 +162,7 @@ public class DependencyTester {
       vmidFolder.mkdirs();
 
       LOG.info("Initial checkout finished, VM-Folder " + vmidFolder.getAbsolutePath() + " exists: " + vmidFolder.exists());
-
-      testExecutor.prepareKoPeMeExecution(new File(logFolder, "clean.txt"));
-      final long timeout = 5 + (int) (this.timeout * 1.1);
-      testExecutor.executeTest(testcase, vmidFolder, timeout);
-
-      LOG.info("Ändere eine Klassen durch Ergänzung des Gitversion-Elements.");
-      
-      currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart, testTransformer.isUseKieker());
-      currentOrganizer.saveResultFiles(testcase, version, vmid);
-
-      cleanup();
+      return vmidFolder;
    }
 
    void cleanup() throws InterruptedException {
@@ -181,14 +180,9 @@ public class DependencyTester {
       System.gc();
       Thread.sleep(1);
    }
-   
-   public int getVMCount() {
-      return vms;
-   }
 
-   public void setTimeout(final long timeout) {
-      this.timeout = timeout;
-      testTransformer.setSumTime(60 * 1000 * timeout);
+   public int getVMCount() {
+      return configuration.getVms();
    }
 
 }

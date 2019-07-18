@@ -11,7 +11,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.github.javaparser.ParseProblemException;
 
 import de.peass.dependency.ChangeManager;
-import de.peass.dependency.TestResultManager;
+import de.peass.dependency.KiekerResultManager;
 import de.peass.vcs.VersionIterator;
 /**
  * Creates all, dependencyfile, executionfile and view-diff, by generating a trace and analysing it afterwards.
@@ -55,7 +55,7 @@ public class ProntoProcessor extends DependencyReader {
 
 	            dependencyManager.getExecutor().deleteTemporaryFiles();
 	            
-	            final File xmlTraceFolder = TestResultManager.getXMLFileFolder(folders, folders.getProjectFolder());
+	            final File xmlTraceFolder = KiekerResultManager.getXMLFileFolder(folders, folders.getProjectFolder());
 	            final File currentTraceFolder = new File(folders.getTempProjectFolder(), iterator.getTag().substring(0, 6));
 	            
 	            FileUtils.moveDirectory(xmlTraceFolder, currentTraceFolder);

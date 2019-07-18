@@ -4,6 +4,7 @@ import java.io.File;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
 
 /**
@@ -17,6 +18,12 @@ public class TestCase implements Comparable<TestCase>{
    private final String clazz;
    private final String method;
 
+   public TestCase(Kopemedata data) {
+      clazz = data.getTestcases().getClazz();
+      method = data.getTestcases().getTestcase().get(0).getName();
+      module = "";
+   }
+   
    public TestCase(final String clazz, final String method) {
       if (clazz.contains(File.separator)) { // possibly assertion, if speed becomes issue..
          throw new RuntimeException("Testcase should be full qualified name, not path: " + clazz);
@@ -50,7 +57,7 @@ public class TestCase implements Comparable<TestCase>{
          clazz = testcase.substring(0, index);
          method = testcase.substring(index + 1);
       }
-      module = null;
+      module = "";
    }
 
    public TestCase(final Testcases testcases) {

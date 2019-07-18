@@ -1,9 +1,11 @@
 package de.peass.analysis.properties;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.peass.analysis.changes.Change;
 
@@ -27,6 +29,7 @@ public class ChangeProperty {
    private String diff;
    private boolean affectsSource = false;
    private boolean affectsTestSource = false;
+   private Set<String> affectedMethods = new HashSet<>();
    private List<String> types = new LinkedList<>();
    private List<String> guessedTypes = new LinkedList<>();
    private TraceChange traceChangeType;
@@ -178,5 +181,13 @@ public class ChangeProperty {
 
    public void setGuessedTypes(final List<String> guessedTypes) {
       this.guessedTypes = guessedTypes;
+   }
+
+   public Set<String> getAffectedMethods() {
+      return affectedMethods;
+   }
+
+   public void setAffectedMethods(Set<String> affectedMethods) {
+      this.affectedMethods = affectedMethods;
    }
 }

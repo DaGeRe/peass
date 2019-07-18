@@ -108,10 +108,6 @@ public class MavenPomUtil {
    }
 
    public static void extendDependencies(final Model model, final boolean junit3) {
-      if (model.getDependencies() == null) {
-         model.setDependencies(new LinkedList<Dependency>());
-      }
-
       for (final Dependency dependency : model.getDependencies()) {
          if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
             dependency.setVersion("4.12");
@@ -120,32 +116,27 @@ public class MavenPomUtil {
 
       final List<Dependency> dependencies = model.getDependencies();
 
+      final String scope = "test";
       if (junit3) {
-         final Dependency kopeme_dependency = new Dependency();
-         kopeme_dependency.setGroupId("de.dagere.kopeme");
-         kopeme_dependency.setArtifactId("kopeme-junit3");
-         kopeme_dependency.setVersion(KOPEME_VERSION);
-         kopeme_dependency.setScope("test");
-
+         final Dependency kopeme_dependency = getDependency("de.dagere.kopeme", KOPEME_VERSION, scope, "kopeme-junit3");
          dependencies.add(kopeme_dependency);
       }
-
-      final Dependency kopeme_dependency2 = new Dependency();
-      kopeme_dependency2.setGroupId("de.dagere.kopeme");
-      kopeme_dependency2.setArtifactId("kopeme-junit");
-      kopeme_dependency2.setVersion(KOPEME_VERSION);
-      kopeme_dependency2.setScope("test");
-
+      
+      final Dependency kopeme_dependency2 = getDependency("de.dagere.kopeme", KOPEME_VERSION, scope, "kopeme-junit");
       dependencies.add(kopeme_dependency2);
 
       // Workaround: Add newer AspectJ, until Kieker updates its dependency
-      final Dependency aspectj = new Dependency();
-      aspectj.setGroupId("org.aspectj");
-      aspectj.setArtifactId("aspectjweaver");
-      aspectj.setVersion("1.8.13");
-      aspectj.setScope("test");
-
+      final Dependency aspectj = getDependency("org.aspectj", "1.8.13", scope, "aspectjweaver");
       dependencies.add(0, aspectj);
+   }
+
+   public static Dependency getDependency(final String groupId, final String kopemeVersion, final String scope, final String artifactId) {
+      final Dependency kopeme_dependency2 = new Dependency();
+      kopeme_dependency2.setGroupId(groupId);
+      kopeme_dependency2.setArtifactId(artifactId);
+      kopeme_dependency2.setVersion(kopemeVersion);
+      kopeme_dependency2.setScope(scope);
+      return kopeme_dependency2;
    }
 
    public static boolean isMultiModuleProject(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
@@ -220,7 +211,7 @@ public class MavenPomUtil {
       }
       return surefire;
    }
-
+   
    public static void extendSurefire(final String additionalArgLine, final Model model, final boolean updateVersion, final long timeout) {
       final Plugin plugin = MavenPomUtil.findPlugin(model, SUREFIRE_ARTIFACTID, ORG_APACHE_MAVEN_PLUGINS);
       if (plugin.getConfiguration() == null) {

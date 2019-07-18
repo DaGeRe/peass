@@ -154,7 +154,7 @@ public class CreateValidationOverview {
          System.out.println(lines.all.toString() + analyzer.overall.sum + "\\\\");
       }
 
-      int selected = analyzer.overall.correct + analyzer.overall.workload + analyzer.overall.unchanged;
+      int selected = analyzer.overall.correct + analyzer.overall.workload;
       double percentage = (double) analyzer.overall.correct / selected;
       System.out.println();
       System.out.println("Percentage: " + percentage + " (" + analyzer.overall.correct + " / " + selected + ")");

@@ -13,7 +13,7 @@ public class PeASSFolders {
 	protected final File projectFolder;
 //	private final File resultFolder;
 	private final File fullResultFolder;
-	private final File tempResultFolder, tempProjectFolder, tempFolder;;
+	private final File tempResultFolder, tempProjectFolder, tempFolder, kiekerTemp;
 	private final File logFolder;
 	private final File oldSourceFolder;
 	private final File detailFolder;
@@ -42,6 +42,7 @@ public class PeASSFolders {
 		detailFolder.mkdir();
 		tempResultFolder = new File(peassFolder, "measurementsTemp");
 		tempResultFolder.mkdir();
+		kiekerTemp = new File(peassFolder, "kiekerTemp");
 		tempProjectFolder = new File(peassFolder, "projectTemp");
 //		tempProjectFolder.mkdir();
 	}
@@ -90,6 +91,13 @@ public class PeASSFolders {
          tempProjectFolder.mkdir();
       }
       return tempProjectFolder;
+   }
+   
+   public File getKiekerTempFolder() {
+      if (!kiekerTemp.exists()) {
+         kiekerTemp.mkdir();
+      }
+      return kiekerTemp;
    }
 
    public File getTempDir() {

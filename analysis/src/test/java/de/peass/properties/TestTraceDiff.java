@@ -8,8 +8,8 @@ import org.junit.Test;
 import org.testng.Assert;
 
 import de.peass.analysis.properties.ChangeProperty;
+import de.peass.analysis.properties.PropertyReadHelper;
 import de.peass.analysis.properties.ChangeProperty.TraceChange;
-import de.peran.analysis.helper.read.PropertyReadHelper;
 
 public class TestTraceDiff {
    

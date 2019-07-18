@@ -16,6 +16,7 @@
  */
 package de.peass.dependency.execution;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -24,11 +25,15 @@ import java.lang.ProcessBuilder.Redirect;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.model.Build;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
@@ -37,6 +42,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.persistence.Dependencies;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 /**
@@ -55,14 +61,19 @@ public class MavenTestExecutor extends TestExecutor {
    public static final String TEMP_DIR = "-Djava.io.tmpdir";
    public static final String JAVA_AGENT = "-javaagent";
    public static final String KIEKER_FOLDER_MAVEN = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/1.13/kieker-1.13-aspectj.jar";
+   public static final String KIEKER_FOLDER_MAVEN_TWEAK = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/1.13-tweak/kieker-1.13-tweak-aspectj.jar";
    public static final String KIEKER_FOLDER_GRADLE = "${System.properties['user.home']}/.m2/repository/net/kieker-monitoring/kieker/1.13/kieker-1.13-aspectj.jar";
+   public static final String KIEKER_ADAPTIVE_FILENAME = "config/kieker.adaptiveMonitoring.conf";
    /**
     * This is added to surefire, assuming that kieker has been downloaded already, so that the aspectj-weaving can take place.
     */
    protected static final String KIEKER_ARG_LINE = JAVA_AGENT + ":" + KIEKER_FOLDER_MAVEN;
+   protected static final String KIEKER_ARG_LINE_TWEAK = JAVA_AGENT + ":" + KIEKER_FOLDER_MAVEN_TWEAK;
 
    protected Charset lastEncoding = StandardCharsets.UTF_8;
 
+   private Set<String> includedMethodPattern;
+   
    public MavenTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final long timeout) {
       super(folders, timeout, testTransformer);
    }
@@ -123,7 +134,7 @@ public class MavenTestExecutor extends TestExecutor {
             "-DfailIfNoTests=false",
             "-Drat.skip=true",
             "-Djacoco.skip=true",
-            "-Djava.io.tmpdir="+folders.getTempDir().getAbsolutePath()};
+            "-Djava.io.tmpdir=" + folders.getTempDir().getAbsolutePath() };
 
       final String[] vars = new String[commandLineAddition.length + originals.length];
       for (int i = 0; i < originals.length; i++) {
@@ -157,8 +168,36 @@ public class MavenTestExecutor extends TestExecutor {
       transformTests();
       if (testTransformer.isUseKieker()) {
          generateAOPXML();
+         if (testTransformer.isAdaptiveExecution()) {
+            prepareAdaptiveExecution();
+         }
       }
       preparePom();
+   }
+   
+   public void prepareAdaptiveExecution() throws IOException, InterruptedException {
+      File kiekerJar = new File(MavenTestExecutor.KIEKER_FOLDER_MAVEN_TWEAK.replace("${user.home}", System.getProperty("user.home")));
+      if (!kiekerJar.exists()) {
+         // This can be removed if Kieker 1.14 is released
+         throw new RuntimeException("Tweaked Kieker " + kiekerJar + " needs to exist - git clone https://github.com/DaGeRe/kieker -b 1_13_tweak "
+               + "and install manually!");
+      }
+      writeConfig();
+   }
+
+   private void writeConfig() throws IOException {
+      final File configFolder = new File(folders.getProjectFolder(), "config");
+      configFolder.mkdir();
+
+      final File adaptiveFile = new File(folders.getProjectFolder(), MavenTestExecutor.KIEKER_ADAPTIVE_FILENAME);
+      try (BufferedWriter writer = new BufferedWriter(new FileWriter(adaptiveFile))) {
+         writer.write("- *\n");
+         for (String includedMethod : includedMethodPattern) {
+            writer.write("+ " + includedMethod + "\n");
+         }
+
+         writer.flush();
+      }
    }
 
    @Override
@@ -224,7 +263,7 @@ public class MavenTestExecutor extends TestExecutor {
    public void preparePom() {
       try {
          final File pomFile = new File(folders.getProjectFolder(), "pom.xml");
-         final File tempFile = Files.createTempDirectory("kiekerTemp").toFile();
+         final File tempFile = Files.createTempDirectory(folders.getKiekerTempFolder().toPath(), "kiekerTemp").toFile();
          for (final File module : MavenPomUtil.getModules(pomFile)) {
             editOnePom(true, new File(module, "pom.xml"), tempFile);
          }
@@ -243,15 +282,34 @@ public class MavenTestExecutor extends TestExecutor {
          }
          final String argline;
          if (testTransformer.isUseKieker()) {
-
-            argline = KIEKER_ARG_LINE + " " + TEMP_DIR + "=" + tempFile.toString();
+            if (!testTransformer.isAdaptiveExecution()) {
+               argline = KIEKER_ARG_LINE + " " + TEMP_DIR + "=" + tempFile.toString();
+            } else {
+               argline = KIEKER_ARG_LINE_TWEAK +
+                     " " + TEMP_DIR + "=" + tempFile.toString() +
+                     " -Dkieker.monitoring.adaptiveMonitoring.enabled=true" +
+                     " -Dkieker.monitoring.adaptiveMonitoring.configFile=" + KIEKER_ADAPTIVE_FILENAME +
+                     " -Dkieker.monitoring.adaptiveMonitoring.readInterval=15";
+            }
          } else {
             argline = "";
          }
 
          MavenPomUtil.extendSurefire(argline, model, update, timeout * 2);
+         
+         //TODO Move back to extend dependencies, if stable Kieker version supports <init>
+         if (model.getDependencies() == null) {
+            model.setDependencies(new LinkedList<Dependency>());
+         }
+         if (testTransformer.isAdaptiveExecution()) {
+            // Needs to be the first dependency..
+            List<Dependency> dependencies = model.getDependencies();
+            final Dependency kopeme_dependency2 = MavenPomUtil.getDependency("net.kieker-monitoring", "1.13-tweak", "test", "kieker");
+            dependencies.add(kopeme_dependency2);
+         }
          MavenPomUtil.extendDependencies(model, testTransformer.isJUnit3());
-         // MavenPomUtil.setCompiler8(model);
+         
+         
 
          final MavenXpp3Writer writer = new MavenXpp3Writer();
          writer.write(new FileWriter(pomFile), model);
@@ -269,6 +327,11 @@ public class MavenTestExecutor extends TestExecutor {
    @Override
    public List<File> getModules() throws IOException, XmlPullParserException {
       return MavenPomUtil.getModules(new File(folders.getProjectFolder(), "pom.xml"));
+   }
+   
+   @Override
+   public void setIncludedMethods(Set<String> includedMethodPattern) {
+      this.includedMethodPattern = includedMethodPattern;
    }
 
 }

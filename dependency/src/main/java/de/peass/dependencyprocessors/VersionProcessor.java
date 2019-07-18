@@ -46,7 +46,7 @@ public abstract class VersionProcessor implements Callable<Void> {
 
    private static final Logger LOG = LogManager.getLogger(VersionProcessor.class);
 
-   @Option(names = { "-folder", "--folder" }, description = "Folder that should be analyzed", required = true)
+   @Option(names = { "-folder", "--folder" }, description = "Folder of the project that should be analyzed", required = true)
    protected File projectFolder;
 
    protected PeASSFolders folders;
@@ -140,6 +140,11 @@ public abstract class VersionProcessor implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
+      initVersionProcessor();
+      return null;
+   }
+
+   protected void initVersionProcessor() throws IOException, JsonParseException, JsonMappingException {
       if (dependencyFile != null) {
          dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       }
@@ -171,6 +176,5 @@ public abstract class VersionProcessor implements Callable<Void> {
       
       VersionComparator.setDependencies(dependencies);
       vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
-      return null;
    }
 }

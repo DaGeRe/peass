@@ -1,4 +1,4 @@
-package de.peran;
+package de.peass;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,20 +10,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.tools.ant.util.OutputStreamFunneler;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.analysis.all.ReadAllProperties;
@@ -33,19 +29,19 @@ import de.peass.analysis.changes.Changes;
 import de.peass.analysis.changes.ProjectChanges;
 import de.peass.analysis.properties.ChangeProperties;
 import de.peass.analysis.properties.ChangeProperty;
+import de.peass.analysis.properties.PropertyReadHelper;
 import de.peass.analysis.properties.VersionChangeProperties;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
-import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.statistics.DependencyStatisticAnalyzer;
-import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitUtils;
+import de.peran.FolderSearcher;
 import de.peran.analysis.helper.AnalysisUtil;
-import de.peran.analysis.helper.read.PropertyReadHelper;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
  * Reads a changes.json which contains all changes that happened in a project and determines properties of the changes.
@@ -53,50 +49,62 @@ import de.peran.analysis.helper.read.PropertyReadHelper;
  * @author reichelt
  *
  */
-public class ReadProperties {
+@Command(description = "Reads the properties of given changes", name = "readproperties")
+public class ReadProperties implements Callable<Void> {
 
    private static final Logger LOG = LogManager.getLogger(ReadProperties.class);
 
-   public static void main(final String[] args) throws ParseException, JsonParseException, JsonMappingException, IOException, JAXBException {
-      final Options options = OptionConstants.createOptions(OptionConstants.CHANGEFILE, OptionConstants.DEPENDENCYFILE, OptionConstants.FOLDER,
-            OptionConstants.OUT);
+   @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Path to the dependencyfile")
+   protected File dependencyFile;
 
-      final CommandLineParser parser = new DefaultParser();
-      final CommandLine commandLine = parser.parse(options, args);
+   @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
+   protected File executionFile;
 
-      final File projectFolder = new File(commandLine.getOptionValue(OptionConstants.FOLDER.getName()));
+   @Option(names = { "-folder", "--folder" }, description = "Folder of the project that should be analyzed", required = true)
+   protected File projectFolder;
+
+   @Option(names = { "-out", "--out" }, description = "Path for saving the propertyfile")
+   protected File out;
+
+   public ReadProperties() {
+
+   }
+
+   public ReadProperties(File resultFile) {
+      out = resultFile;
+   }
+
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException, JAXBException {
+      CommandLine commandLine = new CommandLine(new ReadProperties());
+      commandLine.execute(args);
+   }
+
+   @Override
+   public Void call() throws Exception {
+      RepoFolders folders = new RepoFolders();
+      String projectName = projectFolder.getName();
+      GetChanges.getVersionOrder(dependencyFile, executionFile, folders.getDependencyFile(projectName));
+      
       if (!projectFolder.exists()) {
          GitUtils.downloadProject(VersionComparator.getDependencies().getUrl(), projectFolder);
       }
-
-      RepoFolders folders = new RepoFolders();
-
-      String projectName = projectFolder.getName();
-
-      File dependencyFile = folders.getDependencyFile(projectName);
-      final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
-      VersionComparator.setDependencies(dependencies);
 
       // final File viewFolder = new File(commandLine.getOptionValue(OptionConstants.VIEWFOLDER.getName()));
       final File viewFolder = folders.getViewFolder(projectName);
       final ExecutionData changedTests = folders.getExecutionData(projectName);
       if (ReadAllProperties.readAll) {
          final File resultFile = new File("results" + File.separator + projectName + File.separator + "properties_alltests.json");
-         readAllTestsProperties(projectFolder, resultFile, viewFolder, changedTests);
+         out = resultFile;
+         readAllTestsProperties(projectFolder, viewFolder, changedTests);
       } else {
          final File changefile = folders.getChangeFile(projectName);
          // final File changefile = new File(commandLine.getOptionValue(OptionConstants.CHANGEFILE.getName()));
 
-         // if (commandLine.hasOption(OptionConstants.OUT.getName())) {
-         // final File resultsFolder = new File(commandLine.getOptionValue(OptionConstants.OUT.getName()));
-         // AnalysisUtil.setProjectName(resultsFolder, projectFolder.getName());
-         // } else {
-         // AnalysisUtil.setProjectName(changefile.getParentFile().getParentFile(), projectFolder.getName());
-         // }
-
-         final File resultFile = folders.getProjectPropertyFile(projectName);
-         if (!resultFile.getParentFile().exists()) {
-            resultFile.getParentFile().mkdirs();
+         if (out == null) {
+            out = folders.getProjectPropertyFile(projectName);
+            if (!out.getParentFile().exists()) {
+               out.getParentFile().mkdirs();
+            }
          }
 
          if (!changefile.exists()) {
@@ -109,14 +117,16 @@ public class ReadProperties {
             System.exit(1);
          }
 
-         readChangeProperties(changefile, projectFolder, resultFile, viewFolder, changedTests);
+         readChangeProperties(changefile, projectFolder, viewFolder, changedTests);
       }
-
+      return null;
    }
 
-   public static void readAllTestsProperties(final File projectFolder, final File resultFile, final File viewFolder, final ExecutionData changedTests) throws IOException {
+   public void readAllTestsProperties(final File projectFolder, final File viewFolder, final ExecutionData changedTests) throws IOException {
       final VersionChangeProperties versionProperties = new VersionChangeProperties();
       int count = 0;
+      File methodFolder = new File(out.getParentFile(), "methods");
+      methodFolder.mkdirs();
       for (final Map.Entry<String, TestSet> version : changedTests.getVersions().entrySet()) {
          // String prevVersion = VersionComparator.getPreviousVersion(version.getKey());
          final ChangeProperties changeProperties = new ChangeProperties();
@@ -129,9 +139,10 @@ public class ReadProperties {
             for (final String testmethod : testclazz.getValue()) {
                final Change testcaseChange = new Change();
                testcaseChange.setMethod(testmethod);
+               
                final PropertyReadHelper reader = new PropertyReadHelper(version.getKey(), version.getValue().getPredecessor(), testclazz.getKey(), testcaseChange,
                      projectFolder,
-                     viewFolder);
+                     viewFolder, methodFolder);
                final ChangeProperty currentProperty = reader.read();
                if (currentProperty != null) {
                   properties.add(currentProperty);
@@ -140,15 +151,15 @@ public class ReadProperties {
                count++;
             }
          }
-         FolderSearcher.MAPPER.writeValue(resultFile, versionProperties);
+         FolderSearcher.MAPPER.writeValue(out, versionProperties);
       }
 
       System.out.println("Analyzed: " + count);
    }
 
-   public static void readChangeProperties(final File changefile, final File projectFolder, final File resultFile, final File viewFolder, final ExecutionData changedTests)
+   public void readChangeProperties(final File changefile, final File projectFolder, final File viewFolder, final ExecutionData changedTests)
          throws IOException, JsonParseException, JsonMappingException, JsonGenerationException {
-      final File resultCSV = new File(resultFile.getParentFile(), projectFolder.getName() + ".csv");
+      final File resultCSV = new File(out.getParentFile(), projectFolder.getName() + ".csv");
 
       try (BufferedWriter csvWriter = new BufferedWriter(new FileWriter(resultCSV))) {
          writeCSVHeadline(csvWriter);
@@ -162,7 +173,7 @@ public class ReadProperties {
             final TestSet tests = changedTests.getVersions().get(version);
             //
             final String predecessor = tests != null ? tests.getPredecessor() : version + "~1";
-            testcaseCount += detectVersionProperty(projectFolder, resultFile, viewFolder, csvWriter, versionProperties, versionChanges, predecessor);
+            testcaseCount += detectVersionProperty(projectFolder, viewFolder, csvWriter, versionProperties, versionChanges, predecessor);
             if (tests == null) {
                LOG.error("Version not contained in runfile: " + version);
             }
@@ -173,9 +184,11 @@ public class ReadProperties {
       }
    }
 
-   private static int detectVersionProperty(final File projectFolder, final File resultFile, final File viewFolder, final BufferedWriter csvWriter,
+   private int detectVersionProperty(final File projectFolder, final File viewFolder, final BufferedWriter csvWriter,
          final VersionChangeProperties versionProperties,
          final Entry<String, Changes> versionChanges, final String predecessor) throws IOException, JsonGenerationException, JsonMappingException {
+      File methodFolder = new File(out.getParentFile(), "methods");
+      methodFolder.mkdirs();
       final String version = versionChanges.getKey();
       final ChangeProperties changeProperties = new ChangeProperties();
       changeProperties.setCommitText(GitUtils.getCommitText(projectFolder, version));
@@ -187,11 +200,11 @@ public class ReadProperties {
          final List<ChangeProperty> properties = new LinkedList<>();
          changeProperties.getProperties().put(testclazz, properties);
          for (final Change testcaseChange : changes.getValue()) {
-            final PropertyReadHelper reader = new PropertyReadHelper(version, predecessor, new ChangedEntity(testclazz, ""), testcaseChange, projectFolder, viewFolder);
+            final PropertyReadHelper reader = new PropertyReadHelper(version, predecessor, new ChangedEntity(testclazz, ""), testcaseChange, projectFolder, viewFolder, methodFolder);
             final ChangeProperty currentProperty = reader.read();
             // if (currentProperty != null) {
             properties.add(currentProperty);
-            FolderSearcher.MAPPER.writeValue(resultFile, versionProperties);
+            FolderSearcher.MAPPER.writeValue(out, versionProperties);
             writeCSVLine(csvWriter, currentProperty, projectFolder.getName());
             // }
 

@@ -99,7 +99,8 @@ public class IsThereTimeReductionVM {
 
             final double[] valsBefore = ArrayUtils.toPrimitive(before.toArray(new Double[0]));
             final double[] valsAfter = ArrayUtils.toPrimitive(after.toArray(new Double[0]));
-            final boolean decidable = EarlyBreakDecider.isSavelyDecidable2(vmid - 1, valsBefore, valsAfter);
+            boolean decidable = false;
+//            final boolean decidable = EarlyBreakDecider.isSavelyDecidable2(vmid - 1, valsBefore, valsAfter);
             // AdaptiveDependencyTester.isBreakPossible(measurementFolder, version, versionOld, testcase, vmid)
 
             if (decidable) {

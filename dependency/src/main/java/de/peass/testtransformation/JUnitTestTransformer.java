@@ -83,6 +83,7 @@ public class JUnitTestTransformer {
    protected boolean logFullData = true;
    protected File projectFolder;
    protected boolean useKieker = false;
+   protected boolean adaptiveExecution = false;
    protected Charset charset = StandardCharsets.UTF_8;
    protected int repetitions = 1;
    private Map<String, List<File>> extensions = null;
@@ -563,5 +564,12 @@ public class JUnitTestTransformer {
    public File generateClazz(final File module, final ChangedEntity generatedClazz, final ChangedEntity callee, final String method) {
       return new JUnitTestGenerator(module, generatedClazz, callee, method, this).generateClazz();
    }
+   
+   public void setAdaptiveExecution(boolean adaptiveExecution) {
+      this.adaptiveExecution = adaptiveExecution;
+   }
 
+   public boolean isAdaptiveExecution() {
+      return adaptiveExecution;
+   }
 }

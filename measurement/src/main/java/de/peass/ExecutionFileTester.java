@@ -27,6 +27,7 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependencyprocessors.DependencyTester;
+import de.peass.measurement.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.OptionConstants;
 import de.peass.utils.TestLoadUtil;
@@ -35,88 +36,88 @@ import de.peass.vcs.VersionControlSystem;
 
 public class ExecutionFileTester {
 
-	private static final Logger LOG = LogManager.getLogger(ExecutionFileTester.class);
-	
-	protected PeASSFolders folders;
-	protected VersionControlSystem vcs;
-	protected final CommandLine line;
-	protected final String startversion;
-	protected final String endversion;
-	private final ExecutionData tests;
-	private final DependencyTester tester;
-	protected final Map<TestCase, String> lastTestcaseCalls = new HashMap<>();
+   private static final Logger LOG = LogManager.getLogger(ExecutionFileTester.class);
 
-	public ExecutionFileTester(final String[] args) throws ParseException, JsonParseException, JsonMappingException, IOException {
-		final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.WARMUP, OptionConstants.ITERATIONS, OptionConstants.VMS,
-				OptionConstants.STARTVERSION, OptionConstants.ENDVERSION,
-				OptionConstants.EXECUTIONFILE, OptionConstants.REPETITIONS,
-				OptionConstants.USEKIEKER);
-		final CommandLineParser parser = new DefaultParser();
+   protected PeASSFolders folders;
+   protected VersionControlSystem vcs;
+   protected final CommandLine line;
+   protected final String startversion;
+   protected final String endversion;
+   private final ExecutionData tests;
+   private final DependencyTester tester;
+   protected final Map<TestCase, String> lastTestcaseCalls = new HashMap<>();
 
-		line = parser.parse(options, args);
+   public ExecutionFileTester(final String[] args) throws ParseException, JsonParseException, JsonMappingException, IOException {
+      final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.WARMUP, OptionConstants.ITERATIONS, OptionConstants.VMS,
+            OptionConstants.STARTVERSION, OptionConstants.ENDVERSION,
+            OptionConstants.EXECUTIONFILE, OptionConstants.REPETITIONS,
+            OptionConstants.USEKIEKER);
+      final CommandLineParser parser = new DefaultParser();
 
-//		final File executionFile = new File(line.getOptionValue(OptionConstants.EXECUTIONFILE.getName()));
-		tests = TestLoadUtil.loadChangedTests(line);
+      line = parser.parse(options, args);
 
-		final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
-		folders = new PeASSFolders(projectFolder);
-		if (!projectFolder.exists()) {
-			GitUtils.downloadProject(tests.getUrl(), projectFolder);
-		}
+      // final File executionFile = new File(line.getOptionValue(OptionConstants.EXECUTIONFILE.getName()));
+      tests = TestLoadUtil.loadChangedTests(line);
 
-		startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName(), null);
-		endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName(), null);
+      final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
+      folders = new PeASSFolders(projectFolder);
+      if (!projectFolder.exists()) {
+         GitUtils.downloadProject(tests.getUrl(), projectFolder);
+      }
 
-		final int warmup = Integer.parseInt(line.getOptionValue(OptionConstants.WARMUP.getName(), "10"));
-		final int iterations = Integer.parseInt(line.getOptionValue(OptionConstants.ITERATIONS.getName(), "10"));
-		final int vms = Integer.parseInt(line.getOptionValue(OptionConstants.VMS.getName(), "15"));
-		final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "1"));
-		final boolean useKieker = Boolean.parseBoolean(line.getOptionValue(OptionConstants.USEKIEKER.getName(), "false"));
-		final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder());
+      startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName(), null);
+      endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName(), null);
+
+      final int warmup = Integer.parseInt(line.getOptionValue(OptionConstants.WARMUP.getName(), "10"));
+      final int iterations = Integer.parseInt(line.getOptionValue(OptionConstants.ITERATIONS.getName(), "10"));
+      final int vms = Integer.parseInt(line.getOptionValue(OptionConstants.VMS.getName(), "15"));
+      final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "1"));
+      final boolean useKieker = Boolean.parseBoolean(line.getOptionValue(OptionConstants.USEKIEKER.getName(), "false"));
+      final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder());
       testgenerator.setDatacollectorlist(DataCollectorList.ONLYTIME);
       testgenerator.setIterations(iterations);
       testgenerator.setRepetitions(repetitions);
       testgenerator.setLogFullData(true);
       testgenerator.setWarmupExecutions(warmup);
       testgenerator.setUseKieker(useKieker);
-		tester = new DependencyTester(folders, testgenerator, vms);
+      tester = new DependencyTester(folders, testgenerator, new MeasurementConfiguration(vms));
 
-	}
+   }
 
-	public static void main(final String[] args) throws JsonParseException, JsonMappingException, ParseException, IOException {
-		final ExecutionFileTester starter = new ExecutionFileTester(args);
-		starter.processCommandline();
-	}
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, ParseException, IOException {
+      final ExecutionFileTester starter = new ExecutionFileTester(args);
+      starter.processCommandline();
+   }
 
-	private void processCommandline() {
-		for (final Entry<String, TestSet> version : tests.getVersions().entrySet()) {
-			final boolean executeThisTest = true;
-			if (executeThisTest) {
-				final TestSet calls = version.getValue();
-				for (final Map.Entry<ChangedEntity, Set<String>> tests : calls.getTestcases().entrySet()) {
-					for (final String method : tests.getValue()) {
-						final TestCase testcase = new TestCase(tests.getKey().getJavaClazzName(), method, tests.getKey().getModule());
-						final String versionOld = lastTestcaseCalls.get(testcase);
-						try {
-							executeCompareTests(version.getKey(), versionOld, testcase);
-						} catch (IOException | InterruptedException | JAXBException e) {
-							e.printStackTrace();
-						}
-						lastTestcaseCalls.put(testcase, version.getKey());
-					}
-				}
-			}
-		}
-	}
-	
-	//TODO: Simply copied..
-	protected void executeCompareTests(final String version, final String versionOld, final TestCase testcase) throws IOException, InterruptedException, JAXBException {
-		LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", versionOld, version);
+   private void processCommandline() {
+      for (final Entry<String, TestSet> version : tests.getVersions().entrySet()) {
+         final boolean executeThisTest = true;
+         if (executeThisTest) {
+            final TestSet calls = version.getValue();
+            for (final Map.Entry<ChangedEntity, Set<String>> tests : calls.getTestcases().entrySet()) {
+               for (final String method : tests.getValue()) {
+                  final TestCase testcase = new TestCase(tests.getKey().getJavaClazzName(), method, tests.getKey().getModule());
+                  final String versionOld = lastTestcaseCalls.get(testcase);
+                  try {
+                     executeCompareTests(version.getKey(), versionOld, testcase);
+                  } catch (IOException | InterruptedException | JAXBException e) {
+                     e.printStackTrace();
+                  }
+                  lastTestcaseCalls.put(testcase, version.getKey());
+               }
+            }
+         }
+      }
+   }
 
-		final File logFolder = tester.getLogFolder(version, testcase);
+   // TODO: Simply copied..
+   protected void executeCompareTests(final String version, final String versionOld, final TestCase testcase) throws IOException, InterruptedException, JAXBException {
+      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", versionOld, version);
 
-		for (int vmid = 0; vmid < tester.getVMCount(); vmid++) {
-		   tester.runOneComparison(version, versionOld, logFolder, testcase, vmid);
-		}
-	}
+      final File logFolder = tester.getLogFolder(version, testcase);
+
+      for (int vmid = 0; vmid < tester.getVMCount(); vmid++) {
+         tester.runOneComparison(version, versionOld, logFolder, testcase, vmid);
+      }
+   }
 }

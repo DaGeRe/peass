@@ -53,11 +53,11 @@ public class Classification {
                      LOG.error("Raw data contained null-direction: {}", testcase.getKey());
                   }
                } else {
-                  LOG.error("Version only present in input-data: {}", testcase.getKey());
+                  LOG.error("Version only present in input-data: {} - {}", otherVersion.getKey(), testcase.getKey());
                }
             }
          } else {
-            LOG.info("Input data contained version with change that could not be measured: {}", otherVersion.getKey());
+            LOG.info("Input data contained version with change that was not measured: {}", otherVersion.getKey());
          }
       }
    }

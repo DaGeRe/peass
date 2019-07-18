@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import de.peass.ReadProperties;
 import de.peass.analysis.changes.ChangeReader;
 import de.peass.analysis.changes.ProjectChanges;
 import de.peass.analysis.properties.VersionChangeProperties;
@@ -13,7 +14,6 @@ import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.Constants;
 import de.peran.FolderSearcher;
-import de.peran.ReadProperties;
 import de.peran.analysis.helper.AnalysisUtil;
 import de.peran.analysis.helper.all.CleanAll;
 
@@ -57,7 +57,8 @@ public class GetAllChanges {
 
    public static void getChangesForMeasurementfolder(final RepoFolders folders, final String project, File cleanFolder) throws JAXBException {
       final ChangeReader reader = new ChangeReader(folders, project);
-      reader.setConfidence(0.02);
+      reader.setType1error(0.02);
+      reader.setType2error(0.02);
       final ProjectChanges changes = reader.readFile(cleanFolder);
       if (changes != null) {
          final File allPropertyFile = new File(folders.getPropertiesFolder(), project + File.separator + "properties_alltests.json");

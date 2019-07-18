@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.TestResultManager;
+import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.analysis.CalledMethodLoader;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TestCase;
@@ -44,7 +44,7 @@ public class TestPeASSFilter {
 
    @Test
    public void testExecution() throws ViewNotFoundException, IOException, XmlPullParserException, InterruptedException {
-      final TestResultManager manager = new TestResultManager(CURRENT, 5000);
+      final KiekerResultManager manager = new KiekerResultManager(CURRENT, 5000);
       final TestSet ts = new TestSet();
       final TestCase testcase = new TestCase("defaultpackage.TestMe", "testMe", "");
       ts.addTest(testcase);

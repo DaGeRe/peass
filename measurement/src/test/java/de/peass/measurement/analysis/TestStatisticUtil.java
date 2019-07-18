@@ -57,11 +57,11 @@ public class TestStatisticUtil {
       final DescriptiveStatistics statistics3 = new DescriptiveStatistics(vals3);
       final DescriptiveStatistics statistics4 = new DescriptiveStatistics(vals4);
 
-      Assert.assertEquals(StatisticUtil.Relation.UNKOWN, StatisticUtil.agnosticTTest(statistics1, statistics2, 0.05, 0.05));
-      Assert.assertEquals(StatisticUtil.Relation.UNEQUAL, StatisticUtil.agnosticTTest(statistics1, statistics2, 0.05, 0.25));
-      Assert.assertEquals(StatisticUtil.Relation.UNEQUAL, StatisticUtil.agnosticTTest(statistics1, statistics3, 0.05, 0.05));
-      Assert.assertEquals(StatisticUtil.Relation.EQUAL, StatisticUtil.agnosticTTest(statistics1, statistics4, 0.40, 0.05));
-      Assert.assertEquals(StatisticUtil.Relation.EQUAL, StatisticUtil.agnosticTTest(statistics1, statistics1, 0.05, 0.05));
+      Assert.assertEquals(Relation.UNKOWN, StatisticUtil.agnosticTTest(statistics1, statistics2, 0.05, 0.05));
+      Assert.assertEquals(Relation.UNEQUAL, StatisticUtil.agnosticTTest(statistics1, statistics2, 0.05, 0.25));
+      Assert.assertEquals(Relation.UNEQUAL, StatisticUtil.agnosticTTest(statistics1, statistics3, 0.05, 0.05));
+      Assert.assertEquals(Relation.EQUAL, StatisticUtil.agnosticTTest(statistics1, statistics4, 0.40, 0.05));
+      Assert.assertEquals(Relation.EQUAL, StatisticUtil.agnosticTTest(statistics1, statistics1, 0.05, 0.05));
 
       // System.out.println(StatisticUtil.agnosticTTest(statistics1, statistics2, 0.05, 0.05));
       // System.out.println(StatisticUtil.agnosticTTest(statistics1, statistics2, 0.05, 0.25));

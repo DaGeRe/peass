@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.Map.Entry;
 
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
-import de.peass.measurement.analysis.StatisticUtil.Relation;
 import de.peass.measurement.analysis.statistics.DescribedChunk;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.TestData;
@@ -65,7 +64,7 @@ public class ConfidenceCleaner extends Cleaner {
          String versionOld = currentChunk.getResult().get(0).getVersion().getGitversion();
          String versionNew = currentChunk.getResult().get(currentChunk.getResult().size() - 1).getVersion().getGitversion();
          DescribedChunk described = new DescribedChunk(currentChunk, versionOld, versionNew);
-         StatisticUtil.Relation relation = StatisticUtil.agnosticTTest(described.getDesc1(), described.getDesc2(), type1error, type2error);
+         Relation relation = StatisticUtil.agnosticTTest(described.getDescPrevious(), described.getDescCurrent(), type1error, type2error);
          if (relation == Relation.UNEQUAL || relation == Relation.EQUAL) {
             try {
                writer.write(currentOrigin.getAbsolutePath() + "\n");

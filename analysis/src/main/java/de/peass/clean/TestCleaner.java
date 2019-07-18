@@ -6,68 +6,50 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.AdaptiveTestStarter;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.Cleaner;
 import de.peass.measurement.analysis.ConfidenceCleaner;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.Constants;
+import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitUtils;
+import de.peran.FolderSearcher;
+import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 @Command(name = "clean", description = "Cleans the data for faster analysis and transfer", mixinStandardHelpOptions = true)
-public class TestCleaner {
+public class TestCleaner implements Callable<Void> {
+   
+   @Option(names = { "-url", "--url" }, description = "URL for analysis - is used for determining commit order")
+   private String url;
+   
+   @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Path to the dependencyfile")
+   private File dependencyFile;
+   
+   @Option(names = { "-data", "--data" }, description = "Path to the data for cleaning", required = true)
+   protected File[] data; 
+   
+   @Option(names = { "-out", "--out" }, description = "Path for saving the cleaned data")
+   protected File out;
 
    private static final Logger LOG = LogManager.getLogger(TestCleaner.class);
 
    public static void main(final String[] args) throws ParseException, JAXBException, IOException {
-      clean(args);
-   }
-
-   public static void clean(final String[] args) throws ParseException, JAXBException, IOException {
-      CleaningData data = new CleaningData(args);
-
-      LOG.debug("Data: {}", data.getDataValue().length);
-
-      Map<File, List<File>> commonParentFiles = new HashMap<>();
-
-      for (int i = 0; i < data.getDataValue().length; i++) {
-         final File dataFolder = new File(data.getDataValue()[i]);
-         final File projectNameFolder = dataFolder.getParentFile();
-         List<File> fileList = commonParentFiles.get(projectNameFolder);
-         if (fileList == null) {
-            fileList = new LinkedList<>();
-            commonParentFiles.put(projectNameFolder, fileList);
-         }
-         fileList.add(dataFolder);
-      }
-
-      for (Map.Entry<File, List<File>> entry : commonParentFiles.entrySet()) {
-         File projectNameFolder = entry.getKey();
-
-         final Cleaner transformer = createCleaner(data.getOut(), null, projectNameFolder);
-
-         for (File dataFolder : entry.getValue()) {
-            LOG.info("Searching in " + dataFolder);
-
-            if (dataFolder.exists()) {
-               getCommitOrder(dataFolder, projectNameFolder.getName());
-
-               if (VersionComparator.hasVersions()) {
-                  cleanFolder(transformer, dataFolder, projectNameFolder);
-               } else {
-                  LOG.error("No URL defined.");
-               }
-            }
-         }
-      }
+      TestCleaner command = new TestCleaner();
+      CommandLine commandLine = new CommandLine(command);
+      commandLine.execute(args);
    }
 
    public static void cleanFolder(Cleaner transformer, final File dataFolder, final File projectNameFolder) {
@@ -130,6 +112,47 @@ public class TestCleaner {
             GitUtils.getCommitsForURL(url);
          }
       }
+   }
+
+   @Override
+   public Void call() throws Exception {
+      CleaningData cleaner = new CleaningData(out, data);
+
+      LOG.debug("Data: {}", cleaner.getDataValue().length);
+
+      Map<File, List<File>> commonParentFiles = new HashMap<>();
+
+      for (int i = 0; i < cleaner.getDataValue().length; i++) {
+         final File dataFolder = cleaner.getDataValue()[i];
+         final File projectNameFolder = dataFolder.getParentFile();
+         List<File> fileList = commonParentFiles.get(projectNameFolder);
+         if (fileList == null) {
+            fileList = new LinkedList<>();
+            commonParentFiles.put(projectNameFolder, fileList);
+         }
+         fileList.add(dataFolder);
+      }
+
+      for (Map.Entry<File, List<File>> entry : commonParentFiles.entrySet()) {
+         File projectNameFolder = entry.getKey();
+
+         final Cleaner transformer = createCleaner(cleaner.getOut(), null, projectNameFolder);
+
+         for (File dataFolder : entry.getValue()) {
+            LOG.info("Searching in " + dataFolder);
+
+            if (dataFolder.exists()) {
+               getCommitOrder(dataFolder, projectNameFolder.getName());
+
+               if (VersionComparator.hasVersions()) {
+                  cleanFolder(transformer, dataFolder, projectNameFolder);
+               } else {
+                  LOG.error("No URL defined.");
+               }
+            }
+         }
+      }
+      return null;
    }
 
 }

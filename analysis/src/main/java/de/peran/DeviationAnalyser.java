@@ -17,12 +17,12 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.measurement.analysis.DataAnalyser;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.TestData;
 import de.peass.utils.OptionConstants;
-import de.peran.measurement.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peran.measurement.analysis.statistics.MeanCoVData;
 
 /**

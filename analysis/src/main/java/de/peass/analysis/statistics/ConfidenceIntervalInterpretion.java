@@ -1,4 +1,4 @@
-package de.peran.measurement.analysis.statistics;
+package de.peass.analysis.statistics;
 
 import java.util.List;
 
@@ -7,8 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
+import de.peass.measurement.analysis.Relation;
 import de.peass.statistics.ConfidenceInterval;
 import de.peass.statistics.PerformanceChange;
+import de.peran.measurement.analysis.statistics.MeasurementAnalysationUtil;
 
 public class ConfidenceIntervalInterpretion {
 	

@@ -28,15 +28,16 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.TestResultManager;
+import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependencyprocessors.DependencyTester;
+import de.peass.measurement.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.VersionControlSystem;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ VersionControlSystem.class, TestResultManager.class })
+@PrepareForTest({ VersionControlSystem.class, KiekerResultManager.class })
 @PowerMockIgnore("javax.management.*")
 public class TestDependencyTester {
 
@@ -59,15 +60,15 @@ public class TestDependencyTester {
 
       }).when(mockedExecutor).executeTest(Mockito.any(), Mockito.any(), Mockito.anyLong());
 
-      PowerMockito.mockStatic(TestResultManager.class);
-      PowerMockito.when(TestResultManager.createExecutor(Mockito.any(), Mockito.anyLong(), Mockito.any()))
+      PowerMockito.mockStatic(KiekerResultManager.class);
+      PowerMockito.when(KiekerResultManager.createExecutor(Mockito.any(), Mockito.anyLong(), Mockito.any()))
             .thenReturn(mockedExecutor);
 
       PowerMockito.mockStatic(VersionControlSystem.class);
       PowerMockito.when(VersionControlSystem.getVersionControlSystem(folder.getRoot()))
             .thenReturn(VersionControlSystem.GIT);
 
-      DependencyTester tester = new DependencyTester(folders, testTransformer, 4);
+      DependencyTester tester = new DependencyTester(folders, testTransformer, new MeasurementConfiguration(4));
 
       tester.evaluate("1", "2", new TestCase("de.peass.MyTest", "test"));
       

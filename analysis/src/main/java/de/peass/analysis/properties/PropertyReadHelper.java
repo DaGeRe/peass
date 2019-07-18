@@ -1,4 +1,4 @@
-package de.peran.analysis.helper.read;
+package de.peass.analysis.properties;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,7 +19,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.github.javaparser.ast.CompilationUnit;
 
 import de.peass.analysis.changes.Change;
-import de.peass.analysis.properties.ChangeProperty;
 import de.peass.analysis.properties.ChangeProperty.TraceChange;
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.ClazzFinder;
@@ -57,6 +56,7 @@ public class PropertyReadHelper {
    private final File projectFolder;
 
    private final File viewFolder;
+   private final File methodFolder;
 
    public static void main(final String[] args) throws IOException {
       final ChangedEntity ce = new ChangedEntity("org.apache.commons.fileupload.ServletFileUploadTest", "");
@@ -65,11 +65,13 @@ public class PropertyReadHelper {
       change.setMethod("testFoldedHeaders");
       final File projectFolder2 = new File("../../projekte/commons-fileupload");
       final File viewFolder2 = new File("/home/reichelt/daten3/diss/repos/views-final/views_commons-fileupload/");
-      final PropertyReadHelper propertyReadHelper = new PropertyReadHelper("4ed6e923cb2033272fcb993978d69e325990a5aa", "b53957", ce, change, projectFolder2, viewFolder2);
+      final PropertyReadHelper propertyReadHelper = new PropertyReadHelper("4ed6e923cb2033272fcb993978d69e325990a5aa", "b53957", ce, change, projectFolder2, viewFolder2,
+            new File("/dev/null"));
       propertyReadHelper.read();
    }
 
-   public PropertyReadHelper(final String version, final String prevVersion, final ChangedEntity clazz, final Change change, final File projectFolder, final File viewFolder) {
+   public PropertyReadHelper(final String version, final String prevVersion, final ChangedEntity clazz,
+         final Change change, final File projectFolder, final File viewFolder, File methodFolder) {
       this.version = version;
       this.prevVersion = prevVersion;
       if (clazz.getMethod() != null) {
@@ -79,13 +81,10 @@ public class PropertyReadHelper {
       this.change = change;
       this.projectFolder = projectFolder;
       this.viewFolder = viewFolder;
+      this.methodFolder = methodFolder;
    }
 
    public ChangeProperty read() throws IOException {
-      if (version.equals("9492b3cb0e323635ec1ce4b372c9f3281c6fd29c")) {
-         System.out.println("Test");
-      }
-      
       final ChangeProperty property = new ChangeProperty(change);
 
       getSourceInfos(property);
@@ -115,7 +114,6 @@ public class PropertyReadHelper {
       final File fileOld = new File(folder, getShortPrevVersion() + "_method");
       final Set<String> calls = new HashSet<>();
       if (fileCurrent.exists() && fileOld.exists()) {
-
          final PeASSFolders folders = new PeASSFolders(projectFolder);
          final ChangeManager changeManager = new ChangeManager(folders);
          final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(prevVersion, version);
@@ -127,7 +125,10 @@ public class PropertyReadHelper {
          final Set<String> intersection = getEqualCalls(calls, traceCurrent, traceOld);
 
          for (final String calledInBothMethod : intersection) {
-            analyzeCall(property, changeManager, calledInBothMethod);
+            ChangedEntity entity = determineEntity(calledInBothMethod);
+            MethodChangeReader reader = new MethodChangeReader(methodFolder, folders.getProjectFolder(), folders.getOldSources(), entity, version);
+            reader.readMethodChangeData();
+            analyzeCall(property, reader, calledInBothMethod);
          }
 
          identifyAffectedClasses(property, calls);
@@ -169,7 +170,7 @@ public class PropertyReadHelper {
       }
    }
 
-   public void analyzeCall(final ChangeProperty property, final ChangeManager changeManager, final String calledInBothMethod) throws FileNotFoundException {
+   public void analyzeCall(final ChangeProperty property, final MethodChangeReader changeManager, final String calledInBothMethod) throws FileNotFoundException {
       final ChangedEntity entity = determineEntity(calledInBothMethod);
       final Patch<String> patch = changeManager.getKeywordChanges(entity);
 
@@ -192,7 +193,7 @@ public class PropertyReadHelper {
       }
    }
 
-   public ChangedEntity determineEntity(final String calledInBothMethod) {
+   public static ChangedEntity determineEntity(final String calledInBothMethod) {
       final String clazz = calledInBothMethod.substring(0, calledInBothMethod.indexOf("#"));
       final int openingParenthesis = calledInBothMethod.indexOf("(");
       String method;
@@ -204,6 +205,13 @@ public class PropertyReadHelper {
       System.out.println(calledInBothMethod);
 
       final ChangedEntity entity = new ChangedEntity(clazz, "", method);
+      if (openingParenthesis != -1) {
+         String parameterString = calledInBothMethod.substring(openingParenthesis + 1, calledInBothMethod.length() - 1);
+         String[] parameters = parameterString.split(",");
+         for (String parameter : parameters) {
+            entity.getParameters().add(parameter);
+         }
+      }
       return entity;
    }
 
@@ -220,9 +228,6 @@ public class PropertyReadHelper {
 
    void getTestSourceAffection(final ChangeProperty property, final Set<String> calls, final PeASSFolders folders, final Map<ChangedEntity, ClazzChangeData> changes)
          throws FileNotFoundException {
-      if (version.equals("9492b3cb0e323635ec1ce4b372c9f3281c6fd29c")) {
-         System.out.println("Test");
-      }
       final ClazzChangeData clazzChangeData = changes.get(testClazz);
       if (clazzChangeData != null) {
          if (clazzChangeData.isOnlyMethodChange()) {
@@ -238,13 +243,14 @@ public class PropertyReadHelper {
 
       // Prinzipiell: Man müsste schauen, wo der Quelltext liegt, nicht, wie er heißt..
       for (final Entry<ChangedEntity, ClazzChangeData> changedEntity : changes.entrySet()) {
-         final Set<String> guessedTypes = getGuesses(folders, changedEntity);
+         final Set<String> guessedTypes = new PropertyChangeGuesser().getGuesses(folders, changedEntity);
          property.getGuessedTypes().addAll(guessedTypes);
 
+         ChangedEntity outerClazz = changedEntity.getKey();
          if (!changedEntity.getValue().isOnlyMethodChange()) {
             for (final String call : calls) {
                final String clazzCall = call.substring(0, call.indexOf("#"));
-               if (changedEntity.getKey().getJavaClazzName().equals(clazzCall)) {
+               if (outerClazz.getJavaClazzName().equals(clazzCall)) {
                   processFoundCall(property, changedEntity);
                }
             }
@@ -253,55 +259,19 @@ public class PropertyReadHelper {
                for (String changedMethod : changedClazz.getValue()) {
                   String fqn;
                   if (changedMethod.contains(ChangedEntity.METHOD_SEPARATOR)) {
-                     fqn = changedEntity.getKey() + ChangedEntity.CLAZZ_SEPARATOR + changedMethod;
+                     fqn = outerClazz.getPackage() + "." + changedClazz.getKey() + ChangedEntity.CLAZZ_SEPARATOR + changedMethod;
                   } else {
-                     fqn = changedEntity.getKey() + ChangedEntity.METHOD_SEPARATOR + changedMethod;
+                     fqn = outerClazz.getPackage() + "." + changedClazz.getKey() + ChangedEntity.METHOD_SEPARATOR + changedMethod;
+                  }
+                  if (fqn.contains("(") && changedClazz.getKey().contains(ChangedEntity.CLAZZ_SEPARATOR)) {
+                     String innerParameter = changedClazz.getKey().substring(0, changedClazz.getKey().lastIndexOf(ChangedEntity.CLAZZ_SEPARATOR));
+                     fqn = fqn.substring(0, fqn.indexOf("(") + 1) + innerParameter + "," + fqn.substring(fqn.indexOf("(") + 1);
                   }
                   if (calls.contains(fqn)) {
                      processFoundCall(property, changedEntity);
                   }
                }
             }
-         }
-      }
-   }
-
-   private Set<String> getGuesses(final PeASSFolders folders, final Entry<ChangedEntity, ClazzChangeData> changedEntity) throws FileNotFoundException {
-      final Set<String> guessedTypes = new HashSet<>();
-      final File file = ClazzFinder.getSourceFile(folders.getProjectFolder(), changedEntity.getKey());
-      final File fileOld = ClazzFinder.getSourceFile(folders.getOldSources(), changedEntity.getKey());
-
-      if (file != null && fileOld != null && file.exists() && fileOld.exists()) {
-         final CompilationUnit clazzUnit = FileComparisonUtil.parse(file);
-         final CompilationUnit clazzUnitOld = FileComparisonUtil.parse(fileOld);
-
-         for (Map.Entry<String, Set<String>> changedClazz : changedEntity.getValue().getChangedMethods().entrySet()) {
-            // If only method change..
-            if (changedClazz.getValue() != null) {
-               for (String method : changedClazz.getValue()) {
-                  final String source = FileComparisonUtil.getMethod(changedEntity.getKey(), method, clazzUnit);
-                  final String sourceOld = FileComparisonUtil.getMethod(changedEntity.getKey(), method, clazzUnitOld);
-                  final Patch<String> changedLinesMethod = DiffUtils.diff(Arrays.asList(sourceOld.split("\n")), Arrays.asList(source.split("\n")));
-
-                  for (final Delta<String> delta : changedLinesMethod.getDeltas()) {
-                     getDeltaGuess(guessedTypes, (delta.getOriginal().getLines()));
-                     getDeltaGuess(guessedTypes, (delta.getRevised().getLines()));
-                  }
-               }
-            }
-            
-         }
-      }
-      return guessedTypes;
-   }
-
-   private void getDeltaGuess(final Set<String> guessedTypes, final List<String> delta) {
-      for (final String line : delta) {
-         if (line.contains("synchronized")) {
-            guessedTypes.add("SYNCHRONIZED");
-         }
-         if (line.contains("toArray")) {
-            guessedTypes.add("OPTIM");
          }
       }
    }
@@ -351,10 +321,21 @@ public class PropertyReadHelper {
    }
 
    private void processFoundCall(final ChangeProperty property, final Entry<ChangedEntity, ClazzChangeData> changedEntity) {
-      if (changedEntity.getKey().getClazz().toLowerCase().contains("test")) {
+      ChangedEntity call = changedEntity.getKey();
+      if (call.getClazz().toLowerCase().contains("test")) {
          property.setAffectsTestSource(true);
       } else {
          property.setAffectsSource(true);
+      }
+      String packageName = call.getPackage();
+      for (Map.Entry<String, Set<String>> methods : changedEntity.getValue().getChangedMethods().entrySet()) {
+         if (methods.getValue() != null && methods.getValue().size() > 0) {
+            for (String method : methods.getValue()) {
+               property.getAffectedMethods().add(packageName + "." + methods.getKey() + ChangedEntity.METHOD_SEPARATOR + method);
+            }
+         } else {
+            property.getAffectedMethods().add(call.getJavaClazzName());
+         }
       }
    }
 

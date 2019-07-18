@@ -57,7 +57,7 @@ import de.peass.testtransformation.JUnitTestTransformer;
 public class TestGeneration {
 
    @ClassRule
-   public static TemporaryFolder testFolder = new TemporaryFolder();
+   public static TemporaryFolder testFolder = new TemporaryFolder(new File("target"));
 
    private static final URL SOURCE = Thread.currentThread().getContextClassLoader().getResource("generation");
    private static File RESOURCE_FOLDER;

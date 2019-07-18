@@ -17,7 +17,6 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.measurement.analysis.StatisticUtil.Relation;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 public class EarlyBreakDecider {
@@ -33,6 +32,25 @@ public class EarlyBreakDecider {
    private final JUnitTestTransformer testTransformer;
    private final List<Double> before = new LinkedList<>();
    private final List<Double> after = new LinkedList<>();
+
+   private double type1error = 0.01;
+   private double type2error = 0.01;
+
+   public double getType1error() {
+      return type1error;
+   }
+
+   public void setType1error(double type1error) {
+      this.type1error = type1error;
+   }
+
+   public double getType2error() {
+      return type2error;
+   }
+
+   public void setType2error(double type2error) {
+      this.type2error = type2error;
+   }
 
    public EarlyBreakDecider(JUnitTestTransformer testTransformer, final File measurementFolder, final String version,
          final String versionOld, final TestCase testcase, final long currentChunkStart) throws JAXBException {
@@ -78,59 +96,15 @@ public class EarlyBreakDecider {
       }
    }
 
-   private static final double type1error = 0.01;
-   private static final double type2error = 0.01;
-
-   public static boolean isSavelyDecidableBothHypothesis(final int vmid, final double[] valsBefore, final double[] valsAfter) {
+   public boolean isSavelyDecidableBothHypothesis(final int vmid, final double[] valsBefore, final double[] valsAfter) {
       boolean savelyDecidable = false;
       final DescriptiveStatistics statisticsBefore = new DescriptiveStatistics(valsBefore);
       final DescriptiveStatistics statisticsAfter = new DescriptiveStatistics(valsAfter);
       if (valsBefore.length > 30 && valsAfter.length > 30) {
          Relation relation = StatisticUtil.agnosticTTest(statisticsAfter, statisticsBefore, type1error, type2error);
          if (relation == Relation.EQUAL || relation == Relation.UNEQUAL) {
+            LOG.info("Can savely decide: {}", relation);
             savelyDecidable = true;
-         }
-      }
-      return savelyDecidable;
-   }
-
-   public static boolean isSavelyDecidable2(final int vmid, final double[] valsBefore, final double[] valsAfter) {
-      boolean savelyDecidable = false;
-      final DescriptiveStatistics statisticsBefore = new DescriptiveStatistics(valsBefore);
-      final DescriptiveStatistics statisticsAfter = new DescriptiveStatistics(valsAfter);
-      final double tvalue = TestUtils.t(valsBefore, valsAfter);
-      final double deviationBefore = statisticsBefore.getStandardDeviation() / statisticsBefore.getMean();
-      final double deviationAfter = statisticsAfter.getStandardDeviation() / statisticsAfter.getMean();
-      if (valsBefore.length > 30 && valsAfter.length > 30) {
-
-         if (Math.abs(tvalue) > 5 || Math.abs(tvalue) < 0.1) {
-            LOG.info("In VM iteration {}, t-value was {} - skipping rest of vm executions.", vmid, tvalue);
-            savelyDecidable = true;
-         }
-         if ((valsBefore.length > 40 && valsBefore.length > 40) &&
-               (Math.abs(tvalue) > 3 || Math.abs(tvalue) < 0.2)) {
-            LOG.info("In VM iteration {}, t-value was {} - skipping rest of vm executions.", vmid, tvalue);
-            savelyDecidable = true;
-         }
-
-         if ((valsBefore.length > 100 && valsBefore.length > 100) &&
-               (Math.abs(tvalue) > 2.3 || Math.abs(tvalue) < 1.0)) {
-            LOG.info("In VM iteration {}, t-value was {} - skipping rest of vm executions.", vmid, tvalue);
-            savelyDecidable = true;
-         }
-
-         LOG.info("In VM iteration {}, T={}, Standard-Deviations are {} {}", vmid, tvalue, deviationBefore, deviationAfter);
-
-         if (deviationBefore < THRESHOLD_BREAK && deviationAfter < THRESHOLD_BREAK) {
-            savelyDecidable = true;
-            LOG.info("Savely decidable by deviations");
-         }
-
-         if ((Math.abs(statisticsBefore.getMean()) > BIG_TESTCASE_THRESHOLD_MIKROSECONDS || Math.abs(statisticsAfter.getMean()) > BIG_TESTCASE_THRESHOLD_MIKROSECONDS)
-               && ((deviationBefore < 2 * THRESHOLD_BREAK && deviationAfter < 2 * THRESHOLD_BREAK)
-                     || (Math.abs(tvalue) > 5 || Math.abs(tvalue) < 0.1))) {
-            savelyDecidable = true;
-            LOG.info("Savely decidable by deviations - big testcase");
          }
       }
       return savelyDecidable;

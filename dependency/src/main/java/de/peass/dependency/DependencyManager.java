@@ -45,6 +45,7 @@ import de.peass.dependency.analysis.data.TestDependencies;
 import de.peass.dependency.analysis.data.TestExistenceChanges;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.changesreading.ClazzChangeData;
+import de.peass.dependency.traces.KiekerFolderUtil;
 
 /**
  * Runs tests with kieker and reads the dependencies of tests for each version
@@ -52,7 +53,7 @@ import de.peass.dependency.changesreading.ClazzChangeData;
  * @author reichelt
  *
  */
-public class DependencyManager extends TestResultManager {
+public class DependencyManager extends KiekerResultManager {
 
    private static final Logger LOG = LogManager.getLogger(DependencyManager.class);
 
@@ -152,7 +153,7 @@ public class DependencyManager extends TestResultManager {
     */
    public void updateDependenciesOnce(final ChangedEntity testClassName, final File parent, final ModuleClassMapping mapping) {
       LOG.debug("Parent: " + parent);
-      final File kiekerResultFolder = findKiekerFolder(testClassName.getMethod(), parent);
+      final File kiekerResultFolder = KiekerFolderUtil.findKiekerFolder(testClassName.getMethod(), parent);
 
       if (kiekerResultFolder == null) {
          LOG.error("No kieker folder found: " + parent);
@@ -196,31 +197,6 @@ public class DependencyManager extends TestResultManager {
       LOG.debug("Kieker: {} Dependencies: {}", kiekerResultFolder.getAbsolutePath(), calledClasses.size());
       setDependencies(testClassName, calledClasses);
 
-   }
-
-   private File findKiekerFolder(final String testMethodName, final File parent) {
-      final File[] listFiles = parent.listFiles(new FileFilter() {
-         @Override
-         public boolean accept(final File pathname) {
-            return pathname.getName().matches("[0-9]*");
-         }
-      });
-      LOG.debug("Kieker-Files: {}", listFiles.length);
-      if (listFiles.length == 0) {
-         LOG.info("No result folder existing - probably a package name change?");
-         LOG.info("Files: {}", Arrays.toString(parent.list()));
-         return null;
-      }
-      for (final File kiekerFolder : listFiles) {
-         LOG.debug("Analysing Folder: {} {}", kiekerFolder.getAbsolutePath(), testMethodName);
-         final File kiekerNextFolder = new File(kiekerFolder, testMethodName);
-         if (kiekerNextFolder.exists()) {
-            final File kiekerResultFolder = kiekerNextFolder.listFiles()[0];
-            LOG.debug("Test: " + testMethodName);
-            return kiekerResultFolder;
-         }
-      }
-      return null;
    }
 
    /**

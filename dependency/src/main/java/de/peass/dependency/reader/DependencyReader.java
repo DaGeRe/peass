@@ -29,7 +29,7 @@ import com.github.javaparser.ParseProblemException;
 
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.DependencyManager;
-import de.peass.dependency.TestResultManager;
+import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.vcs.VersionIterator;
@@ -186,7 +186,7 @@ public class DependencyReader extends DependencyReaderBase {
          LOG.info("Overall-tests: {} Executed tests with pruning: {}", overallSize, prunedSize);
 
          dependencyManager.getExecutor().deleteTemporaryFiles();
-         final File xmlFileFolder = TestResultManager.getXMLFileFolder(folders, folders.getProjectFolder());
+         final File xmlFileFolder = KiekerResultManager.getXMLFileFolder(folders, folders.getProjectFolder());
          if (xmlFileFolder != null) {
             FileUtils.deleteDirectory(xmlFileFolder);
          }

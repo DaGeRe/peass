@@ -20,12 +20,13 @@ import org.junit.Test;
 
 import com.github.javaparser.ParseException;
 
-import de.peass.dependency.TestResultManager;
+import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.analysis.CalledMethodLoader;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.analysis.data.TraceElement;
+import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.dependency.traces.OneTraceGenerator;
 import de.peass.dependency.traces.TraceMethodReader;
 import de.peass.dependency.traces.TraceWithMethods;
@@ -122,7 +123,7 @@ public class ViewGeneratorIT {
    private void executeTraceGetting(final File project, final String githash)
          throws IOException, ParseException, ViewNotFoundException, XmlPullParserException, InterruptedException {
       init(project);
-      final TestResultManager tracereader = new TestResultManager(projectFolder, 5000);
+      final KiekerResultManager tracereader = new KiekerResultManager(projectFolder, 5000);
       final TestSet testset = new TestSet();
       testset.addTest(new TestCase("viewtest.TestMe", "test", ""));
       tracereader.getExecutor().loadClasses();
@@ -138,9 +139,7 @@ public class ViewGeneratorIT {
 
    public static boolean analyseTrace(final TestCase testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File resultsFolder)
          throws com.github.javaparser.ParseException, IOException, ViewNotFoundException {
-      final File methodResult = OneTraceGenerator.getClazzMethodFolder(testcase, resultsFolder);
-      final File[] possiblyMethodFolder = methodResult.listFiles();
-      final File kiekerResultFolder = possiblyMethodFolder[0];
+      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder);
       // return kiekerResultFolder;
       // final File kiekerResultFolder = getMethodFolder(testcase, resultsFolder);
 
@@ -185,9 +184,9 @@ public class ViewGeneratorIT {
    }
 
    public static File getMethodFolder(final TestCase testcase, final File xmlFileFolder) throws ViewNotFoundException {
-      final File methodResult = OneTraceGenerator.getClazzMethodFolder(testcase, xmlFileFolder);
-      final File[] possiblyMethodFolder = methodResult.listFiles();
-      final File kiekerResultFolder = possiblyMethodFolder[0];
+      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, xmlFileFolder);
+//      final File[] possiblyMethodFolder = methodResult.listFiles();
+//      final File kiekerResultFolder = possiblyMethodFolder[0];
       return kiekerResultFolder;
    }
 }

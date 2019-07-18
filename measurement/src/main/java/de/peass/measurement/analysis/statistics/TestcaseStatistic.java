@@ -23,7 +23,18 @@ public class TestcaseStatistic {
 
    }
 
-   public TestcaseStatistic(final double mean1, final double mean2, final double deviation1, final double deviation2, final long executions, final double tvalue, boolean isChange) {
+   public TestcaseStatistic(DescriptiveStatistics statisticsCurrent, DescriptiveStatistics statisticsOld) {
+      this.meanCurrent = statisticsCurrent.getMean();
+      this.meanOld = statisticsOld.getMean();
+      this.deviationCurrent = statisticsCurrent.getStandardDeviation();
+      this.deviationOld = statisticsCurrent.getStandardDeviation();
+      this.vms = statisticsCurrent.getN() + statisticsOld.getN();
+      this.tvalue = TestUtils.t(statisticsOld, statisticsCurrent);
+      this.isChange = Math.abs(tvalue) > 3.2;
+   }
+
+   public TestcaseStatistic(final double mean1, final double mean2, final double deviation1, final double deviation2, final long executions, final double tvalue,
+         boolean isChange) {
       super();
       this.meanOld = mean1;
       this.meanCurrent = mean2;

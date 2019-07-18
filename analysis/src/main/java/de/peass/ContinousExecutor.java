@@ -7,14 +7,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +32,7 @@ import de.peass.dependency.traces.ViewGenerator;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.dependencyprocessors.DependencyTester;
 import de.peass.dependencyprocessors.VersionComparator;
+import de.peass.measurement.MeasurementConfiguration;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.OptionConstants;
@@ -44,6 +41,8 @@ import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIteratorGit;
 import de.peran.AnalyseOneTest;
 import de.peran.measurement.analysis.AnalyseFullData;
+import picocli.CommandLine;
+import picocli.CommandLine.Option;
 
 /**
  * Executes performance tests continously inside of a project.
@@ -53,79 +52,41 @@ import de.peran.measurement.analysis.AnalyseFullData;
  * @author reichelt
  *
  */
-public class ContinousExecutor {
+public class ContinousExecutor implements Callable<Void>  {
    private static final Logger LOG = LogManager.getLogger(ContinousExecutor.class);
+   
+   @Option(names = { "-vms", "--vms" }, description = "Number of VMs to start")
+   int vms = 100;
+   
+   @Option(names = { "-duration", "--duration" }, description = "Which duration to use - if duration is specified, warmup and iterations are ignored")
+   int duration = 0;
+   
+   @Option(names = { "-warmup", "--warmup" }, description = "Number of warmup iterations")
+   int warmup = 10;
+   
+   @Option(names = { "-iterations", "--iterations" }, description = "Number of iterations")
+   int iterations = 1000;
+   
+   @Option(names = { "-repetitions", "--repetitions" }, description = "Count of repetitions")
+   int repetitions = 100;
+   
+   @Option(names = { "-threads", "--threads" }, description = "Count of threads")
+   int threads = 100;
+   
+   @Option(names = { "-useKieker", "--useKieker", "-usekieker", "--usekieker"}, description = "Whether Kieker should be used")
+   boolean useKieker = false;
 
-   public static void main(final String[] args) throws InterruptedException, IOException, ParseException, JAXBException {
-      final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.WARMUP, OptionConstants.ITERATIONS, OptionConstants.VMS,
-            OptionConstants.REPETITIONS, OptionConstants.USEKIEKER, OptionConstants.THREADS);
-      final String homeFolderName = System.getenv("PEASS_HOME") != null ? System.getenv("PEASS_HOME") : System.getenv("HOME") + File.separator + ".peass" + File.separator;
-      final File peassFolder = new File(homeFolderName);
+   @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
+   String testName;
+   
+   @Option(names = { "-folder", "--folder" }, description = "Folder of the project that should be analyzed", required = true)
+   protected File projectFolder;
 
-      if (!peassFolder.exists()) {
-         peassFolder.mkdirs();
-      }
-      LOG.debug("PeASS-Folder: {} Exists: {}", peassFolder, peassFolder.exists());
-      //
-      final CommandLineParser parser = new DefaultParser();
-      final CommandLine line = parser.parse(options, args);
-
-      final String folderName = line.getOptionValue(OptionConstants.FOLDER.getName());
-      LOG.debug("Folder: {}", folderName);
-      final File cloneProjectFolder = new File(folderName);
-
-      final int vms = Integer.parseInt(line.getOptionValue(OptionConstants.VMS.getName(), "15"));
-      final int warmup = Integer.parseInt(line.getOptionValue(OptionConstants.WARMUP.getName(), "10"));
-      final int iterations = Integer.parseInt(line.getOptionValue(OptionConstants.ITERATIONS.getName(), "10"));
-      final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "10"));
-      final int threads = Integer.parseInt(line.getOptionValue(OptionConstants.THREADS.getName(), "1"));
-      final boolean useViews = true;
-
-      final File localFolder = new File(peassFolder, cloneProjectFolder.getName() + "_full");
-      final File projectFolder = new File(localFolder, cloneProjectFolder.getName());
-      if (!localFolder.exists() || !projectFolder.exists()) {
-         cloneProject(cloneProjectFolder, localFolder);
-      } else {
-         final String head = GitUtils.getName("HEAD", cloneProjectFolder);
-         GitUtils.goToTag(head, projectFolder);
-      }
-
-      final PeASSFolders folders = new PeASSFolders(projectFolder);
-
-      final File dependencyFile = new File(localFolder, "dependencies.json");
-      final String previousName = GitUtils.getName("HEAD~1", projectFolder);
-      final GitCommit headCommit = new GitCommit(GitUtils.getName("HEAD", projectFolder), "", "", "");
-      //
-      final Dependencies dependencies = getDependencies(projectFolder, dependencyFile, previousName, headCommit);
-
-      if (dependencies.getVersions().size() > 0) {
-         VersionComparator.setDependencies(dependencies);
-         final String versionName = dependencies.getVersionNames()[dependencies.getVersions().size() - 1];
-         final Version currentVersion = dependencies.getVersions().get(versionName);
-
-         final Set<TestCase> tests = new HashSet<>();
-
-         if (useViews) {
-            final TestSet traceTestSet = getViewTests(threads, localFolder, projectFolder, folders, dependencies, versionName);
-            for (final Map.Entry<ChangedEntity, Set<String>> test : traceTestSet.getTestcases().entrySet()) {
-               for (final String method : test.getValue()) {
-                  tests.add(new TestCase(test.getKey().getClazz(), method));
-               }
-            }
-         } else {
-            for (final TestSet dep : currentVersion.getChangedClazzes().values()) {
-               tests.addAll(dep.getTests());
-            }
-         }
-
-         final File measurementFolder = executeMeasurements(vms, warmup, iterations, repetitions, localFolder, folders, previousName, headCommit, tests);
-         final File changefile = new File(localFolder, "changes.json");
-         AnalyseOneTest.setResultFolder(new File(localFolder, headCommit.getTag() + "_graphs"));
-         final AnalyseFullData afd = new AnalyseFullData(changefile);
-         afd.analyseFolder(measurementFolder);
-      } else {
-         LOG.info("No test executed - version did not contain changed tests.");
-      }
+   public static void main(final String[] args) throws InterruptedException, IOException, JAXBException {
+      ContinousExecutor command = new ContinousExecutor();
+      CommandLine commandLine = new CommandLine(command);
+      commandLine.execute(args);
+      
    }
 
    private static void cloneProject(final File cloneProjectFolder, final File localFolder) throws InterruptedException, IOException {
@@ -145,7 +106,7 @@ public class ContinousExecutor {
          testgenerator.setWarmupExecutions(warmup);
          testgenerator.setRepetitions(repetitions);
          testgenerator.setUseKieker(false);
-         final DependencyTester tester = new AdaptiveTester(folders, testgenerator, vms);
+         final DependencyTester tester = new AdaptiveTester(folders, testgenerator, new MeasurementConfiguration(vms));
          for (final TestCase test : tests) {
             tester.evaluate(headCommit.getTag(), previousName, test);
          }
@@ -160,7 +121,7 @@ public class ContinousExecutor {
    }
 
    private static TestSet getViewTests(final int threads, final File localFolder, final File projectFolder, final PeASSFolders folders, final Dependencies dependencies,
-         final String version) throws IOException, ParseException, JAXBException, JsonParseException, JsonMappingException {
+         final String version) throws IOException, JAXBException, JsonParseException, JsonMappingException {
       final File executeFile = new File(localFolder, "execute.json");
       final File viewFolder = new File(localFolder, "views");
       viewFolder.mkdir();
@@ -215,5 +176,68 @@ public class ContinousExecutor {
          dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
       }
       return dependencies;
+   }
+
+   @Override
+   public Void call() throws Exception {
+      final String homeFolderName = System.getenv("PEASS_HOME") != null ? System.getenv("PEASS_HOME") : System.getenv("HOME") + File.separator + ".peass" + File.separator;
+      final File peassFolder = new File(homeFolderName);
+
+      if (!peassFolder.exists()) {
+         peassFolder.mkdirs();
+      }
+      LOG.debug("PeASS-Folder: {} Exists: {}", peassFolder, peassFolder.exists());
+      //
+      LOG.debug("Folder: {}", projectFolder);
+      final File cloneProjectFolder = projectFolder;
+
+      final boolean useViews = true;
+
+      final File localFolder = new File(peassFolder, cloneProjectFolder.getName() + "_full");
+      final File projectFolder = new File(localFolder, cloneProjectFolder.getName());
+      if (!localFolder.exists() || !projectFolder.exists()) {
+         cloneProject(cloneProjectFolder, localFolder);
+      } else {
+         final String head = GitUtils.getName("HEAD", cloneProjectFolder);
+         GitUtils.goToTag(head, projectFolder);
+      }
+
+      final PeASSFolders folders = new PeASSFolders(projectFolder);
+
+      final File dependencyFile = new File(localFolder, "dependencies.json");
+      final String previousName = GitUtils.getName("HEAD~1", projectFolder);
+      final GitCommit headCommit = new GitCommit(GitUtils.getName("HEAD", projectFolder), "", "", "");
+      //
+      final Dependencies dependencies = getDependencies(projectFolder, dependencyFile, previousName, headCommit);
+
+      if (dependencies.getVersions().size() > 0) {
+         VersionComparator.setDependencies(dependencies);
+         final String versionName = dependencies.getVersionNames()[dependencies.getVersions().size() - 1];
+         final Version currentVersion = dependencies.getVersions().get(versionName);
+
+         final Set<TestCase> tests = new HashSet<>();
+
+         if (useViews) {
+            final TestSet traceTestSet = getViewTests(threads, localFolder, projectFolder, folders, dependencies, versionName);
+            for (final Map.Entry<ChangedEntity, Set<String>> test : traceTestSet.getTestcases().entrySet()) {
+               for (final String method : test.getValue()) {
+                  tests.add(new TestCase(test.getKey().getClazz(), method));
+               }
+            }
+         } else {
+            for (final TestSet dep : currentVersion.getChangedClazzes().values()) {
+               tests.addAll(dep.getTests());
+            }
+         }
+
+         final File measurementFolder = executeMeasurements(vms, warmup, iterations, repetitions, localFolder, folders, previousName, headCommit, tests);
+         final File changefile = new File(localFolder, "changes.json");
+         AnalyseOneTest.setResultFolder(new File(localFolder, headCommit.getTag() + "_graphs"));
+         final AnalyseFullData afd = new AnalyseFullData(changefile);
+         afd.analyseFolder(measurementFolder);
+      } else {
+         LOG.info("No test executed - version did not contain changed tests.");
+      }
+      return null;
    }
 }

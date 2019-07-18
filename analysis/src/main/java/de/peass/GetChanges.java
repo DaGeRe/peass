@@ -25,16 +25,19 @@ public class GetChanges implements Callable<Void> {
    protected File dependencyFile;
 
    @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
-   protected File executionfile;
+   protected File executionFile;
 
    @Option(names = { "-data", "--data" }, description = "Path to datafolder")
-   protected File data;
+   protected File data[];
 
    @Option(names = { "-out", "--out" }, description = "Path for saving the changefile")
-   File out = new File("results");
+   private File out = new File("results");
 
-   @Option(names = { "-confidence", "--confidence" }, description = "Confidence level for agnostic t-test")
-   private double confidence = 0.01;
+   @Option(names = { "-type1error", "--type1error" }, description = "Type 1 error of agnostic-t-test, i.e. probability of considering measurements equal when they are unequal")
+   public double type1error = 0.01;
+   
+   @Option(names = { "-type2error", "--type2error" }, description = "Type 2 error of agnostic-t-test, i.e. probability of considering measurements unequal when they are equal")
+   private double type2error = 0.01;
 
    public GetChanges() {
 
@@ -47,7 +50,7 @@ public class GetChanges implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      getVersionOrder();
+      getVersionOrder(dependencyFile, executionFile);
 
       if (!out.exists()) {
          out.mkdirs();
@@ -56,25 +59,36 @@ public class GetChanges implements Callable<Void> {
       if (!statisticFolder.exists()) {
          statisticFolder.mkdir();
       }
+      
+      LOG.info("Errors: 1: {} 2: {}", type1error, type2error);
 
       final ChangeReader reader = new ChangeReader(statisticFolder, VersionComparator.getProjectName());
-      reader.setConfidence(confidence);
+      reader.setType1error(type1error);
+      reader.setType2error(type2error);
 
-      reader.readFile(data);
+      for (File dataFile : data) {
+         reader.readFile(dataFile);
+      }
       return null;
    }
 
-   public void getVersionOrder() throws IOException, JsonParseException, JsonMappingException {
+   public static void getVersionOrder(File dependencyFile, File executionFile, File... additionalDependencyFiles) throws IOException, JsonParseException, JsonMappingException {
       Dependencies dependencies = null;
       ExecutionData executionData = null;
       if (dependencyFile != null) {
          dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
          VersionComparator.setDependencies(dependencies);
       }
-      if (executionfile != null) {
-         executionData = Constants.OBJECTMAPPER.readValue(executionfile, ExecutionData.class);
+      if (executionFile != null) {
+         executionData = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
          dependencies = new Dependencies(executionData);
          VersionComparator.setDependencies(dependencies);
+      }
+      if (dependencies == null) {
+         for (File dependencytest : additionalDependencyFiles) {
+            dependencies = Constants.OBJECTMAPPER.readValue(dependencytest, Dependencies.class);
+            VersionComparator.setDependencies(dependencies);
+         }
       }
       if (executionData == null && dependencies == null) {
          throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined and valid!");

@@ -8,6 +8,7 @@ import java.nio.charset.Charset;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
@@ -281,4 +282,6 @@ public abstract class TestExecutor {
    public long getTimeout() {
       return timeout;
    }
+
+   public abstract void setIncludedMethods(Set<String> includedPattern);
 }

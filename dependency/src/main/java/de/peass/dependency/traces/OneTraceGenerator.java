@@ -66,46 +66,11 @@ public class OneTraceGenerator {
       return clazzDir;
    }
 
-   public static File getClazzMethodFolder(final TestCase testcase, final File resultsFolder) throws ViewNotFoundException {
-      final File projectResultFolder = new File(resultsFolder, testcase.getClazz());
-      final File[] listFiles = projectResultFolder.listFiles(new FileFilter() {
-         @Override
-         public boolean accept(final File pathname) {
-            return pathname.getName().matches("[0-9]*");
-         }
-      });
-      if (listFiles == null) {
-         throw new ViewNotFoundException("Result folder: " + Arrays.toString(listFiles) + " ("
-               + (listFiles != null ? listFiles.length : "null") + ") in " + projectResultFolder.getAbsolutePath() + " should exist!");
-      }
-
-      File methodResult = getMethodFolder(testcase, listFiles);
-
-      LOG.debug("Searching for: {}", methodResult);
-
-      if (methodResult.exists() && methodResult.isDirectory()) {
-         return methodResult;
-      } else {
-         throw new RuntimeException("Folder " + methodResult + " is no Kieker result folder!");
-      }
-   }
-
-   private static File getMethodFolder(final TestCase testcase, final File[] listFiles) {
-      File methodResult = new File(listFiles[0], testcase.getMethod());
-      for (final File test : listFiles) {
-         final File candidate = new File(test, testcase.getMethod());
-         if (candidate.exists()) {
-            methodResult = candidate;
-         }
-      }
-      return methodResult;
-   }
-
    public boolean generateTrace(final String versionCurrent)
          throws com.github.javaparser.ParseException, IOException, ViewNotFoundException, XmlPullParserException {
       boolean success = false;
       try {
-         File methodResult = getClazzMethodFolder(testcase, resultsFolder);
+         File methodResult = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder);
          LOG.debug("Searching for: {}", methodResult);
          if (methodResult.exists() && methodResult.isDirectory()) {
             success = generateTraceFiles(versionCurrent, methodResult);
@@ -118,19 +83,17 @@ public class OneTraceGenerator {
       return success;
    }
 
-   private boolean generateTraceFiles(final String versionCurrent, final File methodResult)
+   private boolean generateTraceFiles(final String versionCurrent, final File kiekerResultFolder)
          throws FileNotFoundException, IOException, XmlPullParserException, com.github.javaparser.ParseException {
       boolean success = false;
-      final long size = FileUtils.sizeOfDirectory(methodResult);
+      final long size = FileUtils.sizeOfDirectory(kiekerResultFolder);
       final long sizeInMB = size / (1024 * 1024);
       LOG.debug("Filesize: {} ({})", sizeInMB, size);
       if (sizeInMB < MAX_SIZE_MB) {
-         final File[] possiblyMethodFolder = methodResult.listFiles();
-         final File kiekerResultFolder = possiblyMethodFolder[0];
          final ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), modules);
          final List<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, mapping).getShortTrace("");
          if (shortTrace != null) {
-            LOG.debug("Short Trace: {} Folder: {} Project: {}", shortTrace.size(), methodResult.getAbsolutePath(), folders.getProjectFolder());
+            LOG.debug("Short Trace: {} Folder: {} Project: {}", shortTrace.size(), kiekerResultFolder.getAbsolutePath(), folders.getProjectFolder());
             final List<File> files = new LinkedList<>();
             for (int i = 0; i < modules.size(); i++) {
                final File module = modules.get(i);

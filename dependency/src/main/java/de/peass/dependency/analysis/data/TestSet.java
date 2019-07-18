@@ -87,6 +87,10 @@ public class TestSet {
       addTest(new TestCase(testcase));
    }
 
+   public TestSet(TestCase testcase) {
+      addTest(testcase);
+   }
+
    @JsonIgnore
    public void addTest(final TestCase classname) {
       final ChangedEntity entity = new ChangedEntity(classname.getClazz(), classname.getModule());

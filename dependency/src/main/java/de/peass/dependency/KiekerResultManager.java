@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,16 +47,19 @@ import de.peass.testtransformation.JUnitTestTransformer;
  * @author reichelt
  *
  */
-public class TestResultManager {
+public class KiekerResultManager {
 
-   private static final Logger LOG = LogManager.getLogger(TestResultManager.class);
+   private static final Logger LOG = LogManager.getLogger(KiekerResultManager.class);
 
    protected final TestExecutor executor;
    protected final PeASSFolders folders;
-   protected final JUnitTestTransformer testTransformer;
+   private final JUnitTestTransformer testTransformer;
 
-   public TestResultManager(final File projectFolder, final long timeout) {
-      super();
+   public JUnitTestTransformer getTestTransformer() {
+      return testTransformer;
+   }
+
+   public KiekerResultManager(final File projectFolder, final long timeout) {
       folders = new PeASSFolders(projectFolder);
       testTransformer = createTestTransformer();
       executor = createExecutor(folders, timeout, testTransformer);

@@ -21,6 +21,7 @@ import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependencyprocessors.DependencyTester;
 import de.peass.dependencyprocessors.PairProcessor;
+import de.peass.measurement.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.OptionConstants;
 import de.peass.utils.TestLoadUtil;
@@ -92,7 +93,7 @@ public class DependencyTestPairStarter extends PairProcessor {
          tester = new DependencyTester(folders, duration, vms, true, repetitions, useKieker);
       } else {
          final JUnitTestTransformer testgenerator = getTestTransformer();
-         tester = new DependencyTester(folders, testgenerator, vms);
+         tester = new DependencyTester(folders, testgenerator, new MeasurementConfiguration(vms));
       }
 
       if (testName != null) {

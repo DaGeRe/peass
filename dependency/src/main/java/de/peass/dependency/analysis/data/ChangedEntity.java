@@ -1,6 +1,8 @@
 package de.peass.dependency.analysis.data;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,19 +42,25 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    private String method;
    private final String module;
    private final String javaClazzName;
+   private final List<String> parameters = new LinkedList<String>();
 
    @JsonCreator
    public ChangedEntity(@JsonProperty("clazz") final String clazz, @JsonProperty("module") final String module) {
       this.filename = clazz;
       this.module = module != null ? module : "";
-      final String editedName = replaceClazzFolderFromName(clazz);
-      if (editedName != null) {
-         javaClazzName = editedName;
-      } else {
-         if (clazz.contains(File.separator)) {
-            LOG.error("Classfolder not found: " + clazz + " Module: " + module);
+      if (!clazz.contains(METHOD_SEPARATOR)) {
+         final String editedName = replaceClazzFolderFromName(clazz);
+         if (editedName != null) {
+            javaClazzName = editedName;
+         } else {
+            if (clazz.contains(File.separator)) {
+               LOG.error("Classfolder not found: " + clazz + " Module: " + module);
+            }
+            javaClazzName = clazz;
          }
-         javaClazzName = clazz;
+      } else {
+         javaClazzName = clazz.substring(0, clazz.lastIndexOf("#"));
+         method = clazz.substring(clazz.lastIndexOf("#") + 1);
       }
 
       LOG.trace(javaClazzName + " " + clazz);
@@ -72,6 +80,11 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    @JsonIgnore
    public String getSimpleClazzName() {
       return javaClazzName.substring(javaClazzName.lastIndexOf('.') + 1);
+   }
+
+   @JsonIgnore
+   public String getSimpleFullName() {
+      return javaClazzName.substring(javaClazzName.lastIndexOf('.') + 1) + METHOD_SEPARATOR + method;
    }
 
    @JsonIgnore
@@ -165,20 +178,24 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       copy.setMethod(this.method);
       return copy;
    }
-   
+
    @JsonIgnore
    public ChangedEntity onlyClazz() {
       return new ChangedEntity(filename, module);
    }
-   
+
    @JsonIgnore
    public ChangedEntity getSourceContainingClazz() {
       if (!javaClazzName.contains(CLAZZ_SEPARATOR)) {
          return this;
       } else {
          final String clazzName = javaClazzName.substring(0, javaClazzName.indexOf(CLAZZ_SEPARATOR));
-         return new ChangedEntity(clazzName, module, method);
+         return new ChangedEntity(clazzName, module, "");
       }
+   }
+
+   public List<String> getParameters() {
+      return parameters;
    }
 
 }

@@ -13,7 +13,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peran.FolderSearcher;
-import de.peran.analysis.helper.read.PropertyReadHelper;
 
 public class GetCorrelations {
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {

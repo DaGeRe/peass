@@ -55,13 +55,13 @@ public class CalledMethodLoader {
 
    private static final Logger LOG = LogManager.getLogger(CalledMethodLoader.class);
 
-   private TraceReconstructionFilter traceReconstructionFilter;
-   private final AnalysisController analysisController = new AnalysisController();
+//   private TraceReconstructionFilter traceReconstructionFilter;
+//   private final AnalysisController analysisController = new AnalysisController();
    private final File kiekerTraceFolder;
    private final ModuleClassMapping mapping;
 
-   public CalledMethodLoader(final File kiekerTraceFile, final ModuleClassMapping mapping) {
-      this.kiekerTraceFolder = kiekerTraceFile;
+   public CalledMethodLoader(final File kiekerTraceFolder, final ModuleClassMapping mapping) {
+      this.kiekerTraceFolder = kiekerTraceFolder;
       this.mapping = mapping;
    }
 
@@ -76,16 +76,8 @@ public class CalledMethodLoader {
       try {
          System.setOut(new PrintStream(kiekerOutputFile));
          System.setErr(new PrintStream(kiekerOutputFile));
-         initialiseTraceReading();
-
-         final PeASSFilter peassFilter = new PeASSFilter(null, new Configuration(), analysisController, mapping);
-         analysisController.connect(traceReconstructionFilter, TraceReconstructionFilter.OUTPUT_PORT_NAME_EXECUTION_TRACE,
-               peassFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
-
-         analysisController.run();
-
-         calledClasses = peassFilter.getCalledMethods();
-         return calledClasses;
+         final PeASSFilter peassFilter = executePeassFilter(null);
+         return peassFilter.getCalledMethods();
       } catch (IllegalStateException | AnalysisConfigurationException | FileNotFoundException e) {
          e.printStackTrace();
       } finally {
@@ -109,17 +101,8 @@ public class CalledMethodLoader {
 
          LOG.debug("Größe: {} ({}) Ordner: {}", sizeInMB, size, kiekerTraceFolder);
          if (sizeInMB < TRACE_MAX_SIZE) {
-            initialiseTraceReading();
-
-            // TODO In case of error, logging for TraceReconstructionFilter should be disabled, since this produces huge traces
-            // and errors are expected (if calls get a timeout)
-            final PeASSFilter kopemeFilter = new PeASSFilter(prefix, new Configuration(), analysisController, mapping);
-            analysisController.connect(traceReconstructionFilter, TraceReconstructionFilter.OUTPUT_PORT_NAME_EXECUTION_TRACE,
-                  kopemeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
-
-            analysisController.run();
-
-            return kopemeFilter.getCalls();
+            final PeASSFilter peassFilter = executePeassFilter(prefix);
+            return peassFilter.getCalls();
          } else {
             LOG.info("Trace size: {} MB - skipping", sizeInMB);
             return null;
@@ -130,33 +113,21 @@ public class CalledMethodLoader {
       }
    }
 
-   private void initialiseTraceReading() throws AnalysisConfigurationException {
-      // Initialize and register the list reader
-      final Configuration fsReaderConfig = new Configuration();
+   private PeASSFilter executePeassFilter(final String prefix) throws AnalysisConfigurationException {
+      KiekerReader reader = new KiekerReader(kiekerTraceFolder);
+      reader.initBasic();
+      TraceReconstructionFilter traceReconstructionFilter = reader.initTraceReconstruction();
+      
+      AnalysisController analysisController = reader.getAnalysisController();
 
-      fsReaderConfig.setProperty(FSReader.CONFIG_PROPERTY_NAME_INPUTDIRS, kiekerTraceFolder.getAbsolutePath());
-      final FSReader reader = new FSReader(fsReaderConfig, analysisController);
+      // TODO In case of error, logging for TraceReconstructionFilter should be disabled, since this produces huge traces
+      // and errors are expected (if calls get a timeout)
+      final PeASSFilter kopemeFilter = new PeASSFilter(prefix, new Configuration(), analysisController, mapping);
+      analysisController.connect(traceReconstructionFilter, TraceReconstructionFilter.OUTPUT_PORT_NAME_EXECUTION_TRACE,
+            kopemeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
 
-      // Initialize and register the system model repository
-      final SystemModelRepository systemModelRepository = new SystemModelRepository(new Configuration(), analysisController);
-
-      final ExecutionRecordTransformationFilter executionRecordTransformationFilter = new ExecutionRecordTransformationFilter(new Configuration(),
-            analysisController);
-
-      analysisController.connect(executionRecordTransformationFilter,
-            AbstractTraceAnalysisFilter.REPOSITORY_PORT_NAME_SYSTEM_MODEL, systemModelRepository);
-      analysisController.connect(reader, FSReader.OUTPUT_PORT_NAME_RECORDS,
-            executionRecordTransformationFilter, ExecutionRecordTransformationFilter.INPUT_PORT_NAME_RECORDS);
-
-      traceReconstructionFilter = new TraceReconstructionFilter(new Configuration(), analysisController);
-      analysisController.connect(traceReconstructionFilter,
-            AbstractTraceAnalysisFilter.REPOSITORY_PORT_NAME_SYSTEM_MODEL, systemModelRepository);
-      analysisController.connect(executionRecordTransformationFilter, ExecutionRecordTransformationFilter.OUTPUT_PORT_NAME_EXECUTIONS,
-            traceReconstructionFilter, TraceReconstructionFilter.INPUT_PORT_NAME_EXECUTIONS);
-
-      final Configuration bareSessionReconstructionFilterConfiguration = new Configuration();
-      bareSessionReconstructionFilterConfiguration.setProperty(SessionReconstructionFilter.CONFIG_PROPERTY_NAME_MAX_THINK_TIME,
-            SessionReconstructionFilter.CONFIG_PROPERTY_VALUE_MAX_THINK_TIME);
+      analysisController.run();
+      return kopemeFilter;
    }
 
    public static void main(final String[] args) {

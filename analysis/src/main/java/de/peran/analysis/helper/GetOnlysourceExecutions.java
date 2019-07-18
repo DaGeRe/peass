@@ -1,9 +1,7 @@
 package de.peran.analysis.helper;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map;
@@ -23,6 +21,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.analysis.changes.Change;
 import de.peass.analysis.properties.ChangeProperty;
+import de.peass.analysis.properties.PropertyReadHelper;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
@@ -32,7 +31,6 @@ import de.peass.utils.OptionConstants;
 import de.peass.utils.RunCommandWriter;
 import de.peass.utils.RunCommandWriterSlurm;
 import de.peass.utils.TestLoadUtil;
-import de.peran.analysis.helper.read.PropertyReadHelper;
 
 public class GetOnlysourceExecutions {
    public static void main(final String[] args) throws JAXBException, ParseException, JsonParseException, JsonMappingException, IOException {
@@ -72,7 +70,7 @@ public class GetOnlysourceExecutions {
                   final Change c = new Change();
                   System.out.println(endversion);
                   final PropertyReadHelper helper = new PropertyReadHelper(endversion, VersionComparator.getPreviousVersion(endversion), testcase.getKey(), c,
-                        projectFolder, viewFolder);
+                        projectFolder, viewFolder, new File("/dev/null"));
                   final ChangeProperty prop = new ChangeProperty();
                   prop.setMethod(method);
                   helper.getSourceInfos(prop);

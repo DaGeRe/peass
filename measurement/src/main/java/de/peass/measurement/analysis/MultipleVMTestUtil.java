@@ -162,7 +162,9 @@ public class MultipleVMTestUtil {
       long minExecutionTime = Long.MAX_VALUE;
       for (final Result result : results) {
          final long currentResultSize = result.getExecutionTimes();
-         minExecutionTime = Long.min(minExecutionTime, currentResultSize);
+         if (currentResultSize != 0) {
+            minExecutionTime = Long.min(minExecutionTime, currentResultSize);
+         }
       }
       return minExecutionTime;
    }

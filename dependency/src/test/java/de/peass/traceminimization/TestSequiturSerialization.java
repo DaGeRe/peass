@@ -129,7 +129,7 @@ public class TestSequiturSerialization {
    }
 
    private void testTrace(final List<TraceElement> calls, final TraceWithMethods trace) throws IOException, FileNotFoundException {
-      File temp = File.createTempFile("tempfile", ".tmp");
+      File temp = File.createTempFile("tempfile", ".tmp", new File("target"));
 
       try (BufferedWriter bw = new BufferedWriter(new FileWriter(temp))) {
          bw.write(trace.getTraceMethods());

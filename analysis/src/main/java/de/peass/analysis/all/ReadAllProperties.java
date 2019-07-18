@@ -12,10 +12,10 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.ReadProperties;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.vcs.GitUtils;
 import de.peran.FolderSearcher;
-import de.peran.ReadProperties;
 
 public class ReadAllProperties {
    public static final boolean readAll = System.getenv("read_all") != null ? Boolean.parseBoolean(System.getenv("read_all")) : false;
@@ -73,13 +73,13 @@ public class ReadAllProperties {
             if (!resultFile.getParentFile().exists()) {
                resultFile.getParentFile().mkdir();
             }
-            ReadProperties.readChangeProperties(changeFile, projectFolder, resultFile, viewFolder, changedTests);
+            new ReadProperties(resultFile).readChangeProperties(changeFile, projectFolder, viewFolder, changedTests);
          } else {
             System.err.println("Error: " + changeFile.getAbsolutePath() + " does not exist");
          }
       } else {
          final File resultFile = new File(folders.getPropertiesFolder(), project + File.separator + "properties_alltests.json");
-         ReadProperties.readAllTestsProperties(projectFolder, resultFile, viewFolder, changedTests);
+         new ReadProperties(resultFile).readAllTestsProperties(projectFolder, viewFolder, changedTests);
       }
    }
 }

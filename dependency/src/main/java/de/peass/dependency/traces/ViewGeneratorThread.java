@@ -16,7 +16,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.github.javaparser.ParseException;
 
 import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.TestResultManager;
+import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.ExecutionData;
@@ -104,7 +104,7 @@ public class ViewGeneratorThread implements Runnable {
          throws IOException, InterruptedException, com.github.javaparser.ParseException, ViewNotFoundException, XmlPullParserException {
       boolean gotAllData = true;
 
-      final TestResultManager resultsManager = new TestResultManager(folders.getProjectFolder(), timeout);
+      final KiekerResultManager resultsManager = new KiekerResultManager(folders.getProjectFolder(), timeout);
       LOG.info("View Comparing {} against {}", version, versionOld);
       for (final String githash : new String[] { versionOld, version }) {
          LOG.debug("Checkout... {}", folders.getProjectFolder());
@@ -135,16 +135,10 @@ public class ViewGeneratorThread implements Runnable {
    }
 
    public boolean generateVersionTraces(final PeASSFolders folders, final String version, final TestSet testset, final Map<String, List<File>> traceFileMap,
-         final TestResultManager resultsManager, final String githash) throws FileNotFoundException, IOException, XmlPullParserException, ParseException, ViewNotFoundException {
+         final KiekerResultManager resultsManager, final String githash) throws FileNotFoundException, IOException, XmlPullParserException, ParseException, ViewNotFoundException {
       boolean worked = false;
-      final File xmlFileFolder = resultsManager.getXMLFileFolder(folders.getProjectFolder());
       for (final TestCase testcase : testset.getTests()) {
-         File moduleFolder;
-         if (testcase.getModule() != null) {
-            moduleFolder = resultsManager.getXMLFileFolder(new File(folders.getProjectFolder(), testcase.getModule()));
-         } else {
-            moduleFolder = xmlFileFolder;
-         }
+         final File moduleFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
          final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(viewFolder, folders, testcase, traceFileMap, version, moduleFolder,
                resultsManager.getExecutor().getModules());
          final boolean workedLocal = oneViewGenerator.generateTrace(githash);

@@ -3,15 +3,19 @@ package de.peass.analysis.groups;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.analysis.all.RepoFolders;
 import de.peass.analysis.changes.ProjectChanges;
-import de.peass.utils.Constants;
 import de.peran.FolderSearcher;
 
 public class CreateClassificationDataAll {
+   
+   private static final Logger LOG = LogManager.getLogger(CreateClassificationDataAll.class);
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       RepoFolders folders = new RepoFolders();
@@ -23,7 +27,7 @@ public class CreateClassificationDataAll {
             final ProjectChanges changes = FolderSearcher.MAPPER.readValue(changeFile, ProjectChanges.class);
             CreateClassificationData.createClassificationData(changes, goalFile, project);
          } else {
-            System.out.println("No Change File: " + project);
+            LOG.error("No Change File: " + project);
          }
       }
    }

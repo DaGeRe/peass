@@ -10,10 +10,6 @@ public class StatisticUtil {
 
    private static final Logger LOG = LogManager.getLogger(StatisticUtil.class);
 
-   public static enum Relation {
-      EQUAL, UNKOWN, UNEQUAL;
-   }
-
    /**
     * Agnostic T-Test from Coscrato et al.: Agnostic tests can control the type I and type II errors simultaneously
     */

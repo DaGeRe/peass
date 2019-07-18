@@ -56,7 +56,10 @@ public class CreateClassificationData {
          final VersionChangeProperties properties = FolderSearcher.MAPPER.readValue(propertyFile, VersionChangeProperties.class);
          createClassificationData(properties, goalFile, project);
       }else {
-         final File changeFile = new File(folders.getResultsFolder(), project + File.separator + project + ".json");
+         File changeFile = new File(folders.getResultsFolder(), project + File.separator + project + ".json");
+         if (!changeFile.exists()) {
+            changeFile = new File(folders.getResultsFolder(), project + ".json");
+         }
          if (changeFile.exists()) {
             final ProjectChanges changes = FolderSearcher.MAPPER.readValue(changeFile, ProjectChanges.class);
             createClassificationData(changes, goalFile, project);
@@ -109,8 +112,6 @@ public class CreateClassificationData {
       FolderSearcher.MAPPER.writeValue(new File(goalFile.getParent(), "temp.json"), manualTemplate);
       return manualTemplate;
    }
-
-   
 
    public static Classification readChangesFromProperties(final VersionChangeProperties properties) throws IOException, JsonParseException, JsonMappingException {
       final Classification manualTemplate = new Classification();

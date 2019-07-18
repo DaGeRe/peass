@@ -34,7 +34,7 @@ import de.peass.vcs.VersionIterator;
 public class TestVersionSplitting {
 
    @Rule
-   public TemporaryFolder testFolder = new TemporaryFolder();
+   public TemporaryFolder testFolder = new TemporaryFolder(new File("target"));
 
    static class DummyReader extends DependencyReader {
 

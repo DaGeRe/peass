@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -193,6 +194,12 @@ public class GradleTestExecutor extends TestExecutor {
 
    @Override
    protected void clean(File logFile) throws IOException, InterruptedException {
+      // TODO Auto-generated method stub
+      
+   }
+
+   @Override
+   public void setIncludedMethods(Set<String> includedPattern) {
       // TODO Auto-generated method stub
       
    }

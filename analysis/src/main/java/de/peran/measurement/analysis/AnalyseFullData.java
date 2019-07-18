@@ -17,9 +17,11 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
 import de.peass.analysis.changes.ProjectChanges;
+import de.peass.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.DataAnalyser;
+import de.peass.measurement.analysis.Relation;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.TestData;
 import de.peass.statistics.ConfidenceInterval;
@@ -27,10 +29,8 @@ import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peran.AnalyseOneTest;
 import de.peran.Environment;
 import de.peran.FolderSearcher;
-import de.peran.measurement.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peran.measurement.analysis.statistics.MeanCoVData;
 import de.peran.measurement.analysis.statistics.MeanHistogramData;
-import de.peran.measurement.analysis.statistics.Relation;
 
 /**
  * Analyzes full data and tells which version contain changes based upon given statistical tests (confidence interval, MannWhitney, ..)

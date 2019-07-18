@@ -39,35 +39,40 @@ public class CopyFromFull {
          final ExecutionData tests = FolderSearcher.MAPPER.readValue(executionFile, ExecutionData.class);
 
          final File projectFolder = new File(folders.getCleanDataFolder(), project);
-         if (projectFolder.exists()) {
-            for (File measurementFile : projectFolder.listFiles()) {
-               if (measurementFile.getName().endsWith(".xml")) {
-                  checkFileMerging(folders, project, tests, measurementFile);
-               }
+         File goal = folders.getValidationDataFolder(project);
+//         mergeAllFiles(tests, projectFolder, goal);
+         mergeAllFiles(tests, goal, projectFolder);
+      }
+   }
+
+   private static void mergeAllFiles(final ExecutionData tests, final File source, File goal) throws JAXBException {
+      if (source.exists()) {
+         for (File measurementFile : source.listFiles()) {
+            if (measurementFile.getName().endsWith(".xml")) {
+               checkFileMerging(goal, tests, measurementFile);
             }
          }
       }
    }
 
-   public static void checkFileMerging(final RepoFolders folders, String project, final ExecutionData tests, File measurementFile) throws JAXBException {
-      Kopemedata kopemeData = XMLDataLoader.loadData(measurementFile);
+   public static void checkFileMerging(final File goal, final ExecutionData tests, File source) throws JAXBException {
+      Kopemedata kopemeData = XMLDataLoader.loadData(source);
       Testcases testcase = kopemeData.getTestcases();
       TestcaseType testcaseType = testcase.getTestcase().get(0);
       String clazz = testcase.getClazz();
       String method = testcaseType.getName();
       List<Chunk> chunks = testcaseType.getDatacollector().get(0).getChunk();
       
-      File validationDataFolder = folders.getValidationDataFolder(project);
-      if (!validationDataFolder.exists()) {
-         validationDataFolder.mkdirs();
+      if (!goal.exists()) {
+         goal.mkdirs();
       }
       
       for (Chunk chunk : chunks) {
-         checkChunkMerging(validationDataFolder, project, tests, clazz, method, chunk);
+         checkChunkMerging(goal, tests, clazz, method, chunk);
       }
    }
 
-   public static void checkChunkMerging(final File validationDataFolder, String project, final ExecutionData tests, String clazz, String method, Chunk chunk) throws JAXBException {
+   public static void checkChunkMerging(final File validationDataFolder, final ExecutionData tests, String clazz, String method, Chunk chunk) throws JAXBException {
       String version = chunk.getResult().get(chunk.getResult().size() - 1).getVersion().getGitversion();
       if (tests.getVersions().containsKey(version)) {
          System.out.println(version);

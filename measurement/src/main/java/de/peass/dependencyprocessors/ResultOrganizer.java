@@ -2,6 +2,7 @@ package de.peass.dependencyprocessors;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -58,14 +59,15 @@ public class ResultOrganizer {
             final Kopemedata oneResultData = xdl.getFullData();
             final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
             final String clazz = oneResultData.getTestcases().getClazz();
+            TestCase testcase = new TestCase(clazz, methodname);
             if (testcaseList.size() > 0) {
-               saveResults(version, vmid, new TestCase(clazz, methodname), oneResultFile, oneResultData, testcaseList);
+               saveResults(version, vmid, testcase, oneResultFile, oneResultData, testcaseList);
             } else {
                LOG.error("Keine Daten vorhanden - Messung fehlgeschlagen?");
             }
-         }
-         if (isUseKieker) {
-            saveKiekerFiles(testset, version, vmid, folder, methodname);
+            if (isUseKieker) {
+               saveKiekerFiles(folder, getFullResultFolder(testcase, version));
+            }
          }
       }
       for (final File file : folders.getTempMeasurementFolder().listFiles()) {
@@ -100,6 +102,12 @@ public class ResultOrganizer {
    }
    
    public File getResultFile(final TestCase testcase, final int vmid, final String version) {
+      final File compareVersionFolder = getFullResultFolder(testcase, version);
+      final File destFile = new File(compareVersionFolder, testcase.getMethod() + "_" + vmid + "_" + version + ".xml");
+      return destFile;
+   }
+
+   public File getFullResultFolder(final TestCase testcase, final String version) {
       final File destFolder = new File(folders.getDetailResultFolder(), testcase.getClazz());
       final File currentVersionFolder = new File(destFolder, currentVersion);
       if (!currentVersionFolder.exists()) {
@@ -109,30 +117,13 @@ public class ResultOrganizer {
       if (!compareVersionFolder.exists()) {
          compareVersionFolder.mkdir();
       }
-      final File destFile = new File(compareVersionFolder, testcase.getMethod() + "_" + vmid + "_" + version + ".xml");
-      return destFile;
+      return compareVersionFolder;
    }
    
-   private void saveKiekerFiles(final TestCase testset, final String version, final int vmid, final File folder, final String methodname) throws IOException {
-      final File methodFolder = new File(folders.getTempMeasurementFolder(), testset.getClazz() + "." + methodname);
-      if (!methodFolder.exists()) {
-         methodFolder.mkdir();
-      }
-      final File versionFolder = new File(methodFolder, version);
-      if (!versionFolder.exists()) {
-         versionFolder.mkdir();
-      }
-
-      final File dest = new File(versionFolder, vmid + ".tar.gz");
-
-      try {
-         final Process process = new ProcessBuilder("tar", "-czf", dest.getAbsolutePath(),
-               folder.getAbsolutePath()).start();
-         process.waitFor();
-         FileUtils.deleteDirectory(folder);
-      } catch (final InterruptedException e) {
-         e.printStackTrace();
-      }
+   private void saveKiekerFiles(final File folder, File destFolder) throws IOException {
+      File kiekerFolder = folder.listFiles()[0];
+      File dest = new File(destFolder, kiekerFolder.getName());
+      kiekerFolder.renameTo(dest);
    }
 
    

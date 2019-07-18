@@ -31,7 +31,7 @@ import de.peass.transformation.TestTransformation;
 
 public class TestRepetitionTransforming {
 	@ClassRule
-	public static TemporaryFolder testFolder = new TemporaryFolder();
+	public static TemporaryFolder testFolder = new TemporaryFolder(new File("target/"));
 
 	private static final URL SOURCE = Thread.currentThread().getContextClassLoader().getResource("transformation");
 	private static File RESOURCE_FOLDER;

@@ -52,6 +52,7 @@ import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.printer.lexicalpreservation.changes.Change;
 import com.sun.xml.bind.v2.schemagen.xmlschema.Import;
 
 import de.peass.dependency.ClazzFinder;
@@ -215,7 +216,7 @@ public final class FileComparisonUtil {
    public static String getMethod(final File projectFolder, final ChangedEntity entity, final String method) throws FileNotFoundException {
       final File file = ClazzFinder.getSourceFile(projectFolder, entity);
       if (file != null) {
-         LOG.debug("Found: {} {}", file, file.exists());
+         LOG.debug("Found:  {} {}", file, file.exists());
 
          final CompilationUnit newCu = parse(file);
          return getMethod(entity, method, newCu);
@@ -252,8 +253,29 @@ public final class FileComparisonUtil {
          } else {
             methods = declaration.getMethodsByName(method);
          }
+         if (methods.size() > 0) {
+            for (MethodDeclaration methodDec : methods) {
+               if (methodDec.getParameters().size() == entity.getParameters().size()) {
+                  boolean equal = parametersEqual(entity, methodDec);
+                  if (equal) {
+                     return methodDec.toString();
+                  }
+               }
+            }
+         }
          return methods.size() > 0 ? methods.get(0).toString() : "";
       }
+   }
+
+   private static boolean parametersEqual(final ChangedEntity entity, MethodDeclaration methodDec) {
+      boolean equal = true;
+      for (int i = 0; i < methodDec.getParameters().size(); i++) {
+         String declaredParameterName = methodDec.getParameter(i).getTypeAsString();
+         if (!declaredParameterName.equals(entity.getParameters().get(i))){
+            equal = false;
+         }
+      }
+      return equal;
    }
 
    public static ClassOrInterfaceDeclaration findClazz(final ChangedEntity entity, final List<Node> nodes) {
@@ -265,6 +287,11 @@ public final class FileComparisonUtil {
             if (nameAsString.equals(entity.getSimpleClazzName())) {
                declaration = (ClassOrInterfaceDeclaration) node;
                break;
+            } else {
+               if (entity.getSimpleClazzName().startsWith(nameAsString + ChangedEntity.CLAZZ_SEPARATOR)) {
+                  ChangedEntity inner = new ChangedEntity(entity.getSimpleClazzName().substring(nameAsString.length() + 1), entity.getModule());
+                  declaration = findClazz(inner, node.getChildNodes());
+               }
             }
          }
       }

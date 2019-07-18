@@ -26,7 +26,7 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
 import de.peass.dependency.ClazzFinder;
-import de.peass.dependency.TestResultManager;
+import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.changesreading.FileComparisonUtil;
 
@@ -54,7 +54,7 @@ public class JUnitTestShortener {
       final File calleeClazzFile = ClazzFinder.getClazzFile(module, callee);
       if (calleeClazzFile != null) {
          try {
-            File tempFile = Files.createTempFile("Temp", ".java").toFile();
+            final File tempFile = Files.createTempFile("Temp", ".java").toFile();
             FileUtils.copyFile(calleeClazzFile, tempFile);
             lastShortenedMap.put(tempFile, calleeClazzFile);
 
@@ -171,7 +171,8 @@ public class JUnitTestShortener {
       if (lastShortenedMap != null) {
          for (Map.Entry<File, File> shortened : lastShortenedMap.entrySet()) {
             try {
-               FileUtils.copyFile(shortened.getKey(), shortened.getValue());
+//               FileUtils.copyFile(shortened.getKey(), shortened.getValue());
+               shortened.getKey().renameTo(shortened.getValue());
                final CompilationUnit unit = FileComparisonUtil.parse(shortened.getValue());
                transformer.getLoadedFiles().put(shortened.getValue(), unit);
             } catch (IOException e) {
