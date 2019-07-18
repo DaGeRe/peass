@@ -105,7 +105,7 @@ public class AdaptiveExecutorTest {
 
       executor.evaluate("00001", "00001~1", TEST);
 
-      executor.getDurations("00001", "00001~1");
+      executor.getDurations("00001", "00001~1", 0);
 
       Assert.assertEquals(2, nodeWithDuration.getStatistics("00001").getN());
       Assert.assertEquals(2, nodeWithDuration.getStatistics("00001~1").getN());
@@ -120,7 +120,7 @@ public class AdaptiveExecutorTest {
 
       executor.evaluate("00001", "00001~1", TEST);
 
-      executor.getDurations("00001", "00001~1");
+      executor.getDurations("00001", "00001~1", 1);
 
       Assert.assertEquals(2, nodeWithDuration.getStatistics("00001").getN());
       Assert.assertEquals(2, nodeWithDuration.getStatistics("00001~1").getN());

@@ -1,14 +1,11 @@
 package de.peass.measurement.searchcause;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.xml.bind.JAXBException;
 
@@ -21,7 +18,6 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.KiekerReader;
 import de.peass.dependency.analysis.PeASSFilter;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.MavenTestExecutor;
 import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.dependencyprocessors.ResultOrganizer;
@@ -64,11 +60,19 @@ public class CauseTester extends AdaptiveTester {
       includedMethods = children;
    }
 
-   public void getDurations(String version, String versionOld)
+   public void getDurations(String version, String versionOld, int adaptiveId)
          throws FileNotFoundException, IOException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
       currentOrganizer = new ResultOrganizer(folders, version, currentChunkStart, testTransformer.isUseKieker());
       getDurationsVersion(version);
       getDurationsVersion(versionOld);
+      
+      organizeMeasurements(adaptiveId);
+   }
+
+   private void organizeMeasurements(int adaptiveId) {
+      File testcaseFolder = new File(folders.getDetailResultFolder(), testcase.getClazz());
+      File adaptiveRunFolder = new File(folders.getDetailResultFolder(), "" + adaptiveId);
+      testcaseFolder.renameTo(adaptiveRunFolder);
    }
 
    private void getDurationsVersion(String version) throws ViewNotFoundException, AnalysisConfigurationException {

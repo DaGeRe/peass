@@ -5,11 +5,13 @@ import java.io.IOException;
 import javax.annotation.PreDestroy;
 import javax.xml.bind.JAXBException;
 
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.dependencyprocessors.VersionProcessor;
 import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.searchcause.CauseSearcher;
+import de.peass.measurement.searchcause.CauseSearcherConfig;
 import de.peass.testtransformation.JUnitTestTransformer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -31,14 +33,13 @@ public class SearchChangeCause extends AdaptiveTestStarter {
    @Override
    public Void call() throws Exception {
       initVersionProcessor();
-      
 
       MeasurementConfiguration config = new MeasurementConfiguration(timeout, vms, type1error, type2error);
       final JUnitTestTransformer testgenerator = getTestTransformer();
       testgenerator.setSumTime(config.getTimeout());
       TestCase test = new TestCase(testName);
       String predecessor = dependencies.getVersions().get(version).getPredecessor();
-      CauseSearcher tester = new CauseSearcher(folders.getProjectFolder(), version, predecessor, test, testgenerator, config);
+      CauseSearcher tester = new CauseSearcher(new CauseSearcherConfig(folders.getProjectFolder(), version, predecessor, test), testgenerator, config);
       tester.search();
       return null;
    }

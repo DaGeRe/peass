@@ -23,10 +23,11 @@ public class CauseSearchData {
 
    }
 
-   public CauseSearchData(TestCase test, String version, String predecessor) {
+   public CauseSearchData(final TestCase test, final String version, final String predecessor, final MeasurementConfiguration config) {
       this.testcase = test.getClazz() + ChangedEntity.METHOD_SEPARATOR + test.getMethod();
       this.version = version;
       this.predecessor = predecessor;
+      this.config = config;
    }
 
    public String getTestcase() {

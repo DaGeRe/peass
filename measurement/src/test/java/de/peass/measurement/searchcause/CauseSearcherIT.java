@@ -114,7 +114,7 @@ public class CauseSearcherIT {
       final JUnitTestTransformer testgenerator = new JUnitTestTransformer(CURRENT);
       testgenerator.setIterations(30);
       testgenerator.setWarmupExecutions(30);
-      CauseSearcher searcher = new CauseSearcher(CURRENT, "000001", "000001~1", new TestCase("defaultpackage.TestMe", "testMe"), testgenerator, new MeasurementConfiguration(2));
+      CauseSearcher searcher = new CauseSearcher(new CauseSearcherConfig(CURRENT, "000001", "000001~1", new TestCase("defaultpackage.TestMe", "testMe")), testgenerator, new MeasurementConfiguration(2));
       List<ChangedEntity> changedEntities = searcher.search();
 
       LOG.debug(changedEntities);

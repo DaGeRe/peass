@@ -81,7 +81,6 @@ public class LevelCauseSearcher {
       return treeStructureDifferingNodes;
    }
 
-
    public List<CallTreeNode> getNeedToMeasurePredecessor() {
       return needToMeasurePredecessor;
    }

@@ -36,8 +36,6 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.KeyDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import jline.internal.Log;
-
 /**
  * Represents a set of tests which are executed for one version by its class and its list of methods.
  * 

@@ -28,7 +28,6 @@ import com.github.javaparser.ast.type.VoidType;
 import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.changesreading.FileComparisonUtil;
-import jline.internal.Log;
 
 public class JUnitTestGenerator {
 
