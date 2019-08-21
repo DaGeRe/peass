@@ -1,4 +1,4 @@
-package de.peran.measurement.analysis.changes.processors;
+package de.peass.analysis.changes.processors;
 
 import de.peass.analysis.changes.Change;
 

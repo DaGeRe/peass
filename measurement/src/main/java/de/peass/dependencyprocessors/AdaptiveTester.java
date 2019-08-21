@@ -14,6 +14,7 @@ import de.dagere.kopeme.generated.Result;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.measurement.analysis.EarlyBreakDecider;
+import de.peass.measurement.organize.FolderDeterminer;
 import de.peass.measurement.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 
@@ -30,17 +31,15 @@ public class AdaptiveTester extends DependencyTester {
    public void evaluate(final String version, final String versionOld, final TestCase testcase) throws IOException, InterruptedException, JAXBException {
       LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", versionOld, version);
 
+      new FolderDeterminer(folders).testResultFolders(version, versionOld, testcase);
+      
       final File logFolder = getLogFolder(version, testcase);
 
       currentChunkStart = System.currentTimeMillis();
       for (int vmid = 0; vmid < configuration.getVms(); vmid++) {
          runOneComparison(version, versionOld, logFolder, testcase, vmid);
 
-         EarlyBreakDecider decider = new EarlyBreakDecider(testTransformer, folders.getFullMeasurementFolder(), version, versionOld,
-               testcase, currentChunkStart);
-         decider.setType1error(configuration.getType1error());
-         decider.setType2error(configuration.getType2error());
-         final boolean savelyDecidable = decider.isBreakPossible(vmid);
+         final boolean savelyDecidable = checkIsDecidable(version, versionOld, testcase, vmid);
 
          if (savelyDecidable) {
             LOG.debug("Savely decidable - finishing testing");
@@ -53,6 +52,15 @@ public class AdaptiveTester extends DependencyTester {
             break;
          }
       }
+   }
+
+   protected boolean checkIsDecidable(final String version, final String versionOld, final TestCase testcase, int vmid) throws JAXBException {
+      EarlyBreakDecider decider = new EarlyBreakDecider(testTransformer, folders.getFullMeasurementFolder(), version, versionOld,
+            testcase, currentChunkStart);
+      decider.setType1error(configuration.getType1error());
+      decider.setType2error(configuration.getType2error());
+      final boolean savelyDecidable = decider.isBreakPossible(vmid);
+      return savelyDecidable;
    }
 
    boolean updateExecutions(final String version, final String versionOld, final TestCase testcase, final int vmid) throws JAXBException {
@@ -104,8 +112,8 @@ public class AdaptiveTester extends DependencyTester {
       return shouldBreak;
    }
 
-   private Result getLastResult(final String versionCurrent, final TestCase testcase, final int vmid) throws JAXBException {
-      final File resultFile = currentOrganizer.getResultFile(testcase, vmid, versionCurrent);
+   private Result getLastResult(final String version, final TestCase testcase, final int vmid) throws JAXBException {
+      final File resultFile = currentOrganizer.getResultFile(testcase, vmid, version);
       if (resultFile.exists()) {
          final Kopemedata data = new XMLDataLoader(resultFile).getFullData();
          final Result lastResult = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);

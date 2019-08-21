@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.analysis.changes.ProjectChanges;
+import de.peass.analysis.changes.processors.PropertyProcessor;
 import de.peass.analysis.properties.ChangeProperties;
 import de.peass.analysis.properties.ChangeProperty;
 import de.peass.analysis.properties.VersionChangeProperties;
@@ -22,7 +23,6 @@ import de.peass.utils.Constants;
 import de.peass.vcs.GitUtils;
 import de.peran.FolderSearcher;
 import de.peran.analysis.helper.all.CleanAll;
-import de.peran.measurement.analysis.changes.processors.PropertyProcessor;
 
 /**
  * Creates overview-table for ESEC-paper

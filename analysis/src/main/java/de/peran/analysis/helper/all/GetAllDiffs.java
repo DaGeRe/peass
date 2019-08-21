@@ -13,6 +13,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.analysis.changes.processors.PropertyProcessor;
 import de.peass.analysis.properties.ChangeProperties;
 import de.peass.analysis.properties.ChangeProperty;
 import de.peass.analysis.properties.VersionChangeProperties;
@@ -23,7 +24,6 @@ import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.StreamGobbler;
 import de.peran.FolderSearcher;
 import de.peran.analysis.helper.AnalysisUtil;
-import de.peran.measurement.analysis.changes.processors.PropertyProcessor;
 
 public class GetAllDiffs {
    public static void main(String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {

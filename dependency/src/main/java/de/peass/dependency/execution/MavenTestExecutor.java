@@ -73,7 +73,7 @@ public class MavenTestExecutor extends TestExecutor {
    protected Charset lastEncoding = StandardCharsets.UTF_8;
 
    private Set<String> includedMethodPattern;
-   
+
    public MavenTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final long timeout) {
       super(folders, timeout, testTransformer);
    }
@@ -113,6 +113,7 @@ public class MavenTestExecutor extends TestExecutor {
                folder.mkdirs();
                final File goalFile2 = new File(folder, "aop.xml");
                AOPXMLHelper.writeAOPXMLToFile(existingClasses, goalFile2);
+               AOPXMLHelper.writeKiekerMonitoringProperties(new File(folder, "kieker.monitoring.properties"));
             }
          }
       } catch (final XmlPullParserException | IOException e) {
@@ -174,7 +175,7 @@ public class MavenTestExecutor extends TestExecutor {
       }
       preparePom();
    }
-   
+
    public void prepareAdaptiveExecution() throws IOException, InterruptedException {
       File kiekerJar = new File(MavenTestExecutor.KIEKER_FOLDER_MAVEN_TWEAK.replace("${user.home}", System.getProperty("user.home")));
       if (!kiekerJar.exists()) {
@@ -296,8 +297,8 @@ public class MavenTestExecutor extends TestExecutor {
          }
 
          MavenPomUtil.extendSurefire(argline, model, update, timeout * 2);
-         
-         //TODO Move back to extend dependencies, if stable Kieker version supports <init>
+
+         // TODO Move back to extend dependencies, if stable Kieker version supports <init>
          if (model.getDependencies() == null) {
             model.setDependencies(new LinkedList<Dependency>());
          }
@@ -308,8 +309,6 @@ public class MavenTestExecutor extends TestExecutor {
             dependencies.add(kopeme_dependency2);
          }
          MavenPomUtil.extendDependencies(model, testTransformer.isJUnit3());
-         
-         
 
          final MavenXpp3Writer writer = new MavenXpp3Writer();
          writer.write(new FileWriter(pomFile), model);
@@ -328,7 +327,7 @@ public class MavenTestExecutor extends TestExecutor {
    public List<File> getModules() throws IOException, XmlPullParserException {
       return MavenPomUtil.getModules(new File(folders.getProjectFolder(), "pom.xml"));
    }
-   
+
    @Override
    public void setIncludedMethods(Set<String> includedMethodPattern) {
       this.includedMethodPattern = includedMethodPattern;

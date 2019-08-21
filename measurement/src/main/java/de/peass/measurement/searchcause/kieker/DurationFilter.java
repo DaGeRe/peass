@@ -1,6 +1,5 @@
 package de.peass.measurement.searchcause.kieker;
 
-import java.util.List;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -29,21 +28,19 @@ public class DurationFilter extends AbstractFilterPlugin {
       super(new Configuration(), projectContext);
       this.measuredNodes = measuredNodes;
       this.version = version;
-      
-      measuredNodes.forEach(node -> node.newChunk(version));
+
+      measuredNodes.forEach(node -> node.newResult(version));
    }
 
-   @InputPort(name = INPUT_EXECUTION_TRACE, eventTypes = { ExecutionTrace.class })
-   public void handleInputs(final ExecutionTrace trace) {
-      LOG.trace("Trace: " + trace.getTraceId());
+   @InputPort(name = INPUT_EXECUTION_TRACE, eventTypes = { Execution.class })
+   public void handleInputs(final Execution execution) {
+      LOG.trace("Trace: " + execution.getTraceId());
 
-      for (final Execution execution : trace.getTraceAsSortedExecutionSet()) {
-         final String fullClassname = execution.getOperation().getComponentType().getFullQualifiedName().intern();
-         final String methodname = execution.getOperation().getSignature().getName().intern();
-         final String call = fullClassname + "#" + methodname;
+      final String fullClassname = execution.getOperation().getComponentType().getFullQualifiedName().intern();
+      final String methodname = execution.getOperation().getSignature().getName().intern();
+      final String call = (fullClassname + "#" + methodname).intern();
 
-         addMeasurements(execution, call);
-      }
+      addMeasurements(execution, call);
    }
 
    private void addMeasurements(final Execution execution, final String call) {

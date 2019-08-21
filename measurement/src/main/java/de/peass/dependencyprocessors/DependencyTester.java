@@ -19,6 +19,8 @@ import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.analysis.Cleaner;
 import de.peass.measurement.analysis.DataReader;
 import de.peass.measurement.analysis.statistics.TestData;
+import de.peass.measurement.organize.FolderDeterminer;
+import de.peass.measurement.organize.ResultOrganizer;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.testtransformation.TimeBasedTestTransformer;
 import de.peass.vcs.GitUtils;
@@ -77,6 +79,8 @@ public class DependencyTester {
       vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
       this.testTransformer = testgenerator;
       testExecutor = KiekerResultManager.createExecutor(folders, Integer.MAX_VALUE, testTransformer);
+      
+      
    }
 
    /**
@@ -87,6 +91,8 @@ public class DependencyTester {
     * @param testcase Testcase to test
     */
    public void evaluate(final String version, final String versionOld, final TestCase testcase) throws IOException, InterruptedException, JAXBException {
+      new FolderDeterminer(folders).testResultFolders(version, versionOld, testcase);
+      
       LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", versionOld, version);
 
       final File logFolder = getLogFolder(version, testcase);
@@ -146,9 +152,12 @@ public class DependencyTester {
       final long timeout = 5 + (int) (this.configuration.getTimeout() * 1.1);
       testExecutor.executeTest(testcase, vmidFolder, timeout);
 
-      LOG.info("Ändere eine Klassen durch Ergänzung des Gitversion-Elements.");
-
       currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart, testTransformer.isUseKieker());
+      
+      LOG.debug("Handling Kieker results");
+      handleKiekerResults(version, currentOrganizer.getTempResultsFolder(testcase));
+      
+      LOG.info("Organizing result paths");
       currentOrganizer.saveResultFiles(testcase, version, vmid);
 
       cleanup();
@@ -183,6 +192,14 @@ public class DependencyTester {
 
    public int getVMCount() {
       return configuration.getVms();
+   }
+   
+   /**
+    * This method can be overriden in order to handle kieker results before they are compressed
+    * @param folder 
+    */
+   protected void handleKiekerResults(final String version, File folder) {
+      
    }
 
 }

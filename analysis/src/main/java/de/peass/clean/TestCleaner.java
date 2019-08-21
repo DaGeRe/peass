@@ -75,26 +75,6 @@ public class TestCleaner implements Callable<Void> {
       return transformer;
    }
 
-   public static void cleanFolderConfidence(final File out, final File dataFolder, final File projectNameFolder, double type1error, double type2error) {
-      LOG.info("Searching in " + dataFolder);
-      final File cleanFolder, fulldataFolder;
-      if (out == null) {
-         cleanFolder = new File(projectNameFolder, "clean");
-         cleanFolder.mkdirs();
-         final File chunkFolder = new File(cleanFolder, dataFolder.getName());
-         chunkFolder.mkdirs();
-         fulldataFolder = new File(chunkFolder, "measurementsFull");
-      } else {
-         cleanFolder = out;
-         fulldataFolder = new File(cleanFolder, projectNameFolder.getName());
-      }
-
-      final Cleaner transformer = new ConfidenceCleaner(fulldataFolder, type1error, type2error);
-      LOG.info("Start: " + dataFolder.getAbsolutePath());
-      transformer.processDataFolder(dataFolder);
-      LOG.info("Finish, read: " + transformer.getRead() + " correct: " + transformer.getCorrect());
-   }
-
    public static void getCommitOrder(final File dataFolder, final String projectName) throws JAXBException, IOException {
       if (System.getenv(Constants.PEASS_REPOS) != null) {
          final String repofolder = System.getenv(Constants.PEASS_REPOS);

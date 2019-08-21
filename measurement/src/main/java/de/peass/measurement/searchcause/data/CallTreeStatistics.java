@@ -3,31 +3,41 @@ package de.peass.measurement.searchcause.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 public class CallTreeStatistics {
-   private final List<CallTreeChunk> chunks = new ArrayList<>();
-   private final DescriptiveStatistics statistics = new DescriptiveStatistics();
+   
+   private final int warmup;
+   private final List<CallTreeResult> results = new ArrayList<>();
+   private final SummaryStatistics statistics = new SummaryStatistics();
 
+   public CallTreeStatistics(final int warmup) {
+      this.warmup = warmup;
+   }
+   
    public void addMeasurement(final Long duration) {
-      CallTreeChunk current = chunks.get(chunks.size() - 1);
+      final CallTreeResult current = results.get(results.size() - 1);
       current.addValue(duration);
    }
 
-   public void newChunk() {
-      chunks.add(new CallTreeChunk());
+   public void newResult() {
+      results.add(new CallTreeResult(warmup));
    }
 
-   public void createStatistics(final int warmup) {
+   public void createStatistics() {
       statistics.clear();
-      for (CallTreeChunk chunk : chunks) {
-         final List<Long> values = chunk.values.subList(warmup, chunk.values.size());
-         final double average = values.stream().mapToLong(val -> val).average().getAsDouble();
+      for (final CallTreeResult result : results) {
+         final double average = result.getAverage();
          statistics.addValue(average);
       }
+//      results.clear();
    }
 
-   public DescriptiveStatistics getStatistics() {
+   public SummaryStatistics getStatistics() {
       return statistics;
+   }
+
+   public void resetResults() {
+      results.clear();
    }
 }

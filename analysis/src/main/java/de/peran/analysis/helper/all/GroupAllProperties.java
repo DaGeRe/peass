@@ -18,10 +18,10 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.ReadProperties;
+import de.peass.analysis.changes.processors.PropertyProcessor;
 import de.peass.analysis.properties.ChangeProperties;
 import de.peass.analysis.properties.ChangeProperty;
 import de.peass.analysis.properties.PropertyReadHelper;
-import de.peran.measurement.analysis.changes.processors.PropertyProcessor;
 
 public class GroupAllProperties {
 

@@ -1,4 +1,4 @@
-package de.peass.dependencyprocessors;
+package de.peass.measurement.organize;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -24,49 +24,48 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.measurement.analysis.MultipleVMTestUtil;
 
 public class ResultOrganizer {
-   
+
    private static final Logger LOG = LogManager.getLogger(ResultOrganizer.class);
-   
+
    private PeASSFolders folders;
-   private String currentVersion;
+   private String mainVersion;
    private long currentChunkStart;
    private boolean isUseKieker;
-   
+   private int thresholdForZippingInMB = 10;
+   private final FolderDeterminer determiner;
+
    public ResultOrganizer(PeASSFolders folders, String currentVersion, long currentChunkStart, boolean isUseKieker) {
       super();
       this.folders = folders;
-      this.currentVersion = currentVersion;
+      this.mainVersion = currentVersion;
       this.currentChunkStart = currentChunkStart;
       this.isUseKieker = isUseKieker;
+      
+      determiner = new FolderDeterminer(folders);
    }
 
-   public void saveResultFiles(final TestCase testset, final String version, final int vmid)
+   public void saveResultFiles(final TestCase searchedTest, final String version, final int vmid)
          throws JAXBException, IOException {
-      LOG.info("Teste Methoden: {}", 1);
-      final String expectedFolderName = "*" + testset.getClazz();
-      final Collection<File> folderCandidates = findFolder(folders.getTempMeasurementFolder(), new WildcardFileFilter(expectedFolderName));
-      if (folderCandidates.size() != 1) {
-         LOG.error("Ordner {} ist {} mal vorhanden.", expectedFolderName, folderCandidates.size());
-      } else {
-         final File folder = folderCandidates.iterator().next();
-         final String methodname = testset.getMethod();
+      final File folder = getTempResultsFolder(searchedTest);
+      if (folder != null) {
+         final String methodname = searchedTest.getMethod();
          final File oneResultFile = new File(folder, methodname + ".xml");
          if (!oneResultFile.exists()) {
-            LOG.debug("Datei {} existiert nicht.", oneResultFile.getAbsolutePath());
+            LOG.debug("File {} does not exist.", oneResultFile.getAbsolutePath());
          } else {
-            LOG.debug("Lese: {}", oneResultFile);
+            LOG.debug("Reading: {}", oneResultFile);
             final XMLDataLoader xdl = new XMLDataLoader(oneResultFile);
             final Kopemedata oneResultData = xdl.getFullData();
             final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
             final String clazz = oneResultData.getTestcases().getClazz();
-            TestCase testcase = new TestCase(clazz, methodname);
+            TestCase realTestcase = new TestCase(clazz, methodname);
             if (testcaseList.size() > 0) {
-               saveResults(version, vmid, testcase, oneResultFile, oneResultData, testcaseList);
+               saveResults(version, vmid, realTestcase, oneResultFile, oneResultData, testcaseList);
             } else {
-               LOG.error("Keine Daten vorhanden - Messung fehlgeschlagen?");
+               LOG.error("No data - measurement failed?");
             }
             if (isUseKieker) {
-               saveKiekerFiles(folder, getFullResultFolder(testcase, version));
+               saveKiekerFiles(folder, determiner.getFullResultFolder(realTestcase, version, mainVersion));
             }
          }
       }
@@ -74,7 +73,20 @@ public class ResultOrganizer {
          FileUtils.forceDelete(file);
       }
    }
-   
+
+   public File getTempResultsFolder(final TestCase searchedTest) {
+      LOG.info("Searching method: {}", searchedTest);
+      final String expectedFolderName = "*" + searchedTest.getClazz();
+      final Collection<File> folderCandidates = findFolder(folders.getTempMeasurementFolder(), new WildcardFileFilter(expectedFolderName));
+      if (folderCandidates.size() != 1) {
+         LOG.error("Ordner {} ist {} mal vorhanden.", expectedFolderName, folderCandidates.size());
+         return null;
+      } else {
+         final File folder = folderCandidates.iterator().next();
+         return folder;
+      }
+   }
+
    private void saveResults(final String version, final int vmid, final TestCase testcase, final File oneResultFile,
          final Kopemedata oneResultData, final List<TestcaseType> testcaseList)
          throws JAXBException, IOException {
@@ -84,8 +96,8 @@ public class ResultOrganizer {
       XMLDataStorer.storeData(oneResultFile, oneResultData);
 
       saveSummaryFile(version, testcase, testcaseList);
-      
-      final File destFile = getResultFile(testcase, vmid, version);
+
+      final File destFile = determiner.getResultFile(testcase, vmid, version, mainVersion);
       LOG.info("Verschiebe nach: {}", destFile);
       if (!destFile.exists()) {
          FileUtils.moveFile(oneResultFile, destFile);
@@ -100,33 +112,30 @@ public class ResultOrganizer {
       final File fullResultFile = new File(folders.getFullMeasurementFolder(), shortClazzName + "_" + testcase.getMethod() + ".xml");
       MultipleVMTestUtil.saveSummaryData(fullResultFile, oneRundata, testcase, version, currentChunkStart);
    }
-   
-   public File getResultFile(final TestCase testcase, final int vmid, final String version) {
-      final File compareVersionFolder = getFullResultFolder(testcase, version);
-      final File destFile = new File(compareVersionFolder, testcase.getMethod() + "_" + vmid + "_" + version + ".xml");
-      return destFile;
-   }
 
-   public File getFullResultFolder(final TestCase testcase, final String version) {
-      final File destFolder = new File(folders.getDetailResultFolder(), testcase.getClazz());
-      final File currentVersionFolder = new File(destFolder, currentVersion);
-      if (!currentVersionFolder.exists()) {
-         currentVersionFolder.mkdir();
-      }
-      final File compareVersionFolder = new File(currentVersionFolder, version);
-      if (!compareVersionFolder.exists()) {
-         compareVersionFolder.mkdir();
-      }
-      return compareVersionFolder;
-   }
-   
-   private void saveKiekerFiles(final File folder, File destFolder) throws IOException {
+   private void saveKiekerFiles(final File folder, final File destFolder) throws IOException {
       File kiekerFolder = folder.listFiles()[0];
-      File dest = new File(destFolder, kiekerFolder.getName());
-      kiekerFolder.renameTo(dest);
+      long size = FileUtils.sizeOf(kiekerFolder);
+      long sizeInMb = size / (1024 * 1024);
+      LOG.debug("Kieker folder size: {} MB ({})", sizeInMb, size);
+      if (sizeInMb > thresholdForZippingInMB) {
+         File dest = new File(destFolder, kiekerFolder.getName() + ".tar");
+         ProcessBuilder processBuilder = new ProcessBuilder("tar", "-czf", dest.getAbsolutePath(), kiekerFolder.getAbsolutePath());
+         processBuilder.environment().put("GZIP", "-9");
+         Process process = processBuilder.start();
+         try {
+            process.waitFor();
+         } catch (InterruptedException e) {
+            e.printStackTrace();
+         }
+         FileUtils.deleteDirectory(kiekerFolder);
+
+      } else {
+         File dest = new File(destFolder, kiekerFolder.getName());
+         kiekerFolder.renameTo(dest);
+      }
    }
 
-   
    private static List<File> findFolder(final File baseFolder, final FileFilter folderFilter) {
       final List<File> files = new LinkedList<>();
       for (final File f : baseFolder.listFiles()) {
@@ -139,5 +148,17 @@ public class ResultOrganizer {
          }
       }
       return files;
+   }
+
+   public int getThresholdForZippingInMB() {
+      return thresholdForZippingInMB;
+   }
+
+   public void setThresholdForZippingInMB(int thresholdForZippingInMB) {
+      this.thresholdForZippingInMB = thresholdForZippingInMB;
+   }
+
+   public File getResultFile(TestCase testcase, int vmid, String version) {
+      return determiner.getResultFile(testcase, vmid, version, mainVersion);
    }
 }

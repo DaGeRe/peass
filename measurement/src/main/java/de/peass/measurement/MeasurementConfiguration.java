@@ -1,19 +1,26 @@
 package de.peass.measurement;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class MeasurementConfiguration {
    private int timeout;
    private final int vms;
    private double type1error;
    private double type2error;
-   
-   public MeasurementConfiguration(int vms) {
+
+   public MeasurementConfiguration(final int vms) {
       this.timeout = 1000000;
       this.vms = vms;
       this.type1error = 0.01;
       this.type2error = 0.01;
    }
 
-   public MeasurementConfiguration(int timeout, int vms, double type1error, double type2error) {
+   @JsonCreator
+   public MeasurementConfiguration(@JsonProperty("timeout") final int timeout,
+         @JsonProperty("vms") final int vms,
+         @JsonProperty("type1error") final double type1error,
+         @JsonProperty("type2error") final double type2error) {
       this.timeout = timeout * 1000 * 60; // timeout in minutes, not in milliseconds
       this.vms = vms;
       this.type1error = type1error;
@@ -24,7 +31,7 @@ public class MeasurementConfiguration {
       return timeout;
    }
 
-   public void setTimeout(int timeout) {
+   public void setTimeout(final int timeout) {
       this.timeout = timeout;
    }
 
@@ -36,7 +43,7 @@ public class MeasurementConfiguration {
       return type1error;
    }
 
-   public void setType1error(double type1error) {
+   public void setType1error(final double type1error) {
       this.type1error = type1error;
    }
 
@@ -44,7 +51,7 @@ public class MeasurementConfiguration {
       return type2error;
    }
 
-   public void setType2error(double type2error) {
+   public void setType2error(final double type2error) {
       this.type2error = type2error;
    }
 }

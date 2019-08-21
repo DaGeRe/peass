@@ -2,9 +2,13 @@ package de.peass.measurement.analysis;
 
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.experimental.theories.suppliers.TestedOn;
+
+import de.peass.measurement.MeasurementConfiguration;
 
 public class StatisticUtil {
 
@@ -13,15 +17,19 @@ public class StatisticUtil {
    /**
     * Agnostic T-Test from Coscrato et al.: Agnostic tests can control the type I and type II errors simultaneously
     */
-   public static Relation agnosticTTest(DescriptiveStatistics statisticsAfter, DescriptiveStatistics statisticsBefore, double type1error, double type2error) {
-      final TDistribution tDistribution = new TDistribution(null, statisticsAfter.getN() + statisticsBefore.getN() - 2);
+   public static Relation agnosticTTest(StatisticalSummary statisticsAfter, StatisticalSummary statisticsBefore, double type1error, double type2error) {
+      double tValue = getTValue(statisticsAfter, statisticsBefore, 0);
+      return agnosticTTest(tValue, statisticsAfter.getN() + statisticsBefore.getN() - 2, type1error, type2error);
+   }
+   
+   public static Relation agnosticTTest(double tValue, long degreesOfFreedom, double type1error, double type2error) {
+      final TDistribution tDistribution = new TDistribution(null, degreesOfFreedom);
       final double criticalValueEqual = Math.abs(tDistribution.inverseCumulativeProbability(0.5 * (1 + type1error)));
       final double criticalValueUnequal = Math.abs(tDistribution.inverseCumulativeProbability(1. - 0.5 * type2error));
 
       LOG.info("Allowed errors: {} {}", type1error, type2error);
       LOG.info("Critical values: {} {}", criticalValueUnequal, criticalValueEqual);
 
-      double tValue = getTValue(statisticsAfter, statisticsBefore, 0);
       LOG.info("T: {}", tValue);
 
       if (Math.abs(tValue) > criticalValueUnequal) {
@@ -63,7 +71,7 @@ public class StatisticUtil {
       return true; // falsch -> Eigentlich unbekannt
    }
 
-   public static boolean rejectAreEqual(DescriptiveStatistics statisticsAfter, DescriptiveStatistics statisticsBefore, double significance) {
+   public static boolean rejectAreEqual(StatisticalSummary statisticsAfter, StatisticalSummary statisticsBefore, double significance) {
       final TDistribution tDistribution = new TDistribution(null, statisticsAfter.getN() + statisticsBefore.getN() - 2);
       final double criticalValue = Math.abs(tDistribution.inverseCumulativeProbability(significance));
 
@@ -72,7 +80,7 @@ public class StatisticUtil {
       return Math.abs(tValue0) > criticalValue;
    }
 
-   public static double getTValue(DescriptiveStatistics statisticsAfter, DescriptiveStatistics statisticsBefore, double omega) {
+   public static double getTValue(StatisticalSummary statisticsAfter, StatisticalSummary statisticsBefore, double omega) {
       double n = statisticsAfter.getN();
       double m = statisticsBefore.getN();
       double sizeFactor = Math.sqrt(m * n / (m + n));
@@ -81,5 +89,9 @@ public class StatisticUtil {
       double difference = (statisticsAfter.getMean() - statisticsBefore.getMean() - omega);
       double tAlternative = sizeFactor * difference / s;
       return tAlternative;
+   }
+
+   public static Relation agnosticTTest(StatisticalSummary statisticsVersion, StatisticalSummary statisticsPredecessor, MeasurementConfiguration measurementConfig) {
+      return agnosticTTest(statisticsVersion, statisticsPredecessor, measurementConfig.getType1error(), measurementConfig.getType2error());
    }
 }

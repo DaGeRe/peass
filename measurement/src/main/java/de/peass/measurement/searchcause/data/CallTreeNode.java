@@ -5,24 +5,29 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.measurement.analysis.statistics.DescribedChunk;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 
 public class CallTreeNode {
 
+   private static final Logger LOG = LogManager.getLogger(CallTreeNode.class);
+   
    private final String call;
    private final String kiekerPattern;
 
    private final CallTreeNode parent;
    private final List<CallTreeNode> children = new ArrayList<>();
-   private Map<String, CallTreeStatistics> data = new HashMap<>();
+   private final Map<String, CallTreeStatistics> data = new HashMap<>();
    
    private String version, predecessor;
+   
+   private int warmup;
 
-   public CallTreeNode(String call, String kiekerPattern, CallTreeNode parent) {
+   public CallTreeNode(final String call, final String kiekerPattern, final CallTreeNode parent) {
       super();
       this.parent = parent;
       this.kiekerPattern = kiekerPattern;
@@ -37,8 +42,8 @@ public class CallTreeNode {
       return children;
    }
 
-   public CallTreeNode append(String call, String kiekerPattern) {
-      CallTreeNode added = new CallTreeNode(call, kiekerPattern, this);
+   public CallTreeNode append(final String call, final String kiekerPattern) {
+      final CallTreeNode added = new CallTreeNode(call, kiekerPattern, this);
       children.add(added);
       return added;
    }
@@ -51,27 +56,34 @@ public class CallTreeNode {
       return kiekerPattern;
    }
 
-   public void addMeasurement(String version, Long duration) {
+   public void addMeasurement(final String version, final Long duration) {
       data.get(version).addMeasurement(duration);
 
    }
 
-   public void newChunk(String version) {
+   public void newResult(final String version) {
+      LOG.debug("Adding result: {}", version);
       CallTreeStatistics statistics = data.get(version);
       if (statistics == null) {
-         statistics = new CallTreeStatistics();
+         statistics = new CallTreeStatistics(warmup);
          data.put(version, statistics);
       }
-      statistics.newChunk();
+      statistics.newResult();
+   }
+   
+   public void setWarmup(final int warmup){
+      this.warmup = warmup;
    }
 
-   public DescriptiveStatistics getStatistics(String version) {
+   public SummaryStatistics getStatistics(final String version) {
+      LOG.debug("Getting data: {}", version);
       return data.get(version).getStatistics();
    }
 
-   public void createStatistics(String version, int warmup) {
+   public void createStatistics(final String version) {
+      LOG.debug("Creating statistics: {}", version);
       final CallTreeStatistics callTreeStatistics = data.get(version);
-      callTreeStatistics.createStatistics(warmup);
+      callTreeStatistics.createStatistics();
    }
 
    @Override
@@ -80,19 +92,31 @@ public class CallTreeNode {
    }
 
    public ChangedEntity toEntity() {
-      int index = call.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
-      ChangedEntity entity = new ChangedEntity(call.substring(0, index), "", call.substring(index + 1));
+      final int index = call.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
+      final ChangedEntity entity = new ChangedEntity(call.substring(0, index), "", call.substring(index + 1));
       return entity;
    }
 
    public TestcaseStatistic getTestcaseStatistic() {
-      DescriptiveStatistics current = data.get(version).getStatistics();
-      DescriptiveStatistics previous = data.get(predecessor).getStatistics();
+      final SummaryStatistics current = data.get(version).getStatistics();
+      final SummaryStatistics previous = data.get(predecessor).getStatistics();
       return new TestcaseStatistic(current, previous);
    }
 
-   public void setVersions(String version, String predecessor) {
+   public void setVersions(final String version, final String predecessor) {
       this.version = version;
       this.predecessor = predecessor;
+   }
+
+   public int getTreeSize() {
+      int size = 1;
+      for (final CallTreeNode child : children) {
+         size+=child.getTreeSize();
+      }
+      return size;
+   }
+
+   public void resetStatistics() {
+      data.values().forEach(statistics -> statistics.resetResults());
    }
 }

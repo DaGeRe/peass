@@ -8,8 +8,8 @@ import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.peass.analysis.changes.processors.PropertyProcessor;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peran.measurement.analysis.changes.processors.PropertyProcessor;
 
 public class VersionChangeProperties {
 

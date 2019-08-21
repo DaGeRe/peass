@@ -2,16 +2,16 @@ package de.peass;
 
 import java.io.IOException;
 
-import javax.annotation.PreDestroy;
 import javax.xml.bind.JAXBException;
 
-import de.peass.dependency.PeASSFolders;
+import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependencyprocessors.AdaptiveTester;
-import de.peass.dependencyprocessors.VersionProcessor;
 import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.searchcause.CauseSearcher;
+import de.peass.measurement.searchcause.CauseSearcherComplete;
 import de.peass.measurement.searchcause.CauseSearcherConfig;
+import de.peass.measurement.searchcause.LevelMeasurer;
+import de.peass.measurement.searchcause.kieker.BothTreeReader;
 import de.peass.testtransformation.JUnitTestTransformer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -20,10 +20,9 @@ import picocli.CommandLine.Command;
 public class SearchChangeCause extends AdaptiveTestStarter {
 
    public static void main(final String[] args) throws JAXBException, IOException {
-      SearchChangeCause command = new SearchChangeCause();
-      CommandLine commandLine = new CommandLine(command);
+      final SearchChangeCause command = new SearchChangeCause();
+      final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);
-
    }
 
    public SearchChangeCause() throws JAXBException, IOException {
@@ -34,13 +33,27 @@ public class SearchChangeCause extends AdaptiveTestStarter {
    public Void call() throws Exception {
       initVersionProcessor();
 
-      MeasurementConfiguration config = new MeasurementConfiguration(timeout, vms, type1error, type2error);
-      final JUnitTestTransformer testgenerator = getTestTransformer();
-      testgenerator.setSumTime(config.getTimeout());
-      TestCase test = new TestCase(testName);
-      String predecessor = dependencies.getVersions().get(version).getPredecessor();
-      CauseSearcher tester = new CauseSearcher(new CauseSearcherConfig(folders.getProjectFolder(), version, predecessor, test), testgenerator, config);
-      tester.search();
+      final TestCase test = new TestCase(testName);
+      final String predecessor = dependencies.getVersions().get(version).getPredecessor();
+
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, type1error, type2error);
+      final JUnitTestTransformer testtransformer = getTestTransformer(measurementConfiguration);
+      testtransformer.setSumTime(measurementConfiguration.getTimeout());
+      testtransformer.setDatacollectorlist(DataCollectorList.ONLYTIME);
+
+      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(version, predecessor, test);
+      final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders);
+      final boolean complete = false;
+      if (complete) {
+         final LevelMeasurer measurer = new LevelMeasurer(folders, causeSearcherConfig, testtransformer, measurementConfiguration);
+         final CauseSearcher tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, folders);
+         tester.search();
+      } else {
+         final LevelMeasurer measurer = new LevelMeasurer(folders, causeSearcherConfig, testtransformer, measurementConfiguration);
+         final CauseSearcher tester = new CauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, folders);
+         tester.search();
+      }
+
       return null;
    }
 

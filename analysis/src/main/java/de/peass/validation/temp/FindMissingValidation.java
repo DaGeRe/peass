@@ -15,7 +15,6 @@ import de.peass.analysis.all.RepoFolders;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.reexecutions.MissingExecutionFinder;
 import de.peran.FolderSearcher;
-import jline.internal.Log;
 
 public class FindMissingValidation {
    

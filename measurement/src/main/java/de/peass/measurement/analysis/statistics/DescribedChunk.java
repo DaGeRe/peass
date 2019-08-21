@@ -21,7 +21,7 @@ public class DescribedChunk {
    private final List<Result> previous = new LinkedList<>();
    private final List<Result> current = new LinkedList<>();
 
-   public DescribedChunk(Chunk chunk, String versionPrevious, String versionCurrent) {
+   public DescribedChunk(final Chunk chunk, final String versionPrevious, final String versionCurrent) {
       for (final Result result : chunk.getResult()) {
          if (result.getVersion().getGitversion().equals(versionPrevious) && !Double.isNaN(result.getValue())) {
             descPrev.addValue(result.getValue());
@@ -36,7 +36,7 @@ public class DescribedChunk {
    }
 
    public void removeOutliers() {
-      OutlierRemover outlierRemover = new OutlierRemover(this);
+      final OutlierRemover outlierRemover = new OutlierRemover(this);
       outlierRemover.remove();
    }
 
@@ -56,8 +56,8 @@ public class DescribedChunk {
       return current;
    }
 
-   public TestcaseStatistic getStatistic(double confidence) {
-      boolean isChange = StatisticUtil.agnosticTTest(descPrev, descCurrent, confidence, confidence) == de.peass.measurement.analysis.Relation.UNEQUAL;
+   public TestcaseStatistic getStatistic(final double type1error, final double type2error) {
+      final boolean isChange = StatisticUtil.agnosticTTest(descPrev, descCurrent, type1error, type2error) == de.peass.measurement.analysis.Relation.UNEQUAL;
       final TestcaseStatistic statistic = new TestcaseStatistic(descPrev.getMean(), descCurrent.getMean(),
             descPrev.getStandardDeviation() / descPrev.getMean(), descCurrent.getStandardDeviation() / descCurrent.getMean(), descPrev.getN(),
             descPrev.getN() > 2 ? TestUtils.t(descPrev, descCurrent) : 0, isChange);

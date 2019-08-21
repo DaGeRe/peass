@@ -61,22 +61,18 @@ public class DependencyTestPairStarter extends PairProcessor {
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
 
-   JUnitTestTransformer getTestTransformer() {
-//      final int repetitions = Integer.parseInt(line.getOptionValue(OptionConstants.REPETITIONS.getName(), "100"));
-//      final boolean useKieker = Boolean.parseBoolean(line.getOptionValue(OptionConstants.USEKIEKER.getName(), "false"));
-//      final int warmup = Integer.parseInt(line.getOptionValue(OptionConstants.WARMUP.getName(), "10"));
-//      final int iterations = Integer.parseInt(line.getOptionValue(OptionConstants.ITERATIONS.getName(), "1000"));
-      final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder());
-      testgenerator.setDatacollectorlist(DataCollectorList.ONLYTIME);
-      testgenerator.setIterations(iterations);
-      testgenerator.setLogFullData(true);
-      testgenerator.setWarmupExecutions(warmup);
-      testgenerator.setUseKieker(useKieker);
-      testgenerator.setRepetitions(repetitions);
-      if (timeout != 0) {
-         testgenerator.setSumTime(timeout);
+   JUnitTestTransformer getTestTransformer(MeasurementConfiguration measurementConfig) {
+      final JUnitTestTransformer testtransformer = new JUnitTestTransformer(folders.getProjectFolder());
+      testtransformer.setDatacollectorlist(DataCollectorList.ONLYTIME);
+      testtransformer.setIterations(iterations);
+      testtransformer.setLogFullData(true);
+      testtransformer.setWarmupExecutions(warmup);
+      testtransformer.setUseKieker(useKieker);
+      testtransformer.setRepetitions(repetitions);
+      if (measurementConfig.getTimeout() != 0) {
+         testtransformer.setSumTime(measurementConfig.getTimeout());
       }
-      return testgenerator;
+      return testtransformer;
    }
 
    private static final Logger LOG = LogManager.getLogger(DependencyTestPairStarter.class);
@@ -89,10 +85,11 @@ public class DependencyTestPairStarter extends PairProcessor {
    @Override
    public Void call() throws Exception {
       super.call();
+      MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, 0.01, 0.01);
       if (duration != 0) {
          tester = new DependencyTester(folders, duration, vms, true, repetitions, useKieker);
       } else {
-         final JUnitTestTransformer testgenerator = getTestTransformer();
+         final JUnitTestTransformer testgenerator = getTestTransformer(measurementConfiguration);
          tester = new DependencyTester(folders, testgenerator, new MeasurementConfiguration(vms));
       }
 
@@ -127,14 +124,14 @@ public class DependencyTestPairStarter extends PairProcessor {
          if (startversion != null && currentStartindex == -1) {
             String potentialStart = "";
             if (executionData.getVersions().containsKey(startversion)) {
-               for (final String sicVersion : executionData.getVersions().keySet()) {
-                  for (final String ticVersion : dependencies.getVersions().keySet()) {
-                     if (ticVersion.equals(sicVersion)) {
-                        potentialStart = ticVersion;
+               for (final String executionVersion : executionData.getVersions().keySet()) {
+                  for (final String dependencyVersion : dependencies.getVersions().keySet()) {
+                     if (dependencyVersion.equals(executionVersion)) {
+                        potentialStart = dependencyVersion;
                         break;
                      }
                   }
-                  if (sicVersion.equals(startversion)) {
+                  if (executionVersion.equals(startversion)) {
                      break;
                   }
                }
@@ -158,23 +155,23 @@ public class DependencyTestPairStarter extends PairProcessor {
          if (endversion != null && currentEndindex == -1) {
             String potentialStart = "";
             if (executionData.getVersions().containsKey(endversion)) {
-               for (final String sicVersion : executionData.getVersions().keySet()) {
+               for (final String executionVersion : executionData.getVersions().keySet()) {
                   boolean next = false;
-                  for (final String ticVersion : dependencies.getVersions().keySet()) {
+                  for (final String dependencyVersion : dependencies.getVersions().keySet()) {
                      if (next) {
-                        potentialStart = ticVersion;
+                        potentialStart = dependencyVersion;
                         break;
                      }
-                     if (ticVersion.equals(sicVersion)) {
+                     if (dependencyVersion.equals(executionVersion)) {
                         next = true;
                      }
                   }
-                  if (sicVersion.equals(endversion)) {
+                  if (executionVersion.equals(endversion)) {
                      break;
                   }
                }
             }
-            LOG.debug("Version only in executefile, next version in dependencyfile: {}", potentialStart);
+            LOG.debug("Version only in executionfile, next version in dependencyfile: {}", potentialStart);
             currentEndindex = versions.indexOf(potentialStart);
          }
       }

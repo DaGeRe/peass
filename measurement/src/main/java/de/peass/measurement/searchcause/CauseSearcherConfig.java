@@ -1,19 +1,27 @@
 package de.peass.measurement.searchcause;
 
-import java.io.File;
-
 import de.peass.dependency.analysis.data.TestCase;
 
 public class CauseSearcherConfig {
-   public File projectFolder;
-   public String version;
-   public String predecessor;
-   public TestCase testCase;
+   private final String version;
+   private final String predecessor;
+   private final TestCase testCase;
 
-   public CauseSearcherConfig(File projectFolder, String version, String predecessor, TestCase testCase) {
-      this.projectFolder = projectFolder;
+   public CauseSearcherConfig(String version, String predecessor, TestCase testCase) {
       this.version = version;
       this.predecessor = predecessor;
       this.testCase = testCase;
+   }
+   
+   public String getVersion() {
+      return version;
+   }
+
+   public String getPredecessor() {
+      return predecessor;
+   }
+
+   public TestCase getTestCase() {
+      return testCase;
    }
 }

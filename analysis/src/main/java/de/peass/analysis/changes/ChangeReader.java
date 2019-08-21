@@ -2,7 +2,6 @@ package de.peass.analysis.changes;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 
 import javax.xml.bind.JAXBException;
 
@@ -11,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.analysis.all.RepoFolders;
@@ -19,13 +17,11 @@ import de.peass.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peass.confidence.KoPeMeDataHelper;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.measurement.analysis.Relation;
-import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.analysis.statistics.DescribedChunk;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peran.FolderSearcher;
 import de.peran.analysis.helper.read.VersionData;
 import de.peran.measurement.analysis.ProjectStatistics;
-import picocli.CommandLine.Option;
 
 /**
  * Reads changes of fulldata - data need to be cleaned!
@@ -62,7 +58,7 @@ public class ChangeReader {
       return type1error;
    }
 
-   public void setType1error(double type1error) {
+   public void setType1error(final double type1error) {
       this.type1error = type1error;
    }
 
@@ -70,7 +66,7 @@ public class ChangeReader {
       return type2error;
    }
 
-   public void setType2error(double type2error) {
+   public void setType2error(final double type2error) {
       this.type2error = type2error;
    }
 
@@ -148,12 +144,12 @@ public class ChangeReader {
    public void getIsChange(final String fileName, final Kopemedata data, final ProjectChanges changeKnowledge, final ProjectStatistics info,
          final String[] versions, final DescribedChunk describedChunk) {
       System.out.println(data.getTestcases().getClazz());
-      final TestcaseStatistic statistic = describedChunk.getStatistic(type1error);
+      final TestcaseStatistic statistic = describedChunk.getStatistic(type1error, type2error);
       statistic.setPredecessor(versions[0]);
       // if (! (statistic.getTvalue() == Double.NaN)){
       final Relation confidenceResult = ConfidenceIntervalInterpretion.compare(describedChunk.getPrevious(), describedChunk.getCurrent());
       final TestCase testcase = new TestCase(data);
-      double diff = describedChunk.getDiff();
+      final double diff = describedChunk.getDiff();
       final boolean isBigEnoughDiff = Math.abs(diff) > minChange;
       allData.addStatistic(versions[1], testcase, fileName, statistic,
             statistic.isChange() && isBigEnoughDiff,
@@ -177,7 +173,7 @@ public class ChangeReader {
       return minChange;
    }
 
-   public void setMinChange(double minChange) {
+   public void setMinChange(final double minChange) {
       this.minChange = minChange;
    }
 }

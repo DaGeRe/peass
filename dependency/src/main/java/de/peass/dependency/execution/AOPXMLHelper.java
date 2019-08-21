@@ -28,4 +28,17 @@ public class AOPXMLHelper {
          writer.flush();
       }
    }
+
+   public static void writeKiekerMonitoringProperties(final File goalFile) throws IOException {
+      try (BufferedWriter writer = new BufferedWriter(new FileWriter(goalFile))) {
+         writer.write("kieker.monitoring.name=KIEKER-KoPeMe\n");
+         writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueFQN=java.util.concurrent.LinkedBlockingQueue\n");
+         writer.write("kieker.monitoring.writer=kieker.monitoring.writer.filesystem.ChangeableFolderWriter\n");
+         writer.write("kieker.monitoring.writer.filesystem.ChangeableFolderWriter.realwriter=AsciiFileWriter\n");
+         final int queueSize = 10000000;
+         writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueSize=" + queueSize + "\n");
+         writer.write("kieker.monitoring.writer.filesystem.ChangeableFolderWriter.flush=false\n");
+         writer.flush();
+      }
+   }
 }

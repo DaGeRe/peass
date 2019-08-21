@@ -41,11 +41,10 @@ public class AdaptiveTestStarter extends DependencyTestPairStarter {
    @Override
    public Void call() throws Exception {
       super.call();
-      final JUnitTestTransformer testgenerator = getTestTransformer();
+      MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, type1error, type2error);
+      final JUnitTestTransformer testgenerator = getTestTransformer(measurementConfiguration);
 
-      MeasurementConfiguration config = new MeasurementConfiguration(timeout, vms, type1error, type2error);
-
-      tester = new AdaptiveTester(folders, testgenerator, config);
+      tester = new AdaptiveTester(folders, testgenerator, measurementConfiguration);
 
       processCommandline();
       return null;

@@ -42,10 +42,10 @@ public class DivideAllVersions {
          File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
          if (dependencyFile.exists() && executionFile.exists()) {
             LOG.debug("Loading: " + project);
-            final File executeCommands = new File(resultFolder, "execute-" + project + ".sh");
+            final File executeCommandsFile = new File(resultFolder, "execute-" + project + ".sh");
             final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
             final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
-            DivideVersions.generateExecuteCommands(dependencies, changedTests, "validation", new PrintStream(new FileOutputStream(executeCommands)));
+            DivideVersions.generateExecuteCommands(dependencies, changedTests, "validation", new PrintStream(new FileOutputStream(executeCommandsFile)));
          } else {
             LOG.error("File not existing: " + project + " " + Constants.defaultUrls.get(project) + " " + dependencyFile.getAbsolutePath());
          }

@@ -1,0 +1,51 @@
+package de.peass.measurement.searchcause;
+
+import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.xml.bind.JAXBException;
+
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import de.peass.dependency.PeASSFolders;
+import de.peass.dependencyprocessors.ViewNotFoundException;
+import de.peass.measurement.MeasurementConfiguration;
+import de.peass.measurement.searchcause.data.CallTreeNode;
+import de.peass.testtransformation.JUnitTestTransformer;
+import kieker.analysis.exception.AnalysisConfigurationException;
+
+public class LevelMeasurer {
+   
+   private final PeASSFolders folders;
+   private int adaptiveId = 0;
+   private final CauseSearcherConfig causeSearcherConfig;
+   private final JUnitTestTransformer testgenerator;
+   private final MeasurementConfiguration measurementConfiguration;
+   
+   public LevelMeasurer(final PeASSFolders folders, final CauseSearcherConfig causeSearcherConfig, final JUnitTestTransformer testgenerator, final MeasurementConfiguration measurementConfiguration) {
+      this.folders = folders;
+      this.causeSearcherConfig = causeSearcherConfig;
+      this.testgenerator = testgenerator;
+      this.measurementConfiguration = measurementConfiguration;
+   }
+
+   public void measureVersion(final List<CallTreeNode> nodes)
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+      final CauseTester executor = new CauseTester(folders, testgenerator, measurementConfiguration, causeSearcherConfig.getTestCase());
+      final Set<CallTreeNode> includedNodes = prepareNodes(nodes);
+      includedNodes.forEach(node -> node.resetStatistics());
+      executor.setIncludedMethods(includedNodes);
+      executor.evaluate(causeSearcherConfig.getVersion(), causeSearcherConfig.getPredecessor(), causeSearcherConfig.getTestCase());
+      executor.getDurations(causeSearcherConfig.getVersion(), causeSearcherConfig.getPredecessor(), adaptiveId);
+      adaptiveId++;
+   }
+
+   private Set<CallTreeNode> prepareNodes(final List<CallTreeNode> nodes) {
+      final Set<CallTreeNode> includedNodes = new HashSet<CallTreeNode>();
+      includedNodes.addAll(nodes);
+      nodes.forEach(node -> node.setVersions(causeSearcherConfig.getVersion(), causeSearcherConfig.getPredecessor()));
+      return includedNodes;
+   }
+}

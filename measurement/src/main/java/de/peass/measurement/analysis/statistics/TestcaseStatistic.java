@@ -1,6 +1,7 @@
 package de.peass.measurement.analysis.statistics;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.inference.TestUtils;
 
 public class TestcaseStatistic {
@@ -27,7 +28,17 @@ public class TestcaseStatistic {
       this.meanCurrent = statisticsCurrent.getMean();
       this.meanOld = statisticsOld.getMean();
       this.deviationCurrent = statisticsCurrent.getStandardDeviation();
-      this.deviationOld = statisticsCurrent.getStandardDeviation();
+      this.deviationOld = statisticsOld.getStandardDeviation();
+      this.vms = statisticsCurrent.getN() + statisticsOld.getN();
+      this.tvalue = TestUtils.t(statisticsOld, statisticsCurrent);
+      this.isChange = Math.abs(tvalue) > 3.2;
+   }
+   
+   public TestcaseStatistic(SummaryStatistics statisticsCurrent, SummaryStatistics statisticsOld) {
+      this.meanCurrent = statisticsCurrent.getMean();
+      this.meanOld = statisticsOld.getMean();
+      this.deviationCurrent = statisticsCurrent.getStandardDeviation();
+      this.deviationOld = statisticsOld.getStandardDeviation();
       this.vms = statisticsCurrent.getN() + statisticsOld.getN();
       this.tvalue = TestUtils.t(statisticsOld, statisticsCurrent);
       this.isChange = Math.abs(tvalue) > 3.2;

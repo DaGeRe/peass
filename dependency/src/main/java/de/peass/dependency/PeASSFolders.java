@@ -2,6 +2,7 @@ package de.peass.dependency;
 
 import java.io.File;
 
+import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.GradleParseUtil;
 
 /**
@@ -84,6 +85,14 @@ public class PeASSFolders {
 
 	public File getDetailResultFolder() {
 		return detailFolder;
+	}
+	
+	public File getDetailResultFolder(final String version, final TestCase testcase) {
+	   final File folder = new File(detailFolder, version + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
+	   if (!folder.exists()) {
+	      folder.mkdirs();
+	   }
+      return folder;
 	}
 
    public File getTempProjectFolder() {

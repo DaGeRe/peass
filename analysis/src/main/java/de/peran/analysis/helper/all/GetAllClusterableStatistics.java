@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.analysis.changes.processors.PropertyProcessor;
 import de.peass.analysis.properties.ChangeProperties;
 import de.peass.analysis.properties.ChangeProperty;
 import de.peass.analysis.properties.VersionChangeProperties;
@@ -21,7 +22,6 @@ import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peran.FolderSearcher;
 import de.peran.analysis.helper.AnalysisUtil;
-import de.peran.measurement.analysis.changes.processors.PropertyProcessor;
 
 public class GetAllClusterableStatistics {
    private static final Logger LOG = LogManager.getLogger(GetAllClusterableStatistics.class);

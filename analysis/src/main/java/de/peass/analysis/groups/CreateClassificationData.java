@@ -19,9 +19,7 @@ import de.peass.analysis.changes.Change;
 import de.peass.analysis.changes.ProjectChanges;
 import de.peass.analysis.properties.VersionChangeProperties;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.testtransformation.JUnitTestTransformer;
 import de.peran.FolderSearcher;
-import jline.internal.Log;
 
 public class CreateClassificationData {
    

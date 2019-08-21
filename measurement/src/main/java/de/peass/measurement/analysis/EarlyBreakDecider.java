@@ -8,7 +8,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.stat.inference.TestUtils;
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,30 +32,27 @@ public class EarlyBreakDecider {
    private final JUnitTestTransformer testTransformer;
    private final List<Double> before = new LinkedList<>();
    private final List<Double> after = new LinkedList<>();
+   final StatisticalSummary statisticsBefore;
+   final StatisticalSummary statisticsAfter;
 
    private double type1error = 0.01;
    private double type2error = 0.01;
 
-   public double getType1error() {
-      return type1error;
-   }
-
-   public void setType1error(double type1error) {
-      this.type1error = type1error;
-   }
-
-   public double getType2error() {
-      return type2error;
-   }
-
-   public void setType2error(double type2error) {
-      this.type2error = type2error;
-   }
-
-   public EarlyBreakDecider(JUnitTestTransformer testTransformer, final File measurementFolder, final String version,
+   public EarlyBreakDecider(final JUnitTestTransformer testTransformer, final File measurementFolder, final String version,
          final String versionOld, final TestCase testcase, final long currentChunkStart) throws JAXBException {
       this.testTransformer = testTransformer;
       loadData(measurementFolder, version, versionOld, testcase, currentChunkStart);
+      final double[] valsBefore = ArrayUtils.toPrimitive(before.toArray(new Double[0]));
+      final double[] valsAfter = ArrayUtils.toPrimitive(after.toArray(new Double[0]));
+      statisticsBefore = new DescriptiveStatistics(valsBefore);
+      statisticsAfter = new DescriptiveStatistics(valsAfter);
+   }
+   
+   public EarlyBreakDecider(final JUnitTestTransformer testTransformer, final StatisticalSummary statisticsOld, final StatisticalSummary statistics, final String version,
+         final String versionOld, final TestCase testcase, final long currentChunkStart) throws JAXBException {
+      this.testTransformer = testTransformer;
+      statisticsBefore = statisticsOld;
+      statisticsAfter = statistics;
    }
 
    public boolean isBreakPossible(final int vmid) {
@@ -63,9 +60,7 @@ public class EarlyBreakDecider {
       if (vmid > 3) {
          LOG.debug("T: {} {}", before, after);
          if ((before.size() > 3 && after.size() > 3)) {
-            final double[] valsBefore = ArrayUtils.toPrimitive(before.toArray(new Double[0]));
-            final double[] valsAfter = ArrayUtils.toPrimitive(after.toArray(new Double[0]));
-            savelyDecidable = isSavelyDecidableBothHypothesis(vmid, valsBefore, valsAfter);
+            savelyDecidable = isSavelyDecidableBothHypothesis(vmid);
          } else if (vmid > 10) {
             LOG.debug("More than 10 executions and only {} / {} measurements - aborting", before.size(), after.size());
             return true;
@@ -96,18 +91,32 @@ public class EarlyBreakDecider {
       }
    }
 
-   public boolean isSavelyDecidableBothHypothesis(final int vmid, final double[] valsBefore, final double[] valsAfter) {
+   public boolean isSavelyDecidableBothHypothesis(final int vmid) {
       boolean savelyDecidable = false;
-      final DescriptiveStatistics statisticsBefore = new DescriptiveStatistics(valsBefore);
-      final DescriptiveStatistics statisticsAfter = new DescriptiveStatistics(valsAfter);
-      if (valsBefore.length > 30 && valsAfter.length > 30) {
-         Relation relation = StatisticUtil.agnosticTTest(statisticsAfter, statisticsBefore, type1error, type2error);
+      if (statisticsBefore.getN() > 30 && statisticsAfter.getN() > 30) {
+         final Relation relation = StatisticUtil.agnosticTTest(statisticsAfter, statisticsBefore, type1error, type2error);
          if (relation == Relation.EQUAL || relation == Relation.UNEQUAL) {
             LOG.info("Can savely decide: {}", relation);
             savelyDecidable = true;
          }
       }
       return savelyDecidable;
+   }
+   
+   public double getType1error() {
+      return type1error;
+   }
+
+   public void setType1error(final double type1error) {
+      this.type1error = type1error;
+   }
+
+   public double getType2error() {
+      return type2error;
+   }
+
+   public void setType2error(final double type2error) {
+      this.type2error = type2error;
    }
 
 }

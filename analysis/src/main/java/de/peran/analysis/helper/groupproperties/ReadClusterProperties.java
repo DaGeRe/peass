@@ -14,11 +14,11 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.analysis.changes.processors.PropertyProcessor;
 import de.peass.analysis.properties.ChangeProperties;
 import de.peass.analysis.properties.ChangeProperty;
 import de.peass.analysis.properties.VersionChangeProperties;
 import de.peran.FolderSearcher;
-import de.peran.measurement.analysis.changes.processors.PropertyProcessor;
 
 public class ReadClusterProperties {
    static class ClusterProperties {

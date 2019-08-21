@@ -38,9 +38,9 @@ import kieker.monitoring.core.signaturePattern.PatternParser;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({GitUtils.class, VersionControlSystem.class})
 @PowerMockIgnore("javax.management.*")
-public class CauseSearcherIT {
+public class CauseSearcherCompleteIT {
    
-   private static final Logger LOG = LogManager.getLogger(CauseSearcherIT.class);
+   private static final Logger LOG = LogManager.getLogger(CauseSearcherCompleteIT.class);
    
    public static final File CURRENT = new File(new File("target"), "current");
    private static final File VERSIONS_FOLDER = new File("src/test/resources/rootCauseIT");
@@ -121,7 +121,7 @@ public class CauseSearcherIT {
       final PeASSFolders folders = new PeASSFolders(CURRENT);
       BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders);
       LevelMeasurer measurer = new LevelMeasurer(folders, causeSearcherConfig, testgenerator, measurementConfiguration);
-      CauseSearcher searcher = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, folders);
+      CauseSearcher searcher = new CauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, folders);
       List<ChangedEntity> changedEntities = searcher.search();
 
       LOG.debug(changedEntities);

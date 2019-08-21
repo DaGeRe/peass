@@ -26,6 +26,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.ViewNotFoundException;
@@ -77,6 +78,7 @@ public class AdaptiveExecutorTest {
          GitUtils.goToTag(Mockito.anyString(), Mockito.any(File.class));
          
          final JUnitTestTransformer transformer = new JUnitTestTransformer(projectFolder);
+         transformer.setDatacollectorlist(DataCollectorList.ONLYTIME);
          final MeasurementConfiguration config = new MeasurementConfiguration(2);
          executor = new CauseTester(new PeASSFolders(projectFolder), transformer, config, TEST);
          LOG.debug("Executor: {}", executor);

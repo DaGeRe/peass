@@ -1,5 +1,6 @@
 package de.peass.measurement.searchcause.data;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
@@ -7,7 +8,7 @@ import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 public class MeasuredNode {
    private String call;
    private TestcaseStatistic statistic;
-   private List<MeasuredNode> childs;
+   private List<MeasuredNode> childs = new LinkedList<>();
 
    public String getCall() {
       return call;
