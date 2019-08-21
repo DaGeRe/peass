@@ -70,12 +70,13 @@ public class DependencyParallelReader {
    private final VersionKeeper nonChanges;
    private final List<GitCommit> commits;
    private final PeASSFolders folders;
-   private final int size;
+   private final int sizePerThread;
    private final File[] outFiles;
    private final File tempResultFolder;
    private final String project;
 
-   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<GitCommit> commits, final int count, final int timeout) {
+   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<GitCommit> commits, final int threadCount,
+         final int timeout) {
       url = GitUtils.getURL(projectFolder);
       LOG.debug(url);
       folders = new PeASSFolders(projectFolder);
@@ -91,9 +92,9 @@ public class DependencyParallelReader {
       nonRunning = new VersionKeeper(new File(tempResultFolder, "nonRunning_" + project + ".json"));
       nonChanges = new VersionKeeper(new File(tempResultFolder, "nonChanges_" + project + ".json"));
 
-      size = commits.size() > 2 * count ? commits.size() / count : 2;
+      sizePerThread = commits.size() > 2 * threadCount ? commits.size() / threadCount : 2;
 
-      outFiles = commits.size() > 2 ? new File[count] : new File[1];
+      outFiles = commits.size() > 2 * threadCount ? new File[threadCount] : new File[1];
 
       this.timeout = timeout;
    }
@@ -130,8 +131,8 @@ public class DependencyParallelReader {
    }
 
    public void startPartProcess(final File currentOutFile, final ExecutorService service, final int i, final File projectFolderTemp) throws InterruptedException {
-      final int min = i * size;
-      final int max = Math.min((i + 1) * size + 3, commits.size());// Assuming one in three commits should contain a source-change
+      final int min = i * sizePerThread;
+      final int max = Math.min((i + 1) * sizePerThread + 3, commits.size());// Assuming one in three commits should contain a source-change
       LOG.debug("Min: {} Max: {} Size: {}", min, max, commits.size());
       final List<GitCommit> currentCommits = commits.subList(min, max);
       final List<GitCommit> reserveCommits = commits.subList(max - 1, commits.size());
