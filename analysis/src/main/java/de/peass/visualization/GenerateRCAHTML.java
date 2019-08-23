@@ -4,11 +4,10 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,46 +20,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.peass.measurement.searchcause.data.CauseSearchData;
 import de.peass.measurement.searchcause.data.MeasuredNode;
 
-class Node {
-   private String name;
-   private String parent;
-   private List<Node> children = new LinkedList<Node>();
-   private String color;
-
-   public String getColor() {
-      return color;
-   }
-
-   public void setColor(final String color) {
-      this.color = color;
-   }
-
-   public String getName() {
-      return name;
-   }
-
-   public void setName(final String name) {
-      this.name = name;
-   }
-
-   public String getParent() {
-      return parent;
-   }
-
-   public void setParent(final String parent) {
-      this.parent = parent;
-   }
-
-   public List<Node> getChildren() {
-      return children;
-   }
-
-   public void setChildren(final List<Node> children) {
-      this.children = children;
-   }
-}
-
-public class ConvertToVisualizable {
+public class GenerateRCAHTML {
    
    private static final ObjectMapper MAPPER = new ObjectMapper();
    
@@ -120,7 +80,8 @@ public class ConvertToVisualizable {
             "var treeData = [\n");
       fileWriter.write(MAPPER.writeValueAsString(root));
       fileWriter.write("];\n</script>");
-      final BufferedReader reader = new BufferedReader(new FileReader(new File("src/main/resources/visualization/RestOfHTML.html")));
+      final InputStream htmlStream = GenerateRCAHTML.class.getClassLoader().getResourceAsStream("visualization/RestOfHTML.html");
+      final BufferedReader reader = new BufferedReader(new InputStreamReader(htmlStream));
 
       String line;
       while ((line = reader.readLine()) != null) {
