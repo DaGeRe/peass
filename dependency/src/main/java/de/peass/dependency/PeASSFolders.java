@@ -13,11 +13,11 @@ import de.peass.dependency.execution.GradleParseUtil;
 public class PeASSFolders {
 	protected final File projectFolder;
 //	private final File resultFolder;
-	private final File fullResultFolder;
+	protected final File fullResultFolder;
 	private final File tempResultFolder, tempProjectFolder, tempFolder, kiekerTemp;
 	private final File logFolder;
 	private final File oldSourceFolder;
-	private final File detailFolder;
+	private final File measurementsFolder;
 	private final File cleanFolder;
 	private File gradleHome;
 	
@@ -39,8 +39,8 @@ public class PeASSFolders {
 		tempFolder.mkdir();
 		cleanFolder = new File(peassFolder, "clean");
 //		cleanFolder.mkdir();
-		detailFolder = new File(fullResultFolder, "measurements");
-		detailFolder.mkdir();
+		measurementsFolder = new File(fullResultFolder, "measurements");
+		measurementsFolder.mkdir();
 		tempResultFolder = new File(peassFolder, "measurementsTemp");
 		tempResultFolder.mkdir();
 		kiekerTemp = new File(peassFolder, "kiekerTemp");
@@ -84,11 +84,11 @@ public class PeASSFolders {
 	}
 
 	public File getDetailResultFolder() {
-		return detailFolder;
+		return measurementsFolder;
 	}
 	
 	public File getDetailResultFolder(final String version, final TestCase testcase) {
-	   final File folder = new File(detailFolder, version + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
+	   final File folder = new File(getDetailResultFolder(), version + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
 	   if (!folder.exists()) {
 	      folder.mkdirs();
 	   }
