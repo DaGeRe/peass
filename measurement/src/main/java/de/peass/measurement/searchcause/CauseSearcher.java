@@ -75,9 +75,10 @@ public class CauseSearcher {
       treeDataFile = new File(folders.getFullMeasurementFolder(), causeSearchConfig.getVersion() + File.separator + 
             causeSearchConfig.getTestCase().getShortClazz() + File.separator 
             + causeSearchConfig.getTestCase().getMethod() + ".json");
-      if (treeDataFile.exists()) {
+      if (treeDataFile.getParentFile().exists()) {
          throw new RuntimeException("Old tree data folder " + treeDataFile.getAbsolutePath() + " exists - please cleanup!");
       }
+      treeDataFile.getParentFile().mkdirs();
       
       final File potentialOldFolder = new File(folders.getDetailResultFolder(causeSearchConfig.getVersion(), causeSearchConfig.getTestCase()), "0");
       if (potentialOldFolder.exists()) {
