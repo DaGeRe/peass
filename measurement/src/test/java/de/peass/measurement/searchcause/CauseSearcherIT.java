@@ -2,7 +2,6 @@ package de.peass.measurement.searchcause;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -23,6 +22,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
@@ -33,7 +33,6 @@ import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 import kieker.analysis.exception.AnalysisConfigurationException;
-import kieker.monitoring.core.signaturePattern.PatternParser;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({GitUtils.class, VersionControlSystem.class})
@@ -53,7 +52,7 @@ public class CauseSearcherIT {
          FileUtils.deleteDirectory(CURRENT);
          FileUtils.deleteDirectory(new File(new File("target"), "current_peass"));
          FileUtils.copyDirectory(BASIC_STATE, CURRENT);
-      } catch (IOException e) {
+      } catch (final IOException e) {
          e.printStackTrace();
       }
       
@@ -88,7 +87,7 @@ public class CauseSearcherIT {
 
          @Override
          public Void answer(final InvocationOnMock invocation) throws Throwable {
-            File destFile = (File) invocation.getArgument(1);
+            final File destFile = (File) invocation.getArgument(1);
             LOG.debug("Loading faster..");
             FileUtils.deleteDirectory(destFile);
             FileUtils.copyDirectory(BASIC_STATE, destFile);
@@ -101,7 +100,7 @@ public class CauseSearcherIT {
 
          @Override
          public Void answer(final InvocationOnMock invocation) throws Throwable {
-            File destFile = (File) invocation.getArgument(1);
+            final File destFile = (File) invocation.getArgument(1);
             LOG.debug("Loading slower..");
             FileUtils.copyDirectory(SLOW_STATE, destFile);
             return null;
@@ -118,11 +117,11 @@ public class CauseSearcherIT {
 //      BothTreeReader reader = new Bo
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig("000001", "000001~1", new TestCase("defaultpackage.TestMe", "testMe"));
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(2);
-      final PeASSFolders folders = new PeASSFolders(CURRENT);
-      BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders);
-      LevelMeasurer measurer = new LevelMeasurer(folders, causeSearcherConfig, testgenerator, measurementConfiguration);
-      CauseSearcher searcher = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, folders);
-      List<ChangedEntity> changedEntities = searcher.search();
+      final CauseSearchFolders folders = new CauseSearchFolders(CURRENT);
+      final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders);
+      final LevelMeasurer measurer = new LevelMeasurer(folders, causeSearcherConfig, testgenerator, measurementConfiguration);
+      final CauseSearcher searcher = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, folders);
+      final List<ChangedEntity> changedEntities = searcher.search();
 
       LOG.debug(changedEntities);
       Assert.assertEquals(1, changedEntities.size());

@@ -9,7 +9,7 @@ import javax.xml.bind.JAXBException;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.MeasurementConfiguration;
@@ -71,7 +71,7 @@ class TreeAnalyzer {
 public class CauseSearcherComplete extends CauseSearcher {
 
    public CauseSearcherComplete(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final LevelMeasurer measurer, final MeasurementConfiguration measurementConfig,
-         final PeASSFolders folders) throws InterruptedException, IOException {
+         final CauseSearchFolders folders) throws InterruptedException, IOException {
       super(reader, causeSearchConfig, measurer, measurementConfig, folders);
    }
 

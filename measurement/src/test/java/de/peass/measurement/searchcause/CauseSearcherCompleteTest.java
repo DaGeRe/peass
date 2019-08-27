@@ -2,7 +2,6 @@ package de.peass.measurement.searchcause;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -12,7 +11,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.ViewNotFoundException;
@@ -77,7 +76,7 @@ public class CauseSearcherCompleteTest {
       final LevelMeasurer measurer = Mockito.mock(LevelMeasurer.class);
 
       final CauseSearcherComplete searcher = new CauseSearcherComplete(treeReader, causeSearchConfig, measurer, measurementConfig,
-            new PeASSFolders(folder));
+            new CauseSearchFolders(folder));
       final List<ChangedEntity> changes = searcher.search();
       return changes;
    }

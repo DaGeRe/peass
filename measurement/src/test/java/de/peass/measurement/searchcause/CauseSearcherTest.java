@@ -12,7 +12,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.ViewNotFoundException;
@@ -59,7 +59,7 @@ public class CauseSearcherTest {
       final LevelMeasurer measurer = Mockito.mock(LevelMeasurer.class);
 
       final CauseSearcher searcher = new CauseSearcher(treeReader, causeSearchConfig, measurer, measurementConfig,
-            new PeASSFolders(folder));
+            new CauseSearchFolders(folder));
       final List<ChangedEntity> changes = searcher.search();
 
       Assert.assertEquals(1, changes.size());

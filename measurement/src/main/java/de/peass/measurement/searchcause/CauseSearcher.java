@@ -15,7 +15,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.ViewNotFoundException;
@@ -34,7 +34,7 @@ public class CauseSearcher {
    private static final Logger LOG = LogManager.getLogger(CauseSearcher.class);
 
    // Basic config
-   protected final PeASSFolders folders;
+   protected final CauseSearchFolders folders;
    protected final CauseSearcherConfig causeSearchConfig;
    protected final MeasurementConfiguration measurementConfig;
 
@@ -57,14 +57,14 @@ public class CauseSearcher {
       testtransformer.setSumTime(300000);
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(version, version + "~1", test);
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(15, 5, 0.01, 0.01);
-      final PeASSFolders folders2 = new PeASSFolders(projectFolder);
+      final CauseSearchFolders folders2 = new CauseSearchFolders(projectFolder);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders2);
       final LevelMeasurer measurer = new LevelMeasurer(folders2, causeSearcherConfig, testtransformer, measurementConfiguration);
       final CauseSearcher searcher = new CauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, folders2);
       searcher.search();
    }
 
-   public CauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final LevelMeasurer measurer, final MeasurementConfiguration measurementConfig, final PeASSFolders folders)
+   public CauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final LevelMeasurer measurer, final MeasurementConfiguration measurementConfig, final CauseSearchFolders folders)
          throws InterruptedException, IOException {
       data = new CauseSearchData(causeSearchConfig.getTestCase(), causeSearchConfig.getVersion(), causeSearchConfig.getPredecessor(), measurementConfig);
       this.reader = reader;
@@ -73,7 +73,7 @@ public class CauseSearcher {
       this.folders = folders;
       this.causeSearchConfig = causeSearchConfig;
       
-      treeDataFile = new File(folders.getFullMeasurementFolder(), causeSearchConfig.getVersion() + File.separator + 
+      treeDataFile = new File(folders.getRcaFolder(), causeSearchConfig.getVersion() + File.separator + 
             causeSearchConfig.getTestCase().getShortClazz() + File.separator 
             + causeSearchConfig.getTestCase().getMethod() + ".json");
       if (treeDataFile.getParentFile().exists()) {
@@ -102,7 +102,6 @@ public class CauseSearcher {
       isLevelDifferent(Arrays.asList(new CallTreeNode[] { reader.getRootPredecessor() }),
             Arrays.asList(new CallTreeNode[] { reader.getRootVersion() }));
 
-      writeTreeState();
       return convertToChangedEntitites();
    }
 

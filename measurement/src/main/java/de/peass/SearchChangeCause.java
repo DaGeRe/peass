@@ -5,7 +5,7 @@ import java.io.IOException;
 import javax.xml.bind.JAXBException;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
-import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.searchcause.CauseSearcher;
@@ -45,7 +45,7 @@ public class SearchChangeCause extends AdaptiveTestStarter {
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(version, predecessor, test);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders);
       final boolean complete = false;
-      final PeASSFolders alternateFolders = new PeASSFolders(folders.getProjectFolder());
+      final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
       if (complete) {
          final LevelMeasurer measurer = new LevelMeasurer(alternateFolders, causeSearcherConfig, testtransformer, measurementConfiguration);
          final CauseSearcher tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
