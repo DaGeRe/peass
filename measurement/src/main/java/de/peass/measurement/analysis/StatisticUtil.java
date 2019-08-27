@@ -3,10 +3,8 @@ package de.peass.measurement.analysis;
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.experimental.theories.suppliers.TestedOn;
 
 import de.peass.measurement.MeasurementConfiguration;
 
@@ -17,12 +15,12 @@ public class StatisticUtil {
    /**
     * Agnostic T-Test from Coscrato et al.: Agnostic tests can control the type I and type II errors simultaneously
     */
-   public static Relation agnosticTTest(StatisticalSummary statisticsAfter, StatisticalSummary statisticsBefore, double type1error, double type2error) {
-      double tValue = getTValue(statisticsAfter, statisticsBefore, 0);
-      return agnosticTTest(tValue, statisticsAfter.getN() + statisticsBefore.getN() - 2, type1error, type2error);
+   public static Relation agnosticTTest(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final double type1error, final double type2error) {
+      final double tValue = getTValue(statisticsPrev, statisticsVersion, 0);
+      return agnosticTTest(tValue, statisticsPrev.getN() + statisticsVersion.getN() - 2, type1error, type2error);
    }
    
-   public static Relation agnosticTTest(double tValue, long degreesOfFreedom, double type1error, double type2error) {
+   public static Relation agnosticTTest(final double tValue, final long degreesOfFreedom, final double type1error, final double type2error) {
       final TDistribution tDistribution = new TDistribution(null, degreesOfFreedom);
       final double criticalValueEqual = Math.abs(tDistribution.inverseCumulativeProbability(0.5 * (1 + type1error)));
       final double criticalValueUnequal = Math.abs(tDistribution.inverseCumulativeProbability(1. - 0.5 * type2error));
@@ -44,23 +42,23 @@ public class StatisticUtil {
    /**
     * Tested by testing whether it can be rejected that they are different - this does not work
     */
-   public static boolean areEqual(DescriptiveStatistics statisticsAfter, DescriptiveStatistics statisticsBefore, double significance, double maxDelta) {
-      final double delta_mu = statisticsAfter.getMean() - statisticsBefore.getMean();
+   public static boolean areEqual(final DescriptiveStatistics statisticsPrev, final DescriptiveStatistics statisticsVersion, final double significance, final double maxDelta) {
+      final double delta_mu = statisticsPrev.getMean() - statisticsVersion.getMean();
 
-      final TDistribution tDistribution = new TDistribution(null, statisticsAfter.getN() + statisticsBefore.getN() - 2);
+      final TDistribution tDistribution = new TDistribution(null, statisticsPrev.getN() + statisticsVersion.getN() - 2);
       final double criticalValue = Math.abs(tDistribution.inverseCumulativeProbability(significance));
 
       System.out.println("tcrit: " + criticalValue);
 
-      double tValue0 = getTValue(statisticsAfter, statisticsBefore, delta_mu);
-      System.out.println("Delta: " + delta_mu + " Max: " + maxDelta * statisticsAfter.getMean() + " T0: " + tValue0);
-      if (Math.abs(delta_mu) < maxDelta * statisticsAfter.getMean()) {
+      final double tValue0 = getTValue(statisticsPrev, statisticsVersion, delta_mu);
+      System.out.println("Delta: " + delta_mu + " Max: " + maxDelta * statisticsPrev.getMean() + " T0: " + tValue0);
+      if (Math.abs(delta_mu) < maxDelta * statisticsPrev.getMean()) {
          return true;
       }
       double tested_delta = delta_mu;
-      while (Math.abs(tested_delta) > maxDelta * statisticsAfter.getMean()) {
-         double tValue = getTValue(statisticsAfter, statisticsBefore, tested_delta);
-         System.out.println("Delta: " + tested_delta + " T:" + tValue + " Max: " + maxDelta * statisticsAfter.getMean());
+      while (Math.abs(tested_delta) > maxDelta * statisticsPrev.getMean()) {
+         final double tValue = getTValue(statisticsPrev, statisticsVersion, tested_delta);
+         System.out.println("Delta: " + tested_delta + " T:" + tValue + " Max: " + maxDelta * statisticsPrev.getMean());
          if (Math.abs(tValue) > criticalValue) {
             return false;
          }
@@ -71,27 +69,34 @@ public class StatisticUtil {
       return true; // falsch -> Eigentlich unbekannt
    }
 
-   public static boolean rejectAreEqual(StatisticalSummary statisticsAfter, StatisticalSummary statisticsBefore, double significance) {
+   public static boolean rejectAreEqual(final StatisticalSummary statisticsAfter, final StatisticalSummary statisticsBefore, final double significance) {
       final TDistribution tDistribution = new TDistribution(null, statisticsAfter.getN() + statisticsBefore.getN() - 2);
       final double criticalValue = Math.abs(tDistribution.inverseCumulativeProbability(significance));
 
-      double tValue0 = getTValue(statisticsAfter, statisticsBefore, 0.0);
+      final double tValue0 = getTValue(statisticsAfter, statisticsBefore, 0.0);
 
       return Math.abs(tValue0) > criticalValue;
    }
 
-   public static double getTValue(StatisticalSummary statisticsAfter, StatisticalSummary statisticsBefore, double omega) {
-      double n = statisticsAfter.getN();
-      double m = statisticsBefore.getN();
-      double sizeFactor = Math.sqrt(m * n / (m + n));
-      double upperPart = (m - 1) * Math.pow(statisticsBefore.getStandardDeviation(), 2) + (n - 1) * Math.pow(statisticsAfter.getStandardDeviation(), 2);
-      double s = Math.sqrt(upperPart / (m + n - 2));
-      double difference = (statisticsAfter.getMean() - statisticsBefore.getMean() - omega);
-      double tAlternative = sizeFactor * difference / s;
+   public static double getTValue(final StatisticalSummary statisticsAfter, final StatisticalSummary statisticsBefore, final double omega) {
+      final double n = statisticsAfter.getN();
+      final double m = statisticsBefore.getN();
+      final double sizeFactor = Math.sqrt(m * n / (m + n));
+      final double upperPart = (m - 1) * Math.pow(statisticsBefore.getStandardDeviation(), 2) + (n - 1) * Math.pow(statisticsAfter.getStandardDeviation(), 2);
+      final double s = Math.sqrt(upperPart / (m + n - 2));
+      final double difference = (statisticsAfter.getMean() - statisticsBefore.getMean() - omega);
+      final double tAlternative = sizeFactor * difference / s;
       return tAlternative;
    }
 
-   public static Relation agnosticTTest(StatisticalSummary statisticsVersion, StatisticalSummary statisticsPredecessor, MeasurementConfiguration measurementConfig) {
-      return agnosticTTest(statisticsVersion, statisticsPredecessor, measurementConfig.getType1error(), measurementConfig.getType2error());
+   /**
+    * Determines whether there is a change, no change or no decission can be made. Usually, first the predecessor and than the current version are given.
+    * @param statisticsPrev
+    * @param statisticsVersion
+    * @param measurementConfig
+    * @return
+    */
+   public static Relation agnosticTTest(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final MeasurementConfiguration measurementConfig) {
+      return agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getType1error(), measurementConfig.getType2error());
    }
 }

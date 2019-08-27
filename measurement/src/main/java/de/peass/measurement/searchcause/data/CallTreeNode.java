@@ -26,9 +26,14 @@ public class CallTreeNode {
    private String version, predecessor;
    
    private int warmup;
+   
+   private CallTreeNode otherVersionNode;
 
    public CallTreeNode(final String call, final String kiekerPattern, final CallTreeNode parent) {
       super();
+      if (!kiekerPattern.contains(call.replace("#", "."))) {
+         throw new RuntimeException("Pattern " + kiekerPattern + " must contain " + call);
+      }
       this.parent = parent;
       this.kiekerPattern = kiekerPattern;
       this.call = call;
@@ -118,5 +123,23 @@ public class CallTreeNode {
 
    public void resetStatistics() {
       data.values().forEach(statistics -> statistics.resetResults());
+   }
+
+   public CallTreeNode getOtherVersionNode() {
+      return otherVersionNode;
+   }
+
+   public void setOtherVersionNode(final CallTreeNode otherVersionNode) {
+      this.otherVersionNode = otherVersionNode;
+   }
+   
+   public String getMethod() {
+      final String method = call.substring(call.lastIndexOf('#'));
+      return method;
+   }
+
+   public String getParameters() {
+      final String parameters = kiekerPattern.substring(kiekerPattern.indexOf('('));
+      return parameters;
    }
 }

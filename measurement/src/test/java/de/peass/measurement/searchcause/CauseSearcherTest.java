@@ -19,6 +19,7 @@ import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.searchcause.data.CallTreeNode;
 import de.peass.measurement.searchcause.kieker.BothTreeReader;
+import de.peass.measurement.searchcause.treeanalysis.LevelDifferingDeterminer;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class CauseSearcherTest {
@@ -31,7 +32,7 @@ public class CauseSearcherTest {
       final CallTreeNode root1 = new TreeBuilder().getRoot();
       final CallTreeNode root2 = new TreeBuilder().getRoot();
       
-      final LevelCauseSearcher lcs = new LevelCauseSearcher(Arrays.asList(new CallTreeNode[] { root1 }),
+      final LevelDifferingDeterminer lcs = new LevelDifferingDeterminer(Arrays.asList(new CallTreeNode[] { root1 }),
             Arrays.asList(new CallTreeNode[] { root2 }),
             causeSearchConfig,
             measurementConfig);

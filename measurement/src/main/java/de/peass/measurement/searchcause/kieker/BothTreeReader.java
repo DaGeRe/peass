@@ -10,8 +10,8 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.searchcause.CauseSearcherConfig;
-import de.peass.measurement.searchcause.TreeUtil;
 import de.peass.measurement.searchcause.data.CallTreeNode;
+import de.peass.measurement.searchcause.treeanalysis.TreeUtil;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class BothTreeReader {

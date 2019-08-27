@@ -94,7 +94,7 @@ public class EarlyBreakDecider {
    public boolean isSavelyDecidableBothHypothesis(final int vmid) {
       boolean savelyDecidable = false;
       if (statisticsBefore.getN() > 30 && statisticsAfter.getN() > 30) {
-         final Relation relation = StatisticUtil.agnosticTTest(statisticsAfter, statisticsBefore, type1error, type2error);
+         final Relation relation = StatisticUtil.agnosticTTest(statisticsBefore, statisticsAfter, type1error, type2error);
          if (relation == Relation.EQUAL || relation == Relation.UNEQUAL) {
             LOG.info("Can savely decide: {}", relation);
             savelyDecidable = true;

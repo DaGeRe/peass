@@ -24,6 +24,7 @@ import de.peass.measurement.organize.FolderDeterminer;
 import de.peass.measurement.searchcause.data.CallTreeNode;
 import de.peass.measurement.searchcause.data.CauseSearchData;
 import de.peass.measurement.searchcause.kieker.BothTreeReader;
+import de.peass.measurement.searchcause.treeanalysis.LevelDifferingDeterminer;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.Constants;
 import kieker.analysis.exception.AnalysisConfigurationException;
@@ -117,7 +118,7 @@ public class CauseSearcher {
 
    private void isLevelDifferent(final List<CallTreeNode> currentPredecessorNodeList, final List<CallTreeNode> currentVersionNodeList)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      final LevelCauseSearcher levelSearcher = new LevelCauseSearcher(currentPredecessorNodeList, currentVersionNodeList, causeSearchConfig, measurementConfig);
+      final LevelDifferingDeterminer levelSearcher = new LevelDifferingDeterminer(currentPredecessorNodeList, currentVersionNodeList, causeSearchConfig, measurementConfig);
 
       final List<CallTreeNode> needToMeasurePredecessor = levelSearcher.getNeedToMeasurePredecessor();
       final List<CallTreeNode> needToMeasureCurrent = levelSearcher.getNeedToMeasureCurrent();
