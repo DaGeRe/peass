@@ -84,6 +84,7 @@ public class JUnitTestTransformer {
    protected File projectFolder;
    protected boolean useKieker = false;
    protected boolean adaptiveExecution = false;
+   protected boolean aggregatedWriter = false;
    protected Charset charset = StandardCharsets.UTF_8;
    protected int repetitions = 1;
    private Map<String, List<File>> extensions = null;
@@ -565,11 +566,19 @@ public class JUnitTestTransformer {
       return new JUnitTestGenerator(module, generatedClazz, callee, method, this).generateClazz();
    }
    
-   public void setAdaptiveExecution(boolean adaptiveExecution) {
+   public void setAdaptiveExecution(final boolean adaptiveExecution) {
       this.adaptiveExecution = adaptiveExecution;
    }
 
    public boolean isAdaptiveExecution() {
       return adaptiveExecution;
+   }
+
+   public boolean isAggregatedWriter() {
+      return aggregatedWriter;
+   }
+
+   public void setAggregatedWriter(final boolean aggregatedWriter) {
+      this.aggregatedWriter = aggregatedWriter;
    }
 }

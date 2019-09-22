@@ -15,15 +15,14 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.github.javaparser.ParseException;
 
-import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.KiekerResultManager;
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.utils.Constants;
-import de.peass.utils.StreamGobbler;
 import de.peass.vcs.GitUtils;
 
 public class ViewGeneratorThread implements Runnable {
@@ -32,15 +31,14 @@ public class ViewGeneratorThread implements Runnable {
 
    private final String version, predecessor;
    private final PeASSFolders folders;
-   private final  File viewFolder, executeFile;
+   private final File viewFolder, executeFile;
    private final TestSet testset;
    private final ExecutionData changedTraceMethods;
    private final int timeout;
-   
-   
 
-   public ViewGeneratorThread(String version, String predecessor, PeASSFolders folders, File viewFolder, File executeFile, TestSet testset, ExecutionData changedTraceMethods,
-         int timeout) {
+   public ViewGeneratorThread(final String version, final String predecessor, final PeASSFolders folders, final File viewFolder, final File executeFile, final TestSet testset,
+         final ExecutionData changedTraceMethods,
+         final int timeout) {
       super();
       this.version = version;
       this.predecessor = predecessor;
@@ -64,27 +62,14 @@ public class ViewGeneratorThread implements Runnable {
          if (!diffFolder.exists()) {
             diffFolder.mkdirs();
          }
-         final File projectFolderTemp = new File(folders.getTempProjectFolder(), "" + VersionComparator.getVersionIndex(version));
-         GitUtils.clone(folders, projectFolderTemp);
-         final PeASSFolders folders = new PeASSFolders(projectFolderTemp);
+         final PeASSFolders folders = initProjectFolder();
          final Map<String, List<File>> traceFileMap = new HashMap<>();
-         final boolean tracesWorked = generateTraces(folders, version, testset, predecessor, traceFileMap);
+         final boolean tracesWorked = generateTraces(folders, traceFileMap);
 
          for (final TestCase testcase : testset.getTests()) {
-            if (tracesWorked && traceFileMap.size() > 0) {
-               LOG.debug("Generating Diff " + testcase.getClazz() + "#" + testcase.getMethod() + " " + predecessor + " .." + version + " " + traceFileMap.size());
-               final boolean somethingChanged = generateDiffFiles(testcase, diffFolder, traceFileMap);
-
-               if (somethingChanged) {
-                  synchronized (changedTraceMethods) {
-                     changedTraceMethods.addCall(version, predecessor, testcase);
-                  }
-               }
-            } else {
-               LOG.debug("Missing: " + testcase + " Worked: " + tracesWorked);
-            }
+            analyzeTestcase(diffFolder, traceFileMap, tracesWorked, testcase);
          }
-         
+
          synchronized (changedTraceMethods) {
             LOG.debug("Writing");
             try (FileWriter fw = new FileWriter(executeFile)) {
@@ -99,14 +84,36 @@ public class ViewGeneratorThread implements Runnable {
          t.printStackTrace();
       }
    }
-   
-   protected boolean generateTraces(final PeASSFolders folders, final String version, final TestSet testset, final String versionOld, final Map<String, List<File>> traceFileMap)
+
+   private void analyzeTestcase(final File diffFolder, final Map<String, List<File>> traceFileMap, final boolean tracesWorked, final TestCase testcase) throws IOException {
+      if (tracesWorked && traceFileMap.size() > 0) {
+         LOG.debug("Generating Diff " + testcase.getClazz() + "#" + testcase.getMethod() + " " + predecessor + " .." + version + " " + traceFileMap.size());
+         final boolean somethingChanged = generateDiffFiles(testcase, diffFolder, traceFileMap);
+
+         if (somethingChanged) {
+            synchronized (changedTraceMethods) {
+               changedTraceMethods.addCall(version, predecessor, testcase);
+            }
+         }
+      } else {
+         LOG.debug("Missing: " + testcase + " Worked: " + tracesWorked);
+      }
+   }
+
+   private PeASSFolders initProjectFolder() throws InterruptedException, IOException {
+      final File projectFolderTemp = new File(folders.getTempProjectFolder(), "" + VersionComparator.getVersionIndex(version));
+      GitUtils.clone(folders, projectFolderTemp);
+      final PeASSFolders folders = new PeASSFolders(projectFolderTemp);
+      return folders;
+   }
+
+   protected boolean generateTraces(final PeASSFolders folders, final Map<String, List<File>> traceFileMap)
          throws IOException, InterruptedException, com.github.javaparser.ParseException, ViewNotFoundException, XmlPullParserException {
       boolean gotAllData = true;
 
       final KiekerResultManager resultsManager = new KiekerResultManager(folders.getProjectFolder(), timeout);
-      LOG.info("View Comparing {} against {}", version, versionOld);
-      for (final String githash : new String[] { versionOld, version }) {
+      LOG.info("View Comparing {} against {}", version, predecessor);
+      for (final String githash : new String[] { predecessor, version }) {
          LOG.debug("Checkout... {}", folders.getProjectFolder());
          GitUtils.goToTag(githash, folders.getProjectFolder());
 
@@ -117,7 +124,7 @@ public class ViewGeneratorThread implements Runnable {
 
          LOG.debug("Trace-Analysis..");
 
-         boolean worked = generateVersionTraces(folders, version, testset, traceFileMap, resultsManager, githash);
+         final boolean worked = generateVersionTraces(folders, traceFileMap, resultsManager, githash);
 
          if (!worked) {
             gotAllData = false;
@@ -134,8 +141,8 @@ public class ViewGeneratorThread implements Runnable {
       return gotAllData;
    }
 
-   public boolean generateVersionTraces(final PeASSFolders folders, final String version, final TestSet testset, final Map<String, List<File>> traceFileMap,
-         final KiekerResultManager resultsManager, final String githash) throws FileNotFoundException, IOException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public boolean generateVersionTraces(final PeASSFolders folders, final Map<String, List<File>> traceFileMap, final KiekerResultManager resultsManager, final String githash)
+         throws FileNotFoundException, IOException, XmlPullParserException, ParseException, ViewNotFoundException {
       boolean worked = false;
       for (final TestCase testcase : testset.getTests()) {
          final File moduleFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
@@ -173,12 +180,7 @@ public class ViewGeneratorThread implements Runnable {
                      + OneTraceGenerator.NOCOMMENT));
                System.out.println(isDifferent);
                if (isDifferent.length() > 0) {
-                  generateDiffFile(new File(diffFolder, testcase.getShortClazz() + "#" + testcase.getMethod() + ".txt"), traceFiles, "");
-                  generateDiffFile(new File(diffFolder, testcase.getShortClazz() + "#" + testcase.getMethod() + OneTraceGenerator.METHOD), traceFiles, OneTraceGenerator.METHOD);
-                  generateDiffFile(new File(diffFolder, testcase.getShortClazz() + "#" + testcase.getMethod() + OneTraceGenerator.NOCOMMENT), traceFiles,
-                        OneTraceGenerator.NOCOMMENT);
-                  generateDiffFile(new File(diffFolder, testcase.getShortClazz() + "#" + testcase.getMethod() + OneTraceGenerator.METHOD_EXPANDED), traceFiles,
-                        OneTraceGenerator.METHOD_EXPANDED);
+                  createAllDiffs(testcase, diffFolder, traceFiles);
                   return true;
                } else {
                   LOG.info("No change; traces equal.");
@@ -192,23 +194,20 @@ public class ViewGeneratorThread implements Runnable {
             LOG.info("Traces not existing: {}", testcase);
             return false;
          }
-
       } else {
          LOG.info("Tracefolder too big: {}", sizeInMB);
          return false;
       }
    }
 
-   private void generateDiffFile(final File goalFile, final List<File> traceFiles, final String appendix) throws IOException {
-      final ProcessBuilder processBuilder2 = new ProcessBuilder("diff",
-            "--minimal", "--ignore-all-space", "-y", "-W", "200",
-            traceFiles.get(0).getAbsolutePath() + appendix,
-            traceFiles.get(1).getAbsolutePath() + appendix);
-      final Process p2 = processBuilder2.start();
-      final String result2 = StreamGobbler.getFullProcess(p2, false);
-      try (final FileWriter fw = new FileWriter(goalFile)) {
-         fw.write(result2);
-      }
+   private void createAllDiffs(final TestCase testcase, final File diffFolder, final List<File> traceFiles) throws IOException {
+      final String testcaseName = testcase.getShortClazz() + "#" + testcase.getMethod();
+      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + ".txt"), traceFiles, "");
+      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD), traceFiles, OneTraceGenerator.METHOD);
+      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.NOCOMMENT), traceFiles,
+            OneTraceGenerator.NOCOMMENT);
+      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD_EXPANDED), traceFiles,
+            OneTraceGenerator.METHOD_EXPANDED);
    }
 
 }

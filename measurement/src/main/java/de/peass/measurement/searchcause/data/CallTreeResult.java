@@ -2,7 +2,11 @@ package de.peass.measurement.searchcause.data;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
-class CallTreeResult {
+/**
+ * CallTreeResult for analyzing a log line by line
+ * 
+ */
+public class CallTreeResult implements OneVMResult {
 
    private final int warmup;
    private int measured = 0;
@@ -11,8 +15,8 @@ class CallTreeResult {
    public CallTreeResult(final int warmup) {
       this.warmup = warmup;
    }
-   
-   public double getAverage(){
+
+   public double getAverage() {
       return statistics.getMean();
    }
 

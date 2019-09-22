@@ -2,7 +2,6 @@ package de.peass.measurement.organize;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -25,22 +24,25 @@ import de.peass.measurement.analysis.MultipleVMTestUtil;
 
 public class ResultOrganizer {
 
+
    private static final Logger LOG = LogManager.getLogger(ResultOrganizer.class);
 
    private PeASSFolders folders;
    private String mainVersion;
    private long currentChunkStart;
    private boolean isUseKieker;
-   private int thresholdForZippingInMB = 10;
+   private int thresholdForZippingInMB = 5;
    private final FolderDeterminer determiner;
+   private boolean saveAll = false;
 
-   public ResultOrganizer(PeASSFolders folders, String currentVersion, long currentChunkStart, boolean isUseKieker) {
+   public ResultOrganizer(final PeASSFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll) {
       super();
       this.folders = folders;
       this.mainVersion = currentVersion;
       this.currentChunkStart = currentChunkStart;
       this.isUseKieker = isUseKieker;
-      
+      this.saveAll = saveAll;
+
       determiner = new FolderDeterminer(folders);
    }
 
@@ -58,14 +60,14 @@ public class ResultOrganizer {
             final Kopemedata oneResultData = xdl.getFullData();
             final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
             final String clazz = oneResultData.getTestcases().getClazz();
-            TestCase realTestcase = new TestCase(clazz, methodname);
+            final TestCase realTestcase = new TestCase(clazz, methodname);
             if (testcaseList.size() > 0) {
                saveResults(version, vmid, realTestcase, oneResultFile, oneResultData, testcaseList);
             } else {
                LOG.error("No data - measurement failed?");
             }
             if (isUseKieker) {
-               saveKiekerFiles(folder, determiner.getFullResultFolder(realTestcase, version, mainVersion));
+               saveKiekerFiles(folder, folders.getFullResultFolder(realTestcase, mainVersion, version));
             }
          }
       }
@@ -114,24 +116,31 @@ public class ResultOrganizer {
    }
 
    private void saveKiekerFiles(final File folder, final File destFolder) throws IOException {
-      File kiekerFolder = folder.listFiles()[0];
-      long size = FileUtils.sizeOf(kiekerFolder);
-      long sizeInMb = size / (1024 * 1024);
+      final File kiekerFolder = folder.listFiles()[0];
+      if (saveAll) {
+         moveOrCompressFile(destFolder, kiekerFolder);
+      } else {
+         FileUtils.deleteDirectory(kiekerFolder);
+      }
+   }
+
+   private void moveOrCompressFile(final File destFolder, final File kiekerFolder) throws IOException {
+      final long size = FileUtils.sizeOf(kiekerFolder);
+      final long sizeInMb = size / (1024 * 1024);
       LOG.debug("Kieker folder size: {} MB ({})", sizeInMb, size);
       if (sizeInMb > thresholdForZippingInMB) {
-         File dest = new File(destFolder, kiekerFolder.getName() + ".tar");
-         ProcessBuilder processBuilder = new ProcessBuilder("tar", "-czf", dest.getAbsolutePath(), kiekerFolder.getAbsolutePath());
+         final File dest = new File(destFolder, kiekerFolder.getName() + ".tar");
+         final ProcessBuilder processBuilder = new ProcessBuilder("tar", "-czf", dest.getAbsolutePath(), kiekerFolder.getAbsolutePath());
          processBuilder.environment().put("GZIP", "-9");
-         Process process = processBuilder.start();
+         final Process process = processBuilder.start();
          try {
             process.waitFor();
-         } catch (InterruptedException e) {
+         } catch (final InterruptedException e) {
             e.printStackTrace();
          }
          FileUtils.deleteDirectory(kiekerFolder);
-
       } else {
-         File dest = new File(destFolder, kiekerFolder.getName());
+         final File dest = new File(destFolder, kiekerFolder.getName());
          kiekerFolder.renameTo(dest);
       }
    }
@@ -154,11 +163,19 @@ public class ResultOrganizer {
       return thresholdForZippingInMB;
    }
 
-   public void setThresholdForZippingInMB(int thresholdForZippingInMB) {
+   public void setThresholdForZippingInMB(final int thresholdForZippingInMB) {
       this.thresholdForZippingInMB = thresholdForZippingInMB;
    }
 
-   public File getResultFile(TestCase testcase, int vmid, String version) {
+   public File getResultFile(final TestCase testcase, final int vmid, final String version) {
       return determiner.getResultFile(testcase, vmid, version, mainVersion);
+   }
+   
+   public boolean isSaveAll() {
+      return saveAll;
+   }
+
+   public void setSaveAll(final boolean saveAll) {
+      this.saveAll = saveAll;
    }
 }

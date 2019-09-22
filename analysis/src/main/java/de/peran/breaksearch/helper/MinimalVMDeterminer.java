@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
-import de.peran.breaksearch.FindLowestPossibleIterations;
+import de.peass.breaksearch.FindLowestPossibleIterations;
 
 public class MinimalVMDeterminer extends MinimalValueDeterminer {
 	private static final Logger LOG = LogManager.getLogger(MinimalValueDeterminer.class);

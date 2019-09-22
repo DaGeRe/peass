@@ -10,13 +10,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -25,7 +23,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.searchcause.kieker.BothTreeReader;
@@ -43,8 +40,8 @@ public class CauseSearcherCompleteIT {
    
    public static final File CURRENT = new File(new File("target"), "current");
    private static final File VERSIONS_FOLDER = new File("src/test/resources/rootCauseIT");
-   private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
-   private static final File SLOW_STATE = new File(VERSIONS_FOLDER, "slow_state");
+   private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state_inheritance");
+   private static final File SLOW_STATE = new File(VERSIONS_FOLDER, "slow_state_inheritance");
 
    @Before
    public void setUp() throws InterruptedException, IOException {
@@ -60,71 +57,28 @@ public class CauseSearcherCompleteIT {
       final File projectFolderTemp = new File(folders.getTempProjectFolder(), "000001");
       
       PowerMockito.mockStatic(VersionControlSystem.class);
-      AdaptiveExecutorTest.mockGetVCS();
+      VCSTestUtils.mockGetVCS();
       
       PowerMockito.mockStatic(GitUtils.class);
-      mockClone(projectFolderTemp);
+      VCSTestUtils.mockClone(projectFolderTemp, CURRENT);
       
-      mockGoToTag(folders, projectFolderTemp);
-
-      
-   }
-
-   private void mockClone(final File projectFolderTemp) throws InterruptedException, IOException {
-      PowerMockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            FileUtils.copyDirectory(CURRENT, projectFolderTemp);
-            return null;
-         }
-      }).when(GitUtils.class);
-      GitUtils.clone(Mockito.any(PeASSFolders.class), Mockito.any(File.class));
-   }
-
-   private void mockGoToTag(final PeASSFolders folders, final File projectFolderTemp) {
-      PowerMockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            final File destFile = (File) invocation.getArgument(1);
-            LOG.debug("Loading faster..");
-            FileUtils.deleteDirectory(destFile);
-            FileUtils.copyDirectory(BASIC_STATE, destFile);
-            return null;
-         }
-      }).when(GitUtils.class);
-      GitUtils.goToTag(Mockito.eq("000001"), Mockito.any(File.class));
-
-      PowerMockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            final File destFile = (File) invocation.getArgument(1);
-            LOG.debug("Loading slower..");
-            FileUtils.copyDirectory(SLOW_STATE, destFile);
-            return null;
-         }
-      }).when(GitUtils.class);
-      GitUtils.goToTag(Mockito.eq("000001~1"), Mockito.any(File.class));
+      VCSTestUtils.mockGoToTag(folders, SLOW_STATE, BASIC_STATE);
    }
 
    @Test
    public void testSlowerState() throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
       final JUnitTestTransformer testgenerator = new JUnitTestTransformer(CURRENT);
       testgenerator.setIterations(30);
-      testgenerator.setWarmupExecutions(30);
-//      BothTreeReader reader = new Bo
-      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig("000001", "000001~1", new TestCase("defaultpackage.TestMe", "testMe"));
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(2);
+      testgenerator.setWarmupExecutions(1);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(2, "000001", "000001~1");
       final CauseSearchFolders folders = new CauseSearchFolders(CURRENT);
-      final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders);
-      final LevelMeasurer measurer = new LevelMeasurer(folders, causeSearcherConfig, testgenerator, measurementConfiguration);
-      final CauseSearcher searcher = new CauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, folders);
+      final BothTreeReader reader = new BothTreeReader(AdaptiveExecutorMoreParameterTest.DEFAULT_CAUSE_CONFIG, measurementConfiguration, folders);
+      final LevelMeasurer measurer = new LevelMeasurer(folders, AdaptiveExecutorMoreParameterTest.DEFAULT_CAUSE_CONFIG, testgenerator, measurementConfiguration);
+      final CauseSearcher searcher = new CauseSearcher(reader, AdaptiveExecutorMoreParameterTest.DEFAULT_CAUSE_CONFIG, measurer, measurementConfiguration, folders);
       final List<ChangedEntity> changedEntities = searcher.search();
 
       LOG.debug(changedEntities);
-      Assert.assertEquals(1, changedEntities.size());
+      Assert.assertThat(changedEntities.size(), Matchers.greaterThanOrEqualTo(1));
       Assert.assertEquals("defaultpackage.NormalDependency#child12", changedEntities.get(0).toString());
       
    }

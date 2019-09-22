@@ -16,7 +16,6 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tools.ant.util.OutputStreamFunneler;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -70,26 +69,25 @@ public class ReadProperties implements Callable<Void> {
 
    }
 
-   public ReadProperties(File resultFile) {
+   public ReadProperties(final File resultFile) {
       out = resultFile;
    }
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException, JAXBException {
-      CommandLine commandLine = new CommandLine(new ReadProperties());
+      final CommandLine commandLine = new CommandLine(new ReadProperties());
       commandLine.execute(args);
    }
 
    @Override
    public Void call() throws Exception {
-      RepoFolders folders = new RepoFolders();
-      String projectName = projectFolder.getName();
+      final RepoFolders folders = new RepoFolders();
+      final String projectName = projectFolder.getName();
       GetChanges.getVersionOrder(dependencyFile, executionFile, folders.getDependencyFile(projectName));
       
       if (!projectFolder.exists()) {
          GitUtils.downloadProject(VersionComparator.getDependencies().getUrl(), projectFolder);
       }
 
-      // final File viewFolder = new File(commandLine.getOptionValue(OptionConstants.VIEWFOLDER.getName()));
       final File viewFolder = folders.getViewFolder(projectName);
       final ExecutionData changedTests = folders.getExecutionData(projectName);
       if (ReadAllProperties.readAll) {
@@ -125,7 +123,7 @@ public class ReadProperties implements Callable<Void> {
    public void readAllTestsProperties(final File projectFolder, final File viewFolder, final ExecutionData changedTests) throws IOException {
       final VersionChangeProperties versionProperties = new VersionChangeProperties();
       int count = 0;
-      File methodFolder = new File(out.getParentFile(), "methods");
+      final File methodFolder = new File(out.getParentFile(), "methods");
       methodFolder.mkdirs();
       for (final Map.Entry<String, TestSet> version : changedTests.getVersions().entrySet()) {
          // String prevVersion = VersionComparator.getPreviousVersion(version.getKey());
@@ -140,7 +138,9 @@ public class ReadProperties implements Callable<Void> {
                final Change testcaseChange = new Change();
                testcaseChange.setMethod(testmethod);
                
-               final PropertyReadHelper reader = new PropertyReadHelper(version.getKey(), version.getValue().getPredecessor(), testclazz.getKey(), testcaseChange,
+               final ChangedEntity entity = new ChangedEntity(testclazz.getKey().getClazz(), testclazz.getKey().getModule());
+               final PropertyReadHelper reader = new PropertyReadHelper(version.getKey(), version.getValue().getPredecessor(), 
+                     entity, testcaseChange, 
                      projectFolder,
                      viewFolder, methodFolder);
                final ChangeProperty currentProperty = reader.read();
@@ -187,7 +187,7 @@ public class ReadProperties implements Callable<Void> {
    private int detectVersionProperty(final File projectFolder, final File viewFolder, final BufferedWriter csvWriter,
          final VersionChangeProperties versionProperties,
          final Entry<String, Changes> versionChanges, final String predecessor) throws IOException, JsonGenerationException, JsonMappingException {
-      File methodFolder = new File(out.getParentFile(), "methods");
+      final File methodFolder = new File(out.getParentFile(), "methods");
       methodFolder.mkdirs();
       final String version = versionChanges.getKey();
       final ChangeProperties changeProperties = new ChangeProperties();

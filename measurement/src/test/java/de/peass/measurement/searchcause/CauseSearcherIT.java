@@ -10,6 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +26,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.searchcause.kieker.BothTreeReader;
@@ -60,14 +60,12 @@ public class CauseSearcherIT {
       final File projectFolderTemp = new File(folders.getTempProjectFolder(), "000001");
       
       PowerMockito.mockStatic(VersionControlSystem.class);
-      AdaptiveExecutorTest.mockGetVCS();
+      VCSTestUtils.mockGetVCS();
       
       PowerMockito.mockStatic(GitUtils.class);
       mockClone(projectFolderTemp);
       
       mockGoToTag(folders, projectFolderTemp);
-
-      
    }
 
    private void mockClone(final File projectFolderTemp) throws InterruptedException, IOException {
@@ -115,8 +113,8 @@ public class CauseSearcherIT {
       testgenerator.setIterations(30);
       testgenerator.setWarmupExecutions(30);
 //      BothTreeReader reader = new Bo
-      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig("000001", "000001~1", new TestCase("defaultpackage.TestMe", "testMe"));
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(2);
+      final CauseSearcherConfig causeSearcherConfig = AdaptiveExecutorMoreParameterTest.DEFAULT_CAUSE_CONFIG;
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(2, "000001", "000001~1");
       final CauseSearchFolders folders = new CauseSearchFolders(CURRENT);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders);
       final LevelMeasurer measurer = new LevelMeasurer(folders, causeSearcherConfig, testgenerator, measurementConfiguration);
@@ -124,7 +122,7 @@ public class CauseSearcherIT {
       final List<ChangedEntity> changedEntities = searcher.search();
 
       LOG.debug(changedEntities);
-      Assert.assertEquals(1, changedEntities.size());
+      Assert.assertThat(changedEntities.size(), Matchers.greaterThanOrEqualTo(1));
       Assert.assertEquals("defaultpackage.NormalDependency#child12", changedEntities.get(0).toString());
       
    }

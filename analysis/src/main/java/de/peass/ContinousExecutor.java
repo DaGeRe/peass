@@ -30,12 +30,10 @@ import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependency.reader.VersionKeeper;
 import de.peass.dependency.traces.ViewGenerator;
 import de.peass.dependencyprocessors.AdaptiveTester;
-import de.peass.dependencyprocessors.DependencyTester;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.MeasurementConfiguration;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.testtransformation.JUnitTestTransformer;
-import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIteratorGit;
@@ -83,8 +81,8 @@ public class ContinousExecutor implements Callable<Void>  {
    protected File projectFolder;
 
    public static void main(final String[] args) throws InterruptedException, IOException, JAXBException {
-      ContinousExecutor command = new ContinousExecutor();
-      CommandLine commandLine = new CommandLine(command);
+      final ContinousExecutor command = new ContinousExecutor();
+      final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);
       
    }
@@ -106,9 +104,9 @@ public class ContinousExecutor implements Callable<Void>  {
          testgenerator.setWarmupExecutions(warmup);
          testgenerator.setRepetitions(repetitions);
          testgenerator.setUseKieker(false);
-         final DependencyTester tester = new AdaptiveTester(folders, testgenerator, new MeasurementConfiguration(vms));
+         final AdaptiveTester tester = new AdaptiveTester(folders, testgenerator, new MeasurementConfiguration(vms, headCommit.getTag(), previousName));
          for (final TestCase test : tests) {
-            tester.evaluate(headCommit.getTag(), previousName, test);
+            tester.evaluate(test);
          }
 
          final File fullResultsFolder = folders.getFullMeasurementFolder();

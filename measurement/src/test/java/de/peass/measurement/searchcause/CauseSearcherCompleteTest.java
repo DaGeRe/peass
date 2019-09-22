@@ -6,8 +6,10 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -22,9 +24,19 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class CauseSearcherCompleteTest {
 
-   private final CauseSearcherConfig causeSearchConfig = new CauseSearcherConfig("2", "1", new TestCase("Test#test"));
-   private final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(3);
+   private final CauseSearcherConfig causeSearchConfig = new CauseSearcherConfig(new TestCase("Test#test"), true, false, 5.0);
+   private final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(3, "2", "1");
 
+   @Before
+   public void cleanup() {
+      final File folder = new File("target/test_peass/");
+      try {
+         FileUtils.deleteDirectory(folder);
+      } catch (final IOException e) {
+         e.printStackTrace();
+      }
+   }
+   
    @Test
    public void testSameNodesChanges()
          throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {

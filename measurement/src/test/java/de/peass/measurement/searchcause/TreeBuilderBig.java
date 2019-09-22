@@ -4,9 +4,9 @@ import de.peass.measurement.searchcause.data.CallTreeNode;
 
 class TreeBuilder {
    protected final CallTreeNode root = new CallTreeNode("Test#test", "public void Test.test", null);
-   protected final CallTreeNode a = root.append("ClassA#methodA", "public void ClassA.methodA");
-   protected final CallTreeNode b = a.append("ClassB#methodB", "public void ClassB.methodB");
-   protected final CallTreeNode c = root.append("ClassC#methodC", "public void ClassC.methodC");
+   protected final CallTreeNode a = root.appendChild("ClassA#methodA", "public void ClassA.methodA");
+   protected final CallTreeNode b = a.appendChild("ClassB#methodB", "public void ClassB.methodB");
+   protected final CallTreeNode c = root.appendChild("ClassC#methodC", "public void ClassC.methodC");
 
    public TreeBuilder() {
 
@@ -51,7 +51,7 @@ class TreeBuilder {
 
    protected void buildChunks(final CallTreeNode node, final String version, final long average) {
       for (int i = 0; i < 3; i++) {
-         node.newResult(version);
+         node.newVM(version);
          node.addMeasurement(version, average + i % 2);
          node.addMeasurement(version, average + 5);
          node.addMeasurement(version, average - 5);
@@ -61,10 +61,10 @@ class TreeBuilder {
 
 public class TreeBuilderBig extends TreeBuilder {
 
-   final CallTreeNode b2 = c.append("ClassB#methodB", "public void ClassB.methodB");
+   final CallTreeNode b2 = c.appendChild("ClassB#methodB", "public void ClassB.methodB");
    private final boolean secondBDiffering;
 
-   public TreeBuilderBig(boolean secondBDiffering) {
+   public TreeBuilderBig(final boolean secondBDiffering) {
       this.secondBDiffering = secondBDiffering;
    }
 
@@ -86,8 +86,8 @@ public class TreeBuilderBig extends TreeBuilder {
 
 class TreeBuilderDifferent extends TreeBuilder {
 
-   final CallTreeNode d = c.append("ClassD#methodD", "public void ClassD.methodD");
-   final CallTreeNode e = c.append("ClassE#methodE", "public void ClassE.methodE");
+   final CallTreeNode d = c.appendChild("ClassD#methodD", "public void ClassD.methodD");
+   final CallTreeNode e = c.appendChild("ClassE#methodE", "public void ClassE.methodE");
 
    public TreeBuilderDifferent() {
    }

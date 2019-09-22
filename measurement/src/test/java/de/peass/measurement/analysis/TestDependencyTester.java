@@ -27,8 +27,8 @@ import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
-import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.KiekerResultManager;
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependencyprocessors.DependencyTester;
@@ -46,14 +46,14 @@ public class TestDependencyTester {
 
    @Test
    public void testFiles() throws IOException, InterruptedException, JAXBException {
-      PeASSFolders folders = new PeASSFolders(folder.getRoot());
-      JUnitTestTransformer testTransformer = Mockito.mock(JUnitTestTransformer.class);
+      final PeASSFolders folders = new PeASSFolders(folder.getRoot());
+      final JUnitTestTransformer testTransformer = Mockito.mock(JUnitTestTransformer.class);
 
-      TestExecutor mockedExecutor = Mockito.mock(TestExecutor.class);
+      final TestExecutor mockedExecutor = Mockito.mock(TestExecutor.class);
       Mockito.doAnswer(new Answer<Void>() {
 
          @Override
-         public Void answer(InvocationOnMock invocation) throws Throwable {
+         public Void answer(final InvocationOnMock invocation) throws Throwable {
             writeValue(folders, 100);
             return null;
          }
@@ -68,29 +68,29 @@ public class TestDependencyTester {
       PowerMockito.when(VersionControlSystem.getVersionControlSystem(folder.getRoot()))
             .thenReturn(VersionControlSystem.GIT);
 
-      DependencyTester tester = new DependencyTester(folders, testTransformer, new MeasurementConfiguration(4));
+      final DependencyTester tester = new DependencyTester(folders, testTransformer, new MeasurementConfiguration(4, "2", "1"));
 
-      tester.evaluate("1", "2", new TestCase("de.peass.MyTest", "test"));
+      tester.evaluate(new TestCase("de.peass.MyTest", "test"));
       
-      File expectedShortresultFile = new File(folders.getFullMeasurementFolder(), "MyTest_test.xml");
+      final File expectedShortresultFile = new File(folders.getFullMeasurementFolder(), "MyTest_test.xml");
       Assert.assertTrue(expectedShortresultFile.exists());
       
-      Kopemedata data = XMLDataLoader.loadData(expectedShortresultFile);
-      Datacollector collector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
-      Chunk chunk = collector.getChunk().get(0);
+      final Kopemedata data = XMLDataLoader.loadData(expectedShortresultFile);
+      final Datacollector collector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
+      final Chunk chunk = collector.getChunk().get(0);
       Assert.assertEquals(105, chunk.getResult().get(0).getValue(), 0.1);
       Assert.assertEquals(5, chunk.getResult().get(0).getRepetitions());
       Assert.assertEquals(11, chunk.getResult().get(0).getExecutionTimes());
       Assert.assertEquals(10, chunk.getResult().get(0).getWarmupExecutions());
    }
    
-   public void writeValue(PeASSFolders folders, int average) throws JAXBException {
-      File measurementFile = new File(folders.getTempMeasurementFolder(), "de.peass.MyTest");
+   public void writeValue(final PeASSFolders folders, final int average) throws JAXBException {
+      final File measurementFile = new File(folders.getTempMeasurementFolder(), "de.peass.MyTest");
       measurementFile.mkdirs();
-      XMLDataStorer storer = new XMLDataStorer(measurementFile, "de.peass.MyTest", "test");
-      PerformanceDataMeasure measure = new PerformanceDataMeasure("de.peass.MyTest.test", TimeDataCollector.class.getName(), average, 1,
+      final XMLDataStorer storer = new XMLDataStorer(measurementFile, "de.peass.MyTest", "test");
+      final PerformanceDataMeasure measure = new PerformanceDataMeasure("de.peass.MyTest.test", TimeDataCollector.class.getName(), average, 1,
             20, 0, 5, average - 10, 11, 5);
-      Map<Long, Long> values = new LinkedHashMap<>();
+      final Map<Long, Long> values = new LinkedHashMap<>();
       for (long i = average - 10; i <= average + 10; i++) {
          values.put(i, i);
       }

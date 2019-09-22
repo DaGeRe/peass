@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -24,9 +25,18 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class CauseSearcherTest {
 
-   private final CauseSearcherConfig causeSearchConfig = new CauseSearcherConfig("2", "1", new TestCase("Test#test"));
-   private final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(3);
-
+   private final CauseSearcherConfig causeSearchConfig = new CauseSearcherConfig(new TestCase("Test#test"), true, false, 5.0);
+   private final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(3, "2", "1");
+   
+   public void cleanup() {
+      final File folder = new File("target/test_peass/");
+      try {
+         FileUtils.deleteDirectory(folder);
+      } catch (final IOException e) {
+         e.printStackTrace();
+      }
+   }
+   
    @Test
    public void testMeasurement() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       final CallTreeNode root1 = new TreeBuilder().getRoot();
@@ -41,12 +51,12 @@ public class CauseSearcherTest {
 
       lcs.analyseNode(root1);
       Assert.assertEquals(0, lcs.getTreeStructureDifferingNodes().size());
-
    }
-
+   
    @Test
    public void testCauseSearching()
          throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
+      cleanup();
       final File folder = new File("target/test/");
       folder.mkdir();
 
@@ -62,6 +72,7 @@ public class CauseSearcherTest {
             new CauseSearchFolders(folder));
       final List<ChangedEntity> changes = searcher.search();
 
+      System.out.println(changes);
       Assert.assertEquals(1, changes.size());
       Assert.assertEquals("ClassB#methodB", changes.get(0).toString());
    }

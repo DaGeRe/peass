@@ -28,7 +28,6 @@ import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,7 +41,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.persistence.Dependencies;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 /**
@@ -172,12 +170,15 @@ public class MavenTestExecutor extends TestExecutor {
          if (testTransformer.isAdaptiveExecution()) {
             prepareAdaptiveExecution();
          }
+         if (testTransformer.isAggregatedWriter()) {
+
+         }
       }
       preparePom();
    }
 
    public void prepareAdaptiveExecution() throws IOException, InterruptedException {
-      File kiekerJar = new File(MavenTestExecutor.KIEKER_FOLDER_MAVEN_TWEAK.replace("${user.home}", System.getProperty("user.home")));
+      final File kiekerJar = new File(MavenTestExecutor.KIEKER_FOLDER_MAVEN_TWEAK.replace("${user.home}", System.getProperty("user.home")));
       if (!kiekerJar.exists()) {
          // This can be removed if Kieker 1.14 is released
          throw new RuntimeException("Tweaked Kieker " + kiekerJar + " needs to exist - git clone https://github.com/DaGeRe/kieker -b 1_13_tweak "
@@ -193,7 +194,7 @@ public class MavenTestExecutor extends TestExecutor {
       final File adaptiveFile = new File(folders.getProjectFolder(), MavenTestExecutor.KIEKER_ADAPTIVE_FILENAME);
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(adaptiveFile))) {
          writer.write("- *\n");
-         for (String includedMethod : includedMethodPattern) {
+         for (final String includedMethod : includedMethodPattern) {
             writer.write("+ " + includedMethod + "\n");
          }
 
@@ -281,20 +282,7 @@ public class MavenTestExecutor extends TestExecutor {
          if (model.getBuild() == null) {
             model.setBuild(new Build());
          }
-         final String argline;
-         if (testTransformer.isUseKieker()) {
-            if (!testTransformer.isAdaptiveExecution()) {
-               argline = KIEKER_ARG_LINE + " " + TEMP_DIR + "=" + tempFile.toString();
-            } else {
-               argline = KIEKER_ARG_LINE_TWEAK +
-                     " " + TEMP_DIR + "=" + tempFile.toString() +
-                     " -Dkieker.monitoring.adaptiveMonitoring.enabled=true" +
-                     " -Dkieker.monitoring.adaptiveMonitoring.configFile=" + KIEKER_ADAPTIVE_FILENAME +
-                     " -Dkieker.monitoring.adaptiveMonitoring.readInterval=15";
-            }
-         } else {
-            argline = "";
-         }
+         final String argline = buildArgline(tempFile);
 
          MavenPomUtil.extendSurefire(argline, model, update, timeout * 2);
 
@@ -304,7 +292,7 @@ public class MavenTestExecutor extends TestExecutor {
          }
          if (testTransformer.isAdaptiveExecution()) {
             // Needs to be the first dependency..
-            List<Dependency> dependencies = model.getDependencies();
+            final List<Dependency> dependencies = model.getDependencies();
             final Dependency kopeme_dependency2 = MavenPomUtil.getDependency("net.kieker-monitoring", "1.13-tweak", "test", "kieker");
             dependencies.add(kopeme_dependency2);
          }
@@ -319,6 +307,38 @@ public class MavenTestExecutor extends TestExecutor {
       }
    }
 
+   private String buildArgline(final File tempFile) {
+      final String argline;
+      if (testTransformer.isUseKieker()) {
+         final String writerConfig;
+         if (testTransformer.isAggregatedWriter()) {
+            final String bulkFolder = "-Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.customStoragePath=" + tempFile.toString();
+            final int wholeWarmup = testTransformer.getWarmupExecutions() * testTransformer.getRepetitions();
+            writerConfig = "-Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AggregatedTreeWriter" +
+                  " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.warmup=" + wholeWarmup +
+                  " " + bulkFolder;
+         } else {
+            writerConfig = "";
+         }
+
+         if (!testTransformer.isAdaptiveExecution()) {
+            argline = KIEKER_ARG_LINE +
+                  " " + TEMP_DIR + "=" + tempFile.toString() +
+                  " " + writerConfig;
+         } else {
+            argline = KIEKER_ARG_LINE_TWEAK +
+                  " " + TEMP_DIR + "=" + tempFile.toString() +
+                  " -Dkieker.monitoring.adaptiveMonitoring.enabled=true" +
+                  " -Dkieker.monitoring.adaptiveMonitoring.configFile=" + KIEKER_ADAPTIVE_FILENAME +
+                  " -Dkieker.monitoring.adaptiveMonitoring.readInterval=15" +
+                  " " + writerConfig;
+         }
+      } else {
+         argline = "";
+      }
+      return argline;
+   }
+
    public Charset getEncoding() {
       return lastEncoding;
    }
@@ -329,7 +349,7 @@ public class MavenTestExecutor extends TestExecutor {
    }
 
    @Override
-   public void setIncludedMethods(Set<String> includedMethodPattern) {
+   public void setIncludedMethods(final Set<String> includedMethodPattern) {
       this.includedMethodPattern = includedMethodPattern;
    }
 

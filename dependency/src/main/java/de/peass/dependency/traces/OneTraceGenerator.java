@@ -1,11 +1,9 @@
 package de.peass.dependency.traces;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +68,7 @@ public class OneTraceGenerator {
          throws com.github.javaparser.ParseException, IOException, ViewNotFoundException, XmlPullParserException {
       boolean success = false;
       try {
-         File methodResult = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder);
+         final File methodResult = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder);
          LOG.debug("Searching for: {}", methodResult);
          if (methodResult.exists() && methodResult.isDirectory()) {
             success = generateTraceFiles(versionCurrent, methodResult);
@@ -112,7 +110,7 @@ public class OneTraceGenerator {
                }
                final File methodDir = new File(getClazzDir(version, testcase), testcase.getMethod());
                if (!methodDir.exists()) {
-                  methodDir.mkdir();
+                  methodDir.mkdir(); 
                }
                String shortVersion = versionCurrent.substring(0, 6);
                if (versionCurrent.endsWith("~1")) {

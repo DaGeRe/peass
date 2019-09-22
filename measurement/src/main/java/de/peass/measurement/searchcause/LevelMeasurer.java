@@ -9,7 +9,7 @@ import javax.xml.bind.JAXBException;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.searchcause.data.CallTreeNode;
@@ -18,13 +18,13 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class LevelMeasurer {
    
-   private final PeASSFolders folders;
+   private final CauseSearchFolders folders;
    private int adaptiveId = 0;
    private final CauseSearcherConfig causeSearcherConfig;
    private final JUnitTestTransformer testgenerator;
    private final MeasurementConfiguration measurementConfiguration;
    
-   public LevelMeasurer(final PeASSFolders folders, final CauseSearcherConfig causeSearcherConfig, final JUnitTestTransformer testgenerator, final MeasurementConfiguration measurementConfiguration) {
+   public LevelMeasurer(final CauseSearchFolders folders, final CauseSearcherConfig causeSearcherConfig, final JUnitTestTransformer testgenerator, final MeasurementConfiguration measurementConfiguration) {
       this.folders = folders;
       this.causeSearcherConfig = causeSearcherConfig;
       this.testgenerator = testgenerator;
@@ -33,19 +33,19 @@ public class LevelMeasurer {
 
    public void measureVersion(final List<CallTreeNode> nodes)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      final CauseTester executor = new CauseTester(folders, testgenerator, measurementConfiguration, causeSearcherConfig.getTestCase());
+      final CauseTester executor = new CauseTester(folders, testgenerator, measurementConfiguration, causeSearcherConfig);
       final Set<CallTreeNode> includedNodes = prepareNodes(nodes);
-      includedNodes.forEach(node -> node.resetStatistics());
       executor.setIncludedMethods(includedNodes);
-      executor.evaluate(causeSearcherConfig.getVersion(), causeSearcherConfig.getPredecessor(), causeSearcherConfig.getTestCase());
-      executor.getDurations(causeSearcherConfig.getVersion(), causeSearcherConfig.getPredecessor(), adaptiveId);
+      executor.evaluate(causeSearcherConfig.getTestCase());
+      executor.getDurations(adaptiveId);
+      executor.cleanup(adaptiveId);
       adaptiveId++;
    }
 
    private Set<CallTreeNode> prepareNodes(final List<CallTreeNode> nodes) {
       final Set<CallTreeNode> includedNodes = new HashSet<CallTreeNode>();
       includedNodes.addAll(nodes);
-      nodes.forEach(node -> node.setVersions(causeSearcherConfig.getVersion(), causeSearcherConfig.getPredecessor()));
+      nodes.forEach(node -> node.setVersions(measurementConfiguration.getVersion(), measurementConfiguration.getVersionOld()));
       return includedNodes;
    }
 }

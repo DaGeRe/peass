@@ -21,19 +21,11 @@ import de.peass.testtransformation.JUnitTestTransformer;
 
 public class EarlyBreakDecider {
 
-   private static final double THRESHOLD_BREAK = 0.005;
-   /**
-    * When adjusting this value, it needs to be considered that measurement overhead and iterations multiplicate this value.
-    */
-   private static final int BIG_TESTCASE_THRESHOLD_MIKROSECONDS = 5000;
-
    private static final Logger LOG = LogManager.getLogger(EarlyBreakDecider.class);
 
    private final JUnitTestTransformer testTransformer;
-   private final List<Double> before = new LinkedList<>();
-   private final List<Double> after = new LinkedList<>();
-   final StatisticalSummary statisticsBefore;
-   final StatisticalSummary statisticsAfter;
+   private final StatisticalSummary statisticsBefore;
+   private final StatisticalSummary statisticsAfter;
 
    private double type1error = 0.01;
    private double type2error = 0.01;
@@ -41,15 +33,15 @@ public class EarlyBreakDecider {
    public EarlyBreakDecider(final JUnitTestTransformer testTransformer, final File measurementFolder, final String version,
          final String versionOld, final TestCase testcase, final long currentChunkStart) throws JAXBException {
       this.testTransformer = testTransformer;
-      loadData(measurementFolder, version, versionOld, testcase, currentChunkStart);
-      final double[] valsBefore = ArrayUtils.toPrimitive(before.toArray(new Double[0]));
-      final double[] valsAfter = ArrayUtils.toPrimitive(after.toArray(new Double[0]));
+      final ResultLoader loader = new ResultLoader(measurementFolder, version, versionOld, testcase, currentChunkStart);
+      loader.loadData();
+      final double[] valsBefore = loader.getValsBefore();
+      final double[] valsAfter = loader.getValsAfter();
       statisticsBefore = new DescriptiveStatistics(valsBefore);
       statisticsAfter = new DescriptiveStatistics(valsAfter);
    }
-   
-   public EarlyBreakDecider(final JUnitTestTransformer testTransformer, final StatisticalSummary statisticsOld, final StatisticalSummary statistics, final String version,
-         final String versionOld, final TestCase testcase, final long currentChunkStart) throws JAXBException {
+
+   public EarlyBreakDecider(final JUnitTestTransformer testTransformer, final StatisticalSummary statisticsOld, final StatisticalSummary statistics) throws JAXBException {
       this.testTransformer = testTransformer;
       statisticsBefore = statisticsOld;
       statisticsAfter = statistics;
@@ -58,37 +50,16 @@ public class EarlyBreakDecider {
    public boolean isBreakPossible(final int vmid) {
       boolean savelyDecidable = false;
       if (vmid > 3) {
-         LOG.debug("T: {} {}", before, after);
-         if ((before.size() > 3 && after.size() > 3)) {
+         LOG.debug("T: {} {}", statisticsBefore.getN(), statisticsAfter.getN());
+         if ((statisticsBefore.getN() > 3 && statisticsAfter.getN() > 3)) {
             savelyDecidable = isSavelyDecidableBothHypothesis(vmid);
          } else if (vmid > 10) {
-            LOG.debug("More than 10 executions and only {} / {} measurements - aborting", before.size(), after.size());
+            LOG.debug("More than 10 executions and only {} / {} measurements - aborting", statisticsBefore.getN(), statisticsAfter.getN());
             return true;
          }
          // T statistic can not be determined if less than 2 values (produces exception..)
-
       }
       return savelyDecidable;
-   }
-
-   private void loadData(final File measurementFolder, final String version, final String versionOld, final TestCase testcase, final long currentChunkStart) throws JAXBException {
-      final File kopemeFile = new File(measurementFolder, testcase.getShortClazz() + "_" + testcase.getMethod() + ".xml");
-      final XMLDataLoader loader = new XMLDataLoader(kopemeFile);
-      if (loader.getFullData().getTestcases().getTestcase().size() > 0) {
-         final Datacollector dataCollector = loader.getFullData().getTestcases().getTestcase().get(0).getDatacollector().get(0);
-         final Chunk realChunk = MultipleVMTestUtil.findChunk(currentChunkStart, dataCollector);
-         LOG.debug("Chunk size: {}", realChunk.getResult().size());
-         for (final Result result : realChunk.getResult()) {
-            if (result.getExecutionTimes() + result.getWarmupExecutions() == testTransformer.getIterations() && result.getRepetitions() == testTransformer.getRepetitions()) {
-               if (result.getVersion().getGitversion().equals(versionOld)) {
-                  before.add(result.getValue());
-               }
-               if (result.getVersion().getGitversion().equals(version)) {
-                  after.add(result.getValue());
-               }
-            }
-         }
-      }
    }
 
    public boolean isSavelyDecidableBothHypothesis(final int vmid) {
@@ -102,7 +73,7 @@ public class EarlyBreakDecider {
       }
       return savelyDecidable;
    }
-   
+
    public double getType1error() {
       return type1error;
    }
@@ -117,6 +88,53 @@ public class EarlyBreakDecider {
 
    public void setType2error(final double type2error) {
       this.type2error = type2error;
+   }
+
+   private class ResultLoader {
+      final File measurementFolder;
+      final String version;
+      final String versionOld;
+      final TestCase testcase;
+      final long currentChunkStart;
+
+      private final List<Double> before = new LinkedList<>();
+      private final List<Double> after = new LinkedList<>();
+
+      public ResultLoader(final File measurementFolder, final String version, final String versionOld, final TestCase testcase, final long currentChunkStart) {
+         this.measurementFolder = measurementFolder;
+         this.version = version;
+         this.versionOld = versionOld;
+         this.testcase = testcase;
+         this.currentChunkStart = currentChunkStart;
+      }
+
+      void loadData() throws JAXBException {
+         final File kopemeFile = new File(measurementFolder, testcase.getShortClazz() + "_" + testcase.getMethod() + ".xml");
+         final XMLDataLoader loader = new XMLDataLoader(kopemeFile);
+         if (loader.getFullData().getTestcases().getTestcase().size() > 0) {
+            final Datacollector dataCollector = loader.getFullData().getTestcases().getTestcase().get(0).getDatacollector().get(0);
+            final Chunk realChunk = MultipleVMTestUtil.findChunk(currentChunkStart, dataCollector);
+            LOG.debug("Chunk size: {}", realChunk.getResult().size());
+            for (final Result result : realChunk.getResult()) {
+               if (result.getExecutionTimes() + result.getWarmupExecutions() == testTransformer.getIterations() && result.getRepetitions() == testTransformer.getRepetitions()) {
+                  if (result.getVersion().getGitversion().equals(versionOld)) {
+                     before.add(result.getValue());
+                  }
+                  if (result.getVersion().getGitversion().equals(version)) {
+                     after.add(result.getValue());
+                  }
+               }
+            }
+         }
+      }
+
+      double[] getValsBefore() {
+         return ArrayUtils.toPrimitive(before.toArray(new Double[0]));
+      }
+
+      double[] getValsAfter() {
+         return ArrayUtils.toPrimitive(after.toArray(new Double[0]));
+      }
    }
 
 }

@@ -13,22 +13,22 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.analysis.EarlyBreakDecider;
 import de.peass.measurement.organize.FolderDeterminer;
-import de.peass.measurement.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 public class AdaptiveTester extends DependencyTester {
    
    private static final Logger LOG = LogManager.getLogger(AdaptiveTester.class);
-
+   
    public AdaptiveTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator, final MeasurementConfiguration configuration)
          throws IOException {
       super(folders, testgenerator, configuration);
+      
    }
 
-   @Override
-   public void evaluate(final String version, final String versionOld, final TestCase testcase) throws IOException, InterruptedException, JAXBException {
+   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException {
       LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", versionOld, version);
 
       new FolderDeterminer(folders).testResultFolders(version, versionOld, testcase);
@@ -37,9 +37,9 @@ public class AdaptiveTester extends DependencyTester {
 
       currentChunkStart = System.currentTimeMillis();
       for (int vmid = 0; vmid < configuration.getVms(); vmid++) {
-         runOneComparison(version, versionOld, logFolder, testcase, vmid);
+         runOneComparison(logFolder, testcase, vmid);
 
-         final boolean savelyDecidable = checkIsDecidable(version, versionOld, testcase, vmid);
+         final boolean savelyDecidable = checkIsDecidable(testcase, vmid);
 
          if (savelyDecidable) {
             LOG.debug("Savely decidable - finishing testing");
@@ -54,8 +54,8 @@ public class AdaptiveTester extends DependencyTester {
       }
    }
 
-   protected boolean checkIsDecidable(final String version, final String versionOld, final TestCase testcase, int vmid) throws JAXBException {
-      EarlyBreakDecider decider = new EarlyBreakDecider(testTransformer, folders.getFullMeasurementFolder(), version, versionOld,
+   protected boolean checkIsDecidable(final String version, final String versionOld, final TestCase testcase, final int vmid) throws JAXBException {
+      final EarlyBreakDecider decider = new EarlyBreakDecider(testTransformer, folders.getFullMeasurementFolder(), version, versionOld,
             testcase, currentChunkStart);
       decider.setType1error(configuration.getType1error());
       decider.setType2error(configuration.getType2error());

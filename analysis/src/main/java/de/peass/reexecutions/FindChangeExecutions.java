@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -15,8 +15,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.analysis.all.RepoFolders;
 import de.peass.analysis.changes.ProjectChanges;
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.statistics.DependencyStatisticAnalyzer;
+import de.peass.dependency.persistence.ExecutionData;
 import de.peass.utils.Constants;
 import de.peass.utils.RunCommandWriter;
 import de.peass.utils.RunCommandWriterSearchCause;
@@ -41,33 +40,35 @@ public class FindChangeExecutions {
 //            "commons-imaging", "commons-io", "commons-numbers", "commons-pool", "commons-text" }) {
     for (final String project : new String[] { "commons-fileupload" }) {
          final File projectChangeFile = new File(folders.getResultsFolder(), project + File.separator + project + ".json");
-         final File dependencyFile = new File(folders.getDependencyFolder(), "deps_" + project + ".json");
+         final File dependencyFile = new File(folders.getDependencyFolder(), "execute_" + project + ".json");
          if (projectChangeFile.exists() && dependencyFile.exists()) {
             findProjectExecutions(reexecuteFolder, project, projectChangeFile, dependencyFile);
          }
       }
    }
 
-   public static void findProjectExecutions(final File reexecuteFolder, final String project, final File projectChangeFile, final File dependencyFile)
+   public static void findProjectExecutions(final File reexecuteFolder, final String project, final File projectChangeFile, final File executionFile)
          throws FileNotFoundException, JAXBException, IOException, JsonParseException, JsonMappingException {
       System.out.println("Reading: " + project);
       final File reexecuteProject = new File(reexecuteFolder, "reexecute-change-" + project + ".sh");
       final PrintStream goal = new PrintStream(new FileOutputStream(reexecuteProject));
-      final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+      final ExecutionData executions = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
 //      RunCommandWriter writer = new RunCommandWriterSlurm(goal, NAME, dependencies);
-      final RunCommandWriter writer = new RunCommandWriterSearchCause(goal, NAME, dependencies);
+      final RunCommandWriter writer = new RunCommandWriterSearchCause(goal, NAME, executions);
       writer.setNice(1000);
 
-      writeExecutions(projectChangeFile, dependencies, writer);
+      writeExecutions(projectChangeFile, executions, writer);
    }
 
-   public static void writeExecutions(final File projectChangeFile, final Dependencies dependencies, final RunCommandWriter writer)
+   public static void writeExecutions(final File projectChangeFile, final ExecutionData executions, final RunCommandWriter writer)
          throws IOException, JsonParseException, JsonMappingException {
-      final List<String> versions = Arrays.asList(dependencies.getVersionNames());
+      final List<String> versions = new LinkedList<String>(executions.getVersions().keySet());
       final ProjectChanges changes = Constants.OBJECTMAPPER.readValue(projectChangeFile, ProjectChanges.class);
       changes.executeProcessor((version, testclazz, change) -> {
          final int versionIndex = versions.indexOf(version);
-         writer.createSingleMethodCommand(versionIndex, version, testclazz + "#" + change.getMethod());
+         if (versionIndex != -1) {
+            writer.createSingleMethodCommand(versionIndex, version, testclazz + "#" + change.getMethod());
+         }
       });
    }
 }

@@ -8,24 +8,18 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
-import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependencyprocessors.DependencyTester;
 import de.peass.dependencyprocessors.PairProcessor;
 import de.peass.measurement.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
-import de.peass.utils.OptionConstants;
-import de.peass.utils.TestLoadUtil;
-import groovy.util.Eval;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -61,7 +55,7 @@ public class DependencyTestPairStarter extends PairProcessor {
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
 
-   JUnitTestTransformer getTestTransformer(MeasurementConfiguration measurementConfig) {
+   JUnitTestTransformer getTestTransformer(final MeasurementConfiguration measurementConfig) {
       final JUnitTestTransformer testtransformer = new JUnitTestTransformer(folders.getProjectFolder());
       testtransformer.setDatacollectorlist(DataCollectorList.ONLYTIME);
       testtransformer.setIterations(iterations);
@@ -85,7 +79,7 @@ public class DependencyTestPairStarter extends PairProcessor {
    @Override
    public Void call() throws Exception {
       super.call();
-      MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, 0.01, 0.01);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, 0.01, 0.01);
       if (duration != 0) {
          tester = new DependencyTester(folders, duration, vms, true, repetitions, useKieker);
       } else {
@@ -201,7 +195,8 @@ public class DependencyTestPairStarter extends PairProcessor {
                      executeThisTest = checkExecutionData(version, testcase, executeThisTest);
                   }
                   if (executeThisTest) {
-                     tester.evaluate(version, versionOld, testcase);
+                     tester.setVersions(version, versionOld);
+                     tester.evaluate(testcase);
                   }
                }
             }
@@ -249,8 +244,8 @@ public class DependencyTestPairStarter extends PairProcessor {
    }
 
    public static void main(final String[] args) throws JAXBException, IOException {
-      DependencyTestPairStarter command = new DependencyTestPairStarter();
-      CommandLine commandLine = new CommandLine(command);
+      final DependencyTestPairStarter command = new DependencyTestPairStarter();
+      final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);
       command.processCommandline();
       // final DependencyTestPairStarter starter = new DependencyTestPairStarter(args);

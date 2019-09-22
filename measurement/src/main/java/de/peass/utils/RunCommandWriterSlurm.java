@@ -6,16 +6,26 @@ import de.peass.dependency.persistence.SelectedTests;
 
 public class RunCommandWriterSlurm extends RunCommandWriter {
 
+   public static final String EXECUTE_MEASUREMENT = "executeTests.sh";
+   public static final String EXECUTE_RCA = "executeRCA.sh";
+   
    boolean inited = false;
+   private final String script;
 
-   public RunCommandWriterSlurm(PrintStream goal, String experimentId, SelectedTests dependencies) {
-      super(goal, experimentId, dependencies);
-      slurmOutputFolder = "/nfs/user/do820mize/processlogs/" + dependencies.getName();
+   public RunCommandWriterSlurm(final PrintStream goal, final String experimentId, final SelectedTests dependencies) {
+      this(goal, experimentId, dependencies, EXECUTE_MEASUREMENT);
    }
 
-   public RunCommandWriterSlurm(PrintStream goal, String experimentId, String name, String url) {
+   public RunCommandWriterSlurm(final PrintStream goal, final String experimentId, final SelectedTests dependencies, final String script) {
+      super(goal, experimentId, dependencies);
+      slurmOutputFolder = "/nfs/user/do820mize/processlogs/" + dependencies.getName();
+      this.script = script;
+   }
+
+   public RunCommandWriterSlurm(final PrintStream goal, final String experimentId, final String name, final String url) {
       super(goal, experimentId, name, url);
       slurmOutputFolder = "/nfs/user/do820mize/processlogs/" + name;
+      script = EXECUTE_MEASUREMENT;
    }
 
    public void init() {
@@ -25,7 +35,7 @@ public class RunCommandWriterSlurm extends RunCommandWriter {
 
    private final String slurmOutputFolder;
 
-   public void createFullVersionCommand(int versionIndex, final String endversion) {
+   public void createFullVersionCommand(final int versionIndex, final String endversion) {
       if (!inited) {
          init();
          inited = true;
@@ -33,7 +43,6 @@ public class RunCommandWriterSlurm extends RunCommandWriter {
       goal.println(
             "sbatch --nice=" + nice + " --time=10-0 "
                   + "--output=" + slurmOutputFolder + "/process_" + versionIndex + "_$timestamp.out "
-                  + "--workdir=/nfs/user/do820mize "
                   + "--export=PROJECT=" + url + ",HOME=/newnfs/user/do820mize,START="
                   + endversion + ",END=" + endversion + ",INDEX=" + versionIndex + " executeTests.sh");
    }
@@ -47,12 +56,12 @@ public class RunCommandWriterSlurm extends RunCommandWriter {
       goal.println(
             "sbatch --partition=galaxy-low-prio --nice=" + nice + " --time=10-0 "
                   + "--output=" + slurmOutputFolder + "/" + versionIndex + "_" + simpleTestName + "_$timestamp.out "
-                  + "--workdir=/nfs/user/do820mize "
                   + "--export=PROJECT=" + url + ",HOME=/nfs/user/do820mize,"
                   + "START=" + endversion + ","
                   + "END=" + endversion + ","
                   + "INDEX=" + versionIndex + ","
                   + "EXPERIMENT_ID=" + experimentId + ","
-                  + "TEST=" + testcaseName + " executeTests.sh");
+                  + "TEST=" + testcaseName
+                  + " " + script);
    }
 }

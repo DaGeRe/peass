@@ -7,7 +7,6 @@ import javax.xml.bind.JAXBException;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.measurement.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
-import de.peass.utils.OptionConstants;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -22,7 +21,7 @@ import picocli.CommandLine.Option;
 public class AdaptiveTestStarter extends DependencyTestPairStarter {
 
    @Option(names = { "-type1error", "--type1error" }, description = "Type 1 error of agnostic-t-test, i.e. probability of considering measurements equal when they are unequal")
-   public double type1error = 0.01;
+   public double type1error = 0.05;
 
    @Option(names = { "-type2error", "--type2error" }, description = "Type 2 error of agnostic-t-test, i.e. probability of considering measurements unequal when they are equal")
    protected double type2error = 0.01;
@@ -32,8 +31,8 @@ public class AdaptiveTestStarter extends DependencyTestPairStarter {
    }
 
    public static void main(final String[] args) throws JAXBException, IOException {
-      AdaptiveTestStarter command = new AdaptiveTestStarter();
-      CommandLine commandLine = new CommandLine(command);
+      final AdaptiveTestStarter command = new AdaptiveTestStarter();
+      final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);
 
    }
@@ -41,7 +40,7 @@ public class AdaptiveTestStarter extends DependencyTestPairStarter {
    @Override
    public Void call() throws Exception {
       super.call();
-      MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, type1error, type2error);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, type1error, type2error);
       final JUnitTestTransformer testgenerator = getTestTransformer(measurementConfiguration);
 
       tester = new AdaptiveTester(folders, testgenerator, measurementConfiguration);

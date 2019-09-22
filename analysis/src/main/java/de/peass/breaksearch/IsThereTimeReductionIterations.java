@@ -1,4 +1,4 @@
-package de.peran.breaksearch;
+package de.peass.breaksearch;
 
 import java.io.File;
 import java.util.LinkedList;

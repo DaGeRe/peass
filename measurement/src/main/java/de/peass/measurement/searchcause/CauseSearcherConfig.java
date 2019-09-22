@@ -3,25 +3,31 @@ package de.peass.measurement.searchcause;
 import de.peass.dependency.analysis.data.TestCase;
 
 public class CauseSearcherConfig {
-   private final String version;
-   private final String predecessor;
    private final TestCase testCase;
+   private final boolean useAggregation;
+   private final boolean saveAll;
+   private final double outlierFactor;
 
-   public CauseSearcherConfig(String version, String predecessor, TestCase testCase) {
-      this.version = version;
-      this.predecessor = predecessor;
+   public CauseSearcherConfig(final TestCase testCase, final boolean useAggregation, final boolean saveAll, final double outlierFactor) {
       this.testCase = testCase;
-   }
-   
-   public String getVersion() {
-      return version;
-   }
-
-   public String getPredecessor() {
-      return predecessor;
+      this.useAggregation = useAggregation;
+      this.saveAll = saveAll;
+      this.outlierFactor = outlierFactor;
    }
 
    public TestCase getTestCase() {
       return testCase;
+   }
+
+   public boolean isUseAggregation() {
+      return useAggregation;
+   }
+   
+   public boolean isSaveAll() {
+      return saveAll;
+   }
+   
+   public double getOutlierFactor() {
+      return outlierFactor;
    }
 }

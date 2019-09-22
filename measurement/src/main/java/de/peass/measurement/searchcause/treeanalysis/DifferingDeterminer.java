@@ -41,9 +41,11 @@ public abstract class DifferingDeterminer {
       for (; predecessorIterator.hasNext();) {
          final CallTreeNode currentPredecessorNode = predecessorIterator.next();
 //         final CallTreeNode currentVersionNode = currentIterator.next();
-         final SummaryStatistics statisticsPredecessor = currentPredecessorNode.getStatistics(causeSearchConfig.getPredecessor());
-         final SummaryStatistics statisticsVersion = currentPredecessorNode.getStatistics(causeSearchConfig.getVersion());
-         LOG.debug("Comparison {}", currentPredecessorNode.getKiekerPattern());
+         final SummaryStatistics statisticsPredecessor = currentPredecessorNode.getStatistics(measurementConfig.getVersionOld());
+         final SummaryStatistics statisticsVersion = currentPredecessorNode.getStatistics(measurementConfig.getVersion());
+         LOG.debug("Comparison {} - {}", 
+               currentPredecessorNode.getKiekerPattern(), 
+               currentPredecessorNode.getOtherVersionNode() != null ? currentPredecessorNode.getOtherVersionNode().getKiekerPattern() : null);
          LOG.debug("Current: {} {} Predecessor: {} {}", statisticsVersion.getMean(), statisticsVersion.getStandardDeviation(),
                statisticsPredecessor.getMean(), statisticsPredecessor.getStandardDeviation());
          final Relation relation = StatisticUtil.agnosticTTest(statisticsPredecessor, statisticsVersion, measurementConfig);
@@ -61,24 +63,30 @@ public abstract class DifferingDeterminer {
    }
    
    public void analyseNode(final CallTreeNode predecessorNode) {
-      final SummaryStatistics statisticsPredecessor = predecessorNode.getStatistics(causeSearchConfig.getPredecessor());
-      final SummaryStatistics statisticsVersion = predecessorNode.getStatistics(causeSearchConfig.getVersion());
+      final SummaryStatistics statisticsPredecessor = predecessorNode.getStatistics(measurementConfig.getVersionOld());
+      final SummaryStatistics statisticsVersion = predecessorNode.getStatistics(measurementConfig.getVersion());
       final Relation relation = StatisticUtil.agnosticTTest(statisticsPredecessor, statisticsVersion, measurementConfig);
       LOG.debug("Relation: {} Call: {}", relation, predecessorNode.getCall());
       if (relation == Relation.UNEQUAL) {
-         int childsRemeasure = 0;
-         for (final CallTreeNode testChild : predecessorNode.getChildren()) {
-            LOG.debug("Testing: " + testChild + " " + differingPredecessor);
-            if (differingPredecessor.contains(testChild)) {
-               childsRemeasure++;
-            }
-         }
+         final int childsRemeasure = getRemeasureChilds(predecessorNode);
 
          if (childsRemeasure == 0) {
-            LOG.debug("Adding {} - {} childs needs to be remeasured, T={}", predecessorNode, childsRemeasure, TestUtils.t(statisticsPredecessor, statisticsVersion));
+            LOG.debug("Adding {} - no childs needs to be remeasured, T={}", predecessorNode, childsRemeasure, TestUtils.t(statisticsPredecessor, statisticsVersion));
             LOG.debug("Childs: {}", predecessorNode.getChildren());
             measurementDiffering.add(predecessorNode);
          }
       }
+   }
+
+   private int getRemeasureChilds(final CallTreeNode predecessorNode) {
+      int childsRemeasure = 0;
+      LOG.debug("Children: {}", predecessorNode.getChildren().size());
+      for (final CallTreeNode testChild : predecessorNode.getChildren()) {
+         LOG.debug("Child: {} Parent: {}", testChild, differingPredecessor);
+         if (differingPredecessor.contains(testChild)) {
+            childsRemeasure++;
+         }
+      }
+      return childsRemeasure;
    }
 }

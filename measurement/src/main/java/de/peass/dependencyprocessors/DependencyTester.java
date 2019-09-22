@@ -48,6 +48,8 @@ public class DependencyTester {
    protected String currentVersion;
    protected ResultOrganizer currentOrganizer;
    protected long currentChunkStart = 0;
+   
+   protected String version, versionOld;
 
    public DependencyTester(final PeASSFolders folders, final int duration, final int vms,
          final boolean runInitial, final int repetitions, final boolean useKieker) throws IOException {
@@ -69,6 +71,7 @@ public class DependencyTester {
       testTransformer.setLogFullData(true);
       testExecutor = KiekerResultManager.createExecutor(folders, Integer.MAX_VALUE, testTransformer);
       // testExecutor = new MavenKiekerTestExecutor(folders, testTransformer, Integer.MAX_VALUE);
+      
    }
 
    public DependencyTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator, final MeasurementConfiguration configuration) throws IOException {
@@ -80,7 +83,8 @@ public class DependencyTester {
       this.testTransformer = testgenerator;
       testExecutor = KiekerResultManager.createExecutor(folders, Integer.MAX_VALUE, testTransformer);
       
-      
+      this.version = configuration.getVersion();
+      this.versionOld = configuration.getVersionOld();
    }
 
    /**
@@ -90,7 +94,7 @@ public class DependencyTester {
     * @param versionOld Old version to test
     * @param testcase Testcase to test
     */
-   public void evaluate(final String version, final String versionOld, final TestCase testcase) throws IOException, InterruptedException, JAXBException {
+   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException {
       new FolderDeterminer(folders).testResultFolders(version, versionOld, testcase);
       
       LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", versionOld, version);
@@ -99,7 +103,7 @@ public class DependencyTester {
 
       currentChunkStart = System.currentTimeMillis();
       for (int vmid = 0; vmid < configuration.getVms(); vmid++) {
-         runOneComparison(version, versionOld, logFolder, testcase, vmid);
+         runOneComparison(logFolder, testcase, vmid);
       }
    }
 
@@ -114,9 +118,11 @@ public class DependencyTester {
 
    }
 
-   public void runOneComparison(final String version, final String versionOld, final File logFolder, final TestCase testset, final int vmid)
+   public void runOneComparison(final File logFolder, final TestCase testset, final int vmid)
          throws IOException, InterruptedException, JAXBException {
       currentVersion = version;
+      //TODO Vermutlich currentVersion -> mainVersion
+      currentOrganizer = new ResultOrganizer(folders, version, currentChunkStart, testTransformer.isUseKieker(), false);
       if (versionOld.equals("HEAD~1")) {
          runOnce(testset, version + "~1", vmid, logFolder);
       } else {
@@ -143,7 +149,7 @@ public class DependencyTester {
          GitUtils.goToTag(version, folders.getProjectFolder());
       }
 
-      File vmidFolder = initVMFolder(version, vmid, logFolder);
+      final File vmidFolder = initVMFolder(version, vmid, logFolder);
 
       if (testTransformer.isUseKieker()) {
          testExecutor.loadClasses();
@@ -151,8 +157,6 @@ public class DependencyTester {
       testExecutor.prepareKoPeMeExecution(new File(logFolder, "clean.txt"));
       final long timeout = 5 + (int) (this.configuration.getTimeout() * 1.1);
       testExecutor.executeTest(testcase, vmidFolder, timeout);
-
-      currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart, testTransformer.isUseKieker());
       
       LOG.debug("Handling Kieker results");
       handleKiekerResults(version, currentOrganizer.getTempResultsFolder(testcase));
@@ -198,8 +202,16 @@ public class DependencyTester {
     * This method can be overriden in order to handle kieker results before they are compressed
     * @param folder 
     */
-   protected void handleKiekerResults(final String version, File folder) {
+   protected void handleKiekerResults(final String version, final File folder) {
       
    }
 
+   public void setVersions(final String version, final String versionOld) {
+      this.version = version;
+      this.versionOld = versionOld;
+   }
+
+   protected boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {
+      return false;
+   }
 }

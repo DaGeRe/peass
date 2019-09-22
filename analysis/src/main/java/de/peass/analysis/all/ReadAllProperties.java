@@ -73,7 +73,8 @@ public class ReadAllProperties {
             if (!resultFile.getParentFile().exists()) {
                resultFile.getParentFile().mkdir();
             }
-            new ReadProperties(resultFile).readChangeProperties(changeFile, projectFolder, viewFolder, changedTests);
+            final ReadProperties reader = new ReadProperties(resultFile);
+            reader.readChangeProperties(changeFile, projectFolder, viewFolder, changedTests);
          } else {
             System.err.println("Error: " + changeFile.getAbsolutePath() + " does not exist");
          }

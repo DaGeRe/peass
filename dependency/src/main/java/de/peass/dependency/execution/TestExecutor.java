@@ -126,7 +126,9 @@ public abstract class TestExecutor {
          logFile.getParentFile().mkdir();
       }
       try {
-         clean(new File(logFolder, "log_" + clazz.getJavaClazzName() + File.separator + method + "_clean.txt"));
+         LOG.info("Cleaning...");
+         final File cleanFile = new File(logFolder, "log_" + clazz.getJavaClazzName() + File.separator + method + "_clean.txt");
+         clean(cleanFile);
       } catch (IOException | InterruptedException e) {
          e.printStackTrace();
       }

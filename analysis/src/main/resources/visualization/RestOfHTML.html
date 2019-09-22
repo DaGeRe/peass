@@ -1,36 +1,3 @@
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-
-    <title>Tree Example</title>
-
-    <style>
-	
-	.node {
-		cursor: pointer;
-	}
-
-	.node circle {
-	  fill: #fff;
-	  stroke: steelblue;
-	  stroke-width: 3px;
-	}
-
-	.node text {
-	  font: 12px sans-serif;
-	}
-
-	.link {
-	  fill: none;
-	  stroke: #ccc;
-	  stroke-width: 2px;
-	}
-	
-    </style>
-
-  </head>
-
-  <body>
 
 <!-- load the d3.js library -->	
 <script src="http://d3js.org/d3.v3.min.js"></script>
@@ -47,7 +14,7 @@ var tree = d3.layout.tree()
 var diagonal = d3.svg.diagonal()
 	.projection(function(d) { return [d.y, d.x]; });
 
-var svg = d3.select("body").append("svg")
+var svg = d3.select("#tree").append("svg")
 	.attr("width", width + margin.right + margin.left)
 	.attr("height", height + margin.top + margin.bottom)
   .append("g")
@@ -78,7 +45,8 @@ function update(source) {
   var nodeEnter = node.enter().append("g")
 	  .attr("class", "node")
 	  .attr("transform", function(d) { return "translate(" + source.y0 + "," + source.x0 + ")"; })
-	  .on("click", click);
+	  .on("click", click)
+	  .on("mouseover", shownode);
 
   nodeEnter.append("circle")
 	  .attr("r", 1e-6)
@@ -158,6 +126,42 @@ function click(d) {
 	d._children = null;
   }
   update(d);
+}
+
+function round(value){
+	return Math.round(value*100)/100;
+}
+
+function shownode(node) {
+  infos.innerHTML="<table>" +
+      "<tr><th>Predecessor</th><th>Current</th></tr>"+
+      "<tr><td>" + round(node.statistic.meanOld) +    "</td><td>" + round(node.statistic.meanCurrent)+"</td></tr>"+
+      "<tr><td>" + round(node.statistic.deviationOld)+"</td><td>" + round(node.statistic.deviationCurrent)+"</td></tr>"+
+      "</table> VMs: " + node.statistic.vms +
+      " T=" + round(node.statistic.tvalue);
+  quelltext.innerHTML="<pre>" + source[node.name] +"</pre>"
+  histogramm.innerHTML=node.name;
+  var version = {
+  x: node.values,
+  type: "histogram",
+  name: "Version",
+  opacity: 0.5,
+  marker: {
+     color: 'green',
+  },
+  };
+  var predecessor = {
+  x: node.valuesPredecessor,
+  type: "histogram",
+  name: "Predecessor",
+  opacity: 0.6,
+  marker: {
+     color: 'red',
+  },
+  };
+  var data = [version, predecessor];
+  var layout = {barmode: "overlay"};
+  Plotly.newPlot("histogramm", data, layout);
 }
 
 </script>

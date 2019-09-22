@@ -54,6 +54,7 @@ public class LevelDifferingDeterminer extends DifferingDeterminer {
          } else {
             needToMeasurePredecessor.add(currentPredecessorNode);
             needToMeasureCurrent.add(currentVersionNode);
+            
          }
       }
    }

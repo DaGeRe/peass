@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.TreeSet;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.aspectj.util.FileUtil;
@@ -18,24 +16,21 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
-import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.ViewNotFoundException;
+import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.searchcause.data.CallTreeNode;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 import kieker.analysis.exception.AnalysisConfigurationException;
-import de.peass.measurement.MeasurementConfiguration;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({GitUtils.class, VersionControlSystem.class})
@@ -61,53 +56,34 @@ public class AdaptiveExecutorTest {
          FileUtil.copyDir(SOURCE_DIR, projectFolder);
          
          PowerMockito.mockStatic(VersionControlSystem.class);
-         mockGetVCS();
+         VCSTestUtils.mockGetVCS();
          
          PowerMockito.mockStatic(GitUtils.class);
-         PowerMockito.doAnswer(new Answer<Void>() {
-
-            @Override
-            public Void answer(final InvocationOnMock invocation) throws Throwable {
-               File destFile = (File) invocation.getArgument(1);
-               LOG.debug("Loading version..");
-               FileUtils.deleteDirectory(destFile);
-               FileUtils.copyDirectory(SOURCE_DIR, destFile);
-               return null;
-            }
-         }).when(GitUtils.class);
-         GitUtils.goToTag(Mockito.anyString(), Mockito.any(File.class));
+         
+         VCSTestUtils.mockGoToTagAny(SOURCE_DIR);
          
          final JUnitTestTransformer transformer = new JUnitTestTransformer(projectFolder);
          transformer.setDatacollectorlist(DataCollectorList.ONLYTIME);
-         final MeasurementConfiguration config = new MeasurementConfiguration(2);
-         executor = new CauseTester(new PeASSFolders(projectFolder), transformer, config, TEST);
+         final MeasurementConfiguration config = new MeasurementConfiguration(2, "00001", "00001~1");
+         executor = new CauseTester(new CauseSearchFolders(projectFolder), transformer, config, AdaptiveExecutorMoreParameterTest.DEFAULT_CAUSE_CONFIG);
          LOG.debug("Executor: {}", executor);
-      } catch (IOException e) {
+      } catch (final IOException e) {
          e.printStackTrace();
       }
-   }
-
-   public static void mockGetVCS() {
-      PowerMockito.doAnswer(new Answer<VersionControlSystem>() {
-
-         @Override
-         public VersionControlSystem answer(final InvocationOnMock invocation) throws Throwable {
-            return VersionControlSystem.GIT;
-         }
-      }).when(VersionControlSystem.class);
-      VersionControlSystem.getVersionControlSystem(Mockito.any(File.class));
    }
 
    @Test
    public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       final Set<CallTreeNode> included = new HashSet<>();
       final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1", "public void defaultpackage.NormalDependency.child1()", null);
+      nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);
       executor.setIncludedMethods(included);
+      included.forEach(node -> node.setVersions("00001", "00001~1"));
+      
+      executor.evaluate(TEST);
 
-      executor.evaluate("00001", "00001~1", TEST);
-
-      executor.getDurations("00001", "00001~1", 0);
+      executor.getDurations(0);
 
       Assert.assertEquals(2, nodeWithDuration.getStatistics("00001").getN());
       Assert.assertEquals(2, nodeWithDuration.getStatistics("00001~1").getN());
@@ -117,12 +93,14 @@ public class AdaptiveExecutorTest {
    public void testConstructorExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       final Set<CallTreeNode> included = new HashSet<>();
       final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#<init>", "public new defaultpackage.NormalDependency.<init>()", null);
+      nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);
       executor.setIncludedMethods(included);
+      included.forEach(node -> node.setVersions("00001", "00001~1"));
+      
+      executor.evaluate(TEST);
 
-      executor.evaluate("00001", "00001~1", TEST);
-
-      executor.getDurations("00001", "00001~1", 1);
+      executor.getDurations(1);
 
       Assert.assertEquals(2, nodeWithDuration.getStatistics("00001").getN());
       Assert.assertEquals(2, nodeWithDuration.getStatistics("00001~1").getN());

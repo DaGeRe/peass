@@ -66,7 +66,7 @@ public class TestResultOrganizer {
 
    @Test
    public void testNormalSaving() throws JAXBException, IOException {
-      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, false);
+      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, false, false);
       
       initDummyTestfile(methodFolder);
 
@@ -77,7 +77,7 @@ public class TestResultOrganizer {
 
    @Test
    public void testKiekerSavingTar() throws JAXBException, IOException {
-      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true);
+      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true);
       organizer.setThresholdForZippingInMB(1);
       
       initDummyTestfile(methodFolder);
@@ -98,7 +98,7 @@ public class TestResultOrganizer {
    
    @Test
    public void testKiekerSavingNoTar() throws JAXBException, IOException {
-      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true);
+      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true);
       
       initDummyTestfile(methodFolder);
       

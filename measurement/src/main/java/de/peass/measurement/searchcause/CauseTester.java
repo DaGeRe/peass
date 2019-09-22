@@ -2,35 +2,27 @@ package de.peass.measurement.searchcause;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.KiekerReader;
-import de.peass.dependency.analysis.PeASSFilter;
+import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.analysis.EarlyBreakDecider;
 import de.peass.measurement.organize.ResultOrganizer;
 import de.peass.measurement.searchcause.data.CallTreeNode;
-import de.peass.measurement.searchcause.kieker.DurationFilter;
 import de.peass.testtransformation.JUnitTestTransformer;
-import kieker.analysis.AnalysisController;
 import kieker.analysis.exception.AnalysisConfigurationException;
-import kieker.tools.traceAnalysis.filter.executionRecordTransformation.ExecutionRecordTransformationFilter;
 
 /**
  * Measures method calls adaptively instrumented by Kieker
@@ -44,30 +36,44 @@ public class CauseTester extends AdaptiveTester {
 
    private Set<CallTreeNode> includedNodes;
    private final TestCase testcase;
+   private final CauseSearcherConfig causeConfig;
+   private final CauseSearchFolders folders;
 
-   public CauseTester(final PeASSFolders project, final JUnitTestTransformer testgenerator, final MeasurementConfiguration configuraiton, final TestCase testcase)
+   public CauseTester(final CauseSearchFolders project, final JUnitTestTransformer testgenerator, final MeasurementConfiguration configuration, final CauseSearcherConfig causeConfig)
          throws IOException {
-      super(project, testgenerator, configuraiton);
-      this.testcase = testcase;
+      super(project, testgenerator, configuration);
+      this.testcase = causeConfig.getTestCase();
+      this.causeConfig = causeConfig;
+      this.folders = project;
       testgenerator.setUseKieker(true);
       testgenerator.setAdaptiveExecution(true);
+      testgenerator.setAggregatedWriter(causeConfig.isUseAggregation());
    }
 
    @Override
-   public void evaluate(final String version, final String versionOld, final TestCase testcase) throws IOException, InterruptedException, JAXBException {
+   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException {
       includedNodes.forEach(node -> node.setWarmup(testTransformer.getIterations() / 2));
 
       LOG.debug("Adaptive execution: " + includedNodes);
-      // prepareAdaptiveExecution();
 
-      final Set<String> includedPattern = new HashSet<>();
-      includedNodes.forEach(node -> includedPattern.add(node.getKiekerPattern()));
-      testExecutor.setIncludedMethods(includedPattern);
-      super.evaluate(version, versionOld, testcase);
+      super.evaluate(testcase);
    }
 
    @Override
-   protected boolean checkIsDecidable(final String version, final String versionOld, final TestCase testcase, final int vmid) throws JAXBException {
+   protected void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder) throws IOException, InterruptedException, JAXBException {
+      final Set<String> includedPattern = new HashSet<>();
+      if (versionOld.equals(version)) {
+         includedNodes.forEach(node -> includedPattern.add(node.getKiekerPattern()));
+      } else {
+         includedNodes.forEach(node -> includedPattern.add(node.getOtherVersionNode().getKiekerPattern()));
+      }
+      testExecutor.setIncludedMethods(includedPattern);
+      currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart, testTransformer.isUseKieker(), causeConfig.isSaveAll());
+      super.runOnce(testcase, version, vmid, logFolder);
+   }
+
+   @Override
+   protected boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {
       try {
          getDurationsVersion(version);
          getDurationsVersion(versionOld);
@@ -75,9 +81,12 @@ public class CauseTester extends AdaptiveTester {
          for (final CallTreeNode includedNode : includedNodes) {
             final SummaryStatistics statisticsOld = includedNode.getStatistics(versionOld);
             final SummaryStatistics statistics = includedNode.getStatistics(version);
-            final EarlyBreakDecider decider = new EarlyBreakDecider(testTransformer, statisticsOld, statistics, version, versionOld, testcase, vmid);
-            allDecidable &= decider.isBreakPossible(vmid);
+            final EarlyBreakDecider decider = new EarlyBreakDecider(testTransformer, statisticsOld, statistics);
+            final boolean nodeDecidable = decider.isBreakPossible(vmid);
+            LOG.debug("{} decideable: {}", includedNode.getKiekerPattern(), allDecidable);
+            allDecidable &= nodeDecidable;
          }
+         LOG.debug("Level decideable: {}", allDecidable);
          return allDecidable;
       } catch (ViewNotFoundException | AnalysisConfigurationException e) {
          throw new RuntimeException(e);
@@ -86,42 +95,35 @@ public class CauseTester extends AdaptiveTester {
 
    @Override
    protected void handleKiekerResults(final String version, final File versionResultFolder) {
-      try {
-         for (final File kiekerResultFolder : versionResultFolder.listFiles((FilenameFilter) new RegexFileFilter("[0-9]*"))) {
-            final File kiekerTraceFile = KiekerFolderUtil.getKiekerTraceFolder(kiekerResultFolder, testcase);
-            final KiekerReader reader = new KiekerReader(kiekerTraceFile);
-
-            reader.initBasic();
-            final AnalysisController analysisController = reader.getAnalysisController();
-
-            final DurationFilter kopemeFilter = new DurationFilter(includedNodes, analysisController, version);
-            analysisController.connect(reader.getExecutionFilter(), ExecutionRecordTransformationFilter.OUTPUT_PORT_NAME_EXECUTIONS,
-                  kopemeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
-
-            analysisController.run();
-         }
-      } catch (IllegalStateException | AnalysisConfigurationException e) {
-         e.printStackTrace();
-      }
+      final KiekerResultReader kiekerResultReader = new KiekerResultReader(causeConfig.isUseAggregation(), includedNodes, version, versionResultFolder, testcase, version.equals(this.version));
+      kiekerResultReader.readResults();
    }
 
    public void setIncludedMethods(final Set<CallTreeNode> children) {
       includedNodes = children;
    }
 
-   public void getDurations(final String version, final String versionOld, final int adaptiveId)
+   public void getDurations(final int adaptiveId)
          throws FileNotFoundException, IOException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
-      currentOrganizer = new ResultOrganizer(folders, version, currentChunkStart, testTransformer.isUseKieker());
       getDurationsVersion(version);
       getDurationsVersion(versionOld);
-
-      organizeMeasurements(adaptiveId, version);
    }
 
-   private void organizeMeasurements(final int adaptiveId, final String version) {
-      final File testcaseFolder = new File(folders.getDetailResultFolder(), testcase.getClazz());
-      final File adaptiveRunFolder = new File(folders.getDetailResultFolder(version, testcase), "" + adaptiveId);
-      testcaseFolder.renameTo(adaptiveRunFolder);
+   public void cleanup(final int adaptiveId) {
+      organizeMeasurements(adaptiveId, version, version);
+      organizeMeasurements(adaptiveId, version, versionOld);
+   }
+
+   private void organizeMeasurements(final int adaptiveId, final String mainVersion, final String version) {
+      final File testcaseFolder = folders.getFullResultFolder(testcase, mainVersion, version);
+      final File versionFolder = new File(folders.getArchiveResultFolder(mainVersion, testcase), version);
+      if (!versionFolder.exists()) {
+         versionFolder.mkdir();
+      }
+      final File adaptiveRunFolder = new File(versionFolder, "" + adaptiveId);
+      if (!testcaseFolder.renameTo(adaptiveRunFolder)) {
+         LOG.error("Could not rename {}", testcaseFolder);
+      }
    }
 
    private void getDurationsVersion(final String version) throws ViewNotFoundException, AnalysisConfigurationException {
@@ -133,9 +135,18 @@ public class CauseTester extends AdaptiveTester {
       final String version = "4ed6e923cb2033272fcb993978d69e325990a5aa";
       final TestCase test = new TestCase("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");
 
-      final MeasurementConfiguration config = new MeasurementConfiguration(15, 15, 0.01, 0.05);
-      final CauseTester manager = new CauseTester(new PeASSFolders(projectFolder), new JUnitTestTransformer(projectFolder), config, test);
+      final MeasurementConfiguration config = new MeasurementConfiguration(15, 15, 0.01, 0.05, version, version + "~1");
+      final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, true, 5);
+      final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), new JUnitTestTransformer(projectFolder), config, causeConfig);
 
-      manager.evaluate(version, version + "~1", test);
+      final CallTreeNode node = new CallTreeNode("FileUploadTestCase#parseUpload", "protected java.util.List org.apache.commons.fileupload.FileUploadTestCase.parseUpload(byte[],java.lang.String)", null);
+      node.setOtherVersionNode(node);
+      final Set<CallTreeNode> nodes = new HashSet<>();
+      nodes.add(node);
+      manager.setIncludedMethods(nodes);
+      manager.runOnce(test, version, 0, new File("log"));
+//      manager.evaluate(test);
+      
+      
    }
 }

@@ -22,11 +22,9 @@ import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.organize.FolderDeterminer;
 import de.peass.measurement.searchcause.data.CallTreeNode;
-import de.peass.measurement.searchcause.data.CauseSearchData;
 import de.peass.measurement.searchcause.kieker.BothTreeReader;
 import de.peass.measurement.searchcause.treeanalysis.LevelDifferingDeterminer;
 import de.peass.testtransformation.JUnitTestTransformer;
-import de.peass.utils.Constants;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class CauseSearcher {
@@ -43,9 +41,8 @@ public class CauseSearcher {
    protected final LevelMeasurer measurer;
 
    // Result
-   protected List<CallTreeNode> differingNodes = new LinkedList<CallTreeNode>();
-   protected final CauseSearchData data;
-   private final File treeDataFile;
+   protected List<CallTreeNode> differingNodes = new LinkedList<>();
+   protected CauseDataManager dataManager;
 
    public static void main(final String[] args)
          throws IOException, XmlPullParserException, InterruptedException, IllegalStateException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
@@ -55,8 +52,8 @@ public class CauseSearcher {
 
       final JUnitTestTransformer testtransformer = new JUnitTestTransformer(projectFolder);
       testtransformer.setSumTime(300000);
-      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(version, version + "~1", test);
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(15, 5, 0.01, 0.01);
+      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, true, false, 5.0);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(15, 5, 0.01, 0.01, version, version + "~1");
       final CauseSearchFolders folders2 = new CauseSearchFolders(projectFolder);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders2);
       final LevelMeasurer measurer = new LevelMeasurer(folders2, causeSearcherConfig, testtransformer, measurementConfiguration);
@@ -64,28 +61,21 @@ public class CauseSearcher {
       searcher.search();
    }
 
-   public CauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final LevelMeasurer measurer, final MeasurementConfiguration measurementConfig, final CauseSearchFolders folders)
+   public CauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final LevelMeasurer measurer, final MeasurementConfiguration measurementConfig,
+         final CauseSearchFolders folders)
          throws InterruptedException, IOException {
-      data = new CauseSearchData(causeSearchConfig.getTestCase(), causeSearchConfig.getVersion(), causeSearchConfig.getPredecessor(), measurementConfig);
       this.reader = reader;
       this.measurer = measurer;
       this.measurementConfig = measurementConfig;
       this.folders = folders;
       this.causeSearchConfig = causeSearchConfig;
-      
-      treeDataFile = new File(folders.getRcaFolder(), causeSearchConfig.getVersion() + File.separator + 
-            causeSearchConfig.getTestCase().getShortClazz() + File.separator 
-            + causeSearchConfig.getTestCase().getMethod() + ".json");
-      if (treeDataFile.getParentFile().exists()) {
-         throw new RuntimeException("Old tree data folder " + treeDataFile.getAbsolutePath() + " exists - please cleanup!");
-      }
-      treeDataFile.getParentFile().mkdirs();
-      
-      final File potentialOldFolder = new File(folders.getDetailResultFolder(causeSearchConfig.getVersion(), causeSearchConfig.getTestCase()), "0");
+      dataManager = new CauseDataManager(causeSearchConfig, measurementConfig, folders);
+
+      final File potentialOldFolder = new File(folders.getArchiveResultFolder(measurementConfig.getVersion(), causeSearchConfig.getTestCase()), "0");
       if (potentialOldFolder.exists()) {
          throw new RuntimeException("Old measurement folder " + potentialOldFolder.getAbsolutePath() + " exists - please cleanup!");
       }
-      new FolderDeterminer(folders).testResultFolders(causeSearchConfig.getVersion(), causeSearchConfig.getPredecessor(), causeSearchConfig.getTestCase());
+      new FolderDeterminer(folders).testResultFolders(measurementConfig.getVersion(), measurementConfig.getVersionOld(), causeSearchConfig.getTestCase());
    }
 
    public List<ChangedEntity> search()
@@ -93,12 +83,14 @@ public class CauseSearcher {
       reader.readTrees();
 
       LOG.info("Tree size: {}", reader.getRootPredecessor().getTreeSize());
-      
+
       return searchCause();
    }
 
    protected List<ChangedEntity> searchCause()
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+      reader.getRootPredecessor().setOtherVersionNode(reader.getRootVersion());
+      reader.getRootVersion().setOtherVersionNode(reader.getRootPredecessor());
       isLevelDifferent(Arrays.asList(new CallTreeNode[] { reader.getRootPredecessor() }),
             Arrays.asList(new CallTreeNode[] { reader.getRootVersion() }));
 
@@ -112,7 +104,7 @@ public class CauseSearcher {
    }
 
    protected void writeTreeState() throws IOException, JsonGenerationException, JsonMappingException {
-      Constants.OBJECTMAPPER.writeValue(treeDataFile, data);
+      dataManager.writeTreeState();
    }
 
    private void isLevelDifferent(final List<CallTreeNode> currentPredecessorNodeList, final List<CallTreeNode> currentVersionNodeList)
@@ -127,7 +119,7 @@ public class CauseSearcher {
          levelSearcher.calculateDiffering();
 
          for (final CallTreeNode predecessorNode : needToMeasurePredecessor) {
-            data.addDiff(predecessorNode);
+            dataManager.addDiff(predecessorNode);
             levelSearcher.analyseNode(predecessorNode);
          }
 
@@ -136,7 +128,7 @@ public class CauseSearcher {
 
          writeTreeState();
 
-         isLevelDifferent(levelSearcher.getDifferingPredecessor(), levelSearcher.getDifferingPredecessor());
+         isLevelDifferent(levelSearcher.getDifferingPredecessor(), levelSearcher.getDifferingCurrent());
       }
    }
 

@@ -39,6 +39,7 @@ public class IsChange implements Callable<Integer> {
 
    @Override
    public Integer call() throws Exception {
+      LOG.debug("Checking: {}", dataFolder);
       final File xmlFile = dataFolder.listFiles((FilenameFilter) new WildcardFileFilter("*.xml"))[0];
 
       final Kopemedata data = new XMLDataLoader(xmlFile).getFullData();
