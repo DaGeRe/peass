@@ -3,6 +3,7 @@ package de.peass.measurement.searchcause;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -18,12 +19,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.organize.FolderDeterminer;
 import de.peass.measurement.searchcause.data.CallTreeNode;
 import de.peass.measurement.searchcause.kieker.BothTreeReader;
-import de.peass.measurement.searchcause.treeanalysis.LevelDifferingDeterminer;
+import de.peass.measurement.searchcause.treeanalysis.LevelDifferentNodeDeterminer;
 import de.peass.testtransformation.JUnitTestTransformer;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
@@ -38,11 +39,11 @@ public class CauseSearcher {
 
    // Classes doing the real work
    protected final BothTreeReader reader;
-   protected final LevelMeasurer measurer;
+   protected final CauseTester measurer;
 
    // Result
    protected List<CallTreeNode> differingNodes = new LinkedList<>();
-   protected CauseDataManager dataManager;
+   protected CausePersistenceManager persistenceManager;
 
    public static void main(final String[] args)
          throws IOException, XmlPullParserException, InterruptedException, IllegalStateException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
@@ -50,18 +51,63 @@ public class CauseSearcher {
       final String version = "4ed6e923cb2033272fcb993978d69e325990a5aa";
       final TestCase test = new TestCase("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");
 
-      final JUnitTestTransformer testtransformer = new JUnitTestTransformer(projectFolder);
-      testtransformer.setSumTime(300000);
-      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, true, false, 5.0);
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(15, 5, 0.01, 0.01, version, version + "~1");
+      measurementConfiguration.setUseKieker(true);
+      final JUnitTestTransformer testtransformer = new JUnitTestTransformer(projectFolder, measurementConfiguration);
+      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, true, false, 5.0, false, 0.1, false);
       final CauseSearchFolders folders2 = new CauseSearchFolders(projectFolder);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders2);
-      final LevelMeasurer measurer = new LevelMeasurer(folders2, causeSearcherConfig, testtransformer, measurementConfiguration);
+
+      final CauseTester measurer = new CauseTester(folders2, testtransformer, causeSearcherConfig);
       final CauseSearcher searcher = new CauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, folders2);
-      searcher.search();
+      reader.readTrees();
+
+      List<CallTreeNode> predecessor = Arrays.asList(new CallTreeNode[] { reader.getRootPredecessor() });
+      List<CallTreeNode> current = Arrays.asList(new CallTreeNode[] { reader.getRootVersion() });
+
+      int level = 0;
+      boolean hasChilds = true;
+      while (hasChilds) {
+         level++;
+         LOG.info("Level: " + level + " " + predecessor.get(0).getKiekerPattern());
+         boolean foundNodeLevel = false;
+         final List<CallTreeNode> predecessorNew = new LinkedList<>();
+         final List<CallTreeNode> currentNew = new LinkedList<>();
+
+         final Iterator<CallTreeNode> currentIterator = current.iterator();
+
+         for (final Iterator<CallTreeNode> preIterator = predecessor.iterator(); preIterator.hasNext() && currentIterator.hasNext();) {
+            final CallTreeNode predecessorChild = preIterator.next();
+            final CallTreeNode currentChild = currentIterator.next();
+            predecessorNew.addAll(predecessorChild.getChildren());
+            currentNew.addAll(currentChild.getChildren());
+            final String searchedCall = "public static long org.apache.commons.fileupload.util.Streams.copy(java.io.InputStream,java.io.OutputStream,boolean,byte[])";
+            if (predecessorChild.getKiekerPattern().equals(searchedCall) && currentChild.getKiekerPattern().equals(searchedCall)) {
+               foundNodeLevel = true;
+            }
+            if (predecessorChild.getKiekerPattern().equals(searchedCall) != currentChild.getKiekerPattern().equals(searchedCall)) {
+               LOG.info(predecessorChild.getKiekerPattern());
+               LOG.info(currentChild.getKiekerPattern());
+               throw new RuntimeException("Tree structure differs above searched node!");
+            }
+         }
+         if (foundNodeLevel) {
+            LOG.info("Found!");
+            searcher.isLevelDifferent(predecessorNew, currentNew);
+         }
+         predecessor = predecessorNew;
+         current = currentNew;
+         if (predecessor.isEmpty()) {
+            hasChilds = false;
+         }
+      }
+
+      // reader.getRootPredecessor().get
+
+      // searcher.isLevelDifferent(currentPredecessorNodeList, currentVersionNodeList);
    }
 
-   public CauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final LevelMeasurer measurer, final MeasurementConfiguration measurementConfig,
+   public CauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer, final MeasurementConfiguration measurementConfig,
          final CauseSearchFolders folders)
          throws InterruptedException, IOException {
       this.reader = reader;
@@ -69,7 +115,7 @@ public class CauseSearcher {
       this.measurementConfig = measurementConfig;
       this.folders = folders;
       this.causeSearchConfig = causeSearchConfig;
-      dataManager = new CauseDataManager(causeSearchConfig, measurementConfig, folders);
+      persistenceManager = new CausePersistenceManager(causeSearchConfig, measurementConfig, folders);
 
       final File potentialOldFolder = new File(folders.getArchiveResultFolder(measurementConfig.getVersion(), causeSearchConfig.getTestCase()), "0");
       if (potentialOldFolder.exists()) {
@@ -104,32 +150,34 @@ public class CauseSearcher {
    }
 
    protected void writeTreeState() throws IOException, JsonGenerationException, JsonMappingException {
-      dataManager.writeTreeState();
+      persistenceManager.writeTreeState();
    }
 
    private void isLevelDifferent(final List<CallTreeNode> currentPredecessorNodeList, final List<CallTreeNode> currentVersionNodeList)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      final LevelDifferingDeterminer levelSearcher = new LevelDifferingDeterminer(currentPredecessorNodeList, currentVersionNodeList, causeSearchConfig, measurementConfig);
+      final LevelDifferentNodeDeterminer levelSearcher = new LevelDifferentNodeDeterminer(currentPredecessorNodeList, currentVersionNodeList, causeSearchConfig, measurementConfig);
 
-      final List<CallTreeNode> needToMeasurePredecessor = levelSearcher.getNeedToMeasurePredecessor();
-      final List<CallTreeNode> needToMeasureCurrent = levelSearcher.getNeedToMeasureCurrent();
+      final List<CallTreeNode> measurePredecessor = levelSearcher.getMeasurePredecessor();
 
-      if (needToMeasureCurrent.size() > 0 && needToMeasurePredecessor.size() > 0) {
-         measurer.measureVersion(needToMeasurePredecessor);
-         levelSearcher.calculateDiffering();
-
-         for (final CallTreeNode predecessorNode : needToMeasurePredecessor) {
-            dataManager.addDiff(predecessorNode);
-            levelSearcher.analyseNode(predecessorNode);
-         }
-
-         differingNodes.addAll(levelSearcher.getTreeStructureDifferingNodes());
-         differingNodes.addAll(levelSearcher.getMeasurementDiffering());
-
+      if (measurePredecessor.size() > 0) {
+         analyseLevel(levelSearcher, measurePredecessor);
          writeTreeState();
 
-         isLevelDifferent(levelSearcher.getDifferingPredecessor(), levelSearcher.getDifferingCurrent());
+         isLevelDifferent(levelSearcher.getMeasureNextLevelPredecessor(), levelSearcher.getMeasureNextLevel());
       }
+   }
+
+   private void analyseLevel(final LevelDifferentNodeDeterminer levelSearcher, final List<CallTreeNode> measuredPredecessor)
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+      measurer.measureVersion(measuredPredecessor);
+      levelSearcher.calculateDiffering();
+
+      for (final CallTreeNode predecessorNode : measuredPredecessor) {
+         persistenceManager.addMeasurement(predecessorNode);
+      }
+
+      differingNodes.addAll(levelSearcher.getTreeStructureDifferingNodes());
+      differingNodes.addAll(levelSearcher.getCurrentLevelDifferent());
    }
 
 }

@@ -124,7 +124,7 @@ public class CallTreeNode {
    }
 
    private void newVersion(final String version) {
-      LOG.debug("Adding version: {}", version);
+      LOG.trace("Adding version: {}", version);
       CallTreeStatistics statistics = data.get(version);
       if (statistics == null) {
          statistics = new CallTreeStatistics(warmup);
@@ -138,7 +138,11 @@ public class CallTreeNode {
 
    public SummaryStatistics getStatistics(final String version) {
       LOG.debug("Getting data: {}", version);
-      return data.get(version).getStatistics();
+      final CallTreeStatistics statistics = data.get(version);
+      if (statistics.getStatistics().getN() == 0) {
+         LOG.error("Call createStatistics first for " + call);
+      }
+      return statistics.getStatistics();
    }
 
    public void createStatistics(final String version) {
@@ -206,5 +210,24 @@ public class CallTreeNode {
    public String getParameters() {
       final String parameters = kiekerPattern.substring(kiekerPattern.indexOf('('));
       return parameters;
+   }
+
+   @JsonIgnore
+   public int getEss() {
+      return parent != null ? parent.getEss() + 1 : 0;
+   }
+
+   @JsonIgnore
+   public int getEoi() {
+      final int parentIndex = parent != null ? parent.getChildren().indexOf(this) : 0;
+      final int parentEoi = parent != null ? parent.getEoi() : 0;
+      final int eoi = parentEoi + 1 + parentIndex;
+      return eoi;
+   }
+
+   @JsonIgnore
+   public int getPosition() {
+      final int position = parent != null ? parent.getChildren().indexOf(this) : 0;
+      return position;
    }
 }

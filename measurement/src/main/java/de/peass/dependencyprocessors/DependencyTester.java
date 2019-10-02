@@ -14,8 +14,8 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.execution.TestExecutor;
-import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.analysis.Cleaner;
 import de.peass.measurement.analysis.DataReader;
 import de.peass.measurement.analysis.statistics.TestData;
@@ -62,22 +62,22 @@ public class DependencyTester {
       testTransformer = new TimeBasedTestTransformer(folders.getProjectFolder());
       ((TimeBasedTestTransformer) testTransformer).setDuration(duration);
       if (repetitions != 1) {
-         testTransformer.setRepetitions(repetitions);
+         testTransformer.getConfig().setRepetitions(repetitions);
       }
       testTransformer.setDatacollectorlist(DataCollectorList.ONLYTIME);
-      testTransformer.setIterations(0);
-      testTransformer.setWarmupExecutions(0);
-      testTransformer.setUseKieker(useKieker);
+      testTransformer.getConfig().setIterations(0);
+      testTransformer.getConfig().setWarmup(0);
+      testTransformer.getConfig().setUseKieker(useKieker);
       testTransformer.setLogFullData(true);
       testExecutor = KiekerResultManager.createExecutor(folders, Integer.MAX_VALUE, testTransformer);
       // testExecutor = new MavenKiekerTestExecutor(folders, testTransformer, Integer.MAX_VALUE);
       
    }
 
-   public DependencyTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator, final MeasurementConfiguration configuration) throws IOException {
+   public DependencyTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator) throws IOException {
       super();
       this.folders = folders;
-      this.configuration = configuration;
+      this.configuration = testgenerator.getConfig();
 
       vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
       this.testTransformer = testgenerator;
@@ -122,7 +122,7 @@ public class DependencyTester {
          throws IOException, InterruptedException, JAXBException {
       currentVersion = version;
       //TODO Vermutlich currentVersion -> mainVersion
-      currentOrganizer = new ResultOrganizer(folders, version, currentChunkStart, testTransformer.isUseKieker(), false);
+      currentOrganizer = new ResultOrganizer(folders, version, currentChunkStart, testTransformer.getConfig().isUseKieker(), false);
       if (versionOld.equals("HEAD~1")) {
          runOnce(testset, version + "~1", vmid, logFolder);
       } else {
@@ -151,7 +151,7 @@ public class DependencyTester {
 
       final File vmidFolder = initVMFolder(version, vmid, logFolder);
 
-      if (testTransformer.isUseKieker()) {
+      if (testTransformer.getConfig().isUseKieker()) {
          testExecutor.loadClasses();
       }
       testExecutor.prepareKoPeMeExecution(new File(logFolder, "clean.txt"));
@@ -179,7 +179,14 @@ public class DependencyTester {
    }
 
    void cleanup() throws InterruptedException {
-      for (final File createdTempFile : folders.getTempDir().listFiles()) {
+      emptyFolder(folders.getTempDir());
+      emptyFolder(folders.getKiekerTempFolder());
+      System.gc();
+      Thread.sleep(1);
+   }
+
+   private void emptyFolder(final File tempDir) {
+      for (final File createdTempFile : tempDir.listFiles()) {
          try {
             if (createdTempFile.isDirectory()) {
                FileUtils.deleteDirectory(createdTempFile);
@@ -190,8 +197,6 @@ public class DependencyTester {
             e.printStackTrace();
          }
       }
-      System.gc();
-      Thread.sleep(1);
    }
 
    public int getVMCount() {

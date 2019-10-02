@@ -35,6 +35,7 @@ import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
 
 import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.execution.MeasurementConfiguration;
 
 
 /**
@@ -55,7 +56,7 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 	 * @param path Path where to transform the tests
 	 */
 	public TimeBasedTestTransformer(final File path) {
-		super(path);
+		super(path, MeasurementConfiguration.DEFAULT);
 	}
 
 	public int getDuration() {
@@ -88,10 +89,10 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 			}
 
 			addMethod(clazz, "logFullData", "return " + logFullData + ";", PrimitiveType.booleanType());
-			addMethod(clazz, "useKieker", "return " + useKieker + ";", PrimitiveType.booleanType());
+			addMethod(clazz, "useKieker", "return " + config.isUseKieker() + ";", PrimitiveType.booleanType());
 			addMethod(clazz, "getDuration", "return " + duration + ";", PrimitiveType.longType());
 			addMethod(clazz, "getMaximalTime", "return " + (duration * 2) + ";", PrimitiveType.longType());
-			addMethod(clazz, "getRepetitions", "return " + repetitions + ";", PrimitiveType.intType());
+			addMethod(clazz, "getRepetitions", "return " + config.getRepetitions() + ";", PrimitiveType.intType());
 
 			Files.write(javaFile.toPath(), unit.toString().getBytes(charset));
 		} catch (final FileNotFoundException e) {
@@ -136,7 +137,7 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 				performanceTestAnnotation.addPair("duration", "" + duration);
 				performanceTestAnnotation.addPair("logFullData", "" + true);
 				performanceTestAnnotation.addPair("timeout", "" + duration * 2);
-				performanceTestAnnotation.addPair("repetitions", "" + repetitions);
+				performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
 				method.addAnnotation(performanceTestAnnotation);
 			}
 

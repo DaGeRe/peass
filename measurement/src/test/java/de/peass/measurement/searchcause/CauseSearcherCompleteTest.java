@@ -15,17 +15,16 @@ import org.mockito.Mockito;
 
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.searchcause.data.CallTreeNode;
+import de.peass.measurement.searchcause.helper.TestConstants;
+import de.peass.measurement.searchcause.helper.TreeBuilder;
+import de.peass.measurement.searchcause.helper.TreeBuilderBig;
+import de.peass.measurement.searchcause.helper.TreeBuilderDifferent;
 import de.peass.measurement.searchcause.kieker.BothTreeReader;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class CauseSearcherCompleteTest {
-
-   private final CauseSearcherConfig causeSearchConfig = new CauseSearcherConfig(new TestCase("Test#test"), true, false, 5.0);
-   private final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(3, "2", "1");
 
    @Before
    public void cleanup() {
@@ -85,9 +84,10 @@ public class CauseSearcherCompleteTest {
 
       Mockito.when(treeReader.getRootPredecessor()).thenReturn(root1);
       Mockito.when(treeReader.getRootVersion()).thenReturn(root2);
-      final LevelMeasurer measurer = Mockito.mock(LevelMeasurer.class);
+      final CauseTester measurer = Mockito.mock(CauseTester.class);
 
-      final CauseSearcherComplete searcher = new CauseSearcherComplete(treeReader, causeSearchConfig, measurer, measurementConfig,
+      final CauseSearcherComplete searcher = new CauseSearcherComplete(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, 
+            TestConstants.SIMPLE_MEASUREMENT_CONFIG,
             new CauseSearchFolders(folder));
       final List<ChangedEntity> changes = searcher.search();
       return changes;

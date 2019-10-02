@@ -6,7 +6,7 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.measurement.MeasurementConfiguration;
+import de.peass.dependency.execution.MeasurementConfiguration;
 
 public class StatisticUtil {
 

@@ -44,6 +44,7 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.MemberValuePair;
 
 import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 /**
@@ -77,8 +78,8 @@ public class TestTransformation {
       testFile = new File(SOURCE_FOLDER, "TestMe1.java");
       FileUtils.copyFile(old, testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
-      tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
       tt.transformTests();
 
       final CompilationUnit cu = FileComparisonUtil.parse(testFile);
@@ -91,15 +92,15 @@ public class TestTransformation {
       Assert.assertThat(clazz.getMethodsByName("getWarmupExecutions"), Matchers.hasSize(1));
       Assert.assertThat(clazz.getMethodsByName("getExecutionTimes"), Matchers.hasSize(1));
    }
-   
+
    @Test
    public void testJUnit3Twice() throws IOException {
       final File old = new File(RESOURCE_FOLDER, "TestMe6.java");
       testFile = new File(SOURCE_FOLDER, "TestMe6.java");
       FileUtils.copyFile(old, testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
-      tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
       tt.transformTests();
 
       final CompilationUnit cu = FileComparisonUtil.parse(testFile);
@@ -111,10 +112,10 @@ public class TestTransformation {
 
       Assert.assertThat(clazz.getMethodsByName("getWarmupExecutions"), Matchers.hasSize(1));
       Assert.assertThat(clazz.getMethodsByName("getExecutionTimes"), Matchers.hasSize(1));
-      
+
       Assert.assertTrue(FileUtils.contentEquals(old, testFile));
    }
-   
+
    @Test
    public void testJUnit3Twice2() throws IOException {
       final File old = new File(RESOURCE_FOLDER, "TestMe7.java");
@@ -124,8 +125,8 @@ public class TestTransformation {
       final File goal = new File(SOURCE_FOLDER, "MySuper.java");
       FileUtils.copyFile(superClass, goal);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
-      tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
       tt.transformTests();
 
       final CompilationUnit cu = FileComparisonUtil.parse(testFile);
@@ -145,8 +146,8 @@ public class TestTransformation {
       testFile = new File(SOURCE_FOLDER, "TestMe2.java");
       FileUtils.copyFile(old2, testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
-      tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
       tt.transformTests();
 
       final CompilationUnit cu = FileComparisonUtil.parse(testFile);
@@ -177,13 +178,13 @@ public class TestTransformation {
       FileUtils.copyFile(old, testFile);
       System.out.println(testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
-      tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
       tt.transformTests();
 
       Assert.assertFalse(FileUtils.contentEquals(old, testFile));
    }
-   
+
    @Test
    public void testJUnit4Twice() throws IOException {
       final File old = new File(RESOURCE_FOLDER, "TestMe4.java");
@@ -191,13 +192,13 @@ public class TestTransformation {
       FileUtils.copyFile(old, testFile);
       System.out.println(testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
-      tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
       tt.transformTests();
 
       Assert.assertTrue(FileUtils.contentEquals(old, testFile));
    }
-   
+
    @Test
    public void testOtherRule() throws IOException {
       final File old = new File(RESOURCE_FOLDER, "TestMe5.java");
@@ -205,13 +206,13 @@ public class TestTransformation {
       FileUtils.copyFile(old, testFile);
       System.out.println(testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
-      tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
       tt.transformTests();
 
       Assert.assertFalse(FileUtils.contentEquals(old, testFile));
    }
-   
+
    @After
    public void cleanup() {
       testFile.delete();

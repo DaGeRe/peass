@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.measurement.MeasurementConfiguration;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.searchcause.serialization.MeasuredNode;
 
 public class CauseSearchData {
@@ -75,7 +75,7 @@ public class CauseSearchData {
       serializeNode.setStatistic(rawDataNode.getTestcaseStatistic());
       serializeNode.setCall(rawDataNode.getCall());
       serializeNode.setKiekerPattern(rawDataNode.getKiekerPattern());
-      serializeNode.setOtherCall(rawDataNode.getOtherVersionNode() != null ? rawDataNode.getOtherVersionNode().getCall() : "UNKNOWN");
+      serializeNode.setOtherKiekerPattern(rawDataNode.getOtherVersionNode() != null ? rawDataNode.getOtherVersionNode().getKiekerPattern() : "UNKNOWN");
 
       current.put(rawDataNode, serializeNode);
 

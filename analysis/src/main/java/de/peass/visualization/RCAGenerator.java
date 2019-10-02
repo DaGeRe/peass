@@ -146,15 +146,19 @@ public class RCAGenerator {
          fileWriter.write("};\n");
       }
 
-      private void readSources(final Map<String, String> nameSourceMap, final MeasuredNode root) throws IOException {
-         for (final MeasuredNode node : root.getChilds()) {
-            final int begin = node.getCall().lastIndexOf('.') + 1;
-            final File test = new File(sourceFolder, node.getCall().substring(begin) + "_diff.txt");
-            if (test.exists()) {
-               final String source = FileUtils.readFileToString(test, Charset.defaultCharset());
-               nameSourceMap.put(node.getCall(), source);
-            }
+      private void readSources(final Map<String, String> nameSourceMap, final MeasuredNode parent) throws IOException {
+         getNodeSource(nameSourceMap, parent);
+         for (final MeasuredNode node : parent.getChilds()) {
             readSources(nameSourceMap, node);
+         }
+      }
+
+      private void getNodeSource(final Map<String, String> nameSourceMap, final MeasuredNode node) throws IOException {
+         final int begin = node.getCall().lastIndexOf('.') + 1;
+         final File test = new File(sourceFolder, node.getCall().substring(begin) + "_diff.txt");
+         if (test.exists()) {
+            final String source = FileUtils.readFileToString(test, Charset.defaultCharset());
+            nameSourceMap.put(node.getCall(), source);
          }
       }
    }

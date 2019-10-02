@@ -116,7 +116,8 @@ public class EarlyBreakDecider {
             final Chunk realChunk = MultipleVMTestUtil.findChunk(currentChunkStart, dataCollector);
             LOG.debug("Chunk size: {}", realChunk.getResult().size());
             for (final Result result : realChunk.getResult()) {
-               if (result.getExecutionTimes() + result.getWarmupExecutions() == testTransformer.getIterations() && result.getRepetitions() == testTransformer.getRepetitions()) {
+               if (result.getExecutionTimes() + result.getWarmupExecutions() == testTransformer.getConfig().getIterations() && 
+                     result.getRepetitions() == testTransformer.getConfig().getRepetitions()) {
                   if (result.getVersion().getGitversion().equals(versionOld)) {
                      before.add(result.getValue());
                   }

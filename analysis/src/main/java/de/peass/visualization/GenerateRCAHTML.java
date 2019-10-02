@@ -32,6 +32,9 @@ public class GenerateRCAHTML implements Callable<Void> {
    @Option(names = { "-data", "--data" }, description = "Path to datafolder")
    protected File data[];
 
+   @Option(names = { "-propertyFolder", "--propertyFolder" }, description = "Path to property folder", required = false)
+   protected File propertyFolder;
+   
    private File resultFolder = new File("results");
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
@@ -61,7 +64,8 @@ public class GenerateRCAHTML implements Callable<Void> {
    private void handleSimpleFolder(final File source) throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException {
       for (final File treeFile : source.listFiles()) {
          if (treeFile.getName().endsWith(".json")) {
-            new RCAGenerator(treeFile, resultFolder).createVisualization();
+            final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, resultFolder);
+            rcaGenerator.createVisualization();
          }
       }
    }
@@ -84,7 +88,9 @@ public class GenerateRCAHTML implements Callable<Void> {
             for (final File treeFile : testcaseFolder.listFiles()) {
                if (treeFile.getName().endsWith(".json")) {
                   final String projectName = "commons-fileupload";
-                  final File propertyFolder = new File(new RepoFolders().getPropertiesFolder(), "properties" + File.separator + projectName); 
+                  final File propertyFolder = this.propertyFolder != null ? 
+                        this.propertyFolder : 
+                     new File(new RepoFolders().getPropertiesFolder(), "properties" + File.separator + projectName); 
                   final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, versionResultFolder);
                   rcaGenerator.setPropertyFolder(propertyFolder);
                   rcaGenerator.createVisualization();

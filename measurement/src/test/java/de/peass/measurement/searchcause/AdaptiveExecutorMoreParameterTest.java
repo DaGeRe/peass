@@ -26,83 +26,81 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.searchcause.data.CallTreeNode;
+import de.peass.measurement.searchcause.helper.TestConstants;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({GitUtils.class, VersionControlSystem.class})
+@PrepareForTest({ GitUtils.class, VersionControlSystem.class })
 @PowerMockIgnore("javax.management.*")
 public class AdaptiveExecutorMoreParameterTest {
-   
+
    private static final Logger LOG = LogManager.getLogger(AdaptiveExecutorMoreParameterTest.class);
 
    private static final File SOURCE_DIR = new File("src/test/resources/rootCauseIT/basic_state_moreparameters/");
    private static final TestCase TEST = new TestCase("defaultpackage.TestMe", "testMe");
-   public static CauseSearcherConfig DEFAULT_CAUSE_CONFIG = new CauseSearcherConfig(TEST, true, false, 5.0);
-   public static CauseSearcherConfig FULL_CASE_CONFIG = new CauseSearcherConfig(TEST, false, true, 5.0);
-   
+   public static CauseSearcherConfig FULL_CASE_CONFIG = new CauseSearcherConfig(TEST, false, true, 5.0, false, 0.1, false);
+
    private File tempDir;
    private File projectFolder;
    private CauseTester executor;
-   private JUnitTestTransformer transformer ;
-   private MeasurementConfiguration config = new MeasurementConfiguration(2, "00001", "00001~1");
-   
+   private JUnitTestTransformer transformer;
+
    @Before
    public void setUp() {
       try {
-         // tempDir = new File("/tmp/peass_1994237287341574028");
          tempDir = Files.createTempDirectory(new File("target").toPath(), "peass_").toFile();
          projectFolder = new File(tempDir, "project");
 
          FileUtil.copyDir(SOURCE_DIR, projectFolder);
-         
+
          PowerMockito.mockStatic(VersionControlSystem.class);
          VCSTestUtils.mockGetVCS();
-         
+
          PowerMockito.mockStatic(GitUtils.class);
-         
+
          VCSTestUtils.mockGoToTagAny(SOURCE_DIR);
-         
-         transformer = new JUnitTestTransformer(projectFolder);
+
+         transformer = new JUnitTestTransformer(projectFolder, TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER);
          transformer.setDatacollectorlist(DataCollectorList.ONLYTIME);
-         
+
       } catch (final IOException e) {
          e.printStackTrace();
       }
    }
-   
+
    private void testSuccessfull()
          throws IOException, InterruptedException, JAXBException, FileNotFoundException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
       LOG.debug("Executor: {}", executor);
       final Set<CallTreeNode> included = new HashSet<>();
-      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1", "public void defaultpackage.NormalDependency.child1(int[], double, java.lang.String)", null);
+      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1",
+            "public void defaultpackage.NormalDependency.child1(int[], double, java.lang.String)", null);
       nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);
       executor.setIncludedMethods(included);
-      included.forEach(node -> node.setVersions("00001", "00001~1"));
-      
+      included.forEach(node -> node.setVersions("000001", "000001~1"));
+
       executor.evaluate(TEST);
 
       executor.getDurations(0);
 
-      Assert.assertEquals(2, nodeWithDuration.getStatistics("00001").getN());
-      Assert.assertEquals(2, nodeWithDuration.getStatistics("00001~1").getN());
+      Assert.assertEquals(2, nodeWithDuration.getStatistics("000001").getN());
+      Assert.assertEquals(2, nodeWithDuration.getStatistics("000001~1").getN());
    }
 
    @Test
    public void testFullMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      executor = new CauseTester(new CauseSearchFolders(projectFolder), transformer, config, FULL_CASE_CONFIG);
+      executor = new CauseTester(new CauseSearchFolders(projectFolder), transformer, FULL_CASE_CONFIG);
       testSuccessfull();
    }
 
    @Test
    public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      executor = new CauseTester(new CauseSearchFolders(projectFolder), transformer, config, DEFAULT_CAUSE_CONFIG);
+      executor = new CauseTester(new CauseSearchFolders(projectFolder), transformer, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME);
       testSuccessfull();
    }
-   
+
 }

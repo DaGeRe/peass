@@ -38,6 +38,7 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.execution.GradleTestExecutor;
 import de.peass.dependency.execution.MavenTestExecutor;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.testtransformation.JUnitTestTransformer;
 
@@ -78,12 +79,13 @@ public class KiekerResultManager {
    }
 
    private JUnitTestTransformer createTestTransformer() {
-      final JUnitTestTransformer testGenerator = new JUnitTestTransformer(folders.getProjectFolder());
-      testGenerator.setUseKieker(true);
+      final MeasurementConfiguration config = new MeasurementConfiguration(1);
+      config.setIterations(1);
+      config.setWarmup(0);
+      config.setUseKieker(true);
+      final JUnitTestTransformer testGenerator = new JUnitTestTransformer(folders.getProjectFolder(), config);
       testGenerator.setLogFullData(false);
       testGenerator.setEncoding(StandardCharsets.UTF_8);
-      testGenerator.setIterations(1);
-      testGenerator.setWarmupExecutions(0);
       testGenerator.setDatacollectorlist(DataCollectorList.ONLYTIME);
       return testGenerator;
    }

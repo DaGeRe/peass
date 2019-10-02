@@ -16,7 +16,7 @@ import de.peass.measurement.searchcause.data.OneVMResult;
 public class MeasuredNode {
    private String call;
    private String kiekerPattern;
-   private String otherCall;
+   private String otherKiekerPattern;
    private TestcaseStatistic statistic;
    private List<MeasuredNode> childs = new LinkedList<>();
    
@@ -24,14 +24,6 @@ public class MeasuredNode {
    private MeasuredValues values;
    @JsonInclude(Include.NON_NULL)
    private MeasuredValues valuesPredecessor;
-
-   public String getOtherCall() {
-      return otherCall;
-   }
-
-   public void setOtherCall(final String otherCall) {
-      this.otherCall = otherCall;
-   }
 
    public String getCall() {
       return call;
@@ -47,6 +39,14 @@ public class MeasuredNode {
 
    public void setKiekerPattern(final String kiekerPattern) {
       this.kiekerPattern = kiekerPattern;
+   }
+   
+   public String getOtherKiekerPattern() {
+      return otherKiekerPattern;
+   }
+
+   public void setOtherKiekerPattern(final String otherKiekerPattern) {
+      this.otherKiekerPattern = otherKiekerPattern;
    }
 
    public TestcaseStatistic getStatistic() {

@@ -165,7 +165,7 @@ public class MavenTestExecutor extends TestExecutor {
       clean(logFile);
       LOG.debug("Starting Test Transformation");
       transformTests();
-      if (testTransformer.isUseKieker()) {
+      if (testTransformer.getConfig().isUseKieker()) {
          generateAOPXML();
          if (testTransformer.isAdaptiveExecution()) {
             prepareAdaptiveExecution();
@@ -309,14 +309,19 @@ public class MavenTestExecutor extends TestExecutor {
 
    private String buildArgline(final File tempFile) {
       final String argline;
-      if (testTransformer.isUseKieker()) {
-         final String writerConfig;
+      if (testTransformer.getConfig().isUseKieker()) {
+         String writerConfig;
          if (testTransformer.isAggregatedWriter()) {
             final String bulkFolder = "-Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.customStoragePath=" + tempFile.toString();
-            final int wholeWarmup = testTransformer.getWarmupExecutions() * testTransformer.getRepetitions();
+            final int wholeWarmup = testTransformer.getConfig().getWarmup() * testTransformer.getConfig().getRepetitions();
             writerConfig = "-Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AggregatedTreeWriter" +
                   " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.warmup=" + wholeWarmup +
+                  " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.writeInterval=" + testTransformer.getConfig().getKiekerAggregationInterval() +
                   " " + bulkFolder;
+            if (testTransformer.isSplitAggregated()) {
+               writerConfig += " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.aggregateSplitted=true";
+            }
+           
          } else {
             writerConfig = "";
          }

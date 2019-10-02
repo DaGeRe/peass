@@ -62,6 +62,7 @@ import de.dagere.kopeme.parsing.JUnitParseUtil;
 import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.execution.MeasurementConfiguration;
 
 /**
  * Transforms JUnit-Tests to performance tests.
@@ -71,22 +72,16 @@ import de.peass.dependency.changesreading.FileComparisonUtil;
  */
 public class JUnitTestTransformer {
 
-   private static final int DEFAULT_EXECUTIONS = 10;
-   public static final int TIMEOUT_SECONDS = 300; // 5 Minutes should be fine
-   private static final int DEFAULT_TIMEOUT = 1 * TIMEOUT_SECONDS * 1000;
-
    private static final Logger LOG = LogManager.getLogger(JUnitTestTransformer.class);
 
    protected DataCollectorList datacollectorlist;
-   protected int warmupExecutions, iterations;
-   protected long timeoutTime;
+   protected final MeasurementConfiguration config;
    protected boolean logFullData = true;
    protected File projectFolder;
-   protected boolean useKieker = false;
    protected boolean adaptiveExecution = false;
    protected boolean aggregatedWriter = false;
+   protected boolean splitAggregated = false;
    protected Charset charset = StandardCharsets.UTF_8;
-   protected int repetitions = 1;
    private Map<String, List<File>> extensions = null;
 
    private final JavaParser javaParser = new JavaParser();
@@ -96,28 +91,13 @@ public class JUnitTestTransformer {
     * 
     * @param projectFolder Folder, where tests should be transformed
     */
-   public JUnitTestTransformer(final File projectFolder) {
+   public JUnitTestTransformer(final File projectFolder, final MeasurementConfiguration config) {
       this.projectFolder = projectFolder;
+      this.config = config;
       datacollectorlist = DataCollectorList.STANDARD;
-      iterations = DEFAULT_EXECUTIONS;
-      warmupExecutions = DEFAULT_EXECUTIONS;
-      timeoutTime = DEFAULT_TIMEOUT;
-   }
-
-   public boolean isUseKieker() {
-      return useKieker;
-   }
-
-   public void setUseKieker(final boolean useKieker) {
-      this.useKieker = useKieker;
-   }
-
-   public int getRepetitions() {
-      return repetitions;
-   }
-
-   public void setRepetitions(final int repetitions) {
-      this.repetitions = repetitions;
+//      iterations = DEFAULT_EXECUTIONS;
+//      warmupExecutions = DEFAULT_EXECUTIONS;
+//      timeoutTime = DEFAULT_TIMEOUT;
    }
 
    private Map<File, CompilationUnit> loadedFiles;
@@ -327,12 +307,12 @@ public class JUnitTestTransformer {
             clazz.addExtendedType("KoPeMeTestcase");
          }
 
-         addMethod(clazz, "getWarmupExecutions", "return " + warmupExecutions + ";", PrimitiveType.intType());
-         addMethod(clazz, "getExecutionTimes", "return " + iterations + ";", PrimitiveType.intType());
+         addMethod(clazz, "getWarmupExecutions", "return " + config.getWarmup() + ";", PrimitiveType.intType());
+         addMethod(clazz, "getExecutionTimes", "return " + config.getIterations() + ";", PrimitiveType.intType());
          addMethod(clazz, "logFullData", "return " + logFullData + ";", PrimitiveType.booleanType());
-         addMethod(clazz, "useKieker", "return " + useKieker + ";", PrimitiveType.booleanType());
-         addMethod(clazz, "getMaximalTime", "return " + timeoutTime + ";", PrimitiveType.longType());
-         addMethod(clazz, "getRepetitions", "return " + repetitions + ";", PrimitiveType.intType());
+         addMethod(clazz, "useKieker", "return " + config.isUseKieker() + ";", PrimitiveType.booleanType());
+         addMethod(clazz, "getMaximalTime", "return " + config.getTimeout() + ";", PrimitiveType.longType());
+         addMethod(clazz, "getRepetitions", "return " + config.getRepetitions() + ";", PrimitiveType.intType());
 
          if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
             synchronized (javaParser) {
@@ -428,12 +408,12 @@ public class JUnitTestTransformer {
 
       final NormalAnnotationExpr performanceTestAnnotation = new NormalAnnotationExpr();
       performanceTestAnnotation.setName("de.dagere.kopeme.annotations.PerformanceTest");
-      performanceTestAnnotation.addPair("executionTimes", "" + iterations);
-      performanceTestAnnotation.addPair("warmupExecutions", "" + warmupExecutions);
+      performanceTestAnnotation.addPair("executionTimes", "" + config.getIterations());
+      performanceTestAnnotation.addPair("warmupExecutions", "" + config.getWarmup());
       performanceTestAnnotation.addPair("logFullData", "" + true);
-      performanceTestAnnotation.addPair("useKieker", "" + useKieker);
-      performanceTestAnnotation.addPair("timeout", "" + timeoutTime);
-      performanceTestAnnotation.addPair("repetitions", "" + repetitions);
+      performanceTestAnnotation.addPair("useKieker", "" + config.isUseKieker());
+      performanceTestAnnotation.addPair("timeout", "" + config.getTimeout());
+      performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
       if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
          performanceTestAnnotation.addPair("dataCollectors", "\"ONLYTIME\"");
       }
@@ -510,40 +490,6 @@ public class JUnitTestTransformer {
       this.datacollectorlist = datacollectorlist;
    }
 
-   public void setIterations(final int iterations) {
-      this.iterations = iterations;
-   }
-
-   public int getIterations() {
-      return iterations;
-   }
-
-   public void setWarmupExecutions(final int warmup) {
-      this.warmupExecutions = warmup;
-   }
-
-   public int getWarmupExecutions() {
-      return warmupExecutions;
-   }
-
-   /**
-    * Timeout in milliseconds
-    * 
-    * @return
-    */
-   public long getSumTime() {
-      return timeoutTime;
-   }
-
-   /**
-    * Sets timeout in milliseconds.
-    * 
-    * @param sumTime
-    */
-   public void setSumTime(final long sumTime) {
-      this.timeoutTime = sumTime;
-   }
-
    public File getProjectFolder() {
       return projectFolder;
    }
@@ -580,5 +526,17 @@ public class JUnitTestTransformer {
 
    public void setAggregatedWriter(final boolean aggregatedWriter) {
       this.aggregatedWriter = aggregatedWriter;
+   }
+
+   public boolean isSplitAggregated() {
+      return splitAggregated;
+   }
+
+   public void setSplitAggregated(final boolean splitAggregated) {
+      this.splitAggregated = splitAggregated;
+   }
+
+   public MeasurementConfiguration getConfig() {
+      return config;
    }
 }

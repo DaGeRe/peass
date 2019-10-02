@@ -142,27 +142,33 @@ function shownode(node) {
   quelltext.innerHTML="<pre>" + source[node.name] +"</pre>"
   histogramm.innerHTML=node.name;
   var version = {
-  x: node.values,
-  type: "histogram",
-  name: "Version",
-  opacity: 0.5,
-  marker: {
+    x: node.values,
+    type: "histogram",
+    name: "Version",
+    opacity: 0.5,
+    marker: {
      color: 'green',
-  },
+    },
   };
   var predecessor = {
-  x: node.valuesPredecessor,
-  type: "histogram",
-  name: "Predecessor",
-  opacity: 0.6,
-  marker: {
+    x: node.valuesPredecessor,
+    type: "histogram",
+    name: "Predecessor",
+    opacity: 0.6,
+    marker: {
      color: 'red',
-  },
+    },
   };
   var data = [version, predecessor];
-  var layout = {barmode: "overlay"};
+  var layout = {barmode: "overlay", 
+			title: { text: "Histogramm"},
+			xaxis: { title: { text: "Duration / Mikroseconds"} },
+			yaxis: { title: { text: "Frequency"} }
+		  };
   Plotly.newPlot("histogramm", data, layout);
 }
+
+shownode(root);
 
 </script>
 	

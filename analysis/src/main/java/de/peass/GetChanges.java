@@ -3,10 +3,13 @@ package de.peass;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+
 import de.peass.analysis.changes.ChangeReader;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
@@ -35,7 +38,7 @@ public class GetChanges implements Callable<Void> {
 
    @Option(names = { "-type1error", "--type1error" }, description = "Type 1 error of agnostic-t-test, i.e. probability of considering measurements equal when they are unequal")
    public double type1error = 0.01;
-   
+
    @Option(names = { "-type2error", "--type2error" }, description = "Type 2 error of agnostic-t-test, i.e. probability of considering measurements unequal when they are equal")
    private double type2error = 0.01;
 
@@ -44,7 +47,7 @@ public class GetChanges implements Callable<Void> {
    }
 
    public static void main(final String[] args) {
-      CommandLine commandLine = new CommandLine(new GetChanges());
+      final CommandLine commandLine = new CommandLine(new GetChanges());
       commandLine.execute(args);
    }
 
@@ -59,22 +62,25 @@ public class GetChanges implements Callable<Void> {
       if (!statisticFolder.exists()) {
          statisticFolder.mkdir();
       }
-      
+
       LOG.info("Errors: 1: {} 2: {}", type1error, type2error);
 
       final ChangeReader reader = new ChangeReader(statisticFolder, VersionComparator.getProjectName());
       reader.setType1error(type1error);
       reader.setType2error(type2error);
 
-      for (File dataFile : data) {
+      for (final File dataFile : data) {
          reader.readFile(dataFile);
       }
       return null;
    }
 
-   public static void getVersionOrder(File dependencyFile, File executionFile, File... additionalDependencyFiles) throws IOException, JsonParseException, JsonMappingException {
+   static ExecutionData executionData;
+
+   public static void getVersionOrder(final File dependencyFile, final File executionFile, final File... additionalDependencyFiles)
+         throws IOException, JsonParseException, JsonMappingException {
       Dependencies dependencies = null;
-      ExecutionData executionData = null;
+      executionData = null;
       if (dependencyFile != null) {
          dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
          VersionComparator.setDependencies(dependencies);
@@ -85,7 +91,7 @@ public class GetChanges implements Callable<Void> {
          VersionComparator.setDependencies(dependencies);
       }
       if (dependencies == null) {
-         for (File dependencytest : additionalDependencyFiles) {
+         for (final File dependencytest : additionalDependencyFiles) {
             dependencies = Constants.OBJECTMAPPER.readValue(dependencytest, Dependencies.class);
             VersionComparator.setDependencies(dependencies);
          }

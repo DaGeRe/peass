@@ -87,9 +87,9 @@ public class ReadProperties implements Callable<Void> {
       if (!projectFolder.exists()) {
          GitUtils.downloadProject(VersionComparator.getDependencies().getUrl(), projectFolder);
       }
-
-      final File viewFolder = folders.getViewFolder(projectName);
-      final ExecutionData changedTests = folders.getExecutionData(projectName);
+      
+      final ExecutionData changedTests = GetChanges.executionData != null ? GetChanges.executionData: folders.getExecutionData(projectName);
+      final File viewFolder = GetChanges.executionData != null ? new File(executionFile.getParentFile(), "views_" + projectName) : folders.getViewFolder(projectName);
       if (ReadAllProperties.readAll) {
          final File resultFile = new File("results" + File.separator + projectName + File.separator + "properties_alltests.json");
          out = resultFile;

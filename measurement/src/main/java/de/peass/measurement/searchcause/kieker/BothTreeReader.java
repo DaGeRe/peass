@@ -9,8 +9,8 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peass.dependency.CauseSearchFolders;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.searchcause.CauseSearcherConfig;
 import de.peass.measurement.searchcause.data.CallTreeNode;
 import de.peass.measurement.searchcause.treeanalysis.TreeUtil;

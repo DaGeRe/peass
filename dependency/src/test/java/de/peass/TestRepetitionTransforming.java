@@ -25,6 +25,7 @@ import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.testtransformation.ParseUtil;
 import de.peass.transformation.TestTransformation;
@@ -50,7 +51,7 @@ public class TestRepetitionTransforming {
 		final File testFile = new File(SOURCE_FOLDER, "TestMe1.java");
 		FileUtils.copyFile(old, testFile);
 
-		final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
+		final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
 		tt.setDatacollectorlist(DataCollectorList.ONLYTIME);
 		
 		tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
@@ -74,7 +75,7 @@ public class TestRepetitionTransforming {
 		final File testFile2 = new File(SOURCE_FOLDER, "TestMe2.java");
 		FileUtils.copyFile(old2, testFile2);
 
-		final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
+		final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
 		tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       tt.transformTests();
 

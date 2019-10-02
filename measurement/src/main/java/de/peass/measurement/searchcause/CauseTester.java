@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
@@ -15,9 +16,9 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.analysis.EarlyBreakDecider;
 import de.peass.measurement.organize.ResultOrganizer;
 import de.peass.measurement.searchcause.data.CallTreeNode;
@@ -38,21 +39,43 @@ public class CauseTester extends AdaptiveTester {
    private final TestCase testcase;
    private final CauseSearcherConfig causeConfig;
    private final CauseSearchFolders folders;
+   private int adaptiveId = 0;
+   private boolean considerNodePosition = false;
 
-   public CauseTester(final CauseSearchFolders project, final JUnitTestTransformer testgenerator, final MeasurementConfiguration configuration, final CauseSearcherConfig causeConfig)
+   public CauseTester(final CauseSearchFolders project, final JUnitTestTransformer testgenerator, final CauseSearcherConfig causeConfig)
          throws IOException {
-      super(project, testgenerator, configuration);
+      super(project, testgenerator);
       this.testcase = causeConfig.getTestCase();
       this.causeConfig = causeConfig;
       this.folders = project;
-      testgenerator.setUseKieker(true);
       testgenerator.setAdaptiveExecution(true);
       testgenerator.setAggregatedWriter(causeConfig.isUseAggregation());
+      testgenerator.setSplitAggregated(causeConfig.isSplitAggregated());
+   }
+   
+   public void setConsiderNodePosition(final boolean considerNodePosition) {
+      this.considerNodePosition = considerNodePosition;
+   }
+   
+   public void measureVersion(final List<CallTreeNode> nodes)
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+      includedNodes = prepareNodes(nodes);
+      evaluate(causeConfig.getTestCase());
+      getDurations(adaptiveId);
+      cleanup(adaptiveId);
+      adaptiveId++;
+   }
+   
+   private Set<CallTreeNode> prepareNodes(final List<CallTreeNode> nodes) {
+      final Set<CallTreeNode> includedNodes = new HashSet<CallTreeNode>();
+      includedNodes.addAll(nodes);
+      nodes.forEach(node -> node.setVersions(testTransformer.getConfig().getVersion(), testTransformer.getConfig().getVersionOld()));
+      return includedNodes;
    }
 
    @Override
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException {
-      includedNodes.forEach(node -> node.setWarmup(testTransformer.getIterations() / 2));
+      includedNodes.forEach(node -> node.setWarmup(testTransformer.getConfig().getIterations() / 2));
 
       LOG.debug("Adaptive execution: " + includedNodes);
 
@@ -68,7 +91,7 @@ public class CauseTester extends AdaptiveTester {
          includedNodes.forEach(node -> includedPattern.add(node.getOtherVersionNode().getKiekerPattern()));
       }
       testExecutor.setIncludedMethods(includedPattern);
-      currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart, testTransformer.isUseKieker(), causeConfig.isSaveAll());
+      currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart, testTransformer.getConfig().isUseKieker(), causeConfig.isSaveAll());
       super.runOnce(testcase, version, vmid, logFolder);
    }
 
@@ -96,6 +119,7 @@ public class CauseTester extends AdaptiveTester {
    @Override
    protected void handleKiekerResults(final String version, final File versionResultFolder) {
       final KiekerResultReader kiekerResultReader = new KiekerResultReader(causeConfig.isUseAggregation(), includedNodes, version, versionResultFolder, testcase, version.equals(this.version));
+      kiekerResultReader.setConsiderNodePosition(considerNodePosition);
       kiekerResultReader.readResults();
    }
 
@@ -136,8 +160,9 @@ public class CauseTester extends AdaptiveTester {
       final TestCase test = new TestCase("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");
 
       final MeasurementConfiguration config = new MeasurementConfiguration(15, 15, 0.01, 0.05, version, version + "~1");
-      final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, true, 5);
-      final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), new JUnitTestTransformer(projectFolder), config, causeConfig);
+      config.setUseKieker(true);
+      final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, true, 5, false, 0.01, false);
+      final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), new JUnitTestTransformer(projectFolder, config), causeConfig);
 
       final CallTreeNode node = new CallTreeNode("FileUploadTestCase#parseUpload", "protected java.util.List org.apache.commons.fileupload.FileUploadTestCase.parseUpload(byte[],java.lang.String)", null);
       node.setOtherVersionNode(node);

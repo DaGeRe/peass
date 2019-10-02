@@ -15,19 +15,26 @@ import org.mockito.Mockito;
 
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.searchcause.data.CallTreeNode;
+import de.peass.measurement.searchcause.helper.TestConstants;
+import de.peass.measurement.searchcause.helper.TreeBuilder;
 import de.peass.measurement.searchcause.kieker.BothTreeReader;
-import de.peass.measurement.searchcause.treeanalysis.LevelDifferingDeterminer;
+import de.peass.measurement.searchcause.treeanalysis.LevelDifferentNodeDeterminer;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class CauseSearcherTest {
 
-   private final CauseSearcherConfig causeSearchConfig = new CauseSearcherConfig(new TestCase("Test#test"), true, false, 5.0);
-   private final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(3, "2", "1");
-   
+   /**
+    * Needs own measurement config for kieker activation
+    */
+   private final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(2, "000001", "000001~1");
+
+   {
+      measurementConfig.setUseKieker(true);
+   }
+
    public void cleanup() {
       final File folder = new File("target/test_peass/");
       try {
@@ -36,23 +43,22 @@ public class CauseSearcherTest {
          e.printStackTrace();
       }
    }
-   
+
    @Test
    public void testMeasurement() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       final CallTreeNode root1 = new TreeBuilder().getRoot();
       final CallTreeNode root2 = new TreeBuilder().getRoot();
-      
-      final LevelDifferingDeterminer lcs = new LevelDifferingDeterminer(Arrays.asList(new CallTreeNode[] { root1 }),
+
+      final LevelDifferentNodeDeterminer lcs = new LevelDifferentNodeDeterminer(Arrays.asList(new CallTreeNode[] { root1 }),
             Arrays.asList(new CallTreeNode[] { root2 }),
-            causeSearchConfig,
+            TestConstants.SIMPLE_CAUSE_CONFIG,
             measurementConfig);
       lcs.calculateDiffering();
-      Assert.assertEquals(2, lcs.getDifferingPredecessor().size());
+      Assert.assertEquals(2, lcs.getMeasureNextLevelPredecessor().size());
 
-      lcs.analyseNode(root1);
       Assert.assertEquals(0, lcs.getTreeStructureDifferingNodes().size());
    }
-   
+
    @Test
    public void testCauseSearching()
          throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
@@ -66,9 +72,9 @@ public class CauseSearcherTest {
 
       Mockito.when(treeReader.getRootPredecessor()).thenReturn(root1);
       Mockito.when(treeReader.getRootVersion()).thenReturn(root2);
-      final LevelMeasurer measurer = Mockito.mock(LevelMeasurer.class);
+      final CauseTester measurer = Mockito.mock(CauseTester.class);
 
-      final CauseSearcher searcher = new CauseSearcher(treeReader, causeSearchConfig, measurer, measurementConfig,
+      final CauseSearcher searcher = new CauseSearcher(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, measurementConfig,
             new CauseSearchFolders(folder));
       final List<ChangedEntity> changes = searcher.search();
 

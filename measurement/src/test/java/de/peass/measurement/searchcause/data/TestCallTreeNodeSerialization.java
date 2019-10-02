@@ -10,10 +10,7 @@ import de.peass.utils.Constants;
 public class TestCallTreeNodeSerialization {
    @Test
    public void testName() throws Exception {
-      final CallTreeNode parent = new CallTreeNode("test()", "public void test()", null);
-      final CallTreeNode child2 = parent.appendChild("child1()", "public void child1()");
-      child2.appendChild("child3(int, String)", "public void child3(int, String)");
-      parent.appendChild("child2()", "public void child2()");
+      final CallTreeNode parent = buildExampleTree();
       
       final File resultFile = new File("test.json");
       Constants.OBJECTMAPPER.writeValue(resultFile, parent);
@@ -28,5 +25,13 @@ public class TestCallTreeNodeSerialization {
       
       final CallTreeNode secondChild = deserialized.getChildren().get(1);
       Assert.assertEquals("child2()", secondChild.getCall());
+   }
+
+   private CallTreeNode buildExampleTree() {
+      final CallTreeNode parent = new CallTreeNode("test()", "public void test()", null);
+      final CallTreeNode child2 = parent.appendChild("child1()", "public void child1()");
+      child2.appendChild("child3(int, String)", "public void child3(int, String)");
+      parent.appendChild("child2()", "public void child2()");
+      return parent;
    }
 }

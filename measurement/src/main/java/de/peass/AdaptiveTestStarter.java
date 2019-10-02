@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.AdaptiveTester;
-import de.peass.measurement.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -43,7 +43,7 @@ public class AdaptiveTestStarter extends DependencyTestPairStarter {
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, type1error, type2error);
       final JUnitTestTransformer testgenerator = getTestTransformer(measurementConfiguration);
 
-      tester = new AdaptiveTester(folders, testgenerator, measurementConfiguration);
+      tester = new AdaptiveTester(folders, testgenerator);
 
       processCommandline();
       return null;

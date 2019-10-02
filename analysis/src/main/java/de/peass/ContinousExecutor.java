@@ -23,6 +23,7 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Version;
@@ -31,7 +32,6 @@ import de.peass.dependency.reader.VersionKeeper;
 import de.peass.dependency.traces.ViewGenerator;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.measurement.MeasurementConfiguration;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.GitCommit;
@@ -50,33 +50,33 @@ import picocli.CommandLine.Option;
  * @author reichelt
  *
  */
-public class ContinousExecutor implements Callable<Void>  {
+public class ContinousExecutor implements Callable<Void> {
    private static final Logger LOG = LogManager.getLogger(ContinousExecutor.class);
-   
+
    @Option(names = { "-vms", "--vms" }, description = "Number of VMs to start")
    int vms = 100;
-   
+
    @Option(names = { "-duration", "--duration" }, description = "Which duration to use - if duration is specified, warmup and iterations are ignored")
    int duration = 0;
-   
+
    @Option(names = { "-warmup", "--warmup" }, description = "Number of warmup iterations")
    int warmup = 10;
-   
+
    @Option(names = { "-iterations", "--iterations" }, description = "Number of iterations")
    int iterations = 1000;
-   
+
    @Option(names = { "-repetitions", "--repetitions" }, description = "Count of repetitions")
    int repetitions = 100;
-   
+
    @Option(names = { "-threads", "--threads" }, description = "Count of threads")
    int threads = 100;
-   
-   @Option(names = { "-useKieker", "--useKieker", "-usekieker", "--usekieker"}, description = "Whether Kieker should be used")
+
+   @Option(names = { "-useKieker", "--useKieker", "-usekieker", "--usekieker" }, description = "Whether Kieker should be used")
    boolean useKieker = false;
 
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
-   
+
    @Option(names = { "-folder", "--folder" }, description = "Folder of the project that should be analyzed", required = true)
    protected File projectFolder;
 
@@ -84,7 +84,7 @@ public class ContinousExecutor implements Callable<Void>  {
       final ContinousExecutor command = new ContinousExecutor();
       final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);
-      
+
    }
 
    private static void cloneProject(final File cloneProjectFolder, final File localFolder) throws InterruptedException, IOException {
@@ -99,12 +99,14 @@ public class ContinousExecutor implements Callable<Void>  {
          final GitCommit headCommit, final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException {
       final File fullResultsVersion = new File(localFolder, headCommit.getTag());
       if (!fullResultsVersion.exists()) {
-         final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder());
-         testgenerator.setIterations(iterations);
-         testgenerator.setWarmupExecutions(warmup);
-         testgenerator.setRepetitions(repetitions);
-         testgenerator.setUseKieker(false);
-         final AdaptiveTester tester = new AdaptiveTester(folders, testgenerator, new MeasurementConfiguration(vms, headCommit.getTag(), previousName));
+         final MeasurementConfiguration configuration = new MeasurementConfiguration(vms, headCommit.getTag(), previousName);
+         configuration.setIterations(iterations);
+         configuration.setWarmup(warmup);
+         configuration.setRepetitions(repetitions);
+         final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder(), configuration);
+         testgenerator.getConfig().setUseKieker(false);
+
+         final AdaptiveTester tester = new AdaptiveTester(folders, testgenerator);
          for (final TestCase test : tests) {
             tester.evaluate(test);
          }

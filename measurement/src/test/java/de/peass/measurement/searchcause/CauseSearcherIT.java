@@ -26,8 +26,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.MeasurementConfiguration;
+import de.peass.measurement.searchcause.helper.TestConstants;
 import de.peass.measurement.searchcause.kieker.BothTreeReader;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.GitUtils;
@@ -109,15 +110,14 @@ public class CauseSearcherIT {
 
    @Test
    public void testSlowerState() throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
-      final JUnitTestTransformer testgenerator = new JUnitTestTransformer(CURRENT);
-      testgenerator.setIterations(30);
-      testgenerator.setWarmupExecutions(30);
-//      BothTreeReader reader = new Bo
-      final CauseSearcherConfig causeSearcherConfig = AdaptiveExecutorMoreParameterTest.DEFAULT_CAUSE_CONFIG;
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(2, "000001", "000001~1");
+      measurementConfiguration.setUseKieker(true);
+      final JUnitTestTransformer testTransformer = new JUnitTestTransformer(CURRENT, measurementConfiguration);
+      final CauseSearcherConfig causeSearcherConfig = TestConstants.SIMPLE_CAUSE_CONFIG_TESTME;
+      
       final CauseSearchFolders folders = new CauseSearchFolders(CURRENT);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders);
-      final LevelMeasurer measurer = new LevelMeasurer(folders, causeSearcherConfig, testgenerator, measurementConfiguration);
+      final CauseTester measurer = new CauseTester(folders, testTransformer, causeSearcherConfig);
       final CauseSearcher searcher = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, folders);
       final List<ChangedEntity> changedEntities = searcher.search();
 

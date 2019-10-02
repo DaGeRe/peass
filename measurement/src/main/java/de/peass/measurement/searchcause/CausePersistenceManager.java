@@ -7,19 +7,19 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.CauseSearchFolders;
-import de.peass.measurement.MeasurementConfiguration;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.searchcause.data.CallTreeNode;
 import de.peass.measurement.searchcause.data.CauseSearchData;
 import de.peass.utils.Constants;
 
-public class CauseDataManager {
+public class CausePersistenceManager {
 
    protected final CauseSearchData data;
    protected final CauseSearchData dataDetails;
    private final File treeDataFile;
    private final File treeDataFileDetails;
 
-   public CauseDataManager(final CauseSearcherConfig causeSearchConfig, final MeasurementConfiguration measurementConfig, final CauseSearchFolders folders) {
+   public CausePersistenceManager(final CauseSearcherConfig causeSearchConfig, final MeasurementConfiguration measurementConfig, final CauseSearchFolders folders) {
       data = new CauseSearchData(causeSearchConfig.getTestCase(), measurementConfig.getVersion(), measurementConfig.getVersionOld(), measurementConfig);
       dataDetails = new CauseSearchData(causeSearchConfig.getTestCase(), measurementConfig.getVersion(), measurementConfig.getVersionOld(), measurementConfig);
 
@@ -39,7 +39,7 @@ public class CauseDataManager {
       Constants.OBJECTMAPPER.writeValue(treeDataFileDetails, dataDetails);
    }
 
-   public void addDiff(final CallTreeNode predecessorNode) {
+   public void addMeasurement(final CallTreeNode predecessorNode) {
       data.addDiff(predecessorNode);
       dataDetails.addDetailDiff(predecessorNode);
    }

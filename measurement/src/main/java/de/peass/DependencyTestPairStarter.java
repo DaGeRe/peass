@@ -15,10 +15,10 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependencyprocessors.DependencyTester;
 import de.peass.dependencyprocessors.PairProcessor;
-import de.peass.measurement.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -54,18 +54,11 @@ public class DependencyTestPairStarter extends PairProcessor {
 
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
-
+   
    JUnitTestTransformer getTestTransformer(final MeasurementConfiguration measurementConfig) {
-      final JUnitTestTransformer testtransformer = new JUnitTestTransformer(folders.getProjectFolder());
+      final JUnitTestTransformer testtransformer = new JUnitTestTransformer(folders.getProjectFolder(), measurementConfig);
       testtransformer.setDatacollectorlist(DataCollectorList.ONLYTIME);
-      testtransformer.setIterations(iterations);
       testtransformer.setLogFullData(true);
-      testtransformer.setWarmupExecutions(warmup);
-      testtransformer.setUseKieker(useKieker);
-      testtransformer.setRepetitions(repetitions);
-      if (measurementConfig.getTimeout() != 0) {
-         testtransformer.setSumTime(measurementConfig.getTimeout());
-      }
       return testtransformer;
    }
 
@@ -80,11 +73,16 @@ public class DependencyTestPairStarter extends PairProcessor {
    public Void call() throws Exception {
       super.call();
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, 0.01, 0.01);
+      measurementConfiguration.setUseKieker(useKieker);
+      measurementConfiguration.setIterations(iterations);
+      measurementConfiguration.setWarmup(warmup);
+      measurementConfiguration.setRepetitions(repetitions);
       if (duration != 0) {
          tester = new DependencyTester(folders, duration, vms, true, repetitions, useKieker);
       } else {
          final JUnitTestTransformer testgenerator = getTestTransformer(measurementConfiguration);
-         tester = new DependencyTester(folders, testgenerator, new MeasurementConfiguration(vms));
+         
+         tester = new DependencyTester(folders, testgenerator);
       }
 
       if (testName != null) {
@@ -104,6 +102,7 @@ public class DependencyTestPairStarter extends PairProcessor {
    }
    
    public DependencyTestPairStarter() {
+      LOG.debug("Configuration: VMs: {} Warmup: {} Iterations: {} Repetitions: {}", vms, warmup, iterations, repetitions);
    }
 
    /**

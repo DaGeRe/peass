@@ -1,16 +1,21 @@
-package de.peass.measurement;
+package de.peass.dependency.execution;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class MeasurementConfiguration {
+   
+   public static final MeasurementConfiguration DEFAULT = new MeasurementConfiguration(300, 30, 0.01, 0.01);
+   
    private int timeout;
    private final int vms;
    private double type1error;
    private double type2error;
-   private int warmup;
-   private int iterations;
-   private int repetitions;
+   private int warmup = 0;
+   private int iterations = 1;
+   private int repetitions = 1;
+   private boolean useKieker = false;
+   private int kiekerAggregationInterval = 5000;
 
    private String version;
    private String versionOld;
@@ -122,5 +127,21 @@ public class MeasurementConfiguration {
 
    public void setRepetitions(final int repetitions) {
       this.repetitions = repetitions;
+   }
+   
+   public boolean isUseKieker() {
+      return useKieker;
+   }
+
+   public void setUseKieker(final boolean useKieker) {
+      this.useKieker = useKieker;
+   }
+
+   public int getKiekerAggregationInterval() {
+      return kiekerAggregationInterval;
+   }
+
+   public void setKiekerAggregationInterval(final int kiekerAggregationInterval) {
+      this.kiekerAggregationInterval = kiekerAggregationInterval;
    }
 }

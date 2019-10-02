@@ -47,7 +47,7 @@ public class GradleTestExecutor extends TestExecutor {
    public void prepareKoPeMeExecution(final File logFile) {
       LOG.debug("Starting Test Transformation");
       transformTests();
-      if (testTransformer.isUseKieker()) {
+      if (testTransformer.getConfig().isUseKieker()) {
          generateAOPXML();
       }
 
@@ -58,7 +58,7 @@ public class GradleTestExecutor extends TestExecutor {
          for (final File module : getModules()) {
             final File gradleFile = new File(module, "build.gradle");
             FindDependencyVisitor visitor;
-            if (testTransformer.isUseKieker()) {
+            if (testTransformer.getConfig().isUseKieker()) {
                visitor = GradleParseUtil.addDependency(gradleFile, "de.dagere.kopeme:kopeme-junit:" + MavenPomUtil.KOPEME_VERSION,
                      MavenTestExecutor.TEMP_DIR + ":" + lastTmpFile.getAbsolutePath());
             } else {
@@ -193,13 +193,13 @@ public class GradleTestExecutor extends TestExecutor {
    }
 
    @Override
-   protected void clean(File logFile) throws IOException, InterruptedException {
+   protected void clean(final File logFile) throws IOException, InterruptedException {
       // TODO Auto-generated method stub
       
    }
 
    @Override
-   public void setIncludedMethods(Set<String> includedPattern) {
+   public void setIncludedMethods(final Set<String> includedPattern) {
       // TODO Auto-generated method stub
       
    }

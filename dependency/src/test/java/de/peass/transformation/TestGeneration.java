@@ -46,6 +46,7 @@ import com.github.javaparser.ast.expr.MemberValuePair;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 /**
@@ -79,7 +80,7 @@ public class TestGeneration {
       testFile = new File(SOURCE_FOLDER, "TestMe1.java");
       FileUtils.copyFile(old, testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       final File generated = tt.generateClazz(testFolder.getRoot(), new ChangedEntity("de.GeneratedClass", ""), new ChangedEntity("TestMe1", ""), "testMe1");
       final CompilationUnit cu = FileComparisonUtil.parse(generated);
@@ -103,10 +104,10 @@ public class TestGeneration {
       testFile = new File(SOURCE_FOLDER, "ExtendingTest.java");
       FileUtils.copyFile(old, testFile);
       final File old2 = new File(RESOURCE_FOLDER, "TestMe1.java");
-      File parentTestFile = new File(SOURCE_FOLDER, "TestMe1.java");
+      final File parentTestFile = new File(SOURCE_FOLDER, "TestMe1.java");
       FileUtils.copyFile(old2, parentTestFile);
       
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       final File generated = tt.generateClazz(testFolder.getRoot(), new ChangedEntity("de.GeneratedClass", ""), new ChangedEntity("ExtendingTest", ""), "testMe1");
       final CompilationUnit cu = FileComparisonUtil.parse(generated);
@@ -129,7 +130,7 @@ public class TestGeneration {
       testFile = new File(SOURCE_FOLDER, "TestMe2.java");
       FileUtils.copyFile(old2, testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       final File generated = tt.generateClazz(testFolder.getRoot(), new ChangedEntity("de.GeneratedClass", ""), new ChangedEntity("TestMe2", ""), "testMethod");
       final CompilationUnit cu = FileComparisonUtil.parse(generated);
@@ -168,7 +169,7 @@ public class TestGeneration {
       FileUtils.copyFile(old, testFile);
       System.out.println(testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       
       final File generated = tt.generateClazz(testFolder.getRoot(), new ChangedEntity("de.GeneratedClass", ""), new ChangedEntity("TestMe3", ""), "testMethod");
@@ -185,7 +186,7 @@ public class TestGeneration {
       FileUtils.copyFile(old, testFile);
       System.out.println(testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot());
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       
       final File generated = tt.generateClazz(testFolder.getRoot(), new ChangedEntity("de.GeneratedClass", ""), new ChangedEntity("TestMe5", ""), "testMethod");

@@ -13,6 +13,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
@@ -23,8 +24,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.MeasurementConfiguration;
+import de.peass.measurement.searchcause.helper.TestConstants;
 import de.peass.measurement.searchcause.kieker.BothTreeReader;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.GitUtils;
@@ -65,16 +67,16 @@ public class CauseSearcherCompleteIT {
       VCSTestUtils.mockGoToTag(folders, SLOW_STATE, BASIC_STATE);
    }
 
+   @Ignore
    @Test
    public void testSlowerState() throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
-      final JUnitTestTransformer testgenerator = new JUnitTestTransformer(CURRENT);
-      testgenerator.setIterations(30);
-      testgenerator.setWarmupExecutions(1);
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(2, "000001", "000001~1");
+      measurementConfiguration.setUseKieker(true);
+      final JUnitTestTransformer testgenerator = new JUnitTestTransformer(CURRENT, measurementConfiguration);
       final CauseSearchFolders folders = new CauseSearchFolders(CURRENT);
-      final BothTreeReader reader = new BothTreeReader(AdaptiveExecutorMoreParameterTest.DEFAULT_CAUSE_CONFIG, measurementConfiguration, folders);
-      final LevelMeasurer measurer = new LevelMeasurer(folders, AdaptiveExecutorMoreParameterTest.DEFAULT_CAUSE_CONFIG, testgenerator, measurementConfiguration);
-      final CauseSearcher searcher = new CauseSearcher(reader, AdaptiveExecutorMoreParameterTest.DEFAULT_CAUSE_CONFIG, measurer, measurementConfiguration, folders);
+      final BothTreeReader reader = new BothTreeReader(TestConstants.SIMPLE_CAUSE_CONFIG, measurementConfiguration, folders);
+      final CauseTester measurer = new CauseTester(folders, testgenerator, TestConstants.SIMPLE_CAUSE_CONFIG);
+      final CauseSearcher searcher = new CauseSearcher(reader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, measurementConfiguration, folders);
       final List<ChangedEntity> changedEntities = searcher.search();
 
       LOG.debug(changedEntities);

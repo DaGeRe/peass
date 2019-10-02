@@ -13,7 +13,6 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.analysis.EarlyBreakDecider;
 import de.peass.measurement.organize.FolderDeterminer;
 import de.peass.testtransformation.JUnitTestTransformer;
@@ -22,9 +21,9 @@ public class AdaptiveTester extends DependencyTester {
    
    private static final Logger LOG = LogManager.getLogger(AdaptiveTester.class);
    
-   public AdaptiveTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator, final MeasurementConfiguration configuration)
+   public AdaptiveTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator)
          throws IOException {
-      super(folders, testgenerator, configuration);
+      super(folders, testgenerator);
       
    }
 
@@ -69,7 +68,7 @@ public class AdaptiveTester extends DependencyTester {
       final Result versionNewResult = getLastResult(version, testcase, vmid);
       if (vmid < 10) {
          if (versionOldResult == null || versionNewResult == null) {
-            final int lessIterations = testTransformer.getIterations() / 5;
+            final int lessIterations = testTransformer.getConfig().getIterations() / 5;
             if (versionOldResult == null) {
                final String problemReason = "Measurement for " + versionOld + " is null";
                LOG.error(problemReason);
@@ -80,17 +79,17 @@ public class AdaptiveTester extends DependencyTester {
                LOG.error("Both null!");
             }
             shouldBreak = reduceExecutions(shouldBreak, lessIterations);
-         } else if (versionOldResult.getExecutionTimes() < testTransformer.getIterations()
-               || versionNewResult.getExecutionTimes() < testTransformer.getIterations()) {
+         } else if (versionOldResult.getExecutionTimes() < testTransformer.getConfig().getIterations()
+               || versionNewResult.getExecutionTimes() < testTransformer.getConfig().getIterations()) {
             final int lessIterations;
             final String problemReason = "Measurement executions: Old: " + versionOldResult.getExecutionTimes() + " New: " + versionNewResult.getExecutionTimes();
             LOG.error(problemReason);
             final int minOfExecuted = (int) Math.min(versionOldResult.getExecutionTimes(), versionNewResult.getExecutionTimes()) - 2;
-            lessIterations = Math.min(minOfExecuted, testTransformer.getIterations() / 2);
+            lessIterations = Math.min(minOfExecuted, testTransformer.getConfig().getIterations() / 2);
             // final int lessIterations = testTransformer.getIterations() / 5;
             shouldBreak = reduceExecutions(shouldBreak, lessIterations);
-         } else if ((versionOldResult.getValue() > 10E7 || versionOldResult.getValue() > 10E7) && testTransformer.getIterations() > 10) {
-            shouldBreak = reduceExecutions(shouldBreak, testTransformer.getIterations() / 5);
+         } else if ((versionOldResult.getValue() > 10E7 || versionOldResult.getValue() > 10E7) && testTransformer.getConfig().getIterations() > 10) {
+            shouldBreak = reduceExecutions(shouldBreak, testTransformer.getConfig().getIterations() / 5);
          }
       }
 
@@ -100,11 +99,11 @@ public class AdaptiveTester extends DependencyTester {
    boolean reduceExecutions(boolean shouldBreak, final int lessIterations) {
       if (lessIterations > 3) {
          LOG.info("Reducing iterations too: {}", lessIterations);
-         testTransformer.setIterations(lessIterations);
-         testTransformer.setWarmupExecutions(0);
+         testTransformer.getConfig().setIterations(lessIterations);
+         testTransformer.getConfig().setWarmup(0);
       } else {
-         if (testTransformer.getRepetitions() > 10) {
-            testTransformer.setRepetitions(10);
+         if (testTransformer.getConfig().getRepetitions() > 10) {
+            testTransformer.getConfig().setRepetitions(10);
          } else {
             shouldBreak = true;
          }

@@ -30,9 +30,9 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependencyprocessors.DependencyTester;
-import de.peass.measurement.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.VersionControlSystem;
 
@@ -47,7 +47,10 @@ public class TestDependencyTester {
    @Test
    public void testFiles() throws IOException, InterruptedException, JAXBException {
       final PeASSFolders folders = new PeASSFolders(folder.getRoot());
+      final MeasurementConfiguration configuration = new MeasurementConfiguration(4, "2", "1");
+      
       final JUnitTestTransformer testTransformer = Mockito.mock(JUnitTestTransformer.class);
+      Mockito.when(testTransformer.getConfig()).thenReturn(configuration);
 
       final TestExecutor mockedExecutor = Mockito.mock(TestExecutor.class);
       Mockito.doAnswer(new Answer<Void>() {
@@ -68,7 +71,8 @@ public class TestDependencyTester {
       PowerMockito.when(VersionControlSystem.getVersionControlSystem(folder.getRoot()))
             .thenReturn(VersionControlSystem.GIT);
 
-      final DependencyTester tester = new DependencyTester(folders, testTransformer, new MeasurementConfiguration(4, "2", "1"));
+      
+      final DependencyTester tester = new DependencyTester(folders, testTransformer);
 
       tester.evaluate(new TestCase("de.peass.MyTest", "test"));
       

@@ -6,12 +6,12 @@ import javax.xml.bind.JAXBException;
 
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.persistence.Version;
-import de.peass.measurement.MeasurementConfiguration;
 import de.peass.measurement.searchcause.CauseSearcher;
 import de.peass.measurement.searchcause.CauseSearcherComplete;
 import de.peass.measurement.searchcause.CauseSearcherConfig;
-import de.peass.measurement.searchcause.LevelMeasurer;
+import de.peass.measurement.searchcause.CauseTester;
 import de.peass.measurement.searchcause.kieker.BothTreeReader;
 import de.peass.testtransformation.JUnitTestTransformer;
 import picocli.CommandLine;
@@ -21,15 +21,32 @@ import picocli.CommandLine.Option;
 @Command(description = "Searches for root cause of a performance change, i.e. method causing the performance change", name = "searchcause")
 public class SearchChangeCause extends AdaptiveTestStarter {
 
-   @Option(names = { "-useNonAggregatedWriter", "--useNonAggregatedWriter" }, description = "Whether to save non-aggregated JSON data for measurement results - if true, full kieker record data are stored")
+   @Option(names = { "-measureComplete", "--measureComplete" }, description = "Whether to measure the whole tree at once (default false - tree is measured level-wise)")
+   public boolean measureComplete = false;
+
+   @Option(names = { "-skipCalibrationRun", "--skipCalibrationRun" }, description = "Skip the calibration run for complete measurements")
+   public boolean skipCalibrationRun = false;
+
+   @Option(names = { "-useNonAggregatedWriter",
+         "--useNonAggregatedWriter" }, description = "Whether to save non-aggregated JSON data for measurement results - if true, full kieker record data are stored")
    public boolean useNonAggregatedWriter = false;
-   
-   @Option(names = { "-saveAll", "--saveAll" }, description = "Whether to save all results (requires a lot of disc space)")
-   public boolean saveAll = false;
-   
+
+   @Option(names = { "-saveKieker", "--saveKieker" }, description = "Save no kieker results in order to use less space - default false")
+   public boolean saveNothing = false;
+
+   @Option(names = { "-splitAggregated", "--splitAggregated" }, description = "Whether to split the aggregated data (produces aggregated data per time slice; experimental)")
+   public boolean splitAggregated = false;
+
    @Option(names = { "-outlierFactor", "--outlierFactor" }, description = "Whether outliers should be removed with z-score higher than the given value")
    public double outlierFactor = 5.0;
-   
+
+   @Option(names = { "-minTime",
+         "--minTime" }, description = "Minimum time for a method call to be processed. If it takes less time, it won't be measured (since time measurement isn't below accurate below a certain value).")
+   public double minTime = 1.0;
+
+   @Option(names = { "-writeInterval", "--writeInterval" }, description = "Interval for KoPeMe-aggregated-writing (in milliseconds)")
+   public int writeInterval = 5000;
+
    public static void main(final String[] args) throws JAXBException, IOException {
       final SearchChangeCause command = new SearchChangeCause();
       final CommandLine commandLine = new CommandLine(command);
@@ -52,18 +69,20 @@ public class SearchChangeCause extends AdaptiveTestStarter {
       measurementConfiguration.setWarmup(warmup);
       measurementConfiguration.setIterations(iterations);
       measurementConfiguration.setRepetitions(repetitions);
+      measurementConfiguration.setUseKieker(true);
+      measurementConfiguration.setKiekerAggregationInterval(writeInterval);
       final JUnitTestTransformer testtransformer = getTestTransformer(measurementConfiguration);
 
-      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, !useNonAggregatedWriter, saveAll, outlierFactor);
+      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, !useNonAggregatedWriter, !saveNothing,
+            outlierFactor, splitAggregated, minTime, !skipCalibrationRun);
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders);
-      final boolean complete = false;
-      if (complete) {
-         final LevelMeasurer measurer = new LevelMeasurer(alternateFolders, causeSearcherConfig, testtransformer, measurementConfiguration);
+      if (measureComplete) {
+         final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, causeSearcherConfig);
          final CauseSearcher tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
          tester.search();
       } else {
-         final LevelMeasurer measurer = new LevelMeasurer(alternateFolders, causeSearcherConfig, testtransformer, measurementConfiguration);
+         final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, causeSearcherConfig);
          final CauseSearcher tester = new CauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
          tester.search();
       }
