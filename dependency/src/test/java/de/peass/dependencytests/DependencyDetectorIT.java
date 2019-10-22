@@ -15,8 +15,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
@@ -26,6 +24,7 @@ import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependencytests.helper.FakeFileIterator;
+import de.peass.utils.Constants;
 import de.peass.vcs.VersionIterator;
 
 //@RunWith(PowerMockRunner.class)
@@ -117,8 +116,8 @@ public class DependencyDetectorIT {
       return testcase;
    }
    
-   public static void addChange(final Map<ChangedEntity, ClazzChangeData> changes, String module, String clazz, String method) {
-      ChangedEntity baseChangedClazz = new ChangedEntity(clazz, module);
+   public static void addChange(final Map<ChangedEntity, ClazzChangeData> changes, final String module, final String clazz, final String method) {
+      final ChangedEntity baseChangedClazz = new ChangedEntity(clazz, module);
       final ClazzChangeData methodChanges = new ClazzChangeData(baseChangedClazz);
       methodChanges.addChange(clazz.substring(clazz.lastIndexOf('.') + 1), method);
       changes.put(baseChangedClazz, methodChanges);
@@ -141,7 +140,7 @@ public class DependencyDetectorIT {
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 
-      System.out.println(new ObjectMapper().writeValueAsString(reader.getDependencies()));
+      System.out.println(Constants.OBJECTMAPPER.writeValueAsString(reader.getDependencies()));
 
       fakeIterator.goToNextCommit();
 
@@ -239,7 +238,7 @@ public class DependencyDetectorIT {
       final File secondVersion = new File(VERSIONS_FOLDER, "removed_class");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
-      ChangedEntity changedEntity = new ChangedEntity("src/test/java/defaultpackage/TestMe.java", "");
+      final ChangedEntity changedEntity = new ChangedEntity("src/test/java/defaultpackage/TestMe.java", "");
       changes.put(changedEntity, new ClazzChangeData(changedEntity, false));
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);

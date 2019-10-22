@@ -17,7 +17,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
@@ -34,6 +33,7 @@ import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.testtransformation.JUnitTestTransformer;
+import de.peass.utils.Constants;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIteratorGit;
@@ -130,7 +130,7 @@ public class ContinousExecutor implements Callable<Void> {
          final ViewGenerator viewgenerator = new ViewGenerator(projectFolder, dependencies, executeFile, viewFolder, threads, 60000);
          viewgenerator.processCommandline();
       }
-      final ExecutionData traceTests = new ObjectMapper().readValue(executeFile, ExecutionData.class);
+      final ExecutionData traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
       LOG.debug("Version: {} Path: {}", version, executeFile.getAbsolutePath());
       final TestSet traceTestSet = traceTests.getVersions().get(version);
       return traceTestSet;

@@ -8,11 +8,11 @@ import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.persistence.Version;
-import de.peass.measurement.searchcause.CauseSearcher;
-import de.peass.measurement.searchcause.CauseSearcherComplete;
-import de.peass.measurement.searchcause.CauseSearcherConfig;
-import de.peass.measurement.searchcause.CauseTester;
-import de.peass.measurement.searchcause.kieker.BothTreeReader;
+import de.peass.measurement.rca.CauseSearcher;
+import de.peass.measurement.rca.CauseSearcherComplete;
+import de.peass.measurement.rca.CauseSearcherConfig;
+import de.peass.measurement.rca.CauseTester;
+import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.testtransformation.JUnitTestTransformer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -34,8 +34,8 @@ public class SearchChangeCause extends AdaptiveTestStarter {
    @Option(names = { "-saveKieker", "--saveKieker" }, description = "Save no kieker results in order to use less space - default false")
    public boolean saveNothing = false;
 
-   @Option(names = { "-splitAggregated", "--splitAggregated" }, description = "Whether to split the aggregated data (produces aggregated data per time slice; experimental)")
-   public boolean splitAggregated = false;
+   @Option(names = { "-notSplitAggregated", "--notSplitAggregated" }, description = "Whether to split the aggregated data (produces aggregated data per time slice)")
+   public boolean notSplitAggregated = false;
 
    @Option(names = { "-outlierFactor", "--outlierFactor" }, description = "Whether outliers should be removed with z-score higher than the given value")
    public double outlierFactor = 5.0;
@@ -65,7 +65,7 @@ public class SearchChangeCause extends AdaptiveTestStarter {
       final Version versionInfo = dependencies.getVersions().get(version);
       final String predecessor = versionInfo.getPredecessor();
 
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, type1error, type2error, version, predecessor);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout * 1000 * 60, vms, type1error, type2error, version, predecessor);
       measurementConfiguration.setWarmup(warmup);
       measurementConfiguration.setIterations(iterations);
       measurementConfiguration.setRepetitions(repetitions);
@@ -74,7 +74,7 @@ public class SearchChangeCause extends AdaptiveTestStarter {
       final JUnitTestTransformer testtransformer = getTestTransformer(measurementConfiguration);
 
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, !useNonAggregatedWriter, !saveNothing,
-            outlierFactor, splitAggregated, minTime, !skipCalibrationRun);
+            outlierFactor, !notSplitAggregated, minTime, !skipCalibrationRun);
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders);
       if (measureComplete) {

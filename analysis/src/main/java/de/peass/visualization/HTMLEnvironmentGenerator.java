@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import de.peass.measurement.searchcause.data.CauseSearchData;
+import de.peass.measurement.rca.data.CauseSearchData;
 
 public class HTMLEnvironmentGenerator {
    
@@ -20,7 +20,7 @@ public class HTMLEnvironmentGenerator {
       fileWriter.write("<script src=\"https://cdn.plot.ly/plotly-latest.min.js\"></script>");
       fileWriter.write("<div style='position:absolute; right: 0px; width: 800px; background-color: #BBBBBB; "
             + "border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>\n");
-      fileWriter.write("Version: " + data.getVersion() + "<br>\n");
+      fileWriter.write("Version: " + data.getMeasurementConfig().getVersion() + "<br>\n");
       fileWriter.write("Test Case: " + data.getTestcase() + "<br>\n");
       fileWriter.write("</div>\n");
 

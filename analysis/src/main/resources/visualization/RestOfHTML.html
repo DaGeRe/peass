@@ -1,6 +1,7 @@
 
 <!-- load the d3.js library -->	
 <script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://unpkg.com/textures@1.2.0/dist/textures.js"></script>
 	
 <script>
 	
@@ -20,6 +21,22 @@ var svg = d3.select("#tree").append("svg")
   .append("g")
 	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+var faster_changed = textures.lines()
+.background("#FF0000")
+.thicker();
+
+var slower_changed = textures.lines()
+.background("#00FF00")
+.thicker();
+
+var unknown_changed = textures.lines()
+.background("#8888FF")
+.thicker();
+
+svg.call(faster_changed);
+svg.call(slower_changed);
+svg.call(unknown_changed);
+
 root = treeData[0];
 root.x0 = height / 2;
 root.y0 = 0;
@@ -28,7 +45,23 @@ update(root);
 
 d3.select(self.frameElement).style("height", "500px");
 
+function getTexture(node){
+  if (node.hasSourceChange)
+  { 
+    switch (node.state){
+	  case 'FASTER': return faster_changed.url();
+	  case 'SLOWER': return slower_changed.url();
+	  case 'UNKNOWN': return unknown_changed.url();
+	}
+  }
+  else 
+	return node.color;
+}
+
 function update(source) {
+	
+  var t = textures.lines()
+	  .thicker();
 
   // Compute the new tree layout.
   var nodes = tree.nodes(root).reverse(),
@@ -50,7 +83,7 @@ function update(source) {
 
   nodeEnter.append("circle")
 	  .attr("r", 1e-6)
-	  .style("fill", function(d) { return d.color; });
+	  .style("fill", function(d) { return getTexture(d); });
 
   nodeEnter.append("text")
 	  .attr("x", function(d) { return d.children || d._children ? -13 : 13; })
@@ -66,7 +99,7 @@ function update(source) {
 
   nodeUpdate.select("circle")
 	  .attr("r", 10)
-	  .style("fill", function(d) { return d.color; });
+	  .style("fill", function(d) {  return getTexture(d); });
 
   nodeUpdate.select("text")
 	  .style("fill-opacity", 1);
@@ -133,12 +166,17 @@ function round(value){
 }
 
 function shownode(node) {
-  infos.innerHTML="<table>" +
+  if (node.statistic != null){
+	  infos.innerHTML="<table>" +
       "<tr><th>Predecessor</th><th>Current</th></tr>"+
       "<tr><td>" + round(node.statistic.meanOld) +    "</td><td>" + round(node.statistic.meanCurrent)+"</td></tr>"+
       "<tr><td>" + round(node.statistic.deviationOld)+"</td><td>" + round(node.statistic.deviationCurrent)+"</td></tr>"+
       "</table> VMs: " + node.statistic.vms +
       " T=" + round(node.statistic.tvalue);
+  } else {
+	  infos.innerHTML = "No statistic";
+  }
+	
   quelltext.innerHTML="<pre>" + source[node.name] +"</pre>"
   histogramm.innerHTML=node.name;
   var version = {

@@ -171,7 +171,7 @@ public abstract class TestExecutor {
          process.waitFor(timeout, TimeUnit.MINUTES);
          if (process.isAlive()) {
             LOG.debug("Killing: {}", testname);
-            process.destroy();
+            process.destroyForcibly().waitFor();
             aborted.add(testname);
             FileUtils.writeStringToFile(new File(folders.getFullMeasurementFolder(), "aborted.txt"), aborted.toString(), Charset.defaultCharset());
          }

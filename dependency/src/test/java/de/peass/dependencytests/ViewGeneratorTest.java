@@ -27,12 +27,13 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Dependencies;
+import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.traces.ViewGenerator;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.statistics.DependencyStatisticAnalyzer;
+import de.peass.utils.Constants;
 import de.peass.vcs.GitUtils;
 
 @RunWith(PowerMockRunner.class)
@@ -64,8 +65,7 @@ public class ViewGeneratorTest {
       final Version testVersion = dependencies.getVersions().get(version);
       generator.processVersion(version, testVersion);
 
-      final ObjectMapper MAPPER = new ObjectMapper();
-      final ExecutionData tests = MAPPER.readValue(executefile, ExecutionData.class);
+      final ExecutionData tests = Constants.OBJECTMAPPER.readValue(executefile, ExecutionData.class);
 
       Assert.assertEquals(1, tests.getVersions().size());
       Assert.assertEquals(1, tests.getVersions().get("000001").getTests().size());

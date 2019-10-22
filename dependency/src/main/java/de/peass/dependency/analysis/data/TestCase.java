@@ -2,7 +2,9 @@ package de.peass.dependency.analysis.data;
 
 import java.io.File;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
@@ -13,17 +15,17 @@ import de.dagere.kopeme.generated.Kopemedata.Testcases;
  * @author reichelt
  *
  */
-public class TestCase implements Comparable<TestCase>{
+public class TestCase implements Comparable<TestCase> {
    private final String module;
    private final String clazz;
    private final String method;
 
-   public TestCase(Kopemedata data) {
+   public TestCase(final Kopemedata data) {
       clazz = data.getTestcases().getClazz();
       method = data.getTestcases().getTestcase().get(0).getName();
       module = "";
    }
-   
+
    public TestCase(final String clazz, final String method) {
       if (clazz.contains(File.separator)) { // possibly assertion, if speed becomes issue..
          throw new RuntimeException("Testcase should be full qualified name, not path: " + clazz);
@@ -33,7 +35,10 @@ public class TestCase implements Comparable<TestCase>{
       module = "";
    }
 
-   public TestCase(final String clazz, final String method, final String module) {
+   @JsonCreator
+   public TestCase(@JsonProperty("clazz") final String clazz,
+         @JsonProperty("method") final String method,
+         @JsonProperty("module") final String module) {
       if (clazz.contains(File.separator)) {
          throw new RuntimeException("Testcase " + clazz + " should be full qualified name, not path!");
       }
@@ -136,7 +141,7 @@ public class TestCase implements Comparable<TestCase>{
    }
 
    @Override
-   public int compareTo(TestCase arg0) {
+   public int compareTo(final TestCase arg0) {
       return toString().compareTo(arg0.toString());
    }
 

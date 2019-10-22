@@ -53,7 +53,7 @@ public class MeasurementConfiguration {
          @JsonProperty("type2error") final double type2error,
          @JsonProperty("version") final String version,
          @JsonProperty("versionOld") final String versionOld) {
-      this.timeout = timeout * 1000 * 60; // timeout in minutes, not in milliseconds
+      this.timeout = timeout; // timeout in minutes, not in milliseconds
       this.vms = vms;
       this.type1error = type1error;
       this.type2error = type2error;

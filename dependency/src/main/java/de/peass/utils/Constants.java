@@ -3,8 +3,15 @@ package de.peass.utils;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
+import kieker.monitoring.writer.filesystem.aggregateddata.SummaryStatisticsDeserializer;
+import kieker.monitoring.writer.filesystem.aggregateddata.SummaryStatisticsSerializer;
 
 public class Constants {
 
@@ -33,19 +40,24 @@ public class Constants {
       defaultUrls.put("httpcomponents-core", "https://github.com/apache/httpcomponents-core.git");
       defaultUrls.put("k-9", "https://github.com/k9mail/k-9.git");
       defaultUrls.put("jackson-core", "https://github.com/FasterXML/jackson-core.git");
-      
+
       // Future candidates
       defaultUrls.put("commons-math", "https://github.com/apache/commons-math.git");
       defaultUrls.put("commons-lang", "https://github.com/apache/commons-lang.git");
-      
+
       defaultUrls.put("spring-framework", "https://github.com/spring-projects/spring-framework.git");
       defaultUrls.put("maven", "https://github.com/apache/maven.git");
       defaultUrls.put("okhttp", "https://github.com/square/okhttp.git");
    }
 
    public final static ObjectMapper OBJECTMAPPER = new ObjectMapper();
-   
+
    static {
       OBJECTMAPPER.enable(SerializationFeature.INDENT_OUTPUT);
+
+      final SimpleModule statisticsModule = new SimpleModule();
+      statisticsModule.addSerializer(SummaryStatistics.class, new SummaryStatisticsSerializer());
+      statisticsModule.addDeserializer(StatisticalSummary.class, new SummaryStatisticsDeserializer());
+      OBJECTMAPPER.registerModule(statisticsModule);
    }
 }

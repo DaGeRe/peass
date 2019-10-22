@@ -39,19 +39,7 @@ public class TestStatistic {
       List<Result> previous = data.getPrevius();
       List<Result> current = data.getCurrent();
 
-      if (previous.size() == 0 || current.size() == 0) {
-         LOG.error("Data empty: {} {}", data.getVersion());
-         if (previous.size() == 0) {
-            LOG.error("Previous  empty");
-         }
-         if (current.size() == 0) {
-            LOG.error("Previous  empty");
-         }
-         throw new RuntimeException("Data of " + data.getTestcase() + " empty");
-      }
-      if (Double.isNaN(current.get(0).getDeviation()) || Double.isNaN(previous.get(0).getDeviation())) {
-         throw new RuntimeException("Data contained NaN - not handling result");
-      }
+      checkData(data, previous, current);
 
       previous = ConfidenceInterval.getWarmedUpData(previous);
       current = ConfidenceInterval.getWarmedUpData(current);
@@ -82,6 +70,10 @@ public class TestStatistic {
       // double anovaDeviation = ANOVATestWrapper.getANOVADeviation(prevResults, currentResults);
       LOG.trace("Means: {} {} Diff: {} % T-Value: {} Change: {}", statisticsPrevious.getMean(), statisticsCurrent.getMean(), ((double) diff) / 100, tValue, change);
 
+      addToInfo(data, info, resultslength);
+   }
+
+   private void addToInfo(final EvaluationPair data, final ProjectStatistics info, final int resultslength) {
       if (info != null) {
          info.addMeasurement(data.getVersion(), data.getTestcase(), 
                statisticsPrevious.getMean(), statisticsCurrent.getMean(), 
@@ -92,6 +84,22 @@ public class TestStatistic {
          } catch (final IOException e) {
             e.printStackTrace();
          }
+      }
+   }
+
+   private void checkData(final EvaluationPair data, List<Result> previous, List<Result> current) {
+      if (previous.size() == 0 || current.size() == 0) {
+         LOG.error("Data empty: {} {}", data.getVersion());
+         if (previous.size() == 0) {
+            LOG.error("Previous  empty");
+         }
+         if (current.size() == 0) {
+            LOG.error("Previous  empty");
+         }
+         throw new RuntimeException("Data of " + data.getTestcase() + " empty");
+      }
+      if (Double.isNaN(current.get(0).getDeviation()) || Double.isNaN(previous.get(0).getDeviation())) {
+         throw new RuntimeException("Data contained NaN - not handling result");
       }
    }
 

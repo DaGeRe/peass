@@ -1,6 +1,5 @@
 package de.peass.measurement.analysis;
 
-import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.inference.TestUtils;
 import org.junit.Assert;
@@ -9,11 +8,34 @@ import org.junit.Test;
 public class TestStatisticUtil {
 
    @Test
+   public void testConfidenceInterval() {
+      final double[] values = new double[] { 1.0, 1.1, 1.2, 1.2, 1.1 };
+      final DescriptiveStatistics statistics1 = new DescriptiveStatistics(values);
+      System.out.println(statistics1.getMean() + " " + statistics1.getStandardDeviation());
+
+      Assert.assertEquals(0.06, StatisticUtil.getConfidenceSpread(statistics1, 0.9), 0.01);
+      Assert.assertEquals(0.07, StatisticUtil.getConfidenceSpread(statistics1, 0.95), 0.01);
+      Assert.assertEquals(0.09, StatisticUtil.getConfidenceSpread(statistics1, 0.99), 0.01);
+   }
+   
+   @Test
+   public void testConfidenceOverlap() {
+      final double[] values = new double[] { 1.0, 1.1, 1.2, 1.2, 1.1 };
+      final double[] values2 = new double[] { 1.3, 1.3, 1.5, 1.3, 1.3 };
+      final DescriptiveStatistics statistics1 = new DescriptiveStatistics(values);
+      final DescriptiveStatistics statistics2 = new DescriptiveStatistics(values2);
+      
+      Assert.assertEquals(Relation.UNEQUAL, StatisticUtil.isConfidenceIntervalOverlap(statistics1, statistics2, 0.99));
+      Assert.assertEquals(Relation.UNEQUAL, StatisticUtil.isConfidenceIntervalOverlap(statistics2, statistics1, 0.99));
+      Assert.assertEquals(Relation.EQUAL, StatisticUtil.isConfidenceIntervalOverlap(statistics1, statistics1, 0.99));
+   }
+
+   @Test
    public void testAlternativeT() {
-      double[] vals = new double[] { 1.1, 1.1, 1.2, 1.3, 1.4, 1.1, 1.2, 1.3, 1.4, 1.23, 1.1, 1.1, 1.2, 1.3, 1.4, 1.1, 1.2, 1.3, 1.4, 1.23 };
-      double[] vals2 = new double[] { 1.3, 1.1, 1.2, 1.5, 1.4, 1.2, 1.3, 1.5, 1.4, 1.4 };
-      double[] vals3 = new double[] { 0.9, 1.1, 1.2, 1.1, 0.8, };
-      double[] vals4 = new double[] { 1.9, 1.7, 1.6, 1.5, 1.8, 1.6, 1.3, 1.5, 1.8, 1.7, 1.9, 1.7, 1.6, 1.5, 1.8, 1.6, 1.3, 1.5, 1.8, 1.7 };
+      final double[] vals = new double[] { 1.1, 1.1, 1.2, 1.3, 1.4, 1.1, 1.2, 1.3, 1.4, 1.23, 1.1, 1.1, 1.2, 1.3, 1.4, 1.1, 1.2, 1.3, 1.4, 1.23 };
+      final double[] vals2 = new double[] { 1.3, 1.1, 1.2, 1.5, 1.4, 1.2, 1.3, 1.5, 1.4, 1.4 };
+      final double[] vals3 = new double[] { 0.9, 1.1, 1.2, 1.1, 0.8, };
+      final double[] vals4 = new double[] { 1.9, 1.7, 1.6, 1.5, 1.8, 1.6, 1.3, 1.5, 1.8, 1.7, 1.9, 1.7, 1.6, 1.5, 1.8, 1.6, 1.3, 1.5, 1.8, 1.7 };
 
       final DescriptiveStatistics statistics1 = new DescriptiveStatistics(vals);
       final DescriptiveStatistics statistics2 = new DescriptiveStatistics(vals2);
@@ -47,10 +69,10 @@ public class TestStatisticUtil {
     */
    @Test
    public void testRejectDifferent() {
-      double[] vals = new double[] { 1.0, 1.1, 1.2 };
-      double[] vals2 = new double[] { 0.9, 1.0, 1.0 };
-      double[] vals3 = new double[] { 1.7, 1.6, 1.5 };
-      double[] vals4 = new double[] { 1.1, 1.1, 1.0, };
+      final double[] vals = new double[] { 1.0, 1.1, 1.2 };
+      final double[] vals2 = new double[] { 0.9, 1.0, 1.0 };
+      final double[] vals3 = new double[] { 1.7, 1.6, 1.5 };
+      final double[] vals4 = new double[] { 1.1, 1.1, 1.0, };
 
       final DescriptiveStatistics statistics1 = new DescriptiveStatistics(vals);
       final DescriptiveStatistics statistics2 = new DescriptiveStatistics(vals2);

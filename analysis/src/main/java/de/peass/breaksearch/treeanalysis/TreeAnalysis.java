@@ -9,18 +9,39 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.measurement.searchcause.data.CauseSearchData;
+import de.peass.dependency.execution.MeasurementConfiguration;
+import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.utils.Constants;
 
 public class TreeAnalysis {
+   public static final MeasurementConfiguration config = new MeasurementConfiguration(2);
+   static {
+      config.setType1error(0.1);
+      config.setType2error(0.1);
+   }
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final File treesFolder = new File(args[0]);
+      
 
       final TestVersionPairManager manager = new TestVersionPairManager();
+      if (args.length > 1) {
+         final File treesFolderCorrect = new File(args[1]);
+         getAllTreeData(treesFolderCorrect, manager);
+      }
+      getAllTreeData(treesFolder, manager);
 
+      manager.printChanged();
+      // manager.printAll();
+   }
+
+   private static void getAllTreeData(final File treesFolder, final TestVersionPairManager manager) throws IOException, JsonParseException, JsonMappingException {
       for (final File resultFolder : treesFolder.listFiles()) {
-         final File treeFolder = new File(resultFolder, "peass" + File.separator + "rca" + File.separator + "tree");
+         File treeFolder = new File(resultFolder, "peass" + File.separator + "rca" + File.separator + "tree");
+         final File treeFolder2 = new File(resultFolder, File.separator + "rca" + File.separator + "tree");
+         if (treeFolder2.isDirectory()) {
+            treeFolder = treeFolder2;
+         }
          if (treeFolder.isDirectory()) {
             final File versionFolder = treeFolder.listFiles()[0];
             if (versionFolder.getName().startsWith("4ed")) {
@@ -36,9 +57,6 @@ public class TreeAnalysis {
          } else {
             System.out.println("Not analyzable: " + treeFolder.getAbsolutePath());
          }
-
       }
-
-      manager.printAll();
    }
 }

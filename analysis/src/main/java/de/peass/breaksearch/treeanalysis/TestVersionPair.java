@@ -3,8 +3,10 @@ package de.peass.breaksearch.treeanalysis;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.peass.measurement.searchcause.data.CauseSearchData;
-import de.peass.measurement.searchcause.serialization.MeasuredNode;
+import de.peass.measurement.analysis.Relation;
+import de.peass.measurement.analysis.StatisticUtil;
+import de.peass.measurement.rca.data.CauseSearchData;
+import de.peass.measurement.rca.serialization.MeasuredNode;
 
 class TestVersionPair {
    private List<CauseSearchData> datas = new LinkedList<>();
@@ -24,7 +26,6 @@ class TestVersionPair {
             final boolean equal = correlationAnalyzer.treeStructureEqual();
             System.out.println(i + " " + j + " " + equal);
             correlationAnalyzer.printInfo();
-            
 
             correlationAnalyzer.setThreshold(0);
             correlationAnalyzer.printInfo();
@@ -35,6 +36,68 @@ class TestVersionPair {
 
    public int getValueCount() {
       return datas.get(0).getNodes().getChilds().size();
+   }
+
+   public List<MeasuredNode> getChangedNodes() {
+      final MeasuredNode[] nodes = new MeasuredNode[datas.size()];
+      int i = 0;
+      for (final CauseSearchData data : datas) {
+         nodes[i++] = data.getNodes();
+      }
+
+      final List<MeasuredNode> changed = getChangedNodes(nodes);
+      return changed;
+   }
+
+   private List<MeasuredNode> getChangedNodes(final MeasuredNode[] nodes) {
+      final List<MeasuredNode> changedNodes = new LinkedList<>();
+      boolean oneHasChange = false;
+      for (final MeasuredNode node : nodes) {
+//         final Relation relation = StatisticUtil.agnosticTTest(node.getStatistic().getStatisticsOld(), node.getStatistic().getStatisticsCurrent(), TreeAnalysis.config);
+         final Relation relation = StatisticUtil.isChange(node.getStatistic().getStatisticsOld(), node.getStatistic().getStatisticsCurrent(), TreeAnalysis.config);
+         if (relation == Relation.UNEQUAL
+               && (node.getStatistic().getMeanCurrent() > 1.0
+               || node.getStatistic().getMeanOld() > 1.0)) {
+            oneHasChange = true;
+         }
+      }
+      if (oneHasChange) {
+         boolean oneChildChanged = false;
+         for (int childIndex = 0; childIndex < nodes[0].getChilds().size(); childIndex++) {
+            final MeasuredNode[] childs = new MeasuredNode[nodes.length];
+            int nodeIndex = 0;
+            boolean allChildsPresent = true;
+            for (final MeasuredNode node : nodes) {
+               if (node.getChilds().size() > childIndex) {
+                  childs[nodeIndex++] = node.getChilds().get(childIndex);
+               } else {
+                  allChildsPresent = false;
+               }
+            }
+            if (allChildsPresent) {
+               final List<MeasuredNode> changedChilds = getChangedNodes(childs);
+               if (changedChilds.size() != 0) {
+                  changedNodes.addAll(changedChilds);
+                  oneChildChanged = true;
+               }
+            }
+            if (!allChildsPresent) {
+               printChangedNode(nodes);
+               changedNodes.add(nodes[0]);
+            }
+         }
+         if (!oneChildChanged) {
+            printChangedNode(nodes);
+            changedNodes.add(nodes[0]);
+         }
+      }
+      return changedNodes;
+   }
+
+   private void printChangedNode(final MeasuredNode[] nodes) {
+      for (final MeasuredNode node : nodes) {
+         System.out.println(node.getKiekerPattern() + " " + node.getStatistic());
+      }
    }
 
 }

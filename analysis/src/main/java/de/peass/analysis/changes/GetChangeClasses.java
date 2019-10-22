@@ -10,12 +10,13 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import de.peass.utils.Constants;
 
 public class GetChangeClasses {
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final File f = new File("results/merged.json");
-      final ProjectChanges knowledge = new ObjectMapper().readValue(f, ProjectChanges.class);
+      final ProjectChanges knowledge = Constants.OBJECTMAPPER.readValue(f, ProjectChanges.class);
       final Map<String, DescriptiveStatistics> clazzes = new HashMap<>();
       for (final Changes changes : knowledge.getVersionChanges().values()) {
          for (final List<Change> change : changes.getTestcaseChanges().values()) {

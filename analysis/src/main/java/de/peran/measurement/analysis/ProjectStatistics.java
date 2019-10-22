@@ -26,10 +26,10 @@ public class ProjectStatistics {
 		this.statistics = statistics;
 	}
 
-	public void addMeasurement(final String version, final TestCase test, final double meanOld, final double meanCurrent, final double deviationOld, final double deviationCurrent, final int executions,
+	public void addMeasurement(final String version, final TestCase test, final double meanOld, final double meanCurrent, final double deviationOld, final double deviationCurrent, final int vms,
 			final double tvalue) {
 	   //TODO t-value based on count of values, not only >3.2 (>3.2 means 99% significance with more than 10 values)
-		final TestcaseStatistic statistic = new TestcaseStatistic(meanOld, meanCurrent, deviationOld, deviationCurrent, executions, tvalue, Math.abs(tvalue) > 3.2);
+		final TestcaseStatistic statistic = new TestcaseStatistic(meanOld, meanCurrent, deviationOld, deviationCurrent, vms, tvalue, Math.abs(tvalue) > 3.2);
 		addMeasurement(version, test, statistic);
 	}
 

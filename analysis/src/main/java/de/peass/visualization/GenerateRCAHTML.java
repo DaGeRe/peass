@@ -15,6 +15,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.peass.analysis.all.RepoFolders;
+import de.peass.dependency.CauseSearchFolders;
+import de.peass.measurement.rca.data.CallTreeNode;
+import de.peass.measurement.rca.data.CauseSearchData;
+import de.peass.utils.Constants;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -31,16 +35,20 @@ public class GenerateRCAHTML implements Callable<Void> {
 
    @Option(names = { "-data", "--data" }, description = "Path to datafolder")
    protected File data[];
+   
+   @Option(names = { "-visualizeFull", "--visualizeFull" }, description = "Whether to visualize full tree")
+   protected boolean visualizeFull;
 
    @Option(names = { "-propertyFolder", "--propertyFolder" }, description = "Path to property folder", required = false)
    protected File propertyFolder;
    
    private File resultFolder = new File("results");
+   //TODO Fix dirty hack
+   final String projectName = "commons-fileupload";
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final CommandLine commandLine = new CommandLine(new GenerateRCAHTML());
       commandLine.execute(args);
-
    }
 
    @Override
@@ -55,7 +63,7 @@ public class GenerateRCAHTML implements Callable<Void> {
                handleSimpleFolder(source);
             }
          } else {
-            new RCAGenerator(source, resultFolder).createVisualization();
+            analyzeFile(resultFolder, source);
          }
       }
       return null;
@@ -87,17 +95,44 @@ public class GenerateRCAHTML implements Callable<Void> {
          for (final File testcaseFolder : versionFolder.listFiles()) {
             for (final File treeFile : testcaseFolder.listFiles()) {
                if (treeFile.getName().endsWith(".json")) {
-                  final String projectName = "commons-fileupload";
-                  final File propertyFolder = this.propertyFolder != null ? 
-                        this.propertyFolder : 
-                     new File(new RepoFolders().getPropertiesFolder(), "properties" + File.separator + projectName); 
-                  final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, versionResultFolder);
-                  rcaGenerator.setPropertyFolder(propertyFolder);
-                  rcaGenerator.createVisualization();
+                  analyzeFile(versionResultFolder, treeFile);
                }
             }
          }
       }
+   }
+
+   private void analyzeFile(final File versionResultFolder, final File treeFile)
+         throws JsonParseException, JsonMappingException, IOException, JsonProcessingException, FileNotFoundException {
+      final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, versionResultFolder);
+      final File propertyFolder = getPropertyFolder(projectName); 
+      rcaGenerator.setPropertyFolder(propertyFolder);
+      if (visualizeFull) {
+         final CauseSearchData data = rcaGenerator.getData();
+         
+         final File projectFolder = treeFile.getAbsoluteFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
+         final CauseSearchFolders folders = new CauseSearchFolders(projectFolder);
+         final File treeFolder = folders.getTreeCacheFolder(data.getMeasurementConfig().getVersion(), data.getCauseConfig().getTestCase());
+         
+         if (treeFolder.exists()) {
+            final File potentialCacheFileOld = new File(treeFolder, data.getMeasurementConfig().getVersionOld());
+            final File potentialCacheFile = new File(treeFolder, data.getMeasurementConfig().getVersion());
+            
+            final CallTreeNode rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFileOld, CallTreeNode.class);
+            final CallTreeNode rootVersion = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
+            
+            rcaGenerator.setFullTree(rootPredecessor, rootVersion);
+         }
+         
+      }
+      rcaGenerator.createVisualization();
+   }
+
+   private File getPropertyFolder(final String projectName) {
+      final File propertyFolder = this.propertyFolder != null ? 
+            this.propertyFolder : 
+         new File(new RepoFolders().getPropertiesFolder(), "properties" + File.separator + projectName);
+      return propertyFolder;
    }
 
 }

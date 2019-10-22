@@ -3,7 +3,6 @@ package de.peass.measurement.analysis.statistics;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.inference.TestUtils;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,6 +13,7 @@ public class TestcaseStatistic {
    private double meanOld, meanCurrent;
    private double deviationOld, deviationCurrent;
    private long vms;
+   private long callsOld, calls;
    private double tvalue;
    @JsonInclude(Include.NON_NULL)
    private String predecessor;
@@ -23,14 +23,16 @@ public class TestcaseStatistic {
 
    }
 
-   public TestcaseStatistic(final SummaryStatistics statisticsCurrent, final SummaryStatistics statisticsOld) {
+   public TestcaseStatistic(final StatisticalSummary statisticsCurrent, final StatisticalSummary statisticsOld, final long calls, final long callsOld) {
       this.meanCurrent = statisticsCurrent.getMean();
       this.meanOld = statisticsOld.getMean();
       this.deviationCurrent = statisticsCurrent.getStandardDeviation();
       this.deviationOld = statisticsOld.getStandardDeviation();
-      this.vms = statisticsCurrent.getN() + statisticsOld.getN();
+      this.vms = (statisticsCurrent.getN() + statisticsOld.getN()) / 2;
       this.tvalue = TestUtils.t(statisticsOld, statisticsCurrent);
       this.isChange = Math.abs(tvalue) > 3.2;
+      this.calls = calls;
+      this.callsOld = callsOld;
    }
 
    public TestcaseStatistic(final double mean1, final double mean2, final double deviation1, final double deviation2, final long executions, final double tvalue,
@@ -44,7 +46,7 @@ public class TestcaseStatistic {
       this.tvalue = tvalue;
       this.setChange(isChange);
    }
-   
+
    public String getPredecessor() {
       return predecessor;
    }
@@ -83,6 +85,22 @@ public class TestcaseStatistic {
 
    public void setDeviationCurrent(final double deviation2) {
       this.deviationCurrent = deviation2;
+   }
+
+   public long getCallsOld() {
+      return callsOld;
+   }
+
+   public void setCallsOld(final long callsOld) {
+      this.callsOld = callsOld;
+   }
+
+   public long getCalls() {
+      return calls;
+   }
+
+   public void setCalls(final long calls) {
+      this.calls = calls;
    }
 
    public long getVMs() {
@@ -130,15 +148,15 @@ public class TestcaseStatistic {
    public void setChange(final boolean isChange) {
       this.isChange = isChange;
    }
-   
+
    @JsonIgnore
    public StatisticalSummary getStatisticsCurrent() {
-      return new StatisticalSummaryValues(meanCurrent, deviationCurrent*deviationCurrent, vms/2, Double.MAX_VALUE, 0, meanCurrent*vms);
+      return new StatisticalSummaryValues(meanCurrent, deviationCurrent * deviationCurrent, vms, Double.MAX_VALUE, 0, meanCurrent * vms);
    }
-   
+
    @JsonIgnore
    public StatisticalSummary getStatisticsOld() {
-      return new StatisticalSummaryValues(meanOld, deviationOld*deviationOld, vms/2, Double.MAX_VALUE, 0, meanOld*vms);
+      return new StatisticalSummaryValues(meanOld, deviationOld * deviationOld, vms, Double.MAX_VALUE, 0, meanOld * vms);
    }
 
 }

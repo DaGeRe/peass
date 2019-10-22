@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -21,10 +22,10 @@ import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
-import de.peass.measurement.searchcause.KiekerResultReader;
-import de.peass.measurement.searchcause.data.CallTreeNode;
-import de.peass.measurement.searchcause.data.CallTreeStatistics;
-import de.peass.measurement.searchcause.data.OneVMResult;
+import de.peass.measurement.rca.KiekerResultReader;
+import de.peass.measurement.rca.data.CallTreeNode;
+import de.peass.measurement.rca.data.CallTreeStatistics;
+import de.peass.measurement.rca.data.OneVMResult;
 import de.peass.utils.Constants;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
@@ -59,6 +60,16 @@ class ValueVMResult implements OneVMResult {
 
    public List<Long> subList(final int i, final int iterations) {
       return values.subList(i, iterations);
+   }
+   
+   @Override
+   public long getCalls() {
+      throw new RuntimeException("Not implemented yet.");
+   }
+
+   @Override
+   public List<StatisticalSummary> getValues() {
+      throw new RuntimeException("Not implemented yet.");
    }
 }
 
@@ -126,12 +137,12 @@ class FullCallTreeStatistic extends CallTreeStatistics {
 
 class FullDataCallTreeNode extends CallTreeNode {
 
-   public FullDataCallTreeNode(final String call, final String kiekerPattern, final CallTreeNode parent) {
+   protected FullDataCallTreeNode(final String call, final String kiekerPattern, final CallTreeNode parent) {
       super(call, kiekerPattern, parent);
    }
 
    public FullDataCallTreeNode(final CallTreeNode mirrorNode) {
-      super(mirrorNode.getCall(), mirrorNode.getKiekerPattern(), null);
+      super(mirrorNode.getCall(), mirrorNode.getKiekerPattern());
       for (final CallTreeNode child : mirrorNode.getChildren()) {
          appendChild(child);
       }
@@ -170,19 +181,19 @@ class FullDataCallTreeNode extends CallTreeNode {
    public TestcaseStatistic getMinTestcaseStatistic(final int iterations) {
       final SummaryStatistics current = ((FullCallTreeStatistic) data.get(version)).getMinStatistics(iterations);
       final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(predecessor)).getMinStatistics(iterations);
-      return new TestcaseStatistic(current, previous);
+      return new TestcaseStatistic(current, previous, data.get(version).getCalls(), data.get(previous).getCalls());
    }
 
    public TestcaseStatistic getMedianTestcaseStatistic(final int iterations) {
       final SummaryStatistics current = ((FullCallTreeStatistic) data.get(version)).getMedianStatistics(iterations);
       final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(predecessor)).getMedianStatistics(iterations);
-      return new TestcaseStatistic(current, previous);
+      return new TestcaseStatistic(current, previous, data.get(version).getCalls(), data.get(previous).getCalls());
    }
 
    public TestcaseStatistic getTestcaseStatistic(final int iterations) {
       final SummaryStatistics current = ((FullCallTreeStatistic) data.get(version)).getStatistics(iterations);
       final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(predecessor)).getStatistics(iterations);
-      return new TestcaseStatistic(current, previous);
+      return new TestcaseStatistic(current, previous, data.get(version).getCalls(), data.get(previous).getCalls());
    }
 
    public boolean hasData() {

@@ -1,8 +1,13 @@
 package de.peass.measurement.analysis;
 
+import java.util.List;
+
+import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.stat.descriptive.AggregateSummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
+import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -12,6 +17,11 @@ public class StatisticUtil {
 
    private static final Logger LOG = LogManager.getLogger(StatisticUtil.class);
 
+   public static double getMean(final List<StatisticalSummary> statistics) {
+      final StatisticalSummaryValues vals = AggregateSummaryStatistics.aggregate(statistics);
+      return vals.getMean();
+   }
+   
    /**
     * Agnostic T-Test from Coscrato et al.: Agnostic tests can control the type I and type II errors simultaneously
     */
@@ -19,16 +29,15 @@ public class StatisticUtil {
       final double tValue = getTValue(statisticsPrev, statisticsVersion, 0);
       return agnosticTTest(tValue, statisticsPrev.getN() + statisticsVersion.getN() - 2, type1error, type2error);
    }
-   
+
    public static Relation agnosticTTest(final double tValue, final long degreesOfFreedom, final double type1error, final double type2error) {
-      final TDistribution tDistribution = new TDistribution(null, degreesOfFreedom);
-      final double criticalValueEqual = Math.abs(tDistribution.inverseCumulativeProbability(0.5 * (1 + type1error)));
-      final double criticalValueUnequal = Math.abs(tDistribution.inverseCumulativeProbability(1. - 0.5 * type2error));
+      final double criticalValueEqual = getCriticalValueType1(type1error, degreesOfFreedom);
+      final double criticalValueUnequal = getCriticalValueType2(type2error, degreesOfFreedom);
 
-      LOG.info("Allowed errors: {} {}", type1error, type2error);
-      LOG.info("Critical values: {} {}", criticalValueUnequal, criticalValueEqual);
+      LOG.trace("Allowed errors: {} {}", type1error, type2error);
+      LOG.trace("Critical values: {} {}", criticalValueUnequal, criticalValueEqual);
 
-      LOG.info("T: {}", tValue);
+      LOG.trace("T: {}", tValue);
 
       if (Math.abs(tValue) > criticalValueUnequal) {
          return Relation.UNEQUAL;
@@ -37,6 +46,18 @@ public class StatisticUtil {
       } else {
          return Relation.UNKOWN;
       }
+   }
+
+   public static double getCriticalValueType2(final double type2error, final long degreesOfFreedom) {
+      final TDistribution tDistribution = new TDistribution(null, degreesOfFreedom);
+      final double criticalValueUnequal = Math.abs(tDistribution.inverseCumulativeProbability(1. - 0.5 * type2error));
+      return criticalValueUnequal;
+   }
+
+   public static double getCriticalValueType1(final double type1error, final long degreesOfFreedom) {
+      final TDistribution tDistribution = new TDistribution(null, degreesOfFreedom);
+      final double criticalValueEqual = Math.abs(tDistribution.inverseCumulativeProbability(0.5 * (1 + type1error)));
+      return criticalValueEqual;
    }
 
    /**
@@ -91,6 +112,7 @@ public class StatisticUtil {
 
    /**
     * Determines whether there is a change, no change or no decission can be made. Usually, first the predecessor and than the current version are given.
+    * 
     * @param statisticsPrev
     * @param statisticsVersion
     * @param measurementConfig
@@ -98,5 +120,59 @@ public class StatisticUtil {
     */
    public static Relation agnosticTTest(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final MeasurementConfiguration measurementConfig) {
       return agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getType1error(), measurementConfig.getType2error());
+   }
+
+   public static Relation isChange(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final MeasurementConfiguration measurementConfig) {
+      final double maxVal = Math.max(statisticsPrev.getMean(), statisticsVersion.getMean());
+      if (maxVal > 100) {
+         return agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig);
+      } else if (maxVal > 1) {
+         final Relation r1 = isConfidenceIntervalOverlap(statisticsPrev, statisticsVersion, measurementConfig.getType2error());
+         final Relation r2 = agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getType1error() / 10, measurementConfig.getType2error() / 10);
+         final Relation result = (r1 == r2) ? r2 : Relation.UNKOWN;
+         return result;
+      } else {
+         Relation r1 = agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getType1error() / 20, measurementConfig.getType2error() / 20);
+         final double tValue = getTValue(statisticsPrev, statisticsVersion, 0);
+         if (Math.abs(tValue) < 10) {
+            r1 = Relation.UNKOWN;
+         }
+         final Relation r2 = isConfidenceIntervalOverlap(statisticsPrev, statisticsVersion, measurementConfig.getType2error());
+         final Relation result = ((r1 == r2) && (r2 == Relation.UNEQUAL)) ? Relation.UNEQUAL : Relation.UNKOWN;
+         return result;
+      }
+   }
+
+   public static Relation isConfidenceIntervalOverlap(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final double confidenceLevel) {
+      final double confidenceSpreadPrev = getConfidenceSpread(statisticsPrev, confidenceLevel);
+      final double confidenceSpreadVersion = getConfidenceSpread(statisticsVersion, confidenceLevel);
+      final double lowerPrev = statisticsPrev.getMean() - confidenceSpreadPrev;
+      final double upperVersion = statisticsVersion.getMean() + confidenceSpreadVersion;
+      final double lowerVersion = statisticsVersion.getMean() - confidenceSpreadVersion;
+      final double upperPrev = statisticsPrev.getMean() + confidenceSpreadPrev;
+      if (statisticsPrev.getMean() > statisticsVersion.getMean()) {
+         if (lowerPrev > upperVersion) {
+            return Relation.UNEQUAL;
+         } else {
+            return Relation.EQUAL;
+         }
+      } else {
+
+         if (lowerVersion > upperPrev) {
+            return Relation.UNEQUAL;
+         } else {
+            return Relation.EQUAL;
+         }
+      }
+   }
+
+   public static double getConfidenceSpread(final StatisticalSummary statistics, final double confidenceLevel) {
+      final double standarderror = Math.sqrt(statistics.getStandardDeviation() * statistics.getStandardDeviation() / statistics.getN());
+      // final TDistribution tDistribution = new TDistribution(null, statistics.getN());
+      final NormalDistribution tDistribution = new NormalDistribution();
+      final double areaSize = (1 - confidenceLevel) / 2;
+      final double criticalValue = Math.abs(tDistribution.inverseCumulativeProbability(areaSize));
+      // System.out.println(standarderror + " " + criticalValue);
+      return criticalValue * standarderror;
    }
 }

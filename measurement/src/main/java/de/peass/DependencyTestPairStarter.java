@@ -100,10 +100,6 @@ public class DependencyTestPairStarter extends PairProcessor {
       endindex = getEndVersion();
       return null;
    }
-   
-   public DependencyTestPairStarter() {
-      LOG.debug("Configuration: VMs: {} Warmup: {} Iterations: {} Repetitions: {}", vms, warmup, iterations, repetitions);
-   }
 
    /**
     * Calculates the index of the start version
@@ -173,6 +169,7 @@ public class DependencyTestPairStarter extends PairProcessor {
 
    @Override
    protected void processVersion(final String version, final Version versioninfo) {
+      LOG.debug("Configuration: VMs: {} Warmup: {} Iterations: {} Repetitions: {}", vms, warmup, iterations, repetitions);
       try {
          final int currentIndex = versions.indexOf(version);
          final boolean executeThisVersion = currentIndex >= startindex && currentIndex <= endindex;
