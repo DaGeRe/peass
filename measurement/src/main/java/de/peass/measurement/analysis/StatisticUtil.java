@@ -124,13 +124,13 @@ public class StatisticUtil {
 
    public static Relation isChange(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final MeasurementConfiguration measurementConfig) {
       final double maxVal = Math.max(statisticsPrev.getMean(), statisticsVersion.getMean());
-      if (maxVal > 100) {
+      if (maxVal > 1) {
          return agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig);
-      } else if (maxVal > 1) {
-         final Relation r1 = isConfidenceIntervalOverlap(statisticsPrev, statisticsVersion, measurementConfig.getType2error());
-         final Relation r2 = agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getType1error() / 10, measurementConfig.getType2error() / 10);
-         final Relation result = (r1 == r2) ? r2 : Relation.UNKOWN;
-         return result;
+//      } else if (maxVal > 1) {
+//         final Relation r1 = isConfidenceIntervalOverlap(statisticsPrev, statisticsVersion, measurementConfig.getType2error());
+//         final Relation r2 = agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getType1error() / 10, measurementConfig.getType2error() / 10);
+//         final Relation result = (r1 == r2) ? r2 : Relation.UNKOWN;
+//         return result;
       } else {
          Relation r1 = agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getType1error() / 20, measurementConfig.getType2error() / 20);
          final double tValue = getTValue(statisticsPrev, statisticsVersion, 0);

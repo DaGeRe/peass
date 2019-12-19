@@ -42,7 +42,7 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({GitUtils.class, VersionControlSystem.class})
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore({"javax.management.*"})
 public class CauseSearcherIT {
    
    private static final Logger LOG = LogManager.getLogger(CauseSearcherIT.class);

@@ -13,7 +13,7 @@ import picocli.CommandLine.Command;
       ReadProperties.class, 
       TestCleaner.class, 
       IsChange.class, 
-      SearchChangeCause.class, 
+      RootCauseAnalysis.class, 
       GenerateRCAHTML.class }, synopsisSubcommandLabel = "COMMAND")
 public class PeASSMain implements Callable<Void> {
    public static void main(final String[] args) {

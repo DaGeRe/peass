@@ -143,6 +143,8 @@ public class DependencyReader extends DependencyReaderBase {
       }
       return isVersionRunning;
    }
+   
+   boolean success = true;
 
    /**
     * Reads the dependencies of the tests
@@ -205,12 +207,14 @@ public class DependencyReader extends DependencyReaderBase {
    public void cleanTooBigLogs() {
       File logFolder = folders.getLogFolder();
       File versionFolder = new File(logFolder, iterator.getTag());
-      for (File clazzFolder : versionFolder.listFiles()) {
-         if (clazzFolder.isDirectory()) {
-            for (File methodLog : clazzFolder.listFiles()) {
-               long sizeInMb = (methodLog.length() / (1024*1024));
-               if (sizeInMb > MAX_SIZE_IN_MB) {
-                  methodLog.delete();
+      if (versionFolder.exists()) {
+         for (File clazzFolder : versionFolder.listFiles()) {
+            if (clazzFolder.isDirectory()) {
+               for (File methodLog : clazzFolder.listFiles()) {
+                  long sizeInMb = (methodLog.length() / (1024*1024));
+                  if (sizeInMb > MAX_SIZE_IN_MB) {
+                     methodLog.delete();
+                  }
                }
             }
          }

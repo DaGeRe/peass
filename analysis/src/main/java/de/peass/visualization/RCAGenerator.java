@@ -63,8 +63,6 @@ public class RCAGenerator {
          fileWriter.write("<!DOCTYPE html>\n");
          htmlGenerator.writeHTML("visualization/HeaderOfHTML.html");
          htmlGenerator.writeInfoDivs(data);
-
-         
          
          writeTreeDiv(fileWriter);
          
@@ -74,8 +72,6 @@ public class RCAGenerator {
             new SourceWriter(root, fileWriter, sourceFolder).writeSources();
          }
          writeColoredTree(root, fileWriter);
-
-         
 
          writeTreeDivSizes(root, fileWriter);
          fileWriter.write("</script>\n");

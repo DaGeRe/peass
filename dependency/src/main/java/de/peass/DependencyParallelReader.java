@@ -145,6 +145,8 @@ public class DependencyParallelReader {
 
    void processCommits(final File currentOutFile, final ExecutorService service, final File projectFolderTemp, final List<GitCommit> currentCommits,
          final List<GitCommit> reserveCommits, final GitCommit minimumCommit) throws InterruptedException {
+      LOG.debug("Start: {} End: {}", currentCommits.get(0), currentCommits.get(currentCommits.size() - 1));
+      LOG.debug(currentCommits);
       final VersionIterator iterator = new VersionIteratorGit(projectFolderTemp, currentCommits, null);
       final DependencyReader reader = new DependencyReader(projectFolderTemp, currentOutFile, url, iterator, timeout, nonRunning, nonChanges);
       final VersionIteratorGit reserveIterator = new VersionIteratorGit(projectFolderTemp, reserveCommits, null);

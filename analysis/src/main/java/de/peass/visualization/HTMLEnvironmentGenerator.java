@@ -21,7 +21,8 @@ public class HTMLEnvironmentGenerator {
       fileWriter.write("<div style='position:absolute; right: 0px; width: 800px; background-color: #BBBBBB; "
             + "border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>\n");
       fileWriter.write("Version: " + data.getMeasurementConfig().getVersion() + "<br>\n");
-      fileWriter.write("Test Case: " + data.getTestcase() + "<br>\n");
+      fileWriter.write("Test Case: " + data.getTestcase() + "<br>\n"
+            + "<a href=\"#\" onclick=\"collapse();\">Collapse</a>");
       fileWriter.write("</div>\n");
 
       fileWriter.write("<div style='position:absolute; left: 0px; width: 800px; height: 100px; background-color: #BBBBBB; "

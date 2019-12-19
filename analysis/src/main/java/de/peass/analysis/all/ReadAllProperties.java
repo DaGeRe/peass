@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.ReadProperties;
+import de.peass.analysis.properties.PropertyReader;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.vcs.GitUtils;
 import de.peran.FolderSearcher;
@@ -50,7 +51,7 @@ public class ReadAllProperties {
       }
    }
 
-   static void getProperties(RepoFolders folders, final String project)
+   static void getProperties(final RepoFolders folders, final String project)
          throws JAXBException, IOException, JsonParseException, JsonMappingException, JsonGenerationException {
 //      final File dependencyFile = new File(dependencyFolder, "deps_" + project + ".json");
 //      final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
@@ -80,7 +81,7 @@ public class ReadAllProperties {
          }
       } else {
          final File resultFile = new File(folders.getPropertiesFolder(), project + File.separator + "properties_alltests.json");
-         new ReadProperties(resultFile).readAllTestsProperties(projectFolder, viewFolder, changedTests);
+         new PropertyReader(resultFile.getParentFile(), projectFolder, viewFolder).readAllTestsProperties(changedTests);
       }
    }
 }

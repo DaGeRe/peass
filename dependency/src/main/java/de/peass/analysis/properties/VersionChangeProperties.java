@@ -8,7 +8,6 @@ import java.util.TreeMap;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.peass.analysis.changes.processors.PropertyProcessor;
 import de.peass.dependencyprocessors.VersionComparator;
 
 public class VersionChangeProperties {
@@ -19,14 +18,14 @@ public class VersionChangeProperties {
       return versions;
    }
 
-   public void setVersions(Map<String, ChangeProperties> versionProperties) {
+   public void setVersions(final Map<String, ChangeProperties> versionProperties) {
       this.versions = versionProperties;
    }
 
-   public void executeProcessor(PropertyProcessor c) {
-      for (Entry<String, ChangeProperties> version : versions.entrySet()) {
-         for (Entry<String, List<ChangeProperty>> testcase : version.getValue().getProperties().entrySet()) {
-            for (ChangeProperty change : testcase.getValue()) {
+   public void executeProcessor(final PropertyProcessor c) {
+      for (final Entry<String, ChangeProperties> version : versions.entrySet()) {
+         for (final Entry<String, List<ChangeProperty>> testcase : version.getValue().getProperties().entrySet()) {
+            for (final ChangeProperty change : testcase.getValue()) {
                c.process(version.getKey(), testcase.getKey(), change, version.getValue());
             }
          }
@@ -36,7 +35,7 @@ public class VersionChangeProperties {
    final class Counter implements PropertyProcessor {
       int count = 0;
       @Override
-      public void process(String version, String testcase, ChangeProperty change, ChangeProperties changeProperties) {
+      public void process(final String version, final String testcase, final ChangeProperty change, final ChangeProperties changeProperties) {
          if (change.isAffectsSource() && !change.isAffectsTestSource()) {
             count++;
          }
@@ -45,7 +44,7 @@ public class VersionChangeProperties {
    
    @JsonIgnore
    public int getSourceChanges() {
-      Counter counter = new Counter();
+      final Counter counter = new Counter();
       executeProcessor(counter);
       return counter.count;
    }

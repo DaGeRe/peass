@@ -94,7 +94,7 @@ public class KiekerResultManager {
       truncateKiekerResults();
       // TODO Verschieben
 
-      LOG.debug("Führe Tests neu aus für Abhängigkeiten-Aktuallisierung, Ergebnisordner: {}", folders.getTempMeasurementFolder());
+      LOG.debug("Executing dependency update test, results folder: {}", folders.getTempMeasurementFolder());
       final TestSet tests = new TestSet();
       testTransformer.determineVersions(executor.getModules());
       for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {

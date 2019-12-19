@@ -14,9 +14,9 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.analysis.changes.processors.PropertyProcessor;
 import de.peass.analysis.properties.ChangeProperties;
 import de.peass.analysis.properties.ChangeProperty;
+import de.peass.analysis.properties.PropertyProcessor;
 import de.peass.analysis.properties.VersionChangeProperties;
 import de.peran.FolderSearcher;
 
@@ -30,7 +30,7 @@ public class ReadClusterProperties {
          return changePercent;
       }
 
-      public void setChangePercent(List<Double> changePercent) {
+      public void setChangePercent(final List<Double> changePercent) {
          this.changePercent = changePercent;
       }
 
@@ -38,14 +38,14 @@ public class ReadClusterProperties {
          return comments;
       }
 
-      public void setComments(Set<String> comments) {
+      public void setComments(final Set<String> comments) {
          this.comments = comments;
       }
       
       @Override
       public String toString() {
-         DescriptiveStatistics stat = new DescriptiveStatistics();
-         for (Double val : changePercent) {
+         final DescriptiveStatistics stat = new DescriptiveStatistics();
+         for (final Double val : changePercent) {
             stat.addValue(val);
          }
          return comments.toString() + " " + stat.getMean();
@@ -57,8 +57,8 @@ public class ReadClusterProperties {
       Map<String, ClusterProperties> clusters = new LinkedHashMap<>();
 
       @Override
-      public void process(String version, String testcase, ChangeProperty change, ChangeProperties prop) {
-         for (String type : change.getTypes()) {
+      public void process(final String version, final String testcase, final ChangeProperty change, final ChangeProperties prop) {
+         for (final String type : change.getTypes()) {
             ClusterProperties props = clusters.get(type);
             if (props == null) {
                props = new ClusterProperties();
@@ -70,14 +70,14 @@ public class ReadClusterProperties {
       }
 
       public void printResults() {
-         for (Map.Entry<String, ClusterProperties> typeCluster : clusters.entrySet()) {
+         for (final Map.Entry<String, ClusterProperties> typeCluster : clusters.entrySet()) {
             System.out.println(typeCluster.getKey());
-            DescriptiveStatistics stat = new DescriptiveStatistics();
-            for (Double val : typeCluster.getValue().getChangePercent()) {
+            final DescriptiveStatistics stat = new DescriptiveStatistics();
+            for (final Double val : typeCluster.getValue().getChangePercent()) {
                stat.addValue(val);
             }
             System.out.println(stat.getMean());
-            for (String comment : typeCluster.getValue().getComments()) {
+            for (final String comment : typeCluster.getValue().getComments()) {
                System.out.println(" " + comment);
             }
          }
@@ -85,14 +85,14 @@ public class ReadClusterProperties {
       }
    }
 
-   public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
-      File folder = new File("results/commons-io/");
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
+      final File folder = new File("results/commons-io/");
       // File changesFile = new File(folder, "changes.json");
-      File propertiesFile = new File(folder, "properties.json");
+      final File propertiesFile = new File(folder, "properties.json");
 
-      VersionChangeProperties properties = FolderSearcher.MAPPER.readValue(propertiesFile, VersionChangeProperties.class);
+      final VersionChangeProperties properties = FolderSearcher.MAPPER.readValue(propertiesFile, VersionChangeProperties.class);
 
-      TypeClusterReader typeClusterReader = new TypeClusterReader();
+      final TypeClusterReader typeClusterReader = new TypeClusterReader();
       properties.executeProcessor(typeClusterReader);
       
       typeClusterReader.printResults();

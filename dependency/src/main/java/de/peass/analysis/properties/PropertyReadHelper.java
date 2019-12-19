@@ -238,8 +238,8 @@ public class PropertyReadHelper {
 
       // Prinzipiell: Man müsste schauen, wo der Quelltext liegt, nicht, wie er heißt..
       for (final Entry<ChangedEntity, ClazzChangeData> changedEntity : changes.entrySet()) {
-         final Set<String> guessedTypes = new PropertyChangeGuesser().getGuesses(folders, changedEntity);
-         property.getGuessedTypes().addAll(guessedTypes);
+//         final Set<String> guessedTypes = new PropertyChangeGuesser().getGuesses(folders, changedEntity);
+//         property.getGuessedTypes().addAll(guessedTypes);
 
          final ChangedEntity outerClazz = changedEntity.getKey();
          if (!changedEntity.getValue().isOnlyMethodChange()) {

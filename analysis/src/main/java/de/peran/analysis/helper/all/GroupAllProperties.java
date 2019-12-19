@@ -18,9 +18,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.ReadProperties;
-import de.peass.analysis.changes.processors.PropertyProcessor;
 import de.peass.analysis.properties.ChangeProperties;
 import de.peass.analysis.properties.ChangeProperty;
+import de.peass.analysis.properties.PropertyProcessor;
 import de.peass.analysis.properties.PropertyReadHelper;
 
 public class GroupAllProperties {
@@ -53,13 +53,13 @@ public class GroupAllProperties {
       final BufferedWriter writer;
       final String project;
 
-      public PropertyGroupCSVGenerator(File folder, String project) throws IOException {
+      public PropertyGroupCSVGenerator(final File folder, final String project) throws IOException {
          writer = new BufferedWriter(new FileWriter(new File(folder, "properties_groupable.csv")));
          this.project = project;
       }
 
       @Override
-      public void process(String version, String testcase, ChangeProperty change, ChangeProperties changeProperties) {
+      public void process(final String version, final String testcase, final ChangeProperty change, final ChangeProperties changeProperties) {
          if (change.getCalls() != 0 && change.getCallsOld() != 0) {
             String line = project + ";";
             line += change.getDiff() + ";";
@@ -81,25 +81,25 @@ public class GroupAllProperties {
             }
             line += ";";
             System.out.println(change.getTypes() + " " + change.getDiff());
-            for (Map.Entry<String, String[]> keywordType : keywords.entrySet()) {
-               int words = getAddCount(change, keywordType.getValue());
+            for (final Map.Entry<String, String[]> keywordType : keywords.entrySet()) {
+               final int words = getAddCount(change, keywordType.getValue());
                line += words + ";";
-               int wordsR = getRemoveCount(change, keywordType.getValue());
+               final int wordsR = getRemoveCount(change, keywordType.getValue());
                line += wordsR + ";";
             }
 
             try {
                writer.write(line + "\n");
                writer.flush();
-            } catch (IOException e) {
+            } catch (final IOException e) {
                e.printStackTrace();
             }
          }
       }
 
-      private int getAddCount(ChangeProperty change, String[] controlWords2) {
+      private int getAddCount(final ChangeProperty change, final String[] controlWords2) {
          int count = 0;
-         for (Entry<String, Integer> keyword : change.getAddedMap().entrySet()) {
+         for (final Entry<String, Integer> keyword : change.getAddedMap().entrySet()) {
             if (Arrays.asList(controlWords2).contains(keyword.getKey())) {
                count += keyword.getValue();
             }
@@ -107,9 +107,9 @@ public class GroupAllProperties {
          return count;
       }
 
-      private int getRemoveCount(ChangeProperty change, String[] controlWords2) {
+      private int getRemoveCount(final ChangeProperty change, final String[] controlWords2) {
          int count = 0;
-         for (Entry<String, Integer> keyword : change.getAddedMap().entrySet()) {
+         for (final Entry<String, Integer> keyword : change.getAddedMap().entrySet()) {
             if (Arrays.asList(controlWords2).contains(keyword.getKey())) {
                count += keyword.getValue();
             }
@@ -119,7 +119,7 @@ public class GroupAllProperties {
 
    }
 
-   public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       // for (String project : new String[] { "commons-csv", "commons-compress", "commons-dbcp", "commons-fileupload", "commons-imaging", "commons-io",
       // "commons-text" }) {
       // File folder = new File(CleanAll.defaultDataFolder, "results/" + project);
@@ -128,8 +128,8 @@ public class GroupAllProperties {
       // properties.executeProcessor(new PropertyGroupCSVGenerator(folder, project));
       // }
 
-      File csvFile = new File("/home/reichelt/daten/diss/ergebnisse/normaltest/v26_symbolicComplete/results/props_all.csv");
-      File csvOutFile = new File("/home/reichelt/daten/diss/ergebnisse/normaltest/v26_symbolicComplete/results/props_all2.csv");
+      final File csvFile = new File("/home/reichelt/daten/diss/ergebnisse/normaltest/v26_symbolicComplete/results/props_all.csv");
+      final File csvOutFile = new File("/home/reichelt/daten/diss/ergebnisse/normaltest/v26_symbolicComplete/results/props_all2.csv");
 
       // summarize(csvFile, csvOutFile);
       discretize(csvFile, csvOutFile);
@@ -139,14 +139,14 @@ public class GroupAllProperties {
 
    }
 
-   private static void summarize(File csvFile, File csvOutFile) throws IOException, FileNotFoundException {
-      BufferedWriter writer = new BufferedWriter(new FileWriter(csvOutFile));
+   private static void summarize(final File csvFile, final File csvOutFile) throws IOException, FileNotFoundException {
+      final BufferedWriter writer = new BufferedWriter(new FileWriter(csvOutFile));
       try (BufferedReader fileReader = new BufferedReader(new FileReader(csvFile))) {
-         Set<String> ids = new HashSet<>();
+         final Set<String> ids = new HashSet<>();
 
          String line = "#Diff" + ";" + "method" + ";" + "intensity" + ";" + "testChange;" + "traceChange" + ";";
          line += "calls" + ";" + "callsOld" + ";" + "oldTime" + ";";
-         for (String keyword : PropertyReadHelper.keywords) {
+         for (final String keyword : PropertyReadHelper.keywords) {
             line += keyword + "Added;";
          }
          writer.write(line.substring(0, line.length() - 1) + "\n");
@@ -154,7 +154,7 @@ public class GroupAllProperties {
 
          while ((line = fileReader.readLine()) != null) {
 
-            String[] splitted = line.split(";");
+            final String[] splitted = line.split(";");
             if (!ids.contains(splitted[0])) {
                ids.add(splitted[0]);
                String outLine = "";
@@ -203,17 +203,17 @@ public class GroupAllProperties {
 
    }
 
-   private static void discretize(File csvFile, File csvOutFile) throws IOException, FileNotFoundException {
-      BufferedWriter writer = new BufferedWriter(new FileWriter(csvOutFile));
+   private static void discretize(final File csvFile, final File csvOutFile) throws IOException, FileNotFoundException {
+      final BufferedWriter writer = new BufferedWriter(new FileWriter(csvOutFile));
       try (BufferedReader fileReader = new BufferedReader(new FileReader(csvFile))) {
-         Set<String> ids = new HashSet<>();
+         final Set<String> ids = new HashSet<>();
          String line;
 
          ReadProperties.writeCSVHeadline(writer);
 
          while ((line = fileReader.readLine()) != null) {
             if (!line.startsWith("#")) {
-               String[] splitted = line.split(";");
+               final String[] splitted = line.split(";");
                if (!ids.contains(splitted[0])) {
                   ids.add(splitted[0]);
                   String outLine = "";

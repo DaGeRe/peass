@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.analysis.properties.PropertyReader;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.parallel.Merger;
 import de.peass.dependency.persistence.Dependencies;
@@ -56,7 +57,7 @@ public class DependencyExecutionReader implements Callable<Void>{
 
    public static void main(final String[] args) {
       try {
-         CommandLine commandLine = new CommandLine(new DependencyExecutionReader());
+         final CommandLine commandLine = new CommandLine(new DependencyExecutionReader());
          commandLine.execute(args);
       } catch (final Throwable t) {
          t.printStackTrace();
@@ -76,7 +77,7 @@ public class DependencyExecutionReader implements Callable<Void>{
 
    public static void readExecutions(final File projectFolder, final String project, final List<GitCommit> commits, final int timeout, final int threads,
          final File resultBaseFolder) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, ParseException, JAXBException {
-      DependencyParallelReader reader = new DependencyParallelReader(projectFolder, resultBaseFolder, project, commits, threads, timeout);
+      final DependencyParallelReader reader = new DependencyParallelReader(projectFolder, resultBaseFolder, project, commits, threads, timeout);
       final File[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);
@@ -93,6 +94,10 @@ public class DependencyExecutionReader implements Callable<Void>{
 
       final ViewGenerator viewGenerator = new ViewGenerator(projectFolder, all, executeOut, viewFolder, threads, timeout);
       viewGenerator.processCommandline();
+      
+      final File propertyFolders = new File(resultBaseFolder, "properties_" + project);
+      final PropertyReader propertyReader = new PropertyReader(propertyFolders, projectFolder, viewFolder);
+      propertyReader.readAllTestsProperties(viewGenerator.getChangedTraceMethods());
    }
 
    

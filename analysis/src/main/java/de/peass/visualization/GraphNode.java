@@ -106,7 +106,7 @@ public class GraphNode extends BasicNode {
       return state;
    }
 
-   public void setState(State state) {
+   public void setState(final State state) {
       this.state = state;
    }
 }

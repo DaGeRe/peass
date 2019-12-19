@@ -200,13 +200,16 @@ public class NodePreparator {
       if (isChange && measuredNode.getStatistic().getMeanCurrent() > 1 && measuredNode.getStatistic().getMeanOld() > 1) {
          if (measuredNode.getStatistic().getTvalue() < 0) {
             graphNode.setColor("#FF0000");
-            graphNode.setState(State.FASTER);
+            graphNode.setState(State.SLOWER);
+            graphNode.getStatistic().setChange(true);
          } else {
             graphNode.setColor("#00FF00");
-            graphNode.setState(State.SLOWER);
+            graphNode.setState(State.FASTER);
+            graphNode.getStatistic().setChange(true);
          }
       } else {
          graphNode.setColor("#FFFFFF");
+         graphNode.getStatistic().setChange(false);
       }
    }
 

@@ -4,10 +4,14 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.persistence.Version;
+import de.peass.dependencyprocessors.VersionProcessor;
 import de.peass.measurement.rca.CauseSearcher;
 import de.peass.measurement.rca.CauseSearcherComplete;
 import de.peass.measurement.rca.CauseSearcherConfig;
@@ -19,7 +23,9 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(description = "Searches for root cause of a performance change, i.e. method causing the performance change", name = "searchcause")
-public class SearchChangeCause extends AdaptiveTestStarter {
+public class RootCauseAnalysis extends AdaptiveTestStarter {
+   
+   private static final Logger LOG = LogManager.getLogger(RootCauseAnalysis.class);
 
    @Option(names = { "-measureComplete", "--measureComplete" }, description = "Whether to measure the whole tree at once (default false - tree is measured level-wise)")
    public boolean measureComplete = false;
@@ -48,18 +54,27 @@ public class SearchChangeCause extends AdaptiveTestStarter {
    public int writeInterval = 5000;
 
    public static void main(final String[] args) throws JAXBException, IOException {
-      final SearchChangeCause command = new SearchChangeCause();
+      final RootCauseAnalysis command = new RootCauseAnalysis();
       final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);
    }
 
-   public SearchChangeCause() throws JAXBException, IOException {
+   public RootCauseAnalysis() throws JAXBException, IOException {
       super();
    }
 
    @Override
    public Void call() throws Exception {
+      if (testName == null) {
+         throw new RuntimeException("Test needs to be defined!");
+      }
+      
       initVersionProcessor();
+      
+      if (version == null) {
+         version = executionData.getVersions().keySet().iterator().next();
+         LOG.info("Version was not defined, using " + version);
+      }
 
       final TestCase test = new TestCase(testName);
       final Version versionInfo = dependencies.getVersions().get(version);

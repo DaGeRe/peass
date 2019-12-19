@@ -165,6 +165,22 @@ function round(value){
 	return Math.round(value*100)/100;
 }
 
+function collapse(){
+   root = treeData[0];
+   collapseNode(root);
+}
+
+function collapseNode(parent){
+   for (var nodeId in parent.children) {
+      var node=parent.children[nodeId];
+      if (node.color == "#5555FF"){
+          click(node);
+      } else {
+	      collapseNode(node);
+      }
+   }
+}
+
 function shownode(node) {
   if (node.statistic != null){
 	  infos.innerHTML="<table>" +
@@ -177,7 +193,7 @@ function shownode(node) {
 	  infos.innerHTML = "No statistic";
   }
 	
-  quelltext.innerHTML="<pre>" + source[node.name] +"</pre>"
+  quelltext.innerHTML="<pre>" + source[node.call] +"</pre>"
   histogramm.innerHTML=node.name;
   var version = {
     x: node.values,

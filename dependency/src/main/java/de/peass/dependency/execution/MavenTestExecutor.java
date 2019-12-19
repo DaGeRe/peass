@@ -93,7 +93,13 @@ public class MavenTestExecutor extends TestExecutor {
          final List<TestCase> testCases = getTestCases();
          LOG.info("Starting Testcases: {}", testCases.size());
          for (final TestCase test : testCases) {
+            if (test.getClazz().contains("ServletFileUploadTest") ) {
+               System.out.println("test");
+            }
             executeTest(test, logFile.getParentFile(), timeout);
+            if (test.getClazz().contains("ServletFileUploadTest") ) {
+               System.out.println("test");
+            }
          }
          // execute("all", timeout, process);
          // process.waitFor();
@@ -321,7 +327,7 @@ public class MavenTestExecutor extends TestExecutor {
             if (testTransformer.isSplitAggregated()) {
                writerConfig += " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.aggregateSplitted=true";
             }
-           
+
          } else {
             writerConfig = "";
          }

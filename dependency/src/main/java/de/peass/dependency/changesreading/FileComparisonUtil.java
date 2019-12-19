@@ -52,11 +52,14 @@ import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
+import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.github.javaparser.ast.visitor.VoidVisitor;
 import com.github.javaparser.printer.lexicalpreservation.changes.Change;
 import com.sun.xml.bind.v2.schemagen.xmlschema.Import;
 
 import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import javassist.compiler.ast.MethodDecl;
 
 /**
  * Helps to compare whether two versions of a file may have changed performance (and whether this change is for the use of the whole file or only some methods).
@@ -242,8 +245,20 @@ public final class FileComparisonUtil {
 
       if (method.equals("<init>")) {
          final List<ConstructorDeclaration> methods = declaration.getConstructors();
-         System.out.println("Searching: " + method);
-         return methods.size() > 0 ? methods.get(0).toString() : "";
+         System.out.println("Searching: " + method + " " + entity);
+         if (methods.size() > 0) {
+            CallableDeclaration<?> callable = findCallable(entity, methods);
+            if (callable == null) {
+               LOG.debug("Full parameters of not-found entity: " + entity.getParameters());
+               entity.getParameters().remove(0); // Remove instance of surrounding class
+               callable = findCallable(entity, methods);
+               System.out.println("Found: " + callable);
+            }
+            callable.setComment(null);
+            return callable.toString();
+         } else {
+            return "";
+         }
       } else {
          List<MethodDeclaration> methods;
          if (method.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
@@ -254,25 +269,45 @@ public final class FileComparisonUtil {
             methods = declaration.getMethodsByName(method);
          }
          if (methods.size() > 0) {
-            for (MethodDeclaration methodDec : methods) {
-               if (methodDec.getParameters().size() == entity.getParameters().size()) {
-                  boolean equal = parametersEqual(entity, methodDec);
-                  if (equal) {
-                     return methodDec.toString();
-                  }
-               }
+            CallableDeclaration<?> foundDeclaration = findCallable(entity, methods);
+            if (foundDeclaration != null) {
+               foundDeclaration.setComment(null);
+               return foundDeclaration.toString();
             }
          }
-         return methods.size() > 0 ? methods.get(0).toString() : "";
+         return "";
       }
    }
 
-   private static boolean parametersEqual(final ChangedEntity entity, MethodDeclaration methodDec) {
+   private static CallableDeclaration<?> findCallable(final ChangedEntity entity, List<? extends CallableDeclaration<?>> methods) {
+      CallableDeclaration<?> foundDeclaration = null;
+      for (CallableDeclaration<?> methodDec : methods) {
+         if (methodDec.getParameters().size() == entity.getParameters().size()) {
+            boolean equal = parametersEqual(entity, methodDec);
+            if (equal) {
+               foundDeclaration = methodDec;
+               break;
+
+            }
+         }
+      }
+      return foundDeclaration;
+   }
+
+   private static boolean parametersEqual(final ChangedEntity entity, CallableDeclaration<?> methodDec) {
       boolean equal = true;
       for (int i = 0; i < methodDec.getParameters().size(); i++) {
          String declaredParameterName = methodDec.getParameter(i).getTypeAsString();
-         if (!declaredParameterName.equals(entity.getParameters().get(i))){
-            equal = false;
+         final String entityParameterName = entity.getParameters().get(i);
+         if (entityParameterName.contains("$")) {
+            String shortName = entityParameterName.substring(entityParameterName.indexOf('$') + 1);
+            if (!declaredParameterName.equals(entityParameterName) && !declaredParameterName.equals(shortName)) {
+               equal = false;
+            }
+         } else {
+            if (!declaredParameterName.equals(entityParameterName)) {
+               equal = false;
+            }
          }
       }
       return equal;

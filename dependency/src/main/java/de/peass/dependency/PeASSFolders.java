@@ -25,7 +25,7 @@ public class PeASSFolders {
    protected final File peassFolder;
 
    public PeASSFolders(final File folder) {
-      if (!folder.getName().endsWith("_peass")) {
+      if (!folder.getName().endsWith("peass")) {
          projectFolder = folder;
          peassFolder = new File(projectFolder.getParentFile(), projectFolder.getName() + "_peass");
          if (!peassFolder.exists()) {
