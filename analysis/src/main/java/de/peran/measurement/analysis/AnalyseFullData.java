@@ -23,14 +23,14 @@ import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.DataAnalyser;
 import de.peass.measurement.analysis.Relation;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
+import de.peass.measurement.analysis.statistics.MeanCoVData;
+import de.peass.measurement.analysis.statistics.MeanHistogramData;
 import de.peass.measurement.analysis.statistics.TestData;
 import de.peass.statistics.ConfidenceInterval;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peran.AnalyseOneTest;
 import de.peran.Environment;
 import de.peran.FolderSearcher;
-import de.peran.measurement.analysis.statistics.MeanCoVData;
-import de.peran.measurement.analysis.statistics.MeanHistogramData;
 
 /**
  * Analyzes full data and tells which version contain changes based upon given statistical tests (confidence interval, MannWhitney, ..)

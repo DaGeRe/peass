@@ -20,6 +20,7 @@ import de.peass.dependency.persistence.Version;
 import de.peass.dependencyprocessors.DependencyTester;
 import de.peass.dependencyprocessors.PairProcessor;
 import de.peass.testtransformation.JUnitTestTransformer;
+import de.peass.testtransformation.TimeBasedTestTransformer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -57,8 +58,6 @@ public class DependencyTestPairStarter extends PairProcessor {
    
    JUnitTestTransformer getTestTransformer(final MeasurementConfiguration measurementConfig) {
       final JUnitTestTransformer testtransformer = new JUnitTestTransformer(folders.getProjectFolder(), measurementConfig);
-      testtransformer.setDatacollectorlist(DataCollectorList.ONLYTIME);
-      testtransformer.setLogFullData(true);
       return testtransformer;
    }
 
@@ -78,7 +77,15 @@ public class DependencyTestPairStarter extends PairProcessor {
       measurementConfiguration.setWarmup(warmup);
       measurementConfiguration.setRepetitions(repetitions);
       if (duration != 0) {
-         tester = new DependencyTester(folders, duration, vms, true, repetitions, useKieker);
+         TimeBasedTestTransformer testTransformer = new TimeBasedTestTransformer(folders.getProjectFolder());
+         ((TimeBasedTestTransformer) testTransformer).setDuration(duration);
+         if (repetitions != 1) {
+            testTransformer.getConfig().setRepetitions(repetitions);
+         }
+         testTransformer.getConfig().setIterations(0);
+         testTransformer.getConfig().setWarmup(0);
+         testTransformer.getConfig().setUseKieker(useKieker);
+         tester = new DependencyTester(folders, testTransformer);
       } else {
          final JUnitTestTransformer testgenerator = getTestTransformer(measurementConfiguration);
          

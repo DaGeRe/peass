@@ -24,14 +24,14 @@ public class TestCompleteReading {
    private void writeFakeMeasurements(final File kiekerTraceFolder) throws IOException {
       final Configuration configuration = new Configuration();
       configuration.setProperty(AggregatedTreeWriter.CONFIG_PATH, kiekerTraceFolder.getAbsolutePath());
-      configuration.setProperty(AggregatedTreeWriter.CONFIG_WARMUP, 0);
+      // configuration.setProperty(AggregatedTreeWriter.CONFIG_WARMUP, 0);
       final AggregatedTreeWriter writer = new AggregatedTreeWriter(configuration);
       writer.onStarting();
       writer.writeMonitoringRecord(new OperationExecutionRecord("public void A.parent()", "1", 1, 1000, 2000, "xyz", 0, 0));
       for (int i = 0; i < 100; i++) {
-         writer.writeMonitoringRecord(new OperationExecutionRecord("public void A.child1()", "1", 1, 1000, 2000, "xyz", 0, 1));
-         writer.writeMonitoringRecord(new OperationExecutionRecord("public void A.child2()", "1", 1, 1000, 2000, "xyz", 1, 1));
-         writer.writeMonitoringRecord(new OperationExecutionRecord("public void A.child3()", "1", 1, 1000, 2000, "xyz", 2, 1));
+         writer.writeMonitoringRecord(new OperationExecutionRecord("public void A.child1()", "1", 1, 1000, 2000, "xyz", 1, 1));
+         writer.writeMonitoringRecord(new OperationExecutionRecord("public void A.child2()", "1", 1, 1000, 2000, "xyz", 2, 1));
+         writer.writeMonitoringRecord(new OperationExecutionRecord("public void A.child3()", "1", 1, 1000, 2000, "xyz", 3, 1));
       }
       writer.onTerminating();
    }
@@ -67,7 +67,7 @@ public class TestCompleteReading {
 
       final TestCase testcase = new TestCase("A", "parent");
       final KiekerResultReader reader = new KiekerResultReader(false, includedNodes, "0", kiekerTraceFolder, testcase, false);
-      reader.setConsiderNodePosition(true);
+//      reader.setConsiderNodePosition(true);
       final File kiekerFolder = kiekerTraceFolder.listFiles()[0];
       reader.readAggregatedData(kiekerFolder);
 

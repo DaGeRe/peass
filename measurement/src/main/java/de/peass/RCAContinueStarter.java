@@ -49,8 +49,6 @@ public class RCAContinueStarter implements Callable<Void> {
          final CauseSearchFolders alternateFolders = new CauseSearchFolders(nowFolder);
 
          final JUnitTestTransformer testtransformer = new JUnitTestTransformer(alternateFolders.getProjectFolder(), data.getMeasurementConfig());
-         testtransformer.setDatacollectorlist(DataCollectorList.ONLYTIME);
-         testtransformer.setLogFullData(true);
 
          final BothTreeReader reader = new BothTreeReader(data.getCauseConfig(), data.getMeasurementConfig(), folders);
          reader.readCachedTrees();

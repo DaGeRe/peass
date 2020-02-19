@@ -5,6 +5,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -90,7 +91,7 @@ public abstract class TestExecutor {
    }
 
    protected Process buildFolderProcess(final File currentFolder, final File logFile, final String[] vars) throws IOException {
-      LOG.debug("Command: {}", vars);
+      LOG.debug("Command: {}", Arrays.toString(vars));
 
       final ProcessBuilder pb = new ProcessBuilder(vars);
       LOG.debug("KOPEME_HOME={}", folders.getTempMeasurementFolder().getAbsolutePath());

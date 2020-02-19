@@ -17,7 +17,6 @@ public class GraphNode extends BasicNode {
    
    private String name;
    private String parent;
-   private List<GraphNode> children = new LinkedList<>();
    private String color;
    private TestcaseStatistic statistic;
    private boolean hasSourceChange = false;
@@ -27,7 +26,8 @@ public class GraphNode extends BasicNode {
    private double[] values = null;
    @JsonInclude(Include.NON_NULL)
    private double[] valuesPredecessor = null;
-
+   private List<GraphNode> children = new LinkedList<>();
+   
    public GraphNode(final String call, final String kiekerPattern) {
       super(call, kiekerPattern);
    }

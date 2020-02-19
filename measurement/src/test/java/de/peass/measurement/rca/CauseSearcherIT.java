@@ -65,7 +65,6 @@ public class CauseSearcherIT {
       final PeASSFolders folders = new PeASSFolders(CURRENT);
       final File projectFolderTemp = new File(folders.getTempProjectFolder(), "000001");
       
-      PowerMockito.mockStatic(VersionControlSystem.class);
       VCSTestUtils.mockGetVCS();
       
       PowerMockito.mockStatic(GitUtils.class);

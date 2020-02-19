@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
 import de.peass.breaksearch.FindLowestPossibleIterations;
-import de.peass.statistics.ConfidenceInterval;
+import de.peass.measurement.analysis.StatisticUtil;
 
 /**
  * Determines the minimal count of executions keeping the same result.
@@ -24,8 +24,8 @@ public class MinimalExecutionDeterminer extends MinimalValueDeterminer {
 
 		executionloop: for (; localMinValue > 1000; localMinValue -= 500) {
 			final boolean significant;
-			final List<Result> reduced = ConfidenceInterval.shortenValues(current, 0, localMinValue);
-			final List<Result> reducedBefore = ConfidenceInterval.shortenValues(before, 0, localMinValue);
+			final List<Result> reduced = StatisticUtil.shortenValues(current, 0, localMinValue);
+			final List<Result> reducedBefore = StatisticUtil.shortenValues(before, 0, localMinValue);
 			significant = FindLowestPossibleIterations.isStillSignificant(getValues(reduced), getValues(reducedBefore), oldResult);
 			// final boolean significant = isStillSignificant(statistics.subList(start, start + localMinVmTry), statisticsBefore.subList(start, start + localMinVmTry), oldResult);
 			if (!significant) {

@@ -25,8 +25,12 @@ import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
+import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.generated.Result.Fulldata;
+import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
@@ -37,7 +41,7 @@ import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.VersionControlSystem;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ VersionControlSystem.class, KiekerResultManager.class })
+@PrepareForTest({ VersionControlSystem.class, ExecutorCreator.class })
 @PowerMockIgnore("javax.management.*")
 public class TestDependencyTester {
 
@@ -48,7 +52,7 @@ public class TestDependencyTester {
    public void testFiles() throws IOException, InterruptedException, JAXBException {
       final PeASSFolders folders = new PeASSFolders(folder.getRoot());
       final MeasurementConfiguration configuration = new MeasurementConfiguration(4, "2", "1");
-      
+
       final JUnitTestTransformer testTransformer = Mockito.mock(JUnitTestTransformer.class);
       Mockito.when(testTransformer.getConfig()).thenReturn(configuration);
 
@@ -63,22 +67,21 @@ public class TestDependencyTester {
 
       }).when(mockedExecutor).executeTest(Mockito.any(), Mockito.any(), Mockito.anyLong());
 
-      PowerMockito.mockStatic(KiekerResultManager.class);
-      PowerMockito.when(KiekerResultManager.createExecutor(Mockito.any(), Mockito.anyLong(), Mockito.any()))
+      PowerMockito.mockStatic(ExecutorCreator.class);
+      PowerMockito.when(ExecutorCreator.createExecutor(Mockito.any(), Mockito.anyLong(), Mockito.any()))
             .thenReturn(mockedExecutor);
 
       PowerMockito.mockStatic(VersionControlSystem.class);
       PowerMockito.when(VersionControlSystem.getVersionControlSystem(folder.getRoot()))
             .thenReturn(VersionControlSystem.GIT);
 
-      
       final DependencyTester tester = new DependencyTester(folders, testTransformer);
 
       tester.evaluate(new TestCase("de.peass.MyTest", "test"));
-      
+
       final File expectedShortresultFile = new File(folders.getFullMeasurementFolder(), "MyTest_test.xml");
       Assert.assertTrue(expectedShortresultFile.exists());
-      
+
       final Kopemedata data = XMLDataLoader.loadData(expectedShortresultFile);
       final Datacollector collector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
       final Chunk chunk = collector.getChunk().get(0);
@@ -87,19 +90,38 @@ public class TestDependencyTester {
       Assert.assertEquals(11, chunk.getResult().get(0).getExecutionTimes());
       Assert.assertEquals(10, chunk.getResult().get(0).getWarmupExecutions());
    }
-   
+
    public void writeValue(final PeASSFolders folders, final int average) throws JAXBException {
       final File measurementFile = new File(folders.getTempMeasurementFolder(), "de.peass.MyTest");
       measurementFile.mkdirs();
       final XMLDataStorer storer = new XMLDataStorer(measurementFile, "de.peass.MyTest", "test");
-      final PerformanceDataMeasure measure = new PerformanceDataMeasure("de.peass.MyTest.test", TimeDataCollector.class.getName(), average, 1,
-            20, 0, 5, average - 10, 11, 5);
-      final Map<Long, Long> values = new LinkedHashMap<>();
-      for (long i = average - 10; i <= average + 10; i++) {
-         values.put(i, i);
-      }
+      Result result = buildResult(average);
+      buildFulldata(average, result);
 
-      storer.storeValue(measure, values);
-      storer.storeData();
+      storer.storeValue(result, "de.peass.MyTest", TimeDataCollector.class.getName());
+   }
+
+   private void buildFulldata(final int average, Result result) {
+      final Fulldata values = new Fulldata();
+      for (long i = average - 10; i <= average + 10; i++) {
+         Value value = new Value();
+         value.setStart(i);
+         value.setValue("" + i);
+         values.getValue().add(value);
+         // values.put(i, i);
+      }
+      result.setFulldata(values);
+   }
+
+   private Result buildResult(final int average) {
+      Result result = new Result();
+      result.setValue(average);
+      result.setDeviation(1);
+      result.setMin(0L);
+      result.setMax(20L);
+      result.setRepetitions(5);
+      result.setWarmupExecutions(10);
+      result.setExecutionTimes(11);
+      return result;
    }
 }

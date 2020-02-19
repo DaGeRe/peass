@@ -39,6 +39,9 @@ public class Constants {
       defaultUrls.put("commons-jcs", "https://github.com/apache/commons-jcs.git");
       defaultUrls.put("httpcomponents-core", "https://github.com/apache/httpcomponents-core.git");
       defaultUrls.put("k-9", "https://github.com/k9mail/k-9.git");
+      defaultUrls.put("osmdroid", "https://github.com/osmdroid/osmdroid.git");
+      defaultUrls.put("osmand", "https://github.com/osmandapp/Osmand.git");
+      defaultUrls.put("nextcloud", "https://github.com/nextcloud/android.git");
       defaultUrls.put("jackson-core", "https://github.com/FasterXML/jackson-core.git");
 
       // Future candidates

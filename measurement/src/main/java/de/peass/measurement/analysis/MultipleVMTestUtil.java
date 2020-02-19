@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datacollection.TimeDataCollector;
+import de.dagere.kopeme.datacollection.TimeDataCollectorNoGC;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
@@ -26,7 +27,6 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.kopeme.generated.Versioninfo;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.statistics.ConfidenceInterval;
 
 /**
  * Provides utilities for reading KoPeMe-data from multiple runs which should be summarized into one file.
@@ -59,14 +59,18 @@ public class MultipleVMTestUtil {
    }
 
    public static Datacollector getTimeDataCollector(final Kopemedata fullResultData) {
+      return getTimeDataCollector(fullResultData.getTestcases().getTestcase().get(0));
+   }
+   
+   public static Datacollector getTimeDataCollector(final TestcaseType oneRunData) {
       Datacollector oneRunDatacollector = null;
-      for (final Datacollector collector : fullResultData.getTestcases().getTestcase().get(0).getDatacollector()) {
-         if (collector.getName().equals(TimeDataCollector.class.getName())) {
+      for (final Datacollector collector : oneRunData.getDatacollector()) {
+         if (collector.getName().equals(TimeDataCollector.class.getName()) || collector.getName().equals(TimeDataCollectorNoGC.class.getName())) {
             oneRunDatacollector = collector;
          }
       }
       if (oneRunDatacollector == null) {
-         throw new RuntimeException("Achtung: Kein " + TimeDataCollector.class.getName() + " gefunden");
+         throw new RuntimeException("Did not find " + TimeDataCollector.class.getName() + " or " + TimeDataCollectorNoGC.class);
       }
       return oneRunDatacollector;
    }
@@ -83,11 +87,11 @@ public class MultipleVMTestUtil {
          throws JAXBException {
       LOG.info("Writing to merged result file: {}", summaryResultFile);
       final Kopemedata fullResultData = initKopemeData(summaryResultFile, testcase);
-      Datacollector oneRunDatacollector = getOnedataCollector(oneRunData);
+      Datacollector oneRunDatacollector = getTimeDataCollector(oneRunData);
       Chunk realChunk = findChunk(currentChunkStart, fullResultData, oneRunDatacollector);
 
       final Result oneResult = oneRunDatacollector.getResult().get(0);
-      final Result cleaned = ConfidenceInterval.shortenValues(oneResult);
+      final Result cleaned = StatisticUtil.shortenValues(oneResult);
       final Fulldata realData = cleaned.getFulldata();
       if (realData != null && realData.getValue() != null && realData.getValue().size() > 0) {
          final SummaryStatistics st = new SummaryStatistics();
@@ -112,19 +116,6 @@ public class MultipleVMTestUtil {
          fullResultData.getTestcases().getTestcase().get(0).setName(testcase.getMethod());
       }
       return fullResultData;
-   }
-
-   public static Datacollector getOnedataCollector(final TestcaseType oneRunData) {
-      Datacollector oneRunDatacollector = null;
-      for (final Datacollector collector : oneRunData.getDatacollector()) {
-         if (collector.getName().equals(TimeDataCollector.class.getName())) {
-            oneRunDatacollector = collector;
-         }
-      }
-      if (oneRunDatacollector == null) {
-         throw new RuntimeException("Achtung: Kein " + TimeDataCollector.class.getName() + " gefunden");
-      }
-      return oneRunDatacollector;
    }
 
    public static Chunk findChunk(final long currentChunkStart, final Kopemedata fullResultData, Datacollector oneRunDatacollector) {

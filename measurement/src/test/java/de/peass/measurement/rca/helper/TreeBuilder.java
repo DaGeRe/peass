@@ -113,4 +113,12 @@ public class TreeBuilder {
    public CallTreeNode getA() {
       return a;
    }
+   
+   public CallTreeNode getB() {
+      return b;
+   }
+   
+   public CallTreeNode getC() {
+      return c;
+   }
 }

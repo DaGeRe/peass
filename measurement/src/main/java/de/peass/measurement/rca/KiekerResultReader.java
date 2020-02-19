@@ -81,7 +81,7 @@ public class KiekerResultReader {
          final CallTreeNode examinedNode = otherVersion ? node.getOtherVersionNode() : node;
          final String nodeCall = KiekerPatternConverter.fixParameters(examinedNode.getKiekerPattern());
          final List<StatisticalSummary> values = new LinkedList<>();
-//         final SummaryStatistics statistics = new SummaryStatistics();
+         // final SummaryStatistics statistics = new SummaryStatistics();
          for (final Entry<AggregatedDataNode, AggregatedData> entry : fullDataMap.entrySet()) {
             if (isSameNode(examinedNode, nodeCall, entry.getKey())) {
                for (final StatisticalSummary dataSlice : entry.getValue().getStatistic().values()) {
@@ -102,9 +102,10 @@ public class KiekerResultReader {
    private boolean isSameNode(final CallTreeNode node, final String nodeCall, final AggregatedDataNode measuredNode) {
       final String kiekerCall = KiekerPatternConverter.getKiekerPattern(measuredNode.getCall());
       if (nodeCall.equals(kiekerCall)) {
+         System.out.println("Test: " + kiekerCall + " " + nodeCall + " " + node.getEoi() + " " + measuredNode.getEoi());
          if (considerNodePosition) {
-            final int ess = node.getEss();
-            if (measuredNode.getEss() == ess) {
+            final int eoi = node.getEoi();
+            if (measuredNode.getEoi() == eoi) {
                return true;
             } else {
                return false;

@@ -36,8 +36,6 @@ import de.dagere.kopeme.parsing.BuildtoolProjectNameReader;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.execution.GradleTestExecutor;
-import de.peass.dependency.execution.MavenTestExecutor;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.testtransformation.JUnitTestTransformer;
@@ -54,39 +52,28 @@ public class KiekerResultManager {
 
    protected final TestExecutor executor;
    protected final PeASSFolders folders;
-   private final JUnitTestTransformer testTransformer;
+   protected final JUnitTestTransformer testTransformer;
 
-   public JUnitTestTransformer getTestTransformer() {
-      return testTransformer;
-   }
+   
 
    public KiekerResultManager(final File projectFolder, final long timeout) {
       folders = new PeASSFolders(projectFolder);
       testTransformer = createTestTransformer();
-      executor = createExecutor(folders, timeout, testTransformer);
+      executor = ExecutorCreator.createExecutor(folders, timeout, testTransformer);
+   }
+   
+   public JUnitTestTransformer getTestTransformer() {
+      return testTransformer;
    }
 
-   public static TestExecutor createExecutor(final PeASSFolders folders, final long timeout, final JUnitTestTransformer testTransformer) {
-      final File pom = new File(folders.getProjectFolder(), "pom.xml");
-      final File buildGradle = new File(folders.getProjectFolder(), "build.gradle");
-      if (buildGradle.exists()) {
-         return new GradleTestExecutor(folders, testTransformer, timeout);
-      } else if (pom.exists()) {
-         return new MavenTestExecutor(folders, testTransformer, timeout);
-      } else {
-         throw new RuntimeException("No known buildfile (pom.xml  or build.gradle) in " + folders.getProjectFolder().getAbsolutePath() + " found; can not create test executor.");
-      }
-   }
-
-   private JUnitTestTransformer createTestTransformer() {
+   protected JUnitTestTransformer createTestTransformer() {
       final MeasurementConfiguration config = new MeasurementConfiguration(1);
       config.setIterations(1);
       config.setWarmup(0);
       config.setUseKieker(true);
       final JUnitTestTransformer testGenerator = new JUnitTestTransformer(folders.getProjectFolder(), config);
-      testGenerator.setLogFullData(false);
+      testGenerator.getConfig().setLogFullData(false);
       testGenerator.setEncoding(StandardCharsets.UTF_8);
-      testGenerator.setDatacollectorlist(DataCollectorList.ONLYTIME);
       return testGenerator;
    }
 

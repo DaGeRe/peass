@@ -17,7 +17,7 @@ import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 
 @JsonDeserialize(using = CallTreeNodeDeserializer.class)
-public class CallTreeNode extends BasicNode{
+public class CallTreeNode extends BasicNode {
 
    private static final Logger LOG = LogManager.getLogger(CallTreeNode.class);
 
@@ -140,6 +140,22 @@ public class CallTreeNode extends BasicNode{
       return new TestcaseStatistic(current, previous, data.get(version).getCalls(), data.get(predecessor).getCalls());
    }
 
+   public TestcaseStatistic getPartialTestcaseStatistic() {
+      final SummaryStatistics current = data.get(version).getStatistics();
+      final SummaryStatistics previous = data.get(predecessor).getStatistics();
+      if (current.getN() > 0 && previous.getN() == 0) {
+         return new TestcaseStatistic(current.getMean(), Double.NaN, 
+               current.getStandardDeviation(), Double.NaN, 
+               current.getN(), Double.NaN, true);
+      } else if (previous.getN() > 0) {
+         return new TestcaseStatistic(Double.NaN, previous.getMean(), 
+               Double.NaN, previous.getStandardDeviation(), 
+               current.getN(), Double.NaN, true);
+      } else {
+         throw new RuntimeException("Partial statistics should only be created if one node is unmeasurable");
+      }
+   }
+
    @JsonIgnore
    public void setVersions(final String version, final String predecessor) {
       this.version = version;
@@ -190,20 +206,41 @@ public class CallTreeNode extends BasicNode{
 
    @JsonIgnore
    public int getEoi() {
-      final int parentIndex = parent != null ? parent.getChildren().indexOf(this) : 0;
-      final int parentEoi = parent != null ? parent.getEoi() : 0;
-      final int eoi = parentEoi + 1 + parentIndex;
+      int eoi;
+      if (parent != null) {
+         int predecessorIndex = parent.getChildren().indexOf(this) - 1;
+         if (predecessorIndex >= 0) {
+            CallTreeNode predecessor = parent.getChildren().get(predecessorIndex);
+            eoi = predecessor.getEoi() + predecessor.getAllChildCount() + 1;
+         } else {
+            eoi = parent.getEoi() + 1;
+         }
+      } else {
+         eoi = 0;
+      }
       return eoi;
+   }
+
+   private int getAllChildCount() {
+      int childs = 0;
+      for (CallTreeNode child : children) {
+         childs += child.getAllChildCount() + 1;
+      }
+      return childs;
    }
 
    @JsonIgnore
    public int getPosition() {
-      for (int childIndex = 0; childIndex < parent.getChildren().size(); childIndex++) {
-         if (parent.getChildren().get(childIndex) == this) {
-            return childIndex;
+      if (parent != null) {
+         for (int childIndex = 0; childIndex < parent.getChildren().size(); childIndex++) {
+            if (parent.getChildren().get(childIndex) == this) {
+               return childIndex;
+            }
          }
+         return -1;
+      } else {
+         return 0;
       }
-      return -1;
    }
 
    public long getCallCount(final String version) {

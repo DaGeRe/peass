@@ -52,8 +52,6 @@ public class TestRepetitionTransforming {
 		FileUtils.copyFile(old, testFile);
 
 		final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
-		tt.setDatacollectorlist(DataCollectorList.ONLYTIME);
-		
 		tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
 		tt.transformTests();
 

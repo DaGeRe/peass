@@ -1,10 +1,11 @@
-package de.peran.measurement.analysis.statistics;
+package de.peass.measurement.analysis.statistics;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,10 +29,10 @@ public class MeanCoVData {
       FORMAT.setGroupingUsed(false);
    }
    
-   private final int avgCount;
+   protected final int avgCount;
 
-   protected final List<DescriptiveStatistics> allMeans = new LinkedList<>();
-   protected final List<DescriptiveStatistics> allCoVs = new LinkedList<>();
+   protected final List<DescriptiveStatistics> allMeans = new ArrayList<>();
+   protected final List<DescriptiveStatistics> allCoVs = new ArrayList<>();
 
    public List<DescriptiveStatistics> getAllMeans() {
       return allMeans;
@@ -64,7 +65,7 @@ public class MeanCoVData {
       return avgCount;
    }
 
-   private void addTestcaseData() {
+   protected void addTestcaseData() {
       for (final Result result : results) {
          DescriptiveStatistics statistics = new DescriptiveStatistics();
          int index = 0;
@@ -72,7 +73,7 @@ public class MeanCoVData {
             // writer.write(value.getValue() + "\n");
             statistics.addValue(Double.parseDouble(value.getValue()));
             if (statistics.getValues().length == avgCount) {
-               final double cov = statistics.getVariance() / statistics.getMean();
+               final double cov = statistics.getStandardDeviation() / statistics.getMean();
                addValue(index, statistics.getMean(), allMeans);
                addValue(index, cov, allCoVs);
                index++;
@@ -82,7 +83,7 @@ public class MeanCoVData {
       }
    }
 
-   private void addValue(final int index, final double value, final List<DescriptiveStatistics> statistics) {
+   protected void addValue(final int index, final double value, final List<DescriptiveStatistics> statistics) {
       DescriptiveStatistics meanSummary;
       if (statistics.size() <= index) {
          meanSummary = new DescriptiveStatistics();
@@ -105,7 +106,6 @@ public class MeanCoVData {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile))) {
          DescriptiveStatistics statistics = new DescriptiveStatistics();
          for (final Value value : result.getFulldata().getValue()) {
-            // writer.write(value.getValue() + "\n");
             statistics.addValue(Double.parseDouble(value.getValue()));
             if (statistics.getValues().length == avgCount) {
                final double cov = statistics.getVariance() / statistics.getMean();

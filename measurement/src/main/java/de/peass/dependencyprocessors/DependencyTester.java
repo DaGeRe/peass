@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
-import de.peass.dependency.KiekerResultManager;
+import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
@@ -51,29 +51,6 @@ public class DependencyTester {
    
    protected String version, versionOld;
 
-   public DependencyTester(final PeASSFolders folders, final int duration, final int vms,
-         final boolean runInitial, final int repetitions, final boolean useKieker) throws IOException {
-      super();
-      this.folders = folders;
-      this.configuration = null;
-
-      vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
-
-      testTransformer = new TimeBasedTestTransformer(folders.getProjectFolder());
-      ((TimeBasedTestTransformer) testTransformer).setDuration(duration);
-      if (repetitions != 1) {
-         testTransformer.getConfig().setRepetitions(repetitions);
-      }
-      testTransformer.setDatacollectorlist(DataCollectorList.ONLYTIME);
-      testTransformer.getConfig().setIterations(0);
-      testTransformer.getConfig().setWarmup(0);
-      testTransformer.getConfig().setUseKieker(useKieker);
-      testTransformer.setLogFullData(true);
-      testExecutor = KiekerResultManager.createExecutor(folders, Integer.MAX_VALUE, testTransformer);
-      // testExecutor = new MavenKiekerTestExecutor(folders, testTransformer, Integer.MAX_VALUE);
-      
-   }
-
    public DependencyTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator) throws IOException {
       super();
       this.folders = folders;
@@ -81,7 +58,7 @@ public class DependencyTester {
 
       vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
       this.testTransformer = testgenerator;
-      testExecutor = KiekerResultManager.createExecutor(folders, Integer.MAX_VALUE, testTransformer);
+      testExecutor = ExecutorCreator.createExecutor(folders, Integer.MAX_VALUE, testTransformer);
       
       this.version = configuration.getVersion();
       this.versionOld = configuration.getVersionOld();

@@ -109,7 +109,7 @@ public class GetSteadyStateNodewise implements Callable<Void> {
       printInVMDeviations(node);
    }
 
-   private void printInVMDeviations(MeasuredNode node) {
+   public void printInVMDeviations(MeasuredNode node) {
       // final Collection<List<StatisticalSummary>> values = ;
 
       new PerVMDeviationDeriver(node.getKiekerPattern(), node.getValues().getValues().values()).printDeviations();

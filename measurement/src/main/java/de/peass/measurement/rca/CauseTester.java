@@ -33,7 +33,7 @@ import kieker.analysis.exception.AnalysisConfigurationException;
  */
 public class CauseTester extends AdaptiveTester {
 
-   private static final Logger LOG = LogManager.getLogger(AdaptiveTester.class);
+   private static final Logger LOG = LogManager.getLogger(CauseTester.class);
 
    private Set<CallTreeNode> includedNodes;
    private final TestCase testcase;
@@ -50,7 +50,7 @@ public class CauseTester extends AdaptiveTester {
       this.folders = project;
       testgenerator.setAdaptiveExecution(true);
       testgenerator.setAggregatedWriter(causeConfig.isUseAggregation());
-      testgenerator.setSplitAggregated(causeConfig.isSplitAggregated());
+      testgenerator.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
    }
 
    public void setConsiderNodePosition(final boolean considerNodePosition) {
@@ -100,15 +100,16 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   protected boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {
+   public boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {
       try {
          getDurationsVersion(version);
          getDurationsVersion(versionOld);
-         boolean allDecidable = super.checkIsDecidable(version, versionOld, testcase, vmid);
+         boolean allDecidable = super.checkIsDecidable(testcase, vmid);
+         LOG.debug("Super decidable: {}", allDecidable);
          for (final CallTreeNode includedNode : includedNodes) {
             final SummaryStatistics statisticsOld = includedNode.getStatistics(versionOld);
             final SummaryStatistics statistics = includedNode.getStatistics(version);
-            final EarlyBreakDecider decider = new EarlyBreakDecider(testTransformer, statisticsOld, statistics);
+            final EarlyBreakDecider decider = new EarlyBreakDecider(configuration, statisticsOld, statistics);
             final boolean nodeDecidable = decider.isBreakPossible(vmid);
             LOG.debug("{} decideable: {}", includedNode.getKiekerPattern(), allDecidable);
             allDecidable &= nodeDecidable;
@@ -164,9 +165,9 @@ public class CauseTester extends AdaptiveTester {
       final String version = "4ed6e923cb2033272fcb993978d69e325990a5aa";
       final TestCase test = new TestCase("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");
 
-      final MeasurementConfiguration config = new MeasurementConfiguration(15 * 1000 * 60, 15, 0.01, 0.05, version, version + "~1");
+      final MeasurementConfiguration config = new MeasurementConfiguration(15 * 1000 * 60, 15, 0.01, 0.05, true, version, version + "~1");
       config.setUseKieker(true);
-      final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, true, 5, false, 0.01, false);
+      final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, true, 5, false, 0.01, false, false);
       final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), new JUnitTestTransformer(projectFolder, config), causeConfig);
 
       final CallTreeNode node = new CallTreeNode("FileUploadTestCase#parseUpload",

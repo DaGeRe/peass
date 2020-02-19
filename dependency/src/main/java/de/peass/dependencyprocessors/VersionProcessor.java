@@ -63,7 +63,7 @@ public abstract class VersionProcessor implements Callable<Void> {
    @Option(names = { "-version", "--version" }, description = "Only version to analyze - do not use together with startversion and endversion!")
    protected String version;
 
-   @Option(names = { "-timeout", "--timeout" }, description = "Timeout for each VM start")
+   @Option(names = { "-timeout", "--timeout" }, description = "Timeout in minutes for each VM start")
    protected int timeout = 5;
 
    @Option(names = { "-threads", "--threads" }, description = "Number of parallel threads for analysis")
@@ -175,6 +175,6 @@ public abstract class VersionProcessor implements Callable<Void> {
       }
       
       VersionComparator.setDependencies(dependencies);
-      vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
+      vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
    }
 }

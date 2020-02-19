@@ -1,5 +1,7 @@
 package de.peass.measurement.rca;
 
+import static org.junit.Assert.*;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -20,5 +22,17 @@ public class TestKiekerPatternConverter {
       Assert.assertEquals("protected new ClassA.<init>(int[])", KiekerPatternConverter.getKiekerPattern(withConstructorArray));
       Assert.assertEquals("new ClassA.<init>(int[])", KiekerPatternConverter.getKiekerPattern(defaultVisibility));
       Assert.assertEquals(twoParameters, KiekerPatternConverter.getKiekerPattern(twoParameters));
+   }
+
+   @Test
+   public void testFixParameters() throws Exception {
+      String call = "public static long org.apache.commons.fileupload.util.Streams.copy(java.io.InputStream,java.io.OutputStream,boolean,byte[])";
+      KiekerPatternConverter.fixParameters(call);
+      KiekerPatternConverter.fixParameters("public int org.apache.commons.fileupload.MultipartStream$ItemInputStream.read(byte[], int, int)");
+
+      KiekerPatternConverter.fixParameters("private boolean org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl.findNextItem()");
+      KiekerPatternConverter.fixParameters("public int org.apache.commons.fileupload.MultipartStream$ItemInputStream.read(byte[], int, int)");
+      KiekerPatternConverter.fixParameters("public void org.apache.commons.fileupload.MultipartStream$ItemInputStream.close()");
+
    }
 }

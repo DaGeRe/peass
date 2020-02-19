@@ -165,6 +165,7 @@ public class DependencyManager extends KiekerResultManager {
 
       LOG.debug("Size: {} Folder: {}", sizeInMB, kiekerResultFolder);
       if (sizeInMB > CalledMethodLoader.TRACE_MAX_SIZE) {
+         LOG.error("Trace too big!");
          return;
       }
 

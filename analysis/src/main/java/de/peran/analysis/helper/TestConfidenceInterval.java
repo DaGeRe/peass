@@ -4,8 +4,8 @@ import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.inference.TTest;
 
+import de.peass.measurement.analysis.statistics.MeasurementAnalysationUtil;
 import de.peass.statistics.ConfidenceInterval;
-import de.peran.measurement.analysis.statistics.MeasurementAnalysationUtil;
 
 public class TestConfidenceInterval {
    public static void main(final String[] args) {

@@ -79,6 +79,16 @@ public class MeasuredNode extends BasicNode {
    public List<MeasuredNode> getChildren() {
       return childs;
    }
+   
+   public MeasuredNode getChildByPattern(String name) {
+      MeasuredNode result = null;
+      for (MeasuredNode node : childs) {
+         if (node.getKiekerPattern().contentEquals(name)) {
+            result = node;
+         }
+      }
+      return result;
+   }
 
    public MeasuredValues getValues() {
       return values;

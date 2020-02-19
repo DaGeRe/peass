@@ -51,7 +51,6 @@ public class TestTimebasedTransforming {
 		FileUtils.copyFile(old, testFile);
 
 		final JUnitTestTransformer tt = new TimeBasedTestTransformer(testFolder.getRoot());
-		tt.setDatacollectorlist(DataCollectorList.ONLYTIME);
 		tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       tt.transformTests();
 

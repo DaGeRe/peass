@@ -21,6 +21,12 @@ public class GetGraphs {
 
       MeasuredValues values = data.getNodes().getValues();
 
+      printValues(data, values);
+      
+
+   }
+
+   public static void printValues(CauseSearchData data, MeasuredValues values) {
       System.out.println(data.getTestcase());
 
       for (int i = 0; i < 100; i++) {
@@ -38,11 +44,11 @@ public class GetGraphs {
             break;
          }
       }
+      
       System.out.print("plot ");
       for (Map.Entry<Integer, List<StatisticalSummary>> vals : values.getValues().entrySet()) {
          System.out.print("'vals2.csv' u 0:" + vals.getKey() + ", ");
       }
       System.out.println();
-
    }
 }

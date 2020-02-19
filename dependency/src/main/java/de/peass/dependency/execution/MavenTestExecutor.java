@@ -86,23 +86,11 @@ public class MavenTestExecutor extends TestExecutor {
    public void executeAllKoPeMeTests(final File logFile) {
       try {
          prepareKoPeMeExecution(logFile);
-         // final int testcount = getTestCount();
-         // final Process process = buildProcess(logFile);
-
-         // final long timeout = 1l + testcount * this.timeout;
          final List<TestCase> testCases = getTestCases();
          LOG.info("Starting Testcases: {}", testCases.size());
          for (final TestCase test : testCases) {
-            if (test.getClazz().contains("ServletFileUploadTest") ) {
-               System.out.println("test");
-            }
             executeTest(test, logFile.getParentFile(), timeout);
-            if (test.getClazz().contains("ServletFileUploadTest") ) {
-               System.out.println("test");
-            }
          }
-         // execute("all", timeout, process);
-         // process.waitFor();
       } catch (final XmlPullParserException | IOException | InterruptedException e) {
          e.printStackTrace();
       }
@@ -319,14 +307,17 @@ public class MavenTestExecutor extends TestExecutor {
          String writerConfig;
          if (testTransformer.isAggregatedWriter()) {
             final String bulkFolder = "-Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.customStoragePath=" + tempFile.toString();
-            final int wholeWarmup = testTransformer.getConfig().getWarmup() * testTransformer.getConfig().getRepetitions();
             writerConfig = "-Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AggregatedTreeWriter" +
-                  " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.warmup=" + wholeWarmup +
                   " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.writeInterval=" + testTransformer.getConfig().getKiekerAggregationInterval() +
                   " " + bulkFolder;
-            if (testTransformer.isSplitAggregated()) {
-               writerConfig += " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.aggregateSplitted=true";
+            
+            if (testTransformer.isIgnoreEOIs()) {
+               writerConfig += " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.ignoreEOIs=true";
             }
+            
+//            if (testTransformer.isSplitAggregated()) {
+//               writerConfig += " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.aggregateSplitted=true";
+//            }
 
          } else {
             writerConfig = "";

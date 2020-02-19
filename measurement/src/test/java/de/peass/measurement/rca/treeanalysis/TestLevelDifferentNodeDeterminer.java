@@ -14,6 +14,7 @@ import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.TreeBuilderDifferent;
+import de.peass.measurement.rca.helper.TreeBuilderLeafs;
 import de.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
@@ -27,7 +28,7 @@ public class TestLevelDifferentNodeDeterminer {
       final LevelDifferentNodeDeterminer determiner = getDiff(rootOld, rootMain);
       Assert.assertEquals(2, determiner.getMeasureNextLevel().size());
       
-      final LevelDifferentNodeDeterminer determinerD = getDiff(predecessorBuilder.getD(), predecessorBuilder.getD());
+      final LevelDifferentNodeDeterminer determinerD = getDiff(predecessorBuilder.getB(), predecessorBuilder.getB());
       Assert.assertEquals(1, determinerD.getCurrentLevelDifferent().size());
    }
 

@@ -88,7 +88,7 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 				clazz.addExtendedType("TimeBasedTestcase");
 			}
 
-			addMethod(clazz, "logFullData", "return " + logFullData + ";", PrimitiveType.booleanType());
+			addMethod(clazz, "logFullData", "return " + config.isLogFullData() + ";", PrimitiveType.booleanType());
 			addMethod(clazz, "useKieker", "return " + config.isUseKieker() + ";", PrimitiveType.booleanType());
 			addMethod(clazz, "getDuration", "return " + duration + ";", PrimitiveType.longType());
 			addMethod(clazz, "getMaximalTime", "return " + (duration * 2) + ";", PrimitiveType.longType());

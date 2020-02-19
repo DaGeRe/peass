@@ -3,13 +3,20 @@ package de.peass.measurement.rca.data;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.serialization.MeasuredNode;
+import jline.internal.Log;
 
 public class CauseSearchData {
+
+   private static final Logger LOG = LogManager.getLogger(CauseSearchData.class);
+
    private MeasurementConfiguration measurementConfig;
    private CauseSearcherConfig causeConfig;
    private MeasuredNode nodes;
@@ -39,13 +46,15 @@ public class CauseSearchData {
 
    public void setNodes(final MeasuredNode nodes) {
       this.nodes = nodes;
-      buildCurrentMap(nodes);
+      buildCurrentMap(nodes, null);
    }
 
-   private void buildCurrentMap(final MeasuredNode parent) {
-      current.put(new CallTreeNode(parent.getCall(), parent.getKiekerPattern()), parent);
-      for (final MeasuredNode node : parent.getChilds()) {
-         buildCurrentMap(node);
+   private void buildCurrentMap(final MeasuredNode node, CallTreeNode parentStructure) {
+      final CallTreeNode nodeStructure = parentStructure != null ? parentStructure.appendChild(node.getCall(), node.getKiekerPattern())
+            : new CallTreeNode(node.getCall(), node.getKiekerPattern());
+      current.put(nodeStructure, node);
+      for (final MeasuredNode child : node.getChilds()) {
+         buildCurrentMap(child, nodeStructure);
       }
    }
 
@@ -64,20 +73,36 @@ public class CauseSearchData {
 
    @JsonIgnore
    public MeasuredNode addDiff(final CallTreeNode rawDataNode) {
+      try {
+         final MeasuredNode serializeNode = buildSerializedNode(rawDataNode);
+         if (!rawDataNode.getCall().equals("ADDED") &&
+               !rawDataNode.getCall().equals("REMOVED") &&
+               !rawDataNode.getOtherVersionNode().getCall().equals("ADDED") &&
+               !rawDataNode.getOtherVersionNode().getCall().equals("REMOVED")) {
+            System.out.println(rawDataNode.getCall() + " " + rawDataNode.getOtherVersionNode().getCall());
+            serializeNode.setStatistic(rawDataNode.getTestcaseStatistic());
+         } else {
+            serializeNode.setStatistic(rawDataNode.getPartialTestcaseStatistic());
+         }
+         current.put(rawDataNode, serializeNode);
+
+         if (rawDataNode.getParent() == null) {
+            nodes = serializeNode;
+         } else {
+            final MeasuredNode parent = current.get(rawDataNode.getParent());
+            parent.getChilds().add(serializeNode);
+         }
+         return serializeNode;
+      } catch (Exception e) {
+         throw e;
+      }
+   }
+
+   private MeasuredNode buildSerializedNode(final CallTreeNode rawDataNode) {
       final MeasuredNode serializeNode = new MeasuredNode();
-      serializeNode.setStatistic(rawDataNode.getTestcaseStatistic());
       serializeNode.setCall(rawDataNode.getCall());
       serializeNode.setKiekerPattern(rawDataNode.getKiekerPattern());
       serializeNode.setOtherKiekerPattern(rawDataNode.getOtherVersionNode() != null ? rawDataNode.getOtherVersionNode().getKiekerPattern() : "UNKNOWN");
-
-      current.put(rawDataNode, serializeNode);
-
-      if (rawDataNode.getParent() == null) {
-         nodes = serializeNode;
-      } else {
-         final MeasuredNode parent = current.get(rawDataNode.getParent());
-         parent.getChilds().add(serializeNode);
-      }
       return serializeNode;
    }
 

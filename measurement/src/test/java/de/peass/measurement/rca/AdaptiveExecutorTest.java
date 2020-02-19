@@ -56,7 +56,6 @@ public class AdaptiveExecutorTest {
 
          FileUtil.copyDir(SOURCE_DIR, projectFolder);
 
-         PowerMockito.mockStatic(VersionControlSystem.class);
          VCSTestUtils.mockGetVCS();
 
          PowerMockito.mockStatic(GitUtils.class);
@@ -67,7 +66,6 @@ public class AdaptiveExecutorTest {
          config.setIterations(2);
          config.setRepetitions(2);
          final JUnitTestTransformer transformer = new JUnitTestTransformer(projectFolder, config);
-         transformer.setDatacollectorlist(DataCollectorList.ONLYTIME);
          executor = new CauseTester(new CauseSearchFolders(projectFolder), transformer, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME);
          LOG.debug("Executor: {}", executor);
       } catch (final IOException e) {

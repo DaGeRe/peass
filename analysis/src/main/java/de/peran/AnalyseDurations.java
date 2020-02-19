@@ -23,8 +23,8 @@ import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.peass.measurement.analysis.statistics.MeanCoVData;
 import de.peran.breaksearch.helper.MinimalExecutionDeterminer;
-import de.peran.measurement.analysis.statistics.MeanCoVData;
 
 class DebugInfo implements Comparable<DebugInfo> {
    String eventType, version, testcase;

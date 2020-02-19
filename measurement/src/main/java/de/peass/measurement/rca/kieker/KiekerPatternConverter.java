@@ -1,18 +1,34 @@
 package de.peass.measurement.rca.kieker;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import kieker.tools.traceAnalysis.systemModel.Operation;
 
 public class KiekerPatternConverter {
 
+   private static final Logger LOG = LogManager.getLogger(KiekerPatternConverter.class);
+
+   /**
+    * Fixes parameters, i.e. removes spaces, that might be introduced by kieker.
+    * @param kiekerCall Kieker call that should be fixed
+    * @return fixed call
+    */
    public static String fixParameters(final String kiekerCall) {
+      LOG.info("Fixing: {}", kiekerCall);
       final int parametersBegin = kiekerCall.indexOf('(');
-      final String namePart = kiekerCall.substring(0, parametersBegin);
-      String parameterPart = kiekerCall.substring(parametersBegin);
-      parameterPart = parameterPart.replace(" ", "");
-      final String result = namePart + parameterPart;
-      return result;
+      if (parametersBegin != -1) {
+         final String namePart = kiekerCall.substring(0, parametersBegin);
+         String parameterPart = kiekerCall.substring(parametersBegin);
+         parameterPart = parameterPart.replace(" ", "");
+         final String result = namePart + parameterPart;
+         return result;
+      } else {
+         return kiekerCall;
+      }
+
    }
-   
+
    public static String getKiekerPattern(final String kiekerCall) {
       final int parametersBegin = kiekerCall.indexOf('(');
       String namePart = kiekerCall.substring(0, parametersBegin);

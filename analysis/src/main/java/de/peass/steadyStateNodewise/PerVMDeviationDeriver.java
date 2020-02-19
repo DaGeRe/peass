@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 
-class PerVMDeviationDeriver {
+public class PerVMDeviationDeriver {
 	
 		private final String name;
 		private final DescriptiveStatistics vmDeviations = new DescriptiveStatistics();
@@ -33,6 +33,6 @@ class PerVMDeviationDeriver {
 		}
 
 		public void printDeviations() {
-			System.out.println(name + " " + vmDeviations.getMean() + " " + valueMean.getMean() + " " + measurementCount.getMean() + " " + repetitionCount.getMean() + " " + vmDeviations.getN());
+			System.out.println(name + " " + vmDeviations.getMean() + " Mean: " + valueMean.getMean() + " " + measurementCount.getMean() + " " + repetitionCount.getMean() + " " + vmDeviations.getN());
 		}
 	}

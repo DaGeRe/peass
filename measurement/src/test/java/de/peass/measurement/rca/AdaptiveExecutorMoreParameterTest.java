@@ -45,7 +45,7 @@ public class AdaptiveExecutorMoreParameterTest {
 
    private static final File SOURCE_DIR = new File("src/test/resources/rootCauseIT/basic_state_moreparameters/");
    private static final TestCase TEST = new TestCase("defaultpackage.TestMe", "testMe");
-   public static CauseSearcherConfig FULL_CASE_CONFIG = new CauseSearcherConfig(TEST, false, true, 5.0, false, 0.1, false);
+   public static CauseSearcherConfig FULL_CASE_CONFIG = new CauseSearcherConfig(TEST, false, true, 5.0, false, 0.1, false, false);
 
    private File tempDir;
    private File projectFolder;
@@ -60,7 +60,6 @@ public class AdaptiveExecutorMoreParameterTest {
 
          FileUtil.copyDir(SOURCE_DIR, projectFolder);
 
-         PowerMockito.mockStatic(VersionControlSystem.class);
          VCSTestUtils.mockGetVCS();
 
          PowerMockito.mockStatic(GitUtils.class);
@@ -68,8 +67,6 @@ public class AdaptiveExecutorMoreParameterTest {
          VCSTestUtils.mockGoToTagAny(SOURCE_DIR);
 
          transformer = new JUnitTestTransformer(projectFolder, TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER);
-         transformer.setDatacollectorlist(DataCollectorList.ONLYTIME);
-
       } catch (final IOException e) {
          e.printStackTrace();
       }

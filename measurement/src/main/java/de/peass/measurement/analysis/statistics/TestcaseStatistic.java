@@ -17,7 +17,7 @@ public class TestcaseStatistic {
    private double tvalue;
    @JsonInclude(Include.NON_NULL)
    private String predecessor;
-   private boolean isChange;
+   private Boolean isChange;
 
    public TestcaseStatistic() {
 
@@ -30,21 +30,23 @@ public class TestcaseStatistic {
       this.deviationOld = statisticsOld.getStandardDeviation();
       this.vms = (statisticsCurrent.getN() + statisticsOld.getN()) / 2;
       this.tvalue = TestUtils.t(statisticsOld, statisticsCurrent);
-      this.isChange = Math.abs(tvalue) > 3.2;
+      this.isChange = null;
       this.calls = calls;
       this.callsOld = callsOld;
    }
 
-   public TestcaseStatistic(final double mean1, final double mean2, final double deviation1, final double deviation2, final long executions, final double tvalue,
+   public TestcaseStatistic(final double meanOld, final double meanCurrent, 
+         final double deviationOld, final double deviationCurrent, 
+         final long executions, final double tvalue,
          final boolean isChange) {
       super();
-      this.meanOld = mean1;
-      this.meanCurrent = mean2;
-      this.deviationOld = deviation1;
-      this.deviationCurrent = deviation2;
+      this.meanOld = meanOld;
+      this.meanCurrent = meanCurrent;
+      this.deviationOld = deviationOld;
+      this.deviationCurrent = deviationCurrent;
       this.vms = executions;
       this.tvalue = tvalue;
-      this.setChange(isChange);
+      this.isChange = isChange;
    }
 
    public String getPredecessor() {
@@ -141,11 +143,12 @@ public class TestcaseStatistic {
 
    }
 
-   public boolean isChange() {
+   @JsonInclude(Include.NON_NULL)
+   public Boolean isChange() {
       return isChange;
    }
 
-   public void setChange(final boolean isChange) {
+   public void setChange(final Boolean isChange) {
       this.isChange = isChange;
    }
 

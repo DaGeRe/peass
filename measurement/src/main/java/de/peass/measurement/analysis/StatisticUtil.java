@@ -1,5 +1,6 @@
 package de.peass.measurement.analysis;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
@@ -11,7 +12,11 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.generated.Result.Fulldata;
+import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.peass.dependency.execution.MeasurementConfiguration;
+import de.peass.statistics.ConfidenceInterval;
 
 public class StatisticUtil {
 
@@ -21,7 +26,7 @@ public class StatisticUtil {
       final StatisticalSummaryValues vals = AggregateSummaryStatistics.aggregate(statistics);
       return vals.getMean();
    }
-   
+
    /**
     * Agnostic T-Test from Coscrato et al.: Agnostic tests can control the type I and type II errors simultaneously
     */
@@ -126,11 +131,11 @@ public class StatisticUtil {
       final double maxVal = Math.max(statisticsPrev.getMean(), statisticsVersion.getMean());
       if (maxVal > 1) {
          return agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig);
-//      } else if (maxVal > 1) {
-//         final Relation r1 = isConfidenceIntervalOverlap(statisticsPrev, statisticsVersion, measurementConfig.getType2error());
-//         final Relation r2 = agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getType1error() / 10, measurementConfig.getType2error() / 10);
-//         final Relation result = (r1 == r2) ? r2 : Relation.UNKOWN;
-//         return result;
+         // } else if (maxVal > 1) {
+         // final Relation r1 = isConfidenceIntervalOverlap(statisticsPrev, statisticsVersion, measurementConfig.getType2error());
+         // final Relation r2 = agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getType1error() / 10, measurementConfig.getType2error() / 10);
+         // final Relation result = (r1 == r2) ? r2 : Relation.UNKOWN;
+         // return result;
       } else {
          Relation r1 = agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getType1error() / 20, measurementConfig.getType2error() / 20);
          final double tValue = getTValue(statisticsPrev, statisticsVersion, 0);
@@ -174,5 +179,54 @@ public class StatisticUtil {
       final double criticalValue = Math.abs(tDistribution.inverseCumulativeProbability(areaSize));
       // System.out.println(standarderror + " " + criticalValue);
       return criticalValue * standarderror;
+   }
+
+   public static Result shortenResult(final Result result, final int start, final int end) {
+      final Result resultShort = new Result();
+      resultShort.setFulldata(new Fulldata());
+      final DescriptiveStatistics statistics = new DescriptiveStatistics();
+      // LOG.debug("Size: " + result.getFulldata().getValue().size());
+      final int size = (Math.min(end, result.getFulldata().getValue().size()));
+      if (start > size) {
+         throw new RuntimeException("Start (" + start + ") is after end of data (" + size + ").");
+      }
+      if (end > size) {
+         throw new RuntimeException("End (" + end + ") is after end of data (" + size + ").");
+      }
+      // LOG.debug("Size: {}", j);
+      for (int i = start; i < size; i++) {
+         final Value value = result.getFulldata().getValue().get(i);
+         final Fulldata fulldata = resultShort.getFulldata();
+         fulldata.getValue().add(value);
+         statistics.addValue(Double.parseDouble(value.getValue()));
+      }
+      resultShort.setValue(statistics.getMean());
+      resultShort.setDeviation(statistics.getStandardDeviation());
+      resultShort.setExecutionTimes(end - start);
+      resultShort.setWarmupExecutions(start);
+      resultShort.setRepetitions(result.getRepetitions());
+      return resultShort;
+   }
+
+   public static Result shortenValues(final Result result) {
+      final int start = result.getFulldata().getValue().size() / 2;
+      final int end = result.getFulldata().getValue().size();
+      final Result resultShort = shortenResult(result, start, end);
+      return resultShort;
+   }
+
+   public static List<Result> shortenValues(final List<Result> values, final int start, final int end) {
+      final List<Result> shortenedValues = new LinkedList<>();
+      int index = 0;
+      for (final Result result : values) {
+         index++;
+         try {
+            final Result resultShort = shortenResult(result, start, end);
+            shortenedValues.add(resultShort);
+         } catch (RuntimeException e) {
+            throw new RuntimeException("Error in result " + index, e);
+         }
+      }
+      return shortenedValues;
    }
 }

@@ -32,6 +32,9 @@ public class RootCauseAnalysis extends AdaptiveTestStarter {
 
    @Option(names = { "-skipCalibrationRun", "--skipCalibrationRun" }, description = "Skip the calibration run for complete measurements")
    public boolean skipCalibrationRun = false;
+   
+   @Option(names = { "-skipGC", "--skipGC" }, description = "Do not execute GC before each iteration")
+   public boolean skipGC = false;
 
    @Option(names = { "-useNonAggregatedWriter",
          "--useNonAggregatedWriter" }, description = "Whether to save non-aggregated JSON data for measurement results - if true, full kieker record data are stored")
@@ -39,6 +42,9 @@ public class RootCauseAnalysis extends AdaptiveTestStarter {
 
    @Option(names = { "-saveKieker", "--saveKieker" }, description = "Save no kieker results in order to use less space - default false")
    public boolean saveNothing = false;
+   
+   @Option(names = { "-ignoreEOIs", "--ignoreEOIs" }, description = "Ignore EOIs - nodes will only be considered different if their kieker pattern or ess differ (saves space and computation time for big trees)")
+   public boolean ignoreEOIs = false;
 
    @Option(names = { "-notSplitAggregated", "--notSplitAggregated" }, description = "Whether to split the aggregated data (produces aggregated data per time slice)")
    public boolean notSplitAggregated = false;
@@ -80,16 +86,17 @@ public class RootCauseAnalysis extends AdaptiveTestStarter {
       final Version versionInfo = dependencies.getVersions().get(version);
       final String predecessor = versionInfo.getPredecessor();
 
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout * 1000 * 60, vms, type1error, type2error, version, predecessor);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout * 1000 * 60, vms, type1error, type2error, !skipEarlyStop, version, predecessor);
       measurementConfiguration.setWarmup(warmup);
       measurementConfiguration.setIterations(iterations);
       measurementConfiguration.setRepetitions(repetitions);
       measurementConfiguration.setUseKieker(true);
+      measurementConfiguration.setUseGC(!skipGC);
       measurementConfiguration.setKiekerAggregationInterval(writeInterval);
       final JUnitTestTransformer testtransformer = getTestTransformer(measurementConfiguration);
 
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, !useNonAggregatedWriter, !saveNothing,
-            outlierFactor, !notSplitAggregated, minTime, !skipCalibrationRun);
+            outlierFactor, !notSplitAggregated, minTime, !skipCalibrationRun, ignoreEOIs);
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders);
       if (measureComplete) {

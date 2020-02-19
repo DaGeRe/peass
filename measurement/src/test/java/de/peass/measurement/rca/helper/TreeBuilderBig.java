@@ -25,4 +25,8 @@ public class TreeBuilderBig extends TreeBuilder {
 
       buildStatistics(nodes);
    }
+   
+   public CallTreeNode getB2() {
+      return b2;
+   }
 }

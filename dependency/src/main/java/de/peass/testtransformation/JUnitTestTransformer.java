@@ -76,11 +76,10 @@ public class JUnitTestTransformer {
 
    protected DataCollectorList datacollectorlist;
    protected final MeasurementConfiguration config;
-   protected boolean logFullData = true;
    protected File projectFolder;
    protected boolean adaptiveExecution = false;
    protected boolean aggregatedWriter = false;
-   protected boolean splitAggregated = false;
+   protected boolean ignoreEOIs = false;
    protected Charset charset = StandardCharsets.UTF_8;
    private Map<String, List<File>> extensions = null;
 
@@ -94,10 +93,10 @@ public class JUnitTestTransformer {
    public JUnitTestTransformer(final File projectFolder, final MeasurementConfiguration config) {
       this.projectFolder = projectFolder;
       this.config = config;
-      datacollectorlist = DataCollectorList.STANDARD;
-//      iterations = DEFAULT_EXECUTIONS;
-//      warmupExecutions = DEFAULT_EXECUTIONS;
-//      timeoutTime = DEFAULT_TIMEOUT;
+      datacollectorlist = config.isUseGC() ? DataCollectorList.ONLYTIME : DataCollectorList.ONLYTIME_NOGC;
+      // iterations = DEFAULT_EXECUTIONS;
+      // warmupExecutions = DEFAULT_EXECUTIONS;
+      // timeoutTime = DEFAULT_TIMEOUT;
    }
 
    private Map<File, CompilationUnit> loadedFiles;
@@ -149,6 +148,7 @@ public class JUnitTestTransformer {
 
    /**
     * Returns the version of the JUnit test. If the file is no JUnit test, 0 is returned.
+    * 
     * @param clazzFile
     * @return
     */
@@ -161,7 +161,7 @@ public class JUnitTestTransformer {
       }
 
    }
-   
+
    private void determineVersions(final File testFolder) {
       extensions = new HashMap<>();
       for (final File javaFile : FileUtils.listFiles(testFolder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE)) {
@@ -237,7 +237,7 @@ public class JUnitTestTransformer {
          }
       }
    }
-   
+
    public Map<String, List<File>> getExtensions() {
       return extensions;
    }
@@ -309,15 +309,17 @@ public class JUnitTestTransformer {
 
          addMethod(clazz, "getWarmupExecutions", "return " + config.getWarmup() + ";", PrimitiveType.intType());
          addMethod(clazz, "getExecutionTimes", "return " + config.getIterations() + ";", PrimitiveType.intType());
-         addMethod(clazz, "logFullData", "return " + logFullData + ";", PrimitiveType.booleanType());
+         addMethod(clazz, "logFullData", "return " + config.isLogFullData() + ";", PrimitiveType.booleanType());
          addMethod(clazz, "useKieker", "return " + config.isUseKieker() + ";", PrimitiveType.booleanType());
          addMethod(clazz, "getMaximalTime", "return " + config.getTimeout() + ";", PrimitiveType.longType());
          addMethod(clazz, "getRepetitions", "return " + config.getRepetitions() + ";", PrimitiveType.intType());
 
-         if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
-            synchronized (javaParser) {
-               final ClassOrInterfaceType type = javaParser.parseClassOrInterfaceType("DataCollectorList").getResult().get();
+         synchronized (javaParser) {
+            final ClassOrInterfaceType type = javaParser.parseClassOrInterfaceType("DataCollectorList").getResult().get();
+            if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
                addMethod(clazz, "getDataCollectors", "return DataCollectorList.ONLYTIME;", type);
+            } else if (datacollectorlist.equals(DataCollectorList.ONLYTIME_NOGC)) {
+               addMethod(clazz, "getDataCollectors", "return DataCollectorList.ONLYTIME_NOGC;", type);
             }
          }
       }
@@ -416,6 +418,8 @@ public class JUnitTestTransformer {
       performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
       if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
          performanceTestAnnotation.addPair("dataCollectors", "\"ONLYTIME\"");
+      } else if (datacollectorlist.equals(DataCollectorList.ONLYTIME_NOGC)) {
+         performanceTestAnnotation.addPair("dataCollectors", "\"ONLYTIME_NOGC\"");
       }
       method.addAnnotation(performanceTestAnnotation);
    }
@@ -478,18 +482,6 @@ public class JUnitTestTransformer {
       fieldDeclaration.getAnnotations().add(annotation);
    }
 
-   public boolean isLogFullData() {
-      return logFullData;
-   }
-
-   public void setLogFullData(final boolean logFullData) {
-      this.logFullData = logFullData;
-   }
-
-   public void setDatacollectorlist(final DataCollectorList datacollectorlist) {
-      this.datacollectorlist = datacollectorlist;
-   }
-
    public File getProjectFolder() {
       return projectFolder;
    }
@@ -511,7 +503,7 @@ public class JUnitTestTransformer {
    public File generateClazz(final File module, final ChangedEntity generatedClazz, final ChangedEntity callee, final String method) {
       return new JUnitTestGenerator(module, generatedClazz, callee, method, this).generateClazz();
    }
-   
+
    public void setAdaptiveExecution(final boolean adaptiveExecution) {
       this.adaptiveExecution = adaptiveExecution;
    }
@@ -527,13 +519,13 @@ public class JUnitTestTransformer {
    public void setAggregatedWriter(final boolean aggregatedWriter) {
       this.aggregatedWriter = aggregatedWriter;
    }
-
-   public boolean isSplitAggregated() {
-      return splitAggregated;
+   
+   public void setIgnoreEOIs(boolean ignoreEOIs) {
+      this.ignoreEOIs = ignoreEOIs;
    }
-
-   public void setSplitAggregated(final boolean splitAggregated) {
-      this.splitAggregated = splitAggregated;
+   
+   public boolean isIgnoreEOIs() {
+      return ignoreEOIs;
    }
 
    public MeasurementConfiguration getConfig() {

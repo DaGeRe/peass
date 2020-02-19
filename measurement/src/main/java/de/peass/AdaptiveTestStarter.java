@@ -25,6 +25,9 @@ public class AdaptiveTestStarter extends DependencyTestPairStarter {
 
    @Option(names = { "-type2error", "--type2error" }, description = "Type 2 error of agnostic-t-test, i.e. probability of considering measurements unequal when they are equal")
    protected double type2error = 0.01;
+   
+   @Option(names = { "-skipEarlyStop", "--skipEarlyStop" }, description = "Whether to skip early stop (i.e. execute all VMs even if decision can already be made)")
+   protected boolean skipEarlyStop = false;
 
    public AdaptiveTestStarter() throws JAXBException, IOException {
 
@@ -41,6 +44,7 @@ public class AdaptiveTestStarter extends DependencyTestPairStarter {
    public Void call() throws Exception {
       super.call();
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, type1error, type2error);
+      measurementConfiguration.setEarlyStop(!skipEarlyStop);
       final JUnitTestTransformer testgenerator = getTestTransformer(measurementConfiguration);
 
       tester = new AdaptiveTester(folders, testgenerator);

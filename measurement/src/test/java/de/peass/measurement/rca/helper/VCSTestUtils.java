@@ -20,6 +20,7 @@ public class VCSTestUtils {
    private static final Logger LOG = LogManager.getLogger(VCSTestUtils.class);
    
    public static void mockGetVCS() {
+      PowerMockito.mockStatic(VersionControlSystem.class);
       PowerMockito.doAnswer(new Answer<VersionControlSystem>() {
 
          @Override

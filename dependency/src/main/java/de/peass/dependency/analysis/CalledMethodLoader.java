@@ -48,7 +48,7 @@ import kieker.tools.traceAnalysis.systemModel.repository.SystemModelRepository;
  */
 public class CalledMethodLoader {
 
-   public static final int TRACE_MAX_SIZE = 10;
+   public static final int TRACE_MAX_SIZE = 50;
 
    private static final PrintStream realSystemOut = System.out;
    private static final PrintStream realSystemErr = System.err;
@@ -104,7 +104,7 @@ public class CalledMethodLoader {
             final PeASSFilter peassFilter = executePeassFilter(prefix);
             return peassFilter.getCalls();
          } else {
-            LOG.info("Trace size: {} MB - skipping", sizeInMB);
+            LOG.error("Trace size: {} MB - skipping", sizeInMB);
             return null;
          }
       } catch (IllegalStateException | AnalysisConfigurationException e) {

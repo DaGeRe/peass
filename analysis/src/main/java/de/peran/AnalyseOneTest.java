@@ -22,10 +22,10 @@ import de.dagere.kopeme.generated.Result;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.measurement.analysis.DataReader;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
+import de.peass.measurement.analysis.statistics.MeanCoVData;
 import de.peass.measurement.analysis.statistics.TestData;
 import de.peass.utils.OptionConstants;
 import de.peran.measurement.analysis.AnalyseFullData;
-import de.peran.measurement.analysis.statistics.MeanCoVData;
 
 public class AnalyseOneTest {
 

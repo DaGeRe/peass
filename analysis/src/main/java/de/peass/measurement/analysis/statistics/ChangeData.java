@@ -1,4 +1,4 @@
-package de.peran.measurement.analysis.statistics;
+package de.peass.measurement.analysis.statistics;
 
 
 import java.io.File;

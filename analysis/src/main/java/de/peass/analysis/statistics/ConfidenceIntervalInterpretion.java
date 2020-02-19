@@ -8,9 +8,9 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
 import de.peass.measurement.analysis.Relation;
+import de.peass.measurement.analysis.statistics.MeasurementAnalysationUtil;
 import de.peass.statistics.ConfidenceInterval;
 import de.peass.statistics.PerformanceChange;
-import de.peran.measurement.analysis.statistics.MeasurementAnalysationUtil;
 
 public class ConfidenceIntervalInterpretion {
 	

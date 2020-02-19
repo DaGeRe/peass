@@ -7,6 +7,7 @@ import de.peass.dependency.analysis.data.TestCase;
 
 public class CauseSearcherConfig {
    private final TestCase testCase;
+   private final boolean ignoreEOIs;
    private final boolean useAggregation;
    private final boolean saveAll;
    private final double outlierFactor;
@@ -21,7 +22,8 @@ public class CauseSearcherConfig {
          @JsonProperty("outlierFactor") final double outlierFactor,
          @JsonProperty("splitAggregated") final boolean splitAggregated,
          @JsonProperty("minTime") final double minTime,
-         @JsonProperty("calibrationRun") final boolean calibrationRun) {
+         @JsonProperty("calibrationRun") final boolean calibrationRun,
+         @JsonProperty("ignoreEOIs") final boolean ignoreEOIs) {
       this.testCase = testCase;
       this.useAggregation = useAggregation;
       this.saveAll = saveAll;
@@ -29,6 +31,7 @@ public class CauseSearcherConfig {
       this.splitAggregated = splitAggregated;
       this.minTime = minTime;
       this.calibrationRun = calibrationRun;
+      this.ignoreEOIs = ignoreEOIs;
    }
 
    public TestCase getTestCase() {
@@ -58,4 +61,9 @@ public class CauseSearcherConfig {
    public boolean useCalibrationRun() {
       return calibrationRun;
    }
+   
+   public boolean isIgnoreEOIs() {
+      return ignoreEOIs;
+   }
+   
 }

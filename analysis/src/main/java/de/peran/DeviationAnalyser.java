@@ -21,9 +21,9 @@ import de.peass.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.measurement.analysis.DataAnalyser;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
+import de.peass.measurement.analysis.statistics.MeanCoVData;
 import de.peass.measurement.analysis.statistics.TestData;
 import de.peass.utils.OptionConstants;
-import de.peran.measurement.analysis.statistics.MeanCoVData;
 
 /**
  * Analyzes data from all subfolders of one folder. It is assumed that the typical PeASS-folder-structure is given.
