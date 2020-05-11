@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 
 import javax.xml.bind.JAXBException;
 
@@ -14,7 +15,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
+import de.dagere.kopeme.datacollection.tempfile.ResultTempWriter;
+import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
@@ -28,7 +32,7 @@ import de.peass.measurement.analysis.MultipleVMTestUtil;
 import de.peass.measurement.organize.ResultOrganizer;
 
 public class TestResultOrganizer {
-   
+
    private static final String VERSION_NAME = "2";
 
    private static final String KIEKER_TIMESTAMP = "1512123";
@@ -66,54 +70,74 @@ public class TestResultOrganizer {
 
    @Test
    public void testNormalSaving() throws JAXBException, IOException {
-      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, false, false);
-      
-      initDummyTestfile(methodFolder);
+      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, false, false, searchedTest);
 
-      organizer.saveResultFiles(searchedTest, VERSION_NAME, 0);
+      DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, searchedTest);
+
+      organizer.saveResultFiles(VERSION_NAME, 0);
 
       testXMLFileExists();
+   }
+
+   @Test
+   public void testKoPeMeFileSaving() throws JAXBException, IOException {
+      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, false, false, searchedTest);
+
+      DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 2000, searchedTest);
+
+      organizer.saveResultFiles(VERSION_NAME, 0);
+
+      File kopemefile = new File(getVersionMeasurementFolder(), searchedTest.getMethod() + "_0_" + VERSION_NAME + ".xml");
+      Kopemedata data = XMLDataLoader.loadData(kopemefile);
+      final Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
+      final Fulldata fulldata = datacollector.getResult().get(0).getFulldata();
+      Assert.assertNotNull(fulldata.getFileName());
+      File fulldataFile = new File(getVersionMeasurementFolder(), fulldata.getFileName());
+      Assert.assertTrue(fulldataFile.exists());
    }
 
    @Test
    public void testKiekerSavingTar() throws JAXBException, IOException {
-      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true);
+      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true, searchedTest);
       organizer.setThresholdForZippingInMB(1);
-      
-      initDummyTestfile(methodFolder);
-      
+
+      DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, searchedTest);
+
       writeKiekerFile(100000);
-      
-      organizer.saveResultFiles(searchedTest, VERSION_NAME, 0);
-      
+
+      organizer.saveResultFiles(VERSION_NAME, 0);
+
       testXMLFileExists();
-      
-      final File expectedKiekerTarFile = new File(folders.getFullMeasurementFolder(), "measurements" + File.separator +  
-            searchedTest.getClazz() + File.separator +
-            VERSION_NAME + File.separator + 
-            VERSION_NAME + File.separator + 
-            KIEKER_TIMESTAMP + ".tar");
+
+      File versionFolder = getVersionMeasurementFolder();
+      final File expectedKiekerTarFile = new File(versionFolder, KIEKER_TIMESTAMP + ".tar");
       Assert.assertTrue(expectedKiekerTarFile.exists());
    }
-   
+
    @Test
    public void testKiekerSavingNoTar() throws JAXBException, IOException {
-      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true);
-      
-      initDummyTestfile(methodFolder);
-      
+      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true, searchedTest);
+
+      DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, searchedTest);
+
       writeKiekerFile(10000);
-      
-      organizer.saveResultFiles(searchedTest, VERSION_NAME, 0);
-      
+
+      organizer.saveResultFiles(VERSION_NAME, 0);
+
       testXMLFileExists();
-      
-      final File expectedKiekerFile = new File(folders.getFullMeasurementFolder(), "measurements" + File.separator +  
-            searchedTest.getClazz() + File.separator +
-            VERSION_NAME + File.separator + 
-            VERSION_NAME + File.separator + 
-            KIEKER_TIMESTAMP);
+
+      File versionFolder = getVersionMeasurementFolder();
+
+      final File expectedKiekerFile = new File(versionFolder, KIEKER_TIMESTAMP);
       Assert.assertTrue(expectedKiekerFile.exists());
+   }
+
+   private File getVersionMeasurementFolder() {
+      File versionFolder = new File(folders.getFullMeasurementFolder(), "measurements" + File.separator +
+            searchedTest.getClazz() + File.separator +
+            VERSION_NAME + File.separator +
+            VERSION_NAME + File.separator);
+      return versionFolder;
    }
 
    private void testXMLFileExists() {
@@ -125,38 +149,15 @@ public class TestResultOrganizer {
       final File kiekerFolder = new File(methodFolder, KIEKER_TIMESTAMP);
       kiekerFolder.mkdir();
       final File kiekerFile = new File(kiekerFolder, "kieker-2019.dat");
-      try (BufferedWriter writer = new BufferedWriter(new FileWriter(kiekerFile))){
-         
+      try (BufferedWriter writer = new BufferedWriter(new FileWriter(kiekerFile))) {
+
          for (int i = 0; i < kiekerFileSize; i++) {
             writer.write("1515;somekiekerstuff;" + i + "\n");
          }
          writer.flush();
-         LOG.debug("Size: {} MB ({})", kiekerFile.length() / (1024*1024), kiekerFile.length());
+         LOG.debug("Size: {} MB ({})", kiekerFile.length() / (1024 * 1024), kiekerFile.length());
       }
    }
 
-   private void initDummyTestfile(final File methodFolder) throws JAXBException {
-      final File kopemeFile = new File(methodFolder, "testMethod.xml");
-
-      final Kopemedata currentdata = MultipleVMTestUtil.initKopemeData(kopemeFile, searchedTest);
-      final Datacollector collector = new Datacollector();
-      collector.setName(TimeDataCollector.class.getName());
-      final TestcaseType testcaseType = currentdata.getTestcases().getTestcase().get(0);
-      testcaseType.getDatacollector().add(collector);
-      final Result result = new Result();
-      result.setValue(15);
-      collector.getResult().add(result);
-      initDummyFulldata(result);
-
-      XMLDataStorer.storeData(kopemeFile, currentdata);
-   }
-
-   private void initDummyFulldata(final Result result) {
-      result.setFulldata(new Fulldata());
-      final Value value = new Value();
-      value.setValue("15");
-      result.getFulldata().getValue().add(value);
-      result.getFulldata().getValue().add(value);
-      result.getFulldata().getValue().add(value);
-   }
+   
 }

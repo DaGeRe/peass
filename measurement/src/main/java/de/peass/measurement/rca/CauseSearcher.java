@@ -165,6 +165,7 @@ public class CauseSearcher {
 
       final List<CallTreeNode> measurePredecessor = levelSearcher.getMeasurePredecessor();
 
+      LOG.info("Measure next level: {}", measurePredecessor);
       if (measurePredecessor.size() > 0) {
          analyseLevel(levelSearcher, measurePredecessor);
          writeTreeState();
@@ -187,7 +188,6 @@ public class CauseSearcher {
    }
 
    public CauseSearchData getRCAData() {
-      // TODO Auto-generated method stub
       return persistenceManager.getRCAData();
    }
 

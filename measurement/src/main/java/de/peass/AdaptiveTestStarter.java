@@ -45,6 +45,11 @@ public class AdaptiveTestStarter extends DependencyTestPairStarter {
       super.call();
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, type1error, type2error);
       measurementConfiguration.setEarlyStop(!skipEarlyStop);
+      measurementConfiguration.setUseKieker(useKieker);
+      measurementConfiguration.setIterations(iterations);
+      measurementConfiguration.setWarmup(warmup);
+      measurementConfiguration.setRepetitions(repetitions);
+      measurementConfiguration.setUseGC(useGC);
       final JUnitTestTransformer testgenerator = getTestTransformer(measurementConfiguration);
 
       tester = new AdaptiveTester(folders, testgenerator);

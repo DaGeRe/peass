@@ -50,6 +50,17 @@ public class MeanCoVDataContinous extends MeanCoVData {
       }
    }
    
+   protected void addValue(final int index, final double value, final List<DescriptiveStatistics> statistics) {
+      DescriptiveStatistics meanSummary;
+      if (statistics.size() <= index) {
+         meanSummary = new DescriptiveStatistics();
+         statistics.add(meanSummary);
+      } else {
+         meanSummary = statistics.get(index);
+      }
+      meanSummary.addValue(value);
+   }
+   
    public File printAverages(final File folder, final String clazzname) throws IOException {
       final File summaryFile = new File(folder, "result_" + clazzname + "_" + testMethodName + "_all.csv");
       printAverages(summaryFile);

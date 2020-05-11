@@ -23,12 +23,17 @@ public class TreeBuilder {
    MeasurementConfiguration config;
 
    public TreeBuilder(final MeasurementConfiguration config) {
-      this.config = config;
+      this(config, true);
    }
 
    public TreeBuilder(final MeasurementConfiguration config, final boolean useFullLogAPI) {
       this.config = config;
       this.useFullLogAPI = useFullLogAPI;
+      
+      root.setOtherVersionNode(new CallTreeNode("Test#test", "public void Test.test"));
+      a.setOtherVersionNode(new CallTreeNode("ClassA#methodA", "public void ClassA.methodA"));
+      b.setOtherVersionNode(new CallTreeNode("ClassA#methodB", "public void ClassA.methodB"));
+      c.setOtherVersionNode(new CallTreeNode("ClassA#methodC", "public void ClassA.methodC"));
    }
 
    public TreeBuilder() {

@@ -49,8 +49,6 @@ public class DependencyTester {
    protected ResultOrganizer currentOrganizer;
    protected long currentChunkStart = 0;
    
-   protected String version, versionOld;
-
    public DependencyTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator) throws IOException {
       super();
       this.folders = folders;
@@ -59,9 +57,6 @@ public class DependencyTester {
       vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
       this.testTransformer = testgenerator;
       testExecutor = ExecutorCreator.createExecutor(folders, Integer.MAX_VALUE, testTransformer);
-      
-      this.version = configuration.getVersion();
-      this.versionOld = configuration.getVersionOld();
    }
 
    /**
@@ -72,11 +67,11 @@ public class DependencyTester {
     * @param testcase Testcase to test
     */
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException {
-      new FolderDeterminer(folders).testResultFolders(version, versionOld, testcase);
+      new FolderDeterminer(folders).testResultFolders(configuration.getVersion(), configuration.getVersionOld(), testcase);
       
-      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", versionOld, version);
+      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getVersionOld(), configuration.getVersion());
 
-      final File logFolder = getLogFolder(version, testcase);
+      final File logFolder = getLogFolder(configuration.getVersion(), testcase);
 
       currentChunkStart = System.currentTimeMillis();
       for (int vmid = 0; vmid < configuration.getVms(); vmid++) {
@@ -85,28 +80,31 @@ public class DependencyTester {
    }
 
    public void postEvaluate() {
-      final Cleaner cleaner = new Cleaner(folders.getCleanFolder());
+      final File cleanFolder = new File(folders.getCleanFolder(), configuration.getVersion() + File.separator + 
+            configuration.getVersionOld() + File.separator + 
+            currentOrganizer.getTest().getClazz() + File.separator +
+            currentOrganizer.getTest().getMethod());
+      final Cleaner cleaner = new Cleaner(cleanFolder);
       for (final File clazzFile : folders.getDetailResultFolder().listFiles()) {
          final Map<String, TestData> testdata = DataReader.readClassFolder(clazzFile);
          for (final Map.Entry<String, TestData> entry : testdata.entrySet()) {
             cleaner.processTestdata(entry.getValue());
          }
       }
-
    }
 
-   public void runOneComparison(final File logFolder, final TestCase testset, final int vmid)
+   public void runOneComparison(final File logFolder, final TestCase testcase, final int vmid)
          throws IOException, InterruptedException, JAXBException {
-      currentVersion = version;
+      currentVersion = configuration.getVersion();
       //TODO Vermutlich currentVersion -> mainVersion
-      currentOrganizer = new ResultOrganizer(folders, version, currentChunkStart, testTransformer.getConfig().isUseKieker(), false);
-      if (versionOld.equals("HEAD~1")) {
-         runOnce(testset, version + "~1", vmid, logFolder);
+      currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, testTransformer.getConfig().isUseKieker(), false, testcase);
+      if (configuration.getVersionOld().equals("HEAD~1")) {
+         runOnce(testcase, configuration.getVersion() + "~1", vmid, logFolder);
       } else {
-         runOnce(testset, versionOld, vmid, logFolder);
+         runOnce(testcase, configuration.getVersionOld(), vmid, logFolder);
       }
 
-      runOnce(testset, version, vmid, logFolder);
+      runOnce(testcase, configuration.getVersion(), vmid, logFolder);
    }
 
    public File getLogFolder(final String version, final TestCase testcase) {
@@ -136,10 +134,10 @@ public class DependencyTester {
       testExecutor.executeTest(testcase, vmidFolder, timeout);
       
       LOG.debug("Handling Kieker results");
-      handleKiekerResults(version, currentOrganizer.getTempResultsFolder(testcase));
+      handleKiekerResults(version, currentOrganizer.getTempResultsFolder());
       
       LOG.info("Organizing result paths");
-      currentOrganizer.saveResultFiles(testcase, version, vmid);
+      currentOrganizer.saveResultFiles(version, vmid);
 
       cleanup();
    }
@@ -189,8 +187,8 @@ public class DependencyTester {
    }
 
    public void setVersions(final String version, final String versionOld) {
-      this.version = version;
-      this.versionOld = versionOld;
+      configuration.setVersion(version);
+      configuration.setVersionOld(versionOld);
    }
 
    protected boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {

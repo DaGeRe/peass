@@ -45,6 +45,7 @@ public class RunCommandWriter {
             + "-repetitions 100 "
             + "-vms 100 "
             + "-timeout 10 "
+            + "-useGC false "
             + "-version " + endversion + " "
             + "-executionfile $PEASS_REPOS/dependencies-final/execute_" + name + ".json "
             + "-folder ../../projekte/" + name + "/ "

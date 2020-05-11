@@ -85,7 +85,7 @@ public class CauseTester extends AdaptiveTester {
    @Override
    protected void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder) throws IOException, InterruptedException, JAXBException {
       final Set<String> includedPattern = new HashSet<>();
-      if (versionOld.equals(version)) {
+      if (configuration.getVersionOld().equals(version)) {
          includedNodes.forEach(node -> includedPattern.add(node.getKiekerPattern()));
       } else {
          System.out.println("Searching other: " + version);
@@ -95,24 +95,19 @@ public class CauseTester extends AdaptiveTester {
          });
       }
       testExecutor.setIncludedMethods(includedPattern);
-      currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart, testTransformer.getConfig().isUseKieker(), causeConfig.isSaveAll());
+      currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart, testTransformer.getConfig().isUseKieker(), causeConfig.isSaveAll(), testcase);
       super.runOnce(testcase, version, vmid, logFolder);
    }
 
    @Override
    public boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {
       try {
-         getDurationsVersion(version);
-         getDurationsVersion(versionOld);
+         getDurationsVersion(configuration.getVersion());
+         getDurationsVersion(configuration.getVersionOld());
          boolean allDecidable = super.checkIsDecidable(testcase, vmid);
          LOG.debug("Super decidable: {}", allDecidable);
          for (final CallTreeNode includedNode : includedNodes) {
-            final SummaryStatistics statisticsOld = includedNode.getStatistics(versionOld);
-            final SummaryStatistics statistics = includedNode.getStatistics(version);
-            final EarlyBreakDecider decider = new EarlyBreakDecider(configuration, statisticsOld, statistics);
-            final boolean nodeDecidable = decider.isBreakPossible(vmid);
-            LOG.debug("{} decideable: {}", includedNode.getKiekerPattern(), allDecidable);
-            allDecidable &= nodeDecidable;
+            allDecidable &= checkLevelDecidable(vmid, allDecidable, includedNode);
          }
          LOG.debug("Level decideable: {}", allDecidable);
          return allDecidable;
@@ -121,10 +116,21 @@ public class CauseTester extends AdaptiveTester {
       }
    }
 
+   private boolean checkLevelDecidable(final int vmid, boolean allDecidable, final CallTreeNode includedNode) throws JAXBException {
+      final SummaryStatistics statisticsOld = includedNode.getStatistics(configuration.getVersionOld());
+      final SummaryStatistics statistics = includedNode.getStatistics(configuration.getVersion());
+      final EarlyBreakDecider decider = new EarlyBreakDecider(configuration, statisticsOld, statistics);
+      final boolean nodeDecidable = decider.isBreakPossible(vmid);
+      LOG.debug("{} decideable: {}", includedNode.getKiekerPattern(), allDecidable);
+      LOG.debug("Old: {} {} Current: {} {}", statisticsOld.getMean(), statisticsOld.getStandardDeviation(), 
+            statistics.getMean(), statistics.getStandardDeviation());
+      return nodeDecidable;
+   }
+
    @Override
    protected void handleKiekerResults(final String version, final File versionResultFolder) {
       final KiekerResultReader kiekerResultReader = new KiekerResultReader(causeConfig.isUseAggregation(), includedNodes, version, versionResultFolder, testcase,
-            version.equals(this.version));
+            version.equals(configuration.getVersion()));
       kiekerResultReader.setConsiderNodePosition(considerNodePosition);
       kiekerResultReader.readResults();
    }
@@ -135,13 +141,13 @@ public class CauseTester extends AdaptiveTester {
 
    public void getDurations(final int adaptiveId)
          throws FileNotFoundException, IOException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
-      getDurationsVersion(version);
-      getDurationsVersion(versionOld);
+      getDurationsVersion(configuration.getVersion());
+      getDurationsVersion(configuration.getVersionOld());
    }
 
    public void cleanup(final int adaptiveId) {
-      organizeMeasurements(adaptiveId, version, version);
-      organizeMeasurements(adaptiveId, version, versionOld);
+      organizeMeasurements(adaptiveId, configuration.getVersion(), configuration.getVersion());
+      organizeMeasurements(adaptiveId, configuration.getVersion(), configuration.getVersionOld());
    }
 
    private void organizeMeasurements(final int adaptiveId, final String mainVersion, final String version) {

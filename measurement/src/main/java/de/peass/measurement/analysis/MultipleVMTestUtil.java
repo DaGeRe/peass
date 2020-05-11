@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datacollection.TimeDataCollectorNoGC;
+import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
@@ -61,7 +62,7 @@ public class MultipleVMTestUtil {
    public static Datacollector getTimeDataCollector(final Kopemedata fullResultData) {
       return getTimeDataCollector(fullResultData.getTestcases().getTestcase().get(0));
    }
-   
+
    public static Datacollector getTimeDataCollector(final TestcaseType oneRunData) {
       Datacollector oneRunDatacollector = null;
       for (final Datacollector collector : oneRunData.getDatacollector()) {
@@ -86,12 +87,17 @@ public class MultipleVMTestUtil {
    public static void saveSummaryData(final File summaryResultFile, final TestcaseType oneRunData, final TestCase testcase, final String version, final long currentChunkStart)
          throws JAXBException {
       LOG.info("Writing to merged result file: {}", summaryResultFile);
-      final Kopemedata fullResultData = initKopemeData(summaryResultFile, testcase);
+      final Kopemedata summaryData = initKopemeData(summaryResultFile, testcase);
       Datacollector oneRunDatacollector = getTimeDataCollector(oneRunData);
-      Chunk realChunk = findChunk(currentChunkStart, fullResultData, oneRunDatacollector);
+      Chunk summaryChunk = findChunk(currentChunkStart, summaryData, oneRunDatacollector);
 
       final Result oneResult = oneRunDatacollector.getResult().get(0);
-      final Result cleaned = StatisticUtil.shortenValues(oneResult);
+      if (oneResult.getFulldata().getFileName() != null) {
+         WrittenResultReader reader = new WrittenResultReader(new File(oneResult.getFulldata().getFileName()));
+         reader.read(null, null);
+      }
+      
+      final Result cleaned = StatisticUtil.shortenResult(oneResult);
       final Fulldata realData = cleaned.getFulldata();
       if (realData != null && realData.getValue() != null && realData.getValue().size() > 0) {
          final SummaryStatistics st = new SummaryStatistics();
@@ -100,8 +106,8 @@ public class MultipleVMTestUtil {
          result.setDate(cleaned.getDate());
          result.setWarmupExecutions(cleaned.getWarmupExecutions());
 
-         realChunk.getResult().add(result);
-         XMLDataStorer.storeData(summaryResultFile, fullResultData);
+         summaryChunk.getResult().add(result);
+         XMLDataStorer.storeData(summaryResultFile, summaryData);
       } else {
          LOG.error("Achtung: Fulldata von " + summaryResultFile + " leer!");
       }
@@ -169,8 +175,8 @@ public class MultipleVMTestUtil {
    private static Result createResultFromStatistic(final String version, final SummaryStatistics st, final long repetitions) {
       final Result result = new Result();
       result.setValue(st.getMean());
-      result.setMin((long) st.getMin());
-      result.setMax((long) st.getMax());
+      result.setMin(st.getMin());
+      result.setMax(st.getMax());
       result.setVersion(new Versioninfo());
       result.getVersion().setGitversion(version);
       result.setDeviation(st.getStandardDeviation());

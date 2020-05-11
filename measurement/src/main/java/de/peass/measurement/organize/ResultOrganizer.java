@@ -3,6 +3,7 @@ package de.peass.measurement.organize;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
+import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
@@ -34,40 +36,43 @@ public class ResultOrganizer {
    private int thresholdForZippingInMB = 5;
    private final FolderDeterminer determiner;
    private boolean saveAll = false;
+   private final TestCase testcase;
 
-   public ResultOrganizer(final PeASSFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll) {
+   public ResultOrganizer(final PeASSFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll, TestCase test) {
       super();
       this.folders = folders;
       this.mainVersion = currentVersion;
       this.currentChunkStart = currentChunkStart;
       this.isUseKieker = isUseKieker;
       this.saveAll = saveAll;
+      this.testcase = test;
 
       determiner = new FolderDeterminer(folders);
    }
 
-   public void saveResultFiles(final TestCase searchedTest, final String version, final int vmid)
+   public void saveResultFiles(final String version, final int vmid)
          throws JAXBException, IOException {
-      final File folder = getTempResultsFolder(searchedTest);
+      final File folder = getTempResultsFolder();
       if (folder != null) {
-         final String methodname = searchedTest.getMethod();
+         final String methodname = testcase.getMethod();
          final File oneResultFile = new File(folder, methodname + ".xml");
          if (!oneResultFile.exists()) {
             LOG.debug("File {} does not exist.", oneResultFile.getAbsolutePath());
          } else {
             LOG.debug("Reading: {}", oneResultFile);
             final XMLDataLoader xdl = new XMLDataLoader(oneResultFile);
+            xdl.readFulldataValues();
             final Kopemedata oneResultData = xdl.getFullData();
             final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
-            final String clazz = oneResultData.getTestcases().getClazz();
-            final TestCase realTestcase = new TestCase(clazz, methodname);
+//            final String clazz = oneResultData.getTestcases().getClazz();
+//            final TestCase realTestcase = new TestCase(clazz, methodname);
             if (testcaseList.size() > 0) {
-               saveResults(version, vmid, realTestcase, oneResultFile, oneResultData, testcaseList);
+               saveResults(version, vmid, oneResultFile, oneResultData, testcaseList);
             } else {
                LOG.error("No data - measurement failed?");
             }
             if (isUseKieker) {
-               saveKiekerFiles(folder, folders.getFullResultFolder(realTestcase, mainVersion, version));
+               saveKiekerFiles(folder, folders.getFullResultFolder(testcase, mainVersion, version));
             }
          }
       }
@@ -76,9 +81,9 @@ public class ResultOrganizer {
       }
    }
 
-   public File getTempResultsFolder(final TestCase searchedTest) {
-      LOG.info("Searching method: {}", searchedTest);
-      final String expectedFolderName = "*" + searchedTest.getClazz();
+   public File getTempResultsFolder() {
+      LOG.info("Searching method: {}", testcase);
+      final String expectedFolderName = "*" + testcase.getClazz();
       final Collection<File> folderCandidates = findFolder(folders.getTempMeasurementFolder(), new WildcardFileFilter(expectedFolderName));
       if (folderCandidates.size() != 1) {
          LOG.error("Ordner {} ist {} mal vorhanden.", expectedFolderName, folderCandidates.size());
@@ -89,34 +94,52 @@ public class ResultOrganizer {
       }
    }
 
-   private void saveResults(final String version, final int vmid, final TestCase testcase, final File oneResultFile,
+   private void saveResults(final String version, final int vmid, final File oneResultFile,
          final Kopemedata oneResultData, final List<TestcaseType> testcaseList)
          throws JAXBException, IOException {
       // Update testname, in case it has been set to
       // testRepetition
       testcaseList.get(0).setName(testcase.getMethod());
-      XMLDataStorer.storeData(oneResultFile, oneResultData);
-
-      saveSummaryFile(version, testcase, testcaseList);
+      
+      saveSummaryFile(version, testcaseList);
 
       final File destFile = determiner.getResultFile(testcase, vmid, version, mainVersion);
-      LOG.info("Verschiebe nach: {}", destFile);
+      destFile.getParentFile().mkdirs();
+      LOG.info("Saving in: {}", destFile);
       if (!destFile.exists()) {
-         FileUtils.moveFile(oneResultFile, destFile);
+         final Fulldata fulldata = oneResultData.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0).getFulldata();
+         if (fulldata.getFileName() != null) {
+            saveFulldataFile(vmid, oneResultFile, destFile, fulldata);
+         }
+         XMLDataStorer.storeData(destFile, oneResultData);
+         oneResultFile.delete();
       } else {
          throw new RuntimeException("Moving failed: " + destFile + " already exist.");
       }
    }
 
-   public void saveSummaryFile(final String version, final TestCase testcase, final List<TestcaseType> testcaseList) throws JAXBException {
+   private void saveFulldataFile(final int vmid, final File oneResultFile, final File destFile, final Fulldata fulldata) throws IOException {
+      File fulldataFile = new File(oneResultFile.getParentFile(), fulldata.getFileName());
+      final String destFileName = testcase.getMethod() + "_kopeme_" + vmid + ".tmp";
+      File destKopemeFile = new File(destFile.getParentFile(), destFileName);
+      Files.move(fulldataFile.toPath(), destKopemeFile.toPath());
+      fulldata.setFileName(destFileName);
+   }
+
+   public void saveSummaryFile(final String version, final List<TestcaseType> testcaseList) throws JAXBException {
       final TestcaseType oneRundata = testcaseList.get(0);
       final String shortClazzName = testcase.getShortClazz();
       final File fullResultFile = new File(folders.getFullMeasurementFolder(), shortClazzName + "_" + testcase.getMethod() + ".xml");
       MultipleVMTestUtil.saveSummaryData(fullResultFile, oneRundata, testcase, version, currentChunkStart);
    }
+   
+  
 
    private void saveKiekerFiles(final File folder, final File destFolder) throws IOException {
       final File kiekerFolder = folder.listFiles()[0];
+      if (!kiekerFolder.getName().matches("[0-9]*")) {
+         throw new RuntimeException("Kieker folder is expected to consist only of numbers, but was " + kiekerFolder.getName());
+      }
       if (saveAll) {
          moveOrCompressFile(destFolder, kiekerFolder);
       } else {
@@ -177,5 +200,9 @@ public class ResultOrganizer {
 
    public void setSaveAll(final boolean saveAll) {
       this.saveAll = saveAll;
+   }
+
+   public TestCase getTest() {
+      return testcase;
    }
 }

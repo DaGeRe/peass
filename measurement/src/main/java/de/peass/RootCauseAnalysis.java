@@ -32,9 +32,6 @@ public class RootCauseAnalysis extends AdaptiveTestStarter {
 
    @Option(names = { "-skipCalibrationRun", "--skipCalibrationRun" }, description = "Skip the calibration run for complete measurements")
    public boolean skipCalibrationRun = false;
-   
-   @Option(names = { "-skipGC", "--skipGC" }, description = "Do not execute GC before each iteration")
-   public boolean skipGC = false;
 
    @Option(names = { "-useNonAggregatedWriter",
          "--useNonAggregatedWriter" }, description = "Whether to save non-aggregated JSON data for measurement results - if true, full kieker record data are stored")
@@ -53,8 +50,9 @@ public class RootCauseAnalysis extends AdaptiveTestStarter {
    public double outlierFactor = 5.0;
 
    @Option(names = { "-minTime",
-         "--minTime" }, description = "Minimum time for a method call to be processed. If it takes less time, it won't be measured (since time measurement isn't below accurate below a certain value).")
-   public double minTime = 1.0;
+         "--minTime" }, description = "Minimum node difference time compared to relative standard deviation. "
+               + "If a node takes less time, its childs won't be measured (since time measurement isn't below accurate below a certain value).")
+   public double minTime = 0.1;
 
    @Option(names = { "-writeInterval", "--writeInterval" }, description = "Interval for KoPeMe-aggregated-writing (in milliseconds)")
    public int writeInterval = 5000;
@@ -91,7 +89,7 @@ public class RootCauseAnalysis extends AdaptiveTestStarter {
       measurementConfiguration.setIterations(iterations);
       measurementConfiguration.setRepetitions(repetitions);
       measurementConfiguration.setUseKieker(true);
-      measurementConfiguration.setUseGC(!skipGC);
+      measurementConfiguration.setUseGC(useGC);
       measurementConfiguration.setKiekerAggregationInterval(writeInterval);
       final JUnitTestTransformer testtransformer = getTestTransformer(measurementConfiguration);
 

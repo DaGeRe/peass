@@ -176,7 +176,6 @@ public class Cleaner extends DataAnalyser {
       result.setRepetitions(result.getRepetitions());
       result.setMin(null);
       result.setMax(null);
-      result.setFirst10Percentile(null);
       result.setFulldata(new Fulldata());
    }
 }

@@ -52,6 +52,9 @@ public class DependencyTestPairStarter extends PairProcessor {
    
    @Option(names = { "-useKieker", "--useKieker", "-usekieker", "--usekieker"}, description = "Whether Kieker should be used")
    boolean useKieker = false;
+   
+   @Option(names = { "-useGC", "--useGC" }, description = "Do execute GC before each iteration (default false)")
+   public boolean useGC = false;
 
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
@@ -76,6 +79,7 @@ public class DependencyTestPairStarter extends PairProcessor {
       measurementConfiguration.setIterations(iterations);
       measurementConfiguration.setWarmup(warmup);
       measurementConfiguration.setRepetitions(repetitions);
+      measurementConfiguration.setUseGC(useGC);
       if (duration != 0) {
          TimeBasedTestTransformer testTransformer = new TimeBasedTestTransformer(folders.getProjectFolder());
          ((TimeBasedTestTransformer) testTransformer).setDuration(duration);
@@ -134,6 +138,9 @@ public class DependencyTestPairStarter extends PairProcessor {
             }
             LOG.debug("Version only in executefile, next version in dependencyfile: {}", potentialStart);
             currentStartindex = versions.indexOf(potentialStart);
+            if (currentStartindex == -1) {
+               throw new RuntimeException("Did not find " + startversion + " in given PRONTO-files!");
+            }
          }
       }
       return currentStartindex;

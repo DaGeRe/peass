@@ -89,11 +89,11 @@ public class AdaptiveTesterTest {
       Mockito.when(loader.getStatisticsAfter()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
       Mockito.when(loader.getStatisticsBefore()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
 
-      ResultLoader newLoader = new ResultLoader(null, null, null, null, null, 15);
+      ResultLoader newLoader = new ResultLoader(null, null, null,  15);
       Assert.assertNotNull(newLoader.getStatisticsAfter());
       System.out.println(newLoader.getStatisticsAfter());
 
-      ResultLoader newLoader2 = new ResultLoader(null, null, null, null, null, 15);
+      ResultLoader newLoader2 = new ResultLoader(null, null, null, 15);
       System.out.println(newLoader2.getStatisticsAfter());
    }
 

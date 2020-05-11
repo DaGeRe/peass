@@ -140,6 +140,7 @@ public class CallTreeNode extends BasicNode {
       return new TestcaseStatistic(current, previous, data.get(version).getCalls(), data.get(predecessor).getCalls());
    }
 
+   @JsonIgnore
    public TestcaseStatistic getPartialTestcaseStatistic() {
       final SummaryStatistics current = data.get(version).getStatistics();
       final SummaryStatistics previous = data.get(predecessor).getStatistics();

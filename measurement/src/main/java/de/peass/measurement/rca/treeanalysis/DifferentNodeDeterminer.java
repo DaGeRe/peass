@@ -42,32 +42,49 @@ public abstract class DifferentNodeDeterminer {
          // final CallTreeNode currentVersionNode = currentIterator.next();
          final SummaryStatistics statisticsPredecessor = currentPredecessorNode.getStatistics(measurementConfig.getVersionOld());
          final SummaryStatistics statisticsVersion = currentPredecessorNode.getStatistics(measurementConfig.getVersion());
-         LOG.debug("Comparison {} - {}",
-               currentPredecessorNode.getKiekerPattern(),
-               currentPredecessorNode.getOtherVersionNode() != null ? currentPredecessorNode.getOtherVersionNode().getKiekerPattern() : null);
-         LOG.debug("Current: {} {} Predecessor: {} {}",
-               statisticsVersion.getMean(), statisticsVersion.getStandardDeviation(),
-               statisticsPredecessor.getMean(), statisticsPredecessor.getStandardDeviation());
+         calculateDiffering(currentPredecessorNode, statisticsPredecessor, statisticsVersion);
+      }
+   }
+
+   private void calculateDiffering(final CallTreeNode currentPredecessorNode, final SummaryStatistics statisticsPredecessor, final SummaryStatistics statisticsVersion) {
+      LOG.debug("Comparison {} - {}",
+            currentPredecessorNode.getKiekerPattern(),
+            currentPredecessorNode.getOtherVersionNode() != null ? currentPredecessorNode.getOtherVersionNode().getKiekerPattern() : null);
+      LOG.debug("Predecessor: {} {} Current: {} {} ",
+            statisticsPredecessor.getMean(), statisticsPredecessor.getStandardDeviation(),
+            statisticsVersion.getMean(), statisticsVersion.getStandardDeviation());
+      if (statisticsPredecessor.getN() > 0 && statisticsVersion.getN() > 0) {
          final Relation relation = StatisticUtil.agnosticTTest(statisticsPredecessor, statisticsVersion, measurementConfig);
+         LOG.debug("Relation: {}", relation);
          if (relation == Relation.UNEQUAL && needsEnoughTime(statisticsPredecessor, statisticsVersion)) {
-            measureNextlevelPredecessor.addAll(currentPredecessorNode.getChildren());
-            final List<CallTreeNode> currentNodes = buildCurrentDiffering(currentPredecessorNode);
-            measureNextLevel.addAll(currentNodes);
-
-            final int childsRemeasure = getRemeasureChilds(currentPredecessorNode);
-
-            if (childsRemeasure == 0) {
-               LOG.debug("Adding {} - no childs needs to be remeasured, T={}", currentPredecessorNode, childsRemeasure, TestUtils.t(statisticsPredecessor, statisticsVersion));
-               LOG.debug("Childs: {}", currentPredecessorNode.getChildren());
-               currentLevelDifferent.add(currentPredecessorNode);
-            }
+            addChildsToMeasurement(currentPredecessorNode, statisticsPredecessor, statisticsVersion);
+         } else {
+            LOG.info("No remeasurement");
          }
       }
    }
 
+   private void addChildsToMeasurement(final CallTreeNode currentPredecessorNode, final SummaryStatistics statisticsPredecessor, final SummaryStatistics statisticsVersion) {
+      measureNextlevelPredecessor.addAll(currentPredecessorNode.getChildren());
+      final List<CallTreeNode> currentNodes = buildCurrentDiffering(currentPredecessorNode);
+      measureNextLevel.addAll(currentNodes);
+
+      final int childsRemeasure = getRemeasureChilds(currentPredecessorNode);
+
+      if (childsRemeasure == 0) {
+         LOG.debug("Adding {} - no childs needs to be remeasured, T={}", currentPredecessorNode, childsRemeasure, TestUtils.homoscedasticT(statisticsPredecessor, statisticsVersion));
+         LOG.debug("Childs: {}", currentPredecessorNode.getChildren());
+         currentLevelDifferent.add(currentPredecessorNode);
+      }
+   }
+
    private boolean needsEnoughTime(final SummaryStatistics statisticsPredecessor, final SummaryStatistics statisticsVersion) {
-      return statisticsPredecessor.getMean() > causeSearchConfig.getMinTime() &&
-            statisticsVersion.getMean() > causeSearchConfig.getMinTime();
+      double relativeDifference = Math.abs(statisticsPredecessor.getMean() - statisticsVersion.getMean()) / statisticsVersion.getMean();
+      double relativeDeviationPredecessor = statisticsPredecessor.getStandardDeviation() / statisticsPredecessor.getMean();
+      double relativeDeviationVersion = statisticsVersion.getStandardDeviation() / statisticsVersion.getMean();
+      double relativeStandardDeviation = Math.sqrt((Math.pow(relativeDeviationPredecessor, 2) +
+            Math.pow(relativeDeviationVersion, 2)) / 2);
+      return relativeDifference > causeSearchConfig.getMinTime() * relativeStandardDeviation;
    }
 
    private List<CallTreeNode> buildCurrentDiffering(final CallTreeNode currentPredecessorNode) {

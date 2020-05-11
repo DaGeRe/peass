@@ -69,7 +69,7 @@ public class ConfidenceInterval {
 	public static List<Result> getWarmedUpData(final List<Result> values) {
       final List<Result> shortenedValues = new LinkedList<>();
       for (final Result result : values) {
-         final Result resultShort = StatisticUtil.shortenValues(result);
+         final Result resultShort = StatisticUtil.shortenResult(result);
          shortenedValues.add(resultShort);
       }
       return shortenedValues;

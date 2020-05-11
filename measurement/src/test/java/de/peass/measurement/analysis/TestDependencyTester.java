@@ -117,8 +117,8 @@ public class TestDependencyTester {
       Result result = new Result();
       result.setValue(average);
       result.setDeviation(1);
-      result.setMin(0L);
-      result.setMax(20L);
+      result.setMin(0D);
+      result.setMax(20D);
       result.setRepetitions(5);
       result.setWarmupExecutions(10);
       result.setExecutionTimes(11);

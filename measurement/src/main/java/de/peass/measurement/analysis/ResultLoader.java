@@ -24,20 +24,16 @@ public class ResultLoader {
 
    private final MeasurementConfiguration config;
    final File measurementFolder;
-   final String version;
-   final String versionOld;
    final TestCase testcase;
    final long currentChunkStart;
 
    private final List<Double> before = new LinkedList<>();
    private final List<Double> after = new LinkedList<>();
 
-   public ResultLoader(MeasurementConfiguration config, final File measurementFolder, final String version, final String versionOld, final TestCase testcase,
+   public ResultLoader(MeasurementConfiguration config, final File measurementFolder, final TestCase testcase,
          final long currentChunkStart) {
       this.config = config;
       this.measurementFolder = measurementFolder;
-      this.version = version;
-      this.versionOld = versionOld;
       this.testcase = testcase;
       this.currentChunkStart = currentChunkStart;
    }
@@ -52,10 +48,10 @@ public class ResultLoader {
          for (final Result result : realChunk.getResult()) {
             if (result.getExecutionTimes() + result.getWarmupExecutions() == config.getIterations() &&
                   result.getRepetitions() == config.getRepetitions()) {
-               if (result.getVersion().getGitversion().equals(versionOld)) {
+               if (result.getVersion().getGitversion().equals(config.getVersionOld())) {
                   before.add(result.getValue());
                }
-               if (result.getVersion().getGitversion().equals(version)) {
+               if (result.getVersion().getGitversion().equals(config.getVersion())) {
                   after.add(result.getValue());
                }
             }

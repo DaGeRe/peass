@@ -47,17 +47,17 @@ public class MeanCoVData {
    // final TestcaseType testcase;
 
    public MeanCoVData(final TestcaseType testcase, int avg_count) {
-      this.testMethodName = testcase.getName();
-      this.results = testcase.getDatacollector().get(0).getResult();
-      this.avgCount = avg_count;
-      // this.testcase = testcase;
-      addTestcaseData();
+      this(testcase.getName(), testcase.getDatacollector().get(0).getResult(), avg_count);
    }
 
    public MeanCoVData(final String name, final List<Result> results) {
+      this(name, results, 10);
+   }
+   
+   public MeanCoVData(final String name, final List<Result> results, int avg_count) {
       this.testMethodName = name;
       this.results = results;
-      avgCount = 10;
+      avgCount = avg_count;
       addTestcaseData();
    }
 
@@ -66,33 +66,25 @@ public class MeanCoVData {
    }
 
    protected void addTestcaseData() {
-      for (final Result result : results) {
-         DescriptiveStatistics statistics = new DescriptiveStatistics();
-         int index = 0;
-         for (final Value value : result.getFulldata().getValue()) {
-            // writer.write(value.getValue() + "\n");
-            statistics.addValue(Double.parseDouble(value.getValue()));
-            if (statistics.getValues().length == avgCount) {
-               final double cov = statistics.getStandardDeviation() / statistics.getMean();
-               addValue(index, statistics.getMean(), allMeans);
-               addValue(index, cov, allCoVs);
-               index++;
-               statistics = new DescriptiveStatistics();
-            }
-         }
-      }
+      new MeanCoVReader(allMeans, allCoVs).addTestcaseData(results, avgCount);
+//      for (final Result result : results) {
+//         DescriptiveStatistics statistics = new DescriptiveStatistics();
+//         int index = 0;
+//         for (final Value value : result.getFulldata().getValue()) {
+//            // writer.write(value.getValue() + "\n");
+//            statistics.addValue(Double.parseDouble(value.getValue()));
+//            if (statistics.getValues().length == avgCount) {
+//               final double cov = statistics.getStandardDeviation() / statistics.getMean();
+//               addValue(index, statistics.getMean(), allMeans);
+//               addValue(index, cov, allCoVs);
+//               index++;
+//               statistics = new DescriptiveStatistics();
+//            }
+//         }
+//      }
    }
 
-   protected void addValue(final int index, final double value, final List<DescriptiveStatistics> statistics) {
-      DescriptiveStatistics meanSummary;
-      if (statistics.size() <= index) {
-         meanSummary = new DescriptiveStatistics();
-         statistics.add(meanSummary);
-      } else {
-         meanSummary = statistics.get(index);
-      }
-      meanSummary.addValue(value);
-   }
+   
 
    public void printTestcaseData(final File folder) throws IOException {
       for (final Result result : results) {
@@ -109,7 +101,8 @@ public class MeanCoVData {
             statistics.addValue(Double.parseDouble(value.getValue()));
             if (statistics.getValues().length == avgCount) {
                final double cov = statistics.getVariance() / statistics.getMean();
-               writer.write(FORMAT.format(statistics.getMean()) + ";" + FORMAT.format(cov) + "\n");
+               writer.write(statistics.getMean() + " " + cov + "\n");
+//               writer.write(FORMAT.format(statistics.getMean()) + ";" + FORMAT.format(cov) + "\n");
                statistics = new DescriptiveStatistics();
             }
          }
@@ -155,7 +148,8 @@ public class MeanCoVData {
    public File printAverages(final File summaryFile) throws IOException {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(summaryFile))) {
          for (int i = 0; i < allMeans.size(); i++) {
-            writer.write(FORMAT.format(allMeans.get(i).getMean()) + ";" + FORMAT.format(allCoVs.get(i).getMean()) + "\n");
+            writer.write(allMeans.get(i).getMean() + " " + allCoVs.get(i).getMean() + "\n");
+//            writer.write(FORMAT.format(allMeans.get(i).getMean()) + ";" + FORMAT.format(allCoVs.get(i).getMean()) + "\n");
          }
          writer.flush();
       }

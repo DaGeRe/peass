@@ -121,7 +121,7 @@ public abstract class VersionProcessor implements Callable<Void> {
 
       } else {
          for (final Map.Entry<String, Version> version : dependencies.getVersions().entrySet()) {
-            LOG.debug("Processing {}", version);
+            LOG.debug("Processing {}", version.getKey());
             processVersion(version.getKey(), version.getValue());
          }
       }

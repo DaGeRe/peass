@@ -32,11 +32,11 @@ public class AdaptiveTester extends DependencyTester {
    }
 
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException {
-      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", versionOld, version);
+      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getVersionOld(), configuration.getVersion());
 
-      new FolderDeterminer(folders).testResultFolders(version, versionOld, testcase);
+      new FolderDeterminer(folders).testResultFolders(configuration.getVersion(), configuration.getVersionOld(), testcase);
 
-      final File logFolder = getLogFolder(version, testcase);
+      final File logFolder = getLogFolder(configuration.getVersion(), testcase);
 
       currentChunkStart = System.currentTimeMillis();
       for (finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
@@ -64,7 +64,7 @@ public class AdaptiveTester extends DependencyTester {
    public boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {
       final boolean savelyDecidable;
       if (configuration.isEarlyStop()) {
-         final ResultLoader loader = new ResultLoader(configuration, folders.getFullMeasurementFolder(), version, versionOld, testcase, currentChunkStart);
+         final ResultLoader loader = new ResultLoader(configuration, folders.getFullMeasurementFolder(), testcase, currentChunkStart);
          loader.loadData();
          System.out.println(loader.getStatisticsAfter());
          DescriptiveStatistics statisticsBefore = loader.getStatisticsBefore();
@@ -82,11 +82,11 @@ public class AdaptiveTester extends DependencyTester {
 
    boolean updateExecutions(final TestCase testcase, final int vmid) throws JAXBException {
       boolean shouldBreak = false;
-      final Result versionOldResult = getLastResult(versionOld, testcase, vmid);
-      final Result versionNewResult = getLastResult(version, testcase, vmid);
+      final Result versionOldResult = getLastResult(configuration.getVersionOld(), testcase, vmid);
+      final Result versionNewResult = getLastResult(configuration.getVersion(), testcase, vmid);
       if (vmid < 10) {
-         shouldBreak = updateExecutions(versionOld, shouldBreak, versionOldResult);
-         shouldBreak = updateExecutions(version, shouldBreak, versionNewResult);
+         shouldBreak = updateExecutions(configuration.getVersionOld(), shouldBreak, versionOldResult);
+         shouldBreak = updateExecutions(configuration.getVersion(), shouldBreak, versionNewResult);
       }
 
       return shouldBreak;

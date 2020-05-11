@@ -208,13 +208,13 @@ public class StatisticUtil {
       return resultShort;
    }
 
-   public static Result shortenValues(final Result result) {
+   public static Result shortenResult(final Result result) {
       final int start = result.getFulldata().getValue().size() / 2;
       final int end = result.getFulldata().getValue().size();
       final Result resultShort = shortenResult(result, start, end);
       return resultShort;
    }
-
+   
    public static List<Result> shortenValues(final List<Result> values, final int start, final int end) {
       final List<Result> shortenedValues = new LinkedList<>();
       int index = 0;

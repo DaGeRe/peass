@@ -15,11 +15,11 @@ public class TestCauseSearchData {
    public void testParent() throws Exception {
       CauseSearchData csd = new CauseSearchData();
       
-      MeasuredNode a = new MeasuredNode("A", "public void A.a()");
-      MeasuredNode b = new MeasuredNode("B", "public void B.b()");
-      a.getChildren().add(b);
+      MeasuredNode aMeasured = new MeasuredNode("A", "public void A.a()");
+      MeasuredNode bMeasured = new MeasuredNode("B", "public void B.b()");
+      aMeasured.getChildren().add(bMeasured);
       
-      csd.setNodes(a);
+      csd.setNodes(aMeasured);
       
       CallTreeNode aStructure = new CallTreeNode("A", "public void A.a()");
       CallTreeNode bStructure = aStructure.appendChild("B", "public void B.b()");
@@ -27,11 +27,13 @@ public class TestCauseSearchData {
       
       System.out.println(cStructure.getPosition());
       
-      Assert.assertNotNull(csd.addDiff(cStructure));
+      final MeasuredNode diff = csd.addDiff(cStructure);
+      Assert.assertNotNull(diff);
    }
 
    private CallTreeNode buildAdditionalNode(CallTreeNode bStructure) {
       CallTreeNode cStructure = bStructure.appendChild("C", "public void C.c()");
+      cStructure.setOtherVersionNode(new CallTreeNode("C", "public void C.c()"));
       cStructure.setVersions("1", "2");
       for (int i = 0; i < 3; i++) {
          cStructure.newVM("1");
