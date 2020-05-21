@@ -58,9 +58,9 @@ public class MavenTestExecutor extends TestExecutor {
 
    public static final String TEMP_DIR = "-Djava.io.tmpdir";
    public static final String JAVA_AGENT = "-javaagent";
-   public static final String KIEKER_FOLDER_MAVEN = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/1.13/kieker-1.13-aspectj.jar";
-   public static final String KIEKER_FOLDER_MAVEN_TWEAK = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/1.13-tweak/kieker-1.13-tweak-aspectj.jar";
-   public static final String KIEKER_FOLDER_GRADLE = "${System.properties['user.home']}/.m2/repository/net/kieker-monitoring/kieker/1.13/kieker-1.13-aspectj.jar";
+   public static final String KIEKER_FOLDER_MAVEN = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/1.14/kieker-1.14-aspectj.jar";
+   public static final String KIEKER_FOLDER_MAVEN_TWEAK = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/1.14-tweak/kieker-1.14-aspectj.jar";
+   public static final String KIEKER_FOLDER_GRADLE = "${System.properties['user.home']}/.m2/repository/net/kieker-monitoring/kieker/1.14/kieker-1.14-aspectj.jar";
    public static final String KIEKER_ADAPTIVE_FILENAME = "config/kieker.adaptiveMonitoring.conf";
    /**
     * This is added to surefire, assuming that kieker has been downloaded already, so that the aspectj-weaving can take place.

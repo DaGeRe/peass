@@ -23,6 +23,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TraceElement;
@@ -31,8 +34,8 @@ import kieker.analysis.plugin.annotation.InputPort;
 import kieker.analysis.plugin.annotation.Plugin;
 import kieker.analysis.plugin.filter.AbstractFilterPlugin;
 import kieker.common.configuration.Configuration;
-import kieker.tools.traceAnalysis.systemModel.Execution;
-import kieker.tools.traceAnalysis.systemModel.ExecutionTrace;
+import kieker.tools.trace.analysis.systemModel.Execution;
+import kieker.tools.trace.analysis.systemModel.ExecutionTrace;
 
 /**
  * Loads all methods for parsing the trace
@@ -42,6 +45,9 @@ import kieker.tools.traceAnalysis.systemModel.ExecutionTrace;
  */
 @Plugin(description = "A filter to transform PeASS-Traces")
 public class PeASSFilter extends AbstractFilterPlugin {
+   
+   private static final Logger LOG = LogManager.getLogger(PeASSFilter.class);
+   
    public static final String INPUT_EXECUTION_TRACE = "INPUT_EXECUTION_TRACE";
 
    private final Map<ChangedEntity, Set<String>> classes = new HashMap<>();

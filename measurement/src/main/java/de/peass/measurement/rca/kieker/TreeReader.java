@@ -13,12 +13,10 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.rca.KiekerResultReader;
 import de.peass.measurement.rca.data.CallTreeNode;
-import de.peass.testtransformation.JUnitTestTransformer;
 import kieker.analysis.AnalysisController;
 import kieker.analysis.exception.AnalysisConfigurationException;
-import kieker.tools.traceAnalysis.filter.traceReconstruction.TraceReconstructionFilter;
+import kieker.tools.trace.analysis.filter.traceReconstruction.TraceReconstructionFilter;
 
 public class TreeReader extends KiekerResultManager {
 

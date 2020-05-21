@@ -182,8 +182,7 @@ public class StatisticUtil {
    }
 
    public static Result shortenResult(final Result result, final int start, final int end) {
-      final Result resultShort = new Result();
-      resultShort.setFulldata(new Fulldata());
+      final Result resultShort = copyResultBasics(result);
       final DescriptiveStatistics statistics = new DescriptiveStatistics();
       // LOG.debug("Size: " + result.getFulldata().getValue().size());
       final int size = (Math.min(end, result.getFulldata().getValue().size()));
@@ -198,13 +197,22 @@ public class StatisticUtil {
          final Value value = result.getFulldata().getValue().get(i);
          final Fulldata fulldata = resultShort.getFulldata();
          fulldata.getValue().add(value);
-         statistics.addValue(Double.parseDouble(value.getValue()));
+         statistics.addValue(value.getValue());
       }
       resultShort.setValue(statistics.getMean());
       resultShort.setDeviation(statistics.getStandardDeviation());
       resultShort.setExecutionTimes(end - start);
       resultShort.setWarmupExecutions(start);
       resultShort.setRepetitions(result.getRepetitions());
+      return resultShort;
+   }
+
+   private static Result copyResultBasics(final Result result) {
+      final Result resultShort = new Result();
+      resultShort.setCpu(result.getCpu());
+      resultShort.setDate(result.getDate());
+      resultShort.setMemory(result.getMemory());
+      resultShort.setFulldata(new Fulldata());
       return resultShort;
    }
 

@@ -41,7 +41,7 @@ public class MeanCoVDataContinous extends MeanCoVData {
             DescriptiveStatistics lastMean = new DescriptiveStatistics();
             for (int covIndex = 0; covIndex < Math.min(avgCount, startindex); covIndex++) {
                Value currentValueObject = result.getFulldata().getValue().get(startindex - covIndex);
-               double currentValue = Double.parseDouble(currentValueObject.getValue());
+               double currentValue = currentValueObject.getValue();
                lastMean.addValue(currentValue);
             }
             addValue(startindex, lastMean.getStandardDeviation(), allCoVs);

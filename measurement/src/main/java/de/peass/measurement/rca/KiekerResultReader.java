@@ -29,7 +29,7 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 import kieker.monitoring.writer.filesystem.AggregatedDataReader;
 import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedData;
 import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedDataNode;
-import kieker.tools.traceAnalysis.filter.executionRecordTransformation.ExecutionRecordTransformationFilter;
+import kieker.tools.trace.analysis.filter.executionRecordTransformation.ExecutionRecordTransformationFilter;
 
 public class KiekerResultReader {
 

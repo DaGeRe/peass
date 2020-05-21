@@ -3,7 +3,7 @@ package de.peass.measurement.rca.kieker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import kieker.tools.traceAnalysis.systemModel.Operation;
+import kieker.tools.trace.analysis.systemModel.Operation;
 
 public class KiekerPatternConverter {
 

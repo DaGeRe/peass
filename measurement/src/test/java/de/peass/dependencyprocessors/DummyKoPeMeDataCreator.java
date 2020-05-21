@@ -34,7 +34,7 @@ public class DummyKoPeMeDataCreator {
    private static void initDummyFulldata(final Result result, int count) {
       result.setFulldata(new Fulldata());
       final Value value = new Value();
-      value.setValue("15");
+      value.setValue(15);
       if (count > TestResult.BOUNDARY_SAVE_FILE) {
          try {
             ResultTempWriter writer = new ResultTempWriter();

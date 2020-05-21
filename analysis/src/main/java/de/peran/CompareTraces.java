@@ -24,12 +24,12 @@ import kieker.analysis.AnalysisController;
 import kieker.analysis.exception.AnalysisConfigurationException;
 import kieker.analysis.plugin.reader.filesystem.FSReader;
 import kieker.common.configuration.Configuration;
-import kieker.tools.traceAnalysis.filter.AbstractTraceAnalysisFilter;
-import kieker.tools.traceAnalysis.filter.executionRecordTransformation.ExecutionRecordTransformationFilter;
-import kieker.tools.traceAnalysis.filter.sessionReconstruction.SessionReconstructionFilter;
-import kieker.tools.traceAnalysis.filter.traceReconstruction.TraceReconstructionFilter;
-import kieker.tools.traceAnalysis.systemModel.Execution;
-import kieker.tools.traceAnalysis.systemModel.repository.SystemModelRepository;
+import kieker.tools.trace.analysis.filter.AbstractTraceAnalysisFilter;
+import kieker.tools.trace.analysis.filter.executionRecordTransformation.ExecutionRecordTransformationFilter;
+import kieker.tools.trace.analysis.filter.sessionReconstruction.SessionReconstructionFilter;
+import kieker.tools.trace.analysis.filter.traceReconstruction.TraceReconstructionFilter;
+import kieker.tools.trace.analysis.systemModel.Execution;
+import kieker.tools.trace.analysis.systemModel.repository.SystemModelRepository;
 
 public class CompareTraces {
 

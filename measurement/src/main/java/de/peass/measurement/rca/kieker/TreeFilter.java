@@ -10,8 +10,8 @@ import kieker.analysis.plugin.annotation.InputPort;
 import kieker.analysis.plugin.annotation.Plugin;
 import kieker.analysis.plugin.filter.AbstractFilterPlugin;
 import kieker.common.configuration.Configuration;
-import kieker.tools.traceAnalysis.systemModel.Execution;
-import kieker.tools.traceAnalysis.systemModel.ExecutionTrace;
+import kieker.tools.trace.analysis.systemModel.Execution;
+import kieker.tools.trace.analysis.systemModel.ExecutionTrace;
 
 @Plugin(description = "A filter to transform generate PeASS-Call-trees")
 public class TreeFilter extends AbstractFilterPlugin {

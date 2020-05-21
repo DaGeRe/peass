@@ -34,11 +34,7 @@ import kieker.analysis.AnalysisController;
 import kieker.analysis.exception.AnalysisConfigurationException;
 import kieker.analysis.plugin.reader.filesystem.FSReader;
 import kieker.common.configuration.Configuration;
-import kieker.tools.traceAnalysis.filter.AbstractTraceAnalysisFilter;
-import kieker.tools.traceAnalysis.filter.executionRecordTransformation.ExecutionRecordTransformationFilter;
-import kieker.tools.traceAnalysis.filter.sessionReconstruction.SessionReconstructionFilter;
-import kieker.tools.traceAnalysis.filter.traceReconstruction.TraceReconstructionFilter;
-import kieker.tools.traceAnalysis.systemModel.repository.SystemModelRepository;
+import kieker.tools.trace.analysis.filter.traceReconstruction.TraceReconstructionFilter;
 
 /**
  * Loads the methods that have been called from an given kieker-trace

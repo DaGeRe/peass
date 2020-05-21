@@ -98,7 +98,7 @@ public class MeanCoVData {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile))) {
          DescriptiveStatistics statistics = new DescriptiveStatistics();
          for (final Value value : result.getFulldata().getValue()) {
-            statistics.addValue(Double.parseDouble(value.getValue()));
+            statistics.addValue(value.getValue());
             if (statistics.getValues().length == avgCount) {
                final double cov = statistics.getVariance() / statistics.getMean();
                writer.write(statistics.getMean() + " " + cov + "\n");

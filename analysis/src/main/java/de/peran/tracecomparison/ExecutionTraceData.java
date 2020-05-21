@@ -8,7 +8,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import kieker.tools.traceAnalysis.systemModel.Execution;
+import kieker.tools.trace.analysis.systemModel.Execution;
 
 public class ExecutionTraceData {
 	

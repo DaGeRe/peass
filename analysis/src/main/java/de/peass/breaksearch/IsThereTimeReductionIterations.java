@@ -160,7 +160,7 @@ public class IsThereTimeReductionIterations extends DataAnalyser {
          final double[] vals = new double[result.getFulldata().getValue().size()];
          int index = 0;
          for (final Value value : result.getFulldata().getValue()) {
-            vals[index] = Double.parseDouble(value.getValue());
+            vals[index] = value.getValue();
             index++;
          }
          beforeMeasurements.add(vals);

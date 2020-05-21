@@ -26,7 +26,7 @@ public class MeanCoVReader {
       for (final Result result : results) {
          for (final Value value : result.getFulldata().getValue()) {
             // writer.write(value.getValue() + "\n");
-            statistics.addValue(Double.parseDouble(value.getValue()));
+            statistics.addValue(value.getValue());
             if (statistics.getN() == avgCount) {
                nextIndex();
             }

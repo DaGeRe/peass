@@ -106,7 +106,7 @@ public class TestDependencyTester {
       for (long i = average - 10; i <= average + 10; i++) {
          Value value = new Value();
          value.setStart(i);
-         value.setValue("" + i);
+         value.setValue(i);
          values.getValue().add(value);
          // values.put(i, i);
       }

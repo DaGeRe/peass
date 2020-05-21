@@ -189,7 +189,7 @@ public class MultipleVMTestUtil {
       final double[] values = new double[realData.getValue().size()];
       int i = 0;
       for (final Value value : realData.getValue()) {
-         final long parseDouble = Long.parseLong(value.getValue());
+         final long parseDouble =value.getValue();
          st.addValue(parseDouble);
          values[i++] = parseDouble;
       }
@@ -199,7 +199,7 @@ public class MultipleVMTestUtil {
    public static List<Double> getAverages(final List<Result> before) {
       return before.stream()
             .mapToDouble(beforeVal -> beforeVal.getFulldata().getValue().stream()
-                  .mapToDouble(val -> Double.parseDouble(val.getValue())).sum()
+                  .mapToDouble(val -> val.getValue()).sum()
                   / beforeVal.getFulldata().getValue().size())
             .boxed().sorted().collect(Collectors.toList());
    }

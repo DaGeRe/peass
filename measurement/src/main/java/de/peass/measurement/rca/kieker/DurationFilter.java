@@ -11,7 +11,7 @@ import kieker.analysis.plugin.annotation.InputPort;
 import kieker.analysis.plugin.annotation.Plugin;
 import kieker.analysis.plugin.filter.AbstractFilterPlugin;
 import kieker.common.configuration.Configuration;
-import kieker.tools.traceAnalysis.systemModel.Execution;
+import kieker.tools.trace.analysis.systemModel.Execution;
 
 @Plugin(description = "A filter to get durations from execution traces")
 public class DurationFilter extends AbstractFilterPlugin {
