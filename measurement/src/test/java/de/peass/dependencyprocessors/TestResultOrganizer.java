@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
 
 import javax.xml.bind.JAXBException;
 
@@ -16,19 +15,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.datacollection.TimeDataCollector;
-import de.dagere.kopeme.datacollection.tempfile.ResultTempWriter;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
-import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.measurement.analysis.MultipleVMTestUtil;
 import de.peass.measurement.organize.ResultOrganizer;
 
 public class TestResultOrganizer {
@@ -83,7 +75,7 @@ public class TestResultOrganizer {
    public void testKoPeMeFileSaving() throws JAXBException, IOException {
       organizer = new ResultOrganizer(folders, VERSION_NAME, 1, false, false, searchedTest);
 
-      DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 2000, searchedTest);
+      DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, TestResult.BOUNDARY_SAVE_FILE * 2, searchedTest);
 
       organizer.saveResultFiles(VERSION_NAME, 0);
 

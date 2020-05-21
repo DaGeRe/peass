@@ -1,8 +1,10 @@
 package de.peass.measurement.analysis;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
@@ -94,7 +96,9 @@ public class MultipleVMTestUtil {
       final Result oneResult = oneRunDatacollector.getResult().get(0);
       if (oneResult.getFulldata().getFileName() != null) {
          WrittenResultReader reader = new WrittenResultReader(new File(oneResult.getFulldata().getFileName()));
-         reader.read(null, null);
+         Set<String> keys = new HashSet<>();
+         keys.add(oneRunDatacollector.getName());
+         reader.read(null, keys);
       }
       
       final Result cleaned = StatisticUtil.shortenResult(oneResult);

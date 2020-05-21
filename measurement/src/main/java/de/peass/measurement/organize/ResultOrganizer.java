@@ -61,7 +61,7 @@ public class ResultOrganizer {
          } else {
             LOG.debug("Reading: {}", oneResultFile);
             final XMLDataLoader xdl = new XMLDataLoader(oneResultFile);
-            xdl.readFulldataValues();
+//            xdl.readFulldataValues();
             final Kopemedata oneResultData = xdl.getFullData();
             final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
 //            final String clazz = oneResultData.getTestcases().getClazz();
