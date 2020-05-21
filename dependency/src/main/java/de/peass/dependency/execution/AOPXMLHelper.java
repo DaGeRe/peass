@@ -34,7 +34,7 @@ public class AOPXMLHelper {
          writer.write("kieker.monitoring.name=KIEKER-KoPeMe\n");
          writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueFQN=java.util.concurrent.LinkedBlockingQueue\n");
          writer.write("kieker.monitoring.writer=kieker.monitoring.writer.filesystem.ChangeableFolderWriter\n");
-         writer.write("kieker.monitoring.writer.filesystem.ChangeableFolderWriter.realwriter=AsciiFileWriter\n");
+         writer.write("kieker.monitoring.writer.filesystem.ChangeableFolderWriter.realwriter=FileWriter\n");
          final int queueSize = 10000000;
          writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueSize=" + queueSize + "\n");
          writer.write("kieker.monitoring.writer.filesystem.ChangeableFolderWriter.flush=false\n");
