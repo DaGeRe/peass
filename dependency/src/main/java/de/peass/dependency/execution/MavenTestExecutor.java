@@ -62,6 +62,7 @@ public class MavenTestExecutor extends TestExecutor {
    public static final String KIEKER_FOLDER_MAVEN_TWEAK = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/1.14-tweak/kieker-1.14-aspectj.jar";
    public static final String KIEKER_FOLDER_GRADLE = "${System.properties['user.home']}/.m2/repository/net/kieker-monitoring/kieker/1.14/kieker-1.14-aspectj.jar";
    public static final String KIEKER_ADAPTIVE_FILENAME = "config/kieker.adaptiveMonitoring.conf";
+   public static final File KIEKER_ASPECTJ_JAR = new File(MavenTestExecutor.KIEKER_FOLDER_MAVEN_TWEAK.replace("${user.home}", System.getProperty("user.home")));
    /**
     * This is added to surefire, assuming that kieker has been downloaded already, so that the aspectj-weaving can take place.
     */
@@ -172,10 +173,9 @@ public class MavenTestExecutor extends TestExecutor {
    }
 
    public void prepareAdaptiveExecution() throws IOException, InterruptedException {
-      final File kiekerJar = new File(MavenTestExecutor.KIEKER_FOLDER_MAVEN_TWEAK.replace("${user.home}", System.getProperty("user.home")));
-      if (!kiekerJar.exists()) {
+      if (!MavenTestExecutor.KIEKER_ASPECTJ_JAR.exists()) {
          // This can be removed if Kieker 1.14 is released
-         throw new RuntimeException("Tweaked Kieker " + kiekerJar + " needs to exist - git clone https://github.com/DaGeRe/kieker -b 1_13_tweak "
+         throw new RuntimeException("Tweaked Kieker " + MavenTestExecutor.KIEKER_ASPECTJ_JAR + " needs to exist - git clone https://github.com/DaGeRe/kieker -b 1_13_tweak "
                + "and install manually!");
       }
       writeConfig();

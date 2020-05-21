@@ -14,6 +14,7 @@ import com.github.javaparser.ParseException;
 
 import de.peass.dependency.analysis.CalledMethodLoader;
 import de.peass.dependency.analysis.ModuleClassMapping;
+import de.peass.dependency.execution.MavenTestExecutor;
 import de.peass.dependency.traces.TraceMethodReader;
 import de.peass.dependency.traces.TraceWithMethods;
 import de.peass.utils.StreamGobbler;
@@ -32,7 +33,6 @@ public class TestTraceMethodReader {
    private final String KOPEME_VERSION = "0.10.1-SNAPSHOT";
    private final String REPO = System.getenv("HOME") + "/.m2/repository";
    private final String KOPEME_JAR = REPO + "/de/dagere/kopeme/kopeme-core/" + KOPEME_VERSION + "/kopeme-core-" + KOPEME_VERSION + ".jar";
-   private final String KIEKER_AGENT = REPO + "/net/kieker-monitoring/kieker/1.13/kieker-1.13-aspectj.jar";
 
    @Before
    public void init() {
@@ -52,7 +52,7 @@ public class TestTraceMethodReader {
    @Test
    public void testTraceLengthSimpleFor() throws ParseException, IOException {
       final ProcessBuilder builder = new ProcessBuilder("java",
-            "-javaagent:" + KIEKER_AGENT,
+            "-javaagent:" + MavenTestExecutor.KIEKER_ASPECTJ_JAR,
             "-cp", KOPEME_JAR + ":target/test-classes/",
             "de.peass.example.CallerSimpleFor");
       final Process process = builder.start();
@@ -77,7 +77,7 @@ public class TestTraceMethodReader {
    @Test
    public void testTraceLengthLongFor() throws ParseException, IOException {
       final ProcessBuilder builder = new ProcessBuilder("java",
-            "-javaagent:" + KIEKER_AGENT,
+            "-javaagent:" + MavenTestExecutor.KIEKER_ASPECTJ_JAR,
             "-cp", KOPEME_JAR + ":target/test-classes/",
             "de.peass.example.CallerLongFor");
       final Process process = builder.start();
