@@ -17,7 +17,11 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.commons.math3.exception.MathIllegalArgumentException;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.StorelessUnivariateStatistic;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,7 +35,52 @@ import de.peass.statistics.PerformanceChange;
 
 public final class MeasurementAnalysationUtil {
 
-	private MeasurementAnalysationUtil() {
+	private static final class DummyStatistic implements StorelessUnivariateStatistic {
+      @Override
+      public double evaluate(double[] values, int begin, int length) throws MathIllegalArgumentException {
+         return 0;
+      }
+
+      @Override
+      public double evaluate(double[] values) throws MathIllegalArgumentException {
+         return 0;
+      }
+
+      @Override
+      public void incrementAll(double[] values, int start, int length) throws MathIllegalArgumentException {
+         // TODO Auto-generated method stub
+         
+      }
+
+      @Override
+      public void incrementAll(double[] values) throws MathIllegalArgumentException {
+      }
+
+      @Override
+      public void increment(double d) {
+      }
+
+      @Override
+      public double getResult() {
+         return 0;
+      }
+
+      @Override
+      public long getN() {
+         return 0;
+      }
+
+      @Override
+      public StorelessUnivariateStatistic copy() {
+         return null;
+      }
+
+      @Override
+      public void clear() {
+      }
+   }
+
+   private MeasurementAnalysationUtil() {
 
 	}
 
@@ -194,24 +243,33 @@ public final class MeasurementAnalysationUtil {
 
 	public static ConfidenceInterval getBootstrapConfidenceInterval(final double[] values, final int count, final int repetitions, final int intervalPercentage) {
 		LOG.trace("Werte: {}", values);
-		final DescriptiveStatistics statistics = new DescriptiveStatistics();
-		for (int i = 0; i < repetitions; i++) {
-			final double[] tempValues = getBootstrapValues(values, count);
-			final DescriptiveStatistics st = new DescriptiveStatistics();
-			for (final double value : tempValues) {
-				st.addValue(value);
-			}
-//			final double bootstrapMean = st.getPercentile(0.5);
-			final double bootstrapMean = st.getMean();
-			statistics.addValue(bootstrapMean);
-		}
+		final double[] means = getMeanStatistics(values, count, repetitions);
 
-		LOG.trace("Mittelwert: {}", statistics.getMean());
+//		LOG.trace("Mean: {}", statistics.getMean());
 
-		final double upperBound = statistics.getPercentile(intervalPercentage);
-		final double lowerBound = statistics.getPercentile(100 - intervalPercentage);
+		final double upperBound = new Percentile(intervalPercentage).evaluate(means);
+		final double lowerBound = new Percentile(100 - intervalPercentage).evaluate(means);;
 		return new ConfidenceInterval(lowerBound, upperBound, intervalPercentage);
 	}
+
+   private static double[] getMeanStatistics(final double[] values, final int count, final int repetitions) {
+      double[] meanValues = new double[repetitions];
+		for (int i = 0; i < repetitions; i++) {
+			final double bootstrapMean = getBootstrappedStatistics(values, count);
+			meanValues[i] = bootstrapMean;
+		}
+      return meanValues;
+   }
+
+   private static double getBootstrappedStatistics(final double[] values, final int count) {
+      final double[] tempValues = getBootstrapValues(values, count);
+      final SummaryStatistics st = new SummaryStatistics();
+      st.setSumLogImpl(new DummyStatistic());
+      for (double value : tempValues) {
+         st.addValue(value);
+      }
+      return st.getMean();
+   }
 
 	public static double[] getBootstrapValues(final double[] values, final int count) {
 		final double[] result = new double[count];

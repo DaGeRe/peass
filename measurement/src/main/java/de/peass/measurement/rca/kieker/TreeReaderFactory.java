@@ -17,7 +17,7 @@ public class TreeReaderFactory {
     * @throws InterruptedException
     * @throws IOException
     */
-   public static TreeReader createTreeReader(final PeASSFolders parentFolders, final String predecessor, final int timeout, boolean ignoreEOIs) throws InterruptedException, IOException {
+   public static TreeReader createTreeReader(final PeASSFolders parentFolders, final String predecessor, final long timeout, boolean ignoreEOIs) throws InterruptedException, IOException {
       File treeReadingFolder = new File(parentFolders.getTempProjectFolder(), predecessor);
       GitUtils.clone(parentFolders, treeReadingFolder);
       GitUtils.goToTag(predecessor, treeReadingFolder);

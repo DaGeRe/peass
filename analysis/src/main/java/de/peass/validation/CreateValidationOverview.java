@@ -2,8 +2,6 @@ package de.peass.validation;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParseException;

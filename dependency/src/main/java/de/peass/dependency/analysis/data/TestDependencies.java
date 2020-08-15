@@ -19,14 +19,13 @@ package de.peass.dependency.analysis.data;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.peass.dependency.changesreading.ClazzChangeData;
-import de.peass.dependency.reader.DependencyReaderUtil;
 
 /**
  * Represents information about the tests and their dependencies, i.e. the classes they call.

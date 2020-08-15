@@ -22,15 +22,29 @@ public class DescribedChunk {
    private final List<Result> current = new LinkedList<>();
 
    public DescribedChunk(final Chunk chunk, final String versionPrevious, final String versionCurrent) {
+      long minRepetitions = Long.MAX_VALUE, minIterations = Long.MAX_VALUE;
       for (final Result result : chunk.getResult()) {
-         if (result.getVersion().getGitversion().equals(versionPrevious) && !Double.isNaN(result.getValue())) {
-            descPrev.addValue(result.getValue());
-            previous.add(result);
+         if (!Double.isNaN(result.getValue())) {
+            minRepetitions = Math.min(minRepetitions, result.getRepetitions());
+            minIterations = Math.min(minIterations, result.getExecutionTimes());
          }
-         if (result.getVersion().getGitversion().equals(versionCurrent) && !Double.isNaN(result.getValue())) {
-            descCurrent.addValue(result.getValue());
-            current.add(result);
+      }
+      LOG.info("Repetitions: " + minRepetitions + " Iterations: " + minIterations);
+      
+      for (final Result result : chunk.getResult()) {
+         if (!Double.isNaN(result.getValue()) && 
+               result.getExecutionTimes() == minIterations &&
+               result.getRepetitions() == minRepetitions) {
+            if (result.getVersion().getGitversion().equals(versionPrevious)) {
+               descPrev.addValue(result.getValue());
+               previous.add(result);
+            }
+            if (result.getVersion().getGitversion().equals(versionCurrent)) {
+               descCurrent.addValue(result.getValue());
+               current.add(result);
+            }
          }
+         
       }
       LOG.trace("Built values: {} {}", previous.size(), current.size());
    }
@@ -57,10 +71,12 @@ public class DescribedChunk {
    }
 
    public TestcaseStatistic getStatistic(final double type1error, final double type2error) {
-      final boolean isChange = StatisticUtil.agnosticTTest(descPrev, descCurrent, type1error, type2error) == de.peass.measurement.analysis.Relation.UNEQUAL;
+//      final boolean isChange = StatisticUtil.agnosticTTest(descPrev, descCurrent, type1error, type2error) == de.peass.measurement.analysis.Relation.UNEQUAL;
+      final boolean isChange = StatisticUtil.bimodalTTest(previous, current, type1error) != de.peass.measurement.analysis.Relation.EQUAL;
       final TestcaseStatistic statistic = new TestcaseStatistic(descPrev.getMean(), descCurrent.getMean(),
             descPrev.getStandardDeviation() / descPrev.getMean(), descCurrent.getStandardDeviation() / descCurrent.getMean(), descPrev.getN(),
             descPrev.getN() > 2 ? TestUtils.t(descPrev, descCurrent) : 0, isChange);
+      statistic.setIsBimodal(StatisticUtil.isBimodal(previous, current));
       return statistic;
    }
 

@@ -39,7 +39,6 @@ public class ResultOrganizer {
    private final TestCase testcase;
 
    public ResultOrganizer(final PeASSFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll, TestCase test) {
-      super();
       this.folders = folders;
       this.mainVersion = currentVersion;
       this.currentChunkStart = currentChunkStart;

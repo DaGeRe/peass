@@ -27,7 +27,6 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.analysis.data.TraceElement;
 import de.peass.dependency.traces.KiekerFolderUtil;
-import de.peass.dependency.traces.OneTraceGenerator;
 import de.peass.dependency.traces.TraceMethodReader;
 import de.peass.dependency.traces.TraceWithMethods;
 import de.peass.dependencyprocessors.ViewNotFoundException;

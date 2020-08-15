@@ -14,9 +14,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import de.peass.analysis.all.RepoFolders;
-import de.peass.dependency.CauseSearchFolders;
-import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.serialization.MeasuredNode;
 import de.peass.utils.Constants;

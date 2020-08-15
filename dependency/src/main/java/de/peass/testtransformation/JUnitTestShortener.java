@@ -55,7 +55,7 @@ public class JUnitTestShortener {
       final File calleeClazzFile = ClazzFinder.getClazzFile(module, callee);
       if (calleeClazzFile != null) {
          try {
-            
+
             shortenTestClazz(callee, calleeClazzFile);
 
             for (final File superclass : superclasses) {
@@ -69,6 +69,8 @@ public class JUnitTestShortener {
          } catch (final IOException e1) {
             e1.printStackTrace();
          }
+      } else {
+         throw new RuntimeException("Could not find " + callee.getClazz() + " java file - maybe package missing?");
       }
    }
 
@@ -77,7 +79,7 @@ public class JUnitTestShortener {
 
       if (version != 0) {
          saveUnshortened(calleeClazzFile);
-         
+
          final CompilationUnit calleeUnit = transformer.getLoadedFiles().get(calleeClazzFile);
          final ClassOrInterfaceDeclaration clazz = FileComparisonUtil.findClazz(callee, calleeUnit.getChildNodes());
          shortenParent(module, callee, calleeClazzFile, calleeUnit, clazz);
@@ -140,7 +142,7 @@ public class JUnitTestShortener {
    private void removeNonWanted(final String method, final int version, final ClassOrInterfaceDeclaration clazz) {
       final List<Node> remove = new LinkedList<>();
       for (final MethodDeclaration methodDeclaration : clazz.getMethods()) {
-         if (!methodDeclaration.getNameAsString().equals(method) 
+         if (!methodDeclaration.getNameAsString().equals(method)
                && methodDeclaration.getModifiers().contains(Modifier.publicModifier()) &&
                methodDeclaration.getParameters().size() == 0) {
             if (version != 4) {

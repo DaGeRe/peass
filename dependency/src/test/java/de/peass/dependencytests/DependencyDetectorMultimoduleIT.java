@@ -20,7 +20,6 @@ import org.mockito.Mockito;
 import co.unruly.matchers.StreamMatchers;
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.changesreading.ClazzChangeData;
 import de.peass.dependency.persistence.InitialDependency;

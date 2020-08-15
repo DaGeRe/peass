@@ -22,12 +22,9 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.rca.CauseSearcherConfig;
-import de.peass.measurement.rca.CauseTester;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.VCSTestUtils;

@@ -12,8 +12,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.KiekerResultManager;
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.CalledMethodLoader;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TestCase;

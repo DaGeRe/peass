@@ -1,17 +1,9 @@
 package de.peass.dependencyprocessors;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.cli.ParseException;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
@@ -19,7 +11,6 @@ import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.InitialDependency;
 import de.peass.dependency.persistence.InitialVersion;
 import de.peass.dependency.persistence.Version;
-import picocli.CommandLine.Command;
 
 /**
  * Base for processing pair of potentially changed testcases, which are given by a dependencyfile.

@@ -1,8 +1,6 @@
 package de.peass.confidence;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
@@ -11,20 +9,9 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Kopemedata.Testcases;
-import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.clean.CleaningData;
 import de.peass.clean.TestCleaner;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.measurement.analysis.MeasurementFileFinder;
-import de.peass.measurement.analysis.Relation;
-import de.peass.measurement.analysis.StatisticUtil;
-import de.peass.measurement.analysis.statistics.DescribedChunk;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 

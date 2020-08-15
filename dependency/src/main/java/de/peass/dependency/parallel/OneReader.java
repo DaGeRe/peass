@@ -2,8 +2,6 @@ package de.peass.dependency.parallel;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +10,6 @@ import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.VersionIterator;
-import de.peass.vcs.VersionIteratorGit;
 
 public final class OneReader implements Runnable {
 

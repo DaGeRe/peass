@@ -14,8 +14,6 @@ import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.TreeBuilderDifferent;
-import de.peass.measurement.rca.helper.TreeBuilderLeafs;
-import de.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class TestLevelDifferentNodeDeterminer {

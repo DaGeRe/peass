@@ -11,7 +11,6 @@ import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.persistence.Version;
-import de.peass.dependencyprocessors.VersionProcessor;
 import de.peass.measurement.rca.CauseSearcher;
 import de.peass.measurement.rca.CauseSearcherComplete;
 import de.peass.measurement.rca.CauseSearcherConfig;
@@ -84,7 +83,8 @@ public class RootCauseAnalysis extends AdaptiveTestStarter {
       final Version versionInfo = dependencies.getVersions().get(version);
       final String predecessor = versionInfo.getPredecessor();
 
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout * 1000 * 60, vms, type1error, type2error, !skipEarlyStop, version, predecessor);
+      LOG.debug("Timeout in minutes: {}", timeout);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, type1error, type2error, !skipEarlyStop, version, predecessor);
       measurementConfiguration.setWarmup(warmup);
       measurementConfiguration.setIterations(iterations);
       measurementConfiguration.setRepetitions(repetitions);

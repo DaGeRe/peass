@@ -31,7 +31,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.parsing.BuildtoolProjectNameReader;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
@@ -54,20 +53,18 @@ public class KiekerResultManager {
    protected final PeASSFolders folders;
    protected final JUnitTestTransformer testTransformer;
 
-   
-
-   public KiekerResultManager(final File projectFolder, final long timeout) {
+   public KiekerResultManager(final File projectFolder, long timeout) {
       folders = new PeASSFolders(projectFolder);
-      testTransformer = createTestTransformer();
-      executor = ExecutorCreator.createExecutor(folders, timeout, testTransformer);
+      testTransformer = createTestTransformer(timeout);
+      executor = ExecutorCreator.createExecutor(folders, testTransformer);
    }
    
    public JUnitTestTransformer getTestTransformer() {
       return testTransformer;
    }
 
-   protected JUnitTestTransformer createTestTransformer() {
-      final MeasurementConfiguration config = new MeasurementConfiguration(1);
+   protected JUnitTestTransformer createTestTransformer(long timeout) {
+      final MeasurementConfiguration config = new MeasurementConfiguration(1, timeout);
       config.setIterations(1);
       config.setWarmup(0);
       config.setUseKieker(true);
@@ -129,7 +126,7 @@ public class KiekerResultManager {
       for (final Map.Entry<ChangedEntity, Set<String>> test : testsToUpdate.getTestcases().entrySet()) {
          for (final String method : test.getValue()) {
             final TestCase testcase = new TestCase(test.getKey().getJavaClazzName(), method, test.getKey().getModule());
-            executor.executeTest(testcase, logVersionFolder, executor.getTimeout());
+            executor.executeTest(testcase, logVersionFolder, testTransformer.getConfig().getTimeoutInMinutes());
          }
       }
       cleanAboveSize(logVersionFolder, 500, "txt");

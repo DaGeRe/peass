@@ -17,13 +17,10 @@
 package de.peass.vcs;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import de.peass.utils.StreamGobbler;
 
 /**
  * Allows iteration over git-versions

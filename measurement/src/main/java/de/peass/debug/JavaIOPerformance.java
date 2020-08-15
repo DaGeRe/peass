@@ -2,11 +2,9 @@ package de.peass.debug;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Writer;
 import java.nio.file.Files;

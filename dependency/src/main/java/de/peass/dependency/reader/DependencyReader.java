@@ -33,7 +33,6 @@ import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.vcs.VersionIterator;
-import de.peass.vcs.VersionIteratorGit;
 
 /**
  * Reads the dependencies of a project

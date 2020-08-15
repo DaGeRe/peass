@@ -11,16 +11,11 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.tools.ant.taskdefs.condition.And;
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.builder.AstBuilder;
 import org.codehaus.plexus.util.IOUtil;

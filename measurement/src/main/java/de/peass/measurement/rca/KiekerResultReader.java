@@ -1,6 +1,7 @@
 package de.peass.measurement.rca;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.LinkedList;
@@ -9,6 +10,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.logging.log4j.LogManager;
@@ -61,7 +63,9 @@ public class KiekerResultReader {
    public void readResults() {
       try {
          LOG.info("Reading kieker results");
-         for (final File kiekerResultFolder : versionResultFolder.listFiles((FilenameFilter) new RegexFileFilter("[0-9]*"))) {
+         FileFilter filter = new OrFileFilter(new RegexFileFilter("[0-9]*"), new RegexFileFilter("measurement-[0-9]*.csv"));
+         final File[] kiekerResultFiles = versionResultFolder.listFiles(filter);
+         for (final File kiekerResultFolder : kiekerResultFiles) {
             final File kiekerTraceFile = KiekerFolderUtil.getKiekerTraceFolder(kiekerResultFolder, testcase);
             if (useAggregation) {
                readAggregatedData(kiekerTraceFile);

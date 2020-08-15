@@ -11,7 +11,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;

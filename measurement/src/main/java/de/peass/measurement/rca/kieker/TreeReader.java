@@ -22,7 +22,7 @@ public class TreeReader extends KiekerResultManager {
 
    private boolean ignoreEOIs;
    
-   TreeReader(final File folder, final int timeout) throws InterruptedException, IOException {
+   TreeReader(final File folder, final long timeout) throws InterruptedException, IOException {
       super(folder, timeout);
    }
 
@@ -64,7 +64,6 @@ public class TreeReader extends KiekerResultManager {
    }
 
    private void executeMeasurements(TestCase testcase, String version) throws IOException, XmlPullParserException, InterruptedException {
-      getExecutor().loadClasses();
       executeKoPeMeKiekerRun(new TestSet(testcase), version);
    }
 

@@ -19,8 +19,6 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
-import de.peass.dependencyprocessors.AdaptiveTester;
-import de.peass.measurement.analysis.EarlyBreakDecider;
 
 public class IsThereTimeReductionVM {
 

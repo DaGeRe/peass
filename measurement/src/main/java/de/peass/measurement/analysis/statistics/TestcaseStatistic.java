@@ -17,7 +17,7 @@ public class TestcaseStatistic {
    private double tvalue;
    @JsonInclude(Include.NON_NULL)
    private String predecessor;
-   private Boolean isChange;
+   private Boolean isChange, isBimodal;
 
    public TestcaseStatistic() {
 
@@ -150,6 +150,15 @@ public class TestcaseStatistic {
 
    public void setChange(final Boolean isChange) {
       this.isChange = isChange;
+   }
+   
+   @JsonInclude(Include.NON_NULL)
+   public Boolean getIsBimodal() {
+      return isBimodal;
+   }
+
+   public void setIsBimodal(Boolean isBimodal) {
+      this.isBimodal = isBimodal;
    }
 
    @JsonIgnore

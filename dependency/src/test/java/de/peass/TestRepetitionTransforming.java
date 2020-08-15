@@ -23,7 +23,6 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 
-import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.peass.dependency.changesreading.FileComparisonUtil;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;

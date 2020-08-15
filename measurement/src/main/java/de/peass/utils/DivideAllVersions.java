@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 
 import javax.xml.bind.JAXBException;
 
@@ -16,8 +15,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.measurement.analysis.Cleaner;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 
 public class DivideAllVersions {

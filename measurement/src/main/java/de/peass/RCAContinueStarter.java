@@ -8,7 +8,6 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.measurement.rca.CauseSearcher;
 import de.peass.measurement.rca.CauseTester;

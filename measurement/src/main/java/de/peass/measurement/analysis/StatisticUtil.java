@@ -1,6 +1,6 @@
 package de.peass.measurement.analysis;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.distribution.NormalDistribution;
@@ -16,7 +16,8 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.peass.dependency.execution.MeasurementConfiguration;
-import de.peass.statistics.ConfidenceInterval;
+import de.precision.analysis.repetitions.bimodal.BimodalityTester;
+import de.precision.analysis.repetitions.bimodal.CompareData;
 
 public class StatisticUtil {
 
@@ -25,6 +26,22 @@ public class StatisticUtil {
    public static double getMean(final List<StatisticalSummary> statistics) {
       final StatisticalSummaryValues vals = AggregateSummaryStatistics.aggregate(statistics);
       return vals.getMean();
+   }
+
+   public static Relation bimodalTTest(List<Result> valuesPrev, List<Result> valuesVersion, double type1error) {
+      CompareData data = new CompareData(valuesPrev, valuesVersion);
+      final BimodalityTester tester = new BimodalityTester(data);
+      if (tester.isTChange(type1error)) {
+         return tester.getRelation();
+      } else {
+         return Relation.EQUAL;
+      }
+   }
+   
+   public static boolean isBimodal(List<Result> valuesPrev, List<Result> valuesVersion) {
+      CompareData data = new CompareData(valuesPrev, valuesVersion);
+      final BimodalityTester tester = new BimodalityTester(data);
+      return tester.isBimodal();
    }
 
    /**
@@ -222,9 +239,9 @@ public class StatisticUtil {
       final Result resultShort = shortenResult(result, start, end);
       return resultShort;
    }
-   
+
    public static List<Result> shortenValues(final List<Result> values, final int start, final int end) {
-      final List<Result> shortenedValues = new LinkedList<>();
+      final List<Result> shortenedValues = new ArrayList<>(values.size());
       int index = 0;
       for (final Result result : values) {
          index++;
@@ -234,6 +251,15 @@ public class StatisticUtil {
          } catch (RuntimeException e) {
             throw new RuntimeException("Error in result " + index, e);
          }
+      }
+      return shortenedValues;
+   }
+
+   public static List<Result> shortenValues(final List<Result> values) {
+      final List<Result> shortenedValues = new ArrayList<>(values.size());
+      for (final Result result : values) {
+         final Result resultShort = StatisticUtil.shortenResult(result);
+         shortenedValues.add(resultShort);
       }
       return shortenedValues;
    }

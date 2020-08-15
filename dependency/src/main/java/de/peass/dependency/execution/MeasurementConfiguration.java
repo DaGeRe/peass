@@ -1,16 +1,14 @@
 package de.peass.dependency.execution;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-
-import de.peass.utils.Constants;
 
 public class MeasurementConfiguration {
 
    public static final MeasurementConfiguration DEFAULT = new MeasurementConfiguration(300, 30, 0.01, 0.01);
 
-   private int timeout;
+   private final long timeout;
    private final int vms;
    private double type1error;
    private double type2error;
@@ -28,14 +26,21 @@ public class MeasurementConfiguration {
    private String versionOld;
 
    public MeasurementConfiguration(final int vms) {
-      this.timeout = 1000000;
+      this.timeout = 20 * 60 * 1000; // 20 minutes
+      this.vms = vms;
+      this.type1error = 0.01;
+      this.type2error = 0.01;
+   }
+   public MeasurementConfiguration(final int vms, long timeout) {
+      this.timeout = timeout * 60 * 1000; // timeout in minutes is converted to milliseconds
       this.vms = vms;
       this.type1error = 0.01;
       this.type2error = 0.01;
    }
 
+
    public MeasurementConfiguration(final int vms, final String version, final String versionOld) {
-      this.timeout = 1000000;
+      this.timeout = 20 * 60 * 1000; // 20 minutes
       this.vms = vms;
       this.type1error = 0.01;
       this.type2error = 0.01;
@@ -61,7 +66,7 @@ public class MeasurementConfiguration {
          @JsonProperty("earlystop") final boolean earlyStop,
          @JsonProperty("version") final String version,
          @JsonProperty("versionOld") final String versionOld) {
-      this.timeout = timeout; // timeout in minutes, not in milliseconds
+      this.timeout = timeout * 1000 * 60; // timeout in minutes is converted to milliseconds
       this.vms = vms;
       this.type1error = type1error;
       this.type2error = type2error;
@@ -83,12 +88,13 @@ public class MeasurementConfiguration {
       this.useGC = useGC;
    }
 
-   public int getTimeout() {
+   public long getTimeout() {
       return timeout;
    }
 
-   public void setTimeout(final int timeout) {
-      this.timeout = timeout;
+   @JsonIgnore
+   public long getTimeoutInMinutes() {
+      return timeout / 60 / 1000;
    }
 
    public int getVms() {

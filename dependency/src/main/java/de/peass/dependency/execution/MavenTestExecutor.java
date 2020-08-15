@@ -28,6 +28,7 @@ import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,9 +59,13 @@ public class MavenTestExecutor extends TestExecutor {
 
    public static final String TEMP_DIR = "-Djava.io.tmpdir";
    public static final String JAVA_AGENT = "-javaagent";
-   public static final String KIEKER_FOLDER_MAVEN = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/1.14/kieker-1.14-aspectj.jar";
-   public static final String KIEKER_FOLDER_MAVEN_TWEAK = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/1.14/kieker-1.14-aspectj.jar";
-   public static final String KIEKER_FOLDER_GRADLE = "${System.properties['user.home']}/.m2/repository/net/kieker-monitoring/kieker/1.14/kieker-1.14-aspectj.jar";
+   public static final String KIEKER_VERSION = "1.14";
+   public static final String KIEKER_FOLDER_MAVEN = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/" + KIEKER_VERSION +
+         "/kieker-" + KIEKER_VERSION + "-aspectj.jar";
+   public static final String KIEKER_FOLDER_MAVEN_TWEAK = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/" + KIEKER_VERSION + "/kieker-" + KIEKER_VERSION
+         + "-aspectj.jar";
+   public static final String KIEKER_FOLDER_GRADLE = "${System.properties['user.home']}/.m2/repository/net/kieker-monitoring/kieker/" + KIEKER_VERSION + "/kieker-" + KIEKER_VERSION
+         + "1.14-aspectj.jar";
    public static final String KIEKER_ADAPTIVE_FILENAME = "config/kieker.adaptiveMonitoring.conf";
    public static final File KIEKER_ASPECTJ_JAR = new File(MavenTestExecutor.KIEKER_FOLDER_MAVEN_TWEAK.replace("${user.home}", System.getProperty("user.home")));
    /**
@@ -73,8 +78,8 @@ public class MavenTestExecutor extends TestExecutor {
 
    private Set<String> includedMethodPattern;
 
-   public MavenTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final long timeout) {
-      super(folders, timeout, testTransformer);
+   public MavenTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
+      super(folders, testTransformer);
    }
 
    /**
@@ -90,7 +95,7 @@ public class MavenTestExecutor extends TestExecutor {
          final List<TestCase> testCases = getTestCases();
          LOG.info("Starting Testcases: {}", testCases.size());
          for (final TestCase test : testCases) {
-            executeTest(test, logFile.getParentFile(), timeout);
+            executeTest(test, logFile.getParentFile(), testTransformer.getConfig().getTimeoutInMinutes());
          }
       } catch (final XmlPullParserException | IOException | InterruptedException e) {
          e.printStackTrace();
@@ -149,9 +154,22 @@ public class MavenTestExecutor extends TestExecutor {
          pbClean.redirectOutput(Redirect.appendTo(logFile));
          pbClean.redirectError(Redirect.appendTo(logFile));
       }
+      
+      cleanSafely(pbClean);
+   }
 
-      final Process processClean = pbClean.start();
-      processClean.waitFor();
+   private void cleanSafely(final ProcessBuilder pbClean) throws IOException, InterruptedException {
+      boolean finished = false;
+      int count = 0;
+      while (!finished && count < 10) {
+         final Process processClean = pbClean.start();
+         finished = processClean.waitFor(60, TimeUnit.MINUTES);
+         if (!finished) {
+            LOG.info("Clean process " + processClean + " was not finished successfully; trying again to clean");
+            processClean.destroyForcibly();
+         }
+         count++;
+      }
    }
 
    @Override
@@ -278,7 +296,7 @@ public class MavenTestExecutor extends TestExecutor {
          }
          final String argline = buildArgline(tempFile);
 
-         MavenPomUtil.extendSurefire(argline, model, update, timeout * 2);
+         MavenPomUtil.extendSurefire(argline, model, update, testTransformer.getConfig().getTimeoutInMinutes() * 2);
 
          // TODO Move back to extend dependencies, if stable Kieker version supports <init>
          if (model.getDependencies() == null) {
@@ -287,7 +305,7 @@ public class MavenTestExecutor extends TestExecutor {
          if (testTransformer.isAdaptiveExecution()) {
             // Needs to be the first dependency..
             final List<Dependency> dependencies = model.getDependencies();
-            final Dependency kopeme_dependency2 = MavenPomUtil.getDependency("net.kieker-monitoring", "1.13-tweak", "test", "kieker");
+            final Dependency kopeme_dependency2 = MavenPomUtil.getDependency("net.kieker-monitoring", KIEKER_VERSION, "test", "kieker");
             dependencies.add(kopeme_dependency2);
          }
          MavenPomUtil.extendDependencies(model, testTransformer.isJUnit3());
@@ -310,14 +328,14 @@ public class MavenTestExecutor extends TestExecutor {
             writerConfig = "-Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AggregatedTreeWriter" +
                   " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.writeInterval=" + testTransformer.getConfig().getKiekerAggregationInterval() +
                   " " + bulkFolder;
-            
+
             if (testTransformer.isIgnoreEOIs()) {
                writerConfig += " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.ignoreEOIs=true";
             }
-            
-//            if (testTransformer.isSplitAggregated()) {
-//               writerConfig += " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.aggregateSplitted=true";
-//            }
+
+            // if (testTransformer.isSplitAggregated()) {
+            // writerConfig += " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.aggregateSplitted=true";
+            // }
 
          } else {
             writerConfig = "";

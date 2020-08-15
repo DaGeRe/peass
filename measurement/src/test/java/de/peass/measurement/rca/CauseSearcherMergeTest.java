@@ -2,7 +2,6 @@ package de.peass.measurement.rca;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
@@ -24,10 +23,8 @@ import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.helper.TestConstants;
-import de.peass.measurement.rca.helper.TreeBuilder;
 import de.peass.measurement.rca.helper.TreeBuilderLeafs;
 import de.peass.measurement.rca.kieker.BothTreeReader;
-import de.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**

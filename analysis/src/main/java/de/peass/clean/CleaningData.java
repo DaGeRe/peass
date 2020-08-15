@@ -1,22 +1,9 @@
 package de.peass.clean;
 
 import java.io.File;
-import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import de.peass.dependency.reader.DependencyReaderUtil;
-import de.peass.utils.OptionConstants;
-import de.peass.vcs.GitUtils;
-import de.peran.FolderSearcher;
 
 public class CleaningData {
    private static final Logger LOG = LogManager.getLogger(TestCleaner.class);

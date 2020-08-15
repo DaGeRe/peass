@@ -1,11 +1,7 @@
 package de.peass.measurement.analysis.statistics;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.text.NumberFormat;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;

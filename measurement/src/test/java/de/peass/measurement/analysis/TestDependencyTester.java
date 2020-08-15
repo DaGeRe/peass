@@ -2,8 +2,6 @@ package de.peass.measurement.analysis;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
@@ -21,7 +19,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.dagere.kopeme.datacollection.TimeDataCollector;
-import de.dagere.kopeme.datastorage.PerformanceDataMeasure;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
@@ -31,7 +28,6 @@ import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.dependency.ExecutorCreator;
-import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
@@ -68,7 +64,7 @@ public class TestDependencyTester {
       }).when(mockedExecutor).executeTest(Mockito.any(), Mockito.any(), Mockito.anyLong());
 
       PowerMockito.mockStatic(ExecutorCreator.class);
-      PowerMockito.when(ExecutorCreator.createExecutor(Mockito.any(), Mockito.anyLong(), Mockito.any()))
+      PowerMockito.when(ExecutorCreator.createExecutor(Mockito.any(), Mockito.any()))
             .thenReturn(mockedExecutor);
 
       PowerMockito.mockStatic(VersionControlSystem.class);

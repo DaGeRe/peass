@@ -26,12 +26,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.rca.CauseSearcher;
-import de.peass.measurement.rca.CauseSearcherComplete;
-import de.peass.measurement.rca.CauseSearcherConfig;
-import de.peass.measurement.rca.CauseTester;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.VCSTestUtils;
 import de.peass.measurement.rca.kieker.BothTreeReader;
@@ -46,6 +43,10 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 public class CauseSearcherIT {
    
    private static final Logger LOG = LogManager.getLogger(CauseSearcherIT.class);
+   
+   public final static CauseSearcherConfig CAUSE_CONFIG_TESTME_COMPLETE = new CauseSearcherConfig(new TestCase("defaultpackage.TestMe", "testMe"), 
+         false, false, 5.0, false, 0.1,
+         false, false);
    
    public static final File CURRENT = new File(new File("target"), "current");
    private static final File VERSIONS_FOLDER = new File("src/test/resources/rootCauseIT");
@@ -117,7 +118,7 @@ public class CauseSearcherIT {
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(2, "000001", "000001~1");
       measurementConfiguration.setUseKieker(true);
       final JUnitTestTransformer testTransformer = new JUnitTestTransformer(CURRENT, measurementConfiguration);
-      final CauseSearcherConfig causeSearcherConfig = TestConstants.SIMPLE_CAUSE_CONFIG_TESTME;
+      final CauseSearcherConfig causeSearcherConfig = CAUSE_CONFIG_TESTME_COMPLETE;
       
       final CauseSearchFolders folders = new CauseSearchFolders(CURRENT);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders);

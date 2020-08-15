@@ -24,8 +24,8 @@ public class GradleTestExecutor extends TestExecutor {
 
    private boolean isAndroid;
 
-   public GradleTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final long timeout) {
-      super(folders, timeout, testTransformer);
+   public GradleTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
+      super(folders, testTransformer);
    }
 
    @Override
@@ -35,7 +35,7 @@ public class GradleTestExecutor extends TestExecutor {
          final int testcount = getTestCount();
          final Process process = buildProcess(folders.getProjectFolder(), logFile);
          LOG.info("Starting Process, tests: {}", testcount);
-         final long timeout = 1l + testcount * this.timeout;
+         final long timeout = 1l + testcount * this.testTransformer.getConfig().getTimeoutInMinutes();
          execute("all", timeout, process);
       } catch (InterruptedException | IOException | XmlPullParserException e) {
          e.printStackTrace();

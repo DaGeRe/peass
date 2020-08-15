@@ -2,7 +2,6 @@ package de.peass.utils;
 
 import java.io.PrintStream;
 
-import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.SelectedTests;
 
 public class RunCommandWriter {

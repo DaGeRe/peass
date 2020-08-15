@@ -18,7 +18,6 @@ package de.peass.dependency.reader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -26,23 +25,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.namespace.QName;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.javaparser.printer.lexicalpreservation.changes.Change;
-
-import de.peass.dependency.analysis.data.CalledMethods;
 import de.peass.dependency.analysis.data.ChangeTestMapping;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.analysis.data.TestDependencies;
 import de.peass.dependency.analysis.data.TestExistenceChanges;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.changesreading.ClazzChangeData;

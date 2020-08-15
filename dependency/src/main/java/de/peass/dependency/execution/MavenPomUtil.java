@@ -45,18 +45,7 @@ public class MavenPomUtil {
             model.setBuild(build);
          }
 
-         final List<Dependency> dependencies = model.getDependencies();
-         if (dependencies != null) {
-            for (final Dependency dep : dependencies) {
-               if (dep.getVersion() != null) {
-                  if (!dep.getArtifactId().equals("kopeme-junit") && !dep.getArtifactId().equals("kopeme-junit3")) {
-                     if (dep.getVersion().endsWith("-SNAPSHOT")) {
-                        dep.setVersion(dep.getVersion().replaceAll("-SNAPSHOT", ""));
-                     }
-                  }
-               }
-            }
-         }
+         removeSnapshots(model);
          final List<Plugin> plugins = build.getPlugins();
          if (plugins != null) {
             for (final Plugin plugin : plugins) {
@@ -75,6 +64,21 @@ public class MavenPomUtil {
          writer.write(new FileWriter(pomFile), model);
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();
+      }
+   }
+
+   private static void removeSnapshots(final Model model) {
+      final List<Dependency> dependencies = model.getDependencies();
+      if (dependencies != null) {
+         for (final Dependency dep : dependencies) {
+            if (dep.getVersion() != null) {
+               if (!dep.getArtifactId().equals("kopeme-junit") && !dep.getArtifactId().equals("kopeme-junit3")) {
+                  if (dep.getVersion().endsWith("-SNAPSHOT")) {
+                     dep.setVersion(dep.getVersion().replaceAll("-SNAPSHOT", ""));
+                  }
+               }
+            }
+         }
       }
    }
 

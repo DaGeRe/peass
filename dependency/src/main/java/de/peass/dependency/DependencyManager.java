@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
@@ -65,7 +64,7 @@ public class DependencyManager extends KiekerResultManager {
     * 
     * @param projectFolder
     */
-   public DependencyManager(final File projectFolder, final int timeout) {
+   public DependencyManager(final File projectFolder, long timeout) {
       super(projectFolder, timeout);
    }
 

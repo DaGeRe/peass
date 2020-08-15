@@ -23,7 +23,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.dagere.kopeme.generated.Result;
 import de.peass.dependency.ExecutorCreator;
-import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MavenTestExecutor;
@@ -78,7 +77,7 @@ public class AdaptiveTesterTest {
       tester2.evaluate(testcase);
 
       Assert.assertEquals(100, tester2.getFinishedVMs());
-      Mockito.verify(config2).setIterations(38);
+      Mockito.verify(config2).setIterations(40);
    }
 
    @Test
@@ -173,6 +172,6 @@ public class AdaptiveTesterTest {
             return manager;
          }
       }).when(ExecutorCreator.class);
-      ExecutorCreator.createExecutor(Mockito.any(PeASSFolders.class), Mockito.anyLong(), Mockito.any(JUnitTestTransformer.class));
+      ExecutorCreator.createExecutor(Mockito.any(PeASSFolders.class), Mockito.any(JUnitTestTransformer.class));
    }
 }

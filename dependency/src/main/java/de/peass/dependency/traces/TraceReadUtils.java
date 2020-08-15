@@ -121,27 +121,22 @@ public class TraceReadUtils {
       if (currentTraceElement.getClazz().contains("$")) {
          final String indexString = currentTraceElement.getClazz().split("\\$")[1];
          if (indexString.matches("[0-9]+")) {
-            final int index = Integer.parseInt(indexString) - 1;
-            final List<NodeList<BodyDeclaration<?>>> anonymousClazzes = getAnonymusClasses(cu);
-            final NodeList<BodyDeclaration<?>> nodes = anonymousClazzes.get(index);
-            for (final Node candidate : nodes) {
-               LOG.trace(candidate);
-               final Node ret = getMethod(candidate, currentTraceElement);
-               if (ret != null) {
-                  return ret;
-               }
-            }
+            return getMethodAnonymousClass(currentTraceElement, cu, indexString);
          } else {
-            final Map<String, TypeDeclaration<?>> namedClasses = getNamedClasses(cu, "");
-            final String clazz = currentTraceElement.getClazz().substring(currentTraceElement.getClazz().lastIndexOf('.') + 1);
-            final TypeDeclaration<?> declaration = namedClasses.get(clazz);
-            return getMethod(declaration, currentTraceElement);
+            return getMethodNamedInnerClass(currentTraceElement, cu);
          }
       }
       Node method = null;
       for (final Node node : cu.getChildNodes()) {
-         if (node instanceof ClassOrInterfaceDeclaration || node instanceof EnumDeclaration) {
-            method = TraceReadUtils.getMethod(node, currentTraceElement);
+         if (node instanceof ClassOrInterfaceDeclaration) {
+            MethodReader reader = new MethodReader((ClassOrInterfaceDeclaration) node);
+            method = reader.getMethod(node, currentTraceElement);
+            if (method != null) {
+               break;
+            }
+         } else if (node instanceof EnumDeclaration) {
+            MethodReader reader = new MethodReader(null);
+            method = reader.getMethod(node, currentTraceElement);
             if (method != null) {
                break;
             }
@@ -152,125 +147,30 @@ public class TraceReadUtils {
       return method;
    }
 
-   public static Node getMethod(final Node node, final TraceElementContent currentTraceElement) {
-      if (node != null && node.getParentNode().isPresent()) {
-         final Node parent = node.getParentNode().get();
-         if (node instanceof MethodDeclaration) {
-            final MethodDeclaration method = (MethodDeclaration) node;
-            if (method.getNameAsString().equals(currentTraceElement.getMethod())) {
-               LOG.trace("Parameter: {} Trace-Parameter: {}", method.getParameters().size(), currentTraceElement.getParameterTypes().length);
-               if (parametersEqual(currentTraceElement, method)) {
-                  if (parent instanceof TypeDeclaration<?>) {
-                     final TypeDeclaration<?> clazz = (TypeDeclaration<?>) parent;
-                     final String clazzName = clazz.getNameAsString();
-                     if (clazzName.equals(currentTraceElement.getSimpleClazz())) {
-                        return method;
-                     }
-                  } else {
-                     return method;
-                  }
-               }
-            }
-         } else if (node instanceof ConstructorDeclaration) {
-            if ("<init>".equals(currentTraceElement.getMethod())) {
-               if (parent instanceof TypeDeclaration<?>) {
-                  final ConstructorDeclaration constructor = (ConstructorDeclaration) node;
-                  final TypeDeclaration<?> clazz = (TypeDeclaration<?>) parent;
-                  LOG.trace(clazz.getNameAsString() + " " + currentTraceElement.getClazz());
-                  if (clazz.getNameAsString().equals(currentTraceElement.getSimpleClazz())) {
-                     if (parametersEqual(currentTraceElement, constructor)) {
-                        return node;
-                     }
-                  }
-               }
-               LOG.trace(parent);
-            }
-         }
+   private static Node getMethodNamedInnerClass(final TraceElementContent currentTraceElement, final CompilationUnit cu) {
+      final Map<String, TypeDeclaration<?>> namedClasses = getNamedClasses(cu, "");
+      final String clazz = currentTraceElement.getClazz().substring(currentTraceElement.getClazz().lastIndexOf('.') + 1);
+      final TypeDeclaration<?> declaration = namedClasses.get(clazz);
+      MethodReader reader = new MethodReader((ClassOrInterfaceDeclaration) null);
+      return reader.getMethod(declaration, currentTraceElement);
+   }
 
-         for (final Node child : node.getChildNodes()) {
-            final Node possibleMethod = getMethod(child, currentTraceElement);
-            if (possibleMethod != null) {
-               return possibleMethod;
-            }
-
+   private static Node getMethodAnonymousClass(final TraceElementContent currentTraceElement, final CompilationUnit cu, final String indexString) {
+      final int index = Integer.parseInt(indexString) - 1;
+      final List<NodeList<BodyDeclaration<?>>> anonymousClazzes = getAnonymusClasses(cu);
+      final NodeList<BodyDeclaration<?>> nodes = anonymousClazzes.get(index);
+      MethodReader reader = new MethodReader(null);
+      for (final Node candidate : nodes) {
+         LOG.trace(candidate);
+         final Node ret = reader.getMethod(candidate, currentTraceElement);
+         if (ret != null) {
+            return ret;
          }
       }
-
       return null;
    }
 
-   private static boolean parametersEqual(final TraceElementContent te, final CallableDeclaration<?> method) {
-      if (te.getParameterTypes().length == 0 && method.getParameters().size() == 0) {
-         return true;
-      } else if (method.getParameters().size() == 0) {
-         return false;
-      }
-      int parameterIndex = 0;
-      final List<Parameter> parameters = method.getParameters();
-      String[] traceParameterTypes;
-      if (te.isInnerClassCall()) {
-         final String outerClazz = te.getOuterClass();
-         final String firstType = te.getParameterTypes()[0];
-         if (outerClazz.equals(firstType)) {
-            traceParameterTypes = new String[te.getParameterTypes().length - 1];
-            System.arraycopy(te.getParameterTypes(), 1, traceParameterTypes, 0, te.getParameterTypes().length - 1);
-         } else {
-            traceParameterTypes = te.getParameterTypes();
-         }
-      } else {
-         traceParameterTypes = te.getParameterTypes();
-      }
-      if (traceParameterTypes.length != parameters.size() && !parameters.get(parameters.size() - 1).isVarArgs()) {
-         return false;
-      } else if (parameters.get(parameters.size() - 1).isVarArgs()) {
-         if (traceParameterTypes.length < parameters.size() - 1) {
-            return false;
-         }
-      }
-
-      for (final Parameter parameter : parameters) {
-         final Type type = parameter.getType();
-         LOG.trace(type + " " + type.getClass());
-         if (!parameter.isVarArgs()) {
-            if (!testParameter(traceParameterTypes, parameterIndex, type, false)) {
-               return false;
-            }
-         } else {
-            if (traceParameterTypes.length > parameterIndex) {
-               for (int varArgIndex = parameterIndex; varArgIndex < traceParameterTypes.length; varArgIndex++) {
-                  if (!testParameter(traceParameterTypes, varArgIndex, type, true)) {
-                     return false;
-                  }
-               }
-            }
-         }
-
-         parameterIndex++;
-      }
-
-      return true;
-   }
-
-   private static boolean testParameter(final String traceParameterTypes[], final int parameterIndex, final Type type, final boolean varArgAllowed) {
-      final String traceParameterType = traceParameterTypes[parameterIndex];
-      final String simpleTraceParameterType = traceParameterType.substring(traceParameterType.lastIndexOf('.') + 1);
-      final String typeString = type instanceof ClassOrInterfaceType ? ((ClassOrInterfaceType) type).getNameAsString() : type.toString();
-      // ClassOrInterfaceType
-      if (typeString.equals(simpleTraceParameterType)) {
-         return true;
-      } else if (varArgAllowed && (typeString + "[]").equals(simpleTraceParameterType)) {
-         return true;
-      } else if (simpleTraceParameterType.contains("$")) {
-         final String innerClassName = simpleTraceParameterType.substring(simpleTraceParameterType.indexOf("$") + 1);
-         if (innerClassName.equals(typeString)) {
-            return true;
-         } else {
-            return false;
-         }
-      } else {
-         return false;
-      }
-   }
+   
 
    public static boolean traceElementsEquals(final TraceElement currentTraceElement, final TraceElement samePredecessorCandidate) {
       return samePredecessorCandidate.getClazz().equals(currentTraceElement.getClazz()) &&

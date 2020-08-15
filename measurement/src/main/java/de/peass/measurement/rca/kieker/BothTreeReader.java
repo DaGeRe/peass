@@ -66,10 +66,10 @@ public class BothTreeReader {
    }
 
    private void determineTrees() throws InterruptedException, IOException, FileNotFoundException, XmlPullParserException, ViewNotFoundException, AnalysisConfigurationException {
-      final TreeReader resultsManager = TreeReaderFactory.createTreeReader(folders, config.getVersionOld(), config.getTimeout(), causeSearchConfig.isIgnoreEOIs());
+      final TreeReader resultsManager = TreeReaderFactory.createTreeReader(folders, config.getVersionOld(), config.getTimeoutInMinutes(), causeSearchConfig.isIgnoreEOIs());
       rootPredecessor = resultsManager.getTree(causeSearchConfig.getTestCase(), config.getVersionOld());
 
-      final TreeReader resultsManagerPrevious = TreeReaderFactory.createTreeReader(folders, config.getVersion(), config.getTimeout(), causeSearchConfig.isIgnoreEOIs());
+      final TreeReader resultsManagerPrevious = TreeReaderFactory.createTreeReader(folders, config.getVersion(), config.getTimeoutInMinutes(), causeSearchConfig.isIgnoreEOIs());
       rootVersion = resultsManagerPrevious.getTree(causeSearchConfig.getTestCase(), config.getVersion());
       LOG.info("Traces equal: {}", TreeUtil.areTracesEqual(rootPredecessor, rootVersion));
    }

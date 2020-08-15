@@ -14,8 +14,8 @@ import de.dagere.kopeme.generated.Result;
 import de.peass.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peass.measurement.analysis.MultipleVMTestUtil;
 import de.peass.measurement.analysis.Relation;
+import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
-import de.peass.statistics.ConfidenceInterval;
 import de.peran.FolderSearcher;
 
 public class TestStatistic {
@@ -41,8 +41,8 @@ public class TestStatistic {
 
       checkData(data, previous, current);
 
-      previous = ConfidenceInterval.getWarmedUpData(previous);
-      current = ConfidenceInterval.getWarmedUpData(current);
+      previous = StatisticUtil.shortenValues(previous);
+      current = StatisticUtil.shortenValues(current);
 
       confidenceResult = ConfidenceIntervalInterpretion.compare(previous, current);
 

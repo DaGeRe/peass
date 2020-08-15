@@ -69,7 +69,7 @@ public class AdaptiveTester extends DependencyTester {
          System.out.println(loader.getStatisticsAfter());
          DescriptiveStatistics statisticsBefore = loader.getStatisticsBefore();
          DescriptiveStatistics statisticsAfter = loader.getStatisticsAfter();
-         
+
          final EarlyBreakDecider decider = new EarlyBreakDecider(configuration, statisticsAfter, statisticsBefore);
          decider.setType1error(configuration.getType1error());
          decider.setType2error(configuration.getType2error());
@@ -84,32 +84,33 @@ public class AdaptiveTester extends DependencyTester {
       boolean shouldBreak = false;
       final Result versionOldResult = getLastResult(configuration.getVersionOld(), testcase, vmid);
       final Result versionNewResult = getLastResult(configuration.getVersion(), testcase, vmid);
-      if (vmid < 10) {
-         shouldBreak = updateExecutions(configuration.getVersionOld(), shouldBreak, versionOldResult);
-         shouldBreak = updateExecutions(configuration.getVersion(), shouldBreak, versionNewResult);
+      if (vmid < 40) {
+         int reducedIterations = Math.min(shouldReduce(configuration.getVersionOld(), versionOldResult),
+                                  shouldReduce(configuration.getVersion(), versionNewResult));
+         if (reducedIterations != testTransformer.getConfig().getIterations()) {
+            final int lessIterations = testTransformer.getConfig().getIterations() / 5;
+            shouldBreak = reduceExecutions(shouldBreak, lessIterations);
+         }
       }
 
       return shouldBreak;
    }
 
-   private boolean updateExecutions(final String versionOld, boolean shouldBreak, final Result versionOldResult) {
-      if (versionOldResult == null) {
-         final int lessIterations = testTransformer.getConfig().getIterations() / 5;
-         if (versionOldResult == null) {
-            final String problemReason = "Measurement for " + versionOld + " is null";
-            LOG.error(problemReason);
-         }
-         shouldBreak = reduceExecutions(shouldBreak, lessIterations);
-      } else if (versionOldResult.getExecutionTimes() < testTransformer.getConfig().getIterations()) {
-         final int lessIterations;
-         LOG.error("Measurement executions: {}", versionOldResult.getExecutionTimes());
-         final int minOfExecuted = (int) versionOldResult.getExecutionTimes() - 2;
-         lessIterations = Math.min(minOfExecuted, testTransformer.getConfig().getIterations() / 2);
-         shouldBreak = reduceExecutions(shouldBreak, lessIterations);
-      } else if ((versionOldResult.getValue() > 10E7 || versionOldResult.getValue() > 10E7) && testTransformer.getConfig().getIterations() > 10) {
-         shouldBreak = reduceExecutions(shouldBreak, testTransformer.getConfig().getIterations() / 5);
+   private int shouldReduce(final String version, final Result result) {
+      final int reducedIterations;
+      if (result == null) {
+         reducedIterations = testTransformer.getConfig().getIterations() / 2;
+         LOG.error("Measurement for {} is null", version);
+      } else if (result.getExecutionTimes() < testTransformer.getConfig().getIterations()) {
+         LOG.error("Measurement executions: {}", result.getExecutionTimes());
+         final int minOfExecuted = (int) result.getExecutionTimes() - 2;
+         reducedIterations = Math.min(minOfExecuted, testTransformer.getConfig().getIterations() / 2);
+      } else if (result.getValue() > 10E7 && testTransformer.getConfig().getIterations() > 10) {
+         reducedIterations = testTransformer.getConfig().getIterations() / 2;
+      } else {
+         reducedIterations = testTransformer.getConfig().getIterations();
       }
-      return shouldBreak;
+      return reducedIterations;
    }
 
    boolean reduceExecutions(boolean shouldBreak, final int lessIterations) {
@@ -118,8 +119,10 @@ public class AdaptiveTester extends DependencyTester {
          testTransformer.getConfig().setIterations(lessIterations);
          testTransformer.getConfig().setWarmup(0);
       } else {
-         if (testTransformer.getConfig().getRepetitions() > 10) {
-            testTransformer.getConfig().setRepetitions(10);
+         if (testTransformer.getConfig().getRepetitions() > 5) {
+            final int reducedRepetitions = testTransformer.getConfig().getRepetitions() / 5;
+            LOG.debug("Reducing repetitions to " + reducedRepetitions);
+            testTransformer.getConfig().setRepetitions(reducedRepetitions);
          } else {
             shouldBreak = true;
          }

@@ -11,7 +11,6 @@ import org.junit.Test;
 
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.peass.dependency.analysis.data.TestCase;

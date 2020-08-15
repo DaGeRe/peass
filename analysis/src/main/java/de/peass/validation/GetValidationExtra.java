@@ -2,7 +2,6 @@ package de.peass.validation;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,9 +9,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.measurement.analysis.DataAnalyser;
 import de.peass.utils.Constants;
-import de.peran.FolderSearcher;
 
 /**
  * Reads validation data from extra executed validation-experiments (are saved in $PEASS_REPOS/measurementdata/validation/).

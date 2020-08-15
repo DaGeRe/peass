@@ -1,9 +1,7 @@
 package de.peass;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Arrays;
@@ -26,7 +24,6 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
-import de.peass.utils.DivideVersions;
 import de.peass.utils.OptionConstants;
 import de.peass.utils.RunCommandWriter;
 import de.peass.utils.RunCommandWriterSlurm;

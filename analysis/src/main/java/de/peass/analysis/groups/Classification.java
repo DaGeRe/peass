@@ -3,15 +3,13 @@ package de.peass.analysis.groups;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.Set;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.peass.analysis.changes.ChangeReader;
 import de.peass.dependency.analysis.data.ChangedEntity;
 
 public class Classification {

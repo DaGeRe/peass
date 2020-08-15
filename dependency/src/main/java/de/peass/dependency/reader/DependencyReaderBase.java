@@ -2,10 +2,7 @@ package de.peass.dependency.reader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,16 +17,12 @@ import de.peass.dependency.ChangeManager;
 import de.peass.dependency.DependencyManager;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.ModuleClassMapping;
-import de.peass.dependency.analysis.data.CalledMethods;
 import de.peass.dependency.analysis.data.ChangeTestMapping;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestDependencies;
 import de.peass.dependency.analysis.data.TestExistenceChanges;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.changesreading.ClazzChangeData;
 import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.InitialDependency;
-import de.peass.dependency.persistence.InitialVersion;
 import de.peass.dependency.persistence.Version;
 import de.peass.utils.Constants;
 import de.peass.vcs.VersionIterator;

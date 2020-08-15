@@ -10,7 +10,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
@@ -22,7 +21,6 @@ import de.peass.measurement.analysis.statistics.TestData;
 import de.peass.measurement.organize.FolderDeterminer;
 import de.peass.measurement.organize.ResultOrganizer;
 import de.peass.testtransformation.JUnitTestTransformer;
-import de.peass.testtransformation.TimeBasedTestTransformer;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 
@@ -56,7 +54,7 @@ public class DependencyTester {
 
       vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
       this.testTransformer = testgenerator;
-      testExecutor = ExecutorCreator.createExecutor(folders, Integer.MAX_VALUE, testTransformer);
+      testExecutor = ExecutorCreator.createExecutor(folders, testTransformer);
    }
 
    /**
@@ -130,8 +128,8 @@ public class DependencyTester {
          testExecutor.loadClasses();
       }
       testExecutor.prepareKoPeMeExecution(new File(logFolder, "clean.txt"));
-      final long timeout = 5 + (int) (this.configuration.getTimeout() * 1.1);
-      testExecutor.executeTest(testcase, vmidFolder, timeout);
+      final long outerTimeout = 5 + (int) (this.configuration.getTimeoutInMinutes() * 1.1);
+      testExecutor.executeTest(testcase, vmidFolder, outerTimeout);
       
       LOG.debug("Handling Kieker results");
       handleKiekerResults(version, currentOrganizer.getTempResultsFolder());

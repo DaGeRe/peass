@@ -10,11 +10,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,13 +22,9 @@ import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.InitialVersion;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.traces.ViewGenerator;
-import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.Constants;
-import de.peass.utils.OptionConstants;
-import de.peass.utils.TestLoadUtil;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
-import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 /**

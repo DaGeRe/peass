@@ -2,11 +2,8 @@ package de.peass.dependencyprocessors;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.bind.JAXBException;
-
 
 import de.dagere.kopeme.datacollection.DataCollector;
 import de.dagere.kopeme.datacollection.TestResult;
@@ -52,8 +49,7 @@ public class DummyKoPeMeDataCreator {
    }
 
    private static void writeToDisk(int count, ResultTempWriter writer) {
-      Map<String, DataCollector> collectors = new HashMap<>();
-      collectors.put(TimeDataCollector.class.getName(), new DataCollector() {
+      DataCollector[] collectors = new DataCollector[] {new DataCollector() {
          @Override
          public void stopCollection() {
          }
@@ -76,7 +72,7 @@ public class DummyKoPeMeDataCreator {
          public String getName() {
             return TimeDataCollector.class.getName();
          }
-      });
+      }};
       writer.setDataCollectors(collectors);
       for (int i = 0; i < count; i++) {
          writer.executionStart(i);

@@ -16,14 +16,11 @@ import org.mockito.Mockito;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.rca.CauseSearcherComplete;
-import de.peass.measurement.rca.CauseTester;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.TreeBuilder;
 import de.peass.measurement.rca.helper.TreeBuilderBig;
 import de.peass.measurement.rca.helper.TreeBuilderDifferent;
-import de.peass.measurement.rca.helper.TreeBuilderLeafs;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import kieker.analysis.exception.AnalysisConfigurationException;
 

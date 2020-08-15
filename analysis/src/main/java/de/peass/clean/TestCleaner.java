@@ -10,21 +10,16 @@ import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.AdaptiveTestStarter;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.Cleaner;
-import de.peass.measurement.analysis.ConfidenceCleaner;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.Constants;
-import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitUtils;
-import de.peran.FolderSearcher;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -100,19 +95,13 @@ public class TestCleaner implements Callable<Void> {
 
       LOG.debug("Data: {}", cleaner.getDataValue().length);
 
-      Map<File, List<File>> commonParentFiles = new HashMap<>();
+      Map<File, List<File>> commonParentFiles = sortFolders(cleaner);
 
-      for (int i = 0; i < cleaner.getDataValue().length; i++) {
-         final File dataFolder = cleaner.getDataValue()[i];
-         final File projectNameFolder = dataFolder.getParentFile();
-         List<File> fileList = commonParentFiles.get(projectNameFolder);
-         if (fileList == null) {
-            fileList = new LinkedList<>();
-            commonParentFiles.put(projectNameFolder, fileList);
-         }
-         fileList.add(dataFolder);
-      }
+      executeCleaning(cleaner, commonParentFiles);
+      return null;
+   }
 
+   private void executeCleaning(CleaningData cleaner, Map<File, List<File>> commonParentFiles) throws JAXBException, IOException {
       for (Map.Entry<File, List<File>> entry : commonParentFiles.entrySet()) {
          File projectNameFolder = entry.getKey();
 
@@ -132,7 +121,22 @@ public class TestCleaner implements Callable<Void> {
             }
          }
       }
-      return null;
+   }
+
+   private Map<File, List<File>> sortFolders(CleaningData cleaner) {
+      Map<File, List<File>> commonParentFiles = new HashMap<>();
+
+      for (int i = 0; i < cleaner.getDataValue().length; i++) {
+         final File dataFolder = cleaner.getDataValue()[i];
+         final File projectNameFolder = dataFolder.getParentFile();
+         List<File> fileList = commonParentFiles.get(projectNameFolder);
+         if (fileList == null) {
+            fileList = new LinkedList<>();
+            commonParentFiles.put(projectNameFolder, fileList);
+         }
+         fileList.add(dataFolder);
+      }
+      return commonParentFiles;
    }
 
 }

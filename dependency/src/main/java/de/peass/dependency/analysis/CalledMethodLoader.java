@@ -32,7 +32,6 @@ import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TraceElement;
 import kieker.analysis.AnalysisController;
 import kieker.analysis.exception.AnalysisConfigurationException;
-import kieker.analysis.plugin.reader.filesystem.FSReader;
 import kieker.common.configuration.Configuration;
 import kieker.tools.trace.analysis.filter.traceReconstruction.TraceReconstructionFilter;
 

@@ -2,6 +2,7 @@ package de.peass;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -15,6 +16,21 @@ import de.peass.dependency.traces.TraceReadUtils;
 import de.peass.dependency.traces.requitur.content.TraceElementContent;
 
 public class TestSourceReading {
+   
+   @Test
+   public void testGenericClass() throws FileNotFoundException {
+      final CompilationUnit cu = FileComparisonUtil.parse(new File("src/test/resources/methodFinding/GenericClassExample.java"));
+
+      final TraceElementContent exampleTrace = new TraceElementContent("GenericClassExample", "test1", new String[0], 1);
+      final Node exampleMethod = TraceReadUtils.getMethod(exampleTrace, cu);
+
+      Assert.assertNotNull(exampleMethod);
+
+      final TraceElementContent genericMethod = new TraceElementContent("GenericClassExample", "myMethod", new String[] {"Comparable"}, 1);
+      final Node genericMethodNode = TraceReadUtils.getMethod(genericMethod, cu);
+
+      Assert.assertNotNull(genericMethodNode);
+   }
 
    @Test
    public void testAnonymousClass() throws FileNotFoundException {

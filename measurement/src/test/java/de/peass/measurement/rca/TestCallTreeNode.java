@@ -1,15 +1,11 @@
 package de.peass.measurement.rca;
 
-import static org.junit.Assert.*;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.measurement.rca.data.CallTreeNode;
-import de.peass.measurement.rca.helper.TreeBuilder;
 import de.peass.measurement.rca.helper.TreeBuilderBig;
-import de.peass.measurement.rca.helper.TreeBuilderDifferent;
 
 public class TestCallTreeNode {
    @Test

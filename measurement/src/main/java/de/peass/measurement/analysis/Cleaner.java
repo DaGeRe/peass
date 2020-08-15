@@ -12,25 +12,19 @@ import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.groovy.util.StringUtil;
 
-import de.dagere.kopeme.datacollection.DataCollector;
-import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
-import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.kopeme.generated.Versioninfo;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.TestData;
-import de.peass.statistics.ConfidenceInterval;
 import de.peass.utils.OptionConstants;
 
 /**
@@ -117,29 +111,33 @@ public class Cleaner extends DataAnalyser {
          final List<Result> current = getChunk(entry.getValue().getVersion(), minExecutionCount, entry.getValue().getCurrent());
          currentChunk.getResult().addAll(current);
 
-         try {
-            final MeasurementFileFinder finder = new MeasurementFileFinder(measurementsFull, clazz, method);
-            final File measurementFile = finder.getMeasurementFile();
-            final Kopemedata oneResultData = finder.getOneResultData();
-            Datacollector datacollector = finder.getDataCollector();
-            
-            if (checkChunk(currentChunk)) {
-               datacollector.getChunk().add(currentChunk);
-               XMLDataStorer.storeData(measurementFile, oneResultData);
-               correct++;
-            } else {
-               for (final Result r : entry.getValue().getPrevius()) {
-                  LOG.debug("Value: {} Executions: {} Repetitions: {}", r.getValue(), r.getExecutionTimes(), r.getRepetitions());
-               }
-               for (final Result r : entry.getValue().getCurrent()) {
-                  LOG.debug("Value:  {} Executions: {} Repetitions: {}", r.getValue(), r.getExecutionTimes(), r.getRepetitions());
-               }
-               LOG.debug("Too few correct measurements: {} ", measurementFile.getAbsolutePath());
-               LOG.debug("Measurements: {} / {}", currentChunk.getResult().size(), entry.getValue().getPrevius().size() + entry.getValue().getCurrent().size());
+         handleChunk(entry, clazz, method, currentChunk);
+      }
+   }
+
+   private void handleChunk(final Entry<String, EvaluationPair> entry, final String clazz, final String method, final Chunk currentChunk) {
+      try {
+         final MeasurementFileFinder finder = new MeasurementFileFinder(measurementsFull, clazz, method);
+         final File measurementFile = finder.getMeasurementFile();
+         final Kopemedata oneResultData = finder.getOneResultData();
+         Datacollector datacollector = finder.getDataCollector();
+         
+         if (checkChunk(currentChunk)) {
+            datacollector.getChunk().add(currentChunk);
+            XMLDataStorer.storeData(measurementFile, oneResultData);
+            correct++;
+         } else {
+            for (final Result r : entry.getValue().getPrevius()) {
+               LOG.debug("Value: {} Executions: {} Repetitions: {}", r.getValue(), r.getExecutionTimes(), r.getRepetitions());
             }
-         } catch (final JAXBException e) {
-            e.printStackTrace();
+            for (final Result r : entry.getValue().getCurrent()) {
+               LOG.debug("Value:  {} Executions: {} Repetitions: {}", r.getValue(), r.getExecutionTimes(), r.getRepetitions());
+            }
+            LOG.debug("Too few correct measurements: {} ", measurementFile.getAbsolutePath());
+            LOG.debug("Measurements: {} / {}", currentChunk.getResult().size(), entry.getValue().getPrevius().size() + entry.getValue().getCurrent().size());
          }
+      } catch (final JAXBException e) {
+         e.printStackTrace();
       }
    }
 
@@ -152,8 +150,7 @@ public class Cleaner extends DataAnalyser {
    }
 
    private List<Result> getChunk(final String version, final long minExecutionCount, List<Result> previous) {
-      final List<Result> previousClean = ConfidenceInterval.getWarmedUpData(previous);
-//      final List<Result> previousClean = ConfidenceInterval.getWarmupData(previous);
+      final List<Result> previousClean = StatisticUtil.shortenValues(previous);
       for (final Iterator<Result> it = previousClean.iterator(); it.hasNext();) {
          final Result result = it.next();
          final int resultSize = result.getFulldata().getValue().size();

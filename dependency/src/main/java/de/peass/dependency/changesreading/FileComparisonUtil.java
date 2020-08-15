@@ -19,14 +19,11 @@ package de.peass.dependency.changesreading;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import javax.management.RuntimeErrorException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -52,14 +49,9 @@ import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.Statement;
-import com.github.javaparser.ast.visitor.GenericVisitor;
-import com.github.javaparser.ast.visitor.VoidVisitor;
-import com.github.javaparser.printer.lexicalpreservation.changes.Change;
-import com.sun.xml.bind.v2.schemagen.xmlschema.Import;
 
 import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import javassist.compiler.ast.MethodDecl;
 
 /**
  * Helps to compare whether two versions of a file may have changed performance (and whether this change is for the use of the whole file or only some methods).
@@ -449,7 +441,7 @@ public final class FileComparisonUtil {
       return clazz;
    }
 
-   private static String getParameters(final CallableDeclaration callable) {
+   private static String getParameters(final CallableDeclaration<?> callable) {
       NodeList<Parameter> parameterDeclaration = callable.getParameters();
       String parameters;
       if (parameterDeclaration.size() > 0) {

@@ -15,7 +15,6 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.DependencyParallelReader;
 import de.peass.DependencyReadingStarter;
 import de.peass.dependency.parallel.Merger;
 import de.peass.dependencyprocessors.VersionComparator;

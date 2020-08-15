@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.serialization.MeasuredNode;
-import jline.internal.Log;
 
 public class CauseSearchData {
 

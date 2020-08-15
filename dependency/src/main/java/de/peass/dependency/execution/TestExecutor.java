@@ -42,16 +42,13 @@ public abstract class TestExecutor {
    protected final PeASSFolders folders;
    protected File lastTmpFile;
    protected int jdk_version = 8;
-   /** This is the timeout in minutes */
-   protected final long timeout;
    protected final JUnitTestTransformer testTransformer;
    protected List<String> existingClasses;
 
    protected boolean buildfileExists = false;
 
-   public TestExecutor(final PeASSFolders folders, final long timeout, final JUnitTestTransformer testTransformer) {
+   public TestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
       this.folders = folders;
-      this.timeout = timeout;
       this.testTransformer = testTransformer;
    }
 
@@ -167,7 +164,7 @@ public abstract class TestExecutor {
       if (timeout == -1) {
          LOG.info("Executing without timeout!");
          process.waitFor();
-      } else {
+      } else if (timeout > 0) {
          LOG.debug("Executing: {} Timeout: {}", testname, timeout);
          process.waitFor(timeout, TimeUnit.MINUTES);
          if (process.isAlive()) {
@@ -176,6 +173,8 @@ public abstract class TestExecutor {
             aborted.add(testname);
             FileUtils.writeStringToFile(new File(folders.getFullMeasurementFolder(), "aborted.txt"), aborted.toString(), Charset.defaultCharset());
          }
+      } else {
+         throw new RuntimeException("Illegal timeout: " + timeout);
       }
 
    }
@@ -194,9 +193,9 @@ public abstract class TestExecutor {
          pb.redirectOutput(Redirect.appendTo(logFile));
          pb.redirectError(Redirect.appendTo(logFile));
 
-         LOG.debug("Waiting for {} minutes", timeout);
+         LOG.debug("Waiting for {} minutes", testTransformer.getConfig().getTimeoutInMinutes());
          final Process process = pb.start();
-         process.waitFor(timeout, TimeUnit.MINUTES);
+         process.waitFor(testTransformer.getConfig().getTimeoutInMinutes(), TimeUnit.MINUTES);
          if (process.isAlive()) {
             LOG.debug("Destroying process");
             process.destroyForcibly().waitFor();
@@ -280,10 +279,6 @@ public abstract class TestExecutor {
 
    public boolean isAndroid() {
       return false;
-   }
-
-   public long getTimeout() {
-      return timeout;
    }
 
    public abstract void setIncludedMethods(Set<String> includedPattern);

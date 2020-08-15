@@ -1,6 +1,5 @@
 package de.peass.measurement.analysis.statistics;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;

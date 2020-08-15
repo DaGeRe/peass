@@ -37,10 +37,10 @@ public class GetChanges implements Callable<Void> {
    private File out = new File("results");
 
    @Option(names = { "-type1error", "--type1error" }, description = "Type 1 error of agnostic-t-test, i.e. probability of considering measurements equal when they are unequal")
-   public double type1error = 0.01;
+   public double type1error = 0.001;
 
    @Option(names = { "-type2error", "--type2error" }, description = "Type 2 error of agnostic-t-test, i.e. probability of considering measurements unequal when they are equal")
-   private double type2error = 0.01;
+   private double type2error = 0.001;
 
    public GetChanges() {
 

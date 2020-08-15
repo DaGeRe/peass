@@ -11,6 +11,8 @@ import de.dagere.kopeme.generated.Result;
 
 public class OutlierRemover {
 
+   public static final double Z_SCORE = 3.29;
+
    class RemoveInformation {
       int removedHigher = 0;
       int removedLower = 0;
@@ -81,8 +83,8 @@ public class OutlierRemover {
 
    private RemoveInformation removeOutliers(DescriptiveStatistics statistics, List<Result> results) {
       final RemoveInformation removals = new RemoveInformation();
-      final double max = statistics.getMean() + 2 * statistics.getStandardDeviation();
-      final double min = statistics.getMean() - 2 * statistics.getStandardDeviation();
+      final double max = statistics.getMean() + Z_SCORE * statistics.getStandardDeviation();
+      final double min = statistics.getMean() - Z_SCORE * statistics.getStandardDeviation();
       final int outliers = countOutliers(results, max, min);
       final double allowedOutliers = results.size() * 0.05;
       LOG.info("Outliers: {} Allowed: {} Values: {}", outliers, allowedOutliers, results.size());

@@ -86,13 +86,29 @@ public class ChangeReader {
    private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info) throws JAXBException {
       if (measurementFolder.isDirectory()) {
          for (final File file : measurementFolder.listFiles()) {
-            if (file.getName().endsWith(".xml")) {
+            if (file.getName().matches("[0-9]+_[0-9]+")) {
+               File slurmCleanFolder = new File(file, "peass/clean");
+               readCleanFolder(measurementFolder, changes, info, slurmCleanFolder);
+            } else if (file.getName().equals("clean")) {
+               LOG.info("Reading clean folder: {}", file);
+               readCleanFolder(measurementFolder, changes, info, file);
+            } else if (file.getName().endsWith(".xml")) {
                readFile(measurementFolder, changes, info, file);
             }
          }
       } else {
          if (measurementFolder.getName().endsWith(".xml")) {
             readFile(measurementFolder, changes, info, measurementFolder);
+         }
+      }
+   }
+
+   private void readCleanFolder(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, File slurmCleanFolder) throws JAXBException {
+      File versionFolder = slurmCleanFolder.listFiles()[0].listFiles()[0];
+      File testcaseFolder = versionFolder.listFiles()[0].listFiles()[0];
+      for (File childFile : testcaseFolder.listFiles()) {
+         if (childFile.getName().endsWith(".xml")) {
+            readFile(measurementFolder, changes, info, childFile);
          }
       }
    }
@@ -113,7 +129,7 @@ public class ChangeReader {
    private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File file) throws JAXBException {
       final Kopemedata data = new XMLDataLoader(file).getFullData();
       for (final TestcaseType testcaseMethod : data.getTestcases().getTestcase()) {
-         System.out.println(file.getAbsolutePath());
+         LOG.info(file.getAbsolutePath());
          readTestcase(measurementFolder.getName(), data, testcaseMethod, changes, info);
          measurements += testcaseMethod.getDatacollector().get(0).getChunk().size();
          testcases++;
@@ -123,27 +139,31 @@ public class ChangeReader {
    private int readTestcase(final String fileName, final Kopemedata data, final TestcaseType testcaseMethod, final ProjectChanges changeKnowledge,
          final ProjectStatistics info) {
       for (final Chunk chunk : testcaseMethod.getDatacollector().get(0).getChunk()) {
-
          folderMeasurements++;
          final String[] versions = KoPeMeDataHelper.getVersions(chunk);
          LOG.debug(versions[1]);
          if (versions[1] != null) {
-            final DescribedChunk describedChunk = new DescribedChunk(chunk, versions[0], versions[1]);
-            describedChunk.removeOutliers();
-
-            if (describedChunk.getDescPrevious().getN() > 1 && describedChunk.getDescCurrent().getN() > 1) {
-               getIsChange(fileName, data, changeKnowledge, info, versions, describedChunk);
-            } else {
-               System.out.println("Too few measurements: " + describedChunk.getDescPrevious().getN() + " " + versions[0] + " " + versions[1]);
-            }
+            readChunk(fileName, data, changeKnowledge, info, chunk, versions);
          }
       }
       return folderMeasurements;
    }
 
+   private void readChunk(final String fileName, final Kopemedata data, final ProjectChanges changeKnowledge, final ProjectStatistics info, final Chunk chunk,
+         final String[] versions) {
+      final DescribedChunk describedChunk = new DescribedChunk(chunk, versions[0], versions[1]);
+      describedChunk.removeOutliers();
+
+      if (describedChunk.getDescPrevious().getN() > 1 && describedChunk.getDescCurrent().getN() > 1) {
+         getIsChange(fileName, data, changeKnowledge, info, versions, describedChunk);
+      } else {
+         System.out.println("Too few measurements: " + describedChunk.getDescPrevious().getN() + " " + versions[0] + " " + versions[1]);
+      }
+   }
+
    public void getIsChange(final String fileName, final Kopemedata data, final ProjectChanges changeKnowledge, final ProjectStatistics info,
          final String[] versions, final DescribedChunk describedChunk) {
-      System.out.println(data.getTestcases().getClazz());
+      LOG.debug(data.getTestcases().getClazz());
       final TestcaseStatistic statistic = describedChunk.getStatistic(type1error, type2error);
       statistic.setPredecessor(versions[0]);
       // if (! (statistic.getTvalue() == Double.NaN)){
