@@ -106,7 +106,7 @@
 			<version>0.11-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>co.unruly</groupId>
 			<artifactId>java-8-matchers</artifactId>
@@ -140,9 +140,8 @@
 
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-all</artifactId>
-			<version>2.5.7</version>
-			<type>pom</type>
+			<artifactId>groovy-astbuilder</artifactId>
+			<version>3.0.4</version>
 		</dependency>
 	</dependencies>
 
