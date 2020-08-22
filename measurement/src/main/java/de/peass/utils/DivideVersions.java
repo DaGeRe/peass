@@ -5,54 +5,66 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBException;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.DependencyTestStarter;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependencyprocessors.VersionComparator;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
- * Divides the versions of a dependencyfile (and optionally an executionfile) in order to start slurm test executions.
+ * Creates a script for running a set of tests based on a dependencyfile (and optionally an executionfile) in order to start test executions.
  * 
  * @author reichelt
  *
  */
-public class DivideVersions {
+@Command(description = "Creates a script (bash or slurm) to run a set of tests", name = "createScript")
+public class DivideVersions implements Callable<Void> {
 
-   public static void main(final String[] args) throws JAXBException, ParseException, JsonParseException, JsonMappingException, IOException {
-      final Option experimentIdOption = Option.builder("experiment_id").hasArg().build();
-      final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE, OptionConstants.EXECUTIONFILE, OptionConstants.USE_SLURM);
-      options.addOption(experimentIdOption);
-      final CommandLineParser parser = new DefaultParser();
+   @Option(names = { "-experimentId", "--experimentId" }, description = "Id of the experiment")
+   protected String experimentId = "default";
+   
+   @Option(names = { "-dependencyfile", "--dependencyfile", "-dependencyFile", "--dependencyFile"  }, description = "Path to the dependencyfile")
+   protected File dependencyFile;
 
-      final CommandLine line = parser.parse(options, args);
+   @Option(names = { "-executionfile", "--executionfile", "-executionFile", "--executionFile" }, description = "Path to the executionfile")
+   protected File executionfile;
+   
+   @Option(names = { "-useSlurm", "--useSlurm" }, description = "Use slurm (if not specified, a bash script is created)")
+   protected Boolean useSlurm = false;
 
-      final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
-      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-      VersionComparator.setDependencies(dependencies);
-
-      final ExecutionData changedTests = TestLoadUtil.loadChangedTests(line);
-
-      final File resultFolder = new File("results");
-      if (!resultFolder.exists()) {
-         resultFolder.mkdirs();
+   private Dependencies dependencies;
+   private ExecutionData executionData;
+   
+   public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
+      final DivideVersions command = new DivideVersions();
+      final CommandLine commandLine = new CommandLine(command);
+      commandLine.execute(args);
+   }
+   
+   @Override
+   public Void call() throws Exception {
+      if (dependencyFile != null) {
+         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       }
-      final String experimentId = line.getOptionValue("experiment_id", "unknown");
-
-      boolean useSlurm = Boolean.parseBoolean(line.getOptionValue(OptionConstants.USE_SLURM.getName(), "true"));
+      if (executionfile != null) {
+         executionData = Constants.OBJECTMAPPER.readValue(executionfile, ExecutionData.class);
+         dependencies = new Dependencies(executionData);
+      }
+      if (executionData == null && dependencies == null) {
+         throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");
+      }
 
       PrintStream destination = System.out;
       RunCommandWriter writer;
@@ -63,7 +75,9 @@ public class DivideVersions {
          writer = new RunCommandWriter(destination, experimentId, dependencies);
       }
 
-      generateExecuteCommands(dependencies, changedTests, experimentId, writer);
+      generateExecuteCommands(dependencies, executionData, experimentId, writer);
+      
+      return null;
    }
 
    public static void generateExecuteCommands(final Dependencies dependencies, final ExecutionData changedTests, final String experimentId, PrintStream goal) throws IOException {
@@ -92,16 +106,17 @@ public class DivideVersions {
    public static void generateExecuteCommands(final Dependencies dependencies, final ExecutionData changedTests, final String experimentId, RunCommandWriter writer)
          throws IOException {
       final String[] versions = dependencies.getVersionNames();
-      for (int i = 0; i < dependencies.getVersions().size(); i++) {
-         final String endversion = versions[i];
+      for (int versionIndex = 0; versionIndex < dependencies.getVersions().size(); versionIndex++) {
+         final String endversion = versions[versionIndex];
          // System.out.println("-startversion " + startversion + " -endversion " + endversion);
          if (changedTests == null) {
-            writer.createFullVersionCommand(i, endversion);
+            final Set<TestCase> tests = dependencies.getVersions().get(endversion).getTests().getTests();
+            writer.createFullVersionCommand(versionIndex, endversion, tests);
          } else if (changedTests != null && changedTests.getVersions().containsKey(endversion)) {
             for (final Map.Entry<ChangedEntity, Set<String>> testcase : changedTests.getVersions().get(endversion).getTestcases().entrySet()) {
                for (final String method : testcase.getValue()) {
                   final String testcaseName = testcase.getKey().getJavaClazzName() + "#" + method;
-                  writer.createSingleMethodCommand(i, endversion, testcaseName);
+                  writer.createSingleMethodCommand(versionIndex, endversion, testcaseName);
 
                }
             }

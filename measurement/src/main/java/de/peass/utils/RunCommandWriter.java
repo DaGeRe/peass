@@ -1,7 +1,9 @@
 package de.peass.utils;
 
 import java.io.PrintStream;
+import java.util.Set;
 
+import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.persistence.SelectedTests;
 
 public class RunCommandWriter {
@@ -31,9 +33,12 @@ public class RunCommandWriter {
    public void setNice(int nice) {
       this.nice = nice;
    }
-
-   public void createFullVersionCommand(int versionIndex, final String endversion) {
-      throw new RuntimeException("Not implemented yet.");
+   
+   public void createFullVersionCommand(int versionIndex, final String endversion, Set<TestCase> tests) {
+      for (TestCase testcase : tests) {
+         final String testcaseName = testcase.getClazz() + "#" + testcase.getMethod();
+         createSingleMethodCommand(versionIndex, endversion, testcaseName);
+      }
    }
 
    public void createSingleMethodCommand(final int versionIndex, final String endversion, final String testcaseName) {

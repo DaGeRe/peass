@@ -23,6 +23,7 @@ import de.peass.analysis.changes.Change;
 import de.peass.analysis.properties.ChangeProperty;
 import de.peass.analysis.properties.PropertyReadHelper;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.reader.DependencyReaderUtil;
@@ -63,7 +64,8 @@ public class GetOnlysourceExecutions {
          final String endversion = versions[versionIndex];
          // System.out.println("-startversion " + startversion + " -endversion " + endversion);
          if (changedTests == null) {
-            writer.createFullVersionCommand(versionIndex, endversion);
+            final Set<TestCase> tests = dependencies.getVersions().get(endversion).getTests().getTests();
+            writer.createFullVersionCommand(versionIndex, endversion, tests);
          } else if (changedTests != null && changedTests.getVersions().containsKey(endversion)) {
             for (final Map.Entry<ChangedEntity, Set<String>> testcase : changedTests.getVersions().get(endversion).getTestcases().entrySet()) {
                for (final String method : testcase.getValue()) {

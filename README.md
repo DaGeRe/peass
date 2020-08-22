@@ -37,7 +37,7 @@ where `folder`and `executionfile` or `dependencyfile` need to be set. All other 
 
 Since execution of tests normally takes much time, it is reasonable to start the tests on different computers. As an example, test may be distributed via slurm. Therefore, run
 
-`java -cp target/measurement-0.1-SNAPSHOT.jar de.peass.utils.DivideVersions -dependencyfile .. -executionfile .. > ../misc/scripts/slurm/runall.sh`
+`./peass createScript de.peass.utils.DivideVersions -dependencyfile .. -executionfile .. -useSlu -useSlurm > ../misc/scripts/slurm/runall.sh`
 `chmod +x ../misc/scripts/slurm/runall.sh`
 
 in order to produce a list of calls, which is executable. Every call produces a slurm job executing one test. Afterwards switch to `../misc/scripts/slurm/` and run `./runall`. It starts `executeTests.sh` on every cluster. If the count of warmup iterations, measurement iterations, repetitions or vms should be changed, edit `executeTests.sh`. 

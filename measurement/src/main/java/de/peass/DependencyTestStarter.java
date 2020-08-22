@@ -267,8 +267,6 @@ public class DependencyTestStarter extends PairProcessor {
       final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);
       command.processCommandline();
-      // final DependencyTestPairStarter starter = new DependencyTestPairStarter(args);
-      // starter.processCommandline();
    }
 
 }

@@ -35,18 +35,6 @@ public class RunCommandWriterSlurm extends RunCommandWriter {
 
    private final String slurmOutputFolder;
 
-   public void createFullVersionCommand(final int versionIndex, final String endversion) {
-      if (!inited) {
-         init();
-         inited = true;
-      }
-      goal.println(
-            "sbatch --nice=" + nice + " --time=10-0 "
-                  + "--output=" + slurmOutputFolder + "/process_" + versionIndex + "_$timestamp.out "
-                  + "--export=PROJECT=" + url + ",HOME=/newnfs/user/do820mize,START="
-                  + endversion + ",END=" + endversion + ",INDEX=" + versionIndex + " executeTests.sh");
-   }
-
    public void createSingleMethodCommand(final int versionIndex, final String endversion, final String testcaseName) {
       if (!inited) {
          init();
