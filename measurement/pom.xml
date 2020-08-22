@@ -73,11 +73,14 @@
 	</build>
 
 	<dependencies>
+	
+		<!-- For execution, it is assumed that the kieker aspectJ-jar is in the local .m2 directory; no need for inclusion in jar, therefore scope runtime -->
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
 			<artifactId>kieker</artifactId>
 			<version>1.14</version>
 			<classifier>aspectj</classifier>
+			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
@@ -85,6 +88,18 @@
 			<version>3.11</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.jgrapht</groupId>
+			<artifactId>jgrapht-core</artifactId>
+			<version>1.4.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>de.peass</groupId>
+			<artifactId>dependency</artifactId>
+			<version>0.1-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
@@ -102,17 +117,6 @@
 			<artifactId>powermock-api-mockito2</artifactId>
 			<version>2.0.7</version>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jgrapht</groupId>
-			<artifactId>jgrapht-core</artifactId>
-			<version>1.4.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>de.peass</groupId>
-			<artifactId>dependency</artifactId>
-			<version>0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<repositories>
