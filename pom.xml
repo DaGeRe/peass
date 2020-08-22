@@ -1,27 +1,51 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.peass</groupId>
-    <artifactId>peass-parent</artifactId>
-    <packaging>pom</packaging>
-    <version>0.1-SNAPSHOT</version>
-    <name>PeASS - Parent</name>
-    <description>Tool for Analysing the Performance Changes in a Project</description>
+	<groupId>de.peass</groupId>
+	<artifactId>peass-parent</artifactId>
+	<packaging>pom</packaging>
+	<version>0.1-SNAPSHOT</version>
+	<name>PeASS - Parent</name>
+	<description>Tool for Analysing the Performance Changes in a Project</description>
 
-    <modules>
-	<module>dependency</module>
-        <module>measurement</module>
-	<module>analysis</module>
-	<module>distribution</module>
-    </modules>
+	<modules>
+		<module>dependency</module>
+		<module>measurement</module>
+		<module>analysis</module>
+		<module>distribution</module>
+	</modules>
 
-    <developers>
-	<developer>
-		<id>DaGeRe</id>
-		<name>David Georg Reichelt</name>
-		<email>kopeme@dagere.de</email>
-	</developer>
-    </developers>
+	<developers>
+		<developer>
+			<id>DaGeRe</id>
+			<name>David Georg Reichelt</name>
+			<email>kopeme@dagere.de</email>
+		</developer>
+	</developers>
+
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-pmd-plugin</artifactId>
+					<version>3.13.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>3.2.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>exec-maven-plugin</artifactId>
+					<version>3.0.0</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
 
 	<licenses>
 		<license>
@@ -31,7 +55,7 @@
 		</license>
 	</licenses>
 
-	
+
 	<inceptionYear>2015</inceptionYear>
 	<properties>
 		<project.organization.name>DaGeRe</project.organization.name>
