@@ -31,8 +31,8 @@ import picocli.CommandLine.Option;
  * @author reichelt
  *
  */
-@Command(description = "Measures the defined tests and versions exactly until the number of VMs is reached", name = "measureExact")
-public class DependencyTestPairStarter extends PairProcessor {
+@Command(description = "Measures the defined tests and versions exactly until the number of VMs is reached", name = "measure")
+public class DependencyTestStarter extends PairProcessor {
    
    @Option(names = { "-vms", "--vms" }, description = "Number of VMs to start")
    int vms = 100;
@@ -58,12 +58,21 @@ public class DependencyTestPairStarter extends PairProcessor {
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
    
+   @Option(names = { "-earlyStop", "--earlyStop" }, description = "Whether to stop early (i.e. execute VMs until type 1 and type 2 error are met)")
+   protected boolean earlyStop = false;
+   
+   @Option(names = { "-type1error", "--type1error" }, description = "Type 1 error of agnostic-t-test, i.e. probability of considering measurements equal when they are unequal (requires earlyStop)")
+   public double type1error = 0.05;
+
+   @Option(names = { "-type2error", "--type2error" }, description = "Type 2 error of agnostic-t-test, i.e. probability of considering measurements unequal when they are equal (requires earlyStop)")
+   protected double type2error = 0.01;
+   
    JUnitTestTransformer getTestTransformer(final MeasurementConfiguration measurementConfig) {
       final JUnitTestTransformer testtransformer = new JUnitTestTransformer(folders.getProjectFolder(), measurementConfig);
       return testtransformer;
    }
 
-   private static final Logger LOG = LogManager.getLogger(DependencyTestPairStarter.class);
+   private static final Logger LOG = LogManager.getLogger(DependencyTestStarter.class);
 
    protected DependencyTester tester;
    private final List<String> versions = new LinkedList<>();
@@ -73,7 +82,8 @@ public class DependencyTestPairStarter extends PairProcessor {
    @Override
    public Void call() throws Exception {
       super.call();
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, 0.01, 0.01);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, type1error, type2error);
+      measurementConfiguration.setEarlyStop(earlyStop);
       measurementConfiguration.setUseKieker(useKieker);
       measurementConfiguration.setIterations(iterations);
       measurementConfiguration.setWarmup(warmup);
@@ -253,7 +263,7 @@ public class DependencyTestPairStarter extends PairProcessor {
    }
 
    public static void main(final String[] args) throws JAXBException, IOException {
-      final DependencyTestPairStarter command = new DependencyTestPairStarter();
+      final DependencyTestStarter command = new DependencyTestStarter();
       final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);
       command.processCommandline();

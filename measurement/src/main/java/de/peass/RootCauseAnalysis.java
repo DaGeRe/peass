@@ -22,7 +22,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(description = "Searches for root cause of a performance change, i.e. method causing the performance change", name = "searchcause")
-public class RootCauseAnalysis extends AdaptiveTestStarter {
+public class RootCauseAnalysis extends DependencyTestStarter {
    
    private static final Logger LOG = LogManager.getLogger(RootCauseAnalysis.class);
 
@@ -84,7 +84,7 @@ public class RootCauseAnalysis extends AdaptiveTestStarter {
       final String predecessor = versionInfo.getPredecessor();
 
       LOG.debug("Timeout in minutes: {}", timeout);
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, type1error, type2error, !skipEarlyStop, version, predecessor);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, type1error, type2error, earlyStop, version, predecessor);
       measurementConfiguration.setWarmup(warmup);
       measurementConfiguration.setIterations(iterations);
       measurementConfiguration.setRepetitions(repetitions);
