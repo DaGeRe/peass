@@ -1,13 +1,10 @@
 package de.precision.analysis.repetitions.bimodal;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import de.dagere.kopeme.generated.Result;
-import de.precision.analysis.repetitions.bimodal.BimodalityTester;
 
 public class TestBimodalChange {
    

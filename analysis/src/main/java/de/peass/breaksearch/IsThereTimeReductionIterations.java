@@ -1,6 +1,7 @@
 package de.peass.breaksearch;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -15,6 +16,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.inference.TestUtils;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
@@ -40,7 +44,7 @@ public class IsThereTimeReductionIterations extends DataAnalyser {
    static long avgcount = 0;
    static int vms = 0;
 
-   public static void main(final String[] args) throws JAXBException, InterruptedException, ParseException {
+   public static void main(final String[] args) throws JAXBException, InterruptedException, ParseException, JsonParseException, JsonMappingException, IOException {
       final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE);
       options.addOption(FolderSearcher.DATAOPTION);
 

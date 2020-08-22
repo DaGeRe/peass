@@ -5,6 +5,9 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import de.peass.ReadProperties;
 import de.peass.analysis.changes.ChangeReader;
 import de.peass.analysis.changes.ProjectChanges;
@@ -12,10 +15,11 @@ import de.peass.analysis.properties.VersionChangeProperties;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.statistics.DependencyStatisticAnalyzer;
+import de.peass.utils.Constants;
 import de.peran.FolderSearcher;
 
 public class GetAllChanges {
-   public static void main(final String[] args) throws JAXBException {
+   public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
       final RepoFolders folders = new RepoFolders();
       
       // for (final String project : new String[] { "commons-compress", "commons-csv", "commons-dbcp", "commons-fileupload", "commons-jcs",
@@ -23,7 +27,7 @@ public class GetAllChanges {
       for (final String project : new String[] { "commons-fileupload" }) {
          final File dependencyFile = new File(folders.getDependencyFolder(), "deps_" + project + ".json");
          if (dependencyFile.exists()) {
-            final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+            final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
             VersionComparator.setDependencies(dependencies);
             getChangesForProject(folders, project);
             // ProjectChanges.reset();

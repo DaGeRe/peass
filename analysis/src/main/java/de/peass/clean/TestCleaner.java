@@ -76,7 +76,7 @@ public class TestCleaner implements Callable<Void> {
          final File folder = new File(repofolder);
          if (folder.exists()) {
             final File dependencyFile = new File(folder, "dependencies-final" + File.separator + "deps_" + projectName + ".json");
-            final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+            final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
             VersionComparator.setDependencies(dependencies);
          }
       }

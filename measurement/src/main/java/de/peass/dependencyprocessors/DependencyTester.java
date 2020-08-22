@@ -1,12 +1,14 @@
 package de.peass.dependencyprocessors;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,7 +85,7 @@ public class DependencyTester {
             currentOrganizer.getTest().getClazz() + File.separator +
             currentOrganizer.getTest().getMethod());
       final Cleaner cleaner = new Cleaner(cleanFolder);
-      for (final File clazzFile : folders.getDetailResultFolder().listFiles()) {
+      for (final File clazzFile : folders.getDetailResultFolder().listFiles( (FileFilter) new WildcardFileFilter("*.xml"))) {
          final Map<String, TestData> testdata = DataReader.readClassFolder(clazzFile);
          for (final Map.Entry<String, TestData> entry : testdata.entrySet()) {
             cleaner.processTestdata(entry.getValue());

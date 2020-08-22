@@ -20,6 +20,7 @@ import de.peass.analysis.properties.VersionChangeProperties;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.statistics.DependencyStatisticAnalyzer;
+import de.peass.utils.Constants;
 import de.peran.FolderSearcher;
 import de.peran.analysis.helper.AnalysisUtil;
 
@@ -34,7 +35,7 @@ public class GetAllClusterableStatistics {
          for (final String project : new String[] {"commons-compress",  "commons-csv",  "commons-dbcp", "commons-fileupload", "commons-io", "commons-imaging", "commons-text"}) {
             LOG.info("Analyzing: {}", project);
             final File dependencyFile = new File(CleanAll.defaultDependencyFolder, "deps_" + project + ".xml");
-            final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+            final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
             VersionComparator.setDependencies(dependencies);
             AnalysisUtil.setProjectName(project);
 //            File changeFile = new File("results/" + project + "/clean.json");

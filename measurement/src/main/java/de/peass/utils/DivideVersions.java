@@ -42,7 +42,7 @@ public class DivideVersions {
       final CommandLine line = parser.parse(options, args);
 
       final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
-      final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       VersionComparator.setDependencies(dependencies);
 
       final ExecutionData changedTests = TestLoadUtil.loadChangedTests(line);

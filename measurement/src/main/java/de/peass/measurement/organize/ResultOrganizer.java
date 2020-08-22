@@ -100,7 +100,7 @@ public class ResultOrganizer {
       // testRepetition
       testcaseList.get(0).setName(testcase.getMethod());
       
-      saveSummaryFile(version, testcaseList);
+      saveSummaryFile(version, testcaseList, oneResultFile);
 
       final File destFile = determiner.getResultFile(testcase, vmid, version, mainVersion);
       destFile.getParentFile().mkdirs();
@@ -125,11 +125,11 @@ public class ResultOrganizer {
       fulldata.setFileName(destFileName);
    }
 
-   public void saveSummaryFile(final String version, final List<TestcaseType> testcaseList) throws JAXBException {
+   public void saveSummaryFile(final String version, final List<TestcaseType> testcaseList, final File oneResultFile) throws JAXBException {
       final TestcaseType oneRundata = testcaseList.get(0);
       final String shortClazzName = testcase.getShortClazz();
       final File fullResultFile = new File(folders.getFullMeasurementFolder(), shortClazzName + "_" + testcase.getMethod() + ".xml");
-      MultipleVMTestUtil.saveSummaryData(fullResultFile, oneRundata, testcase, version, currentChunkStart);
+      MultipleVMTestUtil.saveSummaryData(fullResultFile, oneResultFile, oneRundata, testcase, version, currentChunkStart);
    }
    
   

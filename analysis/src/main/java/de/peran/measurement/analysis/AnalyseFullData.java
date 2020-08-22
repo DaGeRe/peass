@@ -15,6 +15,9 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import de.dagere.kopeme.generated.Result;
 import de.peass.analysis.changes.ProjectChanges;
 import de.peass.analysis.statistics.ConfidenceIntervalInterpretion;
@@ -27,6 +30,7 @@ import de.peass.measurement.analysis.statistics.MeanCoVData;
 import de.peass.measurement.analysis.statistics.MeanHistogramData;
 import de.peass.measurement.analysis.statistics.TestData;
 import de.peass.statistics.DependencyStatisticAnalyzer;
+import de.peass.utils.Constants;
 import de.peran.AnalyseOneTest;
 import de.peran.Environment;
 import de.peran.FolderSearcher;
@@ -237,14 +241,14 @@ public class AnalyseFullData extends DataAnalyser {
       }
    }
 
-   public static void main(final String[] args) throws InterruptedException, JAXBException {
+   public static void main(final String[] args) throws InterruptedException, JAXBException, JsonParseException, JsonMappingException, IOException {
       final File folder = new File(args[0]);
       if (!folder.getName().equals("measurements")) {
          throw new RuntimeException("Can only be executed with measurements-folder! For searching folders, use FolderSearcher");
       }
       LOG.info("Draw results: " + Environment.DRAW_RESULTS);
       final File dependencyFile = new File(args[1]);
-      final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       VersionComparator.setDependencies(dependencies);
       final AnalyseFullData analyseFullData = new AnalyseFullData(new ProjectStatistics());
       analyseFullData.analyseFolder(folder);

@@ -18,6 +18,7 @@ public class MeasurementConfiguration {
    private int repetitions = 1;
    private boolean logFullData = true;
    private boolean useKieker = false;
+   private boolean redirectToNull = true;
    private boolean useGC = true;
    private int kiekerAggregationInterval = 5000;
    private String javaVersion = System.getProperty("java.version");
@@ -86,6 +87,14 @@ public class MeasurementConfiguration {
 
    public void setUseGC(boolean useGC) {
       this.useGC = useGC;
+   }
+   
+   public boolean isRedirectToNull() {
+      return redirectToNull;
+   }
+   
+   public void setRedirectToNull(boolean redirectToNull) {
+      this.redirectToNull = redirectToNull;
    }
 
    public long getTimeout() {

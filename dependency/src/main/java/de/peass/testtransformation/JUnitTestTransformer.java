@@ -313,6 +313,7 @@ public class JUnitTestTransformer {
          addMethod(clazz, "useKieker", "return " + config.isUseKieker() + ";", PrimitiveType.booleanType());
          addMethod(clazz, "getMaximalTime", "return " + config.getTimeout() + ";", PrimitiveType.longType());
          addMethod(clazz, "getRepetitions", "return " + config.getRepetitions() + ";", PrimitiveType.intType());
+         addMethod(clazz, "redirectToNull", "return " + config.isRedirectToNull() + ";", PrimitiveType.booleanType());
 
          synchronized (javaParser) {
             final ClassOrInterfaceType type = javaParser.parseClassOrInterfaceType("DataCollectorList").getResult().get();
@@ -416,6 +417,7 @@ public class JUnitTestTransformer {
       performanceTestAnnotation.addPair("useKieker", "" + config.isUseKieker());
       performanceTestAnnotation.addPair("timeout", "" + config.getTimeout());
       performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
+      performanceTestAnnotation.addPair("redirectToNull", "" + config.isRedirectToNull());
       if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
          performanceTestAnnotation.addPair("dataCollectors", "\"ONLYTIME\"");
       } else if (datacollectorlist.equals(DataCollectorList.ONLYTIME_NOGC)) {

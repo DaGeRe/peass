@@ -69,8 +69,8 @@ public class DependencyStatisticAnalyzer {
 				statistics.multipleChangedTest.size(), statistics.onceChangedTests.size());
 	}
 
-	public static DependencyStatistics getChangeStatistics(final File dependenciesFile, final ExecutionData changedTests) throws JAXBException {
-		final Dependencies dependencies = readVersions(dependenciesFile);
+	public static DependencyStatistics getChangeStatistics(final File dependenciesFile, final ExecutionData changedTests) throws JAXBException, JsonParseException, JsonMappingException, IOException {
+		final Dependencies dependencies =  Constants.OBJECTMAPPER.readValue(dependenciesFile, Dependencies.class); 
 		final Map<String,Version> versions = dependencies.getVersions();
 
 		final int startTestCound = dependencies.getInitialversion().getInitialDependencies().size();
@@ -126,22 +126,5 @@ public class DependencyStatisticAnalyzer {
 			statistics.overallRunTests += currentContainedTests.size();
 		}
 		return statistics;
-	}
-
-	/**
-	 * 
-	 * @param dependencyFile
-	 * @return
-	 * @deprecated read JSON directly with Jackson
-	 */
-	@Deprecated
-	public static Dependencies readVersions(final File dependencyFile) {
-	   Dependencies deps = null;
-	   try {
-         deps = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-      } catch (final IOException e) {
-         e.printStackTrace();
-      }
-	   return deps;
 	}
 }

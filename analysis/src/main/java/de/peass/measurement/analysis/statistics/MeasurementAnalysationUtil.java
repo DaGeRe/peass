@@ -260,24 +260,35 @@ public final class MeasurementAnalysationUtil {
 		}
       return meanValues;
    }
-
+   
    private static double getBootstrappedStatistics(final double[] values, final int count) {
-      final double[] tempValues = getBootstrapValues(values, count);
       final SummaryStatistics st = new SummaryStatistics();
       st.setSumLogImpl(new DummyStatistic());
-      for (double value : tempValues) {
-         st.addValue(value);
+      for (int i = 0; i < count; i++) {
+         final int nextInt = RANDOM.nextInt(values.length);
+         // System.out.println(nextInt);
+         st.addValue(values[nextInt]);
       }
       return st.getMean();
-   }
+   } 
 
-	public static double[] getBootstrapValues(final double[] values, final int count) {
-		final double[] result = new double[count];
-		for (int i = 0; i < count; i++) {
-			final int nextInt = RANDOM.nextInt(values.length);
-			// System.out.println(nextInt);
-			result[i] = values[nextInt];
-		}
-		return result;
-	}
+//   private static double getBootstrappedStatistics(final double[] values, final int count) {
+//      final double[] tempValues = getBootstrapValues(values, count);
+//      final SummaryStatistics st = new SummaryStatistics();
+//      st.setSumLogImpl(new DummyStatistic());
+//      for (double value : tempValues) {
+//         st.addValue(value);
+//      }
+//      return st.getMean();
+//   }
+
+//	public static double[] getBootstrapValues(final double[] values, final int count) {
+//		final double[] result = new double[count];
+//		for (int i = 0; i < count; i++) {
+//			final int nextInt = RANDOM.nextInt(values.length);
+//			// System.out.println(nextInt);
+//			result[i] = values[nextInt];
+//		}
+//		return result;
+//	}
 }

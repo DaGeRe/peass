@@ -55,7 +55,7 @@ public class ViewGeneratorTest {
       final File viewFolder = new File(ViewGeneratorIT.VIEW_IT, "views");
       // final File viewFolder = Files.createTempDirectory(ViewGeneratorIT.VIEW_IT.toPath(), "views").toFile();
 
-      final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyfile);
+      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, Dependencies.class);
       VersionComparator.setDependencies(dependencies);
       final ViewGenerator generator = new ViewGenerator(ViewGeneratorIT.projectFolder, dependencies, executefile, viewFolder, 1, 60000);
 

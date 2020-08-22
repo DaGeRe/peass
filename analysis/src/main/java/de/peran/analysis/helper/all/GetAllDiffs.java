@@ -21,6 +21,7 @@ import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.traces.OneTraceGenerator;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.statistics.DependencyStatisticAnalyzer;
+import de.peass.utils.Constants;
 import de.peass.utils.StreamGobbler;
 import de.peran.FolderSearcher;
 import de.peran.analysis.helper.AnalysisUtil;
@@ -33,7 +34,7 @@ public class GetAllDiffs {
          final File viewFolder = new File("results/views/" + project);
          viewFolder.mkdirs();
          final File dependencyFile = new File(dependencyFolder, "deps_" + project + ".xml");
-         final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+         final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
          VersionComparator.setDependencies(dependencies);
          AnalysisUtil.setProjectName(project);
          final File resultFile = new File("results" + File.separator + project + File.separator + "properties.json");

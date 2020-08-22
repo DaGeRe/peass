@@ -18,6 +18,7 @@ package de.peass.debugtools;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
@@ -33,12 +34,16 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import de.peass.DependencyReadingStarter;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.statistics.DependencyStatisticAnalyzer;
+import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
@@ -58,7 +63,7 @@ import de.peass.vcs.VersionIteratorGit;
 public class DependencyReadingContinueStarter {
 	private static final Logger LOG = LogManager.getLogger(DependencyReadingContinueStarter.class);
 
-	public static void main(final String[] args) throws ParseException, FileNotFoundException, JAXBException {
+	public static void main(final String[] args) throws ParseException, JsonParseException, JsonMappingException, IOException {
 		final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.STARTVERSION, OptionConstants.ENDVERSION, OptionConstants.OUT,
 				OptionConstants.DEPENDENCYFILE, OptionConstants.TIMEOUT);
 
@@ -70,7 +75,7 @@ public class DependencyReadingContinueStarter {
 		final File dependencyFile = DependencyReadingStarter.getDependencyFile(line, projectFolder);
 
 		final File dependencyFileIn = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
-		final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFileIn);
+		final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, Dependencies.class);
 		VersionComparator.setVersions(GitUtils.getCommits(projectFolder));
 
 		String previousVersion = getPreviousVersion(line, projectFolder, dependencies);

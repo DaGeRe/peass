@@ -17,6 +17,9 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import de.peass.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.measurement.analysis.DataAnalyser;
@@ -35,7 +38,7 @@ public class DeviationAnalyser extends DataAnalyser {
 	
 	private static final Logger LOG = LogManager.getLogger(DeviationAnalyser.class);
 
-	public static void main(final String[] args) throws ParseException, JAXBException, InterruptedException {
+	public static void main(final String[] args) throws ParseException, JAXBException, InterruptedException, JsonParseException, JsonMappingException, IOException {
 		final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE);
 		options.addOption(FolderSearcher.DATAOPTION);
 

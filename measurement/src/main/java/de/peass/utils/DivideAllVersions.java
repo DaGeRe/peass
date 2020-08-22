@@ -40,7 +40,7 @@ public class DivideAllVersions {
          if (dependencyFile.exists() && executionFile.exists()) {
             LOG.debug("Loading: " + project);
             final File executeCommandsFile = new File(resultFolder, "execute-" + project + ".sh");
-            final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+            final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
             final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
             DivideVersions.generateExecuteCommands(dependencies, changedTests, "validation", new PrintStream(new FileOutputStream(executeCommandsFile)));
          } else {

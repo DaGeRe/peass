@@ -17,9 +17,9 @@ import de.peass.reexecutions.MissingExecutionFinder;
 import de.peran.FolderSearcher;
 
 public class FindMissingValidation {
-   
+
    private static final Logger LOG = LogManager.getLogger(FindMissingValidation.class);
-   
+
    public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException, JAXBException {
       final RepoFolders folders = new RepoFolders();
 
@@ -32,7 +32,7 @@ public class FindMissingValidation {
          ExecutionData tests = FolderSearcher.MAPPER.readValue(executionFile, ExecutionData.class);
 
          MissingExecutionFinder missingExecutionFinder = new MissingExecutionFinder(project, reexecuteFolder, tests, "commentExec");
-         missingExecutionFinder.findMissing(folders.getValidationDataFolder(project));
+         missingExecutionFinder.findMissing(new File[] { folders.getValidationDataFolder(project) });
       }
 
    }

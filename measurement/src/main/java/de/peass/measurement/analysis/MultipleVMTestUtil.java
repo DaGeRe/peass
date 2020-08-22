@@ -85,7 +85,7 @@ public class MultipleVMTestUtil {
     * @param version
     * @throws JAXBException
     */
-   public static void saveSummaryData(final File summaryResultFile, final TestcaseType oneRunData, final TestCase testcase, final String version, final long currentChunkStart)
+   public static void saveSummaryData(final File summaryResultFile, final File oneResultFile, final TestcaseType oneRunData, final TestCase testcase, final String version, final long currentChunkStart)
          throws JAXBException {
       LOG.info("Writing to merged result file: {}", summaryResultFile);
       final Kopemedata summaryData = initKopemeData(summaryResultFile, testcase);
@@ -94,26 +94,38 @@ public class MultipleVMTestUtil {
 
       final Result oneResult = oneRunDatacollector.getResult().get(0);
       if (oneResult.getFulldata().getFileName() != null) {
-         WrittenResultReader reader = new WrittenResultReader(new File(oneResult.getFulldata().getFileName()));
-         Set<String> keys = new HashSet<>();
-         keys.add(oneRunDatacollector.getName());
-         reader.read(null, keys);
-      }
-      
-      final Result cleaned = StatisticUtil.shortenResult(oneResult);
-      final Fulldata realData = cleaned.getFulldata();
-      if (realData != null && realData.getValue() != null && realData.getValue().size() > 0) {
-         final SummaryStatistics st = new SummaryStatistics();
-         createStatistics(st, realData);
-         final Result result = createResultFromStatistic(version, st, cleaned.getRepetitions());
-         result.setDate(cleaned.getDate());
-         result.setWarmupExecutions(cleaned.getWarmupExecutions());
-
-         summaryChunk.getResult().add(result);
-         XMLDataStorer.storeData(summaryResultFile, summaryData);
+         SummaryStatistics st = getExternalFileStatistics(oneResultFile, oneRunDatacollector, oneResult);
+         saveData(summaryResultFile, version, summaryData, summaryChunk, oneResult, st);
       } else {
-         LOG.error("Achtung: Fulldata von " + summaryResultFile + " leer!");
+         final Result cleaned = StatisticUtil.shortenResult(oneResult);
+         final Fulldata realData = cleaned.getFulldata();
+         if (realData != null && realData.getValue() != null && realData.getValue().size() > 0) {
+            final SummaryStatistics st = createStatistics(realData);
+            saveData(summaryResultFile, version, summaryData, summaryChunk, oneResult, st);
+         } else {
+            LOG.error("Fulldata of " + oneResultFile + " empty!");
+         }
       }
+   }
+
+   private static void saveData(final File summaryResultFile, final String version, final Kopemedata summaryData, Chunk summaryChunk, final Result oneResult,
+         final SummaryStatistics st) {
+      final Result result = createResultFromStatistic(version, st, oneResult.getRepetitions());
+      result.setDate(oneResult.getDate());
+      result.setWarmupExecutions(oneResult.getWarmupExecutions());
+
+      summaryChunk.getResult().add(result);
+      XMLDataStorer.storeData(summaryResultFile, summaryData);
+   }
+
+   private static SummaryStatistics getExternalFileStatistics(final File oneResultFile, Datacollector oneRunDatacollector, final Result oneResult) {
+      final File resultFile = new File(oneResultFile.getParentFile(), oneResult.getFulldata().getFileName());
+      WrittenResultReader reader = new WrittenResultReader(resultFile);
+      Set<String> keys = new HashSet<>();
+      keys.add(oneRunDatacollector.getName());
+      reader.read(null, keys);
+      SummaryStatistics st = reader.getCollectorSummary(oneRunDatacollector.getName());
+      return st;
    }
 
    public static Kopemedata initKopemeData(final File summaryResultFile, final TestCase testcase) throws JAXBException {
@@ -188,15 +200,16 @@ public class MultipleVMTestUtil {
       return result;
    }
 
-   private static double[] createStatistics(final SummaryStatistics st, final Fulldata realData) {
+   private static SummaryStatistics createStatistics(final Fulldata realData) {
+      final SummaryStatistics st2 = new SummaryStatistics();
       final double[] values = new double[realData.getValue().size()];
       int i = 0;
       for (final Value value : realData.getValue()) {
          final long parseDouble =value.getValue();
-         st.addValue(parseDouble);
+         st2.addValue(parseDouble);
          values[i++] = parseDouble;
       }
-      return values;
+      return st2;
    }
 
    public static List<Double> getAverages(final List<Result> before) {

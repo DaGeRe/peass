@@ -47,14 +47,28 @@ public class FindMissingExecutions implements Callable<Void> {
 
       final ExecutionData tests = folders.getExecutionData(project);
 
-      final File dataFolder;
-      if (data.length == 0) {
-         dataFolder = new File(folders.getCleanDataFolder(), project);
-      } else {
-         dataFolder = new File(data[0], project);
-      }
+      final File[] dataFolder = getDataFolder(project, folders);
       MissingExecutionFinder missingExecutionFinder = new MissingExecutionFinder(project, reexecuteFolder, tests, NAME);
       missingExecutionFinder.findMissing(dataFolder);
+   }
+
+   private File[] getDataFolder(final String project, RepoFolders folders) {
+      final File[] dataFolders;
+      if (data.length == 0) {
+         dataFolders = new File[1];
+         dataFolders[0] = new File(folders.getCleanDataFolder(), project);
+      } else {
+         dataFolders = new File[data.length];
+         for (int i = 0; i < data.length; i++) {
+            File candidate = new File(data[i], project);
+            if (candidate.exists()) {
+               dataFolders[i] = new File(data[i], project);
+            } else {
+               dataFolders[i] = data[i];
+            }
+         }
+      }
+      return dataFolders;
    }
 
    @Override
@@ -63,7 +77,7 @@ public class FindMissingExecutions implements Callable<Void> {
       File reexecuteFolder = new File(folders.getResultsFolder(), NAME);
       reexecuteFolder.mkdirs();
 
-      for (final String project : new String[] {  "commons-fileupload", "commons-csv" }) {
+      for (final String project : new String[] { "commons-fileupload" }) {
          LOG.info("Searching: {}", project);
          findMissing(project, reexecuteFolder, folders);
       }

@@ -39,7 +39,7 @@ public class TestSummaryFileSaving {
       
       final File resultFile = new File(testFolder, "result.xml");
       
-      MultipleVMTestUtil.saveSummaryData(resultFile, oneRunData, testcase, "1", 0);
+      MultipleVMTestUtil.saveSummaryData(resultFile, oneResultFile, oneRunData, testcase, "1", 0);
       
       Assert.assertTrue(resultFile.exists());
    }
@@ -55,7 +55,7 @@ public class TestSummaryFileSaving {
       
       final File resultFile = new File(testFolder, "result.xml");
       
-      MultipleVMTestUtil.saveSummaryData(resultFile, oneRunData, testcase, "1", 0);
+      MultipleVMTestUtil.saveSummaryData(resultFile, oneResultFile, oneRunData, testcase, "1", 0);
       
       Assert.assertTrue(resultFile.exists());
    }

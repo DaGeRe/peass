@@ -1,6 +1,7 @@
 package de.peass.debugtools;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,22 +9,26 @@ import java.util.Map.Entry;
 
 import javax.xml.bind.JAXBException;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.InitialDependency;
 import de.peass.statistics.DependencyStatisticAnalyzer;
+import de.peass.utils.Constants;
 /**
  * Compares two dependency files in order to find whether one is missing some testcases
  * @author reichelt
  *
  */
 public class CompareDependencies {
-	public static void main(final String[] args) throws JAXBException {
+	public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
 		final File oldDependenciesFile = new File(args[0]);
 		final File newDependenciesFile = new File(args[1]);
 
-		final Dependencies oldDependencies = DependencyStatisticAnalyzer.readVersions(oldDependenciesFile);
-		final Dependencies newDependencies = DependencyStatisticAnalyzer.readVersions(newDependenciesFile);
+      final Dependencies oldDependencies = Constants.OBJECTMAPPER.readValue(oldDependenciesFile, Dependencies.class) ;
+		final Dependencies newDependencies = Constants.OBJECTMAPPER.readValue(newDependenciesFile, Dependencies.class);
 
 		int addedCount = 0, missingCount = 0;
 		

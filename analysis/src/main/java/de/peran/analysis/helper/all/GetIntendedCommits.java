@@ -19,6 +19,7 @@ import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.statistics.DependencyStatisticAnalyzer;
+import de.peass.utils.Constants;
 import de.peran.FolderSearcher;
 
 public class GetIntendedCommits {
@@ -35,7 +36,7 @@ public class GetIntendedCommits {
          File viewFile = new File(dependencyFolder, "views_" + entry.getKey() + "/execute-" + entry.getKey() + ".json");
          ExecutionData tests = FolderSearcher.MAPPER.readValue(viewFile, ExecutionData.class);
          File dependencyFile = new File(dependencyFolder, "deps_" + entry.getKey() + ".xml");
-         final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+         final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
          VersionComparator.setDependencies(dependencies);
          int selected = 0, before = 0, unselected = 0;
          for (String version : entry.getValue()) {

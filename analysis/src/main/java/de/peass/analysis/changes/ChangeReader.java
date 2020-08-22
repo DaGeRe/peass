@@ -53,6 +53,10 @@ public class ChangeReader {
    public ChangeReader(final File statisticsFolder, final String projectName) {
       this.statisticsFolder = statisticsFolder;
    }
+   
+   public ChangeReader(final String projectName) {
+      this.statisticsFolder = null;
+   }
 
    public double getType1error() {
       return type1error;
@@ -90,7 +94,6 @@ public class ChangeReader {
                File slurmCleanFolder = new File(file, "peass/clean");
                readCleanFolder(measurementFolder, changes, info, slurmCleanFolder);
             } else if (file.getName().equals("clean")) {
-               LOG.info("Reading clean folder: {}", file);
                readCleanFolder(measurementFolder, changes, info, file);
             } else if (file.getName().endsWith(".xml")) {
                readFile(measurementFolder, changes, info, file);
@@ -104,6 +107,7 @@ public class ChangeReader {
    }
 
    private void readCleanFolder(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, File slurmCleanFolder) throws JAXBException {
+      LOG.info("Handlung: {}", slurmCleanFolder);
       File versionFolder = slurmCleanFolder.listFiles()[0].listFiles()[0];
       File testcaseFolder = versionFolder.listFiles()[0].listFiles()[0];
       for (File childFile : testcaseFolder.listFiles()) {
@@ -114,15 +118,17 @@ public class ChangeReader {
    }
 
    private void writeResults(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info) {
-      final String measurementFolderName = measurementFolder.getName();
-      final String executorName = measurementFolderName.substring(measurementFolderName.lastIndexOf(File.separator) + 1);
-      final File resultfile = new File(statisticsFolder.getParentFile(), executorName + ".json");
-      final File statisticFile = new File(statisticsFolder, executorName + ".json");
-      try {
-         FolderSearcher.MAPPER.writeValue(resultfile, changes);
-         FolderSearcher.MAPPER.writeValue(statisticFile, info);
-      } catch (final IOException e) {
-         e.printStackTrace();
+      if (statisticsFolder != null) {
+         final String measurementFolderName = measurementFolder.getName();
+         final String executorName = measurementFolderName.substring(measurementFolderName.lastIndexOf(File.separator) + 1);
+         final File resultfile = new File(statisticsFolder.getParentFile(), executorName + ".json");
+         final File statisticFile = new File(statisticsFolder, executorName + ".json");
+         try {
+            FolderSearcher.MAPPER.writeValue(resultfile, changes);
+            FolderSearcher.MAPPER.writeValue(statisticFile, info);
+         } catch (final IOException e) {
+            e.printStackTrace();
+         }
       }
    }
 

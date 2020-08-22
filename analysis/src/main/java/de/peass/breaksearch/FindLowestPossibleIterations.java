@@ -1,6 +1,7 @@
 package de.peass.breaksearch;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -15,12 +16,16 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.DataReader;
 import de.peass.measurement.analysis.MultipleVMTestUtil;
 import de.peass.measurement.analysis.statistics.TestData;
 import de.peass.statistics.DependencyStatisticAnalyzer;
+import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 import de.peran.FolderSearcher;
 import de.peran.breaksearch.helper.MinimalVMDeterminer;
@@ -28,7 +33,7 @@ import de.peran.breaksearch.helper.MinimalVMDeterminer;
 public class FindLowestPossibleIterations {
 	private static final Logger LOG = LogManager.getLogger(FindLowestPossibleIterations.class);
 
-	public static void main(final String[] args) throws InterruptedException, ParseException, JAXBException {
+	public static void main(final String[] args) throws InterruptedException, ParseException, JAXBException, JsonParseException, JsonMappingException, IOException {
 		final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE);
 
 		final Option dataOption = new Option(FolderSearcher.DATA, "Data of measurements");
@@ -40,7 +45,7 @@ public class FindLowestPossibleIterations {
 
 		if (line.hasOption(OptionConstants.DEPENDENCYFILE.getName())) {
 			final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
-			final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+			final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
 			VersionComparator.setDependencies(dependencies);
 		} else {
 			LOG.error("No dependencyfile information passed.");

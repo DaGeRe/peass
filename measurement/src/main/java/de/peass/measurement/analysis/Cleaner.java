@@ -1,6 +1,7 @@
 package de.peass.measurement.analysis;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
@@ -14,6 +15,9 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
@@ -40,7 +44,7 @@ public class Cleaner extends DataAnalyser {
 
    private static final Logger LOG = LogManager.getLogger(Cleaner.class);
    
-   public static void main(final String[] args) throws ParseException, JAXBException {
+   public static void main(final String[] args) throws ParseException, JAXBException, JsonParseException, JsonMappingException, IOException {
       final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE, OptionConstants.DATA);
 
       final CommandLineParser parser = new DefaultParser();

@@ -137,7 +137,7 @@ public class ContinousExecutor implements Callable<Void> {
    }
 
    private static Dependencies getDependencies(final File projectFolder, final File dependencyFile, final String previousName, final GitCommit headCommit)
-         throws JAXBException {
+         throws JAXBException, JsonParseException, JsonMappingException, IOException {
       Dependencies dependencies;
 
       final String url = GitUtils.getURL(projectFolder);
@@ -156,9 +156,9 @@ public class ContinousExecutor implements Callable<Void> {
          needToLoad = true;
          final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, 10, nonRunning, nonChanges);
          reader.readDependencies();
-         dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       } else {
-         dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
          VersionComparator.setDependencies(dependencies);
 
          if (dependencies.getVersions().size() > 0) {
@@ -173,7 +173,7 @@ public class ContinousExecutor implements Callable<Void> {
       if (needToLoad) {
          final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, 10, nonRunning, nonChanges);
          reader.readDependencies();
-         dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
+         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       }
       return dependencies;
    }

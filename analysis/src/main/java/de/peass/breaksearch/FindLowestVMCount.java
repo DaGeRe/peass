@@ -16,6 +16,9 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.measurement.analysis.DataAnalyser;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
@@ -29,7 +32,7 @@ public class FindLowestVMCount extends DataAnalyser {
 
    private static final Logger LOG = LogManager.getLogger(FindLowestVMCount.class);
 
-   public static void main(String[] args) throws JAXBException, ParseException, InterruptedException {
+   public static void main(String[] args) throws JAXBException, ParseException, InterruptedException, JsonParseException, JsonMappingException, IOException {
       final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE);
       options.addOption(FolderSearcher.DATAOPTION);
 
