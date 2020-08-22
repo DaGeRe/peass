@@ -8,7 +8,6 @@ import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
 @Command(name = "peass", mixinStandardHelpOptions = true, subcommands = { DependencyExecutionReader.class, 
-      AdaptiveTestStarter.class,
       GetChanges.class, 
       ReadProperties.class, 
       TestCleaner.class, 

@@ -67,11 +67,6 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>co.unruly</groupId>
-			<artifactId>java-8-matchers</artifactId>
-			<version>1.6</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.7</version>
@@ -86,6 +81,16 @@
 			<artifactId>kieker</artifactId>
 			<version>1.14</version>
 		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.11.2</version>
+		</dependency>
+		<dependency>
+			<groupId>info.picocli</groupId>
+			<artifactId>picocli</artifactId>
+			<version>4.5.0</version>
+		</dependency>
 
 		<!-- Both are needed in your local maven repo, and both should be downloaded 
 			when building (but are only needed at runtime, if a project does not use 
@@ -99,14 +104,15 @@
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-junit3</artifactId>
 			<version>0.11-SNAPSHOT</version>
+			<scope>test</scope>
 		</dependency>
-
+		
 		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-			<version>2.11.2</version>
+			<groupId>co.unruly</groupId>
+			<artifactId>java-8-matchers</artifactId>
+			<version>1.6</version>
+			<scope>test</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
@@ -137,12 +143,6 @@
 			<artifactId>groovy-all</artifactId>
 			<version>2.5.7</version>
 			<type>pom</type>
-		</dependency>
-
-		<dependency>
-			<groupId>info.picocli</groupId>
-			<artifactId>picocli</artifactId>
-			<version>4.5.0</version>
 		</dependency>
 	</dependencies>
 
