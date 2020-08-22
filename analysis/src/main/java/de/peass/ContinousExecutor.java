@@ -31,7 +31,6 @@ import de.peass.dependency.reader.VersionKeeper;
 import de.peass.dependency.traces.ViewGenerator;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.Constants;
 import de.peass.vcs.GitCommit;

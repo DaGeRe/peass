@@ -25,8 +25,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,7 +41,6 @@ import de.peass.dependency.changesreading.ClazzChangeData;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 

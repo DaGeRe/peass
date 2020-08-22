@@ -14,7 +14,6 @@ import de.peass.analysis.changes.ProjectChanges;
 import de.peass.analysis.properties.VersionChangeProperties;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.Constants;
 import de.peran.FolderSearcher;
 

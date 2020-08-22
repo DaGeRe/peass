@@ -29,7 +29,6 @@ import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.MeanCoVData;
 import de.peass.measurement.analysis.statistics.MeanHistogramData;
 import de.peass.measurement.analysis.statistics.TestData;
-import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.Constants;
 import de.peran.AnalyseOneTest;
 import de.peran.Environment;

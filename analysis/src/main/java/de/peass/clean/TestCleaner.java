@@ -17,7 +17,6 @@ import org.apache.logging.log4j.Logger;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.Cleaner;
-import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.Constants;
 import de.peass.vcs.GitUtils;
 import picocli.CommandLine;

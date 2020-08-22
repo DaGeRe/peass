@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
-import de.peass.statistics.DependencyStatisticAnalyzer;
 
 public class DivideAllVersions {
 

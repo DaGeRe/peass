@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.InitialDependency;
-import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.Constants;
 /**
  * Compares two dependency files in order to find whether one is missing some testcases

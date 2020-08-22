@@ -20,7 +20,6 @@ import de.peass.analysis.properties.VersionChangeProperties;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.traces.OneTraceGenerator;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.Constants;
 import de.peass.utils.StreamGobbler;
 import de.peran.FolderSearcher;

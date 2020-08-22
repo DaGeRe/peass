@@ -1,6 +1,5 @@
 package de.precision.analysis.repetitions.bimodal;
 
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.commons.math3.stat.inference.TTest;
 
 import de.peass.measurement.analysis.Relation;

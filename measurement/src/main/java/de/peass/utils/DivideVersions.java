@@ -23,7 +23,6 @@ import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.statistics.DependencyStatisticAnalyzer;
 
 /**
  * Divides the versions of a dependencyfile (and optionally an executionfile) in order to start slurm test executions.

@@ -24,7 +24,6 @@ import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.DataReader;
 import de.peass.measurement.analysis.MultipleVMTestUtil;
 import de.peass.measurement.analysis.statistics.TestData;
-import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 import de.peran.FolderSearcher;
