@@ -38,7 +38,7 @@ public class CauseSearcherComplete extends CauseSearcher {
    @Override
    protected List<ChangedEntity> searchCause()
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      measurer.setConsiderNodePosition(true);
+//      measurer.setConsiderNodePosition(true);
       final List<CallTreeNode> includableNodes;
       final CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
       final List<CallTreeNode> currentPredecessorNodeList = analyzer.getNonDifferingPredecessor();

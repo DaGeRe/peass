@@ -104,8 +104,9 @@ public class KiekerResultReader {
 
    private boolean isSameNode(final CallTreeNode node, final String nodeCall, final AggregatedDataNode measuredNode) {
       final String kiekerCall = KiekerPatternConverter.getKiekerPattern(measuredNode.getCall());
-      if (nodeCall.equals(kiekerCall)) {
-         System.out.println("Test: " + kiekerCall + " " + nodeCall + " " + node.getEoi() + " " + measuredNode.getEoi());
+      LOG.trace("Node: {} Kieker: {} Equal: {}", nodeCall, kiekerCall, nodeCall.equals(kiekerCall));
+      if (nodeCall.equals(kiekerCall)) { 
+         LOG.trace("EOI: {} vs {}", node.getEoi(), measuredNode.getEoi());
          if (considerNodePosition) {
             final int eoi = node.getEoi();
             if (measuredNode.getEoi() == eoi) {
