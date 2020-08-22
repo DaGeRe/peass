@@ -54,7 +54,7 @@ In order to get all changes, execute `./peass getchanges -dependencyfile $DEPEND
 
 ## Individual Cleanup
 
-The resultfolder of your project is `$PROJECTNAME_peass`. In general, a clean/ folder is created in the resultfolder of your project. It contains measurementfiles only containing the statistical information about the second half of each VM start; the first half is seen as warmup. If you want to clean your data differently, e.g. remove different size of warmup, you can use the de.peass.TestCleaner. This is done by calling `java -cp target/analysis-0.1-SNAPSHOT.jar de.peass.TestCleaner -dependencyfile $DEPENDENCYFILE -data $DATAFOLDER`, where `$DATAFOLDER` should contain all measurements.
+The resultfolder of your project is `$PROJECTNAME_peass`. In general, a clean/ folder is created in the resultfolder of your project. It contains measurementfiles only containing the statistical information about the second half of each VM start; the first half is seen as warmup. If you want to clean your data differently, e.g. remove different size of warmup, you can use the de.peass.TestCleaner. This is done by calling `./peass clean -dependencyfile $DEPENDENCYFILE -data $DATAFOLDER`, where `$DATAFOLDER` should contain all measurements.
 
 # General Options
 
