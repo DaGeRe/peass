@@ -6,7 +6,10 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.reader.DependencyReader;
+import de.peass.dependency.reader.FirstRunningVersionFinder;
+import de.peass.dependency.reader.VersionKeeper;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.VersionIterator;
@@ -17,23 +20,28 @@ public final class OneReader implements Runnable {
 
    private final GitCommit minimumCommit;
    private final File currentOutFile;
-   private final DependencyReader reader;
    private final VersionIterator reserveIterator;
+   final FirstRunningVersionFinder firstRunningVersionFinder;
+   private final DependencyReader reader;
 
-   public OneReader(GitCommit minimumCommit, File currentOutFile, VersionIterator reserveIterator, DependencyReader reader) {
+   public OneReader(GitCommit minimumCommit, File currentOutFile, VersionIterator reserveIterator, DependencyReader reader, FirstRunningVersionFinder firstRunningVersionFinder) {
       this.minimumCommit = minimumCommit;
       this.currentOutFile = currentOutFile;
       this.reserveIterator = reserveIterator;
+      this.firstRunningVersionFinder = firstRunningVersionFinder;
       this.reader = reader;
    }
 
    @Override
    public void run() {
       try {
-         LOG.debug("Reader initalized: " + currentOutFile + " This: " + this);
-         final boolean readingSuccess = reader.readDependencies();
-         if (readingSuccess) {
-            readRemaining(reader);
+         boolean init = firstRunningVersionFinder.searchFirstRunningCommit();
+         if (init) {
+            LOG.debug("Reader initalized: " + currentOutFile + " This: " + this);
+            final boolean readingSuccess = reader.readDependencies();
+            if (readingSuccess) {
+               readRemaining(reader);
+            }
          }
       } catch (final Throwable e) {
          e.printStackTrace();

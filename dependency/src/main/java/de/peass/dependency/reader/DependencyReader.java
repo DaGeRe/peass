@@ -29,9 +29,11 @@ import com.github.javaparser.ParseProblemException;
 
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.DependencyManager;
+import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependency.persistence.Dependencies;
+import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.VersionIterator;
 
 /**
@@ -44,11 +46,8 @@ public class DependencyReader extends DependencyReaderBase {
 
    private static final Logger LOG = LogManager.getLogger(DependencyReader.class);
 
-   protected boolean init = false;
    private final ChangeManager changeManager;
    private int overallSize = 0, prunedSize = 0;
-
-   private final VersionKeeper nonRunning;
 
    public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final int timeout,
          final ChangeManager changeManager) {
@@ -61,7 +60,7 @@ public class DependencyReader extends DependencyReaderBase {
       dependencyManager = new DependencyManager(projectFolder, timeout);
 
       this.changeManager = changeManager;
-      nonRunning = new VersionKeeper(new File("/dev/null"));
+      
    }
 
    /**
@@ -72,18 +71,18 @@ public class DependencyReader extends DependencyReaderBase {
     * @param url
     * @param iterator
     */
-   public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final int timeout, final VersionKeeper nonRunning,
+   public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final int timeout,
          final VersionKeeper nochange) {
       super(new Dependencies(), projectFolder, dependencyFile, timeout, nochange);
 
       this.iterator = iterator;
 
       dependencyResult.setUrl(url);
-
+      
       dependencyManager = new DependencyManager(projectFolder, timeout);
 
       changeManager = new ChangeManager(folders);
-      this.nonRunning = nonRunning;
+      
    }
 
    /**
@@ -98,7 +97,7 @@ public class DependencyReader extends DependencyReaderBase {
     */
    public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final Dependencies initialdependencies,
          final int timeout) {
-      this(projectFolder, dependencyFile, url, iterator, timeout, new VersionKeeper(new File(dependencyFile.getParentFile(), "nonrunning.json")),
+      this(projectFolder, dependencyFile, url, iterator, timeout,
             new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")));
 
       dependencyResult.setVersions(initialdependencies.getVersions());
@@ -108,41 +107,8 @@ public class DependencyReader extends DependencyReaderBase {
       initialVersionReader.readCompletedVersions();
       DependencyReaderUtil.write(dependencyResult, dependencyFile);
       lastRunningVersion = iterator.getTag();
-      init = true;
    }
 
-   /**
-    * Searches the first commit where a mvn clean packages runs correct, i.e. returns 1
-    * 
-    * @param projectFolder
-    */
-   public boolean searchFirstRunningCommit(final VersionIterator iterator, final TestExecutor executor, final File projectFolder) {
-      boolean successGettingCommit = iterator.goToFirstCommit();
-      while (!successGettingCommit && iterator.hasNextCommit()) {
-         successGettingCommit = iterator.goToNextCommit();
-      }
-      if (!successGettingCommit) {
-         throw new RuntimeException("Repository does not contain usable commit - maybe path has changed?");
-      } else {
-         LOG.info("Found first commit: " + iterator.getTag());
-      }
-      boolean isVersionRunning = false;
-      while (!isVersionRunning && iterator.hasNextCommit()) {
-         isVersionRunning = executor.isVersionRunning(iterator.getTag());
-
-         if (!isVersionRunning) {
-            LOG.debug("Buildfile does not exist / version is not running {}", iterator.getTag());
-            if (executor.doesBuildfileExist()) {
-               nonRunning.addVersion(iterator.getTag(), "Version is not running.");
-            } else {
-               nonRunning.addVersion(iterator.getTag(), "Buildfile does not exist.");
-            }
-            iterator.goToNextCommit();
-         }
-      }
-      return isVersionRunning;
-   }
-   
    boolean success = true;
 
    /**
@@ -150,12 +116,9 @@ public class DependencyReader extends DependencyReaderBase {
     */
    public boolean readDependencies() {
       try {
-         if (!init) {
-            final boolean running = searchFirstRunningCommit(iterator, dependencyManager.getExecutor(), folders.getProjectFolder());
-            if (!running || !readInitialVersion()) {
-               LOG.error("No version analyzable.");
-               return false;
-            }
+         if (!readInitialVersion()) {
+            LOG.error("Analyzing first version was not possible");
+            return false;
          }
 
          LOG.debug("Analysiere {} Einträge", iterator.getSize());
@@ -202,7 +165,7 @@ public class DependencyReader extends DependencyReaderBase {
    }
 
    public static final int MAX_SIZE_IN_MB = 10;
-   
+
    public void cleanTooBigLogs() {
       File logFolder = folders.getLogFolder();
       File versionFolder = new File(logFolder, iterator.getTag());
@@ -210,7 +173,7 @@ public class DependencyReader extends DependencyReaderBase {
          for (File clazzFolder : versionFolder.listFiles()) {
             if (clazzFolder.isDirectory()) {
                for (File methodLog : clazzFolder.listFiles()) {
-                  long sizeInMb = (methodLog.length() / (1024*1024));
+                  long sizeInMb = (methodLog.length() / (1024 * 1024));
                   if (sizeInMb > MAX_SIZE_IN_MB) {
                      methodLog.delete();
                   }

@@ -153,7 +153,7 @@ public class ContinousExecutor implements Callable<Void> {
       // final VersionKeeper nrv = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonrunning.json"));
       if (!dependencyFile.exists()) {
          needToLoad = true;
-         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, 10, nonRunning, nonChanges);
+         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, 10, nonChanges);
          reader.readDependencies();
          dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       } else {
@@ -170,7 +170,7 @@ public class ContinousExecutor implements Callable<Void> {
          }
       }
       if (needToLoad) {
-         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, 10, nonRunning, nonChanges);
+         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, 10, nonChanges);
          reader.readDependencies();
          dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       }

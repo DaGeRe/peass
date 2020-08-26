@@ -1,6 +1,7 @@
 package de.peass.reading;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
@@ -56,14 +57,8 @@ public class TestPeASSFilter {
       final ModuleClassMapping mapping = new ModuleClassMapping(manager.getExecutor());
       final List<TraceElement> referenceTrace = new CalledMethodLoader(kiekerFolder, mapping).getShortTrace("");
 
-      for (int i = 1; i <= 10; i++) {
-         cleanup();
-         new PeASSFolders(CURRENT);
-         manager.getExecutor().loadClasses();
-         manager.executeKoPeMeKiekerRun(ts, ""+i);
-         final File kiekerFolderComparison = ViewGeneratorIT.getMethodFolder(testcase, manager.getXMLFileFolder(CURRENT));
-         LOG.debug("Searching: " + kiekerFolderComparison);
-         final List<TraceElement> compareTrace = new CalledMethodLoader(kiekerFolderComparison, mapping).getShortTrace("");
+      for (int i = 1; i <= 5; i++) {
+         final List<TraceElement> compareTrace = regenerateTrace(manager, ts, testcase, mapping, i);
          
          LOG.debug("Old");
          for (final TraceElement reference : referenceTrace){
@@ -79,5 +74,17 @@ public class TestPeASSFilter {
          Assert.assertEquals(referenceTrace.size(), compareTrace.size());
       }
 
+   }
+
+   private List<TraceElement> regenerateTrace(final KiekerResultManager manager, final TestSet ts, final TestCase testcase, final ModuleClassMapping mapping, int i)
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, FileNotFoundException {
+      cleanup();
+      new PeASSFolders(CURRENT);
+      manager.getExecutor().loadClasses();
+      manager.executeKoPeMeKiekerRun(ts, ""+i);
+      final File kiekerFolderComparison = ViewGeneratorIT.getMethodFolder(testcase, manager.getXMLFileFolder(CURRENT));
+      LOG.debug("Searching: " + kiekerFolderComparison);
+      final List<TraceElement> compareTrace = new CalledMethodLoader(kiekerFolderComparison, mapping).getShortTrace("");
+      return compareTrace;
    }
 }

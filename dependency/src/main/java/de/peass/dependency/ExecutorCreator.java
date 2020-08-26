@@ -8,6 +8,12 @@ import de.peass.dependency.execution.TestExecutor;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 public class ExecutorCreator {
+   
+   public static boolean hasBuildfile(final PeASSFolders folders) {
+      final File pom = new File(folders.getProjectFolder(), "pom.xml");
+      final File buildGradle = new File(folders.getProjectFolder(), "build.gradle");
+      return pom.exists() || buildGradle.exists();
+   }
 
    public static TestExecutor createExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
       final File pom = new File(folders.getProjectFolder(), "pom.xml");

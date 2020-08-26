@@ -25,6 +25,7 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.parallel.Merger;
 import de.peass.dependency.parallel.OneReader;
 import de.peass.dependency.reader.DependencyReader;
+import de.peass.dependency.reader.FirstRunningVersionFinder;
 import de.peass.dependency.reader.VersionKeeper;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.OptionConstants;
@@ -93,8 +94,9 @@ public class DependencyParallelReader {
       nonChanges = new VersionKeeper(new File(tempResultFolder, "nonChanges_" + project + ".json"));
 
       sizePerThread = commits.size() > 2 * threadCount ? commits.size() / threadCount : 2;
-
       outFiles = commits.size() > 2 * threadCount ? new File[threadCount] : new File[1];
+      
+      LOG.debug("Threads: {} Size per Thread: {} OutFile: {}", threadCount, sizePerThread, outFiles.length) ;
 
       this.timeout = timeout;
    }
@@ -148,9 +150,10 @@ public class DependencyParallelReader {
       LOG.debug("Start: {} End: {}", currentCommits.get(0), currentCommits.get(currentCommits.size() - 1));
       LOG.debug(currentCommits);
       final VersionIterator iterator = new VersionIteratorGit(projectFolderTemp, currentCommits, null);
-      final DependencyReader reader = new DependencyReader(projectFolderTemp, currentOutFile, url, iterator, timeout, nonRunning, nonChanges);
+      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(folders, nonRunning, iterator, timeout);
+      final DependencyReader reader = new DependencyReader(projectFolderTemp, currentOutFile, url, iterator, timeout, nonChanges);
       final VersionIteratorGit reserveIterator = new VersionIteratorGit(projectFolderTemp, reserveCommits, null);
-      final Runnable current = new OneReader(minimumCommit, currentOutFile, reserveIterator, reader);
+      final Runnable current = new OneReader(minimumCommit, currentOutFile, reserveIterator, reader, finder);
       service.submit(current);
       Thread.sleep(5);
    }

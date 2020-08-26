@@ -29,7 +29,9 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.reader.DependencyReader;
+import de.peass.dependency.reader.FirstRunningVersionFinder;
 import de.peass.dependency.reader.VersionKeeper;
 import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitCommit;
@@ -84,7 +86,11 @@ public class DependencyReadingStarter {
          final List<GitCommit> commits = getGitCommits(line, projectFolder);
          LOG.debug(url);
          final VersionIterator iterator = new VersionIteratorGit(projectFolder, commits, null);
-         reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, timeout, nonRunning, nonChanges);
+         boolean init = new FirstRunningVersionFinder(new PeASSFolders(projectFolder), nonRunning, iterator, timeout).searchFirstRunningCommit();
+         if (!init) {
+            throw new RuntimeException("No analyzable version");
+         }
+         reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, timeout, nonChanges);
          LOG.debug("Reader initalized");
       } else {
          throw new RuntimeException("Unknown version control system");
@@ -121,7 +127,7 @@ public class DependencyReadingStarter {
    public static List<GitCommit> getGitCommits(final CommandLine line, final File projectFolder) {
       final String startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName(), null);
       final String endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName(), null);
-      
+
       return getGitCommits(startversion, endversion, projectFolder);
    }
 

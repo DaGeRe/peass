@@ -94,9 +94,23 @@ public class JUnitTestTransformer {
       this.projectFolder = projectFolder;
       this.config = config;
       datacollectorlist = config.isUseGC() ? DataCollectorList.ONLYTIME : DataCollectorList.ONLYTIME_NOGC;
-      // iterations = DEFAULT_EXECUTIONS;
-      // warmupExecutions = DEFAULT_EXECUTIONS;
-      // timeoutTime = DEFAULT_TIMEOUT;
+   }
+   
+   /**
+    * Creates a test transformer for usage in PRONTO
+    * @param projectFolder
+    * @param timeout
+    */
+   public JUnitTestTransformer(File projectFolder, long timeout) {
+      this.projectFolder = projectFolder;
+      config = new MeasurementConfiguration(1, timeout);
+      config.setIterations(1);
+      config.setWarmup(0);
+      config.setUseKieker(true);
+      datacollectorlist = DataCollectorList.ONLYTIME;
+      final JUnitTestTransformer testGenerator = new JUnitTestTransformer(projectFolder, config);
+      testGenerator.getConfig().setLogFullData(false);
+      testGenerator.setEncoding(StandardCharsets.UTF_8);
    }
 
    private Map<File, CompilationUnit> loadedFiles;

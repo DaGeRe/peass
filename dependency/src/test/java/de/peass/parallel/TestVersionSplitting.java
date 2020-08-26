@@ -26,6 +26,7 @@ import de.peass.dependency.parallel.OneReader;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.InitialVersion;
 import de.peass.dependency.reader.DependencyReader;
+import de.peass.dependency.reader.FirstRunningVersionFinder;
 import de.peass.dependencytests.helper.FakeVersionIterator;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.VersionIterator;
@@ -39,11 +40,6 @@ public class TestVersionSplitting {
 
       public DummyReader(File dummyFolder, VersionIterator iterator, ChangeManager manager) throws IOException {
          super(dummyFolder, null, null, iterator, 1, manager);
-      }
-
-      @Override
-      public boolean searchFirstRunningCommit(VersionIterator iterator, TestExecutor executor, File projectFolder) {
-         return true;
       }
 
       @Override
@@ -150,10 +146,17 @@ public class TestVersionSplitting {
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(null);
 
+      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(null, null, null, 0) {
+         @Override
+         public boolean searchFirstRunningCommit() {
+            return true;
+         }
+      };
+      
       DummyReader dummy = new DummyReader(dummyFolder, fakeIterator, changeManager);
       System.out.println(minimumCommit.getTag());
       final VersionIterator reserveIterator = new FakeVersionIterator(dummyFolder, reserveCommits);
-      OneReader reader = new OneReader(minimumCommit, new File("/dev/null"), reserveIterator, dummy);
+      OneReader reader = new OneReader(minimumCommit, new File("/dev/null"), reserveIterator, dummy, finder);
       reader.run();
 
       dependencies.add(dummy.getDependencies());

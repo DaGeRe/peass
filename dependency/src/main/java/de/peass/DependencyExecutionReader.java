@@ -71,12 +71,11 @@ public class DependencyExecutionReader implements Callable<Void>{
       final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(startversion, endversion, projectFolder);
       VersionComparator.setVersions(commits);
       
-      readExecutions(projectFolder, project, commits, timeout, threads, resultBaseFolder);
+      readExecutions(project, commits);
       return null;
    }
 
-   public static void readExecutions(final File projectFolder, final String project, final List<GitCommit> commits, final int timeout, final int threads,
-         final File resultBaseFolder) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, ParseException, JAXBException {
+   public void readExecutions(final String project, final List<GitCommit> commits) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, ParseException, JAXBException {
       final DependencyParallelReader reader = new DependencyParallelReader(projectFolder, resultBaseFolder, project, commits, threads, timeout);
       final File[] outFiles = reader.readDependencies();
 

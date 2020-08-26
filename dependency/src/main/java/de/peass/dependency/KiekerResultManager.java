@@ -55,23 +55,12 @@ public class KiekerResultManager {
 
    public KiekerResultManager(final File projectFolder, long timeout) {
       folders = new PeASSFolders(projectFolder);
-      testTransformer = createTestTransformer(timeout);
+      testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), timeout);
       executor = ExecutorCreator.createExecutor(folders, testTransformer);
    }
    
    public JUnitTestTransformer getTestTransformer() {
       return testTransformer;
-   }
-
-   protected JUnitTestTransformer createTestTransformer(long timeout) {
-      final MeasurementConfiguration config = new MeasurementConfiguration(1, timeout);
-      config.setIterations(1);
-      config.setWarmup(0);
-      config.setUseKieker(true);
-      final JUnitTestTransformer testGenerator = new JUnitTestTransformer(folders.getProjectFolder(), config);
-      testGenerator.getConfig().setLogFullData(false);
-      testGenerator.setEncoding(StandardCharsets.UTF_8);
-      return testGenerator;
    }
 
    public void runTraceTests(final TestSet testsToUpdate, final String version) throws IOException, XmlPullParserException, InterruptedException {
