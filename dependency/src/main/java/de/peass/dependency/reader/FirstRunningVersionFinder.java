@@ -39,6 +39,7 @@ public class FirstRunningVersionFinder {
          if (ExecutorCreator.hasBuildfile(folders)) {
             isVersionRunning = tryCommit(iterator, testTransformer);
          } else {
+            nonRunning.addVersion(iterator.getTag(), "Buildfile does not exist.");
             iterator.goToNextCommit();
          }
       }

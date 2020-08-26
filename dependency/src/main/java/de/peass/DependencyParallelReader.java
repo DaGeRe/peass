@@ -150,7 +150,7 @@ public class DependencyParallelReader {
       LOG.debug("Start: {} End: {}", currentCommits.get(0), currentCommits.get(currentCommits.size() - 1));
       LOG.debug(currentCommits);
       final VersionIterator iterator = new VersionIteratorGit(projectFolderTemp, currentCommits, null);
-      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(folders, nonRunning, iterator, timeout);
+      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(new PeASSFolders(projectFolderTemp), nonRunning, iterator, timeout);
       final DependencyReader reader = new DependencyReader(projectFolderTemp, currentOutFile, url, iterator, timeout, nonChanges);
       final VersionIteratorGit reserveIterator = new VersionIteratorGit(projectFolderTemp, reserveCommits, null);
       final Runnable current = new OneReader(minimumCommit, currentOutFile, reserveIterator, reader, finder);

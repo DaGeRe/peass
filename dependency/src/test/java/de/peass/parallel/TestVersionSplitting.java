@@ -20,6 +20,8 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import de.peass.dependency.ChangeManager;
+import de.peass.dependency.DependencyManager;
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependency.parallel.Merger;
 import de.peass.dependency.parallel.OneReader;
@@ -44,6 +46,7 @@ public class TestVersionSplitting {
 
       @Override
       public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException {
+         dependencyManager = new DependencyManager(folders, Integer.MAX_VALUE);
          dependencyResult.setInitialversion(new InitialVersion());
          dependencyResult.getInitialversion().setVersion(iterator.getTag());
          return true;

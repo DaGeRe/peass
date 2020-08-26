@@ -49,8 +49,6 @@ public class DependencyReader extends DependencyReaderBase {
    private final ChangeManager changeManager;
    private int overallSize = 0, prunedSize = 0;
    
-   private final int timeout;
-
    public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final int timeout,
          final ChangeManager changeManager) {
       super(new Dependencies(), projectFolder, dependencyFile, timeout, new VersionKeeper(new File("/dev/null")));
@@ -58,8 +56,7 @@ public class DependencyReader extends DependencyReaderBase {
       this.iterator = iterator;
 
       dependencyResult.setUrl(url);
-      this.timeout = timeout;
-
+      
       this.changeManager = changeManager;
       
    }
@@ -77,7 +74,6 @@ public class DependencyReader extends DependencyReaderBase {
       super(new Dependencies(), projectFolder, dependencyFile, timeout, nochange);
 
       this.iterator = iterator;
-      this.timeout = timeout;
 
       dependencyResult.setUrl(url);
       
@@ -120,8 +116,6 @@ public class DependencyReader extends DependencyReaderBase {
             LOG.error("Analyzing first version was not possible");
             return false;
          }
-         dependencyManager = new DependencyManager(folders, timeout);
-         
 
          LOG.debug("Analysiere {} Einträge", iterator.getSize());
 

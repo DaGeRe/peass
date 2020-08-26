@@ -181,6 +181,7 @@ public abstract class DependencyReaderBase {
    }
 
    public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException {
+      dependencyManager = new DependencyManager(folders, timeout);
       InitialVersionReader initialVersionReader = new InitialVersionReader(dependencyResult, dependencyManager, iterator);
       if (initialVersionReader.readInitialVersion()) {
          DependencyReaderUtil.write(dependencyResult, dependencyFile);
