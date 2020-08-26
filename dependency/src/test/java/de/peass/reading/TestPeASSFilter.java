@@ -45,7 +45,7 @@ public class TestPeASSFilter {
 
    @Test
    public void testExecution() throws ViewNotFoundException, IOException, XmlPullParserException, InterruptedException {
-      final KiekerResultManager manager = new KiekerResultManager(CURRENT, 5000);
+      final KiekerResultManager manager = new KiekerResultManager(new PeASSFolders(CURRENT), 5000);
       final TestSet ts = new TestSet();
       final TestCase testcase = new TestCase("defaultpackage.TestMe", "testMe", "");
       ts.addTest(testcase);

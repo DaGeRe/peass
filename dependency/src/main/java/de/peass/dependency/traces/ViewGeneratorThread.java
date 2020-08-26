@@ -111,7 +111,7 @@ public class ViewGeneratorThread implements Runnable {
          throws IOException, InterruptedException, com.github.javaparser.ParseException, ViewNotFoundException, XmlPullParserException {
       boolean gotAllData = true;
 
-      final KiekerResultManager resultsManager = new KiekerResultManager(folders.getProjectFolder(), timeout);
+      final KiekerResultManager resultsManager = new KiekerResultManager(folders, timeout);
       LOG.info("View Comparing {} against {}", version, predecessor);
       for (final String githash : new String[] { predecessor, version }) {
          LOG.debug("Checkout... {}", folders.getProjectFolder());

@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peass.dependency.KiekerResultManager;
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.KiekerReader;
 import de.peass.dependency.analysis.PeASSFilter;
 import de.peass.dependency.analysis.data.TestCase;
@@ -22,8 +24,8 @@ public class TreeReader extends KiekerResultManager {
 
    private boolean ignoreEOIs;
    
-   TreeReader(final File folder, final long timeout) throws InterruptedException, IOException {
-      super(folder, timeout);
+   TreeReader(final File projectFolder, final long timeout) throws InterruptedException, IOException {
+      super(new PeASSFolders(projectFolder), timeout);
    }
 
    public void setIgnoreEOIs(boolean ignoreEOIs) {

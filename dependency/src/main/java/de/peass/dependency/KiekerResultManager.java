@@ -53,8 +53,8 @@ public class KiekerResultManager {
    protected final PeASSFolders folders;
    protected final JUnitTestTransformer testTransformer;
 
-   public KiekerResultManager(final File projectFolder, long timeout) {
-      folders = new PeASSFolders(projectFolder);
+   public KiekerResultManager(final PeASSFolders folders, long timeout) {
+      this.folders = folders;
       testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), timeout);
       executor = ExecutorCreator.createExecutor(folders, testTransformer);
    }

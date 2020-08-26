@@ -64,8 +64,8 @@ public class DependencyManager extends KiekerResultManager {
     * 
     * @param projectFolder
     */
-   public DependencyManager(final File projectFolder, long timeout) {
-      super(projectFolder, timeout);
+   public DependencyManager(final PeASSFolders folders, long timeout) {
+      super(folders, timeout);
    }
 
    public TestDependencies getDependencyMap() {

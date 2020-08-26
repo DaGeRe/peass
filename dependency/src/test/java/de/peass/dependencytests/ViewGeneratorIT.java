@@ -21,6 +21,7 @@ import org.junit.Test;
 import com.github.javaparser.ParseException;
 
 import de.peass.dependency.KiekerResultManager;
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.CalledMethodLoader;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TestCase;
@@ -122,7 +123,7 @@ public class ViewGeneratorIT {
    private void executeTraceGetting(final File project, final String githash)
          throws IOException, ParseException, ViewNotFoundException, XmlPullParserException, InterruptedException {
       init(project);
-      final KiekerResultManager tracereader = new KiekerResultManager(projectFolder, 5000);
+      final KiekerResultManager tracereader = new KiekerResultManager(new PeASSFolders(projectFolder), 5000);
       final TestSet testset = new TestSet();
       testset.addTest(new TestCase("viewtest.TestMe", "test", ""));
       tracereader.getExecutor().loadClasses();
