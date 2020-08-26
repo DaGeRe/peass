@@ -106,9 +106,9 @@ public class ChangeReader {
       }
    }
 
-   private void readCleanFolder(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, File slurmCleanFolder) throws JAXBException {
-      LOG.info("Handlung: {}", slurmCleanFolder);
-      File versionFolder = slurmCleanFolder.listFiles()[0].listFiles()[0];
+   private void readCleanFolder(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, File cleanFolder) throws JAXBException {
+      LOG.info("Handling: {}", cleanFolder);
+      File versionFolder = cleanFolder.listFiles()[0].listFiles()[0];
       File testcaseFolder = versionFolder.listFiles()[0].listFiles()[0];
       for (File childFile : testcaseFolder.listFiles()) {
          if (childFile.getName().endsWith(".xml")) {
