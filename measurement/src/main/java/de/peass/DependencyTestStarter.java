@@ -31,7 +31,7 @@ import picocli.CommandLine.Option;
  * @author reichelt
  *
  */
-@Command(description = "Measures the defined tests and versions exactly until the number of VMs is reached", name = "measure")
+@Command(description = "Measures the defined tests and versions until the number of VMs is reached", name = "measure")
 public class DependencyTestStarter extends PairProcessor {
    
    @Option(names = { "-vms", "--vms" }, description = "Number of VMs to start")
@@ -118,6 +118,8 @@ public class DependencyTestStarter extends PairProcessor {
 
       startindex = getStartVersionIndex();
       endindex = getEndVersion();
+      
+      processCommandline();
       return null;
    }
 
@@ -266,7 +268,6 @@ public class DependencyTestStarter extends PairProcessor {
       final DependencyTestStarter command = new DependencyTestStarter();
       final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);
-      command.processCommandline();
    }
 
 }
