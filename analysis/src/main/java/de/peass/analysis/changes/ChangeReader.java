@@ -53,7 +53,7 @@ public class ChangeReader {
    public ChangeReader(final File statisticsFolder, final String projectName) {
       this.statisticsFolder = statisticsFolder;
    }
-   
+
    public ChangeReader(final String projectName) {
       this.statisticsFolder = null;
    }
@@ -120,8 +120,11 @@ public class ChangeReader {
    private void writeResults(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info) {
       if (statisticsFolder != null) {
          final String measurementFolderName = measurementFolder.getName();
-         final String executorName = measurementFolderName.substring(measurementFolderName.lastIndexOf(File.separator) + 1);
-         final File resultfile = new File(statisticsFolder.getParentFile(), executorName + ".json");
+         String executorName = measurementFolderName.substring(measurementFolderName.lastIndexOf(File.separator) + 1);
+         if (executorName.endsWith("_peass")) {
+            executorName = executorName.substring(0, executorName.length() - "_peass".length());
+         }
+         final File resultfile = new File(statisticsFolder.getParentFile(), "changes_" + executorName + ".json");
          final File statisticFile = new File(statisticsFolder, executorName + ".json");
          try {
             FolderSearcher.MAPPER.writeValue(resultfile, changes);
