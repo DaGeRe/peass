@@ -66,7 +66,7 @@ public class AdaptiveTester extends DependencyTester {
       if (configuration.isEarlyStop()) {
          final ResultLoader loader = new ResultLoader(configuration, folders.getFullMeasurementFolder(), testcase, currentChunkStart);
          loader.loadData();
-         System.out.println(loader.getStatisticsAfter());
+         LOG.debug(loader.getStatisticsAfter());
          DescriptiveStatistics statisticsBefore = loader.getStatisticsBefore();
          DescriptiveStatistics statisticsAfter = loader.getStatisticsAfter();
 
@@ -113,7 +113,7 @@ public class AdaptiveTester extends DependencyTester {
       return reducedIterations;
    }
 
-   boolean reduceExecutions(boolean shouldBreak, final int lessIterations) {
+   protected boolean reduceExecutions(boolean shouldBreak, final int lessIterations) {
       if (lessIterations > 3) {
          LOG.info("Reducing iterations too: {}", lessIterations);
          testTransformer.getConfig().setIterations(lessIterations);
@@ -124,6 +124,7 @@ public class AdaptiveTester extends DependencyTester {
             LOG.debug("Reducing repetitions to " + reducedRepetitions);
             testTransformer.getConfig().setRepetitions(reducedRepetitions);
          } else {
+            LOG.error("Cannot reduce iterations ({}) or repetitions ({}) anymore", testTransformer.getConfig().getIterations(), testTransformer.getConfig().getRepetitions());
             shouldBreak = true;
          }
       }

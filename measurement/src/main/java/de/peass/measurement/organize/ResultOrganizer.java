@@ -26,7 +26,6 @@ import de.peass.measurement.analysis.MultipleVMTestUtil;
 
 public class ResultOrganizer {
 
-
    private static final Logger LOG = LogManager.getLogger(ResultOrganizer.class);
 
    private PeASSFolders folders;
@@ -37,6 +36,7 @@ public class ResultOrganizer {
    private final FolderDeterminer determiner;
    private boolean saveAll = false;
    private final TestCase testcase;
+   private boolean success = true;
 
    public ResultOrganizer(final PeASSFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll, TestCase test) {
       this.folders = folders;
@@ -57,18 +57,20 @@ public class ResultOrganizer {
          final File oneResultFile = new File(folder, methodname + ".xml");
          if (!oneResultFile.exists()) {
             LOG.debug("File {} does not exist.", oneResultFile.getAbsolutePath());
+            success = false;
          } else {
             LOG.debug("Reading: {}", oneResultFile);
             final XMLDataLoader xdl = new XMLDataLoader(oneResultFile);
-//            xdl.readFulldataValues();
+            // xdl.readFulldataValues();
             final Kopemedata oneResultData = xdl.getFullData();
             final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
-//            final String clazz = oneResultData.getTestcases().getClazz();
-//            final TestCase realTestcase = new TestCase(clazz, methodname);
+            // final String clazz = oneResultData.getTestcases().getClazz();
+            // final TestCase realTestcase = new TestCase(clazz, methodname);
             if (testcaseList.size() > 0) {
                saveResults(version, vmid, oneResultFile, oneResultData, testcaseList);
             } else {
                LOG.error("No data - measurement failed?");
+               success = false;
             }
             if (isUseKieker) {
                saveKiekerFiles(folder, folders.getFullResultFolder(testcase, mainVersion, version));
@@ -99,7 +101,7 @@ public class ResultOrganizer {
       // Update testname, in case it has been set to
       // testRepetition
       testcaseList.get(0).setName(testcase.getMethod());
-      
+
       saveSummaryFile(version, testcaseList, oneResultFile);
 
       final File destFile = determiner.getResultFile(testcase, vmid, version, mainVersion);
@@ -131,8 +133,6 @@ public class ResultOrganizer {
       final File fullResultFile = new File(folders.getFullMeasurementFolder(), shortClazzName + "_" + testcase.getMethod() + ".xml");
       MultipleVMTestUtil.saveSummaryData(fullResultFile, oneResultFile, oneRundata, testcase, version, currentChunkStart);
    }
-   
-  
 
    private void saveKiekerFiles(final File folder, final File destFolder) throws IOException {
       final File kiekerFolder = folder.listFiles()[0];
@@ -192,7 +192,7 @@ public class ResultOrganizer {
    public File getResultFile(final TestCase testcase, final int vmid, final String version) {
       return determiner.getResultFile(testcase, vmid, version, mainVersion);
    }
-   
+
    public boolean isSaveAll() {
       return saveAll;
    }
@@ -203,5 +203,9 @@ public class ResultOrganizer {
 
    public TestCase getTest() {
       return testcase;
+   }
+
+   public boolean isSuccess() {
+      return success;
    }
 }

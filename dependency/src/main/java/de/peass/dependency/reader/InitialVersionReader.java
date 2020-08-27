@@ -34,7 +34,6 @@ public class InitialVersionReader {
    
    
    public InitialVersionReader(Dependencies dependencyResult, DependencyManager dependencyManager, VersionIterator iterator) {
-      super();
       this.dependencyResult = dependencyResult;
       this.dependencyManager = dependencyManager;
       this.iterator = iterator;

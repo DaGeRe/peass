@@ -29,8 +29,8 @@ public class RootCauseAnalysis extends DependencyTestStarter {
    @Option(names = { "-measureComplete", "--measureComplete" }, description = "Whether to measure the whole tree at once (default false - tree is measured level-wise)")
    public boolean measureComplete = false;
 
-   @Option(names = { "-skipCalibrationRun", "--skipCalibrationRun" }, description = "Skip the calibration run for complete measurements")
-   public boolean skipCalibrationRun = false;
+   @Option(names = { "-useCalibrationRun", "--useCalibrationRun" }, description = "Use the calibration run for complete measurements")
+   public boolean useCalibrationRun = false;
 
    @Option(names = { "-useNonAggregatedWriter",
          "--useNonAggregatedWriter" }, description = "Whether to save non-aggregated JSON data for measurement results - if true, full kieker record data are stored")
@@ -94,7 +94,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       final JUnitTestTransformer testtransformer = getTestTransformer(measurementConfiguration);
 
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, !useNonAggregatedWriter, !saveNothing,
-            outlierFactor, !notSplitAggregated, minTime, !skipCalibrationRun, ignoreEOIs);
+            outlierFactor, !notSplitAggregated, minTime, useCalibrationRun, ignoreEOIs);
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders);
       if (measureComplete) {

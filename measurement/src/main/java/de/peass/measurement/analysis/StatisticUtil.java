@@ -91,17 +91,17 @@ public class StatisticUtil {
       final TDistribution tDistribution = new TDistribution(null, statisticsPrev.getN() + statisticsVersion.getN() - 2);
       final double criticalValue = Math.abs(tDistribution.inverseCumulativeProbability(significance));
 
-      System.out.println("tcrit: " + criticalValue);
+      LOG.debug("tcrit: " + criticalValue);
 
       final double tValue0 = getTValue(statisticsPrev, statisticsVersion, delta_mu);
-      System.out.println("Delta: " + delta_mu + " Max: " + maxDelta * statisticsPrev.getMean() + " T0: " + tValue0);
+      LOG.debug("Delta: " + delta_mu + " Max: " + maxDelta * statisticsPrev.getMean() + " T0: " + tValue0);
       if (Math.abs(delta_mu) < maxDelta * statisticsPrev.getMean()) {
          return true;
       }
       double tested_delta = delta_mu;
       while (Math.abs(tested_delta) > maxDelta * statisticsPrev.getMean()) {
          final double tValue = getTValue(statisticsPrev, statisticsVersion, tested_delta);
-         System.out.println("Delta: " + tested_delta + " T:" + tValue + " Max: " + maxDelta * statisticsPrev.getMean());
+         LOG.debug("Delta: " + tested_delta + " T:" + tValue + " Max: " + maxDelta * statisticsPrev.getMean());
          if (Math.abs(tValue) > criticalValue) {
             return false;
          }

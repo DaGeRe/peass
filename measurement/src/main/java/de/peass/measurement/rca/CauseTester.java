@@ -61,6 +61,15 @@ public class CauseTester extends AdaptiveTester {
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       includedNodes = prepareNodes(nodes);
       evaluate(causeConfig.getTestCase());
+      if (!currentOrganizer.isSuccess()) {
+         boolean shouldBreak = reduceExecutions(false, configuration.getIterations() / 2);
+         configuration.setIterations(configuration.getIterations() / 2);
+         if (shouldBreak) {
+            throw new RuntimeException("Execution took too long, Iterations: " + configuration.getIterations() 
+            + " Warmup: " + configuration.getWarmup() 
+            + " Repetitions: " + configuration.getRepetitions());
+         }
+      }
       getDurations(adaptiveId);
       cleanup(adaptiveId);
       adaptiveId++;
@@ -88,9 +97,9 @@ public class CauseTester extends AdaptiveTester {
       if (configuration.getVersionOld().equals(version)) {
          includedNodes.forEach(node -> includedPattern.add(node.getKiekerPattern()));
       } else {
-         System.out.println("Searching other: " + version);
+         LOG.debug("Searching other: " + version);
          includedNodes.forEach(node -> {
-            System.out.println(node);
+            LOG.trace(node);
             includedPattern.add(node.getOtherVersionNode().getKiekerPattern());
          });
       }
