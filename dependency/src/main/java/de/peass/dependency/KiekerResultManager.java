@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
@@ -58,7 +59,7 @@ public class KiekerResultManager {
       testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), timeout);
       executor = ExecutorCreator.createExecutor(folders, testTransformer);
    }
-   
+
    public JUnitTestTransformer getTestTransformer() {
       return testTransformer;
    }
@@ -118,7 +119,7 @@ public class KiekerResultManager {
             executor.executeTest(testcase, logVersionFolder, testTransformer.getConfig().getTimeoutInMinutes());
          }
       }
-      cleanAboveSize(logVersionFolder, 500, "txt");
+      cleanAboveSize(logVersionFolder, 100, "txt");
    }
 
    /**
@@ -126,13 +127,26 @@ public class KiekerResultManager {
     * 
     * @param folderToClean
     */
-   void cleanAboveSize(final File folderToClean, final int sizeInMb, final String ending) {
-      for (final File logFile : FileUtils.listFiles(folderToClean, new WildcardFileFilter("*." + ending), TrueFileFilter.INSTANCE)) {
-         final long size = logFile.length() / (1024 * sizeInMb);
-         LOG.debug("File: {} Size: {}", logFile, size);
-         if (size > 1024) {
+   protected void cleanAboveSize(final File folderToClean, final int sizeInMb, final String ending) {
+      for (final File file : FileUtils.listFiles(folderToClean, new WildcardFileFilter("*." + ending), TrueFileFilter.INSTANCE)) {
+         final long size = file.length() / (1024 * 1024);
+         LOG.debug("File: {} Size: {}", file, size);
+         if (size > sizeInMb) {
             LOG.debug("Deleting file.");
-            logFile.delete();
+            file.delete();
+         }
+      }
+   }
+
+   protected void cleanFolderAboveSize(final File folderToClean, final int sizeInMb) {
+      for (final File file : folderToClean.listFiles()) {
+         if (file.isDirectory()) {
+            final long size = FileUtils.sizeOfDirectory(file) / (1024 * 1024);
+            LOG.debug("File: {} Size: {}", file, size);
+            if (size > sizeInMb) {
+               LOG.debug("Deleting file.");
+               file.delete();
+            }
          }
       }
    }

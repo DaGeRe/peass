@@ -84,7 +84,7 @@ public class DependencyManager extends KiekerResultManager {
       executor.executeAllKoPeMeTests(logFile);
 
       if (folders.getTempMeasurementFolder().exists()) {
-         return readResultFules(mapping);
+         return readInitialResultFiles(mapping);
       } else {
          return printErrors();
       }
@@ -120,7 +120,7 @@ public class DependencyManager extends KiekerResultManager {
       return sourceFound;
    }
 
-   private boolean readResultFules(final ModuleClassMapping mapping) {
+   private boolean readInitialResultFiles(final ModuleClassMapping mapping) {
       final Collection<File> xmlFiles = FileUtils.listFiles(folders.getTempMeasurementFolder(), new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE);
       LOG.debug("Initial test execution finished, starting result collection, analyzing {} files", xmlFiles.size());
       for (final File testResultFile : xmlFiles) {
@@ -139,7 +139,10 @@ public class DependencyManager extends KiekerResultManager {
 
       final File movedInitialResults = new File(folders.getTempMeasurementFolder().getParentFile(), "initialresults_kieker");
       folders.getTempMeasurementFolder().renameTo(movedInitialResults);
-      cleanAboveSize(movedInitialResults, 100, "dat");
+      for (File classFolder : movedInitialResults.listFiles()) {
+         LOG.debug("Cleaning {}", classFolder.getAbsolutePath());
+         cleanFolderAboveSize(classFolder, 100);
+      }
       return true;
    }
 
