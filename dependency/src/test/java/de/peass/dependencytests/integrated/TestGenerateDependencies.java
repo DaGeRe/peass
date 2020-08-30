@@ -17,6 +17,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import de.peass.TestConstants;
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.changesreading.ClazzChangeData;
@@ -46,9 +47,9 @@ public class TestGenerateDependencies {
          }
       }).when(VersionControlSystem.class);
 
-      final FakeFileIterator iterator = new FakeFileIterator(ViewGeneratorIT.projectFolder, Arrays.asList(ViewGeneratorIT.REPETITION));
+      final FakeFileIterator iterator = new FakeFileIterator(TestConstants.projectFolder, Arrays.asList(ViewGeneratorIT.REPETITION));
       final File dependencyFile = new File(ViewGeneratorIT.VIEW_IT, "dependencies.json");
-      final DependencyReader reader = new DependencyReader(ViewGeneratorIT.projectFolder, dependencyFile, "", iterator, 5000, VersionKeeper.INSTANCE);
+      final DependencyReader reader = new DependencyReader(TestConstants.projectFolder, dependencyFile, "", iterator, 5000, VersionKeeper.INSTANCE);
 
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);

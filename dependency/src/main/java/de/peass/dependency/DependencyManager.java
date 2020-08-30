@@ -44,7 +44,9 @@ import de.peass.dependency.analysis.data.TestDependencies;
 import de.peass.dependency.analysis.data.TestExistenceChanges;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.changesreading.ClazzChangeData;
+import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependency.traces.KiekerFolderUtil;
+import de.peass.testtransformation.JUnitTestTransformer;
 
 /**
  * Runs tests with kieker and reads the dependencies of tests for each version
@@ -57,6 +59,7 @@ public class DependencyManager extends KiekerResultManager {
    private static final Logger LOG = LogManager.getLogger(DependencyManager.class);
 
    private final TestDependencies dependencies = new TestDependencies();
+   int deleteFolderSize = 100;
 
    /**
     * Creates a new ChangeTestClassesHandler for the given folder with the given groupId and projectId. The groupId and projectId are needed to determine where the results are
@@ -67,9 +70,21 @@ public class DependencyManager extends KiekerResultManager {
    public DependencyManager(final PeASSFolders folders, long timeout) {
       super(folders, timeout);
    }
-
+   
+   public DependencyManager(TestExecutor executor, PeASSFolders folders, JUnitTestTransformer testTransformer) {
+      super(executor, folders, testTransformer);
+   }
+   
    public TestDependencies getDependencyMap() {
       return dependencies;
+   }
+   
+   public int getDeleteFolderSize() {
+      return deleteFolderSize;
+   }
+
+   public void setDeleteFolderSize(int deleteFolderSize) {
+      this.deleteFolderSize = deleteFolderSize;
    }
 
    public boolean initialyGetTraces(final String version) throws IOException, InterruptedException, XmlPullParserException {
@@ -141,7 +156,7 @@ public class DependencyManager extends KiekerResultManager {
       folders.getTempMeasurementFolder().renameTo(movedInitialResults);
       for (File classFolder : movedInitialResults.listFiles()) {
          LOG.debug("Cleaning {}", classFolder.getAbsolutePath());
-         cleanFolderAboveSize(classFolder, 100);
+         cleanFolderAboveSize(classFolder, deleteFolderSize);
       }
       return true;
    }

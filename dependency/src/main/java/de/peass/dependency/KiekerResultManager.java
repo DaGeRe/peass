@@ -59,6 +59,13 @@ public class KiekerResultManager {
       testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), timeout);
       executor = ExecutorCreator.createExecutor(folders, testTransformer);
    }
+   
+   public KiekerResultManager(TestExecutor executor, PeASSFolders folders, JUnitTestTransformer testTransformer) {
+      this.executor = executor;
+      this.folders = folders;
+      this.testTransformer = testTransformer;
+   }
+
 
    public JUnitTestTransformer getTestTransformer() {
       return testTransformer;
@@ -145,7 +152,11 @@ public class KiekerResultManager {
             LOG.debug("File: {} Size: {}", file, size);
             if (size > sizeInMb) {
                LOG.debug("Deleting file.");
-               file.delete();
+               try {
+                  FileUtils.deleteDirectory(file);
+               } catch (IOException e) {
+                  e.printStackTrace();
+               }
             }
          }
       }

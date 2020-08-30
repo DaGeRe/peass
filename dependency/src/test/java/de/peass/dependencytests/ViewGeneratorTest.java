@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import de.peass.TestConstants;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestSet;
@@ -57,7 +58,7 @@ public class ViewGeneratorTest {
 
       final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, Dependencies.class);
       VersionComparator.setDependencies(dependencies);
-      final ViewGenerator generator = new ViewGenerator(ViewGeneratorIT.projectFolder, dependencies, executefile, viewFolder, 1, 60000);
+      final ViewGenerator generator = new ViewGenerator(TestConstants.projectFolder, dependencies, executefile, viewFolder, 1, 60000);
 
       mockGitHandling();
 
@@ -75,14 +76,14 @@ public class ViewGeneratorTest {
    }
 
    private void mockGitHandling() throws InterruptedException, IOException {
-      final PeASSFolders folders = new PeASSFolders(ViewGeneratorIT.projectFolder);
+      final PeASSFolders folders = new PeASSFolders(TestConstants.projectFolder);
       final File projectFolderTemp = new File(folders.getTempProjectFolder(), "1");
       PowerMockito.mockStatic(GitUtils.class);
       PowerMockito.doAnswer(new Answer<Void>() {
 
          @Override
          public Void answer(final InvocationOnMock invocation) throws Throwable {
-            FileUtils.copyDirectory(ViewGeneratorIT.projectFolder, projectFolderTemp);
+            FileUtils.copyDirectory(TestConstants.projectFolder, projectFolderTemp);
             return null;
          }
       }).when(GitUtils.class);
