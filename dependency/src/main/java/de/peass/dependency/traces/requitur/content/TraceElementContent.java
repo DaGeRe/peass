@@ -6,9 +6,8 @@ import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TraceElement;
 
 public class TraceElementContent extends Content {
-	TraceElement value;
 
-	private final String clazz, method;
+   private final String clazz, method;
 
 	private final boolean isStatic;
 

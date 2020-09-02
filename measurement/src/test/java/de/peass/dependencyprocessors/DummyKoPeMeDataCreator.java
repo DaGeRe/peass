@@ -34,7 +34,7 @@ public class DummyKoPeMeDataCreator {
       value.setValue(15);
       if (count > TestResult.BOUNDARY_SAVE_FILE) {
          try {
-            ResultTempWriter writer = new ResultTempWriter();
+            ResultTempWriter writer = new ResultTempWriter(false);
             
             writeToDisk(count, writer);
             result.getFulldata().setFileName(writer.getTempFile().getAbsolutePath());
