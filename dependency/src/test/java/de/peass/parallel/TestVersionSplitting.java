@@ -21,8 +21,6 @@ import org.mockito.Mockito;
 
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.DependencyManager;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependency.parallel.Merger;
 import de.peass.dependency.parallel.OneReader;
 import de.peass.dependency.persistence.Dependencies;

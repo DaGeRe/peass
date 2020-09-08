@@ -33,7 +33,6 @@ import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.traces.ViewGenerator;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.utils.Constants;
 import de.peass.vcs.GitUtils;
 

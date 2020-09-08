@@ -3,20 +3,15 @@ package de.peass.dependencytests;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.Mockito;
 
 import de.peass.dependency.ChangeManager;
-import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.changesreading.ClazzChangeData;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependencytests.helper.FakeFileIterator;
 import de.peass.vcs.VersionIterator;
@@ -49,11 +44,7 @@ public class DependencyDetectorITGradle {
    public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException {
       init(BASIC_STATE);
 
-      final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
-      DependencyDetectorIT.addChange(changes, "", "defaultpackage.NormalDependency", "executeThing");
-
-      final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
-      Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
+      final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
       final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(CHANGE));
 
@@ -66,7 +57,7 @@ public class DependencyDetectorITGradle {
 
       System.out.println(reader.getDependencies());
 
-      final TestSet testMe = DependencyDetectorIT.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", VERSION_1);
+      final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", VERSION_1);
       final TestCase testcase = testMe.getTests().iterator().next();
       Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
       Assert.assertEquals("testMe", testcase.getMethod());
@@ -76,11 +67,7 @@ public class DependencyDetectorITGradle {
    public void testNormalChangeAndroid() throws IOException, InterruptedException, XmlPullParserException {
       init(BASIC_STATE_ANDROID);
       
-      final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
-      DependencyDetectorIT.addChange(changes, "", "defaultpackage.NormalDependency", "executeThing");
-
-      final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
-      Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
+      final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
       final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(CHANGE_ANDROID));
 
@@ -93,7 +80,7 @@ public class DependencyDetectorITGradle {
 
       System.out.println(reader.getDependencies());
 
-      final TestSet testMe = DependencyDetectorIT.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", VERSION_1);
+      final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", VERSION_1);
       final TestCase testcase = testMe.getTests().iterator().next();
       Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
       Assert.assertEquals("testMe", testcase.getMethod());

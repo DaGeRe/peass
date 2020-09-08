@@ -2,7 +2,6 @@ package de.peass;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Test;

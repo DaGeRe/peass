@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
@@ -21,7 +20,6 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.changesreading.ClazzChangeData;
 import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.Version;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependencytests.helper.FakeFileIterator;
 import de.peass.utils.Constants;
@@ -33,7 +31,7 @@ public class DependencyDetectorIT {
 
    static final String VERSION_1 = "000001";
    static final String VERSION_2 = "000002";
-   private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT");
+   private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT_JUnit5");
    public static final File CURRENT = new File(new File("target"), "current");
    private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
 
@@ -50,11 +48,7 @@ public class DependencyDetectorIT {
    public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException {
       final File secondVersion = new File(VERSIONS_FOLDER, "normal_change");
 
-      final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
-      addChange(changes, "", "defaultpackage.NormalDependency", "executeThing");
-
-      final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
-      Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
+      final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
       final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(secondVersion));
 
@@ -67,7 +61,7 @@ public class DependencyDetectorIT {
 
       System.out.println(reader.getDependencies());
 
-      final TestSet testMe = findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", VERSION_1);
+      final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", VERSION_1);
       final TestCase testcase = testMe.getTests().iterator().next();
       Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
       Assert.assertEquals("testMe", testcase.getMethod());
@@ -78,7 +72,7 @@ public class DependencyDetectorIT {
       final File secondVersion = new File(VERSIONS_FOLDER, "changed_test");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
-      addChange(changes, "", "defaultpackage.TestMe", "testMe");
+      DependencyDetectorTestUtil.addChange(changes, "", "defaultpackage.TestMe", "testMe");
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
@@ -94,34 +88,14 @@ public class DependencyDetectorIT {
 
       System.out.println(reader.getDependencies().getVersions().get(VERSION_1));
 
-      final TestSet testMe = findDependency(reader.getDependencies(), "defaultpackage.TestMe#testMe", VERSION_1);
+      final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.TestMe#testMe", VERSION_1);
       System.out.println(testMe);
       final TestCase testcase = testMe.getTests().iterator().next();
       Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
       Assert.assertEquals("testMe", testcase.getMethod());
    }
 
-   static TestSet findDependency(final Dependencies dependencies, final String changedClass, final String version) {
-      final Version versionDependencies = dependencies.getVersions().get(version);
-      System.out.println(dependencies.getVersions().keySet());
-      Assert.assertNotNull("Searching for " + changedClass + " in " + version, versionDependencies);
-
-      TestSet testcase = null;
-      for (final Entry<ChangedEntity, TestSet> candidate : versionDependencies.getChangedClazzes().entrySet()) {
-         final String changeclassInDependencies = candidate.getKey().toString();
-         if (changeclassInDependencies.equals(changedClass)) {
-            testcase = candidate.getValue();
-         }
-      }
-      return testcase;
-   }
    
-   public static void addChange(final Map<ChangedEntity, ClazzChangeData> changes, final String module, final String clazz, final String method) {
-      final ChangedEntity baseChangedClazz = new ChangedEntity(clazz, module);
-      final ClazzChangeData methodChanges = new ClazzChangeData(baseChangedClazz);
-      methodChanges.addChange(clazz.substring(clazz.lastIndexOf('.') + 1), method);
-      changes.put(baseChangedClazz, methodChanges);
-   }
 
    @Test
    public void testAddedClass() throws IOException, InterruptedException, XmlPullParserException {
@@ -148,7 +122,7 @@ public class DependencyDetectorIT {
 
       System.out.println(reader.getDependencies());
 
-      final TestSet testMeAlso = findDependency(reader.getDependencies(), "defaultpackage.TestMeAlso", VERSION_1);
+      final TestSet testMeAlso = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.TestMeAlso", VERSION_1);
       final TestCase testcase = testMeAlso.getTests().iterator().next();
 
       System.out.println(testMeAlso);
@@ -181,7 +155,7 @@ public class DependencyDetectorIT {
 
       System.out.println(dependencies);
 
-      final TestSet testMe = findDependency(dependencies, "defaultpackage.NormalDependency", VERSION_1);
+      final TestSet testMe = DependencyDetectorTestUtil.findDependency(dependencies, "defaultpackage.NormalDependency", VERSION_1);
 
       System.out.println(testMe);
       final ChangedEntity change = dependencies.getVersions().get(VERSION_1).getChangedClazzes().keySet().iterator().next();
@@ -225,7 +199,7 @@ public class DependencyDetectorIT {
 
       System.out.println(reader.getDependencies());
 
-      final TestSet testMe = findDependency(reader.getDependencies(), "defaultpackage.TestMe", VERSION_2);
+      final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.TestMe", VERSION_2);
 
       final TestCase test = testMe.getTests().iterator().next();
       Assert.assertEquals(1, testMe.getTests().size());
