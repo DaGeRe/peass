@@ -20,7 +20,6 @@ public class DependencyDetectorITGradle {
 
    static final String VERSION_1 = "000001";
    static final String VERSION_2 = "000002";
-   private static final File CURRENT = new File(new File("target"), "current");
    private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT_gradle");
    private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
    private static final File BASIC_STATE_ANDROID = new File(VERSIONS_FOLDER, "basic_state_android");
@@ -30,8 +29,8 @@ public class DependencyDetectorITGradle {
 
    public void init(final File folder) throws IOException {
       Assert.assertTrue(VERSIONS_FOLDER.exists());
-      FileUtils.deleteDirectory(CURRENT);
-      FakeFileIterator.copy(folder, CURRENT);
+      FileUtils.deleteDirectory(DependencyDetectorTestUtil.CURRENT);
+      FakeFileIterator.copy(folder, DependencyDetectorTestUtil.CURRENT);
    }
 
    // @org.junit.After
@@ -46,16 +45,9 @@ public class DependencyDetectorITGradle {
 
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
-      final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(CHANGE));
+      final VersionIterator fakeIterator = new FakeFileIterator(DependencyDetectorTestUtil.CURRENT, Arrays.asList(CHANGE));
 
-      final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
-      final boolean success = reader.readInitialVersion();
-      Assert.assertTrue(success);
-      fakeIterator.goToNextCommit();
-
-      reader.analyseVersion(changeManager);
-
-      System.out.println(reader.getDependencies());
+      final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
       final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", VERSION_1);
       final TestCase testcase = testMe.getTests().iterator().next();
@@ -69,16 +61,9 @@ public class DependencyDetectorITGradle {
       
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
-      final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(CHANGE_ANDROID));
+      final VersionIterator fakeIterator = new FakeFileIterator(DependencyDetectorTestUtil.CURRENT, Arrays.asList(CHANGE_ANDROID));
 
-      final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
-      final boolean success = reader.readInitialVersion();
-      Assert.assertTrue(success);
-      fakeIterator.goToNextCommit();
-
-      reader.analyseVersion(changeManager);
-
-      System.out.println(reader.getDependencies());
+      final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
       final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", VERSION_1);
       final TestCase testcase = testMe.getTests().iterator().next();

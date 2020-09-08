@@ -31,7 +31,6 @@ public class DependencyDetectorMultimoduleIT {
    private static final Logger LOG = LogManager.getLogger(DependencyDetectorMultimoduleIT.class);
 
    private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT_multimodule");
-   private static final File CURRENT = new File(new File("target"), "current");
    private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
 
    // private DependencyManager handler;
@@ -40,8 +39,8 @@ public class DependencyDetectorMultimoduleIT {
    public void initialize() throws IOException, InterruptedException {
       Assert.assertTrue(VERSIONS_FOLDER.exists());
 
-      FileUtils.deleteDirectory(CURRENT);
-      FileUtils.copyDirectory(BASIC_STATE, CURRENT);
+      FileUtils.deleteDirectory(DependencyDetectorTestUtil.CURRENT);
+      FileUtils.copyDirectory(BASIC_STATE, DependencyDetectorTestUtil.CURRENT);
 
       // handler = new DependencyManager(CURRENT);
       // final boolean success = handler.initialyGetTraces();
@@ -59,13 +58,14 @@ public class DependencyDetectorMultimoduleIT {
    public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException {
       final File secondVersion = new File(VERSIONS_FOLDER, "normal_change");
 
-      final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(secondVersion));
+      final VersionIterator fakeIterator = new FakeFileIterator(DependencyDetectorTestUtil.CURRENT, Arrays.asList(secondVersion));
 
       final Map<ChangedEntity, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("base-module", "de.dagere.base.BaseChangeable", "doSomething");
 
       ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
-      final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
+      
+      final DependencyReader reader = new DependencyReader(DependencyDetectorTestUtil.CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
 
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
@@ -89,14 +89,14 @@ public class DependencyDetectorMultimoduleIT {
          throws IOException, XmlPullParserException, InterruptedException {
       final File thirdVersion = new File(VERSIONS_FOLDER, "another_change");
 
-      final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(thirdVersion));
+      final VersionIterator fakeIterator = new FakeFileIterator(DependencyDetectorTestUtil.CURRENT, Arrays.asList(thirdVersion));
 
       final Map<ChangedEntity, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("base-module", "de.dagere.base.BaseChangeable", "doSomething");
       DependencyDetectorTestUtil.addChange(changes, "base-module", "de.dagere.base.NextBaseChangeable", "doSomething");
 
       ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
-      final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
+      final DependencyReader reader = new DependencyReader(DependencyDetectorTestUtil.CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 

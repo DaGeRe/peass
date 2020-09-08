@@ -1,9 +1,12 @@
 package de.peass.dependencytests;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.mockito.Mockito;
 
@@ -13,9 +16,14 @@ import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.changesreading.ClazzChangeData;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.Version;
+import de.peass.dependency.reader.DependencyReader;
+import de.peass.vcs.VersionIterator;
 
 public class DependencyDetectorTestUtil {
-   static TestSet findDependency(final Dependencies dependencies, final String changedClass, final String version) {
+   
+   public static final File CURRENT = new File(new File("target"), "current");
+   
+   public static TestSet findDependency(final Dependencies dependencies, final String changedClass, final String version) {
       final Version versionDependencies = dependencies.getVersions().get(version);
       System.out.println(dependencies.getVersions().keySet());
       Assert.assertNotNull("Searching for " + changedClass + " in " + version, versionDependencies);
@@ -49,5 +57,16 @@ public class DependencyDetectorTestUtil {
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
       return changeManager;
+   }
+   
+   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator)
+         throws IOException, InterruptedException, XmlPullParserException {
+      final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
+      final boolean success = reader.readInitialVersion();
+      Assert.assertTrue(success);
+      fakeIterator.goToNextCommit();
+
+      reader.analyseVersion(changeManager);
+      return reader;
    }
 }

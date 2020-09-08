@@ -114,7 +114,7 @@ public class MavenPomUtil {
    public static void extendDependencies(final Model model, final boolean junit3) {
       for (final Dependency dependency : model.getDependencies()) {
          if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
-            dependency.setVersion("4.12");
+            dependency.setVersion("4.13");
          }
       }
 

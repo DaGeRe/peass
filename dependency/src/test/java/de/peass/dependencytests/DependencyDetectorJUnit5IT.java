@@ -18,21 +18,19 @@ import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependencytests.helper.FakeFileIterator;
 import de.peass.vcs.VersionIterator;
 
-@Disabled
 public class DependencyDetectorJUnit5IT {
 
    static final String VERSION_1 = "000001";
    static final String VERSION_2 = "000002";
    private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT");
-   public static final File CURRENT = new File(new File("target"), "current");
    private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
 
    @BeforeEach
    public void initialize() throws IOException, InterruptedException {
       Assert.assertTrue(VERSIONS_FOLDER.exists());
 
-      FileUtils.deleteDirectory(CURRENT);
-      FileUtils.copyDirectory(BASIC_STATE, CURRENT);
+      FileUtils.deleteDirectory(DependencyDetectorTestUtil.CURRENT);
+      FileUtils.copyDirectory(BASIC_STATE, DependencyDetectorTestUtil.CURRENT);
       
    }
 
@@ -42,14 +40,9 @@ public class DependencyDetectorJUnit5IT {
 
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
-      final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(secondVersion));
+      final VersionIterator fakeIterator = new FakeFileIterator(DependencyDetectorTestUtil.CURRENT, Arrays.asList(secondVersion));
 
-      final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
-      final boolean success = reader.readInitialVersion();
-      Assert.assertTrue(success);
-      fakeIterator.goToNextCommit();
-
-      reader.analyseVersion(changeManager);
+      final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
       System.out.println(reader.getDependencies());
 
@@ -58,5 +51,7 @@ public class DependencyDetectorJUnit5IT {
       Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
       Assert.assertEquals("testMe", testcase.getMethod());
    }
+
+   
 
 }
