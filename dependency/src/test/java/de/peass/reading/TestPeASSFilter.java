@@ -10,8 +10,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.PeASSFolders;
@@ -31,7 +31,7 @@ public class TestPeASSFilter {
    private static final File CURRENT = new File(new File("target"), "current");
    private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
 
-   @Before
+   @BeforeEach
    public void initialize() throws IOException, InterruptedException {
       Assert.assertTrue(VERSIONS_FOLDER.exists());
       cleanup();
