@@ -33,6 +33,8 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.aspectj.weaver.ClassAnnotationValue;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.rules.TestRule;
 
 import com.github.javaparser.JavaParser;
@@ -46,8 +48,11 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.AnnotationExpr;
+import com.github.javaparser.ast.expr.ClassExpr;
 import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.MarkerAnnotationExpr;
 import com.github.javaparser.ast.expr.Name;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
@@ -56,8 +61,12 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
 import com.github.javaparser.ast.type.Type;
+import com.github.javaparser.ast.type.TypeParameter;
+import com.github.javaparser.ast.visitor.GenericVisitor;
+import com.github.javaparser.ast.visitor.VoidVisitor;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
+import de.dagere.kopeme.junit5.rule.KoPeMeExtension;
 import de.dagere.kopeme.parsing.JUnitParseUtil;
 import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
@@ -154,8 +163,10 @@ public class JUnitTestTransformer {
       for (final Map.Entry<File, Integer> fileVersionEntry : junitVersions.entrySet()) {
          if (fileVersionEntry.getValue() == 3) {
             editJUnit3(fileVersionEntry.getKey());
-         } else if (fileVersionEntry.getValue() == 4 || fileVersionEntry.getValue() == 34 || fileVersionEntry.getValue() == 5) {
+         } else if (fileVersionEntry.getValue() == 4 || fileVersionEntry.getValue() == 34 ) {
             editJUnit4(fileVersionEntry.getKey());
+         } else if (fileVersionEntry.getValue() == 5) {
+            editJUnit5(fileVersionEntry.getKey());
          }
       }
    }
@@ -197,9 +208,6 @@ public class JUnitTestTransformer {
                // We only need to consider classes with one extends, since classes can not have multiple extends and we search for classes that may extend TestCase (indirectly)
                LOG.trace("Transforming: {}", clazz.getNameAsString());
                if (clazz.getExtendedTypes().size() == 1) {
-                  if (javaFile.getName().contains("TestSharedPoolData")) {
-                     System.out.println("test");
-                  }
                   final ClassOrInterfaceType extend = clazz.getExtendedTypes(0);
                   final String extensionName = extend.getNameAsString().intern();
                   List<File> extensionsOfBase = extensions.get(extensionName);
@@ -244,6 +252,8 @@ public class JUnitTestTransformer {
                // 34 means mixed-junit-3-4
                // -> A test may include @Test-tests, but still extend some JUnit 3 test, and therefore the extension hierarchy is still relevant for him
                junitVersions.put(foundTest, 34);
+            } else if (junitVersions.get(foundTest) == 5 ){
+               junitVersions.put(foundTest, 5);
             } else {
                junitVersions.put(foundTest, 3);
             }
@@ -379,7 +389,51 @@ public class JUnitTestTransformer {
          e.printStackTrace();
       }
    }
+   
+   protected void editJUnit5(final File javaFile) {
+      try {
+         final CompilationUnit unit = loadedFiles.get(javaFile);
 
+         editJUnit5(unit);
+
+         Files.write(javaFile.toPath(), unit.toString().getBytes(charset));
+      } catch (final FileNotFoundException e) {
+         e.printStackTrace();
+      } catch (final IOException e) {
+         e.printStackTrace();
+      }
+   }
+
+   void editJUnit5(final CompilationUnit unit) {
+      unit.addImport("org.junit.jupiter.api.extension.ExtendWith");
+      unit.addImport("de.dagere.kopeme.junit5.rule.KoPeMeExtension");
+      
+      final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
+
+      final SingleMemberAnnotationExpr extendAnnotation = new SingleMemberAnnotationExpr(new Name("ExtendWith"), new ClassExpr(new TypeParameter("KoPeMeExtension")));
+      clazz.addAnnotation(extendAnnotation);
+
+      for (final MethodDeclaration method : clazz.getMethods()) {
+         boolean performanceTestFound = false;
+         boolean testFound = false;
+         for (final AnnotationExpr annotation : method.getAnnotations()) {
+            final String currentName = annotation.getNameAsString();
+            if (currentName.equals("de.dagere.kopeme.annotations.PerformanceTest") || currentName.equals("PerformanceTest")) {
+               performanceTestFound = true;
+            }
+            if (currentName.equals("org.junit.Test") || currentName.equals("org.junit.jupiter.api.Test") || currentName.equals("Test")) {
+               testFound = true;
+            }
+         }
+         if (testFound && !performanceTestFound) {
+            if (!method.isPublic()) {
+               method.setPublic(true);
+            }
+            addAnnotation(method);
+         }
+      }
+   }
+   
    void editJUnit4(final CompilationUnit unit) {
       unit.addImport("de.dagere.kopeme.annotations.Assertion");
       unit.addImport("de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation");

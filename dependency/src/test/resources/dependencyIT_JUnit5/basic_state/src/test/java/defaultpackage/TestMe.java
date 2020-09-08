@@ -1,5 +1,5 @@
 package defaultpackage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import defaultpackage.NormalDependency;
 import defaultpackage.OtherDependency;

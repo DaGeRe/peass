@@ -54,7 +54,7 @@ public class MavenTestExecutor extends TestExecutor {
 
    private static final Logger LOG = LogManager.getLogger(MavenTestExecutor.class);
 
-   public static final String SUREFIRE_VERSION = "2.21.0";
+   public static final String SUREFIRE_VERSION = "3.0.0-M3";
    public static final String JAVA_VERSION = "1.8";
 
    public static final String TEMP_DIR = "-Djava.io.tmpdir";
