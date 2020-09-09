@@ -134,11 +134,15 @@ public abstract class DependencyReaderBase {
 
          final TestSet testsToRun = dependencyManager.getTestsToRun(changes); // contains only the tests that need to be run -> could be changeTestMap.values() und dann umwandeln
          Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "toRun_" + version + ".json"), testsToRun.entrySet());
+
+         final int changedTests;
          if (testsToRun.classCount() > 0) {
-            return analyzeTests(version, newVersionInfo, testsToRun);
+            changedTests = analyzeTests(version, newVersionInfo, testsToRun);
          } else {
-            return testsToRun.classCount();
+            changedTests = 0;
          }
+         dependencyResult.getVersions().put(version, newVersionInfo);
+         return changedTests;
       } else {
          skippedNoChange.addVersion(version, "No Change at all");
          return 0;
@@ -173,11 +177,10 @@ public abstract class DependencyReaderBase {
       if (DETAIL_DEBUG)
          Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "final_" + version + ".json"), newVersionInfo);
 
-      dependencyResult.getVersions().put(version, newVersionInfo);
-      return newVersionInfo.getChangedClazzes().values().stream().mapToInt(value -> {
+      final int changedClazzCount = newVersionInfo.getChangedClazzes().values().stream().mapToInt(value -> {
          return value.getTestcases().values().stream().mapToInt(list -> list.size()).sum();
-      })
-            .sum();
+      }).sum();
+      return changedClazzCount;
    }
 
    public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException {

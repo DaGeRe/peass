@@ -139,47 +139,7 @@ public class ChangeManager {
          LOG.debug("Before Cleaning: {}", changedClasses);
          if (folders.getOldSources().exists()) {
             for (final Iterator<ChangedEntity> clazzIterator = changedClasses.iterator(); clazzIterator.hasNext();) {
-               final ChangedEntity clazz = clazzIterator.next();
-               final ClazzChangeData changeData = new ClazzChangeData(clazz);
-               try {
-                  final File newFile = ClazzFinder.getSourceFile(folders.getProjectFolder(), clazz);
-                  final File oldFile = ClazzFinder.getSourceFile(folders.getOldSources(), clazz);
-                  LOG.info("Vergleiche {}", newFile, oldFile);
-                  if (newFile != null && newFile.exists() && oldFile != null) {
-                     FileComparisonUtil.getChangedMethods(newFile, oldFile, changeData);
-                     boolean isImportChange = false;
-                     for (ChangedEntity entity : changeData.getImportChanges()) {
-                        final File entityFile = ClazzFinder.getSourceFile(folders.getProjectFolder(), entity);
-                        if (entityFile != null && entityFile.exists()) {
-                           isImportChange = true;
-                           changeData.setChange(true);
-                           changeData.setOnlyMethodChange(false);
-                           changeData.addClazzChange(clazz);
-                        }
-                     }
-                     
-                     if (!changeData.isChange() && !isImportChange) {
-                        clazzIterator.remove();
-                        LOG.debug("Dateien gleich: {}", clazz);
-                     } else {
-                        changedClassesMethods.put(clazz, changeData);
-                     }
-                  } else {
-                     LOG.info("Class did not exist before: {}", clazz);
-                     changeData.addClazzChange(clazz);
-                     changedClassesMethods.put(clazz, changeData);
-                  }
-               } catch (final ParseException | NoSuchElementException pe) {
-                  LOG.info("Class is unparsable for java parser, so to be sure it is added to the changed classes: {}", clazz);
-                  changeData.addClazzChange(clazz);
-                  changedClassesMethods.put(clazz, changeData);
-                  pe.printStackTrace();
-               } catch (final IOException e) {
-                  LOG.info("Class is unparsable for java parser, so to be sure it is added to the changed classes: {}", clazz);
-                  changeData.addClazzChange(clazz);
-                  changedClassesMethods.put(clazz, changeData);
-                  e.printStackTrace();
-               }
+               compareClazz(changedClassesMethods, clazzIterator);
             }
          } else {
             LOG.info("Kein Ordner für alte Dateien vorhanden");
@@ -191,6 +151,55 @@ public class ChangeManager {
       LOG.debug("After cleaning: {}", changedClassesMethods);
 
       return changedClassesMethods;
+   }
+
+   private void compareClazz(final Map<ChangedEntity, ClazzChangeData> changedClassesMethods, final Iterator<ChangedEntity> clazzIterator) {
+      final ChangedEntity clazz = clazzIterator.next();
+      final ClazzChangeData changeData = new ClazzChangeData(clazz);
+      try {
+         final File newFile = ClazzFinder.getSourceFile(folders.getProjectFolder(), clazz);
+         final File oldFile = ClazzFinder.getSourceFile(folders.getOldSources(), clazz);
+         LOG.info("Vergleiche {}", newFile, oldFile);
+         if (newFile != null && newFile.exists() && oldFile != null) {
+            compareFiles(changedClassesMethods, clazzIterator, clazz, changeData, newFile, oldFile);
+         } else {
+            LOG.info("Class did not exist before: {}", clazz);
+            changeData.addClazzChange(clazz);
+            changedClassesMethods.put(clazz, changeData);
+         }
+      } catch (final ParseException | NoSuchElementException pe) {
+         LOG.info("Class is unparsable for java parser, so to be sure it is added to the changed classes: {}", clazz);
+         changeData.addClazzChange(clazz);
+         changedClassesMethods.put(clazz, changeData);
+         pe.printStackTrace();
+      } catch (final IOException e) {
+         LOG.info("Class is unparsable for java parser, so to be sure it is added to the changed classes: {}", clazz);
+         changeData.addClazzChange(clazz);
+         changedClassesMethods.put(clazz, changeData);
+         e.printStackTrace();
+      }
+   }
+
+   private void compareFiles(final Map<ChangedEntity, ClazzChangeData> changedClassesMethods, final Iterator<ChangedEntity> clazzIterator, final ChangedEntity clazz,
+         final ClazzChangeData changeData, final File newFile, final File oldFile) throws ParseException, IOException {
+      FileComparisonUtil.getChangedMethods(newFile, oldFile, changeData);
+      boolean isImportChange = false;
+      for (ChangedEntity entity : changeData.getImportChanges()) {
+         final File entityFile = ClazzFinder.getSourceFile(folders.getProjectFolder(), entity);
+         if (entityFile != null && entityFile.exists()) {
+            isImportChange = true;
+            changeData.setChange(true);
+            changeData.setOnlyMethodChange(false);
+            changeData.addClazzChange(clazz);
+         }
+      }
+      
+      if (!changeData.isChange() && !isImportChange) {
+         clazzIterator.remove();
+         LOG.debug("Dateien gleich: {}", clazz);
+      } else {
+         changedClassesMethods.put(clazz, changeData);
+      }
    }
 
 }

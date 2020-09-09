@@ -116,6 +116,10 @@ public abstract class TestExecutor {
    protected abstract void runTest(File module, final File logFile, final String testname, final long timeout);
 
    void runMethod(final File logFolder, final ChangedEntity clazz, final File module, final String method, final long timeout) {
+      if (!method.equals("testFileItemHeaders")) {
+         return;
+      }
+      
       final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, module, clazz, method);
       shortener.shortenTest();
 

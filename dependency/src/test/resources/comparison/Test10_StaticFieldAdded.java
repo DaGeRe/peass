@@ -24,7 +24,7 @@ class Test{
 	public static final int y = 438;
 	public int w = 49;
 	
-	public static Test someReferenceToMe = new Test();
+	public static Test someReferenceToMe = null;
 
 	/**
 	 * Comment 1

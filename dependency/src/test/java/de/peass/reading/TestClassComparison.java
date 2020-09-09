@@ -157,8 +157,19 @@ public class TestClassComparison {
    }
 
    @Test
-   public void test10() throws ParseException, IOException {
+   public void testStaticFieldAdded() throws ParseException, IOException {
       final File file1 = new File(FOLDER, "Test1_1_Equal.java");
+      final File file2 = new File(FOLDER, "Test10_StaticFieldAdded.java");
+
+      final ClazzChangeData changedMethods = new ClazzChangeData(new ChangedEntity("Test1_1_Equal", ""));
+      FileComparisonUtil.getChangedMethods(file1, file2, changedMethods);
+
+      Assert.assertTrue(changedMethods.isChange());
+   }
+   
+   @Test
+   public void testStaticFieldChanged() throws ParseException, IOException {
+      final File file1 = new File(FOLDER, "Test10_StaticFieldAdded.java");
       final File file2 = new File(FOLDER, "Test10_StaticFieldChanged.java");
 
       final ClazzChangeData changedMethods = new ClazzChangeData(new ChangedEntity("Test1_1_Equal", ""));
