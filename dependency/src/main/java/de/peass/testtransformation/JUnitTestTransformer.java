@@ -104,9 +104,10 @@ public class JUnitTestTransformer {
       this.config = config;
       datacollectorlist = config.isUseGC() ? DataCollectorList.ONLYTIME : DataCollectorList.ONLYTIME_NOGC;
    }
-   
+
    /**
     * Creates a test transformer for usage in PRONTO
+    * 
     * @param projectFolder
     * @param timeout
     */
@@ -163,7 +164,7 @@ public class JUnitTestTransformer {
       for (final Map.Entry<File, Integer> fileVersionEntry : junitVersions.entrySet()) {
          if (fileVersionEntry.getValue() == 3) {
             editJUnit3(fileVersionEntry.getKey());
-         } else if (fileVersionEntry.getValue() == 4 || fileVersionEntry.getValue() == 34 ) {
+         } else if (fileVersionEntry.getValue() == 4 || fileVersionEntry.getValue() == 34) {
             editJUnit4(fileVersionEntry.getKey());
          } else if (fileVersionEntry.getValue() == 5) {
             editJUnit5(fileVersionEntry.getKey());
@@ -248,11 +249,12 @@ public class JUnitTestTransformer {
       final List<File> extending = extensions.get(clazzName);
       if (extending != null) {
          for (final File foundTest : extending) {
-            if (junitVersions.get(foundTest) != null && junitVersions.get(foundTest) == 4) {
+            final Integer testVersion = junitVersions.get(foundTest);
+            if (testVersion != null && testVersion == 4) {
                // 34 means mixed-junit-3-4
                // -> A test may include @Test-tests, but still extend some JUnit 3 test, and therefore the extension hierarchy is still relevant for him
                junitVersions.put(foundTest, 34);
-            } else if (junitVersions.get(foundTest) == 5 ){
+            } else if (testVersion != null && testVersion == 5) {
                junitVersions.put(foundTest, 5);
             } else {
                junitVersions.put(foundTest, 3);
@@ -389,7 +391,7 @@ public class JUnitTestTransformer {
          e.printStackTrace();
       }
    }
-   
+
    protected void editJUnit5(final File javaFile) {
       try {
          final CompilationUnit unit = loadedFiles.get(javaFile);
@@ -407,7 +409,7 @@ public class JUnitTestTransformer {
    void editJUnit5(final CompilationUnit unit) {
       unit.addImport("org.junit.jupiter.api.extension.ExtendWith");
       unit.addImport("de.dagere.kopeme.junit5.rule.KoPeMeExtension");
-      
+
       final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
 
       final SingleMemberAnnotationExpr extendAnnotation = new SingleMemberAnnotationExpr(new Name("ExtendWith"), new ClassExpr(new TypeParameter("KoPeMeExtension")));
@@ -433,7 +435,7 @@ public class JUnitTestTransformer {
          }
       }
    }
-   
+
    void editJUnit4(final CompilationUnit unit) {
       unit.addImport("de.dagere.kopeme.annotations.Assertion");
       unit.addImport("de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation");
@@ -589,11 +591,11 @@ public class JUnitTestTransformer {
    public void setAggregatedWriter(final boolean aggregatedWriter) {
       this.aggregatedWriter = aggregatedWriter;
    }
-   
+
    public void setIgnoreEOIs(boolean ignoreEOIs) {
       this.ignoreEOIs = ignoreEOIs;
    }
-   
+
    public boolean isIgnoreEOIs() {
       return ignoreEOIs;
    }
