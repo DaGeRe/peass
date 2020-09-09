@@ -1,4 +1,4 @@
-package de.peass;
+package de.peass.dependency.reader;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,46 +24,17 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.parallel.Merger;
 import de.peass.dependency.parallel.OneReader;
-import de.peass.dependency.reader.DependencyReader;
-import de.peass.dependency.reader.FirstRunningVersionFinder;
-import de.peass.dependency.reader.VersionKeeper;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIterator;
 import de.peass.vcs.VersionIteratorGit;
+import picocli.CommandLine.Command;
+
 
 public class DependencyParallelReader {
    private static final Logger LOG = LogManager.getLogger(DependencyParallelReader.class);
-
-   public static void main(final String[] args) throws ParseException, JsonGenerationException, JsonMappingException, IOException, InterruptedException, JAXBException {
-      final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.STARTVERSION, OptionConstants.ENDVERSION, OptionConstants.OUT,
-            OptionConstants.TIMEOUT, OptionConstants.THREADS);
-
-      final CommandLineParser parser = new DefaultParser();
-      final CommandLine line = parser.parse(options, args);
-
-      final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
-      if (!projectFolder.exists()) {
-         throw new RuntimeException("Folder " + projectFolder.getAbsolutePath() + " does not exist.");
-      }
-      final String project = projectFolder.getName();
-
-      final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(line, projectFolder);
-      VersionComparator.setVersions(commits);
-
-      final int timeout = Integer.parseInt(line.getOptionValue(OptionConstants.TIMEOUT.getName(), "5"));
-      final int threads = Integer.parseInt(line.getOptionValue(OptionConstants.THREADS.getName(), "4"));
-
-      final File resultBaseFolder = new File(line.getOptionValue(OptionConstants.OUT.getName(), "results"));
-      final DependencyParallelReader reader = new DependencyParallelReader(projectFolder, resultBaseFolder, project, commits, threads, timeout);
-      final File[] outFiles = reader.readDependencies();
-
-      final File dependencyOut = DependencyReadingStarter.getDependencyFile(line, projectFolder);
-
-      Merger.mergeVersions(dependencyOut, outFiles);
-   }
 
    private final String url;
    private final int timeout;

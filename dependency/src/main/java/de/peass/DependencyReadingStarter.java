@@ -20,12 +20,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.List;
+import java.util.concurrent.Callable;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,6 +35,9 @@ import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 import de.peass.vcs.VersionIterator;
 import de.peass.vcs.VersionIteratorGit;
+import picocli.CommandLine;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 
 /**
  * Creates dependency information and statics for a project by running all tests and identifying the dependencies with Kieker.
@@ -46,22 +45,32 @@ import de.peass.vcs.VersionIteratorGit;
  * @author reichelt
  *
  */
-public class DependencyReadingStarter {
+@Command(description = "Reads the dependencies", name = "readDependencies")
+public class DependencyReadingStarter implements Callable<Void> {
+
    private static final Logger LOG = LogManager.getLogger(DependencyReadingStarter.class);
 
-   public static void main(final String[] args) throws ParseException, FileNotFoundException {
-      final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.STARTVERSION, OptionConstants.ENDVERSION, OptionConstants.OUT,
-            OptionConstants.TIMEOUT);
+   @Mixin
+   private DependencyReaderConfig config;
 
-      final CommandLineParser parser = new DefaultParser();
-      final CommandLine line = parser.parse(options, args);
+   public static void main(final String[] args) {
+      try {
+         final CommandLine commandLine = new CommandLine(new DependencyReadingParallelStarter());
+         commandLine.execute(args);
+      } catch (final Throwable t) {
+         t.printStackTrace();
+      }
+   }
 
-      final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
+   @Override
+   public Void call() throws Exception {
+
+      final File projectFolder = config.getProjectFolder();
       if (!projectFolder.exists()) {
          throw new RuntimeException("Folder " + projectFolder.getAbsolutePath() + " does not exist.");
       }
 
-      final File dependencyFile = getDependencyFile(line, projectFolder);
+      final File dependencyFile = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + ".json");
 
       File outputFile = projectFolder.getParentFile();
       if (outputFile.isDirectory()) {
@@ -71,7 +80,7 @@ public class DependencyReadingStarter {
       LOG.debug("Lese {}", projectFolder.getAbsolutePath());
       final VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
 
-      final int timeout = Integer.parseInt(line.getOptionValue(OptionConstants.TIMEOUT.getName(), "5"));
+      final int timeout = config.getTimeout();
 
       System.setOut(new PrintStream(outputFile));
 
@@ -83,7 +92,7 @@ public class DependencyReadingStarter {
          throw new RuntimeException("SVN not supported currently.");
       } else if (vcs.equals(VersionControlSystem.GIT)) {
          final String url = GitUtils.getURL(projectFolder);
-         final List<GitCommit> commits = getGitCommits(line, projectFolder);
+         final List<GitCommit> commits = getGitCommits(config.getStartversion(), config.getEndversion(), projectFolder);
          LOG.debug(url);
          final VersionIterator iterator = new VersionIteratorGit(projectFolder, commits, null);
          boolean init = new FirstRunningVersionFinder(new PeASSFolders(projectFolder), nonRunning, iterator, timeout).searchFirstRunningCommit();
@@ -96,39 +105,8 @@ public class DependencyReadingStarter {
          throw new RuntimeException("Unknown version control system");
       }
       reader.readDependencies();
-   }
-
-   public static File getDependencyFile(final CommandLine line, final File projectFolder) {
-      final File dependencyFile;
-      if (line.hasOption(OptionConstants.OUT.getName())) {
-         dependencyFile = new File(line.getOptionValue(OptionConstants.OUT.getName()));
-      } else {
-         final File resultFolder = getResultFolder();
-         dependencyFile = new File(resultFolder, "deps_" + projectFolder.getName() + ".json");
-      }
-      return dependencyFile;
-   }
-
-   public static File getResultFolder() {
-      final File resultFolder = new File("results");
-      if (!resultFolder.exists()) {
-         resultFolder.mkdir();
-      }
-      return resultFolder;
-   }
-
-   /**
-    * Reads the list of all git commits from the given URL using start- and endversion from the given CommandLine.
-    * 
-    * @param line
-    * @param url
-    * @return
-    */
-   public static List<GitCommit> getGitCommits(final CommandLine line, final File projectFolder) {
-      final String startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName(), null);
-      final String endversion = line.getOptionValue(OptionConstants.ENDVERSION.getName(), null);
-
-      return getGitCommits(startversion, endversion, projectFolder);
+      
+      return null;
    }
 
    public static List<GitCommit> getGitCommits(String startversion, String endversion, final File projectFolder) {

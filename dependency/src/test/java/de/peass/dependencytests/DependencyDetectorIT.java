@@ -28,7 +28,7 @@ public class DependencyDetectorIT {
 
    static final String VERSION_1 = "000001";
    static final String VERSION_2 = "000002";
-   private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT_JUnit5");
+   private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT");
    private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
 
    @Before

@@ -18,11 +18,13 @@ import de.peass.analysis.properties.PropertyReader;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.parallel.Merger;
 import de.peass.dependency.persistence.Dependencies;
+import de.peass.dependency.reader.DependencyParallelReader;
 import de.peass.dependency.traces.ViewGenerator;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.vcs.GitCommit;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 /**
@@ -37,23 +39,8 @@ public class DependencyExecutionReader implements Callable<Void>{
 
    private static final Logger LOG = LogManager.getLogger(DependencyExecutionReader.class);
 
-   @Option(names = {"-folder", "--folder"}, description = "Folder that should be analyzed", required = true)
-   private File projectFolder;
-
-   @Option(names = {"-out","--out"}, description = "Folder for results")
-   private File resultBaseFolder = new File("results");
-
-   @Option(names = {"-timeout", "--timeout"}, description = "Timeout for each VM start")
-   private int timeout = 5;
-
-   @Option(names = {"-threads", "--threads"}, description = "Number of parallel threads for analysis")
-   private int threads = 4;
-
-   @Option(names = {"-startversion", "--startversion"}, description = "First version that should be analysed")
-   private String startversion;
-
-   @Option(names = {"-endversion", "--endversion"}, description = "Last version that should be analysed")
-   private String endversion;
+   @Mixin
+   private DependencyReaderConfig config;
 
    public static void main(final String[] args) {
       try {
@@ -66,9 +53,9 @@ public class DependencyExecutionReader implements Callable<Void>{
    
    @Override
    public Void call() throws Exception {
-      final String project = projectFolder.getName();
+      final String project = config.getProjectFolder().getName();
       
-      final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(startversion, endversion, projectFolder);
+      final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(config.getStartversion(), config.getEndversion(), config.getProjectFolder());
       VersionComparator.setVersions(commits);
       
       readExecutions(project, commits);
@@ -76,26 +63,26 @@ public class DependencyExecutionReader implements Callable<Void>{
    }
 
    public void readExecutions(final String project, final List<GitCommit> commits) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, ParseException, JAXBException {
-      final DependencyParallelReader reader = new DependencyParallelReader(projectFolder, resultBaseFolder, project, commits, threads, timeout);
+      final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, commits, config.getThreads(), config.getTimeout());
       final File[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);
 
-      final File out = new File(resultBaseFolder, "deps_" + project + ".json");
+      final File out = new File(config.getResultBaseFolder(), "deps_" + project + ".json");
       final Dependencies all = Merger.mergeVersions(out, outFiles);
 
-      final PeASSFolders folders = new PeASSFolders(projectFolder);
+      final PeASSFolders folders = new PeASSFolders(config.getProjectFolder());
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");
       folders.getTempProjectFolder().renameTo(dependencyTempFiles);
 
-      final File executeOut = new File(resultBaseFolder, "execute_" + project + ".json");
-      final File viewFolder = new File(resultBaseFolder, "views_" + project);
+      final File executeOut = new File(config.getResultBaseFolder(), "execute_" + project + ".json");
+      final File viewFolder = new File(config.getResultBaseFolder(), "views_" + project);
 
-      final ViewGenerator viewGenerator = new ViewGenerator(projectFolder, all, executeOut, viewFolder, threads, timeout);
+      final ViewGenerator viewGenerator = new ViewGenerator(config.getProjectFolder(), all, executeOut, viewFolder, config.getThreads(), config.getTimeout());
       viewGenerator.processCommandline();
       
-      final File propertyFolders = new File(resultBaseFolder, "properties_" + project);
-      final PropertyReader propertyReader = new PropertyReader(propertyFolders, projectFolder, viewFolder);
+      final File propertyFolders = new File(config.getResultBaseFolder(), "properties_" + project);
+      final PropertyReader propertyReader = new PropertyReader(propertyFolders, config.getProjectFolder(), viewFolder);
       propertyReader.readAllTestsProperties(viewGenerator.getChangedTraceMethods());
    }
 

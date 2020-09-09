@@ -163,7 +163,7 @@ public class ViewGenerator extends PairProcessor {
       init();
 
       if (out == null) {
-         out = DependencyReadingStarter.getResultFolder();
+         out = new File("results");
       }
 
       executeFile = new File(out, "execute-" + projectName + ".json");

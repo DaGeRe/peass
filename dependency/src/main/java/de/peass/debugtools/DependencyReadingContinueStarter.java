@@ -22,18 +22,16 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.Callable;
 
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.DependencyReaderConfig;
+import de.peass.DependencyReadingParallelStarter;
 import de.peass.DependencyReadingStarter;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.Version;
@@ -46,95 +44,105 @@ import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 import de.peass.vcs.VersionIterator;
 import de.peass.vcs.VersionIteratorGit;
+import picocli.CommandLine;
+import picocli.CommandLine.Mixin;
 
 /**
- * Creates dependency information and statics for a project by running all tests
- * and identifying the dependencies with Kieker.
+ * Creates dependency information and statics for a project by running all tests and identifying the dependencies with Kieker.
  * 
  * Starts with a given dependencyfile and continues its analysis.
  * 
  * @author reichelt
  *
  */
-public class DependencyReadingContinueStarter {
-	private static final Logger LOG = LogManager.getLogger(DependencyReadingContinueStarter.class);
+public class DependencyReadingContinueStarter implements Callable<Void> {
+   private static final Logger LOG = LogManager.getLogger(DependencyReadingContinueStarter.class);
 
-	public static void main(final String[] args) throws ParseException, JsonParseException, JsonMappingException, IOException {
-		final Options options = OptionConstants.createOptions(OptionConstants.FOLDER, OptionConstants.STARTVERSION, OptionConstants.ENDVERSION, OptionConstants.OUT,
-				OptionConstants.DEPENDENCYFILE, OptionConstants.TIMEOUT);
+   @Mixin
+   private DependencyReaderConfig config;
 
-		final CommandLineParser parser = new DefaultParser();
-		final CommandLine line = parser.parse(options, args);
+   public static void main(final String[] args) {
+      try {
+         final CommandLine commandLine = new CommandLine(new DependencyReadingContinueStarter());
+         commandLine.execute(args);
+      } catch (final Throwable t) {
+         t.printStackTrace();
+      }
+   }
 
-		final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
+   @Override
+   public Void call() throws Exception {
+      final File projectFolder = config.getProjectFolder();
+      if (!projectFolder.exists()) {
+         throw new RuntimeException("Folder " + projectFolder.getAbsolutePath() + " does not exist.");
+      }
 
-		final File dependencyFile = DependencyReadingStarter.getDependencyFile(line, projectFolder);
+      final File dependencyFile = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + ".json");
 
-		final File dependencyFileIn = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
-		final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, Dependencies.class);
-		VersionComparator.setVersions(GitUtils.getCommits(projectFolder));
+      final File dependencyFileIn = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + "_continue.json");
+      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, Dependencies.class);
+      VersionComparator.setVersions(GitUtils.getCommits(projectFolder));
 
-		String previousVersion = getPreviousVersion(line, projectFolder, dependencies);
+      String previousVersion = getPreviousVersion(config.getStartversion(), projectFolder, dependencies);
 
-		File outputFile = projectFolder.getParentFile();
-		if (outputFile.isDirectory()) {
-			outputFile = new File(projectFolder.getParentFile(), "ausgabe.txt");
-		}
+      File outputFile = projectFolder.getParentFile();
+      if (outputFile.isDirectory()) {
+         outputFile = new File(projectFolder.getParentFile(), "ausgabe.txt");
+      }
 
-		final int timeout = Integer.parseInt(line.getOptionValue(OptionConstants.TIMEOUT.getName(), "3"));
-		
-		LOG.debug("Lese {}", projectFolder.getAbsolutePath());
-		final VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
+      final int timeout = config.getTimeout();
 
-		System.setOut(new PrintStream(outputFile));
+      LOG.debug("Lese {}", projectFolder.getAbsolutePath());
+      final VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
 
-		final DependencyReader reader = createReader(line, projectFolder, dependencyFile, dependencies, previousVersion, timeout, vcs);
-		reader.readDependencies();
-		LOG.debug("Reader initalized");
+      System.setOut(new PrintStream(outputFile));
 
-	}
+      final DependencyReader reader = createReader(config, dependencyFile, dependencies, previousVersion, timeout, vcs);
+      reader.readDependencies();
+      
+      return null;
+   }
 
-   static String getPreviousVersion(final CommandLine line, final File projectFolder, final Dependencies dependencies) {
+   static String getPreviousVersion(final String startversion, final File projectFolder, final Dependencies dependencies) {
       String previousVersion;
-		if (line.hasOption(OptionConstants.STARTVERSION.getName())) {
-			final String startversion = line.getOptionValue(OptionConstants.STARTVERSION.getName());
-			truncateVersions(startversion, dependencies.getVersions());
-		   previousVersion = GitUtils.getPrevious(startversion, projectFolder);
-		} else {
-			previousVersion = VersionComparator.getPreviousVersion(dependencies.getInitialversion().getVersion());
-		}
+      if (startversion != null) {
+         truncateVersions(startversion, dependencies.getVersions());
+         previousVersion = GitUtils.getPrevious(startversion, projectFolder);
+      } else {
+         previousVersion = VersionComparator.getPreviousVersion(dependencies.getInitialversion().getVersion());
+      }
       return previousVersion;
    }
 
-   static DependencyReader createReader(final CommandLine line, final File projectFolder, final File dependencyFile, final Dependencies dependencies, String previousVersion,
+   static DependencyReader createReader(DependencyReaderConfig config, final File dependencyFile, final Dependencies dependencies, String previousVersion,
          final int timeout, final VersionControlSystem vcs) {
       final DependencyReader reader;
-		if (vcs.equals(VersionControlSystem.GIT)) {
-			final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(line, projectFolder);
-			commits.add(0, new GitCommit(previousVersion, "", "", ""));
-//			VersionComparator.setVersions(commits);
-			final GitCommit previous = new GitCommit(previousVersion, "", "", "");
-			final VersionIterator iterator = new VersionIteratorGit(projectFolder, commits, previous);
-			reader = new DependencyReader(projectFolder, dependencyFile, dependencies.getUrl(), iterator, dependencies, timeout);
-			iterator.goTo0thCommit();
-		} else if (vcs.equals(VersionControlSystem.SVN)) {
-		   throw new RuntimeException("SVN not supported currently.");
-		} else {
-			throw new RuntimeException("Unknown version control system");
-		}
+      if (vcs.equals(VersionControlSystem.GIT)) {
+         final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(config.getStartversion(), config.getEndversion(), config.getProjectFolder());
+         commits.add(0, new GitCommit(previousVersion, "", "", ""));
+         // VersionComparator.setVersions(commits);
+         final GitCommit previous = new GitCommit(previousVersion, "", "", "");
+         final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previous);
+         reader = new DependencyReader(config.getProjectFolder(), dependencyFile, dependencies.getUrl(), iterator, dependencies, timeout);
+         iterator.goTo0thCommit();
+      } else if (vcs.equals(VersionControlSystem.SVN)) {
+         throw new RuntimeException("SVN not supported currently.");
+      } else {
+         throw new RuntimeException("Unknown version control system");
+      }
       return reader;
    }
 
-	public static void truncateVersions(final String startversion, final Map<String,Version> versions) {
-	   for (final java.util.Iterator<Entry<String, Version>> it = versions.entrySet().iterator(); it.hasNext();) {
-			final Entry<String, Version> version = it.next();
-			if (VersionComparator.isBefore(startversion, version.getKey()) || version.getKey().equals(startversion)) {
-			   LOG.trace("Remove: " + version.getKey() + " " + VersionComparator.isBefore(startversion, version.getKey()));
-				it.remove();
-			}
-		}
-//		if (versions.size() > 0) {
-//			LOG.debug("Letzte vorgeladene Version: " + versions.get(versions.size() - 1).getKey());
-//		}
-	}
+   public static void truncateVersions(final String startversion, final Map<String, Version> versions) {
+      for (final java.util.Iterator<Entry<String, Version>> it = versions.entrySet().iterator(); it.hasNext();) {
+         final Entry<String, Version> version = it.next();
+         if (VersionComparator.isBefore(startversion, version.getKey()) || version.getKey().equals(startversion)) {
+            LOG.trace("Remove: " + version.getKey() + " " + VersionComparator.isBefore(startversion, version.getKey()));
+            it.remove();
+         }
+      }
+      // if (versions.size() > 0) {
+      // LOG.debug("Letzte vorgeladene Version: " + versions.get(versions.size() - 1).getKey());
+      // }
+   }
 }
