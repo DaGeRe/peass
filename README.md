@@ -63,3 +63,7 @@ For dependency and measurement, by providing `-startversion` and/or `-endversion
 # Funding
 
 The creation of this project was funded by a PhD scholarship of Hanns-Seidel-Stiftung (https://www.hss.de/).
+
+# Citation
+
+If you use PeASS for research, please cite `Reichelt, David Georg, Stefan Kühne, and Wilhelm Hasselbring. "PeASS: a tool for identifying performance changes at code level." 2019 34th IEEE/ACM International Conference on Automated Software Engineering (ASE). IEEE, 2019.`

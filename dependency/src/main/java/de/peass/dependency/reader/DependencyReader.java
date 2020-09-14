@@ -151,13 +151,10 @@ public class DependencyReader extends DependencyReaderBase {
             FileUtils.deleteDirectory(xmlFileFolder);
          }
          cleanTooBigLogs();
-      } catch (final ParseProblemException ppe) {
+      } catch (final ParseProblemException | XmlPullParserException | InterruptedException | IOException ppe) {
+         LOG.debug("Exception while reading a version");
          ppe.printStackTrace();
-      } catch (final XmlPullParserException e) {
-         e.printStackTrace();
-      } catch (final InterruptedException e) {
-         e.printStackTrace();
-      }
+      } 
    }
 
    public static final int MAX_SIZE_IN_MB = 10;

@@ -28,6 +28,9 @@ public class ExecutionData extends SelectedTests {
 
    private Map<String, TestSet> versions = new TreeMap<>(new VersionComparator());
 
+   public ExecutionData() {
+   }
+   
    public void setVersions(final Map<String, TestSet> versions) {
       this.versions = versions;
    }

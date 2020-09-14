@@ -164,7 +164,6 @@ public class DependencyReaderUtil {
       }
    }
 
-
    public static void write(final Dependencies deps, final File file) {
       LOG.debug("Schreibe in: {}", file);
       try {
@@ -220,11 +219,12 @@ public class DependencyReaderUtil {
       // }
       LOG.debug("Removable: " + removableVersion.size());
       for (final String version : removableVersion) {
+         LOG.debug("Removing: {}", version);
          merged.getVersions().remove(version);
       }
       int add = 0;
       for (final Map.Entry<String, Version> newerVersion : newer.getVersions().entrySet()) {
-         // LOG.debug("Add: {}", newerVersion.getKey());
+         LOG.debug("Add: {}", newerVersion.getKey());
          add++;
          merged.getVersions().put(newerVersion.getKey(), newerVersion.getValue());
       }

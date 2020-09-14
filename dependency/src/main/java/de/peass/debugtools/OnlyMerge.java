@@ -41,10 +41,9 @@ public class OnlyMerge implements Callable<Void>{
       final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(config.getStartversion(), config.getEndversion(), projectFolder);
       VersionComparator.setVersions(commits);
       
-      final File merge = new File("/home/reichelt/daten3/diss/chunk2/commons-pool");
-      final File[] files = merge.listFiles((FilenameFilter) new WildcardFileFilter("*.json"));
+      final File[] files = config.getResultBaseFolder().listFiles((FilenameFilter) new WildcardFileFilter("deps*.json"));
       
-      Merger.mergeVersions(new File(merge, "merged.json"), files);
+      Merger.mergeVersions(new File(config.getResultBaseFolder(), "merged.json"), files);
       return null;
    }
 }

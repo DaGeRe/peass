@@ -324,7 +324,7 @@ public class MavenTestExecutor extends TestExecutor {
       if (testTransformer.getConfig().isUseKieker()) {
          String writerConfig;
          if (testTransformer.isAggregatedWriter()) {
-            final String bulkFolder = "-Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.customStoragePath=" + tempFile.toString();
+            final String bulkFolder = "-Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.customStoragePath=" + tempFile.getAbsolutePath().toString();
             writerConfig = "-Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AggregatedTreeWriter" +
                   " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.writeInterval=" + testTransformer.getConfig().getKiekerAggregationInterval() +
                   " " + bulkFolder;
@@ -343,11 +343,11 @@ public class MavenTestExecutor extends TestExecutor {
 
          if (!testTransformer.isAdaptiveExecution()) {
             argline = KIEKER_ARG_LINE +
-                  " " + TEMP_DIR + "=" + tempFile.toString() +
+                  " " + TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
                   " " + writerConfig;
          } else {
             argline = KIEKER_ARG_LINE_TWEAK +
-                  " " + TEMP_DIR + "=" + tempFile.toString() +
+                  " " + TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
                   " -Dkieker.monitoring.adaptiveMonitoring.enabled=true" +
                   " -Dkieker.monitoring.adaptiveMonitoring.configFile=" + KIEKER_ADAPTIVE_FILENAME +
                   " -Dkieker.monitoring.adaptiveMonitoring.readInterval=15" +
