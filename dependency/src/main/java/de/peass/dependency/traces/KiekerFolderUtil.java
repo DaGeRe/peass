@@ -28,7 +28,7 @@ public class KiekerFolderUtil {
          }
       });
       if (listFiles == null) {
-         throw new ViewNotFoundException("Result folder: " + Arrays.toString(listFiles) + " ("
+         throw new ViewNotFoundException("Probably project not running - Result folder: " + Arrays.toString(listFiles) + " ("
                + (listFiles != null ? listFiles.length : "null") + ") in " + projectResultFolder.getAbsolutePath() + " should exist!");
       }
 

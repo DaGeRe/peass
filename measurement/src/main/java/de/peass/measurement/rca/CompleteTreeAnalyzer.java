@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.peass.measurement.rca.data.CallTreeNode;
+import de.peass.measurement.rca.treeanalysis.TreeUtil;
 
 public class CompleteTreeAnalyzer {
    private final List<CallTreeNode> treeStructureDiffering = new LinkedList<>();
@@ -12,20 +13,31 @@ public class CompleteTreeAnalyzer {
    private final List<CallTreeNode> nonDifferingPredecessor = new LinkedList<>();
 
    public CompleteTreeAnalyzer(final CallTreeNode root, final CallTreeNode rootPredecessor) {
+      root.setOtherVersionNode(rootPredecessor);
+      rootPredecessor.setOtherVersionNode(root);
       getAllNodes(root, rootPredecessor);
    }
 
    private void getAllNodes(final CallTreeNode current, final CallTreeNode currentPredecessor) {
-      if (current.getKiekerPattern().equals(currentPredecessor.getKiekerPattern()) &&
-            currentPredecessor.getChildren().size() == current.getChildren().size()) {
-         nonDifferingVersion.add(current);
-         nonDifferingPredecessor.add(currentPredecessor);
-         currentPredecessor.setOtherVersionNode(current);
-         current.setOtherVersionNode(currentPredecessor);
-         compareEqualChilds(current, currentPredecessor);
-      } else {
-         treeStructureDiffering.add(currentPredecessor);
+      
+      TreeUtil.findChildMapping(current, currentPredecessor.getOtherVersionNode());
+      for (CallTreeNode currentChild : current.getChildren()) {
+         getAllNodes(currentChild, currentChild.getOtherVersionNode());
+         
+         nonDifferingPredecessor.add(currentChild);
+         nonDifferingPredecessor.add(currentChild.getOtherVersionNode());
       }
+      
+//      if (current.getKiekerPattern().equals(currentPredecessor.getKiekerPattern()) &&
+//            currentPredecessor.getChildren().size() == current.getChildren().size()) {
+//         nonDifferingVersion.add(current);
+//         nonDifferingPredecessor.add(currentPredecessor);
+//         currentPredecessor.setOtherVersionNode(current);
+//         current.setOtherVersionNode(currentPredecessor);
+//         compareEqualChilds(current, currentPredecessor);
+//      } else {
+//         treeStructureDiffering.add(currentPredecessor);
+//      }
    }
 
    private void compareEqualChilds(final CallTreeNode current, final CallTreeNode currentPredecessor) {

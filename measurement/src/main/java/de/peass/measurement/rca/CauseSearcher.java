@@ -3,9 +3,12 @@ package de.peass.measurement.rca;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import javax.xml.bind.JAXBException;
 
@@ -130,7 +133,7 @@ public class CauseSearcher {
       new FolderDeterminer(folders).testResultFolders(measurementConfig.getVersion(), measurementConfig.getVersionOld(), causeSearchConfig.getTestCase());
    }
 
-   public List<ChangedEntity> search()
+   public Set<ChangedEntity> search()
          throws IOException, XmlPullParserException, InterruptedException, IllegalStateException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
       reader.readTrees();
 
@@ -139,7 +142,7 @@ public class CauseSearcher {
       return searchCause();
    }
 
-   protected List<ChangedEntity> searchCause()
+   protected Set<ChangedEntity> searchCause()
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       reader.getRootPredecessor().setOtherVersionNode(reader.getRootVersion());
       reader.getRootVersion().setOtherVersionNode(reader.getRootPredecessor());
@@ -149,8 +152,8 @@ public class CauseSearcher {
       return convertToChangedEntitites();
    }
 
-   protected List<ChangedEntity> convertToChangedEntitites() {
-      final List<ChangedEntity> changed = new LinkedList<>();
+   protected Set<ChangedEntity> convertToChangedEntitites() {
+      final Set<ChangedEntity> changed = new TreeSet<>();
       differingNodes.forEach(node -> changed.add(node.toEntity()));
       return changed;
    }

@@ -3,6 +3,7 @@ package de.peass.measurement.rca;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -124,11 +125,11 @@ public class CauseSearcherIT {
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders);
       final CauseTester measurer = new CauseTester(folders, testTransformer, causeSearcherConfig);
       final CauseSearcher searcher = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, folders);
-      final List<ChangedEntity> changedEntities = searcher.search();
+      final Set<ChangedEntity> changedEntities = searcher.search();
 
       LOG.debug(changedEntities);
       Assert.assertThat(changedEntities.size(), Matchers.greaterThanOrEqualTo(1));
-      Assert.assertEquals("defaultpackage.NormalDependency#child12", changedEntities.get(0).toString());
+      Assert.assertEquals("defaultpackage.NormalDependency#child12", changedEntities.iterator().next().toString());
       
    }
 

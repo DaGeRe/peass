@@ -89,7 +89,9 @@ public class CauseSearchData {
             nodes = serializeNode;
          } else {
             final MeasuredNode parent = current.get(rawDataNode.getParent());
-            parent.getChilds().add(serializeNode);
+            if (parent != null) {
+               parent.getChilds().add(serializeNode);
+            }
          }
          return serializeNode;
       } catch (Exception e) {

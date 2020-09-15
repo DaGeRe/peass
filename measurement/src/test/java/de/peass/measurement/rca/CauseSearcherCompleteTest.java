@@ -3,14 +3,17 @@ package de.peass.measurement.rca;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import de.peass.dependency.CauseSearchFolders;
@@ -26,6 +29,8 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class CauseSearcherCompleteTest {
 
+   final CauseTester measurer = Mockito.mock(CauseTester.class);
+   
    @Before
    public void cleanup() {
       final File folder = new File("target/test_peass/");
@@ -42,11 +47,11 @@ public class CauseSearcherCompleteTest {
       final CallTreeNode root1 = new TreeBuilderBig(true).getRoot();
       final CallTreeNode root2 = new TreeBuilderBig(true).getRoot();
 
-      final List<ChangedEntity> changes = getChanges(root1, root2);
+      final Set<ChangedEntity> changes = getChanges(root1, root2);
 
-      Assert.assertEquals(2, changes.size());
-      Assert.assertEquals("ClassB#methodB", changes.get(0).toString());
-      Assert.assertEquals("ClassB#methodB", changes.get(1).toString());
+      System.out.println(changes);
+      Assert.assertEquals(1, changes.size());
+      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassB#methodB", "")));
    }
    
    @Test
@@ -55,27 +60,35 @@ public class CauseSearcherCompleteTest {
       final CallTreeNode root1 = new TreeBuilderBig(false).getRoot();
       final CallTreeNode root2 = new TreeBuilderBig(false).getRoot();
 
-      final List<ChangedEntity> changes = getChanges(root1, root2);
+      final Set<ChangedEntity> changes = getChanges(root1, root2);
 
       Assert.assertEquals(1, changes.size());
-      Assert.assertEquals("ClassB#methodB", changes.get(0).toString());
+      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassB#methodB", "")));
    }
    
    @Test
    public void testDifferentTree()
          throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
       final CallTreeNode root1 = new TreeBuilder().getRoot();
-      final CallTreeNode root2 = new TreeBuilderDifferent().getRoot();
+      final TreeBuilderDifferent differentTreeBuilder = new TreeBuilderDifferent();
+      final CallTreeNode root2 = differentTreeBuilder.getRoot();
 
-      final List<ChangedEntity> changes = getChanges(root1, root2);
+      final Set<ChangedEntity> changes = getChanges(root1, root2);
 
       System.out.println(changes);
-      Assert.assertEquals(2, changes.size());
-      Assert.assertEquals("ClassB#methodB", changes.get(0).toString());
-      Assert.assertEquals("ClassC#methodC", changes.get(1).toString());
+      Assert.assertEquals(3, changes.size());
+      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassB#methodB", "")));
+      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassD#methodD", "")));
+      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassE#methodE", "")));
+      
+      ArgumentCaptor<List<CallTreeNode>> includedNodes = ArgumentCaptor.forClass(List.class);
+      Mockito.verify(measurer).measureVersion(includedNodes.capture());
+      
+      Assert.assertThat(includedNodes.getValue(), Matchers.hasItem(differentTreeBuilder.getD()));
+      Assert.assertThat(includedNodes.getValue(), Matchers.hasItem(differentTreeBuilder.getE()));
    }
 
-   private List<ChangedEntity> getChanges(final CallTreeNode root1, final CallTreeNode root2)
+   private Set<ChangedEntity> getChanges(final CallTreeNode root1, final CallTreeNode root2)
          throws InterruptedException, IOException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
       final File folder = new File("target/test/");
       folder.mkdir();
@@ -84,12 +97,12 @@ public class CauseSearcherCompleteTest {
 
       Mockito.when(treeReader.getRootPredecessor()).thenReturn(root1);
       Mockito.when(treeReader.getRootVersion()).thenReturn(root2);
-      final CauseTester measurer = Mockito.mock(CauseTester.class);
 
       final CauseSearcherComplete searcher = new CauseSearcherComplete(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, 
             TestConstants.SIMPLE_MEASUREMENT_CONFIG,
             new CauseSearchFolders(folder));
-      final List<ChangedEntity> changes = searcher.search();
+      final Set<ChangedEntity> changes = searcher.search();
+      
       return changes;
    }
 

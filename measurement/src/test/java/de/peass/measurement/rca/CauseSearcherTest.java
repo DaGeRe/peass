@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -82,11 +83,11 @@ public class CauseSearcherTest {
       final CauseSearcher searcher = new CauseSearcher(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, measurementConfig,
             new CauseSearchFolders(folder));
       
-      final List<ChangedEntity> changes = searcher.search();
+      final Set<ChangedEntity> changes = searcher.search();
 
       System.out.println(changes);
       Assert.assertEquals(1, changes.size());
-      Assert.assertEquals("ClassB#methodB", changes.get(0).toString());
+      Assert.assertEquals("ClassB#methodB", changes.iterator().next().toString());
       
       final CauseSearchData data = searcher.getRCAData();
       final TestcaseStatistic nodeStatistic = data.getNodes().getStatistic();
@@ -117,11 +118,11 @@ public class CauseSearcherTest {
       final CauseSearcher searcher = new CauseSearcher(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, measurementConfig,
             new CauseSearchFolders(folder));
       
-      final List<ChangedEntity> changes = searcher.search();
+      final Set<ChangedEntity> changes = searcher.search();
 
       System.out.println(changes);
       Assert.assertEquals(1, changes.size());
-      Assert.assertEquals("ClassB#methodB", changes.get(0).toString());
+      Assert.assertEquals("ClassB#methodB", changes.iterator().next().toString());
       
       final CauseSearchData data = searcher.getRCAData();
       final TestcaseStatistic nodeStatistic = data.getNodes().getStatistic();

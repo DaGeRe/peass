@@ -1,7 +1,9 @@
 package de.peass.measurement.rca;
 
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -36,7 +38,7 @@ public class CauseSearcherComplete extends CauseSearcher {
    }
 
    @Override
-   protected List<ChangedEntity> searchCause()
+   protected Set<ChangedEntity> searchCause()
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
 //      measurer.setConsiderNodePosition(true);
       final List<CallTreeNode> includableNodes;
