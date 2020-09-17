@@ -173,18 +173,6 @@ public class Cleaner extends DataAnalyser {
             })
             .map(result -> cleanResult(version, result))
             .collect(Collectors.toList());
-      // for (final Iterator<Result> it = previousClean.iterator(); it.hasNext();) {
-      // final Result result = it.next();
-      // final int resultSize = result.getFulldata().getValue().size();
-      // final long expectedSize = ceilDiv(minExecutionCount, 2);
-      // if (resultSize == expectedSize && !Double.isNaN(result.getValue())) {
-      // cleanResult(version, result);
-      // } else {
-      // LOG.debug("Wrong size: {} Expected: {}", resultSize, expectedSize);
-      // it.remove();
-      // }
-      // }
-      // return previousClean;
    }
 
    private Result cleanResult(final String version, final Result result) {

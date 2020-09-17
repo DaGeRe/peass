@@ -181,7 +181,7 @@ public class JUnitTestShortener implements AutoCloseable{
       return fqn;
    }
 
-   public void resetShortenedFile() {
+   private void resetShortenedFile() {
       if (lastShortenedMap != null) {
          for (final Map.Entry<File, File> shortened : lastShortenedMap.entrySet()) {
             try {

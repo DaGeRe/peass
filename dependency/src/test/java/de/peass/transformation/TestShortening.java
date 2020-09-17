@@ -1,6 +1,5 @@
 package de.peass.transformation;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -26,7 +25,7 @@ public class TestShortening {
    private File subTestFile = new File(subUrl.getPath());
 
    JUnitTestTransformer transformer;
-   
+
    @Rule
    public TemporaryFolder folder = new TemporaryFolder();
 
@@ -38,7 +37,7 @@ public class TestShortening {
       FileUtils.copyFile(exampleTestFile, testClazz);
       final File subTestClazz = new File(test, "SubTest.java");
       FileUtils.copyFile(subTestFile, subTestClazz);
-      
+
       transformer = new JUnitTestTransformer(folder.getRoot(), new MeasurementConfiguration(5));
       transformer.determineVersions(Arrays.asList(new File[] { folder.getRoot() }));
    }
@@ -49,28 +48,25 @@ public class TestShortening {
       test.mkdirs();
       final File testClazz = new File(test, "ExampleTest.java");
 
-      JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder.getRoot(), new ChangedEntity("ExampleTest", ""), "test1");
+      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder.getRoot(), new ChangedEntity("ExampleTest", ""), "test1")) {
+         Assert.assertFalse(FileUtils.contentEquals(exampleTestFile, testClazz));
+      }
 
-      Assert.assertFalse(FileUtils.contentEquals(exampleTestFile, testClazz));
-
-      shortener.resetShortenedFile();
       Assert.assertTrue(FileUtils.contentEquals(exampleTestFile, testClazz));
    }
-   
+
    @Test
    public void testSubclassShortening() throws Exception {
       final File test = new File(folder.getRoot(), "src/test/java");
       test.mkdirs();
       final File testClazz = new File(test, "ExampleTest.java");
       final File subClazz = new File(test, "SubTest.java");
-     
 
-      JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder.getRoot(), new ChangedEntity("SubTest", ""), "test3");
+      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder.getRoot(), new ChangedEntity("SubTest", ""), "test3")) {
+         Assert.assertFalse(FileUtils.contentEquals(exampleTestFile, testClazz));
+         Assert.assertFalse(FileUtils.contentEquals(subTestFile, subClazz));
+      }
 
-      Assert.assertFalse(FileUtils.contentEquals(exampleTestFile, testClazz));
-      Assert.assertFalse(FileUtils.contentEquals(subTestFile, subClazz));
-      
-      shortener.resetShortenedFile();
       Assert.assertTrue(FileUtils.contentEquals(exampleTestFile, testClazz));
       Assert.assertTrue(FileUtils.contentEquals(subTestFile, subClazz));
    }
