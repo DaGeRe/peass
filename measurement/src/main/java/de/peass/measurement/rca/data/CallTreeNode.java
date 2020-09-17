@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.management.RuntimeErrorException;
+
+import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
@@ -137,7 +140,15 @@ public class CallTreeNode extends BasicNode {
    public TestcaseStatistic getTestcaseStatistic() {
       final SummaryStatistics current = data.get(version).getStatistics();
       final SummaryStatistics previous = data.get(predecessor).getStatistics();
-      return new TestcaseStatistic(current, previous, data.get(version).getCalls(), data.get(predecessor).getCalls());
+      try {
+         final TestcaseStatistic testcaseStatistic = new TestcaseStatistic(current, previous, data.get(version).getCalls(), data.get(predecessor).getCalls());
+         return testcaseStatistic;
+      } catch (NumberIsTooSmallException t) {
+         LOG.debug("Data: " + current.getN() + " " + previous.getN());
+         final String otherCall = otherVersionNode != null ? otherVersionNode.getCall() : "Not Existing";
+         throw new RuntimeException("Could not read " + call + " Other Version: " + otherCall, t);
+      }
+      
    }
 
    @JsonIgnore

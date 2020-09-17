@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
@@ -43,7 +45,7 @@ import de.peass.utils.OptionConstants;
 public class Cleaner extends DataAnalyser {
 
    private static final Logger LOG = LogManager.getLogger(Cleaner.class);
-   
+
    public static void main(final String[] args) throws ParseException, JAXBException, JsonParseException, JsonMappingException, IOException {
       final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE, OptionConstants.DATA);
 
@@ -125,24 +127,28 @@ public class Cleaner extends DataAnalyser {
          final File measurementFile = finder.getMeasurementFile();
          final Kopemedata oneResultData = finder.getOneResultData();
          Datacollector datacollector = finder.getDataCollector();
-         
+
          if (checkChunk(currentChunk)) {
             datacollector.getChunk().add(currentChunk);
             XMLDataStorer.storeData(measurementFile, oneResultData);
             correct++;
          } else {
-            for (final Result r : entry.getValue().getPrevius()) {
-               LOG.debug("Value: {} Executions: {} Repetitions: {}", r.getValue(), r.getExecutionTimes(), r.getRepetitions());
-            }
-            for (final Result r : entry.getValue().getCurrent()) {
-               LOG.debug("Value:  {} Executions: {} Repetitions: {}", r.getValue(), r.getExecutionTimes(), r.getRepetitions());
-            }
-            LOG.debug("Too few correct measurements: {} ", measurementFile.getAbsolutePath());
-            LOG.debug("Measurements: {} / {}", currentChunk.getResult().size(), entry.getValue().getPrevius().size() + entry.getValue().getCurrent().size());
+            printFailureInfo(entry, currentChunk, measurementFile);
          }
       } catch (final JAXBException e) {
          e.printStackTrace();
       }
+   }
+
+   private void printFailureInfo(final Entry<String, EvaluationPair> entry, final Chunk currentChunk, final File measurementFile) {
+      for (final Result r : entry.getValue().getPrevius()) {
+         LOG.debug("Value: {} Executions: {} Repetitions: {}", r.getValue(), r.getExecutionTimes(), r.getRepetitions());
+      }
+      for (final Result r : entry.getValue().getCurrent()) {
+         LOG.debug("Value:  {} Executions: {} Repetitions: {}", r.getValue(), r.getExecutionTimes(), r.getRepetitions());
+      }
+      LOG.debug("Too few correct measurements: {} ", measurementFile.getAbsolutePath());
+      LOG.debug("Measurements: {} / {}", currentChunk.getResult().size(), entry.getValue().getPrevius().size() + entry.getValue().getCurrent().size());
    }
 
    public boolean checkChunk(final Chunk currentChunk) {
@@ -155,21 +161,33 @@ public class Cleaner extends DataAnalyser {
 
    private List<Result> getChunk(final String version, final long minExecutionCount, List<Result> previous) {
       final List<Result> previousClean = StatisticUtil.shortenValues(previous);
-      for (final Iterator<Result> it = previousClean.iterator(); it.hasNext();) {
-         final Result result = it.next();
-         final int resultSize = result.getFulldata().getValue().size();
-         final long expectedSize = ceilDiv(minExecutionCount, 2);
-         if (resultSize == expectedSize && !Double.isNaN(result.getValue())) {
-            cleanResult(version, result);
-         } else {
-            LOG.debug("Wrong size: {} Expected: {}", resultSize, expectedSize);
-            it.remove();
-         }
-      }
-      return previousClean;
+      return previousClean.stream()
+            .filter(result -> {
+               final int resultSize = result.getFulldata().getValue().size();
+               final long expectedSize = ceilDiv(minExecutionCount, 2);
+               final boolean isCorrect = resultSize == expectedSize && !Double.isNaN(result.getValue());
+               if (!isCorrect) {
+                  LOG.debug("Wrong size: {} Expected: {}", resultSize, expectedSize);
+               }
+               return isCorrect;
+            })
+            .map(result -> cleanResult(version, result))
+            .collect(Collectors.toList());
+      // for (final Iterator<Result> it = previousClean.iterator(); it.hasNext();) {
+      // final Result result = it.next();
+      // final int resultSize = result.getFulldata().getValue().size();
+      // final long expectedSize = ceilDiv(minExecutionCount, 2);
+      // if (resultSize == expectedSize && !Double.isNaN(result.getValue())) {
+      // cleanResult(version, result);
+      // } else {
+      // LOG.debug("Wrong size: {} Expected: {}", resultSize, expectedSize);
+      // it.remove();
+      // }
+      // }
+      // return previousClean;
    }
 
-   private void cleanResult(final String version, final Result result) {
+   private Result cleanResult(final String version, final Result result) {
       result.setVersion(new Versioninfo());
       result.getVersion().setGitversion(version);
       result.setWarmupExecutions(result.getFulldata().getValue().size());
@@ -178,5 +196,6 @@ public class Cleaner extends DataAnalyser {
       result.setMin(null);
       result.setMax(null);
       result.setFulldata(new Fulldata());
+      return result;
    }
 }

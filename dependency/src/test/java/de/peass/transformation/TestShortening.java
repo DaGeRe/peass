@@ -42,14 +42,6 @@ public class TestShortening {
       transformer = new JUnitTestTransformer(folder.getRoot(), new MeasurementConfiguration(5));
       transformer.determineVersions(Arrays.asList(new File[] { folder.getRoot() }));
    }
-   
-   @Test(expected = RuntimeException.class)
-   public void doNotShortenTwice() throws Exception {
-      JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder.getRoot(), new ChangedEntity("ExampleTest", ""), "test1");
-
-      shortener.shortenTest();
-      shortener.shortenTest();
-   }
 
    @Test
    public void testShortening() throws Exception {
@@ -59,7 +51,6 @@ public class TestShortening {
 
       JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder.getRoot(), new ChangedEntity("ExampleTest", ""), "test1");
 
-      shortener.shortenTest();
       Assert.assertFalse(FileUtils.contentEquals(exampleTestFile, testClazz));
 
       shortener.resetShortenedFile();
@@ -76,7 +67,6 @@ public class TestShortening {
 
       JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder.getRoot(), new ChangedEntity("SubTest", ""), "test3");
 
-      shortener.shortenTest();
       Assert.assertFalse(FileUtils.contentEquals(exampleTestFile, testClazz));
       Assert.assertFalse(FileUtils.contentEquals(subTestFile, subClazz));
       

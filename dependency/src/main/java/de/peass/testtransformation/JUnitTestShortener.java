@@ -29,7 +29,7 @@ import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.changesreading.FileComparisonUtil;
 
-public class JUnitTestShortener {
+public class JUnitTestShortener implements AutoCloseable{
 
    private static final Logger LOG = LogManager.getLogger(JUnitTestShortener.class);
 
@@ -38,17 +38,18 @@ public class JUnitTestShortener {
    private final ChangedEntity callee;
    private final String method;
 
+   private final Map<File, File> lastShortenedMap = new HashMap<>();
+   private final Set<File> superclasses = new HashSet<>();
+
    public JUnitTestShortener(final JUnitTestTransformer transformer, final File module, final ChangedEntity callee, final String method) {
       this.transformer = transformer;
       this.module = module;
       this.callee = callee;
       this.method = method;
+      shortenTest();
    }
 
-   private final Map<File, File> lastShortenedMap = new HashMap<>();
-   private final Set<File> superclasses = new HashSet<>();
-
-   public void shortenTest() {
+   private void shortenTest() {
       if (!lastShortenedMap.isEmpty()) {
          throw new RuntimeException("Only use TestShortener once!");
       }
@@ -196,5 +197,10 @@ public class JUnitTestShortener {
 
          }
       }
+   }
+
+   @Override
+   public void close() throws Exception {
+      resetShortenedFile();
    }
 }
