@@ -14,11 +14,13 @@ public class TreeBuilderDifferent extends TreeBuilder {
    protected void buildMeasurements() {
       final CallTreeNode[] nodes = new CallTreeNode[] { root, a, b, c, d, e };
       initVersions(nodes);
-      buildChunks(d, version2, 95);
-      buildChunks(e, version2, 95);
+      
       buildBasicChunks();
-      buildChunks(d, version1, 105);
-      buildChunks(e, version1, 105);
+      buildChunks(d, version, 95);
+      buildChunks(e, version, 95);
+//      
+//      buildChunks(d, versionPredecessor, 105);
+//      buildChunks(e, versionPredecessor, 105);
 
       buildStatistics(nodes);
    }

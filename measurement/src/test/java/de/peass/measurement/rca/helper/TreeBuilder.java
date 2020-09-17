@@ -15,8 +15,8 @@ public class TreeBuilder {
    protected final CallTreeNode b = a.appendChild("ClassB#methodB", "public void ClassB.methodB");
    protected final CallTreeNode c = root.appendChild("ClassC#methodC", "public void ClassC.methodC");
 
-   protected String version1 = "000001~1";
-   protected String version2 = "000001";
+   protected String versionPredecessor = "000001~1";
+   protected String version = "000001";
 
    private boolean useFullLogAPI = true;
 
@@ -54,28 +54,28 @@ public class TreeBuilder {
    }
 
    protected void buildBasicChunks() {
-      buildChunks(root, version2, 95);
-      buildChunks(a, version2, 95);
-      buildChunks(c, version2, 100);
-      buildChunks(b, version2, 95);
+      buildChunks(root, version, 95);
+      buildChunks(a, version, 95);
+      buildChunks(c, version, 100);
+      buildChunks(b, version, 95);
 
-      buildChunks(root, version1, 105);
-      buildChunks(a, version1, 105);
-      buildChunks(c, version1, 100);
-      buildChunks(b, version1, 105);
+      buildChunks(root, versionPredecessor, 105);
+      buildChunks(a, versionPredecessor, 105);
+      buildChunks(c, versionPredecessor, 100);
+      buildChunks(b, versionPredecessor, 105);
    }
 
    protected void buildStatistics(final CallTreeNode[] nodes) {
       for (final CallTreeNode node : nodes) {
-         node.createStatistics(version2);
-         node.createStatistics(version1);
+         node.createStatistics(version);
+         node.createStatistics(versionPredecessor);
       }
    }
 
    protected void initVersions(final CallTreeNode[] nodes) {
       for (final CallTreeNode node : nodes) {
          node.setWarmup(config.getWarmup());
-         node.setVersions(version2, version1);
+         node.setVersions(version, versionPredecessor);
       }
    }
 

@@ -69,11 +69,11 @@ public class CauseSearcherCompleteTest {
    @Test
    public void testDifferentTree()
          throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
-      final CallTreeNode root1 = new TreeBuilder().getRoot();
+      final CallTreeNode rootPredecessor = new TreeBuilder().getRoot();
       final TreeBuilderDifferent differentTreeBuilder = new TreeBuilderDifferent();
-      final CallTreeNode root2 = differentTreeBuilder.getRoot();
+      final CallTreeNode rootVersion = differentTreeBuilder.getRoot();
 
-      final Set<ChangedEntity> changes = getChanges(root1, root2);
+      final Set<ChangedEntity> changes = getChanges(rootPredecessor, rootVersion);
 
       System.out.println(changes);
       Assert.assertEquals(3, changes.size());
@@ -88,15 +88,15 @@ public class CauseSearcherCompleteTest {
       Assert.assertThat(includedNodes.getValue(), Matchers.hasItem(differentTreeBuilder.getE()));
    }
 
-   private Set<ChangedEntity> getChanges(final CallTreeNode root1, final CallTreeNode root2)
+   private Set<ChangedEntity> getChanges(final CallTreeNode rootPredecessor, final CallTreeNode rootVersion)
          throws InterruptedException, IOException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
       final File folder = new File("target/test/");
       folder.mkdir();
 
       final BothTreeReader treeReader = Mockito.mock(BothTreeReader.class);
 
-      Mockito.when(treeReader.getRootPredecessor()).thenReturn(root1);
-      Mockito.when(treeReader.getRootVersion()).thenReturn(root2);
+      Mockito.when(treeReader.getRootPredecessor()).thenReturn(rootPredecessor);
+      Mockito.when(treeReader.getRootVersion()).thenReturn(rootVersion);
 
       final CauseSearcherComplete searcher = new CauseSearcherComplete(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, 
             TestConstants.SIMPLE_MEASUREMENT_CONFIG,

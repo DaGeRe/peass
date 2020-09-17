@@ -117,13 +117,15 @@ public abstract class TestExecutor {
 
    void runMethod(final File logFolder, final ChangedEntity clazz, final File module, final String method, final long timeout) {
       try (final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, module, clazz, method)) {
-         final File logFile = new File(logFolder, "log_" + clazz.getJavaClazzName() + File.separator + method + ".txt");
-         if (!logFile.getParentFile().exists()) {
-            logFile.getParentFile().mkdir();
+         File clazzLogFolder = new File(logFolder, "log_" + clazz.getJavaClazzName());
+         if (!clazzLogFolder.exists()) {
+            clazzLogFolder.mkdir();
          }
          LOG.info("Cleaning...");
-         final File cleanFile = new File(logFolder, "log_" + clazz.getJavaClazzName() + File.separator + method + "_clean.txt");
+         final File cleanFile = new File(clazzLogFolder, method + "_clean.txt");
          clean(cleanFile);
+         
+         final File logFile = new File(clazzLogFolder, method + ".txt");
          runTest(module, logFile, clazz.getJavaClazzName(), timeout);
       } catch (Exception e1) {
          e1.printStackTrace();

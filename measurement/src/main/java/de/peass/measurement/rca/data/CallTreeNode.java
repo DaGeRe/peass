@@ -75,10 +75,16 @@ public class CallTreeNode extends BasicNode {
    }
 
    public void addMeasurement(final String version, final Long duration) {
+      if (call.equals(CauseSearchData.ADDED) || call.equals(CauseSearchData.REMOVED)) {
+         throw new RuntimeException("Added or removed methods may not contain data");
+      }
       data.get(version).addMeasurement(duration);
    }
 
    public void setMeasurement(final String version, final List<StatisticalSummary> statistic) {
+      if (call.equals(CauseSearchData.ADDED) || call.equals(CauseSearchData.REMOVED)) {
+         throw new RuntimeException("Added or removed methods may not contain data");
+      }
       data.get(version).setMeasurement(statistic);
    }
 
@@ -87,7 +93,8 @@ public class CallTreeNode extends BasicNode {
    }
 
    public List<OneVMResult> getResults(final String version) {
-      return data.get(version).getResults();
+      final CallTreeStatistics statistics = data.get(version);
+      return statistics != null ? statistics.getResults() : null;
    }
 
    public void newVM(final String version) {
@@ -113,10 +120,7 @@ public class CallTreeNode extends BasicNode {
    public SummaryStatistics getStatistics(final String version) {
       LOG.debug("Getting data: {}", version);
       final CallTreeStatistics statistics = data.get(version);
-      if (statistics.getStatistics().getN() == 0) {
-         LOG.error("Call createStatistics first for " + call);
-      }
-      return statistics.getStatistics();
+      return statistics != null ? statistics.getStatistics() : null;
    }
 
    public void createStatistics(final String version) {
@@ -131,9 +135,13 @@ public class CallTreeNode extends BasicNode {
    }
 
    public ChangedEntity toEntity() {
-      final int index = call.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
-      final ChangedEntity entity = new ChangedEntity(call.substring(0, index), "", call.substring(index + 1));
-      return entity;
+      if (call.equals(CauseSearchData.ADDED) || call.equals(CauseSearchData.REMOVED)) {
+         return otherVersionNode.toEntity();
+      } else {
+         final int index = call.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
+         final ChangedEntity entity = new ChangedEntity(call.substring(0, index), "", call.substring(index + 1));
+         return entity;
+      }
    }
 
    @JsonIgnore
@@ -148,24 +156,37 @@ public class CallTreeNode extends BasicNode {
          final String otherCall = otherVersionNode != null ? otherVersionNode.getCall() : "Not Existing";
          throw new RuntimeException("Could not read " + call + " Other Version: " + otherCall, t);
       }
-      
+
    }
 
    @JsonIgnore
    public TestcaseStatistic getPartialTestcaseStatistic() {
-      final SummaryStatistics current = data.get(version).getStatistics();
-      final SummaryStatistics previous = data.get(predecessor).getStatistics();
-      if (current.getN() > 0 && previous.getN() == 0) {
-         return new TestcaseStatistic(current.getMean(), Double.NaN, 
-               current.getStandardDeviation(), Double.NaN, 
+      final SummaryStatistics current = getStatistics(version);
+      final SummaryStatistics previous = getStatistics(predecessor);
+
+      LOG.debug("Current {}: {}", version, current);
+      LOG.debug("Previous {}: {} ", predecessor, previous);
+
+      if (firstHasValues(current, previous)) {
+         return new TestcaseStatistic(current.getMean(), Double.NaN,
+               current.getStandardDeviation(), Double.NaN,
                current.getN(), Double.NaN, true);
-      } else if (previous.getN() > 0) {
-         return new TestcaseStatistic(Double.NaN, previous.getMean(), 
-               Double.NaN, previous.getStandardDeviation(), 
+      } else if (firstHasValues(previous, current)) {
+         return new TestcaseStatistic(Double.NaN, previous.getMean(),
+               Double.NaN, previous.getStandardDeviation(),
                current.getN(), Double.NaN, true);
+      } else if ((current == null || current.getN() == 0) && (previous == null || previous.getN() == 0)) {
+         LOG.error("Could not measure {}", this);
+         return new TestcaseStatistic(Double.NaN, Double.NaN,
+               Double.NaN, Double.NaN,
+               0, Double.NaN, false);
       } else {
-         throw new RuntimeException("Partial statistics should only be created if one node is unmeasurable");
+         throw new RuntimeException("Partial statistics should exactly be created if one node is unmeasurable");
       }
+   }
+
+   private boolean firstHasValues(final SummaryStatistics first, final SummaryStatistics second) {
+      return (second == null || second.getN() == 0) && (first != null && first.getN() > 0);
    }
 
    @JsonIgnore

@@ -61,6 +61,19 @@ public class TreeUtil {
       final Set<CallTreeNodeVertex> partition1 = builder.getPartition1();
       final Set<CallTreeNodeVertex> partition2 = builder.getPartition2();
 
+      final Matching<CallTreeNodeVertex, DefaultWeightedEdge> resultMatching = setOtherVersionNodes(graph, partition1, partition2);
+      if (partition1.size() > partition2.size()) {
+         addSurplus(secondNode, firstNode.getChildren());
+      }
+      if (partition2.size() > partition1.size()) {
+         addSurplus(firstNode, secondNode.getChildren());
+      }
+
+      return resultMatching.getEdges().size();
+   }
+
+   private static Matching<CallTreeNodeVertex, DefaultWeightedEdge> setOtherVersionNodes(final Graph<CallTreeNodeVertex, DefaultWeightedEdge> graph,
+         final Set<CallTreeNodeVertex> partition1, final Set<CallTreeNodeVertex> partition2) {
       final MaximumWeightBipartiteMatching<CallTreeNodeVertex, DefaultWeightedEdge> matching = new MaximumWeightBipartiteMatching<>(graph, partition1,
             partition2);
       final Matching<CallTreeNodeVertex, DefaultWeightedEdge> resultMatching = matching.getMatching();
@@ -71,14 +84,7 @@ public class TreeUtil {
          target.setOtherVersionNode(source);
          LOG.info("Matched: {} - {}", source, target);
       }
-      if (partition1.size() > partition2.size()) {
-         addSurplus(secondNode, firstNode.getChildren());
-      }
-      if (partition2.size() > partition1.size()) {
-         addSurplus(firstNode, secondNode.getChildren());
-      }
-
-      return resultMatching.getEdges().size();
+      return resultMatching;
    }
 
    private static void addSurplus(final CallTreeNode otherParent, final List<CallTreeNode> partition) {

@@ -42,26 +42,35 @@ public abstract class DifferentNodeDeterminer {
          // final CallTreeNode currentVersionNode = currentIterator.next();
          final SummaryStatistics statisticsPredecessor = currentPredecessorNode.getStatistics(measurementConfig.getVersionOld());
          final SummaryStatistics statisticsVersion = currentPredecessorNode.getStatistics(measurementConfig.getVersion());
-         calculateDiffering(currentPredecessorNode, statisticsPredecessor, statisticsVersion);
+         calculateNodeDifference(currentPredecessorNode, statisticsPredecessor, statisticsVersion);
       }
    }
 
-   private void calculateDiffering(final CallTreeNode currentPredecessorNode, final SummaryStatistics statisticsPredecessor, final SummaryStatistics statisticsVersion) {
+   private void calculateNodeDifference(final CallTreeNode currentPredecessorNode, final SummaryStatistics statisticsPredecessor, final SummaryStatistics statisticsVersion) {
+      if (statisticsPredecessor == null || statisticsVersion == null) {
+         LOG.debug("Statistics is null, is different: {} vs {}", statisticsPredecessor, statisticsVersion);
+         currentLevelDifferent.add(currentPredecessorNode);
+      } else {
+         printComparisonInfos(currentPredecessorNode, statisticsPredecessor, statisticsVersion);
+         if (statisticsPredecessor.getN() > 0 && statisticsVersion.getN() > 0) {
+            final Relation relation = StatisticUtil.agnosticTTest(statisticsPredecessor, statisticsVersion, measurementConfig);
+            LOG.debug("Relation: {}", relation);
+            if (relation == Relation.UNEQUAL && needsEnoughTime(statisticsPredecessor, statisticsVersion)) {
+               addChildsToMeasurement(currentPredecessorNode, statisticsPredecessor, statisticsVersion);
+            } else {
+               LOG.info("No remeasurement");
+            }
+         }
+      }
+   }
+
+   private void printComparisonInfos(final CallTreeNode currentPredecessorNode, final SummaryStatistics statisticsPredecessor, final SummaryStatistics statisticsVersion) {
       LOG.debug("Comparison {} - {}",
             currentPredecessorNode.getKiekerPattern(),
             currentPredecessorNode.getOtherVersionNode() != null ? currentPredecessorNode.getOtherVersionNode().getKiekerPattern() : null);
       LOG.debug("Predecessor: {} {} Current: {} {} ",
             statisticsPredecessor.getMean(), statisticsPredecessor.getStandardDeviation(),
             statisticsVersion.getMean(), statisticsVersion.getStandardDeviation());
-      if (statisticsPredecessor.getN() > 0 && statisticsVersion.getN() > 0) {
-         final Relation relation = StatisticUtil.agnosticTTest(statisticsPredecessor, statisticsVersion, measurementConfig);
-         LOG.debug("Relation: {}", relation);
-         if (relation == Relation.UNEQUAL && needsEnoughTime(statisticsPredecessor, statisticsVersion)) {
-            addChildsToMeasurement(currentPredecessorNode, statisticsPredecessor, statisticsVersion);
-         } else {
-            LOG.info("No remeasurement");
-         }
-      }
    }
 
    private void addChildsToMeasurement(final CallTreeNode currentPredecessorNode, final SummaryStatistics statisticsPredecessor, final SummaryStatistics statisticsVersion) {
@@ -72,7 +81,8 @@ public abstract class DifferentNodeDeterminer {
       final int childsRemeasure = getRemeasureChilds(currentPredecessorNode);
 
       if (childsRemeasure == 0) {
-         LOG.debug("Adding {} - no childs needs to be remeasured, T={}", currentPredecessorNode, childsRemeasure, TestUtils.homoscedasticT(statisticsPredecessor, statisticsVersion));
+         LOG.debug("Adding {} - no childs needs to be remeasured, T={}", currentPredecessorNode, childsRemeasure,
+               TestUtils.homoscedasticT(statisticsPredecessor, statisticsVersion));
          LOG.debug("Childs: {}", currentPredecessorNode.getChildren());
          currentLevelDifferent.add(currentPredecessorNode);
       }

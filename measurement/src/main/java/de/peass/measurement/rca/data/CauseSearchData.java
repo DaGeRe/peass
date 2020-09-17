@@ -14,6 +14,9 @@ import de.peass.measurement.rca.serialization.MeasuredNode;
 
 public class CauseSearchData {
 
+   public static final String REMOVED = "REMOVED";
+   public static final String ADDED = "ADDED";
+
    private static final Logger LOG = LogManager.getLogger(CauseSearchData.class);
 
    private MeasurementConfiguration measurementConfig;
@@ -74,15 +77,7 @@ public class CauseSearchData {
    public MeasuredNode addDiff(final CallTreeNode rawDataNode) {
       try {
          final MeasuredNode serializeNode = buildSerializedNode(rawDataNode);
-         if (!rawDataNode.getCall().equals("ADDED") &&
-               !rawDataNode.getCall().equals("REMOVED") &&
-               !rawDataNode.getOtherVersionNode().getCall().equals("ADDED") &&
-               !rawDataNode.getOtherVersionNode().getCall().equals("REMOVED")) {
-            System.out.println(rawDataNode.getCall() + " " + rawDataNode.getOtherVersionNode().getCall());
-            serializeNode.setStatistic(rawDataNode.getTestcaseStatistic());
-         } else {
-            serializeNode.setStatistic(rawDataNode.getPartialTestcaseStatistic());
-         }
+         setStatistic(rawDataNode, serializeNode);
          current.put(rawDataNode, serializeNode);
 
          if (rawDataNode.getParent() == null) {
@@ -96,6 +91,19 @@ public class CauseSearchData {
          return serializeNode;
       } catch (Exception e) {
          throw e;
+      }
+   }
+
+   private void setStatistic(final CallTreeNode rawDataNode, final MeasuredNode serializeNode) {
+      if (!rawDataNode.getCall().equals(ADDED) &&
+            !rawDataNode.getCall().equals(REMOVED) &&
+            !rawDataNode.getOtherVersionNode().getCall().equals(ADDED) &&
+            !rawDataNode.getOtherVersionNode().getCall().equals(REMOVED)) {
+         LOG.debug(rawDataNode.getCall() + " " + rawDataNode.getOtherVersionNode().getCall());
+         serializeNode.setStatistic(rawDataNode.getTestcaseStatistic());
+      } else {
+         LOG.debug(rawDataNode.getCall() + " " + rawDataNode.getOtherVersionNode().getCall());
+         serializeNode.setStatistic(rawDataNode.getPartialTestcaseStatistic());
       }
    }
 

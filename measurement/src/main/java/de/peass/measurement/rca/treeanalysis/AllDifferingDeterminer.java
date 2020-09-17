@@ -23,6 +23,11 @@ public class AllDifferingDeterminer extends DifferentNodeDeterminer {
 //      this.needToMeasureCurrent = needToMeasureCurrent;
       this.measurePredecessor = needToMeasurePredecessor;
    }
+   
+   @Override
+   public void calculateDiffering() {
+      super.calculateDiffering();
+   }
 
    public List<CallTreeNode> getIncludableNodes() {
       final List<CallTreeNode> includeable = new LinkedList<CallTreeNode>();

@@ -115,6 +115,7 @@ public class MeasuredNode extends BasicNode {
    }
 
    public void setValues(final CallTreeNode rawDataNode, final String version, final String predecessor) {
+      System.out.println("Persisting: " + version + " " + rawDataNode.getCall());
       values = new MeasuredValues();
       valuesPredecessor = new MeasuredValues();
       persistValues(rawDataNode.getResults(version), values);
@@ -122,10 +123,12 @@ public class MeasuredNode extends BasicNode {
    }
 
    private void persistValues(final List<OneVMResult> results, final MeasuredValues values) {
-      for (int i = 0; i < results.size(); i++) {
-         final OneVMResult oneVMResult = results.get(i);
-         final List<StatisticalSummary> value = oneVMResult.getValues();
-         values.getValues().put(i, value);
+      if (results != null) {
+         for (int i = 0; i < results.size(); i++) {
+            final OneVMResult oneVMResult = results.get(i);
+            final List<StatisticalSummary> value = oneVMResult.getValues();
+            values.getValues().put(i, value);
+         }
       }
    }
 

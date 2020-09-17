@@ -20,7 +20,7 @@ public class CompleteTreeAnalyzer {
 
    private void getAllNodes(final CallTreeNode current, final CallTreeNode currentPredecessor) {
       
-      TreeUtil.findChildMapping(current, currentPredecessor.getOtherVersionNode());
+      TreeUtil.findChildMapping(current, currentPredecessor);
       for (CallTreeNode currentChild : current.getChildren()) {
          getAllNodes(currentChild, currentChild.getOtherVersionNode());
          
