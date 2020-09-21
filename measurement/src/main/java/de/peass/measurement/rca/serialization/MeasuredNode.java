@@ -32,6 +32,7 @@ public class MeasuredNode extends BasicNode {
 
    public MeasuredNode(final String call, final String kiekerPattern) {
       super(call, kiekerPattern);
+      otherKiekerPattern = kiekerPattern;
    }
 
    public String getCall() {
