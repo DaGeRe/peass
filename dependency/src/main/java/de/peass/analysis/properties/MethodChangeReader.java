@@ -34,13 +34,16 @@ public class MethodChangeReader {
    }
 
    public void readMethodChangeData() throws IOException {
-      final File folder = new File(outFolder, version);
-      folder.mkdirs();
-      final File goalFile = new File(folder, clazz.getSimpleFullName() + "_diff.txt");
+      final File versionFolder = new File(outFolder, version);
+      versionFolder.mkdirs();
+      final File clazzFolder = new File(versionFolder, clazz.getJavaClazzName());
+      clazzFolder.mkdirs();
+      final String methodString = clazz.getMethod() + "_" + clazz.getParametersPrintable();
+      final File goalFile = new File(clazzFolder, methodString + "_diff.txt");
       if (!method.equals(methodOld)) {
 
-         final File main = new File(folder, clazz.getSimpleFullName() + "_main.txt");
-         final File old = new File(folder, clazz.getSimpleFullName() + "_old.txt");
+         final File main = new File(clazzFolder, methodString + "_main.txt");
+         final File old = new File(clazzFolder, methodString + "_old.txt");
 
          FileUtils.writeStringToFile(main, method, Charset.defaultCharset());
          FileUtils.writeStringToFile(old, methodOld, Charset.defaultCharset());

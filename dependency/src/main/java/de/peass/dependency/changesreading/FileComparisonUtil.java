@@ -217,14 +217,18 @@ public final class FileComparisonUtil {
          LOG.debug("Found:  {} {}", file, file.exists());
          final CompilationUnit cu = parse(file);
 
-         TraceElementContent traceElement = new TraceElementContent(entity.getJavaClazzName(), method, entity.getParameters().toArray(new String[0]), 0);
+         return getMethod(entity, method, cu);
+      } else {
+         return "";
+      }
+   }
+   
+   public static String getMethod(ChangedEntity entity, String method, CompilationUnit clazzUnit) {
+      TraceElementContent traceElement = new TraceElementContent(entity.getJavaClazzName(), method, entity.getParameters().toArray(new String[0]), 0);
 
-         final Node node = TraceReadUtils.getMethod(traceElement, cu);
-         if (node != null) {
-            return node.toString();
-         } else {
-            return "";
-         }
+      final Node node = TraceReadUtils.getMethod(traceElement, clazzUnit);
+      if (node != null) {
+         return node.toString();
       } else {
          return "";
       }

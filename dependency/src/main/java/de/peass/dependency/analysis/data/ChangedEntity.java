@@ -198,4 +198,13 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       return parameters;
    }
 
+   @JsonIgnore
+   public String getParametersPrintable() {
+      String result = "";
+      for (String parameter : parameters) {
+         result += parameter + "_";
+      }
+      return result.length() > 0 ? result.substring(0, result.length() - 1) : "";
+   }
+
 }
