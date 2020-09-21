@@ -75,17 +75,26 @@ public class CallTreeNode extends BasicNode {
    }
 
    public void addMeasurement(final String version, final Long duration) {
-      if (call.equals(CauseSearchData.ADDED) || call.equals(CauseSearchData.REMOVED)) {
-         throw new RuntimeException("Added or removed methods may not contain data");
-      }
+      checkDataAddPossible(version);
+      LOG.debug("Adding measurement: {}", version);
       data.get(version).addMeasurement(duration);
    }
 
    public void setMeasurement(final String version, final List<StatisticalSummary> statistic) {
-      if (call.equals(CauseSearchData.ADDED) || call.equals(CauseSearchData.REMOVED)) {
-         throw new RuntimeException("Added or removed methods may not contain data");
-      }
+      checkDataAddPossible(version);
       data.get(version).setMeasurement(statistic);
+   }
+
+   private void checkDataAddPossible(final String version) {
+      if (otherVersionNode == null) {
+         throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
+      }
+      if (call.equals(CauseSearchData.ADDED) && version.equals(this.predecessor)) {
+         throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
+      }
+      if (otherVersionNode.getCall().equals(CauseSearchData.ADDED) && version.equals(this.version)) {
+         throw new RuntimeException("Added methods may not contain data");
+      }
    }
 
    public boolean hasMeasurement(final String version) {
@@ -98,9 +107,8 @@ public class CallTreeNode extends BasicNode {
    }
 
    public void newVM(final String version) {
-      LOG.debug("Adding VM: {}", version);
       final CallTreeStatistics statistics = data.get(version);
-      LOG.debug("VMs: {}", statistics.getResults().size());
+      LOG.debug("Adding VM: {} {} VMs: {}", call, version, statistics.getResults().size());
       statistics.newResult();
    }
 
@@ -135,7 +143,7 @@ public class CallTreeNode extends BasicNode {
    }
 
    public ChangedEntity toEntity() {
-      if (call.equals(CauseSearchData.ADDED) || call.equals(CauseSearchData.REMOVED)) {
+      if (call.equals(CauseSearchData.ADDED)) {
          return otherVersionNode.toEntity();
       } else {
          final int index = call.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
@@ -163,9 +171,6 @@ public class CallTreeNode extends BasicNode {
    public TestcaseStatistic getPartialTestcaseStatistic() {
       final SummaryStatistics current = getStatistics(version);
       final SummaryStatistics previous = getStatistics(predecessor);
-
-      LOG.debug("Current {}: {}", version, current);
-      LOG.debug("Previous {}: {} ", predecessor, previous);
 
       if (firstHasValues(current, previous)) {
          return new TestcaseStatistic(current.getMean(), Double.NaN,

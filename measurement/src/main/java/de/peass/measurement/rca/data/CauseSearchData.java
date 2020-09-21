@@ -14,7 +14,6 @@ import de.peass.measurement.rca.serialization.MeasuredNode;
 
 public class CauseSearchData {
 
-   public static final String REMOVED = "REMOVED";
    public static final String ADDED = "ADDED";
 
    private static final Logger LOG = LogManager.getLogger(CauseSearchData.class);
@@ -75,30 +74,24 @@ public class CauseSearchData {
 
    @JsonIgnore
    public MeasuredNode addDiff(final CallTreeNode rawDataNode) {
-      try {
-         final MeasuredNode serializeNode = buildSerializedNode(rawDataNode);
-         setStatistic(rawDataNode, serializeNode);
-         current.put(rawDataNode, serializeNode);
+      final MeasuredNode serializeNode = buildSerializedNode(rawDataNode);
+      setStatistic(rawDataNode, serializeNode);
+      current.put(rawDataNode, serializeNode);
 
-         if (rawDataNode.getParent() == null) {
-            nodes = serializeNode;
-         } else {
-            final MeasuredNode parent = current.get(rawDataNode.getParent());
-            if (parent != null) {
-               parent.getChilds().add(serializeNode);
-            }
+      if (rawDataNode.getParent() == null) {
+         nodes = serializeNode;
+      } else {
+         final MeasuredNode parent = current.get(rawDataNode.getParent());
+         if (parent != null) {
+            parent.getChilds().add(serializeNode);
          }
-         return serializeNode;
-      } catch (Exception e) {
-         throw e;
       }
+      return serializeNode;
    }
 
    private void setStatistic(final CallTreeNode rawDataNode, final MeasuredNode serializeNode) {
       if (!rawDataNode.getCall().equals(ADDED) &&
-            !rawDataNode.getCall().equals(REMOVED) &&
-            !rawDataNode.getOtherVersionNode().getCall().equals(ADDED) &&
-            !rawDataNode.getOtherVersionNode().getCall().equals(REMOVED)) {
+            !rawDataNode.getOtherVersionNode().getCall().equals(ADDED)) {
          LOG.debug(rawDataNode.getCall() + " " + rawDataNode.getOtherVersionNode().getCall());
          serializeNode.setStatistic(rawDataNode.getTestcaseStatistic());
       } else {

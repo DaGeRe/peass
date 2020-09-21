@@ -154,7 +154,13 @@ public class CauseSearcher {
 
    protected Set<ChangedEntity> convertToChangedEntitites() {
       final Set<ChangedEntity> changed = new TreeSet<>();
-      differingNodes.forEach(node -> changed.add(node.toEntity()));
+      differingNodes.forEach(node -> {
+         if (node.getCall().equals(CauseSearchData.ADDED)) {
+            changed.add(node.getOtherVersionNode().toEntity());
+         } else {
+            changed.add(node.toEntity());
+         }
+      });
       return changed;
    }
 

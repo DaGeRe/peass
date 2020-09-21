@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.stat.inference.TTest;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -26,6 +27,7 @@ import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.TreeBuilder;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
+import de.peass.measurement.rca.treeanalysis.TreeUtil;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class CauseSearcherTest {
@@ -38,8 +40,6 @@ public class CauseSearcherTest {
    {
       measurementConfig.setUseKieker(true);
    }
-   
-   
 
    public void cleanup() {
       final File folder = new File("target/test_peass/");
@@ -52,15 +52,24 @@ public class CauseSearcherTest {
 
    @Test
    public void testMeasurement() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      final CallTreeNode root1 = new TreeBuilder().getRoot();
-      final CallTreeNode root2 = new TreeBuilder().getRoot();
+      final TreeBuilder treeBuilderPredecessor = new TreeBuilder();
+      final CallTreeNode root1 = treeBuilderPredecessor.getRoot();
+      final CallTreeNode root2 = treeBuilderPredecessor.getRoot();
 
       final LevelDifferentNodeDeterminer lcs = new LevelDifferentNodeDeterminer(Arrays.asList(new CallTreeNode[] { root1 }),
             Arrays.asList(new CallTreeNode[] { root2 }),
             TestConstants.SIMPLE_CAUSE_CONFIG,
             measurementConfig);
+      
+      root1.setOtherVersionNode(root2);
+      root2.setOtherVersionNode(root1);
+      treeBuilderPredecessor.buildMeasurements(treeBuilderPredecessor.getRoot());
+      
       lcs.calculateDiffering();
-      Assert.assertEquals(2, lcs.getMeasureNextLevelPredecessor().size());
+      Assert.assertEquals(3, lcs.getMeasureNextLevelPredecessor().size());
+      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(treeBuilderPredecessor.getA()));
+      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(treeBuilderPredecessor.getC()));
+      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(treeBuilderPredecessor.getConstructor()));
 
       Assert.assertEquals(0, lcs.getTreeStructureDifferingNodes().size());
    }
@@ -68,9 +77,10 @@ public class CauseSearcherTest {
    @Test
    public void testCauseSearching()
          throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
-      final CallTreeNode root1 = new TreeBuilder().getRoot();
-       final CallTreeNode root2 = new TreeBuilder().getRoot();
-      
+      final TreeBuilder builderPredecessor = new TreeBuilder();
+      final CallTreeNode root1 = builderPredecessor.getRoot();
+      final CallTreeNode root2 = builderPredecessor.getRoot();
+
       cleanup();
       final File folder = new File("target/test/");
       folder.mkdir();
@@ -78,23 +88,24 @@ public class CauseSearcherTest {
       final BothTreeReader treeReader = Mockito.mock(BothTreeReader.class);
       Mockito.when(treeReader.getRootPredecessor()).thenReturn(root1);
       Mockito.when(treeReader.getRootVersion()).thenReturn(root2);
-      
+
       final CauseTester measurer = Mockito.mock(CauseTester.class);
+      CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
       final CauseSearcher searcher = new CauseSearcher(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, measurementConfig,
             new CauseSearchFolders(folder));
-      
+
       final Set<ChangedEntity> changes = searcher.search();
 
       System.out.println(changes);
       Assert.assertEquals(1, changes.size());
       Assert.assertEquals("ClassB#methodB", changes.iterator().next().toString());
-      
+
       final CauseSearchData data = searcher.getRCAData();
       final TestcaseStatistic nodeStatistic = data.getNodes().getStatistic();
       final double expectedT = new TTest().t(nodeStatistic.getStatisticsOld(), nodeStatistic.getStatisticsCurrent());
       Assert.assertEquals(expectedT, nodeStatistic.getTvalue(), 0.01);
    }
-   
+
    @Test
    public void testWarmup()
          throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
@@ -103,34 +114,36 @@ public class CauseSearcherTest {
       folder.mkdir();
 
       measurementConfig = new MeasurementConfiguration(3, TestConstants.V2, TestConstants.V1);
-//      measurementConfig.setUseKieker(true);
+      // measurementConfig.setUseKieker(true);
       measurementConfig.setWarmup(3);
       measurementConfig.setIterations(5);
-      
-      final CallTreeNode root1 = new TreeBuilder(measurementConfig).getRoot();
-      final CallTreeNode root2 = new TreeBuilder(measurementConfig).getRoot();
-      
+
+      final TreeBuilder builderPredecessor = new TreeBuilder(measurementConfig);
+      final CallTreeNode root1 = builderPredecessor.getRoot();
+      final CallTreeNode root2 = builderPredecessor.getRoot();
+
       final BothTreeReader treeReader = Mockito.mock(BothTreeReader.class);
       Mockito.when(treeReader.getRootPredecessor()).thenReturn(root1);
       Mockito.when(treeReader.getRootVersion()).thenReturn(root2);
-      
+
       final CauseTester measurer = Mockito.mock(CauseTester.class);
+      CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
       final CauseSearcher searcher = new CauseSearcher(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, measurementConfig,
             new CauseSearchFolders(folder));
-      
+
       final Set<ChangedEntity> changes = searcher.search();
 
       System.out.println(changes);
       Assert.assertEquals(1, changes.size());
       Assert.assertEquals("ClassB#methodB", changes.iterator().next().toString());
-      
+
       final CauseSearchData data = searcher.getRCAData();
       final TestcaseStatistic nodeStatistic = data.getNodes().getStatistic();
       final double expectedT = new TTest().t(nodeStatistic.getStatisticsOld(), nodeStatistic.getStatisticsCurrent());
       System.out.println(nodeStatistic.getMeanCurrent());
       System.out.println(expectedT + " " + nodeStatistic.getTvalue());
-//      Assert.assertEquals(nodeStatistic.getMeanCurrent());
+      // Assert.assertEquals(nodeStatistic.getMeanCurrent());
       Assert.assertEquals(expectedT, nodeStatistic.getTvalue(), 0.01);
    }
-   
+
 }

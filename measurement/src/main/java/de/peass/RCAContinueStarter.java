@@ -58,7 +58,7 @@ public class RCAContinueStarter implements Callable<Void> {
          final List<CallTreeNode> currentVersionNodeList = new LinkedList<>();
          final List<CallTreeNode> currentPredecessorNodeList = new LinkedList<>();
 
-         new LevelManager(currentVersionNodeList, currentPredecessorNodeList, reader).goToLastLevel(data.getNodes());
+         new LevelManager(currentVersionNodeList, currentPredecessorNodeList, reader).goToLastMeasuredLevel(data.getNodes());
 
          tester.isLevelDifferent(currentPredecessorNodeList, currentVersionNodeList);
       }

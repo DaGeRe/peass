@@ -64,6 +64,7 @@ public class TestCausePersistenceManager {
       final CausePersistenceManager manager = new CausePersistenceManager(TestConstants.SIMPLE_CAUSE_CONFIG, config, folders);
 
       final TreeBuilder builder = new TreeBuilder(config, useFullLogAPI);
+      builder.buildMeasurements(builder.getRoot());
       manager.addMeasurement(builder.getRoot());
 
       manager.writeTreeState();

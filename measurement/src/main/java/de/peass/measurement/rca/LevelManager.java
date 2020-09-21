@@ -13,6 +13,11 @@ import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.serialization.MeasuredNode;
 import de.peass.measurement.rca.treeanalysis.TreeUtil;
 
+/**
+ * Supports continueing of RCA by adding all old measurements into CallTreeNodes
+ * @author reichelt
+ *
+ */
 public class LevelManager {
 
    private static final Logger LOG = LogManager.getLogger(LevelManager.class);
@@ -30,7 +35,7 @@ public class LevelManager {
       reader.getRootPredecessor().setOtherVersionNode(reader.getRootVersion());
    }
 
-   public void goToLastLevel(final MeasuredNode root) {
+   public void goToLastMeasuredLevel(final MeasuredNode root) {
       final List<MeasuredNode> persistentNodes = new LinkedList<>();
       persistentNodes.add(root);
 

@@ -49,6 +49,7 @@ public class TestCompleteReading {
       for (final CallTreeNode node : includedNodes) {
          node.setVersions("0", "1");
          node.setWarmup(0);
+         node.setOtherVersionNode(node);
       }
       return includedNodes;
    }

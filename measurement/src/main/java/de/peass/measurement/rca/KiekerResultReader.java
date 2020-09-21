@@ -61,7 +61,7 @@ public class KiekerResultReader {
 
    public void readResults() {
       try {
-         LOG.info("Reading kieker results");
+         LOG.info("Reading kieker results from {}", versionResultFolder.getAbsolutePath(), version);
          FileFilter filter = new OrFileFilter(new RegexFileFilter("[0-9]*"), new RegexFileFilter("measurement-[0-9]*.csv"));
          final File[] kiekerResultFiles = versionResultFolder.listFiles(filter);
          for (final File kiekerResultFolder : kiekerResultFiles) {
@@ -95,6 +95,7 @@ public class KiekerResultReader {
          }
 
          if (nodeFound) {
+            LOG.debug("Setting measurement: {}", version, values);
             node.setMeasurement(version, values);
          } else {
             LOG.warn("Node {} ({}) did not find measurement values", nodeCall, node.getOtherVersionNode());

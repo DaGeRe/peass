@@ -1,10 +1,7 @@
 package de.peass.visualization;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 
 import de.peass.measurement.analysis.Relation;
 import de.peass.measurement.analysis.StatisticUtil;
-import de.peass.measurement.rca.data.BasicNode;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.serialization.MeasuredNode;
@@ -58,31 +54,6 @@ public class NodePreparator {
       }
 
       preparePrefix(root);
-   }
-
-   class EqualChildDeterminer {
-      Map<String, List<BasicNode>> alreadyAdded = new HashMap<>();
-
-      public boolean hasEqualSubtreeNode(final BasicNode current) {
-         final List<BasicNode> candidates = alreadyAdded.get(current.getKiekerPattern());
-         boolean foundEqual = false;
-         if (candidates != null) {
-            for (final BasicNode candidate : candidates) {
-               if (TreeUtil.areTracesEqual(candidate, current)) {
-                  foundEqual = true;
-               }
-            }
-            if (!foundEqual) {
-               candidates.add(current);
-            }
-         } else {
-            final LinkedList<BasicNode> list = new LinkedList<BasicNode>();
-            alreadyAdded.put(current.getKiekerPattern(), list);
-            list.add(current);
-         }
-
-         return foundEqual;
-      }
    }
 
    private void handleFullTreeNode(final GraphNode graphNode, final CallTreeNode nodePredecessor, final CallTreeNode nodeVersion) {
@@ -157,7 +128,11 @@ public class NodePreparator {
       final Set<String> addedPatterns = new HashSet<>();
       for (final MeasuredNode measuredChild : measuredParent.getChilds()) {
          // if (!determiner.hasEqualSubtreeNode(measuredChild)) {
-         final GraphNode newChild = new GraphNode(measuredChild.getCall(), measuredChild.getKiekerPattern());
+         final GraphNode newChild = createGraphNode(measuredChild);
+         if (measuredChild.getCall().equals(CauseSearchData.ADDED) || measuredChild.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {
+            newChild.setHasSourceChange(true);
+         }
+
          newChild.setParent(measuredParent.getCall());
          setGraphData(measuredChild, newChild);
 
@@ -166,6 +141,18 @@ public class NodePreparator {
          addedPatterns.add(measuredChild.getKiekerPattern());
       }
       // }
+   }
+
+   private GraphNode createGraphNode(final MeasuredNode measuredChild) {
+      final GraphNode newChild;
+      if (measuredChild.getCall().equals(CauseSearchData.ADDED)) {
+         final String pattern = measuredChild.getOtherKiekerPattern();
+         String name = pattern.substring(pattern.lastIndexOf(' '), pattern.lastIndexOf('('));
+         newChild = new GraphNode(name, pattern);
+      } else {
+         newChild = new GraphNode(measuredChild.getCall(), measuredChild.getKiekerPattern());
+      }
+      return newChild;
    }
 
    private void setGraphData(final MeasuredNode measuredChild, final GraphNode newChild) {
@@ -192,12 +179,12 @@ public class NodePreparator {
 
    private void setNodeColor(final MeasuredNode measuredNode, final GraphNode graphNode) {
       graphNode.setStatistic(measuredNode.getStatistic());
-
       // final boolean isChange = StatisticUtil.agnosticTTest(measuredNode.getStatistic().getStatisticsOld(), measuredNode.getStatistic().getStatisticsCurrent(), data.getConfig())
       // == Relation.UNEQUAL;
-      final boolean isChange = StatisticUtil.isChange(measuredNode.getStatistic().getStatisticsOld(), measuredNode.getStatistic().getStatisticsCurrent(),
-            data.getMeasurementConfig()) == Relation.UNEQUAL;
-      if (isChange && measuredNode.getStatistic().getMeanCurrent() > 1 && measuredNode.getStatistic().getMeanOld() > 1) {
+      final StatisticalSummary statisticsOld = measuredNode.getStatistic().getStatisticsOld();
+      final StatisticalSummary statisticsCurrent = measuredNode.getStatistic().getStatisticsCurrent();
+      final boolean isChange = StatisticUtil.isChange(statisticsOld, statisticsCurrent, data.getMeasurementConfig()) == Relation.UNEQUAL;
+      if (isChange && measuredNode.getStatistic().getMeanCurrent() > 0.001 && measuredNode.getStatistic().getMeanOld() > 0.001) {
          if (measuredNode.getStatistic().getTvalue() < 0) {
             graphNode.setColor("#FF0000");
             graphNode.setState(State.SLOWER);
@@ -207,6 +194,14 @@ public class NodePreparator {
             graphNode.setState(State.FASTER);
             graphNode.getStatistic().setChange(true);
          }
+      } else if (Double.isNaN(statisticsOld.getMean()) && !Double.isNaN(statisticsCurrent.getMean())) {
+         graphNode.setColor("#00FF00");
+         graphNode.setState(State.FASTER);
+         graphNode.getStatistic().setChange(true);
+      } else if (!Double.isNaN(statisticsOld.getMean()) && Double.isNaN(statisticsCurrent.getMean())) {
+         graphNode.setColor("#FF0000");
+         graphNode.setState(State.SLOWER);
+         graphNode.getStatistic().setChange(true);
       } else {
          graphNode.setColor("#FFFFFF");
          graphNode.getStatistic().setChange(false);

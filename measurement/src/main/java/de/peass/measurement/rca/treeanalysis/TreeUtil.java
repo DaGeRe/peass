@@ -13,6 +13,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 
 import de.peass.measurement.rca.data.BasicNode;
 import de.peass.measurement.rca.data.CallTreeNode;
+import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.serialization.MeasuredNode;
 
 public class TreeUtil {
@@ -90,7 +91,7 @@ public class TreeUtil {
    private static void addSurplus(final CallTreeNode otherParent, final List<CallTreeNode> partition) {
       for (final CallTreeNode unmatched : partition) {
          if (unmatched.getOtherVersionNode() == null) {
-            final CallTreeNode virtual_node = otherParent.appendChild("ADDED", "ADDED");
+            final CallTreeNode virtual_node = otherParent.appendChild(CauseSearchData.ADDED, CauseSearchData.ADDED);
             unmatched.setOtherVersionNode(virtual_node);
             virtual_node.setOtherVersionNode(unmatched);
          }

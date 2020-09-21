@@ -1,5 +1,6 @@
 package de.peass.measurement.rca.helper;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,7 +15,11 @@ public class TreeBuilder {
    protected final CallTreeNode a = root.appendChild("ClassA#methodA", "public void ClassA.methodA");
    protected final CallTreeNode b = a.appendChild("ClassB#methodB", "public void ClassB.methodB");
    protected final CallTreeNode c = root.appendChild("ClassC#methodC", "public void ClassC.methodC");
+   protected final CallTreeNode constructor = root.appendChild("ClassA#<init>", "new public void ClassA.<init>");
 
+   private CallTreeNode d;
+   private CallTreeNode e;
+   
    protected String versionPredecessor = "000001~1";
    protected String version = "000001";
 
@@ -34,35 +39,66 @@ public class TreeBuilder {
       a.setOtherVersionNode(new CallTreeNode("ClassA#methodA", "public void ClassA.methodA"));
       b.setOtherVersionNode(new CallTreeNode("ClassA#methodB", "public void ClassA.methodB"));
       c.setOtherVersionNode(new CallTreeNode("ClassA#methodC", "public void ClassA.methodC"));
+      constructor.setOtherVersionNode(new CallTreeNode("ClassA#<init>", "new public void ClassA.<init>"));
    }
-
+   
    public TreeBuilder() {
       config = new MeasurementConfiguration(3);
       config.setIterations(3);
    }
 
-   public CallTreeNode getRoot() {
-      buildMeasurements();
-      return root;
+   public void addDE() {
+      d = c.appendChild("ClassD#methodD", "public void ClassD.methodD");
+      e = c.appendChild("ClassE#methodE", "public void ClassE.methodE");
    }
-
-   protected void buildMeasurements() {
-      final CallTreeNode[] nodes = new CallTreeNode[] { root, a, b, c };
+   
+//   public void buildMeasurements() {
+//      final CallTreeNode[] nodes = new CallTreeNode[] { root, a, b, c, constructor };
+//      initVersions(nodes);
+//      buildBasicChunks(nodes);
+//      buildStatistics(nodes);
+//   }
+   
+   public void buildMeasurements(CallTreeNode... nodes) {
       initVersions(nodes);
-      buildBasicChunks();
+      buildBasicChunks(nodes);
       buildStatistics(nodes);
    }
 
-   protected void buildBasicChunks() {
-      buildChunks(root, version, 95);
-      buildChunks(a, version, 95);
-      buildChunks(c, version, 100);
-      buildChunks(b, version, 95);
-
-      buildChunks(root, versionPredecessor, 105);
-      buildChunks(a, versionPredecessor, 105);
-      buildChunks(c, versionPredecessor, 100);
-      buildChunks(b, versionPredecessor, 105);
+   protected void buildBasicChunks(CallTreeNode[] nodes) {
+      List<CallTreeNode> nodeList = Arrays.asList(nodes);
+      if (nodeList.contains(root)) {
+         buildChunks(root, version, 95);
+         buildChunks(root, versionPredecessor, 105);
+      }
+      
+      if (nodeList.contains(a)) {
+         buildChunks(a, version, 95);
+         buildChunks(a, versionPredecessor, 105);
+      }
+      
+      if (nodeList.contains(b)) {
+         buildChunks(b, version, 95);
+         buildChunks(b, versionPredecessor, 105);
+      }
+      
+      if (nodeList.contains(c)) {
+         buildChunks(c, version, 100);
+         buildChunks(c, versionPredecessor, 100);
+      }
+      
+      if (nodeList.contains(constructor)) {
+         buildChunks(constructor, version, 95);
+         buildChunks(constructor, versionPredecessor, 95);
+      }
+      
+      if (nodeList.contains(d) || (c.getChildren().size() > 0 && nodeList.contains(c.getChildren().get(0)))) {
+         buildChunks(c.getChildren().get(0), version, 95);
+      }
+      
+      if (nodeList.contains(e) || (c.getChildren().size() > 1 && nodeList.contains(c.getChildren().get(1)))) {
+         buildChunks(c.getChildren().get(1), version, 95);
+      }
    }
 
    protected void buildStatistics(final CallTreeNode[] nodes) {
@@ -114,7 +150,11 @@ public class TreeBuilder {
          }
       }
    }
-
+   
+   public CallTreeNode getRoot() {
+      return root;
+   }
+   
    public CallTreeNode getA() {
       return a;
    }
@@ -125,5 +165,17 @@ public class TreeBuilder {
    
    public CallTreeNode getC() {
       return c;
+   }
+   
+   public CallTreeNode getD() {
+      return d;
+   }
+   
+   public CallTreeNode getE() {
+      return e;
+   }
+   
+   public CallTreeNode getConstructor() {
+      return constructor;
    }
 }

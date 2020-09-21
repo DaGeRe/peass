@@ -12,11 +12,11 @@ public class TreeBuilderBig extends TreeBuilder {
    }
 
    @Override
-   protected void buildMeasurements() {
-      final CallTreeNode[] nodes = new CallTreeNode[] { root, a, b, c, b2 };
+   public void buildMeasurements(CallTreeNode... nodes) {
+//      final CallTreeNode[] nodes = new CallTreeNode[] { root, a, b, c, constructor, b2 };
       initVersions(nodes);
       buildChunks(b2, version, 95);
-      buildBasicChunks();
+      buildBasicChunks(nodes);
       if (secondBDiffering) {
          buildChunks(b2, versionPredecessor, 105);
       } else {

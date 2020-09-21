@@ -15,6 +15,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
@@ -23,14 +25,13 @@ import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.TreeBuilder;
 import de.peass.measurement.rca.helper.TreeBuilderBig;
-import de.peass.measurement.rca.helper.TreeBuilderDifferent;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class CauseSearcherCompleteTest {
 
    final CauseTester measurer = Mockito.mock(CauseTester.class);
-   
+
    @Before
    public void cleanup() {
       final File folder = new File("target/test_peass/");
@@ -40,52 +41,59 @@ public class CauseSearcherCompleteTest {
          e.printStackTrace();
       }
    }
-   
+
    @Test
-   public void testSameNodesChanges()
-         throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
-      final CallTreeNode root1 = new TreeBuilderBig(true).getRoot();
-      final CallTreeNode root2 = new TreeBuilderBig(true).getRoot();
+   public void testSameNodesChanges() throws Exception {
+      final TreeBuilderBig builderPredecessor = new TreeBuilderBig(true);
+      final TreeBuilderBig builderVersion = new TreeBuilderBig(true);
+      final CallTreeNode rootPredecessor = builderPredecessor.getRoot();
+      final CallTreeNode rootVersion = builderVersion.getRoot();
 
-      final Set<ChangedEntity> changes = getChanges(root1, root2);
-
-      System.out.println(changes);
-      Assert.assertEquals(1, changes.size());
-      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassB#methodB", "")));
-   }
-   
-   @Test
-   public void testSameNodesNotDifferent()
-         throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
-      final CallTreeNode root1 = new TreeBuilderBig(false).getRoot();
-      final CallTreeNode root2 = new TreeBuilderBig(false).getRoot();
-
-      final Set<ChangedEntity> changes = getChanges(root1, root2);
-
-      Assert.assertEquals(1, changes.size());
-      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassB#methodB", "")));
-   }
-   
-   @Test
-   public void testDifferentTree()
-         throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
-      final CallTreeNode rootPredecessor = new TreeBuilder().getRoot();
-      final TreeBuilderDifferent differentTreeBuilder = new TreeBuilderDifferent();
-      final CallTreeNode rootVersion = differentTreeBuilder.getRoot();
+      CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
 
       final Set<ChangedEntity> changes = getChanges(rootPredecessor, rootVersion);
 
       System.out.println(changes);
-      Assert.assertEquals(3, changes.size());
+      Assert.assertEquals(1, changes.size());
+      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassB#methodB", "")));
+   }
+
+   @Test
+   public void testSameNodesNotDifferent() throws Exception {
+      final TreeBuilderBig builderPredecessor = new TreeBuilderBig(false);
+      final CallTreeNode rootPredecessor = builderPredecessor.getRoot();
+      final CallTreeNode rootVersion = new TreeBuilderBig(false).getRoot();
+
+      CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
+
+      final Set<ChangedEntity> changes = getChanges(rootPredecessor, rootVersion);
+
+      Assert.assertEquals(1, changes.size());
+      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassB#methodB", "")));
+   }
+
+   @Test
+   public void testDifferentTree() throws Exception {
+      final TreeBuilder builderPredecessor = new TreeBuilder();
+      final CallTreeNode rootPredecessor = builderPredecessor.getRoot();
+      final TreeBuilder differentTreeBuilder = new TreeBuilder();
+      differentTreeBuilder.addDE();
+      final CallTreeNode rootVersion = differentTreeBuilder.getRoot();
+
+      CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
+
+      final Set<ChangedEntity> changes = getChanges(rootPredecessor, rootVersion);
+
+      System.out.println(changes);
       Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassB#methodB", "")));
       Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassD#methodD", "")));
       Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassE#methodE", "")));
-      
+
       ArgumentCaptor<List<CallTreeNode>> includedNodes = ArgumentCaptor.forClass(List.class);
       Mockito.verify(measurer).measureVersion(includedNodes.capture());
-      
-      Assert.assertThat(includedNodes.getValue(), Matchers.hasItem(differentTreeBuilder.getD()));
-      Assert.assertThat(includedNodes.getValue(), Matchers.hasItem(differentTreeBuilder.getE()));
+
+      Assert.assertThat(includedNodes.getValue(), Matchers.hasItem(builderPredecessor.getB()));
+      Assert.assertThat(includedNodes.getValue(), Matchers.hasItem(builderPredecessor.getC()));
    }
 
    private Set<ChangedEntity> getChanges(final CallTreeNode rootPredecessor, final CallTreeNode rootVersion)
@@ -98,11 +106,11 @@ public class CauseSearcherCompleteTest {
       Mockito.when(treeReader.getRootPredecessor()).thenReturn(rootPredecessor);
       Mockito.when(treeReader.getRootVersion()).thenReturn(rootVersion);
 
-      final CauseSearcherComplete searcher = new CauseSearcherComplete(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, 
+      final CauseSearcherComplete searcher = new CauseSearcherComplete(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer,
             TestConstants.SIMPLE_MEASUREMENT_CONFIG,
             new CauseSearchFolders(folder));
       final Set<ChangedEntity> changes = searcher.search();
-      
+
       return changes;
    }
 

@@ -2,6 +2,7 @@ package de.peass.measurement;
 
 import java.util.LinkedList;
 
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -14,37 +15,46 @@ import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.serialization.MeasuredNode;
 
 public class LevelManagerTest {
-   TreeBuilder builder1 = new TreeBuilder();
-   TreeBuilder builder2 = new TreeBuilder();
+   private TreeBuilder builder1 = new TreeBuilder();
+   private TreeBuilder builder2 = new TreeBuilder();
 
+   private PersistedTestDataBuilder persistedDataBuilder = new PersistedTestDataBuilder();
+   
    @Test
    public void testLevelGoing() throws Exception {
-      final CauseSearchData data = buildPersistedData();
+      final CauseSearchData data = persistedDataBuilder.getData();
 
       final BothTreeReader mock = buildTree();
 
       final LinkedList<CallTreeNode> currentVersionNodeList = new LinkedList<>();
       final LinkedList<CallTreeNode> currentVersionPredecessorNodeList = new LinkedList<>();
 
-      new LevelManager(currentVersionPredecessorNodeList, currentVersionNodeList, mock).goToLastLevel(data.getNodes());
+      new LevelManager(currentVersionPredecessorNodeList, currentVersionNodeList, mock).goToLastMeasuredLevel(data.getNodes());
 
       System.out.println(currentVersionPredecessorNodeList);
-      Assert.assertEquals(2, currentVersionPredecessorNodeList.size());
-      Assert.assertEquals(2, currentVersionNodeList.size());
+      System.out.println(currentVersionNodeList);
+      testMeasureListCorrectness(currentVersionPredecessorNodeList, builder1);
+      testMeasureListCorrectness(currentVersionNodeList, builder2);
+   }
+
+   private void testMeasureListCorrectness(final LinkedList<CallTreeNode> currentVersionNodeList, TreeBuilder builder) {
+      Assert.assertEquals(3, currentVersionNodeList.size());
+      Assert.assertThat(currentVersionNodeList, Matchers.hasItem(builder.getA()));
+      Assert.assertThat(currentVersionNodeList, Matchers.hasItem(builder.getC()));
+      Assert.assertThat(currentVersionNodeList, Matchers.hasItem(builder.getConstructor()));
    }
 
    @Test
    public void testTwoLevelGoing() throws Exception {
-      final CauseSearchData data = buildPersistedData();
-
-      final MeasuredNode rootMeasured = addSecondLevel(data);
+      persistedDataBuilder.addSecondLevel();
+      final CauseSearchData data = persistedDataBuilder.getData();
 
       final BothTreeReader mock = buildTree();
 
       final LinkedList<CallTreeNode> currentVersionNodeList = new LinkedList<>();
       final LinkedList<CallTreeNode> currentVersionPredecessorNodeList = new LinkedList<>();
 
-      new LevelManager(currentVersionPredecessorNodeList, currentVersionNodeList, mock).goToLastLevel(rootMeasured);
+      new LevelManager(currentVersionPredecessorNodeList, currentVersionNodeList, mock).goToLastMeasuredLevel(data.getNodes());
 
       System.out.println(currentVersionPredecessorNodeList);
       Assert.assertEquals(1, currentVersionPredecessorNodeList.size());
@@ -81,7 +91,7 @@ public class LevelManagerTest {
       final LinkedList<CallTreeNode> currentVersionNodeList = new LinkedList<>();
       final LinkedList<CallTreeNode> currentVersionPredecessorNodeList = new LinkedList<>();
 
-      new LevelManager(currentVersionPredecessorNodeList, currentVersionNodeList, mock).goToLastLevel(rootMeasured);
+      new LevelManager(currentVersionPredecessorNodeList, currentVersionNodeList, mock).goToLastMeasuredLevel(rootMeasured);
 
       System.out.println(currentVersionPredecessorNodeList);
       Assert.assertEquals(1, currentVersionPredecessorNodeList.size());
@@ -89,21 +99,7 @@ public class LevelManagerTest {
       Assert.assertEquals("FinalClass.finalMethod", currentVersionNodeList.get(0).getCall());
    }
 
-   private MeasuredNode addSecondLevel(final CauseSearchData data) {
-      final MeasuredNode child1 = new MeasuredNode();
-      child1.setCall("ClassA.methodA");
-      child1.setKiekerPattern("public void ClassA.methodA");
-
-      final MeasuredNode child2 = new MeasuredNode();
-      child2.setCall("ClassC.methodC");
-      child2.setKiekerPattern("public void ClassC.methodC");
-
-      final MeasuredNode rootMeasured = data.getNodes();
-      data.setNodes(rootMeasured);
-      rootMeasured.getChilds().add(child1);
-      rootMeasured.getChilds().add(child2);
-      return rootMeasured;
-   }
+   
 
    private BothTreeReader buildTree() {
       final BothTreeReader mock = Mockito.mock(BothTreeReader.class);
@@ -114,24 +110,19 @@ public class LevelManagerTest {
 
    @Test
    public void testCauseDataReusing() throws Exception {
-      final CauseSearchData data = buildPersistedData();
+      final CauseSearchData data = persistedDataBuilder.getData();
 
       final BothTreeReader mock = buildTree();
 
       final LinkedList<CallTreeNode> currentVersionNodeList = new LinkedList<>();
       final LinkedList<CallTreeNode> currentVersionPredecessorNodeList = new LinkedList<>();
 
-      new LevelManager(currentVersionPredecessorNodeList, currentVersionNodeList, mock).goToLastLevel(data.getNodes());
+      new LevelManager(currentVersionPredecessorNodeList, currentVersionNodeList, mock).goToLastMeasuredLevel(data.getNodes());
 
+      builder1.buildMeasurements(builder1.getRoot(), builder1.getA(),builder1.getC());
       data.addDiff(builder1.getA());
-   }
-
-   private CauseSearchData buildPersistedData() {
-      final CauseSearchData data = new CauseSearchData();
-      final MeasuredNode rootMeasured = new MeasuredNode();
-      rootMeasured.setCall("Test#test");
-      rootMeasured.setKiekerPattern("public void Test.test");
-      data.setNodes(rootMeasured);
-      return data;
+      data.addDiff(builder1.getC());
+      
+      Assert.assertThat(data.getNodes().getChildren(), Matchers.hasSize(2));
    }
 }

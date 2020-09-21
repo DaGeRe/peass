@@ -40,26 +40,25 @@ public class CauseSearcherComplete extends CauseSearcher {
    @Override
    protected Set<ChangedEntity> searchCause()
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-//      measurer.setConsiderNodePosition(true);
-      final List<CallTreeNode> includableNodes;
+      // measurer.setConsiderNodePosition(true);
+      
       final CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
-      final List<CallTreeNode> currentPredecessorNodeList = analyzer.getNonDifferingPredecessor();
-      final List<CallTreeNode> currentVersionNodeList = analyzer.getNonDifferingVersion();
+      final List<CallTreeNode> predecessorNodeList = analyzer.getNonDifferingPredecessor();
+      final List<CallTreeNode> includableNodes;
       if (causeSearchConfig.useCalibrationRun()) {
-         includableNodes = getAnalysableNodes(currentPredecessorNodeList, currentVersionNodeList);
+         includableNodes = getAnalysableNodes(predecessorNodeList);
       } else {
-         includableNodes = currentPredecessorNodeList;
+         includableNodes = predecessorNodeList;
       }
 
-      LOG.debug("Analyzable: {} / {}", includableNodes.size(), currentPredecessorNodeList.size());
+      LOG.debug("Analyzable: {} / {}", includableNodes.size(), predecessorNodeList.size());
 
       final AllDifferingDeterminer allSearcher = new AllDifferingDeterminer(includableNodes, causeSearchConfig, measurementConfig);
       measurer.measureVersion(includableNodes);
       allSearcher.calculateDiffering();
-
-      for (final CallTreeNode predecessorNode : includableNodes) {
-         persistenceManager.addMeasurement(predecessorNode);
-      }
+      
+      persistenceManager.addMeasurement(reader.getRootPredecessor());
+      addMeasurements(includableNodes, reader.getRootPredecessor());
 
       differingNodes.addAll(allSearcher.getCurrentLevelDifferent());
       differingNodes.addAll(analyzer.getTreeStructureDiffering());
@@ -69,7 +68,17 @@ public class CauseSearcherComplete extends CauseSearcher {
       return convertToChangedEntitites();
    }
 
-   private List<CallTreeNode> getAnalysableNodes(final List<CallTreeNode> currentPredecessorNodeList, final List<CallTreeNode> currentVersionNodeList)
+   private void addMeasurements(final List<CallTreeNode> includableNodes, CallTreeNode parent) {
+      for (CallTreeNode child : parent.getChildren()) {
+         if (includableNodes.contains(child)) {
+            LOG.debug("Analyzing: {}", child);
+            persistenceManager.addMeasurement(child);
+            addMeasurements(includableNodes, child);
+         }
+      }
+   }
+
+   private List<CallTreeNode> getAnalysableNodes(final List<CallTreeNode> predecessorNodeList)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       final MeasurementConfiguration config = new MeasurementConfiguration(1, measurementConfig.getVersion(), measurementConfig.getVersionOld());
       config.setIterations(measurementConfig.getIterations());
@@ -77,8 +86,8 @@ public class CauseSearcherComplete extends CauseSearcher {
       config.setWarmup(measurementConfig.getWarmup());
       config.setUseKieker(true);
       final CauseTester calibrationMeasurer = new CauseTester(folders, new JUnitTestTransformer(folders.getProjectFolder(), config), causeSearchConfig);
-      final AllDifferingDeterminer calibrationRunner = new AllDifferingDeterminer(currentPredecessorNodeList, causeSearchConfig, config);
-      calibrationMeasurer.measureVersion(currentPredecessorNodeList);
+      final AllDifferingDeterminer calibrationRunner = new AllDifferingDeterminer(predecessorNodeList, causeSearchConfig, config);
+      calibrationMeasurer.measureVersion(predecessorNodeList);
       final List<CallTreeNode> includableByMinTime = calibrationRunner.getIncludableNodes();
       return includableByMinTime;
    }

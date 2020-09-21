@@ -13,18 +13,23 @@ import org.junit.Test;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.TestConstants;
-import de.peass.measurement.rca.helper.TreeBuilderDifferent;
+import de.peass.measurement.rca.helper.TreeBuilder;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class TestLevelDifferentNodeDeterminer {
    @Test
    public void testLevelDifferingDeterminer() throws Exception {
-      final TreeBuilderDifferent predecessorBuilder = new TreeBuilderDifferent();
-      final CallTreeNode rootOld = predecessorBuilder.getRoot();
-      final CallTreeNode rootMain = predecessorBuilder.getRoot();
+      final TreeBuilder predecessorBuilder = new TreeBuilder();
+      predecessorBuilder.addDE();
+      final CallTreeNode rootPredecessor = predecessorBuilder.getRoot();
+      final CallTreeNode root = new TreeBuilder().getRoot();
+      
+      root.setOtherVersionNode(rootPredecessor);
+      rootPredecessor.setOtherVersionNode(root);
+      predecessorBuilder.buildMeasurements(rootPredecessor);
 
-      final LevelDifferentNodeDeterminer determiner = getDiff(rootOld, rootMain);
-      Assert.assertEquals(2, determiner.getMeasureNextLevel().size());
+      final LevelDifferentNodeDeterminer determiner = getDiff(rootPredecessor, root);
+      Assert.assertEquals(3, determiner.getMeasureNextLevel().size());
       
       final LevelDifferentNodeDeterminer determinerD = getDiff(predecessorBuilder.getB(), predecessorBuilder.getB());
       Assert.assertEquals(1, determinerD.getCurrentLevelDifferent().size());
