@@ -61,7 +61,7 @@ public class PropertyReadHelper {
       final File projectFolder2 = new File("../../projekte/commons-fileupload");
       final File viewFolder2 = new File("/home/reichelt/daten3/diss/repos/views-final/views_commons-fileupload/");
       final PropertyReadHelper propertyReadHelper = new PropertyReadHelper("4ed6e923cb2033272fcb993978d69e325990a5aa", "b53957", ce, change, projectFolder2, viewFolder2,
-            new File("/dev/null"));
+            new File("/tmp/"));
       propertyReadHelper.read();
    }
 

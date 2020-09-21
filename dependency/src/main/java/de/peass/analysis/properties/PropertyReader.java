@@ -35,22 +35,26 @@ public class PropertyReader {
       final File methodFolder = new File(outFolder, "methods");
       methodFolder.mkdirs();
       for (final Map.Entry<String, TestSet> version : changedTests.getVersions().entrySet()) {
-         // String prevVersion = VersionComparator.getPreviousVersion(version.getKey());
-         final ChangeProperties changeProperties = new ChangeProperties();
-         changeProperties.setCommitText(GitUtils.getCommitText(projectFolder, version.getKey()));
-         changeProperties.setCommitter(GitUtils.getCommitter(projectFolder, version.getKey()));
-         versionProperties.getVersions().put(version.getKey(), changeProperties);
-         for (final Entry<ChangedEntity, Set<String>> testclazz : version.getValue().getTestcases().entrySet()) {
-            final List<ChangeProperty> properties = new LinkedList<>();
-            changeProperties.getProperties().put(testclazz.getKey().getJavaClazzName(), properties);
-            for (final String testmethod : testclazz.getValue()) {
-               readMethod(methodFolder, version, testclazz, properties, testmethod);
-            }
-         }
+         readVersion(versionProperties, methodFolder, version);
          Constants.OBJECTMAPPER.writeValue(propertyFile, versionProperties);
       }
 
       System.out.println("Analyzed: " + count);
+   }
+
+   private void readVersion(final VersionChangeProperties versionProperties, final File methodFolder, final Map.Entry<String, TestSet> version) throws IOException {
+      // String prevVersion = VersionComparator.getPreviousVersion(version.getKey());
+      final ChangeProperties changeProperties = new ChangeProperties();
+      changeProperties.setCommitText(GitUtils.getCommitText(projectFolder, version.getKey()));
+      changeProperties.setCommitter(GitUtils.getCommitter(projectFolder, version.getKey()));
+      versionProperties.getVersions().put(version.getKey(), changeProperties);
+      for (final Entry<ChangedEntity, Set<String>> testclazz : version.getValue().getTestcases().entrySet()) {
+         final List<ChangeProperty> properties = new LinkedList<>();
+         changeProperties.getProperties().put(testclazz.getKey().getJavaClazzName(), properties);
+         for (final String testmethod : testclazz.getValue()) {
+            readMethod(methodFolder, version, testclazz, properties, testmethod);
+         }
+      }
    }
 
    private void readMethod(final File methodFolder, final Map.Entry<String, TestSet> version, final Entry<ChangedEntity, Set<String>> testclazz,

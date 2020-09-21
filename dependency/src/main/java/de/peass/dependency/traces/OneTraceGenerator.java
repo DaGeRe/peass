@@ -92,14 +92,7 @@ public class OneTraceGenerator {
          final List<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, mapping).getShortTrace("");
          if (shortTrace != null) {
             LOG.debug("Short Trace: {} Folder: {} Project: {}", shortTrace.size(), kiekerResultFolder.getAbsolutePath(), folders.getProjectFolder());
-            final List<File> files = new LinkedList<>();
-            for (int i = 0; i < modules.size(); i++) {
-               final File module = modules.get(i);
-               for (int folderIndex = 0; folderIndex < ChangedEntity.potentialClassFolders.length; folderIndex++) {
-                  final String path = ChangedEntity.potentialClassFolders[folderIndex];
-                  files.add(new File(module, path));
-               }
-            }
+            final List<File> files = getClasspathFolders();
             if (shortTrace.size() > 0) {
                final TraceMethodReader traceMethodReader = new TraceMethodReader(shortTrace, files.toArray(new File[0]));
                final TraceWithMethods trace = traceMethodReader.getTraceWithMethods();
@@ -116,22 +109,7 @@ public class OneTraceGenerator {
                if (versionCurrent.endsWith("~1")) {
                   shortVersion = shortVersion + "~1";
                }
-               final File currentTraceFile = new File(methodDir, shortVersion);
-               traceFiles.add(currentTraceFile);
-               Files.write(currentTraceFile.toPath(), trace.getWholeTrace().getBytes());
-               final File commentlessTraceFile = new File(methodDir, shortVersion + NOCOMMENT);
-               Files.write(commentlessTraceFile.toPath(), trace.getCommentlessTrace().getBytes());
-               final File methodTrace = new File(methodDir, shortVersion + METHOD);
-               Files.write(methodTrace.toPath(), trace.getTraceMethods().getBytes());
-               if (sizeInMB < 5) {
-                  final File methodExpandedTrace = new File(methodDir, shortVersion + METHOD_EXPANDED);
-                  Files.write(methodExpandedTrace.toPath(), traceMethodReader.getExpandedTrace()
-                        .stream()
-                        .filter(value -> !(value instanceof RuleContent))
-                        .map(value -> value.toString()).collect(Collectors.toList()));
-               } else {
-                  LOG.debug("Do not write expanded trace - size: {} MB", sizeInMB);
-               }
+               final File methodTrace = writeTraces(sizeInMB, traceMethodReader, trace, traceFiles, methodDir, shortVersion);
                LOG.debug("Datei {} existiert: {}", methodTrace.getAbsolutePath(), methodTrace.exists());
                success = true;
             } else {
@@ -142,5 +120,38 @@ public class OneTraceGenerator {
          LOG.error("File size exceeds 2000 MB");
       }
       return success;
+   }
+
+   private File writeTraces(final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace, List<File> traceFiles, final File methodDir,
+         String shortVersion) throws IOException {
+      final File currentTraceFile = new File(methodDir, shortVersion);
+      traceFiles.add(currentTraceFile);
+      Files.write(currentTraceFile.toPath(), trace.getWholeTrace().getBytes());
+      final File commentlessTraceFile = new File(methodDir, shortVersion + NOCOMMENT);
+      Files.write(commentlessTraceFile.toPath(), trace.getCommentlessTrace().getBytes());
+      final File methodTrace = new File(methodDir, shortVersion + METHOD);
+      Files.write(methodTrace.toPath(), trace.getTraceMethods().getBytes());
+      if (sizeInMB < 5) {
+         final File methodExpandedTrace = new File(methodDir, shortVersion + METHOD_EXPANDED);
+         Files.write(methodExpandedTrace.toPath(), traceMethodReader.getExpandedTrace()
+               .stream()
+               .filter(value -> !(value instanceof RuleContent))
+               .map(value -> value.toString()).collect(Collectors.toList()));
+      } else {
+         LOG.debug("Do not write expanded trace - size: {} MB", sizeInMB);
+      }
+      return methodTrace;
+   }
+
+   private List<File> getClasspathFolders() {
+      final List<File> files = new LinkedList<>();
+      for (int i = 0; i < modules.size(); i++) {
+         final File module = modules.get(i);
+         for (int folderIndex = 0; folderIndex < ChangedEntity.potentialClassFolders.length; folderIndex++) {
+            final String path = ChangedEntity.potentialClassFolders[folderIndex];
+            files.add(new File(module, path));
+         }
+      }
+      return files;
    }
 }

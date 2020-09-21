@@ -52,6 +52,9 @@ import com.github.javaparser.ast.stmt.Statement;
 
 import de.peass.dependency.ClazzFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.analysis.data.TraceElement;
+import de.peass.dependency.traces.TraceReadUtils;
+import de.peass.dependency.traces.requitur.content.TraceElementContent;
 
 /**
  * Helps to compare whether two versions of a file may have changed performance (and whether this change is for the use of the whole file or only some methods).
@@ -212,98 +215,105 @@ public final class FileComparisonUtil {
       final File file = ClazzFinder.getSourceFile(projectFolder, entity);
       if (file != null) {
          LOG.debug("Found:  {} {}", file, file.exists());
+         final CompilationUnit cu = parse(file);
 
-         final CompilationUnit newCu = parse(file);
-         return getMethod(entity, method, newCu);
-      } else {
-         return "";
-      }
-   }
+         TraceElementContent traceElement = new TraceElementContent(entity.getJavaClazzName(), method, entity.getParameters().toArray(new String[0]), 0);
 
-   public static String getMethod(final ChangedEntity entity, final String method, final CompilationUnit newCu) {
-      ClassOrInterfaceDeclaration declaration = findClazz(entity, newCu.getChildNodes());
-      if (declaration == null) {
-         return "";
-      }
-      if (method.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
-         final String outerClazz = method.substring(0, method.indexOf(ChangedEntity.CLAZZ_SEPARATOR));
-         LOG.debug("Searching: " + outerClazz + " " + method);
-         declaration = findClazz(new ChangedEntity(outerClazz, ""), declaration.getChildNodes());
-         LOG.debug("Suche: " + outerClazz + " " + declaration);
-      }
-      if (declaration == null) {
-         return "";
-      }
-
-      if (method.equals("<init>")) {
-         final List<ConstructorDeclaration> methods = declaration.getConstructors();
-         System.out.println("Searching: " + method + " " + entity);
-         if (methods.size() > 0) {
-            CallableDeclaration<?> callable = findCallable(entity, methods);
-            if (callable == null) {
-               LOG.debug("Full parameters of not-found entity: " + entity.getParameters());
-               entity.getParameters().remove(0); // Remove instance of surrounding class
-               callable = findCallable(entity, methods);
-               System.out.println("Found: " + callable);
-            }
-            callable.setComment(null);
-            return callable.toString();
+         final Node node = TraceReadUtils.getMethod(traceElement, cu);
+         if (node != null) {
+            return node.toString();
          } else {
             return "";
          }
       } else {
-         List<MethodDeclaration> methods;
-         if (method.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
-            final String methodName = method.substring(method.indexOf(ChangedEntity.CLAZZ_SEPARATOR) + 1);
-            System.out.println("Suche: " + methodName + " " + method);
-            methods = declaration.getMethodsByName(methodName);
-         } else {
-            methods = declaration.getMethodsByName(method);
-         }
-         if (methods.size() > 0) {
-            CallableDeclaration<?> foundDeclaration = findCallable(entity, methods);
-            if (foundDeclaration != null) {
-               foundDeclaration.setComment(null);
-               return foundDeclaration.toString();
-            }
-         }
          return "";
       }
    }
 
-   private static CallableDeclaration<?> findCallable(final ChangedEntity entity, List<? extends CallableDeclaration<?>> methods) {
-      CallableDeclaration<?> foundDeclaration = null;
-      for (CallableDeclaration<?> methodDec : methods) {
-         if (methodDec.getParameters().size() == entity.getParameters().size()) {
-            boolean equal = parametersEqual(entity, methodDec);
-            if (equal) {
-               foundDeclaration = methodDec;
-               break;
-
-            }
-         }
-      }
-      return foundDeclaration;
-   }
-
-   private static boolean parametersEqual(final ChangedEntity entity, CallableDeclaration<?> methodDec) {
-      boolean equal = true;
-      for (int i = 0; i < methodDec.getParameters().size(); i++) {
-         String declaredParameterName = methodDec.getParameter(i).getTypeAsString();
-         final String entityParameterName = entity.getParameters().get(i);
-         if (entityParameterName.contains("$")) {
-            String shortName = entityParameterName.substring(entityParameterName.indexOf('$') + 1);
-            if (!declaredParameterName.equals(entityParameterName) && !declaredParameterName.equals(shortName)) {
-               equal = false;
-            }
-         } else {
-            if (!declaredParameterName.equals(entityParameterName)) {
-               equal = false;
-            }
-         }
-      }
-      return equal;
-   }
+   // public static String getMethod(final ChangedEntity entity, final String method, final CompilationUnit newCu) {
+   // ClassOrInterfaceDeclaration declaration = findClazz(entity, newCu.getChildNodes());
+   // if (declaration == null) {
+   // return "";
+   // }
+   // if (method.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
+   // final String outerClazz = method.substring(0, method.indexOf(ChangedEntity.CLAZZ_SEPARATOR));
+   // LOG.debug("Searching: " + outerClazz + " " + method);
+   // declaration = findClazz(new ChangedEntity(outerClazz, ""), declaration.getChildNodes());
+   // LOG.debug("Suche: " + outerClazz + " " + declaration);
+   // }
+   // if (declaration == null) {
+   // return "";
+   // }
+   //
+   // if (method.equals("<init>")) {
+   // final List<ConstructorDeclaration> methods = declaration.getConstructors();
+   // System.out.println("Searching: " + method + " " + entity);
+   // if (methods.size() > 0) {
+   // CallableDeclaration<?> callable = findCallable(entity, methods);
+   // if (callable == null) {
+   // LOG.debug("Full parameters of not-found entity: " + entity.getParameters());
+   // entity.getParameters().remove(0); // Remove instance of surrounding class
+   // callable = findCallable(entity, methods);
+   // System.out.println("Found: " + callable);
+   // }
+   // callable.setComment(null);
+   // return callable.toString();
+   // } else {
+   // return "";
+   // }
+   // } else {
+   // List<MethodDeclaration> methods;
+   // if (method.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
+   // final String methodName = method.substring(method.indexOf(ChangedEntity.CLAZZ_SEPARATOR) + 1);
+   // System.out.println("Suche: " + methodName + " " + method);
+   // methods = declaration.getMethodsByName(methodName);
+   // } else {
+   // methods = declaration.getMethodsByName(method);
+   // }
+   // if (methods.size() > 0) {
+   // CallableDeclaration<?> foundDeclaration = findCallable(entity, methods);
+   // if (foundDeclaration != null) {
+   // foundDeclaration.setComment(null);
+   // return foundDeclaration.toString();
+   // }
+   // }
+   // return "";
+   // }
+   // }
+   //
+   // private static CallableDeclaration<?> findCallable(final ChangedEntity entity, List<? extends CallableDeclaration<?>> methods) {
+   // CallableDeclaration<?> foundDeclaration = null;
+   // for (CallableDeclaration<?> methodDec : methods) {
+   // if (methodDec.getParameters().size() == entity.getParameters().size()) {
+   // boolean equal = parametersEqual(entity, methodDec);
+   // if (equal) {
+   // foundDeclaration = methodDec;
+   // break;
+   //
+   // }
+   // }
+   // }
+   // return foundDeclaration;
+   // }
+   //
+   // private static boolean parametersEqual(final ChangedEntity entity, CallableDeclaration<?> methodDec) {
+   // boolean equal = true;
+   // for (int i = 0; i < methodDec.getParameters().size(); i++) {
+   // String declaredParameterName = methodDec.getParameter(i).getTypeAsString();
+   // final String entityParameterName = entity.getParameters().get(i);
+   // if (entityParameterName.contains("$")) {
+   // String shortName = entityParameterName.substring(entityParameterName.indexOf('$') + 1);
+   // if (!declaredParameterName.equals(entityParameterName) && !declaredParameterName.equals(shortName)) {
+   // equal = false;
+   // }
+   // } else {
+   // if (!declaredParameterName.equals(entityParameterName)) {
+   // equal = false;
+   // }
+   // }
+   // }
+   // return equal;
+   // }
 
    public static ClassOrInterfaceDeclaration findClazz(final ChangedEntity entity, final List<Node> nodes) {
       ClassOrInterfaceDeclaration declaration = null;

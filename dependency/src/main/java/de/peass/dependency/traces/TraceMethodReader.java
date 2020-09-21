@@ -67,35 +67,39 @@ public class TraceMethodReader {
       final List<ReducedTraceElement> rleTrace = runLengthEncodingSequitur.getReadableRLETrace();
       final TraceWithMethods trace = new TraceWithMethods(rleTrace);
       for (final ReducedTraceElement traceElement : rleTrace) {
-         if (traceElement.getValue() instanceof TraceElementContent) {
-            final TraceElementContent te = (TraceElementContent) traceElement.getValue();
-            File clazzFile = ClazzFinder.getClazzFile(te, clazzFolder);
-            if (clazzFile == null) {
-               clazzFile = findAlternativeClassfile(te, clazzFile);
-            }
-
-            if (clazzFile != null) {
-               CompilationUnit cu = getCU(clazzFile);
-               final Node method = TraceReadUtils.getMethod(te, cu);
-
-               if (method != null) {
-                  final String commentedMethod = method.toString().intern();
-                  trace.setElementSource(te, commentedMethod);
-                  method.setComment(null);
-                  final String noCommentMethod = method.toString().intern();
-                  trace.setElementSourceNoComment(te, noCommentMethod);
-               } else {
-                  LOG.debug("Not found: " + te);
-
-                  trace.setElementSource(te, null);
-                  trace.setElementSourceNoComment(te, null);
-               }
-            } else {
-               LOG.error("Not found: " + clazzFile);
-            }
-         }
+         loadMethodSource(trace, traceElement);
       }
       return trace;
+   }
+
+   private void loadMethodSource(final TraceWithMethods trace, final ReducedTraceElement traceElement) throws FileNotFoundException {
+      if (traceElement.getValue() instanceof TraceElementContent) {
+         final TraceElementContent te = (TraceElementContent) traceElement.getValue();
+         File clazzFile = ClazzFinder.getClazzFile(te, clazzFolder);
+         if (clazzFile == null) {
+            clazzFile = findAlternativeClassfile(te, clazzFile);
+         }
+
+         if (clazzFile != null) {
+            CompilationUnit cu = getCU(clazzFile);
+            final Node method = TraceReadUtils.getMethod(te, cu);
+
+            if (method != null) {
+               final String commentedMethod = method.toString().intern();
+               trace.setElementSource(te, commentedMethod);
+               method.setComment(null);
+               final String noCommentMethod = method.toString().intern();
+               trace.setElementSourceNoComment(te, noCommentMethod);
+            } else {
+               LOG.debug("Not found: " + te);
+
+               trace.setElementSource(te, null);
+               trace.setElementSourceNoComment(te, null);
+            }
+         } else {
+            LOG.error("Not found: " + clazzFile);
+         }
+      }
    }
 
    public File findAlternativeClassfile(final TraceElementContent te, File clazzFile) throws FileNotFoundException {
