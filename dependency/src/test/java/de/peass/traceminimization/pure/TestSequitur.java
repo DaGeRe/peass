@@ -243,8 +243,16 @@ public class TestSequitur {
          System.out.println(rule.getValue());
       }
 
+      for (Content traceElement : seq.getUncompressedTrace()) {
+         if (traceElement instanceof RuleContent) {
+            System.out.print(((RuleContent) traceElement).getValue() + " ");
+         } else {
+            System.out.print(traceElement + " ");
+         }
+      }
+      System.out.println();
+
       System.out.println(seq.getUncompressedTrace());
-      System.out.println(seq.getTrace());
 
       final List<Content> expandedTrace = TraceStateTester.expandContentTrace(seq.getUncompressedTrace(), seq.getRules());
       Assert.assertEquals(trace, contentToStringTrace(expandedTrace));
