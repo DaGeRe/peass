@@ -16,11 +16,11 @@ import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
-import de.peass.dependency.ClazzFinder;
+import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.analysis.CalledMethodLoader;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TraceElement;
-import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.dependency.traces.requitur.ReducedTraceElement;
 import de.peass.dependency.traces.requitur.RunLengthEncodingSequitur;
 import de.peass.dependency.traces.requitur.Sequitur;
@@ -75,7 +75,7 @@ public class TraceMethodReader {
    private void loadMethodSource(final TraceWithMethods trace, final ReducedTraceElement traceElement) throws FileNotFoundException {
       if (traceElement.getValue() instanceof TraceElementContent) {
          final TraceElementContent te = (TraceElementContent) traceElement.getValue();
-         File clazzFile = ClazzFinder.getClazzFile(te, clazzFolder);
+         File clazzFile = ClazzFileFinder.getClazzFile(te, clazzFolder);
          if (clazzFile == null) {
             clazzFile = findAlternativeClassfile(te, clazzFile);
          }
@@ -109,7 +109,7 @@ public class TraceMethodReader {
          if (packageFolder.exists()) {
             for (File candidate : packageFolder.listFiles((FileFilter) new WildcardFileFilter("*.java"))) {
                CompilationUnit cu = getCU(candidate);
-               List<String> clazzes = ClazzFinder.getClazzes(cu);
+               List<String> clazzes = ClazzFileFinder.getClazzes(cu);
                if (clazzes.contains(te.getPackagelessClazz())) {
                   clazzFile = candidate;
                }
@@ -123,7 +123,7 @@ public class TraceMethodReader {
       CompilationUnit cu = loadedUnits.get(clazzFile);
       if (cu == null) {
          LOG.debug("CU {} not imported yet", clazzFile);
-         cu = FileComparisonUtil.parse(clazzFile);
+         cu = JavaParserProvider.parse(clazzFile);
          loadedUnits.put(clazzFile, cu);
       }
       return cu;

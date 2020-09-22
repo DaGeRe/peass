@@ -26,7 +26,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.dependency.ClazzFinder;
+import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TraceElement;
 import kieker.analysis.IProjectContext;
@@ -106,7 +106,7 @@ public class PeASSFilter extends AbstractFilterPlugin {
                   && !methodname.equals("getDataCollectors")) {
                calls.add(traceelement);
                // final String clazzFilename = ClazzFinder.getClassFilename(projectFolder, fullClassname);
-               final String outerClazzName = ClazzFinder.getOuterClass(fullClassname);
+               final String outerClazzName = ClazzFileFinder.getOuterClass(fullClassname);
                final ChangedEntity fullClassEntity = new ChangedEntity(fullClassname, mapping.getModuleOfClass(outerClazzName));
                Set<String> currentMethodSet = classes.get(fullClassEntity);
                if (currentMethodSet == null) {

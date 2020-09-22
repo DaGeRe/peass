@@ -11,11 +11,12 @@ import java.util.Set;
 
 import com.github.javaparser.ast.CompilationUnit;
 
-import de.peass.dependency.ClazzFinder;
+import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.changesreading.ClazzChangeData;
 import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.changesreading.JavaParserProvider;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;
@@ -24,12 +25,12 @@ public class PropertyChangeGuesser {
 
    public Set<String> getGuesses(final PeASSFolders folders, final Entry<ChangedEntity, ClazzChangeData> changedEntity) throws FileNotFoundException {
       final Set<String> guessedTypes = new HashSet<>();
-      final File file = ClazzFinder.getSourceFile(folders.getProjectFolder(), changedEntity.getKey());
-      final File fileOld = ClazzFinder.getSourceFile(folders.getOldSources(), changedEntity.getKey());
+      final File file = ClazzFileFinder.getSourceFile(folders.getProjectFolder(), changedEntity.getKey());
+      final File fileOld = ClazzFileFinder.getSourceFile(folders.getOldSources(), changedEntity.getKey());
 
       if (file != null && fileOld != null && file.exists() && fileOld.exists()) {
-         final CompilationUnit clazzUnit = FileComparisonUtil.parse(file);
-         final CompilationUnit clazzUnitOld = FileComparisonUtil.parse(fileOld);
+         final CompilationUnit clazzUnit = JavaParserProvider.parse(file);
+         final CompilationUnit clazzUnitOld = JavaParserProvider.parse(fileOld);
 
          for (Map.Entry<String, Set<String>> changedClazz : changedEntity.getValue().getChangedMethods().entrySet()) {
             // If only method change..

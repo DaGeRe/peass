@@ -22,37 +22,24 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.github.javaparser.JavaParser;
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.body.AnnotationDeclaration;
-import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
-import com.github.javaparser.ast.body.EnumDeclaration;
-import com.github.javaparser.ast.body.InitializerDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.Parameter;
-import com.github.javaparser.ast.body.TypeDeclaration;
-import com.github.javaparser.ast.comments.Comment;
 import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.comments.LineComment;
-import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.BlockStmt;
-import com.github.javaparser.ast.stmt.Statement;
 
-import de.peass.dependency.ClazzFinder;
+import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TraceElement;
 import de.peass.dependency.traces.TraceReadUtils;
 import de.peass.dependency.traces.requitur.content.TraceElementContent;
 
@@ -71,30 +58,6 @@ public final class FileComparisonUtil {
     */
    private FileComparisonUtil() {
 
-   }
-
-   public static void clearComments(final Node node) {
-      final Optional<Comment> comment = node.getComment();
-      if (comment.isPresent()) {
-         final Comment realComment = comment.get();
-         if (realComment.getComment() != null) {
-            realComment.setContent("");
-         }
-         node.setComment(null);
-      }
-      node.getOrphanComments().clear();
-      final List<Node> childNodes = node.getChildNodes();
-      LOG.trace("Type: {}", childNodes.getClass());
-      for (final Iterator<Node> begin = childNodes.iterator(); begin.hasNext();) {
-         final Node child = begin.next();
-         if (child instanceof LineComment) {
-            ((LineComment) child).setContent("");
-         } else if (child instanceof JavadocComment) {
-            ((JavadocComment) child).setContent("");
-         } else {
-            clearComments(child);
-         }
-      }
    }
 
    /**
@@ -162,8 +125,7 @@ public final class FileComparisonUtil {
                if (child instanceof BlockStmt || child2 instanceof BlockStmt) {
                   changes.add(child);
                   changes.add(child2);
-               }
-               if (child instanceof ImportDeclaration || child2 instanceof ImportDeclaration) {
+               } else if (child instanceof ImportDeclaration || child2 instanceof ImportDeclaration) {
                   changes.add(child);
                   changes.add(child2);
                } else {
@@ -175,7 +137,6 @@ public final class FileComparisonUtil {
 
                   changes.addAll(comparePairwise(child, child2));
                }
-
             } else {
                LOG.trace("Equal: {} {}", child, child2);
             }
@@ -184,7 +145,7 @@ public final class FileComparisonUtil {
    }
 
    private static boolean isNodeNotRelevant(final Node testNode) {
-      return testNode instanceof ImportDeclaration || testNode instanceof LineComment || testNode instanceof JavadocComment;
+      return testNode instanceof LineComment || testNode instanceof JavadocComment;
    }
 
    private static List<Node> cleanUnneccessary(final List<Node> childs1) {
@@ -199,30 +160,18 @@ public final class FileComparisonUtil {
       return result;
    }
 
-   private final static ThreadLocal<JavaParser> javaParser = new ThreadLocal<JavaParser>() {
-      protected JavaParser initialValue() {
-         return new JavaParser();
-      };
-   };
-
-   public synchronized static CompilationUnit parse(final File file) throws FileNotFoundException {
-      final JavaParser parser = javaParser.get();
-      final Optional<CompilationUnit> result = parser.parse(file).getResult();
-      return result.get();
-   }
-
    public static String getMethod(final File projectFolder, final ChangedEntity entity, final String method) throws FileNotFoundException {
-      final File file = ClazzFinder.getSourceFile(projectFolder, entity);
+      final File file = ClazzFileFinder.getSourceFile(projectFolder, entity);
       if (file != null) {
          LOG.debug("Found:  {} {}", file, file.exists());
-         final CompilationUnit cu = parse(file);
+         final CompilationUnit cu = JavaParserProvider.parse(file);
 
          return getMethod(entity, method, cu);
       } else {
          return "";
       }
    }
-   
+
    public static String getMethod(ChangedEntity entity, String method, CompilationUnit clazzUnit) {
       TraceElementContent traceElement = new TraceElementContent(entity.getJavaClazzName(), method, entity.getParameters().toArray(new String[0]), 0);
 
@@ -232,111 +181,6 @@ public final class FileComparisonUtil {
       } else {
          return "";
       }
-   }
-
-   // public static String getMethod(final ChangedEntity entity, final String method, final CompilationUnit newCu) {
-   // ClassOrInterfaceDeclaration declaration = findClazz(entity, newCu.getChildNodes());
-   // if (declaration == null) {
-   // return "";
-   // }
-   // if (method.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
-   // final String outerClazz = method.substring(0, method.indexOf(ChangedEntity.CLAZZ_SEPARATOR));
-   // LOG.debug("Searching: " + outerClazz + " " + method);
-   // declaration = findClazz(new ChangedEntity(outerClazz, ""), declaration.getChildNodes());
-   // LOG.debug("Suche: " + outerClazz + " " + declaration);
-   // }
-   // if (declaration == null) {
-   // return "";
-   // }
-   //
-   // if (method.equals("<init>")) {
-   // final List<ConstructorDeclaration> methods = declaration.getConstructors();
-   // System.out.println("Searching: " + method + " " + entity);
-   // if (methods.size() > 0) {
-   // CallableDeclaration<?> callable = findCallable(entity, methods);
-   // if (callable == null) {
-   // LOG.debug("Full parameters of not-found entity: " + entity.getParameters());
-   // entity.getParameters().remove(0); // Remove instance of surrounding class
-   // callable = findCallable(entity, methods);
-   // System.out.println("Found: " + callable);
-   // }
-   // callable.setComment(null);
-   // return callable.toString();
-   // } else {
-   // return "";
-   // }
-   // } else {
-   // List<MethodDeclaration> methods;
-   // if (method.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
-   // final String methodName = method.substring(method.indexOf(ChangedEntity.CLAZZ_SEPARATOR) + 1);
-   // System.out.println("Suche: " + methodName + " " + method);
-   // methods = declaration.getMethodsByName(methodName);
-   // } else {
-   // methods = declaration.getMethodsByName(method);
-   // }
-   // if (methods.size() > 0) {
-   // CallableDeclaration<?> foundDeclaration = findCallable(entity, methods);
-   // if (foundDeclaration != null) {
-   // foundDeclaration.setComment(null);
-   // return foundDeclaration.toString();
-   // }
-   // }
-   // return "";
-   // }
-   // }
-   //
-   // private static CallableDeclaration<?> findCallable(final ChangedEntity entity, List<? extends CallableDeclaration<?>> methods) {
-   // CallableDeclaration<?> foundDeclaration = null;
-   // for (CallableDeclaration<?> methodDec : methods) {
-   // if (methodDec.getParameters().size() == entity.getParameters().size()) {
-   // boolean equal = parametersEqual(entity, methodDec);
-   // if (equal) {
-   // foundDeclaration = methodDec;
-   // break;
-   //
-   // }
-   // }
-   // }
-   // return foundDeclaration;
-   // }
-   //
-   // private static boolean parametersEqual(final ChangedEntity entity, CallableDeclaration<?> methodDec) {
-   // boolean equal = true;
-   // for (int i = 0; i < methodDec.getParameters().size(); i++) {
-   // String declaredParameterName = methodDec.getParameter(i).getTypeAsString();
-   // final String entityParameterName = entity.getParameters().get(i);
-   // if (entityParameterName.contains("$")) {
-   // String shortName = entityParameterName.substring(entityParameterName.indexOf('$') + 1);
-   // if (!declaredParameterName.equals(entityParameterName) && !declaredParameterName.equals(shortName)) {
-   // equal = false;
-   // }
-   // } else {
-   // if (!declaredParameterName.equals(entityParameterName)) {
-   // equal = false;
-   // }
-   // }
-   // }
-   // return equal;
-   // }
-
-   public static ClassOrInterfaceDeclaration findClazz(final ChangedEntity entity, final List<Node> nodes) {
-      ClassOrInterfaceDeclaration declaration = null;
-      for (final Node node : nodes) {
-         if (node instanceof ClassOrInterfaceDeclaration) {
-            final ClassOrInterfaceDeclaration temp = (ClassOrInterfaceDeclaration) node;
-            final String nameAsString = temp.getNameAsString();
-            if (nameAsString.equals(entity.getSimpleClazzName())) {
-               declaration = (ClassOrInterfaceDeclaration) node;
-               break;
-            } else {
-               if (entity.getSimpleClazzName().startsWith(nameAsString + ChangedEntity.CLAZZ_SEPARATOR)) {
-                  ChangedEntity inner = new ChangedEntity(entity.getSimpleClazzName().substring(nameAsString.length() + 1), entity.getModule());
-                  declaration = findClazz(inner, node.getChildNodes());
-               }
-            }
-         }
-      }
-      return declaration;
    }
 
    /**
@@ -349,11 +193,11 @@ public final class FileComparisonUtil {
     * @throws IOException If class can't be read
     */
    public static void getChangedMethods(final File newFile, final File oldFile, ClazzChangeData changedata) throws ParseException, IOException {
-      final CompilationUnit newCu = parse(newFile);
-      final CompilationUnit oldCu = parse(oldFile);
+      final CompilationUnit newCu = JavaParserProvider.parse(newFile);
+      final CompilationUnit oldCu = JavaParserProvider.parse(oldFile);
       try {
-         clearComments(newCu);
-         clearComments(oldCu);
+         new CommentRemover(newCu);
+         new CommentRemover(oldCu);
 
          final List<Node> changes = comparePairwise(newCu, oldCu);
          Set<ImportDeclaration> unequalImports = new ImportComparator(newCu.getImports(), oldCu.getImports()).getNotInBoth();
@@ -364,24 +208,13 @@ public final class FileComparisonUtil {
             return;
          }
 
-         boolean onlyLineCommentOrImportChanges = true;
-         for (final Node node : changes) {
-            if (!(node instanceof LineComment) && !(node instanceof ImportDeclaration)) {
-               onlyLineCommentOrImportChanges = false;
-            }
-         }
+         boolean onlyLineCommentOrImportChanges = checkOnlyIrrelevantChange(changes);
          if (onlyLineCommentOrImportChanges) {
             return;
          }
 
          for (final Node node : changes) {
-            if (node instanceof Statement || node instanceof Expression) {
-               handleStatement(changedata, node);
-            } else if (node instanceof ClassOrInterfaceDeclaration) {
-               handleClassChange(changedata, node);
-            } else {
-               handleClassChange(changedata, node);
-            }
+            ChangeAdder.addChange(changedata, node);
          }
       } catch (final Exception e) {
          e.printStackTrace();
@@ -392,92 +225,14 @@ public final class FileComparisonUtil {
 
       return;
    }
-
-   public static void handleClassChange(ClazzChangeData changedata, final Node node) {
-      String clazz = getClazz(node);
-      if (!clazz.isEmpty()) {
-         changedata.addClazzChange(clazz);
-         changedata.setOnlyMethodChange(false);
-      }
-   }
-
-   private static void handleStatement(final ClazzChangeData changedata, final Node statement) {
-      Node parent = statement.getParentNode().get();
-      boolean finished = false;
-      while (!finished && parent.getParentNode() != null && !(parent instanceof CompilationUnit)) {
-         if (parent instanceof ConstructorDeclaration) {
-            ConstructorDeclaration constructorDeclaration = (ConstructorDeclaration) parent;
-            final String parameters = getParameters(constructorDeclaration);
-            String clazz = getClazz(parent);
-            changedata.addChange(clazz, "<init>" + parameters);
-            finished = true;
-         } else if (parent instanceof MethodDeclaration) {
-            final MethodDeclaration methodDeclaration = (MethodDeclaration) parent;
-            final String parameters = getParameters(methodDeclaration);
-            String clazz = getClazz(parent);
-            changedata.addChange(clazz, methodDeclaration.getNameAsString() + parameters);
-            finished = true;
-         } else if (parent instanceof InitializerDeclaration) {
-            InitializerDeclaration initializerDeclaration = (InitializerDeclaration) parent;
-            String clazz = getClazz(initializerDeclaration);
-            changedata.addChange(clazz, "<init>");
-            finished = true;
+   
+   private static boolean checkOnlyIrrelevantChange(final List<Node> changes) {
+      boolean onlyLineCommentOrImportChanges = true;
+      for (final Node node : changes) {
+         if (!(node instanceof LineComment)) {
+            onlyLineCommentOrImportChanges = false;
          }
-         final Optional<Node> newParent = parent.getParentNode();
-         if (!newParent.isPresent()) {
-            System.out.println("No Parent: " + newParent);
-         }
-         parent = newParent.get();
       }
-      if (!finished) {
-         LOG.debug("No containing method found!");
-         changedata.addClazzChange(getClazz(statement));
-         changedata.setOnlyMethodChange(false);
-      }
-   }
-
-   public static String getClazz(Node statement) {
-      String clazz = "";
-      Node current = statement;
-      while (current.getParentNode().isPresent()) {
-         if (current instanceof ClassOrInterfaceDeclaration || current instanceof EnumDeclaration || current instanceof AnnotationDeclaration) {
-            TypeDeclaration<?> declaration = (TypeDeclaration<?>) current;
-            String name = declaration.getNameAsString();
-            if (!clazz.isEmpty()) {
-               clazz = name + "$" + clazz;
-            } else {
-               clazz = name;
-            }
-         }
-         current = current.getParentNode().get();
-
-      }
-      return clazz;
-   }
-
-   private static String getParameters(final CallableDeclaration<?> callable) {
-      NodeList<Parameter> parameterDeclaration = callable.getParameters();
-      String parameters;
-      if (parameterDeclaration.size() > 0) {
-         parameters = "(";
-         for (final Parameter parameter : parameterDeclaration) {
-            String type;
-            if (parameter.getTypeAsString().contains("<")) {
-               type = parameter.getTypeAsString().substring(0, parameter.getTypeAsString().indexOf("<"));
-            } else {
-               type = parameter.getTypeAsString();
-            }
-            if (parameter.isVarArgs()) {
-               parameters += type + "[]" + ",";
-            } else {
-               parameters += type + ",";
-            }
-
-         }
-         parameters = parameters.substring(0, parameters.length() - 1) + ")";
-      } else {
-         parameters = "";
-      }
-      return parameters;
+      return onlyLineCommentOrImportChanges;
    }
 }

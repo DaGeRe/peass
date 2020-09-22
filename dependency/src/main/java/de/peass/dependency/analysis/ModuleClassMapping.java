@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.peass.dependency.ClazzFinder;
+import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.execution.TestExecutor;
 
 public class ModuleClassMapping {
@@ -26,7 +26,7 @@ public class ModuleClassMapping {
 
    public ModuleClassMapping(final File baseFolder, final List<File> modules) {
       for (final File module : modules) {
-         final List<String> classes = ClazzFinder.getClasses(module);
+         final List<String> classes = ClazzFileFinder.getClasses(module);
          String moduleName;
          if (module.equals(baseFolder)) {
             moduleName = "";

@@ -102,7 +102,7 @@ public class TestClassComparison {
       final ClazzChangeData changedMethods = new ClazzChangeData(new ChangedEntity("Test1_1_Equal", ""));
       FileComparisonUtil.getChangedMethods(file1, file2, changedMethods);
 
-      Assert.assertFalse(changedMethods.isChange());
+      Assert.assertTrue(changedMethods.isChange());
    }
 
    @Test
@@ -205,5 +205,16 @@ public class TestClassComparison {
       Assert.assertFalse(changedMethods.isOnlyMethodChange());
       System.out.println(changedMethods.getChangedMethods());
       Assert.assertThat(changedMethods.getChangedMethods().values().iterator().next(), Matchers.containsInAnyOrder("<init>", "doNonStaticThing"));
+   }
+   
+   @Test
+   public void testImport() throws ParseException, IOException, URISyntaxException {
+      final File file1 = new File(FOLDER, "TestImport_New.java");
+      final File file2 = new File(FOLDER, "TestImport_Old.java");
+
+      final ClazzChangeData changedMethods = new ClazzChangeData(new ChangedEntity("TestImport_new", ""));
+      FileComparisonUtil.getChangedMethods(file1, file2, changedMethods);
+
+      Assert.assertTrue(changedMethods.isChange());
    }
 }

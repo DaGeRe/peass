@@ -18,7 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.peass.dependency.ClazzFinder;
+import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.ChangedEntity;
@@ -74,7 +74,7 @@ public abstract class TestExecutor {
    protected List<TestCase> getTestCases() throws IOException, XmlPullParserException {
       final List<TestCase> testcases = new LinkedList<>();
       for (final File module : getModules()) {
-         for (final String test : ClazzFinder.getTestClazzes(new File(module, "src"))) {
+         for (final String test : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
             final String moduleName = ModuleClassMapping.getModuleName(folders.getProjectFolder(), module);
             final ChangedEntity entity = new ChangedEntity(test, moduleName);
             final List<String> testMethods = testTransformer.getTests(module, entity);
@@ -262,7 +262,7 @@ public abstract class TestExecutor {
       existingClasses = new LinkedList<>();
       try {
          for (final File module : getModules()) {
-            final List<String> currentClasses = ClazzFinder.getClasses(module);
+            final List<String> currentClasses = ClazzFileFinder.getClasses(module);
             existingClasses.addAll(currentClasses);
          }
       } catch (IOException | XmlPullParserException e) {

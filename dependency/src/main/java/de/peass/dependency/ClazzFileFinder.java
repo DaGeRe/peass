@@ -17,7 +17,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.dependency.traces.TraceReadUtils;
 import de.peass.dependency.traces.requitur.content.TraceElementContent;
 
@@ -27,9 +27,9 @@ import de.peass.dependency.traces.requitur.content.TraceElementContent;
  * @author reichelt
  *
  */
-public class ClazzFinder {
+public class ClazzFileFinder {
 
-   private static final Logger LOG = LogManager.getLogger(ClazzFinder.class);
+   private static final Logger LOG = LogManager.getLogger(ClazzFileFinder.class);
 
    public static String getOuterClass(final String clazzname) {
       final int innerClassSeparatorIndex = clazzname.indexOf(ChangedEntity.CLAZZ_SEPARATOR);
@@ -101,7 +101,7 @@ public class ClazzFinder {
          final String packageName = clazz.lastIndexOf('.') != -1 ? clazz.substring(0, clazz.lastIndexOf('.')) : clazz;
 
          try {
-            final CompilationUnit cu = FileComparisonUtil.parse(clazzFile);
+            final CompilationUnit cu = JavaParserProvider.parse(clazzFile);
             for (final Node node : cu.getChildNodes()) {
                clazzes.addAll(getClazzes(node, packageName, "."));
             }

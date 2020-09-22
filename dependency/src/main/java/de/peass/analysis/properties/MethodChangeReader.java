@@ -34,10 +34,7 @@ public class MethodChangeReader {
    }
 
    public void readMethodChangeData() throws IOException {
-      final File versionFolder = new File(outFolder, version);
-      versionFolder.mkdirs();
-      final File clazzFolder = new File(versionFolder, clazz.getJavaClazzName());
-      clazzFolder.mkdirs();
+      final File clazzFolder = getClazzFolder();
       final String methodString = clazz.getMethod() + "_" + clazz.getParametersPrintable();
       final File goalFile = new File(clazzFolder, methodString + "_diff.txt");
       if (!method.equals(methodOld)) {
@@ -51,6 +48,14 @@ public class MethodChangeReader {
       } else {
          FileUtils.writeStringToFile(goalFile, method, Charset.defaultCharset());
       }
+   }
+
+   private File getClazzFolder() {
+      final File versionFolder = new File(outFolder, version);
+      versionFolder.mkdirs();
+      final File clazzFolder = new File(versionFolder, clazz.getJavaClazzName());
+      clazzFolder.mkdirs();
+      return clazzFolder;
    }
 
    public Patch<String> getKeywordChanges(final ChangedEntity clazz) throws FileNotFoundException {

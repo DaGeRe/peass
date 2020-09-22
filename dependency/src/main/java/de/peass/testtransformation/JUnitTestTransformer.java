@@ -68,9 +68,9 @@ import com.github.javaparser.ast.visitor.VoidVisitor;
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.junit5.rule.KoPeMeExtension;
 import de.dagere.kopeme.parsing.JUnitParseUtil;
-import de.peass.dependency.ClazzFinder;
+import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.dependency.execution.MeasurementConfiguration;
 
 /**
@@ -192,7 +192,7 @@ public class JUnitTestTransformer {
       extensions = new HashMap<>();
       for (final File javaFile : FileUtils.listFiles(testFolder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE)) {
          try {
-            final CompilationUnit unit = FileComparisonUtil.parse(javaFile);
+            final CompilationUnit unit = JavaParserProvider.parse(javaFile);
             loadedFiles.put(javaFile, unit);
             final boolean isJUnit4 = isJUnit(unit, 4);
             if (isJUnit4) {
@@ -270,7 +270,7 @@ public class JUnitTestTransformer {
 
    public List<String> getTests(final File module, final ChangedEntity clazzname) {
       final List<String> methods = new LinkedList<>();
-      final File clazzFile = ClazzFinder.getClazzFile(module, clazzname);
+      final File clazzFile = ClazzFileFinder.getClazzFile(module, clazzname);
       final CompilationUnit unit = loadedFiles.get(clazzFile);
       if (unit != null) {
          final Integer junit = junitVersions.get(clazzFile);

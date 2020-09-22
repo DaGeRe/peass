@@ -37,7 +37,6 @@ public class ClazzChangeData {
    private final Map<String, Set<String>> changedMethods = new HashMap<>();
    private final Set<ChangedEntity> importChanges = new HashSet<>();
    private ChangedEntity containingFile;
-   // private final Set<String> changedMethods = new HashSet<>();
 
    public ClazzChangeData(ChangedEntity containingFile) {
       this.containingFile = containingFile;
@@ -155,6 +154,12 @@ public class ClazzChangeData {
 
    public Set<ChangedEntity> getImportChanges() {
       return importChanges;
+   }
+
+   public void addImportChange(String name) {
+      importChanges.add(new ChangedEntity(name, ""));
+      isChange = true;
+      isOnlyMethodChange = false;
    }
 
 }

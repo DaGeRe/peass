@@ -8,13 +8,13 @@ import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.dependency.ClazzFinder;
+import de.peass.dependency.ClazzFileFinder;
 
 public class TestPackageFinder {
 	
 	@Test
 	public void testDependencyModule(){
-		final List<String> lowestPackage = ClazzFinder.getClasses(new File("."));
+		final List<String> lowestPackage = ClazzFileFinder.getClasses(new File("."));
 		System.out.println(lowestPackage);
 		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.peass.DependencyReadingStarter"));
 		Assert.assertThat(lowestPackage, Matchers.not(IsCollectionContaining.hasItem("de.peass.DependencyReadingStarter.DependencyReadingStarter")));

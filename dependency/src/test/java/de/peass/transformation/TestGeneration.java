@@ -45,7 +45,7 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.MemberValuePair;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 
@@ -83,7 +83,7 @@ public class TestGeneration {
       final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       final File generated = tt.generateClazz(testFolder.getRoot(), new ChangedEntity("de.GeneratedClass", ""), new ChangedEntity("TestMe1", ""), "testMe1");
-      final CompilationUnit cu = FileComparisonUtil.parse(generated);
+      final CompilationUnit cu = JavaParserProvider.parse(generated);
       final ClassOrInterfaceDeclaration clazz = cu.getClassByName("GeneratedClass").get();
       
       Assert.assertNotNull(clazz);
@@ -110,7 +110,7 @@ public class TestGeneration {
       final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       final File generated = tt.generateClazz(testFolder.getRoot(), new ChangedEntity("de.GeneratedClass", ""), new ChangedEntity("ExtendingTest", ""), "testMe1");
-      final CompilationUnit cu = FileComparisonUtil.parse(generated);
+      final CompilationUnit cu = JavaParserProvider.parse(generated);
       final ClassOrInterfaceDeclaration clazz = cu.getClassByName("GeneratedClass").get();
       
       Assert.assertNotNull(clazz);
@@ -133,7 +133,7 @@ public class TestGeneration {
       final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       final File generated = tt.generateClazz(testFolder.getRoot(), new ChangedEntity("de.GeneratedClass", ""), new ChangedEntity("TestMe2", ""), "testMethod");
-      final CompilationUnit cu = FileComparisonUtil.parse(generated);
+      final CompilationUnit cu = JavaParserProvider.parse(generated);
       final ClassOrInterfaceDeclaration clazz = cu.getClassByName("GeneratedClass").get();
 
       Assert.assertNotNull(clazz);
@@ -173,7 +173,7 @@ public class TestGeneration {
       tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       
       final File generated = tt.generateClazz(testFolder.getRoot(), new ChangedEntity("de.GeneratedClass", ""), new ChangedEntity("TestMe3", ""), "testMethod");
-      final CompilationUnit cu = FileComparisonUtil.parse(generated);
+      final CompilationUnit cu = JavaParserProvider.parse(generated);
       final ClassOrInterfaceDeclaration clazz = cu.getClassByName("GeneratedClass").get();
 
       Assert.assertFalse(FileUtils.contentEquals(old, generated));
@@ -190,7 +190,7 @@ public class TestGeneration {
       tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       
       final File generated = tt.generateClazz(testFolder.getRoot(), new ChangedEntity("de.GeneratedClass", ""), new ChangedEntity("TestMe5", ""), "testMethod");
-      final CompilationUnit cu = FileComparisonUtil.parse(generated);
+      final CompilationUnit cu = JavaParserProvider.parse(generated);
       final ClassOrInterfaceDeclaration clazz = cu.getClassByName("GeneratedClass").get();
       
       final List<MethodDeclaration> methodsByName = clazz.getMethodsByName("testMethod");

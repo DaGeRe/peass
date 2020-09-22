@@ -157,8 +157,8 @@ public class ChangeManager {
       final ChangedEntity clazz = clazzIterator.next();
       final ClazzChangeData changeData = new ClazzChangeData(clazz);
       try {
-         final File newFile = ClazzFinder.getSourceFile(folders.getProjectFolder(), clazz);
-         final File oldFile = ClazzFinder.getSourceFile(folders.getOldSources(), clazz);
+         final File newFile = ClazzFileFinder.getSourceFile(folders.getProjectFolder(), clazz);
+         final File oldFile = ClazzFileFinder.getSourceFile(folders.getOldSources(), clazz);
          LOG.info("Vergleiche {}", newFile, oldFile);
          if (newFile != null && newFile.exists() && oldFile != null) {
             compareFiles(changedClassesMethods, clazzIterator, clazz, changeData, newFile, oldFile);
@@ -185,7 +185,7 @@ public class ChangeManager {
       FileComparisonUtil.getChangedMethods(newFile, oldFile, changeData);
       boolean isImportChange = false;
       for (ChangedEntity entity : changeData.getImportChanges()) {
-         final File entityFile = ClazzFinder.getSourceFile(folders.getProjectFolder(), entity);
+         final File entityFile = ClazzFileFinder.getSourceFile(folders.getProjectFolder(), entity);
          if (entityFile != null && entityFile.exists()) {
             isImportChange = true;
             changeData.setChange(true);

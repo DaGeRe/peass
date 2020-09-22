@@ -25,8 +25,9 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.VoidType;
 
-import de.peass.dependency.ClazzFinder;
+import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.changesreading.ClazzFinder;
 import de.peass.dependency.changesreading.FileComparisonUtil;
 
 public class JUnitTestGenerator {
@@ -48,7 +49,7 @@ public class JUnitTestGenerator {
    }
 
    public File generateClazz() {
-      final File calleeClazzFile = ClazzFinder.getClazzFile(module, callee);
+      final File calleeClazzFile = ClazzFileFinder.getClazzFile(module, callee);
       final int version = transformer.getVersion(calleeClazzFile);
 
       final File testClazzFolder = new File(module, calleeClazzFile.getAbsolutePath().contains("src/test/java") ? "src/test/java" : "src/test");
@@ -68,7 +69,7 @@ public class JUnitTestGenerator {
       }
       generatedClass.addField(callee.getSimpleClazzName(), "sut", Modifier.privateModifier().getKeyword());
 
-      final ClassOrInterfaceDeclaration calleeClass = FileComparisonUtil.findClazz(callee, calleeUnit.getChildNodes());
+      final ClassOrInterfaceDeclaration calleeClass = ClazzFinder.findClazz(callee, calleeUnit.getChildNodes());
 
       List<ClassOrInterfaceDeclaration> superClazzes = getSuperclasses(calleeClass, calleeUnit);
 
@@ -105,9 +106,9 @@ public class JUnitTestGenerator {
                }
             } // TODO Other module, same package, asterix-import
             ChangedEntity superEntity = new ChangedEntity(superPackage != null ? superPackage : superclass.getNameAsString(), callee.getModule());
-            final File superClazzFile = ClazzFinder.getClazzFile(module, superEntity);
+            final File superClazzFile = ClazzFileFinder.getClazzFile(module, superEntity);
             CompilationUnit superUnit = transformer.getLoadedFiles().get(superClazzFile);
-            final ClassOrInterfaceDeclaration superClass = FileComparisonUtil.findClazz(superEntity, superUnit.getChildNodes());
+            final ClassOrInterfaceDeclaration superClass = ClazzFinder.findClazz(superEntity, superUnit.getChildNodes());
             makeSetUpPublic(superClazzFile, superUnit, superClass);
 
             superClazzes.add(superClass);

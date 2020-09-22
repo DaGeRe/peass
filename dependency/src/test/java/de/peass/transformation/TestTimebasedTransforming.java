@@ -23,7 +23,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 
-import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.testtransformation.ParseUtil;
 import de.peass.testtransformation.TimeBasedTestTransformer;
@@ -53,7 +53,7 @@ public class TestTimebasedTransforming {
 		tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       tt.transformTests();
 
-		final CompilationUnit cu = FileComparisonUtil.parse(testFile);
+		final CompilationUnit cu = JavaParserProvider.parse(testFile);
 
 		final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMe1").get();
 		Assert.assertNotNull(clazz);
@@ -75,7 +75,7 @@ public class TestTimebasedTransforming {
 		tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
       tt.transformTests();
 
-		final CompilationUnit cu = FileComparisonUtil.parse(testFile2);
+		final CompilationUnit cu = JavaParserProvider.parse(testFile2);
 
 		final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMe2").get();
 		Assert.assertNotNull(clazz);
@@ -105,7 +105,7 @@ public class TestTimebasedTransforming {
 	public void testMe() throws IOException {
 		final File old2 = new File(RESOURCE_FOLDER, "TestMe2.java");
 
-		final CompilationUnit unit = FileComparisonUtil.parse(old2);
+		final CompilationUnit unit = JavaParserProvider.parse(old2);
 
 		final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
 

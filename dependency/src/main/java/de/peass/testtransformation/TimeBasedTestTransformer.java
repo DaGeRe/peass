@@ -34,7 +34,7 @@ import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
 
-import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.dependency.execution.MeasurementConfiguration;
 
 
@@ -78,7 +78,7 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 	 */
 	protected void editJUnit3(final File javaFile) {
 		try {
-			final CompilationUnit unit = FileComparisonUtil.parse(javaFile);
+			final CompilationUnit unit = JavaParserProvider.parse(javaFile);
 			unit.addImport("de.dagere.kopeme.junit3.TimeBasedTestcase");
 
 			final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
@@ -110,7 +110,7 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 	 */
 	protected void editJUnit4(final File javaFile) {
 		try {
-			final CompilationUnit unit = FileComparisonUtil.parse(javaFile);
+			final CompilationUnit unit = JavaParserProvider.parse(javaFile);
 
 			unit.addImport("de.dagere.kopeme.annotations.Assertion");
 			unit.addImport("de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation");

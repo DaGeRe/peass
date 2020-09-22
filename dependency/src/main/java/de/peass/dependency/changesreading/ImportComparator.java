@@ -8,10 +8,7 @@ import com.github.javaparser.ast.ImportDeclaration;
 
 public class ImportComparator {
    
-   
-   final Set<ImportDeclaration> notInBothImport = new HashSet<>();
-   
-   
+   private final Set<ImportDeclaration> notInBothImport = new HashSet<>();
 
    public ImportComparator(List<ImportDeclaration> imports1, List<ImportDeclaration> imports2) {
       final Set<String> importSet1 = getImportNames(imports1);

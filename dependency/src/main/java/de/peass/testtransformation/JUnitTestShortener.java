@@ -25,9 +25,11 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
-import de.peass.dependency.ClazzFinder;
+import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.changesreading.ClazzFinder;
 import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.changesreading.JavaParserProvider;
 
 public class JUnitTestShortener implements AutoCloseable{
 
@@ -53,7 +55,7 @@ public class JUnitTestShortener implements AutoCloseable{
       if (!lastShortenedMap.isEmpty()) {
          throw new RuntimeException("Only use TestShortener once!");
       }
-      final File calleeClazzFile = ClazzFinder.getClazzFile(module, callee);
+      final File calleeClazzFile = ClazzFileFinder.getClazzFile(module, callee);
       if (calleeClazzFile != null) {
          try {
 
@@ -82,7 +84,7 @@ public class JUnitTestShortener implements AutoCloseable{
          saveUnshortened(calleeClazzFile);
 
          final CompilationUnit calleeUnit = transformer.getLoadedFiles().get(calleeClazzFile);
-         final ClassOrInterfaceDeclaration clazz = FileComparisonUtil.findClazz(callee, calleeUnit.getChildNodes());
+         final ClassOrInterfaceDeclaration clazz = ClazzFinder.findClazz(callee, calleeUnit.getChildNodes());
          shortenParent(module, callee, calleeClazzFile, calleeUnit, clazz);
          removeNonWanted(method, version, clazz);
 
@@ -101,7 +103,7 @@ public class JUnitTestShortener implements AutoCloseable{
       LOG.debug("Shortening: {}", callee);
       if (clazz.getExtendedTypes().size() > 0) {
          final ChangedEntity parentEntity = getParentEntity(callee, calleeUnit, clazz);
-         final File parentClazzFile = ClazzFinder.getClazzFile(module, parentEntity);
+         final File parentClazzFile = ClazzFileFinder.getClazzFile(module, parentEntity);
          if (parentClazzFile != null) {
             shortenTestClazz(parentEntity, parentClazzFile);
          }
@@ -189,7 +191,7 @@ public class JUnitTestShortener implements AutoCloseable{
                shortened.getValue().delete();
                LOG.debug("Goal: {} Exists: {} Parent exists: {}", shortened.getValue(), shortened.getValue().exists(), shortened.getValue().getParentFile().exists());
                Files.move(shortened.getKey().toPath(), shortened.getValue().toPath());
-               final CompilationUnit unit = FileComparisonUtil.parse(shortened.getValue());
+               final CompilationUnit unit = JavaParserProvider.parse(shortened.getValue());
                transformer.getLoadedFiles().put(shortened.getValue(), unit);
             } catch (final IOException e) {
                e.printStackTrace();

@@ -43,7 +43,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.MemberValuePair;
 
-import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 
@@ -82,7 +82,7 @@ public class TestTransformation {
       tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
       tt.transformTests();
 
-      final CompilationUnit cu = FileComparisonUtil.parse(testFile);
+      final CompilationUnit cu = JavaParserProvider.parse(testFile);
 
       final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMe1").get();
       Assert.assertNotNull(clazz);
@@ -103,7 +103,7 @@ public class TestTransformation {
       tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
       tt.transformTests();
 
-      final CompilationUnit cu = FileComparisonUtil.parse(testFile);
+      final CompilationUnit cu = JavaParserProvider.parse(testFile);
 
       final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMe6").get();
       Assert.assertNotNull(clazz);
@@ -129,7 +129,7 @@ public class TestTransformation {
       tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
       tt.transformTests();
 
-      final CompilationUnit cu = FileComparisonUtil.parse(testFile);
+      final CompilationUnit cu = JavaParserProvider.parse(testFile);
 
       final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMe7").get();
       Assert.assertNotNull(clazz);
@@ -150,7 +150,7 @@ public class TestTransformation {
       tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
       tt.transformTests();
 
-      final CompilationUnit cu = FileComparisonUtil.parse(testFile);
+      final CompilationUnit cu = JavaParserProvider.parse(testFile);
 
       final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMe2").get();
       Assert.assertNotNull(clazz);

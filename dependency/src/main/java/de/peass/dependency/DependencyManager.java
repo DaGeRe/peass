@@ -195,7 +195,7 @@ public class DependencyManager extends KiekerResultManager {
          final String wholeClassName = entity.getJavaClazzName();
 
          // ignore inner class part, because it is in the same file - if the file exists, it is very likely that a subclass, which is in the logs, exists also
-         final String outerClazzName = ClazzFinder.getOuterClass(wholeClassName);
+         final String outerClazzName = ClazzFileFinder.getOuterClass(wholeClassName);
          LOG.trace("Testing: " + outerClazzName);
          if (!executor.getExistingClasses().contains(outerClazzName)) {
             // Removes classes not in package

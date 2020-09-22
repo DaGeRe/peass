@@ -1,27 +1,44 @@
 package de.peass.reading;
 
-import java.io.File;
 import java.util.List;
 
-import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.dependency.ClazzFinder;
+import com.github.javaparser.JavaParser;
+import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+
+import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.changesreading.ClazzFinder;
+import de.peass.dependency.changesreading.FileComparisonUtil;
 
 public class TestClazzFinder {
    
-   private static final File SOURCE = new File("src/test/resources/clazzFinderExample/");
+   @Test
+   public void testFindClazz() {
+      String test = "class A{ }";
+      JavaParser parser = new JavaParser();
+      List<Node> parsed = parser.parse(test).getResult().get().getChildNodes();
+      ClassOrInterfaceDeclaration clazz = ClazzFinder.findClazz(new ChangedEntity("A", ""), parsed);
+      Assert.assertNotNull(clazz);
+   }
    
    @Test
-   public void testClasses() {
-      List<String> clazzes = ClazzFinder.getClasses(SOURCE);
-      
-      System.out.println(clazzes);
-      
-      Assert.assertThat(clazzes, IsCollectionContaining.hasItem("de.TestMe1"));
-      Assert.assertThat(clazzes, IsCollectionContaining.hasItem("de.TestMe2"));
-      Assert.assertThat(clazzes, IsCollectionContaining.hasItem("de.Second"));
-      Assert.assertThat(clazzes, IsCollectionContaining.hasItem("de.TestMe2.Inner"));
+   public void testFindInnerClazz() {
+      String test = "class A{ class B{ } }";
+      JavaParser parser = new JavaParser();
+      List<Node> parsed = parser.parse(test).getResult().get().getChildNodes();
+      ClassOrInterfaceDeclaration clazz = ClazzFinder.findClazz(new ChangedEntity("A$B", ""), parsed);
+      Assert.assertNotNull(clazz);
+   }
+   
+   @Test
+   public void testFindInnerInnerClazz() {
+      String test = "class A{ class B{ class C{ } } }";
+      JavaParser parser = new JavaParser();
+      List<Node> parsed = parser.parse(test).getResult().get().getChildNodes();
+      ClassOrInterfaceDeclaration clazz = ClazzFinder.findClazz(new ChangedEntity("A$B$C", ""), parsed);
+      Assert.assertNotNull(clazz);
    }
 }

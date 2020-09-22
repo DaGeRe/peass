@@ -10,7 +10,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
 import de.peass.dependency.analysis.data.TraceElement;
-import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.dependency.traces.TraceReadUtils;
 import de.peass.dependency.traces.requitur.content.TraceElementContent;
 
@@ -18,7 +18,7 @@ public class TestSourceReading {
    
    @Test
    public void testGenericClass() throws FileNotFoundException {
-      final CompilationUnit cu = FileComparisonUtil.parse(new File("src/test/resources/methodFinding/GenericClassExample.java"));
+      final CompilationUnit cu = JavaParserProvider.parse(new File("src/test/resources/methodFinding/GenericClassExample.java"));
 
       final TraceElementContent exampleTrace = new TraceElementContent("GenericClassExample", "test1", new String[0], 1);
       final Node exampleMethod = TraceReadUtils.getMethod(exampleTrace, cu);
@@ -33,7 +33,7 @@ public class TestSourceReading {
 
    @Test
    public void testAnonymousClass() throws FileNotFoundException {
-      final CompilationUnit cu = FileComparisonUtil.parse(new File("src/test/resources/methodFinding/AnonymousClassExample.java"));
+      final CompilationUnit cu = JavaParserProvider.parse(new File("src/test/resources/methodFinding/AnonymousClassExample.java"));
 
       final TraceElementContent anonymousTrace = new TraceElementContent("AnonymousClassExample$1", "run", new String[0], 1);
       final Node anonymousMethod = TraceReadUtils.getMethod(anonymousTrace, cu);
@@ -53,7 +53,7 @@ public class TestSourceReading {
    
    @Test
    public void testInnerConstructor() throws FileNotFoundException {
-      final CompilationUnit cu = FileComparisonUtil.parse(new File("src/test/resources/methodFinding/AnonymousClassExample.java"));
+      final CompilationUnit cu = JavaParserProvider.parse(new File("src/test/resources/methodFinding/AnonymousClassExample.java"));
 
       final TraceElementContent anonymousTrace = new TraceElementContent("AnonymousClassExample$MyPrivateClass", "<init>", new String[] {"int"}, 1);
       final Node anonymousMethod = TraceReadUtils.getMethod(anonymousTrace, cu);
@@ -65,7 +65,7 @@ public class TestSourceReading {
 
    @Test
    public void testParameters() throws FileNotFoundException {
-      final CompilationUnit cu = FileComparisonUtil.parse(new File("src/test/resources/methodFinding/AnonymousClassExample.java"));
+      final CompilationUnit cu = JavaParserProvider.parse(new File("src/test/resources/methodFinding/AnonymousClassExample.java"));
 
       final TraceElement te = new TraceElement("AnonymousClassExample", "parameterMethod", 1);
       te.setParameterTypes(new String[] {"int"});
@@ -94,7 +94,7 @@ public class TestSourceReading {
    
    @Test
    public void testVarArgs() throws FileNotFoundException {
-      final CompilationUnit cu = FileComparisonUtil.parse(new File("src/test/resources/methodFinding/AnonymousClassExample.java"));
+      final CompilationUnit cu = JavaParserProvider.parse(new File("src/test/resources/methodFinding/AnonymousClassExample.java"));
       
       final TraceElement teVarArg = new TraceElement("AnonymousClassExample", "parameterMethod", 1);
       teVarArg.setParameterTypes(new String[] {"Object", "String"});

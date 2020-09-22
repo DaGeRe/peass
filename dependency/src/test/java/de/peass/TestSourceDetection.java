@@ -17,7 +17,7 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 
-import de.peass.dependency.changesreading.FileComparisonUtil;
+import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.dependency.traces.TraceReadUtils;
 import de.peass.dependency.traces.requitur.content.TraceElementContent;
 
@@ -27,7 +27,7 @@ public class TestSourceDetection {
    @Test
    public void testInner() throws ParseException, IOException {
       final File file = new File(SOURCE, "Test3_Inner.java");
-      final CompilationUnit cu = FileComparisonUtil.parse(file);
+      final CompilationUnit cu = JavaParserProvider.parse(file);
 
       final TraceElementContent currentTraceElement = new TraceElementContent("Test3_Inner$InnerStuff", "<init>", new String[] { "de.peass.InnerParameter1", "InnerParameter2" },
             1);
@@ -48,7 +48,7 @@ public class TestSourceDetection {
    @Test
    public void testAnonymousClazzes() throws ParseException, IOException {
       final File file = new File(SOURCE, "Test1_Anonym.java");
-      final CompilationUnit cu = FileComparisonUtil.parse(file);
+      final CompilationUnit cu = JavaParserProvider.parse(file);
 
       final TraceElementContent currentTraceElement = new TraceElementContent("Test1_Anonym$1", "<init>", new String[0], 1);
       final Node method = TraceReadUtils.getMethod(currentTraceElement, cu);
@@ -85,7 +85,7 @@ public class TestSourceDetection {
    @Test
    public void testNamedClazzes() throws ParseException, IOException {
       final File file = new File(SOURCE, "Test2_Named.java");
-      final CompilationUnit cu = FileComparisonUtil.parse(file);
+      final CompilationUnit cu = JavaParserProvider.parse(file);
 
       final TraceElementContent currentTraceElement = new TraceElementContent("Test2_Named$MyStuff", "doMyStuff1", new String[0], 1);
       final Node methodRun = TraceReadUtils.getMethod(currentTraceElement, cu);
@@ -107,7 +107,7 @@ public class TestSourceDetection {
    @Test
    public void testAnonymousList() throws FileNotFoundException {
       final File file = new File(SOURCE, "Test1_Anonym.java");
-      final CompilationUnit cu = FileComparisonUtil.parse(file);
+      final CompilationUnit cu = JavaParserProvider.parse(file);
       final List<NodeList<BodyDeclaration<?>>> anonymous = TraceReadUtils.getAnonymusClasses(cu);
 
       Assert.assertEquals(3, anonymous.size());
@@ -120,7 +120,7 @@ public class TestSourceDetection {
    @Test
    public void testNamedList() throws FileNotFoundException {
       final File file = new File(SOURCE, "Test2_Named.java");
-      final CompilationUnit cu = FileComparisonUtil.parse(file);
+      final CompilationUnit cu = JavaParserProvider.parse(file);
       final Map<String, TypeDeclaration<?>> named = TraceReadUtils.getNamedClasses(cu, "");
 
       Assert.assertEquals(3, named.size());
@@ -132,7 +132,7 @@ public class TestSourceDetection {
    @Test
    public void testDirectoryWalker() throws FileNotFoundException {
       final File file = new File(SOURCE, "DirectoryWalkerTestCase.java");
-      final CompilationUnit cu = FileComparisonUtil.parse(file);
+      final CompilationUnit cu = JavaParserProvider.parse(file);
       final Map<String, TypeDeclaration<?>> named = TraceReadUtils.getNamedClasses(cu, "");
 
       Assert.assertEquals(4, named.size());
