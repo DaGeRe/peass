@@ -13,7 +13,7 @@ class Symbol {
 	private final Sequitur sequitur;
 
 	private Symbol predecessor;
-	private Symbol sucessor;
+	private Symbol successor;
 	private Content value;
 	private RuleContent name; // if this is a rule-symbol
 	private Rule rule;
@@ -60,12 +60,12 @@ class Symbol {
 		this.predecessor = predecessor;
 	}
 
-	public Symbol getSucessor() {
-		return sucessor;
+	public Symbol getSuccessor() {
+		return successor;
 	}
 
-	public void setSucessor(final Symbol sucessor) {
-		this.sucessor = sucessor;
+	public void setSuccessor(final Symbol successor) {
+		this.successor = successor;
 	}
 
 	public int getOccurences() {
@@ -123,14 +123,14 @@ class Symbol {
 			rule.decrementUsage();
 			// System.out.println("Decrement usage: " + rule.value + " " + rule.usage);
 			if (rule.usage == 1) {
-				if (rule.getAnchor().sucessor.sucessor == rule.getAnchor().predecessor) {
+				if (rule.getAnchor().successor.successor == rule.getAnchor().predecessor) {
 					replaceTraceDigram();
 				}
-				final Symbol firstElement = rule.getAnchor().sucessor;
+				final Symbol firstElement = rule.getAnchor().successor;
 				final Symbol lastElement = rule.getAnchor().predecessor;
 				sequitur.rules.remove(rule.getName());
 				sequitur.ununsedRules.add(rule);
-				if (usingRule.getAnchor().sucessor.equals(this)) {
+				if (usingRule.getAnchor().successor.equals(this)) {
 					replaceStartRule(usingRule, firstElement, lastElement);
 				} else if (usingRule.getAnchor().predecessor.equals(this)) {
 					replaceEndRule(usingRule, firstElement, lastElement);
@@ -150,8 +150,8 @@ class Symbol {
 	}
 
 	private void replaceStartRule(final Rule usingRule, final Symbol firstElement, final Symbol lastElement) {
-		final Symbol temp = usingRule.getAnchor().sucessor.sucessor;
-		sequitur.digrams.remove(new Digram(usingRule.getAnchor().sucessor, usingRule.getAnchor().sucessor.sucessor));
+		final Symbol temp = usingRule.getAnchor().successor.successor;
+		sequitur.digrams.remove(new Digram(usingRule.getAnchor().successor, usingRule.getAnchor().successor.successor));
 		sequitur.link(usingRule.getAnchor(), firstElement);
 		sequitur.link(lastElement, temp);
 	}
@@ -160,7 +160,7 @@ class Symbol {
 	 * The digram, originally saved in the trace, is replaced by the digram in the rule.
 	 */
 	private void replaceTraceDigram() {
-		final Digram ruleDigram = new Digram(rule.getAnchor().sucessor, rule.getAnchor().sucessor.sucessor);
+		final Digram ruleDigram = new Digram(rule.getAnchor().successor, rule.getAnchor().successor.successor);
 		final Digram savedDigram = this.sequitur.digrams.get(ruleDigram);
 		savedDigram.rule = null;
 	}
