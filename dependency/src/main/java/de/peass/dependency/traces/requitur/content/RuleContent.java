@@ -29,7 +29,7 @@ public class RuleContent extends Content {
 
 	@Override
 	public String toString() {
-		return value;
+		return " (" + count + ")";
 	}
 
 	public int getCount() {
