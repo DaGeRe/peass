@@ -1,6 +1,5 @@
 package de.peass.dependency.changesreading;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,31 +29,33 @@ public class ChangeAdder {
       if (node instanceof Statement || node instanceof Expression) {
          handleStatement(changedata, node);
       } else if (node instanceof ClassOrInterfaceDeclaration) {
-         handleClassChange(changedata, node);
+         handleClassChange(changedata, (ClassOrInterfaceDeclaration) node);
       } else if (node instanceof ImportDeclaration) {
-         handleImportChange(changedata, node, cu);
+         handleImportChange(changedata, (ImportDeclaration) node, cu);
       } else {
-         handleClassChange(changedata, node);
+         handleUnknownChange(changedata, cu);
       }
    }
 
-   public static void handleClassChange(ClazzChangeData changedata, final Node node) {
-      String clazz = ClazzFinder.getClazz(node);
+   public static void handleClassChange(ClazzChangeData changedata, final ClassOrInterfaceDeclaration node) {
+      String clazz = ClazzFinder.getContainingClazz(node);
       if (!clazz.isEmpty()) {
          changedata.addClazzChange(clazz);
          changedata.setOnlyMethodChange(false);
       }
    }
    
-   private static void handleImportChange(ClazzChangeData changedata, final Node node, CompilationUnit cu) {
-      List<String> clazzes = ClazzFinder.getClazzes(cu);
-      List<ChangedEntity> entities = new LinkedList<>();
-      for (String clazz : clazzes) {
-         entities.add(new ChangedEntity(clazz, ""));
+   public static void handleUnknownChange(ClazzChangeData changedata, final CompilationUnit cu) {
+      List<ChangedEntity> entities = ClazzFinder.getClazzEntities(cu);
+      for (ChangedEntity entity : entities) {
+         changedata.addClazzChange(entity);
       }
+   }
+   
+   private static void handleImportChange(ClazzChangeData changedata, final ImportDeclaration node, CompilationUnit cu) {
+      List<ChangedEntity> entities = ClazzFinder.getClazzEntities(cu);
       
-      ImportDeclaration importDeclaration = (ImportDeclaration) node;
-      changedata.addImportChange(importDeclaration.getNameAsString(), entities);
+      changedata.addImportChange(node.getNameAsString(), entities);
    }
 
    private static void handleStatement(final ClazzChangeData changedata, final Node statement) {
@@ -64,18 +65,18 @@ public class ChangeAdder {
          if (parent instanceof ConstructorDeclaration) {
             ConstructorDeclaration constructorDeclaration = (ConstructorDeclaration) parent;
             final String parameters = getParameters(constructorDeclaration);
-            String clazz = ClazzFinder.getClazz(parent);
+            String clazz = ClazzFinder.getContainingClazz(parent);
             changedata.addChange(clazz, "<init>" + parameters);
             finished = true;
          } else if (parent instanceof MethodDeclaration) {
             final MethodDeclaration methodDeclaration = (MethodDeclaration) parent;
             final String parameters = getParameters(methodDeclaration);
-            String clazz = ClazzFinder.getClazz(parent);
+            String clazz = ClazzFinder.getContainingClazz(parent);
             changedata.addChange(clazz, methodDeclaration.getNameAsString() + parameters);
             finished = true;
          } else if (parent instanceof InitializerDeclaration) {
             InitializerDeclaration initializerDeclaration = (InitializerDeclaration) parent;
-            String clazz = ClazzFinder.getClazz(initializerDeclaration);
+            String clazz = ClazzFinder.getContainingClazz(initializerDeclaration);
             changedata.addChange(clazz, "<init>");
             finished = true;
          }
@@ -87,7 +88,7 @@ public class ChangeAdder {
       }
       if (!finished) {
          LOG.debug("No containing method found!");
-         changedata.addClazzChange(ClazzFinder.getClazz(statement));
+         changedata.addClazzChange(ClazzFinder.getContainingClazz(statement));
          changedata.setOnlyMethodChange(false);
       }
    }

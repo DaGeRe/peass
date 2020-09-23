@@ -13,7 +13,7 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import de.peass.dependency.analysis.data.ChangedEntity;
 
 public class ClazzFinder {
-   public static String getClazz(Node statement) {
+   public static String getContainingClazz(Node statement) {
       String clazz = "";
       Node current = statement;
       while (current.getParentNode().isPresent()) {
@@ -75,6 +75,15 @@ public class ClazzFinder {
          clazzes.addAll(getClazzes(node, "", "$"));
       }
       return clazzes;
+   }
+   
+   public static List<ChangedEntity> getClazzEntities(CompilationUnit cu){
+      List<String> clazzes = ClazzFinder.getClazzes(cu);
+      List<ChangedEntity> entities = new LinkedList<>();
+      for (String clazz : clazzes) {
+         entities.add(new ChangedEntity(clazz, ""));
+      }
+      return entities;
    }
 
 }
