@@ -28,7 +28,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.github.javaparser.ParseProblemException;
 
 import de.peass.dependency.ChangeManager;
-import de.peass.dependency.DependencyManager;
 import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.vcs.VersionIterator;

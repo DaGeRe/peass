@@ -14,9 +14,9 @@ import org.apache.logging.log4j.Logger;
 import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.changesreading.ClazzFinder;
 import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.dependency.traces.TraceReadUtils;
 import de.peass.dependency.traces.requitur.content.TraceElementContent;
@@ -103,7 +103,8 @@ public class ClazzFileFinder {
          try {
             final CompilationUnit cu = JavaParserProvider.parse(clazzFile);
             for (final Node node : cu.getChildNodes()) {
-               clazzes.addAll(getClazzes(node, packageName, "."));
+               final List<String> nodeChildClazzes = ClazzFinder.getClazzes(node, packageName, ".");
+               clazzes.addAll(nodeChildClazzes);
             }
 
          } catch (final ParseProblemException e) {
@@ -120,31 +121,6 @@ public class ClazzFileFinder {
       path = path.substring(0, path.length() - 5);
       final String clazz = path.replace(File.separator, ".");
       return clazz;
-   }
-
-   private static List<String> getClazzes(final Node node, final String parent, String clazzSeparator) {
-      final List<String> clazzes = new LinkedList<>();
-      if (node instanceof ClassOrInterfaceDeclaration) {
-         final ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) node;
-         final String clazzname = parent.length() > 0 ? parent + clazzSeparator + clazz.getName().getIdentifier() : clazz.getName().getIdentifier();
-         clazzes.add(clazzname);
-         for (final Node child : node.getChildNodes()) {
-            clazzes.addAll(getClazzes(child, clazzname, clazzSeparator));
-         }
-      } else {
-         for (final Node child : node.getChildNodes()) {
-            clazzes.addAll(getClazzes(child, parent, clazzSeparator));
-         }
-      }
-      return clazzes;
-   }
-   
-   public static List<String> getClazzes(CompilationUnit cu) {
-      final List<String> clazzes = new LinkedList<>();
-      for (final Node node : cu.getChildNodes()) {
-         clazzes.addAll(getClazzes(node, "", "$"));
-      }
-      return clazzes;
    }
 
    /**

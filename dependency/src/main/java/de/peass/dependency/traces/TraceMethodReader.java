@@ -20,6 +20,7 @@ import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.analysis.CalledMethodLoader;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TraceElement;
+import de.peass.dependency.changesreading.ClazzFinder;
 import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.dependency.traces.requitur.ReducedTraceElement;
 import de.peass.dependency.traces.requitur.RunLengthEncodingSequitur;
@@ -109,7 +110,7 @@ public class TraceMethodReader {
          if (packageFolder.exists()) {
             for (File candidate : packageFolder.listFiles((FileFilter) new WildcardFileFilter("*.java"))) {
                CompilationUnit cu = getCU(candidate);
-               List<String> clazzes = ClazzFileFinder.getClazzes(cu);
+               List<String> clazzes = ClazzFinder.getClazzes(cu);
                if (clazzes.contains(te.getPackagelessClazz())) {
                   clazzFile = candidate;
                }

@@ -193,9 +193,10 @@ public final class FileComparisonUtil {
     * @throws IOException If class can't be read
     */
    public static void getChangedMethods(final File newFile, final File oldFile, ClazzChangeData changedata) throws ParseException, IOException {
-      final CompilationUnit newCu = JavaParserProvider.parse(newFile);
-      final CompilationUnit oldCu = JavaParserProvider.parse(oldFile);
       try {
+         final CompilationUnit newCu = JavaParserProvider.parse(newFile);
+         final CompilationUnit oldCu = JavaParserProvider.parse(oldFile);
+         
          new CommentRemover(newCu);
          new CommentRemover(oldCu);
 
@@ -208,13 +209,14 @@ public final class FileComparisonUtil {
             return;
          }
 
-         boolean onlyLineCommentOrImportChanges = checkOnlyIrrelevantChange(changes);
-         if (onlyLineCommentOrImportChanges) {
+         boolean onlyLineCommentChanges = checkOnlyLineCommentChange(changes);
+         if (onlyLineCommentChanges) {
             return;
          }
 
          for (final Node node : changes) {
-            ChangeAdder.addChange(changedata, node);
+            // Use old CU for change adding - if new CU contains more clazzes, these will be regarded as changes anyway
+            ChangeAdder.addChange(changedata, node, oldCu);
          }
       } catch (final Exception e) {
          e.printStackTrace();
@@ -226,7 +228,7 @@ public final class FileComparisonUtil {
       return;
    }
    
-   private static boolean checkOnlyIrrelevantChange(final List<Node> changes) {
+   private static boolean checkOnlyLineCommentChange(final List<Node> changes) {
       boolean onlyLineCommentOrImportChanges = true;
       for (final Node node : changes) {
          if (!(node instanceof LineComment)) {

@@ -1,5 +1,7 @@
 package de.peass.dependency.changesreading;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -18,17 +20,19 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.stmt.Statement;
 
+import de.peass.dependency.analysis.data.ChangedEntity;
+
 public class ChangeAdder {
    
    private static final Logger LOG = LogManager.getLogger(ChangeAdder.class);
    
-   public static void addChange(ClazzChangeData changedata, final Node node) {
+   public static void addChange(ClazzChangeData changedata, final Node node, CompilationUnit cu) {
       if (node instanceof Statement || node instanceof Expression) {
          handleStatement(changedata, node);
       } else if (node instanceof ClassOrInterfaceDeclaration) {
          handleClassChange(changedata, node);
       } else if (node instanceof ImportDeclaration) {
-         handleImportChange(changedata, node);
+         handleImportChange(changedata, node, cu);
       } else {
          handleClassChange(changedata, node);
       }
@@ -42,9 +46,15 @@ public class ChangeAdder {
       }
    }
    
-   private static void handleImportChange(ClazzChangeData changedata, final Node node) {
+   private static void handleImportChange(ClazzChangeData changedata, final Node node, CompilationUnit cu) {
+      List<String> clazzes = ClazzFinder.getClazzes(cu);
+      List<ChangedEntity> entities = new LinkedList<>();
+      for (String clazz : clazzes) {
+         entities.add(new ChangedEntity(clazz, ""));
+      }
+      
       ImportDeclaration importDeclaration = (ImportDeclaration) node;
-      changedata.addImportChange(importDeclaration.getNameAsString());
+      changedata.addImportChange(importDeclaration.getNameAsString(), entities);
    }
 
    private static void handleStatement(final ClazzChangeData changedata, final Node statement) {

@@ -23,6 +23,7 @@
 import java.sql.Query;
  
 class Test{
+	class InnerTest{}
 	
 	public static final int y = 438;
 	public int w = 48;

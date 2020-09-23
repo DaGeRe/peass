@@ -216,5 +216,7 @@ public class TestClassComparison {
       FileComparisonUtil.getChangedMethods(file1, file2, changedMethods);
 
       Assert.assertTrue(changedMethods.isChange());
+      Assert.assertThat(changedMethods.getChanges(), Matchers.hasItem(new ChangedEntity(".Test", "")));
+      Assert.assertThat(changedMethods.getChanges(), Matchers.hasItem(new ChangedEntity(".Test$InnerTest", "")));
    }
 }

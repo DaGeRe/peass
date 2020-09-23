@@ -18,6 +18,7 @@ package de.peass.dependency.changesreading;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -156,10 +157,14 @@ public class ClazzChangeData {
       return importChanges;
    }
 
-   public void addImportChange(String name) {
+   public void addImportChange(String name, List<ChangedEntity> entities) {
       importChanges.add(new ChangedEntity(name, ""));
       isChange = true;
       isOnlyMethodChange = false;
+      
+      for (ChangedEntity entity : entities) {
+         addClazzChange(entity);
+      }
    }
 
 }
