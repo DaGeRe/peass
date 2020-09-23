@@ -17,7 +17,6 @@
 package de.peass.debugtools;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
@@ -27,18 +26,13 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import de.peass.DependencyReaderConfig;
-import de.peass.DependencyReadingParallelStarter;
 import de.peass.DependencyReadingStarter;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.Constants;
-import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
@@ -46,6 +40,7 @@ import de.peass.vcs.VersionIterator;
 import de.peass.vcs.VersionIteratorGit;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
+import picocli.CommandLine.Option;
 
 /**
  * Creates dependency information and statics for a project by running all tests and identifying the dependencies with Kieker.
@@ -60,6 +55,9 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
 
    @Mixin
    private DependencyReaderConfig config;
+
+   @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Folder for dependencyfile")
+   private File dependencyFile = null;
 
    public static void main(final String[] args) {
       try {
@@ -79,7 +77,13 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
 
       final File dependencyFile = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + ".json");
 
-      final File dependencyFileIn = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + "_continue.json");
+      final File dependencyFileIn;
+      if (this.dependencyFile != null) {
+         dependencyFileIn = this.dependencyFile;
+      } else {
+         dependencyFileIn = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + "_continue.json");
+      }
+
       final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, Dependencies.class);
       VersionComparator.setVersions(GitUtils.getCommits(projectFolder));
 
@@ -98,8 +102,9 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       System.setOut(new PrintStream(outputFile));
 
       final DependencyReader reader = createReader(config, dependencyFile, dependencies, previousVersion, timeout, vcs);
+      reader.readCompletedVersions(dependencies);
       reader.readDependencies();
-      
+
       return null;
    }
 
@@ -123,7 +128,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
          // VersionComparator.setVersions(commits);
          final GitCommit previous = new GitCommit(previousVersion, "", "", "");
          final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previous);
-         reader = new DependencyReader(config.getProjectFolder(), dependencyFile, dependencies.getUrl(), iterator, dependencies, timeout);
+         reader = new DependencyReader(config.getProjectFolder(), dependencyFile, dependencies.getUrl(), iterator, timeout);
          iterator.goTo0thCommit();
       } else if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");

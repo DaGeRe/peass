@@ -2,21 +2,15 @@ package de.peass.debugtools;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import de.peass.DependencyReaderConfig;
-import de.peass.DependencyReadingParallelStarter;
 import de.peass.DependencyReadingStarter;
 import de.peass.dependency.parallel.Merger;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitCommit;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;

@@ -194,5 +194,17 @@ public abstract class DependencyReaderBase {
          return false;
       }
    }
+   
+   public void readCompletedVersions(final Dependencies initialdependencies) {
+      dependencyResult.setVersions(initialdependencies.getVersions());
+      dependencyResult.setInitialversion(initialdependencies.getInitialversion());
+      
+      dependencyManager = new DependencyManager(folders, timeout);
+
+      InitialVersionReader initialVersionReader = new InitialVersionReader(initialdependencies, dependencyManager, iterator);
+      initialVersionReader.readCompletedVersions();
+      DependencyReaderUtil.write(dependencyResult, dependencyFile);
+      lastRunningVersion = iterator.getTag();
+   }
 
 }

@@ -28,7 +28,6 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.changesreading.ClazzFinder;
-import de.peass.dependency.changesreading.FileComparisonUtil;
 import de.peass.dependency.changesreading.JavaParserProvider;
 
 public class JUnitTestShortener implements AutoCloseable{

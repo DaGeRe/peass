@@ -14,6 +14,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -136,7 +137,7 @@ public class ContinousExecutor implements Callable<Void> {
    }
 
    private static Dependencies getDependencies(final File projectFolder, final File dependencyFile, final String previousName, final GitCommit headCommit)
-         throws JAXBException, JsonParseException, JsonMappingException, IOException {
+         throws JAXBException, JsonParseException, JsonMappingException, IOException, InterruptedException, XmlPullParserException {
       Dependencies dependencies;
 
       final String url = GitUtils.getURL(projectFolder);
@@ -154,7 +155,11 @@ public class ContinousExecutor implements Callable<Void> {
       if (!dependencyFile.exists()) {
          needToLoad = true;
          final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, 10, nonChanges);
-         reader.readDependencies();
+         if (!reader.readInitialVersion()) {
+            LOG.error("Analyzing first version was not possible");
+         } else {
+            reader.readDependencies();
+         }
          dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       } else {
          dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);

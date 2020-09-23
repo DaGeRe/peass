@@ -6,10 +6,8 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependency.reader.FirstRunningVersionFinder;
-import de.peass.dependency.reader.VersionKeeper;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.VersionIterator;
@@ -38,9 +36,13 @@ public final class OneReader implements Runnable {
          boolean init = firstRunningVersionFinder.searchFirstRunningCommit();
          if (init) {
             LOG.debug("Reader initalized: " + currentOutFile + " This: " + this);
-            final boolean readingSuccess = reader.readDependencies();
-            if (readingSuccess) {
-               readRemaining(reader);
+            if (!reader.readInitialVersion()) {
+               LOG.error("Analyzing first version was not possible");
+            } else {
+               final boolean readingSuccess = reader.readDependencies();
+               if (readingSuccess) {
+                  readRemaining(reader);
+               }
             }
          }
       } catch (final Throwable e) {

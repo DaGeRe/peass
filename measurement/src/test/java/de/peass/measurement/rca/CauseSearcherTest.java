@@ -3,7 +3,6 @@ package de.peass.measurement.rca;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
@@ -27,7 +26,6 @@ import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.TreeBuilder;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
-import de.peass.measurement.rca.treeanalysis.TreeUtil;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class CauseSearcherTest {

@@ -17,7 +17,6 @@ import de.peass.dependency.persistence.ExecutionData;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.statistics.DependencyStatistics;
 import de.peass.utils.Constants;
-import de.peass.utils.OptionConstants;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;

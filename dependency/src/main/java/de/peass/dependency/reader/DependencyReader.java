@@ -29,11 +29,8 @@ import com.github.javaparser.ParseProblemException;
 
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.DependencyManager;
-import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.KiekerResultManager;
-import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependency.persistence.Dependencies;
-import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.VersionIterator;
 
 /**
@@ -91,32 +88,18 @@ public class DependencyReader extends DependencyReaderBase {
     * @param initialdependencies
     * @param timeout Timeout in Minutes
     */
-   public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final Dependencies initialdependencies,
+   public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, 
          final int timeout) {
       this(projectFolder, dependencyFile, url, iterator, timeout,
             new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")));
-
-      dependencyResult.setVersions(initialdependencies.getVersions());
-      dependencyResult.setInitialversion(initialdependencies.getInitialversion());
-
-      InitialVersionReader initialVersionReader = new InitialVersionReader(initialdependencies, dependencyManager, iterator);
-      initialVersionReader.readCompletedVersions();
-      DependencyReaderUtil.write(dependencyResult, dependencyFile);
-      lastRunningVersion = iterator.getTag();
    }
 
-   boolean success = true;
 
    /**
     * Reads the dependencies of the tests
     */
    public boolean readDependencies() {
       try {
-         if (!readInitialVersion()) {
-            LOG.error("Analyzing first version was not possible");
-            return false;
-         }
-
          LOG.debug("Analysiere {} Einträge", iterator.getSize());
 
          prunedSize += dependencyManager.getDependencyMap().size();
@@ -130,7 +113,7 @@ public class DependencyReader extends DependencyReaderBase {
 
          LOG.debug("Finished dependency-reading");
          return true;
-      } catch (IOException | InterruptedException | XmlPullParserException e) {
+      } catch (IOException e) {
          e.printStackTrace();
          return false;
       }

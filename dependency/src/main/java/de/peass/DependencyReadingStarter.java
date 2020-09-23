@@ -17,7 +17,6 @@
 package de.peass;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -29,7 +28,6 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependency.reader.FirstRunningVersionFinder;
 import de.peass.dependency.reader.VersionKeeper;
-import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
@@ -104,8 +102,12 @@ public class DependencyReadingStarter implements Callable<Void> {
       } else {
          throw new RuntimeException("Unknown version control system");
       }
-      reader.readDependencies();
-      
+      if (!reader.readInitialVersion()) {
+         LOG.error("Analyzing first version was not possible");
+      } else {
+         reader.readDependencies();
+      }
+
       return null;
    }
 

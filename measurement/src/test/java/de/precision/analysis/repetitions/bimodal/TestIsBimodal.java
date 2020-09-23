@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.dagere.kopeme.generated.Result;
-import de.precision.analysis.repetitions.bimodal.IsBimodal;
 
 public class TestIsBimodal {
    

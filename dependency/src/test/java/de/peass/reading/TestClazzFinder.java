@@ -11,7 +11,6 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.changesreading.ClazzFinder;
-import de.peass.dependency.changesreading.FileComparisonUtil;
 
 public class TestClazzFinder {
    

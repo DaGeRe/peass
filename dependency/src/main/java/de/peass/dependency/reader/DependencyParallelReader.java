@@ -8,29 +8,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.parallel.Merger;
 import de.peass.dependency.parallel.OneReader;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.utils.OptionConstants;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIterator;
 import de.peass.vcs.VersionIteratorGit;
-import picocli.CommandLine.Command;
 
 
 public class DependencyParallelReader {

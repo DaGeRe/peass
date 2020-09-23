@@ -2,10 +2,8 @@ package de.peass.measurement.analysis;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
