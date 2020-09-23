@@ -1,7 +1,9 @@
 package de.peass.analysis.changes;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 
 import javax.xml.bind.JAXBException;
 
@@ -10,15 +12,18 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
+import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.analysis.all.RepoFolders;
 import de.peass.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peass.confidence.KoPeMeDataHelper;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.Relation;
 import de.peass.measurement.analysis.statistics.DescribedChunk;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.peass.utils.RunCommandWriterSearchCause;
 import de.peran.FolderSearcher;
 import de.peran.analysis.helper.read.VersionData;
 import de.peran.measurement.analysis.ProjectStatistics;
@@ -45,17 +50,22 @@ public class ChangeReader {
    private final VersionData allData = new VersionData();
    // private static VersionKnowledge oldKnowledge;
    private final File statisticsFolder;
+   
+   private final RunCommandWriterSearchCause runCommandWriter;
 
-   public ChangeReader(final RepoFolders resultsFolder, final String projectName) {
+   public ChangeReader(final RepoFolders resultsFolder, final String projectName) throws FileNotFoundException {
       statisticsFolder = resultsFolder.getProjectStatisticsFolder(projectName);
+      runCommandWriter = new RunCommandWriterSearchCause(new PrintStream(new File(statisticsFolder, "run-" + projectName+".sh")), "default", VersionComparator.getDependencies());
    }
 
-   public ChangeReader(final File statisticsFolder, final String projectName) {
+   public ChangeReader(final File statisticsFolder, final String projectName) throws FileNotFoundException {
       this.statisticsFolder = statisticsFolder;
+      runCommandWriter = new RunCommandWriterSearchCause(new PrintStream(new File(statisticsFolder, "run-" + projectName+".sh")), "default", VersionComparator.getDependencies());
    }
 
    public ChangeReader(final String projectName) {
       this.statisticsFolder = null;
+      runCommandWriter = null;
    }
 
    public double getType1error() {
@@ -190,6 +200,12 @@ public class ChangeReader {
                describedChunk.getDescPrevious().getMean(), diff,
                statistic.getTvalue(),
                statistic.getVMs());
+         
+         if (runCommandWriter != null) {
+            final Result exampleResult = describedChunk.getCurrent().get(0);
+            runCommandWriter.createSingleMethodCommand(0, versions[1], testcase.getExecutable(), 
+                  (int) exampleResult.getWarmupExecutions(), (int) exampleResult.getExecutionTimes(), (int) exampleResult.getRepetitions(), describedChunk.getCurrent().size());
+         }
       }
       info.addMeasurement(versions[1], testcase, statistic);
    }

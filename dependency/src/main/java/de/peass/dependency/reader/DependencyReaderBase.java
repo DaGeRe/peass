@@ -114,39 +114,44 @@ public abstract class DependencyReaderBase {
       }
 
       if (changes.size() > 0) {
-         final ChangeTestMapping changeTestMap = dependencyManager.getDependencyMap().getChangeTestMap(changes); // tells which tests need to be run, and
-                                                                                                                 // because of
-         LOG.debug("Change test mapping (without added tests): " + changeTestMap);
-         // which change they need to be run
-
-         if (DETAIL_DEBUG)
-            Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "changetest_" + version + ".json"), changeTestMap);
-
-         final Version newVersionInfo = DependencyReaderUtil.createVersionFromChangeMap(version, changes, changeTestMap);
-         newVersionInfo.setJdk(dependencyManager.getExecutor().getJDKVersion());
-         newVersionInfo.setPredecessor(predecessor);
-
-         if (DETAIL_DEBUG) {
-            Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "versioninfo_" + version + ".json"), newVersionInfo);
-         }
-
-         LOG.debug("Updating dependencies.. {}", version);
-
-         final TestSet testsToRun = dependencyManager.getTestsToRun(changes); // contains only the tests that need to be run -> could be changeTestMap.values() und dann umwandeln
-         Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "toRun_" + version + ".json"), testsToRun.entrySet());
-
-         final int changedTests;
-         if (testsToRun.classCount() > 0) {
-            changedTests = analyzeTests(version, newVersionInfo, testsToRun);
-         } else {
-            changedTests = 0;
-         }
-         dependencyResult.getVersions().put(version, newVersionInfo);
-         return changedTests;
+         return analyseChanges(version, changes, predecessor);
       } else {
          skippedNoChange.addVersion(version, "No Change at all");
          return 0;
       }
+   }
+
+   private int analyseChanges(final String version, final Map<ChangedEntity, ClazzChangeData> changes, String predecessor)
+         throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException {
+      final ChangeTestMapping changeTestMap = dependencyManager.getDependencyMap().getChangeTestMap(changes); // tells which tests need to be run, and
+                                                                                                              // because of
+      LOG.debug("Change test mapping (without added tests): " + changeTestMap);
+      // which change they need to be run
+
+      if (DETAIL_DEBUG)
+         Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "changetest_" + version + ".json"), changeTestMap);
+
+      final Version newVersionInfo = DependencyReaderUtil.createVersionFromChangeMap(version, changes, changeTestMap);
+      newVersionInfo.setJdk(dependencyManager.getExecutor().getJDKVersion());
+      newVersionInfo.setPredecessor(predecessor);
+
+      if (DETAIL_DEBUG) {
+         Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "versioninfo_" + version + ".json"), newVersionInfo);
+      }
+
+      LOG.debug("Updating dependencies.. {}", version);
+
+      final TestSet testsToRun = dependencyManager.getTestsToRun(changes); // contains only the tests that need to be run -> could be changeTestMap.values() und dann umwandeln
+      Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "toRun_" + version + ".json"), testsToRun.entrySet());
+
+      final int changedTests;
+      if (testsToRun.classCount() > 0) {
+         changedTests = analyzeTests(version, newVersionInfo, testsToRun);
+      } else {
+         changedTests = 0;
+      }
+      dependencyResult.getVersions().put(version, newVersionInfo);
+      return changedTests;
    }
 
    public void documentFailure(final String version) {

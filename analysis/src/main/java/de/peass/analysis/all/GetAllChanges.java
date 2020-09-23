@@ -1,6 +1,7 @@
 package de.peass.analysis.all;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
@@ -36,7 +37,7 @@ public class GetAllChanges {
       }
    }
 
-   public static void getChangesForProject(final RepoFolders folders, final String project) throws JAXBException {
+   public static void getChangesForProject(final RepoFolders folders, final String project) throws JAXBException, FileNotFoundException {
       final File projectFolder = new File(folders.getCleanDataFolder(), project);
       if (projectFolder.exists()) {
          File cleanFolder = new File(projectFolder, "clean");
@@ -55,7 +56,7 @@ public class GetAllChanges {
       }
    }
 
-   public static void getChangesForMeasurementfolder(final RepoFolders folders, final String project, File cleanFolder) throws JAXBException {
+   public static void getChangesForMeasurementfolder(final RepoFolders folders, final String project, File cleanFolder) throws JAXBException, FileNotFoundException {
       final ChangeReader reader = new ChangeReader(folders, project);
       reader.setType1error(0.02);
       reader.setType2error(0.02);
