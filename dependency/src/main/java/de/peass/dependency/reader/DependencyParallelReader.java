@@ -18,7 +18,6 @@ import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIterator;
 import de.peass.vcs.VersionIteratorGit;
 
-
 public class DependencyParallelReader {
    private static final Logger LOG = LogManager.getLogger(DependencyParallelReader.class);
 
@@ -52,8 +51,8 @@ public class DependencyParallelReader {
 
       sizePerThread = commits.size() > 2 * threadCount ? commits.size() / threadCount : 2;
       outFiles = commits.size() > 2 * threadCount ? new File[threadCount] : new File[1];
-      
-      LOG.debug("Threads: {} Size per Thread: {} OutFile: {}", threadCount, sizePerThread, outFiles.length) ;
+
+      LOG.debug("Threads: {} Size per Thread: {} OutFile: {}", threadCount, sizePerThread, outFiles.length);
 
       this.timeout = timeout;
    }
@@ -71,8 +70,9 @@ public class DependencyParallelReader {
       });
 
       for (int i = 0; i < outFiles.length; i++) {
-         outFiles[i] = new File(tempResultFolder, "deps_" + project + "_" + i + ".json");
-         final File projectFolderTemp = new File(folders.getTempProjectFolder(), "" + i);
+         final int readableIndex = i + 1;
+         outFiles[i] = new File(tempResultFolder, "deps_" + project + "_" + readableIndex + ".json");
+         final File projectFolderTemp = new File(folders.getTempProjectFolder(), "" + readableIndex);
          GitUtils.clone(folders, projectFolderTemp);
          final File currentOutFile = outFiles[i];
          startPartProcess(currentOutFile, service, i, projectFolderTemp);
