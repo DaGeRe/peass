@@ -21,7 +21,7 @@ import kieker.tools.trace.analysis.filter.traceReconstruction.TraceReconstructio
 
 public class TreeReader extends KiekerResultManager {
 
-   private boolean ignoreEOIs;
+   private boolean ignoreEOIs = true;
    
    TreeReader(final File projectFolder, final long timeout) throws InterruptedException, IOException {
       super(new PeASSFolders(projectFolder), timeout);
@@ -54,13 +54,13 @@ public class TreeReader extends KiekerResultManager {
       TraceReconstructionFilter traceReconstructionFilter = reader.initTraceReconstruction();
 
       AnalysisController analysisController = reader.getAnalysisController();
-      final TreeFilter kopemeFilter = new TreeFilter(null, analysisController, testcase, ignoreEOIs);
+      final TreeFilter treeFilter = new TreeFilter(null, analysisController, testcase, ignoreEOIs);
       analysisController.connect(traceReconstructionFilter, TraceReconstructionFilter.OUTPUT_PORT_NAME_EXECUTION_TRACE,
-            kopemeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
+            treeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
 
       analysisController.run();
 
-      CallTreeNode root = kopemeFilter.getRoot();
+      CallTreeNode root = treeFilter.getRoot();
       return root;
    }
 

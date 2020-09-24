@@ -40,7 +40,6 @@ public class CauseTester extends AdaptiveTester {
    private final CauseSearcherConfig causeConfig;
    private final CauseSearchFolders folders;
    private int adaptiveId = 0;
-   private boolean considerNodePosition = false;
 
    public CauseTester(final CauseSearchFolders project, final JUnitTestTransformer testgenerator, final CauseSearcherConfig causeConfig)
          throws IOException {
@@ -53,9 +52,6 @@ public class CauseTester extends AdaptiveTester {
       testgenerator.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
    }
 
-   public void setConsiderNodePosition(final boolean considerNodePosition) {
-      this.considerNodePosition = considerNodePosition;
-   }
 
    public void measureVersion(final List<CallTreeNode> nodes)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
@@ -140,7 +136,7 @@ public class CauseTester extends AdaptiveTester {
    protected void handleKiekerResults(final String version, final File versionResultFolder) {
       final KiekerResultReader kiekerResultReader = new KiekerResultReader(causeConfig.isUseAggregation(), includedNodes, version, versionResultFolder, testcase,
             version.equals(configuration.getVersion()));
-      kiekerResultReader.setConsiderNodePosition(considerNodePosition);
+      kiekerResultReader.setConsiderNodePosition(!causeConfig.isIgnoreEOIs());
       kiekerResultReader.readResults();
    }
 

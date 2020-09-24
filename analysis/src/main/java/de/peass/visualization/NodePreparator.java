@@ -128,17 +128,23 @@ public class NodePreparator {
       final Set<String> addedPatterns = new HashSet<>();
       for (final MeasuredNode measuredChild : measuredParent.getChilds()) {
          // if (!determiner.hasEqualSubtreeNode(measuredChild)) {
-         final GraphNode newChild = createGraphNode(measuredChild);
-         if (measuredChild.getCall().equals(CauseSearchData.ADDED) || measuredChild.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {
-            newChild.setHasSourceChange(true);
+         if ((Double.isNaN(measuredChild.getStatistic().getMeanCurrent()) && Double.isNaN(measuredChild.getStatistic().getMeanOld())) ||
+               (measuredChild.getStatistic().getCalls() == 0 && measuredChild.getStatistic().getCallsOld() == 0)) {
+            LOG.debug("Node {} - {} is ignored", measuredChild.getKiekerPattern(), measuredChild.getOtherKiekerPattern());
+         } else {
+            final GraphNode newChild = createGraphNode(measuredChild);
+            if (measuredChild.getCall().equals(CauseSearchData.ADDED) || measuredChild.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {
+               newChild.setHasSourceChange(true);
+            }
+
+            newChild.setParent(measuredParent.getCall());
+            setGraphData(measuredChild, newChild);
+
+            graphParent.getChildren().add(newChild);
+            processNode(measuredChild, newChild);
+            addedPatterns.add(measuredChild.getKiekerPattern());
          }
 
-         newChild.setParent(measuredParent.getCall());
-         setGraphData(measuredChild, newChild);
-
-         graphParent.getChildren().add(newChild);
-         processNode(measuredChild, newChild);
-         addedPatterns.add(measuredChild.getKiekerPattern());
       }
       // }
    }
@@ -183,29 +189,34 @@ public class NodePreparator {
       // == Relation.UNEQUAL;
       final StatisticalSummary statisticsOld = measuredNode.getStatistic().getStatisticsOld();
       final StatisticalSummary statisticsCurrent = measuredNode.getStatistic().getStatisticsCurrent();
-      final boolean isChange = StatisticUtil.isChange(statisticsOld, statisticsCurrent, data.getMeasurementConfig()) == Relation.UNEQUAL;
-      if (isChange && measuredNode.getStatistic().getMeanCurrent() > 0.001 && measuredNode.getStatistic().getMeanOld() > 0.001) {
-         if (measuredNode.getStatistic().getTvalue() < 0) {
+      try {
+         final boolean isChange = StatisticUtil.isChange(statisticsOld, statisticsCurrent, data.getMeasurementConfig()) == Relation.UNEQUAL;
+         if (isChange && measuredNode.getStatistic().getMeanCurrent() > 0.001 && measuredNode.getStatistic().getMeanOld() > 0.001) {
+            if (measuredNode.getStatistic().getTvalue() < 0) {
+               graphNode.setColor("#FF0000");
+               graphNode.setState(State.SLOWER);
+               graphNode.getStatistic().setChange(true);
+            } else {
+               graphNode.setColor("#00FF00");
+               graphNode.setState(State.FASTER);
+               graphNode.getStatistic().setChange(true);
+            }
+         } else if (Double.isNaN(statisticsOld.getMean()) && !Double.isNaN(statisticsCurrent.getMean())) {
+            graphNode.setColor("#00FF00");
+            graphNode.setState(State.FASTER);
+            graphNode.getStatistic().setChange(true);
+         } else if (!Double.isNaN(statisticsOld.getMean()) && Double.isNaN(statisticsCurrent.getMean())) {
             graphNode.setColor("#FF0000");
             graphNode.setState(State.SLOWER);
             graphNode.getStatistic().setChange(true);
          } else {
-            graphNode.setColor("#00FF00");
-            graphNode.setState(State.FASTER);
-            graphNode.getStatistic().setChange(true);
+            graphNode.setColor("#FFFFFF");
+            graphNode.getStatistic().setChange(false);
          }
-      } else if (Double.isNaN(statisticsOld.getMean()) && !Double.isNaN(statisticsCurrent.getMean())) {
-         graphNode.setColor("#00FF00");
-         graphNode.setState(State.FASTER);
-         graphNode.getStatistic().setChange(true);
-      } else if (!Double.isNaN(statisticsOld.getMean()) && Double.isNaN(statisticsCurrent.getMean())) {
-         graphNode.setColor("#FF0000");
-         graphNode.setState(State.SLOWER);
-         graphNode.getStatistic().setChange(true);
-      } else {
-         graphNode.setColor("#FFFFFF");
-         graphNode.getStatistic().setChange(false);
+      } catch (Exception e) {
+         throw new RuntimeException("Could not examine change " + measuredNode.getKiekerPattern(), e);
       }
+
    }
 
    public GraphNode getRootNode() {
