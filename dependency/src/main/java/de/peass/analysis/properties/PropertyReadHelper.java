@@ -54,13 +54,14 @@ public class PropertyReadHelper {
    private final File methodFolder;
 
    public static void main(final String[] args) throws IOException {
-      final ChangedEntity ce = new ChangedEntity("org.apache.commons.fileupload.ServletFileUploadTest", "");
+      final ChangedEntity ce = new ChangedEntity("org.apache.commons.fileupload.DefaultFileItemTest", "");
       final Change change = new Change();
       change.setChangePercent(-8.0);
-      change.setMethod("testFoldedHeaders");
+      change.setMethod("testTextFieldConstruction");
       final File projectFolder2 = new File("../../projekte/commons-fileupload");
       final File viewFolder2 = new File("/home/reichelt/daten3/diss/repos/views-final/views_commons-fileupload/");
-      final PropertyReadHelper propertyReadHelper = new PropertyReadHelper("4ed6e923cb2033272fcb993978d69e325990a5aa", "b53957", ce, change, projectFolder2, viewFolder2,
+      final PropertyReadHelper propertyReadHelper = new PropertyReadHelper("4f38de087e0af31bf348b811b24b7c28212a8429",
+            "555886", ce, change, projectFolder2, viewFolder2,
             new File("/tmp/"));
       propertyReadHelper.read();
    }
@@ -108,7 +109,7 @@ public class PropertyReadHelper {
       final File fileCurrent = new File(folder, version.substring(0, 6) + "_method");
       final File fileOld = new File(folder, getShortPrevVersion() + "_method");
       final Set<String> calls = new HashSet<>();
-      if (fileCurrent.exists() && fileOld.exists()) { 
+      if (fileCurrent.exists() && fileOld.exists()) {
          final PeASSFolders folders = new PeASSFolders(projectFolder);
          final ChangeManager changeManager = new ChangeManager(folders);
          final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(prevVersion, version);
@@ -117,18 +118,19 @@ public class PropertyReadHelper {
          final List<String> traceOld = Sequitur.getExpandedTrace(fileOld);
          determineTraceSizeChanges(property, traceCurrent, traceOld);
 
-         final Set<String> intersection = getEqualCalls(calls, traceCurrent, traceOld);
+         final Set<String> merged = getMergedCalls(calls, traceCurrent, traceOld);
 
-         for (final String calledInBothMethod : intersection) {
-            final ChangedEntity entity = determineEntity(calledInBothMethod);
+         for (final String calledInOneMethod : merged) {
+            LOG.debug("Loading: " + calledInOneMethod);
+            final ChangedEntity entity = determineEntity(calledInOneMethod);
             final MethodChangeReader reader = new MethodChangeReader(methodFolder, folders.getProjectFolder(), folders.getOldSources(), entity, version);
             reader.readMethodChangeData();
-            getKeywordChanges(property, reader, calledInBothMethod);
+            getKeywordChanges(property, reader, entity);
          }
 
          identifyAffectedClasses(property, calls);
 
-         System.out.println("Calls: " + calls);
+         LOG.info("Calls: " + calls);
 
          getTestSourceAffection(property, calls, folders, changes);
       } else {
@@ -165,9 +167,8 @@ public class PropertyReadHelper {
       }
    }
 
-   public void getKeywordChanges(final ChangeProperty property, final MethodChangeReader changeManager, final String calledInBothMethod) throws FileNotFoundException {
-      final ChangedEntity entity = determineEntity(calledInBothMethod);
-      final Patch<String> patch = changeManager.getKeywordChanges(entity); 
+   public void getKeywordChanges(final ChangeProperty property, final MethodChangeReader changeManager, ChangedEntity entity) throws FileNotFoundException {
+      final Patch<String> patch = changeManager.getKeywordChanges(entity);
 
       final Map<String, Integer> vNewkeywords = new HashMap<>();
       final Map<String, Integer> vOldkeywords = new HashMap<>();
@@ -188,20 +189,20 @@ public class PropertyReadHelper {
       }
    }
 
-   public static ChangedEntity determineEntity(final String calledInBothMethod) {
-      final String clazz = calledInBothMethod.substring(0, calledInBothMethod.indexOf("#"));
-      final int openingParenthesis = calledInBothMethod.indexOf("(");
+   public static ChangedEntity determineEntity(final String clazzMethodName) {
+      final String clazz = clazzMethodName.substring(0, clazzMethodName.indexOf("#"));
+      final int openingParenthesis = clazzMethodName.indexOf("(");
       String method;
       if (openingParenthesis != -1) {
-         method = calledInBothMethod.substring(calledInBothMethod.indexOf("#") + 1, openingParenthesis);
+         method = clazzMethodName.substring(clazzMethodName.indexOf("#") + 1, openingParenthesis);
       } else {
-         method = calledInBothMethod.substring(calledInBothMethod.indexOf("#") + 1);
+         method = clazzMethodName.substring(clazzMethodName.indexOf("#") + 1);
       }
-      System.out.println(calledInBothMethod);
+      System.out.println(clazzMethodName);
 
       final ChangedEntity entity = new ChangedEntity(clazz, "", method);
       if (openingParenthesis != -1) {
-         final String parameterString = calledInBothMethod.substring(openingParenthesis + 1, calledInBothMethod.length() - 1);
+         final String parameterString = clazzMethodName.substring(openingParenthesis + 1, clazzMethodName.length() - 1);
          final String[] parameters = parameterString.split(",");
          for (final String parameter : parameters) {
             entity.getParameters().add(parameter);
@@ -210,15 +211,15 @@ public class PropertyReadHelper {
       return entity;
    }
 
-   public Set<String> getEqualCalls(final Set<String> calls, final List<String> traceCurrent, final List<String> traceOld) {
-      final Set<String> intersection = new HashSet<>(traceCurrent);
+   public Set<String> getMergedCalls(final Set<String> calls, final List<String> traceCurrent, final List<String> traceOld) {
+      final Set<String> merged = new HashSet<>(traceCurrent);
       final Set<String> calledCurrent = new HashSet<>(traceCurrent);
       final Set<String> calledOld = new HashSet<>(traceOld);
       calls.addAll(calledCurrent);
       calls.addAll(calledOld);
 
-      intersection.retainAll(calledOld);
-      return intersection;
+      // intersection.retainAll(calledOld);
+      return merged;
    }
 
    void getTestSourceAffection(final ChangeProperty property, final Set<String> calls, final PeASSFolders folders, final Map<ChangedEntity, ClazzChangeData> changes)
@@ -238,8 +239,8 @@ public class PropertyReadHelper {
 
       // Prinzipiell: Man müsste schauen, wo der Quelltext liegt, nicht, wie er heißt..
       for (final Entry<ChangedEntity, ClazzChangeData> changedEntity : changes.entrySet()) {
-//         final Set<String> guessedTypes = new PropertyChangeGuesser().getGuesses(folders, changedEntity);
-//         property.getGuessedTypes().addAll(guessedTypes);
+         // final Set<String> guessedTypes = new PropertyChangeGuesser().getGuesses(folders, changedEntity);
+         // property.getGuessedTypes().addAll(guessedTypes);
 
          final ChangedEntity outerClazz = changedEntity.getKey();
          if (!changedEntity.getValue().isOnlyMethodChange()) {
