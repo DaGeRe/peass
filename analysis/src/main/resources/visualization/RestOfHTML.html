@@ -193,7 +193,7 @@ function shownode(node) {
 	  infos.innerHTML = "No statistic";
   }
 	
-  quelltext.innerHTML="<pre>" + source[node.call] +"</pre>"
+  quelltext.innerHTML="<pre>" + source[node.key] +"</pre>"
   histogramm.innerHTML=node.name;
   var version = {
     x: node.values,

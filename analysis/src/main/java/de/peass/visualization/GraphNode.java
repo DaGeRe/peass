@@ -15,7 +15,7 @@ public class GraphNode extends BasicNode {
       FASTER, SLOWER, UNKNOWN;
    }
    
-   private String name;
+   private String name, key;
    private String parent;
    private String color;
    private TestcaseStatistic statistic;
@@ -30,8 +30,17 @@ public class GraphNode extends BasicNode {
    
    public GraphNode(final String call, final String kiekerPattern) {
       super(call, kiekerPattern);
+      key = KiekerPatternConverter.getKey(kiekerPattern);
    }
    
+   public String getKey() {
+      return key;
+   }
+
+   public void setKey(String key) {
+      this.key = key;
+   }
+
    public double[] getValues() {
       return values;
    }

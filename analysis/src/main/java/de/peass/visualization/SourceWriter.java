@@ -39,16 +39,20 @@ class SourceWriter {
    }
 
    private void getNodeSource(final Map<String, String> nameSourceMap, final GraphNode node) throws IOException {
-      final int begin = node.getCall().lastIndexOf('.') + 1;
-      final File test = new File(sourceFolder, node.getCall().substring(begin) + "_diff.txt");
+      final String key = KiekerPatternConverter.getKey(node.getKiekerPattern());
+      String fileNameStart = KiekerPatternConverter.getFileNameStart(node.getKiekerPattern());
+
+      final File test = new File(sourceFolder, fileNameStart + "_diff.txt");
       if (test.exists()) {
          final String source = FileUtils.readFileToString(test, Charset.defaultCharset());
-         nameSourceMap.put(node.getCall(), source);
-         final File main = new File(sourceFolder, node.getCall().substring(begin) + "_main.txt");
-         final File old = new File(sourceFolder, node.getCall().substring(begin) + "_old.txt");
+         nameSourceMap.put(key, source);
+         final File main = new File(sourceFolder, fileNameStart + "_main.txt");
+         final File old = new File(sourceFolder, fileNameStart + "_old.txt");
          if (main.exists() && old.exists()) {
             node.setHasSourceChange(true);
          }
       }
    }
+
+   
 }
