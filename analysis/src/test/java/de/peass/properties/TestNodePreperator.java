@@ -32,28 +32,10 @@ public class TestNodePreperator {
    }
 
    @Test
-   public void testSubtreeElimination() {
+   public void testSubtreePreperation() {
       final TestcaseStatistic statistic = new TestcaseStatistic(1, 2, 0.1, 0.1, 100, 3, true);
 
-      final MeasuredNode root = new MeasuredNode("Test.testMethod", "public void Test.testMethod()");
-      
-      final MeasuredNode child1 = new MeasuredNode("ClassA.method1", "public void ClassA.method1");
-      final MeasuredNode child2 = new MeasuredNode("ClassA.method1", "public void ClassA.method1");
-      final MeasuredNode child3 = new MeasuredNode("ClassA.method1", "public void ClassA.method1");
-      
-      final MeasuredNode child11 = new MeasuredNode("ClassA.method11", "public void ClassA.method11");
-      final MeasuredNode child12 = new MeasuredNode("ClassA.method12", "public void ClassA.method12");
-      child1.setChilds(Arrays.asList(new MeasuredNode[] {child11, child12}));
-      
-      final MeasuredNode child21 = new MeasuredNode("ClassA.method11", "public void ClassA.method11");
-      final MeasuredNode child22 = new MeasuredNode("ClassA.method12", "public void ClassA.method12");
-      child2.setChilds(Arrays.asList(new MeasuredNode[] {child21, child22}));
-      
-      final MeasuredNode child31 = new MeasuredNode("ClassA.method11", "public void ClassA.method11");
-      final MeasuredNode child32 = new MeasuredNode("ClassA.method13", "public void ClassA.method13");
-      child3.setChilds(Arrays.asList(new MeasuredNode[] {child31, child32}));
-      
-      root.setChilds(Arrays.asList(new MeasuredNode[] { child1, child2, child3 }));
+      final MeasuredNode root = prepareLongTree();
       
       setChildrenStatistic(statistic, root);
       
@@ -65,6 +47,28 @@ public class TestNodePreperator {
       Assert.assertEquals(3, preparator.getRootNode().getChildren().size());
       Assert.assertEquals(2, preparator.getRootNode().getChildren().get(0).getChildren().size());
       Assert.assertEquals(2, preparator.getRootNode().getChildren().get(1).getChildren().size());
+   }
+
+   private MeasuredNode prepareLongTree() {
+      final MeasuredNode root = new MeasuredNode("Test.testMethod", "public void Test.testMethod()");
+      
+      final MeasuredNode child1 = new MeasuredNode("ClassA.method1", "public void ClassA.method1()");
+      final MeasuredNode child2 = new MeasuredNode("ClassA.method1", "public void ClassA.method1()");
+      final MeasuredNode child3 = new MeasuredNode("ClassA.method1", "public void ClassA.method1()");
+      root.setChilds(Arrays.asList(new MeasuredNode[] { child1, child2, child3 }));
+      
+      final MeasuredNode child11 = new MeasuredNode("ClassA.method11", "public void ClassA.method11()");
+      final MeasuredNode child12 = new MeasuredNode("ClassA.method12", "public void ClassA.method12()");
+      child1.setChilds(Arrays.asList(new MeasuredNode[] {child11, child12}));
+      
+      final MeasuredNode child21 = new MeasuredNode("ClassA.method11", "public void ClassA.method11()");
+      final MeasuredNode child22 = new MeasuredNode("ClassA.method12", "public void ClassA.method12()");
+      child2.setChilds(Arrays.asList(new MeasuredNode[] {child21, child22}));
+      
+      final MeasuredNode child31 = new MeasuredNode("ClassA.method11", "public void ClassA.method11()");
+      final MeasuredNode child32 = new MeasuredNode("ClassA.method13", "public void ClassA.method13()");
+      child3.setChilds(Arrays.asList(new MeasuredNode[] {child31, child32}));
+      return root;
    }
 
    private void setChildrenStatistic(final TestcaseStatistic statistic, final MeasuredNode parent) {
@@ -81,16 +85,16 @@ public class TestNodePreperator {
 
       final MeasuredNode root = new MeasuredNode("Test.testMethod", "public void Test.testMethod()");
 
-      final MeasuredNode child1 = new MeasuredNode("ClassA.method1", "public void ClassA.method1");
-      final MeasuredNode child2 = new MeasuredNode("ClassA.method2", "public void ClassA.method2");
+      final MeasuredNode child1 = new MeasuredNode("ClassA.method1", "public void ClassA.method1()");
+      final MeasuredNode child2 = new MeasuredNode("ClassA.method2", "public void ClassA.method2()");
+      root.setChilds(Arrays.asList(new MeasuredNode[] { child1, child2 }));
 
-      final MeasuredNode child11 = new MeasuredNode("ClassA.method11", "public void ClassA.method11");
-      final MeasuredNode child12 = new MeasuredNode("ClassA.method12", "public void ClassA.method12");
-      final MeasuredNode child13 = new MeasuredNode("ClassA.method13", "public void ClassA.method13");
-
+      final MeasuredNode child11 = new MeasuredNode("ClassA.method11", "public void ClassA.method11()");
+      final MeasuredNode child12 = new MeasuredNode("ClassA.method12", "public void ClassA.method12()");
+      final MeasuredNode child13 = new MeasuredNode("ClassA.method13", "public void ClassA.method13()");
       child1.setChilds(Arrays.asList(new MeasuredNode[] { child11, child12, child13 }));
 
-      root.setChilds(Arrays.asList(new MeasuredNode[] { child1, child2 }));
+      
 
       setChildrenStatistic(statistic, root);
       
