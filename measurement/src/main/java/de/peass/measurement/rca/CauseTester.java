@@ -136,7 +136,7 @@ public class CauseTester extends AdaptiveTester {
    protected void handleKiekerResults(final String version, final File versionResultFolder) {
       final KiekerResultReader kiekerResultReader = new KiekerResultReader(causeConfig.isUseAggregation(), includedNodes, version, versionResultFolder, testcase,
             version.equals(configuration.getVersion()));
-      kiekerResultReader.setConsiderNodePosition(!causeConfig.isIgnoreEOIs());
+      kiekerResultReader.setConsiderNodePosition(!causeConfig.isUseAggregation());
       kiekerResultReader.readResults();
    }
 

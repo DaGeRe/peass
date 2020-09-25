@@ -32,6 +32,9 @@ public class CauseSearcherConfig {
       this.minTime = minTime;
       this.calibrationRun = calibrationRun;
       this.ignoreEOIs = ignoreEOIs;
+      if (useAggregation && !ignoreEOIs) {
+         throw new RuntimeException("EOIs need always to be ignored if aggregation is enabled!");
+      }
    }
 
    public TestCase getTestCase() {

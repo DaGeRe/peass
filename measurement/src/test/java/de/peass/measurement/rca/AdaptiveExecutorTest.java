@@ -43,14 +43,13 @@ public class AdaptiveExecutorTest {
    private static final File SOURCE_DIR = new File("src/test/resources/rootCauseIT/basic_state/");
    private final TestCase TEST = new TestCase("defaultpackage.TestMe", "testMe");
 
-   private File tempDir;
+   private File tempDir = TestConstants.getCurrentFolder();
    private File projectFolder;
    private CauseTester executor;
 
    @Before
    public void setUp() {
       try {
-         tempDir = Files.createTempDirectory(new File("target").toPath(), "peass_").toFile();
          projectFolder = new File(tempDir, "project");
 
          FileUtil.copyDir(SOURCE_DIR, projectFolder);

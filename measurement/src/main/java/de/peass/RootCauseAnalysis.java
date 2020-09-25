@@ -39,8 +39,8 @@ public class RootCauseAnalysis extends DependencyTestStarter {
    @Option(names = { "-saveKieker", "--saveKieker" }, description = "Save no kieker results in order to use less space - default false")
    public boolean saveNothing = false;
    
-   @Option(names = { "-ignoreEOIs", "--ignoreEOIs" }, description = "Ignore EOIs - nodes will only be considered different if their kieker pattern or ess differ (saves space and computation time for big trees)")
-   public boolean ignoreEOIs = false;
+   @Option(names = { "-useEOIs", "--useEOIs" }, description = "Use EOIs - nodes will be considered different if their kieker pattern or ess differ (needs space and computation time for big trees)")
+   public boolean useEOIs = false;
 
    @Option(names = { "-notSplitAggregated", "--notSplitAggregated" }, description = "Whether to split the aggregated data (produces aggregated data per time slice)")
    public boolean notSplitAggregated = false;
@@ -94,7 +94,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       final JUnitTestTransformer testtransformer = getTestTransformer(measurementConfiguration);
 
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, !useNonAggregatedWriter, !saveNothing,
-            outlierFactor, !notSplitAggregated, minTime, useCalibrationRun, ignoreEOIs);
+            outlierFactor, !notSplitAggregated, minTime, useCalibrationRun, !useEOIs);
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders);
       if (measureComplete) {
