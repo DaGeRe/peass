@@ -13,7 +13,9 @@ import de.peass.measurement.rca.serialization.MeasuredNode;
 import de.peass.visualization.NodePreparator;
 
 public class TestNodePreperator {
-   CauseSearchData data = new CauseSearchData();
+   
+   private CauseSearchData data = new CauseSearchData();
+   private final TestcaseStatistic statistic = new TestcaseStatistic(1, 2, 0.1, 0.1, 100, 3, true, 5, 0);
    
    @Before
    public void setUp() {
@@ -33,13 +35,7 @@ public class TestNodePreperator {
 
    @Test
    public void testSubtreePreperation() {
-      final TestcaseStatistic statistic = new TestcaseStatistic(1, 2, 0.1, 0.1, 100, 3, true);
-
-      final MeasuredNode root = prepareLongTree();
-      
-      setChildrenStatistic(statistic, root);
-      
-      data.setNodes(root);
+      prepareLongTree();
       
       final NodePreparator preparator = new NodePreparator(data);
       preparator.prepare();
@@ -49,7 +45,7 @@ public class TestNodePreperator {
       Assert.assertEquals(2, preparator.getRootNode().getChildren().get(1).getChildren().size());
    }
 
-   private MeasuredNode prepareLongTree() {
+   private void prepareLongTree() {
       final MeasuredNode root = new MeasuredNode("Test.testMethod", "public void Test.testMethod()");
       
       final MeasuredNode child1 = new MeasuredNode("ClassA.method1", "public void ClassA.method1()");
@@ -68,20 +64,14 @@ public class TestNodePreperator {
       final MeasuredNode child31 = new MeasuredNode("ClassA.method11", "public void ClassA.method11()");
       final MeasuredNode child32 = new MeasuredNode("ClassA.method13", "public void ClassA.method13()");
       child3.setChilds(Arrays.asList(new MeasuredNode[] {child31, child32}));
-      return root;
-   }
-
-   private void setChildrenStatistic(final TestcaseStatistic statistic, final MeasuredNode parent) {
-      parent.setStatistic(statistic);
-      for (final MeasuredNode node : parent.getChildren()) {
-         System.out.println("Setting: " + node);
-         node.setStatistic(statistic);
-         setChildrenStatistic(statistic, node);
-      }
+      
+      setChildrenStatistic(statistic, root);
+      
+      data.setNodes(root);
    }
 
    private void prepareTree() {
-      final TestcaseStatistic statistic = new TestcaseStatistic(1, 2, 0.1, 0.1, 100, 3, true);
+      final TestcaseStatistic statistic = new TestcaseStatistic(1, 2, 0.1, 0.1, 100, 3, true, 5, 0);
 
       final MeasuredNode root = new MeasuredNode("Test.testMethod", "public void Test.testMethod()");
 
@@ -94,10 +84,17 @@ public class TestNodePreperator {
       final MeasuredNode child13 = new MeasuredNode("ClassA.method13", "public void ClassA.method13()");
       child1.setChilds(Arrays.asList(new MeasuredNode[] { child11, child12, child13 }));
 
-      
-
       setChildrenStatistic(statistic, root);
       
       data.setNodes(root);
+   }
+   
+   private void setChildrenStatistic(final TestcaseStatistic statistic, final MeasuredNode parent) {
+      parent.setStatistic(statistic);
+      for (final MeasuredNode node : parent.getChildren()) {
+         System.out.println("Setting: " + node);
+         node.setStatistic(statistic);
+         setChildrenStatistic(statistic, node);
+      }
    }
 }

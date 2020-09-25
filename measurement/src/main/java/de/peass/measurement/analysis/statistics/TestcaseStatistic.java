@@ -38,7 +38,8 @@ public class TestcaseStatistic {
    public TestcaseStatistic(final double meanOld, final double meanCurrent, 
          final double deviationOld, final double deviationCurrent, 
          final long executions, final double tvalue,
-         final boolean isChange) {
+         final boolean isChange,
+         final long calls, final long callsOld) {
       super();
       this.meanOld = meanOld;
       this.meanCurrent = meanCurrent;
@@ -47,6 +48,8 @@ public class TestcaseStatistic {
       this.vms = executions;
       this.tvalue = tvalue;
       this.isChange = isChange;
+      this.calls = calls;
+      this.callsOld = callsOld;
    }
 
    public String getPredecessor() {

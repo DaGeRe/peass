@@ -173,16 +173,16 @@ public class CallTreeNode extends BasicNode {
       if (firstHasValues(current, previous)) {
          return new TestcaseStatistic(current.getMean(), Double.NaN,
                current.getStandardDeviation(), Double.NaN,
-               current.getN(), Double.NaN, true);
+               -1, Double.NaN, true, current.getN(), 0);
       } else if (firstHasValues(previous, current)) {
          return new TestcaseStatistic(Double.NaN, previous.getMean(),
                Double.NaN, previous.getStandardDeviation(),
-               current.getN(), Double.NaN, true);
+               -1, Double.NaN, true, 0, previous.getN());
       } else if ((current == null || current.getN() == 0) && (previous == null || previous.getN() == 0)) {
          LOG.error("Could not measure {}", this);
          return new TestcaseStatistic(Double.NaN, Double.NaN,
                Double.NaN, Double.NaN,
-               0, Double.NaN, false);
+               0, Double.NaN, false, 0, 0);
       } else {
          throw new RuntimeException("Partial statistics should exactly be created if one node is unmeasurable");
       }
