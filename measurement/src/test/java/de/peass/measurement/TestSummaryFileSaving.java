@@ -26,6 +26,9 @@ public class TestSummaryFileSaving {
    @Before
    public void cleanup() {
       FileUtil.deleteContents(testFolder);
+      if (!testFolder.exists()) {
+         testFolder.mkdirs();
+      }
    }
    
    @Test
