@@ -44,7 +44,7 @@ public class TestBimodalChange {
    @Test
    public void testIsUnimodalEqual() {
       List<Result> before = BimodalTestUtil.buildValues(50,50);
-      List<Result> after = BimodalTestUtil.buildValues(50,50.1);
+      List<Result> after = BimodalTestUtil.buildValues(50,50.01);
       CompareData data = new CompareData(before, after);
       
       final BimodalityTester tester = new BimodalityTester(data);
