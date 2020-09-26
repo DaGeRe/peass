@@ -23,7 +23,7 @@ public class TreeFilter extends AbstractFilterPlugin {
    private CallTreeNode root;
 
    private final TestCase test;
-   
+
    private final boolean ignoreEOIs;
 
    public TreeFilter(final String prefix, final IProjectContext projectContext, final TestCase test, boolean ignoreEOIs) {
@@ -40,7 +40,7 @@ public class TreeFilter extends AbstractFilterPlugin {
    public CallTreeNode getRoot() {
       return root;
    }
-   
+
    CallTreeNode lastParent = null, lastAdded = null;
    int lastStackSize = 1;
    long testTraceId = -1;
@@ -48,7 +48,7 @@ public class TreeFilter extends AbstractFilterPlugin {
    @InputPort(name = INPUT_EXECUTION_TRACE, eventTypes = { ExecutionTrace.class })
    public void handleInputs(final ExecutionTrace trace) {
       LOG.info("Trace: " + trace.getTraceId());
-      
+
       for (final Execution execution : trace.getTraceAsSortedExecutionSet()) {
          final String fullClassname = execution.getOperation().getComponentType().getFullQualifiedName().intern();
          final String methodname = execution.getOperation().getSignature().getName().intern();
@@ -56,23 +56,30 @@ public class TreeFilter extends AbstractFilterPlugin {
          final String kiekerPattern = KiekerPatternConverter.getKiekerPattern(execution.getOperation());
          LOG.trace(kiekerPattern);
 
-         if (test.getClazz().equals(fullClassname) && test.getMethod().equals(methodname)) {
-            readRoot(execution, call, kiekerPattern);
-         } else if (root != null && execution.getTraceId() == testTraceId) {
-            LOG.trace(fullClassname + " " + execution.getOperation().getSignature() + " " + execution.getEoi() + " " + execution.getEss());
-            LOG.trace("Last Stack: " + lastStackSize);
-            callLevelDown(execution);
-            callLevelUp(execution);
-            LOG.trace("Parent: " + lastParent.getCall());
-            boolean hasEqualNode = false;
-            for (CallTreeNode candidate : lastParent.getChildren()) {
-               if (candidate.getKiekerPattern().equals(kiekerPattern)) {
-                  hasEqualNode = true;
-               }
+         // ignore synthetic java methods
+         if (!methodname.equals("class$") && !methodname.startsWith("access$")) {
+            addExecutionToTree(execution, fullClassname, methodname, call, kiekerPattern);
+         }
+      }
+   }
+
+   private void addExecutionToTree(final Execution execution, final String fullClassname, final String methodname, final String call, final String kiekerPattern) {
+      if (test.getClazz().equals(fullClassname) && test.getMethod().equals(methodname)) {
+         readRoot(execution, call, kiekerPattern);
+      } else if (root != null && execution.getTraceId() == testTraceId) {
+         LOG.trace(fullClassname + " " + execution.getOperation().getSignature() + " " + execution.getEoi() + " " + execution.getEss());
+         LOG.trace("Last Stack: " + lastStackSize);
+         callLevelDown(execution);
+         callLevelUp(execution);
+         LOG.trace("Parent: " + lastParent.getCall());
+         boolean hasEqualNode = false;
+         for (CallTreeNode candidate : lastParent.getChildren()) {
+            if (candidate.getKiekerPattern().equals(kiekerPattern)) {
+               hasEqualNode = true;
             }
-            if (!ignoreEOIs || !hasEqualNode) {
-               lastAdded = lastParent.appendChild(call, kiekerPattern);
-            }
+         }
+         if (!ignoreEOIs || !hasEqualNode) {
+            lastAdded = lastParent.appendChild(call, kiekerPattern);
          }
       }
    }
