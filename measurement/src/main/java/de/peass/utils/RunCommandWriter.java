@@ -18,6 +18,9 @@ public class RunCommandWriter {
       super();
       this.goal = goal;
       this.experimentId = experimentId;
+      if (dependencies.getUrl() == null) {
+         throw new RuntimeException("Run commands can only be created if URL for download is present!");
+      }
       name = dependencies.getName();
       url = dependencies.getUrl();
    }

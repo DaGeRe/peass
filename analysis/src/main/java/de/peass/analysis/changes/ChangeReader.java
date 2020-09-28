@@ -50,17 +50,27 @@ public class ChangeReader {
    private final VersionData allData = new VersionData();
    // private static VersionKnowledge oldKnowledge;
    private final File statisticsFolder;
-   
+
    private final RunCommandWriterSearchCause runCommandWriter;
 
    public ChangeReader(final RepoFolders resultsFolder, final String projectName) throws FileNotFoundException {
       statisticsFolder = resultsFolder.getProjectStatisticsFolder(projectName);
-      runCommandWriter = new RunCommandWriterSearchCause(new PrintStream(new File(statisticsFolder, "run-" + projectName+".sh")), "default", VersionComparator.getDependencies());
+      if (VersionComparator.getDependencies().getUrl() != null) {
+         final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-" + projectName + ".sh"));
+         runCommandWriter = new RunCommandWriterSearchCause(runCommandPrinter, "default", VersionComparator.getDependencies());
+      } else {
+         runCommandWriter = null;
+      }
    }
 
    public ChangeReader(final File statisticsFolder, final String projectName) throws FileNotFoundException {
       this.statisticsFolder = statisticsFolder;
-      runCommandWriter = new RunCommandWriterSearchCause(new PrintStream(new File(statisticsFolder, "run-" + projectName+".sh")), "default", VersionComparator.getDependencies());
+      if (VersionComparator.getDependencies().getUrl() != null) {
+         final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-" + projectName + ".sh"));
+         runCommandWriter = new RunCommandWriterSearchCause(runCommandPrinter, "default", VersionComparator.getDependencies());
+      } else {
+         runCommandWriter = null;
+      }
    }
 
    public ChangeReader(final String projectName) {
@@ -200,10 +210,10 @@ public class ChangeReader {
                describedChunk.getDescPrevious().getMean(), diff,
                statistic.getTvalue(),
                statistic.getVMs());
-         
+
          if (runCommandWriter != null) {
             final Result exampleResult = describedChunk.getCurrent().get(0);
-            runCommandWriter.createSingleMethodCommand(0, versions[1], testcase.getExecutable(), 
+            runCommandWriter.createSingleMethodCommand(0, versions[1], testcase.getExecutable(),
                   (int) exampleResult.getWarmupExecutions(), (int) exampleResult.getExecutionTimes(), (int) exampleResult.getRepetitions(), describedChunk.getCurrent().size());
          }
       }
