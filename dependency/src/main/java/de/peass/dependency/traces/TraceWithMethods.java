@@ -68,13 +68,7 @@ public class TraceWithMethods {
 		List<Integer> currentDepth = new LinkedList<>();
 		for (final ReducedTraceElement te : elements) {
 			final List<Integer> newDepth = new LinkedList<>();
-			String spaceString = "";
-			for (final Integer depth : currentDepth) {
-				spaceString += " ";
-				if (depth > 1) {
-					newDepth.add(depth - 1);
-				}
-			}
+			String spaceString = getSpaceString(currentDepth, newDepth);
 			result.append(spaceString);
 			currentDepth = newDepth;
 			if (te.getOccurences() != 1) {
@@ -87,17 +81,32 @@ public class TraceWithMethods {
 				final int count = ((RuleContent) te.getValue()).getCount();
 				currentDepth.add(count);
 			} else if (te.getValue() instanceof TraceElementContent && currentSource != null) {
-				final TraceElementContent traceContent = (TraceElementContent) te.getValue();
-				final String source = currentSource.get(traceContent);
-				if (source != null) {
-					result.append(spaceString);
-					result.append(source.replaceAll("\n", "\n" + spaceString));
-					result.append("\n");
-				}
+				writeMethodSource(currentSource, result, te, spaceString);
 			}
 		}
 		return result.toString();
 	}
+
+   private void writeMethodSource(final Map<TraceElementContent, String> currentSource, final StringBuilder result, final ReducedTraceElement te, String spaceString) {
+      final TraceElementContent traceContent = (TraceElementContent) te.getValue();
+      final String source = currentSource.get(traceContent);
+      if (source != null) {
+      	result.append(spaceString);
+      	result.append(source.replaceAll("\n", "\n" + spaceString));
+      	result.append("\n");
+      }
+   }
+
+   private String getSpaceString(List<Integer> currentDepth, final List<Integer> newDepth) {
+      String spaceString = "";
+      for (final Integer depth : currentDepth) {
+      	spaceString += " ";
+      	if (depth > 1) {
+      		newDepth.add(depth - 1);
+      	}
+      }
+      return spaceString;
+   }
 
 	public String getTraceMethods() {
 		return toString();
