@@ -22,19 +22,22 @@ public class RunLengthEncodingSequitur {
    public void reduce() {
       reduce(sequitur.getStartSymbol());
 
-      removeSingleUsageRules();
+      removeSingleUsageRules(sequitur.getStartSymbol().getSuccessor());
 
       reduce(sequitur.getStartSymbol());
    }
 
-   private void removeSingleUsageRules() {
-      Symbol iterator = sequitur.getStartSymbol().getSuccessor();
-      while (iterator != null && iterator.getValue() != null && iterator.getSuccessor() != null && iterator.getSuccessor().getValue() != null) {
-         if (iterator.getValue() instanceof RuleContent && iterator.getOccurences() == 1) {
+   private void removeSingleUsageRules(Symbol iterator) {
+      while (iterator != null && iterator.getValue() != null && iterator.getSuccessor() != null) {
+         if (iterator.getValue() instanceof RuleContent) {
             RuleContent ruleName = (RuleContent) iterator.getValue();
             Rule rule = sequitur.getRules().get(ruleName.getValue());
 
-            removeSingleOccurenceRule(iterator, rule);
+            removeSingleUsageRules(rule.getAnchor().getSuccessor());
+            
+            if (iterator.getOccurences() == 1) {
+               removeSingleOccurenceRule(iterator, rule);
+            }
 
             iterator = iterator.getSuccessor();
          } else {
