@@ -48,19 +48,23 @@ public class RunLengthEncodingSequitur {
       Symbol currentPredecessor = iterator.getPredecessor();
       Symbol ruleIterator = rule.getAnchor().getSuccessor();
       while (ruleIterator.getSuccessor() != rule.getAnchor()) {
-         Symbol copied = new Symbol(sequitur, ruleIterator.getValue(), ruleIterator.getRule());
-         currentPredecessor.setSuccessor(copied);
-         copied.setPredecessor(currentPredecessor);
+         Symbol copied = copySymbol(currentPredecessor, ruleIterator);
 
          currentPredecessor = copied;
          ruleIterator = ruleIterator.getSuccessor();
       }
-      Symbol copied = new Symbol(sequitur, ruleIterator.getValue(), ruleIterator.getRule());
-      currentPredecessor.setSuccessor(copied);
-      copied.setPredecessor(currentPredecessor);
+      Symbol copied = copySymbol(currentPredecessor, ruleIterator);
 
       copied.setSuccessor(iterator.getSuccessor());
       iterator.getSuccessor().setPredecessor(copied);
+   }
+
+   private Symbol copySymbol(Symbol currentPredecessor, Symbol ruleIterator) {
+      Symbol copied = new Symbol(sequitur, ruleIterator.getValue(), ruleIterator.getRule());
+      copied.setOccurences(ruleIterator.getOccurences());
+      currentPredecessor.setSuccessor(copied);
+      copied.setPredecessor(currentPredecessor);
+      return copied;
    }
 
    private void reduce(final Symbol start) {
