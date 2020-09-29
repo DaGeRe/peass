@@ -21,29 +21,73 @@ public class RunLengthEncodingSequitur {
 
    public void reduce() {
       reduce(sequitur.getStartSymbol());
+
+      removeSingleUsageRules();
+
+      reduce(sequitur.getStartSymbol());
+   }
+
+   private void removeSingleUsageRules() {
+      Symbol iterator = sequitur.getStartSymbol().getSuccessor();
+      while (iterator != null && iterator.getValue() != null && iterator.getSuccessor() != null && iterator.getSuccessor().getValue() != null) {
+         if (iterator.getValue() instanceof RuleContent && iterator.getOccurences() == 1) {
+            RuleContent ruleName = (RuleContent) iterator.getValue();
+            Rule rule = sequitur.getRules().get(ruleName.getValue());
+
+            removeSingleOccurenceRule(iterator, rule);
+
+            iterator = iterator.getSuccessor();
+         } else {
+            iterator = iterator.getSuccessor();
+         }
+         // TraceStateTester.assureCorrectState(sequitur);
+      }
+   }
+
+   private void removeSingleOccurenceRule(Symbol iterator, Rule rule) {
+      Symbol currentPredecessor = iterator.getPredecessor();
+      Symbol ruleIterator = rule.getAnchor().getSuccessor();
+      while (ruleIterator.getSuccessor() != rule.getAnchor()) {
+         Symbol copied = new Symbol(sequitur, ruleIterator.getValue(), ruleIterator.getRule());
+         currentPredecessor.setSuccessor(copied);
+         copied.setPredecessor(currentPredecessor);
+
+         currentPredecessor = copied;
+         ruleIterator = ruleIterator.getSuccessor();
+      }
+      Symbol copied = new Symbol(sequitur, ruleIterator.getValue(), ruleIterator.getRule());
+      currentPredecessor.setSuccessor(copied);
+      copied.setPredecessor(currentPredecessor);
+
+      copied.setSuccessor(iterator.getSuccessor());
+      iterator.getSuccessor().setPredecessor(copied);
    }
 
    private void reduce(final Symbol start) {
       Symbol iterator = start.getSuccessor();
-      subReduce(iterator);
+      reduceRule(iterator);
       while (iterator != null && iterator.getValue() != null && iterator.getSuccessor() != null && iterator.getSuccessor().getValue() != null) {
          final Symbol successor = iterator.getSuccessor();
-         subReduce(successor);
+         reduceRule(successor);
          if (iterator.valueEqual(successor)) {
-            if (successor.getSuccessor() != null) {
-               iterator.setSuccessor(successor.getSuccessor());
-               successor.getSuccessor().setPredecessor(iterator);
-            } else {
-               iterator.setSuccessor(null);
-            }
-            iterator.setOccurences(iterator.getOccurences() + successor.getOccurences());
+            mergeOccurences(iterator, successor);
          } else {
             iterator = iterator.getSuccessor();
          }
       }
    }
 
-   private void subReduce(final Symbol containingSymbol) {
+   private void mergeOccurences(Symbol iterator, final Symbol successor) {
+      if (successor.getSuccessor() != null) {
+         iterator.setSuccessor(successor.getSuccessor());
+         successor.getSuccessor().setPredecessor(iterator);
+      } else {
+         iterator.setSuccessor(null);
+      }
+      iterator.setOccurences(iterator.getOccurences() + successor.getOccurences());
+   }
+
+   private void reduceRule(final Symbol containingSymbol) {
       if (containingSymbol.isRule()) {
          LOG.trace("Reduce: {}", containingSymbol);
          final Rule rule = containingSymbol.getRule();
@@ -53,16 +97,20 @@ public class RunLengthEncodingSequitur {
          LOG.trace("Reduced: {}", rule.getName());
          LOG.trace("Rule-Length: {}", rule.getElements().size() + " " + (firstSymbolOfRule.getSuccessor() == iterator));
          if (firstSymbolOfRule.getSuccessor() == iterator) { // Irgendwie entsteht hier die Zuordnung #1 auf Regel #0
-            containingSymbol.setValue(firstSymbolOfRule.getValue());
-            containingSymbol.setOccurences(containingSymbol.getOccurences() * firstSymbolOfRule.getOccurences());
-            containingSymbol.decrementUsage(rule);
-            if (firstSymbolOfRule.getRule() != null) {
-               containingSymbol.setRule(firstSymbolOfRule.getRule());
-            } else {
-               firstSymbolOfRule.setRule(null);
-            }
+            removeRuleUsage(containingSymbol, rule, firstSymbolOfRule);
          }
          // TraceStateTester.testTrace(sequitur);
+      }
+   }
+
+   private void removeRuleUsage(final Symbol containingSymbol, final Rule rule, final Symbol firstSymbolOfRule) {
+      containingSymbol.setValue(firstSymbolOfRule.getValue());
+      containingSymbol.setOccurences(containingSymbol.getOccurences() * firstSymbolOfRule.getOccurences());
+      containingSymbol.decrementUsage(rule);
+      if (firstSymbolOfRule.getRule() != null) {
+         containingSymbol.setRule(firstSymbolOfRule.getRule());
+      } else {
+         firstSymbolOfRule.setRule(null);
       }
    }
 
@@ -108,9 +156,10 @@ public class RunLengthEncodingSequitur {
 
    private int addRuleContent(final Symbol iterator, final List<ReducedTraceElement> trace, final Content content, final ReducedTraceElement newElement) {
       final RuleContent currentContent = (RuleContent) content;
-      if (newElement.getOccurences() > 1)
-         trace.add(newElement);
-      final Symbol anchor = iterator.getRule().getAnchor();
+      // if (newElement.getOccurences() > 1)
+      trace.add(newElement);
+      final Rule rule = iterator.getRule();
+      final Symbol anchor = rule.getAnchor();
       Symbol ruleIterator = anchor.getSuccessor();
       int subElements = 1;
       while (ruleIterator != anchor) {
@@ -118,7 +167,7 @@ public class RunLengthEncodingSequitur {
          ruleIterator = ruleIterator.getSuccessor();
       }
       currentContent.setCount(subElements - 1);
-      return newElement.getOccurences() > 1 ? subElements : subElements - 1;
+      return subElements;
    }
 
 }

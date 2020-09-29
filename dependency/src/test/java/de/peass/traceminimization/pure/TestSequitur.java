@@ -24,98 +24,112 @@ import de.peass.dependency.traces.requitur.content.StringContent;
  */
 public class TestSequitur {
 
+   private final Sequitur seq = new Sequitur();
+   
    public static List<String> contentToStringTrace(final List<Content> expandedTrace) {
       return expandedTrace.stream().map(value -> ((StringContent) value).getValue()).collect(Collectors.toList());
    }
 
    @Test
    public void testBasic() {
-      final Sequitur seg = new Sequitur();
       final List<String> mytrace = new LinkedList<>();
       for (int i = 0; i < 2; i++) {
          mytrace.add("A");
          mytrace.add("B");
       }
-      seg.addElements(mytrace);
+      seq.addElements(mytrace);
 
-      final List<Content> trace = seg.getUncompressedTrace();
+      final List<Content> trace = seq.getUncompressedTrace();
       System.out.println(trace);
       Assert.assertEquals(2, trace.size());
       Assert.assertEquals("#0", ((RuleContent) trace.get(0)).getValue());
       Assert.assertEquals("#0", ((RuleContent) trace.get(1)).getValue());
-      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seq.getRules());
+      Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
+   }
+   
+   @Test
+   public void testSequence() {
+      String content[] = new String[] { "B", "B", "B", "C", "C", "B", "B", "C", "C" };
+      System.out.println(Arrays.toString(content));
+      List<String> mytrace = Arrays.asList(content);
+      
+      seq.addElements(mytrace);
+
+      final List<Content> trace = seq.getUncompressedTrace();
+      System.out.println(trace + " " + seq.getRules());
+      Assert.assertEquals(5, trace.size());
+      Assert.assertEquals("#0", ((RuleContent) trace.get(0)).getValue());
+      Assert.assertEquals("B", ((StringContent) trace.get(1)).getValue());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seq.getRules());
       Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
    }
 
    @Test
    public void testOverlappingPredecessor() {
-      final Sequitur seg = new Sequitur();
       final List<String> mytrace = new LinkedList<>();
       for (final String c : new String[] { "f", "e", "f", "e", "f", "f", "f", "e", "f", "g", "h", "c", "d", "f", "e", "f", "f", "x" }) {
          mytrace.add(c);
       }
-      seg.addElements(mytrace);
+      seq.addElements(mytrace);
 
-      final List<Content> trace = seg.getUncompressedTrace();
+      final List<Content> trace = seq.getUncompressedTrace();
       System.out.println(trace);
       Assert.assertEquals(9, trace.size());
-      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seq.getRules());
       Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
    }
 
    @Test
    public void testCorrectNamesExtended() {
-      final Sequitur seg = new Sequitur();
       final List<String> mytrace = new LinkedList<>();
       for (final String c : new String[] { "setUp", "test", "a", "b", "c", "a", "b", "c" }) {
          mytrace.add(c);
       }
-      seg.addElements(mytrace);
+      seq.addElements(mytrace);
 
-      final List<Content> trace = seg.getUncompressedTrace();
+      final List<Content> trace = seq.getUncompressedTrace();
       System.out.println(trace);
       Assert.assertEquals(4, trace.size());
       // Assert.assertEquals("#0 (2)", trace.get(2)); // Could be tested sometimes..
-      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seq.getRules());
       Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
    }
 
    @Test
    public void testCorrectNamesSimple() {
-      final Sequitur seg = new Sequitur();
       final List<String> mytrace = new LinkedList<>();
       for (final String c : new String[] { "setUp", "test", "a", "b", "a", "b" }) {
          mytrace.add(c);
       }
-      seg.addElements(mytrace);
+      seq.addElements(mytrace);
 
-      final List<Content> trace = seg.getUncompressedTrace();
+      final List<Content> trace = seq.getUncompressedTrace();
       System.out.println(trace);
       Assert.assertEquals(4, trace.size());
-      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seq.getRules());
       Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
    }
 
    @Test
    public void testOverlappingSuccessor() {
-      final Sequitur seg = new Sequitur();
+      final Sequitur seq = new Sequitur();
       final List<String> mytrace = new LinkedList<>();
       for (final String c : new String[] { "D", "E", "G", "K", "I", "J", "I", "J", "I", "J", "X", "M", "L", "N", "O", "P", "T", "Q", "R", "S", "R", "S", "R", "S", "U", "V", "W",
             "V", "X", "M", "L", "N", "O", "P", "T", "Q", "R", "S" }) {
          mytrace.add(c);
       }
-      seg.addElements(mytrace);
+      seq.addElements(mytrace);
 
-      final List<Content> trace = seg.getUncompressedTrace();
+      final List<Content> trace = seq.getUncompressedTrace();
       System.out.println(trace);
       Assert.assertEquals(15, trace.size());
-      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seq.getRules());
       Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
    }
 
    @Test
    public void testViewExample() {
-      final Sequitur seg = new Sequitur();
       final List<String> mytrace = new LinkedList<>();
       mytrace.add("A");
       mytrace.add("B");
@@ -127,38 +141,36 @@ public class TestSequitur {
          mytrace.add("E");
       }
       mytrace.add("E");
-      seg.addElements(mytrace);
+      seq.addElements(mytrace);
 
-      final List<Content> trace = seg.getUncompressedTrace();
+      final List<Content> trace = seq.getUncompressedTrace();
       System.out.println(trace);
       Assert.assertEquals(8, trace.size());
-      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seq.getRules());
       Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
    }
 
    @Test
    public void testTriple() {
-      final Sequitur seg = new Sequitur();
       final List<String> mytrace = new LinkedList<>();
       for (int i = 0; i < 2; i++) {
          mytrace.add("A");
          mytrace.add("B");
          mytrace.add("C");
       }
-      seg.addElements(mytrace);
+      seq.addElements(mytrace);
 
-      final List<Content> trace = seg.getUncompressedTrace();
+      final List<Content> trace = seq.getUncompressedTrace();
       System.out.println(trace);
       Assert.assertEquals(2, trace.size());
       Assert.assertEquals("#1", ((RuleContent) trace.get(0)).getValue());
       Assert.assertEquals("#1", ((RuleContent) trace.get(1)).getValue());
-      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seq.getRules());
       Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
    }
 
    @Test
    public void testQuad() {
-      final Sequitur seg = new Sequitur();
       final List<String> mytrace = new LinkedList<>();
       for (int i = 0; i < 2; i++) {
          mytrace.add("A");
@@ -166,20 +178,19 @@ public class TestSequitur {
          mytrace.add("C");
          mytrace.add("D");
       }
-      seg.addElements(mytrace);
+      seq.addElements(mytrace);
 
-      final List<Content> trace = seg.getUncompressedTrace();
+      final List<Content> trace = seq.getUncompressedTrace();
       System.out.println(trace);
-      System.out.println(seg.getRules());
+      System.out.println(seq.getRules());
       Assert.assertEquals(2, trace.size());
-      Assert.assertEquals(1, seg.getRules().size());
-      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      Assert.assertEquals(1, seq.getRules().size());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seq.getRules());
       Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
    }
 
    @Test
    public void test6() {
-      final Sequitur seg = new Sequitur();
       final List<String> mytrace = new LinkedList<>();
       for (int i = 0; i < 2; i++) {
          mytrace.add("A");
@@ -189,20 +200,19 @@ public class TestSequitur {
          mytrace.add("E");
          mytrace.add("F");
       }
-      seg.addElements(mytrace);
+      seq.addElements(mytrace);
 
-      final List<Content> trace = seg.getUncompressedTrace();
+      final List<Content> trace = seq.getUncompressedTrace();
       System.out.println(trace);
-      System.out.println(seg.getRules());
+      System.out.println(seq.getRules());
       Assert.assertEquals(2, trace.size());
-      Assert.assertEquals(1, seg.getRules().size());
-      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      Assert.assertEquals(1, seq.getRules().size());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seq.getRules());
       Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
    }
 
    @Test
    public void testNested() {
-      final Sequitur seg = new Sequitur();
       final List<String> mytrace = new LinkedList<>();
       for (int j = 0; j < 3; j++) {
          for (int i = 0; i < 2; i++) {
@@ -217,14 +227,14 @@ public class TestSequitur {
       mytrace.add("A");
       mytrace.add("B");
       mytrace.add("H");
-      seg.addElements(mytrace);
+      seq.addElements(mytrace);
 
-      final List<Content> trace = seg.getUncompressedTrace();
+      final List<Content> trace = seq.getUncompressedTrace();
       System.out.println(trace);
-      System.out.println(seg.getRules());
+      System.out.println(seq.getRules());
       Assert.assertEquals(5, trace.size());
-      Assert.assertEquals(3, seg.getRules().size());
-      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      Assert.assertEquals(3, seq.getRules().size());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seq.getRules());
       Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
    }
 
@@ -260,7 +270,6 @@ public class TestSequitur {
 
    @Test
    public void testRuleOnce() {
-
       final List<String> mytrace = new LinkedList<>();
       for (int j = 0; j < 2; j++) {
          for (int i = 0; i < 2; i++) {
@@ -275,13 +284,12 @@ public class TestSequitur {
       mytrace.add("A");
       mytrace.add("B");
       mytrace.add("C");
-      final Sequitur seg = new Sequitur();
-      seg.addElements(mytrace);
+      seq.addElements(mytrace);
 
-      final List<Content> trace = seg.getUncompressedTrace();
+      final List<Content> trace = seq.getUncompressedTrace();
       System.out.println(trace);
-      System.out.println(seg.getRules());
-      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      System.out.println(seq.getRules());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seq.getRules());
       Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
    }
 
@@ -304,33 +312,31 @@ public class TestSequitur {
          // mytrace.add("B");
          // mytrace.add("H");
       }
-      final Sequitur seg = new Sequitur();
-      seg.addElements(mytrace);
+      seq.addElements(mytrace);
 
-      final List<Content> trace = seg.getUncompressedTrace();
+      final List<Content> trace = seq.getUncompressedTrace();
       System.out.println(trace);
-      System.out.println(seg.getRules());
+      System.out.println(seq.getRules());
       // Assert.assertEquals(10, trace.size());
-      Assert.assertEquals(5, seg.getRules().size());
-      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      Assert.assertEquals(5, seq.getRules().size());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seq.getRules());
       Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
    }
 
    @Test
    public void testMoreRuleUsage() {
       final List<String> mytrace = new LinkedList<>();
-      final Sequitur seg = new Sequitur();
       for (int i = 0; i < 3; i++) {
          mytrace.add("A");
          mytrace.add("B");
       }
-      seg.addElements(mytrace);
+      seq.addElements(mytrace);
 
-      final List<Content> trace = seg.getUncompressedTrace();
+      final List<Content> trace = seq.getUncompressedTrace();
       System.out.println(trace);
-      System.out.println(seg.getRules());
+      System.out.println(seq.getRules());
       Assert.assertEquals(3, trace.size());
-      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seg.getRules());
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(trace, seq.getRules());
       Assert.assertEquals(mytrace, contentToStringTrace(expandedTrace));
    }
 }

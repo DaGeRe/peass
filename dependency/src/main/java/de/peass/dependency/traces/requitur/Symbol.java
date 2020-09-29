@@ -30,6 +30,7 @@ class Symbol {
 		this.sequitur = seguitur;
 		this.value = other.value;
 		this.name = other.name;
+		this.occurences = other.getOccurences();
 		if (other.rule != null) {
 			rule = other.rule;
 			rule.usage++;
@@ -123,24 +124,28 @@ class Symbol {
 			rule.decrementUsage();
 			// System.out.println("Decrement usage: " + rule.value + " " + rule.usage);
 			if (rule.usage == 1) {
-				if (rule.getAnchor().successor.successor == rule.getAnchor().predecessor) {
-					replaceTraceDigram();
-				}
-				final Symbol firstElement = rule.getAnchor().successor;
-				final Symbol lastElement = rule.getAnchor().predecessor;
-				sequitur.rules.remove(rule.getName());
-				sequitur.ununsedRules.add(rule);
-				if (usingRule.getAnchor().successor.equals(this)) {
-					replaceStartRule(usingRule, firstElement, lastElement);
-				} else if (usingRule.getAnchor().predecessor.equals(this)) {
-					replaceEndRule(usingRule, firstElement, lastElement);
-				} else {
-					throw new RuntimeException("Unexpected: Rule-Symbol " + getValue() + " is deleted, but deleted symbol is neither start nor end of rule " + usingRule);
-				}
-				rule.usage = 0;
+				removeSingleUsageRule(usingRule);
 			}
 		}
 	}
+
+   public void removeSingleUsageRule(final Rule usingRule) {
+      if (rule.getAnchor().successor.successor == rule.getAnchor().predecessor) {
+      	replaceTraceDigram();
+      }
+      final Symbol firstElement = rule.getAnchor().successor;
+      final Symbol lastElement = rule.getAnchor().predecessor;
+      sequitur.rules.remove(rule.getName());
+      sequitur.ununsedRules.add(rule);
+      if (usingRule.getAnchor().successor.equals(this)) {
+      	replaceStartRule(usingRule, firstElement, lastElement);
+      } else if (usingRule.getAnchor().predecessor.equals(this)) {
+      	replaceEndRule(usingRule, firstElement, lastElement);
+      } else {
+      	throw new RuntimeException("Unexpected: Rule-Symbol " + getValue() + " is deleted, but deleted symbol is neither start nor end of rule " + usingRule);
+      }
+      rule.usage = 0;
+   }
 
 	private void replaceEndRule(final Rule usingRule, final Symbol firstElement, final Symbol lastElement) {
 		final Symbol temp = usingRule.getAnchor().predecessor.predecessor;

@@ -70,14 +70,8 @@ public class Sequitur {
                   rule = ununsedRules.remove(0);
                   rule.setDigram(existing);
                } else {
-                  // if (digram.getStart().isRule() && digram.getStart().getRule().getUsage() == 2) {
-                  // rule = digram.getStart().getRule();
-                  // link(rule.getAnchor().getPredecessor(), digram.getEnd());
-                  // link(existing.getStart(), existing.getEnd().getSucessor());
-                  // } else {
                   rule = new Rule(this, ruleindex, existing);
                   ruleindex++;
-                  // }
                }
                rules.put(rule.getName(), rule);
 
