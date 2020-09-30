@@ -186,12 +186,12 @@ public class CallTreeNode extends BasicNode {
       final SummaryStatistics previous = previousVersionStatistics.getStatistics();
 
       if (firstHasValues(current, previous)) {
-         return new TestcaseStatistic(current.getMean(), Double.NaN,
-               current.getStandardDeviation(), Double.NaN,
+         return new TestcaseStatistic(Double.NaN, current.getMean(),
+               Double.NaN, current.getStandardDeviation(),
                current.getN(), Double.NaN, true, currentVersionStatistics.getCalls(), 0);
       } else if (firstHasValues(previous, current)) {
-         return new TestcaseStatistic(Double.NaN, previous.getMean(),
-               Double.NaN, previous.getStandardDeviation(),
+         return new TestcaseStatistic(previous.getMean(), Double.NaN, 
+               previous.getStandardDeviation(), Double.NaN, 
                previous.getN(), Double.NaN, true, 0, previousVersionStatistics.getCalls());
       } else if ((current == null || current.getN() == 0) && (previous == null || previous.getN() == 0)) {
          LOG.error("Could not measure {}", this);
