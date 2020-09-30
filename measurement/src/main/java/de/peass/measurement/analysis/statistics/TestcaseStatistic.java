@@ -23,7 +23,7 @@ public class TestcaseStatistic {
 
    }
 
-   public TestcaseStatistic(final StatisticalSummary statisticsCurrent, final StatisticalSummary statisticsOld, final long calls, final long callsOld) {
+   public TestcaseStatistic(final StatisticalSummary statisticsOld, final StatisticalSummary statisticsCurrent, final long callsOld, final long calls) {
       this.meanCurrent = statisticsCurrent.getMean();
       this.meanOld = statisticsOld.getMean();
       this.deviationCurrent = statisticsCurrent.getStandardDeviation();
@@ -33,13 +33,15 @@ public class TestcaseStatistic {
       this.isChange = null;
       this.calls = calls;
       this.callsOld = callsOld;
+      
+      check();
    }
 
    public TestcaseStatistic(final double meanOld, final double meanCurrent, 
          final double deviationOld, final double deviationCurrent, 
          final long executions, final double tvalue,
-         final boolean isChange,
-         final long calls, final long callsOld) {
+         final boolean isChange, 
+         final long callsOld, final long calls) {
       super();
       this.meanOld = meanOld;
       this.meanCurrent = meanCurrent;
@@ -51,6 +53,10 @@ public class TestcaseStatistic {
       this.calls = calls;
       this.callsOld = callsOld;
       
+      check();
+   }
+
+   private void check() {
       if (callsOld == 0 && (!Double.isNaN(meanOld) || !Double.isNaN(deviationOld))) {
          throw new RuntimeException("Old data need to be not defined at all or contain a count of calls, a mean and a deviation!");
       }

@@ -75,10 +75,7 @@ public class TestStatistic {
 
    private void addToInfo(final EvaluationPair data, final ProjectStatistics info, final int resultslength) {
       if (info != null) {
-         info.addMeasurement(data.getVersion(), data.getTestcase(), 
-               statisticsPrevious.getMean(), statisticsCurrent.getMean(), 
-               statisticsPrevious.getStandardDeviation(), statisticsCurrent.getStandardDeviation(),
-               resultslength, tValue);
+         info.addMeasurement(data.getVersion(), data.getTestcase(), statisticsPrevious, statisticsCurrent, resultslength);
          try {
             FolderSearcher.MAPPER.writeValue(new File("results/statistics.json"), info);
          } catch (final IOException e) {

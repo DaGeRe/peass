@@ -1,4 +1,4 @@
-package de.peass.properties;
+package de.peass.visualization;
 
 import java.util.Arrays;
 
@@ -12,10 +12,10 @@ import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.serialization.MeasuredNode;
 import de.peass.visualization.NodePreparator;
 
-public class TestNodePreperator {
+public class TestNodePreperatorColor {
    
    private CauseSearchData data = new CauseSearchData();
-   private final TestcaseStatistic statistic = new TestcaseStatistic(1, 2, 0.1, 0.1, 100, 3, true, 5, 0);
+   private final TestcaseStatistic statistic = new TestcaseStatistic(1, 2, 0.1, 0.1, 100, 3, true, 5, 3);
    
    @Before
    public void setUp() {
@@ -71,7 +71,7 @@ public class TestNodePreperator {
    }
 
    private void prepareTree() {
-      final TestcaseStatistic statistic = new TestcaseStatistic(1, 2, 0.1, 0.1, 100, 3, true, 5, 0);
+      final TestcaseStatistic statistic = new TestcaseStatistic(1, 2, 0.1, 0.1, 100, 3, true, 3, 5);
 
       final MeasuredNode root = new MeasuredNode("Test.testMethod", "public void Test.testMethod()");
 

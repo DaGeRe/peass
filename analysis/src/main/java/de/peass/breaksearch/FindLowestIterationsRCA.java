@@ -61,7 +61,7 @@ class ValueVMResult implements OneVMResult {
    public List<Long> subList(final int i, final int iterations) {
       return values.subList(i, iterations);
    }
-   
+
    @Override
    public long getCalls() {
       throw new RuntimeException("Not implemented yet.");
@@ -181,19 +181,19 @@ class FullDataCallTreeNode extends CallTreeNode {
    public TestcaseStatistic getMinTestcaseStatistic(final int iterations) {
       final SummaryStatistics current = ((FullCallTreeStatistic) data.get(version)).getMinStatistics(iterations);
       final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(predecessor)).getMinStatistics(iterations);
-      return new TestcaseStatistic(current, previous, data.get(version).getCalls(), data.get(previous).getCalls());
+      return new TestcaseStatistic(previous, current, data.get(predecessor).getCalls(), data.get(version).getCalls());
    }
 
    public TestcaseStatistic getMedianTestcaseStatistic(final int iterations) {
       final SummaryStatistics current = ((FullCallTreeStatistic) data.get(version)).getMedianStatistics(iterations);
       final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(predecessor)).getMedianStatistics(iterations);
-      return new TestcaseStatistic(current, previous, data.get(version).getCalls(), data.get(previous).getCalls());
+      return new TestcaseStatistic(previous, current, data.get(predecessor).getCalls(), data.get(version).getCalls());
    }
 
    public TestcaseStatistic getTestcaseStatistic(final int iterations) {
       final SummaryStatistics current = ((FullCallTreeStatistic) data.get(version)).getStatistics(iterations);
       final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(predecessor)).getStatistics(iterations);
-      return new TestcaseStatistic(current, previous, data.get(version).getCalls(), data.get(previous).getCalls());
+      return new TestcaseStatistic(previous, current, data.get(predecessor).getCalls(), data.get(version).getCalls());
    }
 
    public boolean hasData() {
@@ -279,7 +279,7 @@ public class FindLowestIterationsRCA {
             printData((FullDataCallTreeNode) node, iterations);
          }
       }
-      
+
    }
 
    private void readLevel(final File versionFolder, final String version, final File levelFolder) throws AnalysisConfigurationException {

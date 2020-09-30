@@ -20,12 +20,9 @@ import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 /**
  * Saves the call tree structure and measurement data of the call tree
  * 
- * If the measurements are added call by call, the API is:
- * 1) call setVersions with the versions to compare
- * 2) call newVM with the current version
- * 3) call addMeasurement with all values
- * 4) repeat 2) and 3) until all measurements are read
- * 5) call createStatistics with both versions
+ * If the measurements are added call by call, the API is: 1) call setVersions with the versions to compare 2) call newVM with the current version 3) call addMeasurement with all
+ * values 4) repeat 2) and 3) until all measurements are read 5) call createStatistics with both versions
+ * 
  * @author reichelt
  *
  */
@@ -169,7 +166,8 @@ public class CallTreeNode extends BasicNode {
       final CallTreeStatistics previousVersionStatistics = data.get(predecessor);
       final SummaryStatistics previous = previousVersionStatistics.getStatistics();
       try {
-         final TestcaseStatistic testcaseStatistic = new TestcaseStatistic(current, previous, currentVersionStatistics.getCalls(), previousVersionStatistics.getCalls());
+         final TestcaseStatistic testcaseStatistic = new TestcaseStatistic(previous, current, 
+               previousVersionStatistics.getCalls(), currentVersionStatistics.getCalls());
          return testcaseStatistic;
       } catch (NumberIsTooSmallException t) {
          LOG.debug("Data: " + current.getN() + " " + previous.getN());
@@ -188,11 +186,11 @@ public class CallTreeNode extends BasicNode {
       if (firstHasValues(current, previous)) {
          return new TestcaseStatistic(Double.NaN, current.getMean(),
                Double.NaN, current.getStandardDeviation(),
-               current.getN(), Double.NaN, true, currentVersionStatistics.getCalls(), 0);
+               current.getN(), Double.NaN, true, 0, currentVersionStatistics.getCalls());
       } else if (firstHasValues(previous, current)) {
-         return new TestcaseStatistic(previous.getMean(), Double.NaN, 
-               previous.getStandardDeviation(), Double.NaN, 
-               previous.getN(), Double.NaN, true, 0, previousVersionStatistics.getCalls());
+         return new TestcaseStatistic(previous.getMean(), Double.NaN,
+               previous.getStandardDeviation(), Double.NaN,
+               previous.getN(), Double.NaN, true, previousVersionStatistics.getCalls(), 0);
       } else if ((current == null || current.getN() == 0) && (previous == null || previous.getN() == 0)) {
          LOG.error("Could not measure {}", this);
          return new TestcaseStatistic(Double.NaN, Double.NaN,
