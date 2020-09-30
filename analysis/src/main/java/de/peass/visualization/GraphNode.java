@@ -8,31 +8,33 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.measurement.rca.data.BasicNode;
+import de.peass.measurement.rca.data.CauseSearchData;
+import de.peass.visualization.GraphNode.State;
 
 public class GraphNode extends BasicNode {
 
-   public static enum State{
+   public static enum State {
       FASTER, SLOWER, UNKNOWN;
    }
-   
+
    private String name, key;
    private String parent;
    private String color;
    private TestcaseStatistic statistic;
    private boolean hasSourceChange = false;
    private State state;
-   
+
    @JsonInclude(Include.NON_NULL)
    private double[] values = null;
    @JsonInclude(Include.NON_NULL)
    private double[] valuesPredecessor = null;
    private List<GraphNode> children = new LinkedList<>();
-   
+
    public GraphNode(final String call, final String kiekerPattern) {
       super(call, kiekerPattern);
       key = KiekerPatternConverter.getKey(kiekerPattern);
    }
-   
+
    public String getKey() {
       return key;
    }
@@ -97,7 +99,7 @@ public class GraphNode extends BasicNode {
    public void setChildren(final List<GraphNode> children) {
       this.children = children;
    }
-   
+
    @Override
    public String toString() {
       return "Graph: " + kiekerPattern;
@@ -117,5 +119,17 @@ public class GraphNode extends BasicNode {
 
    public void setState(final State state) {
       this.state = state;
+   }
+
+   public void setSlower() {
+      setColor(NodePreparator.COLOR_SLOWER);
+      setState(State.SLOWER);
+      getStatistic().setChange(true);
+   }
+
+   public void setFaster() {
+      setColor(NodePreparator.COLOR_FASTER);
+      setState(State.FASTER);
+      getStatistic().setChange(true);
    }
 }

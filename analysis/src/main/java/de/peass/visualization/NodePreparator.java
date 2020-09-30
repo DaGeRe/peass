@@ -20,6 +20,9 @@ import de.peass.visualization.GraphNode.State;
 
 public class NodePreparator {
 
+   public static final String COLOR_FASTER = "#00FF00";
+   public static final String COLOR_SLOWER = "#FF0000";
+
    private static final Logger LOG = LogManager.getLogger(NodePreparator.class);
 
    private CallTreeNode rootPredecessor, rootVersion;
@@ -190,33 +193,32 @@ public class NodePreparator {
       final StatisticalSummary statisticsOld = measuredNode.getStatistic().getStatisticsOld();
       final StatisticalSummary statisticsCurrent = measuredNode.getStatistic().getStatisticsCurrent();
       try {
-         final boolean isChange = StatisticUtil.isChange(statisticsOld, statisticsCurrent, data.getMeasurementConfig()) == Relation.UNEQUAL;
-         if (isChange && measuredNode.getStatistic().getMeanCurrent() > 0.001 && measuredNode.getStatistic().getMeanOld() > 0.001) {
-            if (measuredNode.getStatistic().getTvalue() < 0) {
-               graphNode.setColor("#FF0000");
-               graphNode.setState(State.SLOWER);
-               graphNode.getStatistic().setChange(true);
-            } else {
-               graphNode.setColor("#00FF00");
-               graphNode.setState(State.FASTER);
-               graphNode.getStatistic().setChange(true);
-            }
-         } else if (Double.isNaN(statisticsOld.getMean()) && !Double.isNaN(statisticsCurrent.getMean())) {
-            graphNode.setColor("#00FF00");
-            graphNode.setState(State.FASTER);
-            graphNode.getStatistic().setChange(true);
-         } else if (!Double.isNaN(statisticsOld.getMean()) && Double.isNaN(statisticsCurrent.getMean())) {
-            graphNode.setColor("#FF0000");
-            graphNode.setState(State.SLOWER);
-            graphNode.getStatistic().setChange(true);
-         } else {
-            graphNode.setColor("#FFFFFF");
-            graphNode.getStatistic().setChange(false);
-         }
+         setColorFullStatistics(measuredNode, graphNode, statisticsOld, statisticsCurrent);
       } catch (Exception e) {
-         throw new RuntimeException("Could not examine change " + measuredNode.getKiekerPattern(), e);
+         throw new RuntimeException("Could not examine change " + measuredNode.getKiekerPattern() + " " + measuredNode.getOtherKiekerPattern(), e);
       }
 
+   }
+
+   private void setColorFullStatistics(final MeasuredNode measuredNode, final GraphNode graphNode, final StatisticalSummary statisticsOld,
+         final StatisticalSummary statisticsCurrent) {
+      if (measuredNode.getStatistic().getMeanCurrent() > 0.001 && measuredNode.getStatistic().getMeanOld() > 0.001) {
+         final boolean isChange = StatisticUtil.isChange(statisticsOld, statisticsCurrent, data.getMeasurementConfig()) == Relation.UNEQUAL;
+         if (isChange) {
+            if (measuredNode.getStatistic().getTvalue() < 0) {
+               graphNode.setSlower();
+            } else {
+               graphNode.setFaster();
+            }
+         }
+      } else if (Double.isNaN(statisticsOld.getMean()) && !Double.isNaN(statisticsCurrent.getMean())) {
+         graphNode.setFaster();
+      } else if (!Double.isNaN(statisticsOld.getMean()) && Double.isNaN(statisticsCurrent.getMean())) {
+         graphNode.setSlower();
+      } else {
+         graphNode.setColor("#FFFFFF");
+         graphNode.getStatistic().setChange(false);
+      }
    }
 
    public GraphNode getRootNode() {

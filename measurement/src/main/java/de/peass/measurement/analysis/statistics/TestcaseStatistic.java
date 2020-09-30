@@ -50,6 +50,14 @@ public class TestcaseStatistic {
       this.isChange = isChange;
       this.calls = calls;
       this.callsOld = callsOld;
+      
+      if (callsOld == 0 && (!Double.isNaN(meanOld) || !Double.isNaN(deviationOld))) {
+         throw new RuntimeException("Old data need to be not defined at all or contain a count of calls, a mean and a deviation!");
+      }
+      
+      if (calls == 0 && (!Double.isNaN(meanCurrent) || !Double.isNaN(deviationCurrent))) {
+         throw new RuntimeException("Current data need to be not defined at all or contain a count of calls, a mean and a deviation!");
+      }
    }
 
    public String getPredecessor() {

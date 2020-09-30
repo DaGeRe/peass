@@ -51,7 +51,7 @@ public class CallTreeNode extends BasicNode {
    public CallTreeNode(final String call, final String kiekerPattern) {
       super(call, kiekerPattern);
       if (!kiekerPattern.contains(call.replace("#", "."))) {
-         throw new RuntimeException("Pattern " + kiekerPattern + " must contain " + call);
+         throw new RuntimeException("Pattern " + kiekerPattern + " must contain " + call + " (with . instead of #)");
       }
       if (kiekerPattern.contains("<init>") && !kiekerPattern.contains("new")) {
          throw new RuntimeException("Pattern " + kiekerPattern + " not legal - Constructor must contain new as return type!");
