@@ -21,7 +21,7 @@ public class PeASSMain implements Callable<Void> {
    public static void main(final String[] args) {
       final CommandLine line = new CommandLine(new PeASSMain());
       if (args.length != 0) {
-         line.execute(args);
+         System.exit(line.execute(args));
       } else {
          line.usage(System.out);
       }

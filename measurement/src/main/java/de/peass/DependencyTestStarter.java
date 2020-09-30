@@ -284,7 +284,7 @@ public class DependencyTestStarter extends PairProcessor {
    public static void main(final String[] args) throws JAXBException, IOException {
       final DependencyTestStarter command = new DependencyTestStarter();
       final CommandLine commandLine = new CommandLine(command);
-      commandLine.execute(args);
+      System.exit(commandLine.execute(args));
    }
 
 }

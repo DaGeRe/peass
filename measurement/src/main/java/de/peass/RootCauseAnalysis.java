@@ -59,7 +59,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
    public static void main(final String[] args) throws JAXBException, IOException {
       final RootCauseAnalysis command = new RootCauseAnalysis();
       final CommandLine commandLine = new CommandLine(command);
-      commandLine.execute(args);
+      System.exit(commandLine.execute(args));
    }
 
    public RootCauseAnalysis() throws JAXBException, IOException {

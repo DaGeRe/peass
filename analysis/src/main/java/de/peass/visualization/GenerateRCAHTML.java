@@ -48,7 +48,7 @@ public class GenerateRCAHTML implements Callable<Void> {
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final CommandLine commandLine = new CommandLine(new GenerateRCAHTML());
-      commandLine.execute(args);
+      System.exit(commandLine.execute(args));
    }
 
    @Override

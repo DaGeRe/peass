@@ -75,7 +75,7 @@ public class ReadProperties implements Callable<Void> {
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException, JAXBException {
       final CommandLine commandLine = new CommandLine(new ReadProperties());
-      commandLine.execute(args);
+      System.exit(commandLine.execute(args));
    }
 
    @Override
@@ -83,12 +83,12 @@ public class ReadProperties implements Callable<Void> {
       final RepoFolders folders = new RepoFolders();
       final String projectName = projectFolder.getName();
       GetChanges.getVersionOrder(dependencyFile, executionFile, folders.getDependencyFile(projectName));
-      
+
       if (!projectFolder.exists()) {
          GitUtils.downloadProject(VersionComparator.getDependencies().getUrl(), projectFolder);
       }
-      
-      final ExecutionData changedTests = GetChanges.executionData != null ? GetChanges.executionData: folders.getExecutionData(projectName);
+
+      final ExecutionData changedTests = GetChanges.executionData != null ? GetChanges.executionData : folders.getExecutionData(projectName);
       final File viewFolder = GetChanges.executionData != null ? new File(executionFile.getParentFile(), "views_" + projectName) : folders.getViewFolder(projectName);
       if (ReadAllProperties.readAll) {
          final File resultFile = new File("results" + File.separator + projectName + File.separator + "properties_alltests.json");
@@ -121,7 +121,6 @@ public class ReadProperties implements Callable<Void> {
       return null;
    }
 
-   
    public void readChangeProperties(final File changefile, final File projectFolder, final File viewFolder, final ExecutionData changedTests)
          throws IOException, JsonParseException, JsonMappingException, JsonGenerationException {
       final File resultCSV = new File(out.getParentFile(), projectFolder.getName() + ".csv");
@@ -165,7 +164,8 @@ public class ReadProperties implements Callable<Void> {
          final List<ChangeProperty> properties = new LinkedList<>();
          changeProperties.getProperties().put(testclazz, properties);
          for (final Change testcaseChange : changes.getValue()) {
-            final PropertyReadHelper reader = new PropertyReadHelper(version, predecessor, new ChangedEntity(testclazz, ""), testcaseChange, projectFolder, viewFolder, methodFolder);
+            final PropertyReadHelper reader = new PropertyReadHelper(version, predecessor, new ChangedEntity(testclazz, ""), testcaseChange, projectFolder, viewFolder,
+                  methodFolder);
             final ChangeProperty currentProperty = reader.read();
             // if (currentProperty != null) {
             properties.add(currentProperty);

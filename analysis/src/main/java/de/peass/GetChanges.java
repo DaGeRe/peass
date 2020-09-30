@@ -48,7 +48,7 @@ public class GetChanges implements Callable<Void> {
 
    public static void main(final String[] args) {
       final CommandLine commandLine = new CommandLine(new GetChanges());
-      commandLine.execute(args);
+      System.exit(commandLine.execute(args));
    }
 
    @Override

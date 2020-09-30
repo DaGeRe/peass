@@ -43,7 +43,7 @@ public class TestCleaner implements Callable<Void> {
    public static void main(final String[] args) throws ParseException, JAXBException, IOException {
       TestCleaner command = new TestCleaner();
       CommandLine commandLine = new CommandLine(command);
-      commandLine.execute(args);
+      System.exit(commandLine.execute(args));
    }
 
    public static void cleanFolder(Cleaner transformer, final File dataFolder, final File projectNameFolder) {
