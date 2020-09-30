@@ -20,8 +20,6 @@ public class TraceStateTester {
    public static void assureCorrectState(final Sequitur sequitur) {
       testTrace(sequitur);
 
-      System.out.println(sequitur.addingElements);
-
       testDigrams(sequitur);
       testRules(sequitur);
       testRuleUsage(sequitur);
@@ -52,7 +50,7 @@ public class TraceStateTester {
       LOG.debug(sequitur.getUncompressedTrace());
       LOG.debug(sequitur.getRules());
       final List<Content> expandedTrace = expandContentTrace(sequitur.getUncompressedTrace(), sequitur.getRules());
-      final List<Content> fullTrace = sequitur.addingElements.subList(0, expandedTrace.size());
+      final List<Content> fullTrace = sequitur.getAddingElements().subList(0, expandedTrace.size());
       Assert.assertEquals(fullTrace, expandedTrace);
    }
 

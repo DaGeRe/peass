@@ -114,7 +114,7 @@ class Symbol {
 		if (obj instanceof Symbol) {
 			final Symbol other = (Symbol) obj;
 			final Content otherContent = other.getValue();
-			return otherContent.equals(getValue());
+			return otherContent.equals(getValue()) && other.getOccurences() == occurences;
 		}
 		return false;
 	}

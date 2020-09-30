@@ -28,6 +28,7 @@ public class Sequitur {
    private Symbol startSymbol = new Symbol(this, (StringContent) null);
    Symbol lastSymbol = startSymbol;
    private int ruleindex = 0;
+   private List<Content> addingElements;
 
    Digram link(final Symbol start, final Symbol end) {
       start.setSuccessor(end);
@@ -113,8 +114,6 @@ public class Sequitur {
    public String toString() {
       return getTrace().toString();
    }
-
-   List<Content> addingElements;
 
    public void addElements(final List<String> mytrace) {
       addingElements = new LinkedList<>();
@@ -208,6 +207,10 @@ public class Sequitur {
 
       }
       return current;
+   }
+   
+   public List<Content> getAddingElements() {
+      return addingElements;
    }
 
 }

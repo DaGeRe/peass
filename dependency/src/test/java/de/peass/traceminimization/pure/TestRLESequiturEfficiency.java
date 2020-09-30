@@ -60,7 +60,30 @@ public class TestRLESequiturEfficiency {
       final List<Content> unexpandedTrace = seq.getUncompressedTrace();
       final List<Content> expandedTrace = TraceStateTester.expandContentTrace(unexpandedTrace, seq.getRules());
       Assert.assertEquals(mytrace, TestSequitur.contentToStringTrace(expandedTrace));
-
-      
    }
+   
+   @Test
+   public void testUnitRuleNewSequences() {
+      String content[] = new String[] { "A","A","A","A","B","A","C","A","D","D","D","A","C","A","D","D","D","D","A","C","A","D","D","A","C","A","D","D","D","D","D","B","C","B","E","E","B","C","C" };
+   
+      System.out.println(Arrays.toString(content));
+      List<String> mytrace = Arrays.asList(content);
+
+      final Sequitur seq = new Sequitur();
+      seq.addElements(mytrace);
+      
+      final List<Content> trace = seq.getUncompressedTrace();
+      System.out.println(trace + " " + seq.getRules());
+
+      final RunLengthEncodingSequitur runLengthEncodingSequitur = new RunLengthEncodingSequitur(seq);
+      runLengthEncodingSequitur.reduce();
+      
+      System.out.println(runLengthEncodingSequitur.getReadableRLETrace());
+
+      final List<Content> unexpandedTrace = seq.getUncompressedTrace();
+      final List<Content> expandedTrace = TraceStateTester.expandContentTrace(unexpandedTrace, seq.getRules());
+      Assert.assertEquals(mytrace, TestSequitur.contentToStringTrace(expandedTrace));
+   }
+   
+   
 }

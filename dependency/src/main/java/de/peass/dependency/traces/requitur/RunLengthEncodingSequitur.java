@@ -1,7 +1,9 @@
 package de.peass.dependency.traces.requitur;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,6 +27,30 @@ public class RunLengthEncodingSequitur {
       removeSingleUsageRules(sequitur.getStartSymbol().getSuccessor());
 
       reduce(sequitur.getStartSymbol());
+
+//      sequiturAgain();
+   }
+
+   private void sequiturAgain() {
+      Map<Digram, Rule> currentRules = new HashMap<>();
+      for (Rule rule : sequitur.getRules().values()) {
+         Digram ruleDigram = new Digram(rule.getAnchor().getSuccessor(), rule.getAnchor().getSuccessor().getSuccessor());
+         currentRules.put(ruleDigram, rule);
+      }
+
+      // Sequitur seq = new Sequitur();
+      Symbol iterator = sequitur.getStartSymbol().getSuccessor();
+      while (iterator != null && iterator.getValue() != null && iterator.getSuccessor() != null) {
+         Symbol successor = iterator.getSuccessor();
+         Digram digram = new Digram(iterator, successor);
+         final Rule potentialRule = currentRules.get(digram);
+         if (potentialRule != null) {
+            potentialRule.use(digram);
+         }
+         
+         iterator = successor;
+         // sequitur.getRules()
+      }
    }
 
    private void removeSingleUsageRules(Symbol iterator) {
@@ -34,7 +60,7 @@ public class RunLengthEncodingSequitur {
             Rule rule = sequitur.getRules().get(ruleName.getValue());
 
             removeSingleUsageRules(rule.getAnchor().getSuccessor());
-            
+
             if (iterator.getOccurences() == 1) {
                removeSingleOccurenceRule(iterator, rule);
             }
@@ -98,12 +124,12 @@ public class RunLengthEncodingSequitur {
       if (containingSymbol.isRule()) {
          LOG.trace("Reduce: {}", containingSymbol);
          final Rule rule = containingSymbol.getRule();
-         final Symbol iterator = rule.getAnchor();
-         reduce(iterator);
-         final Symbol firstSymbolOfRule = iterator.getSuccessor();
+         final Symbol ruleAnchor = rule.getAnchor();
+         reduce(ruleAnchor);
+         final Symbol firstSymbolOfRule = ruleAnchor.getSuccessor();
          LOG.trace("Reduced: {}", rule.getName());
-         LOG.trace("Rule-Length: {}", rule.getElements().size() + " " + (firstSymbolOfRule.getSuccessor() == iterator));
-         if (firstSymbolOfRule.getSuccessor() == iterator) { // Irgendwie entsteht hier die Zuordnung #1 auf Regel #0
+         LOG.trace("Rule-Length: {}", rule.getElements().size() + " " + (firstSymbolOfRule.getSuccessor() == ruleAnchor));
+         if (firstSymbolOfRule.getSuccessor() == ruleAnchor) { 
             removeRuleUsage(containingSymbol, rule, firstSymbolOfRule);
          }
          // TraceStateTester.testTrace(sequitur);
