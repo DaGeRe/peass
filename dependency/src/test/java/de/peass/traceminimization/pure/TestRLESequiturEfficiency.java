@@ -38,7 +38,7 @@ public class TestRLESequiturEfficiency {
       final List<Content> expandedTrace = TraceStateTester.expandContentTrace(unexpandedTrace, seq.getRules());
       Assert.assertEquals(mytrace, TestSequitur.contentToStringTrace(expandedTrace));
       
-      Assert.assertEquals(15, runLengthEncodingSequitur.getReadableRLETrace().size());
+      Assert.assertEquals(13, runLengthEncodingSequitur.getReadableRLETrace().size());
    }
    
    @Test

@@ -28,29 +28,14 @@ public class RunLengthEncodingSequitur {
 
       reduce(sequitur.getStartSymbol());
 
-//      sequiturAgain();
+      markExistingRules();
+      reduce(sequitur.getStartSymbol());
+      removeSingleUsageRules(sequitur.getStartSymbol().getSuccessor());
    }
 
-   private void sequiturAgain() {
-      Map<Digram, Rule> currentRules = new HashMap<>();
-      for (Rule rule : sequitur.getRules().values()) {
-         Digram ruleDigram = new Digram(rule.getAnchor().getSuccessor(), rule.getAnchor().getSuccessor().getSuccessor());
-         currentRules.put(ruleDigram, rule);
-      }
-
-      // Sequitur seq = new Sequitur();
-      Symbol iterator = sequitur.getStartSymbol().getSuccessor();
-      while (iterator != null && iterator.getValue() != null && iterator.getSuccessor() != null) {
-         Symbol successor = iterator.getSuccessor();
-         Digram digram = new Digram(iterator, successor);
-         final Rule potentialRule = currentRules.get(digram);
-         if (potentialRule != null) {
-            potentialRule.use(digram);
-         }
-         
-         iterator = successor;
-         // sequitur.getRules()
-      }
+   private void markExistingRules() {
+      final ExistingRuleMarker marker = new ExistingRuleMarker(sequitur);
+      marker.mark();
    }
 
    private void removeSingleUsageRules(Symbol iterator) {

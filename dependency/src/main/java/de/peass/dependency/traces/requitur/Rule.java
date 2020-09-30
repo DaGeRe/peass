@@ -95,9 +95,17 @@ public class Rule {
          this.sequitur.lastSymbol = ruleSymbol;
       }
 
-      // Remove wrong Digrams
+      removeInvalidatedDigrams(digram, ruleSymbol);
+
+      digram.getStart().decrementUsage(this);
+      digram.getEnd().decrementUsage(this);
+   }
+
+   private void removeInvalidatedDigrams(Digram digram, Symbol ruleSymbol) {
       if (digram.getStart().getPredecessor().getValue() != null) {
+         LOG.trace(digram);
          final Digram prevDigram = new Digram(digram.getStart().getPredecessor(), digram.getStart());
+         LOG.trace("Searching digram: " + prevDigram);
          final Digram oldDigram = sequitur.digrams.get(prevDigram);
          if (oldDigram.getStart() == digram.getStart().getPredecessor() && oldDigram.getEnd() == digram.getStart()) {
             this.sequitur.digrams.remove(oldDigram);
@@ -123,9 +131,6 @@ public class Rule {
             newDigram.rule = newDigram.getEnd().getSuccessor().getRule();
          }
       }
-
-      digram.getStart().decrementUsage(this);
-      digram.getEnd().decrementUsage(this);
    }
 
    @Override
