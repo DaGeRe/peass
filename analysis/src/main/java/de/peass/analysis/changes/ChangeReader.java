@@ -55,7 +55,7 @@ public class ChangeReader {
 
    public ChangeReader(final RepoFolders resultsFolder, final String projectName) throws FileNotFoundException {
       statisticsFolder = resultsFolder.getProjectStatisticsFolder(projectName);
-      if (VersionComparator.getDependencies().getUrl() != null) {
+      if (VersionComparator.getDependencies().getUrl() != null && !VersionComparator.getDependencies().getUrl().isEmpty()) {
          final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-" + projectName + ".sh"));
          runCommandWriter = new RunCommandWriterSearchCause(runCommandPrinter, "default", VersionComparator.getDependencies());
       } else {
@@ -65,7 +65,7 @@ public class ChangeReader {
 
    public ChangeReader(final File statisticsFolder, final String projectName) throws FileNotFoundException {
       this.statisticsFolder = statisticsFolder;
-      if (VersionComparator.getDependencies().getUrl() != null) {
+      if (VersionComparator.getDependencies().getUrl() != null && !VersionComparator.getDependencies().getUrl().isEmpty()) {
          final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-" + projectName + ".sh"));
          runCommandWriter = new RunCommandWriterSearchCause(runCommandPrinter, "default", VersionComparator.getDependencies());
       } else {
