@@ -34,15 +34,11 @@ public class NodePreparator {
       this.rootVersion = rootVersion;
       this.data = data;
 
-      root = new GraphNode(data.getNodes().getCall(), data.getNodes().getKiekerPattern());
+      root = new GraphNode(data.getNodes().getCall(), data.getNodes().getKiekerPattern(), data.getNodes().getOtherKiekerPattern());
    }
 
    public NodePreparator(final CauseSearchData data) {
-      this.rootPredecessor = null;
-      this.rootVersion = null;
-      this.data = data;
-
-      root = new GraphNode(data.getNodes().getCall(), data.getNodes().getKiekerPattern());
+      this(null, null, data);
    }
 
    public void prepare() {
@@ -82,7 +78,7 @@ public class NodePreparator {
             }
          }
          if (add) {
-            final GraphNode newChild = new GraphNode(purePredecessorChild.getCall(), purePredecessorChild.getKiekerPattern());
+            final GraphNode newChild = new GraphNode(purePredecessorChild.getCall(), purePredecessorChild.getKiekerPattern(), purePredecessorChild.getOtherKiekerPattern());
             newChild.setName(purePredecessorChild.getCall());
             newChild.setColor("#5555FF");
             newChild.setState(State.UNKNOWN);
@@ -157,9 +153,9 @@ public class NodePreparator {
       if (measuredChild.getCall().equals(CauseSearchData.ADDED)) {
          final String pattern = measuredChild.getOtherKiekerPattern();
          String name = pattern.substring(pattern.lastIndexOf(' '), pattern.lastIndexOf('('));
-         newChild = new GraphNode(name, pattern);
+         newChild = new GraphNode(name, pattern, measuredChild.getKiekerPattern());
       } else {
-         newChild = new GraphNode(measuredChild.getCall(), measuredChild.getKiekerPattern());
+         newChild = new GraphNode(measuredChild.getCall(), measuredChild.getKiekerPattern(), measuredChild.getOtherKiekerPattern());
       }
       return newChild;
    }

@@ -4,7 +4,7 @@ import de.peass.measurement.rca.data.CallTreeNode;
 
 public class TreeBuilderBig extends TreeBuilder {
 
-   final CallTreeNode b2 = c.appendChild("ClassB#methodB", "public void ClassB.methodB");
+   final CallTreeNode b2 = c.appendChild("ClassB#methodB", "public void ClassB.methodB", null);
    private final boolean secondBDiffering;
 
    public TreeBuilderBig(final boolean secondBDiffering) {

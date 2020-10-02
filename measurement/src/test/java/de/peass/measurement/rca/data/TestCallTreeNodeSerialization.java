@@ -29,9 +29,9 @@ public class TestCallTreeNodeSerialization {
 
    private CallTreeNode buildExampleTree() {
       final CallTreeNode parent = new CallTreeNode("test()", "public void test()", null);
-      final CallTreeNode child2 = parent.appendChild("child1()", "public void child1()");
-      child2.appendChild("child3(int, String)", "public void child3(int, String)");
-      parent.appendChild("child2()", "public void child2()");
+      final CallTreeNode child2 = parent.appendChild("child1()", "public void child1()", null);
+      child2.appendChild("child3(int, String)", "public void child3(int, String)", null);
+      parent.appendChild("child2()", "public void child2()", null);
       return parent;
    }
 }

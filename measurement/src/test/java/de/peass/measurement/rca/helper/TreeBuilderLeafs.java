@@ -4,10 +4,10 @@ import de.peass.measurement.rca.data.CallTreeNode;
 
 public class TreeBuilderLeafs extends TreeBuilder {
 
-   final CallTreeNode b2 = a.appendChild("ClassB#methodB", "public void ClassB.methodB");
-   final CallTreeNode b3 = a.appendChild("ClassB#methodB", "public void ClassB.methodB");
-   final CallTreeNode b4 = a.appendChild("ClassB#methodB", "public void ClassB.methodB");
-   final CallTreeNode c2 = root.appendChild("ClassC#methodC", "public void ClassC.methodC");
+   final CallTreeNode b2 = a.appendChild("ClassB#methodB", "public void ClassB.methodB", null);
+   final CallTreeNode b3 = a.appendChild("ClassB#methodB", "public void ClassB.methodB", null);
+   final CallTreeNode b4 = a.appendChild("ClassB#methodB", "public void ClassB.methodB", null);
+   final CallTreeNode c2 = root.appendChild("ClassC#methodC", "public void ClassC.methodC", null);
 
    public TreeBuilderLeafs() {
    }

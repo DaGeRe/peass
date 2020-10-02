@@ -137,19 +137,19 @@ class FullCallTreeStatistic extends CallTreeStatistics {
 
 class FullDataCallTreeNode extends CallTreeNode {
 
-   protected FullDataCallTreeNode(final String call, final String kiekerPattern, final CallTreeNode parent) {
-      super(call, kiekerPattern, parent);
+   protected FullDataCallTreeNode(final String call, final String kiekerPattern, final String otherKiekerPattern, final CallTreeNode parent) {
+      super(call, kiekerPattern, otherKiekerPattern, parent);
    }
 
    public FullDataCallTreeNode(final CallTreeNode mirrorNode) {
-      super(mirrorNode.getCall(), mirrorNode.getKiekerPattern());
+      super(mirrorNode.getCall(), mirrorNode.getKiekerPattern(), mirrorNode.getOtherKiekerPattern());
       for (final CallTreeNode child : mirrorNode.getChildren()) {
          appendChild(child);
       }
    }
 
    public FullDataCallTreeNode(final CallTreeNode mirrorNode, final FullDataCallTreeNode fullDataCallTreeNode) {
-      super(mirrorNode.getCall(), mirrorNode.getKiekerPattern(), fullDataCallTreeNode.getParent());
+      super(mirrorNode.getCall(), mirrorNode.getKiekerPattern(), mirrorNode.getOtherKiekerPattern(), fullDataCallTreeNode.getParent());
       for (final CallTreeNode child : mirrorNode.getChildren()) {
          appendChild(child);
       }

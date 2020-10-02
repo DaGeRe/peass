@@ -143,23 +143,6 @@ public class TestcaseStatistic {
       return meanOld + " " + meanCurrent + " " + deviationOld / meanOld + " " + deviationCurrent / meanCurrent + " " + vms + " " + tvalue;
    }
 
-   public static void main(final String[] args) {
-      final double[] sample1 = new double[] { 1.0, 2.0, 3.0 };
-      final double[] sample2 = new double[] { 1.0, 2.0, 2.5 };
-
-      final DescriptiveStatistics stat1 = new DescriptiveStatistics(sample1);
-      final DescriptiveStatistics stat2 = new DescriptiveStatistics(sample2);
-
-      System.out.println(TestUtils.tTest(sample1, sample2));
-      System.out.println(TestUtils.t(sample1, sample2));
-      System.out.println(TestUtils.tTest(sample1, sample2, 0.02));
-
-      System.out.println(TestUtils.tTest(stat1, stat2));
-      System.out.println(TestUtils.t(stat1, stat2));
-      System.out.println(TestUtils.tTest(stat1, stat2, 0.02));
-
-   }
-
    @JsonInclude(Include.NON_NULL)
    public Boolean isChange() {
       return isChange;

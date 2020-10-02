@@ -16,7 +16,7 @@ class CallTreeNodeDeserializer extends JsonDeserializer<CallTreeNode> {
       final String call = node.get("call").asText();
       final String kiekerPattern = node.get("kiekerPattern").asText();
       final JsonNode children = node.get("children");
-      final CallTreeNode root = new CallTreeNode(call, kiekerPattern);
+      final CallTreeNode root = new CallTreeNode(call, kiekerPattern, null);
       handleChild(children, root);
 
       return root;
@@ -26,7 +26,7 @@ class CallTreeNodeDeserializer extends JsonDeserializer<CallTreeNode> {
       for (final JsonNode child : children) {
          final String call = child.get("call").asText();
          final String kiekerPattern = child.get("kiekerPattern").asText();
-         final CallTreeNode created = parent.appendChild(call, kiekerPattern);
+         final CallTreeNode created = parent.appendChild(call, kiekerPattern, null);
          handleChild(child.get("children"), created);
       }
    }

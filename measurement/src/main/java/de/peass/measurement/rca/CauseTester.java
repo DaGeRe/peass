@@ -182,6 +182,7 @@ public class CauseTester extends AdaptiveTester {
       final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), new JUnitTestTransformer(projectFolder, config), causeConfig);
 
       final CallTreeNode node = new CallTreeNode("FileUploadTestCase#parseUpload",
+            "protected java.util.List org.apache.commons.fileupload.FileUploadTestCase.parseUpload(byte[],java.lang.String)",
             "protected java.util.List org.apache.commons.fileupload.FileUploadTestCase.parseUpload(byte[],java.lang.String)");
       node.setOtherVersionNode(node);
       final Set<CallTreeNode> nodes = new HashSet<>();

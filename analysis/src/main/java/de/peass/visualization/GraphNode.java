@@ -30,8 +30,8 @@ public class GraphNode extends BasicNode {
    private double[] valuesPredecessor = null;
    private List<GraphNode> children = new LinkedList<>();
 
-   public GraphNode(final String call, final String kiekerPattern) {
-      super(call, kiekerPattern);
+   public GraphNode(final String call, final String kiekerPattern, final String otherKiekerPattern) {
+      super(call, kiekerPattern, otherKiekerPattern);
       key = KiekerPatternConverter.getKey(kiekerPattern);
    }
 

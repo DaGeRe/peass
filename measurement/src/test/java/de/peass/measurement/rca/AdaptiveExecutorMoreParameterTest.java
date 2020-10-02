@@ -73,8 +73,8 @@ public class AdaptiveExecutorMoreParameterTest {
          throws IOException, InterruptedException, JAXBException, FileNotFoundException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
       LOG.debug("Executor: {}", executor);
       final Set<CallTreeNode> included = new HashSet<>();
-      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1",
-            "public void defaultpackage.NormalDependency.child1(int[], double, java.lang.String)");
+      final String kiekerPattern = "public void defaultpackage.NormalDependency.child1(int[], double, java.lang.String)";
+      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1", kiekerPattern, kiekerPattern);
       nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);
       executor.setIncludedMethods(included);

@@ -51,8 +51,9 @@ public class CauseSearchData {
    }
 
    private void buildCurrentMap(final MeasuredNode node, CallTreeNode parentStructure) {
-      final CallTreeNode nodeStructure = parentStructure != null ? parentStructure.appendChild(node.getCall(), node.getKiekerPattern())
-            : new CallTreeNode(node.getCall(), node.getKiekerPattern());
+      final CallTreeNode nodeStructure = parentStructure != null ? 
+            parentStructure.appendChild(node.getCall(), node.getKiekerPattern(), node.getOtherKiekerPattern())
+            : new CallTreeNode(node.getCall(), node.getKiekerPattern(), node.getOtherKiekerPattern());
       current.put(nodeStructure, node);
       for (final MeasuredNode child : node.getChilds()) {
          buildCurrentMap(child, nodeStructure);

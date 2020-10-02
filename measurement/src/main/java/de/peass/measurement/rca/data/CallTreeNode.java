@@ -45,25 +45,13 @@ public class CallTreeNode extends BasicNode {
    /**
     * Creates a root node
     */
-   public CallTreeNode(final String call, final String kiekerPattern) {
-      super(call, kiekerPattern);
-      if (!kiekerPattern.contains(call.replace("#", "."))) {
-         throw new RuntimeException("Pattern " + kiekerPattern + " must contain " + call + " (with . instead of #)");
-      }
-      if (kiekerPattern.contains("<init>") && !kiekerPattern.contains("new")) {
-         throw new RuntimeException("Pattern " + kiekerPattern + " not legal - Constructor must contain new as return type!");
-      }
+   public CallTreeNode(final String call, final String kiekerPattern, final String otherKiekerPattern) {
+      super(call, kiekerPattern, otherKiekerPattern);
       this.parent = null;
    }
 
-   protected CallTreeNode(final String call, final String kiekerPattern, final CallTreeNode parent) {
-      super(call, kiekerPattern);
-      if (!kiekerPattern.contains(call.replace("#", "."))) {
-         throw new RuntimeException("Pattern " + kiekerPattern + " must contain " + call);
-      }
-      if (kiekerPattern.contains("<init>") && !kiekerPattern.contains("new")) {
-         throw new RuntimeException("Pattern " + kiekerPattern + " not legal - Constructor must contain new as return type!");
-      }
+   protected CallTreeNode(final String call, final String kiekerPattern, final String otherKiekerPattern, final CallTreeNode parent) {
+      super(call, kiekerPattern, otherKiekerPattern);
       this.parent = parent;
    }
 
@@ -71,8 +59,8 @@ public class CallTreeNode extends BasicNode {
       return children;
    }
 
-   public CallTreeNode appendChild(final String call, final String kiekerPattern) {
-      final CallTreeNode added = new CallTreeNode(call, kiekerPattern, this);
+   public CallTreeNode appendChild(final String call, final String kiekerPattern, final String otherKiekerPattern) {
+      final CallTreeNode added = new CallTreeNode(call, kiekerPattern, otherKiekerPattern, this);
       children.add(added);
       return added;
    }

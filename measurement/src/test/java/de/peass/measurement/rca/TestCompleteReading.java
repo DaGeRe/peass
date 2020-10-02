@@ -36,14 +36,14 @@ public class TestCompleteReading {
       writer.onTerminating();
    }
 
-   private final CallTreeNode root = new CallTreeNode("parent()", "public void A.parent()");
+   private final CallTreeNode root = new CallTreeNode("parent()", "public void A.parent()", null);
 
    private Set<CallTreeNode> buildTree() {
       final Set<CallTreeNode> includedNodes = new HashSet<>();
 
-      includedNodes.add(root.appendChild("A.child1()", "public void A.child1()"));
-      includedNodes.add(root.appendChild("A.child2()", "public void A.child2()"));
-      includedNodes.add(root.appendChild("A.child3()", "public void A.child3()"));
+      includedNodes.add(root.appendChild("A.child1()", "public void A.child1()", null));
+      includedNodes.add(root.appendChild("A.child2()", "public void A.child2()", null));
+      includedNodes.add(root.appendChild("A.child3()", "public void A.child3()", null));
       includedNodes.add(root);
 
       for (final CallTreeNode node : includedNodes) {

@@ -11,11 +11,11 @@ import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.data.CallTreeNode;
 
 public class TreeBuilder {
-   protected final CallTreeNode root = new CallTreeNode("Test#test", "public void Test.test");
-   protected final CallTreeNode a = root.appendChild("ClassA#methodA", "public void ClassA.methodA");
-   protected final CallTreeNode b = a.appendChild("ClassB#methodB", "public void ClassB.methodB");
-   protected final CallTreeNode c = root.appendChild("ClassC#methodC", "public void ClassC.methodC");
-   protected final CallTreeNode constructor = root.appendChild("ClassA#<init>", "new public void ClassA.<init>");
+   protected final CallTreeNode root = new CallTreeNode("Test#test", "public void Test.test", "public void Test.test");
+   protected final CallTreeNode a = root.appendChild("ClassA#methodA", "public void ClassA.methodA", "public void ClassA.methodA");
+   protected final CallTreeNode b = a.appendChild("ClassB#methodB", "public void ClassB.methodB", "public void ClassB.methodB");
+   protected final CallTreeNode c = root.appendChild("ClassC#methodC", "public void ClassC.methodC", "public void ClassC.methodC");
+   protected final CallTreeNode constructor = root.appendChild("ClassA#<init>", "new public void ClassA.<init>", "new public void ClassA.<init>");
 
    private CallTreeNode d;
    private CallTreeNode e;
@@ -35,11 +35,11 @@ public class TreeBuilder {
       this.config = config;
       this.useFullLogAPI = useFullLogAPI;
       
-      root.setOtherVersionNode(new CallTreeNode("Test#test", "public void Test.test"));
-      a.setOtherVersionNode(new CallTreeNode("ClassA#methodA", "public void ClassA.methodA"));
-      b.setOtherVersionNode(new CallTreeNode("ClassA#methodB", "public void ClassA.methodB"));
-      c.setOtherVersionNode(new CallTreeNode("ClassA#methodC", "public void ClassA.methodC"));
-      constructor.setOtherVersionNode(new CallTreeNode("ClassA#<init>", "new public void ClassA.<init>"));
+      root.setOtherVersionNode(new CallTreeNode("Test#test", "public void Test.test", "public void Test.test"));
+      a.setOtherVersionNode(new CallTreeNode("ClassA#methodA", "public void ClassA.methodA", "public void ClassA.methodA"));
+      b.setOtherVersionNode(new CallTreeNode("ClassA#methodB", "public void ClassA.methodB", "public void ClassA.methodB"));
+      c.setOtherVersionNode(new CallTreeNode("ClassA#methodC", "public void ClassA.methodC", "public void ClassA.methodB"));
+      constructor.setOtherVersionNode(new CallTreeNode("ClassA#<init>", "new public void ClassA.<init>", "new public void ClassA.<init>"));
    }
    
    public TreeBuilder() {
@@ -48,8 +48,8 @@ public class TreeBuilder {
    }
 
    public void addDE() {
-      d = c.appendChild("ClassD#methodD", "public void ClassD.methodD");
-      e = c.appendChild("ClassE#methodE", "public void ClassE.methodE");
+      d = c.appendChild("ClassD#methodD", "public void ClassD.methodD", "public void ClassD.methodD");
+      e = c.appendChild("ClassE#methodE", "public void ClassE.methodE", "public void ClassE.methodE");
    }
    
 //   public void buildMeasurements() {

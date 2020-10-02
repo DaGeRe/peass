@@ -9,16 +9,19 @@ import de.peass.measurement.rca.treeanalysis.TreeUtil;
 
 public class TreeUtilTest {
    
+
+   private final CallTreeNode parent1 = new CallTreeNode("Test1#test", "public void Test1.test", null);
+   private final CallTreeNode parent2 = new CallTreeNode("Test1#test", "public void Test1.test", null);
+   
    @Test
    public void testAddedMapping()  {
-      final CallTreeNode parent1 = createBasicTree();
+      createBasicTree();
       
-      final CallTreeNode parent2 = new CallTreeNode("Test1#test", "public void Test1.test");
-      parent2.appendChild("ClassA#G", "public void ClassA.G");
-      parent2.appendChild("ClassA#I", "public void ClassA.I");
-      parent2.appendChild("ClassA#J", "public void ClassA.J");
-      parent2.appendChild("ClassA#H", "public void ClassA.H");
-      parent2.appendChild("ClassA#K", "public void ClassA.K");
+      parent2.appendChild("ClassA#G", "public void ClassA.G", null);
+      parent2.appendChild("ClassA#I", "public void ClassA.I", null);
+      parent2.appendChild("ClassA#J", "public void ClassA.J", null);
+      parent2.appendChild("ClassA#H", "public void ClassA.H", null);
+      parent2.appendChild("ClassA#K", "public void ClassA.K", null);
       
       TreeUtil.findChildMapping(parent1, parent2);
       
@@ -31,12 +34,11 @@ public class TreeUtilTest {
    
    @Test
    public void testNondeterministicMapping()  {
-      final CallTreeNode parent1 = createBasicTree();
+      createBasicTree();
       
-      final CallTreeNode parent2 = new CallTreeNode("Test1#test", "public void Test1.test");
-      parent2.appendChild("ClassA#G", "public void ClassA.G");
-      parent2.appendChild("ClassA#I", "public void ClassA.I");
-      parent2.appendChild("ClassA#J", "public void ClassA.J");
+      parent2.appendChild("ClassA#G", "public void ClassA.G", null);
+      parent2.appendChild("ClassA#I", "public void ClassA.I", null);
+      parent2.appendChild("ClassA#J", "public void ClassA.J", null);
       
       TreeUtil.findChildMapping(parent1, parent2);
       
@@ -47,12 +49,11 @@ public class TreeUtilTest {
    
    @Test
    public void testVisibilityChangeMapping() {
-      final CallTreeNode parent1 = createBasicTree();
+      createBasicTree();
       
-      final CallTreeNode parent2 = new CallTreeNode("Test1#test", "public void Test1.test");
-      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1()");
-      parent2.appendChild("ClassA#methodA2", "void ClassA.methodA2()");
-      parent2.appendChild("ClassA#methodA3", "public void ClassA.methodA3()");
+      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1()", null);
+      parent2.appendChild("ClassA#methodA2", "void ClassA.methodA2()", null);
+      parent2.appendChild("ClassA#methodA3", "public void ClassA.methodA3()", null);
       
       TreeUtil.findChildMapping(parent1, parent2);
       
@@ -66,12 +67,11 @@ public class TreeUtilTest {
    
    @Test
    public void testParameterChangeMapping() {
-      final CallTreeNode parent1 = createBasicTree();
+      createBasicTree();
       
-      final CallTreeNode parent2 = new CallTreeNode("Test1#test", "public void Test1.test");
-      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1()");
-      parent2.appendChild("ClassA#methodA2", "public void ClassA.methodA2(int a)");
-      parent2.appendChild("ClassA#methodA3", "public void ClassA.methodA3()");
+      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1()", null);
+      parent2.appendChild("ClassA#methodA2", "public void ClassA.methodA2(int a)", null);
+      parent2.appendChild("ClassA#methodA3", "public void ClassA.methodA3()", null);
       
       TreeUtil.findChildMapping(parent1, parent2);
       
@@ -85,12 +85,11 @@ public class TreeUtilTest {
    
    @Test
    public void testSwitchMapping() {
-      final CallTreeNode parent1 = createBasicTree();
+      createBasicTree();
       
-      final CallTreeNode parent2 = new CallTreeNode("Test1#test", "public void Test1.test");
-      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1()");
-      parent2.appendChild("ClassA#methodA3", "public void ClassA.methodA3()");
-      parent2.appendChild("ClassA#methodA2", "public void ClassA.methodA2(int a)");
+      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1()", null);
+      parent2.appendChild("ClassA#methodA3", "public void ClassA.methodA3()", null);
+      parent2.appendChild("ClassA#methodA2", "public void ClassA.methodA2(int a)", null);
       
       TreeUtil.findChildMapping(parent1, parent2);
       
@@ -104,13 +103,12 @@ public class TreeUtilTest {
    
    @Test
    public void testAddition() {
-      final CallTreeNode parent1 = createBasicTree();
+      createBasicTree();
       
-      final CallTreeNode parent2 = new CallTreeNode("Test1#test", "public void Test1.test");
-      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1()");
-      parent2.appendChild("ClassA#methodA2", "void ClassA.methodA2()");
-      parent2.appendChild("ClassA#methodA3", "public void ClassA.methodA3()");
-      parent2.appendChild("ClassA#methodA4", "public void ClassA.methodA4()");
+      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1()", null);
+      parent2.appendChild("ClassA#methodA2", "void ClassA.methodA2()", null);
+      parent2.appendChild("ClassA#methodA3", "public void ClassA.methodA3()", null);
+      parent2.appendChild("ClassA#methodA4", "public void ClassA.methodA4()", null);
       
       TreeUtil.findChildMapping(parent1, parent2);
       
@@ -124,17 +122,15 @@ public class TreeUtilTest {
    
    @Test
    public void testOverriding() {
-      final CallTreeNode parent1 = new CallTreeNode("Test1#test", "public void Test1.test");
-      parent1.appendChild("ClassA#methodA1", "public void ClassA.methodA1(int)");
-      parent1.appendChild("ClassA#methodA1", "public void ClassA.methodA1(byte)");
-      parent1.appendChild("ClassA#methodA1", "public void ClassA.methodA1(String)");
-      parent1.appendChild("ClassA#methodA1", "public void ClassA.methodA1()");
+      parent1.appendChild("ClassA#methodA1", "public void ClassA.methodA1(int)", null);
+      parent1.appendChild("ClassA#methodA1", "public void ClassA.methodA1(byte)", null);
+      parent1.appendChild("ClassA#methodA1", "public void ClassA.methodA1(String)", null);
+      parent1.appendChild("ClassA#methodA1", "public void ClassA.methodA1()", null);
       
-      final CallTreeNode parent2 = new CallTreeNode("Test1#test", "public void Test1.test");
-      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1(int, String)");
-      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1(byte, double)");
-      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1()");
-      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1(String)");
+      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1(int, String)", null);
+      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1(byte, double)", null);
+      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1()", null);
+      parent2.appendChild("ClassA#methodA1", "public void ClassA.methodA1(String)", null);
       
       TreeUtil.findChildMapping(parent1, parent2);
       
@@ -149,13 +145,11 @@ public class TreeUtilTest {
    
    @Test
    public void testSuperclass() {
-      final CallTreeNode parent1 = new CallTreeNode("Test1#test", "public void Test1.test");
-      parent1.appendChild("ClassA#methodA1", "public void ClassA.methodA1()");
-      parent1.appendChild("ClassA#methodA2", "public void ClassA.methodA2()");
+      parent1.appendChild("ClassA#methodA1", "public void ClassA.methodA1()", null);
+      parent1.appendChild("ClassA#methodA2", "public void ClassA.methodA2()", null);
       
-      final CallTreeNode parent2 = new CallTreeNode("Test1#test", "public void Test1.test");
-      parent2.appendChild("ClassB#methodA2", "public void ClassB.methodA2()");
-      parent2.appendChild("ClassA#methodZ1", "public void ClassA.methodZ1()");
+      parent2.appendChild("ClassB#methodA2", "public void ClassB.methodA2()", null);
+      parent2.appendChild("ClassA#methodZ1", "public void ClassA.methodZ1()", null);
       
       TreeUtil.findChildMapping(parent1, parent2);
       
@@ -165,11 +159,9 @@ public class TreeUtilTest {
       Assert.assertEquals(parent1.getChildren().get(1).getOtherVersionNode(), parent2.getChildren().get(0));
    }
    
-   private CallTreeNode createBasicTree() {
-      final CallTreeNode parent1 = new CallTreeNode("Test1#test", "public void Test1.test");
-      parent1.appendChild("ClassA#methodA1", "public void ClassA.methodA1()");
-      parent1.appendChild("ClassA#methodA2", "public void ClassA.methodA2()");
-      parent1.appendChild("ClassA#methodA3", "public void ClassA.methodA3()");
-      return parent1;
+   private void createBasicTree() {
+      parent1.appendChild("ClassA#methodA1", "public void ClassA.methodA1()", null);
+      parent1.appendChild("ClassA#methodA2", "public void ClassA.methodA2()", null);
+      parent1.appendChild("ClassA#methodA3", "public void ClassA.methodA3()", null);
    }
 }

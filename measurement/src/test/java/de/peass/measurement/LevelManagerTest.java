@@ -69,20 +69,20 @@ public class LevelManagerTest {
       rootMeasured.setKiekerPattern("public void Test.test");
       data.setNodes(rootMeasured);
 
-      final CallTreeNode root = new CallTreeNode("Test#test", "public void Test.test");
+      final CallTreeNode root = new CallTreeNode("Test#test", "public void Test.test", "public void Test.test");
       CallTreeNode current = root;
       MeasuredNode measuredCurrent = rootMeasured;
       for (int i = 0; i < 20; i++) {
          final String call = "C" + i + ".method" + i;
          final String kiekerPattern = "public void " + call;
-         current = current.appendChild(call, kiekerPattern);
+         current = current.appendChild(call, kiekerPattern, null);
          final MeasuredNode childMeasured = new MeasuredNode();
          measuredCurrent.getChilds().add(childMeasured);
          childMeasured.setCall(call);
          childMeasured.setKiekerPattern(kiekerPattern);
          measuredCurrent = childMeasured;
       }
-      current.appendChild("FinalClass.finalMethod", "public void FinalClass.finalMethod");
+      current.appendChild("FinalClass.finalMethod", "public void FinalClass.finalMethod", null);
 
       final BothTreeReader mock = Mockito.mock(BothTreeReader.class);
       Mockito.when(mock.getRootPredecessor()).thenReturn(root);

@@ -17,7 +17,6 @@ import de.peass.measurement.rca.data.OneVMResult;
 
 public class MeasuredNode extends BasicNode {
 
-   private String otherKiekerPattern;
    private TestcaseStatistic statistic;
    private List<MeasuredNode> childs = new LinkedList<>();
 
@@ -27,12 +26,11 @@ public class MeasuredNode extends BasicNode {
    private MeasuredValues valuesPredecessor;
 
    public MeasuredNode() {
-      super(null, null);
+      super(null, null, null);
    }
 
-   public MeasuredNode(final String call, final String kiekerPattern) {
-      super(call, kiekerPattern);
-      otherKiekerPattern = kiekerPattern;
+   public MeasuredNode(final String call, final String kiekerPattern, final String otherKiekerPattern) {
+      super(call, kiekerPattern, otherKiekerPattern);
    }
 
    public String getCall() {
@@ -49,14 +47,6 @@ public class MeasuredNode extends BasicNode {
 
    public void setKiekerPattern(final String kiekerPattern) {
       this.kiekerPattern = kiekerPattern;
-   }
-
-   public String getOtherKiekerPattern() {
-      return otherKiekerPattern;
-   }
-
-   public void setOtherKiekerPattern(final String otherKiekerPattern) {
-      this.otherKiekerPattern = otherKiekerPattern;
    }
 
    public TestcaseStatistic getStatistic() {

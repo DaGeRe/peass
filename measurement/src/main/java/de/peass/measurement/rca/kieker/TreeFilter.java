@@ -79,7 +79,7 @@ public class TreeFilter extends AbstractFilterPlugin {
             }
          }
          if (!ignoreEOIs || !hasEqualNode) {
-            lastAdded = lastParent.appendChild(call, kiekerPattern);
+            lastAdded = lastParent.appendChild(call, kiekerPattern, null);
          }
       }
    }
@@ -99,7 +99,7 @@ public class TreeFilter extends AbstractFilterPlugin {
    }
 
    private void readRoot(final Execution execution, final String call, final String kiekerPattern) {
-      root = new CallTreeNode(call, kiekerPattern);
+      root = new CallTreeNode(call, kiekerPattern, null);
       lastParent = root;
       testTraceId = execution.getTraceId();
    }

@@ -10,8 +10,8 @@ import de.peass.measurement.rca.data.CauseSearchData;
 public class TestCallTreeStatistics {
    @Test
    public void testStatistics() {
-      final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()");
-      final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()");
+      final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()");
+      final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()");
       node.setOtherVersionNode(otherVersionNode);
 
       node.setVersions("A", "B");
@@ -32,8 +32,8 @@ public class TestCallTreeStatistics {
 
    @Test
    public void testStatisticsADDED() {
-      final CallTreeNode node = new CallTreeNode(CauseSearchData.ADDED, CauseSearchData.ADDED);
-      final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()");
+      final CallTreeNode node = new CallTreeNode(CauseSearchData.ADDED, CauseSearchData.ADDED, "public void de.mypackage.Test.callMethod()");
+      final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", CauseSearchData.ADDED);
       node.setOtherVersionNode(otherVersionNode);
 
       node.setVersions("A", "B");
@@ -56,8 +56,8 @@ public class TestCallTreeStatistics {
 
    @Test
    public void testStatisticsADDEDNew() {
-      final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()");
-      final CallTreeNode otherVersionNode = new CallTreeNode(CauseSearchData.ADDED, CauseSearchData.ADDED);
+      final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", CauseSearchData.ADDED);
+      final CallTreeNode otherVersionNode = new CallTreeNode(CauseSearchData.ADDED, CauseSearchData.ADDED, "public void de.mypackage.Test.callMethod()");
       node.setOtherVersionNode(otherVersionNode);
 
       node.setVersions("A", "B");
