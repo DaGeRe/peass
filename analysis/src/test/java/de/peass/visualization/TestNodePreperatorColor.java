@@ -4,7 +4,8 @@ import java.util.Arrays;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
@@ -18,9 +19,28 @@ public class TestNodePreperatorColor {
    private final TestcaseStatistic statistic = new TestcaseStatistic(1, 2, 0.1, 0.1, 100, 3, true, 5, 3);
    private final MeasuredNode root = new MeasuredNode("Test.testMethod", "public void Test.testMethod()", "public void Test.testMethod()");
    
-   @Before
+   @BeforeEach
    public void setUp() {
       data.setConfig(new MeasurementConfiguration(100, 100, 0.1, 0.1));
+      data.setNodes(root);
+   }
+   
+   @Test
+   public void testSourceChange() {
+      final MeasuredNode child1 = new MeasuredNode("ClassA.method1", "public void ClassA.method1()", "public void ClassA.method1()");
+      final MeasuredNode child2 = new MeasuredNode("ClassA.method1", "public void ClassA.method1()", CauseSearchData.ADDED);
+      final MeasuredNode child3 = new MeasuredNode("ClassA.method1", "public void ClassA.method1()", "public void ClassA.methodX()");
+      root.setChilds(Arrays.asList(new MeasuredNode[] { child1, child2, child3 }));
+      
+      setChildrenStatistic(statistic, root);
+      
+      final NodePreparator preparator = new NodePreparator(data);
+      preparator.prepare();
+      
+      Assert.assertFalse(preparator.getRootNode().isHasSourceChange());
+      Assert.assertFalse(preparator.getRootNode().getChildren().get(0).isHasSourceChange());
+      Assert.assertTrue(preparator.getRootNode().getChildren().get(1).isHasSourceChange());
+      Assert.assertTrue(preparator.getRootNode().getChildren().get(2).isHasSourceChange());
    }
    
    @Test
@@ -65,8 +85,6 @@ public class TestNodePreperatorColor {
       child3.setChilds(Arrays.asList(new MeasuredNode[] {child31, child32}));
       
       setChildrenStatistic(statistic, root);
-      
-      data.setNodes(root);
    }
 
    private void prepareTree() {
@@ -82,8 +100,6 @@ public class TestNodePreperatorColor {
       child1.setChilds(Arrays.asList(new MeasuredNode[] { child11, child12, child13 }));
 
       setChildrenStatistic(statistic, root);
-      
-      data.setNodes(root);
    }
    
    private void setChildrenStatistic(final TestcaseStatistic statistic, final MeasuredNode parent) {
