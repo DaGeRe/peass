@@ -19,15 +19,15 @@ import com.github.javaparser.ast.type.TypeParameter;
 import de.peass.dependency.traces.requitur.content.TraceElementContent;
 
 public class MethodReader {
-   
+
    private static final Logger LOG = LogManager.getLogger(MethodReader.class);
-   
+
    private final ClassOrInterfaceDeclaration clazz;
-   
+
    public MethodReader(ClassOrInterfaceDeclaration clazz) {
       this.clazz = clazz;
    }
-   
+
    public Node getMethod(final Node node, final TraceElementContent currentTraceElement) {
       if (node != null && node.getParentNode().isPresent()) {
          final Node parent = node.getParentNode().get();
@@ -74,7 +74,7 @@ public class MethodReader {
 
       return null;
    }
-   
+
    private boolean parametersEqual(final TraceElementContent te, final CallableDeclaration<?> method) {
       if (te.getParameterTypes().length == 0 && method.getParameters().size() == 0) {
          return true;
@@ -83,19 +83,7 @@ public class MethodReader {
       }
       int parameterIndex = 0;
       final List<Parameter> parameters = method.getParameters();
-      String[] traceParameterTypes;
-      if (te.isInnerClassCall()) {
-         final String outerClazz = te.getOuterClass();
-         final String firstType = te.getParameterTypes()[0];
-         if (outerClazz.equals(firstType)) {
-            traceParameterTypes = new String[te.getParameterTypes().length - 1];
-            System.arraycopy(te.getParameterTypes(), 1, traceParameterTypes, 0, te.getParameterTypes().length - 1);
-         } else {
-            traceParameterTypes = te.getParameterTypes();
-         }
-      } else {
-         traceParameterTypes = te.getParameterTypes();
-      }
+      String[] traceParameterTypes = getCleanedTraceParameters(te);
       if (traceParameterTypes.length != parameters.size() && !parameters.get(parameters.size() - 1).isVarArgs()) {
          return false;
       } else if (parameters.get(parameters.size() - 1).isVarArgs()) {
@@ -127,6 +115,24 @@ public class MethodReader {
       return true;
    }
 
+   private String[] getCleanedTraceParameters(final TraceElementContent te) {
+      String[] traceParameterTypes;
+      if (te.isInnerClassCall()) {
+         final String outerClazz = te.getOuterClass();
+         final String firstType = te.getParameterTypes()[0];
+         if (outerClazz.equals(firstType) || outerClazz.endsWith("." + firstType)) {
+            // if (outerClazz.equals(firstType)) {
+            traceParameterTypes = new String[te.getParameterTypes().length - 1];
+            System.arraycopy(te.getParameterTypes(), 1, traceParameterTypes, 0, te.getParameterTypes().length - 1);
+         } else {
+            traceParameterTypes = te.getParameterTypes();
+         }
+      } else {
+         traceParameterTypes = te.getParameterTypes();
+      }
+      return traceParameterTypes;
+   }
+
    private boolean testParameter(final String traceParameterTypes[], final int parameterIndex, final Type type, final boolean varArgAllowed) {
       final String traceParameterType = traceParameterTypes[parameterIndex];
       final String simpleTraceParameterType = traceParameterType.substring(traceParameterType.lastIndexOf('.') + 1);
@@ -143,7 +149,7 @@ public class MethodReader {
          } else {
             return false;
          }
-      } else if(clazz != null && clazz.getTypeParameters().size() > 0) {
+      } else if (clazz != null && clazz.getTypeParameters().size() > 0) {
          boolean isTypeParameter = isTypeParameter(typeString);
          return isTypeParameter;
       } else {
@@ -153,7 +159,7 @@ public class MethodReader {
 
    private boolean isTypeParameter(final String typeString) {
       boolean isTypeParameter = false;
-      // It is too cumbersome to check whether a class really fits to the class hierarchy of a generic class; 
+      // It is too cumbersome to check whether a class really fits to the class hierarchy of a generic class;
       // therefore, we only check whether the parameter is one of the type parameters
       for (TypeParameter parameter : clazz.getTypeParameters()) {
          if (parameter.getName().toString().equals(typeString)) {
