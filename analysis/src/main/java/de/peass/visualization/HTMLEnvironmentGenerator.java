@@ -46,7 +46,7 @@ public class HTMLEnvironmentGenerator {
    }
 
    void writeHTML(final String name) throws IOException {
-      final InputStream htmlStream = GenerateRCAHTML.class.getClassLoader().getResourceAsStream(name);
+      final InputStream htmlStream = VisualizeRCA.class.getClassLoader().getResourceAsStream(name);
       try (final BufferedReader reader = new BufferedReader(new InputStreamReader(htmlStream))) {
          String line;
          while ((line = reader.readLine()) != null) {

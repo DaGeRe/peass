@@ -17,7 +17,7 @@ public class GraphNode extends BasicNode {
       FASTER, SLOWER, UNKNOWN;
    }
 
-   private String name, key;
+   private String name, key, otherKey;
    private String parent;
    private String color;
    private TestcaseStatistic statistic;
@@ -33,8 +33,11 @@ public class GraphNode extends BasicNode {
    public GraphNode(final String call, final String kiekerPattern, final String otherKiekerPattern) {
       super(call, kiekerPattern, otherKiekerPattern);
       key = KiekerPatternConverter.getKey(kiekerPattern);
+      if (!otherKiekerPattern.equals(CauseSearchData.ADDED)) {
+         otherKey = KiekerPatternConverter.getKey(otherKiekerPattern);
+      }
       if (!kiekerPattern.equals(otherKiekerPattern)) {
-         hasSourceChange = true; 
+         hasSourceChange = true;
       }
    }
 
@@ -44,6 +47,14 @@ public class GraphNode extends BasicNode {
 
    public void setKey(String key) {
       this.key = key;
+   }
+   
+   public String getOtherKey() {
+      return otherKey;
+   }
+   
+   public void setOtherKey(String otherKey) {
+      this.otherKey = otherKey;
    }
 
    public double[] getValues() {

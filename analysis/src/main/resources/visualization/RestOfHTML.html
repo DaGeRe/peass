@@ -192,9 +192,16 @@ function shownode(node) {
   } else {
 	  infos.innerHTML = "No statistic";
   }
-	
-  quelltext.innerHTML="<pre>" + source[node.key] +"</pre>"
-  histogramm.innerHTML=node.name;
+  if (node.key != node.otherKey){
+    quelltext.innerHTML="<pre>" + source[node.key] + "\n\n" + source[node.otherKey] +"</pre>";
+  }else{
+    quelltext.innerHTML="<pre>" + source[node.key] +"</pre>";
+  }
+  if (node.kiekerPattern != node.otherKiekerPattern) {
+  	histogramm.innerHTML=node.kiekerPattern + " " + node.otherKiekerPattern
+  } else {
+  	histogramm.innerHTML=node.kiekerPattern
+  }
   var version = {
     x: node.values,
     type: "histogram",

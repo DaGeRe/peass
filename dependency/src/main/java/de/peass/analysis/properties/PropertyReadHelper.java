@@ -54,14 +54,14 @@ public class PropertyReadHelper {
    private final File methodFolder;
 
    public static void main(final String[] args) throws IOException {
-      final ChangedEntity ce = new ChangedEntity("org.apache.commons.fileupload.DefaultFileItemTest", "");
+      final ChangedEntity ce = new ChangedEntity("org.apache.commons.fileupload.StreamingTest", "");
       final Change change = new Change();
       change.setChangePercent(-8.0);
-      change.setMethod("testTextFieldConstruction");
+      change.setMethod("testFILEUPLOAD135");
       final File projectFolder2 = new File("../../projekte/commons-fileupload");
-      final File viewFolder2 = new File("/home/reichelt/daten3/diss/repos/views-final/views_commons-fileupload/");
-      final PropertyReadHelper propertyReadHelper = new PropertyReadHelper("4f38de087e0af31bf348b811b24b7c28212a8429",
-            "555886", ce, change, projectFolder2, viewFolder2,
+      final File viewFolder2 = new File("/home/reichelt/daten3/diss/repos/preprocessing/4/commons-fileupload/views_commons-fileupload/");
+      final PropertyReadHelper propertyReadHelper = new PropertyReadHelper("96f8f56556a8592bfed25c82acedeffc4872ac1f",
+            "09d16c", ce, change, projectFolder2, viewFolder2,
             new File("/tmp/"));
       propertyReadHelper.read();
    }
@@ -108,7 +108,6 @@ public class PropertyReadHelper {
       final File folder = new File(viewFolder, "view_" + version + File.separator + testClazz + File.separator + property.getMethod());
       final File fileCurrent = new File(folder, version.substring(0, 6) + "_method");
       final File fileOld = new File(folder, getShortPrevVersion() + "_method");
-      final Set<String> calls = new HashSet<>();
       if (fileCurrent.exists() && fileOld.exists()) {
          final PeASSFolders folders = new PeASSFolders(projectFolder);
          final ChangeManager changeManager = new ChangeManager(folders);
@@ -118,21 +117,24 @@ public class PropertyReadHelper {
          final List<String> traceOld = Sequitur.getExpandedTrace(fileOld);
          determineTraceSizeChanges(property, traceCurrent, traceOld);
 
-         final Set<String> merged = getMergedCalls(calls, traceCurrent, traceOld);
+         final Set<String> merged = getMergedCalls(traceCurrent, traceOld);
 
          for (final String calledInOneMethod : merged) {
             LOG.debug("Loading: " + calledInOneMethod);
+            if (calledInOneMethod.contains("ServletRequestContext#getContentLength")) {
+               System.out.println("Test");
+            }
             final ChangedEntity entity = determineEntity(calledInOneMethod);
             final MethodChangeReader reader = new MethodChangeReader(methodFolder, folders.getProjectFolder(), folders.getOldSources(), entity, version);
             reader.readMethodChangeData();
             getKeywordChanges(property, reader, entity);
          }
 
-         identifyAffectedClasses(property, calls);
+         identifyAffectedClasses(property, merged);
 
-         LOG.info("Calls: " + calls);
+         LOG.info("Calls: " + merged);
 
-         getTestSourceAffection(property, calls, folders, changes);
+         getTestSourceAffection(property, merged, folders, changes);
       } else {
          if (!fileCurrent.exists()) {
             LOG.error("Not found: {}", fileCurrent);
@@ -211,12 +213,12 @@ public class PropertyReadHelper {
       return entity;
    }
 
-   public Set<String> getMergedCalls(final Set<String> calls, final List<String> traceCurrent, final List<String> traceOld) {
-      final Set<String> merged = new HashSet<>(traceCurrent);
+   public Set<String> getMergedCalls(final List<String> traceCurrent, final List<String> traceOld) {
+      final Set<String> merged = new HashSet<>();
       final Set<String> calledCurrent = new HashSet<>(traceCurrent);
       final Set<String> calledOld = new HashSet<>(traceOld);
-      calls.addAll(calledCurrent);
-      calls.addAll(calledOld);
+      merged.addAll(calledCurrent);
+      merged.addAll(calledOld);
 
       // intersection.retainAll(calledOld);
       return merged;

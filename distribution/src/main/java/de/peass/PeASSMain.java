@@ -4,7 +4,7 @@ import java.util.concurrent.Callable;
 
 import de.peass.clean.TestCleaner;
 import de.peass.utils.DivideVersions;
-import de.peass.visualization.GenerateRCAHTML;
+import de.peass.visualization.VisualizeRCA;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -16,7 +16,7 @@ import picocli.CommandLine.Command;
       IsChange.class, 
       RootCauseAnalysis.class, 
       DivideVersions.class, 
-      GenerateRCAHTML.class }, synopsisSubcommandLabel = "COMMAND")
+      VisualizeRCA.class }, synopsisSubcommandLabel = "COMMAND")
 public class PeASSMain implements Callable<Void> {
    public static void main(final String[] args) {
       final CommandLine line = new CommandLine(new PeASSMain());

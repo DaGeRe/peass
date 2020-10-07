@@ -39,8 +39,17 @@ class SourceWriter {
    }
 
    private void getNodeSource(final Map<String, String> nameSourceMap, final GraphNode node) throws IOException {
-      final String key = KiekerPatternConverter.getKey(node.getKiekerPattern());
-      String fileNameStart = KiekerPatternConverter.getFileNameStart(node.getKiekerPattern());
+      final String currentPattern = node.getKiekerPattern();
+      
+      readMethod(nameSourceMap, node, currentPattern);
+      if (!currentPattern.equals(node.getOtherKiekerPattern())) {
+         readMethod(nameSourceMap, node, node.getOtherKiekerPattern());
+      }
+   }
+
+   private void readMethod(final Map<String, String> nameSourceMap, final GraphNode node, final String currentPattern) throws IOException {
+      final String key = KiekerPatternConverter.getKey(currentPattern);
+      String fileNameStart = KiekerPatternConverter.getFileNameStart(currentPattern);
 
       final File test = new File(sourceFolder, fileNameStart + "_diff.txt");
       if (test.exists()) {

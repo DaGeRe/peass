@@ -11,7 +11,6 @@ import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.serialization.MeasuredNode;
-import de.peass.visualization.NodePreparator;
 
 public class TestNodePreperatorColor {
    
