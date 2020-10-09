@@ -54,7 +54,7 @@ public class TreeFilter extends AbstractFilterPlugin {
          final String methodname = execution.getOperation().getSignature().getName().intern();
          final String call = fullClassname + "#" + methodname;
          final String kiekerPattern = KiekerPatternConverter.getKiekerPattern(execution.getOperation());
-         LOG.trace(kiekerPattern);
+         LOG.trace("{} {}", kiekerPattern, execution.getEss());
 
          // ignore synthetic java methods
          if (!methodname.equals("class$") && !methodname.startsWith("access$")) {
@@ -64,18 +64,29 @@ public class TreeFilter extends AbstractFilterPlugin {
    }
 
    private void addExecutionToTree(final Execution execution, final String fullClassname, final String methodname, final String call, final String kiekerPattern) {
+
       if (test.getClazz().equals(fullClassname) && test.getMethod().equals(methodname)) {
          readRoot(execution, call, kiekerPattern);
       } else if (root != null && execution.getTraceId() == testTraceId) {
          LOG.trace(fullClassname + " " + execution.getOperation().getSignature() + " " + execution.getEoi() + " " + execution.getEss());
          LOG.trace("Last Stack: " + lastStackSize);
+
          callLevelDown(execution);
          callLevelUp(execution);
-         LOG.trace("Parent: " + lastParent.getCall());
+         LOG.trace("Parent: {} {}", lastParent.getCall(), lastParent.getEss());
+
+         if (execution.getEss() == lastParent.getEss()) {
+            final String message = "Trying to add " + call + "(" + execution.getEss() + ")" + " to " + lastParent.getCall() + "(" + lastParent.getEss()
+                  + "), but parent ess always needs to be child ess -1";
+            LOG.error(message);
+            throw new RuntimeException(message);
+         }
+
          boolean hasEqualNode = false;
          for (CallTreeNode candidate : lastParent.getChildren()) {
             if (candidate.getKiekerPattern().equals(kiekerPattern)) {
                hasEqualNode = true;
+               lastAdded = candidate;
             }
          }
          if (!ignoreEOIs || !hasEqualNode) {
@@ -86,6 +97,7 @@ public class TreeFilter extends AbstractFilterPlugin {
 
    private void callLevelUp(final Execution execution) {
       while (execution.getEss() < lastStackSize) {
+         LOG.trace("Level up: " + execution.getEss() + " " + lastStackSize);
          lastParent = lastParent.getParent();
          lastStackSize--;
       }
@@ -93,8 +105,14 @@ public class TreeFilter extends AbstractFilterPlugin {
 
    private void callLevelDown(final Execution execution) {
       if (execution.getEss() > lastStackSize) {
+         LOG.info("Level down: " + execution.getEss() + " " + lastStackSize);
          lastParent = lastAdded;
-         lastStackSize++;
+         // lastStackSize++;
+         if (lastStackSize + 1 != lastParent.getEss() + 1) {
+            LOG.error("Down caused wrong lastStackSize: {} {}", lastStackSize, lastParent.getEss());
+         }
+         lastStackSize = lastParent.getEss() + 1;
+         LOG.info("Stack size after going down: {} Measured: {}", lastParent.getEss(), lastStackSize);
       }
    }
 

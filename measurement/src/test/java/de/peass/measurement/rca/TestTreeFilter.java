@@ -20,7 +20,7 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class TestTreeFilter {
    
-   private static final File SOURCE_DIR = new File("src/test/resources/rootCauseIT/basic_state/");
+   private static final File SOURCE_DIR = new File("src/test/resources/treeReadExample");
    
    private File tempDir;
    private File projectFolder;
@@ -42,11 +42,23 @@ public class TestTreeFilter {
       CallTreeNode node = getTree(projectFolder);
       
       Assert.assertNotNull(node);
-      Assert.assertEquals(3, node.getChildren().size());
+      System.out.println(node.getChildren());
+      Assert.assertEquals(7, node.getChildren().size());
       CallTreeNode executeThingNode = node.getChildren().get(1);
       Assert.assertEquals(3, executeThingNode.getChildren().size());
       Assert.assertEquals(2, executeThingNode.getChildren().get(0).getChildren().size());
       Assert.assertEquals(1, executeThingNode.getChildren().get(2).getChildren().size());
+      
+      CallTreeNode executeThingOther = node.getChildren().get(5);
+      Assert.assertEquals("defaultpackage.OtherDependency#executeThing", executeThingOther.getCall());
+      CallTreeNode child1 = executeThingOther.getChildren().get(0);
+      CallTreeNode child2 = executeThingOther.getChildren().get(1);
+      CallTreeNode child3 = executeThingOther.getChildren().get(2);
+      Assert.assertEquals("defaultpackage.OtherDependency#child1", child1.getCall());
+      Assert.assertEquals("defaultpackage.OtherDependency#child2", child2.getCall());
+      Assert.assertEquals("defaultpackage.OtherDependency#child3", child3.getCall());
+      System.out.println(child3.getChildren());
+      Assert.assertEquals(1, child3.getChildren().size());
    }
 
    public static CallTreeNode getTree(File projectFolder) throws IOException, XmlPullParserException, InterruptedException, FileNotFoundException, ViewNotFoundException, AnalysisConfigurationException {
