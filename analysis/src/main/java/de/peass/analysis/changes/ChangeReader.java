@@ -24,6 +24,7 @@ import de.peass.measurement.analysis.Relation;
 import de.peass.measurement.analysis.statistics.DescribedChunk;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.utils.RunCommandWriterSearchCause;
+import de.peass.utils.RunCommandWriterSlurmRCA;
 import de.peran.FolderSearcher;
 import de.peran.analysis.helper.read.VersionData;
 import de.peran.measurement.analysis.ProjectStatistics;
@@ -52,14 +53,18 @@ public class ChangeReader {
    private final File statisticsFolder;
 
    private final RunCommandWriterSearchCause runCommandWriter;
+   private final RunCommandWriterSlurmRCA runCommandWriterSlurm;
 
    public ChangeReader(final RepoFolders resultsFolder, final String projectName) throws FileNotFoundException {
       statisticsFolder = resultsFolder.getProjectStatisticsFolder(projectName);
       if (VersionComparator.getDependencies().getUrl() != null && !VersionComparator.getDependencies().getUrl().isEmpty()) {
          final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-" + projectName + ".sh"));
          runCommandWriter = new RunCommandWriterSearchCause(runCommandPrinter, "default", VersionComparator.getDependencies());
+         final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticsFolder, "run-rca-" + projectName + ".sh"));
+         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", VersionComparator.getDependencies());
       } else {
          runCommandWriter = null;
+         runCommandWriterSlurm = null;
       }
    }
 
@@ -68,14 +73,18 @@ public class ChangeReader {
       if (VersionComparator.getDependencies().getUrl() != null && !VersionComparator.getDependencies().getUrl().isEmpty()) {
          final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-" + projectName + ".sh"));
          runCommandWriter = new RunCommandWriterSearchCause(runCommandPrinter, "default", VersionComparator.getDependencies());
+         PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticsFolder, "run-rca-" + projectName + ".sh"));
+         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", VersionComparator.getDependencies());
       } else {
          runCommandWriter = null;
+         runCommandWriterSlurm = null;
       }
    }
 
    public ChangeReader(final String projectName) {
       this.statisticsFolder = null;
       runCommandWriter = null;
+      runCommandWriterSlurm = null;
    }
 
    public double getType1error() {
@@ -211,13 +220,24 @@ public class ChangeReader {
                statistic.getTvalue(),
                statistic.getVMs());
 
-         if (runCommandWriter != null) {
-            final Result exampleResult = describedChunk.getCurrent().get(0);
-            runCommandWriter.createSingleMethodCommand(0, versions[1], testcase.getExecutable(),
-                  (int) exampleResult.getWarmupExecutions(), (int) exampleResult.getExecutionTimes(), (int) exampleResult.getRepetitions(), describedChunk.getCurrent().size());
-         }
+         writeRunCommands(versions, describedChunk, testcase);
       }
       info.addMeasurement(versions[1], testcase, statistic);
+   }
+
+   private void writeRunCommands(final String[] versions, final DescribedChunk describedChunk, final TestCase testcase) {
+      if (runCommandWriter != null) {
+         final Result exampleResult = describedChunk.getCurrent().get(0);
+         final int iterations = (int) exampleResult.getExecutionTimes();
+         final int repetitions = (int) exampleResult.getRepetitions();
+         final int vms = describedChunk.getCurrent().size();
+
+         runCommandWriter.createSingleMethodCommand(0, versions[1], testcase.getExecutable(),
+               (int) exampleResult.getWarmupExecutions(), iterations, repetitions, vms);
+         
+         runCommandWriterSlurm.createSingleMethodCommand(0, versions[1], testcase.getExecutable(),
+               iterations, repetitions, vms);
+      }
    }
 
    public VersionData getAllData() {

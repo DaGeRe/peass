@@ -99,6 +99,7 @@ public class MissingExecutionFinder {
       for (Entry<String, TestcaseData> entry : reader.getAllData().getData().entrySet()) {
          String version = entry.getKey();
          TestSet versionsTests = tests.getVersions().get(version);
+         LOG.debug("Removing from: {}", version);
          for (TestCase test : entry.getValue().getTestcaseData().keySet()) {
             removeTestFromTestSet(test.getClazz(), test.getMethod(), versionsTests);
          }

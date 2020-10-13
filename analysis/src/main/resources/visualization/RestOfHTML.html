@@ -33,9 +33,14 @@ var unknown_changed = textures.lines()
 .background("#8888FF")
 .thicker();
 
+var equal_changed = textures.lines()
+.background("#FFF")
+.thicker();
+
 svg.call(faster_changed);
 svg.call(slower_changed);
 svg.call(unknown_changed);
+svg.call(equal_changed);
 
 root = treeData[0];
 root.x0 = height / 2;
@@ -52,6 +57,7 @@ function getTexture(node){
 	  case 'FASTER': return faster_changed.url();
 	  case 'SLOWER': return slower_changed.url();
 	  case 'UNKNOWN': return unknown_changed.url();
+	  case null: return equal_changed.url();
 	}
   }
   else 

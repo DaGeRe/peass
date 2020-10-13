@@ -208,9 +208,9 @@ public class NodePreparator {
             }
          }
       } else if (Double.isNaN(statisticsOld.getMean()) && !Double.isNaN(statisticsCurrent.getMean())) {
-         graphNode.setFaster();
-      } else if (!Double.isNaN(statisticsOld.getMean()) && Double.isNaN(statisticsCurrent.getMean())) {
          graphNode.setSlower();
+      } else if (!Double.isNaN(statisticsOld.getMean()) && Double.isNaN(statisticsCurrent.getMean())) {
+         graphNode.setFaster();
       } else {
          graphNode.setColor("#FFFFFF");
          graphNode.getStatistic().setChange(false);

@@ -9,6 +9,8 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
+import de.peass.measurement.rca.data.CauseSearchData;
+
 class SourceWriter {
    final GraphNode root;
    final BufferedWriter fileWriter;
@@ -41,8 +43,10 @@ class SourceWriter {
    private void getNodeSource(final Map<String, String> nameSourceMap, final GraphNode node) throws IOException {
       final String currentPattern = node.getKiekerPattern();
       
-      readMethod(nameSourceMap, node, currentPattern);
-      if (!currentPattern.equals(node.getOtherKiekerPattern())) {
+      if (!currentPattern.equals(CauseSearchData.ADDED)) {
+         readMethod(nameSourceMap, node, currentPattern);
+      }
+      if (!currentPattern.equals(node.getOtherKiekerPattern()) && !node.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {
          readMethod(nameSourceMap, node, node.getOtherKiekerPattern());
       }
    }

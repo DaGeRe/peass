@@ -17,8 +17,9 @@ public class KiekerPatternConverter {
 
    private static String convertPattern(final String kiekerPattern, final String separator) {
       final String call = kiekerPattern.substring(kiekerPattern.lastIndexOf(' ') + 1, kiekerPattern.lastIndexOf('('));
-      String method = call.substring(call.lastIndexOf(".") + 1);
-      String clazz = call.substring(0, call.lastIndexOf('.'));
+      final int dotIndex = call.lastIndexOf(".");
+      String method = call.substring(dotIndex + 1);
+      String clazz = call.substring(0, dotIndex);
 
       String parameterString = getParameterKeyString(kiekerPattern);
       
