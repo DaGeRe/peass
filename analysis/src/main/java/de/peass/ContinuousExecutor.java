@@ -40,6 +40,7 @@ import de.peass.vcs.VersionIteratorGit;
 import de.peran.AnalyseOneTest;
 import de.peran.measurement.analysis.AnalyseFullData;
 import picocli.CommandLine;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 /**
@@ -50,8 +51,10 @@ import picocli.CommandLine.Option;
  * @author reichelt
  *
  */
-public class ContinousExecutor implements Callable<Void> {
-   private static final Logger LOG = LogManager.getLogger(ContinousExecutor.class);
+@Command(description = "Examines the current and last version of a project. If informations are present in default paths, these are used", 
+   name = "continuousExecution")
+public class ContinuousExecutor implements Callable<Void> {
+   private static final Logger LOG = LogManager.getLogger(ContinuousExecutor.class);
 
    @Option(names = { "-vms", "--vms" }, description = "Number of VMs to start")
    int vms = 100;
@@ -81,7 +84,7 @@ public class ContinousExecutor implements Callable<Void> {
    protected File projectFolder;
 
    public static void main(final String[] args) throws InterruptedException, IOException, JAXBException {
-      final ContinousExecutor command = new ContinousExecutor();
+      final ContinuousExecutor command = new ContinuousExecutor();
       final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);
 
@@ -153,14 +156,7 @@ public class ContinousExecutor implements Callable<Void> {
 
       // final VersionKeeper nrv = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonrunning.json"));
       if (!dependencyFile.exists()) {
-         needToLoad = true;
-         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, 10, nonChanges);
-         if (!reader.readInitialVersion()) {
-            LOG.error("Analyzing first version was not possible");
-         } else {
-            reader.readDependencies();
-         }
-         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+         dependencies = fullyLoadDependencies(projectFolder, dependencyFile, url, iterator, nonChanges);
       } else {
          dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
          VersionComparator.setDependencies(dependencies);
@@ -173,12 +169,25 @@ public class ContinousExecutor implements Callable<Void> {
          } else {
             needToLoad = true;
          }
+         if (needToLoad) {
+            //TODO Continuous Dependency Reading
+         }
       }
-      if (needToLoad) {
-         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, 10, nonChanges);
+      
+      return dependencies;
+   }
+
+   private static Dependencies fullyLoadDependencies(final File projectFolder, final File dependencyFile, final String url, final VersionIteratorGit iterator,
+         final VersionKeeper nonChanges) throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException {
+      Dependencies dependencies;
+      final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, 10, nonChanges);
+      iterator.goToPreviousCommit();
+      if (!reader.readInitialVersion()) {
+         LOG.error("Analyzing first version was not possible");
+      } else {
          reader.readDependencies();
-         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       }
+      dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       return dependencies;
    }
 

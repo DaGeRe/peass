@@ -91,12 +91,12 @@
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-junit</artifactId>
-			<version>0.11-SNAPSHOT</version>
+			<version>0.11</version>
 		</dependency>
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-junit3</artifactId>
-			<version>0.11-SNAPSHOT</version>
+			<version>0.11</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
