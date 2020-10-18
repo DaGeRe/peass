@@ -38,8 +38,8 @@ public class ViewGenerator extends PairProcessor {
    private ExecutionData changedTraceMethods = new ExecutionData();
    // private final TestResultManager resultsManager;
 
-   public ViewGenerator(final File projectFolder, final Dependencies dependencies, final File executefile, final File viewFolder, final int threads, final int timeout) {
-      super(projectFolder, dependencies, timeout);
+   public ViewGenerator(final File projectFolder, final Dependencies dependencies, final File executefile, final File viewFolder, final int threads, final int timeoutInMinutes) {
+      super(projectFolder, dependencies, timeoutInMinutes);
       this.viewFolder = viewFolder;
       this.executeFile = executefile;
       this.threads = threads;

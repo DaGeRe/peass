@@ -21,8 +21,8 @@ public abstract class PairProcessor extends VersionProcessor{
 
 	protected final Map<TestCase, String> lastTestcaseCalls = new HashMap<>();
 	
-	public PairProcessor(final File projectFolder, final Dependencies dependencies, final int timeout){
-      super(projectFolder, dependencies, timeout);
+	public PairProcessor(final File projectFolder, final Dependencies dependencies, final int timeoutInMinutes){
+      super(projectFolder, dependencies, timeoutInMinutes);
 	}
 	
 	public PairProcessor()  {

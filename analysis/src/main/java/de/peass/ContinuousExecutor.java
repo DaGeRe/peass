@@ -130,7 +130,7 @@ public class ContinuousExecutor implements Callable<Void> {
       viewFolder.mkdir();
       FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
       if (!executeFile.exists()) {
-         final ViewGenerator viewgenerator = new ViewGenerator(projectFolder, dependencies, executeFile, viewFolder, threads, 60000);
+         final ViewGenerator viewgenerator = new ViewGenerator(projectFolder, dependencies, executeFile, viewFolder, threads, 15);
          viewgenerator.processCommandline();
       }
       final ExecutionData traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);

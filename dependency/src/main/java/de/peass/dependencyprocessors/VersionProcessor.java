@@ -66,13 +66,13 @@ public abstract class VersionProcessor implements Callable<Void> {
    @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
    protected File executionfile;
 
-   public VersionProcessor(final File projectFolder, final Dependencies dependencies, final int timeout) {
+   public VersionProcessor(final File projectFolder, final Dependencies dependencies, final int timeoutInMinutes) {
       this.folders = new PeASSFolders(projectFolder);
       this.dependencies = dependencies;
       startversion = null;
       endversion = null;
       threads = 1;
-      this.timeout = timeout;
+      this.timeout = timeoutInMinutes;
    }
 
    public void setStartversion(final String startversion) {
