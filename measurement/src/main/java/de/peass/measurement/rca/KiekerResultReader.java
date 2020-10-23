@@ -95,7 +95,7 @@ public class KiekerResultReader {
          }
 
          if (nodeFound) {
-            LOG.debug("Setting measurement: {}", version, values);
+            LOG.debug("Setting measurement: {}", version, values) ;
             node.setMeasurement(version, values);
          } else {
             LOG.warn("Node {} ({}) did not find measurement values", nodeCall, node.getOtherVersionNode());

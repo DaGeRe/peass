@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
+import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.peass.dependency.PeASSFolders;
@@ -37,16 +38,59 @@ public class ResultOrganizer {
    private boolean saveAll = false;
    private final TestCase testcase;
    private boolean success = true;
+   private int expectedIterations;
 
-   public ResultOrganizer(final PeASSFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll, TestCase test) {
+   public ResultOrganizer(final PeASSFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll, TestCase test,
+         int expectedIterations) {
       this.folders = folders;
       this.mainVersion = currentVersion;
       this.currentChunkStart = currentChunkStart;
       this.isUseKieker = isUseKieker;
       this.saveAll = saveAll;
       this.testcase = test;
+      this.expectedIterations = expectedIterations;
 
       determiner = new FolderDeterminer(folders);
+   }
+
+   //TODO the success test duplicatees saveResultFiles code and logic from DependencyTester.shouldReduce
+   /**
+    * Tests whether there is a correct result file, i.e. a XML file in the correct position with the right amount of iterations (it may be less iterations if the test takes too long).
+    * This only works *before* the result has been moved, afterwards, the file will be gone and the measurement will be considered no success
+    * @return true of the measurement was correct
+    */
+   public boolean testSuccess() {
+      final File folder = getTempResultsFolder();
+      if (folder != null) {
+         final String methodname = testcase.getMethod();
+         final File oneResultFile = new File(folder, methodname + ".xml");
+         try {
+            if (!oneResultFile.exists()) {
+               success = false;
+            } else {
+               LOG.debug("Reading: {}", oneResultFile);
+               XMLDataLoader xdl = new XMLDataLoader(oneResultFile);
+               final Kopemedata oneResultData = xdl.getFullData();
+               final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
+               if (testcaseList.size() > 0) {
+                  Result r = oneResultData.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);
+                  if (r.getExecutionTimes() == expectedIterations) {
+                     success = true;
+                  } else {
+                     success = false;
+                  }
+               } else {
+                  success = false;
+               }
+            }
+         } catch (JAXBException e) {
+            e.printStackTrace();
+            success = false;
+         }
+      } else {
+         success = false;
+      }
+      return success;
    }
 
    public void saveResultFiles(final String version, final int vmid)
@@ -68,12 +112,13 @@ public class ResultOrganizer {
             // final TestCase realTestcase = new TestCase(clazz, methodname);
             if (testcaseList.size() > 0) {
                saveResults(version, vmid, oneResultFile, oneResultData, testcaseList);
+
+               if (isUseKieker) {
+                  saveKiekerFiles(folder, folders.getFullResultFolder(testcase, mainVersion, version));
+               }
             } else {
                LOG.error("No data - measurement failed?");
                success = false;
-            }
-            if (isUseKieker) {
-               saveKiekerFiles(folder, folders.getFullResultFolder(testcase, mainVersion, version));
             }
          }
       }

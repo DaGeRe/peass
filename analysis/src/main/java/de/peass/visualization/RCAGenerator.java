@@ -24,9 +24,9 @@ public class RCAGenerator {
    private final File source, details, destFolder;
    private final CauseSearchData data;
    private File propertyFolder;
-   
+
    private CallTreeNode rootPredecessor, rootVersion;
-   
+
    public RCAGenerator(final File source, final File destFolder) throws JsonParseException, JsonMappingException, IOException {
       super();
       this.source = source;
@@ -57,15 +57,15 @@ public class RCAGenerator {
    }
 
    private void writeHTML(final GraphNode root, final CauseSearchData data) throws IOException, JsonProcessingException, FileNotFoundException {
-      final File output = new File(destFolder, data.getTestcase() + ".html");
+      final File output = getOutputFolder(data);
       try (final BufferedWriter fileWriter = new BufferedWriter(new FileWriter(output))) {
          final HTMLEnvironmentGenerator htmlGenerator = new HTMLEnvironmentGenerator(fileWriter);
          fileWriter.write("<!DOCTYPE html>\n");
          htmlGenerator.writeHTML("visualization/HeaderOfHTML.html");
          htmlGenerator.writeInfoDivs(data);
-         
+
          writeTreeDiv(fileWriter);
-         
+
          fileWriter.write("<script>\n");
          if (propertyFolder != null) {
             final File sourceFolder = new File(propertyFolder, "methods" + File.separator + data.getMeasurementConfig().getVersion());
@@ -75,10 +75,21 @@ public class RCAGenerator {
 
          writeTreeDivSizes(root, fileWriter);
          fileWriter.write("</script>\n");
-         
+
          htmlGenerator.writeHTML("visualization/RestOfHTML.html");
          fileWriter.flush();
       }
+   }
+
+   private File getOutputFolder(final CauseSearchData data) {
+      final File output;
+      if (destFolder.getName().equals(data.getMeasurementConfig().getVersion())) {
+         output = new File(destFolder, data.getTestcase() + ".html");
+      } else {
+         output = new File(destFolder, data.getMeasurementConfig().getVersion() + File.separator + data.getTestcase() + ".html");
+      }
+      output.getParentFile().mkdirs();
+      return output;
    }
 
    private void writeTreeDivSizes(final GraphNode root, final BufferedWriter fileWriter) throws IOException {

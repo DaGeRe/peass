@@ -39,7 +39,7 @@ public class CauseTester extends AdaptiveTester {
    private final TestCase testcase;
    private final CauseSearcherConfig causeConfig;
    private final CauseSearchFolders folders;
-   private int adaptiveId = 0;
+   private int levelId = 0;
 
    public CauseTester(final CauseSearchFolders project, final JUnitTestTransformer testgenerator, final CauseSearcherConfig causeConfig)
          throws IOException {
@@ -52,7 +52,6 @@ public class CauseTester extends AdaptiveTester {
       testgenerator.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
    }
 
-
    public void measureVersion(final List<CallTreeNode> nodes)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       includedNodes = prepareNodes(nodes);
@@ -61,14 +60,15 @@ public class CauseTester extends AdaptiveTester {
          boolean shouldBreak = reduceExecutions(false, configuration.getIterations() / 2);
          configuration.setIterations(configuration.getIterations() / 2);
          if (shouldBreak) {
-            throw new RuntimeException("Execution took too long, Iterations: " + configuration.getIterations() 
-            + " Warmup: " + configuration.getWarmup() 
-            + " Repetitions: " + configuration.getRepetitions());
+            throw new RuntimeException("Execution took too long, Iterations: " + configuration.getIterations()
+                  + " Warmup: " + configuration.getWarmup()
+                  + " Repetitions: " + configuration.getRepetitions());
          }
+      } else {
+         getDurations(levelId);
       }
-      getDurations(adaptiveId);
-      cleanup(adaptiveId);
-      adaptiveId++;
+      cleanup(levelId);
+      levelId++;
    }
 
    private Set<CallTreeNode> prepareNodes(final List<CallTreeNode> nodes) {
@@ -100,7 +100,9 @@ public class CauseTester extends AdaptiveTester {
          });
       }
       testExecutor.setIncludedMethods(includedPattern);
-      currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart, testTransformer.getConfig().isUseKieker(), causeConfig.isSaveAll(), testcase);
+      currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart, 
+            testTransformer.getConfig().isUseKieker(), causeConfig.isSaveAll(), testcase, 
+            testTransformer.getConfig().getIterations());
       super.runOnce(testcase, version, vmid, logFolder);
    }
 
@@ -127,41 +129,47 @@ public class CauseTester extends AdaptiveTester {
       final EarlyBreakDecider decider = new EarlyBreakDecider(configuration, statisticsOld, statistics);
       final boolean nodeDecidable = decider.isBreakPossible(vmid);
       LOG.debug("{} decideable: {}", includedNode.getKiekerPattern(), allDecidable);
-      LOG.debug("Old: {} {} Current: {} {}", statisticsOld.getMean(), statisticsOld.getStandardDeviation(), 
+      LOG.debug("Old: {} {} Current: {} {}", statisticsOld.getMean(), statisticsOld.getStandardDeviation(),
             statistics.getMean(), statistics.getStandardDeviation());
       return nodeDecidable;
    }
 
    @Override
    protected void handleKiekerResults(final String version, final File versionResultFolder) {
-      final KiekerResultReader kiekerResultReader = new KiekerResultReader(causeConfig.isUseAggregation(), includedNodes, version, versionResultFolder, testcase,
-            version.equals(configuration.getVersion()));
-      kiekerResultReader.setConsiderNodePosition(!causeConfig.isUseAggregation());
-      kiekerResultReader.readResults();
+      if (currentOrganizer.testSuccess()) {
+         LOG.info("Did succeed in measurement - analyse values");
+         final KiekerResultReader kiekerResultReader = new KiekerResultReader(causeConfig.isUseAggregation(), includedNodes, version, versionResultFolder, testcase,
+               version.equals(configuration.getVersion()));
+         kiekerResultReader.setConsiderNodePosition(!causeConfig.isUseAggregation());
+         kiekerResultReader.readResults();
+      } else {
+         LOG.info("Did not success in measurement");
+      }
+
    }
 
    public void setIncludedMethods(final Set<CallTreeNode> children) {
       includedNodes = children;
    }
 
-   public void getDurations(final int adaptiveId)
+   public void getDurations(final int levelId)
          throws FileNotFoundException, IOException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
       getDurationsVersion(configuration.getVersion());
       getDurationsVersion(configuration.getVersionOld());
    }
 
-   public void cleanup(final int adaptiveId) {
-      organizeMeasurements(adaptiveId, configuration.getVersion(), configuration.getVersion());
-      organizeMeasurements(adaptiveId, configuration.getVersion(), configuration.getVersionOld());
+   public void cleanup(final int levelId) {
+      organizeMeasurements(levelId, configuration.getVersion(), configuration.getVersion());
+      organizeMeasurements(levelId, configuration.getVersion(), configuration.getVersionOld());
    }
 
-   private void organizeMeasurements(final int adaptiveId, final String mainVersion, final String version) {
+   private void organizeMeasurements(final int levelId, final String mainVersion, final String version) {
       final File testcaseFolder = folders.getFullResultFolder(testcase, mainVersion, version);
       final File versionFolder = new File(folders.getArchiveResultFolder(mainVersion, testcase), version);
       if (!versionFolder.exists()) {
          versionFolder.mkdir();
       }
-      final File adaptiveRunFolder = new File(versionFolder, "" + adaptiveId);
+      final File adaptiveRunFolder = new File(versionFolder, "" + levelId);
       if (!testcaseFolder.renameTo(adaptiveRunFolder)) {
          LOG.error("Could not rename {}", testcaseFolder);
       }

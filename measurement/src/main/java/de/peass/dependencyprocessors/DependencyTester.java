@@ -166,7 +166,8 @@ public class DependencyTester {
          throws IOException, InterruptedException, JAXBException {
       currentVersion = configuration.getVersion();
       //TODO Vermutlich currentVersion -> mainVersion
-      currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, testTransformer.getConfig().isUseKieker(), false, testcase);
+      currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, testTransformer.getConfig().isUseKieker(), false, testcase, 
+            testTransformer.getConfig().getIterations());
       if (configuration.getVersionOld().equals("HEAD~1")) {
          runOnce(testcase, configuration.getVersion() + "~1", vmid, logFolder);
       } else {

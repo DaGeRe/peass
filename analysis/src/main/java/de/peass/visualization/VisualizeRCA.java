@@ -53,6 +53,9 @@ public class VisualizeRCA implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
+      if (!resultFolder.exists()) {
+         resultFolder.mkdir();
+      }
       for (final File source : data) {
          if (source.isDirectory()) {
             if (source.getName().endsWith("_peass")) {
