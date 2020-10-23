@@ -152,13 +152,28 @@ public class DependencyManager extends KiekerResultManager {
       }
       LOG.debug("Result collection finished");
 
+      cleanResultFolder();
+      return true;
+   }
+
+   private void cleanResultFolder() {
       final File movedInitialResults = new File(folders.getTempMeasurementFolder().getParentFile(), "initialresults_kieker");
-      folders.getTempMeasurementFolder().renameTo(movedInitialResults);
+      if (movedInitialResults.exists()) {
+         try {
+            LOG.info("Deleting old initialresults");
+            FileUtils.deleteDirectory(movedInitialResults);
+         } catch (IOException e) {
+            e.printStackTrace();
+         }
+      }
+      final boolean renameSuccess = folders.getTempMeasurementFolder().renameTo(movedInitialResults);
+      if (!renameSuccess) {
+         LOG.error("Could not move results");
+      }
       for (File classFolder : movedInitialResults.listFiles()) {
          LOG.debug("Cleaning {}", classFolder.getAbsolutePath());
          cleanFolderAboveSize(classFolder, deleteFolderSize);
       }
-      return true;
    }
 
    /**
