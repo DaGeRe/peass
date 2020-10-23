@@ -4,14 +4,14 @@
 	<groupId>de.peran.example</groupId>
 	<artifactId>example</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>peran-example</name>
+	<name>peass-example</name>
 	<description>Example for dependency-generation</description>
 
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.12</version>
+			<version>4.13.1</version>
 		</dependency>
 	</dependencies>
 </project>
