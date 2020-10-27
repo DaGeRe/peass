@@ -58,6 +58,16 @@ public class MeasurementConfiguration {
       this.type1error = type1error;
       this.type2error = type2error;
    }
+   
+   public MeasurementConfiguration(int timeout, MeasurementConfigurationMixin mixin) {
+      this(timeout, mixin.getVms(), mixin.getType1error(), mixin.getType2error());
+      setEarlyStop(mixin.isEarlyStop());
+      setUseKieker(mixin.isUseKieker());
+      setIterations(mixin.getIterations());
+      setWarmup(mixin.getWarmup());
+      setRepetitions(mixin.getRepetitions());
+      setUseGC(mixin.isUseGC());
+   }
 
    @JsonCreator
    public MeasurementConfiguration(@JsonProperty("timeout") final int timeout,

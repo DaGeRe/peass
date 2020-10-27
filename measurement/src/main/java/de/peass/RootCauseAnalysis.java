@@ -65,13 +65,11 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       final String predecessor = versionInfo.getPredecessor();
 
       LOG.debug("Timeout in minutes: {}", timeout);
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, type1error, type2error, earlyStop, version, predecessor);
-      measurementConfiguration.setWarmup(warmup);
-      measurementConfiguration.setIterations(iterations);
-      measurementConfiguration.setRepetitions(repetitions);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, measurementConfigMixin);
       measurementConfiguration.setUseKieker(true);
-      measurementConfiguration.setUseGC(useGC);
       measurementConfiguration.setKiekerAggregationInterval(writeInterval);
+      measurementConfiguration.setVersion(version);
+      measurementConfiguration.setVersionOld(predecessor);
       final JUnitTestTransformer testtransformer = getTestTransformer(measurementConfiguration);
 
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, causeSearchConfigMixin);

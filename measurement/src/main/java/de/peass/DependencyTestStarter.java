@@ -15,6 +15,7 @@ import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.execution.MeasurementConfiguration;
+import de.peass.dependency.execution.MeasurementConfigurationMixin;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.dependencyprocessors.DependencyTester;
@@ -23,6 +24,7 @@ import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.testtransformation.TimeBasedTestTransformer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 /**
@@ -35,40 +37,11 @@ import picocli.CommandLine.Option;
 @Command(description = "Measures the defined tests and versions until the number of VMs is reached", name = "measure")
 public class DependencyTestStarter extends PairProcessor {
 
-   @Option(names = { "-vms", "--vms" }, description = "Number of VMs to start")
-   int vms = 100;
-
-   @Option(names = { "-duration", "--duration" }, description = "Which duration to use - if duration is specified, warmup and iterations are ignored")
-   int duration = 0;
-
-   @Option(names = { "-warmup", "--warmup" }, description = "Number of warmup iterations")
-   int warmup = 10;
-
-   @Option(names = { "-iterations", "--iterations" }, description = "Number of iterations")
-   int iterations = 1000;
-
-   @Option(names = { "-repetitions", "--repetitions" }, description = "Last version that should be analysed")
-   int repetitions = 100;
-
-   @Option(names = { "-useKieker", "--useKieker", "-usekieker", "--usekieker" }, description = "Whether Kieker should be used")
-   boolean useKieker = false;
-
-   @Option(names = { "-useGC", "--useGC" }, description = "Do execute GC before each iteration (default false)")
-   public boolean useGC = false;
+   @Mixin
+   MeasurementConfigurationMixin measurementConfigMixin;
 
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
-
-   @Option(names = { "-earlyStop", "--earlyStop" }, description = "Whether to stop early (i.e. execute VMs until type 1 and type 2 error are met)")
-   protected boolean earlyStop = false;
-
-   @Option(names = { "-type1error",
-         "--type1error" }, description = "Type 1 error of agnostic-t-test, i.e. probability of considering measurements equal when they are unequal (requires earlyStop)")
-   public double type1error = 0.05;
-
-   @Option(names = { "-type2error",
-         "--type2error" }, description = "Type 2 error of agnostic-t-test, i.e. probability of considering measurements unequal when they are equal (requires earlyStop)")
-   protected double type2error = 0.01;
 
    JUnitTestTransformer getTestTransformer(final MeasurementConfiguration measurementConfig) {
       final JUnitTestTransformer testtransformer = new JUnitTestTransformer(folders.getProjectFolder(), measurementConfig);
@@ -107,20 +80,20 @@ public class DependencyTestStarter extends PairProcessor {
    }
 
    private void createTester(final MeasurementConfiguration measurementConfiguration) throws IOException {
-      if (duration != 0) {
+      if (measurementConfigMixin.getDuration() != 0) {
          TimeBasedTestTransformer testTransformer = new TimeBasedTestTransformer(folders.getProjectFolder());
-         ((TimeBasedTestTransformer) testTransformer).setDuration(duration);
-         if (repetitions != 1) {
-            testTransformer.getConfig().setRepetitions(repetitions);
+         ((TimeBasedTestTransformer) testTransformer).setDuration(measurementConfigMixin.getDuration());
+         if (measurementConfigMixin.getRepetitions() != 1) {
+            testTransformer.getConfig().setRepetitions(measurementConfigMixin.getRepetitions());
          }
          testTransformer.getConfig().setIterations(0);
          testTransformer.getConfig().setWarmup(0);
-         testTransformer.getConfig().setUseKieker(useKieker);
+         testTransformer.getConfig().setUseKieker(measurementConfigMixin.isUseKieker());
          tester = new DependencyTester(folders, testTransformer);
       } else {
          final JUnitTestTransformer testgenerator = getTestTransformer(measurementConfiguration);
 
-         if (earlyStop) {
+         if (measurementConfigMixin.isEarlyStop()) {
             tester = new AdaptiveTester(folders, testgenerator);
          } else {
             tester = new DependencyTester(folders, testgenerator);
@@ -130,13 +103,7 @@ public class DependencyTestStarter extends PairProcessor {
    }
 
    private MeasurementConfiguration createConfig() {
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, vms, type1error, type2error);
-      measurementConfiguration.setEarlyStop(earlyStop);
-      measurementConfiguration.setUseKieker(useKieker);
-      measurementConfiguration.setIterations(iterations);
-      measurementConfiguration.setWarmup(warmup);
-      measurementConfiguration.setRepetitions(repetitions);
-      measurementConfiguration.setUseGC(useGC);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, measurementConfigMixin);
       return measurementConfiguration;
    }
 
@@ -211,7 +178,8 @@ public class DependencyTestStarter extends PairProcessor {
 
    @Override
    protected void processVersion(final String version, final Version versioninfo) {
-      LOG.debug("Configuration: VMs: {} Warmup: {} Iterations: {} Repetitions: {}", vms, warmup, iterations, repetitions);
+      LOG.debug("Configuration: VMs: {} Warmup: {} Iterations: {} Repetitions: {}", measurementConfigMixin.getVms(),
+            measurementConfigMixin.getWarmup(), measurementConfigMixin.getIterations(), measurementConfigMixin.getRepetitions());
       try {
          final int currentIndex = versions.indexOf(version);
          final boolean executeThisVersion = currentIndex >= startindex && currentIndex <= endindex;
