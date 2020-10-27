@@ -32,8 +32,8 @@ public class MeasurementConfiguration {
       this.type1error = 0.01;
       this.type2error = 0.01;
    }
-   public MeasurementConfiguration(final int vms, long timeout) {
-      this.timeout = timeout * 60 * 1000; // timeout in minutes is converted to milliseconds
+   public MeasurementConfiguration(final int vms, long timeoutInMinutes) {
+      this.timeout = timeoutInMinutes * 60 * 1000; // timeout in minutes is converted to milliseconds
       this.vms = vms;
       this.type1error = 0.01;
       this.type2error = 0.01;
