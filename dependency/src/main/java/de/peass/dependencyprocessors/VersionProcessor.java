@@ -138,6 +138,8 @@ public abstract class VersionProcessor implements Callable<Void> {
    protected void initVersionProcessor() throws IOException, JsonParseException, JsonMappingException {
       if (dependencyFile != null) {
          dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+         VersionComparator.setDependencies(dependencies);
+         executionData = new ExecutionData(dependencies);
       }
       if (executionfile != null) {
          executionData = Constants.OBJECTMAPPER.readValue(executionfile, ExecutionData.class);
