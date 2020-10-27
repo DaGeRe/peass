@@ -88,10 +88,13 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   protected void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder) throws IOException, InterruptedException, JAXBException {
+   public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder) throws IOException, InterruptedException, JAXBException {
       final Set<String> includedPattern = new HashSet<>();
       if (configuration.getVersionOld().equals(version)) {
-         includedNodes.forEach(node -> includedPattern.add(node.getKiekerPattern()));
+         includedNodes.forEach(node -> {
+            System.out.println(node);
+            includedPattern.add(node.getKiekerPattern());
+         });
       } else {
          LOG.debug("Searching other: " + version);
          includedNodes.forEach(node -> {
@@ -100,8 +103,8 @@ public class CauseTester extends AdaptiveTester {
          });
       }
       testExecutor.setIncludedMethods(includedPattern);
-      currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart, 
-            testTransformer.getConfig().isUseKieker(), causeConfig.isSaveAll(), testcase, 
+      currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart,
+            testTransformer.getConfig().isUseKieker(), causeConfig.isSaveAll(), testcase,
             testTransformer.getConfig().getIterations());
       super.runOnce(testcase, version, vmid, logFolder);
    }
@@ -199,5 +202,9 @@ public class CauseTester extends AdaptiveTester {
       manager.runOnce(test, version, 0, new File("log"));
       // manager.evaluate(test);
 
+   }
+
+   public void setCurrentVersion(String version) {
+      currentVersion = version;
    }
 }

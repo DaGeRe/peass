@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import de.peass.PeassGlobalInfos;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 
@@ -81,15 +82,18 @@ public class CallTreeNode extends BasicNode {
    }
 
    private void checkDataAddPossible(final String version) {
-      if (otherVersionNode == null) {
-         throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
+      if (PeassGlobalInfos.isTwoVersionRun) {
+         if (otherVersionNode == null) {
+            throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
+         }
+         if (otherVersionNode.getCall().equals(CauseSearchData.ADDED) && version.equals(this.version)) {
+            throw new RuntimeException("Added methods may not contain data");
+         }
       }
       if (call.equals(CauseSearchData.ADDED) && version.equals(this.predecessor)) {
          throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
       }
-      if (otherVersionNode.getCall().equals(CauseSearchData.ADDED) && version.equals(this.version)) {
-         throw new RuntimeException("Added methods may not contain data");
-      }
+
    }
 
    public boolean hasMeasurement(final String version) {
@@ -154,7 +158,7 @@ public class CallTreeNode extends BasicNode {
       final CallTreeStatistics previousVersionStatistics = data.get(predecessor);
       final SummaryStatistics previous = previousVersionStatistics.getStatistics();
       try {
-         final TestcaseStatistic testcaseStatistic = new TestcaseStatistic(previous, current, 
+         final TestcaseStatistic testcaseStatistic = new TestcaseStatistic(previous, current,
                previousVersionStatistics.getCalls(), currentVersionStatistics.getCalls());
          return testcaseStatistic;
       } catch (NumberIsTooSmallException t) {

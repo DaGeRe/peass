@@ -186,7 +186,7 @@ public class DependencyTester {
       return logFolder;
    }
 
-   protected void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
+   public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
          throws IOException, InterruptedException, JAXBException {
       if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");
