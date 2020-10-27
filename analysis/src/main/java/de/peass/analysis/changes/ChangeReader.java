@@ -232,10 +232,11 @@ public class ChangeReader {
          final int repetitions = (int) exampleResult.getRepetitions();
          final int vms = describedChunk.getCurrent().size();
 
-         runCommandWriter.createSingleMethodCommand(0, versions[1], testcase.getExecutable(),
+         final int versionIndex = VersionComparator.getVersionIndex(versions[1]);
+         runCommandWriter.createSingleMethodCommand(versionIndex, versions[1], testcase.getExecutable(),
                (int) exampleResult.getWarmupExecutions(), iterations, repetitions, vms);
          
-         runCommandWriterSlurm.createSingleMethodCommand(0, versions[1], testcase.getExecutable(),
+         runCommandWriterSlurm.createSingleMethodCommand(versionIndex, versions[1], testcase.getExecutable(),
                iterations, repetitions, vms);
       }
    }

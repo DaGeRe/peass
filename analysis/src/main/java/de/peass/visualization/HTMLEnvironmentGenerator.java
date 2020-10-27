@@ -20,23 +20,37 @@ public class HTMLEnvironmentGenerator {
       fileWriter.write("<script src=\"https://cdn.plot.ly/plotly-latest.min.js\"></script>");
       fileWriter.write("<div style='position:absolute; right: 0px; width: 800px; background-color: #BBBBBB; "
             + "border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>\n");
-      fileWriter.write("Version: " + data.getMeasurementConfig().getVersion() + "<br>\n");
+      fileWriter.write("Version: <a href='"
+            + "javascript:fallbackCopyTextToClipboard(\"-version " + data.getMeasurementConfig().getVersion() + " -test " + data.getTestcase() + "\")'>"
+            + data.getMeasurementConfig().getVersion() + "</a><br>\n");
       fileWriter.write("Test Case: " + data.getTestcase() + "<br>\n"
             + "<a href=\"#\" onclick=\"collapse();\">Collapse</a>");
       fileWriter.write("</div>\n");
 
+      writeStatisticsDiv();
+
+      writeHistogramDiv();
+
+      writeSourceDiv();
+   }
+
+   private void writeStatisticsDiv() throws IOException {
       fileWriter.write("<div style='position:absolute; left: 0px; width: 800px; height: 100px; background-color: #BBBBBB; "
             + "border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;' id='infos'>\n");
       fileWriter.write("Statistische Informationen\n");
       fileWriter.write("</div>\n");
+   }
 
+   private void writeHistogramDiv() throws IOException {
       fileWriter.write("<div style='position:absolute; bottom: 0px; "
             + "width: 600px; height: 300px; background-color: #BBBBBB; "
             + "border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;' "
             + "id='histogramm'>\n");
       fileWriter.write("Plot\n");
       fileWriter.write("</div>\n");
+   }
 
+   private void writeSourceDiv() throws IOException {
       fileWriter.write("<div style='position:absolute; bottom: 0px; right:0px; overflow: scroll; "
             + "width: 1000px; height: 300px; background-color: #BBBBBB; "
             + "border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;' "

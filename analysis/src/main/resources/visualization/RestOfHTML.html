@@ -168,7 +168,7 @@ function click(d) {
 }
 
 function round(value){
-	return Math.round(value*100)/100;
+	return Math.round(value*1000)/1000;
 }
 
 function collapse(){
@@ -187,12 +187,37 @@ function collapseNode(parent){
    }
 }
 
+function fallbackCopyTextToClipboard(text) {
+  var textArea = document.createElement("textarea");
+  textArea.value = text;
+  
+  // Avoid scrolling to bottom
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
+
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+
+  try {
+    var successful = document.execCommand('copy');
+    var msg = successful ? 'successful' : 'unsuccessful';
+    console.log('Fallback: Copying text command was ' + msg);
+  } catch (err) {
+    console.error('Fallback: Oops, unable to copy', err);
+  }
+
+  document.body.removeChild(textArea);
+}
+
 function shownode(node) {
   if (node.statistic != null){
 	  infos.innerHTML="<table>" +
-      "<tr><th>Predecessor</th><th>Current</th></tr>"+
-      "<tr><td>" + round(node.statistic.meanOld) +    "</td><td>" + round(node.statistic.meanCurrent)+"</td></tr>"+
-      "<tr><td>" + round(node.statistic.deviationOld)+"</td><td>" + round(node.statistic.deviationCurrent)+"</td></tr>"+
+      "<tr><th>Property</th><th>Predecessor</th><th>Current</th></tr>"+
+      "<tr><td>Mean</td><td>" + round(node.statistic.meanOld) +    " &micro;s</td><td>" + round(node.statistic.meanCurrent)+" &micro;s</td></tr>"+
+      "<tr><td>Deviation</td><td>" + round(node.statistic.deviationOld)+"</td><td>" + round(node.statistic.deviationCurrent)+"</td></tr>"+
+      "<tr><td>In-VM-Deviation</td><td>" + round(node.inVMDeviationPredecessor) + "</td><td>" + round(node.inVMDeviation)+ "</td></tr>" + 
       "</table> VMs: " + node.statistic.vms +
       " T=" + round(node.statistic.tvalue);
   } else {

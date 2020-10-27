@@ -23,6 +23,7 @@ public class GraphNode extends BasicNode {
    private TestcaseStatistic statistic;
    private boolean hasSourceChange = false;
    private State state;
+   private double inVMDeviationPredecessor, inVMDeviation;
 
    @JsonInclude(Include.NON_NULL)
    private double[] values = null;
@@ -79,6 +80,22 @@ public class GraphNode extends BasicNode {
 
    public void setStatistic(final TestcaseStatistic statistic) {
       this.statistic = statistic;
+   }
+   
+   public double getInVMDeviationPredecessor() {
+      return inVMDeviationPredecessor;
+   }
+
+   public void setInVMDeviationPredecessor(double inVMDeviationPredecessor) {
+      this.inVMDeviationPredecessor = inVMDeviationPredecessor;
+   }
+
+   public double getInVMDeviation() {
+      return inVMDeviation;
+   }
+
+   public void setInVMDeviation(double inVMDeviation) {
+      this.inVMDeviation = inVMDeviation;
    }
 
    public String getColor() {

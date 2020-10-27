@@ -2,10 +2,12 @@ package de.peass.visualization;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -194,6 +196,26 @@ public class NodePreparator {
          throw new RuntimeException("Could not examine change " + measuredNode.getKiekerPattern() + " " + measuredNode.getOtherKiekerPattern(), e);
       }
 
+      setInVMDeviations(measuredNode, graphNode);
+   }
+
+   private void setInVMDeviations(final MeasuredNode measuredNode, final GraphNode graphNode) {
+      SummaryStatistics statisticPredecessor = getInVMDeviationStatistic(measuredNode.getValuesPredecessor().getValues());
+      graphNode.setInVMDeviationPredecessor(statisticPredecessor.getMean());
+      SummaryStatistics statistic = getInVMDeviationStatistic(measuredNode.getValues().getValues());
+      graphNode.setInVMDeviation(statistic.getMean());
+   }
+
+   private SummaryStatistics getInVMDeviationStatistic(Map<Integer, List<StatisticalSummary>> values) {
+      SummaryStatistics statistic = new SummaryStatistics();
+      for (List<StatisticalSummary> oneVMRun : values.values()) {
+         SummaryStatistics vmAverage = new SummaryStatistics();
+         for (StatisticalSummary aggregatedRunValues : oneVMRun) {
+            vmAverage.addValue(aggregatedRunValues.getMean());
+         }
+         statistic.addValue(vmAverage.getStandardDeviation());
+      }
+      return statistic;
    }
 
    private void setColorFullStatistics(final MeasuredNode measuredNode, final GraphNode graphNode, final StatisticalSummary statisticsOld,
