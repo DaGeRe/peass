@@ -54,9 +54,6 @@ public abstract class VersionProcessor implements Callable<Void> {
    @Option(names = { "-version", "--version" }, description = "Only version to analyze - do not use together with startversion and endversion!")
    protected String version;
 
-   @Option(names = { "-timeout", "--timeout" }, description = "Timeout in minutes for each VM start")
-   protected int timeout = 5;
-
    @Option(names = { "-threads", "--threads" }, description = "Number of parallel threads for analysis")
    protected int threads = 1;
 
@@ -66,13 +63,12 @@ public abstract class VersionProcessor implements Callable<Void> {
    @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
    protected File executionfile;
 
-   public VersionProcessor(final File projectFolder, final Dependencies dependencies, final int timeoutInMinutes) {
+   public VersionProcessor(final File projectFolder, final Dependencies dependencies) {
       this.folders = new PeASSFolders(projectFolder);
       this.dependencies = dependencies;
       startversion = null;
       endversion = null;
       threads = 1;
-      this.timeout = timeoutInMinutes;
    }
 
    public void setStartversion(final String startversion) {

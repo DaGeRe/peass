@@ -36,15 +36,17 @@ public class ViewGenerator extends PairProcessor {
    private File viewFolder;
    private File executeFile;
    private ExecutionData changedTraceMethods = new ExecutionData();
+   private int timeoutInMinutes;
    // private final TestResultManager resultsManager;
 
    public ViewGenerator(final File projectFolder, final Dependencies dependencies, final File executefile, final File viewFolder, final int threads, final int timeoutInMinutes) {
-      super(projectFolder, dependencies, timeoutInMinutes);
+      super(projectFolder, dependencies);
       this.viewFolder = viewFolder;
       this.executeFile = executefile;
       this.threads = threads;
       processInitialVersion(dependencies.getInitialversion());
       changedTraceMethods.setAndroid(dependencies.isAndroid());
+      this.timeoutInMinutes = timeoutInMinutes;
       init();
    }
 
@@ -138,7 +140,7 @@ public class ViewGenerator extends PairProcessor {
       LOG.info("Starting {}", version);
       return new ViewGeneratorThread(version, predecessor, folders,
             viewFolder, executeFile,
-            testset, changedTraceMethods, timeout);
+            testset, changedTraceMethods, timeoutInMinutes);
    }
 
    public File getExecuteFile() {

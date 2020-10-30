@@ -103,7 +103,7 @@ public class DependencyTestStarter extends PairProcessor {
    }
 
    private MeasurementConfiguration createConfig() {
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, measurementConfigMixin);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(measurementConfigMixin);
       return measurementConfiguration;
    }
 

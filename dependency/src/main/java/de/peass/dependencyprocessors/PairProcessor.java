@@ -21,8 +21,8 @@ public abstract class PairProcessor extends VersionProcessor{
 
 	protected final Map<TestCase, String> lastTestcaseCalls = new HashMap<>();
 	
-	public PairProcessor(final File projectFolder, final Dependencies dependencies, final int timeoutInMinutes){
-      super(projectFolder, dependencies, timeoutInMinutes);
+	public PairProcessor(final File projectFolder, final Dependencies dependencies){
+      super(projectFolder, dependencies);
 	}
 	
 	public PairProcessor()  {
@@ -35,10 +35,5 @@ public abstract class PairProcessor extends VersionProcessor{
          final TestCase testcase = new TestCase(test.getClazz(), test.getMethod(), test.getModule());
 			lastTestcaseCalls.put(testcase, versioninfo.getVersion());
 		}
-	}
-	
-	@Deprecated
-	protected Set<TestCase> findTestcases(final Version versioninfo) {
-		return versioninfo.getTests().getTests();
 	}
 }

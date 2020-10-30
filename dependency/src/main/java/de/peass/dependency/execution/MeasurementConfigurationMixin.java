@@ -34,6 +34,9 @@ public class MeasurementConfigurationMixin {
    @Option(names = { "-type2error",
          "--type2error" }, description = "Type 2 error of agnostic-t-test, i.e. probability of considering measurements unequal when they are equal (requires earlyStop)")
    protected double type2error = 0.01;
+   
+   @Option(names = { "-timeout", "--timeout" }, description = "Timeout in minutes for each VM start")
+   protected int timeout = 5;
 
    public int getVms() {
       return vms;
@@ -74,6 +77,8 @@ public class MeasurementConfigurationMixin {
    public double getType2error() {
       return type2error;
    }
-   
-   
+
+   public int getTimeout() {
+      return timeout;
+   }
 }

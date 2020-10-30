@@ -64,8 +64,8 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       final Version versionInfo = dependencies.getVersions().get(version);
       final String predecessor = versionInfo.getPredecessor();
 
-      LOG.debug("Timeout in minutes: {}", timeout);
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(timeout, measurementConfigMixin);
+      LOG.debug("Timeout in minutes: {}", measurementConfigMixin.getTimeout());
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(measurementConfigMixin);
       measurementConfiguration.setUseKieker(true);
       measurementConfiguration.setKiekerAggregationInterval(writeInterval);
       measurementConfiguration.setVersion(version);
