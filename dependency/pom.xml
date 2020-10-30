@@ -82,7 +82,7 @@
 		<dependency>
 			<groupId>info.picocli</groupId>
 			<artifactId>picocli</artifactId>
-			<version>4.5.1</version>
+			<version>4.5.2</version>
 		</dependency>
 
 		<!-- Both are needed in your local maven repo, and both should be downloaded 
@@ -108,7 +108,7 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>3.5.13</version>
+			<version>3.6.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
