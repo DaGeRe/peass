@@ -24,6 +24,7 @@ import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.execution.MeasurementConfiguration;
+import de.peass.dependency.execution.MeasurementConfigurationMixin;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Version;
@@ -41,6 +42,7 @@ import de.peran.AnalyseOneTest;
 import de.peran.measurement.analysis.AnalyseFullData;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 /**
@@ -56,26 +58,11 @@ import picocli.CommandLine.Option;
 public class ContinuousExecutor implements Callable<Void> {
    private static final Logger LOG = LogManager.getLogger(ContinuousExecutor.class);
 
-   @Option(names = { "-vms", "--vms" }, description = "Number of VMs to start")
-   int vms = 100;
-
-   @Option(names = { "-duration", "--duration" }, description = "Which duration to use - if duration is specified, warmup and iterations are ignored")
-   int duration = 0;
-
-   @Option(names = { "-warmup", "--warmup" }, description = "Number of warmup iterations")
-   int warmup = 10;
-
-   @Option(names = { "-iterations", "--iterations" }, description = "Number of iterations")
-   int iterations = 1000;
-
-   @Option(names = { "-repetitions", "--repetitions" }, description = "Count of repetitions")
-   int repetitions = 100;
+   @Mixin
+   MeasurementConfigurationMixin measurementConfigMixin;
 
    @Option(names = { "-threads", "--threads" }, description = "Count of threads")
    int threads = 100;
-
-   @Option(names = { "-useKieker", "--useKieker", "-usekieker", "--usekieker" }, description = "Whether Kieker should be used")
-   boolean useKieker = false;
 
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
@@ -97,15 +84,12 @@ public class ContinuousExecutor implements Callable<Void> {
       builder.start().waitFor();
    }
 
-   private static File executeMeasurements(final int vms, final int warmup, final int iterations, final int repetitions, final File localFolder, final PeASSFolders folders,
+   private File executeMeasurements(final File localFolder, final PeASSFolders folders,
          final String previousName,
          final GitCommit headCommit, final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException {
       final File fullResultsVersion = new File(localFolder, headCommit.getTag());
       if (!fullResultsVersion.exists()) {
-         final MeasurementConfiguration configuration = new MeasurementConfiguration(vms, headCommit.getTag(), previousName);
-         configuration.setIterations(iterations);
-         configuration.setWarmup(warmup);
-         configuration.setRepetitions(repetitions);
+         final MeasurementConfiguration configuration = new MeasurementConfiguration(measurementConfigMixin);
          final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder(), configuration);
          testgenerator.getConfig().setUseKieker(false);
 
@@ -243,7 +227,7 @@ public class ContinuousExecutor implements Callable<Void> {
             }
          }
 
-         final File measurementFolder = executeMeasurements(vms, warmup, iterations, repetitions, localFolder, folders, previousName, headCommit, tests);
+         final File measurementFolder = executeMeasurements(localFolder, folders, previousName, headCommit, tests);
          final File changefile = new File(localFolder, "changes.json");
          AnalyseOneTest.setResultFolder(new File(localFolder, headCommit.getTag() + "_graphs"));
          final AnalyseFullData afd = new AnalyseFullData(changefile);
