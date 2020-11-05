@@ -31,7 +31,6 @@ import de.peass.measurement.analysis.statistics.MeanHistogramData;
 import de.peass.measurement.analysis.statistics.TestData;
 import de.peass.utils.Constants;
 import de.peran.AnalyseOneTest;
-import de.peran.Environment;
 import de.peran.FolderSearcher;
 
 /**
@@ -47,23 +46,21 @@ public class AnalyseFullData extends DataAnalyser {
    public Set<String> versions = new HashSet<>();
    public int testcases = 0;
 
-   private final File changeKnowledgeFile;
-   public final ProjectChanges knowledge = new ProjectChanges();
-//   public final VersionKnowledge oldKnowledge;
+   private final File changeFile;
+   public final ProjectChanges projectChanges = new ProjectChanges();
 
-   private ProjectStatistics info;
+   private final ProjectStatistics info;
 
    public AnalyseFullData(final ProjectStatistics info) {
-      this(new File(AnalyseOneTest.RESULTFOLDER, "changes.json"));
-      this.info = info;
+      this(new File(AnalyseOneTest.RESULTFOLDER, "changes.json"), info);
    }
 
-   public AnalyseFullData(final File knowledgeFile) {
-      this.changeKnowledgeFile = knowledgeFile;
-//      oldKnowledge = VersionKnowledge.getOldChanges();
-      LOG.info("Writing changes to: {}", changeKnowledgeFile.getAbsolutePath());
+   public AnalyseFullData(final File changesFile, ProjectStatistics info) {
+      this.changeFile = changesFile;
+      this.info = info;
+      LOG.info("Writing changes to: {}", changeFile.getAbsolutePath());
       try {
-         FolderSearcher.MAPPER.writeValue(changeKnowledgeFile, knowledge);
+         FolderSearcher.MAPPER.writeValue(changeFile, projectChanges);
       } catch (final IOException e) {
          e.printStackTrace();
       }
@@ -76,7 +73,7 @@ public class AnalyseFullData extends DataAnalyser {
          LOG.debug("Analysing: {} ({}#{}) Complete: {}", version, measurementEntry.getTestClass(), measurementEntry.getTestMethod(), entry.getValue().isComplete());
          final TestStatistic teststatistic = new TestStatistic(entry.getValue(), info);
 
-         if (Environment.DRAW_RESULTS) {
+         if (Constants.DRAW_RESULTS) {
             final File resultFile = generatePlots(measurementEntry, entry, teststatistic.isChange());
             final File stuffFolder;
             if (teststatistic.isChange()) {
@@ -103,15 +100,15 @@ public class AnalyseFullData extends DataAnalyser {
             }
 
             final double diffPercent = ((double) teststatistic.getDiff()) / 100;
-            knowledge.addChange(measurementEntry.getTestCase(), version,
+            projectChanges.addChange(measurementEntry.getTestCase(), version,
                   teststatistic.getConfidenceResult(), tRelation, teststatistic.getPreviousStatistic().getMean(), 
                   diffPercent, teststatistic.getTValue(),
                   teststatistic.getCurrentStatistic().getN());
-            knowledge.setVersionCount(versions.size());
-            knowledge.setTestcaseCount(testcases);
+            projectChanges.setVersionCount(versions.size());
+            projectChanges.setTestcaseCount(testcases);
 
             try {
-               FolderSearcher.MAPPER.writeValue(changeKnowledgeFile, knowledge);
+               FolderSearcher.MAPPER.writeValue(changeFile, projectChanges);
             } catch (final IOException e) {
                e.printStackTrace();
             }
@@ -245,7 +242,7 @@ public class AnalyseFullData extends DataAnalyser {
       if (!folder.getName().equals("measurements")) {
          throw new RuntimeException("Can only be executed with measurements-folder! For searching folders, use FolderSearcher");
       }
-      LOG.info("Draw results: " + Environment.DRAW_RESULTS);
+      LOG.info("Draw results: " + Constants.DRAW_RESULTS);
       final File dependencyFile = new File(args[1]);
       final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       VersionComparator.setDependencies(dependencies);
@@ -255,6 +252,6 @@ public class AnalyseFullData extends DataAnalyser {
    }
 
    public int getChanges() {
-      return knowledge.getChangeCount();
+      return projectChanges.getChangeCount();
    }
 }

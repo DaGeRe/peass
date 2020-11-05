@@ -17,6 +17,8 @@ public class Constants {
 
    public static final String PEASS_REPOS = "PEASS_REPOS";
    public static final String PEASS_PROJECTS = "PEASS_PROJECTS";
+   
+   public static final boolean DRAW_RESULTS = System.getenv("DRAW_RESULTS") != null ? Boolean.parseBoolean(System.getenv("DRAW_RESULTS")) : false;
 
    public static final String[] VALIDATION_PROJECTS = new String[] { "commons-compress", "commons-csv",
          "commons-dbcp", "commons-fileupload", "commons-imaging", "commons-io", "commons-jcs", "commons-numbers", "commons-pool", "commons-text" };

@@ -81,4 +81,50 @@ public class MeasurementConfigurationMixin {
    public int getTimeout() {
       return timeout;
    }
+
+   public void setVms(int vms) {
+      this.vms = vms;
+   }
+
+   public void setDuration(int duration) {
+      this.duration = duration;
+   }
+
+   public void setWarmup(int warmup) {
+      this.warmup = warmup;
+   }
+
+   public void setIterations(int iterations) {
+      this.iterations = iterations;
+   }
+
+   public void setRepetitions(int repetitions) {
+      this.repetitions = repetitions;
+   }
+
+   public void setUseKieker(boolean useKieker) {
+      this.useKieker = useKieker;
+   }
+
+   public void setUseGC(boolean useGC) {
+      this.useGC = useGC;
+   }
+
+   public void setEarlyStop(boolean earlyStop) {
+      this.earlyStop = earlyStop;
+   }
+
+   public void setType1error(double type1error) {
+      this.type1error = type1error;
+   }
+
+   public void setType2error(double type2error) {
+      this.type2error = type2error;
+   }
+
+   public void setTimeout(int timeout) {
+      this.timeout = timeout;
+   }
+   
+   
 }

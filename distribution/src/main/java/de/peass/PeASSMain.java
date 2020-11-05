@@ -17,7 +17,7 @@ import picocli.CommandLine.Command;
       RootCauseAnalysis.class, 
       DivideVersions.class, 
       VisualizeRCA.class, 
-      ContinuousExecutor.class}, synopsisSubcommandLabel = "COMMAND")
+      ContinuousExecutionStarter.class}, synopsisSubcommandLabel = "COMMAND")
 public class PeASSMain implements Callable<Void> {
    public static void main(final String[] args) {
       final CommandLine line = new CommandLine(new PeASSMain());

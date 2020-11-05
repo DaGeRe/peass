@@ -98,6 +98,7 @@ public class PeASSFolders {
 
    public File getFullResultFolder(final TestCase testcase, final String mainVersion, final String version) {
       final File destFolder = new File(getDetailResultFolder(), testcase.getClazz());
+      System.out.println("Creating: " + destFolder + " " + mainVersion + " " + testcase.getClazz());
       final File currentVersionFolder = new File(destFolder, mainVersion);
       if (!currentVersionFolder.exists()) {
          currentVersionFolder.mkdir();
