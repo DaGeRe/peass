@@ -41,8 +41,10 @@ public class VisualizeRCA implements Callable<Void> {
 
    @Option(names = { "-propertyFolder", "--propertyFolder" }, description = "Path to property folder", required = false)
    protected File propertyFolder;
+   
+   @Option(names = {"-out", "--out"}, description = "Path for storage of results, default results", required = false)
+   protected File resultFolder = new File("results");
 
-   private final File resultFolder = new File("results");
    // TODO Fix dirty hack
    final String projectName = "commons-fileupload";
 
@@ -169,4 +171,29 @@ public class VisualizeRCA implements Callable<Void> {
       return propertyFolder;
    }
 
+   public File[] getData() {
+      return data;
+   }
+
+   public void setData(File[] data) {
+      this.data = data;
+   }
+
+   public File getPropertyFolder() {
+      return propertyFolder;
+   }
+
+   public void setPropertyFolder(File propertyFolder) {
+      this.propertyFolder = propertyFolder;
+   }
+
+   public File getResultFolder() {
+      return resultFolder;
+   }
+
+   public void setResultFolder(File resultFolder) {
+      this.resultFolder = resultFolder;
+   }
+   
+   
 }

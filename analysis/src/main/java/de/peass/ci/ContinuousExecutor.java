@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.ContinuousExecutionStarter;
+import de.peass.analysis.properties.PropertyReader;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
@@ -50,16 +51,23 @@ public class ContinuousExecutor {
    private final int threads;
    private final boolean useViews;
 
-   public ContinuousExecutor(File projectFolder, MeasurementConfiguration measurementConfig, int threads, boolean useViews) {
+   private GitCommit version;
+   private String versionOld;
+
+   private final File localFolder;
+   private final File projectFolderLocal;
+   private final PeASSFolders folders;
+   private final File viewFolder;
+   private final File propertyFolder;
+
+   public ContinuousExecutor(File projectFolder, MeasurementConfiguration measurementConfig, int threads, boolean useViews) throws InterruptedException, IOException {
       this.projectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
       this.threads = threads;
       this.useViews = useViews;
-   }
 
-   public void execute() throws InterruptedException, IOException, JAXBException, XmlPullParserException {
-      File localFolder = getLocalFolder();
-      final File projectFolderLocal = new File(localFolder, projectFolder.getName());
+      localFolder = getLocalFolder();
+      projectFolderLocal = new File(localFolder, projectFolder.getName());
       if (!localFolder.exists() || !projectFolderLocal.exists()) {
          cloneProject(projectFolder, localFolder);
       } else {
@@ -67,13 +75,19 @@ public class ContinuousExecutor {
          GitUtils.goToTag(head, projectFolderLocal);
       }
 
-      final PeASSFolders folders = new PeASSFolders(projectFolderLocal);
+      folders = new PeASSFolders(projectFolderLocal);
+      viewFolder = new File(localFolder, "views");
+      viewFolder.mkdir();
+      
+      propertyFolder = new File(localFolder, "properties");
+   }
 
+   public void execute() throws InterruptedException, IOException, JAXBException, XmlPullParserException {
       final File dependencyFile = new File(localFolder, "dependencies.json");
-      final String previousName = GitUtils.getName("HEAD~1", projectFolderLocal);
-      final GitCommit headCommit = new GitCommit(GitUtils.getName("HEAD", projectFolderLocal), "", "", "");
+      versionOld = GitUtils.getName("HEAD~1", projectFolderLocal);
+      version = new GitCommit(GitUtils.getName("HEAD", projectFolderLocal), "", "", "");
       //
-      final Dependencies dependencies = getDependencies(projectFolderLocal, dependencyFile, previousName, headCommit);
+      final Dependencies dependencies = getDependencies(projectFolderLocal, dependencyFile);
 
       if (dependencies.getVersions().size() > 0) {
          VersionComparator.setDependencies(dependencies);
@@ -83,7 +97,7 @@ public class ContinuousExecutor {
          final Set<TestCase> tests = new HashSet<>();
 
          if (useViews) {
-            final TestSet traceTestSet = getViewTests(threads, localFolder, projectFolderLocal, folders, dependencies, versionName);
+            final TestSet traceTestSet = getViewTests(dependencies);
             for (final Map.Entry<ChangedEntity, Set<String>> test : traceTestSet.getTestcases().entrySet()) {
                for (final String method : test.getValue()) {
                   tests.add(new TestCase(test.getKey().getClazz(), method));
@@ -95,9 +109,9 @@ public class ContinuousExecutor {
             }
          }
 
-         final File measurementFolder = executeMeasurements(localFolder, folders, previousName, headCommit, tests);
+         final File measurementFolder = executeMeasurements(localFolder, folders, tests);
          final File changefile = new File(localFolder, "changes.json");
-         AnalyseOneTest.setResultFolder(new File(localFolder, headCommit.getTag() + "_graphs"));
+         AnalyseOneTest.setResultFolder(new File(localFolder, version.getTag() + "_graphs"));
          final ProjectStatistics statistics = new ProjectStatistics();
          final AnalyseFullData afd = new AnalyseFullData(changefile, statistics);
          afd.analyseFolder(measurementFolder);
@@ -114,15 +128,14 @@ public class ContinuousExecutor {
       builder.start().waitFor();
    }
 
-   private File executeMeasurements(final File localFolder, final PeASSFolders folders, final String previousName,
-         final GitCommit headCommit, final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException {
-      final File fullResultsVersion = new File(localFolder, headCommit.getTag());
+   private File executeMeasurements(final File localFolder, final PeASSFolders folders, final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException {
+      final File fullResultsVersion = new File(localFolder, version.getTag());
       if (!fullResultsVersion.exists()) {
          final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder(), measurementConfig);
          testgenerator.getConfig().setUseKieker(false);
-         measurementConfig.setVersion(headCommit.getTag());
-         measurementConfig.setVersionOld(previousName);
-         
+         measurementConfig.setVersion(version.getTag());
+         measurementConfig.setVersionOld(versionOld);
+
          final AdaptiveTester tester = new AdaptiveTester(folders, testgenerator);
          for (final TestCase test : tests) {
             tester.evaluate(test);
@@ -137,31 +150,33 @@ public class ContinuousExecutor {
       return measurementFolder;
    }
 
-   private static TestSet getViewTests(final int threads, final File localFolder, final File projectFolder, final PeASSFolders folders, final Dependencies dependencies,
-         final String version) throws IOException, JAXBException, JsonParseException, JsonMappingException {
+   private TestSet getViewTests(final Dependencies dependencies)
+         throws IOException, JAXBException, JsonParseException, JsonMappingException {
       final File executeFile = new File(localFolder, "execute.json");
-      final File viewFolder = new File(localFolder, "views");
-      viewFolder.mkdir();
+
       FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
       if (!executeFile.exists()) {
          final ViewGenerator viewgenerator = new ViewGenerator(projectFolder, dependencies, executeFile, viewFolder, threads, 15);
          viewgenerator.processCommandline();
+         final PropertyReader propertyReader = new PropertyReader(propertyFolder, folders.getProjectFolder(), viewFolder);
+         propertyReader.readAllTestsProperties(viewgenerator.getChangedTraceMethods());
       }
       final ExecutionData traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
       LOG.debug("Version: {} Path: {}", version, executeFile.getAbsolutePath());
-      final TestSet traceTestSet = traceTests.getVersions().get(version);
+      final TestSet traceTestSet = traceTests.getVersions().get(version.getTag());
+     
       return traceTestSet;
    }
 
-   private static Dependencies getDependencies(final File projectFolder, final File dependencyFile, final String previousName, final GitCommit headCommit)
+   private Dependencies getDependencies(final File projectFolder, final File dependencyFile)
          throws JAXBException, JsonParseException, JsonMappingException, IOException, InterruptedException, XmlPullParserException {
       Dependencies dependencies;
 
       final String url = GitUtils.getURL(projectFolder);
       final List<GitCommit> entries = new LinkedList<>();
-      final GitCommit prevCommit = new GitCommit(previousName, "", "", "");
+      final GitCommit prevCommit = new GitCommit(versionOld, "", "", "");
       entries.add(prevCommit);
-      entries.add(headCommit);
+      entries.add(version);
       final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, entries, prevCommit);
       boolean needToLoad = false;
 
@@ -177,7 +192,7 @@ public class ContinuousExecutor {
 
          if (dependencies.getVersions().size() > 0) {
             final String versionName = dependencies.getVersionNames()[dependencies.getVersions().size() - 1];
-            if (!versionName.equals(headCommit.getTag())) {
+            if (!versionName.equals(version.getTag())) {
                needToLoad = true;
             }
          } else {
@@ -219,5 +234,25 @@ public class ContinuousExecutor {
 
       final File localFolder = new File(peassFolder, cloneProjectFolder.getName() + "_full");
       return localFolder;
+   }
+
+   public String getLatestVersion() {
+      return version.getTag();
+   }
+
+   public PeASSFolders getFolders() {
+      return folders;
+   }
+
+   public String getVersionOld() {
+      return versionOld;
+   }
+
+   public File getPropertyFolder() {
+      return propertyFolder;
+   }
+
+   public File getProjectFolder() {
+      return folders.getProjectFolder();
    }
 }
