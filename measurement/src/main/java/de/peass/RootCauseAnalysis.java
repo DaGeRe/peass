@@ -25,7 +25,11 @@ import picocli.CommandLine.Option;
 
 @Command(description = "Searches for root cause of a performance change, i.e. method causing the performance change", name = "searchcause")
 public class RootCauseAnalysis extends DependencyTestStarter {
-   
+
+   enum MeasurementModes {
+      COMPLETE, LEVEL, PARTIALTREES
+   }
+
    private static final Logger LOG = LogManager.getLogger(RootCauseAnalysis.class);
 
    @Option(names = { "-measureComplete", "--measureComplete" }, description = "Whether to measure the whole tree at once (default false - tree is measured level-wise)")
@@ -52,9 +56,9 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       if (testName == null) {
          throw new RuntimeException("Test needs to be defined!");
       }
-      
+
       initVersionProcessor();
-      
+
       if (version == null) {
          version = executionData.getVersions().keySet().iterator().next();
          LOG.info("Version was not defined, using " + version);

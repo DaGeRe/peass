@@ -97,10 +97,15 @@ public final class GitUtils {
 
    public static void clone(final PeASSFolders folders, final File projectFolderTemp) throws InterruptedException, IOException {
       // TODO Branches klonen
-      final String clonedProject = folders.getProjectFolder().getAbsolutePath();
-      final String goalFolder = projectFolderTemp.getName();
+      final File projectFolder = folders.getProjectFolder();
+      clone(projectFolderTemp, projectFolder);
+   }
+
+   private static void clone(final File projectFolderSource, final File projectFolderDest) throws InterruptedException, IOException {
+      final String clonedProject = projectFolderDest.getAbsolutePath();
+      final String goalFolder = projectFolderSource.getName();
       final ProcessBuilder builder = new ProcessBuilder("git", "clone", clonedProject, goalFolder);
-      builder.directory(projectFolderTemp.getParentFile());
+      builder.directory(projectFolderSource.getParentFile());
       builder.start().waitFor();
    }
 

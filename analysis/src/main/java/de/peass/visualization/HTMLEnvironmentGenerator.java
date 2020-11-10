@@ -35,7 +35,7 @@ public class HTMLEnvironmentGenerator {
    }
 
    private void writeStatisticsDiv() throws IOException {
-      fileWriter.write("<div style='position:absolute; left: 0px; width: 800px; height: 100px; background-color: #BBBBBB; "
+      fileWriter.write("<div style='position:absolute; left: 0px; max-width: 800px; height: 100px; background-color: #BBBBBB; "
             + "border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;' id='infos'>\n");
       fileWriter.write("Statistische Informationen\n");
       fileWriter.write("</div>\n");

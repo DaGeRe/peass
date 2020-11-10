@@ -32,13 +32,13 @@ public class MeasurementConfiguration {
       this.type1error = 0.01;
       this.type2error = 0.01;
    }
+
    public MeasurementConfiguration(final int vms, long timeoutInMinutes) {
       this.timeout = timeoutInMinutes * 60 * 1000; // timeout in minutes is converted to milliseconds
       this.vms = vms;
       this.type1error = 0.01;
       this.type2error = 0.01;
    }
-
 
    public MeasurementConfiguration(final int vms, final String version, final String versionOld) {
       this.timeout = 20 * 60 * 1000; // 20 minutes
@@ -58,7 +58,7 @@ public class MeasurementConfiguration {
       this.type1error = type1error;
       this.type2error = type2error;
    }
-   
+
    public MeasurementConfiguration(MeasurementConfigurationMixin mixin) {
       this(mixin.getTimeout(), mixin.getVms(), mixin.getType1error(), mixin.getType2error());
       setEarlyStop(mixin.isEarlyStop());
@@ -87,6 +87,29 @@ public class MeasurementConfiguration {
    }
 
    /**
+    * Copy constructor
+    * @param other Configuration to copy
+    */
+   public MeasurementConfiguration(MeasurementConfiguration other) {
+      this.timeout = other.timeout;
+      this.vms = other.vms;
+      this.type1error = other.type1error;
+      this.type2error = other.type2error;
+      this.earlyStop = other.earlyStop;
+      this.warmup = other.warmup;
+      this.iterations = other.iterations;
+      this.repetitions = other.repetitions;
+      this.logFullData = other.logFullData;
+      this.useKieker = other.useKieker;
+      this.redirectToNull = other.redirectToNull;
+      this.useGC = other.useGC;
+      this.kiekerAggregationInterval = other.kiekerAggregationInterval;
+      this.javaVersion = other.javaVersion;
+      this.version = other.version;
+      this.versionOld = other.versionOld;
+   }
+
+   /**
     * Whether to execute a GC before every iteration (bunch of repetitions)
     * 
     * @return
@@ -98,11 +121,11 @@ public class MeasurementConfiguration {
    public void setUseGC(boolean useGC) {
       this.useGC = useGC;
    }
-   
+
    public boolean isRedirectToNull() {
       return redirectToNull;
    }
-   
+
    public void setRedirectToNull(boolean redirectToNull) {
       this.redirectToNull = redirectToNull;
    }

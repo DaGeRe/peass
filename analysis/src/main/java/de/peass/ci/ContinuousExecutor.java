@@ -70,6 +70,9 @@ public class ContinuousExecutor {
       projectFolderLocal = new File(localFolder, projectFolder.getName());
       if (!localFolder.exists() || !projectFolderLocal.exists()) {
          cloneProject(projectFolder, localFolder);
+         if (!projectFolderLocal.exists()) {
+            throw new RuntimeException("Was not able to clone project!");
+         }
       } else {
          final String head = GitUtils.getName("HEAD", projectFolder);
          GitUtils.goToTag(head, projectFolderLocal);
@@ -78,7 +81,7 @@ public class ContinuousExecutor {
       folders = new PeASSFolders(projectFolderLocal);
       viewFolder = new File(localFolder, "views");
       viewFolder.mkdir();
-      
+
       propertyFolder = new File(localFolder, "properties");
    }
 
@@ -94,22 +97,9 @@ public class ContinuousExecutor {
          final String versionName = dependencies.getVersionNames()[dependencies.getVersions().size() - 1];
          final Version currentVersion = dependencies.getVersions().get(versionName);
 
-         final Set<TestCase> tests = new HashSet<>();
+         final Set<TestCase> tests = getTestSet(dependencies, currentVersion);
 
-         if (useViews) {
-            final TestSet traceTestSet = getViewTests(dependencies);
-            for (final Map.Entry<ChangedEntity, Set<String>> test : traceTestSet.getTestcases().entrySet()) {
-               for (final String method : test.getValue()) {
-                  tests.add(new TestCase(test.getKey().getClazz(), method));
-               }
-            }
-         } else {
-            for (final TestSet dep : currentVersion.getChangedClazzes().values()) {
-               tests.addAll(dep.getTests());
-            }
-         }
-
-         final File measurementFolder = executeMeasurements(localFolder, folders, tests);
+         final File measurementFolder = executeMeasurements(tests);
          final File changefile = new File(localFolder, "changes.json");
          AnalyseOneTest.setResultFolder(new File(localFolder, version.getTag() + "_graphs"));
          final ProjectStatistics statistics = new ProjectStatistics();
@@ -121,17 +111,43 @@ public class ContinuousExecutor {
       }
    }
 
-   private static void cloneProject(final File cloneProjectFolder, final File localFolder) throws InterruptedException, IOException {
-      localFolder.mkdirs();
-      final ProcessBuilder builder = new ProcessBuilder("git", "clone", cloneProjectFolder.getAbsolutePath());
-      builder.directory(localFolder);
-      builder.start().waitFor();
+   private Set<TestCase> getTestSet(final Dependencies dependencies, final Version currentVersion) throws IOException, JAXBException, JsonParseException, JsonMappingException {
+      final Set<TestCase> tests = new HashSet<>();
+
+      if (useViews) {
+         final TestSet traceTestSet = getViewTests(dependencies);
+         for (final Map.Entry<ChangedEntity, Set<String>> test : traceTestSet.getTestcases().entrySet()) {
+            for (final String method : test.getValue()) {
+               tests.add(new TestCase(test.getKey().getClazz(), method));
+            }
+         }
+      } else {
+         for (final TestSet dep : currentVersion.getChangedClazzes().values()) {
+            tests.addAll(dep.getTests());
+         }
+      }
+      return tests;
    }
 
-   private File executeMeasurements(final File localFolder, final PeASSFolders folders, final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException {
-      final File fullResultsVersion = new File(localFolder, version.getTag());
+   private static void cloneProject(final File cloneProjectFolder, final File localFolder) throws InterruptedException, IOException {
+      localFolder.mkdirs();
+      File gitFolder = new File(cloneProjectFolder, ".git");
+      if (gitFolder.exists()) {
+         LOG.info("Cloning using git clone");
+         final ProcessBuilder builder = new ProcessBuilder("git", "clone", cloneProjectFolder.getAbsolutePath());
+         builder.directory(localFolder);
+         builder.start().waitFor();
+      } else {
+         throw new RuntimeException("No git folder " + gitFolder.getAbsolutePath() + " present - "
+               + "currently, only git projects are supported");
+      }
+   }
+
+   private File executeMeasurements(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException {
+      final File fullResultsVersion = getFullResultsVersion();
       if (!fullResultsVersion.exists()) {
-         final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder(), measurementConfig);
+         MeasurementConfiguration copied = new MeasurementConfiguration(measurementConfig);
+         final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder(), copied);
          testgenerator.getConfig().setUseKieker(false);
          measurementConfig.setVersion(version.getTag());
          measurementConfig.setVersionOld(versionOld);
@@ -164,7 +180,7 @@ public class ContinuousExecutor {
       final ExecutionData traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
       LOG.debug("Version: {} Path: {}", version, executeFile.getAbsolutePath());
       final TestSet traceTestSet = traceTests.getVersions().get(version.getTag());
-     
+
       return traceTestSet;
    }
 
@@ -254,5 +270,10 @@ public class ContinuousExecutor {
 
    public File getProjectFolder() {
       return folders.getProjectFolder();
+   }
+   
+   public File getFullResultsVersion() {
+      final File fullResultsVersion = new File(localFolder, version.getTag());
+      return fullResultsVersion;
    }
 }
