@@ -3,6 +3,7 @@ package de.peass.ci;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -84,20 +85,24 @@ public class ContinuousExecutor {
 
       propertyFolder = new File(localFolder, "properties");
    }
-
+   
    public void execute() throws InterruptedException, IOException, JAXBException, XmlPullParserException {
+      execute(new LinkedList<>());
+   }
+
+   public void execute(List<String> includes) throws InterruptedException, IOException, JAXBException, XmlPullParserException {
       final File dependencyFile = new File(localFolder, "dependencies.json");
       versionOld = GitUtils.getName("HEAD~1", projectFolderLocal);
       version = new GitCommit(GitUtils.getName("HEAD", projectFolderLocal), "", "", "");
-      //
       final Dependencies dependencies = getDependencies(projectFolderLocal, dependencyFile);
 
       if (dependencies.getVersions().size() > 0) {
          VersionComparator.setDependencies(dependencies);
-         final String versionName = dependencies.getVersionNames()[dependencies.getVersions().size() - 1];
-         final Version currentVersion = dependencies.getVersions().get(versionName);
 
-         final Set<TestCase> tests = getTestSet(dependencies, currentVersion);
+         final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version, 
+               viewFolder, propertyFolder, threads, includes);
+         final Set<TestCase> tests = chooser.getTestSet(dependencies);
+         LOG.debug("Executing measurement on {}", tests);
 
          final File measurementFolder = executeMeasurements(tests);
          final File changefile = new File(localFolder, "changes.json");
@@ -111,23 +116,7 @@ public class ContinuousExecutor {
       }
    }
 
-   private Set<TestCase> getTestSet(final Dependencies dependencies, final Version currentVersion) throws IOException, JAXBException, JsonParseException, JsonMappingException {
-      final Set<TestCase> tests = new HashSet<>();
-
-      if (useViews) {
-         final TestSet traceTestSet = getViewTests(dependencies);
-         for (final Map.Entry<ChangedEntity, Set<String>> test : traceTestSet.getTestcases().entrySet()) {
-            for (final String method : test.getValue()) {
-               tests.add(new TestCase(test.getKey().getClazz(), method));
-            }
-         }
-      } else {
-         for (final TestSet dep : currentVersion.getChangedClazzes().values()) {
-            tests.addAll(dep.getTests());
-         }
-      }
-      return tests;
-   }
+   
 
    private static void cloneProject(final File cloneProjectFolder, final File localFolder) throws InterruptedException, IOException {
       localFolder.mkdirs();
@@ -149,8 +138,8 @@ public class ContinuousExecutor {
          MeasurementConfiguration copied = new MeasurementConfiguration(measurementConfig);
          final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder(), copied);
          testgenerator.getConfig().setUseKieker(false);
-         measurementConfig.setVersion(version.getTag());
-         measurementConfig.setVersionOld(versionOld);
+         copied.setVersion(version.getTag());
+         copied.setVersionOld(versionOld);
 
          final AdaptiveTester tester = new AdaptiveTester(folders, testgenerator);
          for (final TestCase test : tests) {
@@ -164,24 +153,6 @@ public class ContinuousExecutor {
 
       final File measurementFolder = new File(fullResultsVersion, "measurements");
       return measurementFolder;
-   }
-
-   private TestSet getViewTests(final Dependencies dependencies)
-         throws IOException, JAXBException, JsonParseException, JsonMappingException {
-      final File executeFile = new File(localFolder, "execute.json");
-
-      FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
-      if (!executeFile.exists()) {
-         final ViewGenerator viewgenerator = new ViewGenerator(projectFolder, dependencies, executeFile, viewFolder, threads, 15);
-         viewgenerator.processCommandline();
-         final PropertyReader propertyReader = new PropertyReader(propertyFolder, folders.getProjectFolder(), viewFolder);
-         propertyReader.readAllTestsProperties(viewgenerator.getChangedTraceMethods());
-      }
-      final ExecutionData traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
-      LOG.debug("Version: {} Path: {}", version, executeFile.getAbsolutePath());
-      final TestSet traceTestSet = traceTests.getVersions().get(version.getTag());
-
-      return traceTestSet;
    }
 
    private Dependencies getDependencies(final File projectFolder, final File dependencyFile)

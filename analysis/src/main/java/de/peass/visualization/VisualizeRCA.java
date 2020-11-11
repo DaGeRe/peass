@@ -41,8 +41,8 @@ public class VisualizeRCA implements Callable<Void> {
 
    @Option(names = { "-propertyFolder", "--propertyFolder" }, description = "Path to property folder", required = false)
    protected File propertyFolder;
-   
-   @Option(names = {"-out", "--out"}, description = "Path for storage of results, default results", required = false)
+
+   @Option(names = { "-out", "--out" }, description = "Path for storage of results, default results", required = false)
    protected File resultFolder = new File("results");
 
    // TODO Fix dirty hack
@@ -128,13 +128,15 @@ public class VisualizeRCA implements Callable<Void> {
 
    private void handlePeassFolder(final File source) throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException {
       final File rcaFolder = new File(source, "rca" + File.separator + "tree");
-      for (final File versionFolder : rcaFolder.listFiles()) {
-         final File versionResultFolder = new File(resultFolder, versionFolder.getName());
-         versionResultFolder.mkdirs();
-         for (final File testcaseFolder : versionFolder.listFiles()) {
-            for (final File treeFile : testcaseFolder.listFiles()) {
-               if (treeFile.getName().endsWith(".json")) {
-                  analyzeFile(versionResultFolder, treeFile);
+      if (rcaFolder.exists()) {
+         for (final File versionFolder : rcaFolder.listFiles()) {
+            final File versionResultFolder = new File(resultFolder, versionFolder.getName());
+            versionResultFolder.mkdirs();
+            for (final File testcaseFolder : versionFolder.listFiles()) {
+               for (final File treeFile : testcaseFolder.listFiles()) {
+                  if (treeFile.getName().endsWith(".json")) {
+                     analyzeFile(versionResultFolder, treeFile);
+                  }
                }
             }
          }
@@ -167,7 +169,8 @@ public class VisualizeRCA implements Callable<Void> {
    }
 
    private File getPropertyFolder(final String projectName) {
-      final File propertyFolder = this.propertyFolder != null ? this.propertyFolder : new File(new RepoFolders().getPropertiesFolder(), "properties" + File.separator + projectName);
+      final File propertyFolder = this.propertyFolder != null ? this.propertyFolder
+            : new File(new RepoFolders().getPropertiesFolder(), "properties" + File.separator + projectName);
       return propertyFolder;
    }
 
@@ -194,6 +197,5 @@ public class VisualizeRCA implements Callable<Void> {
    public void setResultFolder(File resultFolder) {
       this.resultFolder = resultFolder;
    }
-   
-   
+
 }
