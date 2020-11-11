@@ -82,20 +82,28 @@ public class TestChooser {
    private void removeNotIncluded(final Set<TestCase> tests) {
       for (Iterator<TestCase> it = tests.iterator(); it.hasNext(); ) {
          TestCase test = it.next();
-         boolean isIncluded = false;
-         for (String include : includes) {
-            boolean match = FilenameUtils.wildcardMatch(test.getExecutable(), include);
-            LOG.info("Testing {} {} {}", test.getExecutable(), include, match);
-            if (match) {
-               isIncluded = true;
-               break;
-            }
-         }
+         boolean isIncluded = isTestIncluded(test, includes);
          if (!isIncluded) {
             LOG.info("Excluding non-included test {}", test);
             it.remove();
          }
       }
+   }
+
+   public static boolean isTestIncluded(TestCase test, List<String> includes) {
+      if (includes.size() == 0) {
+         return true;
+      }
+      boolean isIncluded = false;
+      for (String include : includes) {
+         boolean match = FilenameUtils.wildcardMatch(test.getExecutable(), include);
+         LOG.info("Testing {} {} {}", test.getExecutable(), include, match);
+         if (match) {
+            isIncluded = true;
+            break;
+         }
+      }
+      return isIncluded;
    }
    
    private TestSet getViewTests(final Dependencies dependencies)

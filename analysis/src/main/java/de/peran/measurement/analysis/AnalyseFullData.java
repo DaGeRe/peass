@@ -90,23 +90,9 @@ public class AnalyseFullData extends DataAnalyser {
 
          LOG.debug("Change: {} T: {}", teststatistic.isChange(), teststatistic.getTValue());
 
-         // if (teststatistic.getConfidenceResult() != Relation.EQUAL) {
          if (teststatistic.isChange()) {
-            Relation tRelation = teststatistic.getConfidenceResult();
-            if (teststatistic.getDiff() > 0) {
-               tRelation = Relation.LESS_THAN;
-            } else {
-               tRelation = Relation.GREATER_THAN;
-            }
-
-            final double diffPercent = ((double) teststatistic.getDiff()) / 100;
-            projectChanges.addChange(measurementEntry.getTestCase(), version,
-                  teststatistic.getConfidenceResult(), tRelation, teststatistic.getPreviousStatistic().getMean(), 
-                  diffPercent, teststatistic.getTValue(),
-                  teststatistic.getCurrentStatistic().getN());
-            projectChanges.setVersionCount(versions.size());
-            projectChanges.setTestcaseCount(testcases);
-
+            addChangeData(measurementEntry, entry, version, teststatistic);
+            
             try {
                FolderSearcher.MAPPER.writeValue(changeFile, projectChanges);
             } catch (final IOException e) {
@@ -115,16 +101,38 @@ public class AnalyseFullData extends DataAnalyser {
             // csvResultWriter.write(version + ";" + "vim " + viewName + ";" + measurementEntry.getTestCase().getTe + ";" + tTestResult + ";" + confidenceResult + "\n");
             // csvResultWriter.flush();
 
-            LOG.info("Version: {} vs {} Klasse: {}#{}", version, entry.getValue().getPreviousVersion(), measurementEntry.getTestClass(),
-                  measurementEntry.getTestMethod());
-            LOG.debug("Confidence Interval Comparison: {}", teststatistic.getConfidenceResult());
-
-            System.out.println("git diff " + version + ".." + VersionComparator.getPreviousVersion(version));
+            
          }
       }
       versions.addAll(measurementEntry.getMeasurements().keySet());
       LOG.debug("Version: {}", measurementEntry.getMeasurements().keySet());
       testcases += measurementEntry.getMeasurements().size();
+   }
+
+   private void addChangeData(final TestData measurementEntry, final Entry<String, EvaluationPair> entry, final String version, final TestStatistic teststatistic) {
+      Relation tRelation = teststatistic.getConfidenceResult();
+      if (teststatistic.getDiff() > 0) {
+         tRelation = Relation.LESS_THAN;
+      } else {
+         tRelation = Relation.GREATER_THAN;
+      }
+      
+      long repetitions = entry.getValue().getCurrent().get(0).getRepetitions();
+
+      final double diffPercent = ((double) teststatistic.getDiff()) / 100;
+      final double mean = teststatistic.getPreviousStatistic().getMean() / repetitions;
+      projectChanges.addChange(measurementEntry.getTestCase(), version,
+            teststatistic.getConfidenceResult(), tRelation, mean, 
+            diffPercent, teststatistic.getTValue(),
+            teststatistic.getCurrentStatistic().getN());
+      projectChanges.setVersionCount(versions.size());
+      projectChanges.setTestcaseCount(testcases);
+
+      LOG.info("Version: {} vs {} Klasse: {}#{}", version, entry.getValue().getPreviousVersion(), measurementEntry.getTestClass(),
+            measurementEntry.getTestMethod());
+      LOG.debug("Confidence Interval Comparison: {}", teststatistic.getConfidenceResult());
+
+      System.out.println("git diff " + version + ".." + VersionComparator.getPreviousVersion(version));
    }
 
    private File generatePlots(final TestData measurementEntry, final Entry<String, EvaluationPair> entry, final boolean change) {
