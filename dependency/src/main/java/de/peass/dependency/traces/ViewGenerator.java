@@ -88,6 +88,8 @@ public class ViewGenerator extends PairProcessor {
       boolean running = isVersionRunning(predecessor);
       if (running) {
          return version + "~1";
+      } else {
+         LOG.debug("Previous version {}  of {} not running, searching running predecessor", predecessor, version);
       }
       while (!running && !predecessor.equals(VersionComparator.NO_BEFORE)) {
          predecessor = VersionComparator.getPreviousVersion(predecessor);
@@ -155,7 +157,7 @@ public class ViewGenerator extends PairProcessor {
    public ExecutionData getChangedTraceMethods() {
       return changedTraceMethods;
    }
-   
+
    @Override
    public Void call() throws Exception {
       super.call();
@@ -172,7 +174,7 @@ public class ViewGenerator extends PairProcessor {
       if (!viewFolder.exists()) {
          viewFolder.mkdir();
       }
-      
+
       processCommandline();
 
       return null;

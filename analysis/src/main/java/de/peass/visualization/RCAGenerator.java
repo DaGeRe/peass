@@ -28,7 +28,6 @@ public class RCAGenerator {
    private CallTreeNode rootPredecessor, rootVersion;
 
    public RCAGenerator(final File source, final File destFolder) throws JsonParseException, JsonMappingException, IOException {
-      super();
       this.source = source;
       details = new File(source.getParentFile(), "details" + File.separator + source.getName());
       this.destFolder = destFolder;
@@ -69,7 +68,8 @@ public class RCAGenerator {
          fileWriter.write("<script>\n");
          if (propertyFolder != null) {
             final File sourceFolder = new File(propertyFolder, "methods" + File.separator + data.getMeasurementConfig().getVersion());
-            new SourceWriter(root, fileWriter, sourceFolder).writeSources();
+            final SourceWriter writer = new SourceWriter(root, fileWriter, sourceFolder);
+            writer.writeSources();
          }
          writeColoredTree(root, fileWriter);
 

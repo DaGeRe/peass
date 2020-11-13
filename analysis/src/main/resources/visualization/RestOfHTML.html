@@ -224,9 +224,18 @@ function shownode(node) {
 	  infos.innerHTML = "No statistic";
   }
   if (node.key != node.otherKey){
-    quelltext.innerHTML="<pre>" + source[node.key] + "\n\n" + source[node.otherKey] +"</pre>";
-  }else{
-    quelltext.innerHTML="<pre>" + source[node.key] +"</pre>";
+    quelltext.innerHTML="<table><tr><td><pre>" + source["old"][node.key] + "</pre></td>" 
+       + "<td><pre>" + source["current"][node.otherKey] +"</pre></td></tr></table>";
+  } else {
+    var sourceCurrent = source["current"][node.key];
+    var sourceOld = source["old"][node.key];
+    if (sourceCurrent == sourceOld) {
+    	quelltext.innerHTML="<pre>" + source["current"][node.key] +"</pre>";
+    } else {
+    	quelltext.innerHTML="<table><tr><td><pre>" + sourceOld + "</pre></td>" 
+    	   + "<td><pre>" + sourceCurrent +"</pre></td></tr></table>";
+    }
+    
   }
   if (node.kiekerPattern != node.otherKiekerPattern) {
   	histogramm.innerHTML=node.kiekerPattern + " " + node.otherKiekerPattern
@@ -254,8 +263,10 @@ function shownode(node) {
   var data = [version, predecessor];
   var layout = {barmode: "overlay", 
 			title: { text: "Histogramm"},
-			xaxis: { title: { text: "Duration / Mikroseconds"} },
-			yaxis: { title: { text: "Frequency"} }
+			xaxis: { title: { text: "Duration / &#x00B5;s"} },
+			yaxis: { title: { text: "Frequency"} },
+			height: 250,
+		    width: 575
 		  };
   Plotly.newPlot("histogramm", data, layout);
 }

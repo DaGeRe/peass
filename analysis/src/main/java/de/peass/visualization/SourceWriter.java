@@ -12,60 +12,72 @@ import org.apache.commons.io.FileUtils;
 import de.peass.measurement.rca.data.CauseSearchData;
 
 class SourceWriter {
-   final GraphNode root;
-   final BufferedWriter fileWriter;
-   File sourceFolder;
+   private final GraphNode root;
+   private final BufferedWriter fileWriter;
+   private File sourceFolder;
+   private final Map<String, String> nameSourceCurrent = new HashMap<>();
+   private final Map<String, String> nameSourceOld = new HashMap<>();
 
    public SourceWriter(final GraphNode root, final BufferedWriter fileWriter, final File sourceFolder) {
-      super();
       this.root = root;
       this.fileWriter = fileWriter;
       this.sourceFolder = sourceFolder;
    }
 
    void writeSources() throws IOException {
+      readSources(root);
       fileWriter.write("var source = {");
-      final Map<String, String> nameSourceMap = new HashMap<>();
-      readSources(nameSourceMap, root);
-      for (final Map.Entry<String, String> sources : nameSourceMap.entrySet()) {
-         fileWriter.write("\"" + sources.getKey() + "\": `" + sources.getValue() + "`,");
+      fileWriter.write("\"current\":\n{\n ");
+      for (final Map.Entry<String, String> sources : nameSourceCurrent.entrySet()) {
+         fileWriter.write("\"" + sources.getKey() + "\":\n `" + sources.getValue() + "`,");
       }
+      fileWriter.write("},\n");
+      fileWriter.write("\"old\":\n{\n ");
+      for (final Map.Entry<String, String> sources : nameSourceOld.entrySet()) {
+         fileWriter.write("\"" + sources.getKey() + "\":\n `" + sources.getValue() + "`,");
+      }
+      fileWriter.write("},\n");
       fileWriter.write("};\n");
    }
 
-   private void readSources(final Map<String, String> nameSourceMap, final GraphNode parent) throws IOException {
-      getNodeSource(nameSourceMap, parent);
+   private void readSources(final GraphNode parent) throws IOException {
+      getNodeSource(parent);
       for (final GraphNode node : parent.getChildren()) {
-         readSources(nameSourceMap, node);
+         readSources(node);
       }
    }
 
-   private void getNodeSource(final Map<String, String> nameSourceMap, final GraphNode node) throws IOException {
+   private void getNodeSource(final GraphNode node) throws IOException {
       final String currentPattern = node.getKiekerPattern();
-      
+
       if (!currentPattern.equals(CauseSearchData.ADDED)) {
-         readMethod(nameSourceMap, node, currentPattern);
+         readMethod(node, currentPattern);
       }
       if (!currentPattern.equals(node.getOtherKiekerPattern()) && !node.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {
-         readMethod(nameSourceMap, node, node.getOtherKiekerPattern());
+         readMethod(node, node.getOtherKiekerPattern());
       }
    }
 
-   private void readMethod(final Map<String, String> nameSourceMap, final GraphNode node, final String currentPattern) throws IOException {
+   private void readMethod(final GraphNode node, final String currentPattern) throws IOException {
       final String key = KiekerPatternConverter.getKey(currentPattern);
       String fileNameStart = KiekerPatternConverter.getFileNameStart(currentPattern);
 
-      final File test = new File(sourceFolder, fileNameStart + "_diff.txt");
-      if (test.exists()) {
-         final String source = FileUtils.readFileToString(test, Charset.defaultCharset());
-         nameSourceMap.put(key, source);
-         final File main = new File(sourceFolder, fileNameStart + "_main.txt");
-         final File old = new File(sourceFolder, fileNameStart + "_old.txt");
-         if (main.exists() && old.exists()) {
-            node.setHasSourceChange(true);
+      final File currentSourceFile = new File(sourceFolder, fileNameStart + "_main.txt");
+      final File oldSourceFile = new File(sourceFolder, fileNameStart + "_old.txt");
+      if (currentSourceFile.exists() && oldSourceFile.exists()) {
+         node.setHasSourceChange(true);
+         final String sourceCurrent = FileUtils.readFileToString(currentSourceFile, Charset.defaultCharset());
+         nameSourceCurrent.put(key, sourceCurrent);
+         final String sourceOld = FileUtils.readFileToString(oldSourceFile, Charset.defaultCharset());
+         nameSourceOld.put(key, sourceOld);
+      } else {
+         final File diffSourceFile = new File(sourceFolder, fileNameStart + "_diff.txt");
+         if (diffSourceFile.exists()) {
+            final String source = FileUtils.readFileToString(diffSourceFile, Charset.defaultCharset());
+            nameSourceCurrent.put(key, source);
+            nameSourceOld.put(key, source);
          }
       }
    }
 
-   
 }
