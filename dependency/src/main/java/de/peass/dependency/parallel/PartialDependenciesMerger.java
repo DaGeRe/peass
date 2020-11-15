@@ -12,17 +12,20 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.DependencyReadingStarter;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.reader.DependencyParallelReader;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.Constants;
+import de.peass.vcs.GitCommit;
+import de.peass.vcs.GitUtils;
 
-public class Merger {
+public class PartialDependenciesMerger {
 
    private static final Logger LOG = LogManager.getLogger(DependencyParallelReader.class);
 
-   private Merger() {
+   private PartialDependenciesMerger() {
 
    }
 
@@ -62,9 +65,10 @@ public class Merger {
       Dependencies merged = deps.get(0);
       if (deps.size() > 1) {
          for (int i = 1; i < deps.size(); i++) {
-            LOG.debug("Merge: {} Vals: {}", i, deps.get(i).getVersionNames());
-            if (deps.get(i) != null) {
-               merged = DependencyReaderUtil.mergeDependencies(merged, deps.get(i));
+            final Dependencies newMergeDependencies = deps.get(i);
+            LOG.debug("Merge: {} Vals: {}", i, newMergeDependencies.getVersionNames());
+            if (newMergeDependencies != null) {
+               merged = DependencyReaderUtil.mergeDependencies(merged, newMergeDependencies);
             }
          }
       }

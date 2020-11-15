@@ -21,7 +21,7 @@ import org.mockito.Mockito;
 
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.DependencyManager;
-import de.peass.dependency.parallel.Merger;
+import de.peass.dependency.parallel.PartialDependenciesMerger;
 import de.peass.dependency.parallel.OneReader;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.InitialVersion;
@@ -83,7 +83,7 @@ public class TestVersionSplitting {
                readUntilMax(commits, dependencies, chunk, chunk * size, max);
             }
 
-            Dependencies merged = Merger.mergeDependencies(dependencies);
+            Dependencies merged = PartialDependenciesMerger.mergeDependencies(dependencies);
 
             System.out.println(merged.getVersions().keySet() + " " + merged.getVersions().size());
             Assert.assertEquals("Error in " + DummyReader.nonRunning, 7, merged.getVersions().size());
@@ -104,7 +104,7 @@ public class TestVersionSplitting {
          readUntilMax(commits, dependencies, chunk, chunk * size, max);
       }
 
-      Dependencies merged = Merger.mergeDependencies(dependencies);
+      Dependencies merged = PartialDependenciesMerger.mergeDependencies(dependencies);
 
       System.out.println(merged.getVersions().keySet());
       Assert.assertEquals(7, merged.getVersions().size());
@@ -119,7 +119,7 @@ public class TestVersionSplitting {
       readUntilMax(commits, dependencies, 1, 6, 8);
       readUntilMax(commits, dependencies, 2, 7, 10);
 
-      Dependencies merged = Merger.mergeDependencies(dependencies);
+      Dependencies merged = PartialDependenciesMerger.mergeDependencies(dependencies);
 
       System.out.println(merged.getVersions().keySet());
       Assert.assertEquals(7, merged.getVersions().size());

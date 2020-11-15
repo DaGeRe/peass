@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.dependency.parallel.Merger;
+import de.peass.dependency.parallel.PartialDependenciesMerger;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.reader.DependencyParallelReader;
 import de.peass.dependencyprocessors.VersionComparator;
@@ -44,7 +44,7 @@ public class DependencyReadingParallelStarter implements Callable<Void> {
       LOG.debug("Files: {}", outFiles);
 
       final File out = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + ".json");
-      final Dependencies all = Merger.mergeVersions(out, outFiles);
+      final Dependencies all = PartialDependenciesMerger.mergeVersions(out, outFiles);
       return null;
    }
 

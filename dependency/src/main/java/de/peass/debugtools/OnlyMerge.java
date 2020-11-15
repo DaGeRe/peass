@@ -9,7 +9,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import de.peass.DependencyReaderConfig;
 import de.peass.DependencyReadingStarter;
-import de.peass.dependency.parallel.Merger;
+import de.peass.dependency.parallel.PartialDependenciesMerger;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.vcs.GitCommit;
 import picocli.CommandLine;
@@ -37,7 +37,7 @@ public class OnlyMerge implements Callable<Void>{
       
       final File[] files = config.getResultBaseFolder().listFiles((FilenameFilter) new WildcardFileFilter("deps*.json"));
       
-      Merger.mergeVersions(new File(config.getResultBaseFolder(), "merged.json"), files);
+      PartialDependenciesMerger.mergeVersions(new File(config.getResultBaseFolder(), "merged.json"), files);
       return null;
    }
 }

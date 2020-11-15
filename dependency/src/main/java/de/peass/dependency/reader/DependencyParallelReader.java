@@ -91,7 +91,7 @@ public class DependencyParallelReader {
 
    public void startPartProcess(final File currentOutFile, final ExecutorService service, final int i, final File projectFolderTemp) throws InterruptedException {
       final int min = i * sizePerThread;
-      final int max = Math.min((i + 1) * sizePerThread + 3, commits.size());// Assuming one in three commits should contain a source-change
+      final int max = Math.min((i + 1) * sizePerThread + 1, commits.size());
       LOG.debug("Min: {} Max: {} Size: {}", min, max, commits.size());
       final List<GitCommit> currentCommits = commits.subList(min, max);
       final List<GitCommit> reserveCommits = commits.subList(max - 1, commits.size());

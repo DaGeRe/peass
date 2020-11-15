@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.analysis.properties.PropertyReader;
 import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.parallel.Merger;
+import de.peass.dependency.parallel.PartialDependenciesMerger;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.reader.DependencyParallelReader;
 import de.peass.dependency.traces.ViewGenerator;
@@ -68,7 +68,7 @@ public class DependencyExecutionReader implements Callable<Void>{
       LOG.debug("Files: {}", outFiles);
 
       final File out = new File(config.getResultBaseFolder(), "deps_" + project + ".json");
-      final Dependencies all = Merger.mergeVersions(out, outFiles);
+      final Dependencies all = PartialDependenciesMerger.mergeVersions(out, outFiles);
 
       final PeASSFolders folders = new PeASSFolders(config.getProjectFolder());
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");
