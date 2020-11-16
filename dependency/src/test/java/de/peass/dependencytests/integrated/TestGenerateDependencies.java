@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,12 +28,15 @@ import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependency.reader.VersionKeeper;
 import de.peass.dependencytests.ViewGeneratorIT;
 import de.peass.dependencytests.helper.FakeFileIterator;
+import de.peass.utils.Constants;
 import de.peass.vcs.VersionControlSystem;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(VersionControlSystem.class)
 @PowerMockIgnore({ "javax.management.*", "org.apache.http.conn.ssl.*", "com.amazonaws.http.conn.ssl.*", "javax.net.ssl.*" })
 public class TestGenerateDependencies {
+   
+   private static final Logger LOG = LogManager.getLogger(TestGenerateDependencies.class);
 
    @Test
    public void testGenerateDependencies() throws IOException, InterruptedException, XmlPullParserException {
@@ -63,7 +68,9 @@ public class TestGenerateDependencies {
       Mockito.when(manager.getChanges(Mockito.any())).thenReturn(value);
 
       final int tests = reader.analyseVersion(manager);
-      DependencyReaderUtil.write(reader.getDependencies(), dependencyFile);
+      
+      LOG.debug(Constants.OBJECTMAPPER.writeValueAsString(reader.getDependencies()));
+      
       Assert.assertEquals(1, tests);
    }
 }
