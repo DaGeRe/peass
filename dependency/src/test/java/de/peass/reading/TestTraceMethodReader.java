@@ -30,7 +30,7 @@ import de.peass.utils.StreamGobbler;
 public class TestTraceMethodReader {
 
    private final File tmpFolder = new File("target/kieker_results_test/");
-   private final String KOPEME_VERSION = "0.11.1-SNAPSHOT";
+   private final String KOPEME_VERSION = "0.12-SNAPSHOT";
    private final String REPO = System.getenv("HOME") + "/.m2/repository";
    private final String KOPEME_JAR = REPO + "/de/dagere/kopeme/kopeme-core/" + KOPEME_VERSION + "/kopeme-core-" + KOPEME_VERSION + ".jar";
 
