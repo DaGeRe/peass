@@ -14,6 +14,7 @@ import com.github.javaparser.ParseException;
 
 import de.peass.dependency.analysis.CalledMethodLoader;
 import de.peass.dependency.analysis.ModuleClassMapping;
+import de.peass.dependency.execution.MavenPomUtil;
 import de.peass.dependency.execution.MavenTestExecutor;
 import de.peass.dependency.traces.TraceMethodReader;
 import de.peass.dependency.traces.TraceWithMethods;
@@ -30,9 +31,8 @@ import de.peass.utils.StreamGobbler;
 public class TestTraceMethodReader {
 
    private final File tmpFolder = new File("target/kieker_results_test/");
-   private final String KOPEME_VERSION = "0.12.1-SNAPSHOT";
    private final String REPO = System.getenv("HOME") + "/.m2/repository";
-   private final String KOPEME_JAR = REPO + "/de/dagere/kopeme/kopeme-core/" + KOPEME_VERSION + "/kopeme-core-" + KOPEME_VERSION + ".jar";
+   private final String KOPEME_JAR = REPO + "/de/dagere/kopeme/kopeme-core/" + MavenPomUtil.KOPEME_CORE_VERSION + "/kopeme-core-" + MavenPomUtil.KOPEME_CORE_VERSION + ".jar";
 
    @Before
    public void init() {

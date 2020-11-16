@@ -25,6 +25,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class MavenPomUtil {
 
    public static final String KOPEME_VERSION = "0.12-SNAPSHOT";
+   public static final String KOPEME_CORE_VERSION = "0.12.1-SNAPSHOT";
    public static final String ORG_APACHE_MAVEN_PLUGINS = "org.apache.maven.plugins";
    public static final String SUREFIRE_ARTIFACTID = "maven-surefire-plugin";
    public static final String COMPILER_ARTIFACTID = "maven-compiler-plugin";

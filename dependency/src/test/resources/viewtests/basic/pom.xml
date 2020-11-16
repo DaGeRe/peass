@@ -6,11 +6,12 @@
   <artifactId>viewtest</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>viewtest</name>
+  
   <dependencies>
     <dependency>
       <groupId>de.dagere.kopeme</groupId>
       <artifactId>kopeme-junit</artifactId>
-      <version>0.11-SNAPSHOT</version>
+      <version>0.12-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>
