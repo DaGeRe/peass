@@ -1,6 +1,8 @@
 package de.peass.dependency.execution;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
@@ -124,7 +126,7 @@ public abstract class TestExecutor {
          LOG.info("Cleaning...");
          final File cleanFile = new File(clazzLogFolder, method + "_clean.txt");
          clean(cleanFile);
-         
+
          final File logFile = new File(clazzLogFolder, method + ".txt");
          runTest(module, logFile, clazz.getJavaClazzName(), timeout);
       } catch (Exception e1) {
@@ -184,7 +186,7 @@ public abstract class TestExecutor {
          if (this instanceof GradleTestExecutor) {
             pb.environment().put("GRADLE_HOME", folders.getGradleHome().getAbsolutePath());
          }
-         System.out.println(folders.getProjectFolder());
+         LOG.debug("Executing run success test {}", folders.getProjectFolder());
          final File versionFolder = getVersionFolder(version);
          final File logFile = new File(versionFolder, "testRunning.log");
          pb.redirectOutput(Redirect.appendTo(logFile));
@@ -200,6 +202,13 @@ public abstract class TestExecutor {
          final int returncode = process.exitValue();
          if (returncode != 0) {
             isRunning = false;
+            try (BufferedReader br = new BufferedReader(new FileReader(logFile))) {
+               String line;
+               while ((line = br.readLine()) != null) {
+                  System.out.println(line);
+               }
+            }
+
          } else {
             isRunning = true;
          }
