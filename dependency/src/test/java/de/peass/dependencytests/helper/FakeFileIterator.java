@@ -25,7 +25,7 @@ class CopyFileVisitor extends SimpleFileVisitor<Path> {
    public FileVisitResult preVisitDirectory(final Path dir, final BasicFileAttributes attrs) throws IOException {
       if (sourcePath == null) {
          sourcePath = dir;
-      } 
+      }
       Files.createDirectories(targetPath.resolve(sourcePath.relativize(dir)));
       return FileVisitResult.CONTINUE;
    }
@@ -74,16 +74,34 @@ public class FakeFileIterator extends VersionIterator {
          FileUtils.deleteDirectory(projectFolder);
          File commitFolder = commits.get(tag - 1);
          copy(commitFolder, projectFolder);
+         return true;
       } catch (final IOException e) {
          e.printStackTrace();
       }
-      return true;
+      return false;
    }
 
    @Override
    public boolean goToFirstCommit() {
       tag = 0;
       return true;
+   }
+
+   @Override
+   public boolean goToPreviousCommit() {
+      if (tag > 0) {
+         tag--;
+         try {
+            FileUtils.deleteDirectory(projectFolder);
+            File commitFolder = commits.get(tag - 1);
+            copy(commitFolder, projectFolder);
+         } catch (final IOException e) {
+            e.printStackTrace();
+         }
+         return true;
+      } else {
+         return false;
+      }
    }
 
    @Override

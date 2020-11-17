@@ -16,6 +16,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -92,31 +93,57 @@ public class ContinuousExecutor {
 
    public void execute(List<String> includes) throws InterruptedException, IOException, JAXBException, XmlPullParserException {
       final File dependencyFile = new File(localFolder, "dependencies.json");
-      versionOld = GitUtils.getName("HEAD~1", projectFolderLocal);
-      version = new GitCommit(GitUtils.getName("HEAD", projectFolderLocal), "", "", "");
-      final Dependencies dependencies = getDependencies(projectFolderLocal, dependencyFile);
+      final VersionIteratorGit iterator = buildIterator();
+      
+      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(version.getTag(), projectFolderLocal, dependencyFile);
+      final Dependencies dependencies = dependencyReader.getDependencies(iterator);
 
       if (dependencies.getVersions().size() > 0) {
-         VersionComparator.setDependencies(dependencies);
-
-         final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version, 
-               viewFolder, propertyFolder, threads, includes);
-         final Set<TestCase> tests = chooser.getTestSet(dependencies);
-         LOG.debug("Executing measurement on {}", tests);
-
-         final File measurementFolder = executeMeasurements(tests);
-         final File changefile = new File(localFolder, "changes.json");
-         AnalyseOneTest.setResultFolder(new File(localFolder, version.getTag() + "_graphs"));
-         final ProjectStatistics statistics = new ProjectStatistics();
-         final AnalyseFullData afd = new AnalyseFullData(changefile, statistics);
-         afd.analyseFolder(measurementFolder);
-         Constants.OBJECTMAPPER.writeValue(new File(localFolder, "statistics.json"), statistics);
+         final Set<TestCase> tests = selectIncludedTests(includes, dependencies);
+         
+         final File measurementFolder = measure(tests);
+         
+         analyzeMeasurements(measurementFolder);
       } else {
          LOG.info("No test executed - version did not contain changed tests.");
       }
    }
 
-   
+   private Set<TestCase> selectIncludedTests(List<String> includes, final Dependencies dependencies) throws IOException, JAXBException, JsonParseException, JsonMappingException {
+      final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version, 
+            viewFolder, propertyFolder, threads, includes);
+      final Set<TestCase> tests = chooser.getTestSet(dependencies);
+      LOG.debug("Executing measurement on {}", tests);
+      return tests;
+   }
+
+   private File measure(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException {
+      final File fullResultsVersion = getFullResultsVersion();
+      final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(version.getTag(), versionOld, folders, measurementConfig);
+      final File measurementFolder = measurementExecutor.executeMeasurements(tests, fullResultsVersion);
+      return measurementFolder;
+   }
+
+   private void analyzeMeasurements(final File measurementFolder) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException {
+      final File changefile = new File(localFolder, "changes.json");
+      AnalyseOneTest.setResultFolder(new File(localFolder, version.getTag() + "_graphs"));
+      final ProjectStatistics statistics = new ProjectStatistics();
+      final AnalyseFullData afd = new AnalyseFullData(changefile, statistics);
+      afd.analyseFolder(measurementFolder);
+      Constants.OBJECTMAPPER.writeValue(new File(localFolder, "statistics.json"), statistics);
+   }
+
+   private VersionIteratorGit buildIterator() {
+      versionOld = GitUtils.getName("HEAD~1", projectFolderLocal);
+      version = new GitCommit(GitUtils.getName("HEAD", projectFolderLocal), "", "", "");
+      
+      final List<GitCommit> entries = new LinkedList<>();
+      final GitCommit prevCommit = new GitCommit(versionOld, "", "", "");
+      entries.add(prevCommit);
+      entries.add(new GitCommit(version.getTag(), "", "", ""));
+      final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, entries, prevCommit);
+      return iterator;
+   }
 
    private static void cloneProject(final File cloneProjectFolder, final File localFolder) throws InterruptedException, IOException {
       localFolder.mkdirs();
@@ -132,80 +159,7 @@ public class ContinuousExecutor {
       }
    }
 
-   private File executeMeasurements(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException {
-      final File fullResultsVersion = getFullResultsVersion();
-      if (!fullResultsVersion.exists()) {
-         MeasurementConfiguration copied = new MeasurementConfiguration(measurementConfig);
-         final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder(), copied);
-         testgenerator.getConfig().setUseKieker(false);
-         copied.setVersion(version.getTag());
-         copied.setVersionOld(versionOld);
-
-         final AdaptiveTester tester = new AdaptiveTester(folders, testgenerator);
-         for (final TestCase test : tests) {
-            tester.evaluate(test);
-         }
-
-         final File fullResultsFolder = folders.getFullMeasurementFolder();
-         LOG.debug("Moving to: {}", fullResultsVersion.getAbsolutePath());
-         FileUtils.moveDirectory(fullResultsFolder, fullResultsVersion);
-      }
-
-      final File measurementFolder = new File(fullResultsVersion, "measurements");
-      return measurementFolder;
-   }
-
-   private Dependencies getDependencies(final File projectFolder, final File dependencyFile)
-         throws JAXBException, JsonParseException, JsonMappingException, IOException, InterruptedException, XmlPullParserException {
-      Dependencies dependencies;
-
-      final String url = GitUtils.getURL(projectFolder);
-      final List<GitCommit> entries = new LinkedList<>();
-      final GitCommit prevCommit = new GitCommit(versionOld, "", "", "");
-      entries.add(prevCommit);
-      entries.add(version);
-      final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, entries, prevCommit);
-      boolean needToLoad = false;
-
-      final VersionKeeper nonRunning = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonRunning_" + projectFolder.getName() + ".json"));
-      final VersionKeeper nonChanges = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonChanges_" + projectFolder.getName() + ".json"));
-
-      // final VersionKeeper nrv = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonrunning.json"));
-      if (!dependencyFile.exists()) {
-         dependencies = fullyLoadDependencies(projectFolder, dependencyFile, url, iterator, nonChanges);
-      } else {
-         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-         VersionComparator.setDependencies(dependencies);
-
-         if (dependencies.getVersions().size() > 0) {
-            final String versionName = dependencies.getVersionNames()[dependencies.getVersions().size() - 1];
-            if (!versionName.equals(version.getTag())) {
-               needToLoad = true;
-            }
-         } else {
-            needToLoad = true;
-         }
-         if (needToLoad) {
-            // TODO Continuous Dependency Reading
-         }
-      }
-
-      return dependencies;
-   }
-
-   private static Dependencies fullyLoadDependencies(final File projectFolder, final File dependencyFile, final String url, final VersionIteratorGit iterator,
-         final VersionKeeper nonChanges) throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException {
-      Dependencies dependencies;
-      final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, 10, nonChanges);
-      iterator.goToPreviousCommit();
-      if (!reader.readInitialVersion()) {
-         LOG.error("Analyzing first version was not possible");
-      } else {
-         reader.readDependencies();
-      }
-      dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-      return dependencies;
-   }
+   
 
    public File getLocalFolder() {
       final String homeFolderName = System.getenv("PEASS_HOME") != null ? System.getenv("PEASS_HOME") : System.getenv("HOME") + File.separator + ".peass" + File.separator;

@@ -82,6 +82,7 @@ public class VersionIteratorGit extends VersionIterator {
       return true;
    }
 
+   @Override
    public boolean goToPreviousCommit() {
       if (tagid > 0) {
          tagid--;

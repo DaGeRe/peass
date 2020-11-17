@@ -74,4 +74,6 @@ public abstract class VersionIterator {
 
    public abstract boolean isPredecessor(String lastRunningVersion);
 
+   public abstract boolean goToPreviousCommit();
+
 }

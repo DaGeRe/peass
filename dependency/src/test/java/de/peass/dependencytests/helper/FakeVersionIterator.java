@@ -6,6 +6,11 @@ import java.util.List;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.VersionIterator;
 
+/**
+ * An iterator which only goes to the versions but does not change anything on the filesystem
+ * @author reichelt
+ *
+ */
 public class FakeVersionIterator extends VersionIterator {
 
    List<GitCommit> commits;
@@ -42,6 +47,11 @@ public class FakeVersionIterator extends VersionIterator {
    public boolean goToFirstCommit() {
       tag = 0;
       return true;
+   }
+   
+   @Override
+   public boolean goToPreviousCommit() {
+      throw new RuntimeException("Not implemented on purpose.");
    }
 
    @Override
