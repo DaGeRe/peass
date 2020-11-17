@@ -36,13 +36,7 @@ import de.peass.vcs.VersionIterator;
 public abstract class DependencyReaderBase {
 
    private static final boolean DETAIL_DEBUG = true;
-   private static final File DEBUG_FOLDER = new File("debug");
    static {
-      if (DETAIL_DEBUG) {
-         if (!DEBUG_FOLDER.exists()) {
-            DEBUG_FOLDER.mkdir();
-         }
-      }
       Constants.OBJECTMAPPER.enable(SerializationFeature.INDENT_OUTPUT);
    }
 
@@ -109,8 +103,8 @@ public abstract class DependencyReaderBase {
       lastRunningVersion = iterator.getTag();
 
       if (DETAIL_DEBUG) {
-         Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "initialdependencies_" + version + ".json"), dependencyManager.getDependencyMap());
-         Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "changes_" + version + ".json"), changes);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "initialdependencies_" + version + ".json"), dependencyManager.getDependencyMap());
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changes_" + version + ".json"), changes);
       }
 
       if (changes.size() > 0) {
@@ -129,20 +123,20 @@ public abstract class DependencyReaderBase {
       // which change they need to be run
 
       if (DETAIL_DEBUG)
-         Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "changetest_" + version + ".json"), changeTestMap);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changetest_" + version + ".json"), changeTestMap);
 
       final Version newVersionInfo = DependencyReaderUtil.createVersionFromChangeMap(version, changes, changeTestMap);
       newVersionInfo.setJdk(dependencyManager.getExecutor().getJDKVersion());
       newVersionInfo.setPredecessor(predecessor);
 
       if (DETAIL_DEBUG) {
-         Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "versioninfo_" + version + ".json"), newVersionInfo);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "versioninfo_" + version + ".json"), newVersionInfo);
       }
 
       LOG.debug("Updating dependencies.. {}", version);
 
       final TestSet testsToRun = dependencyManager.getTestsToRun(changes); // contains only the tests that need to be run -> could be changeTestMap.values() und dann umwandeln
-      Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "toRun_" + version + ".json"), testsToRun.entrySet());
+      Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + version + ".json"), testsToRun.entrySet());
 
       final int changedTests;
       if (testsToRun.classCount() > 0) {
@@ -172,15 +166,15 @@ public abstract class DependencyReaderBase {
       final Map<ChangedEntity, Set<ChangedEntity>> newTestcases = testExistenceChanges.getAddedTests();
 
       if (DETAIL_DEBUG) {
-         Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "add_" + version + ".json"), newTestcases);
-         Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "remove_" + version + ".json"), testExistenceChanges.getRemovedTests());
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "add_" + version + ".json"), newTestcases);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "remove_" + version + ".json"), testExistenceChanges.getRemovedTests());
       }
 
       DependencyReaderUtil.removeDeletedTestcases(newVersionInfo, testExistenceChanges);
       DependencyReaderUtil.addNewTestcases(newVersionInfo, newTestcases);
 
       if (DETAIL_DEBUG)
-         Constants.OBJECTMAPPER.writeValue(new File(DEBUG_FOLDER, "final_" + version + ".json"), newVersionInfo);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "final_" + version + ".json"), newVersionInfo);
 
       final int changedClazzCount = newVersionInfo.getChangedClazzes().values().stream().mapToInt(value -> {
          return value.getTestcases().values().stream().mapToInt(list -> list.size()).sum();

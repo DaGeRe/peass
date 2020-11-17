@@ -20,6 +20,7 @@ public class PeASSFolders {
    private final File oldSourceFolder;
    private final File measurementsFolder;
    private final File cleanFolder;
+   private final File debugFolder;
    private File gradleHome;
 
    protected final File peassFolder;
@@ -44,6 +45,7 @@ public class PeASSFolders {
       tempFolder = new File(peassFolder, "temp");
       tempFolder.mkdir();
       cleanFolder = new File(peassFolder, "clean");
+      debugFolder = new File(peassFolder, "debug");
       // cleanFolder.mkdir();
       measurementsFolder = new File(fullResultFolder, "measurements");
       measurementsFolder.mkdir();
@@ -126,6 +128,13 @@ public class PeASSFolders {
 
    public File getTempDir() {
       return tempFolder;
+   }
+
+   public File getDebugFolder() {
+      if (!debugFolder.exists()) {
+         debugFolder.mkdir();
+      }
+      return debugFolder;
    }
 
 }
