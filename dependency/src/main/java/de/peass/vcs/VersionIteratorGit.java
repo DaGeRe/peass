@@ -39,6 +39,13 @@ public class VersionIteratorGit extends VersionIterator {
    private final GitCommit previous;
    private final int previousIndex;
 
+   public VersionIteratorGit(final File projectFolder) {
+      super(projectFolder);
+      previous = new GitCommit(GitUtils.getName("HEAD~1", projectFolder), "", "", "");
+      entries = GitUtils.getCommits(projectFolder);
+      previousIndex = entries.indexOf(previous);
+   }
+   
    /**
     * Initializes the iterator with a project, which is changed when the iterator moves, a list of commits and the previous commit for starting.
     * 
