@@ -25,6 +25,7 @@ import de.peass.dependency.changesreading.FileComparisonUtil;
 import de.peass.dependency.execution.MavenPomUtil;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
+import de.peass.vcs.VersionIterator;
 import difflib.DiffUtils;
 import difflib.Patch;
 
@@ -39,11 +40,11 @@ public class ChangeManager {
    private static final Logger LOG = LogManager.getLogger(ChangeManager.class);
 
    private final PeASSFolders folders;
-   private final VersionControlSystem vcs;
+   private final VersionIterator iterator;
 
-   public ChangeManager(final PeASSFolders folders) {
+   public ChangeManager(final PeASSFolders folders, VersionIterator iterator) {
       this.folders = folders;
-      vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
+      this.iterator = iterator;
    }
 
    /**
@@ -55,15 +56,7 @@ public class ChangeManager {
     * @throws FileNotFoundException
     */
    private List<ChangedEntity> getChangedClasses(final String lastVersion) throws FileNotFoundException, IOException, XmlPullParserException {
-      final VersionDiff diff;
-      if (vcs.equals(VersionControlSystem.GIT)) {
-         diff = GitUtils.getChangedClasses(folders.getProjectFolder(), MavenPomUtil.getGenericModules(folders.getProjectFolder()), lastVersion);
-      } else if (vcs.equals(VersionControlSystem.SVN)) {
-         throw new RuntimeException("SVN not supported currently.");
-      } else {
-         throw new RuntimeException(".git or .svn not there - Can only happen if .git or .svn is deleted between constructor and method call ");
-      }
-
+      final VersionDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), MavenPomUtil.getGenericModules(folders.getProjectFolder()), lastVersion);
       LOG.info("Changed classes: " + diff.getChangedClasses().size());
       return diff.getChangedClasses();
    }

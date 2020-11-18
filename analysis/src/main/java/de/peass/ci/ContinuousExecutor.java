@@ -94,9 +94,10 @@ public class ContinuousExecutor {
    public void execute(List<String> includes) throws InterruptedException, IOException, JAXBException, XmlPullParserException {
       final File dependencyFile = new File(localFolder, "dependencies.json");
       final VersionIteratorGit iterator = buildIterator();
+      final String url = GitUtils.getURL(projectFolder);
       
       ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(version.getTag(), projectFolderLocal, dependencyFile);
-      final Dependencies dependencies = dependencyReader.getDependencies(iterator);
+      final Dependencies dependencies = dependencyReader.getDependencies(iterator, url);
 
       if (dependencies.getVersions().size() > 0) {
          final Set<TestCase> tests = selectIncludedTests(includes, dependencies);

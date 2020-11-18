@@ -73,7 +73,7 @@ public class DependencyReader extends DependencyReaderBase {
 
       dependencyResult.setUrl(url);
       
-      changeManager = new ChangeManager(folders);
+      changeManager = new ChangeManager(folders, iterator);
       
    }
 

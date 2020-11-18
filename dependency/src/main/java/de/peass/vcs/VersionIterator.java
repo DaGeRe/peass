@@ -17,6 +17,9 @@
 package de.peass.vcs;
 
 import java.io.File;
+import java.util.List;
+
+import de.peass.dependency.analysis.data.VersionDiff;
 
 /**
  * Iterator for VCS, moving always the position of the iterator alongside with the version saved in the folder.
@@ -75,5 +78,7 @@ public abstract class VersionIterator {
    public abstract boolean isPredecessor(String lastRunningVersion);
 
    public abstract boolean goToPreviousCommit();
+
+   public abstract VersionDiff getChangedClasses(File projectFolder2, List<File> genericModules, String lastVersion);
 
 }

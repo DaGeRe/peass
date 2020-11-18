@@ -3,6 +3,7 @@ package de.peass.dependencytests.helper;
 import java.io.File;
 import java.util.List;
 
+import de.peass.dependency.analysis.data.VersionDiff;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.VersionIterator;
 
@@ -51,21 +52,26 @@ public class FakeVersionIterator extends VersionIterator {
    
    @Override
    public boolean goToPreviousCommit() {
-      throw new RuntimeException("Not implemented on purpose.");
+      throw new RuntimeException("Not implemented on purpose - this is only a testing mock with limited functionality.");
    }
 
    @Override
    public boolean goTo0thCommit() {
-      throw new RuntimeException("Not implemented on purpose.");
+      throw new RuntimeException("Not implemented on purpose - this is only a testing mock with limited functionality.");
    }
 
    @Override
    public boolean isPredecessor(String lastRunningVersion) {
-      throw new RuntimeException("Not implemented on purpose.");
+      throw new RuntimeException("Not implemented on purpose - this is only a testing mock with limited functionality.");
    }
    
    @Override
    public boolean goToNextCommitSoft() {
-      throw new RuntimeException("Not implemented on purpose.");
+      throw new RuntimeException("Not implemented on purpose - this is only a testing mock with limited functionality.");
+   }
+   
+   @Override
+   public VersionDiff getChangedClasses(File projectFolder2, List<File> genericModules, String lastVersion) {
+      throw new RuntimeException("Not implemented on purpose - this is only a testing mock with limited functionality.");
    }
 }

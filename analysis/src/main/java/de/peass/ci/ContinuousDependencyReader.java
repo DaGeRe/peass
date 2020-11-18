@@ -33,11 +33,9 @@ public class ContinuousDependencyReader {
       this.dependencyFile = dependencyFile;
    }
 
-   Dependencies getDependencies(VersionIterator iterator)
+   Dependencies getDependencies(VersionIterator iterator, String url)
          throws JAXBException, JsonParseException, JsonMappingException, IOException, InterruptedException, XmlPullParserException {
       Dependencies dependencies;
-
-      final String url = GitUtils.getURL(projectFolder);
       
       boolean needToLoad = false;
 

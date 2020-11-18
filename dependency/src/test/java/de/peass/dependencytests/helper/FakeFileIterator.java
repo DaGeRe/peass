@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
+import de.peass.dependency.analysis.data.VersionDiff;
 import de.peass.vcs.VersionIterator;
 
 class CopyFileVisitor extends SimpleFileVisitor<Path> {
@@ -117,5 +118,10 @@ public class FakeFileIterator extends VersionIterator {
    @Override
    public boolean goToNextCommitSoft() {
       throw new RuntimeException("Not implemented on purpose.");
+   }
+   
+   @Override
+   public VersionDiff getChangedClasses(File projectFolder2, List<File> genericModules, String lastVersion) {
+      throw new RuntimeException("Not implemented yet.");
    }
 }

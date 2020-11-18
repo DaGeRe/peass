@@ -3,6 +3,7 @@ package de.peass.analysis.properties;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,7 +25,9 @@ import de.peass.dependency.analysis.data.VersionDiff;
 import de.peass.dependency.changesreading.ClazzChangeData;
 import de.peass.dependency.execution.MavenPomUtil;
 import de.peass.dependency.traces.requitur.Sequitur;
+import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
+import de.peass.vcs.VersionIteratorGit;
 import difflib.Delta;
 import difflib.Delta.TYPE;
 import difflib.DiffUtils;
@@ -110,7 +113,10 @@ public class PropertyReadHelper {
       final File fileOld = new File(folder, getShortPrevVersion() + "_method");
       if (fileCurrent.exists() && fileOld.exists()) {
          final PeASSFolders folders = new PeASSFolders(projectFolder);
-         final ChangeManager changeManager = new ChangeManager(folders);
+         final VersionIteratorGit iterator = new VersionIteratorGit(folder, 
+               Arrays.asList(new GitCommit[] {new GitCommit(version, null, null, null), new GitCommit(prevVersion, null, null, null)}), 
+               new GitCommit(prevVersion, null, null, null));
+         final ChangeManager changeManager = new ChangeManager(folders, iterator);
          final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(prevVersion, version);
 
          final List<String> traceCurrent = Sequitur.getExpandedTrace(fileCurrent);
