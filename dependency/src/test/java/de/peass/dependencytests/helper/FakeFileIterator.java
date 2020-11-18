@@ -51,7 +51,7 @@ public class FakeFileIterator extends VersionIterator {
       this.commits = commits;
    }
 
-   int tag = 0;
+   private int tag = 0;
 
    @Override
    public int getSize() {
@@ -65,42 +65,40 @@ public class FakeFileIterator extends VersionIterator {
 
    @Override
    public boolean hasNextCommit() {
-      return tag < commits.size() + 1;
+      return tag < commits.size();
    }
 
    @Override
    public boolean goToNextCommit() {
+      System.out.println("Loading commit: " + tag);
       tag++;
-      try {
-         FileUtils.deleteDirectory(projectFolder);
-         File commitFolder = commits.get(tag - 1);
-         copy(commitFolder, projectFolder);
-         return true;
-      } catch (final IOException e) {
-         e.printStackTrace();
-      }
-      return false;
+      return loadVersionFiles(tag - 1);
    }
 
    @Override
    public boolean goToFirstCommit() {
-      tag = 0;
-      return true;
+      tag = 1;
+      return loadVersionFiles(0);
    }
 
    @Override
    public boolean goToPreviousCommit() {
-      if (tag > 0) {
+      if (tag > 1) {
          tag--;
-         try {
-            FileUtils.deleteDirectory(projectFolder);
-            File commitFolder = commits.get(tag - 1);
-            copy(commitFolder, projectFolder);
-         } catch (final IOException e) {
-            e.printStackTrace();
-         }
-         return true;
+         return loadVersionFiles(tag - 1);
       } else {
+         return false;
+      }
+   }
+   
+   private boolean loadVersionFiles(final int goalTag) {
+      try {
+         FileUtils.deleteDirectory(projectFolder);
+         File commitFolder =  commits.get(goalTag);
+         copy(commitFolder, projectFolder);
+         return true;
+      } catch (final IOException e) {
+         e.printStackTrace();
          return false;
       }
    }
@@ -121,7 +119,7 @@ public class FakeFileIterator extends VersionIterator {
    }
    
    @Override
-   public VersionDiff getChangedClasses(File projectFolder2, List<File> genericModules, String lastVersion) {
+   public VersionDiff getChangedClasses(File projectFolder, List<File> genericModules, String lastVersion) {
       throw new RuntimeException("Not implemented yet.");
    }
 }
