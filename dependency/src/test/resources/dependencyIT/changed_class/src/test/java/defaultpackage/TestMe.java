@@ -6,14 +6,14 @@ public class TestMe {
 	
 	@Test
 	public void testMe(){
-		NormalDependency normal = new NormalDependency();
+		final NormalDependency normal = new NormalDependency();
 		normal.executeThing();
 		System.out.println("Test1");
 	}
 	
 	@Test
 	public void removeMe(){
-		OtherDependency other = new OtherDependency();
+		final OtherDependency other = new OtherDependency();
 		other.executeThing();
 	}
 }
