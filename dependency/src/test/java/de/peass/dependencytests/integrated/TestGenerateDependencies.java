@@ -31,9 +31,6 @@ import de.peass.dependencytests.helper.FakeFileIterator;
 import de.peass.utils.Constants;
 import de.peass.vcs.VersionControlSystem;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(VersionControlSystem.class)
-@PowerMockIgnore({ "javax.management.*", "org.apache.http.conn.ssl.*", "com.amazonaws.http.conn.ssl.*", "javax.net.ssl.*" })
 public class TestGenerateDependencies {
    
    private static final Logger LOG = LogManager.getLogger(TestGenerateDependencies.class);
@@ -41,16 +38,6 @@ public class TestGenerateDependencies {
    @Test
    public void testGenerateDependencies() throws IOException, InterruptedException, XmlPullParserException {
       ViewGeneratorIT.init(ViewGeneratorIT.BASIC);
-
-      PowerMockito.mockStatic(VersionControlSystem.class);
-      PowerMockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            System.out.println("Changed!");
-            return null;
-         }
-      }).when(VersionControlSystem.class);
 
       final FakeFileIterator iterator = new FakeFileIterator(TestConstants.projectFolder, Arrays.asList(ViewGeneratorIT.REPETITION));
       final File dependencyFile = new File(ViewGeneratorIT.VIEW_IT, "dependencies.json");
