@@ -58,8 +58,8 @@ public class ContinuousDependencyReader {
             if (!lastVersionName.equals(version)) {
                VersionIterator newIterator = getIterator(lastVersionName);
                DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, dependencies.getUrl(), newIterator, TIMEOUT);
-               iterator.goTo0thCommit();
-               
+               newIterator.goTo0thCommit();
+                
                reader.readCompletedVersions(dependencies);
                reader.readDependencies();
             }

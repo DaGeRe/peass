@@ -1,8 +1,6 @@
 package defaultpackage;
-import org.junit.Test;
 
-import defaultpackage.NormalDependency;
-import defaultpackage.OtherDependency;
+import org.junit.Test;
 
 public class TestMe {	
 	

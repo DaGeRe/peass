@@ -30,6 +30,7 @@ import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.analysis.data.VersionDiff;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependencytests.helper.FakeFileIterator;
+import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIterator;
 import de.peass.vcs.VersionIteratorGit;
 
@@ -40,17 +41,15 @@ public class TestContinuousDependencyReader {
 
    private static final File dependencyFile = new File("target", "dependencies.json");
 
-   private final GitProjectBuilder builder;
-   
-   public TestContinuousDependencyReader() throws InterruptedException, IOException {
-      FileUtils.deleteDirectory(CURRENT);
-      builder = new GitProjectBuilder(CURRENT, new File("../dependency/src/test/resources/dependencyIT/basic_state"));
-   }
-   
+   private static GitProjectBuilder builder;
+
    @BeforeAll
-   public static void cleanDependencies() {
+   public static void cleanDependencies() throws IOException, InterruptedException {
       dependencyFile.delete();
       Assert.assertFalse(dependencyFile.exists());
+
+      FileUtils.deleteDirectory(CURRENT);
+      builder = new GitProjectBuilder(CURRENT, new File("../dependency/src/test/resources/dependencyIT/basic_state"));
    }
 
    @Order(1)
@@ -64,20 +63,37 @@ public class TestContinuousDependencyReader {
 
       ContinuousDependencyReader reader = new ContinuousDependencyReader(iterator.getTag(), CURRENT, dependencyFile);
       Dependencies dependencies = reader.getDependencies(iterator, "");
-      
-      final String lastTag = builder.getTags().get(builder.getTags().size()-1);
-      checkVersion(dependencies, lastTag);
+
+      final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
+      checkVersion(dependencies, lastTag, 1);
    }
-   
-   private void checkVersion(Dependencies dependencies, final String newestVersion) {
+
+   @Order(2)
+   @Test
+   public void testAnotherVersion() throws JsonParseException, JsonMappingException, JAXBException, IOException, InterruptedException, XmlPullParserException {
+      final String prevTag = builder.getTags().get(builder.getTags().size() - 1);
+      GitUtils.goToTag(prevTag, CURRENT);
+
+      String newVersion = builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/basic_state"), "test 2");
+
+      VersionIterator iterator = new VersionIteratorGit(CURRENT);
+
+      final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(newVersion, CURRENT, dependencyFile);
+      Dependencies dependencies = spiedReader.getDependencies(iterator, "");
+
+      final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
+      checkVersion(dependencies, lastTag, 2);
+   }
+
+   private void checkVersion(Dependencies dependencies, final String newestVersion, int versions) {
       Assert.assertTrue(dependencyFile.exists());
-      MatcherAssert.assertThat(dependencies.getVersions(), Matchers.aMapWithSize(1));
-      
+      MatcherAssert.assertThat(dependencies.getVersions(), Matchers.aMapWithSize(versions));
+
       MatcherAssert.assertThat(dependencies.getVersions().get(newestVersion), Matchers.notNullValue());
       final TestSet testSet = getTestset(dependencies, newestVersion);
       Assert.assertEquals(new TestCase("defaultpackage.TestMe#testMe"), testSet.getTests().toArray()[0]);
    }
-   
+
    private TestSet getTestset(Dependencies dependencies, String newestVersion) {
       final TestSet testSet = dependencies.getVersions().get(newestVersion)
             .getChangedClazzes()

@@ -55,7 +55,7 @@ public class GitProjectBuilder {
     * @throws IOException 
     * @throws InterruptedException 
     */
-   public void addVersion(File versionFolder, String commitMessage) throws IOException, InterruptedException {
+   public String addVersion(File versionFolder, String commitMessage) throws IOException, InterruptedException {
       FileUtils.copyDirectory(versionFolder, gitFolder);
       
       final Process addProcess = Runtime.getRuntime().exec("git add -A", new String[0], gitFolder);
@@ -71,6 +71,8 @@ public class GitProjectBuilder {
       final Process headProcess = Runtime.getRuntime().exec("git rev-parse HEAD", new String[0], gitFolder);
       String headOutput = StreamGobbler.getFullProcess(headProcess, false).replaceAll("\n", "");
       tags.add(headOutput);
+      
+      return headOutput;
    }
    
    public List<String> getTags() {
