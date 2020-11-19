@@ -290,6 +290,20 @@ public final class GitUtils {
       }
       return -1;
    }
+   
+   public static void pull(final File projectFolder) {
+      synchronized (projectFolder) {
+         LOG.debug("Pulling", projectFolder.getAbsolutePath());
+         try {
+            Process pReset = Runtime.getRuntime().exec("git fetch", new String[0], projectFolder);
+            final String out = StreamGobbler.getFullProcess(pReset, false);
+            pReset.waitFor();
+            LOG.debug(out);
+         } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+         }
+      }
+   }
 
    /**
     * Lets the project go to the given state by resetting it to revert potential changes and by checking out the given version.

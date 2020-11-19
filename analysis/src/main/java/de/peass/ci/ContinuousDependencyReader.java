@@ -50,7 +50,8 @@ public class ContinuousDependencyReader {
          dependencies = fullyLoadDependencies(url, iterator, noChanges);
       } else {
          dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-
+         VersionComparator.setDependencies(dependencies);
+         
          if (dependencies.getVersions().size() > 0) {
             final String lastVersionName = dependencies.getVersionNames()[dependencies.getVersions().size() - 1];
             if (!lastVersionName.equals(version)) {

@@ -60,6 +60,7 @@ public class ContinuousExecutor {
             throw new RuntimeException("Was not able to clone project!");
          }
       } else {
+         GitUtils.pull(projectFolderLocal);
          final String head = GitUtils.getName("HEAD", projectFolder);
          GitUtils.goToTag(head, projectFolderLocal);
       }
