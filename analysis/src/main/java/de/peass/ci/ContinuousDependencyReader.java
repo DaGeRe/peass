@@ -44,14 +44,12 @@ public class ContinuousDependencyReader {
          throws JAXBException, JsonParseException, JsonMappingException, IOException, InterruptedException, XmlPullParserException {
       Dependencies dependencies;
       
-      final VersionKeeper nonRunning = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonRunning_" + projectFolder.getName() + ".json"));
-      final VersionKeeper nonChanges = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonChanges_" + projectFolder.getName() + ".json"));
+      final VersionKeeper noChanges = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonChanges_" + projectFolder.getName() + ".json"));
 
       if (!dependencyFile.exists()) {
-         dependencies = fullyLoadDependencies(url, iterator, nonChanges);
+         dependencies = fullyLoadDependencies(url, iterator, noChanges);
       } else {
          dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-         VersionComparator.setDependencies(dependencies);
 
          if (dependencies.getVersions().size() > 0) {
             final String lastVersionName = dependencies.getVersionNames()[dependencies.getVersions().size() - 1];
@@ -64,10 +62,11 @@ public class ContinuousDependencyReader {
                reader.readDependencies();
             }
          } else {
-            dependencies = fullyLoadDependencies(url, iterator, nonChanges);
+            dependencies = fullyLoadDependencies(url, iterator, noChanges);
          }
       }
-
+      VersionComparator.setDependencies(dependencies);
+      
       return dependencies;
    }
 

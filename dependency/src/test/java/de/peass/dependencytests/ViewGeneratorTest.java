@@ -57,7 +57,7 @@ public class ViewGeneratorTest {
 
       final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, Dependencies.class);
       VersionComparator.setDependencies(dependencies);
-      final ViewGenerator generator = new ViewGenerator(TestConstants.projectFolder, dependencies, executefile, viewFolder, 1, 60000);
+      final ViewGenerator generator = new ViewGenerator(TestConstants.CURRENT_FOLDER, dependencies, executefile, viewFolder, 1, 60000);
 
       mockGitHandling();
 
@@ -75,14 +75,14 @@ public class ViewGeneratorTest {
    }
 
    private void mockGitHandling() throws InterruptedException, IOException {
-      final PeASSFolders folders = new PeASSFolders(TestConstants.projectFolder);
+      final PeASSFolders folders = new PeASSFolders(TestConstants.CURRENT_FOLDER);
       final File projectFolderTemp = new File(folders.getTempProjectFolder(), "1");
       PowerMockito.mockStatic(GitUtils.class);
       PowerMockito.doAnswer(new Answer<Void>() {
 
          @Override
          public Void answer(final InvocationOnMock invocation) throws Throwable {
-            FileUtils.copyDirectory(TestConstants.projectFolder, projectFolderTemp);
+            FileUtils.copyDirectory(TestConstants.CURRENT_FOLDER, projectFolderTemp);
             return null;
          }
       }).when(GitUtils.class);

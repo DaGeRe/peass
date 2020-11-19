@@ -54,9 +54,9 @@ public class ViewGeneratorIT {
          if (!viewFolder.exists()) {
             viewFolder.mkdir();
          }
-         FileUtils.deleteDirectory(TestConstants.projectFolder);
-         FileUtils.deleteDirectory(new File(TestConstants.projectFolder.getParentFile(), TestConstants.projectFolder.getName() + "_peass"));
-         FileUtils.copyDirectory(folder, TestConstants.projectFolder);
+         FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
+         FileUtils.deleteDirectory(new File(TestConstants.CURRENT_FOLDER.getParentFile(), TestConstants.CURRENT_FOLDER.getName() + "_peass"));
+         FileUtils.copyDirectory(folder, TestConstants.CURRENT_FOLDER);
       } catch (final IOException e) {
          e.printStackTrace();
       }
@@ -123,7 +123,7 @@ public class ViewGeneratorIT {
    private void executeTraceGetting(final File project, final String githash)
          throws IOException, ParseException, ViewNotFoundException, XmlPullParserException, InterruptedException {
       init(project);
-      final KiekerResultManager tracereader = new KiekerResultManager(new PeASSFolders(TestConstants.projectFolder), 5000);
+      final KiekerResultManager tracereader = new KiekerResultManager(new PeASSFolders(TestConstants.CURRENT_FOLDER), 5000);
       final TestSet testset = new TestSet();
       testset.addTest(new TestCase("viewtest.TestMe", "test", ""));
       tracereader.getExecutor().loadClasses();
@@ -131,7 +131,7 @@ public class ViewGeneratorIT {
 
       LOG.debug("Trace-Analysis..");
 
-      final boolean worked = analyseTrace(new TestCase("viewtest.TestMe", "test", ""), viewFolder, new HashMap<>(), githash, tracereader.getXMLFileFolder(TestConstants.projectFolder));
+      final boolean worked = analyseTrace(new TestCase("viewtest.TestMe", "test", ""), viewFolder, new HashMap<>(), githash, tracereader.getXMLFileFolder(TestConstants.CURRENT_FOLDER));
       Assert.assertEquals(true, worked);
 
       tracereader.deleteTempFiles();
@@ -163,8 +163,8 @@ public class ViewGeneratorIT {
       final ArrayList<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING).getShortTrace("");
       LOG.debug("Short Trace: {}", shortTrace.size());
       final TraceMethodReader traceMethodReader = new TraceMethodReader(shortTrace,
-            new File(TestConstants.projectFolder, "src/main/java"), new File(TestConstants.projectFolder, "src/java"),
-            new File(TestConstants.projectFolder, "src/test/java"), new File(TestConstants.projectFolder, "src/test"));
+            new File(TestConstants.CURRENT_FOLDER, "src/main/java"), new File(TestConstants.CURRENT_FOLDER, "src/java"),
+            new File(TestConstants.CURRENT_FOLDER, "src/test/java"), new File(TestConstants.CURRENT_FOLDER, "src/test"));
       final TraceWithMethods trace = traceMethodReader.getTraceWithMethods();
       List<File> traceFile = traceFileMap.get(testcase.getMethod());
       if (traceFile == null) {

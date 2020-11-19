@@ -36,19 +36,27 @@ import de.peass.vcs.VersionIterator;
 import de.peass.vcs.VersionIteratorGit;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-public class TestContinuousDependencyReader {
-
-   public static final File dependencyFile = new File("target", "dependencies.json");
+public class DependenciesOnlyStartversionIT {
 
    private static GitProjectBuilder builder;
 
-   @BeforeAll
-   public static void cleanDependencies() throws IOException, InterruptedException {
-      dependencyFile.delete();
-      Assert.assertFalse(dependencyFile.exists());
+   Dependencies dependencies;
+   
+   @BeforeEach
+   public void cleanDependencies() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+      TestContinuousDependencyReader.dependencyFile.delete();
+      Assert.assertFalse(TestContinuousDependencyReader.dependencyFile.exists());
 
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
       builder = new GitProjectBuilder(TestConstants.CURRENT_FOLDER, new File("../dependency/src/test/resources/dependencyIT/basic_state"));
+      
+      VersionIterator iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
+      iterator.goToFirstCommit();
+      
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(iterator.getTag(), TestConstants.CURRENT_FOLDER, TestContinuousDependencyReader.dependencyFile);
+      dependencies = reader.getDependencies(iterator, "");
+      
+      Assert.assertEquals(0, dependencies.getVersions().size());
    }
 
    @Order(1)
@@ -59,33 +67,17 @@ public class TestContinuousDependencyReader {
       VersionIterator iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
       iterator.goToFirstCommit();
       iterator.goToNextCommit();
-
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(iterator.getTag(), TestConstants.CURRENT_FOLDER, dependencyFile);
-      Dependencies dependencies = reader.getDependencies(iterator, "");
+      
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(iterator.getTag(), TestConstants.CURRENT_FOLDER, TestContinuousDependencyReader.dependencyFile);
+      dependencies = reader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
       checkVersion(dependencies, lastTag, 1);
    }
 
-   @Order(2)
-   @Test
-   public void testAnotherVersion() throws JsonParseException, JsonMappingException, JAXBException, IOException, InterruptedException, XmlPullParserException {
-      final String prevTag = builder.getTags().get(builder.getTags().size() - 1);
-      GitUtils.goToTag(prevTag, TestConstants.CURRENT_FOLDER);
-
-      String newVersion = builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/basic_state"), "test 2");
-
-      VersionIterator iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
-
-      final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(newVersion, TestConstants.CURRENT_FOLDER, dependencyFile);
-      Dependencies dependencies = spiedReader.getDependencies(iterator, "");
-
-      final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
-      checkVersion(dependencies, lastTag, 2);
-   }
 
    private void checkVersion(Dependencies dependencies, final String newestVersion, int versions) {
-      Assert.assertTrue(dependencyFile.exists());
+      Assert.assertTrue(TestContinuousDependencyReader.dependencyFile.exists());
       MatcherAssert.assertThat(dependencies.getVersions(), Matchers.aMapWithSize(versions));
 
       MatcherAssert.assertThat(dependencies.getVersions().get(newestVersion), Matchers.notNullValue());

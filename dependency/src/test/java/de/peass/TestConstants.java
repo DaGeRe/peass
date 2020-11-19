@@ -6,6 +6,6 @@ import de.peass.dependencytests.ViewGeneratorIT;
 
 public class TestConstants {
 
-   public static final File projectFolder = new File(ViewGeneratorIT.VIEW_IT, "current");
+   public static final File CURRENT_FOLDER = new File(ViewGeneratorIT.VIEW_IT, "current");
 
 }

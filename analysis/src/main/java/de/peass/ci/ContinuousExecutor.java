@@ -2,16 +2,12 @@ package de.peass.ci;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -20,22 +16,10 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.ContinuousExecutionStarter;
-import de.peass.analysis.properties.PropertyReader;
 import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.ExecutionData;
-import de.peass.dependency.persistence.Version;
-import de.peass.dependency.reader.DependencyReader;
-import de.peass.dependency.reader.VersionKeeper;
-import de.peass.dependency.traces.ViewGenerator;
-import de.peass.dependencyprocessors.AdaptiveTester;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.Constants;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
@@ -142,7 +126,7 @@ public class ContinuousExecutor {
       final GitCommit prevCommit = new GitCommit(versionOld, "", "", "");
       entries.add(prevCommit);
       entries.add(new GitCommit(version.getTag(), "", "", ""));
-      final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, entries, prevCommit);
+      final VersionIteratorGit iterator = new VersionIteratorGit(projectFolderLocal, entries, prevCommit);
       return iterator;
    }
 

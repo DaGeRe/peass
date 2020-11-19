@@ -64,11 +64,14 @@ public class ViewGenerator extends PairProcessor {
       final Set<TestCase> testcases = versioninfo.getTests().getTests();
 
       final boolean beforeEndVersion = endversion == null || version.equals(endversion) || VersionComparator.isBefore(version, endversion);
+      final boolean beforeStartVersion = startversion == null || !VersionComparator.isBefore(version, startversion);
+      LOG.debug("Before Start Version {}: {}", startversion, beforeStartVersion);
       LOG.debug("Before End Version {}: {}", endversion, beforeEndVersion);
 
+      
       final TestSet tests = new TestSet();
       for (final TestCase testcase : testcases) {
-         if (!VersionComparator.isBefore(version, startversion) && beforeEndVersion) {
+         if (beforeStartVersion && beforeEndVersion) {
             if (lastTestcaseCalls.containsKey(testcase)) {
                tests.addTest(testcase);
             }

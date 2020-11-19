@@ -39,9 +39,9 @@ public class TestGenerateDependencies {
    public void testGenerateDependencies() throws IOException, InterruptedException, XmlPullParserException {
       ViewGeneratorIT.init(ViewGeneratorIT.BASIC);
 
-      final FakeFileIterator iterator = new FakeFileIterator(TestConstants.projectFolder, Arrays.asList(ViewGeneratorIT.REPETITION));
+      final FakeFileIterator iterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, Arrays.asList(ViewGeneratorIT.REPETITION));
       final File dependencyFile = new File(ViewGeneratorIT.VIEW_IT, "dependencies.json");
-      final DependencyReader reader = new DependencyReader(TestConstants.projectFolder, dependencyFile, "", iterator, 5000, VersionKeeper.INSTANCE);
+      final DependencyReader reader = new DependencyReader(TestConstants.CURRENT_FOLDER, dependencyFile, "", iterator, 5000, VersionKeeper.INSTANCE);
 
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);

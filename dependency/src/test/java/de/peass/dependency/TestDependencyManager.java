@@ -24,7 +24,7 @@ public class TestDependencyManager {
    
    @Test
    public void testBigFolderDeletion() throws IOException, InterruptedException, XmlPullParserException {
-      final PeASSFolders folders = new PeASSFolders(TestConstants.projectFolder);
+      final PeASSFolders folders = new PeASSFolders(TestConstants.CURRENT_FOLDER);
 
       final TestExecutor testExecutorMock = Mockito.mock(TestExecutor.class);
 
