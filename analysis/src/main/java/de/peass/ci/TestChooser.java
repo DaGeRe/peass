@@ -35,8 +35,8 @@ public class TestChooser {
    private static final Logger LOG = LogManager.getLogger(TestChooser.class);
    
    private final boolean useViews;
-   File localFolder;
-   PeASSFolders folders;
+   private File localFolder;
+   private PeASSFolders folders;
    private GitCommit version;
    private final File viewFolder;
    private final File propertyFolder;
@@ -113,15 +113,24 @@ public class TestChooser {
       FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
       if (!executeFile.exists()) {
          LOG.debug("Expected file {} does not exist, executing view creation", executeFile);
-         final ViewGenerator viewgenerator = new ViewGenerator(folders.getProjectFolder(), dependencies, executeFile, viewFolder, threads, 15);
-         viewgenerator.processCommandline();
-         final PropertyReader propertyReader = new PropertyReader(propertyFolder, folders.getProjectFolder(), viewFolder);
-         propertyReader.readAllTestsProperties(viewgenerator.getChangedTraceMethods());
+         generateViews(dependencies, executeFile);
       }
-      final ExecutionData traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
+      ExecutionData traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
+      if (!traceTests.getVersions().containsKey(version.getTag())) {
+         generateViews(dependencies, executeFile);
+         traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
+      }
+      
       LOG.debug("Version: {} Path: {}", version, executeFile.getAbsolutePath());
       final TestSet traceTestSet = traceTests.getVersions().get(version.getTag());
 
       return traceTestSet;
+   }
+
+   private void generateViews(final Dependencies dependencies, final File executeFile) throws JAXBException, IOException {
+      final ViewGenerator viewgenerator = new ViewGenerator(folders.getProjectFolder(), dependencies, executeFile, viewFolder, threads, 15);
+      viewgenerator.processCommandline();
+      final PropertyReader propertyReader = new PropertyReader(propertyFolder, folders.getProjectFolder(), viewFolder);
+      propertyReader.readAllTestsProperties(viewgenerator.getChangedTraceMethods());
    }
 }
