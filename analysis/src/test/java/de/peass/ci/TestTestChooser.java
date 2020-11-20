@@ -7,7 +7,10 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.peass.TestConstants;
@@ -27,11 +30,19 @@ public class TestTestChooser {
    
    private String testVersion;
    
+   private GitProjectBuilder builder;
+   
+   @BeforeEach
+   public void cleanDependencies() throws IOException, InterruptedException {
+      FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER.getParentFile());
+      builder = new GitProjectBuilder(TestConstants.CURRENT_FOLDER, new File("../dependency/src/test/resources/dependencyIT/basic_state"));
+   }
+   
    @Test
    public void testBasicChoosing() throws InterruptedException, IOException, JAXBException {
       Dependencies dependencies = createDependencies();
       
-      TestChooser chooser = new TestChooser(false, new File("target/"), new PeASSFolders(TestConstants.CURRENT_FOLDER), new GitCommit(testVersion, "", "", ""), new File("target/views"), new File("target/properties"), 1, new LinkedList<>());
+      TestChooser chooser = new TestChooser(false, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), new GitCommit(testVersion, "", "", ""), new File("target/views"), new File("target/properties"), 1, new LinkedList<>());
       Set<TestCase> tests = chooser.getTestSet(dependencies);
       
       Assert.assertEquals(tests.iterator().next(), new TestCase("defaultpackage.TestMe#testMe"));
@@ -41,14 +52,13 @@ public class TestTestChooser {
    public void testViewChoosing() throws InterruptedException, IOException, JAXBException {
       Dependencies dependencies = createDependencies();
       
-      TestChooser chooser = new TestChooser(true, new File("target/"), new PeASSFolders(TestConstants.CURRENT_FOLDER), new GitCommit(testVersion, "", "", ""), new File("target/views"), new File("target/properties"), 1, new LinkedList<>());
+      TestChooser chooser = new TestChooser(true, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), new GitCommit(testVersion, "", "", ""), new File("target/views"), new File("target/properties"), 1, new LinkedList<>());
       Set<TestCase> tests = chooser.getTestSet(dependencies);
       
       Assert.assertEquals(tests.iterator().next(), new TestCase("defaultpackage.TestMe#testMe"));
    }
 
    private Dependencies createDependencies() throws InterruptedException, IOException {
-      GitProjectBuilder builder = new GitProjectBuilder(TestConstants.CURRENT_FOLDER, new File("../dependency/src/test/resources/dependencyIT/basic_state"));
       builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/normal_change"), "Version 1");
       
       Dependencies dependencies = new Dependencies();
