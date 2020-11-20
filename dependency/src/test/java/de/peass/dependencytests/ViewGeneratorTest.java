@@ -121,7 +121,7 @@ public class ViewGeneratorTest {
     * @throws JsonMappingException
     * @throws JsonGenerationException
     */
-   public static void main(final String[] args) throws JsonGenerationException, JsonMappingException, IOException {
+   public static void main2(final String[] args) throws JsonGenerationException, JsonMappingException, IOException {
       final Dependencies deps = new Dependencies();
       deps.getInitialversion().setVersion("000000");
       deps.getInitialversion().addDependency(new ChangedEntity("viewtest.TestMe", "", "test"), new ChangedEntity("viewtest.TestMe", "", "test"));
