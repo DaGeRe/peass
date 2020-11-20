@@ -30,6 +30,9 @@ public class TestCase implements Comparable<TestCase> {
       if (clazz.contains(File.separator)) { // possibly assertion, if speed becomes issue..
          throw new RuntimeException("Testcase should be full qualified name, not path: " + clazz);
       }
+      if (clazz.contains(ChangedEntity.METHOD_SEPARATOR)) {
+         throw new RuntimeException("Class and method should be separated: " + clazz);
+      }
       this.clazz = clazz;
       this.method = method;
       module = "";
@@ -41,6 +44,9 @@ public class TestCase implements Comparable<TestCase> {
          @JsonProperty("module") final String module) {
       if (clazz.contains(File.separator)) {
          throw new RuntimeException("Testcase " + clazz + " should be full qualified name, not path!");
+      }
+      if (clazz.contains(ChangedEntity.METHOD_SEPARATOR)) {
+         throw new RuntimeException("Class and method should be separated: " + clazz);
       }
       this.clazz = clazz;
       this.method = method;
