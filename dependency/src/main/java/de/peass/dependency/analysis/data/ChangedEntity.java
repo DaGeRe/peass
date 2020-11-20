@@ -44,7 +44,6 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    private final String javaClazzName;
    private final List<String> parameters = new LinkedList<String>();
 
-   @JsonCreator
    public ChangedEntity(@JsonProperty("clazz") final String clazz, @JsonProperty("module") final String module) {
       this.filename = clazz;
       this.module = module != null ? module : "";
@@ -67,8 +66,9 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       LOG.trace(javaClazzName);
    }
 
-   public ChangedEntity(final String testClassName, final String moduleOfClass, final String testMethodName) {
-      this(testClassName, moduleOfClass);
+   @JsonCreator
+   public ChangedEntity(@JsonProperty("clazz") final String clazz, @JsonProperty("module") final String module, @JsonProperty("method") final String testMethodName) {
+      this(clazz, module);
       method = testMethodName;
    }
 
@@ -93,12 +93,8 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       return result;
    }
 
-   public String getFilename() {
-      return filename;
-   }
-
    public String getClazz() {
-      return filename;
+      return javaClazzName;
    }
 
    public String getMethod() {
