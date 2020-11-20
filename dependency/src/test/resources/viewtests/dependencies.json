@@ -7,15 +7,12 @@
       "viewtest.TestMe#test" : {
         "entities" : [ {
           "clazz" : "viewtest.TestMe",
-          "filename" : "viewtest.TestMe",
           "method" : "test"
         }, {
           "clazz" : "viewtest.TestMe$InnerClass",
-          "filename" : "viewtest.TestMe$InnerClass",
           "method" : "<init>"
         }, {
           "clazz" : "viewtest.TestMe$InnerClass",
-          "filename" : "viewtest.TestMe$InnerClass",
           "method" : "method"
         } ]
       }
