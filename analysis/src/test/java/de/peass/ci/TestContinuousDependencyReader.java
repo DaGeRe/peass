@@ -2,35 +2,29 @@ package de.peass.ci;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import javax.xml.bind.JAXBException;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import org.apache.commons.io.FileUtils;
-import org.apache.tools.ant.types.CommandlineJava.SysProperties;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.mockito.Mockito;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.TestConstants;
 import de.peass.ci.helper.GitProjectBuilder;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.analysis.data.VersionDiff;
 import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependencytests.helper.FakeFileIterator;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIterator;
 import de.peass.vcs.VersionIteratorGit;
