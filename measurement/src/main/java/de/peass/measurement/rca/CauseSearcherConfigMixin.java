@@ -32,6 +32,10 @@ public class CauseSearcherConfigMixin {
          "--minTime" }, description = "Minimum node difference time compared to relative standard deviation. "
                + "If a node takes less time, its childs won't be measured (since time measurement isn't below accurate below a certain value).")
    private double minTime = 0.1;
+   
+   @Option(names = { "-rcaStrategy",
+   "--rcaStrategy" }, description = "Strategy to select nodes which are measured")
+   private RCAStrategy strategy = null;
 
    public boolean isUseCalibrationRun() {
       return useCalibrationRun;
@@ -59,6 +63,10 @@ public class CauseSearcherConfigMixin {
 
    public double getMinTime() {
       return minTime;
+   }
+   
+   public RCAStrategy getStrategy() {
+      return strategy;
    }
 
 }

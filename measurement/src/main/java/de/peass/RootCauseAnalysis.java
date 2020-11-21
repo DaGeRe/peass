@@ -28,6 +28,10 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
    private static final Logger LOG = LogManager.getLogger(RootCauseAnalysis.class);
 
+   /**
+    * @deprecated Use CauseSearcherMixin.rcaStrategy instead
+    */
+   @Deprecated
    @Option(names = { "-measureComplete", "--measureComplete" }, description = "Whether to measure the whole tree at once (default false - tree is measured level-wise)")
    public boolean measureComplete = false;
 
@@ -65,27 +69,64 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       final String predecessor = versionInfo.getPredecessor();
 
       LOG.debug("Timeout in minutes: {}", measurementConfigMixin.getTimeout());
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(measurementConfigMixin);
-      measurementConfiguration.setUseKieker(true);
-      measurementConfiguration.setKiekerAggregationInterval(writeInterval);
-      measurementConfiguration.setVersion(version);
-      measurementConfiguration.setVersionOld(predecessor);
+      final MeasurementConfiguration measurementConfiguration = getConfiguration(predecessor);
       final JUnitTestTransformer testtransformer = getTestTransformer(measurementConfiguration);
 
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, causeSearchConfigMixin);
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders);
-      if (measureComplete) {
-         final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, causeSearcherConfig);
-         final CauseSearcher tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
-         tester.search();
-      } else {
-         final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, causeSearcherConfig);
-         final CauseSearcher tester = new CauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
-         tester.search();
-      }
+
+      final CauseSearcher tester = getCauseSeacher(measurementConfiguration, testtransformer, causeSearcherConfig, alternateFolders, reader);
+      tester.search();
 
       return null;
+   }
+
+   private MeasurementConfiguration getConfiguration(final String predecessor) {
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(measurementConfigMixin);
+      measurementConfiguration.setUseKieker(true);
+      measurementConfiguration.setKiekerAggregationInterval(writeInterval);
+      measurementConfiguration.setVersion(version);
+      measurementConfiguration.setVersionOld(predecessor);
+      return measurementConfiguration;
+   }
+
+   private CauseSearcher getCauseSeacher(final MeasurementConfiguration measurementConfiguration, final JUnitTestTransformer testtransformer,
+         final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader) throws IOException, InterruptedException {
+      final CauseSearcher tester;
+      if (causeSearchConfigMixin.getStrategy() != null) {
+         if (measureComplete) {
+            throw new RuntimeException("Definition of RCA strategy and --measureComplete is not allowed; please only define strategy and omit deprecated measureComplete");
+         }
+         final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, causeSearcherConfig);
+         switch (causeSearchConfigMixin.getStrategy()) {
+         case COMPLETE:
+            tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
+            break;
+         case LEVELWISE:
+            tester = new CauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
+            break;
+         case CONSTANT_LEVELS:
+            throw new RuntimeException("Measurement for constant count of level currently not supported");
+         case UNTILL_SOURCE_CHANGE:
+            throw new RuntimeException("Measurement untill source changed nodes currently not supported");
+         case UNTILL_STRUCTURE_CHANGE:
+            throw new RuntimeException("Measurement untill structure change nodes currently not supported");
+         default:
+            throw new RuntimeException("Strategy " + causeSearchConfigMixin.getStrategy() + " not expected");
+         }
+      } else {
+         if (measureComplete) {
+            LOG.debug("*-measureComplete* specified; please specify *-rcaStrategy COMPLETE* instead");
+            final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, causeSearcherConfig);
+            tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
+         } else {
+            final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, causeSearcherConfig);
+            tester = new CauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
+         }
+      }
+
+      return tester;
    }
 
 }
