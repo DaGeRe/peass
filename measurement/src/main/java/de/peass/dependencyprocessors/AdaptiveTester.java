@@ -2,10 +2,12 @@ package de.peass.dependencyprocessors;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,7 +38,10 @@ public class AdaptiveTester extends DependencyTester {
       final File logFolder = getLogFolder(configuration.getVersion(), testcase);
 
       currentChunkStart = System.currentTimeMillis();
+      
+      ProgressWriter writer = new ProgressWriter(new File(folders.getFullMeasurementFolder(), "progress.txt"), configuration.getVms());
       for (finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
+         long comparisonStart = System.currentTimeMillis();
          runOneComparison(logFolder, testcase, finishedVMs);
 
          final boolean savelyDecidable = checkIsDecidable(testcase, finishedVMs);
@@ -51,6 +56,8 @@ public class AdaptiveTester extends DependencyTester {
             LOG.debug("Too less executions possible - finishing testing.");
             break;
          }
+         long durationInSeconds = (System.currentTimeMillis() - comparisonStart)/1000;
+         writer.write(durationInSeconds, finishedVMs);
       }
    }
 

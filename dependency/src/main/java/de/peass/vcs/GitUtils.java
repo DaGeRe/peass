@@ -295,7 +295,7 @@ public final class GitUtils {
       synchronized (projectFolder) {
          LOG.debug("Pulling", projectFolder.getAbsolutePath());
          try {
-            Process pReset = Runtime.getRuntime().exec("git fetch", new String[0], projectFolder);
+            Process pReset = Runtime.getRuntime().exec("git fetch --all", new String[0], projectFolder);
             final String out = StreamGobbler.getFullProcess(pReset, false);
             pReset.waitFor();
             LOG.debug(out);

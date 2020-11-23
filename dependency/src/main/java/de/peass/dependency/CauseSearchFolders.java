@@ -4,6 +4,9 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
+
+import org.apache.commons.io.FileUtils;
 
 import de.peass.dependency.analysis.data.TestCase;
 
@@ -30,18 +33,20 @@ public class CauseSearchFolders extends PeASSFolders {
    }
 
    private void makeClearscript() {
-      final File script = new File(peassFolder, "clearRCA.sh");
-      try (BufferedWriter writer = new BufferedWriter(new FileWriter(script))) {
-         writer.write("rm rca/level -rf && rm rca/archived -rf && rm rca/tree -rf\n");
-         writer.write("rm measurementsTemp -rf\n");
-         writer.write("rm kiekerTemp -rf\n");
-         writer.write("rm projectTemp -rf\n");
-         writer.write("rm temp -rf\n");
-         writer.write("rm logs -rf");
-      } catch (final IOException e) {
+      try {
+         final URL getProgressScript = CauseSearchFolders.class.getClassLoader().getResource("copy/getProgress.sh");
+         final File getProgressFile = new File(peassFolder, "getProgress.sh");
+         FileUtils.copyURLToFile(getProgressScript, getProgressFile);
+         getProgressFile.setExecutable(true);
+         
+         final URL clearRcaScript = CauseSearchFolders.class.getClassLoader().getResource("copy/clearRCA.sh");
+         final File clearRcaFile = new File(peassFolder, "clearRCA.sh");
+         FileUtils.copyURLToFile(clearRcaScript, clearRcaFile);
+         clearRcaFile.setExecutable(true);
+      } catch (IOException e) {
          e.printStackTrace();
       }
-      script.setExecutable(true);
+     
    }
 
    @Override
