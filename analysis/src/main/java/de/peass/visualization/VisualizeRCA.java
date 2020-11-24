@@ -3,6 +3,8 @@ package de.peass.visualization;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.apache.logging.log4j.LogManager;
@@ -52,57 +54,27 @@ public class VisualizeRCA implements Callable<Void> {
       final CommandLine commandLine = new CommandLine(new VisualizeRCA());
       System.exit(commandLine.execute(args));
    }
+   
+   public VisualizeRCA() {
+   }
+   
+   public VisualizeRCA(File[] data, File resultFolder) {
+      this.data = data;
+      this.resultFolder = resultFolder;
+   }
 
    @Override
    public Void call() throws Exception {
       if (!resultFolder.exists()) {
          resultFolder.mkdir();
       }
-      for (final File source : data) {
-         if (source.isDirectory()) {
-            if (source.getName().endsWith("_peass")) {
-               handlePeassFolder(source);
-            } else if (source.getName().equals("galaxy") || source.getParentFile().getName().contains("galaxy")) {
-               handleSlurmFolder(source);
-            } else {
-               boolean containsSlurmChild = false;
-               for (final File child : source.listFiles()) {
-                  if (child.getName().matches("[0-9]+_[0-9]+")) {
-                     containsSlurmChild = true;
-                  }
-               }
-               if (containsSlurmChild) {
-                  handleSlurmFolder(source);
-               } else {
-                  handleSimpleFolder(source);
-               }
-            }
-         } else {
-            analyzeFile(resultFolder, source);
-         }
+      
+      List<File> rcaFilesToHandle = new RCAFolderSearcher(data).searchRCAFiles();
+      for (File rcaFile : rcaFilesToHandle) {
+         analyzeFile(resultFolder, rcaFile);
       }
+      
       return null;
-   }
-
-   private void handleSimpleFolder(final File source) throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException {
-      for (final File treeFile : source.listFiles()) {
-         if (treeFile.getName().endsWith(".json")) {
-            final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, resultFolder);
-            final File propertyFolder = getPropertyFolder(projectName);
-            rcaGenerator.setPropertyFolder(propertyFolder);
-            if (visualizeFull) {
-               final CauseSearchData data = rcaGenerator.getData();
-
-               final File projectFolder = treeFile.getAbsoluteFile().getParentFile().getParentFile().getParentFile().getParentFile();
-               final File treeFolder = new File(projectFolder, "treeCache" + File.separator + data.getMeasurementConfig().getVersion() + File.separator
-                     + data.getCauseConfig().getTestCase().getClazz() + File.separator
-                     + data.getCauseConfig().getTestCase().getMethod());
-
-               getFullTree(rcaGenerator, data, treeFolder);
-            }
-            rcaGenerator.createVisualization();
-         }
-      }
    }
 
    private void getFullTree(final RCAGenerator rcaGenerator, final CauseSearchData data, final File treeFolder) throws IOException, JsonParseException, JsonMappingException {
@@ -114,32 +86,6 @@ public class VisualizeRCA implements Callable<Void> {
          final CallTreeNode rootVersion = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
 
          rcaGenerator.setFullTree(rootPredecessor, rootVersion);
-      }
-   }
-
-   private void handleSlurmFolder(final File source) throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException {
-      for (final File job : source.listFiles()) {
-         if (job.isDirectory()) {
-            final File peassFolder = new File(job, "peass");
-            handlePeassFolder(peassFolder);
-         }
-      }
-   }
-
-   private void handlePeassFolder(final File source) throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException {
-      final File rcaFolder = new File(source, "rca" + File.separator + "tree");
-      if (rcaFolder.exists()) {
-         for (final File versionFolder : rcaFolder.listFiles()) {
-            final File versionResultFolder = new File(resultFolder, versionFolder.getName());
-            versionResultFolder.mkdirs();
-            for (final File testcaseFolder : versionFolder.listFiles()) {
-               for (final File treeFile : testcaseFolder.listFiles()) {
-                  if (treeFile.getName().endsWith(".json")) {
-                     analyzeFile(versionResultFolder, treeFile);
-                  }
-               }
-            }
-         }
       }
    }
 
