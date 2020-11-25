@@ -10,6 +10,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.execution.MeasurementConfiguration;
@@ -48,6 +51,14 @@ public class CauseSearcherComplete extends CauseSearcher {
       final List<CallTreeNode> predecessorNodeList = analyzer.getAllNodesPredecessor();
       final List<CallTreeNode> includableNodes = getIncludableNodes(predecessorNodeList);
 
+      measureDefinedTree(includableNodes);
+      differingNodes.addAll(analyzer.getTreeStructureDiffering());
+      
+      return convertToChangedEntitites();
+   }
+
+   private void measureDefinedTree(final List<CallTreeNode> includableNodes) throws IOException, XmlPullParserException, InterruptedException,
+         ViewNotFoundException, AnalysisConfigurationException, JAXBException, JsonGenerationException, JsonMappingException {
       final AllDifferingDeterminer allSearcher = new AllDifferingDeterminer(includableNodes, causeSearchConfig, measurementConfig);
       measurer.measureVersion(includableNodes);
       allSearcher.calculateDiffering();
@@ -56,11 +67,8 @@ public class CauseSearcherComplete extends CauseSearcher {
       addMeasurements(includableNodes, reader.getRootPredecessor());
 
       differingNodes.addAll(allSearcher.getCurrentLevelDifferent());
-      differingNodes.addAll(analyzer.getTreeStructureDiffering());
 
       writeTreeState();
-
-      return convertToChangedEntitites();
    }
 
    private List<CallTreeNode> getIncludableNodes(final List<CallTreeNode> predecessorNodeList)

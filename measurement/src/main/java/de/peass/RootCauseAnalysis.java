@@ -18,6 +18,7 @@ import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.searcher.CauseSearcher;
 import de.peass.measurement.rca.searcher.CauseSearcherComplete;
 import de.peass.measurement.rca.searcher.LevelCauseSearcher;
+import de.peass.measurement.rca.searcher.StructureCauseSearcher;
 import de.peass.testtransformation.JUnitTestTransformer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -112,7 +113,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
          case UNTILL_SOURCE_CHANGE:
             throw new RuntimeException("Measurement untill source changed nodes currently not supported");
          case UNTILL_STRUCTURE_CHANGE:
-            throw new RuntimeException("Measurement untill structure change nodes currently not supported");
+            tester = new StructureCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
          default:
             throw new RuntimeException("Strategy " + causeSearchConfigMixin.getStrategy() + " not expected");
          }

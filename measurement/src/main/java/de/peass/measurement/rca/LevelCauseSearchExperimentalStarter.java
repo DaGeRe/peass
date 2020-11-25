@@ -19,7 +19,6 @@ import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.kieker.BothTreeReader;
-import de.peass.measurement.rca.searcher.CauseSearcher;
 import de.peass.measurement.rca.searcher.LevelCauseSearcher;
 import de.peass.testtransformation.JUnitTestTransformer;
 import kieker.analysis.exception.AnalysisConfigurationException;

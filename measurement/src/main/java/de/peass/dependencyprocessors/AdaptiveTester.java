@@ -2,12 +2,10 @@ package de.peass.dependencyprocessors;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

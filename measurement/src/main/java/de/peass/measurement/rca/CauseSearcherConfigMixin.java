@@ -1,9 +1,5 @@
 package de.peass.measurement.rca;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import de.peass.dependency.analysis.data.TestCase;
 import picocli.CommandLine.Option;
 
 public class CauseSearcherConfigMixin {

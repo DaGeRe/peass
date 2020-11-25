@@ -1,6 +1,5 @@
 package de.peass.measurement.analysis.statistics;
 
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
 import org.apache.commons.math3.stat.inference.TestUtils;

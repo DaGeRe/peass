@@ -14,7 +14,6 @@ import de.peass.measurement.rca.LevelManager;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.kieker.BothTreeReader;
-import de.peass.measurement.rca.searcher.CauseSearcher;
 import de.peass.measurement.rca.searcher.LevelCauseSearcher;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.Constants;

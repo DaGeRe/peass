@@ -1,9 +1,6 @@
 package de.peass.measurement.rca.searcher;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -20,18 +17,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.organize.FolderDeterminer;
 import de.peass.measurement.rca.CausePersistenceManager;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.CauseTester;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.kieker.BothTreeReader;
-import de.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
-import de.peass.testtransformation.JUnitTestTransformer;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public abstract class CauseSearcher {
