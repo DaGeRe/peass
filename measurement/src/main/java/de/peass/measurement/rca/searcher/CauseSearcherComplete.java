@@ -14,6 +14,7 @@ import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
+import de.peass.measurement.rca.CausePersistenceManager;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.CauseTester;
 import de.peass.measurement.rca.CompleteTreeAnalyzer;
@@ -37,6 +38,7 @@ public class CauseSearcherComplete extends CauseSearcher {
          final MeasurementConfiguration measurementConfig,
          final CauseSearchFolders folders) throws InterruptedException, IOException {
       super(reader, causeSearchConfig, measurer, measurementConfig, folders);
+      persistenceManager = new CausePersistenceManager(causeSearchConfig, measurementConfig, folders);
    }
 
    @Override
