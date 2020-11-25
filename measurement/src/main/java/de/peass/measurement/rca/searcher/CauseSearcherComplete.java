@@ -17,7 +17,7 @@ import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.CausePersistenceManager;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.CauseTester;
-import de.peass.measurement.rca.CompleteTreeAnalyzer;
+import de.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
@@ -45,15 +45,8 @@ public class CauseSearcherComplete extends CauseSearcher {
    protected Set<ChangedEntity> searchCause()
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       final CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
-      final List<CallTreeNode> predecessorNodeList = analyzer.getNonDifferingPredecessor();
-      final List<CallTreeNode> includableNodes;
-      if (causeSearchConfig.useCalibrationRun()) {
-         includableNodes = getAnalysableNodes(predecessorNodeList);
-      } else {
-         includableNodes = predecessorNodeList;
-      }
-
-      LOG.debug("Analyzable: {} / {}", includableNodes.size(), predecessorNodeList.size());
+      final List<CallTreeNode> predecessorNodeList = analyzer.getAllNodesPredecessor();
+      final List<CallTreeNode> includableNodes = getIncludableNodes(predecessorNodeList);
 
       final AllDifferingDeterminer allSearcher = new AllDifferingDeterminer(includableNodes, causeSearchConfig, measurementConfig);
       measurer.measureVersion(includableNodes);
@@ -68,6 +61,19 @@ public class CauseSearcherComplete extends CauseSearcher {
       writeTreeState();
 
       return convertToChangedEntitites();
+   }
+
+   private List<CallTreeNode> getIncludableNodes(final List<CallTreeNode> predecessorNodeList)
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+      final List<CallTreeNode> includableNodes;
+      if (causeSearchConfig.useCalibrationRun()) {
+         includableNodes = getAnalysableNodes(predecessorNodeList);
+      } else {
+         includableNodes = predecessorNodeList;
+      }
+
+      LOG.debug("Analyzable: {} / {}", includableNodes.size(), predecessorNodeList.size());
+      return includableNodes;
    }
 
    private void addMeasurements(final List<CallTreeNode> includableNodes, CallTreeNode parent) {

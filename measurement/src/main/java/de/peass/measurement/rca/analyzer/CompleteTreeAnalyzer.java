@@ -1,4 +1,4 @@
-package de.peass.measurement.rca;
+package de.peass.measurement.rca.analyzer;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,14 +9,13 @@ import de.peass.measurement.rca.treeanalysis.TreeUtil;
 
 public class CompleteTreeAnalyzer {
    private final List<CallTreeNode> treeStructureDiffering = new LinkedList<>();
-   private final List<CallTreeNode> nonDifferingPredecessor = new LinkedList<>();
+   private final List<CallTreeNode> allNodesPredecessor = new LinkedList<>();
 
    public CompleteTreeAnalyzer(final CallTreeNode root, final CallTreeNode rootPredecessor) {
       root.setOtherVersionNode(rootPredecessor);
       rootPredecessor.setOtherVersionNode(root);
 
-      // nonDifferingPredecessor.add(root);
-      nonDifferingPredecessor.add(rootPredecessor);
+      allNodesPredecessor.add(rootPredecessor);
 
       mapAllNodes(root, rootPredecessor);
    }
@@ -28,8 +27,7 @@ public class CompleteTreeAnalyzer {
       for (CallTreeNode currentChild : current.getChildren()) {
          mapAllNodes(currentChild, currentChild.getOtherVersionNode());
 
-         // nonDifferingPredecessor.add(currentChild);
-         nonDifferingPredecessor.add(currentChild.getOtherVersionNode());
+         allNodesPredecessor.add(currentChild.getOtherVersionNode());
       }
    }
 
@@ -50,7 +48,7 @@ public class CompleteTreeAnalyzer {
       return treeStructureDiffering;
    }
 
-   public List<CallTreeNode> getNonDifferingPredecessor() {
-      return nonDifferingPredecessor;
+   public List<CallTreeNode> getAllNodesPredecessor() {
+      return allNodesPredecessor;
    }
 }
