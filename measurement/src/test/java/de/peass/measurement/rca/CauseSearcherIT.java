@@ -45,7 +45,7 @@ public class CauseSearcherIT {
    
    public final static CauseSearcherConfig CAUSE_CONFIG_TESTME_COMPLETE = new CauseSearcherConfig(new TestCase("defaultpackage.TestMe", "testMe"), 
          false, false, 5.0, false, 0.1,
-         false, false);
+         false, false, RCAStrategy.COMPLETE);
    
    public static final File CURRENT = new File(new File("target"), "current");
    private static final File VERSIONS_FOLDER = new File("src/test/resources/rootCauseIT");

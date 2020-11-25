@@ -15,6 +15,7 @@ public class CauseSearcherConfig {
    private final boolean splitAggregated;
    private final double minTime;
    private final boolean calibrationRun;
+   private final RCAStrategy rcaStrategy;
 
    @JsonCreator
    public CauseSearcherConfig(@JsonProperty("testcase") final TestCase testCase,
@@ -24,7 +25,8 @@ public class CauseSearcherConfig {
          @JsonProperty("splitAggregated") final boolean splitAggregated,
          @JsonProperty("minTime") final double minTime,
          @JsonProperty("calibrationRun") final boolean calibrationRun,
-         @JsonProperty("ignoreEOIs") final boolean ignoreEOIs) {
+         @JsonProperty("ignoreEOIs") final boolean ignoreEOIs,
+         @JsonProperty("rcaStrategy") final RCAStrategy rcaStrategy) {
       this.testCase = testCase;
       this.useAggregation = useAggregation;
       this.saveAll = saveAll;
@@ -33,6 +35,7 @@ public class CauseSearcherConfig {
       this.minTime = minTime;
       this.calibrationRun = calibrationRun;
       this.ignoreEOIs = ignoreEOIs;
+      this.rcaStrategy = rcaStrategy;
       if (useAggregation && !ignoreEOIs) {
          throw new RuntimeException("EOIs need always to be ignored if aggregation is enabled!");
       }
@@ -40,7 +43,8 @@ public class CauseSearcherConfig {
    
    public CauseSearcherConfig(TestCase test, CauseSearcherConfigMixin config) {
       this(test, !config.isUseNonAggregatedWriter(), !config.isSaveNothing(),
-            config.getOutlierFactor(), !config.isNotSplitAggregated(), config.getMinTime(), config.isUseCalibrationRun(), !config.isUseEOIs());
+            config.getOutlierFactor(), !config.isNotSplitAggregated(), config.getMinTime(), config.isUseCalibrationRun(), !config.isUseEOIs(), 
+            config.getStrategy());
    }
 
    public TestCase getTestCase() {

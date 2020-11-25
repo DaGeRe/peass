@@ -70,7 +70,7 @@ public class CauseSearcherMergeTest {
 
       final CauseTester measurer = Mockito.mock(CauseTester.class);
       final CauseSearcher searcher = new CauseSearcher(treeReader, 
-            new CauseSearcherConfig(new TestCase("Test#test"), true, false, 5.0, false, 0.1, false, true),
+            new CauseSearcherConfig(new TestCase("Test#test"), true, false, 5.0, false, 0.1, false, true, RCAStrategy.COMPLETE),
             measurer, measurementConfig, new CauseSearchFolders(folder));
 
       final Set<ChangedEntity> changes = searcher.search();

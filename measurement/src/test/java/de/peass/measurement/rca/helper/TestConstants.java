@@ -8,16 +8,19 @@ import org.apache.commons.io.FileUtils;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.CauseSearcherConfig;
+import de.peass.measurement.rca.RCAStrategy;
 
 public class TestConstants {
    
    public static final String V1 = "000001~1";
    public static final String V2 = "000001";
    
-   public final static CauseSearcherConfig SIMPLE_CAUSE_CONFIG = new CauseSearcherConfig(new TestCase("Test#test"), true, false, 5.0, false, 0.1, false, true);
+   public final static CauseSearcherConfig SIMPLE_CAUSE_CONFIG = new CauseSearcherConfig(new TestCase("Test#test"), 
+         true, false, 5.0, false, 0.1, 
+         false, true, RCAStrategy.COMPLETE);
    public final static CauseSearcherConfig SIMPLE_CAUSE_CONFIG_TESTME = new CauseSearcherConfig(new TestCase("defaultpackage.TestMe", "testMe"), 
          true, false, 5.0, false, 0.1,
-         false, true);
+         false, true, RCAStrategy.COMPLETE);
    public final static MeasurementConfiguration SIMPLE_MEASUREMENT_CONFIG = new MeasurementConfiguration(2, V2, V1);
    public final static MeasurementConfiguration SIMPLE_MEASUREMENT_CONFIG_KIEKER = new MeasurementConfiguration(2, V2, V1);
   

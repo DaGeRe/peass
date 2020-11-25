@@ -57,7 +57,7 @@ public class CauseSearcher {
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(15, 5, 0.01, 0.01, true, version, version + "~1");
       measurementConfiguration.setUseKieker(true);
       final JUnitTestTransformer testtransformer = new JUnitTestTransformer(projectFolder, measurementConfiguration);
-      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, true, false, 5.0, false, 0.1, false, false);
+      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, true, false, 5.0, false, 0.1, false, false, RCAStrategy.COMPLETE);
       final CauseSearchFolders folders2 = new CauseSearchFolders(projectFolder);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders2);
 

@@ -42,7 +42,7 @@ public class AdaptiveExecutorMoreParameterTest {
 
    private static final File SOURCE_DIR = new File("src/test/resources/rootCauseIT/basic_state_moreparameters/");
    private static final TestCase TEST = new TestCase("defaultpackage.TestMe", "testMe");
-   public static CauseSearcherConfig FULL_CASE_CONFIG = new CauseSearcherConfig(TEST, false, true, 5.0, false, 0.1, false, false);
+   public static CauseSearcherConfig FULL_CASE_CONFIG = new CauseSearcherConfig(TEST, false, true, 5.0, false, 0.1, false, false, RCAStrategy.COMPLETE);
 
    private File tempDir;
    private File projectFolder;
