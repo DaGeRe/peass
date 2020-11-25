@@ -110,10 +110,11 @@ public class RootCauseAnalysis extends DependencyTestStarter {
             break;
          case CONSTANT_LEVELS:
             throw new RuntimeException("Measurement for constant count of level currently not supported");
-         case UNTILL_SOURCE_CHANGE:
+         case UNTIL_SOURCE_CHANGE:
             throw new RuntimeException("Measurement untill source changed nodes currently not supported");
-         case UNTILL_STRUCTURE_CHANGE:
+         case UNTIL_STRUCTURE_CHANGE:
             tester = new StructureCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
+            break;
          default:
             throw new RuntimeException("Strategy " + causeSearchConfigMixin.getStrategy() + " not expected");
          }
