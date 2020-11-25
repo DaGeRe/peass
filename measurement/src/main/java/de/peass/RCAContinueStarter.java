@@ -9,12 +9,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.peass.dependency.CauseSearchFolders;
-import de.peass.measurement.rca.CauseSearcher;
 import de.peass.measurement.rca.CauseTester;
 import de.peass.measurement.rca.LevelManager;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.kieker.BothTreeReader;
+import de.peass.measurement.rca.searcher.CauseSearcher;
+import de.peass.measurement.rca.searcher.LevelCauseSearcher;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.Constants;
 import de.peass.vcs.GitUtils;
@@ -53,7 +54,7 @@ public class RCAContinueStarter implements Callable<Void> {
          reader.readCachedTrees();
 
          final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, data.getCauseConfig());
-         final CauseSearcher tester = new CauseSearcher(measurer, data, alternateFolders);
+         final CauseSearcher tester = new LevelCauseSearcher(measurer, data, alternateFolders);
 
          final List<CallTreeNode> currentVersionNodeList = new LinkedList<>();
          final List<CallTreeNode> currentPredecessorNodeList = new LinkedList<>();

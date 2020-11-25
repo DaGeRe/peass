@@ -11,12 +11,13 @@ import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.persistence.Version;
-import de.peass.measurement.rca.CauseSearcher;
-import de.peass.measurement.rca.CauseSearcherComplete;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.CauseSearcherConfigMixin;
 import de.peass.measurement.rca.CauseTester;
 import de.peass.measurement.rca.kieker.BothTreeReader;
+import de.peass.measurement.rca.searcher.CauseSearcher;
+import de.peass.measurement.rca.searcher.CauseSearcherComplete;
+import de.peass.measurement.rca.searcher.LevelCauseSearcher;
 import de.peass.testtransformation.JUnitTestTransformer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -104,7 +105,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
             tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
             break;
          case LEVELWISE:
-            tester = new CauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
+            tester = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
             break;
          case CONSTANT_LEVELS:
             throw new RuntimeException("Measurement for constant count of level currently not supported");
@@ -122,7 +123,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
             tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
          } else {
             final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, causeSearcherConfig);
-            tester = new CauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
+            tester = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
          }
       }
 

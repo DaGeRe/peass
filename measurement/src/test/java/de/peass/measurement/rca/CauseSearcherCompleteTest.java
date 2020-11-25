@@ -24,6 +24,7 @@ import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.TreeBuilder;
 import de.peass.measurement.rca.helper.TreeBuilderBig;
 import de.peass.measurement.rca.kieker.BothTreeReader;
+import de.peass.measurement.rca.searcher.CauseSearcherComplete;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class CauseSearcherCompleteTest {

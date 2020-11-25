@@ -1,4 +1,4 @@
-package de.peass.measurement.rca;
+package de.peass.measurement.rca.searcher;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,6 +14,9 @@ import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
+import de.peass.measurement.rca.CauseSearcherConfig;
+import de.peass.measurement.rca.CauseTester;
+import de.peass.measurement.rca.CompleteTreeAnalyzer;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
@@ -39,8 +42,6 @@ public class CauseSearcherComplete extends CauseSearcher {
    @Override
    protected Set<ChangedEntity> searchCause()
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      // measurer.setConsiderNodePosition(true);
-      
       final CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
       final List<CallTreeNode> predecessorNodeList = analyzer.getNonDifferingPredecessor();
       final List<CallTreeNode> includableNodes;

@@ -25,6 +25,8 @@ import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.TreeBuilder;
 import de.peass.measurement.rca.kieker.BothTreeReader;
+import de.peass.measurement.rca.searcher.CauseSearcher;
+import de.peass.measurement.rca.searcher.LevelCauseSearcher;
 import de.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
@@ -89,7 +91,7 @@ public class CauseSearcherTest {
 
       final CauseTester measurer = Mockito.mock(CauseTester.class);
       CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
-      final CauseSearcher searcher = new CauseSearcher(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, measurementConfig,
+      final CauseSearcher searcher = new LevelCauseSearcher(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, measurementConfig,
             new CauseSearchFolders(folder));
 
       final Set<ChangedEntity> changes = searcher.search();
@@ -126,7 +128,7 @@ public class CauseSearcherTest {
 
       final CauseTester measurer = Mockito.mock(CauseTester.class);
       CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
-      final CauseSearcher searcher = new CauseSearcher(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, measurementConfig,
+      final CauseSearcher searcher = new LevelCauseSearcher(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, measurementConfig,
             new CauseSearchFolders(folder));
 
       final Set<ChangedEntity> changes = searcher.search();

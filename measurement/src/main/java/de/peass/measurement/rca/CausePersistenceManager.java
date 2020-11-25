@@ -41,7 +41,7 @@ public class CausePersistenceManager {
       treeDataFileDetails.getParentFile().mkdirs();
    }
 
-   protected void writeTreeState() throws IOException, JsonGenerationException, JsonMappingException {
+   public void writeTreeState() throws IOException, JsonGenerationException, JsonMappingException {
       Constants.OBJECTMAPPER.writeValue(treeDataFile, data);
       Constants.OBJECTMAPPER.writeValue(treeDataFileDetails, dataDetails);
    }

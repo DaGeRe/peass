@@ -25,6 +25,8 @@ import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.TreeBuilderLeafs;
 import de.peass.measurement.rca.kieker.BothTreeReader;
+import de.peass.measurement.rca.searcher.CauseSearcher;
+import de.peass.measurement.rca.searcher.LevelCauseSearcher;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**
@@ -69,7 +71,7 @@ public class CauseSearcherMergeTest {
       Mockito.when(treeReader.getRootVersion()).thenReturn(root2);
 
       final CauseTester measurer = Mockito.mock(CauseTester.class);
-      final CauseSearcher searcher = new CauseSearcher(treeReader, 
+      final CauseSearcher searcher = new LevelCauseSearcher(treeReader, 
             new CauseSearcherConfig(new TestCase("Test#test"), true, false, 5.0, false, 0.1, false, true, RCAStrategy.COMPLETE),
             measurer, measurementConfig, new CauseSearchFolders(folder));
 
