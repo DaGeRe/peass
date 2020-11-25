@@ -1,4 +1,4 @@
-package de.peass.measurement.rca;
+package de.peass.measurement.rca.strategytest;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +20,8 @@ import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.peass.measurement.rca.CauseTester;
+import de.peass.measurement.rca.CauseTesterMockUtil;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.helper.TestConstants;
@@ -30,7 +32,7 @@ import de.peass.measurement.rca.searcher.LevelCauseSearcher;
 import de.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
-public class CauseSearcherTest {
+public class LevelCauseSearcherTest {
 
    /**
     * Needs own measurement config for kieker activation

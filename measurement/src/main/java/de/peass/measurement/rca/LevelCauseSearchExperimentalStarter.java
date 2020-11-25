@@ -42,7 +42,7 @@ public class LevelCauseSearchExperimentalStarter {
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders2);
 
       final CauseTester measurer = new CauseTester(folders2, testtransformer, causeSearcherConfig);
-      final CauseSearcher searcher = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, folders2);
+      final LevelCauseSearcher searcher = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, folders2);
       reader.readTrees();
 
       List<CallTreeNode> predecessor = Arrays.asList(new CallTreeNode[] { reader.getRootPredecessor() });

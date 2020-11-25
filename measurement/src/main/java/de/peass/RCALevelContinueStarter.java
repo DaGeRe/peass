@@ -24,15 +24,15 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(description = "Continues root-cause-analysis based on existing treefile", name = "continuerca")
-public class RCAContinueStarter implements Callable<Void> {
+public class RCALevelContinueStarter implements Callable<Void> {
 
-   private static final Logger LOG = LogManager.getLogger(RCAContinueStarter.class);
+   private static final Logger LOG = LogManager.getLogger(RCALevelContinueStarter.class);
 
    @Option(names = { "-folder", "--folder" }, description = "Folder of the project that should be analyzed", required = true)
    protected File projectFolder;
 
    public static void main(final String[] args) {
-      final RCAContinueStarter command = new RCAContinueStarter();
+      final RCALevelContinueStarter command = new RCALevelContinueStarter();
       final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);
    }
@@ -54,7 +54,7 @@ public class RCAContinueStarter implements Callable<Void> {
          reader.readCachedTrees();
 
          final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, data.getCauseConfig());
-         final CauseSearcher tester = new LevelCauseSearcher(measurer, data, alternateFolders);
+         final LevelCauseSearcher tester = new LevelCauseSearcher(measurer, data, alternateFolders);
 
          final List<CallTreeNode> currentVersionNodeList = new LinkedList<>();
          final List<CallTreeNode> currentPredecessorNodeList = new LinkedList<>();

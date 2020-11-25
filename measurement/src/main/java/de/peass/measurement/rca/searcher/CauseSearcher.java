@@ -89,34 +89,6 @@ public abstract class CauseSearcher {
       persistenceManager.writeTreeState();
    }
 
-   public void isLevelDifferent(final List<CallTreeNode> currentPredecessorNodeList, final List<CallTreeNode> currentVersionNodeList)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      final LevelDifferentNodeDeterminer levelSearcher = new LevelDifferentNodeDeterminer(currentPredecessorNodeList, currentVersionNodeList, causeSearchConfig, measurementConfig);
-
-      final List<CallTreeNode> measurePredecessor = levelSearcher.getMeasurePredecessor();
-
-      LOG.info("Measure next level: {}", measurePredecessor);
-      if (measurePredecessor.size() > 0) {
-         analyseLevel(levelSearcher, measurePredecessor);
-         writeTreeState();
-
-         isLevelDifferent(levelSearcher.getMeasureNextLevelPredecessor(), levelSearcher.getMeasureNextLevel());
-      }
-   }
-
-   private void analyseLevel(final LevelDifferentNodeDeterminer levelSearcher, final List<CallTreeNode> measuredPredecessor)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      measurer.measureVersion(measuredPredecessor);
-      levelSearcher.calculateDiffering();
-
-      for (final CallTreeNode predecessorNode : measuredPredecessor) {
-         persistenceManager.addMeasurement(predecessorNode);
-      }
-
-      differingNodes.addAll(levelSearcher.getTreeStructureDifferingNodes());
-      differingNodes.addAll(levelSearcher.getCurrentLevelDifferent());
-   }
-
    public CauseSearchData getRCAData() {
       return persistenceManager.getRCAData();
    }
