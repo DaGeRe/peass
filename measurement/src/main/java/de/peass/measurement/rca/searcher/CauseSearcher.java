@@ -25,6 +25,7 @@ import de.peass.measurement.rca.CauseTester;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.kieker.BothTreeReader;
+import de.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public abstract class CauseSearcher {
@@ -52,7 +53,7 @@ public abstract class CauseSearcher {
       this.measurementConfig = measurementConfig;
       this.folders = folders;
       this.causeSearchConfig = causeSearchConfig;
-      
+
    }
 
    public Set<ChangedEntity> search()
@@ -64,7 +65,8 @@ public abstract class CauseSearcher {
       return searchCause();
    }
 
-   protected abstract Set<ChangedEntity> searchCause() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException;
+   protected abstract Set<ChangedEntity> searchCause()
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException;
 
    protected Set<ChangedEntity> convertToChangedEntitites() {
       final Set<ChangedEntity> changed = new TreeSet<>();
@@ -77,6 +79,31 @@ public abstract class CauseSearcher {
       });
       return changed;
    }
+
+   protected void measureDefinedTree(final List<CallTreeNode> includableNodes) throws IOException, XmlPullParserException, InterruptedException,
+         ViewNotFoundException, AnalysisConfigurationException, JAXBException, JsonGenerationException, JsonMappingException {
+      final AllDifferingDeterminer allSearcher = new AllDifferingDeterminer(includableNodes, causeSearchConfig, measurementConfig);
+      measurer.measureVersion(includableNodes);
+      allSearcher.calculateDiffering();
+
+      persistenceManager.addMeasurement(reader.getRootPredecessor());
+      addMeasurements(includableNodes, reader.getRootPredecessor());
+
+      differingNodes.addAll(allSearcher.getCurrentLevelDifferent());
+
+      writeTreeState();
+   }
+   
+   private void addMeasurements(final List<CallTreeNode> includableNodes, CallTreeNode parent) {
+      for (CallTreeNode child : parent.getChildren()) {
+         if (includableNodes.contains(child)) {
+            LOG.debug("Analyzing: {}", child);
+            persistenceManager.addMeasurement(child);
+            addMeasurements(includableNodes, child);
+         }
+      }
+   }
+
 
    protected void writeTreeState() throws IOException, JsonGenerationException, JsonMappingException {
       persistenceManager.writeTreeState();

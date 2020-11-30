@@ -47,28 +47,4 @@ public class StructureCauseSearcher extends CauseSearcher {
       return convertToChangedEntitites();
    }
 
-   private void measureDefinedTree(final List<CallTreeNode> includableNodes) throws IOException, XmlPullParserException, InterruptedException,
-         ViewNotFoundException, AnalysisConfigurationException, JAXBException, JsonGenerationException, JsonMappingException {
-      final AllDifferingDeterminer allSearcher = new AllDifferingDeterminer(includableNodes, causeSearchConfig, measurementConfig);
-      measurer.measureVersion(includableNodes);
-      allSearcher.calculateDiffering();
-      
-      persistenceManager.addMeasurement(reader.getRootPredecessor());
-      addMeasurements(includableNodes, reader.getRootPredecessor());
-
-      differingNodes.addAll(allSearcher.getCurrentLevelDifferent());
-
-      writeTreeState();
-   }
-   
-   private void addMeasurements(final List<CallTreeNode> includableNodes, CallTreeNode parent) {
-      for (CallTreeNode child : parent.getChildren()) {
-         if (includableNodes.contains(child)) {
-            LOG.debug("Analyzing: {}", child);
-            persistenceManager.addMeasurement(child);
-            addMeasurements(includableNodes, child);
-         }
-      }
-   }
-
 }

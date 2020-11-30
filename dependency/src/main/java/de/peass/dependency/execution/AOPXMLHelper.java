@@ -8,7 +8,10 @@ import java.util.List;
 
 public class AOPXMLHelper {
 
-   public static void writeAOPXMLToFile(final List<String> allClasses, final File goalFile) throws IOException {
+   public static final String OPERATIONEXECUTION = "kieker.monitoring.probe.aspectj.operationExecution.OperationExecutionAspectFull";
+   public static final String REDUCED_OPERATIONEXECUTION = "kieker.monitoring.probe.aspectj.operationExecution.ReducedOperationExecutionAspectFull";
+
+   public static void writeAOPXMLToFile(final List<String> allClasses, final File goalFile, String aspect) throws IOException {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(goalFile))) {
          writer.write("<!DOCTYPE aspectj PUBLIC \"-//AspectJ//DTD//EN\" \"http://www.aspectj.org/dtd/aspectj_1_5_0.dtd\">\n");
          writer.write("<aspectj>\n");
@@ -22,17 +25,23 @@ public class AOPXMLHelper {
          writer.write(" </weaver>\n");
          writer.write(" <aspects>");
          writer.write("    <aspect ");
-         writer.write("name=\"kieker.monitoring.probe.aspectj.operationExecution.OperationExecutionAspectFull\" />");
+         writer.write("name=\"" + aspect + "\" />");
          writer.write(" </aspects>\n");
          writer.write("</aspectj>");
          writer.flush();
       }
    }
 
-   public static void writeKiekerMonitoringProperties(final File goalFile) throws IOException {
+   public static void writeKiekerMonitoringProperties(final File goalFile, boolean useFastMeasurement) throws IOException {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(goalFile))) {
          writer.write("kieker.monitoring.name=KIEKER-KoPeMe\n");
-         writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueFQN=java.util.concurrent.LinkedBlockingQueue\n");
+         if (useFastMeasurement) {
+            writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueFQN=org.apache.commons.collections4.queue.CircularFifoQueue\n");
+            writer.write("kieker.monitoring.core.controller.WriterController.QueuePutStrategy=kieker.monitoring.queue.putstrategy.YieldPutStrategy\n");
+            writer.write("kieker.monitoring.core.controller.WriterController.QueueTakeStrategy=kieker.monitoring.queue.takestrategy.YieldTakeStrategy\n");
+         } else {
+            writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueFQN=java.util.concurrent.LinkedBlockingQueue\n");
+         }
          writer.write("kieker.monitoring.writer=kieker.monitoring.writer.filesystem.ChangeableFolderWriter\n");
          writer.write("kieker.monitoring.writer.filesystem.ChangeableFolderWriter.realwriter=FileWriter\n");
          final int queueSize = 10000000;
