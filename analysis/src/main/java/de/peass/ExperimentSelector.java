@@ -24,7 +24,7 @@ import de.peass.analysis.properties.VersionChangeProperties;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.utils.Constants;
 import de.peass.utils.RunCommandWriter;
-import de.peass.utils.RunCommandWriterSearchCause;
+import de.peass.utils.RunCommandWriterRCA;
 import de.peass.utils.RunCommandWriterSlurm;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -97,7 +97,7 @@ public class ExperimentSelector implements Callable<Integer> {
 
       final ExecutionData executionData = repoFolders.getExecutionData(projectName);
       final RunCommandWriter writerSlurm = new RunCommandWriterSlurm(new PrintStream(fileSlurm), "cause1", executionData, RunCommandWriterSlurm.EXECUTE_RCA);
-      final RunCommandWriter writer = new RunCommandWriterSearchCause(new PrintStream(fileJava), "cause1", executionData);
+      final RunCommandWriter writer = new RunCommandWriterRCA(new PrintStream(fileJava), "cause1", executionData);
 
       properties.executeProcessor((version, testcase, change, changeProperties) -> {
          all++;

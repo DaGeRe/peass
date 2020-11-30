@@ -5,9 +5,9 @@ import java.io.PrintStream;
 import de.peass.RootCauseAnalysis;
 import de.peass.dependency.persistence.SelectedTests;
 
-public class RunCommandWriterSearchCause extends RunCommandWriter {
+public class RunCommandWriterRCA extends RunCommandWriter {
 
-   public RunCommandWriterSearchCause(final PrintStream goal, final String experimentId, final SelectedTests dependencies) {
+   public RunCommandWriterRCA(final PrintStream goal, final String experimentId, final SelectedTests dependencies) {
       super(goal, experimentId, dependencies);
    }
 
@@ -18,7 +18,7 @@ public class RunCommandWriterSearchCause extends RunCommandWriter {
 
    public void createSingleMethodCommand(final int versionIndex, final String endversion, final String testcaseName, int warmup, int iterations, int repetitions, int vms) {
       goal.println("java -cp distribution/target/peass-distribution-0.1-SNAPSHOT.jar " + RootCauseAnalysis.class.getCanonicalName() + " "
-            + "-measureComplete "
+            + "-rcaStrategy COMPLETE "
             + "-test " + testcaseName + " "
             + "-warmup " + warmup + " "
             + "-iterations " + iterations + " "

@@ -3,6 +3,7 @@ package de.peass;
 import java.util.concurrent.Callable;
 
 import de.peass.clean.TestCleaner;
+import de.peass.reexecutions.FindMissingExecutions;
 import de.peass.utils.DivideVersions;
 import de.peass.visualization.VisualizeRCA;
 import picocli.CommandLine;
@@ -17,7 +18,8 @@ import picocli.CommandLine.Command;
       RootCauseAnalysis.class, 
       DivideVersions.class, 
       VisualizeRCA.class, 
-      ContinuousExecutionStarter.class}, synopsisSubcommandLabel = "COMMAND")
+      ContinuousExecutionStarter.class,
+      FindMissingExecutions.class}, synopsisSubcommandLabel = "COMMAND")
 public class PeASSMain implements Callable<Void> {
    public static void main(final String[] args) {
       final CommandLine line = new CommandLine(new PeASSMain());

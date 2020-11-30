@@ -18,7 +18,7 @@ import de.peass.analysis.changes.ProjectChanges;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.utils.Constants;
 import de.peass.utils.RunCommandWriter;
-import de.peass.utils.RunCommandWriterSearchCause;
+import de.peass.utils.RunCommandWriterRCA;
 
 /**
  * If a measurement is disturbed, e.g. by operation system tasks, it is likely to identify two executions as changed. Therefore, it is safer to re-execute the same measurements
@@ -54,7 +54,7 @@ public class FindChangeExecutions {
       final PrintStream goal = new PrintStream(new FileOutputStream(reexecuteProject));
       final ExecutionData executions = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
 //      RunCommandWriter writer = new RunCommandWriterSlurm(goal, NAME, dependencies);
-      final RunCommandWriter writer = new RunCommandWriterSearchCause(goal, NAME, executions);
+      final RunCommandWriter writer = new RunCommandWriterRCA(goal, NAME, executions);
       writer.setNice(1000);
 
       writeExecutions(projectChangeFile, executions, writer);

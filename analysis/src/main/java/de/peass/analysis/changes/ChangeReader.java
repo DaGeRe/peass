@@ -23,7 +23,7 @@ import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.Relation;
 import de.peass.measurement.analysis.statistics.DescribedChunk;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
-import de.peass.utils.RunCommandWriterSearchCause;
+import de.peass.utils.RunCommandWriterRCA;
 import de.peass.utils.RunCommandWriterSlurmRCA;
 import de.peran.FolderSearcher;
 import de.peran.analysis.helper.read.VersionData;
@@ -46,34 +46,41 @@ public class ChangeReader {
    public double type1error = 0.01;
    private double type2error = 0.01;
 
-   private double minChange = 2;
+   private double minChange = 0;
 
    private final VersionData allData = new VersionData();
    // private static VersionKnowledge oldKnowledge;
    private final File statisticsFolder;
 
-   private final RunCommandWriterSearchCause runCommandWriter;
+   private final RunCommandWriterRCA runCommandWriter;
    private final RunCommandWriterSlurmRCA runCommandWriterSlurm;
 
    public ChangeReader(final RepoFolders resultsFolder, final String projectName) throws FileNotFoundException {
       statisticsFolder = resultsFolder.getProjectStatisticsFolder(projectName);
       if (VersionComparator.getDependencies().getUrl() != null && !VersionComparator.getDependencies().getUrl().isEmpty()) {
-         final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-" + projectName + ".sh"));
-         runCommandWriter = new RunCommandWriterSearchCause(runCommandPrinter, "default", VersionComparator.getDependencies());
-         final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticsFolder, "run-rca-" + projectName + ".sh"));
+         final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-rca-" + projectName + ".sh"));
+         runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", VersionComparator.getDependencies());
+         final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticsFolder, "run-rca-slurm-" + projectName + ".sh"));
          runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", VersionComparator.getDependencies());
       } else {
          runCommandWriter = null;
          runCommandWriterSlurm = null;
       }
    }
+   
+   public ChangeReader(final File statisticsFolder, RunCommandWriterRCA runCommandWriter, RunCommandWriterSlurmRCA runCommandWriterSlurm) throws FileNotFoundException {
+      this.statisticsFolder = statisticsFolder;
+      this.runCommandWriter = runCommandWriter;
+      this.runCommandWriterSlurm = runCommandWriterSlurm;
+      
+   }
 
    public ChangeReader(final File statisticsFolder, final String projectName) throws FileNotFoundException {
       this.statisticsFolder = statisticsFolder;
       if (VersionComparator.getDependencies().getUrl() != null && !VersionComparator.getDependencies().getUrl().isEmpty()) {
-         final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-" + projectName + ".sh"));
-         runCommandWriter = new RunCommandWriterSearchCause(runCommandPrinter, "default", VersionComparator.getDependencies());
-         PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticsFolder, "run-rca-" + projectName + ".sh"));
+         final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-rca-" + projectName + ".sh"));
+         runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", VersionComparator.getDependencies());
+         final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticsFolder, "run-rca-slurm-" + projectName + ".sh"));
          runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", VersionComparator.getDependencies());
       } else {
          runCommandWriter = null;

@@ -30,13 +30,6 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
    private static final Logger LOG = LogManager.getLogger(RootCauseAnalysis.class);
 
-   /**
-    * @deprecated Use CauseSearcherMixin.rcaStrategy instead
-    */
-   @Deprecated
-   @Option(names = { "-measureComplete", "--measureComplete" }, description = "Whether to measure the whole tree at once (default false - tree is measured level-wise)")
-   public boolean measureComplete = false;
-
    @Mixin
    private CauseSearcherConfigMixin causeSearchConfigMixin;
 
@@ -96,11 +89,8 @@ public class RootCauseAnalysis extends DependencyTestStarter {
    private CauseSearcher getCauseSeacher(final MeasurementConfiguration measurementConfiguration, final JUnitTestTransformer testtransformer,
          final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader) throws IOException, InterruptedException {
       final CauseSearcher tester;
+      final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, causeSearcherConfig);
       if (causeSearchConfigMixin.getStrategy() != null) {
-         if (measureComplete) {
-            throw new RuntimeException("Definition of RCA strategy and --measureComplete is not allowed; please only define strategy and omit deprecated measureComplete");
-         }
-         final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, causeSearcherConfig);
          switch (causeSearchConfigMixin.getStrategy()) {
          case COMPLETE:
             tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
@@ -119,16 +109,9 @@ public class RootCauseAnalysis extends DependencyTestStarter {
             throw new RuntimeException("Strategy " + causeSearchConfigMixin.getStrategy() + " not expected");
          }
       } else {
-         if (measureComplete) {
-            LOG.debug("*-measureComplete* specified; please specify *-rcaStrategy COMPLETE* instead");
-            final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, causeSearcherConfig);
-            tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
-         } else {
-            final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, causeSearcherConfig);
-            tester = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
-         }
+         LOG.info("Defaulting to StructureCauseSearcher");
+         tester = new StructureCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
       }
-
       return tester;
    }
 

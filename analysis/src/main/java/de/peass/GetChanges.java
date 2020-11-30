@@ -1,7 +1,9 @@
 package de.peass;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.concurrent.Callable;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +17,8 @@ import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.Constants;
+import de.peass.utils.RunCommandWriterRCA;
+import de.peass.utils.RunCommandWriterSlurmRCA;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -65,14 +69,31 @@ public class GetChanges implements Callable<Void> {
 
       LOG.info("Errors: 1: {} 2: {}", type1error, type2error);
 
-      final ChangeReader reader = new ChangeReader(statisticFolder, VersionComparator.getProjectName());
-      reader.setType1error(type1error);
-      reader.setType2error(type2error);
+      final ChangeReader reader = createReader(statisticFolder);
 
       for (final File dataFile : data) {
          reader.readFile(dataFile);
       }
       return null;
+   }
+
+   private ChangeReader createReader(final File statisticFolder) throws FileNotFoundException {
+      RunCommandWriterRCA runCommandWriter;
+      RunCommandWriterSlurmRCA runCommandWriterSlurm;
+      if (VersionComparator.getDependencies().getUrl() != null && !VersionComparator.getDependencies().getUrl().isEmpty()) {
+         final PrintStream runCommandPrinter = new PrintStream(new File(statisticFolder, "run-rca-" + VersionComparator.getProjectName() + ".sh"));
+         runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", VersionComparator.getDependencies());
+         final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticFolder, "run-rca-slurm-" + VersionComparator.getProjectName() + ".sh"));
+         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", VersionComparator.getDependencies());
+      } else {
+         runCommandWriter = null;
+         runCommandWriterSlurm = null;
+      }
+      
+      final ChangeReader reader = new ChangeReader(statisticFolder, runCommandWriter, runCommandWriterSlurm);
+      reader.setType1error(type1error);
+      reader.setType2error(type2error);
+      return reader;
    }
 
    static ExecutionData executionData;
