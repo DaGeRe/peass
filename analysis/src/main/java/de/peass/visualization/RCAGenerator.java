@@ -63,11 +63,18 @@ public class RCAGenerator {
          final HTMLEnvironmentGenerator htmlGenerator = new HTMLEnvironmentGenerator(fileWriter);
          fileWriter.write("<!DOCTYPE html>\n");
          htmlGenerator.writeHTML("visualization/HeaderOfHTML.html");
-         htmlGenerator.writeInfoDivs(data);
+//         htmlGenerator.writeInfoDivs(data);
 
          writeTreeDiv(fileWriter);
 
          fileWriter.write("<script>\n");
+         fileWriter.write("document.getElementById('testcaseDiv').innerHTML=\"Version: <a href='"
+               + "javascript:fallbackCopyTextToClipboard(\\\"-version " + data.getMeasurementConfig().getVersion() + 
+               " -test " + data.getTestcase() + "\\\")'>"
+               + data.getMeasurementConfig().getVersion() + "</a><br>");
+         fileWriter.write("Test Case: " + data.getTestcase() + "<br>");
+         fileWriter.write("<a href=\\\"#\\\" onclick=\\\"collapse();\\\">Collapse</a>\";\n");
+         fileWriter.write("\n");
          if (propertyFolder != null) {
             final File sourceFolder = new File(propertyFolder, "methods" + File.separator + data.getMeasurementConfig().getVersion());
             final SourceWriter writer = new SourceWriter(root, fileWriter, sourceFolder);
@@ -105,6 +112,8 @@ public class RCAGenerator {
          FileUtils.copyURLToFile(diffview, new File(folder, "diffview.js"));
          URL diffviewcss = RCAGenerator.class.getClassLoader().getResource("visualization/diffview.css");
          FileUtils.copyURLToFile(diffviewcss, new File(folder, "diffview.css"));
+         URL peassCode = RCAGenerator.class.getClassLoader().getResource("visualization/peass-visualization-code.js");
+         FileUtils.copyURLToFile(peassCode, new File(folder, "peass-visualization-code.js"));
       } catch (IOException e) {
          e.printStackTrace();
       }

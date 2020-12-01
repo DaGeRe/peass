@@ -30,6 +30,7 @@
     <link rel="stylesheet" type="text/css" href="diffview.css"/>
 	<script type="text/javascript" src="diffview.js"></script>
 	<script type="text/javascript" src="difflib.js"></script>
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 	<!-- load the d3.js library -->	
 	<script src="http://d3js.org/d3.v3.min.js"></script>
 	<script src="https://unpkg.com/textures@1.2.0/dist/textures.js"></script>
@@ -37,3 +38,21 @@
   </head>
 <body>
 
+<div id="testcaseDiv" 
+	style='position:absolute; right: 0px; width: 800px; background-color: #BBBBBB; border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>
+</div>
+
+<div id='infos'
+	style='position:absolute; left: 0px; max-width: 800px; height: 100px; background-color: #BBBBBB; border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>
+Statistische Informationen
+</div>
+
+<div id='histogramm' 
+   style='position:absolute; bottom: 0px; width: 600px; height: 300px; background-color: #BBBBBB; border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>
+Plot
+</div>
+
+<div id='quelltext' 
+	style='position:absolute; bottom: 0px; right:0px; overflow: scroll; width: 1000px; height: 300px; background-color: #BBBBBB; border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>
+Quelltext
+</div>

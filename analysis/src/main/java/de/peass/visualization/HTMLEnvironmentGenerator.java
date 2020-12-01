@@ -26,37 +26,6 @@ public class HTMLEnvironmentGenerator {
       fileWriter.write("Test Case: " + data.getTestcase() + "<br>\n"
             + "<a href=\"#\" onclick=\"collapse();\">Collapse</a>");
       fileWriter.write("</div>\n");
-
-      writeStatisticsDiv();
-
-      writeHistogramDiv();
-
-      writeSourceDiv();
-   }
-
-   private void writeStatisticsDiv() throws IOException {
-      fileWriter.write("<div style='position:absolute; left: 0px; max-width: 800px; height: 100px; background-color: #BBBBBB; "
-            + "border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;' id='infos'>\n");
-      fileWriter.write("Statistische Informationen\n");
-      fileWriter.write("</div>\n");
-   }
-
-   private void writeHistogramDiv() throws IOException {
-      fileWriter.write("<div style='position:absolute; bottom: 0px; "
-            + "width: 600px; height: 300px; background-color: #BBBBBB; "
-            + "border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;' "
-            + "id='histogramm'>\n");
-      fileWriter.write("Plot\n");
-      fileWriter.write("</div>\n");
-   }
-
-   private void writeSourceDiv() throws IOException {
-      fileWriter.write("<div style='position:absolute; bottom: 0px; right:0px; overflow: scroll; "
-            + "width: 1000px; height: 300px; background-color: #BBBBBB; "
-            + "border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;' "
-            + "id='quelltext'>\n");
-      fileWriter.write("Quelltext\n");
-      fileWriter.write("</div>\n");
    }
 
    void writeHTML(final String name) throws IOException {
