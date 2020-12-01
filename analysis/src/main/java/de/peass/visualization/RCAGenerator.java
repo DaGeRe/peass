@@ -58,16 +58,21 @@ public class RCAGenerator {
    }
 
    private void writeHTML(final GraphNode root, final CauseSearchData data) throws IOException, JsonProcessingException, FileNotFoundException {
-      final File output = getOutputFolder(data);
+      final File output = getOutputHTML(data);
+      final String jsName = output.getName().replace(".html", ".js").replaceAll("#", "_");
       try (final BufferedWriter fileWriter = new BufferedWriter(new FileWriter(output))) {
          final HTMLEnvironmentGenerator htmlGenerator = new HTMLEnvironmentGenerator(fileWriter);
          fileWriter.write("<!DOCTYPE html>\n");
          htmlGenerator.writeHTML("visualization/HeaderOfHTML.html");
-//         htmlGenerator.writeInfoDivs(data);
 
-         writeTreeDiv(fileWriter);
+         fileWriter.write("<script src='"+jsName+"'></script>\n");
 
-         fileWriter.write("<script>\n");
+         htmlGenerator.writeHTML("visualization/RestOfHTML.html");
+         fileWriter.flush();
+      }
+      
+      File outputJS = new File(output.getParentFile(), jsName);
+      try (final BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputJS))) {
          fileWriter.write("document.getElementById('testcaseDiv').innerHTML=\"Version: <a href='"
                + "javascript:fallbackCopyTextToClipboard(\\\"-version " + data.getMeasurementConfig().getVersion() + 
                " -test " + data.getTestcase() + "\\\")'>"
@@ -83,14 +88,11 @@ public class RCAGenerator {
          writeColoredTree(root, fileWriter);
 
          writeTreeDivSizes(root, fileWriter);
-         fileWriter.write("</script>\n");
-
-         htmlGenerator.writeHTML("visualization/RestOfHTML.html");
-         fileWriter.flush();
       }
+      
    }
 
-   private File getOutputFolder(final CauseSearchData data) {
+   private File getOutputHTML(final CauseSearchData data) {
       final File output;
       if (destFolder.getName().equals(data.getMeasurementConfig().getVersion())) {
          output = new File(destFolder, data.getTestcase() + ".html");
@@ -137,12 +139,6 @@ public class RCAGenerator {
       fileWriter.write("var treeData = [\n");
       fileWriter.write(Constants.OBJECTMAPPER.writeValueAsString(root));
       fileWriter.write("];\n");
-   }
-
-   private void writeTreeDiv(final BufferedWriter fileWriter) throws IOException {
-      fileWriter.write("<div id='tree' style='position: absolute; top: 150px; right: 5px; left: 5px; bottom: 335px; "
-            + "overflow: scroll; "
-            + "border: 2px solid blue; border-radius: 1em 1em 1em 1em;'> </div>\n");
    }
 
    private int getDepth(final GraphNode root) {
