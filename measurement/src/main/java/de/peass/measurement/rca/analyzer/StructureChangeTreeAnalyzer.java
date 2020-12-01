@@ -21,7 +21,7 @@ public class StructureChangeTreeAnalyzer {
       rootPredecessor.setOtherVersionNode(root);
 
       if (root.getKiekerPattern().equals(rootPredecessor.getKiekerPattern())) {
-         equalStructureNodes.add(root);
+         equalStructureNodes.add(rootPredecessor);
          mapAllNodes(root, rootPredecessor);
       }
    }
@@ -32,7 +32,7 @@ public class StructureChangeTreeAnalyzer {
       for (CallTreeNode currentChild : current.getChildren()) {
          CallTreeNode childPredecessor = currentChild.getOtherVersionNode();
          if (currentChild.getKiekerPattern().equals(childPredecessor.getKiekerPattern())) {
-            equalStructureNodes.add(currentChild);
+            equalStructureNodes.add(childPredecessor);
             mapAllNodes(currentChild, childPredecessor);
          }
       }

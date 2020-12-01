@@ -72,16 +72,6 @@ public class CauseSearcherComplete extends CauseSearcher {
       return includableNodes;
    }
 
-   private void addMeasurements(final List<CallTreeNode> includableNodes, CallTreeNode parent) {
-      for (CallTreeNode child : parent.getChildren()) {
-         if (includableNodes.contains(child)) {
-            LOG.debug("Analyzing: {}", child);
-            persistenceManager.addMeasurement(child);
-            addMeasurements(includableNodes, child);
-         }
-      }
-   }
-
    private List<CallTreeNode> getAnalysableNodes(final List<CallTreeNode> predecessorNodeList)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       final MeasurementConfiguration config = new MeasurementConfiguration(1, measurementConfig.getVersion(), measurementConfig.getVersionOld());

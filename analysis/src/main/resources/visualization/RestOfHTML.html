@@ -1,7 +1,3 @@
-
-<!-- load the d3.js library -->	
-<script src="http://d3js.org/d3.v3.min.js"></script>
-<script src="https://unpkg.com/textures@1.2.0/dist/textures.js"></script>
 	
 <script>
 	
@@ -211,6 +207,27 @@ function fallbackCopyTextToClipboard(text) {
   document.body.removeChild(textArea);
 }
 
+function diffUsingJS(text1, text2, outputDiv) {
+	"use strict";
+	var base = difflib.stringAsLines(text1),
+		newtxt = difflib.stringAsLines(text2),
+		sm = new difflib.SequenceMatcher(base, newtxt),
+		opcodes = sm.get_opcodes();
+
+	outputDiv.innerHTML = "";
+
+	outputDiv.appendChild(diffview.buildView({
+		baseTextLines: base,
+		newTextLines: newtxt,
+		opcodes: opcodes,
+		baseTextName: "Alte Version",
+		newTextName: "Neue Version",
+		viewType: 0,
+		bothContainLineNumbers: false
+	}));
+}
+
+
 function shownode(node) {
   if (node.statistic != null){
 	  infos.innerHTML="<table>" +
@@ -224,16 +241,14 @@ function shownode(node) {
 	  infos.innerHTML = "No statistic";
   }
   if (node.key != node.otherKey){
-    quelltext.innerHTML="<table><tr><td><pre>" + source["old"][node.key] + "</pre></td>" 
-       + "<td><pre>" + source["current"][node.otherKey] +"</pre></td></tr></table>";
+    diffUsingJS(source["old"][node.key], source["current"][node.otherKey], quelltext);
   } else {
     var sourceCurrent = source["current"][node.key];
     var sourceOld = source["old"][node.key];
     if (sourceCurrent == sourceOld) {
     	quelltext.innerHTML="<pre>" + source["current"][node.key] +"</pre>";
     } else {
-    	quelltext.innerHTML="<table><tr><td><pre>" + sourceOld + "</pre></td>" 
-    	   + "<td><pre>" + sourceCurrent +"</pre></td></tr></table>";
+    	diffUsingJS(sourceOld, sourceCurrent, quelltext);
     }
     
   }

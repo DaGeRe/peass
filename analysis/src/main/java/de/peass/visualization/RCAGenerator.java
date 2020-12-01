@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -85,11 +87,27 @@ public class RCAGenerator {
       final File output;
       if (destFolder.getName().equals(data.getMeasurementConfig().getVersion())) {
          output = new File(destFolder, data.getTestcase() + ".html");
+         copyResources(destFolder);
       } else {
-         output = new File(destFolder, data.getMeasurementConfig().getVersion() + File.separator + data.getTestcase() + ".html");
+         File versionFolder = new File(destFolder, data.getMeasurementConfig().getVersion());
+         copyResources(versionFolder);
+         output = new File(versionFolder, data.getTestcase() + ".html");
       }
       output.getParentFile().mkdirs();
       return output;
+   }
+
+   private void copyResources(File folder) {
+      try {
+         URL difflib = RCAGenerator.class.getClassLoader().getResource("visualization/difflib.js");
+         FileUtils.copyURLToFile(difflib, new File(folder, "difflib.js"));
+         URL diffview = RCAGenerator.class.getClassLoader().getResource("visualization/diffview.js");
+         FileUtils.copyURLToFile(diffview, new File(folder, "diffview.js"));
+         URL diffviewcss = RCAGenerator.class.getClassLoader().getResource("visualization/diffview.css");
+         FileUtils.copyURLToFile(diffviewcss, new File(folder, "diffview.css"));
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
    }
 
    private void writeTreeDivSizes(final GraphNode root, final BufferedWriter fileWriter) throws IOException {
