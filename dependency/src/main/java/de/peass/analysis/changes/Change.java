@@ -17,8 +17,9 @@ public class Change {
    public Change() {
    }
    
-   public Change(String diff) {
+   public Change(String diff, String method) {
       this.diff = diff;
+      this.method = method;
    }
    
    public long getVms() {
