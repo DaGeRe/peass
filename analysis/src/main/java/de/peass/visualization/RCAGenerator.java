@@ -77,8 +77,7 @@ public class RCAGenerator {
                + "javascript:fallbackCopyTextToClipboard(\\\"-version " + data.getMeasurementConfig().getVersion() + 
                " -test " + data.getTestcase() + "\\\")'>"
                + data.getMeasurementConfig().getVersion() + "</a><br>");
-         fileWriter.write("Test Case: " + data.getTestcase() + "<br>");
-         fileWriter.write("<a href=\\\"#\\\" onclick=\\\"collapse();\\\">Collapse</a>\";\n");
+         fileWriter.write("Test Case: " + data.getTestcase() + "<br>\";\n");
          fileWriter.write("\n");
          if (propertyFolder != null) {
             final File sourceFolder = new File(propertyFolder, "methods" + File.separator + data.getMeasurementConfig().getVersion());
