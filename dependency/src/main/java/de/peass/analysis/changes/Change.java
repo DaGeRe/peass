@@ -14,6 +14,13 @@ public class Change {
    private double tvalue;
    private long vms;
    
+   public Change() {
+   }
+   
+   public Change(String diff) {
+      this.diff = diff;
+   }
+   
    public long getVms() {
       return vms;
    }
