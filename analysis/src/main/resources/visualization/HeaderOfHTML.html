@@ -38,25 +38,31 @@
   </head>
 <body>
 
-<div id="testcaseDiv" 
-	style='position:absolute; right: 0px; width: 800px; background-color: #BBBBBB; border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>
-</div>
-
-<div id='infos'
-	style='position:absolute; left: 0px; max-width: 800px; height: 100px; background-color: #BBBBBB; border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>
-Statistische Informationen
-</div>
-
-<div id='histogramm' 
-   style='position:absolute; bottom: 0px; width: 600px; height: 300px; background-color: #BBBBBB; border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>
-Plot
-</div>
-
-<div id='quelltext' 
-	style='position:absolute; bottom: 0px; right:0px; overflow: scroll; width: 1000px; height: 300px; background-color: #BBBBBB; border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>
-Quelltext
+<div id='header'
+	style='position: relative; width: 100%;'>
+	<div id='infos'
+		style='float:left; background-color: #BBBBBB; border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>
+	Statistische Informationen
+	</div>
+	
+	<div id="testcaseDiv" 
+		style='overflow:scroll; background-color: #BBBBBB; border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>
+	</div>
 </div>
 
 <div id='tree' 
-	style='position: absolute; top: 150px; right: 5px; left: 5px; bottom: 335px; overflow: scroll; border: 2px solid blue; border-radius: 1em 1em 1em 1em;'> 
+	style='position: relative; width: 100%; height: 500px;  overflow: scroll; border: 2px solid blue; border-radius: 1em 1em 1em 1em;'> 
+</div>
+
+<div id='footer'
+	style='position: relative; width: 100%;'>
+	<div id='histogramm' 
+	   style='float: left; background-color: #BBBBBB; border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>
+	Plot
+	</div>
+	
+	<div id='quelltext' 
+		style='overflow: scroll; background-color: #BBBBBB; border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;'>
+	Quelltext
+	</div>
 </div>
