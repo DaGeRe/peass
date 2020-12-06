@@ -36,6 +36,9 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
    @Option(names = { "-writeInterval", "--writeInterval" }, description = "Interval for KoPeMe-aggregated-writing (in milliseconds)")
    public int writeInterval = 5000;
+   
+   @Option(names = { "-useSourceInstrumentation", "--useSourceInstrumentation" }, description = "Use source instrumentation (default false - AspectJ instrumentation is used)")
+   public boolean useSourceInstrumentation = false;
 
    public static void main(final String[] args) throws JAXBException, IOException {
       final RootCauseAnalysis command = new RootCauseAnalysis();
@@ -84,6 +87,8 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       measurementConfiguration.setKiekerAggregationInterval(writeInterval);
       measurementConfiguration.setVersion(version);
       measurementConfiguration.setVersionOld(predecessor);
+      measurementConfiguration.setUseSourceInstrumentation(useSourceInstrumentation);
+      LOG.info("Use source instrumentation: {}", useSourceInstrumentation);
       return measurementConfiguration;
    }
 

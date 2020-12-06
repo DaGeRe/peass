@@ -18,6 +18,7 @@ public class MeasurementConfiguration {
    private int repetitions = 1;
    private boolean logFullData = true;
    private boolean useKieker = false;
+   private boolean useSourceInstrumentation = false;
    private boolean redirectToNull = true;
    private boolean useGC = true;
    private int kiekerAggregationInterval = 5000;
@@ -253,4 +254,13 @@ public class MeasurementConfiguration {
    public AllowedKiekerRecord getRecord() {
       return record;
    }
+
+   public boolean isUseSourceInstrumentation() {
+      return useSourceInstrumentation;
+   }
+
+   public void setUseSourceInstrumentation(boolean useSourceInstrumentation) {
+      this.useSourceInstrumentation = useSourceInstrumentation;
+   }
+   
 }

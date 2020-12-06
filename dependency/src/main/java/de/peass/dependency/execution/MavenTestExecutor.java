@@ -42,6 +42,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.kiekerInstrument.InstrumentKiekerSource;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 /**
@@ -178,20 +179,28 @@ public class MavenTestExecutor extends TestExecutor {
       MavenPomUtil.cleanSnapshotDependencies(new File(folders.getProjectFolder(), "pom.xml"));
       clean(logFile);
       LOG.debug("Starting Test Transformation");
-      transformTests();
       if (testTransformer.getConfig().isUseKieker()) {
-         if (testTransformer.isAdaptiveExecution()) {
-            prepareAdaptiveExecution();
-         }
-         if (AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION.equals(testTransformer.getConfig().getRecord()) && testTransformer.isAdaptiveExecution()) {
-            generateAOPXML(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION);
+         if (testTransformer.getConfig().isUseSourceInstrumentation()) {
+            final InstrumentKiekerSource instrumentKiekerSource = new InstrumentKiekerSource(testTransformer.getConfig().getRecord());
+            instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
+            if (testTransformer.isAdaptiveExecution()) {
+               writeConfig();
+            }
          } else {
-            generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION);
-         }
-         if (testTransformer.isAggregatedWriter()) {
+            if (testTransformer.isAdaptiveExecution()) {
+               prepareAdaptiveExecution();
+            }
+            if (AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION.equals(testTransformer.getConfig().getRecord()) && testTransformer.isAdaptiveExecution()) {
+               generateAOPXML(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION);
+            } else {
+               generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION);
+            }
+            if (testTransformer.isAggregatedWriter()) {
 
+            }
          }
       }
+      transformTests();
       preparePom();
    }
 
@@ -347,16 +356,29 @@ public class MavenTestExecutor extends TestExecutor {
          }
 
          if (!testTransformer.isAdaptiveExecution()) {
-            argline = KIEKER_ARG_LINE +
-                  " " + TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
-                  " " + writerConfig;
+            if (testTransformer.getConfig().isUseSourceInstrumentation()) {
+               argline = TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
+                     " " + writerConfig;
+            } else {
+               argline = KIEKER_ARG_LINE +
+                     " " + TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
+                     " " + writerConfig;
+            }
          } else {
-            argline = KIEKER_ARG_LINE_TWEAK +
-                  " " + TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
-                  " -Dkieker.monitoring.adaptiveMonitoring.enabled=true" +
-                  " -Dkieker.monitoring.adaptiveMonitoring.configFile=" + KIEKER_ADAPTIVE_FILENAME +
-                  " -Dkieker.monitoring.adaptiveMonitoring.readInterval=15" +
-                  " " + writerConfig;
+            if (testTransformer.getConfig().isUseSourceInstrumentation()) {
+               argline = TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
+                     " -Dkieker.monitoring.adaptiveMonitoring.enabled=true" +
+                     " -Dkieker.monitoring.adaptiveMonitoring.configFile=" + KIEKER_ADAPTIVE_FILENAME +
+                     " -Dkieker.monitoring.adaptiveMonitoring.readInterval=15" +
+                     " " + writerConfig;
+            } else {
+               argline = KIEKER_ARG_LINE_TWEAK +
+                     " " + TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
+                     " -Dkieker.monitoring.adaptiveMonitoring.enabled=true" +
+                     " -Dkieker.monitoring.adaptiveMonitoring.configFile=" + KIEKER_ADAPTIVE_FILENAME +
+                     " -Dkieker.monitoring.adaptiveMonitoring.readInterval=15" +
+                     " " + writerConfig;
+            }
          }
       } else {
          argline = "";

@@ -130,6 +130,9 @@ public class MavenPomUtil {
       final Dependency kopeme_dependency2 = getDependency("de.dagere.kopeme", KOPEME_VERSION, scope, "kopeme-junit");
       dependencies.add(kopeme_dependency2);
       
+      final Dependency kieker_dependency2 = getDependency("net.kieker-monitoring", "1.14", "", "kieker");
+      dependencies.add(kieker_dependency2);
+      
       final Dependency collections_dependency = getDependency("org.apache.commons", "4.1", "test", "commons-collections4");
       dependencies.add(collections_dependency);
 

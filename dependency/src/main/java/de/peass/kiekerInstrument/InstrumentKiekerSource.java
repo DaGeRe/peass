@@ -30,6 +30,8 @@ import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.testtransformation.ParseUtil;
 import javassist.compiler.ast.MethodDecl;
 import kieker.monitoring.core.controller.MonitoringController;
+import kieker.monitoring.core.registry.ControlFlowRegistry;
+import kieker.monitoring.core.registry.SessionRegistry;
 
 /**
  * Adds kieker monitoring code to existing source code *in-place*, i.e. the existing .java-files will get changed.
@@ -55,6 +57,10 @@ public class InstrumentKiekerSource {
 
    public void instrument(File file) throws IOException {
       CompilationUnit unit = JavaParserProvider.parse(file); // TODO Package
+      unit.addImport("kieker.monitoring.core.controller.MonitoringController");
+      unit.addImport("kieker.monitoring.core.registry.ControlFlowRegistry");
+      unit.addImport("kieker.monitoring.core.registry.SessionRegistry");
+      unit.addImport("kieker.common.record.controlflow.OperationExecutionRecord");
       ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
       String packageName = unit.getPackageDeclaration().get().getNameAsString();
       String name = packageName + "." + clazz.getNameAsString();
@@ -74,7 +80,7 @@ public class InstrumentKiekerSource {
                BlockStmt originalBlock = body.get();
                String signature = getSignature(name + "." + method.getNameAsString(), method);
 
-               BlockStmt replacedStatement = buildStatement(originalBlock, signature);
+               BlockStmt replacedStatement = BlockBuilder.buildStatement(originalBlock, signature, method.getType().toString().equals("void"), usedRecord);
 
                method.setBody(replacedStatement);
 
@@ -86,62 +92,11 @@ public class InstrumentKiekerSource {
             final BlockStmt originalBlock = constructor.getBody();
             String signature = getSignature(name, constructor);
 
-            BlockStmt replacedStatement = buildStatement(originalBlock, signature);
+            BlockStmt replacedStatement = BlockBuilder.buildStatement(originalBlock, signature, true, usedRecord);
 
             constructor.setBody(replacedStatement);
-         } 
+         }
       }
-   }
-
-   private BlockStmt buildStatement(BlockStmt originalBlock, String signature) {
-      BlockStmt replacedStatement = new BlockStmt();
-      replacedStatement.addAndGetStatement("if (!MonitoringController.getInstance().isMonitoringEnabled()) {\n" +
-            "         return thisJoinPoint.proceed();\n" +
-            "      }");
-      replacedStatement.addAndGetStatement("final String signature = this.signatureToLongString(\"" + signature + "\");");
-      replacedStatement.addAndGetStatement("if (!CTRLINST.isProbeActivated(signature)) {\n" +
-            "         return thisJoinPoint.proceed();\n" +
-            "      }\n" +
-            "      // collect data\n" +
-            "      final boolean entrypoint;\n" +
-            "      final String hostname = VMNAME;\n" +
-            "      final String sessionId = SESSIONREGISTRY.recallThreadLocalSessionId();\n" +
-            "      final int eoi; // this is executionOrderIndex-th execution in this trace\n" +
-            "      final int ess; // this is the height in the dynamic call tree of this execution\n" +
-            "      long traceId = CFREGISTRY.recallThreadLocalTraceId(); // traceId, -1 if entry point\n" +
-            "      if (traceId == -1) {\n" +
-            "         entrypoint = true;\n" +
-            "         traceId = CFREGISTRY.getAndStoreUniqueThreadLocalTraceId();\n" +
-            "         CFREGISTRY.storeThreadLocalEOI(0);\n" +
-            "         CFREGISTRY.storeThreadLocalESS(1); // next operation is ess + 1\n" +
-            "         eoi = 0;\n" +
-            "         ess = 0;\n" +
-            "      } else {\n" +
-            "         entrypoint = false;\n" +
-            "         eoi = CFREGISTRY.incrementAndRecallThreadLocalEOI(); // ess > 1\n" +
-            "         ess = CFREGISTRY.recallAndIncrementThreadLocalESS(); // ess >= 0\n" +
-            "         if ((eoi == -1) || (ess == -1)) {\n" +
-            "            LOGGER.error(\"eoi and/or ess have invalid values: eoi == {} ess == {}\", eoi, ess);\n" +
-            "            CTRLINST.terminateMonitoring();\n" +
-            "         }\n" +
-            "      }\n" +
-            "      // measure before\n" +
-            "      final long tin = TIME.getTime();");
-      BlockStmt finallyBlock = new BlockStmt();
-      finallyBlock.addAndGetStatement("// measure after\n" +
-            "         final long tout = TIME.getTime();\n" +
-            "         CTRLINST.newMonitoringRecord(new OperationExecutionRecord(signature, sessionId, traceId, tin, tout, hostname, eoi, ess));\n" +
-            "         // cleanup\n" +
-            "         if (entrypoint) {\n" +
-            "            CFREGISTRY.unsetThreadLocalTraceId();\n" +
-            "            CFREGISTRY.unsetThreadLocalEOI();\n" +
-            "            CFREGISTRY.unsetThreadLocalESS();\n" +
-            "         } else {\n" +
-            "            CFREGISTRY.storeThreadLocalESS(ess); // next operation is ess\n" +
-            "         }");
-      TryStmt stmt = new TryStmt(originalBlock, new NodeList<>(), finallyBlock);
-      replacedStatement.addAndGetStatement(stmt);
-      return replacedStatement;
    }
 
    private String getSignature(String name, MethodDeclaration method) {
