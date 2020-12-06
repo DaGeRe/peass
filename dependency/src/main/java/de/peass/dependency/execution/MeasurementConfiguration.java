@@ -22,6 +22,7 @@ public class MeasurementConfiguration {
    private boolean useGC = true;
    private int kiekerAggregationInterval = 5000;
    private String javaVersion = System.getProperty("java.version");
+   private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
 
    private String version;
    private String versionOld;
@@ -67,6 +68,7 @@ public class MeasurementConfiguration {
       setWarmup(mixin.getWarmup());
       setRepetitions(mixin.getRepetitions());
       setUseGC(mixin.isUseGC());
+      setRecord(mixin.getRecord());
    }
 
    @JsonCreator
@@ -88,6 +90,7 @@ public class MeasurementConfiguration {
 
    /**
     * Copy constructor
+    * 
     * @param other Configuration to copy
     */
    public MeasurementConfiguration(MeasurementConfiguration other) {
@@ -237,5 +240,17 @@ public class MeasurementConfiguration {
 
    public void setJavaVersion(String javaVersion) {
       this.javaVersion = javaVersion;
+   }
+
+   public void setRecord(AllowedKiekerRecord record) {
+      if (record == null) {
+         this.record = AllowedKiekerRecord.OPERATIONEXECUTION;
+      } else {
+         this.record = record;
+      }
+   }
+
+   public AllowedKiekerRecord getRecord() {
+      return record;
    }
 }

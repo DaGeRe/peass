@@ -106,7 +106,7 @@ public class GradleTestExecutor extends TestExecutor {
             final File metainf = new File(module, "src/main/resources/META-INF");
             metainf.mkdirs();
             final File goalFile = new File(metainf, "aop.xml");
-            AOPXMLHelper.writeAOPXMLToFile(existingClasses, goalFile, AOPXMLHelper.OPERATIONEXECUTION);
+            AOPXMLHelper.writeAOPXMLToFile(existingClasses, goalFile, AllowedKiekerRecord.OPERATIONEXECUTION);
          }
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();

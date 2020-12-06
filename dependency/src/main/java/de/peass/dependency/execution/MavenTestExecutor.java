@@ -102,7 +102,7 @@ public class MavenTestExecutor extends TestExecutor {
       }
    }
 
-   protected void generateAOPXML(String aspect) {
+   protected void generateAOPXML(AllowedKiekerRecord aspect) {
       try {
          for (final File module : getModules()) {
             for (final String potentialReadFolder : new String[] { "src/main/resources/META-INF", "src/java/META-INF", "src/test/resources/META-INF", "src/test/META-INF",
@@ -112,7 +112,7 @@ public class MavenTestExecutor extends TestExecutor {
                final File goalFile2 = new File(folder, "aop.xml");
                AOPXMLHelper.writeAOPXMLToFile(existingClasses, goalFile2, aspect);
                final File propertiesFile = new File(folder, "kieker.monitoring.properties");
-               AOPXMLHelper.writeKiekerMonitoringProperties(propertiesFile, aspect.equals(AOPXMLHelper.REDUCED_OPERATIONEXECUTION));
+               AOPXMLHelper.writeKiekerMonitoringProperties(propertiesFile, aspect.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION));
             }
          }
       } catch (final XmlPullParserException | IOException e) {
@@ -173,8 +173,6 @@ public class MavenTestExecutor extends TestExecutor {
       }
    }
 
-   private static final boolean useReducedOperations = false;
-
    @Override
    public void prepareKoPeMeExecution(final File logFile) throws IOException, InterruptedException {
       MavenPomUtil.cleanSnapshotDependencies(new File(folders.getProjectFolder(), "pom.xml"));
@@ -185,10 +183,10 @@ public class MavenTestExecutor extends TestExecutor {
          if (testTransformer.isAdaptiveExecution()) {
             prepareAdaptiveExecution();
          }
-         if (useReducedOperations && testTransformer.isAdaptiveExecution()) {
-            generateAOPXML(AOPXMLHelper.REDUCED_OPERATIONEXECUTION);
+         if (AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION.equals(testTransformer.getConfig().getRecord()) && testTransformer.isAdaptiveExecution()) {
+            generateAOPXML(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION);
          } else {
-            generateAOPXML(AOPXMLHelper.OPERATIONEXECUTION);
+            generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION);
          }
          if (testTransformer.isAggregatedWriter()) {
 

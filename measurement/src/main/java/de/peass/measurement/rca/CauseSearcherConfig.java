@@ -79,4 +79,8 @@ public class CauseSearcherConfig {
       return ignoreEOIs;
    }
    
+   public RCAStrategy getRcaStrategy() {
+      return rcaStrategy;
+   }
+   
 }

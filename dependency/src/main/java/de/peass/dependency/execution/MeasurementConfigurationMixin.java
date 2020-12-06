@@ -23,7 +23,7 @@ public class MeasurementConfigurationMixin {
 
    @Option(names = { "-useGC", "--useGC" }, description = "Do execute GC before each iteration (default false)")
    public boolean useGC = false;
-   
+
    @Option(names = { "-earlyStop", "--earlyStop" }, description = "Whether to stop early (i.e. execute VMs until type 1 and type 2 error are met)")
    protected boolean earlyStop = false;
 
@@ -34,9 +34,12 @@ public class MeasurementConfigurationMixin {
    @Option(names = { "-type2error",
          "--type2error" }, description = "Type 2 error of agnostic-t-test, i.e. probability of considering measurements unequal when they are equal (requires earlyStop)")
    protected double type2error = 0.01;
-   
+
    @Option(names = { "-timeout", "--timeout" }, description = "Timeout in minutes for each VM start")
    protected int timeout = 5;
+
+   @Option(names = { "-record", "--record" }, description = "Kieker Record type to use for monitoring ")
+   protected AllowedKiekerRecord record;
 
    public int getVms() {
       return vms;
@@ -125,6 +128,13 @@ public class MeasurementConfigurationMixin {
    public void setTimeout(int timeout) {
       this.timeout = timeout;
    }
-   
-   
+
+   public AllowedKiekerRecord getRecord() {
+      return record;
+   }
+
+   public void setRecord(AllowedKiekerRecord record) {
+      this.record = record;
+   }
+
 }
