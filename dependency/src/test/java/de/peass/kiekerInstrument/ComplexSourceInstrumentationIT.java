@@ -19,7 +19,7 @@ import de.peass.dependency.execution.AllowedKiekerRecord;
 import de.peass.dependency.execution.MavenTestExecutor;
 import de.peass.utils.StreamGobbler;
 
-public class SourceInstrumentationIT {
+public class ComplexSourceInstrumentationIT {
    
    @BeforeEach
    public void before() throws IOException {
@@ -41,7 +41,7 @@ public class SourceInstrumentationIT {
 
    @Test
    public void testExecution() throws IOException {
-      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2/");
+      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2_complex/");
       File adaptiveFile = writeAdaptiveInstrumentationInfo();
 
       File tempFolder = new File(TestConstants.CURRENT_FOLDER, "results");

@@ -2,11 +2,35 @@ package de.peass.kiekerInstrument;
 
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
+import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.TryStmt;
 
 import de.peass.dependency.execution.AllowedKiekerRecord;
 
 public class BlockBuilder {
+
+   public static BlockStmt buildConstructorStatement(BlockStmt originalBlock, String signature, boolean addReturn, AllowedKiekerRecord recordType) {
+      System.out.println("Statements: " + originalBlock.getStatements().size() + " " + signature);
+      BlockStmt replacedStatement = new BlockStmt();
+      ExplicitConstructorInvocationStmt constructorStatement = null;
+      for (Statement st : originalBlock.getStatements()) {
+         if (st instanceof ExplicitConstructorInvocationStmt) {
+            constructorStatement = (ExplicitConstructorInvocationStmt) st;
+         }
+      }
+      if (constructorStatement != null) {
+         replacedStatement.addAndGetStatement(constructorStatement);
+         originalBlock.getStatements().remove(constructorStatement);
+      }
+
+      final BlockStmt regularChangedStatement = buildStatement(originalBlock, signature, addReturn, recordType);
+      for (Statement st : regularChangedStatement.getStatements()) {
+         replacedStatement.addAndGetStatement(st);
+      }
+
+      return replacedStatement;
+   }
 
    public static BlockStmt buildStatement(BlockStmt originalBlock, String signature, boolean addReturn, AllowedKiekerRecord recordType) {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {

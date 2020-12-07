@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 import de.peass.TestConstants;
 
 public class SourceInstrumentationTestUtil {
-   public static void initProject() throws IOException {
+   public static void initProject(String sourcePath) throws IOException {
       TestConstants.CURRENT_FOLDER.mkdirs();
       
       for (String path : new String[] {"src/main/java/de/peass/C0_0.java", 
@@ -17,16 +17,16 @@ public class SourceInstrumentationTestUtil {
             "src/main/java/de/peass/AddRandomNumbers.java", 
             "src/test/java/de/peass/MainTest.java", 
             "pom.xml"}) {
-         copyResource(path);
+         copyResource(path, sourcePath);
       }
    }
    
-   public static File copyResource(String name) throws IOException {
+   public static File copyResource(String name, String sourcePath) throws IOException {
       File testFile = new File(TestConstants.CURRENT_FOLDER, name);
       if (!testFile.getParentFile().exists()) {
          testFile.getParentFile().mkdirs();
       }
-      final URL exampleClass = TestSourceInstrumentation.class.getResource("/sourceInstrumentation/project_2/" + name);
+      final URL exampleClass = TestSourceInstrumentation.class.getResource(sourcePath + name);
       FileUtils.copyURLToFile(exampleClass, testFile);
       return testFile;
    }

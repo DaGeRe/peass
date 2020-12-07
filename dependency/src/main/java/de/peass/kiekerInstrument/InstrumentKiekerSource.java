@@ -51,16 +51,15 @@ public class InstrumentKiekerSource {
 
    public void instrumentProject(File folder) throws IOException {
       for (File javaFile : FileUtils.listFiles(folder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE)) {
+         LOG.info("Handling: " + javaFile);
          instrument(javaFile);
       }
    }
 
    public void instrument(File file) throws IOException {
       CompilationUnit unit = JavaParserProvider.parse(file); // TODO Package
-      unit.addImport("kieker.monitoring.core.controller.MonitoringController");
-      unit.addImport("kieker.monitoring.core.registry.ControlFlowRegistry");
-      unit.addImport("kieker.monitoring.core.registry.SessionRegistry");
-      unit.addImport("kieker.common.record.controlflow.OperationExecutionRecord");
+      addImports(unit);
+
       ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
       String packageName = unit.getPackageDeclaration().get().getNameAsString();
       String name = packageName + "." + clazz.getNameAsString();
@@ -68,6 +67,13 @@ public class InstrumentKiekerSource {
       handleChildren(clazz, name);
 
       Files.write(file.toPath(), unit.toString().getBytes(StandardCharsets.UTF_8));
+   }
+
+   private void addImports(CompilationUnit unit) {
+      unit.addImport("kieker.monitoring.core.controller.MonitoringController");
+      unit.addImport("kieker.monitoring.core.registry.ControlFlowRegistry");
+      unit.addImport("kieker.monitoring.core.registry.SessionRegistry");
+      unit.addImport(usedRecord.getRecord());
    }
 
    private void handleChildren(ClassOrInterfaceDeclaration clazz, String name) {
@@ -92,7 +98,7 @@ public class InstrumentKiekerSource {
             final BlockStmt originalBlock = constructor.getBody();
             String signature = getSignature(name, constructor);
 
-            BlockStmt replacedStatement = BlockBuilder.buildStatement(originalBlock, signature, true, usedRecord);
+            BlockStmt replacedStatement = BlockBuilder.buildConstructorStatement(originalBlock, signature, true, usedRecord);
 
             constructor.setBody(replacedStatement);
          }

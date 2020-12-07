@@ -19,7 +19,7 @@ public class TestSourceInstrumentation {
    public void testSingleClass() throws IOException {
       TestConstants.CURRENT_FOLDER.mkdirs();
 
-      File testFile = SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/C0_0.java");
+      File testFile = SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/C0_0.java", "/sourceInstrumentation/project_2/");
 
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION);
       instrumenter.instrument(testFile);
@@ -41,7 +41,7 @@ public class TestSourceInstrumentation {
 
    @Test
    public void testProjectInstrumentation() throws IOException {
-      SourceInstrumentationTestUtil.initProject();
+      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2/");
 
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
