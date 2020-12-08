@@ -102,18 +102,33 @@ public class MavenTestExecutor extends TestExecutor {
          e.printStackTrace();
       }
    }
+   
+   private static final String[] metaInfFolders = new String[] { "src/main/resources/META-INF", "src/java/META-INF", "src/test/resources/META-INF", "src/test/META-INF",
+   "target/test-classes/META-INF" };
 
    protected void generateAOPXML(AllowedKiekerRecord aspect) {
       try {
          for (final File module : getModules()) {
-            for (final String potentialReadFolder : new String[] { "src/main/resources/META-INF", "src/java/META-INF", "src/test/resources/META-INF", "src/test/META-INF",
-                  "target/test-classes/META-INF" }) {
+            for (final String potentialReadFolder : metaInfFolders) {
                final File folder = new File(module, potentialReadFolder);
                folder.mkdirs();
                final File goalFile2 = new File(folder, "aop.xml");
                AOPXMLHelper.writeAOPXMLToFile(existingClasses, goalFile2, aspect);
+            }
+         }
+      } catch (final XmlPullParserException | IOException e) {
+         e.printStackTrace();
+      }
+   }
+   
+   protected void generateKiekerMonitoringProperties(boolean useCircularQueue) {
+      try {
+         for (final File module : getModules()) {
+            for (final String potentialReadFolder : metaInfFolders) {
+               final File folder = new File(module, potentialReadFolder);
+               folder.mkdirs();
                final File propertiesFile = new File(folder, "kieker.monitoring.properties");
-               AOPXMLHelper.writeKiekerMonitoringProperties(propertiesFile, aspect.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION));
+               AOPXMLHelper.writeKiekerMonitoringProperties(propertiesFile, useCircularQueue);
             }
          }
       } catch (final XmlPullParserException | IOException e) {
@@ -185,6 +200,7 @@ public class MavenTestExecutor extends TestExecutor {
             instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
             if (testTransformer.isAdaptiveExecution()) {
                writeConfig();
+               generateKiekerMonitoringProperties(testTransformer.getConfig().isUseCircularQueue());
             }
          } else {
             if (testTransformer.isAdaptiveExecution()) {
@@ -192,8 +208,10 @@ public class MavenTestExecutor extends TestExecutor {
             }
             if (AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION.equals(testTransformer.getConfig().getRecord()) && testTransformer.isAdaptiveExecution()) {
                generateAOPXML(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION);
+               generateKiekerMonitoringProperties(testTransformer.getConfig().isUseCircularQueue());
             } else {
                generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION);
+               generateKiekerMonitoringProperties(testTransformer.getConfig().isUseCircularQueue());
             }
             if (testTransformer.isAggregatedWriter()) {
 

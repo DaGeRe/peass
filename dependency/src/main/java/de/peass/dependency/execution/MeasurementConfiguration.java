@@ -19,6 +19,7 @@ public class MeasurementConfiguration {
    private boolean logFullData = true;
    private boolean useKieker = false;
    private boolean useSourceInstrumentation = false;
+   private boolean useCircularQueue = false;
    private boolean redirectToNull = true;
    private boolean useGC = true;
    private int kiekerAggregationInterval = 5000;
@@ -262,5 +263,12 @@ public class MeasurementConfiguration {
    public void setUseSourceInstrumentation(boolean useSourceInstrumentation) {
       this.useSourceInstrumentation = useSourceInstrumentation;
    }
-   
+
+   public boolean isUseCircularQueue() {
+      return useCircularQueue;
+   }
+
+   public void setUseCircularQueue(boolean useCircularQueue) {
+      this.useCircularQueue = useCircularQueue;
+   }
 }

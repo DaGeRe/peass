@@ -39,6 +39,9 @@ public class RootCauseAnalysis extends DependencyTestStarter {
    
    @Option(names = { "-useSourceInstrumentation", "--useSourceInstrumentation" }, description = "Use source instrumentation (default false - AspectJ instrumentation is used)")
    public boolean useSourceInstrumentation = false;
+   
+   @Option(names = { "-useCircularQueue", "--useCircularQueue" }, description = "Use circular queue (default false - LinkedBlockingQueue is used)")
+   public boolean useCircularQueue = false;
 
    public static void main(final String[] args) throws JAXBException, IOException {
       final RootCauseAnalysis command = new RootCauseAnalysis();
@@ -88,6 +91,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       measurementConfiguration.setVersion(version);
       measurementConfiguration.setVersionOld(predecessor);
       measurementConfiguration.setUseSourceInstrumentation(useSourceInstrumentation);
+      measurementConfiguration.setUseCircularQueue(useCircularQueue);
       LOG.info("Use source instrumentation: {}", useSourceInstrumentation);
       return measurementConfiguration;
    }
