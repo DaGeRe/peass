@@ -10,7 +10,15 @@ import de.peass.dependency.execution.AllowedKiekerRecord;
 
 public class BlockBuilder {
 
-   public static BlockStmt buildConstructorStatement(BlockStmt originalBlock, String signature, boolean addReturn, AllowedKiekerRecord recordType) {
+   private final AllowedKiekerRecord recordType;
+   private final boolean enableDeactivation;
+
+   public BlockBuilder(AllowedKiekerRecord recordType, boolean enableDeactivation) {
+      this.recordType = recordType;
+      this.enableDeactivation = enableDeactivation;
+   }
+
+   public BlockStmt buildConstructorStatement(BlockStmt originalBlock, String signature, boolean addReturn) {
       System.out.println("Statements: " + originalBlock.getStatements().size() + " " + signature);
       BlockStmt replacedStatement = new BlockStmt();
       ExplicitConstructorInvocationStmt constructorStatement = null;
@@ -24,7 +32,7 @@ public class BlockBuilder {
          originalBlock.getStatements().remove(constructorStatement);
       }
 
-      final BlockStmt regularChangedStatement = buildStatement(originalBlock, signature, addReturn, recordType);
+      final BlockStmt regularChangedStatement = buildStatement(originalBlock, signature, addReturn);
       for (Statement st : regularChangedStatement.getStatements()) {
          replacedStatement.addAndGetStatement(st);
       }
@@ -32,7 +40,7 @@ public class BlockBuilder {
       return replacedStatement;
    }
 
-   public static BlockStmt buildStatement(BlockStmt originalBlock, String signature, boolean addReturn, AllowedKiekerRecord recordType) {
+   public BlockStmt buildStatement(BlockStmt originalBlock, String signature, boolean addReturn) {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
          return buildOperationExecutionStatement(originalBlock, signature, addReturn);
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
@@ -42,7 +50,7 @@ public class BlockBuilder {
       }
    }
 
-   public static BlockStmt buildReducedOperationExecutionStatement(BlockStmt originalBlock, String signature, boolean addReturn) {
+   public BlockStmt buildReducedOperationExecutionStatement(BlockStmt originalBlock, String signature, boolean addReturn) {
       BlockStmt replacedStatement = new BlockStmt();
 
       buildHeader(originalBlock, signature, addReturn, replacedStatement);
@@ -57,7 +65,7 @@ public class BlockBuilder {
       return replacedStatement;
    }
 
-   public static BlockStmt buildOperationExecutionStatement(BlockStmt originalBlock, String signature, boolean addReturn) {
+   public BlockStmt buildOperationExecutionStatement(BlockStmt originalBlock, String signature, boolean addReturn) {
       BlockStmt replacedStatement = new BlockStmt();
 
       buildHeader(originalBlock, signature, addReturn, replacedStatement);
@@ -103,15 +111,19 @@ public class BlockBuilder {
       return replacedStatement;
    }
 
-   private static void buildHeader(BlockStmt originalBlock, String signature, boolean addReturn, BlockStmt replacedStatement) {
-      replacedStatement.addAndGetStatement("if (!MonitoringController.getInstance().isMonitoringEnabled()) {\n" +
-            originalBlock.toString() +
-            (addReturn ? "return;" : "") +
-            "      }");
+   private void buildHeader(BlockStmt originalBlock, String signature, boolean addReturn, BlockStmt replacedStatement) {
+      if (enableDeactivation) {
+         replacedStatement.addAndGetStatement("if (!MonitoringController.getInstance().isMonitoringEnabled()) {\n" +
+               originalBlock.toString() +
+               (addReturn ? "return;" : "") +
+               "      }");
+      }
       replacedStatement.addAndGetStatement("final String signature = \"" + signature + "\";");
-      replacedStatement.addAndGetStatement("if (!MonitoringController.getInstance().isProbeActivated(signature)) {\n" +
-            originalBlock.toString() +
-            (addReturn ? "return;" : "") +
-            "      }");
+      if (enableDeactivation) {
+         replacedStatement.addAndGetStatement("if (!MonitoringController.getInstance().isProbeActivated(signature)) {\n" +
+               originalBlock.toString() +
+               (addReturn ? "return;" : "") +
+               "      }");
+      }
    }
 }

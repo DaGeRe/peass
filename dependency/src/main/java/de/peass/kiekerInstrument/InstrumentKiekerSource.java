@@ -50,16 +50,19 @@ public class InstrumentKiekerSource {
 
    private final AllowedKiekerRecord usedRecord;
    private final Set<String> includedPatterns;
+   private final BlockBuilder blockBuilder;
 
    public InstrumentKiekerSource(AllowedKiekerRecord usedRecord) {
       this.usedRecord = usedRecord;
       includedPatterns = new HashSet<>();
       includedPatterns.add("*");
+      this.blockBuilder = new BlockBuilder(usedRecord, true);
    }
 
    public InstrumentKiekerSource(AllowedKiekerRecord usedRecord, Set<String> includedPatterns) {
       this.usedRecord = usedRecord;
       this.includedPatterns = includedPatterns;
+      this.blockBuilder = new BlockBuilder(usedRecord, false);
    }
 
    public void instrumentProject(File projectFolder) throws IOException {
@@ -100,7 +103,7 @@ public class InstrumentKiekerSource {
                String signature = getSignature(name + "." + method.getNameAsString(), method);
                boolean oneMatches = testSignatureMatch(signature);
                if (oneMatches) {
-                  BlockStmt replacedStatement = BlockBuilder.buildStatement(originalBlock, signature, method.getType().toString().equals("void"), usedRecord);
+                  BlockStmt replacedStatement = blockBuilder.buildStatement(originalBlock, signature, method.getType().toString().equals("void"));
 
                   method.setBody(replacedStatement);
                }
@@ -113,7 +116,7 @@ public class InstrumentKiekerSource {
             String signature = getSignature(name, constructor);
             boolean oneMatches = testSignatureMatch(signature);
             if (oneMatches) {
-               BlockStmt replacedStatement = BlockBuilder.buildConstructorStatement(originalBlock, signature, true, usedRecord);
+               BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, signature, true);
 
                constructor.setBody(replacedStatement);
             }
