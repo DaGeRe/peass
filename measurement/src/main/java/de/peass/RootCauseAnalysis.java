@@ -43,6 +43,10 @@ public class RootCauseAnalysis extends DependencyTestStarter {
    @Option(names = { "-useCircularQueue", "--useCircularQueue" }, description = "Use circular queue (default false - LinkedBlockingQueue is used)")
    public boolean useCircularQueue = false;
 
+   @Option(names = { "-useSelectiveInstrumentation", "--useSelectiveInstrumentation" }, description = "Use selective instrumentation (only selected methods / classes are instrumented) - adaptive monitoring will not make sense")
+   public boolean useSelectiveInstrumentation = false;
+   
+
    public static void main(final String[] args) throws JAXBException, IOException {
       final RootCauseAnalysis command = new RootCauseAnalysis();
       final CommandLine commandLine = new CommandLine(command);
@@ -92,6 +96,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       measurementConfiguration.setVersionOld(predecessor);
       measurementConfiguration.setUseSourceInstrumentation(useSourceInstrumentation);
       measurementConfiguration.setUseCircularQueue(useCircularQueue);
+      measurementConfiguration.setUseSelectiveInstrumentation(useSelectiveInstrumentation);
       LOG.info("Use source instrumentation: {}", useSourceInstrumentation);
       return measurementConfiguration;
    }

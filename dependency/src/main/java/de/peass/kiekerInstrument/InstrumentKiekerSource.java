@@ -5,7 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -32,6 +35,8 @@ import javassist.compiler.ast.MethodDecl;
 import kieker.monitoring.core.controller.MonitoringController;
 import kieker.monitoring.core.registry.ControlFlowRegistry;
 import kieker.monitoring.core.registry.SessionRegistry;
+import kieker.monitoring.core.signaturePattern.InvalidPatternException;
+import kieker.monitoring.core.signaturePattern.PatternParser;
 
 /**
  * Adds kieker monitoring code to existing source code *in-place*, i.e. the existing .java-files will get changed.
@@ -44,14 +49,22 @@ public class InstrumentKiekerSource {
    private static final Logger LOG = LogManager.getLogger(InstrumentKiekerSource.class);
 
    private final AllowedKiekerRecord usedRecord;
+   private final Set<String> includedPatterns;
 
    public InstrumentKiekerSource(AllowedKiekerRecord usedRecord) {
       this.usedRecord = usedRecord;
+      includedPatterns = new HashSet<>();
+      includedPatterns.add("*");
    }
 
-   public void instrumentProject(File folder) throws IOException {
-      for (File javaFile : FileUtils.listFiles(folder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE)) {
-         LOG.info("Handling: " + javaFile);
+   public InstrumentKiekerSource(AllowedKiekerRecord usedRecord, Set<String> includedPatterns) {
+      this.usedRecord = usedRecord;
+      this.includedPatterns = includedPatterns;
+   }
+
+   public void instrumentProject(File projectFolder) throws IOException {
+      for (File javaFile : FileUtils.listFiles(projectFolder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE)) {
+         LOG.info("Instrumenting: " + javaFile);
          instrument(javaFile);
       }
    }
@@ -85,11 +98,12 @@ public class InstrumentKiekerSource {
             if (body.isPresent()) {
                BlockStmt originalBlock = body.get();
                String signature = getSignature(name + "." + method.getNameAsString(), method);
+               boolean oneMatches = testSignatureMatch(signature);
+               if (oneMatches) {
+                  BlockStmt replacedStatement = BlockBuilder.buildStatement(originalBlock, signature, method.getType().toString().equals("void"), usedRecord);
 
-               BlockStmt replacedStatement = BlockBuilder.buildStatement(originalBlock, signature, method.getType().toString().equals("void"), usedRecord);
-
-               method.setBody(replacedStatement);
-
+                  method.setBody(replacedStatement);
+               }
             } else {
                LOG.info("Unable to instrument " + name + "." + method.getNameAsString() + " because it has no body");
             }
@@ -97,12 +111,31 @@ public class InstrumentKiekerSource {
             ConstructorDeclaration constructor = (ConstructorDeclaration) child;
             final BlockStmt originalBlock = constructor.getBody();
             String signature = getSignature(name, constructor);
+            boolean oneMatches = testSignatureMatch(signature);
+            if (oneMatches) {
+               BlockStmt replacedStatement = BlockBuilder.buildConstructorStatement(originalBlock, signature, true, usedRecord);
 
-            BlockStmt replacedStatement = BlockBuilder.buildConstructorStatement(originalBlock, signature, true, usedRecord);
-
-            constructor.setBody(replacedStatement);
+               constructor.setBody(replacedStatement);
+            }
          }
       }
+   }
+
+   private boolean testSignatureMatch(String signature) {
+      boolean oneMatches = false;
+      for (String pattern : includedPatterns) {
+         try {
+            Pattern patternP = PatternParser.parseToPattern(pattern);
+            if (patternP.matcher(signature).matches()) {
+               oneMatches = true;
+               break;
+            }
+         } catch (InvalidPatternException e) {
+            throw new RuntimeException(e);
+         }
+         
+      }
+      return oneMatches;
    }
 
    private String getSignature(String name, MethodDeclaration method) {

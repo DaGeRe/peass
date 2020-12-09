@@ -19,6 +19,7 @@ public class MeasurementConfiguration {
    private boolean logFullData = true;
    private boolean useKieker = false;
    private boolean useSourceInstrumentation = false;
+   private boolean useSelectiveInstrumentation = false;
    private boolean useCircularQueue = false;
    private boolean redirectToNull = true;
    private boolean useGC = true;
@@ -270,5 +271,13 @@ public class MeasurementConfiguration {
 
    public void setUseCircularQueue(boolean useCircularQueue) {
       this.useCircularQueue = useCircularQueue;
+   }
+   
+   public boolean isUseSelectiveInstrumentation() {
+      return useSelectiveInstrumentation;
+   }
+
+   public void setUseSelectiveInstrumentation(boolean useSelectiveInstrumentation) {
+      this.useSelectiveInstrumentation = useSelectiveInstrumentation;
    }
 }

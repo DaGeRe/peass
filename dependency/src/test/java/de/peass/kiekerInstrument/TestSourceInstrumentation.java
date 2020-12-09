@@ -24,10 +24,10 @@ public class TestSourceInstrumentation {
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION);
       instrumenter.instrument(testFile);
 
-      testFileIsChanged(testFile, "public void de.peass.C0_0.method0()");
+      testFileIsInstrumented(testFile, "public void de.peass.C0_0.method0()");
    }
 
-   private void testFileIsChanged(File testFile, String fqn) throws IOException {
+   public static void testFileIsInstrumented(File testFile, String fqn) throws IOException {
       String changedSource = FileUtils.readFileToString(testFile, StandardCharsets.UTF_8);
 
       Assert.assertThat(changedSource, Matchers.containsString("import kieker.monitoring.core.controller.MonitoringController;"));
@@ -36,7 +36,7 @@ public class TestSourceInstrumentation {
 
       Assert.assertThat(changedSource, Matchers.containsString("MonitoringController.getInstance().isMonitoringEnabled()"));
       Assert.assertThat(changedSource, Matchers.containsString(fqn));
-      Assert.assertThat(changedSource, Matchers.containsString("OperationExecutionRecord"));
+      Assert.assertThat(changedSource, Matchers.containsString("new OperationExecutionRecord"));
    }
 
    @Test
@@ -46,11 +46,11 @@ public class TestSourceInstrumentation {
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 
-      testFileIsChanged(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), "public void de.peass.C0_0.method0()");
-      testFileIsChanged(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), "return");
-      testFileIsChanged(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C1_0.java"), "public void de.peass.C1_0.method0()");
-      testFileIsChanged(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/AddRandomNumbers.java"), "public int de.peass.AddRandomNumbers.getValue()");
-      testFileIsChanged(new File(TestConstants.CURRENT_FOLDER, "/src/test/java/de/peass/MainTest.java"), "public void de.peass.MainTest.testMe()");
-      testFileIsChanged(new File(TestConstants.CURRENT_FOLDER, "/src/test/java/de/peass/MainTest.java"), "public de.peass.MainTest()");
+      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), "public void de.peass.C0_0.method0()");
+      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), "return");
+      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C1_0.java"), "public void de.peass.C1_0.method0()");
+      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/AddRandomNumbers.java"), "public int de.peass.AddRandomNumbers.getValue()");
+      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "/src/test/java/de/peass/MainTest.java"), "public void de.peass.MainTest.testMe()");
+      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "/src/test/java/de/peass/MainTest.java"), "public de.peass.MainTest()");
    }
 }

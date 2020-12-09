@@ -100,11 +100,11 @@ public class MavenTestExecutor extends TestExecutor {
          }
       } catch (final XmlPullParserException | IOException | InterruptedException e) {
          e.printStackTrace();
-      }
+      } 
    }
-   
+
    private static final String[] metaInfFolders = new String[] { "src/main/resources/META-INF", "src/java/META-INF", "src/test/resources/META-INF", "src/test/META-INF",
-   "target/test-classes/META-INF" };
+         "target/test-classes/META-INF" };
 
    protected void generateAOPXML(AllowedKiekerRecord aspect) {
       try {
@@ -120,7 +120,7 @@ public class MavenTestExecutor extends TestExecutor {
          e.printStackTrace();
       }
    }
-   
+
    protected void generateKiekerMonitoringProperties(boolean useCircularQueue) {
       try {
          for (final File module : getModules()) {
@@ -196,7 +196,12 @@ public class MavenTestExecutor extends TestExecutor {
       LOG.debug("Starting Test Transformation");
       if (testTransformer.getConfig().isUseKieker()) {
          if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-            final InstrumentKiekerSource instrumentKiekerSource = new InstrumentKiekerSource(testTransformer.getConfig().getRecord());
+            final InstrumentKiekerSource instrumentKiekerSource;
+            if (testTransformer.getConfig().isUseSelectiveInstrumentation()) {
+               instrumentKiekerSource = new InstrumentKiekerSource(testTransformer.getConfig().getRecord());
+            } else {
+               instrumentKiekerSource = new InstrumentKiekerSource(testTransformer.getConfig().getRecord(), includedMethodPattern);
+            }
             instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
             if (testTransformer.isAdaptiveExecution()) {
                writeConfig();
