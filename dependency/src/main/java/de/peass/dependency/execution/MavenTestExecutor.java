@@ -100,7 +100,7 @@ public class MavenTestExecutor extends TestExecutor {
          }
       } catch (final XmlPullParserException | IOException | InterruptedException e) {
          e.printStackTrace();
-      } 
+      }
    }
 
    private static final String[] metaInfFolders = new String[] { "src/main/resources/META-INF", "src/java/META-INF", "src/test/resources/META-INF", "src/test/META-INF",
@@ -197,7 +197,7 @@ public class MavenTestExecutor extends TestExecutor {
       if (testTransformer.getConfig().isUseKieker()) {
          if (testTransformer.getConfig().isUseSourceInstrumentation()) {
             final InstrumentKiekerSource instrumentKiekerSource;
-            if (testTransformer.getConfig().isUseSelectiveInstrumentation()) {
+            if (!testTransformer.getConfig().isUseSelectiveInstrumentation()) {
                instrumentKiekerSource = new InstrumentKiekerSource(testTransformer.getConfig().getRecord());
             } else {
                instrumentKiekerSource = new InstrumentKiekerSource(testTransformer.getConfig().getRecord(), includedMethodPattern);
