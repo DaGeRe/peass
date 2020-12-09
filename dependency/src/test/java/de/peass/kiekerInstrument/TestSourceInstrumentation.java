@@ -34,8 +34,7 @@ public class TestSourceInstrumentation {
       Assert.assertThat(changedSource, Matchers.containsString("import kieker.monitoring.core.registry.ControlFlowRegistry;"));
       Assert.assertThat(changedSource, Matchers.containsString("import kieker.monitoring.core.registry.SessionRegistry;"));
 
-      Assert.assertThat(changedSource, Matchers.containsString("MonitoringController.getInstance().isMonitoringEnabled()"));
-      Assert.assertThat(changedSource, Matchers.containsString(fqn));
+      Assert.assertThat(changedSource, Matchers.containsString("signature = \"" + fqn));
       Assert.assertThat(changedSource, Matchers.containsString("new OperationExecutionRecord"));
    }
 
