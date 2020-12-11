@@ -10,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 public class TestcaseStatistic {
    private double meanOld, meanCurrent;
+
+   /** Absolute (!) deviation of measured values **/
    private double deviationOld, deviationCurrent;
    private long vms;
    private long callsOld, calls;
@@ -23,35 +25,26 @@ public class TestcaseStatistic {
    }
 
    public TestcaseStatistic(final StatisticalSummary statisticsOld, final StatisticalSummary statisticsCurrent, final long callsOld, final long calls) {
-      this.meanCurrent = statisticsCurrent.getMean();
-      this.meanOld = statisticsOld.getMean();
-      this.deviationCurrent = statisticsCurrent.getStandardDeviation();
-      this.deviationOld = statisticsOld.getStandardDeviation();
-      this.vms = (statisticsCurrent.getN() + statisticsOld.getN()) / 2;
-      this.tvalue = TestUtils.t(statisticsOld, statisticsCurrent);
+      boolean oldHasValues = (statisticsOld != null && statisticsOld.getN() > 0);
+      boolean currentHasValues = (statisticsCurrent != null && statisticsCurrent.getN() > 0);
+      this.meanCurrent = currentHasValues ? statisticsCurrent.getMean() : Double.NaN;
+      this.meanOld = oldHasValues ? statisticsOld.getMean() : Double.NaN;
+      this.deviationCurrent = currentHasValues ? statisticsCurrent.getStandardDeviation() : Double.NaN;
+      this.deviationOld = oldHasValues ? statisticsOld.getStandardDeviation() : Double.NaN;
+      if (currentHasValues && oldHasValues) {
+         this.vms = (statisticsCurrent.getN() + statisticsOld.getN()) / 2;
+      } else if (oldHasValues) {
+         this.vms = statisticsOld.getN();
+      } else if (currentHasValues) {
+         this.vms = statisticsCurrent.getN();
+      } else {
+         vms = 0;
+      }
+      this.tvalue = (oldHasValues && currentHasValues) ? TestUtils.t(statisticsOld, statisticsCurrent) : -1;
       this.isChange = null;
       this.calls = calls;
       this.callsOld = callsOld;
-      
-      check();
-   }
 
-   public TestcaseStatistic(final double meanOld, final double meanCurrent, 
-         final double deviationOld, final double deviationCurrent, 
-         final long executions, final double tvalue,
-         final boolean isChange, 
-         final long callsOld, final long calls) {
-      super();
-      this.meanOld = meanOld;
-      this.meanCurrent = meanCurrent;
-      this.deviationOld = deviationOld;
-      this.deviationCurrent = deviationCurrent;
-      this.vms = executions;
-      this.tvalue = tvalue;
-      this.isChange = isChange;
-      this.calls = calls;
-      this.callsOld = callsOld;
-      
       check();
    }
 
@@ -59,7 +52,7 @@ public class TestcaseStatistic {
       if (callsOld == 0 && (!Double.isNaN(meanOld) || !Double.isNaN(deviationOld))) {
          throw new RuntimeException("Old data need to be not defined at all or contain a count of calls, a mean and a deviation!");
       }
-      
+
       if (calls == 0 && (!Double.isNaN(meanCurrent) || !Double.isNaN(deviationCurrent))) {
          throw new RuntimeException("Current data need to be not defined at all or contain a count of calls, a mean and a deviation!");
       }
@@ -150,7 +143,7 @@ public class TestcaseStatistic {
    public void setChange(final Boolean isChange) {
       this.isChange = isChange;
    }
-   
+
    @JsonInclude(Include.NON_NULL)
    public Boolean getIsBimodal() {
       return isBimodal;

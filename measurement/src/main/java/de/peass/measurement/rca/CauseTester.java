@@ -47,7 +47,9 @@ public class CauseTester extends AdaptiveTester {
       this.testcase = causeConfig.getTestCase();
       this.causeConfig = causeConfig;
       this.folders = project;
-      testgenerator.setAdaptiveExecution(true);
+      if (!testgenerator.getConfig().isUseSelectiveInstrumentation()) {
+         testgenerator.setAdaptiveExecution(true);
+      }
       testgenerator.setAggregatedWriter(causeConfig.isUseAggregation());
       testgenerator.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
    }

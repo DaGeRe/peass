@@ -73,9 +73,8 @@ public class DescribedChunk {
    public TestcaseStatistic getStatistic(final double type1error, final double type2error) {
 //      final boolean isChange = StatisticUtil.agnosticTTest(descPrev, descCurrent, type1error, type2error) == de.peass.measurement.analysis.Relation.UNEQUAL;
       final boolean isChange = StatisticUtil.bimodalTTest(previous, current, type1error) != de.peass.measurement.analysis.Relation.EQUAL;
-      final TestcaseStatistic statistic = new TestcaseStatistic(descPrev.getMean(), descCurrent.getMean(),
-            descPrev.getStandardDeviation() / descPrev.getMean(), descCurrent.getStandardDeviation() / descCurrent.getMean(), -1,
-            descPrev.getN() >= 2 ? TestUtils.t(descPrev, descCurrent) : 0, isChange, descPrev.getN(), descCurrent.getN());
+      TestcaseStatistic statistic = new TestcaseStatistic(descPrev, descCurrent, descPrev.getN(), descCurrent.getN());
+      statistic.setChange(isChange);
       statistic.setIsBimodal(StatisticUtil.isBimodal(previous, current));
       return statistic;
    }

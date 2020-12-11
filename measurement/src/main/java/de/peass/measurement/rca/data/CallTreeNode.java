@@ -176,18 +176,18 @@ public class CallTreeNode extends BasicNode {
       final SummaryStatistics previous = previousVersionStatistics.getStatistics();
 
       if (firstHasValues(current, previous)) {
-         return new TestcaseStatistic(Double.NaN, current.getMean(),
-               Double.NaN, current.getStandardDeviation(),
-               current.getN(), Double.NaN, true, 0, currentVersionStatistics.getCalls());
+         final TestcaseStatistic testcaseStatistic = new TestcaseStatistic(previous, current, 0, currentVersionStatistics.getCalls());
+         testcaseStatistic.setChange(true);
+         return testcaseStatistic;
       } else if (firstHasValues(previous, current)) {
-         return new TestcaseStatistic(previous.getMean(), Double.NaN,
-               previous.getStandardDeviation(), Double.NaN,
-               previous.getN(), Double.NaN, true, previousVersionStatistics.getCalls(), 0);
+         final TestcaseStatistic testcaseStatistic = new TestcaseStatistic(previous, current, previousVersionStatistics.getCalls(), 0);
+         testcaseStatistic.setChange(true);
+         return testcaseStatistic;
       } else if ((current == null || current.getN() == 0) && (previous == null || previous.getN() == 0)) {
          LOG.error("Could not measure {}", this);
-         return new TestcaseStatistic(Double.NaN, Double.NaN,
-               Double.NaN, Double.NaN,
-               0, Double.NaN, false, 0, 0);
+         final TestcaseStatistic testcaseStatistic = new TestcaseStatistic(previous, current, 0, 0);
+         testcaseStatistic.setChange(true);
+         return testcaseStatistic;
       } else {
          throw new RuntimeException("Partial statistics should exactly be created if one node is unmeasurable");
       }
