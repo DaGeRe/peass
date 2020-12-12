@@ -167,21 +167,48 @@ public class DependencyTester implements KiekerResultHandler {
       currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, testTransformer.getConfig().isUseKieker(), false, testcase,
             testTransformer.getConfig().getIterations());
 
+      String[] versions = getVersions();
+      
       if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.SEQUENTIAL)) {
-         runSequential(logFolder, testcase, vmid);
+         runSequential(logFolder, testcase, vmid, versions);
       } else if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.PARALLEL)) {
-         
+         runParallel(logFolder, testcase, vmid, versions);
       }
    }
 
-   private void runSequential(final File logFolder, final TestCase testcase, final int vmid) throws IOException, InterruptedException, JAXBException {
-      if (configuration.getVersionOld().equals("HEAD~1")) {
-         runOnce(testcase, configuration.getVersion() + "~1", vmid, logFolder);
-      } else {
-         runOnce(testcase, configuration.getVersionOld(), vmid, logFolder);
-      }
+   private String[] getVersions() {
+      String versions[] = new String[2];
+      versions[0] = configuration.getVersionOld().equals("HEAD~1") ? configuration.getVersion() + "~1" : configuration.getVersionOld();
+      versions[1] = configuration.getVersion();
+      return versions;
+   }
 
-      runOnce(testcase, configuration.getVersion(), vmid, logFolder);
+   private void runParallel(final File logFolder, final TestCase testcase, final int vmid, String[] versions) throws InterruptedException {
+      Thread[] threads = new Thread[2];
+      for (int i = 0; i < 2; i++) {
+         final String version = versions[i];
+         threads[i] = new Thread(new Runnable() {
+            @Override
+            public void run() {
+               OnceRunner runner = new OnceRunner(folders, vcs, testTransformer, testExecutor, currentOrganizer, DependencyTester.this);
+               try {
+                  runner.runOnce(testcase, version, vmid, logFolder);
+               } catch (IOException | InterruptedException | JAXBException e) {
+                  e.printStackTrace();
+               }
+            }
+         });
+         threads[i].start();
+      }
+      for (int i = 0; i < 2; i++) {
+         threads[i].join();
+      }
+   }
+
+   private void runSequential(final File logFolder, final TestCase testcase, final int vmid, String versions[]) throws IOException, InterruptedException, JAXBException {
+      for (String version : versions) {
+         runOnce(testcase, version, vmid, logFolder);
+      }
    }
 
    public File getLogFolder(final String version, final TestCase testcase) {

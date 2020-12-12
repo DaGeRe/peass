@@ -105,11 +105,8 @@ public class ResultOrganizer {
          } else {
             LOG.debug("Reading: {}", oneResultFile);
             final XMLDataLoader xdl = new XMLDataLoader(oneResultFile);
-            // xdl.readFulldataValues();
             final Kopemedata oneResultData = xdl.getFullData();
             final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
-            // final String clazz = oneResultData.getTestcases().getClazz();
-            // final TestCase realTestcase = new TestCase(clazz, methodname);
             if (testcaseList.size() > 0) {
                saveResults(version, vmid, oneResultFile, oneResultData, testcaseList);
 

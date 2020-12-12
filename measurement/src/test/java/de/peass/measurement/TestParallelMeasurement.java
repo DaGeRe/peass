@@ -33,7 +33,6 @@ public class TestParallelMeasurement {
    @Rule
    public TemporaryFolder folder = new TemporaryFolder();
 
-   @Ignore
    @Test
    public void testFiles() throws IOException, InterruptedException, JAXBException {
       final PeASSFolders folders = new PeASSFolders(folder.getRoot());
