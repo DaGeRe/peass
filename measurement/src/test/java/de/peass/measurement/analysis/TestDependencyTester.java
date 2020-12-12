@@ -33,6 +33,8 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependencyprocessors.DependencyTester;
+import de.peass.measurement.MavenTestExecutorMocker;
+import de.peass.measurement.rca.helper.VCSTestUtils;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.VersionControlSystem;
 
@@ -41,6 +43,8 @@ import de.peass.vcs.VersionControlSystem;
 @PowerMockIgnore("javax.management.*")
 public class TestDependencyTester {
 
+   public static final TestCase EXAMPLE_TESTCASE = new TestCase("de.peass.MyTest", "test");
+   
    @Rule
    public TemporaryFolder folder = new TemporaryFolder();
 
@@ -52,30 +56,19 @@ public class TestDependencyTester {
       final JUnitTestTransformer testTransformer = Mockito.mock(JUnitTestTransformer.class);
       Mockito.when(testTransformer.getConfig()).thenReturn(configuration);
 
-      final TestExecutor mockedExecutor = Mockito.mock(TestExecutor.class);
-      Mockito.doAnswer(new Answer<Void>() {
+      MavenTestExecutorMocker.mockExecutor(folders);
 
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            writeValue(folders, 100);
-            return null;
-         }
-
-      }).when(mockedExecutor).executeTest(Mockito.any(), Mockito.any(), Mockito.anyLong());
-
-      PowerMockito.mockStatic(ExecutorCreator.class);
-      PowerMockito.when(ExecutorCreator.createExecutor(Mockito.any(), Mockito.any()))
-            .thenReturn(mockedExecutor);
-
-      PowerMockito.mockStatic(VersionControlSystem.class);
-      PowerMockito.when(VersionControlSystem.getVersionControlSystem(folder.getRoot()))
-            .thenReturn(VersionControlSystem.GIT);
+      VCSTestUtils.mockGetVCS();
 
       final DependencyTester tester = new DependencyTester(folders, testTransformer);
+      
+      tester.evaluate(EXAMPLE_TESTCASE);
 
-      tester.evaluate(new TestCase("de.peass.MyTest", "test"));
+      checkResult(folders);
+   }
 
-      final File expectedShortresultFile = new File(folders.getFullMeasurementFolder(), "MyTest_test.xml");
+   public static void checkResult(final PeASSFolders folders) throws JAXBException {
+      final File expectedShortresultFile = new File(folders.getFullMeasurementFolder(), EXAMPLE_TESTCASE.getShortClazz() + "_" + EXAMPLE_TESTCASE.getMethod() + ".xml");
       Assert.assertTrue(expectedShortresultFile.exists());
 
       final Kopemedata data = XMLDataLoader.loadData(expectedShortresultFile);
@@ -86,38 +79,5 @@ public class TestDependencyTester {
       Assert.assertEquals(11, chunk.getResult().get(0).getExecutionTimes());
       Assert.assertEquals(10, chunk.getResult().get(0).getWarmupExecutions());
    }
-
-   public void writeValue(final PeASSFolders folders, final int average) throws JAXBException {
-      final File measurementFile = new File(folders.getTempMeasurementFolder(), "de.peass.MyTest");
-      measurementFile.mkdirs();
-      final XMLDataStorer storer = new XMLDataStorer(measurementFile, "de.peass.MyTest", "test");
-      Result result = buildResult(average);
-      buildFulldata(average, result);
-
-      storer.storeValue(result, "de.peass.MyTest", TimeDataCollector.class.getName());
-   }
-
-   private void buildFulldata(final int average, Result result) {
-      final Fulldata values = new Fulldata();
-      for (long i = average - 10; i <= average + 10; i++) {
-         Value value = new Value();
-         value.setStart(i);
-         value.setValue(i);
-         values.getValue().add(value);
-         // values.put(i, i);
-      }
-      result.setFulldata(values);
-   }
-
-   private Result buildResult(final int average) {
-      Result result = new Result();
-      result.setValue(average);
-      result.setDeviation(1);
-      result.setMin(0D);
-      result.setMax(20D);
-      result.setRepetitions(5);
-      result.setWarmupExecutions(10);
-      result.setExecutionTimes(11);
-      return result;
-   }
+   
 }

@@ -105,7 +105,7 @@ public class CauseTester extends AdaptiveTester {
          });
       }
       testExecutor.setIncludedMethods(includedPattern);
-      currentOrganizer = new ResultOrganizer(folders, currentVersion, currentChunkStart,
+      currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart,
             testTransformer.getConfig().isUseKieker(), causeConfig.isSaveAll(), testcase,
             testTransformer.getConfig().getIterations());
       super.runOnce(testcase, version, vmid, logFolder);
@@ -140,7 +140,7 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   protected void handleKiekerResults(final String version, final File versionResultFolder) {
+   public void handleKiekerResults(final String version, final File versionResultFolder) {
       if (currentOrganizer.testSuccess()) {
          LOG.info("Did succeed in measurement - analyse values");
          final KiekerResultReader kiekerResultReader = new KiekerResultReader(causeConfig.isUseAggregation(), includedNodes, version, versionResultFolder, testcase,
@@ -204,9 +204,5 @@ public class CauseTester extends AdaptiveTester {
       manager.runOnce(test, version, 0, new File("log"));
       // manager.evaluate(test);
 
-   }
-
-   public void setCurrentVersion(String version) {
-      currentVersion = version;
    }
 }

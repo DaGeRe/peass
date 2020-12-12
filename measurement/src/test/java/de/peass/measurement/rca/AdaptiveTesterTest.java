@@ -28,6 +28,7 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MavenTestExecutor;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.AdaptiveTester;
+import de.peass.measurement.MavenTestExecutorMocker;
 import de.peass.measurement.analysis.ResultLoader;
 import de.peass.measurement.rca.helper.VCSTestUtils;
 import de.peass.testtransformation.JUnitTestTransformer;
@@ -48,7 +49,7 @@ public class AdaptiveTesterTest {
    @Before
    public void setup() {
       VCSTestUtils.mockGetVCS();
-      mockExecutor();
+      MavenTestExecutorMocker.mockExecutor();
    }
 
    @Test
@@ -161,17 +162,5 @@ public class AdaptiveTesterTest {
       return tester2;
    }
 
-   private void mockExecutor() {
-      final MavenTestExecutor manager = Mockito.mock(MavenTestExecutor.class);
-
-      PowerMockito.mockStatic(ExecutorCreator.class);
-      PowerMockito.doAnswer(new Answer<MavenTestExecutor>() {
-
-         @Override
-         public MavenTestExecutor answer(final InvocationOnMock invocation) throws Throwable {
-            return manager;
-         }
-      }).when(ExecutorCreator.class);
-      ExecutorCreator.createExecutor(Mockito.any(PeASSFolders.class), Mockito.any(JUnitTestTransformer.class));
-   }
+   
 }
