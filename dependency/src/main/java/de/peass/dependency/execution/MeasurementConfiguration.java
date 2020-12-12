@@ -26,6 +26,7 @@ public class MeasurementConfiguration {
    private int kiekerAggregationInterval = 5000;
    private String javaVersion = System.getProperty("java.version");
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
+   private MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
 
    private String version;
    private String versionOld;
@@ -72,6 +73,7 @@ public class MeasurementConfiguration {
       setRepetitions(mixin.getRepetitions());
       setUseGC(mixin.isUseGC());
       setRecord(mixin.getRecord());
+      setMeasurementStrategy(mixin.getMeasurementStrategy());
    }
 
    @JsonCreator
@@ -279,5 +281,13 @@ public class MeasurementConfiguration {
 
    public void setUseSelectiveInstrumentation(boolean useSelectiveInstrumentation) {
       this.useSelectiveInstrumentation = useSelectiveInstrumentation;
+   }
+   
+   public MeasurementStrategy getMeasurementStrategy() {
+      return measurementStrategy;
+   }
+   
+   public void setMeasurementStrategy(MeasurementStrategy measurementStrategy) {
+      this.measurementStrategy = measurementStrategy;
    }
 }

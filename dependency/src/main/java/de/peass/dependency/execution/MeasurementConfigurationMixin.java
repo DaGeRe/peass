@@ -40,6 +40,10 @@ public class MeasurementConfigurationMixin {
 
    @Option(names = { "-record", "--record" }, description = "Kieker Record type to use for monitoring ")
    protected AllowedKiekerRecord record;
+   
+   @Option(names = { "-measurementStrategy", "--measurementStrategy" }, description = "Measurement strategy (Default: SEQUENTIAL) ")
+   protected MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
+
 
    public int getVms() {
       return vms;
@@ -137,4 +141,12 @@ public class MeasurementConfigurationMixin {
       this.record = record;
    }
 
+   public void setMeasurementStrategy(MeasurementStrategy measurementStrategy) {
+      this.measurementStrategy = measurementStrategy;
+   }
+   
+   public MeasurementStrategy getMeasurementStrategy() {
+      return measurementStrategy;
+   }
+   
 }

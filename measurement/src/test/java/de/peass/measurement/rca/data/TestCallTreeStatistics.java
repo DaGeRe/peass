@@ -1,4 +1,4 @@
-package de.peass.measurement.rca;
+package de.peass.measurement.rca.data;
 
 import org.hamcrest.number.IsNaN;
 import org.junit.Assert;

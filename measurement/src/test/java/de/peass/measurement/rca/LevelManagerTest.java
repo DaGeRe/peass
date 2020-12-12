@@ -1,4 +1,4 @@
-package de.peass.measurement;
+package de.peass.measurement.rca;
 
 import java.util.LinkedList;
 
@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import de.peass.measurement.PersistedTestDataBuilder;
 import de.peass.measurement.rca.LevelManager;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;

@@ -1,4 +1,4 @@
-package de.peass.measurement.rca;
+package de.peass.measurement.rca.data;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
