@@ -170,8 +170,10 @@ public class DependencyTester implements KiekerResultHandler {
       String[] versions = getVersions();
       
       if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.SEQUENTIAL)) {
+         LOG.info("Running sequential");
          runSequential(logFolder, testcase, vmid, versions);
       } else if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.PARALLEL)) {
+         System.out.println("Running parallel");
          runParallel(logFolder, testcase, vmid, versions);
       }
    }

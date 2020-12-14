@@ -166,7 +166,7 @@ public class KiekerResultManager {
    public static File getXMLFileFolder(final PeASSFolders folders, final File moduleFolder) throws FileNotFoundException, IOException, XmlPullParserException {
       File xmlFileFolder = null;
       final BuildtoolProjectNameReader buildtoolProjectNameReader = new BuildtoolProjectNameReader();
-      if (buildtoolProjectNameReader.foundPomXml(moduleFolder, 1)) {
+      if (buildtoolProjectNameReader.searchBuildfile(moduleFolder, 1)) {
          final String name = buildtoolProjectNameReader.getProjectName();
          xmlFileFolder = new File(folders.getTempMeasurementFolder(), name);
       }

@@ -79,7 +79,7 @@
 		<dependency>
 			<groupId>com.github.javaparser</groupId>
 			<artifactId>javaparser-core</artifactId>
-			<version>3.17.0</version>
+			<version>3.18.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
@@ -151,7 +151,7 @@
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-astbuilder</artifactId>
-			<version>3.0.6</version>
+			<version>3.0.7</version>
 		</dependency>
 	</dependencies>
 

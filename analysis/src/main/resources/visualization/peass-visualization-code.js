@@ -244,7 +244,8 @@ function shownode(node) {
     var sourceCurrent = source["current"][node.key];
     var sourceOld = source["old"][node.key];
     if (sourceCurrent == sourceOld) {
-    	quelltext.innerHTML="<pre>" + source["current"][node.key] +"</pre>";
+    	const highlightedCode = hljs.highlight("java", source["current"][node.key]).value;
+    	quelltext.innerHTML="<pre>"+highlightedCode+"</pre>";
     } else {
     	diffUsingJS(sourceOld, sourceCurrent, quelltext);
     }
