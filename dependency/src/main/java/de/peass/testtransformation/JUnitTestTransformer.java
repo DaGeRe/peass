@@ -458,6 +458,9 @@ public class JUnitTestTransformer {
          if (testFound && !performanceTestFound) {
             if (!method.isPublic()) {
                method.setPublic(true);
+               method.setPrivate(false);
+               method.setProtected(false);
+               method.setDefault(false);
             }
             addAnnotation(method);
          }

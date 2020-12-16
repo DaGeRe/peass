@@ -203,6 +203,11 @@ public class CauseTester extends AdaptiveTester {
       manager.setIncludedMethods(nodes);
       manager.runOnce(test, version, 0, new File("log"));
       // manager.evaluate(test);
-
    }
+
+   public void setCurrentVersion(String version) {
+      configuration.setVersion(version);
+      configuration.setVersionOld(version + "~1");
+   }
+   
 }

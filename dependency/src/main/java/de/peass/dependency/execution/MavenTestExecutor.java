@@ -55,6 +55,7 @@ public class MavenTestExecutor extends TestExecutor {
 
    private static final Logger LOG = LogManager.getLogger(MavenTestExecutor.class);
 
+   /** M5 has some problems finding JUnit 5 tests; so stay at M3 */
    public static final String SUREFIRE_VERSION = "3.0.0-M3";
    public static final String JAVA_VERSION = "1.8";
 

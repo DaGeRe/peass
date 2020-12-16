@@ -70,7 +70,7 @@ public final class GitUtils {
          final String repofolderName = System.getenv(Constants.PEASS_REPOS);
          File repoFolder = new File(repofolderName);
          File dependencyFolder = new File(repoFolder, "dependencies-final");
-         String project = url.substring(url.lastIndexOf("/")+1, url.lastIndexOf('.'));
+         String project = url.substring(url.lastIndexOf("/") + 1, url.lastIndexOf('.'));
          File dependencyfile = new File(dependencyFolder, "deps_" + project + ".json");
          LOG.debug("Searching: {}", dependencyfile);
          if (dependencyfile.exists()) {
@@ -79,7 +79,7 @@ public final class GitUtils {
             repoFound = true;
          }
       }
-      
+
       if (!repoFound) {
          final File tempDir = Files.createTempDirectory("gitTemp").toFile();
          GitUtils.downloadProject(url, tempDir);
@@ -101,11 +101,14 @@ public final class GitUtils {
       clone(projectFolderTemp, projectFolder);
    }
 
-   private static void clone(final File projectFolderSource, final File projectFolderDest) throws InterruptedException, IOException {
-      final String clonedProject = projectFolderDest.getAbsolutePath();
-      final String goalFolder = projectFolderSource.getName();
+   private static void clone(final File projectFolderDest, final File projectFolderSource) throws InterruptedException, IOException {
+      final String clonedProject = projectFolderSource.getAbsolutePath();
+      final String goalFolder = projectFolderDest.getName();
+      if (projectFolderDest.exists()) {
+         throw new RuntimeException("Can not clone to existing folder: " + projectFolderDest.getAbsolutePath());
+      }
       final ProcessBuilder builder = new ProcessBuilder("git", "clone", clonedProject, goalFolder);
-      builder.directory(projectFolderSource.getParentFile());
+      builder.directory(projectFolderDest.getParentFile());
       builder.start().waitFor();
    }
 
@@ -290,7 +293,7 @@ public final class GitUtils {
       }
       return -1;
    }
-   
+
    public static void pull(final File projectFolder) {
       synchronized (projectFolder) {
          LOG.debug("Pulling", projectFolder.getAbsolutePath());

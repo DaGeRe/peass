@@ -117,6 +117,9 @@ public class MavenPomUtil {
          if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
             dependency.setVersion("4.13");
          }
+         if (dependency.getArtifactId().equals("junit-jupiter") && dependency.getGroupId().equals("org.junit.jupiter")) {
+            dependency.setVersion("5.7.0");
+         }
       }
 
       final List<Dependency> dependencies = model.getDependencies();
@@ -245,7 +248,8 @@ public class MavenPomUtil {
 
       Xpp3Dom argLine = conf.getChild("argLine");
       if (argLine != null) {
-         final String changedArgLine = argLine.getValue().contains("-Xmx") ? argLine.getValue().replaceAll("-Xmx[0-9]{0,3}[mM]", "-Xmx1g") : argLine.getValue();
+         String changedArgLine = argLine.getValue().contains("-Xmx") ? argLine.getValue().replaceAll("-Xmx[0-9]{0,3}[mM]", "-Xmx1g") : argLine.getValue();
+         changedArgLine = changedArgLine.replaceAll("$\\{argLine\\}", "");
          argLine.setValue(changedArgLine + " " + additionalArgLine);
       } else {
          argLine = new Xpp3Dom("argLine");
