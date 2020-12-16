@@ -421,9 +421,7 @@ public class JUnitTestTransformer {
             }
          }
          if (testFound && !performanceTestFound) {
-            if (!method.isPublic()) {
-               method.setPublic(true);
-            }
+            setPublic(method);
             addAnnotation(method);
          }
       }
@@ -456,14 +454,18 @@ public class JUnitTestTransformer {
             }
          }
          if (testFound && !performanceTestFound) {
-            if (!method.isPublic()) {
-               method.setPublic(true);
-               method.setPrivate(false);
-               method.setProtected(false);
-               method.setDefault(false);
-            }
+            setPublic(method);
             addAnnotation(method);
          }
+      }
+   }
+
+   private void setPublic(final MethodDeclaration method) {
+      if (!method.isPublic()) {
+         method.setPublic(true);
+         method.setPrivate(false);
+         method.setProtected(false);
+         method.setDefault(false);
       }
    }
 

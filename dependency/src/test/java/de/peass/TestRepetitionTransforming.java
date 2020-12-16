@@ -101,6 +101,32 @@ public class TestRepetitionTransforming {
 			System.out.println(n);
 		}
 	}
+	
+	@Test
+   public void testJUnit5ProtectedTransformation() throws IOException {
+      final File old2 = new File(RESOURCE_FOLDER, "TestMe8.java");
+      final File testFile2 = new File(SOURCE_FOLDER, "TestMe8.java");
+      FileUtils.copyFile(old2, testFile2);
+
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
+      tt.transformTests();
+
+      final CompilationUnit cu = JavaParserProvider.parse(testFile2);
+
+      final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMe8").get();
+      Assert.assertNotNull(clazz);
+      
+      final List<MethodDeclaration> methodsByName = clazz.getMethodsByName("testMethod1");
+      Assert.assertThat(methodsByName, Matchers.hasSize(1));
+
+      final MethodDeclaration testMethod = methodsByName.get(0);
+
+      final AnnotationExpr performanceTestAnnotation = testMethod.getAnnotationByName("PerformanceTest").get();
+      Assert.assertNotNull(performanceTestAnnotation);
+      Assert.assertTrue(testMethod.isPublic());
+      Assert.assertFalse(testMethod.isProtected());
+	}
 
 	@Test
 	public void testMe() throws IOException {
