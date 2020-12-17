@@ -15,6 +15,11 @@ import org.apache.logging.log4j.Logger;
 
 import de.peass.dependency.execution.GradleParseUtil;
 
+/**
+ * Manages allowed android versions; all allowed android-versions should be specified in dependency/src/main/resources/allowed_android_versions.txt
+ * @author reichelt
+ *
+ */
 public class AndroidVersionUtil {
 
    private static final Logger LOG = LogManager.getLogger(AndroidVersionUtil.class);
@@ -24,7 +29,7 @@ public class AndroidVersionUtil {
 
    static {
       final ClassLoader classLoader = GradleParseUtil.class.getClassLoader();
-      final File versionFile = new File(classLoader.getResource("versions.txt").getFile());
+      final File versionFile = new File(classLoader.getResource("allowed_android_versions.txt").getFile());
       if (versionFile.exists()) {
          try {
             final List<String> runningAndroidVersions = Files.readAllLines(Paths.get(versionFile.toURI()));
