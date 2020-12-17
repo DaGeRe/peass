@@ -87,7 +87,7 @@ public class KiekerFolderUtil {
       for (final File kiekerFolder : listFiles) {
          LOG.debug("Analysing Folder: {} {}", kiekerFolder.getAbsolutePath(), testMethodName);
          final File kiekerNextFolder = new File(kiekerFolder, testMethodName);
-         if (kiekerNextFolder.exists()) {
+         if (kiekerNextFolder.exists() && kiekerNextFolder.listFiles().length > 0) {
             final File kiekerResultFolder = kiekerNextFolder.listFiles()[0];
             LOG.debug("Test: " + testMethodName);
             return kiekerResultFolder;

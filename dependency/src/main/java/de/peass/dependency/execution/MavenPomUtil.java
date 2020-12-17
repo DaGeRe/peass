@@ -124,7 +124,7 @@ public class MavenPomUtil {
 
       final List<Dependency> dependencies = model.getDependencies();
 
-      final String scope = "test";
+      final String scope = "";
       if (junit3) {
          final Dependency kopeme_dependency = getDependency("de.dagere.kopeme", KOPEME_VERSION, scope, "kopeme-junit3");
          dependencies.add(kopeme_dependency);

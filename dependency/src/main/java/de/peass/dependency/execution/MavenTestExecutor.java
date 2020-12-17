@@ -206,8 +206,8 @@ public class MavenTestExecutor extends TestExecutor {
             instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
             if (testTransformer.isAdaptiveExecution()) {
                writeConfig();
-               generateKiekerMonitoringProperties(testTransformer.getConfig().isUseCircularQueue());
             }
+            generateKiekerMonitoringProperties(testTransformer.getConfig().isUseCircularQueue());
          } else {
             if (testTransformer.isAdaptiveExecution()) {
                prepareAdaptiveExecution();

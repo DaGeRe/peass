@@ -2,14 +2,14 @@ package de.peass.dependency.execution.gradle;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,10 +29,10 @@ public class AndroidVersionUtil {
 
    static {
       final ClassLoader classLoader = GradleParseUtil.class.getClassLoader();
-      final File versionFile = new File(classLoader.getResource("allowed_android_versions.txt").getFile());
-      if (versionFile.exists()) {
+      final URL versionFile = classLoader.getResource("allowed_android_versions.txt");
+      if (versionFile != null) {
          try {
-            final List<String> runningAndroidVersions = Files.readAllLines(Paths.get(versionFile.toURI()));
+            final String[] runningAndroidVersions = IOUtils.toString(versionFile, Charset.defaultCharset()).split("\n");
             for (final String line : runningAndroidVersions) {
                final String version = line.substring(line.indexOf(';') + 1);
                versions.put(getMajorVersion(version), version);
