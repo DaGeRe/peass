@@ -370,11 +370,6 @@ public class MavenTestExecutor extends TestExecutor {
             if (testTransformer.isIgnoreEOIs()) {
                writerConfig += " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.ignoreEOIs=true";
             }
-
-            // if (testTransformer.isSplitAggregated()) {
-            // writerConfig += " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.aggregateSplitted=true";
-            // }
-
          } else {
             writerConfig = "";
          }

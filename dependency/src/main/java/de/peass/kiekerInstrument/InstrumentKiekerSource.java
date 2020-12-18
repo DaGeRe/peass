@@ -74,15 +74,17 @@ public class InstrumentKiekerSource {
 
    public void instrument(File file) throws IOException {
       CompilationUnit unit = JavaParserProvider.parse(file); // TODO Package
-      addImports(unit);
 
       ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
       String packageName = unit.getPackageDeclaration().get().getNameAsString();
       String name = packageName + "." + clazz.getNameAsString();
 
-      handleChildren(clazz, name);
-
-      Files.write(file.toPath(), unit.toString().getBytes(StandardCharsets.UTF_8));
+      boolean fileContainsChange = handleChildren(clazz, name);
+     
+      if (fileContainsChange) {
+         addImports(unit);
+         Files.write(file.toPath(), unit.toString().getBytes(StandardCharsets.UTF_8));
+      }
    }
 
    private void addImports(CompilationUnit unit) {
@@ -92,7 +94,8 @@ public class InstrumentKiekerSource {
       unit.addImport(usedRecord.getRecord());
    }
 
-   private void handleChildren(ClassOrInterfaceDeclaration clazz, String name) {
+   private boolean handleChildren(ClassOrInterfaceDeclaration clazz, String name) {
+      boolean oneHasChanged = false;
       for (Node child : clazz.getChildNodes()) {
          if (child instanceof MethodDeclaration) {
             MethodDeclaration method = (MethodDeclaration) child;
@@ -106,6 +109,7 @@ public class InstrumentKiekerSource {
                   BlockStmt replacedStatement = blockBuilder.buildStatement(originalBlock, signature, method.getType().toString().equals("void"));
 
                   method.setBody(replacedStatement);
+                  oneHasChanged = true;
                }
             } else {
                LOG.info("Unable to instrument " + name + "." + method.getNameAsString() + " because it has no body");
@@ -119,9 +123,11 @@ public class InstrumentKiekerSource {
                BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, signature, true);
 
                constructor.setBody(replacedStatement);
+               oneHasChanged = true;
             }
          }
       }
+      return oneHasChanged;
    }
 
    private boolean testSignatureMatch(String signature) {

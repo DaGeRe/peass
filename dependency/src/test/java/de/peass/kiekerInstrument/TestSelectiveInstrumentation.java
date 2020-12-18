@@ -41,5 +41,6 @@ public class TestSelectiveInstrumentation {
       Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("MonitoringController.getInstance().isMonitoringEnabled()")));
       Assert.assertThat(changedSource, Matchers.not(Matchers.containsString(fqn)));
       Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("new OperationExecutionRecord")));
+      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("kieker.monitoring.core.controller.MonitoringController")));
    }
 }

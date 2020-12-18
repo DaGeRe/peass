@@ -53,6 +53,7 @@ public class TestTraceMethodReader {
    public void testTraceLengthSimpleFor() throws ParseException, IOException {
       final ProcessBuilder builder = new ProcessBuilder("java",
             "-javaagent:" + MavenTestExecutor.KIEKER_ASPECTJ_JAR,
+            "-Dorg.aspectj.weaver.loadtime.configuration=file:src/test/resources/aop.xml",
             "-cp", KOPEME_JAR + ":target/test-classes/",
             "de.peass.example.CallerSimpleFor");
       final Process process = builder.start();
@@ -78,6 +79,7 @@ public class TestTraceMethodReader {
    public void testTraceLengthLongFor() throws ParseException, IOException {
       final ProcessBuilder builder = new ProcessBuilder("java",
             "-javaagent:" + MavenTestExecutor.KIEKER_ASPECTJ_JAR,
+            "-Dorg.aspectj.weaver.loadtime.configuration=file:src/test/resources/aop.xml",
             "-cp", KOPEME_JAR + ":target/test-classes/",
             "de.peass.example.CallerLongFor");
       final Process process = builder.start();
