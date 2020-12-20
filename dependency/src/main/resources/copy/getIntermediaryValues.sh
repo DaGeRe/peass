@@ -49,9 +49,9 @@ then
 	cat ${files[1]}/testMe* | grep "<value>" | tr -d "<value/>" | sort > level/predecessor.csv 
 	
 	writeValues ${files[0]}/ level/temp1.csv
-	cat level/temp1.csv | sort -k 2 > level/current_vals.csv
+	cat level/temp1.csv | sort -k 2 | awk '{print $2}' > level/current_vals.csv
 	writeValues ${files[1]}/ level/temp2.csv
-	cat level/temp2.csv | sort -k 2 > level/predecessor_vals.csv
+	cat level/temp2.csv | sort -k 2 | awk '{print $2}' > level/predecessor_vals.csv
 	
 	echo "Measured KoPeMe"
 	echo -n "Predecessor: "
