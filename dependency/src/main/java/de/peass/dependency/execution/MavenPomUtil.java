@@ -136,9 +136,6 @@ public class MavenPomUtil {
       final Dependency kieker_dependency2 = getDependency("net.kieker-monitoring", "1.14", "", "kieker");
       dependencies.add(kieker_dependency2);
       
-      final Dependency collections_dependency = getDependency("org.apache.commons", "4.4", "test", "commons-collections4");
-      dependencies.add(collections_dependency);
-
       // Workaround: Add newer AspectJ, until Kieker updates its dependency
       final Dependency aspectj = getDependency("org.aspectj", "1.8.13", scope, "aspectjweaver");
       dependencies.add(0, aspectj);

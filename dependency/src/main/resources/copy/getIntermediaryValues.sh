@@ -39,6 +39,17 @@ function writeValues {
 	done
 }
 
+function printValues {
+	filePredecessor=$1
+	fileCurrent=$2
+	echo -n "Predecessor: "
+	cat $filePredecessor | getSum
+	echo -n "Current: "
+	cat $fileCurrent | getSum
+	printTValue $filePredecessor $fileCurrent
+	
+}
+
 files=(level/*/*/*)
 
 if [ ${#files[@]} -gt 1 ]
@@ -54,19 +65,11 @@ then
 	cat level/temp2.csv | sort -k 2 | awk '{print $2}' > level/predecessor_vals.csv
 	
 	echo "Measured KoPeMe"
-	echo -n "Predecessor: "
-	cat level/predecessor.csv | getSum
-	echo -n "Current: "
-	cat level/current.csv | getSum
-	printTValue level/predecessor.csv level/current.csv
+	printValues level/predecessor.csv level/current.csv
 	echo
 	
 	echo "Measured Kieker"
-	echo -n "Predecessor: "
-	cat level/predecessor_vals.csv | getSum
-	echo -n "Current: "
-	cat level/current_vals.csv | getSum
-	printTValue level/predecessor_vals.csv level/current_vals.csv
+	printValues level/predecessor_vals.csv level/current_vals.csv
 else
 	echo "No measurement values yet"
 fi

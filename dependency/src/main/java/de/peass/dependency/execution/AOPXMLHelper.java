@@ -33,7 +33,7 @@ public class AOPXMLHelper {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(goalFile))) {
          writer.write("kieker.monitoring.name=KIEKER-KoPeMe\n");
          if (useFastMeasurement) {
-            writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueFQN=org.apache.commons.collections4.queue.CircularFifoQueue\n");
+            writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueFQN=de.dagere.kopeme.collections.SynchronizedCircularFifoQueue\n");
             writer.write("kieker.monitoring.core.controller.WriterController.QueuePutStrategy=kieker.monitoring.queue.putstrategy.YieldPutStrategy\n");
             writer.write("kieker.monitoring.core.controller.WriterController.QueueTakeStrategy=kieker.monitoring.queue.takestrategy.YieldTakeStrategy\n");
          } else {

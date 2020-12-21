@@ -51,7 +51,7 @@ public class ViewGenerator extends PairProcessor {
    }
 
    public ViewGenerator() throws ParseException, JAXBException, JsonParseException, JsonMappingException, IOException {
-
+      timeoutInMinutes = 5;
    }
 
    public void init() {
