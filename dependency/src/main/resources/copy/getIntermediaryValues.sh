@@ -30,7 +30,7 @@ function writeValues {
 	for file in $(ls $source/ | grep -v "testMe")
 	do
 		cat $source/$file/testMe/kieker*/*csv | awk -F';' '{print $5}' | tail -n 3 | getSum >> $target
-		current=$(cat $source/$file/testMe/kieker*/*csv | awk -F';' '{sum+=$7} END {print sum}')
+		current=$(cat $source/$file/*/kieker*/*csv | awk -F';' '{sum+=$7} END {print sum}')
 		if [ ! $before == $current ]
 		then
 			echo "Changed value count: $current"
