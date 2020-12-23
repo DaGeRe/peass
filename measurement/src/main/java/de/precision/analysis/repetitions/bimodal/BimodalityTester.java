@@ -42,6 +42,14 @@ public class BimodalityTester {
          }
       }
    }
+   
+   public IsBimodal getDataBefore() {
+      return dataBefore;
+   }
+   
+   public IsBimodal getDataAfter() {
+      return dataAfter;
+   }
 
    public boolean isTChange(double significance) {
       if (isBimodal) {

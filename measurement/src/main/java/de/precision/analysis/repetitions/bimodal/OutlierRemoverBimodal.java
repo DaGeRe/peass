@@ -1,9 +1,13 @@
 package de.precision.analysis.repetitions.bimodal;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+import org.codehaus.groovy.runtime.ArrayUtil;
 
 import de.dagere.kopeme.generated.Result;
 import de.peass.measurement.analysis.MultipleVMTestUtil;
@@ -55,5 +59,51 @@ public class OutlierRemoverBimodal {
             }
          }
       }
+   }
+
+   public static CompareData removeOutliers(CompareData data) {
+      CompareData result;
+      final BimodalityTester isBismodal = new BimodalityTester(data);
+      if (isBismodal.isBimodal()) {
+         double[] valuesBefore = removeOutliersBimodal(data.getBefore(), isBismodal.getDataBefore());
+         double[] valuesAfter = removeOutliersBimodal(data.getAfter(), isBismodal.getDataAfter());
+         result = new CompareData(valuesBefore, valuesAfter);
+      } else {
+         double[] valuesBefore = removeOutliers(data.getBefore(), data.getBeforeStat());
+         double[] valuesAfter = removeOutliers(data.getAfter(), data.getAfterStat());
+         result = new CompareData(valuesBefore, valuesAfter);
+      }
+      return result;
+   }
+
+   private static double[] removeOutliersBimodal(double[] values, final IsBimodal beforeData) {
+      List<Double> containedValues = new LinkedList<>();
+      for (double value : values) {
+         if (value < beforeData.getAvgValue()) {
+            double zscore = Math.abs(value - beforeData.getStat1().getMean()) / beforeData.getStat1().getStandardDeviation();
+            if (!(zscore > OutlierRemover.Z_SCORE)) {
+               containedValues.add(value);
+            }
+         } else {
+            double zscore = Math.abs(value - beforeData.getStat2().getMean()) / beforeData.getStat2().getStandardDeviation();
+            if (!(zscore > OutlierRemover.Z_SCORE)) {
+               containedValues.add(value);
+            }
+         }
+      }
+      double[] containedResults = ArrayUtils.toPrimitive(containedValues.toArray(new Double[0]));
+      return containedResults;
+   }
+
+   private static double[] removeOutliers(double[] original, StatisticalSummary statistics) {
+      List<Double> containedValues = new LinkedList<>();
+      for (double value : original) {
+         double zscore = Math.abs(value - statistics.getMean()) / statistics.getStandardDeviation();
+         if (!(zscore > OutlierRemover.Z_SCORE)) {
+            containedValues.add(value);
+         }
+      }
+      double[] containedResults = ArrayUtils.toPrimitive(containedValues.toArray(new Double[0]));
+      return containedResults;
    }
 }
