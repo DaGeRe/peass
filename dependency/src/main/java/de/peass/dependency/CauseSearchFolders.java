@@ -38,12 +38,12 @@ public class CauseSearchFolders extends PeASSFolders {
          final File getProgressFile = new File(peassFolder, "getProgress.sh");
          FileUtils.copyURLToFile(getProgressScript, getProgressFile);
          getProgressFile.setExecutable(true);
-         
+
          final URL clearRcaScript = CauseSearchFolders.class.getClassLoader().getResource("copy/clearRCA.sh");
          final File clearRcaFile = new File(peassFolder, "clearRCA.sh");
          FileUtils.copyURLToFile(clearRcaScript, clearRcaFile);
          clearRcaFile.setExecutable(true);
-         
+
          final URL valueReadingScript = CauseSearchFolders.class.getClassLoader().getResource("copy/getIntermediaryValues.sh");
          final File valueReadingFile = new File(peassFolder, "rca/getIntermediaryValues.sh");
          FileUtils.copyURLToFile(valueReadingScript, valueReadingFile);
@@ -51,7 +51,7 @@ public class CauseSearchFolders extends PeASSFolders {
       } catch (IOException e) {
          e.printStackTrace();
       }
-     
+
    }
 
    @Override
@@ -73,6 +73,11 @@ public class CauseSearchFolders extends PeASSFolders {
 
    public File getRcaTreeFolder() {
       return treeFolder;
+   }
+
+   public File getRcaTreeFolder(String version, TestCase testcase) {
+      final File treeDataFolder = new File(treeFolder, version + File.separator + testcase.getShortClazz());
+      return treeDataFolder;
    }
 
    public File getTreeCacheFolder(final String version, final TestCase testcase) {

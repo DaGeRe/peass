@@ -17,6 +17,7 @@ import de.peass.measurement.analysis.Relation;
 import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peran.FolderSearcher;
+import de.precision.analysis.repetitions.bimodal.CompareData;
 
 public class TestStatistic {
    private static final Logger LOG = LogManager.getLogger(TestStatistic.class);
@@ -44,7 +45,8 @@ public class TestStatistic {
       previous = StatisticUtil.shortenValues(previous);
       current = StatisticUtil.shortenValues(current);
 
-      confidenceResult = ConfidenceIntervalInterpretion.compare(previous, current);
+      CompareData cd = new CompareData(previous, current);
+      confidenceResult = ConfidenceIntervalInterpretion.compare(cd);
 
       final int resultslength = Math.min(data.getCurrent().size(), data.getPrevius().size());
 

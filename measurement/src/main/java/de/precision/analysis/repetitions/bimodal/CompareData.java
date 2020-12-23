@@ -12,6 +12,17 @@ public final class CompareData {
    private final SummaryStatistics beforeStat = new SummaryStatistics();
    private final SummaryStatistics afterStat = new SummaryStatistics();
 
+   public CompareData(double[] before, double[] after) {
+      this.before = before;
+      this.after = after;
+      for (double beforeVal : before) {
+         beforeStat.addValue(beforeVal);
+      }
+      for (double afterVal : after) {
+         afterStat.addValue(afterVal);
+      }
+   }
+   
    public CompareData(final List<Result> beforeShortened, final List<Result> afterShortened) {
       {
          before = new double[beforeShortened.size()];

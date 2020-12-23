@@ -11,6 +11,7 @@ import de.peass.measurement.analysis.Relation;
 import de.peass.measurement.analysis.statistics.MeasurementAnalysationUtil;
 import de.peass.statistics.ConfidenceInterval;
 import de.peass.statistics.PerformanceChange;
+import de.precision.analysis.repetitions.bimodal.CompareData;
 
 public class ConfidenceIntervalInterpretion {
 
@@ -22,8 +23,8 @@ public class ConfidenceIntervalInterpretion {
       return ds;
    }
 
-   public static Relation compare(final List<Result> before, final List<Result> after) {
-      return compare(before, after, 96);
+   public static Relation compare(CompareData data) {
+      return compare(data, 96);
    }
 
    /**
@@ -34,12 +35,12 @@ public class ConfidenceIntervalInterpretion {
     * @param after
     * @return
     */
-   public static Relation compare(final List<Result> before, final List<Result> after, int percentage) {
-      final ConfidenceInterval intervalBefore = getConfidenceInterval(before, percentage);
-      final ConfidenceInterval intervalAfter = getConfidenceInterval(after, percentage);
+   public static Relation compare(CompareData data, int percentage) {
+      final ConfidenceInterval intervalBefore = getConfidenceInterval(data.getBefore(), percentage);
+      final ConfidenceInterval intervalAfter = getConfidenceInterval(data.getAfter(), percentage);
 
-      final double avgBefore = before.stream().mapToDouble(b -> b.getValue()).average().getAsDouble();
-      final double avgAfter = after.stream().mapToDouble(b -> b.getValue()).average().getAsDouble();
+      final double avgBefore = data.getAvgBefore();
+      final double avgAfter = data.getAvgAfter();
 
       LOG.trace("Intervalle: {} ({}) vs. vorher {} ({})", intervalAfter, avgAfter, intervalBefore, avgBefore);
       final PerformanceChange change = new PerformanceChange(intervalBefore, intervalAfter, "", "", "0", "1");
@@ -66,11 +67,9 @@ public class ConfidenceIntervalInterpretion {
       return Relation.EQUAL;
    }
 
-   public static ConfidenceInterval getConfidenceInterval(final List<Result> before, int percentage) {
-      // System.out.println(before);
-      final double[] valuesBefore = MeasurementAnalysationUtil.getAveragesArrayFromResults(before);
+   public static ConfidenceInterval getConfidenceInterval(final double[] valuesBefore, int percentage) {
       // LOG.info(valuesBefore + " " + valuesBefore.length);
-      final ConfidenceInterval intervalBefore = MeasurementAnalysationUtil.getBootstrapConfidenceInterval(valuesBefore, before.size(), 100, percentage);
+      final ConfidenceInterval intervalBefore = MeasurementAnalysationUtil.getBootstrapConfidenceInterval(valuesBefore, valuesBefore.length, 100, percentage);
       return intervalBefore;
    }
 }

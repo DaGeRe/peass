@@ -28,6 +28,7 @@ import de.peass.utils.RunCommandWriterSlurmRCA;
 import de.peran.FolderSearcher;
 import de.peran.analysis.helper.read.VersionData;
 import de.peran.measurement.analysis.ProjectStatistics;
+import de.precision.analysis.repetitions.bimodal.CompareData;
 
 /**
  * Reads changes of fulldata - data need to be cleaned!
@@ -212,7 +213,8 @@ public class ChangeReader {
       final TestcaseStatistic statistic = describedChunk.getStatistic(type1error, type2error);
       statistic.setPredecessor(versions[0]);
       // if (! (statistic.getTvalue() == Double.NaN)){
-      final Relation confidenceResult = ConfidenceIntervalInterpretion.compare(describedChunk.getPrevious(), describedChunk.getCurrent());
+      CompareData cd = new CompareData(describedChunk.getPrevious(), describedChunk.getCurrent());
+      final Relation confidenceResult = ConfidenceIntervalInterpretion.compare(cd);
       final TestCase testcase = new TestCase(data);
       final double diff = describedChunk.getDiff();
       final boolean isBigEnoughDiff = Math.abs(diff) > minChange;
