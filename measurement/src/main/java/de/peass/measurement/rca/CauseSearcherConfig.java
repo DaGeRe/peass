@@ -1,6 +1,10 @@
 package de.peass.measurement.rca;
 
+import java.io.File;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.peass.dependency.analysis.data.TestCase;
@@ -15,6 +19,9 @@ public class CauseSearcherConfig {
    private final boolean splitAggregated;
    private final double minTime;
    private final boolean calibrationRun;
+   
+   @JsonInclude(Include.NON_NULL)
+   private File propertyFolder;
    private final RCAStrategy rcaStrategy;
 
    @JsonCreator
@@ -36,6 +43,7 @@ public class CauseSearcherConfig {
       this.calibrationRun = calibrationRun;
       this.ignoreEOIs = ignoreEOIs;
       this.rcaStrategy = rcaStrategy;
+      propertyFolder = null;
       if (useAggregation && !ignoreEOIs) {
          throw new RuntimeException("EOIs need always to be ignored if aggregation is enabled!");
       }
@@ -45,6 +53,7 @@ public class CauseSearcherConfig {
       this(test, !config.isUseNonAggregatedWriter(), !config.isSaveNothing(),
             config.getOutlierFactor(), !config.isNotSplitAggregated(), config.getMinTime(), config.isUseCalibrationRun(), !config.isUseEOIs(), 
             config.getStrategy());
+      this.propertyFolder = config.getPropertyFolder();
    }
 
    public TestCase getTestCase() {
@@ -81,6 +90,10 @@ public class CauseSearcherConfig {
    
    public RCAStrategy getRcaStrategy() {
       return rcaStrategy;
+   }
+   
+   public File getPropertyFolder() {
+      return propertyFolder;
    }
    
 }

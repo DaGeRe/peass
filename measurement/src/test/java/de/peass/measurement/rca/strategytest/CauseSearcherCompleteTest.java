@@ -19,14 +19,19 @@ import org.mockito.Mockito;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependencyprocessors.ViewNotFoundException;
+import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.CauseTester;
 import de.peass.measurement.rca.CauseTesterMockUtil;
+import de.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
+import de.peass.measurement.rca.analyzer.StructureChangeTreeAnalyzer;
+import de.peass.measurement.rca.analyzer.TreeAnalyzer;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.TreeBuilder;
 import de.peass.measurement.rca.helper.TreeBuilderBig;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.searcher.CauseSearcherComplete;
+import de.peass.measurement.rca.searcher.TreeAnalyzerCreator;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class CauseSearcherCompleteTest {

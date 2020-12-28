@@ -14,11 +14,15 @@ import de.peass.dependency.persistence.Version;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.CauseSearcherConfigMixin;
 import de.peass.measurement.rca.CauseTester;
+import de.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
+import de.peass.measurement.rca.analyzer.SourceChangeTreeAnalyzer;
+import de.peass.measurement.rca.analyzer.StructureChangeTreeAnalyzer;
+import de.peass.measurement.rca.analyzer.TreeAnalyzer;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.searcher.CauseSearcher;
 import de.peass.measurement.rca.searcher.CauseSearcherComplete;
 import de.peass.measurement.rca.searcher.LevelCauseSearcher;
-import de.peass.measurement.rca.searcher.StructureCauseSearcher;
+import de.peass.measurement.rca.searcher.TreeAnalyzerCreator;
 import de.peass.testtransformation.JUnitTestTransformer;
 import kieker.analysisteetime.model.analysismodel.statistics.PredefinedUnits;
 import picocli.CommandLine;
@@ -36,16 +40,16 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
    @Option(names = { "-writeInterval", "--writeInterval" }, description = "Interval for KoPeMe-aggregated-writing (in milliseconds)")
    public int writeInterval = 5000;
-   
+
    @Option(names = { "-useSourceInstrumentation", "--useSourceInstrumentation" }, description = "Use source instrumentation (default false - AspectJ instrumentation is used)")
    public boolean useSourceInstrumentation = false;
-   
+
    @Option(names = { "-useCircularQueue", "--useCircularQueue" }, description = "Use circular queue (default false - LinkedBlockingQueue is used)")
    public boolean useCircularQueue = false;
 
-   @Option(names = { "-useSelectiveInstrumentation", "--useSelectiveInstrumentation" }, description = "Use selective instrumentation (only selected methods / classes are instrumented) - adaptive monitoring will not make sense")
+   @Option(names = { "-useSelectiveInstrumentation",
+         "--useSelectiveInstrumentation" }, description = "Use selective instrumentation (only selected methods / classes are instrumented) - adaptive monitoring will not make sense")
    public boolean useSelectiveInstrumentation = false;
-   
 
    public static void main(final String[] args) throws JAXBException, IOException {
       final RootCauseAnalysis command = new RootCauseAnalysis();
@@ -116,16 +120,38 @@ public class RootCauseAnalysis extends DependencyTestStarter {
          case CONSTANT_LEVELS:
             throw new RuntimeException("Measurement for constant count of level currently not supported");
          case UNTIL_SOURCE_CHANGE:
-            throw new RuntimeException("Measurement untill source changed nodes currently not supported");
+            TreeAnalyzerCreator creatorSource = new TreeAnalyzerCreator() {
+
+               @Override
+               public TreeAnalyzer getAnalyzer(BothTreeReader reader, CauseSearcherConfig config) {
+                  return new SourceChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor(), config.getPropertyFolder());
+               }
+            };
+            tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creatorSource);
+            break;
          case UNTIL_STRUCTURE_CHANGE:
-            tester = new StructureCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
+            TreeAnalyzerCreator creator = new TreeAnalyzerCreator() {
+
+               @Override
+               public TreeAnalyzer getAnalyzer(BothTreeReader reader, CauseSearcherConfig config) {
+                  return new StructureChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
+               }
+            };
+            tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creator);
             break;
          default:
             throw new RuntimeException("Strategy " + causeSearchConfigMixin.getStrategy() + " not expected");
          }
       } else {
          LOG.info("Defaulting to StructureCauseSearcher");
-         tester = new StructureCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
+         TreeAnalyzerCreator creator = new TreeAnalyzerCreator() {
+
+            @Override
+            public TreeAnalyzer getAnalyzer(BothTreeReader reader, CauseSearcherConfig config) {
+               return new StructureChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
+            }
+         };
+         tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creator);
       }
       return tester;
    }

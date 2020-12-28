@@ -29,10 +29,13 @@ import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
+import de.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
+import de.peass.measurement.rca.analyzer.TreeAnalyzer;
 import de.peass.measurement.rca.helper.VCSTestUtils;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.searcher.CauseSearcher;
 import de.peass.measurement.rca.searcher.CauseSearcherComplete;
+import de.peass.measurement.rca.searcher.TreeAnalyzerCreator;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
@@ -124,6 +127,7 @@ public class CauseSearcherIT {
       final CauseSearchFolders folders = new CauseSearchFolders(CURRENT);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders);
       final CauseTester measurer = new CauseTester(folders, testTransformer, causeSearcherConfig);
+      
       final CauseSearcher searcher = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, folders);
       final Set<ChangedEntity> changedEntities = searcher.search();
 

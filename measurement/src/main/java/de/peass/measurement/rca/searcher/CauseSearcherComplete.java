@@ -21,6 +21,7 @@ import de.peass.measurement.rca.CausePersistenceManager;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.CauseTester;
 import de.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
+import de.peass.measurement.rca.analyzer.TreeAnalyzer;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
@@ -37,27 +38,41 @@ public class CauseSearcherComplete extends CauseSearcher {
 
    private static final Logger LOG = LogManager.getLogger(CauseSearcherComplete.class);
 
+   private final TreeAnalyzerCreator creator;
+
    public CauseSearcherComplete(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer,
          final MeasurementConfiguration measurementConfig,
          final CauseSearchFolders folders) throws InterruptedException, IOException {
       super(reader, causeSearchConfig, measurer, measurementConfig, folders);
       persistenceManager = new CausePersistenceManager(causeSearchConfig, measurementConfig, folders);
+      creator = new TreeAnalyzerCreator() {
+         @Override
+         public TreeAnalyzer getAnalyzer(BothTreeReader reader, CauseSearcherConfig config) {
+            return new CompleteTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
+         }
+      };
+   }
+   
+   public CauseSearcherComplete(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer,
+         final MeasurementConfiguration measurementConfig,
+         final CauseSearchFolders folders, TreeAnalyzerCreator creator) throws InterruptedException, IOException {
+      super(reader, causeSearchConfig, measurer, measurementConfig, folders);
+      persistenceManager = new CausePersistenceManager(causeSearchConfig, measurementConfig, folders);
+      this.creator = creator;
    }
 
    @Override
    protected Set<ChangedEntity> searchCause()
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      final CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
+      final TreeAnalyzer analyzer = creator.getAnalyzer(reader, causeSearchConfig);
       final List<CallTreeNode> predecessorNodeList = analyzer.getMeasurementNodesPredecessor();
       final List<CallTreeNode> includableNodes = getIncludableNodes(predecessorNodeList);
 
       measureDefinedTree(includableNodes);
-      differingNodes.addAll(analyzer.getTreeStructureDiffering());
-      
+//      differingNodes.addAll(analyzer.getTreeStructureDiffering());
+
       return convertToChangedEntitites();
    }
-
-   
 
    private List<CallTreeNode> getIncludableNodes(final List<CallTreeNode> predecessorNodeList)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {

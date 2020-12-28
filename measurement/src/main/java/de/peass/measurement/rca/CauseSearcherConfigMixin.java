@@ -1,5 +1,7 @@
 package de.peass.measurement.rca;
 
+import java.io.File;
+
 import picocli.CommandLine.Option;
 
 public class CauseSearcherConfigMixin {
@@ -23,6 +25,9 @@ public class CauseSearcherConfigMixin {
 
    @Option(names = { "-outlierFactor", "--outlierFactor" }, description = "Whether outliers should be removed with z-score higher than the given value")
    private double outlierFactor = 5.0;
+   
+   @Option(names = { "-propertyFolder", "--propertyFolder" }, description = "Path to property folder", required = false)
+   protected File propertyFolder;
 
    @Option(names = { "-minTime",
          "--minTime" }, description = "Minimum node difference time compared to relative standard deviation. "
@@ -63,6 +68,10 @@ public class CauseSearcherConfigMixin {
    
    public RCAStrategy getStrategy() {
       return strategy;
+   }
+   
+   public File getPropertyFolder() {
+      return propertyFolder;
    }
 
 }
