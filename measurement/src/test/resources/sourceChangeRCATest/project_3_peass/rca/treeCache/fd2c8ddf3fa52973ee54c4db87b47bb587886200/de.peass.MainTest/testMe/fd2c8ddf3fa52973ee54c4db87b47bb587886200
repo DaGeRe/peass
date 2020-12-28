@@ -1,0 +1,131 @@
+{
+  "call" : "de.peass.MainTest#testMe",
+  "kiekerPattern" : "public void de.peass.MainTest.testMe()",
+  "otherKiekerPattern" : null,
+  "children" : [ {
+    "call" : "de.peass.C0_0#<init>",
+    "kiekerPattern" : "new de.peass.C0_0.<init>()",
+    "otherKiekerPattern" : null,
+    "children" : [ ]
+  }, {
+    "call" : "de.peass.C0_0#method0",
+    "kiekerPattern" : "public void de.peass.C0_0.method0()",
+    "otherKiekerPattern" : null,
+    "children" : [ {
+      "call" : "de.peass.C1_0#<init>",
+      "kiekerPattern" : "new de.peass.C1_0.<init>()",
+      "otherKiekerPattern" : null,
+      "children" : [ ]
+    }, {
+      "call" : "de.peass.C1_0#method0",
+      "kiekerPattern" : "public void de.peass.C1_0.method0()",
+      "otherKiekerPattern" : null,
+      "children" : [ {
+        "call" : "de.peass.C2_0#<init>",
+        "kiekerPattern" : "new de.peass.C2_0.<init>()",
+        "otherKiekerPattern" : null,
+        "children" : [ ]
+      }, {
+        "call" : "de.peass.C2_0#method0",
+        "kiekerPattern" : "public void de.peass.C2_0.method0()",
+        "otherKiekerPattern" : null,
+        "children" : [ {
+          "call" : "de.peass.AddRandomNumbers#<init>",
+          "kiekerPattern" : "public new de.peass.AddRandomNumbers.<init>()",
+          "otherKiekerPattern" : null,
+          "children" : [ ]
+        }, {
+          "call" : "de.peass.AddRandomNumbers#addSomething",
+          "kiekerPattern" : "public void de.peass.AddRandomNumbers.addSomething()",
+          "otherKiekerPattern" : null,
+          "children" : [ ]
+        } ]
+      }, {
+        "call" : "de.peass.C2_0#method1",
+        "kiekerPattern" : "public void de.peass.C2_0.method1()",
+        "otherKiekerPattern" : null,
+        "children" : [ {
+          "call" : "de.peass.AddRandomNumbers#<init>",
+          "kiekerPattern" : "public new de.peass.AddRandomNumbers.<init>()",
+          "otherKiekerPattern" : null,
+          "children" : [ ]
+        }, {
+          "call" : "de.peass.AddRandomNumbers#addSomething",
+          "kiekerPattern" : "public void de.peass.AddRandomNumbers.addSomething()",
+          "otherKiekerPattern" : null,
+          "children" : [ ]
+        } ]
+      } ]
+    }, {
+      "call" : "de.peass.C1_0#method1",
+      "kiekerPattern" : "public void de.peass.C1_0.method1()",
+      "otherKiekerPattern" : null,
+      "children" : [ {
+        "call" : "de.peass.C2_1#<init>",
+        "kiekerPattern" : "new de.peass.C2_1.<init>()",
+        "otherKiekerPattern" : null,
+        "children" : [ ]
+      }, {
+        "call" : "de.peass.C2_1#method0",
+        "kiekerPattern" : "public void de.peass.C2_1.method0()",
+        "otherKiekerPattern" : null,
+        "children" : [ ]
+      }, {
+        "call" : "de.peass.C2_1#method1",
+        "kiekerPattern" : "public void de.peass.C2_1.method1()",
+        "otherKiekerPattern" : null,
+        "children" : [ ]
+      } ]
+    } ]
+  }, {
+    "call" : "de.peass.C0_0#method1",
+    "kiekerPattern" : "public void de.peass.C0_0.method1()",
+    "otherKiekerPattern" : null,
+    "children" : [ {
+      "call" : "de.peass.C1_1#<init>",
+      "kiekerPattern" : "new de.peass.C1_1.<init>()",
+      "otherKiekerPattern" : null,
+      "children" : [ ]
+    }, {
+      "call" : "de.peass.C1_1#method0",
+      "kiekerPattern" : "public void de.peass.C1_1.method0()",
+      "otherKiekerPattern" : null,
+      "children" : [ {
+        "call" : "de.peass.C2_2#<init>",
+        "kiekerPattern" : "new de.peass.C2_2.<init>()",
+        "otherKiekerPattern" : null,
+        "children" : [ ]
+      }, {
+        "call" : "de.peass.C2_2#method0",
+        "kiekerPattern" : "public void de.peass.C2_2.method0()",
+        "otherKiekerPattern" : null,
+        "children" : [ ]
+      }, {
+        "call" : "de.peass.C2_2#method1",
+        "kiekerPattern" : "public void de.peass.C2_2.method1()",
+        "otherKiekerPattern" : null,
+        "children" : [ ]
+      } ]
+    }, {
+      "call" : "de.peass.C1_1#method1",
+      "kiekerPattern" : "public void de.peass.C1_1.method1()",
+      "otherKiekerPattern" : null,
+      "children" : [ {
+        "call" : "de.peass.C2_3#<init>",
+        "kiekerPattern" : "new de.peass.C2_3.<init>()",
+        "otherKiekerPattern" : null,
+        "children" : [ ]
+      }, {
+        "call" : "de.peass.C2_3#method0",
+        "kiekerPattern" : "public void de.peass.C2_3.method0()",
+        "otherKiekerPattern" : null,
+        "children" : [ ]
+      }, {
+        "call" : "de.peass.C2_3#method1",
+        "kiekerPattern" : "public void de.peass.C2_3.method1()",
+        "otherKiekerPattern" : null,
+        "children" : [ ]
+      } ]
+    } ]
+  } ]
+}

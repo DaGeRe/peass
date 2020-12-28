@@ -1,0 +1,3 @@
+public void addSomething() {
+    x += r.nextInt(100);
+}

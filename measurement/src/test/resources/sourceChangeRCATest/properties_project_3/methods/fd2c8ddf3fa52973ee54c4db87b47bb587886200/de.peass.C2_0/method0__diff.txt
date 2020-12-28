@@ -1,0 +1,6 @@
+public void method0() {											public void method0() {
+    final AddRandomNumbers rm = new AddRandomNumbers();							    final AddRandomNumbers rm = new AddRandomNumbers();
+    for (int i = 0; i < 150; i++) {								   |	    for (int i = 0; i < 151; i++) {
+        rm.addSomething();										        rm.addSomething();
+    }													    }
+}													}
