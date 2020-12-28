@@ -17,7 +17,7 @@ public class TestStructureChangeTreeAnalyzer {
 
       StructureChangeTreeAnalyzer analyzer = new StructureChangeTreeAnalyzer(root, rootPredecessor);
 
-      Assert.assertThat(analyzer.getEqualStructureNodes(), Matchers.hasItems(predecessorBuilder.getRoot(), predecessorBuilder.getA()));
+      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(predecessorBuilder.getRoot(), predecessorBuilder.getA()));
    }
 
    @Test
@@ -28,7 +28,7 @@ public class TestStructureChangeTreeAnalyzer {
 
       StructureChangeTreeAnalyzer analyzer = new StructureChangeTreeAnalyzer(root, rootPredecessor);
 
-      Assert.assertThat(analyzer.getEqualStructureNodes(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
-      Assert.assertThat(analyzer.getEqualStructureNodes(), Matchers.not(Matchers.hasItems(bigBuilder.getB2())));
+      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
+      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.not(Matchers.hasItems(bigBuilder.getB2())));
    }
 }

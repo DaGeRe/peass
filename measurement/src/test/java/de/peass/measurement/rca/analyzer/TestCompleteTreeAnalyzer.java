@@ -19,7 +19,7 @@ public class TestCompleteTreeAnalyzer {
       CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(root, rootPredecessor);
 
       Assert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.emptyCollectionOf(CallTreeNode.class));
-      Assert.assertThat(analyzer.getAllNodesPredecessor(), Matchers.hasItems(predecessorBuilder.getRoot(), predecessorBuilder.getA()));
+      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(predecessorBuilder.getRoot(), predecessorBuilder.getA()));
    }
 
    @Test
@@ -31,7 +31,7 @@ public class TestCompleteTreeAnalyzer {
       CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(root, rootPredecessor);
 
       Assert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.hasItem(bigBuilder.getB2()));
-      Assert.assertThat(analyzer.getAllNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
+      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
    }
 
    @Test
@@ -43,6 +43,6 @@ public class TestCompleteTreeAnalyzer {
       CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(root, rootPredecessor);
 
       Assert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.hasItem(bigBuilder.getB2()));
-      Assert.assertThat(analyzer.getAllNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
+      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
    }
 }

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.measurement.rca.data.BasicNode;
 import de.peass.measurement.rca.data.CauseSearchData;
+import de.peass.measurement.rca.kieker.KiekerPatternConverter;
 import de.peass.visualization.GraphNode.State;
 
 public class GraphNode extends BasicNode {

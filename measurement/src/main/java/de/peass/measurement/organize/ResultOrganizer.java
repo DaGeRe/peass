@@ -67,6 +67,7 @@ public class ResultOrganizer {
          try {
             if (!oneResultFile.exists()) {
                success = false;
+               LOG.error("Result file {} does not exist - probably timeout", oneResultFile);
             } else {
                LOG.debug("Reading: {}", oneResultFile);
                XMLDataLoader xdl = new XMLDataLoader(oneResultFile);
@@ -78,8 +79,10 @@ public class ResultOrganizer {
                      success = true;
                   } else {
                      success = false;
+                     LOG.error("Wrong execution count: {} Expected: {}", r.getExecutionTimes(), expectedIterations);
                   }
                } else {
+                  LOG.error("Testcase not found in XML");
                   success = false;
                }
             }
@@ -88,6 +91,7 @@ public class ResultOrganizer {
             success = false;
          }
       } else {
+         LOG.error("Folder {} does not exist", folder);
          success = false;
       }
       return success;

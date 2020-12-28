@@ -12,7 +12,7 @@ import de.peass.measurement.rca.treeanalysis.TreeUtil;
  * @author reichelt
  *
  */
-public class StructureChangeTreeAnalyzer {
+public class StructureChangeTreeAnalyzer implements TreeAnalyzer {
 
    private final List<CallTreeNode> equalStructureNodes = new LinkedList<>();
 
@@ -38,7 +38,8 @@ public class StructureChangeTreeAnalyzer {
       }
    }
    
-   public List<CallTreeNode> getEqualStructureNodes() {
+   @Override
+   public List<CallTreeNode> getMeasurementNodesPredecessor() {
       return equalStructureNodes;
    }
 }

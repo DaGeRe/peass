@@ -3,7 +3,8 @@ package de.peass.properties;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.peass.visualization.KiekerPatternConverter;
+import de.peass.measurement.rca.kieker.KiekerPatternConverter;
+
 
 public class TestSourceKeys {
    

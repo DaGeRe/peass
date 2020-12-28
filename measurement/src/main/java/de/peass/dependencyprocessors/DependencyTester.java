@@ -93,8 +93,9 @@ public class DependencyTester implements KiekerResultHandler {
          int reducedIterations = Math.min(shouldReduce(configuration.getVersionOld(), versionOldResult),
                shouldReduce(configuration.getVersion(), versionNewResult));
          if (reducedIterations != testTransformer.getConfig().getIterations()) {
-            final int lessIterations = testTransformer.getConfig().getIterations() / 5;
-            shouldBreak = reduceExecutions(shouldBreak, lessIterations);
+            LOG.error("Should originally run {} iterations, but did not succeed - reducing to {}", testTransformer.getConfig().getIterations(), reducedIterations);
+//            final int lessIterations = testTransformer.getConfig().getIterations() / 5;
+            shouldBreak = reduceExecutions(shouldBreak, reducedIterations);
          }
       }
 
@@ -110,8 +111,9 @@ public class DependencyTester implements KiekerResultHandler {
          LOG.error("Measurement executions: {}", result.getExecutionTimes());
          final int minOfExecuted = (int) result.getExecutionTimes() - 2;
          reducedIterations = Math.min(minOfExecuted, testTransformer.getConfig().getIterations() / 2);
-      } else if (result.getValue() > 10E7 && testTransformer.getConfig().getIterations() > 10) {
-         reducedIterations = testTransformer.getConfig().getIterations() / 2;
+      // 10E7 for at least 10 iterations means more than ~2.5 minutes per VM, which is ok
+//      } else if (result.getValue() > 10E7 && testTransformer.getConfig().getIterations() > 10) {
+//         reducedIterations = testTransformer.getConfig().getIterations() / 2;
       } else {
          reducedIterations = testTransformer.getConfig().getIterations();
       }

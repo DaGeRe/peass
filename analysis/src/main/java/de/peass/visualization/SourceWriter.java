@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.io.FileUtils;
 
 import de.peass.measurement.rca.data.CauseSearchData;
+import de.peass.measurement.rca.kieker.KiekerPatternConverter;
 
 class SourceWriter {
    private final GraphNode root;

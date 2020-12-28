@@ -7,7 +7,7 @@ import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.treeanalysis.TreeUtil;
 
-public class CompleteTreeAnalyzer {
+public class CompleteTreeAnalyzer implements TreeAnalyzer {
    private final List<CallTreeNode> treeStructureDiffering = new LinkedList<>();
    private final List<CallTreeNode> allNodesPredecessor = new LinkedList<>();
 
@@ -48,7 +48,7 @@ public class CompleteTreeAnalyzer {
       return treeStructureDiffering;
    }
 
-   public List<CallTreeNode> getAllNodesPredecessor() {
+   public List<CallTreeNode> getMeasurementNodesPredecessor() {
       return allNodesPredecessor;
    }
 }

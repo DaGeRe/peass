@@ -40,7 +40,7 @@ public class StructureCauseSearcher extends CauseSearcher {
    protected Set<ChangedEntity> searchCause()
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       final StructureChangeTreeAnalyzer analyzer = new StructureChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
-      final List<CallTreeNode> predecessorNodeList = analyzer.getEqualStructureNodes();
+      final List<CallTreeNode> predecessorNodeList = analyzer.getMeasurementNodesPredecessor();
 
       measureDefinedTree(predecessorNodeList);
 
