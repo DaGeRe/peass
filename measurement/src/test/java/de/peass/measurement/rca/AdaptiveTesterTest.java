@@ -54,7 +54,8 @@ public class AdaptiveTesterTest {
 
    @Test
    public void testIterationUpdate() throws IOException, InterruptedException, JAXBException {
-      final MeasurementConfiguration config = new MeasurementConfiguration(100, "A", "B");
+      final int vms = 10;
+      final MeasurementConfiguration config = new MeasurementConfiguration(vms, "A", "B");
       config.setIterations(1000);
 
       MeasurementConfiguration config2 = Mockito.spy(config);
@@ -63,7 +64,7 @@ public class AdaptiveTesterTest {
       AdaptiveTester tester2 = prepareTester();
       Mockito.doReturn(false).when(tester2).checkIsDecidable(Mockito.eq(testcase), Mockito.anyInt());
 
-      for (int i = 0; i < 100; i++) {
+      for (int i = 0; i < vms; i++) {
          final Result result1 = new Result();
          result1.setValue(15);
          result1.setExecutionTimes(40);
@@ -77,8 +78,8 @@ public class AdaptiveTesterTest {
 
       tester2.evaluate(testcase);
 
-      Assert.assertEquals(100, tester2.getFinishedVMs());
-      Mockito.verify(config2).setIterations(40);
+      Assert.assertEquals(vms, tester2.getFinishedVMs());
+      Mockito.verify(config2).setIterations(38);
    }
 
    @Test
