@@ -1,10 +1,21 @@
 package de.peass.dependency.execution.gradle;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.groovy.ast.CodeVisitorSupport;
+import org.codehaus.groovy.ast.expr.ArgumentListExpression;
+import org.codehaus.groovy.ast.expr.ClosureExpression;
+import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.MapEntryExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
+import org.codehaus.groovy.ast.stmt.BlockStatement;
+import org.codehaus.groovy.ast.stmt.Statement;
+
+import de.peass.dependency.execution.GradleTestExecutor;
 
 public class FindDependencyVisitor extends CodeVisitorSupport {
+
+   private static final Logger LOG = LogManager.getLogger(FindDependencyVisitor.class);
 
    int dependencyLine = -1;
    int testLine = -1;
@@ -18,14 +29,24 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
 
    @Override
    public void visitMethodCallExpression(final MethodCallExpression call) {
-      // LOG.info("Call: " + call.getMethodAsString());
+      LOG.trace("Call: {}", call.getMethodAsString());
       if (call != null && call.getMethodAsString() != null) {
          // System.out.println(call.getMethodAsString());
-         if (call.getMethodAsString().equals("apply")) {
-            final String text = call.getArguments().getText();
-            if (text.contains("plugin:java") || text.contains("plugin:com.android.library") || text.contains("plugin:com.android.application")) {
-               useJava = true;
+         if (call.getMethodAsString().equals("plugins")) {
+            Expression expression = call.getArguments();
+            if (expression instanceof ArgumentListExpression) {
+               ArgumentListExpression list = (ArgumentListExpression) expression;
+               for (Expression pluginExpression : list.getExpressions()) {
+                  ClosureExpression closurePluginExpression = (ClosureExpression) pluginExpression;
+                  for (Statement statement : ((BlockStatement)closurePluginExpression.getCode()).getStatements()) {
+                     String text = statement.getText();
+                     handlePluginName(text);
+                  }
+               } 
             }
+         } else if (call.getMethodAsString().equals("apply")) {
+            final String text = call.getArguments().getText();
+            handlePluginName(text);
          } else if (call.getMethodAsString().equals("dependencies")) {
             // System.out.println(call);
             dependencyLine = call.getLastLineNumber();
@@ -44,6 +65,15 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
 
       // LOG.info("Android: " + androidLine);
       super.visitMethodCallExpression(call);
+   }
+
+   private void handlePluginName(final String text) {
+      if (text.contains("plugin:java") ||
+            text.contains("plugin:com.android.library") ||
+            text.contains("plugin:com.android.application") ||
+            text.contains("com.android.application")) {
+         useJava = true;
+      }
    }
 
    @Override
@@ -99,10 +129,8 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       return buildTools;
    }
 
-
    public int getBuildToolsVersion() {
       return buildToolsVersion;
    }
-
 
 }

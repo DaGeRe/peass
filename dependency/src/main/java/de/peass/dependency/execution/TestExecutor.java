@@ -111,7 +111,7 @@ public abstract class TestExecutor {
 
       final Process process = pb.start();
       final int pid = Integer.parseInt(new File("/proc/self").getCanonicalFile().getName());
-      LOG.debug("Process started: {} Used PIDs: {}", pid, getProcessCount());
+      LOG.debug("Process started: {} Used PIDs: {} Log to: {}", pid, getProcessCount(), logFile);
       return process;
    }
 
