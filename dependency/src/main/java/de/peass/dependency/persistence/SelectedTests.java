@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class SelectedTests {
    private String url;
    private boolean isAndroid = false;
-   
+
    public String getUrl() {
       return url;
    }
@@ -13,7 +13,7 @@ public class SelectedTests {
    public void setUrl(final String url) {
       this.url = url;
    }
-   
+
    public void setAndroid(final boolean isAndroid) {
       this.isAndroid = isAndroid;
    }
@@ -24,7 +24,14 @@ public class SelectedTests {
 
    @JsonIgnore
    public String getName() {
-      String name = url.substring(url.lastIndexOf('/') + 1, url.lastIndexOf('.'));
+      final String name;
+      final int dotSeperator = url.lastIndexOf('.');
+      final int lastSlashIndex = url.lastIndexOf('/') + 1;
+      if (dotSeperator > lastSlashIndex) {
+         name = url.substring(lastSlashIndex, dotSeperator);
+      } else {
+         name = url.substring(lastSlashIndex);
+      }
       return name;
    }
 }
