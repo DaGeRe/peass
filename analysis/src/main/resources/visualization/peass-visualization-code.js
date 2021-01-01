@@ -225,37 +225,39 @@ function diffUsingJS(text1, text2, outputDiv) {
 	}));
 }
 
+function getVmGraph(currentArray) {
+  var xvals = [], yvals = [];  
+  var n = 0;
+  for (i = 0; i < currentArray.length; i++){
+  	xvals[i] = n + currentArray[i].n/2;
+  	yvals[i] = currentArray[i].mean;
+  	n+=currentArray[i].n;
+  }
+  var data = {
+  	x: xvals,
+  	y: yvals,
+  	type: 'scatter',
+  	label: "test"
+  };
+  return data;
+}
 
-function shownode(node) {
-  if (node.statistic != null){
-	  infos.innerHTML="<table>" +
-      "<tr><th>Property</th><th>Predecessor</th><th>Current</th></tr>"+
-      "<tr><td>Mean</td><td>" + round(node.statistic.meanOld) +    " &micro;s</td><td>" + round(node.statistic.meanCurrent)+" &micro;s</td></tr>"+
-      "<tr><td>Deviation</td><td>" + round(node.statistic.deviationOld)+"</td><td>" + round(node.statistic.deviationCurrent)+"</td></tr>"+
-      "<tr><td>In-VM-Deviation</td><td>" + round(node.inVMDeviationPredecessor) + "</td><td>" + round(node.inVMDeviation)+ "</td></tr>" + 
-      "</table> VMs: " + node.statistic.vms +
-      " T=" + round(node.statistic.tvalue);
-  } else {
-	  infos.innerHTML = "No statistic";
+var currentNode;
+
+function plotVMGraph(node, ids, idsPredecessor){
+  var data = [];
+  console.log(ids.length);
+  for (id = 0; id < ids.length; id++){
+  	data[id] = getVmGraph(node.vmValues.values[id]);
   }
-  if (node.key != node.otherKey){
-    diffUsingJS(source["old"][node.key], source["current"][node.otherKey], quelltext);
-  } else {
-    var sourceCurrent = source["current"][node.key];
-    var sourceOld = source["old"][node.key];
-    if (sourceCurrent == sourceOld) {
-    	const highlightedCode = hljs.highlight("java", source["current"][node.key]).value;
-    	quelltext.innerHTML="<pre>"+highlightedCode+"</pre>";
-    } else {
-    	diffUsingJS(sourceOld, sourceCurrent, quelltext);
-    }
-    
+  for (id = 0; id < idsPredecessor.length; id++){
+  	data[id + ids.length] = getVmGraph(node.vmValuesPredecessor.values[id]);
   }
-  if (node.kiekerPattern != node.otherKiekerPattern) {
-  	histogramm.innerHTML=node.kiekerPattern + " " + node.otherKiekerPattern
-  } else {
-  	histogramm.innerHTML=node.kiekerPattern
-  }
+  
+  Plotly.newPlot("histogramm", data);
+}
+
+function plotOverallHistogram(node){
   var version = {
     x: node.values,
     type: "histogram",
@@ -283,6 +285,43 @@ function shownode(node) {
 		    width: 575
 		  };
   Plotly.newPlot("histogramm", data, layout);
+  
+  currentNode = node;
+  document.getElementById("histogramm").innerHTML+="<a href='#' onclick='plotVMGraph(currentNode, [0, 1], [0,1])'>Change to VM Graph</a>";
+}
+
+function shownode(node) {
+  if (node.statistic != null){
+	  infos.innerHTML="<table>" +
+      "<tr><th>Property</th><th>Predecessor</th><th>Current</th></tr>"+
+      "<tr><td>Mean</td><td>" + round(node.statistic.meanOld) +    " &micro;s</td><td>" + round(node.statistic.meanCurrent)+" &micro;s</td></tr>"+
+      "<tr><td>Deviation</td><td>" + round(node.statistic.deviationOld)+"</td><td>" + round(node.statistic.deviationCurrent)+"</td></tr>"+
+      "<tr><td>In-VM-Deviation</td><td>" + round(node.inVMDeviationPredecessor) + "</td><td>" + round(node.inVMDeviation)+ "</td></tr>" + 
+      "</table> VMs: " + node.statistic.vms +
+      " T=" + round(node.statistic.tvalue);
+  } else {
+	  infos.innerHTML = "No statistic";
+  }
+  if (node.key != node.otherKey){
+    diffUsingJS(source["old"][node.key], source["current"][node.otherKey], quelltext);
+  } else {
+    var sourceCurrent = source["current"][node.key];
+    var sourceOld = source["old"][node.key];
+    if (sourceCurrent != null && sourceOld != null){
+      if (sourceCurrent == sourceOld) {
+      	const highlightedCode = hljs.highlight("java", source["current"][node.key]).value;
+    	quelltext.innerHTML="<pre>"+highlightedCode+"</pre>";
+      } else {
+    	  diffUsingJS(sourceOld, sourceCurrent, quelltext);
+      }
+    }
+  }
+  if (node.kiekerPattern != node.otherKiekerPattern) {
+  	histogramm.innerHTML=node.kiekerPattern + " " + node.otherKiekerPattern
+  } else {
+  	histogramm.innerHTML=node.kiekerPattern
+  }
+  plotOverallHistogram(node);
 }
 
 shownode(root);

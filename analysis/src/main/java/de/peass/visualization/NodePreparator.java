@@ -168,10 +168,12 @@ public class NodePreparator {
       if (measuredChild.getValues() != null) {
          final double[] values = getValueArray(measuredChild.getValues());
          newChild.setValues(values);
+         newChild.setVmValues(measuredChild.getValues());
       }
       if (measuredChild.getValuesPredecessor() != null) {
          final double[] values = getValueArray(measuredChild.getValuesPredecessor());
          newChild.setValuesPredecessor(values);
+         newChild.setVmValuesPredecessor(measuredChild.getValuesPredecessor());
       }
    }
 

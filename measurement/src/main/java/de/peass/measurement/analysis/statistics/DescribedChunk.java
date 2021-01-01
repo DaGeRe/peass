@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.stat.inference.TestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,6 +22,7 @@ public class DescribedChunk {
 
    public DescribedChunk(final Chunk chunk, final String versionPrevious, final String versionCurrent) {
       long minRepetitions = Long.MAX_VALUE, minIterations = Long.MAX_VALUE;
+      
       for (final Result result : chunk.getResult()) {
          if (!Double.isNaN(result.getValue())) {
             minRepetitions = Math.min(minRepetitions, result.getRepetitions());

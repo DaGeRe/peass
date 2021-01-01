@@ -203,7 +203,7 @@ public class ChangeReader {
       if (describedChunk.getDescPrevious().getN() > 1 && describedChunk.getDescCurrent().getN() > 1) {
          getIsChange(fileName, data, changeKnowledge, info, versions, describedChunk);
       } else {
-         System.out.println("Too few measurements: " + describedChunk.getDescPrevious().getN() + " " + versions[0] + " " + versions[1]);
+         LOG.error("Too few measurements: {} - {} measurements, {} - {} measurements ", versions[0], describedChunk.getDescPrevious().getN(), versions[1], describedChunk.getDescCurrent().getN());
       }
    }
 

@@ -10,6 +10,7 @@ import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.measurement.rca.data.BasicNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.kieker.KiekerPatternConverter;
+import de.peass.measurement.rca.serialization.MeasuredValues;
 import de.peass.visualization.GraphNode.State;
 
 public class GraphNode extends BasicNode {
@@ -30,6 +31,14 @@ public class GraphNode extends BasicNode {
    private double[] values = null;
    @JsonInclude(Include.NON_NULL)
    private double[] valuesPredecessor = null;
+   
+   @JsonInclude(Include.NON_NULL)
+   private MeasuredValues vmValues = null;
+   @JsonInclude(Include.NON_NULL)
+   private MeasuredValues vmValuesPredecessor = null;
+   
+   
+   
    private List<GraphNode> children = new LinkedList<>();
 
    public GraphNode(final String call, final String kiekerPattern, final String otherKiekerPattern) {
@@ -73,6 +82,22 @@ public class GraphNode extends BasicNode {
 
    public void setValuesPredecessor(final double[] valuesPredecessor) {
       this.valuesPredecessor = valuesPredecessor;
+   }
+   
+   public MeasuredValues getVmValues() {
+      return vmValues;
+   }
+
+   public void setVmValues(MeasuredValues vmValues) {
+      this.vmValues = vmValues;
+   }
+
+   public MeasuredValues getVmValuesPredecessor() {
+      return vmValuesPredecessor;
+   }
+
+   public void setVmValuesPredecessor(MeasuredValues vmValuesPredecessor) {
+      this.vmValuesPredecessor = vmValuesPredecessor;
    }
 
    public TestcaseStatistic getStatistic() {

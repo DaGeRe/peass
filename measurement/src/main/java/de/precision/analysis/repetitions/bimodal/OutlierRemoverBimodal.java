@@ -1,5 +1,6 @@
 package de.precision.analysis.repetitions.bimodal;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -77,7 +78,7 @@ public class OutlierRemoverBimodal {
    }
 
    private static double[] removeOutliersBimodal(double[] values, final IsBimodal beforeData) {
-      List<Double> containedValues = new LinkedList<>();
+      List<Double> containedValues = new ArrayList<>(values.length);
       for (double value : values) {
          if (value < beforeData.getAvgValue()) {
             double zscore = Math.abs(value - beforeData.getStat1().getMean()) / beforeData.getStat1().getStandardDeviation();
@@ -96,7 +97,7 @@ public class OutlierRemoverBimodal {
    }
 
    private static double[] removeOutliers(double[] original, StatisticalSummary statistics) {
-      List<Double> containedValues = new LinkedList<>();
+      List<Double> containedValues = new ArrayList<>(original.length);
       for (double value : original) {
          double zscore = Math.abs(value - statistics.getMean()) / statistics.getStandardDeviation();
          if (!(zscore > OutlierRemover.Z_SCORE)) {
