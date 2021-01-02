@@ -225,71 +225,6 @@ function diffUsingJS(text1, text2, outputDiv) {
 	}));
 }
 
-function getVmGraph(currentArray) {
-  var xvals = [], yvals = [];  
-  var n = 0;
-  for (i = 0; i < currentArray.length; i++){
-  	xvals[i] = n + currentArray[i].n/2;
-  	yvals[i] = currentArray[i].mean;
-  	n+=currentArray[i].n;
-  }
-  var data = {
-  	x: xvals,
-  	y: yvals,
-  	type: 'scatter',
-  	label: "test"
-  };
-  return data;
-}
-
-var currentNode;
-
-function plotVMGraph(node, ids, idsPredecessor){
-  var data = [];
-  console.log(ids.length);
-  for (id = 0; id < ids.length; id++){
-  	data[id] = getVmGraph(node.vmValues.values[id]);
-  }
-  for (id = 0; id < idsPredecessor.length; id++){
-  	data[id + ids.length] = getVmGraph(node.vmValuesPredecessor.values[id]);
-  }
-  
-  Plotly.newPlot("histogramm", data);
-}
-
-function plotOverallHistogram(node){
-  var version = {
-    x: node.values,
-    type: "histogram",
-    name: "Version",
-    opacity: 0.5,
-    marker: {
-     color: 'green',
-    },
-  };
-  var predecessor = {
-    x: node.valuesPredecessor,
-    type: "histogram",
-    name: "Predecessor",
-    opacity: 0.6,
-    marker: {
-     color: 'red',
-    },
-  };
-  var data = [version, predecessor];
-  var layout = {barmode: "overlay", 
-			title: { text: "Histogramm"},
-			xaxis: { title: { text: "Duration / &#x00B5;s"} },
-			yaxis: { title: { text: "Frequency"} },
-			height: 250,
-		    width: 575
-		  };
-  Plotly.newPlot("histogramm", data, layout);
-  
-  currentNode = node;
-  document.getElementById("histogramm").innerHTML+="<a href='#' onclick='plotVMGraph(currentNode, [0, 1], [0,1])'>Change to VM Graph</a>";
-}
-
 function shownode(node) {
   if (node.statistic != null){
 	  infos.innerHTML="<table>" +
@@ -321,7 +256,7 @@ function shownode(node) {
   } else {
   	histogramm.innerHTML=node.kiekerPattern
   }
-  plotOverallHistogram(node);
+  plotOverallHistogram("histogramm", node);
 }
 
 shownode(root);

@@ -1,0 +1,48 @@
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <title>Node Inspector</title>
+	
+	<style>
+	.part{
+	  background-color: #DDD; border: 2px solid blue; border-radius: 1em 1em 1em 1em; padding: 1em;
+	}
+	</style>
+	
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	
+	<script src="jsGraphSource.js"></script>
+</head>
+<body>
+<div id='overallHistogram' class='part' style='float:left; width:45%; height: 47%'>
+
+</div>
+<div id='selectedHistogram' class='part' style='float:right; width:45%; height: 47%'>
+
+</div>
+<div id='selection' class='part' style='float:left; width:45%; height: 47%'>
+  Available VMs:
+  <table style="height: 90%; width: 300px;">
+  	<tr><td>Predecessor</td><td>Current</td></tr>
+    <tr style="height: 90%">
+      <td style='width: 50%; height: 100%'>
+       <div id='predecessorOptions' style='height:100%'>
+       </div>
+     </td>
+     <td  style='width: 50%; height: 100%'>
+      <div id='currentOptions' style='height: 100%'>
+      </div>
+   </td></tr>
+  </table>
+  <a href='#' onClick='visualizeSelected();'>Visualize Selected</a>
+</div>
+<div id='graphs' style='float: right; width: 47%; height: 47%'>
+	<div id='graphPredecessor' class='part' style='width: 95%; height:47%;' >
+	
+	</div>
+	<div id='graphCurrent' class='part' style='width: 95%; height:47%;' >
+	
+	</div>
+</div>

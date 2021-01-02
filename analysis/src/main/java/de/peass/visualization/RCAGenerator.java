@@ -60,6 +60,11 @@ public class RCAGenerator {
    private void writeHTML(final GraphNode root, final CauseSearchData data) throws IOException, JsonProcessingException, FileNotFoundException {
       final File output = getOutputHTML(data);
       final String jsName = output.getName().replace(".html", ".js").replaceAll("#", "_");
+      
+      File nodeDashboard = new File(output.getParentFile(), output.getName().replace(".html", "_dashboard.html"));
+      new NodeDashboardWriter(nodeDashboard, data).write(jsName);
+      
+      
       try (final BufferedWriter fileWriter = new BufferedWriter(new FileWriter(output))) {
          final HTMLEnvironmentGenerator htmlGenerator = new HTMLEnvironmentGenerator(fileWriter);
          fileWriter.write("<!DOCTYPE html>\n");
@@ -73,7 +78,7 @@ public class RCAGenerator {
       
       File outputJS = new File(output.getParentFile(), jsName);
       try (final BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputJS))) {
-         fileWriter.write("document.getElementById('testcaseDiv').innerHTML=\"Version: <a href='"
+         fileWriter.write("if (document.getElementById('testcaseDiv') != null) \n   document.getElementById('testcaseDiv').innerHTML=\"Version: <a href='"
                + "javascript:fallbackCopyTextToClipboard(\\\"-version " + data.getMeasurementConfig().getVersion() + 
                " -test " + data.getTestcase() + "\\\")'>"
                + data.getMeasurementConfig().getVersion() + "</a><br>");
@@ -113,6 +118,10 @@ public class RCAGenerator {
          FileUtils.copyURLToFile(diffview, new File(folder, "diffview.js"));
          URL diffviewcss = RCAGenerator.class.getClassLoader().getResource("visualization/diffview.css");
          FileUtils.copyURLToFile(diffviewcss, new File(folder, "diffview.css"));
+         URL jsGraphSource = RCAGenerator.class.getClassLoader().getResource("visualization/jsGraphSource.js");
+         FileUtils.copyURLToFile(jsGraphSource, new File(folder, "jsGraphSource.js"));
+         URL dashboardStart = RCAGenerator.class.getClassLoader().getResource("visualization/peass-dashboard-start.js");
+         FileUtils.copyURLToFile(dashboardStart, new File(folder, "peass-dashboard-start.js"));
          URL peassCode = RCAGenerator.class.getClassLoader().getResource("visualization/peass-visualization-code.js");
          FileUtils.copyURLToFile(peassCode, new File(folder, "peass-visualization-code.js"));
       } catch (IOException e) {

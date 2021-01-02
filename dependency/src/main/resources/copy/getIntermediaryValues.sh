@@ -2,6 +2,14 @@ function getSum {
   awk '{sum += $1; square += $1^2} END {print sqrt(square / NR - (sum/NR)^2)" "sum/NR" "NR}'
 }
 
+# bc -l can not handle scientific notation, therefore this workaround provides calculation using awk
+# (from https://stackoverflow.com/questions/12882611/how-to-get-bc-to-handle-numbers-in-scientific-aka-exponential-notation)
+scmath ()
+{
+   local in="$(echo "$@" | sed -e 's/\[/(/g' -e 's/\]/)/g')";
+   awk 'BEGIN {print '"$in"'}' < /dev/null
+}
+
 function printTValue {
 	if [ $# -lt 2 ]; then
 		  echo "Two CSV-files for analysis need to be given"
@@ -13,7 +21,7 @@ function printTValue {
 	size=$(cat $1 | wc -l)	
 	sizefactor=$(echo "sqrt ("$size*$size/"("$size+$size"))" | bc -l)
 	weighteddeviation=$(echo "sqrt(("$deviation1*$deviation1"/2)+("$deviation2*$deviation2"/2))" | bc -l)
-	tvalue=$(echo "$sizefactor*($mean1-$mean2)/$weighteddeviation" | bc -l)
+	tvalue=$(scmath "$sizefactor*($mean1-$mean2)/$weighteddeviation")
 	#echo "Means: $mean1 $mean2 Deviations: $deviation1 $deviation2 Sizefactor: $sizefactor Weighted: $weighteddeviation"
 	echo "T-Value: $tvalue Degrees of Freedom: "$(echo $size*2-2 | bc -l)
 }
