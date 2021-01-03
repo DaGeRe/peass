@@ -75,7 +75,7 @@ public class TraceElementContent extends Content {
    @Override
    public String toString() {
       final StringBuffer result = new StringBuffer();
-      if (module != null) {
+      if (module != null && !module.equals("")) {
          result.append(module);
          result.append(ChangedEntity.MODULE_SEPARATOR);
       }
