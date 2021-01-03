@@ -59,16 +59,30 @@ public class TestCase implements Comparable<TestCase> {
       }
       final int index = testcase.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
       if (index == -1) {
-         clazz = testcase;
+         int moduleIndex = testcase.indexOf(ChangedEntity.MODULE_SEPARATOR);
+         if (moduleIndex == -1) {
+            clazz = testcase;
+            module = "";
+         } else {
+            clazz = testcase.substring(moduleIndex + 1);
+            module = testcase.substring(0, moduleIndex);
+         }
          method = null;
          // final int indexDot = testcase.lastIndexOf(".");
          // clazz = testcase.substring(0, indexDot);
          // method = testcase.substring(indexDot + 1);
       } else {
-         clazz = testcase.substring(0, index);
+         String start = testcase.substring(0, index);
+         int moduleIndex = testcase.indexOf(ChangedEntity.MODULE_SEPARATOR);
+         if (moduleIndex == -1) {
+            clazz = start;
+            module = "";
+         } else {
+            clazz = start.substring(moduleIndex + 1);
+            module = start.substring(0, moduleIndex);
+         }
          method = testcase.substring(index + 1);
       }
-      module = "";
    }
 
    public TestCase(final Testcases testcases) {
