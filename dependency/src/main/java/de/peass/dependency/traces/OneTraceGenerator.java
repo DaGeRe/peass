@@ -52,18 +52,6 @@ public class OneTraceGenerator {
       this.modules = modules;
    }
 
-   private File getClazzDir(final String version, final TestCase testcase) {
-      final File viewResultsFolder = new File(viewFolder, "view_" + version);
-      if (!viewResultsFolder.exists()) {
-         viewResultsFolder.mkdir();
-      }
-      final File clazzDir = new File(viewResultsFolder, testcase.getClazz());
-      if (!clazzDir.exists()) {
-         clazzDir.mkdir();
-      }
-      return clazzDir;
-   }
-
    public boolean generateTrace(final String versionCurrent)
          throws com.github.javaparser.ParseException, IOException, ViewNotFoundException, XmlPullParserException {
       boolean success = false;
@@ -101,16 +89,7 @@ public class OneTraceGenerator {
                   traceFiles = new LinkedList<>();
                   traceFileMap.put(testcase.toString(), traceFiles);
                }
-               final File methodDir = new File(getClazzDir(version, testcase), testcase.getMethod());
-               if (!methodDir.exists()) {
-                  methodDir.mkdir(); 
-               }
-               String shortVersion = versionCurrent.substring(0, 6);
-               if (versionCurrent.endsWith("~1")) {
-                  shortVersion = shortVersion + "~1";
-               }
-               final File methodTrace = writeTraces(sizeInMB, traceMethodReader, trace, traceFiles, methodDir, shortVersion);
-               LOG.debug("Datei {} existiert: {}", methodTrace.getAbsolutePath(), methodTrace.exists());
+               new TraceWriter(version, testcase, viewFolder).writeTrace(versionCurrent, sizeInMB, traceMethodReader, trace, traceFiles);
                success = true;
             } else {
                LOG.error("Trace empty!");
@@ -122,26 +101,9 @@ public class OneTraceGenerator {
       return success;
    }
 
-   private File writeTraces(final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace, List<File> traceFiles, final File methodDir,
-         String shortVersion) throws IOException {
-      final File currentTraceFile = new File(methodDir, shortVersion);
-      traceFiles.add(currentTraceFile);
-      Files.write(currentTraceFile.toPath(), trace.getWholeTrace().getBytes());
-      final File commentlessTraceFile = new File(methodDir, shortVersion + NOCOMMENT);
-      Files.write(commentlessTraceFile.toPath(), trace.getCommentlessTrace().getBytes());
-      final File methodTrace = new File(methodDir, shortVersion + METHOD);
-      Files.write(methodTrace.toPath(), trace.getTraceMethods().getBytes());
-      if (sizeInMB < 5) {
-         final File methodExpandedTrace = new File(methodDir, shortVersion + METHOD_EXPANDED);
-         Files.write(methodExpandedTrace.toPath(), traceMethodReader.getExpandedTrace()
-               .stream()
-               .filter(value -> !(value instanceof RuleContent))
-               .map(value -> value.toString()).collect(Collectors.toList()));
-      } else {
-         LOG.debug("Do not write expanded trace - size: {} MB", sizeInMB);
-      }
-      return methodTrace;
-   }
+   
+
+   
 
    private List<File> getClasspathFolders() {
       final List<File> files = new LinkedList<>();
