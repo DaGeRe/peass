@@ -113,8 +113,8 @@ public class PropertyReadHelper {
       final File fileOld = new File(folder, getShortPrevVersion() + "_method");
       if (fileCurrent.exists() && fileOld.exists()) {
          final PeASSFolders folders = new PeASSFolders(projectFolder);
-         final VersionIteratorGit iterator = new VersionIteratorGit(folder, 
-               Arrays.asList(new GitCommit[] {new GitCommit(version, null, null, null), new GitCommit(prevVersion, null, null, null)}), 
+         final VersionIteratorGit iterator = new VersionIteratorGit(folder,
+               Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), new GitCommit(prevVersion, null, null, null) }),
                new GitCommit(prevVersion, null, null, null));
          final ChangeManager changeManager = new ChangeManager(folders, iterator);
          final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(prevVersion, version);
@@ -127,9 +127,6 @@ public class PropertyReadHelper {
 
          for (final String calledInOneMethod : merged) {
             LOG.debug("Loading: " + calledInOneMethod);
-            if (calledInOneMethod.contains("ServletRequestContext#getContentLength")) {
-               System.out.println("Test");
-            }
             final ChangedEntity entity = determineEntity(calledInOneMethod);
             final MethodChangeReader reader = new MethodChangeReader(methodFolder, folders.getProjectFolder(), folders.getOldSources(), entity, version);
             reader.readMethodChangeData();
@@ -198,17 +195,25 @@ public class PropertyReadHelper {
    }
 
    public static ChangedEntity determineEntity(final String clazzMethodName) {
-      final String clazz = clazzMethodName.substring(0, clazzMethodName.indexOf("#"));
+      final String module, clazz;
+      if (clazzMethodName.contains(ChangedEntity.MODULE_SEPARATOR)) {
+         module = clazzMethodName.substring(0, clazzMethodName.indexOf(ChangedEntity.MODULE_SEPARATOR));
+         clazz = clazzMethodName.substring(clazzMethodName.indexOf(ChangedEntity.MODULE_SEPARATOR) + 1, clazzMethodName.indexOf(ChangedEntity.METHOD_SEPARATOR));
+      } else {
+         module = "";
+         clazz = clazzMethodName.substring(0, clazzMethodName.indexOf(ChangedEntity.METHOD_SEPARATOR));
+      }
+
       final int openingParenthesis = clazzMethodName.indexOf("(");
       String method;
       if (openingParenthesis != -1) {
-         method = clazzMethodName.substring(clazzMethodName.indexOf("#") + 1, openingParenthesis);
+         method = clazzMethodName.substring(clazzMethodName.indexOf(ChangedEntity.METHOD_SEPARATOR) + 1, openingParenthesis);
       } else {
-         method = clazzMethodName.substring(clazzMethodName.indexOf("#") + 1);
+         method = clazzMethodName.substring(clazzMethodName.indexOf(ChangedEntity.METHOD_SEPARATOR) + 1);
       }
       System.out.println(clazzMethodName);
 
-      final ChangedEntity entity = new ChangedEntity(clazz, "", method);
+      final ChangedEntity entity = new ChangedEntity(clazz, module, method);
       if (openingParenthesis != -1) {
          final String parameterString = clazzMethodName.substring(openingParenthesis + 1, clazzMethodName.length() - 1);
          final String[] parameters = parameterString.split(",");

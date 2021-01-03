@@ -39,7 +39,6 @@ public class JUnitTestGenerator {
    private final JUnitTestTransformer transformer;
 
    public JUnitTestGenerator(final File module, final ChangedEntity generatedName, final ChangedEntity callee, final String method, final JUnitTestTransformer transformer) {
-      super();
       this.module = module;
       this.generatedName = generatedName;
       this.callee = callee;

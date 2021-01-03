@@ -24,7 +24,7 @@ import java.util.Arrays;
  *
  */
 public class TraceElement {
-	private String clazz, method;
+	private String module, clazz, method;
 	
 	private boolean isStatic = false;
 	
@@ -33,11 +33,18 @@ public class TraceElement {
 	private int depth;
 
 	public TraceElement(final String clazz, final String method, final int depth) {
-		super();
 		this.clazz = clazz;
 		this.method = method;
 		this.depth = depth;
+		this.module = null;
 	}
+	
+	public TraceElement(final String clazz, final String method, final int depth, final String module) {
+      this.clazz = clazz;
+      this.method = method;
+      this.depth = depth;
+      this.module = module;
+   }
 
 	public int getDepth() {
 		return depth;
@@ -70,6 +77,14 @@ public class TraceElement {
 //		}
 //		return simpleClazz;
 //	}
+	
+	public String getModule() {
+      return module;
+   }
+	
+	public void setModule(String module) {
+      this.module = module;
+   }
 
 	public String getClazz() {
 		return clazz;
@@ -89,6 +104,19 @@ public class TraceElement {
 	
 	@Override
 	public String toString() {
-		return clazz + "." + method + " (" + (parameterTypes != null ? Arrays.toString(parameterTypes) : "") + ")";
+	   StringBuffer result = new StringBuffer();
+	   if (module != null) {
+         result.append(module);
+         result.append(ChangedEntity.MODULE_SEPARATOR);
+      }
+      result.append(clazz);
+      result.append(ChangedEntity.METHOD_SEPARATOR);
+      result.append(method);
+      if (parameterTypes.length != 0) {
+         result.append("(");
+         result.append(Arrays.deepToString(parameterTypes));
+         result.append(")");
+      }
+      return result.toString();
 	}
 }

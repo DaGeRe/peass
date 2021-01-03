@@ -85,17 +85,6 @@ public class PeASSFilter extends AbstractFilterPlugin {
                && !fullClassname.equals("de.peass.generated.GeneratedTest")) {
             final String methodname = execution.getOperation().getSignature().getName().intern();
 
-            final TraceElement traceelement = new TraceElement(fullClassname, methodname, execution.getEss());
-            if (Arrays.asList(execution.getOperation().getSignature().getModifier()).contains("static")) {
-               traceelement.setStatic(true);
-            }
-            final String[] paramTypeList = execution.getOperation().getSignature().getParamTypeList();
-            final String[] internParamTypeList = new String[paramTypeList.length];
-            for (int i = 0; i < paramTypeList.length; i++) {
-               internParamTypeList[i] = paramTypeList[i].intern();
-            }
-            traceelement.setParameterTypes(paramTypeList);
-
             // KoPeMe-methods are not relevant
             if (!methodname.equals("logFullData")
                   && !methodname.equals("useKieker")
@@ -104,10 +93,14 @@ public class PeASSFilter extends AbstractFilterPlugin {
                   && !methodname.equals("getMaximalTime")
                   && !methodname.equals("getRepetitions")
                   && !methodname.equals("getDataCollectors")) {
+               final TraceElement traceelement = buildTraceElement(execution, fullClassname, methodname);
+               
                calls.add(traceelement);
                // final String clazzFilename = ClazzFinder.getClassFilename(projectFolder, fullClassname);
                final String outerClazzName = ClazzFileFinder.getOuterClass(fullClassname);
-               final ChangedEntity fullClassEntity = new ChangedEntity(fullClassname, mapping.getModuleOfClass(outerClazzName));
+               final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
+               final ChangedEntity fullClassEntity = new ChangedEntity(fullClassname, moduleOfClass);
+               traceelement.setModule(moduleOfClass);
                Set<String> currentMethodSet = classes.get(fullClassEntity);
                if (currentMethodSet == null) {
                   currentMethodSet = new HashSet<>();
@@ -118,6 +111,20 @@ public class PeASSFilter extends AbstractFilterPlugin {
          }
       }
       LOG.info("Finished");
+   }
+
+   private TraceElement buildTraceElement(final Execution execution, final String fullClassname, final String methodname) {
+      final TraceElement traceelement = new TraceElement(fullClassname, methodname, execution.getEss());
+      if (Arrays.asList(execution.getOperation().getSignature().getModifier()).contains("static")) {
+         traceelement.setStatic(true);
+      }
+      final String[] paramTypeList = execution.getOperation().getSignature().getParamTypeList();
+      final String[] internParamTypeList = new String[paramTypeList.length];
+      for (int i = 0; i < paramTypeList.length; i++) {
+         internParamTypeList[i] = paramTypeList[i].intern();
+      }
+      traceelement.setParameterTypes(paramTypeList);
+      return traceelement;
    }
 
    public ArrayList<TraceElement> getCalls() {

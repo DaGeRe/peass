@@ -58,8 +58,8 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
             javaClazzName = clazz;
          }
       } else {
-         javaClazzName = clazz.substring(0, clazz.lastIndexOf("#"));
-         method = clazz.substring(clazz.lastIndexOf("#") + 1);
+         javaClazzName = clazz.substring(0, clazz.lastIndexOf(ChangedEntity.METHOD_SEPARATOR));
+         method = clazz.substring(clazz.lastIndexOf(ChangedEntity.METHOD_SEPARATOR) + 1);
       }
 
       LOG.trace(javaClazzName + " " + clazz);
