@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
@@ -34,7 +35,7 @@ public class TestParallelMeasurement {
    public TemporaryFolder folder = new TemporaryFolder();
 
    @Test
-   public void testFiles() throws IOException, InterruptedException, JAXBException {
+   public void testFiles() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final PeASSFolders folders = new PeASSFolders(folder.getRoot());
       final MeasurementConfiguration configuration = new MeasurementConfiguration(4, "2", "1");
       configuration.setMeasurementStrategy(MeasurementStrategy.PARALLEL);

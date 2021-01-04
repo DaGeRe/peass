@@ -1,8 +1,10 @@
 package de.peass.dependency.execution;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
@@ -25,6 +27,7 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.kiekerInstrument.InstrumentKiekerSource;
 import de.peass.testtransformation.JUnitTestShortener;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.StreamGobbler;
@@ -46,6 +49,7 @@ public abstract class TestExecutor {
    protected int jdk_version = 8;
    protected final JUnitTestTransformer testTransformer;
    protected List<String> existingClasses;
+   protected Set<String> includedMethodPattern;
 
    protected boolean buildfileExists = false;
 
@@ -62,9 +66,9 @@ public abstract class TestExecutor {
       return jdk_version;
    }
 
-   public abstract void prepareKoPeMeExecution(File logFile) throws IOException, InterruptedException;
+   public abstract void prepareKoPeMeExecution(File logFile) throws IOException, InterruptedException, XmlPullParserException;
 
-   public abstract void executeAllKoPeMeTests(final File logFile);
+   public abstract void executeAllKoPeMeTests(final File logFile) throws IOException, XmlPullParserException, InterruptedException;
 
    public abstract void executeTest(final TestCase tests, final File logFolder, long timeout);
 
@@ -287,5 +291,7 @@ public abstract class TestExecutor {
       return false;
    }
 
-   public abstract void setIncludedMethods(Set<String> includedPattern);
+   public void setIncludedMethods(final Set<String> includedMethodPattern) {
+      this.includedMethodPattern = includedMethodPattern;
+   }
 }

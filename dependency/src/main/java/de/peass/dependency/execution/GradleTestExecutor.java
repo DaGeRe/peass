@@ -29,7 +29,7 @@ public class GradleTestExecutor extends TestExecutor {
    }
 
    @Override
-   public void executeAllKoPeMeTests(final File logFile) {
+   public void executeAllKoPeMeTests(final File logFile) throws IOException, XmlPullParserException, InterruptedException {
       prepareKoPeMeExecution(logFile);
       try {
          final int testcount = getTestCount();
@@ -44,11 +44,12 @@ public class GradleTestExecutor extends TestExecutor {
    }
 
    @Override
-   public void prepareKoPeMeExecution(final File logFile) {
+   public void prepareKoPeMeExecution(final File logFile) throws IOException, XmlPullParserException, InterruptedException {
       LOG.debug("Starting Test Transformation");
       transformTests();
       if (testTransformer.getConfig().isUseKieker()) {
-         generateAOPXML();
+         final KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPattern, folders, testTransformer, getModules(), existingClasses);
+         kiekerEnvironmentPreparer.prepareKieker();
       }
 
       try {
@@ -98,19 +99,6 @@ public class GradleTestExecutor extends TestExecutor {
       }
 
       return buildFolderProcess(folder, logFile, vars);
-   }
-
-   private void generateAOPXML() {
-      try {
-         for (final File module : getModules()) {
-            final File metainf = new File(module, "src/main/resources/META-INF");
-            metainf.mkdirs();
-            final File goalFile = new File(metainf, "aop.xml");
-            AOPXMLHelper.writeAOPXMLToFile(existingClasses, goalFile, AllowedKiekerRecord.OPERATIONEXECUTION);
-         }
-      } catch (IOException | XmlPullParserException e) {
-         e.printStackTrace();
-      }
    }
 
    /**
@@ -195,12 +183,6 @@ public class GradleTestExecutor extends TestExecutor {
    @Override
    protected void clean(final File logFile) throws IOException, InterruptedException {
       // TODO Auto-generated method stub
-      
    }
 
-   @Override
-   public void setIncludedMethods(final Set<String> includedPattern) {
-      // TODO Auto-generated method stub
-      
-   }
 }

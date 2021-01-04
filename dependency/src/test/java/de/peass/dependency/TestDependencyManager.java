@@ -43,19 +43,23 @@ public class TestDependencyManager {
    }
 
    private void prepareMock(final PeASSFolders folders, final TestExecutor testExecutorMock, final File testFolder, final File rubishFile) {
-      Mockito.doAnswer(new Answer<Void>() {
-         @Override
-         public Void answer(InvocationOnMock invocation) throws Throwable {
-            folders.getTempMeasurementFolder().mkdir();
-            testFolder.mkdirs();
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(rubishFile))) {
-               for (int i = 0; i < 2 * 1024 * 1024; i++) {
-                  writer.write(i % 256);
+      try {
+         Mockito.doAnswer(new Answer<Void>() {
+            @Override
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+               folders.getTempMeasurementFolder().mkdir();
+               testFolder.mkdirs();
+               try (BufferedWriter writer = new BufferedWriter(new FileWriter(rubishFile))) {
+                  for (int i = 0; i < 2 * 1024 * 1024; i++) {
+                     writer.write(i % 256);
+                  }
                }
+               LOG.info("Written: {}", rubishFile.length());
+               return null;
             }
-            LOG.info("Written: {}", rubishFile.length());
-            return null;
-         }
-      }).when(testExecutorMock).executeAllKoPeMeTests(Mockito.any());
+         }).when(testExecutorMock).executeAllKoPeMeTests(Mockito.any());
+      } catch (IOException | XmlPullParserException | InterruptedException e) {
+         e.printStackTrace();
+      }
    }
 }

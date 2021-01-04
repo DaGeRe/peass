@@ -78,8 +78,6 @@ public class MavenTestExecutor extends TestExecutor {
 
    protected Charset lastEncoding = StandardCharsets.UTF_8;
 
-   private Set<String> includedMethodPattern;
-
    public MavenTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
       super(folders, testTransformer);
    }
@@ -100,39 +98,6 @@ public class MavenTestExecutor extends TestExecutor {
             executeTest(test, logFile.getParentFile(), testTransformer.getConfig().getTimeoutInMinutes());
          }
       } catch (final XmlPullParserException | IOException | InterruptedException e) {
-         e.printStackTrace();
-      }
-   }
-
-   private static final String[] metaInfFolders = new String[] { "src/main/resources/META-INF", "src/java/META-INF", "src/test/resources/META-INF", "src/test/META-INF",
-         "target/test-classes/META-INF" };
-
-   protected void generateAOPXML(AllowedKiekerRecord aspect) {
-      try {
-         for (final File module : getModules()) {
-            for (final String potentialReadFolder : metaInfFolders) {
-               final File folder = new File(module, potentialReadFolder);
-               folder.mkdirs();
-               final File goalFile2 = new File(folder, "aop.xml");
-               AOPXMLHelper.writeAOPXMLToFile(existingClasses, goalFile2, aspect);
-            }
-         }
-      } catch (final XmlPullParserException | IOException e) {
-         e.printStackTrace();
-      }
-   }
-
-   protected void generateKiekerMonitoringProperties(boolean useCircularQueue) {
-      try {
-         for (final File module : getModules()) {
-            for (final String potentialReadFolder : metaInfFolders) {
-               final File folder = new File(module, potentialReadFolder);
-               folder.mkdirs();
-               final File propertiesFile = new File(folder, "kieker.monitoring.properties");
-               AOPXMLHelper.writeKiekerMonitoringProperties(propertiesFile, useCircularQueue);
-            }
-         }
-      } catch (final XmlPullParserException | IOException e) {
          e.printStackTrace();
       }
    }
@@ -191,65 +156,16 @@ public class MavenTestExecutor extends TestExecutor {
    }
 
    @Override
-   public void prepareKoPeMeExecution(final File logFile) throws IOException, InterruptedException {
+   public void prepareKoPeMeExecution(final File logFile) throws IOException, InterruptedException, XmlPullParserException {
       MavenPomUtil.cleanSnapshotDependencies(new File(folders.getProjectFolder(), "pom.xml"));
       clean(logFile);
       LOG.debug("Starting Test Transformation");
       if (testTransformer.getConfig().isUseKieker()) {
-         if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-            final InstrumentKiekerSource instrumentKiekerSource;
-            if (!testTransformer.getConfig().isUseSelectiveInstrumentation()) {
-               instrumentKiekerSource = new InstrumentKiekerSource(testTransformer.getConfig().getRecord());
-            } else {
-               instrumentKiekerSource = new InstrumentKiekerSource(testTransformer.getConfig().getRecord(), includedMethodPattern);
-            }
-            instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
-            if (testTransformer.isAdaptiveExecution()) {
-               writeConfig();
-            }
-            generateKiekerMonitoringProperties(testTransformer.getConfig().isUseCircularQueue());
-         } else {
-            if (testTransformer.isAdaptiveExecution()) {
-               prepareAdaptiveExecution();
-            }
-            if (AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION.equals(testTransformer.getConfig().getRecord()) && testTransformer.isAdaptiveExecution()) {
-               generateAOPXML(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION);
-               generateKiekerMonitoringProperties(testTransformer.getConfig().isUseCircularQueue());
-            } else {
-               generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION);
-               generateKiekerMonitoringProperties(testTransformer.getConfig().isUseCircularQueue());
-            }
-            if (testTransformer.isAggregatedWriter()) {
-
-            }
-         }
+         final KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPattern, folders, testTransformer, getModules(), existingClasses);
+         kiekerEnvironmentPreparer.prepareKieker();
       }
       transformTests();
       preparePom();
-   }
-
-   public void prepareAdaptiveExecution() throws IOException, InterruptedException {
-      if (!MavenTestExecutor.KIEKER_ASPECTJ_JAR.exists()) {
-         // This can be removed if Kieker 1.14 is released
-         throw new RuntimeException("Tweaked Kieker " + MavenTestExecutor.KIEKER_ASPECTJ_JAR + " needs to exist - git clone https://github.com/DaGeRe/kieker -b 1_13_tweak "
-               + "and install manually!");
-      }
-      writeConfig();
-   }
-
-   private void writeConfig() throws IOException {
-      final File configFolder = new File(folders.getProjectFolder(), "config");
-      configFolder.mkdir();
-
-      final File adaptiveFile = new File(folders.getProjectFolder(), MavenTestExecutor.KIEKER_ADAPTIVE_FILENAME);
-      try (BufferedWriter writer = new BufferedWriter(new FileWriter(adaptiveFile))) {
-         writer.write("- *\n");
-         for (final String includedMethod : includedMethodPattern) {
-            writer.write("+ " + includedMethod + "\n");
-         }
-
-         writer.flush();
-      }
    }
 
    @Override
@@ -363,13 +279,7 @@ public class MavenTestExecutor extends TestExecutor {
          String writerConfig;
          if (testTransformer.isAggregatedWriter()) {
             final String bulkFolder = "-Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.customStoragePath=" + tempFile.getAbsolutePath().toString();
-            writerConfig = "-Dkieker.monitoring.writer=kieker.monitoring.writer.filesystem.AggregatedTreeWriter" +
-                  " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.writeInterval=" + testTransformer.getConfig().getKiekerAggregationInterval() +
-                  " " + bulkFolder;
-
-            if (testTransformer.isIgnoreEOIs()) {
-               writerConfig += " -Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.ignoreEOIs=true";
-            }
+            writerConfig = bulkFolder;
          } else {
             writerConfig = "";
          }
@@ -386,16 +296,10 @@ public class MavenTestExecutor extends TestExecutor {
          } else {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
                argline = TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
-                     " -Dkieker.monitoring.adaptiveMonitoring.enabled=true" +
-                     " -Dkieker.monitoring.adaptiveMonitoring.configFile=" + KIEKER_ADAPTIVE_FILENAME +
-                     " -Dkieker.monitoring.adaptiveMonitoring.readInterval=15" +
                      " " + writerConfig;
             } else {
                argline = KIEKER_ARG_LINE_TWEAK +
                      " " + TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
-                     " -Dkieker.monitoring.adaptiveMonitoring.enabled=true" +
-                     " -Dkieker.monitoring.adaptiveMonitoring.configFile=" + KIEKER_ADAPTIVE_FILENAME +
-                     " -Dkieker.monitoring.adaptiveMonitoring.readInterval=15" +
                      " " + writerConfig;
             }
          }
@@ -412,11 +316,6 @@ public class MavenTestExecutor extends TestExecutor {
    @Override
    public List<File> getModules() throws IOException, XmlPullParserException {
       return MavenPomUtil.getModules(new File(folders.getProjectFolder(), "pom.xml"));
-   }
-
-   @Override
-   public void setIncludedMethods(final Set<String> includedMethodPattern) {
-      this.includedMethodPattern = includedMethodPattern;
    }
 
 }

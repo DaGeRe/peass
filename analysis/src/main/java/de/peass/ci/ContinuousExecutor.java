@@ -103,7 +103,7 @@ public class ContinuousExecutor {
       return tests;
    }
 
-   private File measure(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException {
+   private File measure(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final File fullResultsVersion = getFullResultsVersion();
       final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(version.getTag(), versionOld, folders, measurementConfig);
       final File measurementFolder = measurementExecutor.executeMeasurements(tests, fullResultsVersion);

@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
@@ -41,7 +42,7 @@ public class OnceRunner {
    }
 
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
-         throws IOException, InterruptedException, JAXBException {
+         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");
       } else {

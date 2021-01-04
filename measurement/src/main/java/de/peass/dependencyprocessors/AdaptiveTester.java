@@ -8,6 +8,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
@@ -28,7 +29,7 @@ public class AdaptiveTester extends DependencyTester {
 
    }
 
-   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException {
+   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getVersionOld(), configuration.getVersion());
 
       new FolderDeterminer(folders).testResultFolders(configuration.getVersion(), configuration.getVersionOld(), testcase);

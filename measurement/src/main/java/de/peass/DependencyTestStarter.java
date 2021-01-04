@@ -10,6 +10,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
@@ -208,7 +209,7 @@ public class DependencyTestStarter extends PairProcessor {
             }
             lastTestcaseCalls.put(testcase, version);
          }
-      } catch (IOException | InterruptedException | JAXBException e) {
+      } catch (IOException | InterruptedException | JAXBException | XmlPullParserException e) {
          e.printStackTrace();
       }
    }

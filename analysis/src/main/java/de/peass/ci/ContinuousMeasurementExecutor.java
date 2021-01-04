@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
@@ -31,7 +32,7 @@ public class ContinuousMeasurementExecutor {
       this.measurementConfig = measurementConfig;
    }
 
-   public File executeMeasurements(final Set<TestCase> tests, final File fullResultsVersion) throws IOException, InterruptedException, JAXBException {
+   public File executeMeasurements(final Set<TestCase> tests, final File fullResultsVersion) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       if (!fullResultsVersion.exists()) {
          MeasurementConfiguration copied = new MeasurementConfiguration(measurementConfig);
          final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder(), copied);

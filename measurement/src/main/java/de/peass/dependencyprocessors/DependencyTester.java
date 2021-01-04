@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
@@ -65,8 +66,9 @@ public class DependencyTester implements KiekerResultHandler {
     * @param version Current version to test
     * @param versionOld Old version to test
     * @param testcase Testcase to test
+    * @throws XmlPullParserException 
     */
-   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException {
+   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       new FolderDeterminer(folders).testResultFolders(configuration.getVersion(), configuration.getVersionOld(), testcase);
 
       LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getVersionOld(), configuration.getVersion());
@@ -165,7 +167,7 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    public void runOneComparison(final File logFolder, final TestCase testcase, final int vmid)
-         throws IOException, InterruptedException, JAXBException {
+         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, testTransformer.getConfig().isUseKieker(), false, testcase,
             testTransformer.getConfig().getIterations());
 
@@ -197,7 +199,7 @@ public class DependencyTester implements KiekerResultHandler {
                OnceRunner runner = new OnceRunner(folders, vcs, testTransformer, testExecutor, currentOrganizer, DependencyTester.this);
                try {
                   runner.runOnce(testcase, version, vmid, logFolder);
-               } catch (IOException | InterruptedException | JAXBException e) {
+               } catch (IOException | InterruptedException | JAXBException | XmlPullParserException e) {
                   e.printStackTrace();
                }
             }
@@ -209,7 +211,7 @@ public class DependencyTester implements KiekerResultHandler {
       }
    }
 
-   private void runSequential(final File logFolder, final TestCase testcase, final int vmid, String versions[]) throws IOException, InterruptedException, JAXBException {
+   private void runSequential(final File logFolder, final TestCase testcase, final int vmid, String versions[]) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       for (String version : versions) {
          runOnce(testcase, version, vmid, logFolder);
       }
@@ -225,7 +227,7 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
-         throws IOException, InterruptedException, JAXBException {
+         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       OnceRunner runner = new OnceRunner(folders, vcs, testTransformer, testExecutor, currentOrganizer, this);
       runner.runOnce(testcase, version, vmid, logFolder);
    }

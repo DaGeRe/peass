@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -53,7 +54,7 @@ public class AdaptiveTesterTest {
    }
 
    @Test
-   public void testIterationUpdate() throws IOException, InterruptedException, JAXBException {
+   public void testIterationUpdate() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final int vms = 10;
       final MeasurementConfiguration config = new MeasurementConfiguration(vms, "A", "B");
       config.setIterations(1000);
@@ -122,7 +123,7 @@ public class AdaptiveTesterTest {
    }
    
    @Test
-   public void testSkipEarlyDecision() throws IOException, InterruptedException, JAXBException {
+   public void testSkipEarlyDecision() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final MeasurementConfiguration config = new MeasurementConfiguration(100, "A", "B");
       config.setIterations(1000);
       config.setEarlyStop(false);
@@ -153,7 +154,7 @@ public class AdaptiveTesterTest {
       }
    }
 
-   private AdaptiveTester prepareTester() throws IOException, InterruptedException, JAXBException {
+   private AdaptiveTester prepareTester() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final PeASSFolders folders = Mockito.mock(PeASSFolders.class);
       Mockito.when(folders.getProjectFolder()).thenReturn(folder.newFolder("test"));
 

@@ -35,8 +35,8 @@ public class CauseSearcherConfigMixin {
    private double minTime = 0.1;
    
    @Option(names = { "-rcaStrategy",
-   "--rcaStrategy" }, description = "Strategy to select nodes which are measured")
-   private RCAStrategy strategy = null;
+   "--rcaStrategy" }, description = "Strategy to select nodes which are measured (default: COMPLETE)")
+   private RCAStrategy strategy = RCAStrategy.COMPLETE;
 
    public boolean isUseCalibrationRun() {
       return useCalibrationRun;

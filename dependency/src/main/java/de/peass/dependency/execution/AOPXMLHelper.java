@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import de.peass.testtransformation.JUnitTestTransformer;
+
 public class AOPXMLHelper {
 
    public static void writeAOPXMLToFile(final List<String> allClasses, final File goalFile, AllowedKiekerRecord record) throws IOException {
@@ -29,18 +31,38 @@ public class AOPXMLHelper {
       }
    }
 
-   public static void writeKiekerMonitoringProperties(final File goalFile, boolean useFastMeasurement) throws IOException {
+   public static void writeKiekerMonitoringProperties(final File goalFile, JUnitTestTransformer transformer) throws IOException {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(goalFile))) {
          writer.write("kieker.monitoring.name=KIEKER-KoPeMe\n");
-         if (useFastMeasurement) {
+         if (transformer.getConfig().isUseCircularQueue()) {
             writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueFQN=de.dagere.kopeme.collections.SynchronizedCircularFifoQueue\n");
             writer.write("kieker.monitoring.core.controller.WriterController.QueuePutStrategy=kieker.monitoring.queue.putstrategy.YieldPutStrategy\n");
             writer.write("kieker.monitoring.core.controller.WriterController.QueueTakeStrategy=kieker.monitoring.queue.takestrategy.YieldTakeStrategy\n");
          } else {
             writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueFQN=java.util.concurrent.LinkedBlockingQueue\n");
          }
-         writer.write("kieker.monitoring.writer=kieker.monitoring.writer.filesystem.ChangeableFolderWriter\n");
-         writer.write("kieker.monitoring.writer.filesystem.ChangeableFolderWriter.realwriter=FileWriter\n");
+         if (transformer.isAggregatedWriter()) {
+            writer.write("kieker.monitoring.writer=kieker.monitoring.writer.filesystem.AggregatedTreeWriter\n");
+            writer.write("kieker.monitoring.writer.filesystem.AggregatedTreeWriter.writeInterval=" + transformer.getConfig().getKiekerAggregationInterval() + "\n");
+         } else {
+            writer.write("kieker.monitoring.writer=kieker.monitoring.writer.filesystem.ChangeableFolderWriter\n");
+            writer.write("kieker.monitoring.writer.filesystem.ChangeableFolderWriter.realwriter=FileWriter\n");
+         }
+         if (transformer.isIgnoreEOIs()) {
+            writer.write("kieker.monitoring.writer.filesystem.AggregatedTreeWriter.ignoreEOIs=true\n");
+         }
+         if (transformer.isAdaptiveExecution()) {
+            if (transformer.getConfig().isUseSourceInstrumentation()) {
+               writer.write("kieker.monitoring.adaptiveMonitoring.enabled=true\n");
+               writer.write("kieker.monitoring.adaptiveMonitoring.configFile=" + MavenTestExecutor.KIEKER_ADAPTIVE_FILENAME + "\n");
+               writer.write("kieker.monitoring.adaptiveMonitoring.readInterval=15\n");
+            } else {
+               writer.write("kieker.monitoring.adaptiveMonitoring.enabled=true\n");
+               writer.write("kieker.monitoring.adaptiveMonitoring.configFile=" + MavenTestExecutor.KIEKER_ADAPTIVE_FILENAME + "\n");
+               writer.write("kieker.monitoring.adaptiveMonitoring.readInterval=15\n");
+            }
+         }
+
          final int queueSize = 10000000;
          writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueSize=" + queueSize + "\n");
          writer.write("kieker.monitoring.writer.filesystem.ChangeableFolderWriter.flush=false\n");
