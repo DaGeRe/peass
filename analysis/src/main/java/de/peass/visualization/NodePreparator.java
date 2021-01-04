@@ -37,6 +37,7 @@ public class NodePreparator {
       this.data = data;
 
       root = new GraphNode(data.getNodes().getCall(), data.getNodes().getKiekerPattern(), data.getNodes().getOtherKiekerPattern());
+      root.setModule(data.getNodes().getModule());
    }
 
    public NodePreparator(final CauseSearchData data) {
@@ -81,6 +82,7 @@ public class NodePreparator {
          }
          if (add) {
             final GraphNode newChild = new GraphNode(purePredecessorChild.getCall(), purePredecessorChild.getKiekerPattern(), purePredecessorChild.getOtherKiekerPattern());
+            newChild.setModule(purePredecessorChild.getModule());
             newChild.setName(purePredecessorChild.getCall());
             newChild.setColor("#5555FF");
             newChild.setState(State.UNKNOWN);
@@ -159,6 +161,7 @@ public class NodePreparator {
       } else {
          newChild = new GraphNode(measuredChild.getCall(), measuredChild.getKiekerPattern(), measuredChild.getOtherKiekerPattern());
       }
+      newChild.setModule(measuredChild.getModule());
       return newChild;
    }
 

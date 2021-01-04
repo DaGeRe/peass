@@ -15,8 +15,10 @@ class CallTreeNodeDeserializer extends JsonDeserializer<CallTreeNode> {
       final JsonNode node = p.getCodec().readTree(p);
       final String call = node.get("call").asText();
       final String kiekerPattern = node.get("kiekerPattern").asText();
+      final String module = node.get("module") != null ? node.get("module").asText() : null;
       final JsonNode children = node.get("children");
       final CallTreeNode root = new CallTreeNode(call, kiekerPattern, null);
+      root.setModule(module);
       handleChild(children, root);
 
       return root;

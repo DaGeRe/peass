@@ -105,6 +105,7 @@ public class CauseSearchData {
       final MeasuredNode serializeNode = new MeasuredNode();
       serializeNode.setCall(rawDataNode.getCall());
       serializeNode.setKiekerPattern(rawDataNode.getKiekerPattern());
+      serializeNode.setModule(rawDataNode.getModule());
       serializeNode.setOtherKiekerPattern(rawDataNode.getOtherVersionNode() != null ? rawDataNode.getOtherVersionNode().getKiekerPattern() : "UNKNOWN");
       return serializeNode;
    }

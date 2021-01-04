@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
+import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.kieker.KiekerPatternConverter;
 
@@ -62,7 +63,10 @@ class SourceWriter {
    private void readMethod(final GraphNode node, final String currentPattern) throws IOException {
       final String key = KiekerPatternConverter.getKey(currentPattern);
       String fileNameStart = KiekerPatternConverter.getFileNameStart(currentPattern);
-
+      if (node.getModule() != null) {
+         fileNameStart = node.getModule() + ChangedEntity.MODULE_SEPARATOR + fileNameStart;
+      }
+      
       final File currentSourceFile = new File(sourceFolder, fileNameStart + "_main.txt");
       final File oldSourceFile = new File(sourceFolder, fileNameStart + "_old.txt");
       if (currentSourceFile.exists() && oldSourceFile.exists()) {

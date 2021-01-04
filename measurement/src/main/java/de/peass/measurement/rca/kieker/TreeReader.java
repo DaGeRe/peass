@@ -9,9 +9,11 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.KiekerReader;
+import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.PeASSFilter;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
@@ -48,13 +50,15 @@ public class TreeReader extends KiekerResultManager {
       return root;
    }
 
-   private CallTreeNode readTree(TestCase testcase, File kiekerTraceFolder) throws AnalysisConfigurationException {
+   private CallTreeNode readTree(TestCase testcase, File kiekerTraceFolder) throws AnalysisConfigurationException, IOException, XmlPullParserException {
       KiekerReader reader = new KiekerReader(kiekerTraceFolder);
       reader.initBasic();
       TraceReconstructionFilter traceReconstructionFilter = reader.initTraceReconstruction();
 
+      final ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), TestExecutor.getModules(folders));
+      
       AnalysisController analysisController = reader.getAnalysisController();
-      final TreeFilter treeFilter = new TreeFilter(null, analysisController, testcase, ignoreEOIs);
+      final TreeFilter treeFilter = new TreeFilter(null, analysisController, testcase, ignoreEOIs, mapping);
       analysisController.connect(traceReconstructionFilter, TraceReconstructionFilter.OUTPUT_PORT_NAME_EXECUTION_TRACE,
             treeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
 

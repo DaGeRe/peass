@@ -67,7 +67,7 @@ public class GraphNode extends BasicNode {
    public void setOtherKey(String otherKey) {
       this.otherKey = otherKey;
    }
-
+   
    public double[] getValues() {
       return values;
    }

@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peass.dependency.ClazzFileFinder;
+import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.ChangedEntity;
@@ -293,5 +294,10 @@ public abstract class TestExecutor {
 
    public void setIncludedMethods(final Set<String> includedMethodPattern) {
       this.includedMethodPattern = includedMethodPattern;
+   }
+
+   public static List<File> getModules(PeASSFolders folders) throws IOException, XmlPullParserException{
+      TestExecutor tempExecutor = ExecutorCreator.createExecutor(folders, null);
+      return tempExecutor.getModules();
    }
 }
