@@ -26,7 +26,7 @@ public class DescribedChunk {
       for (final Result result : chunk.getResult()) {
          if (!Double.isNaN(result.getValue())) {
             minRepetitions = Math.min(minRepetitions, result.getRepetitions());
-            minIterations = Math.min(minIterations, result.getExecutionTimes());
+            minIterations = Math.min(minIterations, result.getIterations());
          }
       }
       LOG.info("Repetitions: " + minRepetitions + " Iterations: " + minIterations);

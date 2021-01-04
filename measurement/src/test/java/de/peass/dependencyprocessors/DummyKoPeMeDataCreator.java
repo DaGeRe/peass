@@ -22,7 +22,7 @@ public class DummyKoPeMeDataCreator {
 
       final Result result = new Result();
       result.setValue(15);
-      result.setExecutionTimes(iterations);
+      result.setIterations(iterations);
       initDummyFulldata(result, iterations);
 
       storer.storeValue(result, testcase.getExecutable(), TimeDataCollector.class.getName());

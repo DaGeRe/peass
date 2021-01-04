@@ -140,10 +140,10 @@ public class Cleaner extends DataAnalyser {
 
    private void printFailureInfo(final Entry<String, EvaluationPair> entry, final Chunk currentChunk, final File measurementFile) {
       for (final Result r : entry.getValue().getPrevius()) {
-         LOG.debug("Value: {} Executions: {} Repetitions: {}", r.getValue(), r.getExecutionTimes(), r.getRepetitions());
+         LOG.debug("Value: {} Executions: {} Repetitions: {}", r.getValue(), r.getIterations(), r.getRepetitions());
       }
       for (final Result r : entry.getValue().getCurrent()) {
-         LOG.debug("Value:  {} Executions: {} Repetitions: {}", r.getValue(), r.getExecutionTimes(), r.getRepetitions());
+         LOG.debug("Value:  {} Executions: {} Repetitions: {}", r.getValue(), r.getIterations(), r.getRepetitions());
       }
       LOG.debug("Too few correct measurements: {} ", measurementFile.getAbsolutePath());
       LOG.debug("Measurements: {} / {}", currentChunk.getResult().size(), entry.getValue().getPrevius().size() + entry.getValue().getCurrent().size());
@@ -176,8 +176,8 @@ public class Cleaner extends DataAnalyser {
    private Result cleanResult(final String version, final Result result) {
       result.setVersion(new Versioninfo());
       result.getVersion().setGitversion(version);
-      result.setWarmupExecutions(result.getFulldata().getValue().size());
-      result.setExecutionTimes(result.getFulldata().getValue().size());
+      result.setWarmup(result.getFulldata().getValue().size());
+      result.setIterations(result.getFulldata().getValue().size());
       result.setRepetitions(result.getRepetitions());
       result.setMin(null);
       result.setMax(null);

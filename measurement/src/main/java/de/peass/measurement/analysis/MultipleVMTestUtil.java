@@ -112,7 +112,7 @@ public class MultipleVMTestUtil {
          final SummaryStatistics st) {
       final Result result = createResultFromStatistic(version, st, oneResult.getRepetitions());
       result.setDate(oneResult.getDate());
-      result.setWarmupExecutions(oneResult.getWarmupExecutions());
+      result.setWarmup(oneResult.getWarmup());
 
       summaryChunk.getResult().add(result);
       XMLDataStorer.storeData(summaryResultFile, summaryData);
@@ -179,7 +179,7 @@ public class MultipleVMTestUtil {
    public static long getMinExecutionCount(final List<Result> results) {
       long minExecutionTime = Long.MAX_VALUE;
       for (final Result result : results) {
-         final long currentResultSize = result.getExecutionTimes();
+         final long currentResultSize = result.getIterations();
          if (currentResultSize != 0) {
             minExecutionTime = Long.min(minExecutionTime, currentResultSize);
          }
@@ -195,7 +195,7 @@ public class MultipleVMTestUtil {
       result.setVersion(new Versioninfo());
       result.getVersion().setGitversion(version);
       result.setDeviation(st.getStandardDeviation());
-      result.setExecutionTimes(st.getN());
+      result.setIterations(st.getN());
       result.setRepetitions(repetitions);
       return result;
    }

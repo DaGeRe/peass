@@ -218,8 +218,8 @@ public class StatisticUtil {
       }
       resultShort.setValue(statistics.getMean());
       resultShort.setDeviation(statistics.getStandardDeviation());
-      resultShort.setExecutionTimes(end - start);
-      resultShort.setWarmupExecutions(start);
+      resultShort.setIterations(end - start);
+      resultShort.setWarmup(start);
       resultShort.setRepetitions(result.getRepetitions());
       return resultShort;
    }

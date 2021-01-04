@@ -109,7 +109,7 @@ public class DependencyTester implements KiekerResultHandler {
       if (result == null) {
          reducedIterations = testTransformer.getConfig().getIterations() / 2;
          LOG.error("Measurement for {} is null", version);
-      } else if (result.getExecutionTimes() < testTransformer.getConfig().getIterations()) {
+      } else if (result.getIterations() < testTransformer.getConfig().getIterations()) {
          LOG.error("Measurement executions: {}", result.getExecutionTimes());
          final int minOfExecuted = (int) result.getExecutionTimes() - 2;
          reducedIterations = Math.min(minOfExecuted, testTransformer.getConfig().getIterations() / 2);

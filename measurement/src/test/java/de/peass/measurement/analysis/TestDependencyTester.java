@@ -77,8 +77,8 @@ public class TestDependencyTester {
       final Chunk chunk = collector.getChunk().get(0);
       Assert.assertEquals(105, chunk.getResult().get(0).getValue(), 0.1);
       Assert.assertEquals(5, chunk.getResult().get(0).getRepetitions());
-      Assert.assertEquals(11, chunk.getResult().get(0).getExecutionTimes());
-      Assert.assertEquals(10, chunk.getResult().get(0).getWarmupExecutions());
+      Assert.assertEquals(11, chunk.getResult().get(0).getIterations());
+      Assert.assertEquals(10, chunk.getResult().get(0).getWarmup());
    }
    
 }

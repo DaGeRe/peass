@@ -75,7 +75,7 @@ public class ResultOrganizer {
                final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
                if (testcaseList.size() > 0) {
                   Result r = oneResultData.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);
-                  if (r.getExecutionTimes() == expectedIterations) {
+                  if (r.getIterations() == expectedIterations) {
                      success = true;
                   } else {
                      success = false;

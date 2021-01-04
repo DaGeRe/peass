@@ -237,13 +237,13 @@ public class ChangeReader {
    private void writeRunCommands(final String[] versions, final DescribedChunk describedChunk, final TestCase testcase) {
       if (runCommandWriter != null) {
          final Result exampleResult = describedChunk.getCurrent().get(0);
-         final int iterations = (int) exampleResult.getExecutionTimes();
+         final int iterations = (int) exampleResult.getIterations();
          final int repetitions = (int) exampleResult.getRepetitions();
          final int vms = describedChunk.getCurrent().size();
 
          final int versionIndex = VersionComparator.getVersionIndex(versions[1]);
          runCommandWriter.createSingleMethodCommand(versionIndex, versions[1], testcase.getExecutable(),
-               (int) exampleResult.getWarmupExecutions(), iterations, repetitions, vms);
+               (int) exampleResult.getWarmup(), iterations, repetitions, vms);
          
          runCommandWriterSlurm.createSingleMethodCommand(versionIndex, versions[1], testcase.getExecutable(),
                iterations, repetitions, vms);

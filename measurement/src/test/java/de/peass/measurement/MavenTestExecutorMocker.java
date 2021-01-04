@@ -81,8 +81,8 @@ public class MavenTestExecutorMocker {
       result.setMin(0D);
       result.setMax(20D);
       result.setRepetitions(5);
-      result.setWarmupExecutions(10);
-      result.setExecutionTimes(11);
+      result.setWarmup(10);
+      result.setIterations(11);
       return result;
    }
 }

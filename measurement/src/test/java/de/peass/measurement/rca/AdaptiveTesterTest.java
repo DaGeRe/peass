@@ -68,12 +68,12 @@ public class AdaptiveTesterTest {
       for (int i = 0; i < vms; i++) {
          final Result result1 = new Result();
          result1.setValue(15);
-         result1.setExecutionTimes(40);
+         result1.setIterations(40);
          Mockito.doReturn(result1).when(tester2).getLastResult("A", testcase, i);
 
          final Result result2 = new Result();
          result2.setValue(17);
-         result2.setExecutionTimes(40);
+         result2.setIterations(40);
          Mockito.doReturn(result2).when(tester2).getLastResult("B", testcase, i);
       }
 
@@ -144,12 +144,12 @@ public class AdaptiveTesterTest {
       for (int i = 0; i < 100; i++) {
          final Result result1 = new Result();
          result1.setValue(15);
-         result1.setExecutionTimes(40);
+         result1.setIterations(40);
          Mockito.doReturn(result1).when(tester2).getLastResult("A", testcase, i);
 
          final Result result2 = new Result();
          result2.setValue(15);
-         result2.setExecutionTimes(40);
+         result2.setIterations(40);
          Mockito.doReturn(result2).when(tester2).getLastResult("B", testcase, i);
       }
    }
