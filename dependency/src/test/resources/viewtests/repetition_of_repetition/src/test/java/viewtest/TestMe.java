@@ -24,7 +24,7 @@ public class TestMe {
 	}
 	
 	@Test
-	@PerformanceTest(executionTimes=1, warmupExecutions=0, useKieker=true)
+	@PerformanceTest(iterations=1, warmup=0, useKieker=true)
 	public void test() {
 		InnerClass c = new InnerClass();
 		for (int j = 0; j < 3; j++){

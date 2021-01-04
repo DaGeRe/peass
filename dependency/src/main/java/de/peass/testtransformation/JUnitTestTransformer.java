@@ -326,8 +326,8 @@ public class JUnitTestTransformer {
             clazz.addExtendedType("KoPeMeTestcase");
          }
 
-         addMethod(clazz, "getWarmupExecutions", "return " + config.getWarmup() + ";", PrimitiveType.intType());
-         addMethod(clazz, "getExecutionTimes", "return " + config.getIterations() + ";", PrimitiveType.intType());
+         addMethod(clazz, "getWarmup", "return " + config.getWarmup() + ";", PrimitiveType.intType());
+         addMethod(clazz, "getIterations", "return " + config.getIterations() + ";", PrimitiveType.intType());
          addMethod(clazz, "logFullData", "return " + config.isLogFullData() + ";", PrimitiveType.booleanType());
          addMethod(clazz, "useKieker", "return " + config.isUseKieker() + ";", PrimitiveType.booleanType());
          addMethod(clazz, "getMaximalTime", "return " + config.getTimeout() + ";", PrimitiveType.longType());
@@ -479,8 +479,8 @@ public class JUnitTestTransformer {
 
       final NormalAnnotationExpr performanceTestAnnotation = new NormalAnnotationExpr();
       performanceTestAnnotation.setName("de.dagere.kopeme.annotations.PerformanceTest");
-      performanceTestAnnotation.addPair("executionTimes", "" + config.getIterations());
-      performanceTestAnnotation.addPair("warmupExecutions", "" + config.getWarmup());
+      performanceTestAnnotation.addPair("iterations", "" + config.getIterations());
+      performanceTestAnnotation.addPair("warmup", "" + config.getWarmup());
       performanceTestAnnotation.addPair("logFullData", "" + true);
       performanceTestAnnotation.addPair("useKieker", "" + config.isUseKieker());
       performanceTestAnnotation.addPair("timeout", "" + config.getTimeout());

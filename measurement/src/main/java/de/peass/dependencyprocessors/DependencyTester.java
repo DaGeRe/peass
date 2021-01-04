@@ -110,8 +110,8 @@ public class DependencyTester implements KiekerResultHandler {
          reducedIterations = testTransformer.getConfig().getIterations() / 2;
          LOG.error("Measurement for {} is null", version);
       } else if (result.getIterations() < testTransformer.getConfig().getIterations()) {
-         LOG.error("Measurement executions: {}", result.getExecutionTimes());
-         final int minOfExecuted = (int) result.getExecutionTimes() - 2;
+         LOG.error("Measurement executions: {}", result.getIterations());
+         final int minOfExecuted = (int) result.getIterations() - 2;
          reducedIterations = Math.min(minOfExecuted, testTransformer.getConfig().getIterations() / 2);
       // 10E7 for at least 10 iterations means more than ~2.5 minutes per VM, which is ok
 //      } else if (result.getValue() > 10E7 && testTransformer.getConfig().getIterations() > 10) {

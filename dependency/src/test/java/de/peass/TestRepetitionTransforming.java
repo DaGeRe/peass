@@ -61,8 +61,8 @@ public class TestRepetitionTransforming {
 
 		Assert.assertEquals("KoPeMeTestcase", clazz.getExtendedTypes(0).getName().getIdentifier());
 
-		Assert.assertThat(clazz.getMethodsByName("getWarmupExecutions"), Matchers.hasSize(1));
-		Assert.assertThat(clazz.getMethodsByName("getExecutionTimes"), Matchers.hasSize(1));
+		Assert.assertThat(clazz.getMethodsByName("getWarmup"), Matchers.hasSize(1));
+		Assert.assertThat(clazz.getMethodsByName("getIterations"), Matchers.hasSize(1));
 
 	}
 
@@ -93,9 +93,9 @@ public class TestRepetitionTransforming {
 		final AnnotationExpr performanceTestAnnotation = testMethod.getAnnotationByName("PerformanceTest").get();
 		Assert.assertNotNull(performanceTestAnnotation);
 
-		Assert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("executionTimes"));
+		Assert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("iterations"));
 		Assert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("repetitions"));
-		Assert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("warmupExecutions"));
+		Assert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("warmup"));
 
 		for (final Node n : performanceTestAnnotation.getChildNodes()) {
 			System.out.println(n);
@@ -142,7 +142,7 @@ public class TestRepetitionTransforming {
 			}
 			final NormalAnnotationExpr a = new NormalAnnotationExpr();
 			a.setName("PerformanceTest");
-			a.addPair("executionTimes", "" + 5);
+			a.addPair("iterations", "" + 5);
 			method.addAnnotation(a);
 			for (final Object o : method.getAnnotations()) {
 				System.out.println(o.toString() + " " + o.getClass());

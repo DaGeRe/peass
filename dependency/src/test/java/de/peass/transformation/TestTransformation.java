@@ -89,8 +89,8 @@ public class TestTransformation {
 
       Assert.assertEquals("KoPeMeTestcase", clazz.getExtendedTypes(0).getName().getIdentifier());
 
-      Assert.assertThat(clazz.getMethodsByName("getWarmupExecutions"), Matchers.hasSize(1));
-      Assert.assertThat(clazz.getMethodsByName("getExecutionTimes"), Matchers.hasSize(1));
+      Assert.assertThat(clazz.getMethodsByName("getWarmup"), Matchers.hasSize(1));
+      Assert.assertThat(clazz.getMethodsByName("getIterations"), Matchers.hasSize(1));
    }
 
    @Test
@@ -163,8 +163,8 @@ public class TestTransformation {
       final AnnotationExpr performanceTestAnnotation = testMethod.getAnnotationByName("PerformanceTest").get();
       Assert.assertNotNull(performanceTestAnnotation);
 
-      Assert.assertThat(performanceTestAnnotation.getChildNodes(), hasAnnotation("executionTimes"));
-      Assert.assertThat(performanceTestAnnotation.getChildNodes(), hasAnnotation("warmupExecutions"));
+      Assert.assertThat(performanceTestAnnotation.getChildNodes(), hasAnnotation("iterations"));
+      Assert.assertThat(performanceTestAnnotation.getChildNodes(), hasAnnotation("warmup"));
 
       for (final Node n : performanceTestAnnotation.getChildNodes()) {
          System.out.println(n);
