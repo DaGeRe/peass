@@ -102,6 +102,14 @@ public class ViewGeneratorThread implements Runnable {
 
    private PeASSFolders initProjectFolder() throws InterruptedException, IOException {
       final File projectFolderTemp = new File(folders.getTempProjectFolder(), "" + VersionComparator.getVersionIndex(version));
+      if (projectFolderTemp.exists()) {
+         LOG.warn("Deleting existing folder {}", projectFolderTemp);
+         FileUtils.deleteDirectory(projectFolderTemp);
+         File peassFolder = new File(projectFolderTemp.getParentFile(), projectFolderTemp.getName()+"_peass");
+         if (peassFolder.exists()) {
+            FileUtils.deleteDirectory(peassFolder);
+         }
+      }
       GitUtils.clone(folders, projectFolderTemp);
       final PeASSFolders folders = new PeASSFolders(projectFolderTemp);
       return folders;
