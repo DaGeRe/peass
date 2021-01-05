@@ -41,3 +41,6 @@ out.txt
 /target/
 /target/
 peass_completion
+analysis/src/test/resources/visualization/project_test_peass/clearRCA.sh
+analysis/src/test/resources/visualization/project_test_peass/getProgress.sh
+analysis/src/test/resources/visualization/project_test_peass/rca/getIntermediaryValues.sh
