@@ -1,4 +1,4 @@
-package de.peran.analysis.helper.read;
+package de.peass.analysis.helper.read;
 
 import java.util.LinkedHashMap;
 import java.util.Map;

@@ -25,11 +25,11 @@ import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.measurement.analysis.DataAnalyser;
 import de.peass.measurement.analysis.DataReader;
+import de.peass.measurement.analysis.TestStatistic;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.TestData;
 import de.peass.utils.OptionConstants;
 import de.peran.FolderSearcher;
-import de.peran.measurement.analysis.TestStatistic;
 
 public class IsThereTimeReductionIterations extends DataAnalyser {
 

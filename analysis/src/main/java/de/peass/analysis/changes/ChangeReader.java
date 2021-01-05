@@ -16,18 +16,18 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.analysis.all.RepoFolders;
+import de.peass.analysis.helper.read.VersionData;
 import de.peass.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peass.confidence.KoPeMeDataHelper;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.VersionComparator;
+import de.peass.measurement.analysis.ProjectStatistics;
 import de.peass.measurement.analysis.Relation;
 import de.peass.measurement.analysis.statistics.DescribedChunk;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.utils.RunCommandWriterRCA;
 import de.peass.utils.RunCommandWriterSlurmRCA;
 import de.peran.FolderSearcher;
-import de.peran.analysis.helper.read.VersionData;
-import de.peran.measurement.analysis.ProjectStatistics;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 
 /**

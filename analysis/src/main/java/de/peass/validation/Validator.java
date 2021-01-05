@@ -17,12 +17,12 @@ import de.peass.analysis.changes.ProjectChanges;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependencyprocessors.VersionComparator;
+import de.peass.measurement.analysis.ProjectStatistics;
 import de.peass.validation.data.ProjectValidation;
 import de.peass.validation.data.Validation;
 import de.peass.validation.data.ValidationChange;
 import de.peass.vcs.GitUtils;
 import de.peran.FolderSearcher;
-import de.peran.measurement.analysis.ProjectStatistics;
 
 public class Validator {
 

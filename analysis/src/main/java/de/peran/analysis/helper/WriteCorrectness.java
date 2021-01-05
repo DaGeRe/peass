@@ -11,8 +11,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.peass.analysis.changes.Change;
 import de.peass.analysis.changes.Changes;
 import de.peass.analysis.changes.ProjectChanges;
+import de.peass.measurement.analysis.ProjectStatistics;
 import de.peran.FolderSearcher;
-import de.peran.measurement.analysis.ProjectStatistics;
 
 public class WriteCorrectness {
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {

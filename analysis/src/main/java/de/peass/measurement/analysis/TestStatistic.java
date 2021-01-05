@@ -1,4 +1,4 @@
-package de.peran.measurement.analysis;
+package de.peass.measurement.analysis;
 
 import java.io.File;
 import java.io.IOException;

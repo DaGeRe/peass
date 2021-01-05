@@ -20,13 +20,13 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.persistence.Dependencies;
+import de.peass.measurement.analysis.AnalyseFullData;
+import de.peass.measurement.analysis.ProjectStatistics;
 import de.peass.utils.Constants;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIteratorGit;
 import de.peran.AnalyseOneTest;
-import de.peran.measurement.analysis.AnalyseFullData;
-import de.peran.measurement.analysis.ProjectStatistics;
 
 public class ContinuousExecutor {
 

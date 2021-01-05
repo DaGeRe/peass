@@ -18,12 +18,12 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.analysis.changes.ChangeReader;
+import de.peass.analysis.helper.read.TestcaseData;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.utils.DivideVersions;
-import de.peran.analysis.helper.read.TestcaseData;
 
 public class MissingExecutionFinder {
 

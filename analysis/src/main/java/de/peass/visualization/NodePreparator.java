@@ -29,7 +29,7 @@ public class NodePreparator {
 
    private CallTreeNode rootPredecessor, rootVersion;
    private final CauseSearchData data;
-   final GraphNode root;
+   private final GraphNode root;
 
    public NodePreparator(final CallTreeNode rootPredecessor, final CallTreeNode rootVersion, final CauseSearchData data) {
       this.rootPredecessor = rootPredecessor;

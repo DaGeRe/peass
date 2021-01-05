@@ -20,9 +20,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.peass.dependency.reader.DependencyReaderUtil;
+import de.peass.measurement.analysis.AnalyseFullData;
+import de.peass.measurement.analysis.ProjectStatistics;
 import de.peass.utils.OptionConstants;
-import de.peran.measurement.analysis.AnalyseFullData;
-import de.peran.measurement.analysis.ProjectStatistics;
 
 /**
  * Analyzes data from all subfolders of one folder. It is assumed that the typical PeASS-folder-structure is given.

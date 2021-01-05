@@ -20,6 +20,9 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.analysis.changes.ChangeReader;
+import de.peass.analysis.helper.read.FolderValues;
+import de.peass.analysis.helper.read.TestcaseData;
+import de.peass.analysis.helper.read.VersionData;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependencyprocessors.VersionComparator;
@@ -30,9 +33,6 @@ import de.peass.utils.RunCommandWriterSlurm;
 import de.peran.FolderSearcher;
 import de.peran.analysis.helper.AnalysisUtil;
 import de.peran.analysis.helper.comparedata.BigDiffs;
-import de.peran.analysis.helper.read.FolderValues;
-import de.peran.analysis.helper.read.TestcaseData;
-import de.peran.analysis.helper.read.VersionData;
 
 /**
  * Compares measurements of same versions and testcases in order to find out whether there results differ.

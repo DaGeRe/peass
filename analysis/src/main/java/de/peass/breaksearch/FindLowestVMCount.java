@@ -21,12 +21,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.measurement.analysis.DataAnalyser;
+import de.peass.measurement.analysis.TestStatistic;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.MeanCoVData;
 import de.peass.measurement.analysis.statistics.TestData;
 import de.peass.utils.OptionConstants;
 import de.peran.FolderSearcher;
-import de.peran.measurement.analysis.TestStatistic;
 
 public class FindLowestVMCount extends DataAnalyser {
 
