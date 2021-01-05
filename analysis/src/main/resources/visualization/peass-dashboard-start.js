@@ -132,7 +132,47 @@ function visualizeSelected(){
 	visualizeGraph("graphCurrent", "currentSelect");
 }
 
-var currentNode = treeData[0];
+function findGetParameter(parameterName) {
+    var result = null,
+        tmp = [];
+    var items = location.search.substr(1).split("&");
+    for (var index = 0; index < items.length; index++) {
+        tmp = items[index].split("=");
+        if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+    }
+    return result;
+}
+
+var call = findGetParameter("call");
+var ess = findGetParameter("ess");
+console.log("Searching " + call + " " + ess);
+
+function findNode(node, depth){
+	if (ess == depth) {
+		console.log("Testing " + node.call + " " +call);
+		if (node.call == call){
+			return node;
+		}
+	} else {
+		for (var index = 0; index < node.children.length; index++) {
+		  var child = node.children[index];
+		  var found = findNode(child, depth + 1);
+		  if (found != null){
+		  	return found;
+		  }
+		}
+	}
+}
+
+
+
+var currentNode = findNode(treeData[0], 0);
+if (currentNode == null){
+	alert("Did not find node with Execution Stack Size " + ess + " and call " + call + " - visualization root node instead");
+	currentNode = treeData[0];
+}
+
+document.getElementById("overallHistogram").innerHTML="Current Node: " + currentNode.call
 
 plotOverallHistogram("overallHistogram", currentNode);
 

@@ -99,12 +99,12 @@ public class RCAGenerator {
    private File getOutputHTML(final CauseSearchData data) {
       final File output;
       if (destFolder.getName().equals(data.getMeasurementConfig().getVersion())) {
-         output = new File(destFolder, data.getTestcase() + ".html");
+         output = new File(destFolder, data.getTestcase().replace('#', '_') + ".html");
          copyResources(destFolder);
       } else {
          File versionFolder = new File(destFolder, data.getMeasurementConfig().getVersion());
          copyResources(versionFolder);
-         output = new File(versionFolder, data.getTestcase() + ".html");
+         output = new File(versionFolder, data.getTestcase().replace('#', '_') + ".html");
       }
       output.getParentFile().mkdirs();
       return output;

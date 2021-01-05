@@ -251,12 +251,19 @@ function shownode(node) {
       }
     }
   }
+  
+  
+  var inspectLink = "";
+  if (node.ess != -1){
+    inspectLink = "<a href='"+treeData[0].call.replace("#", "_") +"_dashboard.html?ess="+node.ess+"&call=" + encodeURIComponent(node.call)+"' target='parent'>Inspect Node</a><br><br>";
+  }
   if (node.kiekerPattern != node.otherKiekerPattern) {
-  	histogramm.innerHTML=node.kiekerPattern + " " + node.otherKiekerPattern
+  	histogramm.innerHTML=node.kiekerPattern + " " + node.otherKiekerPattern + inspectLink;
   } else {
-  	histogramm.innerHTML=node.kiekerPattern
+  	histogramm.innerHTML=node.kiekerPattern + node.otherKiekerPattern + inspectLink;
   }
   plotOverallHistogram("histogramm", node);
+  //document.getElementById("histogramm").innerHtml+="<br><a href='"+treeData[0].call+"_dashboard.html?ess="+1+"&test="+node.call+"'>Inspect Node</a>";
 }
 
 shownode(root);

@@ -87,6 +87,7 @@ public class NodePreparator {
             newChild.setColor("#5555FF");
             newChild.setState(State.UNKNOWN);
             graphNode.getChildren().add(newChild);
+            newChild.setEss(-1);
             LOG.trace("Adding: " + purePredecessorChild.getCall() + " Parent: " + graphNode.getKiekerPattern());
             handleFullTreeNode(newChild, purePredecessorChild, purePredecessorChild.getOtherVersionNode());
          }
@@ -141,6 +142,7 @@ public class NodePreparator {
             }
 
             newChild.setParent(measuredParent.getCall());
+            newChild.setEss(graphParent.getEss() + 1);
             setGraphData(measuredChild, newChild);
 
             graphParent.getChildren().add(newChild);

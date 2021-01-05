@@ -26,19 +26,18 @@ public class GraphNode extends BasicNode {
    private boolean hasSourceChange = false;
    private State state;
    private double inVMDeviationPredecessor, inVMDeviation;
+   private int ess;
 
    @JsonInclude(Include.NON_NULL)
    private double[] values = null;
    @JsonInclude(Include.NON_NULL)
    private double[] valuesPredecessor = null;
-   
+
    @JsonInclude(Include.NON_NULL)
    private MeasuredValues vmValues = null;
    @JsonInclude(Include.NON_NULL)
    private MeasuredValues vmValuesPredecessor = null;
-   
-   
-   
+
    private List<GraphNode> children = new LinkedList<>();
 
    public GraphNode(final String call, final String kiekerPattern, final String otherKiekerPattern) {
@@ -59,15 +58,23 @@ public class GraphNode extends BasicNode {
    public void setKey(String key) {
       this.key = key;
    }
-   
+
+   public int getEss() {
+      return ess;
+   }
+
+   public void setEss(int ess) {
+      this.ess = ess;
+   }
+
    public String getOtherKey() {
       return otherKey;
    }
-   
+
    public void setOtherKey(String otherKey) {
       this.otherKey = otherKey;
    }
-   
+
    public double[] getValues() {
       return values;
    }
@@ -83,7 +90,7 @@ public class GraphNode extends BasicNode {
    public void setValuesPredecessor(final double[] valuesPredecessor) {
       this.valuesPredecessor = valuesPredecessor;
    }
-   
+
    public MeasuredValues getVmValues() {
       return vmValues;
    }
@@ -107,7 +114,7 @@ public class GraphNode extends BasicNode {
    public void setStatistic(final TestcaseStatistic statistic) {
       this.statistic = statistic;
    }
-   
+
    public double getInVMDeviationPredecessor() {
       return inVMDeviationPredecessor;
    }
