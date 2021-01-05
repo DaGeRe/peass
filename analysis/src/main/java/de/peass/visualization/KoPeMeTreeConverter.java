@@ -9,6 +9,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.math3.stat.descriptive.AggregateSummaryStatistics;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
@@ -26,8 +27,10 @@ import de.peass.measurement.rca.serialization.MeasuredValues;
 
 public class KoPeMeTreeConverter {
 
-   private GraphNode node;
+   private final GraphNode node;
    private int calls = 0, callsOld = 0;
+   private final DescriptiveStatistics statisticsCurrent = new DescriptiveStatistics();
+   private final DescriptiveStatistics statisticsOld = new DescriptiveStatistics();
 
    public KoPeMeTreeConverter(final CauseSearchFolders folders, final String version, final TestCase testcase) throws JAXBException {
       node = new GraphNode("overall", "public overall.overall()", "public overall.overall()");
@@ -38,21 +41,21 @@ public class KoPeMeTreeConverter {
    }
 
    private void readStatistics(final CauseSearchFolders folders, final String version, final TestCase testcase) throws JAXBException {
-      SummaryStatistics statisticsCurrent = new SummaryStatistics();
-      SummaryStatistics statisticsOld = new SummaryStatistics();
-
       for (File versionFolder : folders.getArchiveResultFolder(version, testcase).listFiles()) {
          File levelFolder = new File(versionFolder, "0"); // For the beginning, just analyze topmost KoPeMe-measurement
          for (File kopemeFile : levelFolder.listFiles((FilenameFilter) new WildcardFileFilter(testcase.getMethod() + "*.xml"))) {
-            readFile(version, testcase, statisticsCurrent, statisticsOld, versionFolder, kopemeFile);
+            readFile(version, testcase, versionFolder, kopemeFile);
          }
       }
 
       final TestcaseStatistic overallStatistic = new TestcaseStatistic(statisticsOld, statisticsCurrent, callsOld, calls);
       node.setStatistic(overallStatistic);
+      
+      node.setValues(statisticsCurrent.getValues());
+      node.setValuesPredecessor(statisticsOld.getValues());
    }
 
-   private void readFile(final String version, final TestCase testcase, SummaryStatistics statisticsCurrent, SummaryStatistics statisticsOld, File versionFolder, File kopemeFile)
+   private void readFile(final String version, final TestCase testcase, File versionFolder, File kopemeFile)
          throws JAXBException {
       String stringIndex = kopemeFile.getName().substring(testcase.getMethod().length()+1, kopemeFile.getName().lastIndexOf('_'));
       int index = Integer.parseInt(stringIndex);
@@ -60,15 +63,15 @@ public class KoPeMeTreeConverter {
       final Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
       if (datacollector.getChunk().size() > 0) {
          for (Result result : datacollector.getChunk().get(0).getResult()) {
-            readResult(version, versionFolder.getName(), statisticsCurrent, statisticsOld, result, index);
+            readResult(version, versionFolder.getName(), result, index);
          }
       }
       for (Result result : datacollector.getResult()) {
-         readResult(version, versionFolder.getName(), statisticsCurrent, statisticsOld, result, index);
+         readResult(version, versionFolder.getName(), result, index);
       }
    }
 
-   private void readResult(final String version, String currentVersion, SummaryStatistics statisticsCurrent, SummaryStatistics statisticsOld, Result result, int index) {
+   private void readResult(final String version, String currentVersion, Result result, int index) {
       if (currentVersion.equals(version)) {
          statisticsCurrent.addValue(result.getValue());
          calls += result.getIterations();

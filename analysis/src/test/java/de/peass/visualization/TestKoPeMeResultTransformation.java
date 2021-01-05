@@ -26,5 +26,9 @@ public class TestKoPeMeResultTransformation {
       Assert.assertEquals(45, convertedNode.getVmValuesPredecessor().getValues().get(0).get(0).getMean(), 0.01);
       Assert.assertEquals(35, convertedNode.getVmValuesPredecessor().getValues().get(0).get(1).getMean(), 0.01);
       
+      Assert.assertEquals(30, convertedNode.getValues()[0], 0.01);
+      Assert.assertEquals(30, convertedNode.getValues()[1], 0.01);
+      Assert.assertEquals(40, convertedNode.getValuesPredecessor()[0], 0.01);
+      Assert.assertEquals(40, convertedNode.getValuesPredecessor()[1], 0.01);
    }
 }
