@@ -12,6 +12,7 @@
 	
 	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jstat@latest/dist/jstat.min.js"></script>
 	
 	<script src="jsGraphSource.js"></script>
 </head>
@@ -23,6 +24,7 @@
 
 </div>
 <div id='selection' class='part' style='float:left; width:45%; height: 47%'>
+  <div id='selectionTable' style='float:left; width: 45%'>
   Available VMs:
   <table style="height: 90%; width: 300px;">
   	<tr><td>Predecessor</td><td>Current</td></tr>
@@ -37,6 +39,10 @@
    </td></tr>
   </table>
   <a href='#' onClick='visualizeSelected();'>Visualize Selected</a>
+  </div>
+  <div id='tValueTable' style='float: right; width: 45%'>
+  
+  </div>
 </div>
 <div id='graphs' style='float: right; width: 47%; height: 47%'>
 	<div id='graphPredecessor' class='part' style='width: 95%; height:47%;' >

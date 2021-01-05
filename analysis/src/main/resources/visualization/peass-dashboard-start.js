@@ -92,6 +92,14 @@ function getAverage(divId, vmValues, start, end){
  	return averages;
 }
 
+function get_t_test(t_array1, t_array2){
+     meanA = jStat.mean(t_array1);
+     meanB = jStat.mean(t_array2);
+     S2=(jStat.sum(jStat.pow(jStat.subtract(t_array1,meanA),2)) + jStat.sum(jStat.pow(jStat.subtract(t_array2,meanB),2)))/(t_array1.length+t_array2.length-2);
+     t_score = (meanA - meanB)/Math.sqrt(S2/t_array1.length+S2/t_array2.length);
+     return t_score;
+ }
+
 function visualizeHistogram(start, end){
 	var averagesPredecessor = getAverage("predecessorSelect", currentNode.vmValuesPredecessor, start, end);
  	var averagesCurrent = getAverage("predecessorSelect", currentNode.vmValues, start, end);
@@ -121,7 +129,14 @@ function visualizeHistogram(start, end){
 				yaxis: { title: { text: "Frequency"} }
 			  };
 	  Plotly.newPlot("selectedHistogram", data, layout);
-
+	  
+	  var predecessorStat = new jStat(averagesPredecessor);
+	  var currentStat = new jStat(averagesCurrent);
+	  document.getElementById("tValueTable").innerHTML="<table><tr><th>Property</th><th>Predecessor</th><th>Current</th></tr>"
+	  	+ "<tr><td>Mean</td><td>" + Math.round(predecessorStat.mean()*1000)/1000 +"</td><td>" + Math.round(currentStat.mean()*1000)/1000 + "</td></tr>"
+	  	+ "<tr><td>Deviation</td><td>" + Math.round(predecessorStat.stdev()*1000)/1000 +"</td><td>" + Math.round(currentStat.stdev()*1000)/1000 + "</td></tr>"
+	  	+ "</table>"
+	  	+ "VMS: " + averagesPredecessor.length + " T=" + Math.round(get_t_test(averagesPredecessor, averagesCurrent)*1000)/1000;
 }
 
 function visualizeSelected(){
@@ -167,8 +182,6 @@ function findNode(node, depth){
 	}
 }
 
-
-
 var currentNode = findNode(treeData[0], 0);
 if (currentNode == null) {
 	alert("Did not find node with Execution Stack Size " + ess + " and call " + call + " - visualization root node instead");
@@ -181,3 +194,5 @@ plotOverallHistogram("overallHistogram", currentNode);
 
 addOptionSelectbox('predecessorOptions', 'predecessorSelect', currentNode.vmValuesPredecessor.values);
 addOptionSelectbox('currentOptions', 'currentSelect', currentNode.vmValues.values);
+
+visualizeHistogram();
