@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -90,28 +92,32 @@ public class VisualizeRCA implements Callable<Void> {
    }
 
    private void analyzeFile(final File versionResultFolder, final File treeFile)
-         throws JsonParseException, JsonMappingException, IOException, JsonProcessingException, FileNotFoundException {
-      final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, versionResultFolder);
+         throws JsonParseException, JsonMappingException, IOException, JsonProcessingException, FileNotFoundException, JAXBException {
+      final CauseSearchFolders folders = getCauseSearchFolders(treeFile);
+      
+      final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, versionResultFolder, folders);
       final File propertyFolder = getPropertyFolder(projectName);
       rcaGenerator.setPropertyFolder(propertyFolder);
+
       if (visualizeFull) {
          final CauseSearchData data = rcaGenerator.getData();
 
-         final File projectFolder = treeFile.getAbsoluteFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
-
-         final CauseSearchFolders folders;
-         if (projectFolder.getName().contentEquals("rca")) {
-            folders = new CauseSearchFolders(projectFolder.getParentFile());
-         } else {
-            folders = new CauseSearchFolders(projectFolder);
-         }
-
          final File treeFolder = folders.getTreeCacheFolder(data.getMeasurementConfig().getVersion(), data.getCauseConfig().getTestCase());
-
          getFullTree(rcaGenerator, data, treeFolder);
-
       }
       rcaGenerator.createVisualization();
+   }
+
+   private CauseSearchFolders getCauseSearchFolders(final File treeFile) {
+      final File projectFolder = treeFile.getAbsoluteFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
+
+      final CauseSearchFolders folders;
+      if (projectFolder.getName().contentEquals("rca")) {
+         folders = new CauseSearchFolders(projectFolder.getParentFile());
+      } else {
+         folders = new CauseSearchFolders(projectFolder);
+      }
+      return folders;
    }
 
    private File getPropertyFolder(final String projectName) {

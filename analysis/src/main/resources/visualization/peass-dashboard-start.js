@@ -148,6 +148,9 @@ var ess = findGetParameter("ess");
 console.log("Searching " + call + " " + ess);
 
 function findNode(node, depth){
+	if (call == "overall" && ess == -1) {
+		return kopemeData[0];
+	}
 	if (ess == depth) {
 		console.log("Testing " + node.call + " " +call);
 		if (node.call == call){
@@ -167,7 +170,7 @@ function findNode(node, depth){
 
 
 var currentNode = findNode(treeData[0], 0);
-if (currentNode == null){
+if (currentNode == null) {
 	alert("Did not find node with Execution Stack Size " + ess + " and call " + call + " - visualization root node instead");
 	currentNode = treeData[0];
 }
