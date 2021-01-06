@@ -16,7 +16,7 @@ function getVmGraph(currentArray) {
   return data;
 }
 
-function plotVMGraph(divName, node, ids, idsPredecessor){
+function plotVMGraph(divName, node, ids, idsPredecessor, name){
   var data = [];
   console.log(ids.length);
   for (id = 0; id < ids.length; id++){
@@ -26,7 +26,7 @@ function plotVMGraph(divName, node, ids, idsPredecessor){
   	data[id + ids.length] = getVmGraph(node.vmValuesPredecessor.values[id]);
   }
   
-  var layout = {title: { text: "VM-wise Iteration Durations"},
+  var layout = {title: { text: "VM-wise Iteration Durations " + name},
 			xaxis: { title: { text: "Iteration"} },
 			yaxis: { title: { text: "Duration / &#x00B5;s"},
 			mode: "lines+markers" }
@@ -62,9 +62,9 @@ function visualizeGraph(divId, selectId){
 	  ids[i] = vmId;
 	}
 	if (selectId == "predecessorSelect") {
-		plotVMGraph(divId, currentNode, [], ids);
+		plotVMGraph(divId, currentNode, [], ids, "Predecessor");
 	} else {
-		plotVMGraph(divId, currentNode, ids, []);
+		plotVMGraph(divId, currentNode, ids, [], "Current");
 	}
 }
 

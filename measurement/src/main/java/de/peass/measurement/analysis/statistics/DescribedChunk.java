@@ -33,7 +33,7 @@ public class DescribedChunk {
       
       for (final Result result : chunk.getResult()) {
          if (!Double.isNaN(result.getValue()) && 
-               result.getExecutionTimes() == minIterations &&
+               result.getIterations() == minIterations &&
                result.getRepetitions() == minRepetitions) {
             if (result.getVersion().getGitversion().equals(versionPrevious)) {
                descPrev.addValue(result.getValue());
