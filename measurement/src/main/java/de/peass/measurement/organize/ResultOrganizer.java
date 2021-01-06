@@ -79,7 +79,7 @@ public class ResultOrganizer {
                      success = true;
                   } else {
                      success = false;
-                     LOG.error("Wrong execution count: {} Expected: {}", r.getExecutionTimes(), expectedIterations);
+                     LOG.error("Wrong execution count: {} Expected: {}", r.getIterations(), expectedIterations);
                   }
                } else {
                   LOG.error("Testcase not found in XML");
