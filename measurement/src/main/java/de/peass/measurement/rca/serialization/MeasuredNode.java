@@ -17,6 +17,7 @@ import de.peass.measurement.rca.data.OneVMResult;
 
 public class MeasuredNode extends BasicNode {
 
+   // Contains duration in microseconds
    private TestcaseStatistic statistic;
    private List<MeasuredNode> childs = new LinkedList<>();
 

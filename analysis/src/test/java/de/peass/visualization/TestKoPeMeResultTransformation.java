@@ -18,17 +18,17 @@ public class TestKoPeMeResultTransformation {
       CauseSearchFolders folders = new CauseSearchFolders(new File("src/test/resources/visualization/project_test"));
       KoPeMeTreeConverter converter = new KoPeMeTreeConverter(folders, "7675e29a368e5ac051e76c145e84c80af7ae1e88", testcase);
       GraphNode convertedNode = converter.getData();
-      Assert.assertEquals(40, convertedNode.getStatistic().getMeanOld(), 0.01);
-      Assert.assertEquals(30, convertedNode.getStatistic().getMeanCurrent(), 0.01);
-      Assert.assertEquals(35, convertedNode.getVmValues().getValues().get(0).get(0).getMean(), 0.01);
-      Assert.assertEquals(25, convertedNode.getVmValues().getValues().get(0).get(1).getMean(), 0.01);
+      Assert.assertEquals(0.004, convertedNode.getStatistic().getMeanOld(), 0.01);
+      Assert.assertEquals(0.003, convertedNode.getStatistic().getMeanCurrent(), 0.01);
+      Assert.assertEquals(0.0035, convertedNode.getVmValues().getValues().get(0).get(0).getMean(), 0.01);
+      Assert.assertEquals(0.0025, convertedNode.getVmValues().getValues().get(0).get(1).getMean(), 0.01);
       
-      Assert.assertEquals(45, convertedNode.getVmValuesPredecessor().getValues().get(0).get(0).getMean(), 0.01);
-      Assert.assertEquals(35, convertedNode.getVmValuesPredecessor().getValues().get(0).get(1).getMean(), 0.01);
+      Assert.assertEquals(0.0045, convertedNode.getVmValuesPredecessor().getValues().get(0).get(0).getMean(), 0.01);
+      Assert.assertEquals(0.0035, convertedNode.getVmValuesPredecessor().getValues().get(0).get(1).getMean(), 0.01);
       
-      Assert.assertEquals(30, convertedNode.getValues()[0], 0.01);
-      Assert.assertEquals(30, convertedNode.getValues()[1], 0.01);
-      Assert.assertEquals(40, convertedNode.getValuesPredecessor()[0], 0.01);
-      Assert.assertEquals(40, convertedNode.getValuesPredecessor()[1], 0.01);
+      Assert.assertEquals(0.003, convertedNode.getValues()[0], 0.01);
+      Assert.assertEquals(0.003, convertedNode.getValues()[1], 0.01);
+      Assert.assertEquals(0.004, convertedNode.getValuesPredecessor()[0], 0.01);
+      Assert.assertEquals(0.004, convertedNode.getValuesPredecessor()[1], 0.01);
    }
 }

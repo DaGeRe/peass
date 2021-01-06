@@ -1,8 +1,14 @@
 package de.peass.kiekerInstrument;
 
+import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.expr.AssignExpr;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
+import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.TryStmt;
 
@@ -13,12 +19,12 @@ public class BlockBuilder {
    private final AllowedKiekerRecord recordType;
    private final boolean enableDeactivation;
 
-   public BlockBuilder(AllowedKiekerRecord recordType, boolean enableDeactivation) {
+   public BlockBuilder(final AllowedKiekerRecord recordType, final boolean enableDeactivation) {
       this.recordType = recordType;
       this.enableDeactivation = enableDeactivation;
    }
 
-   public BlockStmt buildConstructorStatement(BlockStmt originalBlock, String signature, boolean addReturn) {
+   public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final String signature, final boolean addReturn) {
       System.out.println("Statements: " + originalBlock.getStatements().size() + " " + signature);
       BlockStmt replacedStatement = new BlockStmt();
       ExplicitConstructorInvocationStmt constructorStatement = null;
@@ -40,6 +46,16 @@ public class BlockBuilder {
       return replacedStatement;
    }
 
+   public BlockStmt buildSampleStatement(BlockStmt originalBlock, String signature, boolean addReturn, String counterName) {
+      if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
+         throw new RuntimeException("Not implemented yet");
+      } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
+         return buildSelectiveSamplingStatement(originalBlock, signature, addReturn, counterName);
+      } else {
+         throw new RuntimeException();
+      }
+   }
+
    public BlockStmt buildStatement(BlockStmt originalBlock, String signature, boolean addReturn) {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
          return buildOperationExecutionStatement(originalBlock, signature, addReturn);
@@ -48,6 +64,23 @@ public class BlockBuilder {
       } else {
          throw new RuntimeException();
       }
+   }
+
+   public BlockStmt buildSelectiveSamplingStatement(BlockStmt originalBlock, String signature, boolean addReturn, String samplingCounterName) {
+      BlockStmt replacedStatement = new BlockStmt();
+      buildHeader(originalBlock, signature, addReturn, replacedStatement);
+
+      int count = 1000;
+
+      BlockStmt samplingInvocationStatement = buildReducedOperationExecutionStatement(originalBlock, signature, addReturn);
+      samplingInvocationStatement.addAndGetStatement(samplingCounterName + "=0");
+
+      Expression expression = StaticJavaParser.parseExpression(samplingCounterName + "++==" + count);
+      IfStmt ifstatement = new IfStmt(expression, samplingInvocationStatement, originalBlock);
+
+      replacedStatement.addStatement(ifstatement);
+
+      return replacedStatement;
    }
 
    public BlockStmt buildReducedOperationExecutionStatement(BlockStmt originalBlock, String signature, boolean addReturn) {

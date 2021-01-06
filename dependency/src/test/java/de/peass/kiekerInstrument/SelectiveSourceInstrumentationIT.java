@@ -40,7 +40,7 @@ public class SelectiveSourceInstrumentationIT {
       shouldInstrument.add("public void de.peass.MainTest.testMe()");
       shouldInstrument.add("public void de.peass.C0_0.method0()");
       
-      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION, shouldInstrument);
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION, shouldInstrument, false);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 
       final ProcessBuilder pb = new ProcessBuilder("mvn", "test", 

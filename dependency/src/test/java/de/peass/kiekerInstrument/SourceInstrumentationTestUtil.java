@@ -3,8 +3,11 @@ package de.peass.kiekerInstrument;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 
 import de.peass.TestConstants;
 
@@ -29,5 +32,14 @@ public class SourceInstrumentationTestUtil {
       final URL exampleClass = TestSourceInstrumentation.class.getResource(sourcePath + name);
       FileUtils.copyURLToFile(exampleClass, testFile);
       return testFile;
+   }
+   
+   public static void testFileIsNotInstrumented(File testFile, String fqn) throws IOException {
+      String changedSource = FileUtils.readFileToString(testFile, StandardCharsets.UTF_8);
+
+      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("MonitoringController.getInstance().isMonitoringEnabled()")));
+      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString(fqn)));
+      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("new OperationExecutionRecord")));
+      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("kieker.monitoring.core.controller.MonitoringController")));
    }
 }

@@ -36,7 +36,7 @@ public class KiekerEnvironmentPreparer {
          if (!testTransformer.getConfig().isUseSelectiveInstrumentation()) {
             instrumentKiekerSource = new InstrumentKiekerSource(testTransformer.getConfig().getRecord());
          } else {
-            instrumentKiekerSource = new InstrumentKiekerSource(testTransformer.getConfig().getRecord(), includedMethodPattern);
+            instrumentKiekerSource = new InstrumentKiekerSource(testTransformer.getConfig().getRecord(), includedMethodPattern, false);
          }
          instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
          if (testTransformer.isAdaptiveExecution()) {

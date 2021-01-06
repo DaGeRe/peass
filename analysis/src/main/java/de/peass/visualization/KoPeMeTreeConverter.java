@@ -27,6 +27,7 @@ import de.peass.measurement.rca.serialization.MeasuredValues;
 
 public class KoPeMeTreeConverter {
 
+   private static final int NANO_TO_MICRO = 1000;
    private final GraphNode node;
    private int calls = 0, callsOld = 0;
    private final DescriptiveStatistics statisticsCurrent = new DescriptiveStatistics();
@@ -36,7 +37,7 @@ public class KoPeMeTreeConverter {
       node = new GraphNode("overall", "public overall.overall()", "public overall.overall()");
       node.setVmValues(new MeasuredValues());
       node.setVmValuesPredecessor(new MeasuredValues());
-      
+
       readStatistics(folders, version, testcase);
    }
 
@@ -50,14 +51,14 @@ public class KoPeMeTreeConverter {
 
       final TestcaseStatistic overallStatistic = new TestcaseStatistic(statisticsOld, statisticsCurrent, callsOld, calls);
       node.setStatistic(overallStatistic);
-      
+
       node.setValues(statisticsCurrent.getValues());
       node.setValuesPredecessor(statisticsOld.getValues());
    }
 
    private void readFile(final String version, final TestCase testcase, File versionFolder, File kopemeFile)
          throws JAXBException {
-      String stringIndex = kopemeFile.getName().substring(testcase.getMethod().length()+1, kopemeFile.getName().lastIndexOf('_'));
+      String stringIndex = kopemeFile.getName().substring(testcase.getMethod().length() + 1, kopemeFile.getName().lastIndexOf('_'));
       int index = Integer.parseInt(stringIndex);
       Kopemedata data = XMLDataLoader.loadData(kopemeFile);
       final Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
@@ -73,15 +74,15 @@ public class KoPeMeTreeConverter {
 
    private void readResult(final String version, String currentVersion, Result result, int index) {
       if (currentVersion.equals(version)) {
-         statisticsCurrent.addValue(result.getValue());
+         statisticsCurrent.addValue(result.getValue() / result.getRepetitions() / NANO_TO_MICRO);
          calls += result.getIterations();
-         
+
          List<StatisticalSummary> course = getCourse(result);
          node.getVmValues().getValues().put(index, course);
       } else {
-         statisticsOld.addValue(result.getValue());
+         statisticsOld.addValue(result.getValue() / result.getRepetitions() / NANO_TO_MICRO);
          callsOld += result.getIterations();
-         
+
          List<StatisticalSummary> course = getCourse(result);
          node.getVmValuesPredecessor().getValues().put(index, course);
       }
@@ -90,7 +91,8 @@ public class KoPeMeTreeConverter {
    private List<StatisticalSummary> getCourse(Result result) {
       List<StatisticalSummary> course = new LinkedList<>();
       for (Value value : result.getFulldata().getValue()) {
-         final StatisticalSummaryValues statistic = new StatisticalSummaryValues(value.getValue(), 0, result.getRepetitions(), value.getValue(), value.getValue(), result.getValue()*result.getRepetitions());
+         double mean = ((double) value.getValue()) / result.getRepetitions() / NANO_TO_MICRO; // Convert nanoseconds (from KoPeMe) to microseconds
+         final StatisticalSummaryValues statistic = new StatisticalSummaryValues(mean, 0, result.getRepetitions(), mean, mean, mean * result.getRepetitions());
          course.add(statistic);
       }
       return course;

@@ -23,24 +23,17 @@ public class TestSelectiveInstrumentation {
       Set<String> shouldInstrument = new HashSet<>();
       shouldInstrument.add("public void de.peass.MainTest.testMe()");
       
-      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION, shouldInstrument);
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION, shouldInstrument, false);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 
       TestSourceInstrumentation.testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/test/java/de/peass/MainTest.java"), 
-            "public void de.peass.MainTest.testMe()");
+            "public void de.peass.MainTest.testMe()", "OperationExecutionRecord");
       
-      testFileIsNotInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), 
+      SourceInstrumentationTestUtil.testFileIsNotInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), 
             "public void de.peass.C0_0.method0()");
-      testFileIsNotInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C1_0.java"), 
+      SourceInstrumentationTestUtil.testFileIsNotInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C1_0.java"), 
             "public void de.peass.C1_0.method0()");
    }
    
-   public static void testFileIsNotInstrumented(File testFile, String fqn) throws IOException {
-      String changedSource = FileUtils.readFileToString(testFile, StandardCharsets.UTF_8);
-
-      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("MonitoringController.getInstance().isMonitoringEnabled()")));
-      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString(fqn)));
-      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("new OperationExecutionRecord")));
-      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("kieker.monitoring.core.controller.MonitoringController")));
-   }
+   
 }

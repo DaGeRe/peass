@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -19,13 +21,16 @@ import org.codehaus.groovy.ast.stmt.BlockStatement;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.TryStmt;
+import com.github.javaparser.ast.type.PrimitiveType;
 
 import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.dependency.execution.AllowedKiekerRecord;
@@ -51,18 +56,21 @@ public class InstrumentKiekerSource {
    private final AllowedKiekerRecord usedRecord;
    private final Set<String> includedPatterns;
    private final BlockBuilder blockBuilder;
+   private final boolean sample;
 
    public InstrumentKiekerSource(AllowedKiekerRecord usedRecord) {
       this.usedRecord = usedRecord;
       includedPatterns = new HashSet<>();
       includedPatterns.add("*");
       this.blockBuilder = new BlockBuilder(usedRecord, true);
+      this.sample = false;
    }
 
-   public InstrumentKiekerSource(AllowedKiekerRecord usedRecord, Set<String> includedPatterns) {
+   public InstrumentKiekerSource(AllowedKiekerRecord usedRecord, Set<String> includedPatterns, boolean sample) {
       this.usedRecord = usedRecord;
       this.includedPatterns = includedPatterns;
       this.blockBuilder = new BlockBuilder(usedRecord, false);
+      this.sample = sample;
    }
 
    public void instrumentProject(File projectFolder) throws IOException {
@@ -80,7 +88,7 @@ public class InstrumentKiekerSource {
       String name = packageName + "." + clazz.getNameAsString();
 
       boolean fileContainsChange = handleChildren(clazz, name);
-     
+
       if (fileContainsChange) {
          addImports(unit);
          Files.write(file.toPath(), unit.toString().getBytes(StandardCharsets.UTF_8));
@@ -96,6 +104,7 @@ public class InstrumentKiekerSource {
 
    private boolean handleChildren(ClassOrInterfaceDeclaration clazz, String name) {
       boolean oneHasChanged = false;
+      List<String> fieldsToAdd = new LinkedList<>();
       for (Node child : clazz.getChildNodes()) {
          if (child instanceof MethodDeclaration) {
             MethodDeclaration method = (MethodDeclaration) child;
@@ -106,7 +115,15 @@ public class InstrumentKiekerSource {
                String signature = getSignature(name + "." + method.getNameAsString(), method);
                boolean oneMatches = testSignatureMatch(signature);
                if (oneMatches) {
-                  BlockStmt replacedStatement = blockBuilder.buildStatement(originalBlock, signature, method.getType().toString().equals("void"));
+                  final BlockStmt replacedStatement;
+                  final boolean needsReturn = method.getType().toString().equals("void");
+                  if (sample) {
+                     String counterName = signature.substring(signature.lastIndexOf('.') + 1, signature.indexOf('(')) + "Counter";
+                     fieldsToAdd.add(counterName);
+                     replacedStatement = blockBuilder.buildSampleStatement(originalBlock, signature, needsReturn, counterName);
+                  } else {
+                     replacedStatement = blockBuilder.buildStatement(originalBlock, signature, needsReturn);
+                  }
 
                   method.setBody(replacedStatement);
                   oneHasChanged = true;
@@ -127,6 +144,9 @@ public class InstrumentKiekerSource {
             }
          }
       }
+      for (String counterName : fieldsToAdd) {
+         clazz.addField("int", counterName, Keyword.PRIVATE);
+      }
       return oneHasChanged;
    }
 
@@ -142,7 +162,7 @@ public class InstrumentKiekerSource {
          } catch (InvalidPatternException e) {
             throw new RuntimeException(e);
          }
-         
+
       }
       return oneMatches;
    }
