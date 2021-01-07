@@ -115,9 +115,8 @@ public class LevelCauseSearcherTest {
    @Test
    public void testWarmup()
          throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
-      measurementConfig = new MeasurementConfiguration(3, TestConstants.V2, TestConstants.V1);
-      // measurementConfig.setUseKieker(true);
-      measurementConfig.setWarmup(3);
+      measurementConfig = new MeasurementConfiguration(5, TestConstants.V2, TestConstants.V1);
+      measurementConfig.setWarmup(500);
       measurementConfig.setIterations(5);
 
       builderPredecessor = new TreeBuilder(measurementConfig);
@@ -141,6 +140,8 @@ public class LevelCauseSearcherTest {
       System.out.println(expectedT + " " + nodeStatistic.getTvalue());
       // Assert.assertEquals(nodeStatistic.getMeanCurrent());
       Assert.assertEquals(expectedT, nodeStatistic.getTvalue(), 0.01);
+      Assert.assertEquals(95, nodeStatistic.getMeanCurrent(), 0.01);
+      Assert.assertEquals(105, nodeStatistic.getMeanOld(), 0.01);
    }
 
 }
