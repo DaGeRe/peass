@@ -25,7 +25,7 @@ public class TreeBuilder {
 
    private boolean useFullLogAPI = true;
 
-   MeasurementConfiguration config;
+   private final MeasurementConfiguration config;
 
    public TreeBuilder(final MeasurementConfiguration config) {
       this(config, true);

@@ -12,6 +12,7 @@ import org.apache.commons.math3.stat.inference.TTest;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -38,25 +39,38 @@ public class LevelCauseSearcherTest {
     * Needs own measurement config for kieker activation
     */
    private MeasurementConfiguration measurementConfig = new MeasurementConfiguration(2, TestConstants.V2, TestConstants.V1);
-
+   private final File folder = new File("target/test_peass/");
    {
       measurementConfig.setUseKieker(true);
    }
 
+   private TreeBuilder builderPredecessor = new TreeBuilder();
+   private CallTreeNode root1;
+   private CallTreeNode root2;
+   private BothTreeReader treeReader;
+   
+   @Before
    public void cleanup() {
-      final File folder = new File("target/test_peass/");
       try {
          FileUtils.deleteDirectory(folder);
       } catch (final IOException e) {
          e.printStackTrace();
       }
+      folder.mkdir();
+   }
+   
+   public void buildRoots() {
+      root1 = builderPredecessor.getRoot();
+      root2 = builderPredecessor.getRoot();
+      
+      treeReader = Mockito.mock(BothTreeReader.class);
+      Mockito.when(treeReader.getRootPredecessor()).thenReturn(root1);
+      Mockito.when(treeReader.getRootVersion()).thenReturn(root2);
    }
 
    @Test
    public void testMeasurement() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      final TreeBuilder treeBuilderPredecessor = new TreeBuilder();
-      final CallTreeNode root1 = treeBuilderPredecessor.getRoot();
-      final CallTreeNode root2 = treeBuilderPredecessor.getRoot();
+      buildRoots();
 
       final LevelDifferentNodeDeterminer lcs = new LevelDifferentNodeDeterminer(Arrays.asList(new CallTreeNode[] { root1 }),
             Arrays.asList(new CallTreeNode[] { root2 }),
@@ -65,13 +79,13 @@ public class LevelCauseSearcherTest {
       
       root1.setOtherVersionNode(root2);
       root2.setOtherVersionNode(root1);
-      treeBuilderPredecessor.buildMeasurements(treeBuilderPredecessor.getRoot());
+      builderPredecessor.buildMeasurements(builderPredecessor.getRoot());
       
       lcs.calculateDiffering();
       Assert.assertEquals(3, lcs.getMeasureNextLevelPredecessor().size());
-      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(treeBuilderPredecessor.getA()));
-      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(treeBuilderPredecessor.getC()));
-      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(treeBuilderPredecessor.getConstructor()));
+      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(builderPredecessor.getA()));
+      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(builderPredecessor.getC()));
+      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(builderPredecessor.getConstructor()));
 
       Assert.assertEquals(0, lcs.getTreeStructureDifferingNodes().size());
    }
@@ -79,17 +93,7 @@ public class LevelCauseSearcherTest {
    @Test
    public void testCauseSearching()
          throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
-      final TreeBuilder builderPredecessor = new TreeBuilder();
-      final CallTreeNode root1 = builderPredecessor.getRoot();
-      final CallTreeNode root2 = builderPredecessor.getRoot();
-
-      cleanup();
-      final File folder = new File("target/test/");
-      folder.mkdir();
-
-      final BothTreeReader treeReader = Mockito.mock(BothTreeReader.class);
-      Mockito.when(treeReader.getRootPredecessor()).thenReturn(root1);
-      Mockito.when(treeReader.getRootVersion()).thenReturn(root2);
+      buildRoots();
 
       final CauseTester measurer = Mockito.mock(CauseTester.class);
       CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
@@ -111,22 +115,13 @@ public class LevelCauseSearcherTest {
    @Test
    public void testWarmup()
          throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
-      cleanup();
-      final File folder = new File("target/test/");
-      folder.mkdir();
-
       measurementConfig = new MeasurementConfiguration(3, TestConstants.V2, TestConstants.V1);
       // measurementConfig.setUseKieker(true);
       measurementConfig.setWarmup(3);
       measurementConfig.setIterations(5);
 
-      final TreeBuilder builderPredecessor = new TreeBuilder(measurementConfig);
-      final CallTreeNode root1 = builderPredecessor.getRoot();
-      final CallTreeNode root2 = builderPredecessor.getRoot();
-
-      final BothTreeReader treeReader = Mockito.mock(BothTreeReader.class);
-      Mockito.when(treeReader.getRootPredecessor()).thenReturn(root1);
-      Mockito.when(treeReader.getRootVersion()).thenReturn(root2);
+      builderPredecessor = new TreeBuilder(measurementConfig);
+      buildRoots();
 
       final CauseTester measurer = Mockito.mock(CauseTester.class);
       CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
