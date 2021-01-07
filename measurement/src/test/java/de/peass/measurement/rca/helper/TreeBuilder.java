@@ -24,6 +24,7 @@ public class TreeBuilder {
    protected String version = "000001";
 
    private boolean useFullLogAPI = true;
+   private boolean addOutlier = false;
 
    private final MeasurementConfiguration config;
 
@@ -45,6 +46,10 @@ public class TreeBuilder {
    public TreeBuilder() {
       config = new MeasurementConfiguration(3);
       config.setIterations(3);
+   }
+
+   public void setAddOutlier(boolean addOutlier) {
+      this.addOutlier = addOutlier;
    }
 
    public void addDE() {
@@ -142,17 +147,25 @@ public class TreeBuilder {
    private void writeFullLogData(final CallTreeNode node, final String version, final long average) {
       for (int vm = 0; vm < config.getVms(); vm++) {
          node.newVM(version);
-         final long deltaVM = (config.getVms() / 2) - vm ;
          for (int warmup = 0; warmup < config.getWarmup(); warmup++) {
             node.addMeasurement(version, average * 5);
          }
          for (int iteration = 0; iteration < config.getIterations(); iteration++) {
-            final long deltaIteration = (config.getIterations() / 2) - iteration ;
-            final long value = average - deltaIteration - deltaVM;
-            node.addMeasurement(version, value);
-            System.out.println(vm + " " + iteration + " " + deltaVM + " " + deltaIteration + " "+ value);
+            final long value = getValue(average, vm, iteration);
+            if (!addOutlier || vm != config.getVms() - 1) {
+               node.addMeasurement(version, value);
+            } else {
+               node.addMeasurement(version, 100000L);
+            }
          }
       }
+   }
+
+   private long getValue(final long average, final int vm, int iteration) {
+      final long deltaVM = (config.getVms() / 2) - vm;
+      final long deltaIteration = (config.getIterations() / 2) - iteration;
+      final long value = average - deltaIteration - deltaVM;
+      return value;
    }
 
    public CallTreeNode getRoot() {

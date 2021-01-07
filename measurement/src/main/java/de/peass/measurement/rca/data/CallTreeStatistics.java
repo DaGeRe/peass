@@ -6,6 +6,9 @@ import java.util.List;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
+import de.peass.measurement.analysis.statistics.OutlierRemover;
+import de.peass.measurement.analysis.statistics.OutlierRemoverVMResults;
+
 public class CallTreeStatistics {
    
    private final int warmup;
@@ -31,10 +34,7 @@ public class CallTreeStatistics {
 
    public void createStatistics() {
       statistics.clear();
-      for (final OneVMResult result : results) {
-         final double average = result.getAverage();
-         statistics.addValue(average);
-      }
+      OutlierRemoverVMResults.getValuesWithoutOutliers(results, statistics);
    }
    
    public List<OneVMResult> getResults() {
