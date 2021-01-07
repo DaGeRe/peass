@@ -2,11 +2,13 @@ package de.peass.measurement.rca.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
+import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -78,7 +80,30 @@ public class CallTreeNode extends BasicNode {
 
    public void setMeasurement(final String version, final List<StatisticalSummary> statistic) {
       checkDataAddPossible(version);
+      removeWarmup(statistic);
       data.get(version).setMeasurement(statistic);
+   }
+
+   private void removeWarmup(final List<StatisticalSummary> statistic) {
+      int remainingWarmup = warmup;
+      StatisticalSummary borderSummary = null;
+      for (Iterator<StatisticalSummary> it = statistic.iterator(); it.hasNext();) {
+         StatisticalSummary chunk = it.next();
+         if (remainingWarmup - chunk.getN() > 0) {
+            remainingWarmup -= chunk.getN();
+            it.remove();
+         } else {
+            borderSummary = new StatisticalSummaryValues(chunk.getMean(), chunk.getVariance(), chunk.getN() - remainingWarmup,
+                  chunk.getMax(), chunk.getMin(), chunk.getMean() * remainingWarmup);
+            it.remove();
+            break;
+         }
+      }
+      if (borderSummary != null) {
+         statistic.add(0, borderSummary);
+      } else {
+         LOG.warn("Warning! Reading aggregated data which contain less executions than the warmup!");
+      }
    }
 
    private void checkDataAddPossible(final String version) {

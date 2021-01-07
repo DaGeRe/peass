@@ -82,7 +82,7 @@ public class CauseTester extends AdaptiveTester {
 
    @Override
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      includedNodes.forEach(node -> node.setWarmup(testTransformer.getConfig().getIterations() / 2));
+      includedNodes.forEach(node -> node.setWarmup(testTransformer.getConfig().getWarmup() * testTransformer.getConfig().getRepetitions()));
 
       LOG.debug("Adaptive execution: " + includedNodes);
 
