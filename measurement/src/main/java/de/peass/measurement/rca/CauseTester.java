@@ -82,7 +82,9 @@ public class CauseTester extends AdaptiveTester {
 
    @Override
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      includedNodes.forEach(node -> node.setWarmup(testTransformer.getConfig().getWarmup() * testTransformer.getConfig().getRepetitions()));
+      final int samplingfactor = testTransformer.getConfig().isUseSampling() ? 1000 : 1;
+      final int warmup = testTransformer.getConfig().getWarmup() * testTransformer.getConfig().getRepetitions() / samplingfactor;
+      includedNodes.forEach(node -> node.setWarmup(warmup));
 
       LOG.debug("Adaptive execution: " + includedNodes);
 
@@ -90,7 +92,8 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
+         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final Set<String> includedPattern = new HashSet<>();
       if (configuration.getVersionOld().equals(version)) {
          includedNodes.forEach(node -> {
@@ -209,5 +212,5 @@ public class CauseTester extends AdaptiveTester {
       configuration.setVersion(version);
       configuration.setVersionOld(version + "~1");
    }
-   
+
 }

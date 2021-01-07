@@ -91,6 +91,7 @@ public class CallTreeNode extends BasicNode {
          StatisticalSummary chunk = it.next();
          if (remainingWarmup - chunk.getN() > 0) {
             remainingWarmup -= chunk.getN();
+            LOG.debug("Reducing warmup by {}, remaining warmup {}", chunk.getN(), remainingWarmup);
             it.remove();
          } else {
             borderSummary = new StatisticalSummaryValues(chunk.getMean(), chunk.getVariance(), chunk.getN() - remainingWarmup,
@@ -102,7 +103,7 @@ public class CallTreeNode extends BasicNode {
       if (borderSummary != null) {
          statistic.add(0, borderSummary);
       } else {
-         LOG.warn("Warning! Reading aggregated data which contain less executions than the warmup!");
+         LOG.warn("Warning! Reading aggregated data which contain less executions than the warmup " + warmup);
       }
    }
 
