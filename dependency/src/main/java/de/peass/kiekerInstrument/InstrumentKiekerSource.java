@@ -103,8 +103,10 @@ public class InstrumentKiekerSource {
    }
 
    private boolean handleChildren(ClassOrInterfaceDeclaration clazz, String name) {
+      int counterIndex = 0;
       boolean oneHasChanged = false;
-      List<String> fieldsToAdd = new LinkedList<>();
+      List<String> countersToAdd = new LinkedList<>();
+      List<String> sumsToAdd = new LinkedList<>();
       for (Node child : clazz.getChildNodes()) {
          if (child instanceof MethodDeclaration) {
             MethodDeclaration method = (MethodDeclaration) child;
@@ -118,9 +120,12 @@ public class InstrumentKiekerSource {
                   final BlockStmt replacedStatement;
                   final boolean needsReturn = method.getType().toString().equals("void");
                   if (sample) {
-                     String counterName = signature.substring(signature.lastIndexOf('.') + 1, signature.indexOf('(')) + "Counter";
-                     fieldsToAdd.add(counterName);
-                     replacedStatement = blockBuilder.buildSampleStatement(originalBlock, signature, needsReturn, counterName);
+                     String counterName = signature.substring(signature.lastIndexOf('.') + 1, signature.indexOf('(')) + "Counter" + counterIndex;
+                     String sumName = signature.substring(signature.lastIndexOf('.') + 1, signature.indexOf('(')) + "Sum" + counterIndex;
+                     countersToAdd.add(counterName);
+                     sumsToAdd.add(sumName);
+                     replacedStatement = blockBuilder.buildSampleStatement(originalBlock, signature, needsReturn, counterName, sumName);
+                     counterIndex++;
                   } else {
                      replacedStatement = blockBuilder.buildStatement(originalBlock, signature, needsReturn);
                   }
@@ -144,8 +149,11 @@ public class InstrumentKiekerSource {
             }
          }
       }
-      for (String counterName : fieldsToAdd) {
+      for (String counterName : countersToAdd) {
          clazz.addField("int", counterName, Keyword.PRIVATE);
+      }
+      for (String counterName : sumsToAdd) {
+         clazz.addField("long", counterName, Keyword.PRIVATE);
       }
       return oneHasChanged;
    }

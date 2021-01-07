@@ -20,6 +20,7 @@ public class MeasurementConfiguration {
    private boolean useKieker = false;
    private boolean useSourceInstrumentation = false;
    private boolean useSelectiveInstrumentation = false;
+   private boolean useSampling = false;
    private boolean useCircularQueue = false;
    private boolean redirectToNull = true;
    private boolean useGC = true;
@@ -274,7 +275,7 @@ public class MeasurementConfiguration {
    public void setUseCircularQueue(boolean useCircularQueue) {
       this.useCircularQueue = useCircularQueue;
    }
-   
+
    public boolean isUseSelectiveInstrumentation() {
       return useSelectiveInstrumentation;
    }
@@ -282,11 +283,19 @@ public class MeasurementConfiguration {
    public void setUseSelectiveInstrumentation(boolean useSelectiveInstrumentation) {
       this.useSelectiveInstrumentation = useSelectiveInstrumentation;
    }
-   
+
+   public boolean isUseSampling() {
+      return useSampling;
+   }
+
+   public void setUseSampling(boolean useSampling) {
+      this.useSampling = useSampling;
+   }
+
    public MeasurementStrategy getMeasurementStrategy() {
       return measurementStrategy;
    }
-   
+
    public void setMeasurementStrategy(MeasurementStrategy measurementStrategy) {
       this.measurementStrategy = measurementStrategy;
    }

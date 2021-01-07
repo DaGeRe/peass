@@ -31,12 +31,13 @@ public class KiekerEnvironmentPreparer {
    }
 
    public void prepareKieker() throws IOException, InterruptedException {
-      if (testTransformer.getConfig().isUseSourceInstrumentation()) {
+      final MeasurementConfiguration config = testTransformer.getConfig();
+      if (config.isUseSourceInstrumentation()) {
          final InstrumentKiekerSource instrumentKiekerSource;
-         if (!testTransformer.getConfig().isUseSelectiveInstrumentation()) {
-            instrumentKiekerSource = new InstrumentKiekerSource(testTransformer.getConfig().getRecord());
+         if (!config.isUseSelectiveInstrumentation()) {
+            instrumentKiekerSource = new InstrumentKiekerSource(config.getRecord());
          } else {
-            instrumentKiekerSource = new InstrumentKiekerSource(testTransformer.getConfig().getRecord(), includedMethodPattern, false);
+            instrumentKiekerSource = new InstrumentKiekerSource(config.getRecord(), includedMethodPattern, config.isUseSampling());
          }
          instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
          if (testTransformer.isAdaptiveExecution()) {
@@ -47,7 +48,7 @@ public class KiekerEnvironmentPreparer {
          if (testTransformer.isAdaptiveExecution()) {
             prepareAdaptiveExecution();
          }
-         if (AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION.equals(testTransformer.getConfig().getRecord()) && testTransformer.isAdaptiveExecution()) {
+         if (AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION.equals(config.getRecord()) && testTransformer.isAdaptiveExecution()) {
             generateAOPXML(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION);
             generateKiekerMonitoringProperties();
          } else {

@@ -46,11 +46,11 @@ public class BlockBuilder {
       return replacedStatement;
    }
 
-   public BlockStmt buildSampleStatement(BlockStmt originalBlock, String signature, boolean addReturn, String counterName) {
+   public BlockStmt buildSampleStatement(BlockStmt originalBlock, String signature, boolean addReturn, String counterName, String sumName) {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
          throw new RuntimeException("Not implemented yet");
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
-         return buildSelectiveSamplingStatement(originalBlock, signature, addReturn, counterName);
+         return buildSelectiveSamplingStatement(originalBlock, signature, addReturn, counterName, sumName);
       } else {
          throw new RuntimeException();
       }
@@ -66,19 +66,23 @@ public class BlockBuilder {
       }
    }
 
-   public BlockStmt buildSelectiveSamplingStatement(BlockStmt originalBlock, String signature, boolean addReturn, String samplingCounterName) {
+   public BlockStmt buildSelectiveSamplingStatement(BlockStmt originalBlock, String signature, boolean addReturn, String samplingCounterName, String sumName) {
       BlockStmt replacedStatement = new BlockStmt();
-      buildHeader(originalBlock, signature, addReturn, replacedStatement);
+      replacedStatement.addAndGetStatement("      final long tin = MonitoringController.getInstance().getTimeSource().getTime();");
 
       int count = 1000;
 
-      BlockStmt samplingInvocationStatement = buildReducedOperationExecutionStatement(originalBlock, signature, addReturn);
-      samplingInvocationStatement.addAndGetStatement(samplingCounterName + "=0");
-
-      Expression expression = StaticJavaParser.parseExpression(samplingCounterName + "++==" + count);
-      IfStmt ifstatement = new IfStmt(expression, samplingInvocationStatement, originalBlock);
-
-      replacedStatement.addStatement(ifstatement);
+      BlockStmt finallyBlock = new BlockStmt();
+      finallyBlock.addAndGetStatement("// measure after\n" +
+            "         final long tout = MonitoringController.getInstance().getTimeSource().getTime();\n" +
+            "        " + sumName + "+=tout-tin;\n" +
+            "if (" + samplingCounterName + "++%" + count + "==0){\n" +
+            "final String signature = \"" + signature + "\";\n" +
+            "final long calculatedTout=tin+"+sumName+";\n" +
+            "MonitoringController.getInstance().newMonitoringRecord(new ReducedOperationExecutionRecord(signature, tin, calculatedTout));\n"
+            + sumName + "=0;}\n");
+      TryStmt stmt = new TryStmt(originalBlock, new NodeList<>(), finallyBlock);
+      replacedStatement.addAndGetStatement(stmt);
 
       return replacedStatement;
    }

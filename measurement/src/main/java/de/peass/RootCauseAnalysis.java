@@ -51,6 +51,10 @@ public class RootCauseAnalysis extends DependencyTestStarter {
          "--useSelectiveInstrumentation" }, description = "Use selective instrumentation (only selected methods / classes are instrumented) - adaptive monitoring will not make sense")
    public boolean useSelectiveInstrumentation = false;
 
+   @Option(names = { "-useSampling",
+         "--useSampling" }, description = "Use sampling (only record every nth invocation of method - may reduce measurement noise)")
+   public boolean useSampling = false;
+
    public static void main(final String[] args) throws JAXBException, IOException {
       final RootCauseAnalysis command = new RootCauseAnalysis();
       final CommandLine commandLine = new CommandLine(command);
@@ -101,6 +105,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       measurementConfiguration.setUseSourceInstrumentation(useSourceInstrumentation);
       measurementConfiguration.setUseCircularQueue(useCircularQueue);
       measurementConfiguration.setUseSelectiveInstrumentation(useSelectiveInstrumentation);
+      measurementConfiguration.setUseSampling(useSampling);
       LOG.info("Use source instrumentation: {}", useSourceInstrumentation);
       return measurementConfiguration;
    }
