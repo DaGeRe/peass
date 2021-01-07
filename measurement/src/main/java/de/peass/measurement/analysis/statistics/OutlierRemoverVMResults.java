@@ -19,7 +19,7 @@ public class OutlierRemoverVMResults {
       
       for (final OneVMResult result : results) {
          final double average = result.getAverage();
-         if (average > min && average < max) {
+         if (average >= min && average <= max) {
             statistics.addValue(average);
          }
       }
