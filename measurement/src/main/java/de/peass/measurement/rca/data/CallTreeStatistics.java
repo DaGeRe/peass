@@ -50,6 +50,10 @@ public class CallTreeStatistics {
       return results;
    }
 
+   /**
+    * Returns the statistics *after* warmup consideration and outlier removal - values may therefore be unequal to full values from csv-measuremets
+    * @return statistics of VM averages
+    */
    public SummaryStatistics getStatistics() {
       return statistics;
    }

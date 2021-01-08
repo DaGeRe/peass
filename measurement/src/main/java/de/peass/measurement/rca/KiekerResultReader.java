@@ -22,6 +22,7 @@ import de.peass.dependency.analysis.KiekerReader;
 import de.peass.dependency.analysis.PeASSFilter;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.traces.KiekerFolderUtil;
+import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.kieker.DurationFilter;
 import de.peass.measurement.rca.kieker.KiekerPatternConverter;
@@ -94,6 +95,7 @@ public class KiekerResultReader {
 
          if (nodeFound) {
             LOG.debug("Setting measurement: {} {}", version, values.size());
+//            System.out.println(StatisticUtil.getMean(values) + " ");
             node.setMeasurement(version, values);
          } else {
             LOG.warn("Node {} ({}) did not find measurement values", nodeCall, node.getOtherVersionNode());

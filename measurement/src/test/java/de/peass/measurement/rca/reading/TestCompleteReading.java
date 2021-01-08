@@ -1,4 +1,4 @@
-package de.peass.measurement.rca;
+package de.peass.measurement.rca.reading;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.measurement.rca.KiekerResultReader;
 import de.peass.measurement.rca.data.CallTreeNode;
 import kieker.analysis.exception.AnalysisConfigurationException;
 import kieker.common.configuration.Configuration;
