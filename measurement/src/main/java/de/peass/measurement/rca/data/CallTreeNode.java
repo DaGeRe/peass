@@ -85,25 +85,32 @@ public class CallTreeNode extends BasicNode {
    }
 
    private void removeWarmup(final List<StatisticalSummary> statistic) {
-      int remainingWarmup = warmup;
-      StatisticalSummary borderSummary = null;
-      for (Iterator<StatisticalSummary> it = statistic.iterator(); it.hasNext();) {
-         StatisticalSummary chunk = it.next();
-         if (remainingWarmup - chunk.getN() > 0) {
-            remainingWarmup -= chunk.getN();
-            LOG.debug("Reducing warmup by {}, remaining warmup {}", chunk.getN(), remainingWarmup);
-            it.remove();
-         } else {
-            borderSummary = new StatisticalSummaryValues(chunk.getMean(), chunk.getVariance(), chunk.getN() - remainingWarmup,
-                  chunk.getMax(), chunk.getMin(), chunk.getMean() * remainingWarmup);
-            it.remove();
-            break;
+      if (warmup > 0) {
+         int remainingWarmup = warmup;
+         StatisticalSummary borderSummary = null;
+         for (Iterator<StatisticalSummary> it = statistic.iterator(); it.hasNext();) {
+            StatisticalSummary chunk = it.next();
+            if (remainingWarmup - chunk.getN() > 0) {
+               remainingWarmup -= chunk.getN();
+               LOG.debug("Reducing warmup by {}, remaining warmup {}", chunk.getN(), remainingWarmup);
+               it.remove();
+            } else {
+               if (remainingWarmup > 0) {
+                  borderSummary = new StatisticalSummaryValues(chunk.getMean(), chunk.getVariance(), chunk.getN() - remainingWarmup,
+                        chunk.getMax(), chunk.getMin(), chunk.getMean() * remainingWarmup);
+               } else {
+                  // Since there is no warmup remaining, the first summary is just removed and added later on
+                  borderSummary = chunk;
+               }
+               it.remove();
+               break;
+            }
          }
-      }
-      if (borderSummary != null) {
-         statistic.add(0, borderSummary);
-      } else {
-         LOG.warn("Warning! Reading aggregated data which contain less executions than the warmup " + warmup);
+         if (borderSummary != null) {
+            statistic.add(0, borderSummary);
+         } else {
+            LOG.warn("Warning! Reading aggregated data which contain less executions than the warmup " + warmup);
+         }
       }
    }
 

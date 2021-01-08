@@ -19,11 +19,20 @@ public class CallTreeStatistics {
       this.warmup = warmup;
    }
    
+   /***
+    * Adds *one* measurement to the current (last) VM of the node - suitable for measurements per iteration. If aggregated data are obtained, 
+    * rather use setMeasurement
+    * @param duration   duration of one iteration
+    */
    public void addMeasurement(final Long duration) {
       final CallTreeResult current = (CallTreeResult) results.get(results.size() - 1);
       current.addValue(duration);
    }
    
+   /**
+    * Sets measurement values of a VM run. All warmed-up measurement values of the VM should be contained.
+    * @param statistic  list of all warmed-up aggregated measurement statistics of one VM
+    */
    public void setMeasurement(final List<StatisticalSummary> statistic) {
       results.add(new FinalCallTreeResult(statistic));
    }

@@ -39,18 +39,16 @@ public class KiekerResultReader {
    final boolean useAggregation;
    final Set<CallTreeNode> includedNodes;
    final String version;
-   final File versionResultFolder;
    final TestCase testcase;
    final boolean otherVersion;
 
    boolean considerNodePosition = false;
 
    public KiekerResultReader(final boolean useAggregation, final Set<CallTreeNode> includedNodes, final String version,
-         final File versionResultFolder, final TestCase testcase, final boolean otherVersion) {
+         final TestCase testcase, final boolean otherVersion) {
       this.useAggregation = useAggregation;
       this.includedNodes = includedNodes;
       this.version = version;
-      this.versionResultFolder = versionResultFolder;
       this.testcase = testcase;
       this.otherVersion = otherVersion;
    }
@@ -59,7 +57,7 @@ public class KiekerResultReader {
       this.considerNodePosition = considerNodePosition;
    }
 
-   public void readResults() {
+   public void readResults(final File versionResultFolder) {
       try {
          LOG.info("Reading kieker results from {}", versionResultFolder.getAbsolutePath(), version);
          FileFilter filter = new OrFileFilter(new RegexFileFilter("[0-9]*"), new RegexFileFilter("measurement-[0-9]*.csv"));
@@ -95,7 +93,7 @@ public class KiekerResultReader {
          }
 
          if (nodeFound) {
-            LOG.debug("Setting measurement: {} {}", version, values.size()) ;
+            LOG.debug("Setting measurement: {} {}", version, values.size());
             node.setMeasurement(version, values);
          } else {
             LOG.warn("Node {} ({}) did not find measurement values", nodeCall, node.getOtherVersionNode());
@@ -106,7 +104,7 @@ public class KiekerResultReader {
    private boolean isSameNode(final CallTreeNode node, final String nodeCall, final AggregatedDataNode measuredNode) {
       final String kiekerCall = KiekerPatternConverter.getKiekerPattern(measuredNode.getCall());
       LOG.trace("Node: {} Kieker: {} Equal: {}", nodeCall, kiekerCall, nodeCall.equals(kiekerCall));
-      if (nodeCall.equals(kiekerCall)) { 
+      if (nodeCall.equals(kiekerCall)) {
          LOG.trace("EOI: {} vs {}", node.getEoi(), measuredNode.getEoi());
          if (considerNodePosition) {
             final int eoi = node.getEoi();

@@ -93,7 +93,7 @@ public class CauseSearchData {
    private void setStatistic(final CallTreeNode rawDataNode, final MeasuredNode serializeNode) {
       if (!rawDataNode.getCall().equals(ADDED) &&
             !rawDataNode.getOtherVersionNode().getCall().equals(ADDED)) {
-         LOG.debug(rawDataNode.getCall() + " " + rawDataNode.getOtherVersionNode().getCall());
+         LOG.debug("Setting statistic: " + rawDataNode.getCall() + " " + rawDataNode.getOtherVersionNode().getCall());
          serializeNode.setStatistic(rawDataNode.getTestcaseStatistic());
       } else {
          LOG.debug(rawDataNode.getCall() + " " + rawDataNode.getOtherVersionNode().getCall());

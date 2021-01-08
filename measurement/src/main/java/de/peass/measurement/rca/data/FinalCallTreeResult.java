@@ -15,7 +15,6 @@ public class FinalCallTreeResult implements OneVMResult {
    private final List<StatisticalSummary> statistics;
 
    public FinalCallTreeResult(final List<StatisticalSummary> statistics) {
-      super();
       this.statistics = statistics;
    }
 

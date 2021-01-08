@@ -67,7 +67,7 @@ public class TestCompleteReading {
       final Set<CallTreeNode> includedNodes = buildTree();
 
       final TestCase testcase = new TestCase("A", "parent");
-      final KiekerResultReader reader = new KiekerResultReader(false, includedNodes, "0", kiekerTraceFolder, testcase, false);
+      final KiekerResultReader reader = new KiekerResultReader(false, includedNodes, "0", testcase, false);
 //      reader.setConsiderNodePosition(true);
       final File kiekerFolder = kiekerTraceFolder.listFiles()[0];
       reader.readAggregatedData(kiekerFolder);
