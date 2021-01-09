@@ -28,8 +28,9 @@ public class OutlierRemoverVMResults {
          final double average = result.getAverage();
          if (average >= min && average <= max) {
             statistics.addValue(average);
+            LOG.trace("Adding value: {}", average);
          } else {
-            LOG.debug("Not adding outlier: " + average);
+            LOG.debug("Not adding outlier: {}", average);
          }
       }
       LOG.debug("VM count after removal: {}", statistics.getN());

@@ -30,10 +30,10 @@ public class CallTreeStatistics {
    }
    
    /**
-    * Sets measurement values of a VM run. All warmed-up measurement values of the VM should be contained.
+    * Adds measurement values of *one VM run*. All warmed-up measurement values of the VM should be removed.
     * @param statistic  list of all warmed-up aggregated measurement statistics of one VM
     */
-   public void setMeasurement(final List<StatisticalSummary> statistic) {
+   public void addAggregatedMeasurement(final List<StatisticalSummary> statistic) {
       results.add(new FinalCallTreeResult(statistic));
    }
    

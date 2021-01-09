@@ -96,7 +96,7 @@ public class KiekerResultReader {
          if (nodeFound) {
             LOG.debug("Setting measurement: {} {}", version, values.size());
 //            System.out.println(StatisticUtil.getMean(values) + " ");
-            node.setMeasurement(version, values);
+            node.addAggregatedMeasurement(version, values);
          } else {
             LOG.warn("Node {} ({}) did not find measurement values", nodeCall, node.getOtherVersionNode());
          }

@@ -140,7 +140,7 @@ public class TreeBuilder {
             statistic.addValue(value);
             statistics.add(statistic);
          }
-         node.setMeasurement(version, statistics);
+         node.addAggregatedMeasurement(version, statistics);
       }
    }
 

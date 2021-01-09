@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.peass.PeassGlobalInfos;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 
 /**
@@ -78,10 +79,15 @@ public class CallTreeNode extends BasicNode {
       data.get(version).addMeasurement(duration);
    }
 
-   public void setMeasurement(final String version, final List<StatisticalSummary> statistic) {
+   /**
+    * Adds the measurement of *one full VM* to the measurements of the version
+    * @param version
+    * @param statistic
+    */
+   public void addAggregatedMeasurement(final String version, final List<StatisticalSummary> statistic) {
       checkDataAddPossible(version);
       removeWarmup(statistic);
-      data.get(version).setMeasurement(statistic);
+      data.get(version).addAggregatedMeasurement(statistic);
    }
 
    private void removeWarmup(final List<StatisticalSummary> statistic) {
@@ -96,8 +102,9 @@ public class CallTreeNode extends BasicNode {
                it.remove();
             } else {
                if (remainingWarmup > 0) {
-                  borderSummary = new StatisticalSummaryValues(chunk.getMean(), chunk.getVariance(), chunk.getN() - remainingWarmup,
-                        chunk.getMax(), chunk.getMin(), chunk.getMean() * remainingWarmup);
+                  final long reducedN = chunk.getN() - remainingWarmup;
+                  borderSummary = new StatisticalSummaryValues(chunk.getMean(), chunk.getVariance(), reducedN,
+                        chunk.getMax(), chunk.getMin(), chunk.getMean() * reducedN);
                } else {
                   // Since there is no warmup remaining, the first summary is just removed and added later on
                   borderSummary = chunk;
@@ -111,6 +118,10 @@ public class CallTreeNode extends BasicNode {
          } else {
             LOG.warn("Warning! Reading aggregated data which contain less executions than the warmup " + warmup);
          }
+         for (StatisticalSummary summary : statistic) {
+            LOG.trace("After removing: {} {} Sum: {}", summary.getMean(), summary.getN(), summary.getSum());
+         }
+         LOG.trace("Overall mean: {}", StatisticUtil.getMean(statistic));
       }
    }
 
