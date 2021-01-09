@@ -95,12 +95,12 @@
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.12.0</version>
+			<version>2.12.1</version>
 		</dependency>
 		<dependency>
 			<groupId>info.picocli</groupId>
 			<artifactId>picocli</artifactId>
-			<version>4.5.2</version>
+			<version>4.6.1</version>
 		</dependency>
 
 		<!-- Both are needed in your local maven repo, and both should be downloaded 
@@ -126,7 +126,7 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>3.6.28</version>
+			<version>3.7.0</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
