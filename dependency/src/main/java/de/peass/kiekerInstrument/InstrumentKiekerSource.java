@@ -150,10 +150,10 @@ public class InstrumentKiekerSource {
          }
       }
       for (String counterName : countersToAdd) {
-         clazz.addField("int", counterName, Keyword.PRIVATE);
+         clazz.addField("int", counterName, Keyword.PRIVATE, Keyword.STATIC);
       }
       for (String counterName : sumsToAdd) {
-         clazz.addField("long", counterName, Keyword.PRIVATE);
+         clazz.addField("long", counterName, Keyword.PRIVATE, Keyword.STATIC);
       }
       return oneHasChanged;
    }

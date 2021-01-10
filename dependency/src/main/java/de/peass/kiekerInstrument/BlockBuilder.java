@@ -94,9 +94,9 @@ public class BlockBuilder {
       replacedStatement.addAndGetStatement("      final long tin = MonitoringController.getInstance().getTimeSource().getTime();");
 
       BlockStmt finallyBlock = new BlockStmt();
-      finallyBlock.addAndGetStatement("// measure after\n" +
-            "         final long tout = MonitoringController.getInstance().getTimeSource().getTime();\n" +
-            "         MonitoringController.getInstance().newMonitoringRecord(new ReducedOperationExecutionRecord(signature, tin, tout));");
+      finallyBlock.addAndGetStatement("// measure after\n");
+      finallyBlock.addAndGetStatement("final long tout = MonitoringController.getInstance().getTimeSource().getTime()");
+      finallyBlock.addAndGetStatement("MonitoringController.getInstance().newMonitoringRecord(new ReducedOperationExecutionRecord(signature, tin, tout))");
       TryStmt stmt = new TryStmt(originalBlock, new NodeList<>(), finallyBlock);
       replacedStatement.addAndGetStatement(stmt);
       return replacedStatement;

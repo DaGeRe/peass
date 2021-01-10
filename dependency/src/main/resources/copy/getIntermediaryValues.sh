@@ -78,6 +78,9 @@ then
 	
 	echo "Measured Kieker"
 	printValues level/predecessor_vals.csv level/current_vals.csv
+	
+	tail -n 1 ../measurementsFull/progress.txt
 else
 	echo "No measurement values yet"
 fi
+
