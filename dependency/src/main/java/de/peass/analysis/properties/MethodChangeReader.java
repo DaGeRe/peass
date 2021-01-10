@@ -53,7 +53,7 @@ public class MethodChangeReader {
    private File getClazzFolder() {
       final File versionFolder = new File(outFolder, version);
       versionFolder.mkdirs();
-      final String clazzFolderName = clazz.getModule() != null ? 
+      final String clazzFolderName = (clazz.getModule() != null && !clazz.getModule().equals("")) ? 
             clazz.getModule() + ChangedEntity.MODULE_SEPARATOR + clazz.getJavaClazzName()
             : clazz.getJavaClazzName();
       final File clazzFolder = new File(versionFolder, clazzFolderName);

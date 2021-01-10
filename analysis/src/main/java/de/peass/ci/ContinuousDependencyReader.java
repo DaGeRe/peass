@@ -2,6 +2,7 @@ package de.peass.ci;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -9,6 +10,14 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.FileAppender;
+import org.apache.logging.log4j.core.appender.OutputStreamAppender;
+import org.apache.logging.log4j.core.config.Configurator;
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
+import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
+import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -41,7 +50,7 @@ public class ContinuousDependencyReader {
    }
 
    Dependencies getDependencies(VersionIterator iterator, String url)
-         throws JAXBException, JsonParseException, JsonMappingException, IOException, InterruptedException, XmlPullParserException {
+         throws Exception {
       Dependencies dependencies;
       
       final VersionKeeper noChanges = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonChanges_" + projectFolder.getName() + ".json"));
@@ -78,6 +87,7 @@ public class ContinuousDependencyReader {
       List<GitCommit> commits = new LinkedList<>();
       commits.add(lastAnalyzedCommit);
       commits.add(currentCommit);
+      LOG.info("Analyzing {} - {}", lastAnalyzedCommit, currentCommit);
       VersionIteratorGit newIterator = new VersionIteratorGit(projectFolder, commits, lastAnalyzedCommit);
       return newIterator;
    }
@@ -85,16 +95,21 @@ public class ContinuousDependencyReader {
    
 
    private Dependencies fullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
-         throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException {
-      Dependencies dependencies;
-      final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, TIMEOUT, nonChanges);
-      iterator.goToPreviousCommit();
-      if (!reader.readInitialVersion()) {
-         LOG.error("Analyzing first version was not possible");
-      } else {
-         reader.readDependencies();
-      }
-      dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-      return dependencies;
+         throws Exception {
+      File logFile = new File(dependencyFile.getParentFile(), "dependencyreading_" + iterator.getTag() + ".txt");
+
+      LOG.info("Writing to {}",  logFile.getAbsolutePath());
+      
+      try (LogRedirector director = new LogRedirector(logFile)){
+         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, TIMEOUT, nonChanges);
+         iterator.goToPreviousCommit();
+         if (!reader.readInitialVersion()) {
+            LOG.error("Analyzing first version was not possible");
+         } else {
+            reader.readDependencies();
+         }
+         Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+         return dependencies;
+      } 
    }
 }

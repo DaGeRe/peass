@@ -47,7 +47,7 @@ public class TestContinuousDependencyReader {
 
    @Order(1)
    @Test
-   public void testBasicVersionReading() throws JsonParseException, JsonMappingException, JAXBException, IOException, InterruptedException, XmlPullParserException {
+   public void testBasicVersionReading() throws Exception {
       builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/changed_class"), "test 1");
       
       VersionIterator iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
@@ -63,7 +63,7 @@ public class TestContinuousDependencyReader {
 
    @Order(2)
    @Test
-   public void testAnotherVersion() throws JsonParseException, JsonMappingException, JAXBException, IOException, InterruptedException, XmlPullParserException {
+   public void testAnotherVersion() throws Exception {
       final String prevTag = builder.getTags().get(builder.getTags().size() - 1);
       GitUtils.goToTag(prevTag, TestConstants.CURRENT_FOLDER);
 

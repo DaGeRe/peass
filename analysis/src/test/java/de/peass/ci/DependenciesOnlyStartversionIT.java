@@ -43,7 +43,7 @@ public class DependenciesOnlyStartversionIT {
    Dependencies dependencies;
    
    @BeforeEach
-   public void cleanDependencies() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   public void cleanDependencies() throws Exception {
       TestContinuousDependencyReader.dependencyFile.delete();
       Assert.assertFalse(TestContinuousDependencyReader.dependencyFile.exists());
 
@@ -61,7 +61,7 @@ public class DependenciesOnlyStartversionIT {
 
    @Order(1)
    @Test
-   public void testBasicVersionReading() throws JsonParseException, JsonMappingException, JAXBException, IOException, InterruptedException, XmlPullParserException {
+   public void testBasicVersionReading() throws Exception {
       builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/changed_class"), "test 1");
       
       VersionIterator iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);

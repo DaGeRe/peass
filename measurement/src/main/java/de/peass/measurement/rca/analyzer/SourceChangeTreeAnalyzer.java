@@ -28,6 +28,7 @@ public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
 
    private Set<CallTreeNode> calculateIncludedNodes(File sourceFolder, List<CallTreeNode> includableNodes) {
       Set<CallTreeNode> includeNodes = new HashSet<>();
+      LOG.debug("Searching in {}", sourceFolder);
       File parentFolder = new File(sourceFolder, "methods").listFiles()[0];
       for (CallTreeNode node : includableNodes) {
          String fileNameStart = KiekerPatternConverter.getFileNameStart(node.getKiekerPattern());

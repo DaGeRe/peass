@@ -72,11 +72,11 @@ public class ContinuousExecutor {
       propertyFolder = new File(localFolder, "properties");
    }
    
-   public void execute() throws InterruptedException, IOException, JAXBException, XmlPullParserException {
+   public void execute() throws Exception {
       execute(new LinkedList<>());
    }
 
-   public void execute(List<String> includes) throws InterruptedException, IOException, JAXBException, XmlPullParserException {
+   public void execute(List<String> includes) throws Exception {
       final File dependencyFile = new File(localFolder, "dependencies.json");
       final VersionIteratorGit iterator = buildIterator();
       final String url = GitUtils.getURL(projectFolder);
