@@ -30,6 +30,6 @@ public class TestSampling {
       
       String changedSource = FileUtils.readFileToString(instrumentedFile, StandardCharsets.UTF_8);
       Assert.assertThat(changedSource, Matchers.containsString("if (testMeCounter"));
-      Assert.assertThat(changedSource, Matchers.containsString("private int testMeCounter"));
+      Assert.assertThat(changedSource, Matchers.containsString("private static int testMeCounter"));
    }
 }
