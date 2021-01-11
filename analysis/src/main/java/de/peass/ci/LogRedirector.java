@@ -84,7 +84,7 @@ public class LogRedirector implements AutoCloseable {
    }
 
    @Override
-   public void close() throws Exception {
+   public void close() {
       System.setOut(oldOut);
       System.setErr(oldErr);
       Configurator.reconfigure();

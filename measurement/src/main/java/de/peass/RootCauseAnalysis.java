@@ -110,12 +110,12 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       return measurementConfiguration;
    }
 
-   private CauseSearcher getCauseSeacher(final MeasurementConfiguration measurementConfiguration, final JUnitTestTransformer testtransformer,
+   public static CauseSearcher getCauseSeacher(final MeasurementConfiguration measurementConfiguration, final JUnitTestTransformer testtransformer,
          final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader) throws IOException, InterruptedException {
       final CauseSearcher tester;
       final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, causeSearcherConfig);
-      if (causeSearchConfigMixin.getStrategy() != null) {
-         switch (causeSearchConfigMixin.getStrategy()) {
+      if (causeSearcherConfig.getRcaStrategy() != null) {
+         switch (causeSearcherConfig.getRcaStrategy()) {
          case COMPLETE:
             tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders);
             break;
@@ -145,7 +145,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
             tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creator);
             break;
          default:
-            throw new RuntimeException("Strategy " + causeSearchConfigMixin.getStrategy() + " not expected");
+            throw new RuntimeException("Strategy " + causeSearcherConfig.getRcaStrategy() + " not expected");
          }
       } else {
          LOG.info("Defaulting to StructureCauseSearcher");
