@@ -31,9 +31,9 @@ import de.peass.utils.Constants;
 import de.peass.vcs.GitCommit;
 
 public class TestChooser {
-   
+
    private static final Logger LOG = LogManager.getLogger(TestChooser.class);
-   
+
    private final boolean useViews;
    private File localFolder;
    private PeASSFolders folders;
@@ -42,7 +42,7 @@ public class TestChooser {
    private final File propertyFolder;
    private final int threads;
    private final List<String> includes;
-   
+
    public TestChooser(boolean useViews, File localFolder, PeASSFolders folders, GitCommit version, File viewFolder, File propertyFolder, int threads, List<String> includes) {
       this.useViews = useViews;
       this.localFolder = localFolder;
@@ -54,10 +54,10 @@ public class TestChooser {
       this.includes = includes;
    }
 
-   public Set<TestCase> getTestSet(final Dependencies dependencies) throws IOException, JAXBException, JsonParseException, JsonMappingException {
+   public Set<TestCase> getTestSet(final Dependencies dependencies) throws Exception {
       final String versionName = dependencies.getVersionNames()[dependencies.getVersions().size() - 1];
       final Version currentVersion = dependencies.getVersions().get(versionName);
-      
+
       final Set<TestCase> tests = new HashSet<>();
 
       if (useViews) {
@@ -72,7 +72,7 @@ public class TestChooser {
             tests.addAll(dep.getTests());
          }
       }
-      
+
       if (includes.size() > 0) {
          removeNotIncluded(tests);
       }
@@ -80,7 +80,7 @@ public class TestChooser {
    }
 
    private void removeNotIncluded(final Set<TestCase> tests) {
-      for (Iterator<TestCase> it = tests.iterator(); it.hasNext(); ) {
+      for (Iterator<TestCase> it = tests.iterator(); it.hasNext();) {
          TestCase test = it.next();
          boolean isIncluded = isTestIncluded(test, includes);
          if (!isIncluded) {
@@ -105,9 +105,9 @@ public class TestChooser {
       }
       return isIncluded;
    }
-   
+
    private TestSet getViewTests(final Dependencies dependencies)
-         throws IOException, JAXBException, JsonParseException, JsonMappingException {
+         throws Exception {
       final File executeFile = new File(localFolder, "execute.json");
 
       FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
@@ -120,17 +120,22 @@ public class TestChooser {
          generateViews(dependencies, executeFile);
          traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
       }
-      
+
       LOG.debug("Version: {} Path: {}", version, executeFile.getAbsolutePath());
       final TestSet traceTestSet = traceTests.getVersions().get(version.getTag());
 
       return traceTestSet;
    }
 
-   private void generateViews(final Dependencies dependencies, final File executeFile) throws JAXBException, IOException {
-      final ViewGenerator viewgenerator = new ViewGenerator(folders.getProjectFolder(), dependencies, executeFile, viewFolder, threads, 15);
-      viewgenerator.processCommandline();
-      final PropertyReader propertyReader = new PropertyReader(propertyFolder, folders.getProjectFolder(), viewFolder);
-      propertyReader.readAllTestsProperties(viewgenerator.getChangedTraceMethods());
+   private void generateViews(final Dependencies dependencies, final File executeFile) throws Exception {
+      File logFile = new File(executeFile.getParentFile(), "executionreading_" + version.getTag() + ".txt");
+      LOG.info("Executig regression test selection (part 2) - Log goes to {}", logFile.getAbsolutePath());
+
+      try (LogRedirector director = new LogRedirector(logFile)) {
+         final ViewGenerator viewgenerator = new ViewGenerator(folders.getProjectFolder(), dependencies, executeFile, viewFolder, threads, 15);
+         viewgenerator.processCommandline();
+         final PropertyReader propertyReader = new PropertyReader(propertyFolder, folders.getProjectFolder(), viewFolder);
+         propertyReader.readAllTestsProperties(viewgenerator.getChangedTraceMethods());
+      } 
    }
 }

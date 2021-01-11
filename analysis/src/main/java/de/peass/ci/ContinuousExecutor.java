@@ -95,7 +95,7 @@ public class ContinuousExecutor {
       }
    }
 
-   private Set<TestCase> selectIncludedTests(List<String> includes, final Dependencies dependencies) throws IOException, JAXBException, JsonParseException, JsonMappingException {
+   private Set<TestCase> selectIncludedTests(List<String> includes, final Dependencies dependencies) throws Exception {
       final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version, 
             viewFolder, propertyFolder, threads, includes);
       final Set<TestCase> tests = chooser.getTestSet(dependencies);
@@ -144,8 +144,6 @@ public class ContinuousExecutor {
                + "currently, only git projects are supported");
       }
    }
-
-   
 
    public File getLocalFolder() {
       final String homeFolderName = System.getenv("PEASS_HOME") != null ? System.getenv("PEASS_HOME") : System.getenv("HOME") + File.separator + ".peass" + File.separator;

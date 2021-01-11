@@ -39,7 +39,7 @@ public class TestTestChooser {
    }
    
    @Test
-   public void testBasicChoosing() throws InterruptedException, IOException, JAXBException {
+   public void testBasicChoosing() throws Exception {
       Dependencies dependencies = createDependencies();
       
       TestChooser chooser = new TestChooser(false, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), new GitCommit(testVersion, "", "", ""), new File("target/views"), new File("target/properties"), 1, new LinkedList<>());
@@ -49,7 +49,7 @@ public class TestTestChooser {
    }
    
    @Test
-   public void testViewChoosing() throws InterruptedException, IOException, JAXBException {
+   public void testViewChoosing() throws Exception {
       Dependencies dependencies = createDependencies();
       
       TestChooser chooser = new TestChooser(true, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), new GitCommit(testVersion, "", "", ""), new File("target/views"), new File("target/properties"), 1, new LinkedList<>());

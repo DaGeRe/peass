@@ -130,7 +130,7 @@ public class JUnitTestShortener implements AutoCloseable{
    public ChangedEntity getParentEntity(final ChangedEntity callee, final CompilationUnit calleeUnit, final ClassOrInterfaceDeclaration clazz) {
       ChangedEntity parentEntity = null;
       for (final ClassOrInterfaceType parent : clazz.getExtendedTypes()) {
-         LOG.debug("Must also shorten " + parent);
+         LOG.debug("Must also shorten {} Package: {}", parent, callee.getPackage());
          final String parentName = parent.getName().toString();
          String fqn = findFQN(calleeUnit, parentName);
          if (fqn == parentName) {
