@@ -37,23 +37,9 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
    @Mixin
    private CauseSearcherConfigMixin causeSearchConfigMixin;
-
-   @Option(names = { "-writeInterval", "--writeInterval" }, description = "Interval for KoPeMe-aggregated-writing (in milliseconds)")
-   public int writeInterval = 5000;
-
-   @Option(names = { "-useSourceInstrumentation", "--useSourceInstrumentation" }, description = "Use source instrumentation (default false - AspectJ instrumentation is used)")
-   public boolean useSourceInstrumentation = false;
-
-   @Option(names = { "-useCircularQueue", "--useCircularQueue" }, description = "Use circular queue (default false - LinkedBlockingQueue is used)")
-   public boolean useCircularQueue = false;
-
-   @Option(names = { "-useSelectiveInstrumentation",
-         "--useSelectiveInstrumentation" }, description = "Use selective instrumentation (only selected methods / classes are instrumented) - adaptive monitoring will not make sense")
-   public boolean useSelectiveInstrumentation = false;
-
-   @Option(names = { "-useSampling",
-         "--useSampling" }, description = "Use sampling (only record every nth invocation of method - may reduce measurement noise)")
-   public boolean useSampling = false;
+   
+   @Mixin
+   private KiekerConfigMixin kiekerConfigMixin;
 
    public static void main(final String[] args) throws JAXBException, IOException {
       final RootCauseAnalysis command = new RootCauseAnalysis();
@@ -99,14 +85,14 @@ public class RootCauseAnalysis extends DependencyTestStarter {
    private MeasurementConfiguration getConfiguration(final String predecessor) {
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(measurementConfigMixin);
       measurementConfiguration.setUseKieker(true);
-      measurementConfiguration.setKiekerAggregationInterval(writeInterval);
+      measurementConfiguration.setKiekerAggregationInterval(kiekerConfigMixin.getWriteInterval());
       measurementConfiguration.setVersion(version);
       measurementConfiguration.setVersionOld(predecessor);
-      measurementConfiguration.setUseSourceInstrumentation(useSourceInstrumentation);
-      measurementConfiguration.setUseCircularQueue(useCircularQueue);
-      measurementConfiguration.setUseSelectiveInstrumentation(useSelectiveInstrumentation);
-      measurementConfiguration.setUseSampling(useSampling);
-      LOG.info("Use source instrumentation: {}", useSourceInstrumentation);
+      measurementConfiguration.setUseSourceInstrumentation(kiekerConfigMixin.isUseSourceInstrumentation());
+      measurementConfiguration.setUseCircularQueue(kiekerConfigMixin.isUseCircularQueue());
+      measurementConfiguration.setUseSelectiveInstrumentation(kiekerConfigMixin.isUseSelectiveInstrumentation());
+      measurementConfiguration.setUseSampling(kiekerConfigMixin.isUseSampling());
+      LOG.info("Use source instrumentation: {}", kiekerConfigMixin.isUseSourceInstrumentation());
       return measurementConfiguration;
    }
 

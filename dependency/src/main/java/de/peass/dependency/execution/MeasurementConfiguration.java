@@ -114,6 +114,8 @@ public class MeasurementConfiguration {
       this.useGC = other.useGC;
       this.kiekerAggregationInterval = other.kiekerAggregationInterval;
       this.javaVersion = other.javaVersion;
+      this.record = other.record;
+      this.measurementStrategy = other.measurementStrategy;
       this.version = other.version;
       this.versionOld = other.versionOld;
    }
