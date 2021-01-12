@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.parallel.OneReader;
+import de.peass.dependency.traces.TemporaryProjectFolderUtil;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIterator;
@@ -73,7 +74,7 @@ public class DependencyParallelReader {
          final int readableIndex = i + 1;
          outFiles[i] = new File(tempResultFolder, "deps_" + project + "_" + readableIndex + ".json");
          final File projectFolderTemp = new File(folders.getTempProjectFolder(), "" + readableIndex);
-         GitUtils.clone(folders, projectFolderTemp);
+         TemporaryProjectFolderUtil.cloneForcefully(folders, projectFolderTemp);
          final File currentOutFile = outFiles[i];
          startPartProcess(currentOutFile, service, i, projectFolderTemp);
       }

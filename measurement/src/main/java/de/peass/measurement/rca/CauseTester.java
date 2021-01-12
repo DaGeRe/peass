@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peass.dependency.CauseSearchFolders;
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.execution.TestExecutor;
@@ -89,8 +90,8 @@ public class CauseTester extends AdaptiveTester {
    }
    
    @Override
-   protected synchronized TestExecutor getExecutor() {
-      final TestExecutor testExecutor = super.getExecutor();
+   protected synchronized TestExecutor getExecutor(PeASSFolders temporaryFolders) {
+      final TestExecutor testExecutor = super.getExecutor(temporaryFolders);
       JUnitTestTransformer testTransformer = testExecutor.getTestTransformer();
       if (!testTransformer.getConfig().isUseSelectiveInstrumentation()) {
          testTransformer.setAdaptiveExecution(true);
@@ -158,7 +159,7 @@ public class CauseTester extends AdaptiveTester {
 
    @Override
    public void handleKiekerResults(final String version, final File versionResultFolder) {
-      if (currentOrganizer.testSuccess()) {
+      if (currentOrganizer.testSuccess(version)) {
          LOG.info("Did succeed in measurement - analyse values");
          final KiekerResultReader kiekerResultReader = new KiekerResultReader(causeConfig.isUseAggregation(), includedNodes, version, testcase,
                version.equals(configuration.getVersion()));

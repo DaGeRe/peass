@@ -39,7 +39,6 @@ public class ViewGeneratorThread implements Runnable {
    public ViewGeneratorThread(final String version, final String predecessor, final PeASSFolders folders, final File viewFolder, final File executeFile, final TestSet testset,
          final ExecutionData changedTraceMethods,
          final int timeout) {
-      super();
       this.version = version;
       this.predecessor = predecessor;
       this.folders = folders;
@@ -102,17 +101,7 @@ public class ViewGeneratorThread implements Runnable {
 
    private PeASSFolders initProjectFolder() throws InterruptedException, IOException {
       final File projectFolderTemp = new File(folders.getTempProjectFolder(), "" + VersionComparator.getVersionIndex(version));
-      if (projectFolderTemp.exists()) {
-         LOG.warn("Deleting existing folder {}", projectFolderTemp);
-         FileUtils.deleteDirectory(projectFolderTemp);
-         File peassFolder = new File(projectFolderTemp.getParentFile(), projectFolderTemp.getName()+"_peass");
-         if (peassFolder.exists()) {
-            FileUtils.deleteDirectory(peassFolder);
-         }
-      }
-      GitUtils.clone(folders, projectFolderTemp);
-      final PeASSFolders folders = new PeASSFolders(projectFolderTemp);
-      return folders;
+      return TemporaryProjectFolderUtil.cloneForcefully(folders, projectFolderTemp);
    }
 
    protected boolean generateTraces(final PeASSFolders folders, final Map<String, List<File>> traceFileMap)

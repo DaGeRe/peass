@@ -20,6 +20,7 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.execution.MeasurementStrategy;
 import de.peass.dependency.execution.TestExecutor;
+import de.peass.dependency.traces.TemporaryProjectFolderUtil;
 import de.peass.measurement.analysis.Cleaner;
 import de.peass.measurement.analysis.DataReader;
 import de.peass.measurement.analysis.statistics.TestData;
@@ -189,9 +190,11 @@ public class DependencyTester implements KiekerResultHandler {
          threads[i] = new Thread(new Runnable() {
             @Override
             public void run() {
-               final TestExecutor testExecutor = getExecutor();
-               final OnceRunner runner = new OnceRunner(folders, vcs, testExecutor, currentOrganizer, DependencyTester.this);
+               File projectFolderTemp = new File(folders.getTempProjectFolder(), version);
                try {
+                  PeASSFolders temporaryFolders = TemporaryProjectFolderUtil.cloneForcefully(folders, projectFolderTemp);
+                  final TestExecutor testExecutor = getExecutor(temporaryFolders);
+                  final OnceRunner runner = new OnceRunner(temporaryFolders, vcs, testExecutor, currentOrganizer, DependencyTester.this);
                   runner.runOnce(testcase, version, vmid, logFolder);
                } catch (IOException | InterruptedException | JAXBException | XmlPullParserException e) {
                   e.printStackTrace();
@@ -222,12 +225,12 @@ public class DependencyTester implements KiekerResultHandler {
 
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      final TestExecutor testExecutor = getExecutor();
+      final TestExecutor testExecutor = getExecutor(folders);
       final OnceRunner runner = new OnceRunner(folders, vcs, testExecutor, currentOrganizer, this);
       runner.runOnce(testcase, version, vmid, logFolder);
    }
 
-   protected synchronized TestExecutor getExecutor() {
+   protected synchronized TestExecutor getExecutor(PeASSFolders currentFolders) {
       final JUnitTestTransformer testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), configuration);
       final TestExecutor testExecutor = ExecutorCreator.createExecutor(folders, testTransformer);
       return testExecutor;

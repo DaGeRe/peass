@@ -29,14 +29,14 @@ public class ResultOrganizer {
 
    private static final Logger LOG = LogManager.getLogger(ResultOrganizer.class);
 
-   private PeASSFolders folders;
-   private String mainVersion;
+   private final PeASSFolders folders;
+   private final String mainVersion;
    private long currentChunkStart;
    private boolean isUseKieker;
    private int thresholdForZippingInMB = 5;
    private final FolderDeterminer determiner;
    private boolean saveAll = false;
-   private final TestCase testcase;
+   protected final TestCase testcase;
    private boolean success = true;
    private int expectedIterations;
 
@@ -59,8 +59,8 @@ public class ResultOrganizer {
     * This only works *before* the result has been moved, afterwards, the file will be gone and the measurement will be considered no success
     * @return true of the measurement was correct
     */
-   public boolean testSuccess() {
-      final File folder = getTempResultsFolder();
+   public boolean testSuccess(final String version) {
+      final File folder = getTempResultsFolder(version);
       if (folder != null) {
          final String methodname = testcase.getMethod();
          final File oneResultFile = new File(folder, methodname + ".xml");
@@ -74,12 +74,12 @@ public class ResultOrganizer {
                final Kopemedata oneResultData = xdl.getFullData();
                final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
                if (testcaseList.size() > 0) {
-                  Result r = oneResultData.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);
-                  if (r.getIterations() == expectedIterations) {
+                  Result result = oneResultData.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);
+                  if (result.getIterations() == expectedIterations) {
                      success = true;
                   } else {
                      success = false;
-                     LOG.error("Wrong execution count: {} Expected: {}", r.getIterations(), expectedIterations);
+                     LOG.error("Wrong execution count: {} Expected: {}", result.getIterations(), expectedIterations);
                   }
                } else {
                   LOG.error("Testcase not found in XML");
@@ -99,7 +99,7 @@ public class ResultOrganizer {
 
    public void saveResultFiles(final String version, final int vmid)
          throws JAXBException, IOException {
-      final File folder = getTempResultsFolder();
+      final File folder = getTempResultsFolder(version);
       if (folder != null) {
          final String methodname = testcase.getMethod();
          final File oneResultFile = new File(folder, methodname + ".xml");
@@ -128,7 +128,7 @@ public class ResultOrganizer {
       }
    }
 
-   public File getTempResultsFolder() {
+   public File getTempResultsFolder(final String version) {
       LOG.info("Searching method: {}", testcase);
       final String expectedFolderName = "*" + testcase.getClazz();
       final Collection<File> folderCandidates = findFolder(folders.getTempMeasurementFolder(), new WildcardFileFilter(expectedFolderName));
@@ -213,7 +213,7 @@ public class ResultOrganizer {
       }
    }
 
-   private static List<File> findFolder(final File baseFolder, final FileFilter folderFilter) {
+   protected static List<File> findFolder(final File baseFolder, final FileFilter folderFilter) {
       final List<File> files = new LinkedList<>();
       for (final File f : baseFolder.listFiles()) {
          if (f.isDirectory()) {

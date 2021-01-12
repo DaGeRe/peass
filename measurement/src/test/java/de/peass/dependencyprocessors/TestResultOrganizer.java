@@ -66,13 +66,11 @@ public class TestResultOrganizer {
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, searchedTest);
 
-      Assert.assertTrue(organizer.testSuccess());
+      Assert.assertTrue(organizer.testSuccess(VERSION_NAME));
       
       organizer.saveResultFiles(VERSION_NAME, 0);
 
       testXMLFileExists();
-      
-      
    }
 
    @Test

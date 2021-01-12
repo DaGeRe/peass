@@ -58,7 +58,7 @@ public class OnceRunner {
       testExecutor.executeTest(testcase, vmidFolder, outerTimeout);
 
       LOG.debug("Handling Kieker results");
-      resultHandler.handleKiekerResults(version, currentOrganizer.getTempResultsFolder());
+      resultHandler.handleKiekerResults(version, currentOrganizer.getTempResultsFolder(version));
 
       LOG.info("Organizing result paths");
       currentOrganizer.saveResultFiles(version, vmid);
