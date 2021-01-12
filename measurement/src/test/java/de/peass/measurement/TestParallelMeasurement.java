@@ -10,7 +10,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -22,11 +21,11 @@ import de.peass.dependency.execution.MeasurementStrategy;
 import de.peass.dependencyprocessors.DependencyTester;
 import de.peass.measurement.analysis.TestDependencyTester;
 import de.peass.measurement.rca.helper.VCSTestUtils;
-import de.peass.testtransformation.JUnitTestTransformer;
+import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ VersionControlSystem.class, ExecutorCreator.class })
+@PrepareForTest({ VersionControlSystem.class, ExecutorCreator.class, GitUtils.class})
 @PowerMockIgnore("javax.management.*")
 public class TestParallelMeasurement {
    
@@ -35,14 +34,15 @@ public class TestParallelMeasurement {
    public TemporaryFolder folder = new TemporaryFolder();
 
    @Test
-   public void testFiles() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   public void testFiles() throws Exception {
       final PeASSFolders folders = new PeASSFolders(folder.getRoot());
       final MeasurementConfiguration configuration = new MeasurementConfiguration(4, "2", "1");
       configuration.setMeasurementStrategy(MeasurementStrategy.PARALLEL);
 
-      MavenTestExecutorMocker.mockExecutor(folders);
+      MavenTestExecutorMocker.mockExecutor(folders, configuration);
 
       VCSTestUtils.mockGetVCS();
+      VCSTestUtils.mockGoToTagAny();
 
       final DependencyTester tester = new DependencyTester(folders, configuration);
       

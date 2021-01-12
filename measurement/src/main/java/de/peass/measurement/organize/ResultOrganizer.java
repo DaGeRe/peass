@@ -122,9 +122,9 @@ public class ResultOrganizer {
                success = false;
             }
          }
-      }
-      for (final File file : folders.getTempMeasurementFolder().listFiles()) {
-         FileUtils.forceDelete(file);
+         for (final File file : folder.listFiles()) {
+            FileUtils.forceDelete(file);
+         }
       }
    }
 

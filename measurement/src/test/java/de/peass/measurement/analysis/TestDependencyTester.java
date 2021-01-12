@@ -50,11 +50,11 @@ public class TestDependencyTester {
    public TemporaryFolder folder = new TemporaryFolder();
 
    @Test
-   public void testFiles() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   public void testFiles() throws Exception {
       final PeASSFolders folders = new PeASSFolders(folder.getRoot());
       final MeasurementConfiguration configuration = new MeasurementConfiguration(4, "2", "1");
 
-      MavenTestExecutorMocker.mockExecutor(folders);
+      MavenTestExecutorMocker.mockExecutor(folders, configuration);
 
       VCSTestUtils.mockGetVCS();
 

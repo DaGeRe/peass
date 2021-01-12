@@ -34,7 +34,8 @@ public class ResultOrganizerParallel extends ResultOrganizer {
       final String expectedFolderName = "*" + testcase.getClazz();
       final Collection<File> folderCandidates = findFolder(currentFolders.getTempMeasurementFolder(), new WildcardFileFilter(expectedFolderName));
       if (folderCandidates.size() != 1) {
-         LOG.error("Ordner {} ist {} mal vorhanden.", expectedFolderName, folderCandidates.size());
+         LOG.error("Folder with name {} is existing {} times.", expectedFolderName, folderCandidates.size());
+         LOG.error("Searched in: {}", currentFolders.getTempMeasurementFolder());
          return null;
       } else {
          final File folder = folderCandidates.iterator().next();

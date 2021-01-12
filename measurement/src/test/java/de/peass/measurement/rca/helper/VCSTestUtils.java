@@ -43,6 +43,22 @@ public class VCSTestUtils {
       GitUtils.clone(Mockito.any(PeASSFolders.class), Mockito.any(File.class));
    }
    
+   /**
+    * Does nothing instead of going to tag
+    */
+   public static void mockGoToTagAny() {
+      PowerMockito.mockStatic(GitUtils.class);
+      PowerMockito.doAnswer(new Answer<Void>() {
+
+         @Override
+         public Void answer(final InvocationOnMock invocation) throws Throwable {
+            LOG.debug("Loading version without doing anything");
+            return null;
+         }
+      }).when(GitUtils.class);
+      GitUtils.goToTag(Mockito.anyString(), Mockito.any(File.class));
+   }
+   
    public static void mockGoToTagAny(final File anyVersion) {
       PowerMockito.doAnswer(new Answer<Void>() {
 

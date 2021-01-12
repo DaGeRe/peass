@@ -4,6 +4,7 @@ import java.io.File;
 
 import javax.xml.bind.JAXBException;
 
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -17,8 +18,11 @@ import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.execution.MavenTestExecutor;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.execution.TestExecutor;
+import de.peass.dependencyprocessors.OnceRunner;
 import de.peass.testtransformation.JUnitTestTransformer;
+import groovyjarjarantlr4.v4.parse.ANTLRParser.terminal_return;
 
 public class MavenTestExecutorMocker {
    public static void mockExecutor() {
@@ -34,34 +38,37 @@ public class MavenTestExecutorMocker {
       }).when(ExecutorCreator.class);
       ExecutorCreator.createExecutor(Mockito.any(PeASSFolders.class), Mockito.any(JUnitTestTransformer.class));
    }
-   
-   public static void mockExecutor(final PeASSFolders folders) {
+
+   public static void mockExecutor(final PeASSFolders folders, MeasurementConfiguration config) throws Exception {
       final TestExecutor mockedExecutor = Mockito.mock(TestExecutor.class);
-      Mockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            writeValue(folders, 100);
-            return null;
-         }
-
-      }).when(mockedExecutor).executeTest(Mockito.any(), Mockito.any(), Mockito.anyLong());
 
       PowerMockito.mockStatic(ExecutorCreator.class);
       PowerMockito.when(ExecutorCreator.createExecutor(Mockito.any(), Mockito.any()))
-            .thenReturn(mockedExecutor);
+            .then(new Answer<TestExecutor>() {
+
+               @Override
+               public TestExecutor answer(InvocationOnMock invocation) throws Throwable {
+                  PeASSFolders folders = invocation.getArgument(0);
+                  writeValue(folders, 100);
+                  return mockedExecutor;
+               }
+            });
+
+      Mockito.when(mockedExecutor.getTestTransformer()).thenReturn(new JUnitTestTransformer(folders.getProjectFolder(), config));
    }
-   
-   public static void writeValue(final PeASSFolders folders, final int average) throws JAXBException {
+
+   public synchronized static void writeValue(final PeASSFolders folders, final int average) throws JAXBException {
       final File measurementFile = new File(folders.getTempMeasurementFolder(), "de.peass.MyTest");
       measurementFile.mkdirs();
       final XMLDataStorer storer = new XMLDataStorer(measurementFile, "de.peass.MyTest", "test");
       Result result = buildResult(average);
       buildFulldata(average, result);
 
+      System.out.println("Measurement file exists: " + measurementFile.exists());
       storer.storeValue(result, "de.peass.MyTest", TimeDataCollector.class.getName());
+      System.out.println("Storing success");
    }
-   
+
    private static void buildFulldata(final int average, Result result) {
       final Fulldata values = new Fulldata();
       for (long i = average - 10; i <= average + 10; i++) {

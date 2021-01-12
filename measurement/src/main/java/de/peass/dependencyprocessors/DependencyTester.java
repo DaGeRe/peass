@@ -26,6 +26,7 @@ import de.peass.measurement.analysis.DataReader;
 import de.peass.measurement.analysis.statistics.TestData;
 import de.peass.measurement.organize.FolderDeterminer;
 import de.peass.measurement.organize.ResultOrganizer;
+import de.peass.measurement.organize.ResultOrganizerParallel;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
@@ -162,12 +163,11 @@ public class DependencyTester implements KiekerResultHandler {
 
    public void runOneComparison(final File logFolder, final TestCase testcase, final int vmid)
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), false, testcase,
-            configuration.getIterations());
-
       String[] versions = getVersions();
       
       if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.SEQUENTIAL)) {
+         currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), false, testcase,
+               configuration.getIterations());
          LOG.info("Running sequential");
          runSequential(logFolder, testcase, vmid, versions);
       } else if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.PARALLEL)) {
@@ -184,6 +184,9 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    private void runParallel(final File logFolder, final TestCase testcase, final int vmid, String[] versions) throws InterruptedException {
+      ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), false, testcase,
+            configuration.getIterations());
+      currentOrganizer = organizer;
       Thread[] threads = new Thread[2];
       for (int i = 0; i < 2; i++) {
          final String version = versions[i];
@@ -193,6 +196,7 @@ public class DependencyTester implements KiekerResultHandler {
                File projectFolderTemp = new File(folders.getTempProjectFolder(), version);
                try {
                   PeASSFolders temporaryFolders = TemporaryProjectFolderUtil.cloneForcefully(folders, projectFolderTemp);
+                  organizer.setFolder(version, temporaryFolders);
                   final TestExecutor testExecutor = getExecutor(temporaryFolders);
                   final OnceRunner runner = new OnceRunner(temporaryFolders, vcs, testExecutor, currentOrganizer, DependencyTester.this);
                   runner.runOnce(testcase, version, vmid, logFolder);
@@ -231,8 +235,8 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    protected synchronized TestExecutor getExecutor(PeASSFolders currentFolders) {
-      final JUnitTestTransformer testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), configuration);
-      final TestExecutor testExecutor = ExecutorCreator.createExecutor(folders, testTransformer);
+      final JUnitTestTransformer testTransformer = new JUnitTestTransformer(currentFolders.getProjectFolder(), configuration);
+      final TestExecutor testExecutor = ExecutorCreator.createExecutor(currentFolders, testTransformer);
       return testExecutor;
    }
 

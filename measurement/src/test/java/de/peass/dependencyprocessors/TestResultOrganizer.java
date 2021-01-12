@@ -25,39 +25,24 @@ import de.peass.measurement.organize.ResultOrganizer;
 
 public class TestResultOrganizer {
 
-   private static final String VERSION_NAME = "2";
+   public static final String VERSION_NAME = "2";
 
    private static final String KIEKER_TIMESTAMP = "1512123";
 
    private static final Logger LOG = LogManager.getLogger(TestResultOrganizer.class);
 
-   private final TestCase searchedTest = new TestCase("de.test.Test#testMethod");
+   public static final TestCase searchedTest = new TestCase("de.test.Test#testMethod");
    private PeASSFolders folders;
    private ResultOrganizer organizer;
    private File methodFolder;
 
    @Before
    public void setUp() {
-      deleteOldFolders();
+      TestUtil.deleteOldFolders();
 
       folders = new PeASSFolders(new File("target/current"));
       methodFolder = new File(folders.getTempMeasurementFolder(), searchedTest.getClazz());
       methodFolder.mkdir();
-   }
-
-   private void deleteOldFolders() {
-      final File resultFolder = new File("target/current_peass/");
-      if (resultFolder.exists()) {
-         try {
-            for (final File subdir : resultFolder.listFiles()) {
-               if (subdir.isDirectory()) {
-                  FileUtils.deleteDirectory(subdir);
-               }
-            }
-         } catch (final IOException e) {
-            e.printStackTrace();
-         }
-      }
    }
 
    @Test
@@ -81,6 +66,10 @@ public class TestResultOrganizer {
 
       organizer.saveResultFiles(VERSION_NAME, 0);
 
+      testXMLFileIsCorrect();
+   }
+
+   private void testXMLFileIsCorrect() throws JAXBException {
       File kopemefile = new File(getVersionMeasurementFolder(), searchedTest.getMethod() + "_0_" + VERSION_NAME + ".xml");
       Kopemedata data = XMLDataLoader.loadData(kopemefile);
       final Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
