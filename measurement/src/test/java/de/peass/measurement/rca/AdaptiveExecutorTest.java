@@ -63,8 +63,7 @@ public class AdaptiveExecutorTest {
          config.setUseKieker(true);
          config.setIterations(2);
          config.setRepetitions(2);
-         final JUnitTestTransformer transformer = new JUnitTestTransformer(projectFolder, config);
-         executor = new CauseTester(new CauseSearchFolders(projectFolder), transformer, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME);
+         executor = new CauseTester(new CauseSearchFolders(projectFolder), config, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME);
          LOG.debug("Executor: {}", executor);
       } catch (final IOException e) {
          e.printStackTrace();

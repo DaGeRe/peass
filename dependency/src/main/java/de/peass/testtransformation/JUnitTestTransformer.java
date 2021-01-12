@@ -93,6 +93,7 @@ public class JUnitTestTransformer {
     * @param projectFolder Folder, where tests should be transformed
     */
    public JUnitTestTransformer(final File projectFolder, final MeasurementConfiguration config) {
+      LOG.debug("Test transformer for {} created", projectFolder);
       this.projectFolder = projectFolder;
       this.config = config;
       datacollectorlist = config.isUseGC() ? DataCollectorList.ONLYTIME : DataCollectorList.ONLYTIME_NOGC;
@@ -111,9 +112,6 @@ public class JUnitTestTransformer {
       config.setWarmup(0);
       config.setUseKieker(true);
       datacollectorlist = DataCollectorList.ONLYTIME;
-      final JUnitTestTransformer testGenerator = new JUnitTestTransformer(projectFolder, config);
-      testGenerator.getConfig().setLogFullData(false);
-      testGenerator.setEncoding(StandardCharsets.UTF_8);
    }
 
    private Map<File, CompilationUnit> loadedFiles;

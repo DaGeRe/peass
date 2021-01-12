@@ -158,7 +158,7 @@ public class AdaptiveTesterTest {
       final PeASSFolders folders = Mockito.mock(PeASSFolders.class);
       Mockito.when(folders.getProjectFolder()).thenReturn(folder.newFolder("test"));
 
-      AdaptiveTester tester = new AdaptiveTester(folders, testGenerator);
+      AdaptiveTester tester = new AdaptiveTester(folders, testGenerator.getConfig());
       AdaptiveTester tester2 = Mockito.spy(tester);
       Mockito.doNothing().when(tester2).runOneComparison(Mockito.any(File.class), Mockito.any(TestCase.class), Mockito.anyInt());
       return tester2;

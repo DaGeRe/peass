@@ -300,4 +300,8 @@ public abstract class TestExecutor {
       TestExecutor tempExecutor = ExecutorCreator.createExecutor(folders, null);
       return tempExecutor.getModules();
    }
+   
+   public JUnitTestTransformer getTestTransformer() {
+      return testTransformer;
+   }
 }

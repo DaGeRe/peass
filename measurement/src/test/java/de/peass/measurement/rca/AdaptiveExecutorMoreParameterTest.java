@@ -47,7 +47,6 @@ public class AdaptiveExecutorMoreParameterTest {
    private File tempDir;
    private File projectFolder;
    private CauseTester executor;
-   private JUnitTestTransformer transformer;
 
    @Before
    public void setUp() {
@@ -63,7 +62,6 @@ public class AdaptiveExecutorMoreParameterTest {
 
          VCSTestUtils.mockGoToTagAny(SOURCE_DIR);
 
-         transformer = new JUnitTestTransformer(projectFolder, TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER);
       } catch (final IOException e) {
          e.printStackTrace();
       }
@@ -90,13 +88,13 @@ public class AdaptiveExecutorMoreParameterTest {
 
    @Test
    public void testFullMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      executor = new CauseTester(new CauseSearchFolders(projectFolder), transformer, FULL_CASE_CONFIG);
+      executor = new CauseTester(new CauseSearchFolders(projectFolder), TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER, FULL_CASE_CONFIG);
       testSuccessfull();
    }
 
    @Test
    public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      executor = new CauseTester(new CauseSearchFolders(projectFolder), transformer, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME);
+      executor = new CauseTester(new CauseSearchFolders(projectFolder), TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME);
       testSuccessfull();
    }
 

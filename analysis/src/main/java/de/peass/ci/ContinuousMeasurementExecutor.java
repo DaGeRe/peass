@@ -35,12 +35,11 @@ public class ContinuousMeasurementExecutor {
    public File executeMeasurements(final Set<TestCase> tests, final File fullResultsVersion) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       if (!fullResultsVersion.exists()) {
          MeasurementConfiguration copied = new MeasurementConfiguration(measurementConfig);
-         final JUnitTestTransformer testgenerator = new JUnitTestTransformer(folders.getProjectFolder(), copied);
-         testgenerator.getConfig().setUseKieker(false);
+         copied.setUseKieker(false);
          copied.setVersion(version);
          copied.setVersionOld(versionOld);
 
-         final AdaptiveTester tester = new AdaptiveTester(folders, testgenerator);
+         final AdaptiveTester tester = new AdaptiveTester(folders, copied);
          for (final TestCase test : tests) {
             tester.evaluate(test);
          }

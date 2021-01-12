@@ -72,10 +72,9 @@ public class CauseSearcherCompleteIT {
    public void testSlowerState() throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(2, "000001", "000001~1");
       measurementConfiguration.setUseKieker(true);
-      final JUnitTestTransformer testgenerator = new JUnitTestTransformer(CURRENT, measurementConfiguration);
       final CauseSearchFolders folders = new CauseSearchFolders(CURRENT);
       final BothTreeReader reader = new BothTreeReader(TestConstants.SIMPLE_CAUSE_CONFIG, measurementConfiguration, folders);
-      final CauseTester measurer = new CauseTester(folders, testgenerator, TestConstants.SIMPLE_CAUSE_CONFIG);
+      final CauseTester measurer = new CauseTester(folders, measurementConfiguration, TestConstants.SIMPLE_CAUSE_CONFIG);
       final CauseSearcher searcher = new LevelCauseSearcher(reader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, measurementConfiguration, folders);
       final Set<ChangedEntity> changedEntities = searcher.search();
 

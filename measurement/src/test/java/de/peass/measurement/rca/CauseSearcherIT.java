@@ -121,12 +121,11 @@ public class CauseSearcherIT {
    public void testSlowerState() throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(2, "000001", "000001~1");
       measurementConfiguration.setUseKieker(true);
-      final JUnitTestTransformer testTransformer = new JUnitTestTransformer(CURRENT, measurementConfiguration);
       final CauseSearcherConfig causeSearcherConfig = CAUSE_CONFIG_TESTME_COMPLETE;
       
       final CauseSearchFolders folders = new CauseSearchFolders(CURRENT);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders);
-      final CauseTester measurer = new CauseTester(folders, testTransformer, causeSearcherConfig);
+      final CauseTester measurer = new CauseTester(folders, measurementConfiguration, causeSearcherConfig);
       
       final CauseSearcher searcher = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, folders);
       final Set<ChangedEntity> changedEntities = searcher.search();

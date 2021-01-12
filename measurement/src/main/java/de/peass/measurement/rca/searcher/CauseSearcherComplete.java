@@ -94,7 +94,7 @@ public class CauseSearcherComplete extends CauseSearcher {
       config.setRepetitions(measurementConfig.getRepetitions());
       config.setWarmup(measurementConfig.getWarmup());
       config.setUseKieker(true);
-      final CauseTester calibrationMeasurer = new CauseTester(folders, new JUnitTestTransformer(folders.getProjectFolder(), config), causeSearchConfig);
+      final CauseTester calibrationMeasurer = new CauseTester(folders, config, causeSearchConfig);
       final AllDifferingDeterminer calibrationRunner = new AllDifferingDeterminer(predecessorNodeList, causeSearchConfig, config);
       calibrationMeasurer.measureVersion(predecessorNodeList);
       final List<CallTreeNode> includableByMinTime = calibrationRunner.getIncludableNodes();

@@ -40,14 +40,11 @@ public class TestParallelMeasurement {
       final MeasurementConfiguration configuration = new MeasurementConfiguration(4, "2", "1");
       configuration.setMeasurementStrategy(MeasurementStrategy.PARALLEL);
 
-      final JUnitTestTransformer testTransformer = Mockito.mock(JUnitTestTransformer.class);
-      Mockito.when(testTransformer.getConfig()).thenReturn(configuration);
-
       MavenTestExecutorMocker.mockExecutor(folders);
 
       VCSTestUtils.mockGetVCS();
 
-      final DependencyTester tester = new DependencyTester(folders, testTransformer);
+      final DependencyTester tester = new DependencyTester(folders, configuration);
       
       tester.evaluate(TestDependencyTester.EXAMPLE_TESTCASE);
 

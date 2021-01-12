@@ -28,14 +28,13 @@ public class OnceRunner {
    protected final TestExecutor testExecutor;
 
    protected final ResultOrganizer currentOrganizer;
-   private KiekerResultHandler resultHandler;
+   private final KiekerResultHandler resultHandler;
 
-   public OnceRunner(PeASSFolders folders, VersionControlSystem vcs, JUnitTestTransformer testTransformer, 
-         TestExecutor testExecutor, ResultOrganizer currentOrganizer, 
+   public OnceRunner(PeASSFolders folders, VersionControlSystem vcs, TestExecutor testExecutor, ResultOrganizer currentOrganizer, 
          KiekerResultHandler resultHandler) {
       this.folders = folders;
       this.vcs = vcs;
-      this.testTransformer = testTransformer;
+      this.testTransformer = testExecutor.getTestTransformer();
       this.testExecutor = testExecutor;
       this.currentOrganizer = currentOrganizer;
       this.resultHandler = resultHandler;

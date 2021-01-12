@@ -35,12 +35,11 @@ public class LevelCauseSearchExperimentalStarter {
 
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(15, 5, 0.01, 0.01, true, version, version + "~1");
       measurementConfiguration.setUseKieker(true);
-      final JUnitTestTransformer testtransformer = new JUnitTestTransformer(projectFolder, measurementConfiguration);
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, true, false, 5.0, false, 0.1, false, false, RCAStrategy.COMPLETE);
       final CauseSearchFolders folders2 = new CauseSearchFolders(projectFolder);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders2);
 
-      final CauseTester measurer = new CauseTester(folders2, testtransformer, causeSearcherConfig);
+      final CauseTester measurer = new CauseTester(folders2, measurementConfiguration, causeSearcherConfig);
       final LevelCauseSearcher searcher = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, folders2);
       reader.readTrees();
 

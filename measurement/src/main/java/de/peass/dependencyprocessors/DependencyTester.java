@@ -41,23 +41,16 @@ public class DependencyTester implements KiekerResultHandler {
 
    protected final PeASSFolders folders;
    protected final MeasurementConfiguration configuration;
-   // protected final int vms;
-
    private final VersionControlSystem vcs;
-
-   protected final JUnitTestTransformer testTransformer;
-   protected final TestExecutor testExecutor;
-
    protected ResultOrganizer currentOrganizer;
    protected long currentChunkStart = 0;
 
-   public DependencyTester(final PeASSFolders folders, final JUnitTestTransformer testgenerator) throws IOException {
+   public DependencyTester(final PeASSFolders folders, final MeasurementConfiguration measurementConfig) throws IOException {
       this.folders = folders;
-      this.configuration = testgenerator.getConfig();
+      this.configuration = measurementConfig;
 
       vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
-      this.testTransformer = testgenerator;
-      testExecutor = ExecutorCreator.createExecutor(folders, testTransformer);
+      
    }
 
    /**
@@ -94,8 +87,8 @@ public class DependencyTester implements KiekerResultHandler {
       if (vmid < 40) {
          int reducedIterations = Math.min(shouldReduce(configuration.getVersionOld(), versionOldResult),
                shouldReduce(configuration.getVersion(), versionNewResult));
-         if (reducedIterations != testTransformer.getConfig().getIterations()) {
-            LOG.error("Should originally run {} iterations, but did not succeed - reducing to {}", testTransformer.getConfig().getIterations(), reducedIterations);
+         if (reducedIterations != configuration.getIterations()) {
+            LOG.error("Should originally run {} iterations, but did not succeed - reducing to {}", configuration.getIterations(), reducedIterations);
 //            final int lessIterations = testTransformer.getConfig().getIterations() / 5;
             shouldBreak = reduceExecutions(shouldBreak, reducedIterations);
          }
@@ -107,17 +100,17 @@ public class DependencyTester implements KiekerResultHandler {
    private int shouldReduce(final String version, final Result result) {
       final int reducedIterations;
       if (result == null) {
-         reducedIterations = testTransformer.getConfig().getIterations() / 2;
+         reducedIterations = configuration.getIterations() / 2;
          LOG.error("Measurement for {} is null", version);
-      } else if (result.getIterations() < testTransformer.getConfig().getIterations()) {
+      } else if (result.getIterations() < configuration.getIterations()) {
          LOG.error("Measurement executions: {}", result.getIterations());
          final int minOfExecuted = (int) result.getIterations() - 2;
-         reducedIterations = Math.min(minOfExecuted, testTransformer.getConfig().getIterations() / 2);
+         reducedIterations = Math.min(minOfExecuted, configuration.getIterations() / 2);
       // 10E7 for at least 10 iterations means more than ~2.5 minutes per VM, which is ok
 //      } else if (result.getValue() > 10E7 && testTransformer.getConfig().getIterations() > 10) {
 //         reducedIterations = testTransformer.getConfig().getIterations() / 2;
       } else {
-         reducedIterations = testTransformer.getConfig().getIterations();
+         reducedIterations = configuration.getIterations();
       }
       return reducedIterations;
    }
@@ -125,15 +118,15 @@ public class DependencyTester implements KiekerResultHandler {
    protected boolean reduceExecutions(boolean shouldBreak, final int lessIterations) {
       if (lessIterations > 3) {
          LOG.info("Reducing iterations too: {}", lessIterations);
-         testTransformer.getConfig().setIterations(lessIterations);
-         testTransformer.getConfig().setWarmup(0);
+         configuration.setIterations(lessIterations);
+         configuration.setWarmup(0);
       } else {
-         if (testTransformer.getConfig().getRepetitions() > 5) {
-            final int reducedRepetitions = testTransformer.getConfig().getRepetitions() / 5;
+         if (configuration.getRepetitions() > 5) {
+            final int reducedRepetitions = configuration.getRepetitions() / 5;
             LOG.debug("Reducing repetitions to " + reducedRepetitions);
-            testTransformer.getConfig().setRepetitions(reducedRepetitions);
+            configuration.setRepetitions(reducedRepetitions);
          } else {
-            LOG.error("Cannot reduce iterations ({}) or repetitions ({}) anymore", testTransformer.getConfig().getIterations(), testTransformer.getConfig().getRepetitions());
+            LOG.error("Cannot reduce iterations ({}) or repetitions ({}) anymore", configuration.getIterations(), configuration.getRepetitions());
             shouldBreak = true;
          }
       }
@@ -168,8 +161,8 @@ public class DependencyTester implements KiekerResultHandler {
 
    public void runOneComparison(final File logFolder, final TestCase testcase, final int vmid)
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, testTransformer.getConfig().isUseKieker(), false, testcase,
-            testTransformer.getConfig().getIterations());
+      currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), false, testcase,
+            configuration.getIterations());
 
       String[] versions = getVersions();
       
@@ -196,7 +189,8 @@ public class DependencyTester implements KiekerResultHandler {
          threads[i] = new Thread(new Runnable() {
             @Override
             public void run() {
-               OnceRunner runner = new OnceRunner(folders, vcs, testTransformer, testExecutor, currentOrganizer, DependencyTester.this);
+               final TestExecutor testExecutor = getExecutor();
+               final OnceRunner runner = new OnceRunner(folders, vcs, testExecutor, currentOrganizer, DependencyTester.this);
                try {
                   runner.runOnce(testcase, version, vmid, logFolder);
                } catch (IOException | InterruptedException | JAXBException | XmlPullParserException e) {
@@ -228,8 +222,15 @@ public class DependencyTester implements KiekerResultHandler {
 
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      OnceRunner runner = new OnceRunner(folders, vcs, testTransformer, testExecutor, currentOrganizer, this);
+      final TestExecutor testExecutor = getExecutor();
+      final OnceRunner runner = new OnceRunner(folders, vcs, testExecutor, currentOrganizer, this);
       runner.runOnce(testcase, version, vmid, logFolder);
+   }
+
+   protected synchronized TestExecutor getExecutor() {
+      final JUnitTestTransformer testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), configuration);
+      final TestExecutor testExecutor = ExecutorCreator.createExecutor(folders, testTransformer);
+      return testExecutor;
    }
 
    /**

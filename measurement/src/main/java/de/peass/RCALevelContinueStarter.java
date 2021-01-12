@@ -47,12 +47,10 @@ public class RCALevelContinueStarter implements Callable<Void> {
          GitUtils.clone(folders, nowFolder);
          final CauseSearchFolders alternateFolders = new CauseSearchFolders(nowFolder);
 
-         final JUnitTestTransformer testtransformer = new JUnitTestTransformer(alternateFolders.getProjectFolder(), data.getMeasurementConfig());
-
          final BothTreeReader reader = new BothTreeReader(data.getCauseConfig(), data.getMeasurementConfig(), folders);
          reader.readCachedTrees();
 
-         final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, data.getCauseConfig());
+         final CauseTester measurer = new CauseTester(alternateFolders, data.getMeasurementConfig(), data.getCauseConfig());
          final LevelCauseSearcher tester = new LevelCauseSearcher(measurer, data, alternateFolders);
 
          final List<CallTreeNode> currentVersionNodeList = new LinkedList<>();

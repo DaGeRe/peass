@@ -70,13 +70,12 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
       LOG.debug("Timeout in minutes: {}", measurementConfigMixin.getTimeout());
       final MeasurementConfiguration measurementConfiguration = getConfiguration(predecessor);
-      final JUnitTestTransformer testtransformer = getTestTransformer(measurementConfiguration);
 
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, causeSearchConfigMixin);
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders);
 
-      final CauseSearcher tester = getCauseSeacher(measurementConfiguration, testtransformer, causeSearcherConfig, alternateFolders, reader);
+      final CauseSearcher tester = getCauseSeacher(measurementConfiguration, causeSearcherConfig, alternateFolders, reader);
       tester.search();
 
       return null;
@@ -96,10 +95,10 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       return measurementConfiguration;
    }
 
-   public static CauseSearcher getCauseSeacher(final MeasurementConfiguration measurementConfiguration, final JUnitTestTransformer testtransformer,
+   public static CauseSearcher getCauseSeacher(final MeasurementConfiguration measurementConfiguration, 
          final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader) throws IOException, InterruptedException {
       final CauseSearcher tester;
-      final CauseTester measurer = new CauseTester(alternateFolders, testtransformer, causeSearcherConfig);
+      final CauseTester measurer = new CauseTester(alternateFolders, measurementConfiguration, causeSearcherConfig);
       if (causeSearcherConfig.getRcaStrategy() != null) {
          switch (causeSearcherConfig.getRcaStrategy()) {
          case COMPLETE:

@@ -44,11 +44,6 @@ public class DependencyTestStarter extends PairProcessor {
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
 
-   JUnitTestTransformer getTestTransformer(final MeasurementConfiguration measurementConfig) {
-      final JUnitTestTransformer testtransformer = new JUnitTestTransformer(folders.getProjectFolder(), measurementConfig);
-      return testtransformer;
-   }
-
    private static final Logger LOG = LogManager.getLogger(DependencyTestStarter.class);
 
    protected DependencyTester tester;
@@ -82,24 +77,18 @@ public class DependencyTestStarter extends PairProcessor {
 
    private void createTester(final MeasurementConfiguration measurementConfiguration) throws IOException {
       if (measurementConfigMixin.getDuration() != 0) {
-         TimeBasedTestTransformer testTransformer = new TimeBasedTestTransformer(folders.getProjectFolder());
-         ((TimeBasedTestTransformer) testTransformer).setDuration(measurementConfigMixin.getDuration());
-         if (measurementConfigMixin.getRepetitions() != 1) {
-            testTransformer.getConfig().setRepetitions(measurementConfigMixin.getRepetitions());
-         }
-         testTransformer.getConfig().setIterations(0);
-         testTransformer.getConfig().setWarmup(0);
-         testTransformer.getConfig().setUseKieker(measurementConfigMixin.isUseKieker());
-         tester = new DependencyTester(folders, testTransformer);
+         throw new RuntimeException("Time-based running currently not supported; eventually fix commented-out code to get it running again");
+//         TimeBasedTestTransformer testTransformer = new TimeBasedTestTransformer(folders.getProjectFolder());
+//         ((TimeBasedTestTransformer) testTransformer).setDuration(measurementConfigMixin.getDuration());
+//         if (measurementConfigMixin.getRepetitions() != 1) {
+//            testTransformer.getConfig().setRepetitions(measurementConfigMixin.getRepetitions());
+//         }
+//         testTransformer.getConfig().setIterations(0);
+//         testTransformer.getConfig().setWarmup(0);
+//         testTransformer.getConfig().setUseKieker(measurementConfigMixin.isUseKieker());
+//         tester = new DependencyTester(folders, testTransformer);
       } else {
-         final JUnitTestTransformer testgenerator = getTestTransformer(measurementConfiguration);
-
-         if (measurementConfigMixin.isEarlyStop()) {
-            tester = new AdaptiveTester(folders, testgenerator);
-         } else {
-            tester = new DependencyTester(folders, testgenerator);
-         }
-
+         tester = new DependencyTester(folders, new MeasurementConfiguration(measurementConfigMixin));
       }
    }
 

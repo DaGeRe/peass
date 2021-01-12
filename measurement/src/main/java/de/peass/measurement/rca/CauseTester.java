@@ -17,6 +17,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
+import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.analysis.EarlyBreakDecider;
@@ -36,22 +37,18 @@ public class CauseTester extends AdaptiveTester {
    private static final Logger LOG = LogManager.getLogger(CauseTester.class);
 
    private Set<CallTreeNode> includedNodes;
+   private Set<String> includedPattern;
    private final TestCase testcase;
    private final CauseSearcherConfig causeConfig;
    private final CauseSearchFolders folders;
    private int levelId = 0;
 
-   public CauseTester(final CauseSearchFolders project, final JUnitTestTransformer testgenerator, final CauseSearcherConfig causeConfig)
+   public CauseTester(final CauseSearchFolders project, final MeasurementConfiguration measurementConfig, final CauseSearcherConfig causeConfig)
          throws IOException {
-      super(project, testgenerator);
+      super(project, measurementConfig);
       this.testcase = causeConfig.getTestCase();
       this.causeConfig = causeConfig;
       this.folders = project;
-      if (!testgenerator.getConfig().isUseSelectiveInstrumentation()) {
-         testgenerator.setAdaptiveExecution(true);
-      }
-      testgenerator.setAggregatedWriter(causeConfig.isUseAggregation());
-      testgenerator.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
    }
 
    public void measureVersion(final List<CallTreeNode> nodes)
@@ -76,25 +73,47 @@ public class CauseTester extends AdaptiveTester {
    private Set<CallTreeNode> prepareNodes(final List<CallTreeNode> nodes) {
       final Set<CallTreeNode> includedNodes = new HashSet<CallTreeNode>();
       includedNodes.addAll(nodes);
-      nodes.forEach(node -> node.setVersions(testTransformer.getConfig().getVersion(), testTransformer.getConfig().getVersionOld()));
+      nodes.forEach(node -> node.setVersions(configuration.getVersion(), configuration.getVersionOld()));
       return includedNodes;
    }
 
    @Override
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      final int samplingfactor = testTransformer.getConfig().isUseSampling() ? 1000 : 1;
-      final int warmup = testTransformer.getConfig().getWarmup() * testTransformer.getConfig().getRepetitions() / samplingfactor;
+      final int samplingfactor = configuration.isUseSampling() ? 1000 : 1;
+      final int warmup = configuration.getWarmup() * configuration.getRepetitions() / samplingfactor;
       includedNodes.forEach(node -> node.setWarmup(warmup));
 
       LOG.debug("Adaptive execution: " + includedNodes);
 
       super.evaluate(testcase);
    }
+   
+   @Override
+   protected synchronized TestExecutor getExecutor() {
+      final TestExecutor testExecutor = super.getExecutor();
+      JUnitTestTransformer testTransformer = testExecutor.getTestTransformer();
+      if (!testTransformer.getConfig().isUseSelectiveInstrumentation()) {
+         testTransformer.setAdaptiveExecution(true);
+      }
+      testTransformer.setAggregatedWriter(causeConfig.isUseAggregation());
+      testTransformer.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
+      testExecutor.setIncludedMethods(new HashSet<>(includedPattern));
+      return testExecutor;
+   }
 
    @Override
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      final Set<String> includedPattern = new HashSet<>();
+      generatePatternSet(version);
+      
+      currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart,
+            configuration.isUseKieker(), causeConfig.isSaveAll(), testcase,
+            configuration.getIterations());
+      super.runOnce(testcase, version, vmid, logFolder);
+   }
+
+   private void generatePatternSet(final String version) {
+      includedPattern = new HashSet<>();
       if (configuration.getVersionOld().equals(version)) {
          includedNodes.forEach(node -> {
             System.out.println(node);
@@ -107,11 +126,6 @@ public class CauseTester extends AdaptiveTester {
             includedPattern.add(node.getOtherVersionNode().getKiekerPattern());
          });
       }
-      testExecutor.setIncludedMethods(includedPattern);
-      currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart,
-            testTransformer.getConfig().isUseKieker(), causeConfig.isSaveAll(), testcase,
-            testTransformer.getConfig().getIterations());
-      super.runOnce(testcase, version, vmid, logFolder);
    }
 
    @Override
@@ -195,7 +209,7 @@ public class CauseTester extends AdaptiveTester {
       final MeasurementConfiguration config = new MeasurementConfiguration(15 * 1000 * 60, 15, 0.01, 0.05, true, version, version + "~1");
       config.setUseKieker(true);
       final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, true, 5, false, 0.01, false, false, RCAStrategy.COMPLETE);
-      final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), new JUnitTestTransformer(projectFolder, config), causeConfig);
+      final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), config, causeConfig);
 
       final CallTreeNode node = new CallTreeNode("FileUploadTestCase#parseUpload",
             "protected java.util.List org.apache.commons.fileupload.FileUploadTestCase.parseUpload(byte[],java.lang.String)",
