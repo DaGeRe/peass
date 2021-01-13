@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.traces.TemporaryProjectFolderUtil;
 import de.peass.vcs.GitUtils;
 
 public class TreeReaderFactory {
@@ -19,7 +20,10 @@ public class TreeReaderFactory {
     */
    public static TreeReader createTreeReader(final PeASSFolders parentFolders, final String predecessor, final long timeout, boolean ignoreEOIs) throws InterruptedException, IOException {
       File treeReadingFolder = new File(parentFolders.getTempProjectFolder(), predecessor);
-      GitUtils.clone(parentFolders, treeReadingFolder);
+      if (treeReadingFolder.exists()) {
+         
+      }
+      TemporaryProjectFolderUtil.cloneForcefully(parentFolders, treeReadingFolder);
       GitUtils.goToTag(predecessor, treeReadingFolder);
       TreeReader reader = new TreeReader(treeReadingFolder, timeout);
       reader.setIgnoreEOIs(ignoreEOIs);

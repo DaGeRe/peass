@@ -169,7 +169,7 @@ public class CallTreeNode extends BasicNode {
    }
 
    public SummaryStatistics getStatistics(final String version) {
-      LOG.debug("Getting data: {}", version);
+      LOG.trace("Getting data: {}", version);
       final CallTreeStatistics statistics = data.get(version);
       return statistics != null ? statistics.getStatistics() : null;
    }

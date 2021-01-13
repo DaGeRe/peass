@@ -52,7 +52,7 @@ public class DependencyTester implements KiekerResultHandler {
       this.configuration = measurementConfig;
 
       vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
-      
+
    }
 
    /**
@@ -61,7 +61,7 @@ public class DependencyTester implements KiekerResultHandler {
     * @param version Current version to test
     * @param versionOld Old version to test
     * @param testcase Testcase to test
-    * @throws XmlPullParserException 
+    * @throws XmlPullParserException
     */
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       new FolderDeterminer(folders).testResultFolders(configuration.getVersion(), configuration.getVersionOld(), testcase);
@@ -91,7 +91,7 @@ public class DependencyTester implements KiekerResultHandler {
                shouldReduce(configuration.getVersion(), versionNewResult));
          if (reducedIterations != configuration.getIterations()) {
             LOG.error("Should originally run {} iterations, but did not succeed - reducing to {}", configuration.getIterations(), reducedIterations);
-//            final int lessIterations = testTransformer.getConfig().getIterations() / 5;
+            // final int lessIterations = testTransformer.getConfig().getIterations() / 5;
             shouldBreak = reduceExecutions(shouldBreak, reducedIterations);
          }
       }
@@ -108,9 +108,9 @@ public class DependencyTester implements KiekerResultHandler {
          LOG.error("Measurement executions: {}", result.getIterations());
          final int minOfExecuted = (int) result.getIterations() - 2;
          reducedIterations = Math.min(minOfExecuted, configuration.getIterations() / 2);
-      // 10E7 for at least 10 iterations means more than ~2.5 minutes per VM, which is ok
-//      } else if (result.getValue() > 10E7 && testTransformer.getConfig().getIterations() > 10) {
-//         reducedIterations = testTransformer.getConfig().getIterations() / 2;
+         // 10E7 for at least 10 iterations means more than ~2.5 minutes per VM, which is ok
+         // } else if (result.getValue() > 10E7 && testTransformer.getConfig().getIterations() > 10) {
+         // reducedIterations = testTransformer.getConfig().getIterations() / 2;
       } else {
          reducedIterations = configuration.getIterations();
       }
@@ -164,7 +164,7 @@ public class DependencyTester implements KiekerResultHandler {
    public void runOneComparison(final File logFolder, final TestCase testcase, final int vmid)
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       String[] versions = getVersions();
-      
+
       if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.SEQUENTIAL)) {
          currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), false, testcase,
                configuration.getIterations());
@@ -193,11 +193,16 @@ public class DependencyTester implements KiekerResultHandler {
          threads[i] = new Thread(new Runnable() {
             @Override
             public void run() {
-               File projectFolderTemp = new File(folders.getTempProjectFolder(), version);
+               File projectFolderTemp = new File(folders.getTempProjectFolder(), "parallel_" + version);
                try {
-                  PeASSFolders temporaryFolders = TemporaryProjectFolderUtil.cloneForcefully(folders, projectFolderTemp);
+                  PeASSFolders temporaryFolders;
+                  if (!projectFolderTemp.exists()) {
+                     temporaryFolders = TemporaryProjectFolderUtil.cloneForcefully(folders, projectFolderTemp);
+                  } else {
+                     temporaryFolders = new PeASSFolders(projectFolderTemp);
+                  }
                   organizer.setFolder(version, temporaryFolders);
-                  final TestExecutor testExecutor = getExecutor(temporaryFolders);
+                  final TestExecutor testExecutor = getExecutor(temporaryFolders, version);
                   final OnceRunner runner = new OnceRunner(temporaryFolders, vcs, testExecutor, currentOrganizer, DependencyTester.this);
                   runner.runOnce(testcase, version, vmid, logFolder);
                } catch (IOException | InterruptedException | JAXBException | XmlPullParserException e) {
@@ -212,7 +217,8 @@ public class DependencyTester implements KiekerResultHandler {
       }
    }
 
-   private void runSequential(final File logFolder, final TestCase testcase, final int vmid, String versions[]) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   private void runSequential(final File logFolder, final TestCase testcase, final int vmid, String versions[])
+         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       for (String version : versions) {
          runOnce(testcase, version, vmid, logFolder);
       }
@@ -229,12 +235,12 @@ public class DependencyTester implements KiekerResultHandler {
 
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      final TestExecutor testExecutor = getExecutor(folders);
+      final TestExecutor testExecutor = getExecutor(folders, version);
       final OnceRunner runner = new OnceRunner(folders, vcs, testExecutor, currentOrganizer, this);
       runner.runOnce(testcase, version, vmid, logFolder);
    }
 
-   protected synchronized TestExecutor getExecutor(PeASSFolders currentFolders) {
+   protected synchronized TestExecutor getExecutor(final PeASSFolders currentFolders, final String version) {
       final JUnitTestTransformer testTransformer = new JUnitTestTransformer(currentFolders.getProjectFolder(), configuration);
       final TestExecutor testExecutor = ExecutorCreator.createExecutor(currentFolders, testTransformer);
       return testExecutor;

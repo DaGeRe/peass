@@ -90,22 +90,24 @@ public class CauseTester extends AdaptiveTester {
    }
    
    @Override
-   protected synchronized TestExecutor getExecutor(PeASSFolders temporaryFolders) {
-      final TestExecutor testExecutor = super.getExecutor(temporaryFolders);
+   protected synchronized TestExecutor getExecutor(final PeASSFolders temporaryFolders, final String version) {
+      final TestExecutor testExecutor = super.getExecutor(temporaryFolders, version);
       JUnitTestTransformer testTransformer = testExecutor.getTestTransformer();
       if (!testTransformer.getConfig().isUseSelectiveInstrumentation()) {
          testTransformer.setAdaptiveExecution(true);
       }
       testTransformer.setAggregatedWriter(causeConfig.isUseAggregation());
       testTransformer.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
-      testExecutor.setIncludedMethods(new HashSet<>(includedPattern));
+      generatePatternSet(version);
+      final HashSet<String> includedMethodPattern = new HashSet<>(includedPattern);
+      testExecutor.setIncludedMethods(includedMethodPattern);
       return testExecutor;
    }
 
    @Override
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      generatePatternSet(version);
+      
       
       currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart,
             configuration.isUseKieker(), causeConfig.isSaveAll(), testcase,

@@ -117,14 +117,14 @@ public class TreeFilter extends AbstractFilterPlugin {
 
    private void callLevelDown(final Execution execution) {
       if (execution.getEss() > lastStackSize) {
-         LOG.info("Level down: " + execution.getEss() + " " + lastStackSize);
+         LOG.trace("Level down: " + execution.getEss() + " " + lastStackSize);
          lastParent = lastAdded;
          // lastStackSize++;
          if (lastStackSize + 1 != lastParent.getEss() + 1) {
             LOG.error("Down caused wrong lastStackSize: {} {}", lastStackSize, lastParent.getEss());
          }
          lastStackSize = lastParent.getEss() + 1;
-         LOG.info("Stack size after going down: {} Measured: {}", lastParent.getEss(), lastStackSize);
+         LOG.trace("Stack size after going down: {} Measured: {}", lastParent.getEss(), lastStackSize);
       }
    }
 
