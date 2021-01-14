@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.PersistedTestDataBuilder;
 import de.peass.measurement.rca.LevelManager;
 import de.peass.measurement.rca.data.CallTreeNode;
@@ -70,7 +71,7 @@ public class LevelManagerTest {
       rootMeasured.setKiekerPattern("public void Test.test");
       data.setNodes(rootMeasured);
 
-      final CallTreeNode root = new CallTreeNode("Test#test", "public void Test.test", "public void Test.test");
+      final CallTreeNode root = new CallTreeNode("Test#test", "public void Test.test", "public void Test.test", (MeasurementConfiguration) null);
       CallTreeNode current = root;
       MeasuredNode measuredCurrent = rootMeasured;
       for (int i = 0; i < 20; i++) {

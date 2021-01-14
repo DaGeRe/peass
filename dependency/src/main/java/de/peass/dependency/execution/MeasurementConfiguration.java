@@ -301,4 +301,15 @@ public class MeasurementConfiguration {
    public void setMeasurementStrategy(MeasurementStrategy measurementStrategy) {
       this.measurementStrategy = measurementStrategy;
    }
+   
+   /**
+    * Returns the warmup that should be ignored when individual nodes are measured 
+    * @return
+    */
+   @JsonIgnore
+   public int getNodeWarmup() {
+      final int samplingfactor = this.isUseSampling() ? 1000 : 1;
+      final int warmup = this.getWarmup() * this.getRepetitions() / samplingfactor;
+      return warmup;
+   }
 }

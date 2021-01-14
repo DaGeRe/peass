@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.KiekerResultReader;
 import de.peass.measurement.rca.data.CallTreeNode;
 import kieker.analysis.exception.AnalysisConfigurationException;
@@ -37,7 +38,7 @@ public class TestCompleteReading {
       writer.onTerminating();
    }
 
-   private final CallTreeNode root = new CallTreeNode("parent()", "public void A.parent()", null);
+   private final CallTreeNode root = new CallTreeNode("parent()", "public void A.parent()", null, new MeasurementConfiguration(3));
 
    private Set<CallTreeNode> buildTree() {
       final Set<CallTreeNode> includedNodes = new HashSet<>();
@@ -49,7 +50,6 @@ public class TestCompleteReading {
 
       for (final CallTreeNode node : includedNodes) {
          node.setVersions("0", "1");
-         node.setWarmup(0);
          node.setOtherVersionNode(node);
       }
       return includedNodes;

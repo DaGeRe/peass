@@ -82,7 +82,6 @@ public class CauseTester extends AdaptiveTester {
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final int samplingfactor = configuration.isUseSampling() ? 1000 : 1;
       final int warmup = configuration.getWarmup() * configuration.getRepetitions() / samplingfactor;
-      includedNodes.forEach(node -> node.setWarmup(warmup));
 
       LOG.debug("Adaptive execution: " + includedNodes);
 
@@ -216,7 +215,8 @@ public class CauseTester extends AdaptiveTester {
 
       final CallTreeNode node = new CallTreeNode("FileUploadTestCase#parseUpload",
             "protected java.util.List org.apache.commons.fileupload.FileUploadTestCase.parseUpload(byte[],java.lang.String)",
-            "protected java.util.List org.apache.commons.fileupload.FileUploadTestCase.parseUpload(byte[],java.lang.String)");
+            "protected java.util.List org.apache.commons.fileupload.FileUploadTestCase.parseUpload(byte[],java.lang.String)", 
+            config);
       node.setOtherVersionNode(node);
       final Set<CallTreeNode> nodes = new HashSet<>();
       nodes.add(node);

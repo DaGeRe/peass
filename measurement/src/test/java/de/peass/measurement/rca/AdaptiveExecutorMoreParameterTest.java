@@ -24,6 +24,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.TestConstants;
@@ -72,7 +73,7 @@ public class AdaptiveExecutorMoreParameterTest {
       LOG.debug("Executor: {}", executor);
       final Set<CallTreeNode> included = new HashSet<>();
       final String kiekerPattern = "public void defaultpackage.NormalDependency.child1(int[], double, java.lang.String)";
-      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1", kiekerPattern, kiekerPattern);
+      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1", kiekerPattern, kiekerPattern, new MeasurementConfiguration(5));
       nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);
       executor.setIncludedMethods(included);

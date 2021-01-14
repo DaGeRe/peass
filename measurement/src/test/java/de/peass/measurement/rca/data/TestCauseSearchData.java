@@ -3,6 +3,7 @@ package de.peass.measurement.rca.data;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.serialization.MeasuredNode;
@@ -19,7 +20,7 @@ public class TestCauseSearchData {
       
       csd.setNodes(aMeasured);
       
-      CallTreeNode aStructure = new CallTreeNode("A", "public void A.a()", null);
+      CallTreeNode aStructure = new CallTreeNode("A", "public void A.a()", null, new MeasurementConfiguration(-1));
       CallTreeNode bStructure = aStructure.appendChild("B", "public void B.b()", null);
       CallTreeNode cStructure = buildAdditionalNode(bStructure);
       
@@ -31,7 +32,7 @@ public class TestCauseSearchData {
 
    private CallTreeNode buildAdditionalNode(CallTreeNode bStructure) {
       CallTreeNode cStructure = bStructure.appendChild("C", "public void C.c()", null);
-      cStructure.setOtherVersionNode(new CallTreeNode("C", "public void C.c()", null));
+      cStructure.setOtherVersionNode(new CallTreeNode("C", "public void C.c()", null, new MeasurementConfiguration(-1)));
       cStructure.setVersions("1", "2");
       for (int i = 0; i < 3; i++) {
          cStructure.newVM("1");

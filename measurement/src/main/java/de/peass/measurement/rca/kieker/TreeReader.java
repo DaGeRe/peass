@@ -13,6 +13,7 @@ import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.PeASSFilter;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.dependencyprocessors.ViewNotFoundException;
@@ -24,9 +25,11 @@ import kieker.tools.trace.analysis.filter.traceReconstruction.TraceReconstructio
 public class TreeReader extends KiekerResultManager {
 
    private boolean ignoreEOIs = true;
+   private final MeasurementConfiguration config;
    
-   TreeReader(final File projectFolder, final long timeout) throws InterruptedException, IOException {
-      super(new PeASSFolders(projectFolder), timeout);
+   TreeReader(final File projectFolder, final MeasurementConfiguration config) throws InterruptedException, IOException {
+      super(new PeASSFolders(projectFolder), config.getTimeout());
+      this.config = config;
    }
 
    public void setIgnoreEOIs(boolean ignoreEOIs) {
@@ -58,7 +61,7 @@ public class TreeReader extends KiekerResultManager {
       final ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), TestExecutor.getModules(folders));
       
       AnalysisController analysisController = reader.getAnalysisController();
-      final TreeFilter treeFilter = new TreeFilter(null, analysisController, testcase, ignoreEOIs, mapping);
+      final TreeFilter treeFilter = new TreeFilter(null, analysisController, testcase, ignoreEOIs, config, mapping);
       analysisController.connect(traceReconstructionFilter, TraceReconstructionFilter.OUTPUT_PORT_NAME_EXECUTION_TRACE,
             treeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
 

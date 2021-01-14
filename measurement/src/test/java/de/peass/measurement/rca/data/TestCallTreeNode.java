@@ -4,20 +4,21 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.TreeBuilderBig;
 
 public class TestCallTreeNode {
    @Test
    public void testToEntity() {
-      final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()");
+      final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()", (MeasurementConfiguration) null);
       Assert.assertEquals(new ChangedEntity("de.mypackage.Test", "", "callMethod"), node.toEntity());
       Assert.assertEquals("de.mypackage.Test#callMethod", node.toEntity().toString());
    }
 
    @Test
    public void testPosition() throws Exception {
-      CallTreeNode aStructure = new CallTreeNode("A", "public void A.a()", "public void A.a()");
+      CallTreeNode aStructure = new CallTreeNode("A", "public void A.a()", "public void A.a()", (MeasurementConfiguration) null);
       CallTreeNode bStructure = aStructure.appendChild("B", "public void B.b()", "public void B.b()");
       CallTreeNode cStructure = bStructure.appendChild("C", "public void C.c()", "public void C.c()");
       Assert.assertEquals(0, bStructure.getPosition());

@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.KiekerResultReader;
 import de.peass.measurement.rca.data.CallTreeNode;
 
@@ -24,8 +25,9 @@ public class TestRealWorld {
    
    @Test
    public void callMe() throws JsonParseException, JsonMappingException, IOException {
-      CallTreeNode rootNode = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()");
-      CallTreeNode rootNode2 = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()");
+      final MeasurementConfiguration config = new MeasurementConfiguration(5);
+      CallTreeNode rootNode = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()",  config);
+      CallTreeNode rootNode2 = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()",  config);
       rootNode.setOtherVersionNode(rootNode2);
       rootNode2.setOtherVersionNode(rootNode);
       rootNode.setVersions(version, predecessor);

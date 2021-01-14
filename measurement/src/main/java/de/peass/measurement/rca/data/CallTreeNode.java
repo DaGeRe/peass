@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.peass.PeassGlobalInfos;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 
@@ -40,23 +41,25 @@ public class CallTreeNode extends BasicNode {
    protected final List<CallTreeNode> children = new ArrayList<>();
    protected final Map<String, CallTreeStatistics> data = new HashMap<>();
 
-   protected String version, predecessor;
-
-   private int warmup;
+   @JsonIgnore
+   protected
+   final MeasurementConfiguration config;
 
    private CallTreeNode otherVersionNode;
 
    /**
     * Creates a root node
     */
-   public CallTreeNode(final String call, final String kiekerPattern, final String otherKiekerPattern) {
+   public CallTreeNode(final String call, final String kiekerPattern, final String otherKiekerPattern, MeasurementConfiguration config) {
       super(call, kiekerPattern, otherKiekerPattern);
       this.parent = null;
+      this.config = config;
    }
 
    protected CallTreeNode(final String call, final String kiekerPattern, final String otherKiekerPattern, final CallTreeNode parent) {
       super(call, kiekerPattern, otherKiekerPattern);
       this.parent = parent;
+      this.config = parent.config;
    }
 
    public List<CallTreeNode> getChildren() {
@@ -91,8 +94,8 @@ public class CallTreeNode extends BasicNode {
    }
 
    private void removeWarmup(final List<StatisticalSummary> statistic) {
-      if (warmup > 0) {
-         int remainingWarmup = warmup;
+      if (config.getNodeWarmup() > 0) {
+         int remainingWarmup = config.getNodeWarmup();
          StatisticalSummary borderSummary = null;
          for (Iterator<StatisticalSummary> it = statistic.iterator(); it.hasNext();) {
             StatisticalSummary chunk = it.next();
@@ -116,7 +119,7 @@ public class CallTreeNode extends BasicNode {
          if (borderSummary != null) {
             statistic.add(0, borderSummary);
          } else {
-            LOG.warn("Warning! Reading aggregated data which contain less executions than the warmup " + warmup);
+            LOG.warn("Warning! Reading aggregated data which contain less executions than the warmup " + config.getNodeWarmup());
          }
          for (StatisticalSummary summary : statistic) {
             LOG.trace("After removing: {} {} Sum: {}", summary.getMean(), summary.getN(), summary.getSum());
@@ -130,11 +133,11 @@ public class CallTreeNode extends BasicNode {
          if (otherVersionNode == null) {
             throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
          }
-         if (otherVersionNode.getCall().equals(CauseSearchData.ADDED) && version.equals(this.version)) {
+         if (otherVersionNode.getCall().equals(CauseSearchData.ADDED) && version.equals(config.getVersion())) {
             throw new RuntimeException("Added methods may not contain data");
          }
       }
-      if (call.equals(CauseSearchData.ADDED) && version.equals(this.predecessor)) {
+      if (call.equals(CauseSearchData.ADDED) && version.equals(config.getVersionOld())) {
          throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
       }
 
@@ -159,13 +162,9 @@ public class CallTreeNode extends BasicNode {
       LOG.trace("Adding version: {}", version);
       CallTreeStatistics statistics = data.get(version);
       if (statistics == null) {
-         statistics = new CallTreeStatistics(warmup);
+         statistics = new CallTreeStatistics(config.getNodeWarmup());
          data.put(version, statistics);
       }
-   }
-
-   public void setWarmup(final int warmup) {
-      this.warmup = warmup;
    }
 
    public SummaryStatistics getStatistics(final String version) {
@@ -197,9 +196,9 @@ public class CallTreeNode extends BasicNode {
 
    @JsonIgnore
    public TestcaseStatistic getTestcaseStatistic() {
-      final CallTreeStatistics currentVersionStatistics = data.get(version);
+      final CallTreeStatistics currentVersionStatistics = data.get(config.getVersion());
       final SummaryStatistics current = currentVersionStatistics.getStatistics();
-      final CallTreeStatistics previousVersionStatistics = data.get(predecessor);
+      final CallTreeStatistics previousVersionStatistics = data.get(config.getVersionOld());
       final SummaryStatistics previous = previousVersionStatistics.getStatistics();
       try {
          final TestcaseStatistic testcaseStatistic = new TestcaseStatistic(previous, current,
@@ -214,9 +213,9 @@ public class CallTreeNode extends BasicNode {
 
    @JsonIgnore
    public TestcaseStatistic getPartialTestcaseStatistic() {
-      final CallTreeStatistics currentVersionStatistics = data.get(version);
+      final CallTreeStatistics currentVersionStatistics = data.get(config.getVersion());
       final SummaryStatistics current = currentVersionStatistics.getStatistics();
-      final CallTreeStatistics previousVersionStatistics = data.get(predecessor);
+      final CallTreeStatistics previousVersionStatistics = data.get(config.getVersionOld());
       final SummaryStatistics previous = previousVersionStatistics.getStatistics();
 
       if (firstHasValues(current, previous)) {
@@ -241,10 +240,11 @@ public class CallTreeNode extends BasicNode {
       return (second == null || second.getN() == 0) && (first != null && first.getN() > 0);
    }
 
+   @Deprecated
    @JsonIgnore
    public void setVersions(final String version, final String predecessor) {
-      this.version = version;
-      this.predecessor = predecessor;
+      config.setVersion(version);
+      config.setVersionOld(predecessor);
       resetStatistics();
       newVersion(version);
       newVersion(predecessor);

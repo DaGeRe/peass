@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.data.CallTreeNode;
 import kieker.analysis.IProjectContext;
 import kieker.analysis.plugin.annotation.InputPort;
@@ -23,15 +24,18 @@ public class TreeFilter extends AbstractFilterPlugin {
    public static final String INPUT_EXECUTION_TRACE = "INPUT_EXECUTION_TRACE";
 
    private CallTreeNode root;
+   
+   private MeasurementConfiguration measurementConfig;
 
    private final TestCase test;
 
    private final boolean ignoreEOIs;
    private final ModuleClassMapping mapping;
 
-   public TreeFilter(final String prefix, final IProjectContext projectContext, final TestCase test, boolean ignoreEOIs, ModuleClassMapping mapping) {
+   public TreeFilter(final String prefix, final IProjectContext projectContext, final TestCase test, boolean ignoreEOIs, MeasurementConfiguration config, ModuleClassMapping mapping) {
       super(new Configuration(), projectContext);
       this.test = test;
+      this.measurementConfig = config;
       this.ignoreEOIs = ignoreEOIs;
       this.mapping = mapping;
    }
@@ -129,7 +133,7 @@ public class TreeFilter extends AbstractFilterPlugin {
    }
 
    private void readRoot(final Execution execution, final String call, final String kiekerPattern) {
-      root = new CallTreeNode(call, kiekerPattern, null);
+      root = new CallTreeNode(call, kiekerPattern, null, measurementConfig);
       lastParent = root;
       testTraceId = execution.getTraceId();
    }

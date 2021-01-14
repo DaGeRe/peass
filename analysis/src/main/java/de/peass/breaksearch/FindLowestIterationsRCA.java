@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.measurement.rca.KiekerResultReader;
@@ -142,7 +143,7 @@ class FullDataCallTreeNode extends CallTreeNode {
    }
 
    public FullDataCallTreeNode(final CallTreeNode mirrorNode) {
-      super(mirrorNode.getCall(), mirrorNode.getKiekerPattern(), mirrorNode.getOtherKiekerPattern());
+      super(mirrorNode.getCall(), mirrorNode.getKiekerPattern(), mirrorNode.getOtherKiekerPattern(), (MeasurementConfiguration) null);
       for (final CallTreeNode child : mirrorNode.getChildren()) {
          appendChild(child);
       }
@@ -161,15 +162,6 @@ class FullDataCallTreeNode extends CallTreeNode {
       return added;
    }
 
-   @Override
-   public void setVersions(final String version, final String predecessor) {
-      this.version = version;
-      this.predecessor = predecessor;
-      resetStatistics();
-      newVersion(version);
-      newVersion(predecessor);
-   }
-
    private void newVersion(final String version) {
       CallTreeStatistics statistics = data.get(version);
       if (statistics == null) {
@@ -179,21 +171,21 @@ class FullDataCallTreeNode extends CallTreeNode {
    }
 
    public TestcaseStatistic getMinTestcaseStatistic(final int iterations) {
-      final SummaryStatistics current = ((FullCallTreeStatistic) data.get(version)).getMinStatistics(iterations);
-      final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(predecessor)).getMinStatistics(iterations);
-      return new TestcaseStatistic(previous, current, data.get(predecessor).getCalls(), data.get(version).getCalls());
+      final SummaryStatistics current = ((FullCallTreeStatistic) data.get(config.getVersion())).getMinStatistics(iterations);
+      final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(config.getVersionOld())).getMinStatistics(iterations);
+      return new TestcaseStatistic(previous, current, data.get(config.getVersionOld()).getCalls(), data.get(config.getVersion()).getCalls());
    }
 
    public TestcaseStatistic getMedianTestcaseStatistic(final int iterations) {
-      final SummaryStatistics current = ((FullCallTreeStatistic) data.get(version)).getMedianStatistics(iterations);
-      final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(predecessor)).getMedianStatistics(iterations);
-      return new TestcaseStatistic(previous, current, data.get(predecessor).getCalls(), data.get(version).getCalls());
+      final SummaryStatistics current = ((FullCallTreeStatistic) data.get(config.getVersion())).getMedianStatistics(iterations);
+      final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(config.getVersionOld())).getMedianStatistics(iterations);
+      return new TestcaseStatistic(previous, current, data.get(config.getVersionOld()).getCalls(), data.get(config.getVersion()).getCalls());
    }
 
    public TestcaseStatistic getTestcaseStatistic(final int iterations) {
-      final SummaryStatistics current = ((FullCallTreeStatistic) data.get(version)).getStatistics(iterations);
-      final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(predecessor)).getStatistics(iterations);
-      return new TestcaseStatistic(previous, current, data.get(predecessor).getCalls(), data.get(version).getCalls());
+      final SummaryStatistics current = ((FullCallTreeStatistic) data.get(config.getVersion())).getStatistics(iterations);
+      final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(config.getVersionOld())).getStatistics(iterations);
+      return new TestcaseStatistic(previous, current, data.get(config.getVersionOld()).getCalls(), data.get(config.getVersion()).getCalls());
    }
 
    public boolean hasData() {

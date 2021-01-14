@@ -11,11 +11,7 @@ import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.data.CallTreeNode;
 
 public class TreeBuilder {
-   protected final CallTreeNode root = new CallTreeNode("Test#test", "public void Test.test", "public void Test.test");
-   protected final CallTreeNode a = root.appendChild("ClassA#methodA", "public void ClassA.methodA", "public void ClassA.methodA");
-   protected final CallTreeNode b = a.appendChild("ClassB#methodB", "public void ClassB.methodB", "public void ClassB.methodB");
-   protected final CallTreeNode c = root.appendChild("ClassC#methodC", "public void ClassC.methodC", "public void ClassC.methodC");
-   protected final CallTreeNode constructor = root.appendChild("ClassA#<init>", "new public void ClassA.<init>", "new public void ClassA.<init>");
+   protected final CallTreeNode root, a, b, c, constructor;
 
    private CallTreeNode d;
    private CallTreeNode e;
@@ -36,15 +32,21 @@ public class TreeBuilder {
       this.config = config;
       this.useFullLogAPI = useFullLogAPI;
 
-      root.setOtherVersionNode(new CallTreeNode("Test#test", "public void Test.test", "public void Test.test"));
-      a.setOtherVersionNode(new CallTreeNode("ClassA#methodA", "public void ClassA.methodA", "public void ClassA.methodA"));
-      b.setOtherVersionNode(new CallTreeNode("ClassA#methodB", "public void ClassA.methodB", "public void ClassA.methodB"));
-      c.setOtherVersionNode(new CallTreeNode("ClassA#methodC", "public void ClassA.methodC", "public void ClassA.methodB"));
-      constructor.setOtherVersionNode(new CallTreeNode("ClassA#<init>", "new public void ClassA.<init>", "new public void ClassA.<init>"));
+      root = new CallTreeNode("Test#test", "public void Test.test", "public void Test.test", config);
+      a = root.appendChild("ClassA#methodA", "public void ClassA.methodA", "public void ClassA.methodA");
+      b = a.appendChild("ClassB#methodB", "public void ClassB.methodB", "public void ClassB.methodB");
+      c = root.appendChild("ClassC#methodC", "public void ClassC.methodC", "public void ClassC.methodC");
+      constructor = root.appendChild("ClassA#<init>", "new public void ClassA.<init>", "new public void ClassA.<init>");
+
+      root.setOtherVersionNode(new CallTreeNode("Test#test", "public void Test.test", "public void Test.test", config));
+      a.setOtherVersionNode(new CallTreeNode("ClassA#methodA", "public void ClassA.methodA", "public void ClassA.methodA", config));
+      b.setOtherVersionNode(new CallTreeNode("ClassA#methodB", "public void ClassA.methodB", "public void ClassA.methodB", config));
+      c.setOtherVersionNode(new CallTreeNode("ClassA#methodC", "public void ClassA.methodC", "public void ClassA.methodB", config));
+      constructor.setOtherVersionNode(new CallTreeNode("ClassA#<init>", "new public void ClassA.<init>", "new public void ClassA.<init>", config));
    }
 
    public TreeBuilder() {
-      config = new MeasurementConfiguration(3);
+      this(new MeasurementConfiguration(3));
       config.setIterations(3);
    }
 
@@ -115,7 +117,6 @@ public class TreeBuilder {
 
    protected void initVersions(final CallTreeNode[] nodes) {
       for (final CallTreeNode node : nodes) {
-         node.setWarmup(config.getWarmup());
          node.setVersions(version, versionPredecessor);
       }
    }

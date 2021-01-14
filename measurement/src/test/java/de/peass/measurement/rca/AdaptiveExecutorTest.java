@@ -73,7 +73,8 @@ public class AdaptiveExecutorTest {
    @Test
    public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       final Set<CallTreeNode> included = new HashSet<>();
-      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1", "public void defaultpackage.NormalDependency.child1()", "public void defaultpackage.NormalDependency.child1()");
+      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1", 
+            "public void defaultpackage.NormalDependency.child1()", "public void defaultpackage.NormalDependency.child1()", new MeasurementConfiguration(5));
       nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);
       executor.setIncludedMethods(included);
@@ -92,7 +93,8 @@ public class AdaptiveExecutorTest {
    @Test
    public void testConstructorExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       final Set<CallTreeNode> included = new HashSet<>();
-      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#<init>", "public new defaultpackage.NormalDependency.<init>()", "public new defaultpackage.NormalDependency.<init>()");
+      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#<init>", 
+            "public new defaultpackage.NormalDependency.<init>()", "public new defaultpackage.NormalDependency.<init>()", new MeasurementConfiguration(5));
       nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);
       executor.setIncludedMethods(included);

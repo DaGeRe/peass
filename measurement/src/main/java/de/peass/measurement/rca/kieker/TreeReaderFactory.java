@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.traces.TemporaryProjectFolderUtil;
 import de.peass.vcs.GitUtils;
 
@@ -18,14 +19,14 @@ public class TreeReaderFactory {
     * @throws InterruptedException
     * @throws IOException
     */
-   public static TreeReader createTreeReader(final PeASSFolders parentFolders, final String predecessor, final long timeout, boolean ignoreEOIs) throws InterruptedException, IOException {
+   public static TreeReader createTreeReader(final PeASSFolders parentFolders, final String predecessor, MeasurementConfiguration config, boolean ignoreEOIs) throws InterruptedException, IOException {
       File treeReadingFolder = new File(parentFolders.getTempProjectFolder(), predecessor);
       if (treeReadingFolder.exists()) {
          
       }
       TemporaryProjectFolderUtil.cloneForcefully(parentFolders, treeReadingFolder);
       GitUtils.goToTag(predecessor, treeReadingFolder);
-      TreeReader reader = new TreeReader(treeReadingFolder, timeout);
+      TreeReader reader = new TreeReader(treeReadingFolder, config);
       reader.setIgnoreEOIs(ignoreEOIs);
       return reader;
    }
@@ -40,7 +41,8 @@ public class TreeReaderFactory {
     * @throws IOException
     */
    public static TreeReader createTestTreeReader(final File projectFolder, final int timeout) throws InterruptedException, IOException {
-      TreeReader reader = new TreeReader(projectFolder, timeout);
+      final MeasurementConfiguration config = new MeasurementConfiguration(1, timeout);
+      TreeReader reader = new TreeReader(projectFolder, config);
       return reader;
    }
 }
