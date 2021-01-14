@@ -49,7 +49,7 @@ public class TestSourceInstrumentation {
       testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/AddRandomNumbers.java"), "public int de.peass.AddRandomNumbers.getValue()",
             "OperationExecutionRecord");
       testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "/src/test/java/de/peass/MainTest.java"), "public void de.peass.MainTest.testMe()", "OperationExecutionRecord");
-      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "/src/test/java/de/peass/MainTest.java"), "public de.peass.MainTest()", "OperationExecutionRecord");
+      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "/src/test/java/de/peass/MainTest.java"), "public new de.peass.MainTest.<init>()", "OperationExecutionRecord");
    }
 
    @Test
