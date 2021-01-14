@@ -1,5 +1,8 @@
 package de.peass.kiekerInstrument;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.expr.AssignExpr;
@@ -15,6 +18,8 @@ import com.github.javaparser.ast.stmt.TryStmt;
 import de.peass.dependency.execution.AllowedKiekerRecord;
 
 public class BlockBuilder {
+   
+   private static final Logger LOG = LogManager.getLogger(BlockBuilder.class);
 
    private final AllowedKiekerRecord recordType;
    private final boolean enableDeactivation;
@@ -25,7 +30,7 @@ public class BlockBuilder {
    }
 
    public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final String signature, final boolean addReturn) {
-      System.out.println("Statements: " + originalBlock.getStatements().size() + " " + signature);
+      LOG.debug("Statements: " + originalBlock.getStatements().size() + " " + signature);
       BlockStmt replacedStatement = new BlockStmt();
       ExplicitConstructorInvocationStmt constructorStatement = null;
       for (Statement st : originalBlock.getStatements()) {

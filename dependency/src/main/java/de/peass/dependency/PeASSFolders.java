@@ -12,6 +12,8 @@ import de.peass.dependency.execution.GradleParseUtil;
  *
  */
 public class PeASSFolders {
+   private static final String PEASS_POSTFIX = "_peass";
+   
    protected final File projectFolder;
    // private final File resultFolder;
    protected final File fullResultFolder;
@@ -26,9 +28,9 @@ public class PeASSFolders {
    protected final File peassFolder;
 
    public PeASSFolders(final File folder) {
-      if (!folder.getName().endsWith("peass")) {
+      if (!folder.getName().endsWith(PEASS_POSTFIX)) {
          projectFolder = folder;
-         peassFolder = new File(projectFolder.getParentFile(), projectFolder.getName() + "_peass");
+         peassFolder = new File(projectFolder.getParentFile(), projectFolder.getName() + PEASS_POSTFIX);
          if (!peassFolder.exists()) {
             peassFolder.mkdir();
          }
@@ -58,13 +60,17 @@ public class PeASSFolders {
 
    public File getGradleHome() {
       if (gradleHome == null) {
-         final File peassFolder = new File(projectFolder.getParentFile(), projectFolder.getName() + "_peass");
+         final File peassFolder = new File(projectFolder.getParentFile(), projectFolder.getName() + PEASS_POSTFIX);
          gradleHome = new File(peassFolder, "gradleHome");
          gradleHome.mkdir();
          final File init = new File(gradleHome, "init.gradle");
          GradleParseUtil.writeInitGradle(init);
       }
       return gradleHome;
+   }
+   
+   public File getPeassFolder() {
+      return peassFolder;
    }
 
    public File getProjectFolder() {
