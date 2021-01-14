@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.groovy.parser.antlr4.GroovyParser.ClassDeclarationContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
@@ -24,10 +25,12 @@ import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.TryStmt;
 import com.github.javaparser.ast.type.PrimitiveType;
@@ -102,51 +105,22 @@ public class InstrumentKiekerSource {
       unit.addImport(usedRecord.getRecord());
    }
 
+   boolean oneHasChanged = false;
+
    private boolean handleChildren(ClassOrInterfaceDeclaration clazz, String name) {
       int counterIndex = 0;
-      boolean oneHasChanged = false;
+      oneHasChanged = false;
       List<String> countersToAdd = new LinkedList<>();
       List<String> sumsToAdd = new LinkedList<>();
       for (Node child : clazz.getChildNodes()) {
          if (child instanceof MethodDeclaration) {
-            MethodDeclaration method = (MethodDeclaration) child;
-            final Optional<BlockStmt> body = method.getBody();
-
-            if (body.isPresent()) {
-               BlockStmt originalBlock = body.get();
-               String signature = getSignature(name + "." + method.getNameAsString(), method);
-               boolean oneMatches = testSignatureMatch(signature);
-               if (oneMatches) {
-                  final BlockStmt replacedStatement;
-                  final boolean needsReturn = method.getType().toString().equals("void");
-                  if (sample) {
-                     String counterName = signature.substring(signature.lastIndexOf('.') + 1, signature.indexOf('(')) + "Counter" + counterIndex;
-                     String sumName = signature.substring(signature.lastIndexOf('.') + 1, signature.indexOf('(')) + "Sum" + counterIndex;
-                     countersToAdd.add(counterName);
-                     sumsToAdd.add(sumName);
-                     replacedStatement = blockBuilder.buildSampleStatement(originalBlock, signature, needsReturn, counterName, sumName);
-                     counterIndex++;
-                  } else {
-                     replacedStatement = blockBuilder.buildStatement(originalBlock, signature, needsReturn);
-                  }
-
-                  method.setBody(replacedStatement);
-                  oneHasChanged = true;
-               }
-            } else {
-               LOG.info("Unable to instrument " + name + "." + method.getNameAsString() + " because it has no body");
-            }
+            counterIndex = instrumentMethod(name, counterIndex, countersToAdd, sumsToAdd, child);
          } else if (child instanceof ConstructorDeclaration) {
-            ConstructorDeclaration constructor = (ConstructorDeclaration) child;
-            final BlockStmt originalBlock = constructor.getBody();
-            String signature = getSignature(name, constructor);
-            boolean oneMatches = testSignatureMatch(signature);
-            if (oneMatches) {
-               BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, signature, true);
-
-               constructor.setBody(replacedStatement);
-               oneHasChanged = true;
-            }
+            instrumentConstructor(name, child);
+         } else if (child instanceof ClassOrInterfaceDeclaration) {
+            ClassOrInterfaceDeclaration innerClazz = (ClassOrInterfaceDeclaration) child;
+            String innerName = innerClazz.getNameAsString();
+            handleChildren(innerClazz, name + "$" + innerName);
          }
       }
       for (String counterName : countersToAdd) {
@@ -156,6 +130,50 @@ public class InstrumentKiekerSource {
          clazz.addField("long", counterName, Keyword.PRIVATE, Keyword.STATIC);
       }
       return oneHasChanged;
+   }
+
+   private void instrumentConstructor(String name, Node child) {
+      ConstructorDeclaration constructor = (ConstructorDeclaration) child;
+      final BlockStmt originalBlock = constructor.getBody();
+      String signature = getSignature(name, constructor);
+      boolean oneMatches = testSignatureMatch(signature);
+      if (oneMatches) {
+         BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, signature, true);
+
+         constructor.setBody(replacedStatement);
+         oneHasChanged = true;
+      }
+   }
+
+   private int instrumentMethod(String name, int counterIndex, List<String> countersToAdd, List<String> sumsToAdd, Node child) {
+      MethodDeclaration method = (MethodDeclaration) child;
+      final Optional<BlockStmt> body = method.getBody();
+
+      if (body.isPresent()) {
+         BlockStmt originalBlock = body.get();
+         String signature = getSignature(name + "." + method.getNameAsString(), method);
+         boolean oneMatches = testSignatureMatch(signature);
+         if (oneMatches) {
+            final BlockStmt replacedStatement;
+            final boolean needsReturn = method.getType().toString().equals("void");
+            if (sample) {
+               String counterName = signature.substring(signature.lastIndexOf('.') + 1, signature.indexOf('(')) + "Counter" + counterIndex;
+               String sumName = signature.substring(signature.lastIndexOf('.') + 1, signature.indexOf('(')) + "Sum" + counterIndex;
+               countersToAdd.add(counterName);
+               sumsToAdd.add(sumName);
+               replacedStatement = blockBuilder.buildSampleStatement(originalBlock, signature, needsReturn, counterName, sumName);
+               counterIndex++;
+            } else {
+               replacedStatement = blockBuilder.buildStatement(originalBlock, signature, needsReturn);
+            }
+
+            method.setBody(replacedStatement);
+            oneHasChanged = true;
+         }
+      } else {
+         LOG.info("Unable to instrument " + name + "." + method.getNameAsString() + " because it has no body");
+      }
+      return counterIndex;
    }
 
    private boolean testSignatureMatch(String signature) {
@@ -176,21 +194,36 @@ public class InstrumentKiekerSource {
    }
 
    private String getSignature(String name, MethodDeclaration method) {
-      String modifiers = "";
-      for (Modifier modifier : method.getModifiers()) {
-         modifiers += modifier;
-      }
-      String returnType = method.getType().toString() + " ";
-      String signature = modifiers + returnType + name + "(" + ")";
+      String modifiers = getModifierString(method.getModifiers());
+      final String returnType = method.getType().toString() + " ";
+      String signature = modifiers + returnType + name + "(";
+      signature += getParameterString(method);
+      signature += ")";
       return signature;
    }
 
+   private String getParameterString(MethodDeclaration method) {
+      String parameterString = "";
+      for (Parameter parameter : method.getParameters()) {
+         parameterString += parameter.getType().asString() + ",";
+      }
+      if (parameterString.length() > 0) {
+         parameterString = parameterString.substring(0, parameterString.length() - 1);
+      }
+      return parameterString;
+   }
+
    private String getSignature(String name, ConstructorDeclaration method) {
+      String modifiers = getModifierString(method.getModifiers());
+      String signature = modifiers + "new " + name + ".<init>(" + ")";
+      return signature;
+   }
+
+   private String getModifierString(NodeList<Modifier> listOfModifiers) {
       String modifiers = "";
-      for (Modifier modifier : method.getModifiers()) {
+      for (Modifier modifier : listOfModifiers) {
          modifiers += modifier;
       }
-      String signature = modifiers + name + "(" + ")";
-      return signature;
+      return modifiers;
    }
 }

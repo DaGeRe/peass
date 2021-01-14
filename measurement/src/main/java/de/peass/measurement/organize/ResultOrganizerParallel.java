@@ -32,10 +32,11 @@ public class ResultOrganizerParallel extends ResultOrganizer {
       PeASSFolders currentFolders = sourceFolders.get(version);
       LOG.info("Searching method: {}", testcase);
       final String expectedFolderName = "*" + testcase.getClazz();
-      final Collection<File> folderCandidates = findFolder(currentFolders.getTempMeasurementFolder(), new WildcardFileFilter(expectedFolderName));
+      final File containingFolder = currentFolders.getTempMeasurementFolder();
+      final Collection<File> folderCandidates = findFolder(containingFolder, new WildcardFileFilter(expectedFolderName));
       if (folderCandidates.size() != 1) {
          LOG.error("Folder with name {} is existing {} times.", expectedFolderName, folderCandidates.size());
-         LOG.error("Searched in: {}", currentFolders.getTempMeasurementFolder());
+         LOG.error("Searched in: {}", containingFolder);
          return null;
       } else {
          final File folder = folderCandidates.iterator().next();

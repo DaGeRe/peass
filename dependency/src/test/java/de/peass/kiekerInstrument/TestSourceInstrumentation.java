@@ -2,7 +2,6 @@ package de.peass.kiekerInstrument;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.FileUtils;
@@ -47,8 +46,25 @@ public class TestSourceInstrumentation {
 
       testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), "public void de.peass.C0_0.method0()", "OperationExecutionRecord");
       testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C1_0.java"), "public void de.peass.C1_0.method0()", "OperationExecutionRecord");
-      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/AddRandomNumbers.java"), "public int de.peass.AddRandomNumbers.getValue()", "OperationExecutionRecord");
+      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/AddRandomNumbers.java"), "public int de.peass.AddRandomNumbers.getValue()",
+            "OperationExecutionRecord");
       testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "/src/test/java/de/peass/MainTest.java"), "public void de.peass.MainTest.testMe()", "OperationExecutionRecord");
       testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "/src/test/java/de/peass/MainTest.java"), "public de.peass.MainTest()", "OperationExecutionRecord");
+   }
+
+   @Test
+   public void testDifferentSignatures() throws IOException {
+      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2_signatures/");
+
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION);
+      instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
+
+      String changedSource = FileUtils.readFileToString(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), StandardCharsets.UTF_8);
+
+      Assert.assertThat(changedSource, Matchers.containsString("signature = \"public void de.peass.C0_0.method0(int)\""));
+      Assert.assertThat(changedSource, Matchers.containsString("signature = \"public String de.peass.C0_0.method0(String)\""));
+      Assert.assertThat(changedSource, Matchers.containsString("signature = \"public static void de.peass.C0_0.myStaticStuff()\""));
+      Assert.assertThat(changedSource, Matchers.containsString("signature = \"public new de.peass.C0_0$MyInnerClass.<init>()\""));
+      Assert.assertThat(changedSource, Matchers.containsString("signature = \"public void de.peass.C0_0$MyInnerClass.innerMethod()\""));
    }
 }
