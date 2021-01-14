@@ -37,7 +37,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
    @Mixin
    private CauseSearcherConfigMixin causeSearchConfigMixin;
-   
+
    @Mixin
    private KiekerConfigMixin kiekerConfigMixin;
 
@@ -89,13 +89,18 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       measurementConfiguration.setVersionOld(predecessor);
       measurementConfiguration.setUseSourceInstrumentation(kiekerConfigMixin.isUseSourceInstrumentation());
       measurementConfiguration.setUseCircularQueue(kiekerConfigMixin.isUseCircularQueue());
-      measurementConfiguration.setUseSelectiveInstrumentation(kiekerConfigMixin.isUseSelectiveInstrumentation());
+      if (kiekerConfigMixin.isUseSourceInstrumentation() && kiekerConfigMixin.isNotUseSelectiveInstrumentation()) {
+         measurementConfiguration.setUseSelectiveInstrumentation(false);
+      } else {
+         measurementConfiguration.setUseSelectiveInstrumentation(true);
+      }
+
       measurementConfiguration.setUseSampling(kiekerConfigMixin.isUseSampling());
       LOG.info("Use source instrumentation: {}", kiekerConfigMixin.isUseSourceInstrumentation());
       return measurementConfiguration;
    }
 
-   public static CauseSearcher getCauseSeacher(final MeasurementConfiguration measurementConfiguration, 
+   public static CauseSearcher getCauseSeacher(final MeasurementConfiguration measurementConfiguration,
          final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader) throws IOException, InterruptedException {
       final CauseSearcher tester;
       final CauseTester measurer = new CauseTester(alternateFolders, measurementConfiguration, causeSearcherConfig);

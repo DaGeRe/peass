@@ -12,9 +12,9 @@ public class KiekerConfigMixin {
    @Option(names = { "-useCircularQueue", "--useCircularQueue" }, description = "Use circular queue (default false - LinkedBlockingQueue is used)")
    public boolean useCircularQueue = false;
 
-   @Option(names = { "-useSelectiveInstrumentation",
-         "--useSelectiveInstrumentation" }, description = "Use selective instrumentation (only selected methods / classes are instrumented) - adaptive monitoring will not make sense")
-   public boolean useSelectiveInstrumentation = false;
+   @Option(names = { "-notUseSelectiveInstrumentation",
+         "--notUseSelectiveInstrumentation" }, description = "Use selective instrumentation (only selected methods / classes are instrumented) - is activated by default is source instrumentation is activated")
+   public boolean notUseSelectiveInstrumentation = false;
 
    @Option(names = { "-useSampling",
          "--useSampling" }, description = "Use sampling (only record every nth invocation of method - may reduce measurement noise)")
@@ -32,8 +32,8 @@ public class KiekerConfigMixin {
       return useCircularQueue;
    }
 
-   public boolean isUseSelectiveInstrumentation() {
-      return useSelectiveInstrumentation;
+   public boolean isNotUseSelectiveInstrumentation() {
+      return notUseSelectiveInstrumentation;
    }
 
    public boolean isUseSampling() {
