@@ -105,7 +105,8 @@ public class FileInstrumenter {
    private void instrumentConstructor(String name, Node child) {
       ConstructorDeclaration constructor = (ConstructorDeclaration) child;
       final BlockStmt originalBlock = constructor.getBody();
-      String signature = getSignature(name, constructor);
+      SignatureReader reader = new SignatureReader(unit, name);
+      String signature = reader.getSignature(constructor);
       boolean oneMatches = testSignatureMatch(signature);
       if (oneMatches) {
          BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, signature, true);
@@ -121,7 +122,8 @@ public class FileInstrumenter {
 
       if (body.isPresent()) {
          BlockStmt originalBlock = body.get();
-         String signature = getSignature(name + "." + method.getNameAsString(), method);
+         SignatureReader reader = new SignatureReader(unit, name + "." + method.getNameAsString());
+         String signature = reader.getSignature(method);
          boolean oneMatches = testSignatureMatch(signature);
          if (oneMatches) {
             final BlockStmt replacedStatement;
@@ -166,85 +168,5 @@ public class FileInstrumenter {
       return oneMatches;
    }
 
-   private String getSignature(String name, MethodDeclaration method) {
-      String modifiers = getModifierString(method.getModifiers());
-      String returnTypFQN = getTypeFQN(method.getType());
-      final String returnType = returnTypFQN + " ";
-      String signature = modifiers + returnType + name + "(";
-      signature += getParameterString(method);
-      signature += ")";
-      return signature;
-   }
-
-   private String getParameterString(MethodDeclaration method) {
-      String parameterString = "";
-      for (Parameter parameter : method.getParameters()) {
-         String fqn = getTypeFQN(parameter.getType());
-         parameterString += fqn + ",";
-      }
-      if (parameterString.length() > 0) {
-         parameterString = parameterString.substring(0, parameterString.length() - 1);
-      }
-      return parameterString;
-   }
-
-   private String getTypeFQN(Type type) {
-      String typeName = type.asString();
-      if (typeName.equals("void")) {
-         return typeName;
-      }
-      String fqn;
-      if (type.isPrimitiveType()) {
-         fqn = typeName;
-      } else if (type.isArrayType()) {
-         ArrayType arrayType = (ArrayType) type;
-         Type componentType = arrayType.getComponentType();
-         String arrayString = arrayType.asString().substring(arrayType.asString().indexOf('['));
-         if (componentType.isPrimitiveType()) {
-            fqn = typeName ;
-         } else {
-            String typeNameWithoutArray = typeName.substring(0, typeName.indexOf('['));
-            ImportDeclaration currentImport = findImport(typeNameWithoutArray);
-            if (currentImport != null) {
-               fqn = currentImport.getNameAsString() + arrayString;
-            } else {
-               fqn = "java.lang." + typeName;
-            }
-         }
-      } else {
-         ImportDeclaration currentImport = findImport(typeName);
-         if (currentImport != null) {
-            fqn = currentImport.getNameAsString();
-         } else {
-            fqn = "java.lang." + typeName;
-         }
-      }
-      return fqn;
-   }
-
-   private ImportDeclaration findImport(String typeName) {
-      ImportDeclaration currentImport = null;
-      for (ImportDeclaration importDeclaration : unit.getImports()) {
-         final String importFqn = importDeclaration.getNameAsString();
-         if (importFqn.endsWith("." + typeName)) {
-            currentImport = importDeclaration;
-            break;
-         }
-      }
-      return currentImport;
-   }
-
-   private String getSignature(String name, ConstructorDeclaration method) {
-      String modifiers = getModifierString(method.getModifiers());
-      String signature = modifiers + "new " + name + ".<init>(" + ")";
-      return signature;
-   }
-
-   private String getModifierString(NodeList<Modifier> listOfModifiers) {
-      String modifiers = "";
-      for (Modifier modifier : listOfModifiers) {
-         modifiers += modifier;
-      }
-      return modifiers;
-   }
+   
 }
