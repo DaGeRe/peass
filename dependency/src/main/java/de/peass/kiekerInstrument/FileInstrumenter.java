@@ -45,7 +45,11 @@ public class FileInstrumenter {
    private final BlockBuilder blockBuilder;
    private final boolean sample;
    
-   boolean oneHasChanged = false;
+   private boolean oneHasChanged = false;
+   
+   private int counterIndex = 0;
+   private List<String> countersToAdd = new LinkedList<>();
+   private List<String> sumsToAdd = new LinkedList<>();
    
    public FileInstrumenter(File file, AllowedKiekerRecord usedRecord, Set<String> includedPatterns, BlockBuilder blockBuilder, boolean sample) throws FileNotFoundException  {
       this.unit = JavaParserProvider.parse(file);
@@ -64,6 +68,12 @@ public class FileInstrumenter {
       boolean fileContainsChange = handleChildren(clazz, name);
 
       if (fileContainsChange) {
+         for (String counterName : countersToAdd) {
+            clazz.addField("int", counterName, Keyword.PRIVATE, Keyword.STATIC);
+         }
+         for (String counterName : sumsToAdd) {
+            clazz.addField("long", counterName, Keyword.PRIVATE, Keyword.STATIC);
+         }
          addImports(unit);
          Files.write(file.toPath(), unit.toString().getBytes(StandardCharsets.UTF_8));
       }
@@ -77,9 +87,6 @@ public class FileInstrumenter {
    }
 
    private boolean handleChildren(ClassOrInterfaceDeclaration clazz, String name) {
-      int counterIndex = 0;
-      List<String> countersToAdd = new LinkedList<>();
-      List<String> sumsToAdd = new LinkedList<>();
       for (Node child : clazz.getChildNodes()) {
          if (child instanceof MethodDeclaration) {
             counterIndex = instrumentMethod(name, counterIndex, countersToAdd, sumsToAdd, child);
@@ -90,12 +97,6 @@ public class FileInstrumenter {
             String innerName = innerClazz.getNameAsString();
             handleChildren(innerClazz, name + "$" + innerName);
          }
-      }
-      for (String counterName : countersToAdd) {
-         clazz.addField("int", counterName, Keyword.PRIVATE, Keyword.STATIC);
-      }
-      for (String counterName : sumsToAdd) {
-         clazz.addField("long", counterName, Keyword.PRIVATE, Keyword.STATIC);
       }
       return oneHasChanged;
    }
@@ -156,6 +157,7 @@ public class FileInstrumenter {
                break;
             }
          } catch (InvalidPatternException e) {
+            LOG.error("Wrong pattern: {}", pattern);
             throw new RuntimeException(e);
          }
 

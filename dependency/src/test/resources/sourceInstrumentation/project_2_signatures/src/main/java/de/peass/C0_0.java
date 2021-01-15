@@ -47,9 +47,9 @@ class C0_0{
    }.run();
  }
  
- class MyInnerClass {
+ static class MyInnerClass {
    
-   public InnerConstructor(int i){
+   public MyInnerClass(int i){
      new Runnable(){
        public void run(){
          System.out.println("Anonymous class call inside inner constructor");

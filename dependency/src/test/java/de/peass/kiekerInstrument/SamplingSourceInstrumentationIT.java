@@ -43,11 +43,16 @@ public class SamplingSourceInstrumentationIT {
 
    @Test
    public void testExecution() throws IOException, XmlPullParserException {
-      Set<String> shouldInstrument = new HashSet<>();
-      shouldInstrument.add("public void de.peass.MainTest.testMe()");
-      shouldInstrument.add("public void de.peass.C0_0.method0()");
+      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2_signatures/");
 
-      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, shouldInstrument, true);
+      File tempFolder = new File(TestConstants.CURRENT_FOLDER, "results");
+      tempFolder.mkdir();
+
+      final HashSet<String> includedPatterns = new HashSet<>();
+      includedPatterns.add("public * de.peass.C0_0.*(..)");
+      includedPatterns.add("public * de.peass.C0_0$MyInnerClass.*(..)");
+      includedPatterns.add("public * de.peass.MainTest.*(..)");
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, includedPatterns, true);
 
       extendMaven();
 
