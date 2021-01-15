@@ -44,6 +44,10 @@ class C0_0{
     
  }
  
+ public C0_0 doSomethingWithSamePackageObject(C1_0 other) {
+    
+ }
+ 
  public String method0(String i){
    myStaticStuff();
    return i;
