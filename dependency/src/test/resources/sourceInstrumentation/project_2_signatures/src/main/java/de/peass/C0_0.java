@@ -1,5 +1,7 @@
 package de.peass;
 
+import java.util.List;
+
 class C0_0{ 
  public C0_0(){
    super();
@@ -31,6 +33,15 @@ class C0_0{
          System.out.println("Regular anonymous class call");
        }
    }.run();
+   methodWithArrayParam(null, null, null);
+ }
+ 
+ public String[] methodWithArrayParam(byte[] myBytes, int[] myInts, String[] myStrings) {
+    
+ }
+ 
+ public List[] secondMethodWithArrayParam(byte[] myBytes, int[] myInts, List[] myStrings) {
+    
  }
  
  public String method0(String i){

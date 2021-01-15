@@ -25,6 +25,7 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.Type;
 
 import de.peass.dependency.changesreading.JavaParserProvider;
@@ -34,24 +35,24 @@ import kieker.monitoring.core.signaturePattern.InvalidPatternException;
 import kieker.monitoring.core.signaturePattern.PatternParser;
 
 public class FileInstrumenter {
-   
+
    private static final Logger LOG = LogManager.getLogger(FileInstrumenter.class);
-   
+
    private final CompilationUnit unit;
    private final File file;
-   
+
    private final AllowedKiekerRecord usedRecord;
    private final Set<String> includedPatterns;
    private final BlockBuilder blockBuilder;
    private final boolean sample;
-   
+
    private boolean oneHasChanged = false;
-   
+
    private int counterIndex = 0;
    private List<String> countersToAdd = new LinkedList<>();
    private List<String> sumsToAdd = new LinkedList<>();
-   
-   public FileInstrumenter(File file, AllowedKiekerRecord usedRecord, Set<String> includedPatterns, BlockBuilder blockBuilder, boolean sample) throws FileNotFoundException  {
+
+   public FileInstrumenter(File file, AllowedKiekerRecord usedRecord, Set<String> includedPatterns, BlockBuilder blockBuilder, boolean sample) throws FileNotFoundException {
       this.unit = JavaParserProvider.parse(file);
       this.file = file;
       this.usedRecord = usedRecord;
@@ -59,7 +60,7 @@ public class FileInstrumenter {
       this.blockBuilder = blockBuilder;
       this.sample = sample;
    }
-   
+
    public void instrument() throws IOException {
       ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
       String packageName = unit.getPackageDeclaration().get().getNameAsString();
@@ -78,7 +79,7 @@ public class FileInstrumenter {
          Files.write(file.toPath(), unit.toString().getBytes(StandardCharsets.UTF_8));
       }
    }
-   
+
    private void addImports(CompilationUnit unit) {
       unit.addImport("kieker.monitoring.core.controller.MonitoringController");
       unit.addImport("kieker.monitoring.core.registry.ControlFlowRegistry");
@@ -167,7 +168,7 @@ public class FileInstrumenter {
 
    private String getSignature(String name, MethodDeclaration method) {
       String modifiers = getModifierString(method.getModifiers());
-      String returnTypFQN = getTypeFQN(method.getType(), method.getTypeAsString());
+      String returnTypFQN = getTypeFQN(method.getType());
       final String returnType = returnTypFQN + " ";
       String signature = modifiers + returnType + name + "(";
       signature += getParameterString(method);
@@ -178,8 +179,7 @@ public class FileInstrumenter {
    private String getParameterString(MethodDeclaration method) {
       String parameterString = "";
       for (Parameter parameter : method.getParameters()) {
-         final String parameterName = parameter.getType().asString();
-         String fqn = getTypeFQN(parameter.getType(), parameterName);
+         String fqn = getTypeFQN(parameter.getType());
          parameterString += fqn + ",";
       }
       if (parameterString.length() > 0) {
@@ -188,29 +188,50 @@ public class FileInstrumenter {
       return parameterString;
    }
 
-   private String getTypeFQN(Type type, final String parameterName) {
-      if (parameterName.equals("void")) {
-         return parameterName;
+   private String getTypeFQN(Type type) {
+      String typeName = type.asString();
+      if (typeName.equals("void")) {
+         return typeName;
       }
       String fqn;
       if (type.isPrimitiveType()) {
-         fqn = parameterName;
-      } else {
-         ImportDeclaration currentImport = null;
-         for (ImportDeclaration importDeclaration : unit.getImports()) {
-            final String importFqn = importDeclaration.getNameAsString();
-            if (importFqn.endsWith("." + parameterName)) {
-               currentImport = importDeclaration;
-               break;
+         fqn = typeName;
+      } else if (type.isArrayType()) {
+         ArrayType arrayType = (ArrayType) type;
+         Type componentType = arrayType.getComponentType();
+         String arrayString = arrayType.asString().substring(arrayType.asString().indexOf('['));
+         if (componentType.isPrimitiveType()) {
+            fqn = typeName ;
+         } else {
+            String typeNameWithoutArray = typeName.substring(0, typeName.indexOf('['));
+            ImportDeclaration currentImport = findImport(typeNameWithoutArray);
+            if (currentImport != null) {
+               fqn = currentImport.getNameAsString() + arrayString;
+            } else {
+               fqn = "java.lang." + typeName;
             }
          }
+      } else {
+         ImportDeclaration currentImport = findImport(typeName);
          if (currentImport != null) {
             fqn = currentImport.getNameAsString();
          } else {
-            fqn = "java.lang." + parameterName;
+            fqn = "java.lang." + typeName;
          }
       }
       return fqn;
+   }
+
+   private ImportDeclaration findImport(String typeName) {
+      ImportDeclaration currentImport = null;
+      for (ImportDeclaration importDeclaration : unit.getImports()) {
+         final String importFqn = importDeclaration.getNameAsString();
+         if (importFqn.endsWith("." + typeName)) {
+            currentImport = importDeclaration;
+            break;
+         }
+      }
+      return currentImport;
    }
 
    private String getSignature(String name, ConstructorDeclaration method) {
