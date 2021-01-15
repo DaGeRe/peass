@@ -67,8 +67,7 @@ public class BothTreeReader {
    public void readTrees() throws InterruptedException, IOException, XmlPullParserException, ViewNotFoundException, AnalysisConfigurationException {
       if (potentialCacheFile.exists() && potentialCacheFileOld.exists()) {
          LOG.info("Using cache!");
-         rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFileOld, CallTreeNode.class);
-         rootVersion = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
+         readCachedTrees();
       } else {
          determineTrees();
          LOG.info("Writing to cache");
