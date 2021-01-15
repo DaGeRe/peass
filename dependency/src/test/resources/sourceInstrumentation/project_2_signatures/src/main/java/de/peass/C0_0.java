@@ -37,15 +37,15 @@ class C0_0{
  }
  
  public String[] methodWithArrayParam(byte[] myBytes, int[] myInts, String[] myStrings) {
-    
+    return null;
  }
  
  public List[] secondMethodWithArrayParam(byte[] myBytes, int[] myInts, List[] myStrings) {
-    
+    return null;
  }
  
  public C0_0 doSomethingWithSamePackageObject(C1_0 other) {
-    
+    return null;
  }
  
  public String method0(String i){
@@ -76,4 +76,23 @@ class C0_0{
    
    }
  }
+ 
+ public MyInnerClass2 getInnerInstance() {
+    return null;
+ }
+ 
+ static class MyInnerClass2 {
+    
+    public MyInnerClass(int i){
+      new Runnable(){
+        public void run(){
+          System.out.println("Anonymous class call inside inner constructor");
+        }
+      }.run();
+    }
+    
+    public void innerMethod(){
+    
+    }
+  }
 }

@@ -14,12 +14,16 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.Type;
 
+import de.peass.dependency.changesreading.ClazzFinder;
+
+import de.peass.dependency.ClazzFileFinder;
+
 public class SignatureReader {
 
    /**
-    * These contain all classes from java.lang, obtained from http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/687fd7c7986d/src/share/classes/java/lang/, saved
-    * to ~/test.csv and processed by cat ~/test.csv | awk '{print $2}' | awk -F'.' '{print $1}' | tr "\n" " " | sed "s/ /\",\"/g"
-    * While it would be nicer to get them by reflections (so the list would be up-to-date for the current JVM), I did not see a way to do so
+    * These contain all classes from java.lang, obtained from http://hg.openjdk.java.net/jdk8/jdk8/jdk/file/687fd7c7986d/src/share/classes/java/lang/, saved to ~/test.csv and
+    * processed by cat ~/test.csv | awk '{print $2}' | awk -F'.' '{print $1}' | tr "\n" " " | sed "s/ /\",\"/g" While it would be nicer to get them by reflections (so the list
+    * would be up-to-date for the current JVM), I did not see a way to do so
     */
    private static final List<String> javaLangClasses = new LinkedList<>(Arrays.asList(new String[] {
          "AbstractMethodError", "AbstractStringBuilder", "Appendable", "ApplicationShutdownHooks", "ArithmeticException", "ArrayIndexOutOfBoundsException", "ArrayStoreException",
@@ -39,10 +43,12 @@ public class SignatureReader {
 
    private final CompilationUnit unit;
    private final String name;
+   private final List<String> localClazzes;
 
    public SignatureReader(CompilationUnit unit, String name) {
       this.unit = unit;
       this.name = name;
+      localClazzes = ClazzFinder.getClazzes(unit);
    }
 
    public String getSignature(MethodDeclaration method) {
@@ -93,24 +99,38 @@ public class SignatureReader {
             if (currentImport != null) {
                fqn = currentImport.getNameAsString() + arrayString;
             } else {
-               if (javaLangClasses.contains(typeNameWithoutArray)) {
-                  fqn = "java.lang." + typeName;
-               } else {
-                  fqn = unit.getPackageDeclaration().get().getNameAsString() + "." + typeName;
-               }
+               fqn = getReferenceInnerClazz(typeNameWithoutArray);
             }
+         }
+         if (!fqn.endsWith(arrayString)) {
+            fqn = fqn + arrayString;
          }
       } else {
          ImportDeclaration currentImport = findImport(typeName);
          if (currentImport != null) {
             fqn = currentImport.getNameAsString();
          } else {
-            if (javaLangClasses.contains(typeName)) {
-               fqn = "java.lang." + typeName;
-            } else {
-               fqn = unit.getPackageDeclaration().get().getNameAsString() + "." + typeName;
-            }
+            fqn = getReferenceInnerClazz(typeName);
          }
+      }
+      return fqn;
+   }
+
+   private String getReferenceInnerClazz(String typeNameWithoutArray) {
+      String fqn;
+      // This does not work if a inner class is declared that matches the outer class, e.g. C0_0.C0_0
+      String matchingInnerClass = null;
+      for (String innerClass : localClazzes) {
+         if (innerClass.endsWith(typeNameWithoutArray)) {
+            matchingInnerClass = innerClass;
+         }
+      }
+      if (matchingInnerClass != null) {
+         fqn = unit.getPackageDeclaration().get().getNameAsString() + "." + matchingInnerClass;
+      } else if (javaLangClasses.contains(typeNameWithoutArray)) {
+         fqn = "java.lang." + typeNameWithoutArray;
+      } else {
+         fqn = unit.getPackageDeclaration().get().getNameAsString() + "." + typeNameWithoutArray;
       }
       return fqn;
    }
