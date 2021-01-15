@@ -25,13 +25,14 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 public class TestSourceChangeTreeAnalyzer {
    @Test
    public void testNodeSelection() throws InterruptedException, IOException, XmlPullParserException, ViewNotFoundException, AnalysisConfigurationException {
+      final MeasurementConfiguration config = new MeasurementConfiguration(15, "fd2c8ddf3fa52973ee54c4db87b47bb587886200", "fd2c8ddf3fa52973ee54c4db87b47bb587886200~1");
       BothTreeReader treeReader = new BothTreeReader(new CauseSearcherConfig(new TestCase("de.peass.MainTest#testMe"), new CauseSearcherConfigMixin()),
-            new MeasurementConfiguration(15, "fd2c8ddf3fa52973ee54c4db87b47bb587886200", "fd2c8ddf3fa52973ee54c4db87b47bb587886200~1"),
+            config,
             new CauseSearchFolders(new File("src/test/resources/sourceChangeRCATest/project_3")));
       treeReader.readTrees();
 
       SourceChangeTreeAnalyzer analyzer = new SourceChangeTreeAnalyzer(treeReader.getRootVersion(), treeReader.getRootPredecessor(),
-            new File("src/test/resources/sourceChangeRCATest/properties_project_3"));
+            new File("src/test/resources/sourceChangeRCATest/properties_project_3"), config);
 
       List<String> instrumentedCalls = analyzer.getMeasurementNodesPredecessor().stream().map(node -> node.getCall()).collect(Collectors.toList());
       Assert.assertThat(instrumentedCalls, IsIterableContaining.hasItem("de.peass.MainTest#testMe"));

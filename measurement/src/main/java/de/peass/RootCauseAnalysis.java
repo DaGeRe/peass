@@ -119,7 +119,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
                @Override
                public TreeAnalyzer getAnalyzer(BothTreeReader reader, CauseSearcherConfig config) {
-                  return new SourceChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor(), config.getPropertyFolder());
+                  return new SourceChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor(), config.getPropertyFolder(), measurementConfiguration);
                }
             };
             tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creatorSource);
