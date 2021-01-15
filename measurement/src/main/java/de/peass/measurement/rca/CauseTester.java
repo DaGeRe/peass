@@ -87,7 +87,7 @@ public class CauseTester extends AdaptiveTester {
 
       super.evaluate(testcase);
    }
-   
+
    @Override
    protected synchronized TestExecutor getExecutor(final PeASSFolders temporaryFolders, final String version) {
       final TestExecutor testExecutor = super.getExecutor(temporaryFolders, version);
@@ -106,8 +106,7 @@ public class CauseTester extends AdaptiveTester {
    @Override
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      
-      
+
       currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart,
             configuration.isUseKieker(), causeConfig.isSaveAll(), testcase,
             configuration.getIterations());
@@ -118,14 +117,19 @@ public class CauseTester extends AdaptiveTester {
       includedPattern = new HashSet<>();
       if (configuration.getVersionOld().equals(version)) {
          includedNodes.forEach(node -> {
-            System.out.println(node);
-            includedPattern.add(node.getKiekerPattern());
+            LOG.trace(node);
+            if (!node.getKiekerPattern().equals("ADDED")) {
+               includedPattern.add(node.getKiekerPattern());
+            }
+
          });
       } else {
          LOG.debug("Searching other: " + version);
          includedNodes.forEach(node -> {
             LOG.trace(node);
-            includedPattern.add(node.getOtherVersionNode().getKiekerPattern());
+            if (!node.getOtherVersionNode().getKiekerPattern().equals("ADDED")) {
+               includedPattern.add(node.getOtherVersionNode().getKiekerPattern());
+            }
          });
       }
    }
@@ -215,7 +219,7 @@ public class CauseTester extends AdaptiveTester {
 
       final CallTreeNode node = new CallTreeNode("FileUploadTestCase#parseUpload",
             "protected java.util.List org.apache.commons.fileupload.FileUploadTestCase.parseUpload(byte[],java.lang.String)",
-            "protected java.util.List org.apache.commons.fileupload.FileUploadTestCase.parseUpload(byte[],java.lang.String)", 
+            "protected java.util.List org.apache.commons.fileupload.FileUploadTestCase.parseUpload(byte[],java.lang.String)",
             config);
       node.setOtherVersionNode(node);
       final Set<CallTreeNode> nodes = new HashSet<>();

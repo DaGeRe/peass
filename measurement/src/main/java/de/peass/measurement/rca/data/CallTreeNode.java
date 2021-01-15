@@ -42,8 +42,7 @@ public class CallTreeNode extends BasicNode {
    protected final Map<String, CallTreeStatistics> data = new HashMap<>();
 
    @JsonIgnore
-   protected
-   final MeasurementConfiguration config;
+   protected MeasurementConfiguration config;
 
    private CallTreeNode otherVersionNode;
 
@@ -62,6 +61,10 @@ public class CallTreeNode extends BasicNode {
       this.config = parent.config;
    }
 
+   public void setConfig(MeasurementConfiguration config) {
+      this.config = config;
+   }
+   
    public List<CallTreeNode> getChildren() {
       return children;
    }
@@ -84,6 +87,7 @@ public class CallTreeNode extends BasicNode {
 
    /**
     * Adds the measurement of *one full VM* to the measurements of the version
+    * 
     * @param version
     * @param statistic
     */

@@ -50,6 +50,18 @@ public class BothTreeReader {
       }
       rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFileOld, CallTreeNode.class);
       rootVersion = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
+      
+      rootPredecessor.setConfig(config);
+      setConfig(rootPredecessor);
+      rootVersion.setConfig(config);
+      setConfig(rootVersion);
+   }
+
+   private void setConfig(CallTreeNode node) {
+      for (CallTreeNode child : node.getChildren()) {
+         child.setConfig(config);
+         setConfig(child);
+      }
    }
    
    public void readTrees() throws InterruptedException, IOException, XmlPullParserException, ViewNotFoundException, AnalysisConfigurationException {
