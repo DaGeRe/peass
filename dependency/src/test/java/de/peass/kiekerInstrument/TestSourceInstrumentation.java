@@ -62,7 +62,7 @@ public class TestSourceInstrumentation {
       String changedSource = FileUtils.readFileToString(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), StandardCharsets.UTF_8);
 
       Assert.assertThat(changedSource, Matchers.containsString("signature = \"public void de.peass.C0_0.method0(int)\""));
-      Assert.assertThat(changedSource, Matchers.containsString("signature = \"public String de.peass.C0_0.method0(String)\""));
+      Assert.assertThat(changedSource, Matchers.containsString("signature = \"public java.lang.String de.peass.C0_0.method0(java.lang.String)\""));
       Assert.assertThat(changedSource, Matchers.containsString("signature = \"public static void de.peass.C0_0.myStaticStuff()\""));
       Assert.assertThat(changedSource, Matchers.containsString("signature = \"public new de.peass.C0_0$MyInnerClass.<init>()\""));
       Assert.assertThat(changedSource, Matchers.containsString("signature = \"public void de.peass.C0_0$MyInnerClass.innerMethod()\""));

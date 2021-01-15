@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.Node;
@@ -34,6 +35,7 @@ import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.TryStmt;
 import com.github.javaparser.ast.type.PrimitiveType;
+import com.github.javaparser.ast.type.Type;
 
 import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.dependency.execution.AllowedKiekerRecord;
@@ -83,8 +85,10 @@ public class InstrumentKiekerSource {
       }
    }
 
+   CompilationUnit unit;
+
    public void instrument(File file) throws IOException {
-      CompilationUnit unit = JavaParserProvider.parse(file); // TODO Package
+      unit = JavaParserProvider.parse(file); // TODO Package
 
       ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
       String packageName = unit.getPackageDeclaration().get().getNameAsString();
@@ -195,7 +199,8 @@ public class InstrumentKiekerSource {
 
    private String getSignature(String name, MethodDeclaration method) {
       String modifiers = getModifierString(method.getModifiers());
-      final String returnType = method.getType().toString() + " ";
+      String returnTypFQN = getTypeFQN(method.getType(), method.getTypeAsString());
+      final String returnType = returnTypFQN + " ";
       String signature = modifiers + returnType + name + "(";
       signature += getParameterString(method);
       signature += ")";
@@ -205,12 +210,39 @@ public class InstrumentKiekerSource {
    private String getParameterString(MethodDeclaration method) {
       String parameterString = "";
       for (Parameter parameter : method.getParameters()) {
-         parameterString += parameter.getType().asString() + ",";
+         final String parameterName = parameter.getType().asString();
+         String fqn = getTypeFQN(parameter.getType(), parameterName);
+         parameterString += fqn + ",";
       }
       if (parameterString.length() > 0) {
          parameterString = parameterString.substring(0, parameterString.length() - 1);
       }
       return parameterString;
+   }
+
+   private String getTypeFQN(Type type, final String parameterName) {
+      if (parameterName.equals("void")) {
+         return parameterName;
+      }
+      String fqn;
+      if (type.isPrimitiveType()) {
+         fqn = parameterName;
+      } else {
+         ImportDeclaration currentImport = null;
+         for (ImportDeclaration importDeclaration : unit.getImports()) {
+            final String importFqn = importDeclaration.getNameAsString();
+            if (importFqn.endsWith("." + parameterName)) {
+               currentImport = importDeclaration;
+               break;
+            }
+         }
+         if (currentImport != null) {
+            fqn = currentImport.getNameAsString();
+         } else {
+            fqn = "java.lang." + parameterName;
+         }
+      }
+      return fqn;
    }
 
    private String getSignature(String name, ConstructorDeclaration method) {
