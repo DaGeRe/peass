@@ -98,11 +98,13 @@ public class FileInstrumenter {
          }
       }
       if (!constructorFound && configuration.isCreateDefaultConstructor()) {
-         oneHasChanged = true;
          String signature = "public new " + name + ".<init>()";
-         BlockStmt constructorBlock = blockBuilder.buildEmptyConstructor(signature);
-         ConstructorDeclaration constructor = clazz.addConstructor(Modifier.Keyword.PUBLIC);
-         constructor.setBody(constructorBlock);
+         if (testSignatureMatch(signature)) {
+            oneHasChanged = true;
+            BlockStmt constructorBlock = blockBuilder.buildEmptyConstructor(signature);
+            ConstructorDeclaration constructor = clazz.addConstructor(Modifier.Keyword.PUBLIC);
+            constructor.setBody(constructorBlock);
+         }
       }
       return oneHasChanged;
    }
@@ -170,5 +172,4 @@ public class FileInstrumenter {
       return oneMatches;
    }
 
-   
 }
