@@ -83,7 +83,7 @@ class C0_0{
  
  static class MyInnerClass2 {
     
-    public MyInnerClass(int i){
+    public MyInnerClass2(int i){
       new Runnable(){
         public void run(){
           System.out.println("Anonymous class call inside inner constructor");
