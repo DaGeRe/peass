@@ -19,10 +19,11 @@ public class TestSampling {
    public void testSingleSelectiveInstrumentation() throws Exception {
       SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2/");
 
-      Set<String> shouldInstrument = new HashSet<>();
-      shouldInstrument.add("public void de.peass.MainTest.testMe()");
+      Set<String> includedPatterns = new HashSet<>();
+      includedPatterns.add("public void de.peass.MainTest.testMe()");
 
-      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, shouldInstrument, true);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, includedPatterns);
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 
       testIsSamplingInstrumented("src/test/java/de/peass/MainTest.java", "public void de.peass.MainTest.testMe()", "testMeCounter");
@@ -32,12 +33,13 @@ public class TestSampling {
    public void testComplexSignatures() throws Exception {
       SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2_signatures/");
 
-      Set<String> shouldInstrument = new HashSet<>();
-      shouldInstrument.add("public void de.peass.MainTest.testMe()");
-      shouldInstrument.add("public java.lang.String de.peass.C0_0.method0(java.lang.String)");
-      shouldInstrument.add("public static void de.peass.C0_0.myStaticStuff()");
+      Set<String> includedPatterns = new HashSet<>();
+      includedPatterns.add("public void de.peass.MainTest.testMe()");
+      includedPatterns.add("public java.lang.String de.peass.C0_0.method0(java.lang.String)");
+      includedPatterns.add("public static void de.peass.C0_0.myStaticStuff()");
 
-      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, shouldInstrument, true);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, includedPatterns);
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 
       testIsSamplingInstrumented("src/test/java/de/peass/MainTest.java", "public void de.peass.MainTest.testMe()", "testMeCounter");

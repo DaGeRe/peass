@@ -36,11 +36,12 @@ public class SelectiveSourceInstrumentationIT {
       tempFolder.mkdir();
 
       
-      Set<String> shouldInstrument = new HashSet<>();
-      shouldInstrument.add("public void de.peass.MainTest.testMe()");
-      shouldInstrument.add("public void de.peass.C0_0.method0()");
+      Set<String> includedPatterns = new HashSet<>();
+      includedPatterns.add("public void de.peass.MainTest.testMe()");
+      includedPatterns.add("public void de.peass.C0_0.method0()");
       
-      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION, shouldInstrument, false);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, false, includedPatterns);
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 
       final ProcessBuilder pb = new ProcessBuilder("mvn", "test", 

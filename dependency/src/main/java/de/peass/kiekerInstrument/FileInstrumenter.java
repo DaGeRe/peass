@@ -41,10 +41,8 @@ public class FileInstrumenter {
    private final CompilationUnit unit;
    private final File file;
 
-   private final AllowedKiekerRecord usedRecord;
-   private final Set<String> includedPatterns;
+   private final InstrumentationConfiguration configuration;
    private final BlockBuilder blockBuilder;
-   private final boolean sample;
 
    private boolean oneHasChanged = false;
 
@@ -52,13 +50,11 @@ public class FileInstrumenter {
    private List<String> countersToAdd = new LinkedList<>();
    private List<String> sumsToAdd = new LinkedList<>();
 
-   public FileInstrumenter(File file, AllowedKiekerRecord usedRecord, Set<String> includedPatterns, BlockBuilder blockBuilder, boolean sample) throws FileNotFoundException {
+   public FileInstrumenter(File file, InstrumentationConfiguration configuration, BlockBuilder blockBuilder) throws FileNotFoundException {
       this.unit = JavaParserProvider.parse(file);
       this.file = file;
-      this.usedRecord = usedRecord;
-      this.includedPatterns = includedPatterns;
+      this.configuration = configuration;
       this.blockBuilder = blockBuilder;
-      this.sample = sample;
    }
 
    public void instrument() throws IOException {
@@ -84,7 +80,7 @@ public class FileInstrumenter {
       unit.addImport("kieker.monitoring.core.controller.MonitoringController");
       unit.addImport("kieker.monitoring.core.registry.ControlFlowRegistry");
       unit.addImport("kieker.monitoring.core.registry.SessionRegistry");
-      unit.addImport(usedRecord.getRecord());
+      unit.addImport(configuration.getUsedRecord().getRecord());
    }
 
    private boolean handleChildren(ClassOrInterfaceDeclaration clazz, String name) {
@@ -128,7 +124,7 @@ public class FileInstrumenter {
          if (oneMatches) {
             final BlockStmt replacedStatement;
             final boolean needsReturn = method.getType().toString().equals("void");
-            if (sample) {
+            if (configuration.isSample()) {
                final String nameBeforeParanthesis = signature.substring(0, signature.indexOf('('));
                final String methodNameSubstring = nameBeforeParanthesis.substring(nameBeforeParanthesis.lastIndexOf('.') + 1);
                final String counterName = methodNameSubstring + "Counter" + counterIndex;
@@ -152,7 +148,7 @@ public class FileInstrumenter {
 
    private boolean testSignatureMatch(String signature) {
       boolean oneMatches = false;
-      for (String pattern : includedPatterns) {
+      for (String pattern : configuration.getIncludedPatterns()) {
          try {
             Pattern patternP = PatternParser.parseToPattern(pattern);
             if (patternP.matcher(signature).matches()) {

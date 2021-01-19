@@ -58,24 +58,19 @@ public class InstrumentKiekerSource {
 
    private static final Logger LOG = LogManager.getLogger(InstrumentKiekerSource.class);
 
-   private final AllowedKiekerRecord usedRecord;
-   private final Set<String> includedPatterns;
+   private InstrumentationConfiguration configuration;
+   
    private final BlockBuilder blockBuilder;
-   private final boolean sample;
 
    public InstrumentKiekerSource(AllowedKiekerRecord usedRecord) {
-      this.usedRecord = usedRecord;
-      includedPatterns = new HashSet<>();
-      includedPatterns.add("*");
-      this.blockBuilder = new BlockBuilder(usedRecord, true);
-      this.sample = false;
+      configuration = new InstrumentationConfiguration(usedRecord, false, true, true, new HashSet<>());
+      configuration.getIncludedPatterns().add("*");
+      this.blockBuilder = new BlockBuilder(configuration.getUsedRecord(), false);
    }
 
-   public InstrumentKiekerSource(AllowedKiekerRecord usedRecord, Set<String> includedPatterns, boolean sample) {
-      this.usedRecord = usedRecord;
-      this.includedPatterns = includedPatterns;
-      this.blockBuilder = new BlockBuilder(usedRecord, false);
-      this.sample = sample;
+   public InstrumentKiekerSource(InstrumentationConfiguration configuration) {
+      this.configuration = configuration;
+      this.blockBuilder = new BlockBuilder(configuration.getUsedRecord(), false);
    }
 
    public void instrumentProject(File projectFolder) throws IOException {
@@ -85,11 +80,9 @@ public class InstrumentKiekerSource {
       }
    }
 
-
    public void instrument(File file) throws IOException {
-      FileInstrumenter instrumenter = new FileInstrumenter(file, usedRecord, includedPatterns, blockBuilder, sample);
+      FileInstrumenter instrumenter = new FileInstrumenter(file, configuration, blockBuilder);
       instrumenter.instrument();
    }
 
-  
 }

@@ -52,7 +52,8 @@ public class SamplingSourceInstrumentationIT {
       includedPatterns.add("public * de.peass.C0_0.*(..)");
       includedPatterns.add("public * de.peass.C0_0$MyInnerClass.*(..)");
       includedPatterns.add("public * de.peass.MainTest.*(..)");
-      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, includedPatterns, true);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, includedPatterns);
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
 
       extendMaven();
 
@@ -72,6 +73,7 @@ public class SamplingSourceInstrumentationIT {
       String monitorLogs = FileUtils.readFileToString(resultFile, StandardCharsets.UTF_8);
       Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.MainTest.testMe()"));
       Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.C0_0.method0()"));
+      Assert.assertThat(monitorLogs, Matchers.containsString("public new de.peass.C0_0.<init>()"));
       Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.C1_0.method0()")));
       Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.AddRandomNumbers.addSomething()")));
    }

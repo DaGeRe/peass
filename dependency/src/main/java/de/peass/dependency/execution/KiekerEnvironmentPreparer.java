@@ -11,6 +11,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peass.dependency.PeASSFolders;
 import de.peass.kiekerInstrument.InstrumentKiekerSource;
+import de.peass.kiekerInstrument.InstrumentationConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 public class KiekerEnvironmentPreparer {
@@ -37,7 +38,8 @@ public class KiekerEnvironmentPreparer {
          if (!config.isUseSelectiveInstrumentation()) {
             instrumentKiekerSource = new InstrumentKiekerSource(config.getRecord());
          } else {
-            instrumentKiekerSource = new InstrumentKiekerSource(config.getRecord(), includedMethodPattern, config.isUseSampling());
+            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), config.isUseSampling(), includedMethodPattern);
+            instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
          }
          instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
          if (testTransformer.isAdaptiveExecution()) {
