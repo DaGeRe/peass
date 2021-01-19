@@ -200,7 +200,7 @@ public class BlockBuilder {
    }
 
    private void buildOperationExecutionRecordDefaultConstructor(String signature, BlockStmt replacedStatement) {
-      buildHeader(replacedStatement, signature, false, replacedStatement);
+      buildHeader(new BlockStmt(), signature, false, replacedStatement);
       replacedStatement.addAndGetStatement(BEFORE_OER_SOURCE + AFTER_OER_SOURCE);
    }
 }

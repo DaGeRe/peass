@@ -65,7 +65,7 @@ public class InstrumentKiekerSource {
    public InstrumentKiekerSource(AllowedKiekerRecord usedRecord) {
       configuration = new InstrumentationConfiguration(usedRecord, false, true, true, new HashSet<>());
       configuration.getIncludedPatterns().add("*");
-      this.blockBuilder = new BlockBuilder(configuration.getUsedRecord(), false);
+      this.blockBuilder = new BlockBuilder(configuration.getUsedRecord(), true);
    }
 
    public InstrumentKiekerSource(InstrumentationConfiguration configuration) {
