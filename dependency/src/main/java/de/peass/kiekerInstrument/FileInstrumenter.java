@@ -84,16 +84,24 @@ public class FileInstrumenter {
    }
 
    private boolean handleChildren(ClassOrInterfaceDeclaration clazz, String name) {
+      boolean constructorFound = false;
       for (Node child : clazz.getChildNodes()) {
          if (child instanceof MethodDeclaration) {
             counterIndex = instrumentMethod(name, counterIndex, countersToAdd, sumsToAdd, child);
          } else if (child instanceof ConstructorDeclaration) {
             instrumentConstructor(name, child);
+            constructorFound = true;
          } else if (child instanceof ClassOrInterfaceDeclaration) {
             ClassOrInterfaceDeclaration innerClazz = (ClassOrInterfaceDeclaration) child;
             String innerName = innerClazz.getNameAsString();
             handleChildren(innerClazz, name + "$" + innerName);
          }
+      }
+      if (!constructorFound && configuration.isCreateDefaultConstructor()) {
+         String signature = "public new " + name + ".<init>()";
+         BlockStmt constructorBlock = blockBuilder.buildEmptyConstructor(signature);
+         ConstructorDeclaration constructor = clazz.addConstructor(Modifier.Keyword.PUBLIC);
+         constructor.setBody(constructorBlock);
       }
       return oneHasChanged;
    }

@@ -18,7 +18,7 @@ import com.github.javaparser.ast.stmt.TryStmt;
 import de.peass.dependency.execution.AllowedKiekerRecord;
 
 public class BlockBuilder {
-   
+
    private static final Logger LOG = LogManager.getLogger(BlockBuilder.class);
 
    private final AllowedKiekerRecord recordType;
@@ -83,7 +83,7 @@ public class BlockBuilder {
             "        " + sumName + "+=tout-tin;\n" +
             "if (" + samplingCounterName + "++%" + count + "==0){\n" +
             "final String signature = \"" + signature + "\";\n" +
-            "final long calculatedTout=tin+"+sumName+";\n" +
+            "final long calculatedTout=tin+" + sumName + ";\n" +
             "MonitoringController.getInstance().newMonitoringRecord(new ReducedOperationExecutionRecord(signature, tin, calculatedTout));\n"
             + sumName + "=0;}\n");
       TryStmt stmt = new TryStmt(originalBlock, new NodeList<>(), finallyBlock);
@@ -167,5 +167,60 @@ public class BlockBuilder {
                (addReturn ? "return;" : "") +
                "      }");
       }
+   }
+
+   public BlockStmt buildEmptyConstructor(String signature) {
+      BlockStmt replacedStatement = new BlockStmt();
+      if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
+         buildOperationExecutionRecordDefaultConstructor(signature, replacedStatement);
+      } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
+         buildHeader(replacedStatement, signature, false, replacedStatement);
+         replacedStatement.addAndGetStatement("      final long tin = MonitoringController.getInstance().getTimeSource().getTime();");
+         replacedStatement.addAndGetStatement("// measure after\n");
+         replacedStatement.addAndGetStatement("final long tout = MonitoringController.getInstance().getTimeSource().getTime()");
+         replacedStatement.addAndGetStatement("MonitoringController.getInstance().newMonitoringRecord(new ReducedOperationExecutionRecord(signature, tin, tout))");
+      } else {
+         throw new RuntimeException();
+      }
+      return replacedStatement;
+   }
+
+   private void buildOperationExecutionRecordDefaultConstructor(String signature, BlockStmt replacedStatement) {
+      buildHeader(replacedStatement, signature, false, replacedStatement);
+      replacedStatement.addAndGetStatement("      // collect data\n" +
+            "      final boolean entrypoint;\n" +
+            "      final String hostname = MonitoringController.getInstance().getHostname();\n" +
+            "      final String sessionId = SessionRegistry.INSTANCE.recallThreadLocalSessionId();\n" +
+            "      final int eoi; // this is executionOrderIndex-th execution in this trace\n" +
+            "      final int ess; // this is the height in the dynamic call tree of this execution\n" +
+            "      long traceId = ControlFlowRegistry.INSTANCE.recallThreadLocalTraceId(); // traceId, -1 if entry point\n" +
+            "      if (traceId == -1) {\n" +
+            "         entrypoint = true;\n" +
+            "         traceId = ControlFlowRegistry.INSTANCE.getAndStoreUniqueThreadLocalTraceId();\n" +
+            "         ControlFlowRegistry.INSTANCE.storeThreadLocalEOI(0);\n" +
+            "         ControlFlowRegistry.INSTANCE.storeThreadLocalESS(1); // next operation is ess + 1\n" +
+            "         eoi = 0;\n" +
+            "         ess = 0;\n" +
+            "      } else {\n" +
+            "         entrypoint = false;\n" +
+            "         eoi = ControlFlowRegistry.INSTANCE.incrementAndRecallThreadLocalEOI(); // ess > 1\n" +
+            "         ess = ControlFlowRegistry.INSTANCE.recallAndIncrementThreadLocalESS(); // ess >= 0\n" +
+            "         if ((eoi == -1) || (ess == -1)) {\n" +
+            "            System.err.println(\"eoi and/or ess have invalid values: eoi == {} ess == {}\"+ eoi+ \"\" + ess);\n" +
+            "            MonitoringController.getInstance().terminateMonitoring();\n" +
+            "         }\n" +
+            "      }\n" +
+            "      // measure before\n" +
+            "      final long tin = MonitoringController.getInstance().getTimeSource().getTime()\n" +
+            "         final long tout = MonitoringController.getInstance().getTimeSource().getTime();\n" +
+            "         MonitoringController.getInstance().newMonitoringRecord(new OperationExecutionRecord(signature, sessionId, traceId, tin, tout, hostname, eoi, ess));\n" +
+            "         // cleanup\n" +
+            "         if (entrypoint) {\n" +
+            "            ControlFlowRegistry.INSTANCE.unsetThreadLocalTraceId();\n" +
+            "            ControlFlowRegistry.INSTANCE.unsetThreadLocalEOI();\n" +
+            "            ControlFlowRegistry.INSTANCE.unsetThreadLocalESS();\n" +
+            "         } else {\n" +
+            "            ControlFlowRegistry.INSTANCE.storeThreadLocalESS(ess); // next operation is ess\n" +
+            "         }");
    }
 }

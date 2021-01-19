@@ -39,6 +39,7 @@ public class SelectiveSourceInstrumentationIT {
       Set<String> includedPatterns = new HashSet<>();
       includedPatterns.add("public void de.peass.MainTest.testMe()");
       includedPatterns.add("public void de.peass.C0_0.method0()");
+      includedPatterns.add("public new de.peass.C0_0.<init>()");
       
       InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, false, includedPatterns);
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
@@ -58,6 +59,7 @@ public class SelectiveSourceInstrumentationIT {
       String monitorLogs = FileUtils.readFileToString(resultFile, StandardCharsets.UTF_8);
       Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.MainTest.testMe()"));
       Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.C0_0.method0()"));
+      Assert.assertThat(monitorLogs, Matchers.containsString("public new de.peass.C0_0.<init>()"));
       Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.C1_0.method0()")));
       Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.AddRandomNumbers.addSomething()")));
    }
