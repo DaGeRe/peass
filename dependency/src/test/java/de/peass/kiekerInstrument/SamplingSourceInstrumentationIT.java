@@ -50,6 +50,9 @@ public class SamplingSourceInstrumentationIT {
 
       final HashSet<String> includedPatterns = new HashSet<>();
       includedPatterns.add("public * de.peass.C0_0.*(..)");
+      // Kieker currently does not accept <init> if only * is passed, therefore, <init> needs to be added as separate pattern
+      includedPatterns.add("public * de.peass.C0_0.<init>(..)"); 
+      includedPatterns.add("public * de.peass.C1_0.<init>(..)");
       includedPatterns.add("public * de.peass.C0_0$MyInnerClass.*(..)");
       includedPatterns.add("public * de.peass.MainTest.*(..)");
       InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, includedPatterns);

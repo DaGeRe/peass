@@ -87,7 +87,7 @@ public class FileInstrumenter {
       boolean constructorFound = false;
       for (Node child : clazz.getChildNodes()) {
          if (child instanceof MethodDeclaration) {
-            counterIndex = instrumentMethod(name, counterIndex, countersToAdd, sumsToAdd, child);
+            instrumentMethod(name, child);
          } else if (child instanceof ConstructorDeclaration) {
             instrumentConstructor(name, child);
             constructorFound = true;
@@ -98,6 +98,7 @@ public class FileInstrumenter {
          }
       }
       if (!constructorFound && configuration.isCreateDefaultConstructor()) {
+         oneHasChanged = true;
          String signature = "public new " + name + ".<init>()";
          BlockStmt constructorBlock = blockBuilder.buildEmptyConstructor(signature);
          ConstructorDeclaration constructor = clazz.addConstructor(Modifier.Keyword.PUBLIC);
@@ -120,7 +121,7 @@ public class FileInstrumenter {
       }
    }
 
-   private int instrumentMethod(String name, int counterIndex, List<String> countersToAdd, List<String> sumsToAdd, Node child) {
+   private int instrumentMethod(String name, Node child) {
       MethodDeclaration method = (MethodDeclaration) child;
       final Optional<BlockStmt> body = method.getBody();
 
@@ -133,13 +134,10 @@ public class FileInstrumenter {
             final BlockStmt replacedStatement;
             final boolean needsReturn = method.getType().toString().equals("void");
             if (configuration.isSample()) {
-               final String nameBeforeParanthesis = signature.substring(0, signature.indexOf('('));
-               final String methodNameSubstring = nameBeforeParanthesis.substring(nameBeforeParanthesis.lastIndexOf('.') + 1);
-               final String counterName = methodNameSubstring + "Counter" + counterIndex;
-               final String sumName = methodNameSubstring + "Sum" + counterIndex;
-               countersToAdd.add(counterName);
-               sumsToAdd.add(sumName);
-               replacedStatement = blockBuilder.buildSampleStatement(originalBlock, signature, needsReturn, counterName, sumName);
+               SamplingParameters parameters = new SamplingParameters(signature, counterIndex);
+               countersToAdd.add(parameters.getCounterName());
+               sumsToAdd.add(parameters.getSumName());
+               replacedStatement = blockBuilder.buildSampleStatement(originalBlock, signature, needsReturn, parameters);
                counterIndex++;
             } else {
                replacedStatement = blockBuilder.buildStatement(originalBlock, signature, needsReturn);
