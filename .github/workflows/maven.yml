@@ -29,4 +29,4 @@ jobs:
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
     - name: Build with Maven
-      run: mvn -B package --file pom.xml && ls ~/.m2/repository/ && ls ~/.m2/repository/de/dagere/kopeme/kopeme-core
+      run: mvn -B verify --file pom.xml && ls ~/.m2/repository/ && ls ~/.m2/repository/de/dagere/kopeme/kopeme-core
