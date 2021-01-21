@@ -159,7 +159,6 @@ public class FileInstrumenter {
       for (String pattern : configuration.getIncludedPatterns()) {
          pattern = fixConstructorPattern(pattern);
          try {
-            System.out.println(pattern);
             Pattern patternP = PatternParser.parseToPattern(pattern);
             if (patternP.matcher(signature).matches()) {
                oneMatches = true;

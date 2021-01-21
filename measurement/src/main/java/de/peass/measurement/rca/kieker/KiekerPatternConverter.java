@@ -13,6 +13,7 @@ public class KiekerPatternConverter {
 
    /**
     * Fixes parameters, i.e. removes spaces, that might be introduced by kieker.
+    * 
     * @param kiekerCall Kieker call that should be fixed
     * @return fixed call
     */
@@ -47,13 +48,21 @@ public class KiekerPatternConverter {
          final String[] splitted = kiekerCall.split(" ");
          String repaired;
          if (splitted[0].equals("public") || splitted[0].equals("protected") || splitted[0].equals("private")) {
-            repaired = splitted[0] + " new ";
-            for (int i = 1; i < splitted.length; i++) {
-               repaired += splitted[i] + " ";
+            if (!splitted[1].equals("new")) {
+               repaired = splitted[0] + " new ";
+               for (int i = 1; i < splitted.length; i++) {
+                  repaired += splitted[i] + " ";
+               }
+               repaired = repaired.substring(0, repaired.length() - 1);
+            } else {
+               repaired = kiekerCall;
             }
-            repaired = repaired.substring(0, repaired.length() - 1);
          } else {
-            repaired = "new " + kiekerCall;
+            if (!splitted[0].equals("new")) {
+               repaired = "new " + kiekerCall;
+            } else {
+               repaired = kiekerCall;
+            }
          }
          kiekerCall = repaired;
       }
@@ -90,13 +99,13 @@ public class KiekerPatternConverter {
 
       return strBuild.toString();
    }
-   
+
    public static String getFileNameStart(final String kiekerPattern) {
       final String separator = File.separator;
       String fileNameStart = convertPattern(kiekerPattern, separator);
       return fileNameStart;
    }
-   
+
    public static String getKey(final String kiekerPattern) {
       final String separator = ".";
       String fileNameStart = convertPattern(kiekerPattern, separator);
@@ -110,7 +119,7 @@ public class KiekerPatternConverter {
       String clazz = call.substring(0, dotIndex);
 
       String parameterString = getParameterKeyString(kiekerPattern);
-      
+
       String fileNameStart = clazz + separator + method + "_" + parameterString;
       return fileNameStart;
    }

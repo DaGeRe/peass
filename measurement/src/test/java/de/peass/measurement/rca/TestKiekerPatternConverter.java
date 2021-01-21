@@ -21,6 +21,15 @@ public class TestKiekerPatternConverter {
       Assert.assertEquals("new ClassA.<init>(int[])", KiekerPatternConverter.getKiekerPattern(defaultVisibility));
       Assert.assertEquals(twoParameters, KiekerPatternConverter.getKiekerPattern(twoParameters));
    }
+   
+   @Test
+   public void testNewAlreadyExists() {
+      final String withConstructor = "protected new ClassA.<init>()";
+      final String withConstructorArray = "new ClassA.<init>(int[])";
+
+      Assert.assertEquals("protected new ClassA.<init>()", KiekerPatternConverter.getKiekerPattern(withConstructor));
+      Assert.assertEquals("new ClassA.<init>(int[])", KiekerPatternConverter.getKiekerPattern(withConstructorArray));
+   }
 
    @Test
    public void testFixParameters() throws Exception {

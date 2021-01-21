@@ -84,18 +84,31 @@ public class KiekerResultReader {
          final String nodeCall = KiekerPatternConverter.fixParameters(examinedNode.getKiekerPattern());
          final List<StatisticalSummary> values = new LinkedList<>();
          // final SummaryStatistics statistics = new SummaryStatistics();
+         if (nodeCall.contains("DiskFileItem.<init>")) {
+            LOG.debug("In here");
+         }
          for (final Entry<AggregatedDataNode, AggregatedData> entry : fullDataMap.entrySet()) {
+            if (entry.getKey().toString().contains("DiskFileItem.<init>")) {
+               System.out.println("Test");
+            }
             if (isSameNode(examinedNode, nodeCall, entry.getKey())) {
+               if (nodeCall.contains("DiskFileItem.<init>")) {
+                  LOG.debug("Found " + entry.getKey());
+               }
                for (final StatisticalSummary dataSlice : entry.getValue().getStatistic().values()) {
                   values.add(dataSlice);
                }
                nodeFound = true;
+            } else {
+               if (nodeCall.contains("DiskFileItem.<init>")) {
+                  LOG.debug("Testing " + entry.getKey());
+               }
             }
          }
 
          if (nodeFound) {
-            LOG.debug("Setting measurement: {} {}", version, values.size());
-//            System.out.println(StatisticUtil.getMean(values) + " ");
+            LOG.debug("Setting measurement: {} {} {}", version, nodeCall, values.size());
+            // System.out.println(StatisticUtil.getMean(values) + " ");
             node.addAggregatedMeasurement(version, values);
          } else {
             LOG.warn("Node {} ({}) did not find measurement values", nodeCall, node.getOtherVersionNode());
