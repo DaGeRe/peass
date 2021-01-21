@@ -66,6 +66,11 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
       final TestCase test = new TestCase(testName);
       final Version versionInfo = dependencies.getVersions().get(version);
+      boolean found = versionInfo.getTests().getTests().contains(test);
+      if (!found) {
+         LOG.error("Test " + test + " is not contained in regression test selection result, therefore it is unlikely to have a performance change!");
+      }
+      
       final String predecessor = versionInfo.getPredecessor();
 
       LOG.debug("Timeout in minutes: {}", measurementConfigMixin.getTimeout());
