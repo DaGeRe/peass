@@ -68,7 +68,7 @@ public class TestSourceInstrumentation {
       Assert.assertThat(changedSource, Matchers.containsString("signature = \"public de.peass.C0_0 de.peass.C0_0.doSomethingWithSamePackageObject(de.peass.C1_0)\""));
       Assert.assertThat(changedSource, Matchers.containsString("signature = \"public de.peass.C0_0$MyInnerClass2 de.peass.C0_0.getInnerInstance()\""));
       Assert.assertThat(changedSource, Matchers.containsString("signature = \"public static void de.peass.C0_0.myStaticStuff()\""));
-      Assert.assertThat(changedSource, Matchers.containsString("signature = \"public new de.peass.C0_0$MyInnerClass.<init>()\""));
+      Assert.assertThat(changedSource, Matchers.containsString("signature = \"public new de.peass.C0_0$MyInnerClass.<init>(int)\""));
       Assert.assertThat(changedSource, Matchers.containsString("signature = \"public void de.peass.C0_0$MyInnerClass.innerMethod()\""));
    }
 }
