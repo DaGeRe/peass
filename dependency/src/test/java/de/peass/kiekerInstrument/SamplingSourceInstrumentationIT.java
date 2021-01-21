@@ -51,9 +51,11 @@ public class SamplingSourceInstrumentationIT {
       final HashSet<String> includedPatterns = new HashSet<>();
       includedPatterns.add("public * de.peass.C0_0.*(..)");
       // Kieker currently does not accept <init> if only * is passed, therefore, <init> needs to be added as separate pattern
-      includedPatterns.add("public * de.peass.C0_0.<init>(..)"); 
-      includedPatterns.add("public * de.peass.C1_0.<init>(..)");
+      includedPatterns.add("public new de.peass.C0_0.<init>(..)"); 
+      includedPatterns.add("public new de.peass.C1_0.<init>(..)");
+      
       includedPatterns.add("public * de.peass.C0_0$MyInnerClass.*(..)");
+      includedPatterns.add("new de.peass.C0_0$MyInnerClass.<init>(..)");
       includedPatterns.add("public * de.peass.MainTest.*(..)");
       InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, includedPatterns);
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
@@ -77,6 +79,7 @@ public class SamplingSourceInstrumentationIT {
       Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.MainTest.testMe()"));
       Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.C0_0.method0()"));
       Assert.assertThat(monitorLogs, Matchers.containsString("public new de.peass.C0_0.<init>()"));
+      Assert.assertThat(monitorLogs, Matchers.containsString("new de.peass.C0_0$MyInnerClass.<init>(int)"));
       Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.C1_0.method0()")));
       Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.AddRandomNumbers.addSomething()")));
    }

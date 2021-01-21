@@ -154,10 +154,12 @@ public class FileInstrumenter {
       return counterIndex;
    }
 
-   private boolean testSignatureMatch(String signature) {
+   private boolean testSignatureMatch(final String signature) {
       boolean oneMatches = false;
       for (String pattern : configuration.getIncludedPatterns()) {
+         pattern = fixConstructorPattern(pattern);
          try {
+            System.out.println(pattern);
             Pattern patternP = PatternParser.parseToPattern(pattern);
             if (patternP.matcher(signature).matches()) {
                oneMatches = true;
@@ -170,6 +172,29 @@ public class FileInstrumenter {
 
       }
       return oneMatches;
+   }
+
+   /**
+    * In Kieker 1.14, the return type new is ignored for pattern. Therefore, * needs to be set as return type 
+    * of constructors in pattern.
+    */
+   private String fixConstructorPattern(String pattern) {
+      if (pattern.contains("<init>")) {
+         final String[] tokens = pattern.substring(0, pattern.indexOf('(')).trim().split("\\s+");
+         int returnTypeIndex = 0;
+         String modifier = "";
+         if (tokens[0].equals("private") || tokens[0].equals("public") || tokens[0].equals("protected")) {
+            returnTypeIndex++;
+            modifier = tokens[0];
+         }
+         final String returnType = tokens[returnTypeIndex];
+         if (returnType.equals("new")) {
+            String patternChanged = modifier + " *" + pattern.substring(pattern.indexOf("new") + 3);
+            LOG.debug("Changing pattern {} to {}, since Kieker 1.14 does not allow pattern with new", pattern, patternChanged);
+            pattern = patternChanged;
+         }
+      }
+      return pattern;
    }
 
 }

@@ -56,20 +56,22 @@ public class SignatureReader {
       String returnTypFQN = getTypeFQN(method.getType());
       final String returnType = returnTypFQN + " ";
       String signature = modifiers + returnType + name + "(";
-      signature += getParameterString(method);
+      signature += getParameterString(method.getParameters());
       signature += ")";
       return signature;
    }
 
    public String getSignature(ConstructorDeclaration method) {
       String modifiers = getModifierString(method.getModifiers());
-      String signature = modifiers + "new " + name + ".<init>(" + ")";
+      String signature = modifiers + "new " + name + ".<init>(";
+      signature += getParameterString(method.getParameters());
+      signature += ")";
       return signature;
    }
 
-   private String getParameterString(MethodDeclaration method) {
+   private String getParameterString(NodeList<Parameter> methodParameters) {
       String parameterString = "";
-      for (Parameter parameter : method.getParameters()) {
+      for (Parameter parameter : methodParameters) {
          String fqn = getTypeFQN(parameter.getType());
          parameterString += fqn + ",";
       }
