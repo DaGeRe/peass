@@ -45,6 +45,8 @@ public class TestSourceInstrumentation {
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 
       testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), "public new de.peass.C0_0$InstanceInnerClass.<init>(de.peass.C0_0,int)", "OperationExecutionRecord");
+      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), "new de.peass.C0_0$InstanceInnerClass$InnerInnerClass.<init>(de.peass.C0_0$InstanceInnerClass)", "OperationExecutionRecord");
+
    }
 
    @Test

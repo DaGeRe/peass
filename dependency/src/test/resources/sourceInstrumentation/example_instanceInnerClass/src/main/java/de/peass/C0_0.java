@@ -15,5 +15,9 @@ class C0_0{
    public InstanceInnerClass(int i){
      System.out.println("i=" + i);
    }
+   
+   class InnerInnerClass{
+   
+   }
  }
 }

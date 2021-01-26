@@ -98,9 +98,9 @@ public class FileInstrumenter {
          }
       }
       if (!constructorFound && configuration.isCreateDefaultConstructor()) {
-         String visibility = getVisibility(clazz);
-
-         String signature = visibility + "new " + name + ".<init>()";
+         
+         SignatureReader reader = new SignatureReader(unit, name);
+         String signature = reader.getDefaultConstructor(clazz);
          if (testSignatureMatch(signature)) {
             oneHasChanged = true;
             BlockStmt constructorBlock = blockBuilder.buildEmptyConstructor(signature);
@@ -111,28 +111,10 @@ public class FileInstrumenter {
       return oneHasChanged;
    }
 
-   /**
-    * Returns visibility of class including space after modifier (if it is present, otherwise empty string)
-    * @param clazz
-    * @return
-    */
-   private String getVisibility(ClassOrInterfaceDeclaration clazz) {
-      Modifier clazzVisiblity = null;
-      for (Modifier clazzModifier : clazz.getModifiers()) {
-         if (clazzModifier.equals(Modifier.privateModifier()) || clazzModifier.equals(Modifier.protectedModifier()) || clazzModifier.equals(Modifier.publicModifier())) {
-            clazzVisiblity = clazzModifier;
-         }
-      }
-      String visibility;
-      if (clazzVisiblity != null) {
-         visibility = clazzVisiblity.toString();
-      } else {
-         visibility = "";
-      }
-      return visibility;
-   }
-
    private void instrumentConstructor(String name, Node child) {
+      if (name.contains("org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl")) {
+         System.out.println("test");
+      }
       ConstructorDeclaration constructor = (ConstructorDeclaration) child;
       final BlockStmt originalBlock = constructor.getBody();
       SignatureReader reader = new SignatureReader(unit, name);

@@ -8,6 +8,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
@@ -51,6 +52,37 @@ public class SignatureReader {
       localClazzes = ClazzFinder.getClazzes(unit);
    }
 
+   public String getDefaultConstructor(ClassOrInterfaceDeclaration clazz) {
+      String visibility = getVisibility(clazz);
+
+      String signature = visibility + "new " + name + ".<init>(";
+      signature = addInnerClassConstructorParameter(signature, new NodeList<Parameter>());
+      signature += ")";
+      return signature;
+   }
+
+   /**
+    * Returns visibility of class including space after modifier (if it is present, otherwise empty string)
+    * 
+    * @param clazz
+    * @return
+    */
+   private String getVisibility(ClassOrInterfaceDeclaration clazz) {
+      Modifier clazzVisiblity = null;
+      for (Modifier clazzModifier : clazz.getModifiers()) {
+         if (clazzModifier.equals(Modifier.privateModifier()) || clazzModifier.equals(Modifier.protectedModifier()) || clazzModifier.equals(Modifier.publicModifier())) {
+            clazzVisiblity = clazzModifier;
+         }
+      }
+      String visibility;
+      if (clazzVisiblity != null) {
+         visibility = clazzVisiblity.toString();
+      } else {
+         visibility = "";
+      }
+      return visibility;
+   }
+
    public String getSignature(MethodDeclaration method) {
       String modifiers = getModifierString(method.getModifiers());
       String returnTypFQN = getTypeFQN(method.getType());
@@ -64,12 +96,20 @@ public class SignatureReader {
    public String getSignature(ConstructorDeclaration method) {
       String modifiers = getModifierString(method.getModifiers());
       String signature = modifiers + "new " + name + ".<init>(";
-      if (name.contains("$")) {
-         String firstConstructorPart = name.substring(0, name.indexOf('$'));
-         signature += firstConstructorPart + ",";
-      }
-      signature += getParameterString(method.getParameters());
+      signature = addInnerClassConstructorParameter(signature, method.getParameters());
       signature += ")";
+      return signature;
+   }
+
+   private String addInnerClassConstructorParameter(String signature, NodeList<Parameter> parameters) {
+      if (name.contains("$")) {
+         String firstConstructorPart = name.substring(0, name.lastIndexOf('$'));
+         signature += firstConstructorPart;
+         if (parameters.size() > 0) {
+            signature += ",";
+         }
+      }
+      signature += getParameterString(parameters);
       return signature;
    }
 
