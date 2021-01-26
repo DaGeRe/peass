@@ -15,8 +15,8 @@ public class FirstRunningVersionFinder {
 
    private final PeASSFolders folders;
    private final VersionKeeper nonRunning;
-   final VersionIterator iterator;
-   long timeout;
+   private final VersionIterator iterator;
+   private final long timeout;
 
    public FirstRunningVersionFinder(PeASSFolders folders, VersionKeeper nonRunning, VersionIterator iterator, long timeout) {
       this.folders = folders;

@@ -1,6 +1,6 @@
 package defaultpackage;
 
-public class OtherDependency {
+class OtherDependency {
    public void executeThing() {
       for (int i = 0; i < 3; i++) {
          child1();

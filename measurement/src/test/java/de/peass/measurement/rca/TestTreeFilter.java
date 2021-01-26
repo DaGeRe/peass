@@ -39,17 +39,20 @@ public class TestTreeFilter {
    
    @Test
    public void testComplexTreeCreation() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
-      CallTreeNode node = getTree(projectFolder);
+      CallTreeNode rootNode = getTree();
       
-      Assert.assertNotNull(node);
-      System.out.println(node.getChildren());
-      Assert.assertEquals(7, node.getChildren().size());
-      CallTreeNode executeThingNode = node.getChildren().get(1);
+      Assert.assertNotNull(rootNode);
+      System.out.println(rootNode.getChildren());
+      Assert.assertEquals(7, rootNode.getChildren().size());
+      CallTreeNode executeThingNode = rootNode.getChildren().get(1);
       Assert.assertEquals(3, executeThingNode.getChildren().size());
       Assert.assertEquals(2, executeThingNode.getChildren().get(0).getChildren().size());
       Assert.assertEquals(1, executeThingNode.getChildren().get(2).getChildren().size());
       
-      CallTreeNode executeThingOther = node.getChildren().get(5);
+      CallTreeNode otherConstructor = rootNode.getChildren().get(3);
+      Assert.assertEquals("new defaultpackage.OtherDependency.<init>()", otherConstructor.getKiekerPattern());
+      
+      CallTreeNode executeThingOther = rootNode.getChildren().get(5);
       Assert.assertEquals("defaultpackage.OtherDependency#executeThing", executeThingOther.getCall());
       CallTreeNode child1 = executeThingOther.getChildren().get(0);
       CallTreeNode child2 = executeThingOther.getChildren().get(1);
@@ -61,7 +64,7 @@ public class TestTreeFilter {
       Assert.assertEquals(1, child3.getChildren().size());
    }
 
-   public static CallTreeNode getTree(File projectFolder) throws IOException, XmlPullParserException, InterruptedException, FileNotFoundException, ViewNotFoundException, AnalysisConfigurationException {
+   public CallTreeNode getTree() throws IOException, XmlPullParserException, InterruptedException, FileNotFoundException, ViewNotFoundException, AnalysisConfigurationException {
       TreeReader executor = TreeReaderFactory.createTestTreeReader(projectFolder, 15);
       
       TestCase test = new TestCase("defaultpackage.TestMe", "testMe");

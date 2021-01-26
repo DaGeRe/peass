@@ -34,6 +34,7 @@ import de.dagere.kopeme.parsing.BuildtoolProjectNameReader;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.testtransformation.JUnitTestTransformer;
 
@@ -53,7 +54,11 @@ public class KiekerResultManager {
 
    public KiekerResultManager(final PeASSFolders folders, long timeout) {
       this.folders = folders;
-      testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), timeout);
+      MeasurementConfiguration fakeConfig = new MeasurementConfiguration(1, timeout);
+      fakeConfig.setIterations(1);
+      fakeConfig.setWarmup(0);
+      fakeConfig.setUseKieker(true);
+      testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), fakeConfig);
       executor = ExecutorCreator.createExecutor(folders, testTransformer);
    }
    

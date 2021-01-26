@@ -22,7 +22,6 @@ import de.peass.dependency.analysis.KiekerReader;
 import de.peass.dependency.analysis.PeASSFilter;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.traces.KiekerFolderUtil;
-import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.kieker.DurationFilter;
 import de.peass.measurement.rca.kieker.KiekerPatternConverter;
@@ -83,18 +82,8 @@ public class KiekerResultReader {
          final CallTreeNode examinedNode = otherVersion ? node.getOtherVersionNode() : node;
          final String nodeCall = KiekerPatternConverter.fixParameters(examinedNode.getKiekerPattern());
          final List<StatisticalSummary> values = new LinkedList<>();
-         // final SummaryStatistics statistics = new SummaryStatistics();
-         if (nodeCall.contains("DiskFileItem.<init>")) {
-            LOG.debug("In here");
-         }
          for (final Entry<AggregatedDataNode, AggregatedData> entry : fullDataMap.entrySet()) {
-            if (entry.getKey().toString().contains("DiskFileItem.<init>")) {
-               System.out.println("Test");
-            }
-            if (isSameNode(examinedNode, nodeCall, entry.getKey())) {
-               if (nodeCall.contains("DiskFileItem.<init>")) {
-                  LOG.debug("Found " + entry.getKey());
-               }
+        	 if (isSameNode(examinedNode, nodeCall, entry.getKey())) {
                for (final StatisticalSummary dataSlice : entry.getValue().getStatistic().values()) {
                   values.add(dataSlice);
                }
