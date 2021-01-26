@@ -40,7 +40,7 @@ public class SelectiveSourceInstrumentationIT {
       includedPatterns.add("public void de.peass.MainTest.testMe()");
       includedPatterns.add("public void de.peass.C0_0.method0()");
       // Kieker pattern parser currently does not accept new, even if it the "return value" which is inside of the records signature
-      includedPatterns.add("public * de.peass.C0_0.<init>()");
+      includedPatterns.add("* de.peass.C0_0.<init>()");
       
       InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, false, includedPatterns);
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
@@ -60,7 +60,7 @@ public class SelectiveSourceInstrumentationIT {
       String monitorLogs = FileUtils.readFileToString(resultFile, StandardCharsets.UTF_8);
       Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.MainTest.testMe()"));
       Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.C0_0.method0()"));
-      Assert.assertThat(monitorLogs, Matchers.containsString("public new de.peass.C0_0.<init>()"));
+      Assert.assertThat(monitorLogs, Matchers.containsString("new de.peass.C0_0.<init>()"));
       Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.C1_0.method0()")));
       Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.AddRandomNumbers.addSomething()")));
    }
