@@ -54,9 +54,8 @@ public class SignatureReader {
 
    public String getDefaultConstructor(ClassOrInterfaceDeclaration clazz) {
       String visibility = getVisibility(clazz);
-
       String signature = visibility + "new " + name + ".<init>(";
-      signature = addInnerClassConstructorParameter(signature, new NodeList<Parameter>());
+      signature = addInnerClassConstructorParameter(clazz, signature, new NodeList<Parameter>());
       signature += ")";
       return signature;
    }
@@ -93,16 +92,16 @@ public class SignatureReader {
       return signature;
    }
 
-   public String getSignature(ConstructorDeclaration method) {
+   public String getSignature(ClassOrInterfaceDeclaration clazz, ConstructorDeclaration method) {
       String modifiers = getModifierString(method.getModifiers());
       String signature = modifiers + "new " + name + ".<init>(";
-      signature = addInnerClassConstructorParameter(signature, method.getParameters());
+      signature = addInnerClassConstructorParameter(clazz, signature, method.getParameters());
       signature += ")";
       return signature;
    }
 
-   private String addInnerClassConstructorParameter(String signature, NodeList<Parameter> parameters) {
-      if (name.contains("$")) {
+   private String addInnerClassConstructorParameter(ClassOrInterfaceDeclaration clazz, String signature, NodeList<Parameter> parameters) {
+      if (name.contains("$") && !clazz.isStatic()) {
          String firstConstructorPart = name.substring(0, name.lastIndexOf('$'));
          signature += firstConstructorPart;
          if (parameters.size() > 0) {

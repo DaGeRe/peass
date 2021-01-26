@@ -89,7 +89,7 @@ public class FileInstrumenter {
          if (child instanceof MethodDeclaration) {
             instrumentMethod(name, child);
          } else if (child instanceof ConstructorDeclaration) {
-            instrumentConstructor(name, child);
+            instrumentConstructor(clazz, name, child);
             constructorFound = true;
          } else if (child instanceof ClassOrInterfaceDeclaration) {
             ClassOrInterfaceDeclaration innerClazz = (ClassOrInterfaceDeclaration) child;
@@ -111,14 +111,14 @@ public class FileInstrumenter {
       return oneHasChanged;
    }
 
-   private void instrumentConstructor(String name, Node child) {
-      if (name.contains("org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl")) {
+   private void instrumentConstructor(ClassOrInterfaceDeclaration clazz, String name, Node child) {
+      if (name.contains("org.apache.commons.fileupload.MockHttpServletRequest")) {
          System.out.println("test");
       }
       ConstructorDeclaration constructor = (ConstructorDeclaration) child;
       final BlockStmt originalBlock = constructor.getBody();
       SignatureReader reader = new SignatureReader(unit, name);
-      String signature = reader.getSignature(constructor);
+      String signature = reader.getSignature(clazz, constructor);
       boolean oneMatches = testSignatureMatch(signature);
       if (oneMatches) {
          BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, signature, true);

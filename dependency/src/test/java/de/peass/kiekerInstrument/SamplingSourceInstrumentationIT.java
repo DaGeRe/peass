@@ -79,7 +79,7 @@ public class SamplingSourceInstrumentationIT {
       Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.MainTest.testMe()"));
       Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.C0_0.method0()"));
       Assert.assertThat(monitorLogs, Matchers.containsString("public new de.peass.C0_0.<init>()"));
-      Assert.assertThat(monitorLogs, Matchers.containsString("new de.peass.C0_0$MyInnerClass.<init>(de.peass.C0_0,int)"));
+      Assert.assertThat(monitorLogs, Matchers.containsString("new de.peass.C0_0$MyInnerClass.<init>(int)"));
       Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.C1_0.method0()")));
       Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.AddRandomNumbers.addSomething()")));
    }
