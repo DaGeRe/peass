@@ -36,6 +36,16 @@ public class TestSourceInstrumentation {
       Assert.assertThat(changedSource, Matchers.containsString("signature = \"" + fqn));
       Assert.assertThat(changedSource, Matchers.containsString("new " + recordName));
    }
+   
+   @Test
+   public void testInnerConstructor() throws IOException {
+      SourceInstrumentationTestUtil.initSimpleProject("/sourceInstrumentation/example_instanceInnerClass/");
+
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION);
+      instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
+
+      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), "public new de.peass.C0_0$InstanceInnerClass.<init>(de.peass.C0_0,int)", "OperationExecutionRecord");
+   }
 
    @Test
    public void testProjectInstrumentation() throws IOException {
@@ -77,7 +87,7 @@ private void testConstructorVisibility() throws IOException {
       Assert.assertThat(changedSource, Matchers.containsString("signature = \"public de.peass.C0_0 de.peass.C0_0.doSomethingWithSamePackageObject(de.peass.C1_0)\""));
       Assert.assertThat(changedSource, Matchers.containsString("signature = \"public de.peass.C0_0$MyInnerClass2 de.peass.C0_0.getInnerInstance()\""));
       Assert.assertThat(changedSource, Matchers.containsString("signature = \"public static void de.peass.C0_0.myStaticStuff()\""));
-      Assert.assertThat(changedSource, Matchers.containsString("signature = \"public new de.peass.C0_0$MyInnerClass.<init>(int)\""));
+      Assert.assertThat(changedSource, Matchers.containsString("signature = \"public new de.peass.C0_0$MyInnerClass.<init>(de.peass.C0_0,int)\""));
       Assert.assertThat(changedSource, Matchers.containsString("signature = \"public void de.peass.C0_0$MyInnerClass.innerMethod()\""));
    }
 }

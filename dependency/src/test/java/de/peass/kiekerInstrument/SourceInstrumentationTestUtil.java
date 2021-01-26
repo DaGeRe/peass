@@ -12,6 +12,23 @@ import org.junit.Assert;
 import de.peass.TestConstants;
 
 public class SourceInstrumentationTestUtil {
+   
+   public static void initSimpleProject(String sourcePath) throws IOException {
+      TestConstants.CURRENT_FOLDER.mkdirs();
+      
+      for (String path : new String[] {"src/main/java/de/peass/C0_0.java", 
+            "src/test/java/de/peass/MainTest.java", 
+            "pom.xml"}) {
+         copyResource(path, sourcePath);
+      }
+      for (String path : new String[] {
+            "src/main/java/de/peass/C1_0.java", 
+            "src/main/java/de/peass/AddRandomNumbers.java"}) {
+         File testFile = new File(TestConstants.CURRENT_FOLDER, path);
+         testFile.delete();
+      }
+   }
+   
    public static void initProject(String sourcePath) throws IOException {
       TestConstants.CURRENT_FOLDER.mkdirs();
       

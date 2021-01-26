@@ -64,6 +64,10 @@ public class SignatureReader {
    public String getSignature(ConstructorDeclaration method) {
       String modifiers = getModifierString(method.getModifiers());
       String signature = modifiers + "new " + name + ".<init>(";
+      if (name.contains("$")) {
+         String firstConstructorPart = name.substring(0, name.indexOf('$'));
+         signature += firstConstructorPart + ",";
+      }
       signature += getParameterString(method.getParameters());
       signature += ")";
       return signature;
