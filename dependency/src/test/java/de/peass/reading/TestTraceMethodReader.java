@@ -32,7 +32,7 @@ public class TestTraceMethodReader {
 
    private final File tmpFolder = new File("target/kieker_results_test/");
    private final String REPO = System.getenv("HOME") + "/.m2/repository";
-   private final String KOPEME_JAR = REPO + "/de/dagere/kopeme/kopeme-core/" + MavenPomUtil.KOPEME_CORE_VERSION + "/kopeme-core-" + MavenPomUtil.KOPEME_CORE_VERSION + ".jar";
+   private final String KOPEME_JAR = REPO + "/de/dagere/kopeme/kopeme-core/" + MavenPomUtil.KOPEME_VERSION + "/kopeme-core-" + MavenPomUtil.KOPEME_VERSION + ".jar";
 
    @Before
    public void init() {

@@ -36,7 +36,7 @@ public class TestSourceInstrumentation {
       Assert.assertThat(changedSource, Matchers.containsString("signature = \"" + fqn));
       Assert.assertThat(changedSource, Matchers.containsString("new " + recordName));
    }
-   
+
    @Test
    public void testInnerConstructor() throws IOException {
       SourceInstrumentationTestUtil.initSimpleProject("/sourceInstrumentation/example_instanceInnerClass/");
@@ -44,8 +44,10 @@ public class TestSourceInstrumentation {
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 
-      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), "public new de.peass.C0_0$InstanceInnerClass.<init>(de.peass.C0_0,int)", "OperationExecutionRecord");
-      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), "new de.peass.C0_0$InstanceInnerClass$InnerInnerClass.<init>(de.peass.C0_0$InstanceInnerClass)", "OperationExecutionRecord");
+      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), "public new de.peass.C0_0$InstanceInnerClass.<init>(de.peass.C0_0,int)",
+            "OperationExecutionRecord");
+      testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"),
+            "new de.peass.C0_0$InstanceInnerClass$InnerInnerClass.<init>(de.peass.C0_0$InstanceInnerClass)", "OperationExecutionRecord");
 
    }
 
@@ -62,16 +64,16 @@ public class TestSourceInstrumentation {
             "OperationExecutionRecord");
       testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "/src/test/java/de/peass/MainTest.java"), "public void de.peass.MainTest.testMe()", "OperationExecutionRecord");
       testFileIsInstrumented(new File(TestConstants.CURRENT_FOLDER, "/src/test/java/de/peass/MainTest.java"), "public new de.peass.MainTest.<init>()", "OperationExecutionRecord");
-      
+
       testConstructorVisibility();
    }
 
-private void testConstructorVisibility() throws IOException {
-	String changedSourceC1 = FileUtils.readFileToString(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C1_0.java"), StandardCharsets.UTF_8);
+   private void testConstructorVisibility() throws IOException {
+      String changedSourceC1 = FileUtils.readFileToString(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C1_0.java"), StandardCharsets.UTF_8);
       Assert.assertThat(changedSourceC1, Matchers.containsString("String signature = \"public new de.peass.C1_0.<init>()\""));
       String changedSourceC0 = FileUtils.readFileToString(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), StandardCharsets.UTF_8);
       Assert.assertThat(changedSourceC0, Matchers.containsString("String signature = \"new de.peass.C0_0.<init>()\""));
-}
+   }
 
    @Test
    public void testDifferentSignatures() throws IOException {
