@@ -38,7 +38,7 @@
 							<transformers>
 								<transformer
 									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<mainClass>de.peass.PeASSMain</mainClass>
+									<mainClass>de.peass.PeassMain</mainClass>
 								</transformer>
 							</transformers>
 							<filters>
@@ -66,19 +66,22 @@
 				<groupId>org.codehaus.mojo</groupId>
 				<executions>
 					<execution>
-						<id>Version Calculation</id>
+						<id>generate-autocompletion-script</id>
 						<phase>install</phase>
 						<goals>
-							<goal>java</goal>
+							<goal>exec</goal>
 						</goals>
 						<configuration>
-							<mainClass>picocli.AutoComplete</mainClass>
+							<executable>java</executable>
 							<arguments>
-								<argument>-n</argument>
-								<argument>./peass</argument>
-								<argument>-o</argument>
-								<argument>${project.parent.basedir}/peass_completion</argument>
-								<argument>de.peass.PeASSMain</argument>
+								<argument>-Dpicocli.autocomplete.systemExitOnError</argument>
+								<argument>-cp</argument>
+								<classpath />
+								<argument>picocli.AutoComplete</argument>
+								<argument>--force</argument><!-- overwrite if exists -->
+								<argument>--completionScript</argument>
+								<argument>${project.build.directory}/mycommand_completion.sh</argument>
+								<argument>de.peass.PeassMain</argument><!-- replace with your class -->
 							</arguments>
 						</configuration>
 					</execution>
