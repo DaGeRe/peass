@@ -61,29 +61,29 @@
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<artifactId>exec-maven-plugin</artifactId>
-				<groupId>org.codehaus.mojo</groupId>
-				<executions>
-					<execution>
-						<id>Version Calculation</id>
-						<phase>install</phase>
-						<goals>
-							<goal>java</goal>
-						</goals>
-						<configuration>
-							<mainClass>picocli.AutoComplete</mainClass>
-							<arguments>
-								<argument>-n</argument>
-								<argument>./peass</argument>
-								<argument>-o</argument>
-								<argument>${project.parent.basedir}/peass_completion</argument>
-								<argument>de.peass.PeASSMain</argument>
-							</arguments>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+<!-- 			<plugin> -->
+<!-- 				<artifactId>exec-maven-plugin</artifactId> -->
+<!-- 				<groupId>org.codehaus.mojo</groupId> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>Version Calculation</id> -->
+<!-- 						<phase>install</phase> -->
+<!-- 						<goals> -->
+<!-- 							<goal>java</goal> -->
+<!-- 						</goals> -->
+<!-- 						<configuration> -->
+<!-- 							<mainClass>picocli.AutoComplete</mainClass> -->
+<!-- 							<arguments> -->
+<!-- 								<argument>-n</argument> -->
+<!-- 								<argument>./peass</argument> -->
+<!-- 								<argument>-o</argument> -->
+<!-- 								<argument>${project.parent.basedir}/peass_completion</argument> -->
+<!-- 								<argument>de.peass.PeASSMain</argument> -->
+<!-- 							</arguments> -->
+<!-- 						</configuration> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
 		</plugins>
 	</build>
 

@@ -25,15 +25,13 @@ public class SamplingBlockBuilder extends BlockBuilder {
    
    @Override
    public BlockStmt buildEmptyConstructor(final SamplingParameters parameters) {
-      BlockStmt replacedStatement = new BlockStmt();
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
          throw new RuntimeException("Not implemented yet (does Sampling + OperationExecutionRecord make sense?)");
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
-         buildConstructorStatement(parameters);
+         return buildConstructorStatement(parameters);
       } else {
          throw new RuntimeException();
       }
-      return replacedStatement;
    }
 
    public BlockStmt buildSelectiveSamplingStatement(final BlockStmt originalBlock, final boolean addReturn, final SamplingParameters parameters) {
