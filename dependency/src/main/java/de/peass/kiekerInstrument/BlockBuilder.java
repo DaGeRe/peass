@@ -52,7 +52,7 @@ public class BlockBuilder {
 
    private static final Logger LOG = LogManager.getLogger(BlockBuilder.class);
 
-   private final AllowedKiekerRecord recordType;
+   protected final AllowedKiekerRecord recordType;
    private final boolean enableDeactivation;
 
    public BlockBuilder(final AllowedKiekerRecord recordType, final boolean enableDeactivation) {
@@ -60,8 +60,8 @@ public class BlockBuilder {
       this.enableDeactivation = enableDeactivation;
    }
 
-   public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final String signature, final boolean addReturn) {
-      LOG.debug("Statements: " + originalBlock.getStatements().size() + " " + signature);
+   public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final boolean addReturn, final SamplingParameters parameters) {
+      LOG.debug("Statements: " + originalBlock.getStatements().size() + " " + parameters.getSignature());
       BlockStmt replacedStatement = new BlockStmt();
       ExplicitConstructorInvocationStmt constructorStatement = null;
       for (Statement st : originalBlock.getStatements()) {
@@ -74,7 +74,7 @@ public class BlockBuilder {
          originalBlock.getStatements().remove(constructorStatement);
       }
 
-      final BlockStmt regularChangedStatement = buildStatement(originalBlock, signature, addReturn);
+      final BlockStmt regularChangedStatement = buildStatement(originalBlock, addReturn, parameters);
       for (Statement st : regularChangedStatement.getStatements()) {
          replacedStatement.addAndGetStatement(st);
       }
@@ -82,41 +82,17 @@ public class BlockBuilder {
       return replacedStatement;
    }
 
-   public BlockStmt buildSampleStatement(BlockStmt originalBlock, String signature, boolean addReturn, SamplingParameters parameters) {
+   public BlockStmt buildStatement(final BlockStmt originalBlock, final boolean addReturn, final SamplingParameters parameters) {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
-         throw new RuntimeException("Not implemented yet (does Sampling + OperationExecutionRecord make sense?)");
+         return buildOperationExecutionStatement(originalBlock, parameters.getSignature(), addReturn);
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
-         return buildSelectiveSamplingStatement(originalBlock, signature, addReturn, parameters);
+         return buildReducedOperationExecutionStatement(originalBlock, parameters.getSignature(), addReturn);
       } else {
          throw new RuntimeException();
       }
    }
 
-   public BlockStmt buildStatement(BlockStmt originalBlock, String signature, boolean addReturn) {
-      if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
-         return buildOperationExecutionStatement(originalBlock, signature, addReturn);
-      } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
-         return buildReducedOperationExecutionStatement(originalBlock, signature, addReturn);
-      } else {
-         throw new RuntimeException();
-      }
-   }
-
-   public BlockStmt buildSelectiveSamplingStatement(BlockStmt originalBlock, String signature, boolean addReturn, SamplingParameters parameters) {
-      BlockStmt replacedStatement = new BlockStmt();
-      replacedStatement.addAndGetStatement("      final long tin = MonitoringController.getInstance().getTimeSource().getTime();");
-
-      int count = 1000;
-
-      BlockStmt finallyBlock = new BlockStmt();
-      finallyBlock.addAndGetStatement(parameters.getFinalBlock(signature, count));
-      TryStmt stmt = new TryStmt(originalBlock, new NodeList<>(), finallyBlock);
-      replacedStatement.addAndGetStatement(stmt);
-
-      return replacedStatement;
-   }
-
-   public BlockStmt buildReducedOperationExecutionStatement(BlockStmt originalBlock, String signature, boolean addReturn) {
+   public BlockStmt buildReducedOperationExecutionStatement(final BlockStmt originalBlock, final String signature, final boolean addReturn) {
       BlockStmt replacedStatement = new BlockStmt();
 
       buildHeader(originalBlock, signature, addReturn, replacedStatement);
@@ -131,7 +107,7 @@ public class BlockBuilder {
       return replacedStatement;
    }
 
-   public BlockStmt buildOperationExecutionStatement(BlockStmt originalBlock, String signature, boolean addReturn) {
+   public BlockStmt buildOperationExecutionStatement(final BlockStmt originalBlock, final String signature, final boolean addReturn) {
       BlockStmt replacedStatement = new BlockStmt();
 
       buildHeader(originalBlock, signature, addReturn, replacedStatement);
@@ -143,7 +119,7 @@ public class BlockBuilder {
       return replacedStatement;
    }
 
-   private void buildHeader(BlockStmt originalBlock, String signature, boolean addReturn, BlockStmt replacedStatement) {
+   private void buildHeader(final BlockStmt originalBlock, final String signature, final boolean addReturn, final BlockStmt replacedStatement) {
       if (enableDeactivation) {
          replacedStatement.addAndGetStatement("if (!MonitoringController.getInstance().isMonitoringEnabled()) {\n" +
                originalBlock.toString() +
@@ -159,19 +135,19 @@ public class BlockBuilder {
       }
    }
 
-   public BlockStmt buildEmptyConstructor(String signature) {
+   public BlockStmt buildEmptyConstructor(final SamplingParameters parameters) {
       BlockStmt replacedStatement = new BlockStmt();
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
-         buildOperationExecutionRecordDefaultConstructor(signature, replacedStatement);
+         buildOperationExecutionRecordDefaultConstructor(parameters.getSignature(), replacedStatement);
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
-         buildReducedOperationExecutionRecordDefaultConstructor(signature, replacedStatement);
+         buildReducedOperationExecutionRecordDefaultConstructor(parameters.getSignature(), replacedStatement);
       } else {
          throw new RuntimeException();
       }
       return replacedStatement;
    }
    
-   public BlockStmt buildEmptySamplingConstructor(String signature, SamplingParameters parameters) {
+   public BlockStmt buildEmptySamplingConstructor(final String signature, final SamplingParameters parameters) {
       BlockStmt replacedStatement = new BlockStmt();
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
          throw new RuntimeException("Not implemented yet (does Sampling + OperationExecutionRecord make sense?)");
@@ -185,7 +161,7 @@ public class BlockBuilder {
       return replacedStatement;
    }
 
-   private void buildReducedOperationExecutionRecordDefaultConstructor(String signature, BlockStmt replacedStatement) {
+   private void buildReducedOperationExecutionRecordDefaultConstructor(final String signature, final BlockStmt replacedStatement) {
       buildHeader(replacedStatement, signature, false, replacedStatement);
       replacedStatement.addAndGetStatement("      final long tin = MonitoringController.getInstance().getTimeSource().getTime();");
       replacedStatement.addAndGetStatement("// measure after\n");
@@ -193,7 +169,7 @@ public class BlockBuilder {
       replacedStatement.addAndGetStatement("MonitoringController.getInstance().newMonitoringRecord(new ReducedOperationExecutionRecord(signature, tin, tout))");
    }
 
-   private void buildOperationExecutionRecordDefaultConstructor(String signature, BlockStmt replacedStatement) {
+   private void buildOperationExecutionRecordDefaultConstructor(final String signature, final BlockStmt replacedStatement) {
       buildHeader(new BlockStmt(), signature, false, replacedStatement);
       replacedStatement.addAndGetStatement(BEFORE_OER_SOURCE + AFTER_OER_SOURCE);
    }

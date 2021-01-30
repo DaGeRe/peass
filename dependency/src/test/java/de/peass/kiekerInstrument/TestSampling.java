@@ -35,6 +35,7 @@ public class TestSampling {
 
       Set<String> includedPatterns = new HashSet<>();
       includedPatterns.add("public void de.peass.MainTest.testMe()");
+      includedPatterns.add("public * de.peass.MainTest.<init>()");
       includedPatterns.add("public java.lang.String de.peass.C0_0.method0(java.lang.String)");
       includedPatterns.add("public static void de.peass.C0_0.myStaticStuff()");
 
@@ -42,6 +43,7 @@ public class TestSampling {
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 
+      testIsSamplingInstrumented("src/test/java/de/peass/MainTest.java", "public new de.peass.MainTest.<init>()", "initCounter");
       testIsSamplingInstrumented("src/test/java/de/peass/MainTest.java", "public void de.peass.MainTest.testMe()", "testMeCounter");
       testIsSamplingInstrumented("src/main/java/de/peass/C0_0.java", "public java.lang.String de.peass.C0_0.method0(java.lang.String", "method0Counter");
       testIsSamplingInstrumented("src/main/java/de/peass/C0_0.java", "public static void de.peass.C0_0.myStaticStuff()", "myStaticStuffCounter1");
