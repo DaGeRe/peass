@@ -23,7 +23,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.peass.dependency.analysis.data.VersionDiff;
-import de.peass.dependency.execution.MavenPomUtil;
 
 /**
  * Allows iteration over git-versions

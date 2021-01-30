@@ -1,10 +1,8 @@
 package de.peass.dependency.execution;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
@@ -28,7 +26,6 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.kiekerInstrument.InstrumentKiekerSource;
 import de.peass.testtransformation.JUnitTestShortener;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.utils.StreamGobbler;

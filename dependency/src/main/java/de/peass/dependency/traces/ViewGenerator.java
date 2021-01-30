@@ -8,7 +8,6 @@ import java.util.concurrent.ExecutorService;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,7 +49,7 @@ public class ViewGenerator extends PairProcessor {
       init();
    }
 
-   public ViewGenerator() throws ParseException, JAXBException, JsonParseException, JsonMappingException, IOException {
+   public ViewGenerator() {
       timeoutInMinutes = 5;
    }
 
@@ -152,7 +151,7 @@ public class ViewGenerator extends PairProcessor {
       return executeFile;
    }
 
-   public static void main(final String[] args) throws JsonParseException, JsonMappingException, ParseException, JAXBException, IOException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, JAXBException, IOException {
       final CommandLine commandLine = new CommandLine(new ViewGenerator());
       commandLine.execute(args);
    }

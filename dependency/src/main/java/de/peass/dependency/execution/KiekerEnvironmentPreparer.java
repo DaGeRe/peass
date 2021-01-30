@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
 import de.peass.dependency.PeASSFolders;
 import de.peass.kiekerInstrument.InstrumentKiekerSource;
 import de.peass.kiekerInstrument.InstrumentationConfiguration;

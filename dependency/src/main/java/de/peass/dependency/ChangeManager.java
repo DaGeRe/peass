@@ -24,7 +24,6 @@ import de.peass.dependency.changesreading.ClazzChangeData;
 import de.peass.dependency.changesreading.FileComparisonUtil;
 import de.peass.dependency.execution.MavenPomUtil;
 import de.peass.vcs.GitUtils;
-import de.peass.vcs.VersionControlSystem;
 import de.peass.vcs.VersionIterator;
 import difflib.DiffUtils;
 import difflib.Patch;

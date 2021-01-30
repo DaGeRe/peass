@@ -16,7 +16,6 @@
  */
 package de.peass.dependency.execution;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -27,7 +26,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
@@ -42,7 +40,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.kiekerInstrument.InstrumentKiekerSource;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 /**

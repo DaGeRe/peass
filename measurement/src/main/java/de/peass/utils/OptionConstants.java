@@ -38,9 +38,6 @@ public enum OptionConstants {
 	FULLRESULTFOLDER("fullresultfolder", "Folder to save the full results of the tests", false), 
 	CHANGEFILE("changefile", "changefile for processing", false),
 	KNOWLEDGEFILE("knowledgefile", "knowledgefile for processing", false),
-	MODULE("module", "the module to research", false),
-	THREADS("threads", "count of threads, default 1", false),	
-	URL("url", "URL of the project to analyze", false),
 	// Measurement
 	TIMEOUT("timeout", "Timeout, after that one test is finished in minutes.", false),
 	DURATION("duration", "Test duration, if a timebased testcase should be used", false),

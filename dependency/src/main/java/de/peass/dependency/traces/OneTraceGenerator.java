@@ -3,11 +3,9 @@ package de.peass.dependency.traces;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +18,6 @@ import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TraceElement;
-import de.peass.dependency.traces.requitur.content.RuleContent;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 
 public class OneTraceGenerator {

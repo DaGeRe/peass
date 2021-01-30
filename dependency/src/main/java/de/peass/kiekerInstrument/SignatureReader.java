@@ -17,8 +17,6 @@ import com.github.javaparser.ast.type.Type;
 
 import de.peass.dependency.changesreading.ClazzFinder;
 
-import de.peass.dependency.ClazzFileFinder;
-
 public class SignatureReader {
 
    /**

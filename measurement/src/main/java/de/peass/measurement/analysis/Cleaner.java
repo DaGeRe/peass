@@ -26,9 +26,12 @@ import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.kopeme.generated.Versioninfo;
+import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.reader.DependencyReaderUtil;
+import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.TestData;
+import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 
 /**
@@ -50,7 +53,7 @@ public class Cleaner extends DataAnalyser {
       final CommandLineParser parser = new DefaultParser();
       final CommandLine line = parser.parse(options, args);
 
-      DependencyReaderUtil.loadDependencies(line);
+      loadDependencies(line);
 
       for (int i = 0; i < line.getOptionValues(OptionConstants.DATA.getName()).length; i++) {
          final File folder = new File(line.getOptionValues(OptionConstants.DATA.getName())[i]);
@@ -183,5 +186,16 @@ public class Cleaner extends DataAnalyser {
       result.setMax(null);
       result.setFulldata(new Fulldata());
       return result;
+   }
+   
+   public static void loadDependencies(final CommandLine line) throws JsonParseException, JsonMappingException, IOException {
+      if (line.hasOption(OptionConstants.DEPENDENCYFILE.getName())) {
+         final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
+         final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+         VersionComparator.setDependencies(dependencies);
+      } else {
+         LOG.error("No dependencyfile information passed.");
+         throw new RuntimeException("No dependencyfile information passed.");
+      }
    }
 }

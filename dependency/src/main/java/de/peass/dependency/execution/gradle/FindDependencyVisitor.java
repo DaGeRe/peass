@@ -11,8 +11,6 @@ import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 
-import de.peass.dependency.execution.GradleTestExecutor;
-
 public class FindDependencyVisitor extends CodeVisitorSupport {
 
    private static final Logger LOG = LogManager.getLogger(FindDependencyVisitor.class);

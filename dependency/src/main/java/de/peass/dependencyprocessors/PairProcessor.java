@@ -3,14 +3,12 @@ package de.peass.dependencyprocessors;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.InitialDependency;
 import de.peass.dependency.persistence.InitialVersion;
-import de.peass.dependency.persistence.Version;
 
 /**
  * Base for processing pair of potentially changed testcases, which are given by a dependencyfile.

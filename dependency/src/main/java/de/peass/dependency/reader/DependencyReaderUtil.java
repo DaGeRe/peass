@@ -25,12 +25,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.analysis.data.ChangeTestMapping;
 import de.peass.dependency.analysis.data.ChangedEntity;
@@ -42,7 +38,6 @@ import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.Constants;
-import de.peass.utils.OptionConstants;
 
 /**
  * Utility function for reading dependencies
@@ -170,17 +165,6 @@ public class DependencyReaderUtil {
          Constants.OBJECTMAPPER.writeValue(file, deps);
       } catch (final IOException e) {
          e.printStackTrace();
-      }
-   }
-
-   public static void loadDependencies(final CommandLine line) throws JsonParseException, JsonMappingException, IOException {
-      if (line.hasOption(OptionConstants.DEPENDENCYFILE.getName())) {
-         final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
-         final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-         VersionComparator.setDependencies(dependencies);
-      } else {
-         LOG.error("No dependencyfile information passed.");
-         throw new RuntimeException("No dependencyfile information passed.");
       }
    }
 

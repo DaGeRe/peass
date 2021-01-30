@@ -12,14 +12,11 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.DependencyReadingStarter;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.reader.DependencyParallelReader;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.Constants;
-import de.peass.vcs.GitCommit;
-import de.peass.vcs.GitUtils;
 
 public class PartialDependenciesMerger {
 
