@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.generated.Result;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.measurement.analysis.AnalyseFullData;
+import de.peass.measurement.analysis.Cleaner;
 import de.peass.measurement.analysis.DataReader;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.MeanCoVData;
@@ -51,7 +52,7 @@ public class AnalyseOneTest {
 		final CommandLineParser parser = new DefaultParser();
 		final CommandLine line = parser.parse(options, args);
 
-		DependencyReaderUtil.loadDependencies(line);
+		Cleaner.loadDependencies(line);
 
 		final File fullDataFolder = new File(line.getOptionValues(FolderSearcher.DATA)[0]);
 

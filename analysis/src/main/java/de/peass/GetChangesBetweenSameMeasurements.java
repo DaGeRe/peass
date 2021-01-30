@@ -26,6 +26,7 @@ import de.peass.analysis.helper.read.VersionData;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependencyprocessors.VersionComparator;
+import de.peass.measurement.analysis.Cleaner;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.utils.OptionConstants;
 import de.peass.utils.RunCommandWriter;
@@ -52,7 +53,7 @@ public class GetChangesBetweenSameMeasurements {
       final CommandLineParser parser = new DefaultParser();
       final CommandLine line = parser.parse(options, args);
 
-      DependencyReaderUtil.loadDependencies(line);
+      Cleaner.loadDependencies(line);
       final String projectName = VersionComparator.getProjectName();
       AnalysisUtil.setProjectName(projectName);
 //      oldKnowledge = VersionKnowledge.getOldChanges();

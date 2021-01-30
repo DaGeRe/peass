@@ -20,6 +20,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.reader.DependencyReaderUtil;
+import de.peass.measurement.analysis.Cleaner;
 import de.peass.measurement.analysis.DataAnalyser;
 import de.peass.measurement.analysis.TestStatistic;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
@@ -39,7 +40,7 @@ public class FindLowestVMCount extends DataAnalyser {
       final CommandLineParser parser = new DefaultParser();
       final CommandLine line = parser.parse(options, args);
 
-      DependencyReaderUtil.loadDependencies(line);
+      Cleaner.loadDependencies(line);
 
       final FindLowestVMCount flv = new FindLowestVMCount();
       for (int i = 0; i < line.getOptionValues(FolderSearcher.DATA).length; i++) {

@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.peass.dependency.reader.DependencyReaderUtil;
+import de.peass.measurement.analysis.Cleaner;
 import de.peass.measurement.analysis.DataAnalyser;
 import de.peass.measurement.analysis.DataReader;
 import de.peass.measurement.analysis.TestStatistic;
@@ -51,7 +52,7 @@ public class IsThereTimeReductionIterations extends DataAnalyser {
       final CommandLineParser parser = new DefaultParser();
       final CommandLine line = parser.parse(options, args);
 
-      DependencyReaderUtil.loadDependencies(line);
+      Cleaner.loadDependencies(line);
       
       final IsThereTimeReductionIterations isThereTimeReductionIterations = new IsThereTimeReductionIterations();
       for (int i = 0; i < line.getOptionValues(FolderSearcher.DATA).length; i++) {

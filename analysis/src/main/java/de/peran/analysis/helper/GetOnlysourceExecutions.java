@@ -28,6 +28,7 @@ import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependencyprocessors.VersionComparator;
+import de.peass.measurement.analysis.Cleaner;
 import de.peass.utils.OptionConstants;
 import de.peass.utils.RunCommandWriter;
 import de.peass.utils.RunCommandWriterSlurm;
@@ -42,7 +43,7 @@ public class GetOnlysourceExecutions {
 
       final CommandLine line = parser.parse(options, args);
 
-      DependencyReaderUtil.loadDependencies(line);
+      Cleaner.loadDependencies(line);
       final Dependencies dependencies = VersionComparator.getDependencies();
       final File projectFolder = new File(line.getOptionValue(OptionConstants.FOLDER.getName()));
       final File viewFolder = new File(line.getOptionValue(OptionConstants.VIEWFOLDER.getName()));

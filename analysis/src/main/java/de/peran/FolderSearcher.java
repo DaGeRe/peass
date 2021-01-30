@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.measurement.analysis.AnalyseFullData;
+import de.peass.measurement.analysis.Cleaner;
 import de.peass.measurement.analysis.ProjectStatistics;
 import de.peass.utils.OptionConstants;
 
@@ -50,7 +51,7 @@ public class FolderSearcher {
       final CommandLineParser parser = new DefaultParser();
       final CommandLine line = parser.parse(options, args);
 
-      DependencyReaderUtil.loadDependencies(line);
+      Cleaner.loadDependencies(line);
 
       final ProjectStatistics info = new ProjectStatistics();
 
