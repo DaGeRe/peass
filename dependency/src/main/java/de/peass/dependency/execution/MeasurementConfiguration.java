@@ -85,7 +85,7 @@ public class MeasurementConfiguration {
          @JsonProperty("earlystop") final boolean earlyStop,
          @JsonProperty("version") final String version,
          @JsonProperty("versionOld") final String versionOld) {
-      this.timeout = timeout * 1000 * 60; // timeout in minutes is converted to milliseconds
+      this.timeout = timeout; // timeout in minutes is NOT converted, since it is the exact serialized timeout
       this.vms = vms;
       this.type1error = type1error;
       this.type2error = type2error;
