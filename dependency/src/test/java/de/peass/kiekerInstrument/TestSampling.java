@@ -22,7 +22,7 @@ public class TestSampling {
       Set<String> includedPatterns = new HashSet<>();
       includedPatterns.add("public void de.peass.MainTest.testMe()");
 
-      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, includedPatterns);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, includedPatterns, false);
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 
@@ -39,7 +39,7 @@ public class TestSampling {
       includedPatterns.add("public java.lang.String de.peass.C0_0.method0(java.lang.String)");
       includedPatterns.add("public static void de.peass.C0_0.myStaticStuff()");
 
-      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, includedPatterns);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, includedPatterns, false);
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 

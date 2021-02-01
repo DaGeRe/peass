@@ -1,9 +1,7 @@
 package de.peass.kiekerInstrument;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
@@ -18,7 +16,6 @@ import org.junit.jupiter.api.Test;
 
 import de.peass.TestConstants;
 import de.peass.dependency.execution.AllowedKiekerRecord;
-import de.peass.dependency.execution.MavenTestExecutor;
 import de.peass.utils.StreamGobbler;
 
 public class SelectiveSourceInstrumentationIT {
@@ -42,7 +39,7 @@ public class SelectiveSourceInstrumentationIT {
       // Kieker pattern parser currently does not accept new, even if it the "return value" which is inside of the records signature
       includedPatterns.add("* de.peass.C0_0.<init>()");
       
-      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, false, includedPatterns);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, false, includedPatterns, false);
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 

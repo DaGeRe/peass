@@ -7,9 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Currency;
 import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -57,7 +55,7 @@ public class SamplingSourceInstrumentationIT {
       includedPatterns.add("public * de.peass.C0_0$MyInnerClass.*(..)");
       includedPatterns.add("new de.peass.C0_0$MyInnerClass.<init>(..)");
       includedPatterns.add("public * de.peass.MainTest.*(..)");
-      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, includedPatterns);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, includedPatterns, false);
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
 
       extendMaven();
