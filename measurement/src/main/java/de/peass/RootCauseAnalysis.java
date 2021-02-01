@@ -14,7 +14,6 @@ import de.peass.dependency.persistence.Version;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.CauseSearcherConfigMixin;
 import de.peass.measurement.rca.CauseTester;
-import de.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
 import de.peass.measurement.rca.analyzer.SourceChangeTreeAnalyzer;
 import de.peass.measurement.rca.analyzer.StructureChangeTreeAnalyzer;
 import de.peass.measurement.rca.analyzer.TreeAnalyzer;
@@ -23,12 +22,9 @@ import de.peass.measurement.rca.searcher.CauseSearcher;
 import de.peass.measurement.rca.searcher.CauseSearcherComplete;
 import de.peass.measurement.rca.searcher.LevelCauseSearcher;
 import de.peass.measurement.rca.searcher.TreeAnalyzerCreator;
-import de.peass.testtransformation.JUnitTestTransformer;
-import kieker.analysisteetime.model.analysismodel.statistics.PredefinedUnits;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
-import picocli.CommandLine.Option;
 
 @Command(description = "Searches for root cause of a performance change, i.e. method causing the performance change", name = "searchcause")
 public class RootCauseAnalysis extends DependencyTestStarter {
@@ -123,7 +119,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
             TreeAnalyzerCreator creatorSource = new TreeAnalyzerCreator() {
 
                @Override
-               public TreeAnalyzer getAnalyzer(BothTreeReader reader, CauseSearcherConfig config) {
+               public TreeAnalyzer getAnalyzer(final BothTreeReader reader, final CauseSearcherConfig config) {
                   return new SourceChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor(), config.getPropertyFolder(), measurementConfiguration);
                }
             };
@@ -133,7 +129,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
             TreeAnalyzerCreator creator = new TreeAnalyzerCreator() {
 
                @Override
-               public TreeAnalyzer getAnalyzer(BothTreeReader reader, CauseSearcherConfig config) {
+               public TreeAnalyzer getAnalyzer(final BothTreeReader reader, final CauseSearcherConfig config) {
                   return new StructureChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
                }
             };
@@ -147,7 +143,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
          TreeAnalyzerCreator creator = new TreeAnalyzerCreator() {
 
             @Override
-            public TreeAnalyzer getAnalyzer(BothTreeReader reader, CauseSearcherConfig config) {
+            public TreeAnalyzer getAnalyzer(final BothTreeReader reader, final CauseSearcherConfig config) {
                return new StructureChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
             }
          };

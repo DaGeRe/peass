@@ -31,17 +31,17 @@ public class ResultOrganizer {
 
    private final PeASSFolders folders;
    private final String mainVersion;
-   private long currentChunkStart;
-   private boolean isUseKieker;
+   private final long currentChunkStart;
+   private final boolean isUseKieker;
    private int thresholdForZippingInMB = 5;
    private final FolderDeterminer determiner;
    private boolean saveAll = false;
    protected final TestCase testcase;
    private boolean success = true;
-   private int expectedIterations;
+   private final int expectedIterations;
 
-   public ResultOrganizer(final PeASSFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll, TestCase test,
-         int expectedIterations) {
+   public ResultOrganizer(final PeASSFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll, final TestCase test,
+         final int expectedIterations) {
       this.folders = folders;
       this.mainVersion = currentVersion;
       this.currentChunkStart = currentChunkStart;
@@ -99,31 +99,34 @@ public class ResultOrganizer {
 
    public void saveResultFiles(final String version, final int vmid)
          throws JAXBException, IOException {
-      final File folder = getTempResultsFolder(version);
-      if (folder != null) {
-         final String methodname = testcase.getMethod();
-         final File oneResultFile = new File(folder, methodname + ".xml");
-         if (!oneResultFile.exists()) {
-            LOG.debug("File {} does not exist.", oneResultFile.getAbsolutePath());
-            success = false;
-         } else {
-            LOG.debug("Reading: {}", oneResultFile);
-            final XMLDataLoader xdl = new XMLDataLoader(oneResultFile);
-            final Kopemedata oneResultData = xdl.getFullData();
-            final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
-            if (testcaseList.size() > 0) {
-               saveResults(version, vmid, oneResultFile, oneResultData, testcaseList);
-
-               if (isUseKieker) {
-                  saveKiekerFiles(folder, folders.getFullResultFolder(testcase, mainVersion, version));
-               }
-            } else {
-               LOG.error("No data - measurement failed?");
+      // Saving and merging result files should not be executed in parallel, therefore, this needs to be synchronized over the class (not the instance)
+      synchronized (ResultOrganizer.class) {
+         final File folder = getTempResultsFolder(version);
+         if (folder != null) {
+            final String methodname = testcase.getMethod();
+            final File oneResultFile = new File(folder, methodname + ".xml");
+            if (!oneResultFile.exists()) {
+               LOG.debug("File {} does not exist.", oneResultFile.getAbsolutePath());
                success = false;
+            } else {
+               LOG.debug("Reading: {}", oneResultFile);
+               final XMLDataLoader xdl = new XMLDataLoader(oneResultFile);
+               final Kopemedata oneResultData = xdl.getFullData();
+               final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
+               if (testcaseList.size() > 0) {
+                  saveResults(version, vmid, oneResultFile, oneResultData, testcaseList);
+
+                  if (isUseKieker) {
+                     saveKiekerFiles(folder, folders.getFullResultFolder(testcase, mainVersion, version));
+                  }
+               } else {
+                  LOG.error("No data - measurement failed?");
+                  success = false;
+               }
             }
-         }
-         for (final File file : folder.listFiles()) {
-            FileUtils.forceDelete(file);
+            for (final File file : folder.listFiles()) {
+               FileUtils.forceDelete(file);
+            }
          }
       }
    }
