@@ -85,7 +85,8 @@ public class MultipleVMTestUtil {
     * @param version
     * @throws JAXBException
     */
-   public static void saveSummaryData(final File summaryResultFile, final File oneResultFile, final TestcaseType oneRunData, final TestCase testcase, final String version, final long currentChunkStart)
+   public static void saveSummaryData(final File summaryResultFile, final File oneResultFile, final TestcaseType oneRunData, final TestCase testcase, final String version,
+         final long currentChunkStart)
          throws JAXBException {
       LOG.info("Writing to merged result file: {}", summaryResultFile);
       final Kopemedata summaryData = initKopemeData(summaryResultFile, testcase);
@@ -97,7 +98,12 @@ public class MultipleVMTestUtil {
          SummaryStatistics st = getExternalFileStatistics(oneResultFile, oneRunDatacollector, oneResult);
          saveData(summaryResultFile, version, summaryData, summaryChunk, oneResult, st);
       } else {
-         final Result cleaned = StatisticUtil.shortenResult(oneResult);
+         final Result cleaned;
+         if (oneResult.getWarmup() != 0) {
+            cleaned = StatisticUtil.shortenResult(oneResult);
+         } else {
+            cleaned = oneResult;
+         }
          final Fulldata realData = cleaned.getFulldata();
          if (realData != null && realData.getValue() != null && realData.getValue().size() > 0) {
             final SummaryStatistics st = createStatistics(realData);
@@ -108,7 +114,7 @@ public class MultipleVMTestUtil {
       }
    }
 
-   private static void saveData(final File summaryResultFile, final String version, final Kopemedata summaryData, Chunk summaryChunk, final Result oneResult,
+   private static void saveData(final File summaryResultFile, final String version, final Kopemedata summaryData, final Chunk summaryChunk, final Result oneResult,
          final SummaryStatistics st) {
       final Result result = createResultFromStatistic(version, st, oneResult.getRepetitions());
       result.setDate(oneResult.getDate());
@@ -118,7 +124,7 @@ public class MultipleVMTestUtil {
       XMLDataStorer.storeData(summaryResultFile, summaryData);
    }
 
-   private static SummaryStatistics getExternalFileStatistics(final File oneResultFile, Datacollector oneRunDatacollector, final Result oneResult) {
+   private static SummaryStatistics getExternalFileStatistics(final File oneResultFile, final Datacollector oneRunDatacollector, final Result oneResult) {
       final File resultFile = new File(oneResultFile.getParentFile(), oneResult.getFulldata().getFileName());
       WrittenResultReader reader = new WrittenResultReader(resultFile);
       Set<String> keys = new HashSet<>();
@@ -139,7 +145,7 @@ public class MultipleVMTestUtil {
       return fullResultData;
    }
 
-   public static Chunk findChunk(final long currentChunkStart, final Kopemedata fullResultData, Datacollector oneRunDatacollector) {
+   public static Chunk findChunk(final long currentChunkStart, final Kopemedata fullResultData, final Datacollector oneRunDatacollector) {
       final List<Datacollector> fullResultFileDatacollectorList = fullResultData.getTestcases().getTestcase().get(0).getDatacollector();
       if (fullResultFileDatacollectorList.size() == 0) {
          fullResultFileDatacollectorList.add(new Datacollector());
@@ -166,7 +172,7 @@ public class MultipleVMTestUtil {
       return realChunk;
    }
 
-   public static DescriptiveStatistics getChunkData(Chunk chunk, String version) {
+   public static DescriptiveStatistics getChunkData(final Chunk chunk, final String version) {
       final DescriptiveStatistics desc1 = new DescriptiveStatistics();
       for (final Result result : chunk.getResult()) {
          if (result.getVersion().getGitversion().equals(version) && !Double.isNaN(result.getValue())) {
@@ -205,7 +211,7 @@ public class MultipleVMTestUtil {
       final double[] values = new double[realData.getValue().size()];
       int i = 0;
       for (final Value value : realData.getValue()) {
-         final long parseDouble =value.getValue();
+         final long parseDouble = value.getValue();
          st2.addValue(parseDouble);
          values[i++] = parseDouble;
       }
