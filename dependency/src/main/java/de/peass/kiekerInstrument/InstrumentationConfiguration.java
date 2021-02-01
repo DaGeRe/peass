@@ -14,16 +14,16 @@ public class InstrumentationConfiguration {
    /**
     * Simple constructor, setting default values for everything except usedRecord, sample and includedPatterns
     */
-   public InstrumentationConfiguration(AllowedKiekerRecord usedRecord, boolean sample, Set<String> includedPatterns) {
+   public InstrumentationConfiguration(final AllowedKiekerRecord usedRecord, final boolean sample, final Set<String> includedPatterns, final boolean enableAdaptiveMonitoring) {
       this.usedRecord = usedRecord;
       this.sample = sample;
       this.includedPatterns = includedPatterns;
-      this.enableAdaptiveMonitoring = false;
+      this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
       this.createDefaultConstructor = true;
    }
 
-   public InstrumentationConfiguration(AllowedKiekerRecord usedRecord, boolean sample, boolean createDefaultConstructor, boolean enableAdaptiveMonitoring,
-         Set<String> includedPatterns) {
+   public InstrumentationConfiguration(final AllowedKiekerRecord usedRecord, final boolean sample, final boolean createDefaultConstructor, final boolean enableAdaptiveMonitoring,
+         final Set<String> includedPatterns) {
       this.usedRecord = usedRecord;
       this.sample = sample;
       this.createDefaultConstructor = createDefaultConstructor;

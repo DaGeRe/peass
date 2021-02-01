@@ -20,8 +20,8 @@ public class KiekerEnvironmentPreparer {
    private List<File> modules;
    private List<String> existingClasses;
 
-   public KiekerEnvironmentPreparer(Set<String> includedMethodPattern, PeASSFolders folders, JUnitTestTransformer testTransformer, List<File> modules,
-         List<String> existingClasses) {
+   public KiekerEnvironmentPreparer(final Set<String> includedMethodPattern, final PeASSFolders folders, final JUnitTestTransformer testTransformer, final List<File> modules,
+         final List<String> existingClasses) {
       this.includedMethodPattern = includedMethodPattern;
       this.folders = folders;
       this.testTransformer = testTransformer;
@@ -34,9 +34,10 @@ public class KiekerEnvironmentPreparer {
       if (config.isUseSourceInstrumentation()) {
          final InstrumentKiekerSource instrumentKiekerSource;
          if (!config.isUseSelectiveInstrumentation()) {
-            instrumentKiekerSource = new InstrumentKiekerSource(config.getRecord());
+            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), false, includedMethodPattern, config.isEnableAdaptiveConfig());
+            instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
          } else {
-            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), config.isUseSampling(), includedMethodPattern);
+            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), config.isUseSampling(), includedMethodPattern, config.isEnableAdaptiveConfig());
             instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
          }
          instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
@@ -103,7 +104,7 @@ public class KiekerEnvironmentPreparer {
    private static final String[] metaInfFolders = new String[] { "src/main/resources/META-INF", "src/java/META-INF", "src/test/resources/META-INF", "src/test/META-INF",
          "target/test-classes/META-INF" };
 
-   private void generateAOPXML(AllowedKiekerRecord aspect) {
+   private void generateAOPXML(final AllowedKiekerRecord aspect) {
       try {
          for (final File module : modules) {
             for (final String potentialReadFolder : metaInfFolders) {

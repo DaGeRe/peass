@@ -17,12 +17,15 @@ public class MeasurementConfiguration {
    private int iterations = 1;
    private int repetitions = 1;
    private boolean logFullData = true;
+   
+   //Kieker config
    private boolean useKieker = false;
    private boolean useSourceInstrumentation = false;
    private boolean useSelectiveInstrumentation = false;
    private boolean useSampling = false;
    private boolean useCircularQueue = false;
    private boolean redirectToNull = true;
+   private boolean enableAdaptiveMonitoring = false;
    private boolean useGC = true;
    private int kiekerAggregationInterval = 5000;
    private String javaVersion = System.getProperty("java.version");
@@ -39,7 +42,7 @@ public class MeasurementConfiguration {
       this.type2error = 0.01;
    }
 
-   public MeasurementConfiguration(final int vms, long timeoutInMinutes) {
+   public MeasurementConfiguration(final int vms, final long timeoutInMinutes) {
       this.timeout = timeoutInMinutes * 60 * 1000; // timeout in minutes is converted to milliseconds
       this.vms = vms;
       this.type1error = 0.01;
@@ -65,7 +68,7 @@ public class MeasurementConfiguration {
       this.type2error = type2error;
    }
 
-   public MeasurementConfiguration(MeasurementConfigurationMixin mixin) {
+   public MeasurementConfiguration(final MeasurementConfigurationMixin mixin) {
       this(mixin.getTimeout(), mixin.getVms(), mixin.getType1error(), mixin.getType2error());
       setEarlyStop(mixin.isEarlyStop());
       setUseKieker(mixin.isUseKieker());
@@ -99,7 +102,7 @@ public class MeasurementConfiguration {
     * 
     * @param other Configuration to copy
     */
-   public MeasurementConfiguration(MeasurementConfiguration other) {
+   public MeasurementConfiguration(final MeasurementConfiguration other) {
       this.timeout = other.timeout;
       this.vms = other.vms;
       this.type1error = other.type1error;
@@ -129,7 +132,7 @@ public class MeasurementConfiguration {
       return useGC;
    }
 
-   public void setUseGC(boolean useGC) {
+   public void setUseGC(final boolean useGC) {
       this.useGC = useGC;
    }
 
@@ -137,7 +140,7 @@ public class MeasurementConfiguration {
       return redirectToNull;
    }
 
-   public void setRedirectToNull(boolean redirectToNull) {
+   public void setRedirectToNull(final boolean redirectToNull) {
       this.redirectToNull = redirectToNull;
    }
 
@@ -174,7 +177,7 @@ public class MeasurementConfiguration {
       return earlyStop;
    }
 
-   public void setEarlyStop(boolean earlyStop) {
+   public void setEarlyStop(final boolean earlyStop) {
       this.earlyStop = earlyStop;
    }
 
@@ -222,7 +225,7 @@ public class MeasurementConfiguration {
       return logFullData;
    }
 
-   public void setLogFullData(boolean logFullData) {
+   public void setLogFullData(final boolean logFullData) {
       this.logFullData = logFullData;
    }
 
@@ -246,11 +249,11 @@ public class MeasurementConfiguration {
       return javaVersion;
    }
 
-   public void setJavaVersion(String javaVersion) {
+   public void setJavaVersion(final String javaVersion) {
       this.javaVersion = javaVersion;
    }
 
-   public void setRecord(AllowedKiekerRecord record) {
+   public void setRecord(final AllowedKiekerRecord record) {
       if (record == null) {
          this.record = AllowedKiekerRecord.OPERATIONEXECUTION;
       } else {
@@ -266,7 +269,7 @@ public class MeasurementConfiguration {
       return useSourceInstrumentation;
    }
 
-   public void setUseSourceInstrumentation(boolean useSourceInstrumentation) {
+   public void setUseSourceInstrumentation(final boolean useSourceInstrumentation) {
       this.useSourceInstrumentation = useSourceInstrumentation;
    }
 
@@ -274,7 +277,7 @@ public class MeasurementConfiguration {
       return useCircularQueue;
    }
 
-   public void setUseCircularQueue(boolean useCircularQueue) {
+   public void setUseCircularQueue(final boolean useCircularQueue) {
       this.useCircularQueue = useCircularQueue;
    }
 
@@ -282,7 +285,7 @@ public class MeasurementConfiguration {
       return useSelectiveInstrumentation;
    }
 
-   public void setUseSelectiveInstrumentation(boolean useSelectiveInstrumentation) {
+   public void setUseSelectiveInstrumentation(final boolean useSelectiveInstrumentation) {
       this.useSelectiveInstrumentation = useSelectiveInstrumentation;
    }
 
@@ -290,15 +293,23 @@ public class MeasurementConfiguration {
       return useSampling;
    }
 
-   public void setUseSampling(boolean useSampling) {
+   public void setUseSampling(final boolean useSampling) {
       this.useSampling = useSampling;
+   }
+   
+   public boolean isEnableAdaptiveConfig() {
+      return enableAdaptiveMonitoring;
+   }
+   
+   public void setEnableAdaptiveConfig(final boolean allowAdaptiveConfig) {
+      this.enableAdaptiveMonitoring = allowAdaptiveConfig;
    }
 
    public MeasurementStrategy getMeasurementStrategy() {
       return measurementStrategy;
    }
 
-   public void setMeasurementStrategy(MeasurementStrategy measurementStrategy) {
+   public void setMeasurementStrategy(final MeasurementStrategy measurementStrategy) {
       this.measurementStrategy = measurementStrategy;
    }
    
