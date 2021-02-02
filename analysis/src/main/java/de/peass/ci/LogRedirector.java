@@ -7,15 +7,12 @@ import java.io.PrintStream;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.appender.ConsoleAppender;
-import org.apache.logging.log4j.core.appender.FileAppender;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.apache.logging.log4j.core.config.builder.api.AppenderComponentBuilder;
 import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
 import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
 import org.apache.logging.log4j.core.config.builder.api.RootLoggerComponentBuilder;
 import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
-import org.apache.logging.log4j.core.layout.PatternLayout;
 
 public class LogRedirector implements AutoCloseable {
 
@@ -30,17 +27,8 @@ public class LogRedirector implements AutoCloseable {
     * @throws Exception
     * @throws FileNotFoundException
     */
-   public static void main(String[] args) throws FileNotFoundException, Exception {
+   public static void main(final String[] args) throws FileNotFoundException, Exception {
       File logFile = new File("test.txt");
-
-//      redirectLogToFile(logFile);
-//
-//      LOG.debug("test - should go to file");
-//      System.out.println("File 1");
-//
-//      Configurator.reconfigure();
-//      LOG.debug("test - should go to console");
-//      System.out.println("File 2");
 
       try (LogRedirector director = new LogRedirector(logFile)) {
          System.out.println("Should go to file");
@@ -48,9 +36,15 @@ public class LogRedirector implements AutoCloseable {
       }
       LOG.debug("test - should go to console");
       System.out.println("Should go to console");
+      
+      File logFile2 = new File("test2.txt");
+      try (LogRedirector director = new LogRedirector(logFile2)) {
+         System.out.println("Should go to file2");
+         LOG.debug("test - should go to file2");
+      }
    }
 
-   private static void redirectLogToFile(File logFile) {
+   private static void redirectLogToFile(final File logFile) {
       ConfigurationBuilder<BuiltConfiguration> builder = ConfigurationBuilderFactory.newConfigurationBuilder();
 
       builder.setStatusLevel(Level.INFO);
@@ -74,13 +68,13 @@ public class LogRedirector implements AutoCloseable {
    private final PrintStream oldOut;
    private final PrintStream oldErr;
 
-   public LogRedirector(File file) throws FileNotFoundException {
-
+   public LogRedirector(final File file) throws FileNotFoundException {
       oldOut = System.out;
       oldErr = System.err;
       redirectLogToFile(file);
-      System.setOut(new PrintStream(file));
-      System.setErr(new PrintStream(file));
+      final PrintStream changedLog = new PrintStream(file);
+      System.setOut(changedLog);
+      System.setErr(changedLog);
    }
 
    @Override
