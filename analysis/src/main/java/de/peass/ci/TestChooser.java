@@ -1,22 +1,16 @@
 package de.peass.ci;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.analysis.properties.PropertyReader;
 import de.peass.dependency.PeASSFolders;
@@ -43,7 +37,7 @@ public class TestChooser {
    private final int threads;
    private final List<String> includes;
 
-   public TestChooser(boolean useViews, File localFolder, PeASSFolders folders, GitCommit version, File viewFolder, File propertyFolder, int threads, List<String> includes) {
+   public TestChooser(final boolean useViews, final File localFolder, final PeASSFolders folders, final GitCommit version, final File viewFolder, final File propertyFolder, final int threads, final List<String> includes) {
       this.useViews = useViews;
       this.localFolder = localFolder;
       this.folders = folders;
@@ -64,7 +58,8 @@ public class TestChooser {
          final TestSet traceTestSet = getViewTests(dependencies);
          for (final Map.Entry<ChangedEntity, Set<String>> test : traceTestSet.getTestcases().entrySet()) {
             for (final String method : test.getValue()) {
-               tests.add(new TestCase(test.getKey().getClazz(), method));
+               TestCase dynamicallySelectedTest = new TestCase(test.getKey().getClazz(), method, test.getKey().getModule());
+               tests.add(dynamicallySelectedTest);
             }
          }
       } else {
@@ -90,7 +85,7 @@ public class TestChooser {
       }
    }
 
-   public static boolean isTestIncluded(TestCase test, List<String> includes) {
+   public static boolean isTestIncluded(final TestCase test, final List<String> includes) {
       if (includes.size() == 0) {
          return true;
       }

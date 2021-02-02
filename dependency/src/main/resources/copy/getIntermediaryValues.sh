@@ -63,7 +63,9 @@ files=(level/*/*/*)
 if [ ${#files[@]} -gt 1 ]
 then
 	echo "This script provides an ad-hoc analysis to see the ordner of magnitude of measurement values; there is no outlier detection or warmup consideration, therefore these values are not final!"
-	echo "Current file: "${files[0]}/
+	firstFolder=$(ls ${files[0]} | grep -v .xml | head -n 1)
+	methods=$(cat ${files[0]}/$firstFolder/*/kieker*/*.csv | awk -F';' '{print $1}' | uniq | sort | uniq)
+	echo "Current file: "${files[0]}/" Methods: $methods"
 	cat ${files[0]}/*xml | grep "<value>" | tr -d "<value/>" | sort > level/current.csv 
 	cat ${files[1]}/*xml | grep "<value>" | tr -d "<value/>" | sort > level/predecessor.csv 
 	
