@@ -21,10 +21,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.kopeme.generated.Result;
 import de.peass.analysis.changes.ProjectChanges;
 import de.peass.analysis.statistics.ConfidenceIntervalInterpretion;
+import de.peass.dependency.analysis.ModuleClassMapping;
+import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.measurement.analysis.DataAnalyser;
-import de.peass.measurement.analysis.Relation;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.MeanCoVData;
 import de.peass.measurement.analysis.statistics.MeanHistogramData;
@@ -47,16 +47,18 @@ public class AnalyseFullData extends DataAnalyser {
    public int testcases = 0;
 
    private final File changeFile;
-   public final ProjectChanges projectChanges = new ProjectChanges();
+   private final ProjectChanges projectChanges = new ProjectChanges();
+   private final ModuleClassMapping mapping;
 
    private final ProjectStatistics info;
 
    public AnalyseFullData(final ProjectStatistics info) {
-      this(new File(AnalyseOneTest.RESULTFOLDER, "changes.json"), info);
+      this(new File(AnalyseOneTest.RESULTFOLDER, "changes.json"), info, null);
    }
 
-   public AnalyseFullData(final File changesFile, ProjectStatistics info) {
+   public AnalyseFullData(final File changesFile, final ProjectStatistics info, final ModuleClassMapping mapping) {
       this.changeFile = changesFile;
+      this.mapping = mapping;
       this.info = info;
       LOG.info("Writing changes to: {}", changeFile.getAbsolutePath());
       try {
@@ -66,47 +68,53 @@ public class AnalyseFullData extends DataAnalyser {
       }
    }
 
+   public ProjectChanges getProjectChanges() {
+      return projectChanges;
+   }
+
    @Override
    public void processTestdata(final TestData measurementEntry) {
-      for (final Entry<String, EvaluationPair> entry : measurementEntry.getMeasurements().entrySet()) {
-         final String version = entry.getKey();
-         LOG.debug("Analysing: {} ({}#{}) Complete: {}", version, measurementEntry.getTestClass(), measurementEntry.getTestMethod(), entry.getValue().isComplete());
-         final TestStatistic teststatistic = new TestStatistic(entry.getValue(), info);
+      for (final Entry<String, EvaluationPair> versionEntry : measurementEntry.getMeasurements().entrySet()) {
+         final String version = versionEntry.getKey();
+         LOG.debug("Analysing: {} ({}#{}) Complete: {}", version, measurementEntry.getTestClass(), measurementEntry.getTestMethod(), versionEntry.getValue().isComplete());
+
+         final TestStatistic teststatistic = new TestStatistic(versionEntry.getValue(), info);
 
          if (Constants.DRAW_RESULTS) {
-            final File resultFile = generatePlots(measurementEntry, entry, teststatistic.isChange());
-            final File stuffFolder;
-            if (teststatistic.isChange()) {
-               stuffFolder = new File(AnalyseOneTest.RESULTFOLDER, "graphs/results/change");
-            } else {
-               stuffFolder = new File(AnalyseOneTest.RESULTFOLDER, "graphs/results/nochange");
-            }
-            try {
-               FileUtils.copyFile(resultFile, new File(stuffFolder, version + "_" + measurementEntry.getTestMethod() + ".png"));
-            } catch (final IOException e) {
-               e.printStackTrace();
-            }
+            drawPNGs(measurementEntry, versionEntry, version, teststatistic);
          }
 
          LOG.debug("Change: {} T: {}", teststatistic.isChange(), teststatistic.getTValue());
 
          if (teststatistic.isChange()) {
-            addChangeData(measurementEntry, entry, version, teststatistic);
-            
+            addChangeData(measurementEntry, versionEntry, version, teststatistic);
+
             try {
                FolderSearcher.MAPPER.writeValue(changeFile, projectChanges);
             } catch (final IOException e) {
                e.printStackTrace();
             }
-            // csvResultWriter.write(version + ";" + "vim " + viewName + ";" + measurementEntry.getTestCase().getTe + ";" + tTestResult + ";" + confidenceResult + "\n");
-            // csvResultWriter.flush();
 
-            
          }
       }
       versions.addAll(measurementEntry.getMeasurements().keySet());
       LOG.debug("Version: {}", measurementEntry.getMeasurements().keySet());
       testcases += measurementEntry.getMeasurements().size();
+   }
+
+   private void drawPNGs(final TestData measurementEntry, final Entry<String, EvaluationPair> versionEntry, final String version, final TestStatistic teststatistic) {
+      final File resultFile = generatePlots(measurementEntry, versionEntry, teststatistic.isChange());
+      final File stuffFolder;
+      if (teststatistic.isChange()) {
+         stuffFolder = new File(AnalyseOneTest.RESULTFOLDER, "graphs/results/change");
+      } else {
+         stuffFolder = new File(AnalyseOneTest.RESULTFOLDER, "graphs/results/nochange");
+      }
+      try {
+         FileUtils.copyFile(resultFile, new File(stuffFolder, version + "_" + measurementEntry.getTestMethod() + ".png"));
+      } catch (final IOException e) {
+         e.printStackTrace();
+      }
    }
 
    private void addChangeData(final TestData measurementEntry, final Entry<String, EvaluationPair> entry, final String version, final TestStatistic teststatistic) {
@@ -116,13 +124,16 @@ public class AnalyseFullData extends DataAnalyser {
       } else {
          tRelation = Relation.GREATER_THAN;
       }
-      
+
       long repetitions = entry.getValue().getCurrent().get(0).getRepetitions();
 
       final double diffPercent = ((double) teststatistic.getDiff()) / 100;
       final double mean = teststatistic.getPreviousStatistic().getMean() / repetitions;
-      projectChanges.addChange(measurementEntry.getTestCase(), version,
-            teststatistic.getConfidenceResult(), tRelation, mean, 
+
+      final TestCase currentTest = getCurrentTestcase(measurementEntry);
+
+      projectChanges.addChange(currentTest, version,
+            teststatistic.getConfidenceResult(), tRelation, mean,
             diffPercent, teststatistic.getTValue(),
             teststatistic.getCurrentStatistic().getN());
       projectChanges.setVersionCount(versions.size());
@@ -135,9 +146,20 @@ public class AnalyseFullData extends DataAnalyser {
       System.out.println("git diff " + version + ".." + VersionComparator.getPreviousVersion(version));
    }
 
+   private TestCase getCurrentTestcase(final TestData measurementEntry) {
+      final TestCase currentTest;
+      if (mapping != null) {
+         final String module = mapping.getModuleOfClass(measurementEntry.getTestClass());
+         currentTest = new TestCase(measurementEntry.getTestClass(), measurementEntry.getTestMethod(), module);
+      } else {
+         currentTest = measurementEntry.getTestCase();
+      }
+      return currentTest;
+   }
+
    private File generatePlots(final TestData measurementEntry, final Entry<String, EvaluationPair> entry, final boolean change) {
-//      final List<Result> currentValues = ConfidenceInterval.getWarmupData(entry.getValue().getCurrent());
-//      final List<Result> previousValues = ConfidenceInterval.getWarmupData(entry.getValue().getPrevius());
+      // final List<Result> currentValues = ConfidenceInterval.getWarmupData(entry.getValue().getCurrent());
+      // final List<Result> previousValues = ConfidenceInterval.getWarmupData(entry.getValue().getPrevius());
       final List<Result> currentValues = entry.getValue().getCurrent();
       final List<Result> previousValues = entry.getValue().getPrevius();
 

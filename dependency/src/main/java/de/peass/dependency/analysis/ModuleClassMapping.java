@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peass.dependency.ClazzFileFinder;
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.execution.TestExecutor;
 
 public class ModuleClassMapping {
@@ -39,6 +40,25 @@ public class ModuleClassMapping {
          }
       }
    }
+   
+   public ModuleClassMapping(final File baseFolder) throws IOException, XmlPullParserException {
+      final List<File> modules = TestExecutor.getModules(new PeASSFolders(baseFolder));
+      for (final File module : modules) {
+         final List<String> classes = ClazzFileFinder.getClasses(module);
+         String moduleName;
+         if (module.equals(baseFolder)) {
+            moduleName = "";
+         } else {
+            moduleName = getModuleName(baseFolder, module);
+         }
+         LOG.debug("Module: {} Name: {}", module.getAbsolutePath(), moduleName);
+         for (final String clazz : classes) {
+            mapping.put(clazz, moduleName);
+         }
+      }
+   }
+   
+   
 
    public ModuleClassMapping(final TestExecutor executor) throws IOException, XmlPullParserException {
       this(executor.getProjectFolder(), executor.getModules());

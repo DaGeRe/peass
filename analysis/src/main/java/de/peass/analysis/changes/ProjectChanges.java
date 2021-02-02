@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.peass.analysis.changes.processors.ChangeProcessor;
+import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.Relation;
@@ -67,8 +68,8 @@ public class ProjectChanges {
    public void addChange(final TestCase testCase, final String versionTag,
          final Relation confidenceResult,
          final Relation tTestResult, final double oldTime,
-         final double diffPercent, final double tvalue, 
-         long vms) {
+         final double diffPercent, final double tvalue,
+         final long vms) {
       final Changes changeList = getVersion(versionTag);
       final String viewName = "view_" + versionTag + "/diffs/" + testCase.getShortClazz() + "#" + testCase.getMethod() + ".txt";
       LOG.trace("Adding change: " + testCase);
@@ -79,7 +80,14 @@ public class ProjectChanges {
 
    public void addChange(final TestCase test, final String versionTag, final Change change) {
       final Changes changeList = getVersion(versionTag);
-      changeList.addChange(test.getClazz(), change);
+      final String clazz;
+      if (test.getModule() != null && !test.getModule().equals("")) {
+         clazz = test.getModule() + ChangedEntity.MODULE_SEPARATOR + test.getClazz();
+      } else {
+         clazz = test.getClazz();
+
+      }
+      changeList.addChange(clazz, change);
       changeCount++;
 
    }

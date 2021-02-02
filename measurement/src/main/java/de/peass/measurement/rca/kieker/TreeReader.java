@@ -14,7 +14,6 @@ import de.peass.dependency.analysis.PeASSFilter;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.execution.MeasurementConfiguration;
-import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
@@ -32,17 +31,17 @@ public class TreeReader extends KiekerResultManager {
       this.config = config;
    }
 
-   public void setIgnoreEOIs(boolean ignoreEOIs) {
+   public void setIgnoreEOIs(final boolean ignoreEOIs) {
       this.ignoreEOIs = ignoreEOIs;
    }
 
    @Override
-   public void executeKoPeMeKiekerRun(TestSet testsToUpdate, String version) throws IOException, XmlPullParserException, InterruptedException {
+   public void executeKoPeMeKiekerRun(final TestSet testsToUpdate, final String version) throws IOException, XmlPullParserException, InterruptedException {
       executor.loadClasses();
       super.executeKoPeMeKiekerRun(testsToUpdate, version);
    }
 
-   public CallTreeNode getTree(TestCase testcase, String version)
+   public CallTreeNode getTree(final TestCase testcase, final String version)
          throws FileNotFoundException, IOException, XmlPullParserException, ViewNotFoundException, AnalysisConfigurationException, InterruptedException {
       executeMeasurements(testcase, version);
       
@@ -53,12 +52,12 @@ public class TreeReader extends KiekerResultManager {
       return root;
    }
 
-   private CallTreeNode readTree(TestCase testcase, File kiekerTraceFolder) throws AnalysisConfigurationException, IOException, XmlPullParserException {
+   private CallTreeNode readTree(final TestCase testcase, final File kiekerTraceFolder) throws AnalysisConfigurationException, IOException, XmlPullParserException {
       KiekerReader reader = new KiekerReader(kiekerTraceFolder);
       reader.initBasic();
       TraceReconstructionFilter traceReconstructionFilter = reader.initTraceReconstruction();
 
-      final ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), TestExecutor.getModules(folders));
+      final ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder());
       
       AnalysisController analysisController = reader.getAnalysisController();
       final TreeFilter treeFilter = new TreeFilter(null, analysisController, testcase, ignoreEOIs, config, mapping);
@@ -71,7 +70,7 @@ public class TreeReader extends KiekerResultManager {
       return root;
    }
 
-   private void executeMeasurements(TestCase testcase, String version) throws IOException, XmlPullParserException, InterruptedException {
+   private void executeMeasurements(final TestCase testcase, final String version) throws IOException, XmlPullParserException, InterruptedException {
       executeKoPeMeKiekerRun(new TestSet(testcase), version);
    }
 

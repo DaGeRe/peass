@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 
 /**
@@ -34,7 +35,7 @@ public class Changes {
     * @param percent How much the performance was changed
     * @return Added Change
     */
-   public Change addChange(final TestCase testcase, final String viewName, final double oldTime, final double percent, final double tvalue, long vms) {
+   public Change addChange(final TestCase testcase, final String viewName, final double oldTime, final double percent, final double tvalue, final long vms) {
       Change change = new Change();
       change.setDiff(viewName);
       change.setTvalue(tvalue);
@@ -42,11 +43,17 @@ public class Changes {
       change.setChangePercent(percent);
       change.setVms(vms);
       change.setMethod(testcase.getMethod());
-      addChange(testcase.getClazz(), change);
+      String clazz;
+      if (testcase.getModule() != null && !testcase.getModule().equals("")) {
+         clazz = testcase.getModule() + ChangedEntity.MODULE_SEPARATOR + testcase.getClazz();
+      } else {
+         clazz = testcase.getClazz();
+      }
+      addChange(clazz, change);
       return change;
    }
 
-   public Change getChange(TestCase test) {
+   public Change getChange(final TestCase test) {
       List<Change> changes = testcaseChanges.get(test.getClazz());
       if (changes != null) {
          for (Change candidate : changes) {
@@ -60,7 +67,7 @@ public class Changes {
       return null;
    }
 
-   public void addChange(String testclazz, Change change) {
+   public void addChange(final String testclazz, final Change change) {
       if (change == null) {
          throw new RuntimeException("Change should not be null! Testclass: " + testclazz);
       }
@@ -73,7 +80,7 @@ public class Changes {
 
       currentChanges.sort(new Comparator<Change>() {
          @Override
-         public int compare(Change o1, Change o2) {
+         public int compare(final Change o1, final Change o2) {
             return o1.getDiff().compareTo(o2.getDiff());
          }
       });

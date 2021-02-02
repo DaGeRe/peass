@@ -13,10 +13,10 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.persistence.Dependencies;
@@ -46,7 +46,7 @@ public class ContinuousExecutor {
    private final File viewFolder;
    private final File propertyFolder;
 
-   public ContinuousExecutor(File projectFolder, MeasurementConfiguration measurementConfig, int threads, boolean useViews) throws InterruptedException, IOException {
+   public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final int threads, final boolean useViews) throws InterruptedException, IOException {
       this.projectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
       this.threads = threads;
@@ -76,7 +76,7 @@ public class ContinuousExecutor {
       execute(new LinkedList<>());
    }
 
-   public void execute(List<String> includes) throws Exception {
+   public void execute(final List<String> includes) throws Exception {
       final File dependencyFile = new File(localFolder, "dependencies.json");
       final VersionIteratorGit iterator = buildIterator();
       final String url = GitUtils.getURL(projectFolder);
@@ -95,7 +95,7 @@ public class ContinuousExecutor {
       }
    }
 
-   private Set<TestCase> selectIncludedTests(List<String> includes, final Dependencies dependencies) throws Exception {
+   private Set<TestCase> selectIncludedTests(final List<String> includes, final Dependencies dependencies) throws Exception {
       final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version, 
             viewFolder, propertyFolder, threads, includes);
       final Set<TestCase> tests = chooser.getTestSet(dependencies);
@@ -110,11 +110,12 @@ public class ContinuousExecutor {
       return measurementFolder;
    }
 
-   private void analyzeMeasurements(final File measurementFolder) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException {
+   private void analyzeMeasurements(final File measurementFolder) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
       final File changefile = new File(localFolder, "changes.json");
       AnalyseOneTest.setResultFolder(new File(localFolder, version.getTag() + "_graphs"));
       final ProjectStatistics statistics = new ProjectStatistics();
-      final AnalyseFullData afd = new AnalyseFullData(changefile, statistics);
+      ModuleClassMapping mapping = new ModuleClassMapping(projectFolder);
+      final AnalyseFullData afd = new AnalyseFullData(changefile, statistics, mapping);
       afd.analyseFolder(measurementFolder);
       Constants.OBJECTMAPPER.writeValue(new File(localFolder, "statistics.json"), statistics);
    }

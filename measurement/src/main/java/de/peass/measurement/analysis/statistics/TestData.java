@@ -59,7 +59,7 @@ public class TestData {
 	public SortedMap<String, EvaluationPair> getMeasurements() {
 		return data;
 	}
-
+	
 	public String getTestClass() {
 		return testcase.getClazz();
 	}
