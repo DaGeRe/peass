@@ -33,9 +33,14 @@ public class TestCase implements Comparable<TestCase> {
       if (clazz.contains(ChangedEntity.METHOD_SEPARATOR)) {
          throw new RuntimeException("Class and method should be separated: " + clazz);
       }
-      this.clazz = clazz;
+      if (clazz.contains(ChangedEntity.MODULE_SEPARATOR)) {
+         module = clazz.substring(0, clazz.indexOf(ChangedEntity.MODULE_SEPARATOR));
+         this.clazz = clazz.substring(clazz.indexOf(ChangedEntity.MODULE_SEPARATOR) + 1, clazz.length());
+      } else {
+         this.clazz = clazz;
+         module = "";
+      }
       this.method = method;
-      module = "";
    }
 
    @JsonCreator

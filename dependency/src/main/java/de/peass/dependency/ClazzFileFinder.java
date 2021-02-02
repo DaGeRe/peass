@@ -144,14 +144,23 @@ public class ClazzFileFinder {
 
    public static File getClazzFile(final File module, final ChangedEntity name) {
       LOG.debug("Searching: {} in {}", name, module.getAbsolutePath());
-      File potentialFile = null;
       final String clazzFileName = name.getClazz().endsWith(".java") ? name.getClazz() : name.getClazz().replace('.', File.separatorChar) + ".java";
       final File naturalCandidate = new File(module, clazzFileName);
+      File potentialFile = findFile(module, clazzFileName, naturalCandidate);
+      if (potentialFile == null && name.getModule() != null && !name.getModule().equals("")) {
+         File moduleFolder = new File(module, name.getModule());
+         potentialFile = findFile(moduleFolder, clazzFileName, naturalCandidate);
+      }
+      return potentialFile;
+   }
+
+   private static File findFile(final File sourceParentFolder, final String clazzFileName, final File naturalCandidate) {
+      File potentialFile = null;
       if (naturalCandidate.exists()) {
          potentialFile = naturalCandidate;
       }
       for (final String potentialFolder : ChangedEntity.potentialClassFolders) {
-         final File candidate = new File(module, potentialFolder + File.separator + clazzFileName);
+         final File candidate = new File(sourceParentFolder, potentialFolder + File.separator + clazzFileName);
          if (candidate.exists()) {
             potentialFile = candidate;
          }

@@ -2,36 +2,18 @@ package de.peass.ci;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.appender.FileAppender;
-import org.apache.logging.log4j.core.appender.OutputStreamAppender;
-import org.apache.logging.log4j.core.config.Configurator;
-import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilder;
-import org.apache.logging.log4j.core.config.builder.api.ConfigurationBuilderFactory;
-import org.apache.logging.log4j.core.config.builder.impl.BuiltConfiguration;
-import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
-import de.peass.debugtools.DependencyReadingContinueStarter;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependency.reader.VersionKeeper;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.Constants;
 import de.peass.vcs.GitCommit;
-import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIterator;
 import de.peass.vcs.VersionIteratorGit;
 
@@ -44,13 +26,13 @@ public class ContinuousDependencyReader {
    private final String version;
    private final File projectFolder, dependencyFile;
 
-   public ContinuousDependencyReader(String version, File projectFolder, File dependencyFile) {
+   public ContinuousDependencyReader(final String version, final File projectFolder, final File dependencyFile) {
       this.version = version;
       this.projectFolder = projectFolder;
       this.dependencyFile = dependencyFile;
    }
 
-   Dependencies getDependencies(VersionIterator iterator, String url)
+   Dependencies getDependencies(final VersionIterator iterator, final String url)
          throws Exception {
       Dependencies dependencies;
 
@@ -85,7 +67,7 @@ public class ContinuousDependencyReader {
       return newIterator;
    }
 
-   private void partiallyLoadDependencies(Dependencies dependencies) throws FileNotFoundException, Exception {
+   private void partiallyLoadDependencies(final Dependencies dependencies) throws FileNotFoundException, Exception {
       final String lastVersionName = dependencies.getVersionNames()[dependencies.getVersions().size() - 1];
       if (!lastVersionName.equals(version)) {
          File logFile = new File(dependencyFile.getParentFile(), "dependencyreading_" + version + ".txt");
