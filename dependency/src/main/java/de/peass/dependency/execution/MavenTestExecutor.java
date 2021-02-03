@@ -58,7 +58,7 @@ public class MavenTestExecutor extends TestExecutor {
 
    public static final String TEMP_DIR = "-Djava.io.tmpdir";
    public static final String JAVA_AGENT = "-javaagent";
-   public static final String KIEKER_VERSION = "1.14";
+   public static final String KIEKER_VERSION = "1.15-SNAPSHOT";
    public static final String KIEKER_FOLDER_MAVEN = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/" + KIEKER_VERSION +
          "/kieker-" + KIEKER_VERSION + "-aspectj.jar";
    public static final String KIEKER_FOLDER_MAVEN_TWEAK = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/" + KIEKER_VERSION + "/kieker-" + KIEKER_VERSION
@@ -126,6 +126,7 @@ public class MavenTestExecutor extends TestExecutor {
       return buildFolderProcess(folders.getProjectFolder(), logFile, vars);
    }
 
+   @Override
    protected void clean(final File logFile) throws IOException, InterruptedException {
       final String[] originalsClean = new String[] { "mvn", "clean" };
       final ProcessBuilder pbClean = new ProcessBuilder(originalsClean);
@@ -178,6 +179,7 @@ public class MavenTestExecutor extends TestExecutor {
     * @param specialResultFolder Folder for saving the results
     * @param testname Name of the test that should be run
     */
+   @Override
    protected void runTest(final File module, final File logFile, final String testname, final long timeout) {
       try {
          final Process process = buildProcess(logFile, "-Dtest=" + testname);
