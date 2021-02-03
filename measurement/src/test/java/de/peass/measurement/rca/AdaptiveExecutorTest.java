@@ -2,7 +2,6 @@ package de.peass.measurement.rca;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -28,14 +27,13 @@ import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.VCSTestUtils;
-import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ GitUtils.class, VersionControlSystem.class })
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class AdaptiveExecutorTest {
 
    private static final Logger LOG = LogManager.getLogger(AdaptiveExecutorTest.class);

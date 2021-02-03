@@ -31,14 +31,13 @@ import de.peass.measurement.rca.helper.VCSTestUtils;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.searcher.CauseSearcher;
 import de.peass.measurement.rca.searcher.LevelCauseSearcher;
-import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({GitUtils.class, VersionControlSystem.class})
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class CauseSearcherCompleteIT {
    
    private static final Logger LOG = LogManager.getLogger(CauseSearcherCompleteIT.class);

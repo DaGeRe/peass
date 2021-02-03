@@ -15,8 +15,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -26,7 +24,6 @@ import de.dagere.kopeme.generated.Result;
 import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.MavenTestExecutor;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.measurement.MavenTestExecutorMocker;
@@ -38,7 +35,7 @@ import de.peass.vcs.VersionControlSystem;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ GitUtils.class, VersionControlSystem.class, ExecutorCreator.class, ResultLoader.class })
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class AdaptiveTesterTest {
 
    private final TestCase testcase = new TestCase("Dummy#dummyTest");
@@ -140,7 +137,7 @@ public class AdaptiveTesterTest {
       Assert.assertEquals(100, tester2.getFinishedVMs());
    }
 
-   private void createEarlyBreakData(AdaptiveTester tester2) throws JAXBException {
+   private void createEarlyBreakData(final AdaptiveTester tester2) throws JAXBException {
       for (int i = 0; i < 100; i++) {
          final Result result1 = new Result();
          result1.setValue(15);

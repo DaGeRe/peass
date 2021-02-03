@@ -29,14 +29,13 @@ import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.VCSTestUtils;
-import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ GitUtils.class, VersionControlSystem.class })
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class AdaptiveExecutorMoreParameterTest {
 
    private static final Logger LOG = LogManager.getLogger(AdaptiveExecutorMoreParameterTest.class);

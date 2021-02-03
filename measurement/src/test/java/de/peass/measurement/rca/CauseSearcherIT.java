@@ -29,21 +29,17 @@ import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
-import de.peass.measurement.rca.analyzer.TreeAnalyzer;
 import de.peass.measurement.rca.helper.VCSTestUtils;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.searcher.CauseSearcher;
 import de.peass.measurement.rca.searcher.CauseSearcherComplete;
-import de.peass.measurement.rca.searcher.TreeAnalyzerCreator;
-import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({GitUtils.class, VersionControlSystem.class})
-@PowerMockIgnore({"javax.management.*"})
+@PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class CauseSearcherIT {
    
    private static final Logger LOG = LogManager.getLogger(CauseSearcherIT.class);

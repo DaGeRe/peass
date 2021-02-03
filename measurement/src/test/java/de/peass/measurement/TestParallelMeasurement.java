@@ -1,11 +1,5 @@
 package de.peass.measurement;
 
-import java.io.IOException;
-
-import javax.xml.bind.JAXBException;
-
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -25,11 +19,10 @@ import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ VersionControlSystem.class, ExecutorCreator.class, GitUtils.class})
-@PowerMockIgnore("javax.management.*")
+@PrepareForTest({ VersionControlSystem.class, ExecutorCreator.class, GitUtils.class })
+@PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class TestParallelMeasurement {
-   
-   
+
    @Rule
    public TemporaryFolder folder = new TemporaryFolder();
 
@@ -45,7 +38,7 @@ public class TestParallelMeasurement {
       VCSTestUtils.mockGoToTagAny();
 
       final DependencyTester tester = new DependencyTester(folders, configuration);
-      
+
       tester.evaluate(TestDependencyTester.EXAMPLE_TESTCASE);
 
       TestDependencyTester.checkResult(folders);
