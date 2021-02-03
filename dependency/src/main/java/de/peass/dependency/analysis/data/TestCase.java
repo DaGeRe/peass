@@ -108,6 +108,7 @@ public class TestCase implements Comparable<TestCase> {
       return module;
    }
    
+   @JsonIgnore
    public String getTestclazzWithModuleName() {
       String testcase;
       if (module != null && !module.equals("")) {
