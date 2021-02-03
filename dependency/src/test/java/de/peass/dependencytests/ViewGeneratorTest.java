@@ -38,15 +38,13 @@ import de.peass.vcs.GitUtils;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(GitUtils.class)
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class ViewGeneratorTest {
 
    private static final Logger LOG = LogManager.getLogger(ViewGeneratorIT.class);
 
    private static final File dependencyfile = new File(ViewGeneratorIT.class.getClassLoader().getResource("viewtests/dependencies.json").getFile());
          
-//         new File("src/test/resources/viewtests/dependencies.json");
-
    @Test
    public void testTwoVersions() throws IOException, InterruptedException, JAXBException {
       ViewGeneratorIT.init(ViewGeneratorIT.BASIC);
