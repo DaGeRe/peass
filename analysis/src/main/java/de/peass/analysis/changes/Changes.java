@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 
 /**
@@ -43,12 +42,7 @@ public class Changes {
       change.setChangePercent(percent);
       change.setVms(vms);
       change.setMethod(testcase.getMethod());
-      String clazz;
-      if (testcase.getModule() != null && !testcase.getModule().equals("")) {
-         clazz = testcase.getModule() + ChangedEntity.MODULE_SEPARATOR + testcase.getClazz();
-      } else {
-         clazz = testcase.getClazz();
-      }
+      String clazz = testcase.getTestclazzWithModuleName();
       addChange(clazz, change);
       return change;
    }

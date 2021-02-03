@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.CauseSearchFolders;
+import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
@@ -34,7 +35,7 @@ public class RCAGenerator {
 
    private CallTreeNode rootPredecessor, rootVersion;
 
-   public RCAGenerator(final File source, final File destFolder, CauseSearchFolders folders) throws JsonParseException, JsonMappingException, IOException, JAXBException {
+   public RCAGenerator(final File source, final File destFolder, final CauseSearchFolders folders) throws JsonParseException, JsonMappingException, IOException, JAXBException {
       this.source = source;
       details = new File(source.getParentFile(), "details" + File.separator + source.getName());
       this.destFolder = destFolder;
@@ -67,12 +68,12 @@ public class RCAGenerator {
    private void writeHTML(final GraphNode root, final CauseSearchData data) throws IOException, JsonProcessingException, FileNotFoundException, JAXBException {
       final File output = getOutputHTML(data);
       final String jsName = output.getName().replace(".html", ".js").replaceAll("#", "_");
-      
+
       File nodeDashboard = new File(output.getParentFile(), output.getName().replace(".html", "_dashboard.html"));
       new NodeDashboardWriter(nodeDashboard, data).write(jsName);
-      
+
       writeOverviewHTML(output, jsName);
-      
+
       KoPeMeTreeConverter converter = new KoPeMeTreeConverter(folders, data.getMeasurementConfig().getVersion(), new TestCase(data.getTestcase()));
       final JavascriptDataWriter javascriptDataWriter = new JavascriptDataWriter(propertyFolder, root);
       javascriptDataWriter.writeJS(data, output, jsName, converter);
@@ -84,7 +85,7 @@ public class RCAGenerator {
          fileWriter.write("<!DOCTYPE html>\n");
          htmlGenerator.writeHTML("visualization/HeaderOfHTML.html");
 
-         fileWriter.write("<script src='"+jsName+"'></script>\n");
+         fileWriter.write("<script src='" + jsName + "'></script>\n");
 
          htmlGenerator.writeHTML("visualization/RestOfHTML.html");
          fileWriter.flush();
@@ -93,19 +94,20 @@ public class RCAGenerator {
 
    private File getOutputHTML(final CauseSearchData data) {
       final File output;
+      final String testcase = data.getCauseConfig().getTestCase().getTestclazzWithModuleName() + ChangedEntity.METHOD_SEPARATOR + data.getCauseConfig().getTestCase().getMethod();
       if (destFolder.getName().equals(data.getMeasurementConfig().getVersion())) {
-         output = new File(destFolder, data.getTestcase().replace('#', '_') + ".html");
+         output = new File(destFolder, testcase.replace('#', '_') + ".html");
          copyResources(destFolder);
       } else {
          File versionFolder = new File(destFolder, data.getMeasurementConfig().getVersion());
          copyResources(versionFolder);
-         output = new File(versionFolder, data.getTestcase().replace('#', '_') + ".html");
+         output = new File(versionFolder, testcase.replace('#', '_') + ".html");
       }
       output.getParentFile().mkdirs();
       return output;
    }
 
-   private void copyResources(File folder) {
+   private void copyResources(final File folder) {
       try {
          URL difflib = RCAGenerator.class.getClassLoader().getResource("visualization/difflib.js");
          FileUtils.copyURLToFile(difflib, new File(folder, "difflib.js"));

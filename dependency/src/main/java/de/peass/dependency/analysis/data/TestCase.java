@@ -107,6 +107,16 @@ public class TestCase implements Comparable<TestCase> {
    public String getModule() {
       return module;
    }
+   
+   public String getTestclazzWithModuleName() {
+      String testcase;
+      if (module != null && !module.equals("")) {
+         testcase = module + ChangedEntity.MODULE_SEPARATOR + clazz;
+      } else {
+         testcase = clazz;
+      }
+      return testcase;
+   }
 
    @Override
    public int hashCode() {

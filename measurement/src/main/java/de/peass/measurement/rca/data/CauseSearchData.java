@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.serialization.MeasuredNode;
@@ -50,7 +51,7 @@ public class CauseSearchData {
       buildCurrentMap(nodes, null);
    }
 
-   private void buildCurrentMap(final MeasuredNode node, CallTreeNode parentStructure) {
+   private void buildCurrentMap(final MeasuredNode node, final CallTreeNode parentStructure) {
       final CallTreeNode nodeStructure = parentStructure != null ? 
             parentStructure.appendChild(node.getCall(), node.getKiekerPattern(), node.getOtherKiekerPattern())
             : new CallTreeNode(node.getCall(), node.getKiekerPattern(), node.getOtherKiekerPattern(), (MeasurementConfiguration) null);
@@ -70,7 +71,7 @@ public class CauseSearchData {
 
    @JsonIgnore
    public String getTestcase() {
-      return causeConfig.getTestCase().getClazz() + "#" + causeConfig.getTestCase().getMethod();
+      return causeConfig.getTestCase().getClazz() + ChangedEntity.METHOD_SEPARATOR + causeConfig.getTestCase().getMethod();
    }
 
    @JsonIgnore
