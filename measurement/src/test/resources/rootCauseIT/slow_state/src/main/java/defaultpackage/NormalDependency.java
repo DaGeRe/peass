@@ -26,7 +26,7 @@ public class NormalDependency {
 
    public void child12() {
       try {
-         Thread.sleep(100);
+         Thread.sleep(200);
       } catch (InterruptedException e) {
          e.printStackTrace();
       }
