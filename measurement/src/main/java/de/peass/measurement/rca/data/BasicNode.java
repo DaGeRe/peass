@@ -29,7 +29,7 @@ public abstract class BasicNode {
       if (otherKiekerPattern != null && kiekerPattern.contains("<init>") && !kiekerPattern.contains("new")) {
          throw new RuntimeException("Pattern " + kiekerPattern + " not legal - Constructor must contain new as return type!");
       }
-      if (kiekerPattern.contains("new new ")) {
+      if (kiekerPattern != null && kiekerPattern.contains("new new ")) {
          throw new RuntimeException("Illegal duplication of new identifier!");
       }
    }
