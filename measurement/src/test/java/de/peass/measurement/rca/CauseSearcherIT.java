@@ -2,7 +2,9 @@ package de.peass.measurement.rca;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
@@ -10,6 +12,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -126,11 +129,17 @@ public class CauseSearcherIT {
       final CauseSearcher searcher = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, folders);
       final Set<ChangedEntity> changedEntities = searcher.search();
 
-      LOG.debug(changedEntities);
-      Assert.assertThat(changedEntities.size(), Matchers.greaterThanOrEqualTo(1));
-      Assert.assertEquals("defaultpackage.NormalDependency#child12", changedEntities.iterator().next().toString());
-      
+      checkChangelistContainsChild12(changedEntities);
    }
 
-   // child12
+   /**
+    * Child12 needs to be contained - since this is a small test which is executed quickly, other methods may be detected as false positives
+    * @param changedEntities
+    */
+   private void checkChangelistContainsChild12(final Set<ChangedEntity> changedEntities) {
+      LOG.debug(changedEntities);
+      Assert.assertThat(changedEntities.size(), Matchers.greaterThanOrEqualTo(1));
+      List<String> allChanged = changedEntities.stream().map(entity -> entity.toString()).collect(Collectors.toList());
+      MatcherAssert.assertThat(allChanged, Matchers.contains("defaultpackage.NormalDependency#child12"));
+   }
 }
