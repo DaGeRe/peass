@@ -52,17 +52,18 @@ public class KiekerResultManager {
    protected final PeASSFolders folders;
    protected final JUnitTestTransformer testTransformer;
 
-   public KiekerResultManager(final PeASSFolders folders, long timeout) {
+   public KiekerResultManager(final PeASSFolders folders, final long timeout) {
       this.folders = folders;
       MeasurementConfiguration fakeConfig = new MeasurementConfiguration(1, timeout);
       fakeConfig.setIterations(1);
       fakeConfig.setWarmup(0);
       fakeConfig.setUseKieker(true);
+      fakeConfig.setUseSourceInstrumentation(true);
       testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), fakeConfig);
       executor = ExecutorCreator.createExecutor(folders, testTransformer);
    }
    
-   public KiekerResultManager(TestExecutor executor, PeASSFolders folders, JUnitTestTransformer testTransformer) {
+   public KiekerResultManager(final TestExecutor executor, final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
       this.executor = executor;
       this.folders = folders;
       this.testTransformer = testTransformer;

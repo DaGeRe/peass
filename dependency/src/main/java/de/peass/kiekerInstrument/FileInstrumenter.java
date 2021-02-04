@@ -156,6 +156,9 @@ public class FileInstrumenter {
    }
 
    private boolean testSignatureMatch(final String signature) {
+      if (configuration.getIncludedPatterns() == null) {
+         return true;
+      }
       boolean oneMatches = false;
       for (String pattern : configuration.getIncludedPatterns()) {
          pattern = fixConstructorPattern(pattern);
