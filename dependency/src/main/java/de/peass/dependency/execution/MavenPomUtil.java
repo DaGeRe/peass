@@ -296,8 +296,7 @@ public class MavenPomUtil {
    protected static Xpp3Dom setConfNode(final Xpp3Dom conf, final String nodeName, final String value) {
       Xpp3Dom confProperty = conf.getChild(nodeName);
       if (confProperty != null) {
-         confProperty.setValue(value); // Wir brauchen once/always, damit die
-         // Kieker-Optionen gesetzt werden
+         confProperty.setValue(value); 
       } else if (confProperty == null) {
          confProperty = new Xpp3Dom(nodeName);
          confProperty.setValue(value);

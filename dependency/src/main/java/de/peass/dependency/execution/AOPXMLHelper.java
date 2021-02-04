@@ -66,7 +66,7 @@ public class AOPXMLHelper {
          final int queueSize = 10000000;
          writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueSize=" + queueSize + "\n");
          writer.write("kieker.monitoring.writer.filesystem.ChangeableFolderWriter.flush=false\n");
-         writer.write("kieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler\n");
+//         writer.write("kieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler\n");
          writer.flush();
       }
    }

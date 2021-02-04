@@ -58,8 +58,6 @@ public class MavenTestExecutor extends TestExecutor {
    
    public static final String KIEKER_VERSION = "1.15-SNAPSHOT";
   
-   public static final String KIEKER_FOLDER_GRADLE = "${System.properties['user.home']}/.m2/repository/net/kieker-monitoring/kieker/" + KIEKER_VERSION + "/kieker-" + KIEKER_VERSION
-         + "-aspectj.jar";
    public static final String KIEKER_ADAPTIVE_FILENAME = "config/kieker.adaptiveMonitoring.conf";
    public static final File KIEKER_ASPECTJ_JAR = new File(ArgLineBuilder.KIEKER_FOLDER_MAVEN.replace("${user.home}", System.getProperty("user.home")));
    
