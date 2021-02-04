@@ -25,7 +25,7 @@ public class TestBuildGradle {
       final File destFile = new File(CURRENT, "build.gradle");
       FileUtils.copyFile(gradleFile, destFile);
 
-      GradleParseUtil.addDependency(destFile, "de.dagere.kopeme:kopeme-junit:0.10-SNAPSHOT", "xyz");
+      GradleParseUtil.addDependency(destFile, "xyz");
 
       Assert.assertTrue(FileUtils.contentEquals(gradleFile, destFile));
    }
@@ -49,7 +49,7 @@ public class TestBuildGradle {
       final File destFile = new File(CURRENT, "build.gradle");
       FileUtils.copyFile(gradleFile, destFile);
 
-      GradleParseUtil.addDependency(destFile, "de.dagere.kopeme:kopeme-junit:0.10-SNAPSHOT", "xyz");
+      GradleParseUtil.addDependency(destFile, "xyz");
 
       final List<String> gradleFileContents = Files.readAllLines(Paths.get(destFile.toURI()));
 

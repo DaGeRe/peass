@@ -230,33 +230,27 @@ public class MavenTestExecutor extends TestExecutor {
       try {
          lastTmpFile = Files.createTempDirectory(folders.getKiekerTempFolder().toPath(), "kiekerTemp").toFile();
          for (final File module : getModules()) {
-            editOneBuildfile(true, new File(module, "pom.xml"), lastTmpFile);
+            editOneBuildfile(true, new File(module, "pom.xml"));
          }
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();
       }
    }
 
-   private void editOneBuildfile(final boolean update, final File pomFile, final File tempFile) {
+   private void editOneBuildfile(final boolean update, final File pomFile) {
       final MavenXpp3Reader reader = new MavenXpp3Reader();
       try {
          final Model model = reader.read(new FileInputStream(pomFile));
          if (model.getBuild() == null) {
             model.setBuild(new Build());
          }
-         final String argline = buildArgline(tempFile);
+         final String argline = buildArgline(lastTmpFile);
 
          MavenPomUtil.extendSurefire(argline, model, update, testTransformer.getConfig().getTimeoutInMinutes() * 2);
 
          // TODO Move back to extend dependencies, if stable Kieker version supports <init>
          if (model.getDependencies() == null) {
             model.setDependencies(new LinkedList<Dependency>());
-         }
-         if (testTransformer.isAdaptiveExecution()) {
-            // Needs to be the first dependency..
-            final List<Dependency> dependencies = model.getDependencies();
-            final Dependency kopeme_dependency2 = MavenPomUtil.getDependency("net.kieker-monitoring", KIEKER_VERSION, "test", "kieker");
-            dependencies.add(kopeme_dependency2);
          }
          MavenPomUtil.extendDependencies(model, testTransformer.isJUnit3());
 

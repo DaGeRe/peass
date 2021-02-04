@@ -70,7 +70,7 @@ public class GradleParseUtil {
       FindDependencyVisitor visitor;
       final AstBuilder builder = new AstBuilder();
       final List<ASTNode> nodes = builder.buildFromString(IOUtil.toString(new FileInputStream(buildfile), "UTF-8"));
-      
+
       visitor = new FindDependencyVisitor();
       for (final ASTNode node : nodes) {
          node.visit(visitor);
@@ -78,7 +78,7 @@ public class GradleParseUtil {
       return visitor;
    }
 
-   public static void updateBuildTools(FindDependencyVisitor visitor, final List<String> gradleFileContents) {
+   public static void updateBuildTools(final FindDependencyVisitor visitor, final List<String> gradleFileContents) {
       final int lineIndex = visitor.getBuildTools() - 1;
       final String versionLine = gradleFileContents.get(lineIndex).trim().replaceAll("'", "").replace("\"", "");
       final String versionString = versionLine.split(":")[1].trim();
@@ -92,7 +92,7 @@ public class GradleParseUtil {
       }
    }
 
-   public static void updateBuildToolsVersion(FindDependencyVisitor visitor, final List<String> gradleFileContents) {
+   public static void updateBuildToolsVersion(final FindDependencyVisitor visitor, final List<String> gradleFileContents) {
       final int lineIndex = visitor.getBuildToolsVersion() - 1;
       final String versionLine = gradleFileContents.get(lineIndex).trim().replaceAll("'", "").replace("\"", "");
       final String versionString = versionLine.split(" ")[1].trim();
@@ -107,7 +107,7 @@ public class GradleParseUtil {
       }
    }
 
-   public static FindDependencyVisitor addDependency(final File buildfile, final String dependency, final String tempFolder) {
+   public static FindDependencyVisitor addDependency(final File buildfile, final String tempFolder) {
       FindDependencyVisitor visitor = null;
       try {
          visitor = parseBuildfile(buildfile);
@@ -120,13 +120,21 @@ public class GradleParseUtil {
             if (visitor.getBuildToolsVersion() != -1) {
                updateBuildToolsVersion(visitor, gradleFileContents);
             }
-            
-            final String dependencyTest = "testCompile '" + dependency + "'"; // TODO testImplementation vs. other name based on gradle version
+
             if (visitor.getDependencyLine() != -1) {
-               gradleFileContents.add(visitor.getDependencyLine() - 1, dependencyTest);
-            } else {
-               gradleFileContents.add("dependencies { " + dependencyTest + "}");
+               for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
+                  final String dependencyGradle = "compile '" + dependency.getGradleDependency() + "'";
+                  gradleFileContents.add(visitor.getDependencyLine() - 1, dependencyGradle);
+               }
+            }else {
+               gradleFileContents.add("dependencies { " );
+               for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
+                  final String dependencyGradle = "compile '" + dependency.getGradleDependency() + "'";
+                  gradleFileContents.add(dependencyGradle);
+               }
+               gradleFileContents.add("}");
             }
+
             addKiekerLine(tempFolder, visitor, gradleFileContents);
          }
 
@@ -137,7 +145,7 @@ public class GradleParseUtil {
       return visitor;
    }
 
-   public static void addKiekerLine(final String tempFolder, FindDependencyVisitor visitor, final List<String> gradleFileContents) {
+   public static void addKiekerLine(final String tempFolder, final FindDependencyVisitor visitor, final List<String> gradleFileContents) {
       if (tempFolder != null) {
          final String javaagentArgument = "jvmArgs=[\"" + MavenTestExecutor.JAVA_AGENT + ":" + MavenTestExecutor.KIEKER_FOLDER_GRADLE + "\",\"" + tempFolder
                + "\"]";
@@ -176,7 +184,7 @@ public class GradleParseUtil {
       return modules;
    }
 
-   private static void parseModuleLine(final File projectFolder, final List<File> modules, String line) {
+   private static void parseModuleLine(final File projectFolder, final List<File> modules, final String line) {
       final String[] splitted = line.split(" ");
       if (splitted.length == 2 && splitted[0].equals("include")) {
          final String candidate = splitted[1].substring(2, splitted[1].length() - 1);

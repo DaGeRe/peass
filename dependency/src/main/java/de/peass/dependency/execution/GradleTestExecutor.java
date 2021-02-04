@@ -67,10 +67,9 @@ public class GradleTestExecutor extends TestExecutor {
    private void editOneBuildfile(final File gradleFile) {
       FindDependencyVisitor visitor;
       if (testTransformer.getConfig().isUseKieker()) {
-         visitor = GradleParseUtil.addDependency(gradleFile, "de.dagere.kopeme:kopeme-junit:" + MavenPomUtil.KOPEME_VERSION,
-               MavenTestExecutor.TEMP_DIR + ":" + lastTmpFile.getAbsolutePath());
+         visitor = GradleParseUtil.addDependency(gradleFile, MavenTestExecutor.TEMP_DIR + ":" + lastTmpFile.getAbsolutePath());
       } else {
-         visitor = GradleParseUtil.addDependency(gradleFile, "de.dagere.kopeme:kopeme-junit:" + MavenPomUtil.KOPEME_VERSION, null);
+         visitor = GradleParseUtil.addDependency(gradleFile, null);
       }
       if (visitor.isAndroid()) {
          isAndroid = true;

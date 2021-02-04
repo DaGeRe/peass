@@ -110,7 +110,7 @@ public class MavenPomUtil {
          }
       }
    }
-
+   
    public static void extendDependencies(final Model model, final boolean junit3) {
       for (final Dependency dependency : model.getDependencies()) {
          if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
@@ -123,43 +123,11 @@ public class MavenPomUtil {
 
       final List<Dependency> dependencies = model.getDependencies();
 
-      final String scope = "";
-      if (junit3) {
-         final Dependency kopeme_dependency = getDependency("de.dagere.kopeme", KOPEME_VERSION, scope, "kopeme-junit3");
-         dependencies.add(kopeme_dependency);
+      for (RequiredDependency dependency : RequiredDependency.getAll(junit3)) {
+         dependencies.add(dependency.getMavenDependency());
       }
-      
-      final Dependency kopeme_dependency2 = getDependency("de.dagere.kopeme", KOPEME_VERSION, scope, "kopeme-junit");
-      dependencies.add(kopeme_dependency2);
-      
-      final Dependency kieker_dependency = getDependency("net.kieker-monitoring", "1.15-SNAPSHOT", "", "kieker");
-      dependencies.add(kieker_dependency);
-      
-      final Dependency kieker_dependency_aspectj = getDependency("net.kieker-monitoring", "1.15-SNAPSHOT", "", "kieker", "aspectj");
-      dependencies.add(kieker_dependency_aspectj);
-      
-      final Dependency slf4j = getDependency("org.apache.logging.log4j", "2.14.0", "", "log4j-slf4j-impl");
-      dependencies.add(slf4j);
-      
-      // Workaround: Add newer AspectJ, until Kieker updates its dependency
-      final Dependency aspectj = getDependency("org.aspectj", "1.9.5", scope, "aspectjweaver");
-      dependencies.add(0, aspectj);
    }
 
-   private static Dependency getDependency(final String groupId, final String kopemeVersion, final String scope, final String artifactId, final String classifier) {
-      final Dependency dependency = getDependency(groupId, kopemeVersion, scope, artifactId);
-      dependency.setClassifier(classifier);
-      return dependency;
-   }
-
-   public static Dependency getDependency(final String groupId, final String kopemeVersion, final String scope, final String artifactId) {
-      final Dependency dependency = new Dependency();
-      dependency.setGroupId(groupId);
-      dependency.setArtifactId(artifactId);
-      dependency.setVersion(kopemeVersion);
-      dependency.setScope(scope);
-      return dependency;
-   }
 
    public static boolean isMultiModuleProject(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
       final MavenXpp3Reader reader = new MavenXpp3Reader();
