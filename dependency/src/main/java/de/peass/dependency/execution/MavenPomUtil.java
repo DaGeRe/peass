@@ -110,7 +110,7 @@ public class MavenPomUtil {
          }
       }
    }
-   
+
    public static void extendDependencies(final Model model, final boolean junit3) {
       for (final Dependency dependency : model.getDependencies()) {
          if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
@@ -127,7 +127,6 @@ public class MavenPomUtil {
          dependencies.add(dependency.getMavenDependency());
       }
    }
-
 
    public static boolean isMultiModuleProject(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
       final MavenXpp3Reader reader = new MavenXpp3Reader();
@@ -201,7 +200,7 @@ public class MavenPomUtil {
       }
       return surefire;
    }
-   
+
    public static void extendSurefire(final String additionalArgLine, final Model model, final boolean updateVersion, final long timeout) {
       final Plugin plugin = MavenPomUtil.findPlugin(model, SUREFIRE_ARTIFACTID, ORG_APACHE_MAVEN_PLUGINS);
       if (plugin.getConfiguration() == null) {
@@ -242,9 +241,18 @@ public class MavenPomUtil {
       LOG.debug("Compiler" + model.getClass() + " " + compilerPlugin.getConfiguration().getClass());
       model.setVersion("3.6.1");
 
+      // Only set java version to 8 if not java 11 or above is specified
       final Xpp3Dom conf = (Xpp3Dom) compilerPlugin.getConfiguration();
-      MavenPomUtil.setConfNode(conf, "source", MavenTestExecutor.JAVA_VERSION);
-      MavenPomUtil.setConfNode(conf, "target", MavenTestExecutor.JAVA_VERSION);
+      Xpp3Dom confProperty = conf.getChild("source");
+      if (confProperty != null && (!confProperty.getValue().equals("11")
+            && !confProperty.getValue().equals("12")
+            && !confProperty.getValue().equals("13")
+            && !confProperty.getValue().equals("14")
+            && !confProperty.getValue().equals("15"))) {
+         MavenPomUtil.setConfNode(conf, "source", MavenTestExecutor.JAVA_VERSION);
+         MavenPomUtil.setConfNode(conf, "target", MavenTestExecutor.JAVA_VERSION);
+      }
+
    }
 
    public static void extendCompiler(final Plugin plugin, final String boot_class_path) {
@@ -296,7 +304,7 @@ public class MavenPomUtil {
    protected static Xpp3Dom setConfNode(final Xpp3Dom conf, final String nodeName, final String value) {
       Xpp3Dom confProperty = conf.getChild(nodeName);
       if (confProperty != null) {
-         confProperty.setValue(value); 
+         confProperty.setValue(value);
       } else if (confProperty == null) {
          confProperty = new Xpp3Dom(nodeName);
          confProperty.setValue(value);
