@@ -54,7 +54,7 @@ public class MavenTestExecutor extends TestExecutor {
 
    /** M5 has some problems finding JUnit 5 tests; so stay at M3 */
    public static final String SUREFIRE_VERSION = "3.0.0-M3";
-   public static final String JAVA_VERSION = "1.8";
+   public static final String DEFAULT_JAVA_VERSION = "1.8";
    
    public static final String KIEKER_VERSION = "1.15-SNAPSHOT";
   
@@ -144,7 +144,9 @@ public class MavenTestExecutor extends TestExecutor {
 
    @Override
    public void prepareKoPeMeExecution(final File logFile) throws IOException, InterruptedException, XmlPullParserException {
-      MavenPomUtil.cleanSnapshotDependencies(new File(folders.getProjectFolder(), "pom.xml"));
+      File pomFile = new File(folders.getProjectFolder(), "pom.xml");
+      MavenPomUtil.cleanSnapshotDependencies(pomFile);
+      PomJavaUpdater.fixCompilerVersion(pomFile);
       clean(logFile);
       LOG.debug("Starting Test Transformation");
       prepareKiekerSource();
@@ -179,7 +181,8 @@ public class MavenTestExecutor extends TestExecutor {
 
    @Override
    public boolean isVersionRunning(final String version) {
-      final File potentialPom = new File(folders.getProjectFolder(), "pom.xml");
+      File pomFile = new File(folders.getProjectFolder(), "pom.xml");
+      final File potentialPom = pomFile;
       final File testFolder = new File(folders.getProjectFolder(), "src/test");
       final boolean isRunning = false;
       buildfileExists = potentialPom.exists();
@@ -187,15 +190,16 @@ public class MavenTestExecutor extends TestExecutor {
          try {
             final boolean multimodule = MavenPomUtil.isMultiModuleProject(potentialPom);
             if (multimodule || testFolder.exists()) {
-               MavenPomUtil.cleanSnapshotDependencies(new File(folders.getProjectFolder(), "pom.xml"));
-               MavenPomUtil.cleanType(new File(folders.getProjectFolder(), "pom.xml"));
+               MavenPomUtil.cleanSnapshotDependencies(pomFile);
+               PomJavaUpdater.fixCompilerVersion(pomFile);
+               MavenPomUtil.cleanType(pomFile);
                return testRunningSuccess(version,
                      new String[] { "mvn", "clean", "test-compile",
                            "-DskipTests=true",
                            "-Dmaven.test.skip.exec",
                            "-Dcheckstyle.skip=true",
-                           "-Dmaven.compiler.source=" + JAVA_VERSION,
-                           "-Dmaven.compiler.target=" + JAVA_VERSION,
+//                           "-Dmaven.compiler.source=" + DEFAULT_JAVA_VERSION,
+//                           "-Dmaven.compiler.target=" + DEFAULT_JAVA_VERSION,
                            "-Dmaven.javadoc.skip=true",
                            "-Danimal.sniffer.skip=true",
                            "-Djacoco.skip=true",

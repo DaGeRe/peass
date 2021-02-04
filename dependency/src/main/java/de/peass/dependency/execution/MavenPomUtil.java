@@ -233,28 +233,6 @@ public class MavenPomUtil {
       }
    }
 
-   public static void setCompiler8(final Model model) {
-      final Plugin compilerPlugin = MavenPomUtil.findPlugin(model, MavenPomUtil.COMPILER_ARTIFACTID, ORG_APACHE_MAVEN_PLUGINS);
-      if (compilerPlugin.getConfiguration() == null) {
-         compilerPlugin.setConfiguration(new Xpp3Dom("configuration"));
-      }
-      LOG.debug("Compiler" + model.getClass() + " " + compilerPlugin.getConfiguration().getClass());
-      model.setVersion("3.6.1");
-
-      // Only set java version to 8 if not java 11 or above is specified
-      final Xpp3Dom conf = (Xpp3Dom) compilerPlugin.getConfiguration();
-      Xpp3Dom confProperty = conf.getChild("source");
-      if (confProperty != null && (!confProperty.getValue().equals("11")
-            && !confProperty.getValue().equals("12")
-            && !confProperty.getValue().equals("13")
-            && !confProperty.getValue().equals("14")
-            && !confProperty.getValue().equals("15"))) {
-         MavenPomUtil.setConfNode(conf, "source", MavenTestExecutor.JAVA_VERSION);
-         MavenPomUtil.setConfNode(conf, "target", MavenTestExecutor.JAVA_VERSION);
-      }
-
-   }
-
    public static void extendCompiler(final Plugin plugin, final String boot_class_path) {
       if (boot_class_path == null || !new File(boot_class_path).exists()) {
          throw new RuntimeException("Boot-Classpath " + boot_class_path + " is not defined.");
