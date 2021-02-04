@@ -29,13 +29,16 @@ public abstract class BasicNode {
       if (otherKiekerPattern != null && kiekerPattern.contains("<init>") && !kiekerPattern.contains("new")) {
          throw new RuntimeException("Pattern " + kiekerPattern + " not legal - Constructor must contain new as return type!");
       }
+      if (kiekerPattern.contains("new new ")) {
+         throw new RuntimeException("Illegal duplication of new identifier!");
+      }
    }
    
    public String getModule() {
       return module;
    }
    
-   public void setModule(String module) {
+   public void setModule(final String module) {
       this.module = module;
    }
 

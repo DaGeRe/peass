@@ -71,21 +71,26 @@ public class KiekerPatternConverter {
 
    public static String getKiekerPattern(final Operation operation) {
       final StringBuilder strBuild = new StringBuilder();
-      for (final String t : operation.getSignature().getModifier()) {
-         strBuild.append(t)
-               .append(' ');
+      boolean containsNew = false;
+      for (final String modifier : operation.getSignature().getModifier()) {
+         strBuild.append(modifier).append(' ');
+         if ("new".equals(modifier)) {
+            containsNew = true;
+         }
       }
       if (operation.getSignature().hasReturnType()) {
          strBuild.append(operation.getSignature().getReturnType())
                .append(' ');
       } else {
-         strBuild.append("new")
-               .append(' ');
-      }
-      strBuild.append(operation.getComponentType().getFullQualifiedName())
-            .append('.');
-      strBuild.append(operation.getSignature().getName()).append('(');
+         // Only add new if it is not already present (since source instrumentation adds new itself)
+         if (!containsNew) {
+            strBuild.append("new").append(' ');
+         }
 
+      }
+      strBuild.append(operation.getComponentType().getFullQualifiedName()).append('.');
+      strBuild.append(operation.getSignature().getName()).append('(');
+      
       boolean first = true;
       for (final String t : operation.getSignature().getParamTypeList()) {
          if (!first) {
