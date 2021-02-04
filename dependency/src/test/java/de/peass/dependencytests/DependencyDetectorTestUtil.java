@@ -21,8 +21,6 @@ import de.peass.vcs.VersionIterator;
 
 public class DependencyDetectorTestUtil {
    
-   public static final File CURRENT = new File(new File("target"), "current");
-   
    public static TestSet findDependency(final Dependencies dependencies, final String changedClass, final String version) {
       final Version versionDependencies = dependencies.getVersions().get(version);
       System.out.println(dependencies.getVersions().keySet());
@@ -61,7 +59,7 @@ public class DependencyDetectorTestUtil {
    
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator)
          throws IOException, InterruptedException, XmlPullParserException {
-      final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
       fakeIterator.goToNextCommit();

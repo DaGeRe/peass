@@ -57,7 +57,7 @@ public class SuperclassDetectorIT {
 
 		System.out.println(reader.getDependencies());
 
-		final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.NormalSuperclass", DependencyDetectorIT.VERSION_1);
+		final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.NormalSuperclass", DependencyTestConstants.VERSION_1);
 		final TestCase testcase = testMe.getTests().iterator().next();
 		Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
 		Assert.assertEquals("testMe", testcase.getMethod());
