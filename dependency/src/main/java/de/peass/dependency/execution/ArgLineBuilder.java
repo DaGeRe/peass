@@ -67,7 +67,7 @@ public class ArgLineBuilder {
    public String buildArglineGradle(final File tempFolder) {
       final String argline = buildGenericArgline(tempFolder, ":", ",");
       if (!argline.equals("")) {
-         return "jvmArgs=[\"" + argline + "\"]";
+         return "jvmArgs=[\"" + argline.substring(0, argline.length() - 1) + "\"]";
       } else {
          return argline;
       }
