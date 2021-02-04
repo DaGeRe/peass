@@ -3,7 +3,6 @@ package de.peass.dependency.execution;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -46,33 +45,36 @@ public class GradleTestExecutor extends TestExecutor {
    public void prepareKoPeMeExecution(final File logFile) throws IOException, XmlPullParserException, InterruptedException {
       LOG.debug("Starting Test Transformation");
       transformTests();
-      if (testTransformer.getConfig().isUseKieker()) {
-         final KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPattern, folders, testTransformer, getModules(), existingClasses);
-         kiekerEnvironmentPreparer.prepareKieker();
-      }
+      prepareKiekerSource();
 
+      prepareBuildfile();
+
+   }
+
+   private void prepareBuildfile() {
       try {
-         final Path tempFiles = Files.createTempDirectory("kiekerTemp");
-         lastTmpFile = tempFiles.toFile();
-         boolean anyIsAndroid = false;
+         lastTmpFile = Files.createTempDirectory("kiekerTemp").toFile();
+         isAndroid = false;
          for (final File module : getModules()) {
             final File gradleFile = new File(module, "build.gradle");
-            FindDependencyVisitor visitor;
-            if (testTransformer.getConfig().isUseKieker()) {
-               visitor = GradleParseUtil.addDependency(gradleFile, "de.dagere.kopeme:kopeme-junit:" + MavenPomUtil.KOPEME_VERSION,
-                     MavenTestExecutor.TEMP_DIR + ":" + lastTmpFile.getAbsolutePath());
-            } else {
-               visitor = GradleParseUtil.addDependency(gradleFile, "de.dagere.kopeme:kopeme-junit:" + MavenPomUtil.KOPEME_VERSION, null);
-            }
-            if (visitor.isAndroid()) {
-               anyIsAndroid = true;
-            }
+            editOneBuildfile(gradleFile);
          }
-         isAndroid = anyIsAndroid;
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();
       }
+   }
 
+   private void editOneBuildfile(final File gradleFile) {
+      FindDependencyVisitor visitor;
+      if (testTransformer.getConfig().isUseKieker()) {
+         visitor = GradleParseUtil.addDependency(gradleFile, "de.dagere.kopeme:kopeme-junit:" + MavenPomUtil.KOPEME_VERSION,
+               MavenTestExecutor.TEMP_DIR + ":" + lastTmpFile.getAbsolutePath());
+      } else {
+         visitor = GradleParseUtil.addDependency(gradleFile, "de.dagere.kopeme:kopeme-junit:" + MavenPomUtil.KOPEME_VERSION, null);
+      }
+      if (visitor.isAndroid()) {
+         isAndroid = true;
+      }
    }
 
    protected Process buildProcess(final File folder, final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
@@ -131,6 +133,7 @@ public class GradleTestExecutor extends TestExecutor {
     * @param specialResultFolder Folder for saving the results
     * @param testname Name of the test that should be run
     */
+   @Override
    protected void runTest(final File module, final File logFile, final String testname, final long timeout) {
       try {
          final Process process = buildProcess(module, logFile, "--tests", testname);

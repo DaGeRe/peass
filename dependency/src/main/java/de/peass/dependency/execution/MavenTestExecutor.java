@@ -158,13 +158,12 @@ public class MavenTestExecutor extends TestExecutor {
       MavenPomUtil.cleanSnapshotDependencies(new File(folders.getProjectFolder(), "pom.xml"));
       clean(logFile);
       LOG.debug("Starting Test Transformation");
-      if (testTransformer.getConfig().isUseKieker()) {
-         final KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPattern, folders, testTransformer, getModules(), existingClasses);
-         kiekerEnvironmentPreparer.prepareKieker();
-      }
+      prepareKiekerSource();
       transformTests();
+      
       preparePom();
    }
+
 
    @Override
    public void executeTest(final TestCase test, final File logFolder, final long timeout) {
@@ -229,18 +228,16 @@ public class MavenTestExecutor extends TestExecutor {
 
    public void preparePom() {
       try {
-         final File pomFile = new File(folders.getProjectFolder(), "pom.xml");
-         final File tempFile = Files.createTempDirectory(folders.getKiekerTempFolder().toPath(), "kiekerTemp").toFile();
-         for (final File module : MavenPomUtil.getModules(pomFile)) {
-            editOnePom(true, new File(module, "pom.xml"), tempFile);
+         lastTmpFile = Files.createTempDirectory(folders.getKiekerTempFolder().toPath(), "kiekerTemp").toFile();
+         for (final File module : getModules()) {
+            editOneBuildfile(true, new File(module, "pom.xml"), lastTmpFile);
          }
-         lastTmpFile = tempFile;
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();
       }
    }
 
-   private void editOnePom(final boolean update, final File pomFile, final File tempFile) {
+   private void editOneBuildfile(final boolean update, final File pomFile, final File tempFile) {
       final MavenXpp3Reader reader = new MavenXpp3Reader();
       try {
          final Model model = reader.read(new FileInputStream(pomFile));

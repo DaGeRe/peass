@@ -158,6 +158,13 @@ public abstract class TestExecutor {
          e.printStackTrace();
       }
    }
+   
+   protected void prepareKiekerSource() throws IOException, XmlPullParserException, InterruptedException {
+      if (testTransformer.getConfig().isUseKieker()) {
+         final KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPattern, folders, testTransformer, getModules(), existingClasses);
+         kiekerEnvironmentPreparer.prepareKieker();
+      }
+   }
 
    private final List<String> aborted = new LinkedList<>();
 
@@ -293,7 +300,7 @@ public abstract class TestExecutor {
       this.includedMethodPattern = includedMethodPattern;
    }
 
-   public static List<File> getModules(PeASSFolders folders) throws IOException, XmlPullParserException{
+   public static List<File> getModules(final PeASSFolders folders) throws IOException, XmlPullParserException{
       TestExecutor tempExecutor = ExecutorCreator.createExecutor(folders, null);
       return tempExecutor.getModules();
    }
