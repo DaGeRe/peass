@@ -32,6 +32,9 @@ public abstract class BasicNode {
       if (kiekerPattern != null && kiekerPattern.contains("new new ")) {
          throw new RuntimeException("Illegal duplication of new identifier!");
       }
+      if (otherKiekerPattern != null && otherKiekerPattern.contains("new new ")) {
+         throw new RuntimeException("Illegal duplication of new identifier!");
+      }
    }
    
    public String getModule() {
