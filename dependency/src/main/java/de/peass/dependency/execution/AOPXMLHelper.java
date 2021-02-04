@@ -10,7 +10,7 @@ import de.peass.testtransformation.JUnitTestTransformer;
 
 public class AOPXMLHelper {
 
-   public static void writeAOPXMLToFile(final List<String> allClasses, final File goalFile, AllowedKiekerRecord record) throws IOException {
+   public static void writeAOPXMLToFile(final List<String> allClasses, final File goalFile, final AllowedKiekerRecord record) throws IOException {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(goalFile))) {
          writer.write("<!DOCTYPE aspectj PUBLIC \"-//AspectJ//DTD//EN\" \"http://www.aspectj.org/dtd/aspectj_1_5_0.dtd\">\n");
          writer.write("<aspectj>\n");
@@ -31,7 +31,7 @@ public class AOPXMLHelper {
       }
    }
 
-   public static void writeKiekerMonitoringProperties(final File goalFile, JUnitTestTransformer transformer) throws IOException {
+   public static void writeKiekerMonitoringProperties(final File goalFile, final JUnitTestTransformer transformer) throws IOException {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(goalFile))) {
          writer.write("kieker.monitoring.name=KIEKER-KoPeMe\n");
          if (transformer.getConfig().isUseCircularQueue()) {

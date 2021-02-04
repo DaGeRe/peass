@@ -32,7 +32,7 @@ public class TreeFilter extends AbstractFilterPlugin {
    private final boolean ignoreEOIs;
    private final ModuleClassMapping mapping;
 
-   public TreeFilter(final String prefix, final IProjectContext projectContext, final TestCase test, boolean ignoreEOIs, MeasurementConfiguration config, ModuleClassMapping mapping) {
+   public TreeFilter(final String prefix, final IProjectContext projectContext, final TestCase test, final boolean ignoreEOIs, final MeasurementConfiguration config, final ModuleClassMapping mapping) {
       super(new Configuration(), projectContext);
       this.test = test;
       this.measurementConfig = config;
@@ -72,7 +72,6 @@ public class TreeFilter extends AbstractFilterPlugin {
    }
 
    private void addExecutionToTree(final Execution execution, final String fullClassname, final String methodname, final String call, final String kiekerPattern) {
-
       if (test.getClazz().equals(fullClassname) && test.getMethod().equals(methodname)) {
          readRoot(execution, call, kiekerPattern);
          setModule(fullClassname, root);
@@ -105,7 +104,7 @@ public class TreeFilter extends AbstractFilterPlugin {
       }
    }
 
-   private void setModule(final String fullClassname, CallTreeNode node) {
+   private void setModule(final String fullClassname, final CallTreeNode node) {
       final String outerClazzName = ClazzFileFinder.getOuterClass(fullClassname);
       final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
       node.setModule(moduleOfClass);

@@ -55,23 +55,14 @@ public class MavenTestExecutor extends TestExecutor {
    /** M5 has some problems finding JUnit 5 tests; so stay at M3 */
    public static final String SUREFIRE_VERSION = "3.0.0-M3";
    public static final String JAVA_VERSION = "1.8";
-
-   public static final String TEMP_DIR = "-Djava.io.tmpdir";
-   public static final String JAVA_AGENT = "-javaagent";
+   
    public static final String KIEKER_VERSION = "1.15-SNAPSHOT";
-   public static final String KIEKER_FOLDER_MAVEN = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/" + KIEKER_VERSION +
-         "/kieker-" + KIEKER_VERSION + "-aspectj.jar";
-   public static final String KIEKER_FOLDER_MAVEN_TWEAK = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/" + KIEKER_VERSION + "/kieker-" + KIEKER_VERSION
-         + "-aspectj.jar";
+  
    public static final String KIEKER_FOLDER_GRADLE = "${System.properties['user.home']}/.m2/repository/net/kieker-monitoring/kieker/" + KIEKER_VERSION + "/kieker-" + KIEKER_VERSION
          + "-aspectj.jar";
    public static final String KIEKER_ADAPTIVE_FILENAME = "config/kieker.adaptiveMonitoring.conf";
-   public static final File KIEKER_ASPECTJ_JAR = new File(MavenTestExecutor.KIEKER_FOLDER_MAVEN_TWEAK.replace("${user.home}", System.getProperty("user.home")));
-   /**
-    * This is added to surefire, assuming that kieker has been downloaded already, so that the aspectj-weaving can take place.
-    */
-   protected static final String KIEKER_ARG_LINE = JAVA_AGENT + ":" + KIEKER_FOLDER_MAVEN;
-   protected static final String KIEKER_ARG_LINE_TWEAK = JAVA_AGENT + ":" + KIEKER_FOLDER_MAVEN_TWEAK;
+   public static final File KIEKER_ASPECTJ_JAR = new File(ArgLineBuilder.KIEKER_FOLDER_MAVEN.replace("${user.home}", System.getProperty("user.home")));
+   
 
    protected Charset lastEncoding = StandardCharsets.UTF_8;
 
@@ -244,7 +235,7 @@ public class MavenTestExecutor extends TestExecutor {
          if (model.getBuild() == null) {
             model.setBuild(new Build());
          }
-         final String argline = buildArgline(lastTmpFile);
+         final String argline = new ArgLineBuilder(testTransformer).buildArgline(lastTmpFile);
 
          MavenPomUtil.extendSurefire(argline, model, update, testTransformer.getConfig().getTimeoutInMinutes() * 2);
 
@@ -262,42 +253,7 @@ public class MavenTestExecutor extends TestExecutor {
          e.printStackTrace();
       }
    }
-
-   private String buildArgline(final File tempFile) {
-      final String argline;
-      if (testTransformer.getConfig().isUseKieker()) {
-         String writerConfig;
-         if (testTransformer.isAggregatedWriter()) {
-            final String bulkFolder = "-Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.customStoragePath=" + tempFile.getAbsolutePath().toString();
-            writerConfig = bulkFolder;
-         } else {
-            writerConfig = "";
-         }
-
-         if (!testTransformer.isAdaptiveExecution()) {
-            if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-               argline = TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
-                     " " + writerConfig;
-            } else {
-               argline = KIEKER_ARG_LINE +
-                     " " + TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
-                     " " + writerConfig;
-            }
-         } else {
-            if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-               argline = TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
-                     " " + writerConfig;
-            } else {
-               argline = KIEKER_ARG_LINE_TWEAK +
-                     " " + TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
-                     " " + writerConfig;
-            }
-         }
-      } else {
-         argline = "";
-      }
-      return argline;
-   }
+   
 
    public Charset getEncoding() {
       return lastEncoding;

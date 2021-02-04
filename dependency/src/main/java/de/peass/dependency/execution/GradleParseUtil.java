@@ -123,11 +123,11 @@ public class GradleParseUtil {
 
             if (visitor.getDependencyLine() != -1) {
                for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
-                  final String dependencyGradle = "compile '" + dependency.getGradleDependency() + "'";
+                  final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
                   gradleFileContents.add(visitor.getDependencyLine() - 1, dependencyGradle);
                }
-            }else {
-               gradleFileContents.add("dependencies { " );
+            } else {
+               gradleFileContents.add("dependencies { ");
                for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
                   final String dependencyGradle = "compile '" + dependency.getGradleDependency() + "'";
                   gradleFileContents.add(dependencyGradle);
@@ -147,8 +147,7 @@ public class GradleParseUtil {
 
    public static void addKiekerLine(final String tempFolder, final FindDependencyVisitor visitor, final List<String> gradleFileContents) {
       if (tempFolder != null) {
-         final String javaagentArgument = "jvmArgs=[\"" + MavenTestExecutor.JAVA_AGENT + ":" + MavenTestExecutor.KIEKER_FOLDER_GRADLE + "\",\"" + tempFolder
-               + "\"]";
+         final String javaagentArgument = "jvmArgs=[\"" + ArgLineBuilder.JAVA_AGENT + ":" + MavenTestExecutor.KIEKER_FOLDER_GRADLE + "\",\"" + tempFolder + "\"]";
          if (visitor.getAndroidLine() != -1) {
             if (visitor.getUnitTestsAll() != -1) {
                gradleFileContents.add(visitor.getUnitTestsAll() - 1, javaagentArgument);

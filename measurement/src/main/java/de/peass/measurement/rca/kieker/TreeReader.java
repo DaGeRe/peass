@@ -67,6 +67,9 @@ public class TreeReader extends KiekerResultManager {
       analysisController.run();
 
       CallTreeNode root = treeFilter.getRoot();
+      if (root == null) {
+         throw new RuntimeException("An error occured - root node of " + testcase + " could not be identified!");
+      }
       return root;
    }
 
