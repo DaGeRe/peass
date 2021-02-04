@@ -34,7 +34,7 @@ public class ArgLineBuilder {
    }
 
    private String buildGenericArgline(final File tempFolder, final String valueSeparator, final String entrySeparator, final String kiekerLine) {
-      final String argline;
+      String argline;
       if (testTransformer.getConfig().isUseKieker()) {
          String writerConfig;
          if (testTransformer.isAggregatedWriter()) {
@@ -46,8 +46,11 @@ public class ArgLineBuilder {
 
          if (!testTransformer.isAdaptiveExecution()) {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-               argline = TEMP_DIR + valueSeparator + tempFolder.getAbsolutePath() +
-                     entrySeparator + writerConfig;
+               argline = TEMP_DIR + valueSeparator + tempFolder.getAbsolutePath();
+               if (!writerConfig.equals("")) {
+                  argline += entrySeparator + writerConfig;
+               }
+
             } else {
                argline = kiekerLine +
                      entrySeparator + TEMP_DIR + valueSeparator + tempFolder.getAbsolutePath() +
@@ -72,7 +75,8 @@ public class ArgLineBuilder {
    public String buildArglineGradle(final File tempFolder) {
       final String argline = buildGenericArgline(tempFolder, ":", "\",\"", KIEKER_ARG_LINE_GRADLE);
       if (!argline.equals("")) {
-         return "jvmArgs=[\"" + argline.substring(0, argline.length() - 2) + "\"]";
+         String fullArgLine = "\"" + argline + "\"";
+         return "jvmArgs=[" + fullArgLine + "]";
       } else {
          return argline;
       }
