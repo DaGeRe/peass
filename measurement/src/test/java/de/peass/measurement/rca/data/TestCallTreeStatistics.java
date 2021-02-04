@@ -5,18 +5,19 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.peass.dependency.execution.MeasurementConfiguration;
-import de.peass.measurement.rca.data.CallTreeNode;
-import de.peass.measurement.rca.data.CauseSearchData;
 
 public class TestCallTreeStatistics {
+   
+   private static final MeasurementConfiguration CONFIG = new MeasurementConfiguration(10);
+   
    @Test
    public void testStatistics() {
-      final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()", (MeasurementConfiguration) null);
-      final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()", (MeasurementConfiguration) null);
+      final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()", CONFIG);
+      final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()", CONFIG);
       node.setOtherVersionNode(otherVersionNode);
 
       node.setVersions("A", "B");
-      for (int vm = 0; vm < 10; vm++) {
+      for (int vm = 0; vm < CONFIG.getVms(); vm++) {
          addVMMeasurements("A", node);
          addVMMeasurements("B", node);
       }
@@ -33,12 +34,12 @@ public class TestCallTreeStatistics {
 
    @Test
    public void testStatisticsADDED() {
-      final CallTreeNode node = new CallTreeNode(CauseSearchData.ADDED, CauseSearchData.ADDED, "public void de.mypackage.Test.callMethod()", (MeasurementConfiguration) null);
-      final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", CauseSearchData.ADDED, (MeasurementConfiguration) null);
+      final CallTreeNode node = new CallTreeNode(CauseSearchData.ADDED, CauseSearchData.ADDED, "public void de.mypackage.Test.callMethod()", CONFIG);
+      final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", CauseSearchData.ADDED, CONFIG);
       node.setOtherVersionNode(otherVersionNode);
 
       node.setVersions("A", "B");
-      for (int vm = 0; vm < 10; vm++) {
+      for (int vm = 0; vm < CONFIG.getVms(); vm++) {
          addVMMeasurements("A", node);
       }
       node.createStatistics("A");
@@ -57,12 +58,12 @@ public class TestCallTreeStatistics {
 
    @Test
    public void testStatisticsADDEDNew() {
-      final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", CauseSearchData.ADDED, (MeasurementConfiguration) null);
-      final CallTreeNode otherVersionNode = new CallTreeNode(CauseSearchData.ADDED, CauseSearchData.ADDED, "public void de.mypackage.Test.callMethod()", (MeasurementConfiguration) null);
+      final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", CauseSearchData.ADDED, CONFIG);
+      final CallTreeNode otherVersionNode = new CallTreeNode(CauseSearchData.ADDED, CauseSearchData.ADDED, "public void de.mypackage.Test.callMethod()", CONFIG);
       node.setOtherVersionNode(otherVersionNode);
 
       node.setVersions("A", "B");
-      for (int vm = 0; vm < 10; vm++) {
+      for (int vm = 0; vm < CONFIG.getVms(); vm++) {
          addVMMeasurements("B", node);
       }
       node.createStatistics("A");
@@ -79,7 +80,7 @@ public class TestCallTreeStatistics {
       Assert.assertEquals(0, node.getPartialTestcaseStatistic().getCalls());
    }
 
-   private void addVMMeasurements(String version, final CallTreeNode node) {
+   private void addVMMeasurements(final String version, final CallTreeNode node) {
       node.newVM(version);
       for (int i = 0; i < 15; i++) {
          node.addMeasurement(version, 15L);
