@@ -7,8 +7,10 @@ import java.util.Arrays;
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledForJreRange;
+import org.junit.jupiter.api.condition.JRE;
 
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.analysis.data.TestCase;
@@ -19,7 +21,7 @@ import de.peass.vcs.VersionIterator;
 
 public class DependencyDetectorJava11IT {
 
-   @Before
+   @BeforeEach
    public void initialize() throws IOException, InterruptedException {
       Assert.assertTrue(DependencyTestConstants.VERSIONS_FOLDER.exists());
 
@@ -33,6 +35,7 @@ public class DependencyDetectorJava11IT {
    }
 
    @Test
+   @EnabledForJreRange(min = JRE.JAVA_11)
    public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException {
       final File secondVersion = new File("target/dependency_change", "normal_change");
       FileUtils.copyDirectory(new File(DependencyTestConstants.VERSIONS_FOLDER, "normal_change"), secondVersion);
