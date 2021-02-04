@@ -45,7 +45,8 @@ public class PomJavaUpdater {
             if (confProperty != null) {
                String value = confProperty.getValue();
                if (value.contains(".")) {
-                  return Integer.parseInt(value.substring(value.indexOf(".")));
+                  final String versionPart = value.substring(value.indexOf(".")+1);
+                  return Integer.parseInt(versionPart);
                } else {
                   return Integer.parseInt(value);
                }
