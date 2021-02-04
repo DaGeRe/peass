@@ -73,8 +73,9 @@
 	</build>
 
 	<dependencies>
-	
-		<!-- For execution, it is assumed that the kieker aspectJ-jar is in the local .m2 directory; no need for inclusion in jar, therefore scope runtime -->
+
+		<!-- For execution, it is assumed that the kieker aspectJ-jar is in the 
+			local .m2 directory; no need for inclusion in jar, therefore scope runtime -->
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
 			<artifactId>kieker</artifactId>
@@ -92,9 +93,10 @@
 			<artifactId>commons-cli</artifactId>
 			<version>1.4</version>
 		</dependency>
-		
 
-		<!-- Do not upgrade until whole project switches to Java 11, since jgrapht 1.5 is only available for Java 11 -->
+
+		<!-- Do not upgrade until whole project switches to Java 11, since jgrapht 
+			1.5 is only available for Java 11 -->
 		<dependency>
 			<groupId>org.jgrapht</groupId>
 			<artifactId>jgrapht-core</artifactId>
@@ -107,6 +109,20 @@
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>de.peass</groupId>
+			<artifactId>dependency</artifactId>
+			<version>0.1-SNAPSHOT</version>
+			<classifier>tests</classifier>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<version>5.7.0</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>

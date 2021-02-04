@@ -67,9 +67,9 @@ public class GradleTestExecutor extends TestExecutor {
    private void editOneBuildfile(final File gradleFile) {
       FindDependencyVisitor visitor;
       if (testTransformer.getConfig().isUseKieker()) {
-         visitor = GradleParseUtil.addDependency(gradleFile, ArgLineBuilder.TEMP_DIR + ":" + lastTmpFile.getAbsolutePath());
+         visitor = GradleParseUtil.addDependencies(testTransformer, gradleFile, lastTmpFile);
       } else {
-         visitor = GradleParseUtil.addDependency(gradleFile, null);
+         visitor = GradleParseUtil.addDependencies(testTransformer, gradleFile, null);
       }
       if (visitor.isAndroid()) {
          isAndroid = true;

@@ -1,4 +1,4 @@
-package de.peass.dependencytests;
+package de.peass.dependency.execution;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,14 +10,28 @@ import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import de.peass.dependency.execution.GradleParseUtil;
+import de.peass.dependency.execution.MeasurementConfiguration;
+import de.peass.testtransformation.JUnitTestTransformer;
 
 public class TestBuildGradle {
 
    private static final File CURRENT = new File(new File("target"), "current_gradle");
 
+   private JUnitTestTransformer mockedTransformer;
+   
+   @Before
+   public void setupTransformer() {
+      mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
+      MeasurementConfiguration config = new MeasurementConfiguration(2);
+      config.setUseKieker(true);
+      Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
+   }
+   
    @Test
    public void testNoUpdate() throws IOException {
       final File gradleFile = new File("src/test/resources/gradle/differentPlugin.gradle");
@@ -25,7 +39,7 @@ public class TestBuildGradle {
       final File destFile = new File(CURRENT, "build.gradle");
       FileUtils.copyFile(gradleFile, destFile);
 
-      GradleParseUtil.addDependency(destFile, "xyz");
+      GradleParseUtil.addDependencies(mockedTransformer, destFile, new File("xyz"));
 
       Assert.assertTrue(FileUtils.contentEquals(gradleFile, destFile));
    }
@@ -49,7 +63,7 @@ public class TestBuildGradle {
       final File destFile = new File(CURRENT, "build.gradle");
       FileUtils.copyFile(gradleFile, destFile);
 
-      GradleParseUtil.addDependency(destFile, "xyz");
+      GradleParseUtil.addDependencies(mockedTransformer, destFile, new File("xyz"));
 
       final List<String> gradleFileContents = Files.readAllLines(Paths.get(destFile.toURI()));
 

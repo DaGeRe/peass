@@ -5,14 +5,14 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import org.aspectj.util.FileUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.ViewNotFoundException;
+import de.peass.dependencytests.helper.FakeFileIterator;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.kieker.TreeReader;
 import de.peass.measurement.rca.kieker.TreeReaderFactory;
@@ -20,25 +20,28 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class TestTreeFilter {
    
-   private static final File SOURCE_DIR = new File("src/test/resources/treeReadExample");
    
    private File tempDir;
    private File projectFolder;
    
-   @Before
-   public void setUp() {
+   public void setUp(final String source) {
       try {
+         File sourceDir = new File(source);
+         
          tempDir = Files.createTempDirectory(new File("target").toPath(), "peass_").toFile();
          projectFolder = new File(tempDir, "project");
          
-         FileUtil.copyDir(SOURCE_DIR, projectFolder);
+         FakeFileIterator.copy(sourceDir, projectFolder);
       } catch (IOException e) {
          e.printStackTrace();
       }
    }
    
-   @Test
-   public void testComplexTreeCreation() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+   @ParameterizedTest
+   @ValueSource(strings = {"src/test/resources/treeReadExample", "src/test/resources/treeReadExampleGradle"})
+   public void testComplexTreeCreation(final String sourceDir) throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
+      setUp(sourceDir);
+      
       CallTreeNode rootNode = getTree();
       
       Assert.assertNotNull(rootNode);

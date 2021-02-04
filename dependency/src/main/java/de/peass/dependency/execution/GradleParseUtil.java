@@ -22,6 +22,7 @@ import org.codehaus.plexus.util.IOUtil;
 
 import de.peass.dependency.execution.gradle.AndroidVersionUtil;
 import de.peass.dependency.execution.gradle.FindDependencyVisitor;
+import de.peass.testtransformation.JUnitTestTransformer;
 
 public class GradleParseUtil {
 
@@ -107,7 +108,7 @@ public class GradleParseUtil {
       }
    }
 
-   public static FindDependencyVisitor addDependency(final File buildfile, final String tempFolder) {
+   public static FindDependencyVisitor addDependencies(final JUnitTestTransformer testTransformer, final File buildfile, final File tempFolder) {
       FindDependencyVisitor visitor = null;
       try {
          visitor = parseBuildfile(buildfile);
@@ -129,13 +130,13 @@ public class GradleParseUtil {
             } else {
                gradleFileContents.add("dependencies { ");
                for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
-                  final String dependencyGradle = "compile '" + dependency.getGradleDependency() + "'";
+                  final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
                   gradleFileContents.add(dependencyGradle);
                }
                gradleFileContents.add("}");
             }
 
-            addKiekerLine(tempFolder, visitor, gradleFileContents);
+            addKiekerLine(testTransformer, tempFolder, visitor, gradleFileContents);
          }
 
          Files.write(buildfile.toPath(), gradleFileContents, StandardCharsets.UTF_8);
@@ -145,9 +146,9 @@ public class GradleParseUtil {
       return visitor;
    }
 
-   public static void addKiekerLine(final String tempFolder, final FindDependencyVisitor visitor, final List<String> gradleFileContents) {
+   public static void addKiekerLine(final JUnitTestTransformer testTransformer, final File tempFolder, final FindDependencyVisitor visitor, final List<String> gradleFileContents) {
       if (tempFolder != null) {
-         final String javaagentArgument = "jvmArgs=[\"" + ArgLineBuilder.JAVA_AGENT + ":" + MavenTestExecutor.KIEKER_FOLDER_GRADLE + "\",\"" + tempFolder + "\"]";
+         final String javaagentArgument = new ArgLineBuilder(testTransformer).buildArglineGradle(tempFolder);
          if (visitor.getAndroidLine() != -1) {
             if (visitor.getUnitTestsAll() != -1) {
                gradleFileContents.add(visitor.getUnitTestsAll() - 1, javaagentArgument);

@@ -23,12 +23,17 @@ public class ArgLineBuilder {
       this.testTransformer = testTransformer;
    }
 
-   public String buildArgline(final File tempFile) {
+   public String buildArgline(final File tempFolder) {
+      final String argline = buildGenericArgline(tempFolder, "=", " ");
+      return argline;
+   }
+
+   private String buildGenericArgline(final File tempFolder, final String valueSeparator, final String entrySeparator) {
       final String argline;
       if (testTransformer.getConfig().isUseKieker()) {
          String writerConfig;
          if (testTransformer.isAggregatedWriter()) {
-            final String bulkFolder = "-Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.customStoragePath=" + tempFile.getAbsolutePath().toString();
+            final String bulkFolder = "-Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.customStoragePath" + valueSeparator + tempFolder.getAbsolutePath();
             writerConfig = bulkFolder;
          } else {
             writerConfig = "";
@@ -36,26 +41,35 @@ public class ArgLineBuilder {
 
          if (!testTransformer.isAdaptiveExecution()) {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-               argline = TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
-                     " " + writerConfig;
+               argline = TEMP_DIR + valueSeparator + tempFolder.getAbsolutePath() +
+                     entrySeparator + writerConfig;
             } else {
                argline = KIEKER_ARG_LINE +
-                     " " + TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
-                     " " + writerConfig;
+                     entrySeparator + TEMP_DIR + valueSeparator + tempFolder.getAbsolutePath() +
+                     entrySeparator + writerConfig;
             }
          } else {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-               argline = TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
-                     " " + writerConfig;
+               argline = TEMP_DIR + valueSeparator + tempFolder.getAbsolutePath() +
+                     entrySeparator + writerConfig;
             } else {
                argline = KIEKER_ARG_LINE +
-                     " " + TEMP_DIR + "=" + tempFile.getAbsolutePath().toString() +
-                     " " + writerConfig;
+                     entrySeparator + TEMP_DIR + valueSeparator + tempFolder.getAbsolutePath() +
+                     entrySeparator + writerConfig;
             }
          }
       } else {
          argline = "";
       }
       return argline;
+   }
+
+   public String buildArglineGradle(final File tempFolder) {
+      final String argline = buildGenericArgline(tempFolder, ":", ",");
+      if (!argline.equals("")) {
+         return "jvmArgs=[\"" + argline + "\"]";
+      } else {
+         return argline;
+      }
    }
 }
