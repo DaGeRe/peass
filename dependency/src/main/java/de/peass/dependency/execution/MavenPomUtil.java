@@ -24,7 +24,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 public class MavenPomUtil {
 
-   public static final String KOPEME_VERSION = "0.13";
+   public static final String KOPEME_VERSION = "0.14-SNAPSHOT";
    public static final String ORG_APACHE_MAVEN_PLUGINS = "org.apache.maven.plugins";
    public static final String SUREFIRE_ARTIFACTID = "maven-surefire-plugin";
    public static final String COMPILER_ARTIFACTID = "maven-compiler-plugin";
@@ -132,17 +132,17 @@ public class MavenPomUtil {
       final Dependency kopeme_dependency2 = getDependency("de.dagere.kopeme", KOPEME_VERSION, scope, "kopeme-junit");
       dependencies.add(kopeme_dependency2);
       
-      final Dependency kieker_dependency = getDependency("net.kieker-monitoring", MavenTestExecutor.KIEKER_VERSION, "", "kieker");
+      final Dependency kieker_dependency = getDependency("net.kieker-monitoring", "1.15-SNAPSHOT", "", "kieker");
       dependencies.add(kieker_dependency);
       
-      final Dependency kieker_dependency_aspectj = getDependency("net.kieker-monitoring", MavenTestExecutor.KIEKER_VERSION, "", "kieker", "aspectj");
+      final Dependency kieker_dependency_aspectj = getDependency("net.kieker-monitoring", "1.15-SNAPSHOT", "", "kieker", "aspectj");
       dependencies.add(kieker_dependency_aspectj);
       
       final Dependency slf4j = getDependency("org.apache.logging.log4j", "2.14.0", "", "log4j-slf4j-impl");
       dependencies.add(slf4j);
       
       // Workaround: Add newer AspectJ, until Kieker updates its dependency
-      final Dependency aspectj = getDependency("org.aspectj", "1.9.6", scope, "aspectjweaver");
+      final Dependency aspectj = getDependency("org.aspectj", "1.9.5", scope, "aspectjweaver");
       dependencies.add(0, aspectj);
    }
 

@@ -31,9 +31,17 @@ import de.peass.utils.StreamGobbler;
 public class TestTraceMethodReader {
 
    private final File tmpFolder = new File("target/kieker_results_test/");
-   private final String REPO = System.getenv("HOME") + "/.m2/repository";
-   private final String KOPEME_JAR = REPO + "/de/dagere/kopeme/kopeme-core/" + MavenPomUtil.KOPEME_VERSION + "/kopeme-core-" + MavenPomUtil.KOPEME_VERSION + ".jar";
+   private static final String REPO = System.getenv("HOME") + "/.m2/repository";
+   private static final String KOPEME_JAR = REPO + "/de/dagere/kopeme/kopeme-core/" + MavenPomUtil.KOPEME_VERSION + "/kopeme-core-" + MavenPomUtil.KOPEME_VERSION + ".jar";
+   private static final String SLF4J_IMPL_VERSION = "2.14.0";
+   private static final String SLF4J_IMPL_JAR = REPO + "/org/apache/logging/log4j/log4j-slf4j-impl/" + SLF4J_IMPL_VERSION + "/log4j-slf4j-impl-" + SLF4J_IMPL_VERSION + ".jar";
+   private static final String SLF4J_API_VERSION = "1.7.30";
+   private static final String SLF4J_API_JAR = REPO + "/org/slf4j/slf4j-api/" + SLF4J_API_VERSION + "/slf4j-api-" + SLF4J_API_VERSION + ".jar";
+   private static final String LOG4J_IMPL_JAR = REPO + "/org/apache/logging/log4j/log4j-core/2.14.0/log4j-core-2.14.0.jar";
+   private static final String LOG4J_API_JAR = REPO + "/org/apache/logging/log4j/log4j-api/2.14.0/log4j-api-2.14.0.jar";
 
+   private static final String JAR_PATH = KOPEME_JAR + ":" + SLF4J_API_JAR + ":" + SLF4J_IMPL_JAR + ":" + LOG4J_IMPL_JAR + ":" + LOG4J_API_JAR + ":target/test-classes/";
+   
    @Before
    public void init() {
       tmpFolder.mkdirs();
@@ -51,10 +59,12 @@ public class TestTraceMethodReader {
 
    @Test
    public void testTraceLengthSimpleFor() throws ParseException, IOException {
+      System.out.println(SLF4J_API_JAR);
+      System.out.println(SLF4J_IMPL_JAR);
       final ProcessBuilder builder = new ProcessBuilder("java",
             "-javaagent:" + MavenTestExecutor.KIEKER_ASPECTJ_JAR,
             "-Dorg.aspectj.weaver.loadtime.configuration=file:src/test/resources/aop.xml",
-            "-cp", KOPEME_JAR + ":target/test-classes/",
+            "-cp", JAR_PATH,
             "de.peass.example.CallerSimpleFor");
       final Process process = builder.start();
 
@@ -64,7 +74,8 @@ public class TestTraceMethodReader {
 
       final File traceFolder = kiekerFolders[0];
       //
-      final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING).getShortTrace(""), new File("src/test/java"));
+      final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING).getShortTrace(""),
+            new File("src/test/java"));
       final TraceWithMethods trace = reader.getTraceWithMethods();
 
       System.out.println(trace.getWholeTrace());
@@ -80,7 +91,7 @@ public class TestTraceMethodReader {
       final ProcessBuilder builder = new ProcessBuilder("java",
             "-javaagent:" + MavenTestExecutor.KIEKER_ASPECTJ_JAR,
             "-Dorg.aspectj.weaver.loadtime.configuration=file:src/test/resources/aop.xml",
-            "-cp", KOPEME_JAR + ":target/test-classes/",
+            "-cp", JAR_PATH,
             "de.peass.example.CallerLongFor");
       final Process process = builder.start();
 
@@ -89,7 +100,8 @@ public class TestTraceMethodReader {
 
       final File traceFolder = kiekerFolders[0];
 
-      final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING).getShortTrace(""), new File("src/test/java"));
+      final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING).getShortTrace(""),
+            new File("src/test/java"));
       final TraceWithMethods trace = reader.getTraceWithMethods();
 
       System.out.println(trace.getWholeTrace());

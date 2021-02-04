@@ -87,7 +87,7 @@ public class ContinuousDependencyReader {
    private Dependencies fullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
          throws Exception {
       File logFile = new File(dependencyFile.getParentFile(), "dependencyreading_" + iterator.getTag() + ".txt");
-      LOG.info("Executig regression test selection - Log goes to {}", logFile.getAbsolutePath());
+      LOG.info("Executing regression test selection - Log goes to {}", logFile.getAbsolutePath());
 
       try (LogRedirector director = new LogRedirector(logFile)) {
          final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, TIMEOUT, nonChanges);
