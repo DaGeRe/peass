@@ -41,7 +41,7 @@ public class TestTraceMethodReader {
    private static final String LOG4J_API_JAR = REPO + "/org/apache/logging/log4j/log4j-api/2.14.0/log4j-api-2.14.0.jar";
 
    private static final String JAR_PATH = KOPEME_JAR + ":" + SLF4J_API_JAR + ":" + SLF4J_IMPL_JAR + ":" + LOG4J_IMPL_JAR + ":" + LOG4J_API_JAR + ":target/test-classes/";
-   
+
    @Before
    public void init() {
       tmpFolder.mkdirs();
@@ -60,7 +60,7 @@ public class TestTraceMethodReader {
    @Test
    public void testTraceLengthSimpleFor() throws ParseException, IOException {
       System.out.println("Searching: " + SLF4J_API_JAR + " " + new File(SLF4J_API_JAR).exists());
-      System.out.println(SLF4J_IMPL_JAR);
+      System.out.println("Searching: " + SLF4J_IMPL_JAR + " " + new File(SLF4J_IMPL_JAR).exists());
       final ProcessBuilder builder = new ProcessBuilder("java",
             "-javaagent:" + MavenTestExecutor.KIEKER_ASPECTJ_JAR,
             "-Dorg.aspectj.weaver.loadtime.configuration=file:src/test/resources/aop.xml",
