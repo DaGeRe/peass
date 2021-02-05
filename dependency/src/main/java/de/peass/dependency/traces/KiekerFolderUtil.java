@@ -71,10 +71,13 @@ public class KiekerFolderUtil {
             }
          }
       } else {
-         System.out.println("Folder did not exist");
-         File potentialPeassFolder = new File(resultsFolder, "../../../");
-         System.out.println("Files in " + potentialPeassFolder.getAbsolutePath());
-         for (File file : potentialPeassFolder.listFiles()) {
+         File testingFolder = new File(resultsFolder, "../");;
+         while (!testingFolder.exists()) {
+            System.out.println("Folder " + testingFolder.getAbsolutePath() + " did not exist");
+            testingFolder = new File(testingFolder.getAbsolutePath(), "..");
+         }
+         System.out.println("Files in " + testingFolder.getAbsolutePath());
+         for (File file : testingFolder.listFiles()) {
             System.out.println(file.getAbsolutePath());
          }
       }
