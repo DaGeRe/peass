@@ -101,7 +101,7 @@
 			<artifactId>dependency</artifactId>
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>de.peass</groupId>
 			<artifactId>dependency</artifactId>
@@ -153,9 +153,9 @@
 			<id>buildFatJar</id>
 			<activation>
 				<!-- The shade plugin took ~ 21 s from 25 s of build, if a shaded jar 
-					is built for every module Therfore, share is commented out currently; if 
-					a separate dependency-jar is needed, it could be re-enabled (or transfered 
-					to a profile) -->
+					is built for every module Therefore, shade is commented out currently; if 
+					a separate dependency-jar is needed, it could be re-enabled (or used by activating 
+					the profile) -->
 			</activation>
 			<build>
 				<plugins>

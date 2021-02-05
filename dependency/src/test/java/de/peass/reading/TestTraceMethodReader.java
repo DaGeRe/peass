@@ -59,7 +59,7 @@ public class TestTraceMethodReader {
 
    @Test
    public void testTraceLengthSimpleFor() throws ParseException, IOException {
-      System.out.println(SLF4J_API_JAR);
+      System.out.println("Searching: " + SLF4J_API_JAR + " " + new File(SLF4J_API_JAR).exists());
       System.out.println(SLF4J_IMPL_JAR);
       final ProcessBuilder builder = new ProcessBuilder("java",
             "-javaagent:" + MavenTestExecutor.KIEKER_ASPECTJ_JAR,
