@@ -72,7 +72,7 @@ public class KiekerFolderUtil {
          }
       } else {
          System.out.println("Folder did not exist");
-         File potentialPeassFolder = new File(resultsFolder, "../../");
+         File potentialPeassFolder = new File(resultsFolder, "../../../");
          System.out.println("Files in " + potentialPeassFolder.getAbsolutePath());
          for (File file : potentialPeassFolder.listFiles()) {
             System.out.println(file.getAbsolutePath());
