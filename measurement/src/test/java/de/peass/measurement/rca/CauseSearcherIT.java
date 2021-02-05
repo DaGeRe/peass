@@ -140,6 +140,6 @@ public class CauseSearcherIT {
       LOG.debug(changedEntities);
       Assert.assertThat(changedEntities.size(), Matchers.greaterThanOrEqualTo(1));
       List<String> allChanged = changedEntities.stream().map(entity -> entity.toString()).collect(Collectors.toList());
-      MatcherAssert.assertThat(allChanged, Matchers.contains("defaultpackage.NormalDependency#child12"));
+      MatcherAssert.assertThat(allChanged, Matchers.hasItem("defaultpackage.NormalDependency#child12"));
    }
 }

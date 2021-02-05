@@ -87,6 +87,7 @@
 			<groupId>net.kieker-monitoring</groupId>
 			<artifactId>kieker</artifactId>
 			<version>1.15-SNAPSHOT</version>
+			<classifier>jar</classifier>
 		</dependency>
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
