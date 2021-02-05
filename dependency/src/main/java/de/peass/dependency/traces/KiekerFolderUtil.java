@@ -55,10 +55,8 @@ public class KiekerFolderUtil {
       System.out.println("Searching in" + logFolder.getAbsolutePath());
       if (logFolder.exists()) {
          File logFolderChild = logFolder.listFiles(new FileFilter() {
-            
             @Override
             public boolean accept(final File pathname) {
-               // TODO Auto-generated method stub
                return pathname.isDirectory();
             }
          })[0];
@@ -72,9 +70,16 @@ public class KiekerFolderUtil {
                e.printStackTrace();
             }
          }
+      } else {
+         System.out.println("Folder did not exist");
+         File potentialPeassFolder = new File(resultsFolder, "../../");
+         System.out.println("Files in " + potentialPeassFolder.getAbsolutePath());
+         for (File file : potentialPeassFolder.listFiles()) {
+            System.out.println(file.getAbsolutePath());
+         }
       }
    }
-   
+
    public static File getKiekerTraceFolder(final File kiekerResultFolder, final TestCase testcase) {
       File methodResult = new File(kiekerResultFolder, testcase.getMethod());
       if (methodResult.exists() && methodResult.isDirectory()) {

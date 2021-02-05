@@ -6,4 +6,4 @@ jdk:
         - openjdk8
 
 before_install:
-        - cd /tmp && git clone https://github.com/kieker-monitoring/kieker.git && cd kieker && ./gradlew clean aspectJJar mainJar jar -x check -x test publishToMavenLocal && mvn install:install-file -Dfile=build/libs/kieker-1.15-SNAPSHOT-jar.jar -DgroupId=net.kieker-monitoring -DartifactId=kieker -Dversion=1.15-SNAPSHOT -Dpackaging=jar
+        - cd /tmp && git clone --depth 1 https://github.com/kieker-monitoring/kieker.git && cd kieker && ./gradlew clean aspectJJar mainJar jar -x check -x test publishToMavenLocal && mvn install:install-file -Dfile=build/libs/kieker-1.15-SNAPSHOT-jar.jar -DgroupId=net.kieker-monitoring -DartifactId=kieker -Dversion=1.15-SNAPSHOT -Dpackaging=jar
