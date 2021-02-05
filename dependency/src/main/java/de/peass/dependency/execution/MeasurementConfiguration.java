@@ -17,6 +17,7 @@ public class MeasurementConfiguration {
    private int iterations = 1;
    private int repetitions = 1;
    private boolean logFullData = true;
+   private boolean removeSnapshots = false;
    
    //Kieker config
    private boolean useKieker = false;
@@ -322,5 +323,13 @@ public class MeasurementConfiguration {
       final int samplingfactor = this.isUseSampling() ? 1000 : 1;
       final int warmup = this.getWarmup() * this.getRepetitions() / samplingfactor;
       return warmup;
+   }
+
+   public void setRemoveSnapshots(final boolean removeSnapshots) {
+      this.removeSnapshots = removeSnapshots;
+   }
+   
+   public boolean isRemoveSnapshots() {
+      return removeSnapshots;
    }
 }

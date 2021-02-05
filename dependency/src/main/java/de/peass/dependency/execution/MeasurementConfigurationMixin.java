@@ -26,7 +26,10 @@ public class MeasurementConfigurationMixin {
 
    @Option(names = { "-earlyStop", "--earlyStop" }, description = "Whether to stop early (i.e. execute VMs until type 1 and type 2 error are met)")
    protected boolean earlyStop = false;
-
+   
+   @Option(names = { "-removeSnapshots", "--removeSnapshots" }, description = "Activates removing SNAPSHOTS (if older versions should be analysed, this should be activated; for performance measurement in CI, this should not be activated)")
+   protected boolean removeSnapshots = false;
+   
    @Option(names = { "-type1error",
          "--type1error" }, description = "Type 1 error of agnostic-t-test, i.e. probability of considering measurements equal when they are unequal (requires earlyStop)")
    public double type1error = 0.05;
@@ -89,47 +92,47 @@ public class MeasurementConfigurationMixin {
       return timeout;
    }
 
-   public void setVms(int vms) {
+   public void setVms(final int vms) {
       this.vms = vms;
    }
 
-   public void setDuration(int duration) {
+   public void setDuration(final int duration) {
       this.duration = duration;
    }
 
-   public void setWarmup(int warmup) {
+   public void setWarmup(final int warmup) {
       this.warmup = warmup;
    }
 
-   public void setIterations(int iterations) {
+   public void setIterations(final int iterations) {
       this.iterations = iterations;
    }
 
-   public void setRepetitions(int repetitions) {
+   public void setRepetitions(final int repetitions) {
       this.repetitions = repetitions;
    }
 
-   public void setUseKieker(boolean useKieker) {
+   public void setUseKieker(final boolean useKieker) {
       this.useKieker = useKieker;
    }
 
-   public void setUseGC(boolean useGC) {
+   public void setUseGC(final boolean useGC) {
       this.useGC = useGC;
    }
 
-   public void setEarlyStop(boolean earlyStop) {
+   public void setEarlyStop(final boolean earlyStop) {
       this.earlyStop = earlyStop;
    }
 
-   public void setType1error(double type1error) {
+   public void setType1error(final double type1error) {
       this.type1error = type1error;
    }
 
-   public void setType2error(double type2error) {
+   public void setType2error(final double type2error) {
       this.type2error = type2error;
    }
 
-   public void setTimeout(int timeout) {
+   public void setTimeout(final int timeout) {
       this.timeout = timeout;
    }
 
@@ -137,11 +140,11 @@ public class MeasurementConfigurationMixin {
       return record;
    }
 
-   public void setRecord(AllowedKiekerRecord record) {
+   public void setRecord(final AllowedKiekerRecord record) {
       this.record = record;
    }
 
-   public void setMeasurementStrategy(MeasurementStrategy measurementStrategy) {
+   public void setMeasurementStrategy(final MeasurementStrategy measurementStrategy) {
       this.measurementStrategy = measurementStrategy;
    }
    

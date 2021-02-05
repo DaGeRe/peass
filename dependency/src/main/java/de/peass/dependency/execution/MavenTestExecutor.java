@@ -18,6 +18,7 @@ package de.peass.dependency.execution;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
@@ -55,12 +56,11 @@ public class MavenTestExecutor extends TestExecutor {
    /** M5 has some problems finding JUnit 5 tests; so stay at M3 */
    public static final String SUREFIRE_VERSION = "3.0.0-M3";
    public static final String DEFAULT_JAVA_VERSION = "1.8";
-   
+
    public static final String KIEKER_VERSION = "1.15-SNAPSHOT";
-  
+
    public static final String KIEKER_ADAPTIVE_FILENAME = "config/kieker.adaptiveMonitoring.conf";
    public static final File KIEKER_ASPECTJ_JAR = new File(ArgLineBuilder.KIEKER_FOLDER_MAVEN.replace("${user.home}", System.getProperty("user.home")));
-   
 
    protected Charset lastEncoding = StandardCharsets.UTF_8;
 
@@ -94,8 +94,8 @@ public class MavenTestExecutor extends TestExecutor {
             "test",
             "-fn",
             "-Dcheckstyle.skip=true",
-//            "-Dmaven.compiler.source=" + JAVA_VERSION,
-//            "-Dmaven.compiler.target=" + JAVA_VERSION,
+            // "-Dmaven.compiler.source=" + JAVA_VERSION,
+            // "-Dmaven.compiler.target=" + JAVA_VERSION,
             "-Dmaven.javadoc.skip=true",
             "-Danimal.sniffer.skip=true",
             "-Denforcer.skip=true",
@@ -144,17 +144,30 @@ public class MavenTestExecutor extends TestExecutor {
 
    @Override
    public void prepareKoPeMeExecution(final File logFile) throws IOException, InterruptedException, XmlPullParserException {
-      File pomFile = new File(folders.getProjectFolder(), "pom.xml");
-      MavenPomUtil.cleanSnapshotDependencies(pomFile);
-      PomJavaUpdater.fixCompilerVersion(pomFile);
+      updateJava();
+
       clean(logFile);
       LOG.debug("Starting Test Transformation");
       prepareKiekerSource();
       transformTests();
-      
+
       preparePom();
    }
 
+   private void updateJava() throws FileNotFoundException, IOException, XmlPullParserException {
+      final File pomFile = new File(folders.getProjectFolder(), "pom.xml");
+      if (testTransformer.getConfig().isRemoveSnapshots()) {
+         MavenPomUtil.cleanSnapshotDependencies(pomFile);
+      }
+      PomJavaUpdater.fixCompilerVersion(pomFile);
+      for (File module : getModules()) {
+         final File pomFileModule = new File(module, "pom.xml");
+         if (testTransformer.getConfig().isRemoveSnapshots()) {
+            MavenPomUtil.cleanSnapshotDependencies(pomFileModule);
+         }
+         PomJavaUpdater.fixCompilerVersion(pomFileModule);
+      }
+   }
 
    @Override
    public void executeTest(final TestCase test, final File logFolder, final long timeout) {
@@ -190,16 +203,15 @@ public class MavenTestExecutor extends TestExecutor {
          try {
             final boolean multimodule = MavenPomUtil.isMultiModuleProject(potentialPom);
             if (multimodule || testFolder.exists()) {
-               MavenPomUtil.cleanSnapshotDependencies(pomFile);
-               PomJavaUpdater.fixCompilerVersion(pomFile);
+               updateJava();
                MavenPomUtil.cleanType(pomFile);
                return testRunningSuccess(version,
                      new String[] { "mvn", "clean", "test-compile",
                            "-DskipTests=true",
                            "-Dmaven.test.skip.exec",
                            "-Dcheckstyle.skip=true",
-//                           "-Dmaven.compiler.source=" + DEFAULT_JAVA_VERSION,
-//                           "-Dmaven.compiler.target=" + DEFAULT_JAVA_VERSION,
+                           // "-Dmaven.compiler.source=" + DEFAULT_JAVA_VERSION,
+                           // "-Dmaven.compiler.target=" + DEFAULT_JAVA_VERSION,
                            "-Dmaven.javadoc.skip=true",
                            "-Danimal.sniffer.skip=true",
                            "-Djacoco.skip=true",
@@ -255,7 +267,6 @@ public class MavenTestExecutor extends TestExecutor {
          e.printStackTrace();
       }
    }
-   
 
    public Charset getEncoding() {
       return lastEncoding;

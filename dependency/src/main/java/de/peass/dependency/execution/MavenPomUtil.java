@@ -28,6 +28,8 @@ public class MavenPomUtil {
    public static final String ORG_APACHE_MAVEN_PLUGINS = "org.apache.maven.plugins";
    public static final String SUREFIRE_ARTIFACTID = "maven-surefire-plugin";
    public static final String COMPILER_ARTIFACTID = "maven-compiler-plugin";
+   
+   public static final String COMPILER_PLUGIN_VERSION = "3.8.1";
 
    private static final Logger LOG = LogManager.getLogger(MavenPomUtil.class);
 
@@ -68,11 +70,18 @@ public class MavenPomUtil {
    }
 
    private static void removeSnapshots(final Model model) {
+      final String selfGroupId = model.getGroupId();
       final List<Dependency> dependencies = model.getDependencies();
       if (dependencies != null) {
          for (final Dependency dep : dependencies) {
             if (dep.getVersion() != null) {
-               if (!dep.getArtifactId().equals("kopeme-junit") && !dep.getArtifactId().equals("kopeme-junit3")) {
+               if (!dep.getArtifactId().equals("kopeme-junit") && 
+                     !dep.getArtifactId().equals("kopeme-junit3") && 
+                     !dep.getArtifactId().equals("kieker-monitoring") &&
+                     !dep.getGroupId().startsWith(selfGroupId) && 
+                     !selfGroupId.startsWith(dep.getGroupId())
+                     ) {
+                      
                   if (dep.getVersion().endsWith("-SNAPSHOT")) {
                      dep.setVersion(dep.getVersion().replaceAll("-SNAPSHOT", ""));
                   }
@@ -241,7 +250,7 @@ public class MavenPomUtil {
          plugin.setConfiguration(new Xpp3Dom("configuration"));
       }
       LOG.debug("Compiler" + plugin.getClass() + " " + plugin.getConfiguration().getClass());
-      plugin.setVersion("3.6.1");
+      plugin.setVersion(COMPILER_PLUGIN_VERSION);
 
       LOG.info("BOOT_LIBS: {}", boot_class_path);
 
@@ -261,7 +270,7 @@ public class MavenPomUtil {
          plugin.setConfiguration(new Xpp3Dom("configuration"));
       }
       LOG.debug("Compiler" + plugin.getClass() + " " + plugin.getConfiguration().getClass());
-      plugin.setVersion("3.6.1");
+      plugin.setVersion(COMPILER_PLUGIN_VERSION);
 
       final Xpp3Dom conf = (Xpp3Dom) plugin.getConfiguration();
 

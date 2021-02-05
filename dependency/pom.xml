@@ -81,8 +81,8 @@
 			<artifactId>javaparser-core</artifactId>
 			<version>3.18.0</version>
 		</dependency>
-		
-		
+
+
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
 			<artifactId>kieker</artifactId>
@@ -94,7 +94,8 @@
 			<version>1.15-SNAPSHOT</version>
 			<classifier>aspectj</classifier>
 		</dependency>
-		<!-- Normally, we just use log4j2. Since kieker relies on slf4j, we need to add the bridge -->
+		<!-- Normally, we just use log4j2. Since kieker relies on slf4j, we need 
+			to add the bridge -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
@@ -105,7 +106,7 @@
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.30</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
@@ -116,7 +117,7 @@
 			<artifactId>picocli</artifactId>
 			<version>4.6.1</version>
 		</dependency>
-		
+
 		<!-- Both are needed in your local maven repo, and both should be downloaded 
 			when building (but are only needed at runtime, if a project does not use 
 			snapshot repo) -->
