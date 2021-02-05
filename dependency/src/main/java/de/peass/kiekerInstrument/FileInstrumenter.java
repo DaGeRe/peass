@@ -20,6 +20,7 @@ import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 
 import de.peass.dependency.changesreading.JavaParserProvider;
@@ -51,21 +52,29 @@ public class FileInstrumenter {
    }
 
    public void instrument() throws IOException {
-      ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
-      String packageName = unit.getPackageDeclaration().get().getNameAsString();
-      String name = packageName + "." + clazz.getNameAsString();
+      TypeDeclaration<?> clazz = ParseUtil.getClass(unit);
+      final String packageName = unit.getPackageDeclaration().get().getNameAsString();
+      handleTypeDeclaration(clazz, packageName);
+      TypeDeclaration<?> enumDecl = ParseUtil.getEnum(unit);
+      handleTypeDeclaration(enumDecl, packageName);
+   }
 
-      boolean fileContainsChange = handleChildren(clazz, name);
+   private void handleTypeDeclaration(final TypeDeclaration<?> clazz, final String packageName) throws IOException {
+      if (clazz != null) {
+         final String name = packageName + "." + clazz.getNameAsString();
 
-      if (fileContainsChange) {
-         for (String counterName : countersToAdd) {
-            clazz.addField("int", counterName, Keyword.PRIVATE, Keyword.STATIC);
+         boolean fileContainsChange = handleChildren(clazz, name);
+
+         if (fileContainsChange) {
+            for (String counterName : countersToAdd) {
+               clazz.addField("int", counterName, Keyword.PRIVATE, Keyword.STATIC);
+            }
+            for (String counterName : sumsToAdd) {
+               clazz.addField("long", counterName, Keyword.PRIVATE, Keyword.STATIC);
+            }
+            addImports(unit);
+            Files.write(file.toPath(), unit.toString().getBytes(StandardCharsets.UTF_8));
          }
-         for (String counterName : sumsToAdd) {
-            clazz.addField("long", counterName, Keyword.PRIVATE, Keyword.STATIC);
-         }
-         addImports(unit);
-         Files.write(file.toPath(), unit.toString().getBytes(StandardCharsets.UTF_8));
       }
    }
 
@@ -75,8 +84,8 @@ public class FileInstrumenter {
       unit.addImport("kieker.monitoring.core.registry.SessionRegistry");
       unit.addImport(configuration.getUsedRecord().getRecord());
    }
-
-   private boolean handleChildren(final ClassOrInterfaceDeclaration clazz, final String name) {
+   
+   private boolean handleChildren(final TypeDeclaration<?> clazz, final String name) {
       boolean constructorFound = false;
       for (Node child : clazz.getChildNodes()) {
          if (child instanceof MethodDeclaration) {
@@ -105,7 +114,7 @@ public class FileInstrumenter {
       return oneHasChanged;
    }
 
-   private void instrumentConstructor(final ClassOrInterfaceDeclaration clazz, final String name, final Node child) {
+   private void instrumentConstructor(final TypeDeclaration<?> clazz, final String name, final Node child) {
       ConstructorDeclaration constructor = (ConstructorDeclaration) child;
       final BlockStmt originalBlock = constructor.getBody();
       SignatureReader reader = new SignatureReader(unit, name);

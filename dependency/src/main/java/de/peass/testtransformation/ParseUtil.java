@@ -3,6 +3,7 @@ package de.peass.testtransformation;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
 
 /**
  * Helper class for parsing Java code with Javaparser.
@@ -30,6 +31,15 @@ public final class ParseUtil {
       for (final Node node : unit.getChildNodes()) {
          if (node instanceof ClassOrInterfaceDeclaration) {
             return (ClassOrInterfaceDeclaration) node;
+         }
+      }
+      return null;
+   }
+   
+   public static EnumDeclaration getEnum(final CompilationUnit unit) {
+      for (final Node node : unit.getChildNodes()) {
+         if (node instanceof EnumDeclaration) {
+            return (EnumDeclaration) node;
          }
       }
       return null;

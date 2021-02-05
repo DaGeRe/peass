@@ -8,10 +8,10 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.Type;
 
@@ -44,13 +44,13 @@ public class SignatureReader {
    private final String name;
    private final List<String> localClazzes;
 
-   public SignatureReader(CompilationUnit unit, String name) {
+   public SignatureReader(final CompilationUnit unit, final String name) {
       this.unit = unit;
       this.name = name;
       localClazzes = ClazzFinder.getClazzes(unit);
    }
 
-   public String getDefaultConstructor(ClassOrInterfaceDeclaration clazz) {
+   public String getDefaultConstructor(final TypeDeclaration<?> clazz) {
       String visibility = getVisibility(clazz);
       String signature = visibility + "new " + name + ".<init>(";
       signature = addInnerClassConstructorParameter(clazz, signature, new NodeList<Parameter>());
@@ -64,7 +64,7 @@ public class SignatureReader {
     * @param clazz
     * @return
     */
-   private String getVisibility(ClassOrInterfaceDeclaration clazz) {
+   private String getVisibility(final TypeDeclaration<?> clazz) {
       Modifier clazzVisiblity = null;
       for (Modifier clazzModifier : clazz.getModifiers()) {
          if (clazzModifier.equals(Modifier.privateModifier()) || clazzModifier.equals(Modifier.protectedModifier()) || clazzModifier.equals(Modifier.publicModifier())) {
@@ -80,7 +80,7 @@ public class SignatureReader {
       return visibility;
    }
 
-   public String getSignature(MethodDeclaration method) {
+   public String getSignature(final MethodDeclaration method) {
       String modifiers = getModifierString(method.getModifiers());
       String returnTypFQN = getTypeFQN(method.getType());
       final String returnType = returnTypFQN + " ";
@@ -90,7 +90,7 @@ public class SignatureReader {
       return signature;
    }
 
-   public String getSignature(ClassOrInterfaceDeclaration clazz, ConstructorDeclaration method) {
+   public String getSignature(final TypeDeclaration<?> clazz, final ConstructorDeclaration method) {
       String modifiers = getModifierString(method.getModifiers());
       String signature = modifiers + "new " + name + ".<init>(";
       signature = addInnerClassConstructorParameter(clazz, signature, method.getParameters());
@@ -98,7 +98,7 @@ public class SignatureReader {
       return signature;
    }
 
-   private String addInnerClassConstructorParameter(ClassOrInterfaceDeclaration clazz, String signature, NodeList<Parameter> parameters) {
+   private String addInnerClassConstructorParameter(final TypeDeclaration<?> clazz, String signature, final NodeList<Parameter> parameters) {
       if (name.contains("$") && !clazz.isStatic()) {
          String firstConstructorPart = name.substring(0, name.lastIndexOf('$'));
          signature += firstConstructorPart;
@@ -110,7 +110,7 @@ public class SignatureReader {
       return signature;
    }
 
-   private String getParameterString(NodeList<Parameter> methodParameters) {
+   private String getParameterString(final NodeList<Parameter> methodParameters) {
       String parameterString = "";
       for (Parameter parameter : methodParameters) {
          String fqn = getTypeFQN(parameter.getType());
@@ -122,7 +122,7 @@ public class SignatureReader {
       return parameterString;
    }
 
-   private String getTypeFQN(Type type) {
+   private String getTypeFQN(final Type type) {
       String typeName = type.asString();
       if (typeName.equals("void")) {
          return typeName;
@@ -159,7 +159,7 @@ public class SignatureReader {
       return fqn;
    }
 
-   private String getReferenceInnerClazz(String typeNameWithoutArray) {
+   private String getReferenceInnerClazz(final String typeNameWithoutArray) {
       String fqn;
       // This does not work if a inner class is declared that matches the outer class, e.g. C0_0.C0_0
       String matchingInnerClass = null;
@@ -178,7 +178,7 @@ public class SignatureReader {
       return fqn;
    }
 
-   private ImportDeclaration findImport(String typeName) {
+   private ImportDeclaration findImport(final String typeName) {
       ImportDeclaration currentImport = null;
       for (ImportDeclaration importDeclaration : unit.getImports()) {
          final String importFqn = importDeclaration.getNameAsString();
@@ -190,7 +190,7 @@ public class SignatureReader {
       return currentImport;
    }
 
-   private String getModifierString(NodeList<Modifier> listOfModifiers) {
+   private String getModifierString(final NodeList<Modifier> listOfModifiers) {
       String modifiers = "";
       for (Modifier modifier : listOfModifiers) {
          modifiers += modifier;

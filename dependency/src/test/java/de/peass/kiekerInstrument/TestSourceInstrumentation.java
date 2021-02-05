@@ -25,8 +25,22 @@ public class TestSourceInstrumentation {
 
       testFileIsInstrumented(testFile, "public void de.peass.C0_0.method0()", "OperationExecutionRecord");
    }
+   
+   @Test
+   public void testUtilClass() throws IOException {
+      TestConstants.CURRENT_FOLDER.mkdirs();
 
-   public static void testFileIsInstrumented(File testFile, String fqn, String recordName) throws IOException {
+      File testFile = new File(TestConstants.CURRENT_FOLDER, "Utils.java");
+      FileUtils.copyFile(new File("src/test/resources/sourceInstrumentation/Utils.java"), testFile);
+//      File testFile = SourceInstrumentationTestUtil.copyResource("Utils.java", "/sourceInstrumentation/");
+
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION);
+      instrumenter.instrument(testFile);
+
+      testFileIsInstrumented(testFile, "public static java.util.Date com.test.Utils.utilMethod(java.lang.String)", "OperationExecutionRecord");
+   }
+
+   public static void testFileIsInstrumented(final File testFile, final String fqn, final String recordName) throws IOException {
       String changedSource = FileUtils.readFileToString(testFile, StandardCharsets.UTF_8);
 
       Assert.assertThat(changedSource, Matchers.containsString("import kieker.monitoring.core.controller.MonitoringController;"));
