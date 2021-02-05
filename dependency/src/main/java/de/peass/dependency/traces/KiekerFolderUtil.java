@@ -83,6 +83,15 @@ public class KiekerFolderUtil {
             for (File file : testingFolder.listFiles()) {
                System.out.println(file.getAbsolutePath());
             }
+         }else {
+            System.out.println("Did no succeed searching in parent folders; start to search from root");
+            String[] parts = resultsFolder.getAbsolutePath().split(File.separator);
+            File userFolder = new File(File.separator + parts[0] + File.separator + parts[1]);
+            System.out.println(userFolder.getAbsolutePath() + " " + userFolder.exists());
+            for (int i = 2; i < parts.length; i++) {
+               userFolder = new File(userFolder, parts[i]);
+               System.out.println(userFolder.getAbsolutePath() + " " + userFolder.exists());
+            }
          }
       }
    }
