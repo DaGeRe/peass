@@ -67,8 +67,8 @@ public class ErrorLogWriter {
          }
       })[0];
       System.out.println("First folder: " + logFolderChild.getAbsolutePath());
-      File txtFile = new File(logFolderChild, "log_" + testcase.getClazz() + "/" + testcase.getMethod());
-      System.out.println("Trying " + txtFile.getAbsolutePath());
+      File txtFile = new File(logFolderChild, "log_" + testcase.getClazz() + "/" + testcase.getMethod() + ".txt");
+      System.out.println("Trying " + txtFile.getAbsolutePath() + " " + txtFile.exists());
       if (txtFile.exists()) {
          try {
             System.out.println(FileUtils.readFileToString(txtFile, StandardCharsets.UTF_8));
