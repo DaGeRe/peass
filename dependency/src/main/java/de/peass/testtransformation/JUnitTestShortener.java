@@ -188,7 +188,7 @@ public class JUnitTestShortener implements AutoCloseable{
             try {
                // FileUtils.copyFile(shortened.getKey(), shortened.getValue());
                shortened.getValue().delete();
-               LOG.debug("Goal: {} Exists: {} Parent exists: {}", shortened.getValue(), shortened.getValue().exists(), shortened.getValue().getParentFile().exists());
+               LOG.debug("File to reset: {} Exists: {} Parent exists: {}", shortened.getValue(), shortened.getValue().exists(), shortened.getValue().getParentFile().exists());
                Files.move(shortened.getKey().toPath(), shortened.getValue().toPath());
                final CompilationUnit unit = JavaParserProvider.parse(shortened.getValue());
                transformer.getLoadedFiles().put(shortened.getValue(), unit);

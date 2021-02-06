@@ -184,7 +184,6 @@ public abstract class TestExecutor {
       } else {
          throw new RuntimeException("Illegal timeout: " + timeout);
       }
-
    }
 
    protected boolean testRunningSuccess(final String version, final String[] vars) {
