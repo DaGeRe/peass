@@ -1,7 +1,7 @@
-PeASS
+Peass
 ===================
 
-PeASS (from Performance Analysis of Software System versions) is a tool to analyse the evolution of performance during its versions. Base of this analysis is the transformation of junit (3 and 4) tests to performance tests. Since performance measurements need to be repeated often in order to produce statistically reliable results, they need much time. In order to reduce measurement time as far as possible, the regression test selection PRONTO (PeRfOrmance regressiON Test selectiOn) should be executed first. This is done in the `dependency`-module. Afterwards, the `measurement`-module supports execution of the measurements in the selected tests and versions. This measurements can be analyzed using the `analysis`-module later.
+Peass (from Performance analysis of software system versions) is a tool to analyse the evolution of performance during its versions. Base of this analysis is the transformation of junit (3 and 4) tests to performance tests. Since performance measurements need to be repeated often in order to produce statistically reliable results, they need much time. In order to reduce measurement time as far as possible, the regression test selection PRONTO (PeRfOrmance regressiON Test selectiOn) should be executed first. This is done in the `dependency`-module. Afterwards, the `measurement`-module supports execution of the measurements in the selected tests and versions. This measurements can be analyzed using the `analysis`-module later.
 
 All modules should be built with `mvn clean package` before execution. In order to build peass, you'll need to install KoPeMe (https://github.com/DaGeRe/KoPeMe) first or have maven snapshot repo in your `settings.xml`.
 
@@ -66,4 +66,4 @@ The creation of this project was funded by a PhD scholarship of Hanns-Seidel-Sti
 
 # Citation
 
-If you use PeASS for research, please cite `Reichelt, David Georg, Stefan Kühne, and Wilhelm Hasselbring. "PeASS: a tool for identifying performance changes at code level." 2019 34th IEEE/ACM International Conference on Automated Software Engineering (ASE). IEEE, 2019.`
+If you use Peass for research, please cite `Reichelt, David Georg, Stefan Kühne, and Wilhelm Hasselbring. "Peass: a tool for identifying performance changes at code level." 2019 34th IEEE/ACM International Conference on Automated Software Engineering (ASE). IEEE, 2019.`
