@@ -4,10 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
@@ -31,13 +29,11 @@ import de.peass.analysis.properties.PropertyReadHelper;
 import de.peass.analysis.properties.PropertyReader;
 import de.peass.analysis.properties.VersionChangeProperties;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.vcs.GitUtils;
 import de.peran.FolderSearcher;
-import de.peran.analysis.helper.AnalysisUtil;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -261,50 +257,4 @@ public class ReadProperties implements Callable<Void> {
       csvWriter.write(line.substring(0, line.length() - 1) + "\n");
       csvWriter.flush();
    }
-
-   public static void writeOnlySource(final VersionChangeProperties versionProperties, final ProjectChanges oldKnowledge)
-         throws IOException, JsonGenerationException, JsonMappingException {
-      final File resultOnlysource = new File(AnalysisUtil.getProjectResultFolder(), "properties_onlysource.json");
-      final File changesOnlysource = new File(AnalysisUtil.getProjectResultFolder(), "changes_onlysource.json");
-      final VersionChangeProperties propertiesOnlySource = new VersionChangeProperties();
-      final ProjectChanges knowledgeOnlySource = new ProjectChanges();
-      int testcaseCount = 0;
-      for (final Entry<String, ChangeProperties> version : versionProperties.getVersions().entrySet()) {
-         final Map<String, List<ChangeProperty>> testcases = new LinkedHashMap<>();
-         for (final Entry<String, List<ChangeProperty>> testcase : version.getValue().getProperties().entrySet()) {
-            final List<ChangeProperty> newList = new LinkedList<>();
-            for (final ChangeProperty property : testcase.getValue()) {
-               if (property.isAffectsSource() && !property.isAffectsTestSource()) {
-                  newList.add(property);
-
-                  final TestCase test = new TestCase(testcase.getKey(), property.getMethod());
-                  final Changes oldVersion = oldKnowledge.getVersion(version.getKey());
-                  final Change change = oldVersion.getChange(test);
-                  if (change == null) {
-                     LOG.error(test); // TODO throw exception here and debug
-                  } else {
-                     knowledgeOnlySource.addChange(test, version.getKey(), change);
-                     testcaseCount++;
-                  }
-
-               }
-            }
-            if (newList.size() > 0) {
-               testcases.put(testcase.getKey(), newList);
-            }
-         }
-         if (testcases.size() > 0) {
-            final ChangeProperties properties = new ChangeProperties();
-            properties.setProperties(testcases);
-            properties.setCommitter(version.getValue().getCommitter());
-            properties.setCommitText(version.getValue().getCommitText());
-            propertiesOnlySource.getVersions().put(version.getKey(), properties);
-         }
-      }
-      knowledgeOnlySource.setVersionCount(knowledgeOnlySource.getVersionChanges().size());
-      knowledgeOnlySource.setTestcaseCount(testcaseCount);
-      FolderSearcher.MAPPER.writeValue(resultOnlysource, propertiesOnlySource);
-      FolderSearcher.MAPPER.writeValue(changesOnlysource, knowledgeOnlySource);
-   }
-
 }
