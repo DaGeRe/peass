@@ -13,43 +13,6 @@ import de.peass.dependency.execution.AllowedKiekerRecord;
 
 public class BlockBuilder {
 
-   private static final String BEFORE_OER_SOURCE = "      // collect data\n" +
-         "      final boolean entrypoint;\n" +
-         "      final String hostname = MonitoringController.getInstance().getHostname();\n" +
-         "      final String sessionId = SessionRegistry.INSTANCE.recallThreadLocalSessionId();\n" +
-         "      final int eoi; // this is executionOrderIndex-th execution in this trace\n" +
-         "      final int ess; // this is the height in the dynamic call tree of this execution\n" +
-         "      long traceId = ControlFlowRegistry.INSTANCE.recallThreadLocalTraceId(); // traceId, -1 if entry point\n" +
-         "      if (traceId == -1) {\n" +
-         "         entrypoint = true;\n" +
-         "         traceId = ControlFlowRegistry.INSTANCE.getAndStoreUniqueThreadLocalTraceId();\n" +
-         "         ControlFlowRegistry.INSTANCE.storeThreadLocalEOI(0);\n" +
-         "         ControlFlowRegistry.INSTANCE.storeThreadLocalESS(1); // next operation is ess + 1\n" +
-         "         eoi = 0;\n" +
-         "         ess = 0;\n" +
-         "      } else {\n" +
-         "         entrypoint = false;\n" +
-         "         eoi = ControlFlowRegistry.INSTANCE.incrementAndRecallThreadLocalEOI(); // ess > 1\n" +
-         "         ess = ControlFlowRegistry.INSTANCE.recallAndIncrementThreadLocalESS(); // ess >= 0\n" +
-         "         if ((eoi == -1) || (ess == -1)) {\n" +
-         "            System.err.println(\"eoi and/or ess have invalid values: eoi == {} ess == {}\"+ eoi+ \"\" + ess);\n" +
-         "            MonitoringController.getInstance().terminateMonitoring();\n" +
-         "         }\n" +
-         "      }\n" +
-         "      // measure before\n" +
-         "      final long tin = MonitoringController.getInstance().getTimeSource().getTime();\n";
-   private static final String AFTER_OER_SOURCE = "// measure after\n" +
-         "         final long tout = MonitoringController.getInstance().getTimeSource().getTime();\n" +
-         "         MonitoringController.getInstance().newMonitoringRecord(new OperationExecutionRecord(signature, sessionId, traceId, tin, tout, hostname, eoi, ess));\n" +
-         "         // cleanup\n" +
-         "         if (entrypoint) {\n" +
-         "            ControlFlowRegistry.INSTANCE.unsetThreadLocalTraceId();\n" +
-         "            ControlFlowRegistry.INSTANCE.unsetThreadLocalEOI();\n" +
-         "            ControlFlowRegistry.INSTANCE.unsetThreadLocalESS();\n" +
-         "         } else {\n" +
-         "            ControlFlowRegistry.INSTANCE.storeThreadLocalESS(ess); // next operation is ess\n" +
-         "         }";
-
    private static final Logger LOG = LogManager.getLogger(BlockBuilder.class);
 
    protected final AllowedKiekerRecord recordType;
@@ -62,13 +25,8 @@ public class BlockBuilder {
 
    public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final boolean addReturn, final SamplingParameters parameters) {
       LOG.debug("Statements: " + originalBlock.getStatements().size() + " " + parameters.getSignature());
-      BlockStmt replacedStatement = new BlockStmt();
-      ExplicitConstructorInvocationStmt constructorStatement = null;
-      for (Statement st : originalBlock.getStatements()) {
-         if (st instanceof ExplicitConstructorInvocationStmt) {
-            constructorStatement = (ExplicitConstructorInvocationStmt) st;
-         }
-      }
+      final BlockStmt replacedStatement = new BlockStmt();
+      final ExplicitConstructorInvocationStmt constructorStatement = findConstructorInvocation(originalBlock);
       if (constructorStatement != null) {
          replacedStatement.addAndGetStatement(constructorStatement);
          originalBlock.getStatements().remove(constructorStatement);
@@ -80,6 +38,16 @@ public class BlockBuilder {
       }
 
       return replacedStatement;
+   }
+
+   private ExplicitConstructorInvocationStmt findConstructorInvocation(final BlockStmt originalBlock) {
+      ExplicitConstructorInvocationStmt constructorStatement = null;
+      for (Statement st : originalBlock.getStatements()) {
+         if (st instanceof ExplicitConstructorInvocationStmt) {
+            constructorStatement = (ExplicitConstructorInvocationStmt) st;
+         }
+      }
+      return constructorStatement;
    }
 
    public BlockStmt buildStatement(final BlockStmt originalBlock, final boolean addReturn, final SamplingParameters parameters) {
@@ -96,12 +64,10 @@ public class BlockBuilder {
       BlockStmt replacedStatement = new BlockStmt();
 
       buildHeader(originalBlock, signature, addReturn, replacedStatement);
-      replacedStatement.addAndGetStatement("      final long tin = MonitoringController.getInstance().getTimeSource().getTime();");
+      replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getBefore());
 
       BlockStmt finallyBlock = new BlockStmt();
-      finallyBlock.addAndGetStatement("// measure after\n");
-      finallyBlock.addAndGetStatement("final long tout = MonitoringController.getInstance().getTimeSource().getTime()");
-      finallyBlock.addAndGetStatement("MonitoringController.getInstance().newMonitoringRecord(new ReducedOperationExecutionRecord(signature, tin, tout))");
+      finallyBlock.addAndGetStatement(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getAfter());
       TryStmt stmt = new TryStmt(originalBlock, new NodeList<>(), finallyBlock);
       replacedStatement.addAndGetStatement(stmt);
       return replacedStatement;
@@ -111,9 +77,9 @@ public class BlockBuilder {
       BlockStmt replacedStatement = new BlockStmt();
 
       buildHeader(originalBlock, signature, addReturn, replacedStatement);
-      replacedStatement.addAndGetStatement(BEFORE_OER_SOURCE);
+      replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore());
       BlockStmt finallyBlock = new BlockStmt();
-      finallyBlock.addAndGetStatement(AFTER_OER_SOURCE);
+      finallyBlock.addAndGetStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getAfter());
       TryStmt stmt = new TryStmt(originalBlock, new NodeList<>(), finallyBlock);
       replacedStatement.addAndGetStatement(stmt);
       return replacedStatement;
@@ -146,31 +112,16 @@ public class BlockBuilder {
       }
       return replacedStatement;
    }
-   
-   public BlockStmt buildEmptySamplingConstructor(final String signature, final SamplingParameters parameters) {
-      BlockStmt replacedStatement = new BlockStmt();
-      if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
-         throw new RuntimeException("Not implemented yet (does Sampling + OperationExecutionRecord make sense?)");
-      } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
-         buildHeader(replacedStatement, signature, false, replacedStatement);
-         replacedStatement.addAndGetStatement("      final long tin = MonitoringController.getInstance().getTimeSource().getTime();");
-         replacedStatement.addAndGetStatement(parameters.getFinalBlock(signature, 1000));
-      } else {
-         throw new RuntimeException();
-      }
-      return replacedStatement;
-   }
 
    private void buildReducedOperationExecutionRecordDefaultConstructor(final String signature, final BlockStmt replacedStatement) {
       buildHeader(new BlockStmt(), signature, false, replacedStatement);
-      replacedStatement.addAndGetStatement("      final long tin = MonitoringController.getInstance().getTimeSource().getTime();");
-      replacedStatement.addAndGetStatement("// measure after\n");
-      replacedStatement.addAndGetStatement("final long tout = MonitoringController.getInstance().getTimeSource().getTime()");
-      replacedStatement.addAndGetStatement("MonitoringController.getInstance().newMonitoringRecord(new ReducedOperationExecutionRecord(signature, tin, tout))");
+      replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getBefore());
+      replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getAfter());
    }
 
    private void buildOperationExecutionRecordDefaultConstructor(final String signature, final BlockStmt replacedStatement) {
       buildHeader(new BlockStmt(), signature, false, replacedStatement);
-      replacedStatement.addAndGetStatement(BEFORE_OER_SOURCE + AFTER_OER_SOURCE);
+      replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore());
+      replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getAfter());
    }
 }

@@ -126,15 +126,15 @@ public class FileInstrumenter {
    }
 
    private void instrumentConstructor(final TypeDeclaration<?> clazz, final String name, final Node child) {
-      ConstructorDeclaration constructor = (ConstructorDeclaration) child;
+      final ConstructorDeclaration constructor = (ConstructorDeclaration) child;
       final BlockStmt originalBlock = constructor.getBody();
-      SignatureReader reader = new SignatureReader(unit, name);
-      String signature = reader.getSignature(clazz, constructor);
-      boolean oneMatches = testSignatureMatch(signature);
+      final SignatureReader reader = new SignatureReader(unit, name);
+      final String signature = reader.getSignature(clazz, constructor);
+      final boolean oneMatches = testSignatureMatch(signature);
       if (oneMatches) {
          final SamplingParameters parameters = createParameters(signature);
 
-         BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, true, parameters);
+         final BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, true, parameters);
 
          constructor.setBody(replacedStatement);
          oneHasChanged = true;
