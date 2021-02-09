@@ -19,6 +19,7 @@ import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
@@ -84,7 +85,7 @@ public class FileInstrumenter {
       unit.addImport("kieker.monitoring.core.registry.SessionRegistry");
       unit.addImport(configuration.getUsedRecord().getRecord());
    }
-   
+
    private boolean handleChildren(final TypeDeclaration<?> clazz, final String name) {
       boolean constructorFound = false;
       for (Node child : clazz.getChildNodes()) {
@@ -100,18 +101,28 @@ public class FileInstrumenter {
          }
       }
       if (!constructorFound && configuration.isCreateDefaultConstructor()) {
-
-         SignatureReader reader = new SignatureReader(unit, name);
-         String signature = reader.getDefaultConstructor(clazz);
-         if (testSignatureMatch(signature)) {
-            oneHasChanged = true;
-            final SamplingParameters parameters = createParameters(signature);
-            BlockStmt constructorBlock = blockBuilder.buildEmptyConstructor(parameters);
-            ConstructorDeclaration constructor = clazz.addConstructor(Modifier.Keyword.PUBLIC);
-            constructor.setBody(constructorBlock);
+         if (clazz instanceof EnumDeclaration) {
+            createDefaultConstructor(clazz, name);
+         } else if (clazz instanceof ClassOrInterfaceDeclaration) {
+            ClassOrInterfaceDeclaration clazzDecl = (ClassOrInterfaceDeclaration) clazz;
+            if (!clazzDecl.isInterface()) {
+               createDefaultConstructor(clazz, name);
+            }
          }
       }
       return oneHasChanged;
+   }
+
+   private void createDefaultConstructor(final TypeDeclaration<?> clazz, final String name) {
+      SignatureReader reader = new SignatureReader(unit, name);
+      String signature = reader.getDefaultConstructor(clazz);
+      if (testSignatureMatch(signature)) {
+         oneHasChanged = true;
+         final SamplingParameters parameters = createParameters(signature);
+         BlockStmt constructorBlock = blockBuilder.buildEmptyConstructor(parameters);
+         ConstructorDeclaration constructor = clazz.addConstructor(Modifier.Keyword.PUBLIC);
+         constructor.setBody(constructorBlock);
+      }
    }
 
    private void instrumentConstructor(final TypeDeclaration<?> clazz, final String name, final Node child) {
@@ -120,7 +131,7 @@ public class FileInstrumenter {
       SignatureReader reader = new SignatureReader(unit, name);
       String signature = reader.getSignature(clazz, constructor);
       boolean oneMatches = testSignatureMatch(signature);
-      if (oneMatches) { 
+      if (oneMatches) {
          final SamplingParameters parameters = createParameters(signature);
 
          BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, true, parameters);
@@ -152,7 +163,7 @@ public class FileInstrumenter {
          if (oneMatches) {
             final boolean needsReturn = method.getType().toString().equals("void");
             final SamplingParameters parameters = createParameters(signature);
-            
+
             final BlockStmt replacedStatement = blockBuilder.buildStatement(originalBlock, needsReturn, parameters);
 
             method.setBody(replacedStatement);
