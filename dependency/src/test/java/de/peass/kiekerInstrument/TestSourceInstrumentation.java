@@ -25,14 +25,14 @@ public class TestSourceInstrumentation {
 
       testFileIsInstrumented(testFile, "public void de.peass.C0_0.method0()", "OperationExecutionRecord");
    }
-   
+
    @Test
    public void testUtilClass() throws IOException {
       TestConstants.CURRENT_FOLDER.mkdirs();
 
       File testFile = new File(TestConstants.CURRENT_FOLDER, "Utils.java");
       FileUtils.copyFile(new File("src/test/resources/sourceInstrumentation/Utils.java"), testFile);
-//      File testFile = SourceInstrumentationTestUtil.copyResource("Utils.java", "/sourceInstrumentation/");
+      // File testFile = SourceInstrumentationTestUtil.copyResource("Utils.java", "/sourceInstrumentation/");
 
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION);
       instrumenter.instrument(testFile);
@@ -84,9 +84,9 @@ public class TestSourceInstrumentation {
 
    private void testConstructorVisibility() throws IOException {
       String changedSourceC1 = FileUtils.readFileToString(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C1_0.java"), StandardCharsets.UTF_8);
-      Assert.assertThat(changedSourceC1, Matchers.containsString("String signature = \"public new de.peass.C1_0.<init>()\""));
+      Assert.assertThat(changedSourceC1, Matchers.containsString("String " + InstrumentationConstants.PREFIX + "signature = \"public new de.peass.C1_0.<init>()\""));
       String changedSourceC0 = FileUtils.readFileToString(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), StandardCharsets.UTF_8);
-      Assert.assertThat(changedSourceC0, Matchers.containsString("String signature = \"new de.peass.C0_0.<init>()\""));
+      Assert.assertThat(changedSourceC0, Matchers.containsString("String " + InstrumentationConstants.PREFIX + "signature = \"new de.peass.C0_0.<init>()\""));
    }
 
    @Test

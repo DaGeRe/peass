@@ -55,7 +55,7 @@ public class TestSampling {
             instrumentedMethod, "ReducedOperationExecutionRecord");
 
       String changedSource = FileUtils.readFileToString(instrumentedFile, StandardCharsets.UTF_8);
-      Assert.assertThat(changedSource, Matchers.containsString("if (" + counterName));
-      Assert.assertThat(changedSource, Matchers.containsString("private static int " + counterName));
+      Assert.assertThat(changedSource, Matchers.containsString("if (" + InstrumentationConstants.PREFIX + counterName));
+      Assert.assertThat(changedSource, Matchers.containsString("private static int " + InstrumentationConstants.PREFIX + counterName));
    }
 }

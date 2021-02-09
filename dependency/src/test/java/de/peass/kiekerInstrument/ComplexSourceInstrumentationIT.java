@@ -9,7 +9,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +23,6 @@ public class ComplexSourceInstrumentationIT {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
    }
 
-   @Ignore
    @Test
    public void testExecution() throws IOException {
       SourceInstrumentationTestUtil.initSimpleProject("/sourceInstrumentation/example_nameCollision/");
