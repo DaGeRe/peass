@@ -50,7 +50,7 @@ public enum InstrumentationCodeBlocks {
                "         }",
          null), REDUCED_OPERATIONEXECUTION("      final long " + InstrumentationConstants.PREFIX + "tin = MonitoringController.getInstance().getTimeSource().getTime();\n",
                "// measure after\n"
-                     + "final long " + InstrumentationConstants.PREFIX + "tout = MonitoringController.getInstance().getTimeSource().getTime()\n"
+                     + "final long " + InstrumentationConstants.PREFIX + "tout = MonitoringController.getInstance().getTimeSource().getTime();\n"
                      + "MonitoringController.getInstance().newMonitoringRecord(new ReducedOperationExecutionRecord("
                      + InstrumentationConstants.PREFIX + "signature, "
                      + InstrumentationConstants.PREFIX + "tin, "

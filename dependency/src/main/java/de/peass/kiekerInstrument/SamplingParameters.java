@@ -29,10 +29,10 @@ public class SamplingParameters {
    public String getFinalBlock(final String signature, final int count) {
       return "// measure after\n" +
             "         final long " + InstrumentationConstants.PREFIX + "tout = MonitoringController.getInstance().getTimeSource().getTime();\n" +
-            "        " + sumName + "+=tout-tin;\n" +
+            "        " + sumName + "+=" + InstrumentationConstants.PREFIX + "tout-" + InstrumentationConstants.PREFIX + "tin;\n" +
             "if (" + counterName + "++%" + count + "==0){\n" +
             "final String " + InstrumentationConstants.PREFIX + "signature = \"" + signature + "\";\n" +
-            "final long " + InstrumentationConstants.PREFIX + "calculatedTout=tin+" + sumName + ";\n" +
+            "final long " + InstrumentationConstants.PREFIX + "calculatedTout=" + InstrumentationConstants.PREFIX + "tin+" + sumName + ";\n" +
             "MonitoringController.getInstance().newMonitoringRecord(new ReducedOperationExecutionRecord(" + InstrumentationConstants.PREFIX + "signature, "
             + InstrumentationConstants.PREFIX + "tin, " + InstrumentationConstants.PREFIX + "calculatedTout));\n"
             + sumName + "=0;}\n";
