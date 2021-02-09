@@ -102,25 +102,25 @@ public class FileInstrumenter {
       }
       if (!constructorFound && configuration.isCreateDefaultConstructor()) {
          if (clazz instanceof EnumDeclaration) {
-            createDefaultConstructor(clazz, name);
+            createDefaultConstructor(clazz, name, Modifier.Keyword.PRIVATE);
          } else if (clazz instanceof ClassOrInterfaceDeclaration) {
             ClassOrInterfaceDeclaration clazzDecl = (ClassOrInterfaceDeclaration) clazz;
             if (!clazzDecl.isInterface()) {
-               createDefaultConstructor(clazz, name);
+               createDefaultConstructor(clazz, name, Modifier.Keyword.PUBLIC);
             }
          }
       }
       return oneHasChanged;
    }
 
-   private void createDefaultConstructor(final TypeDeclaration<?> clazz, final String name) {
+   private void createDefaultConstructor(final TypeDeclaration<?> clazz, final String name, final Keyword visibility) {
       SignatureReader reader = new SignatureReader(unit, name);
       String signature = reader.getDefaultConstructor(clazz);
       if (testSignatureMatch(signature)) {
          oneHasChanged = true;
          final SamplingParameters parameters = createParameters(signature);
          BlockStmt constructorBlock = blockBuilder.buildEmptyConstructor(parameters);
-         ConstructorDeclaration constructor = clazz.addConstructor(Modifier.Keyword.PUBLIC);
+         ConstructorDeclaration constructor = clazz.addConstructor(visibility);
          constructor.setBody(constructorBlock);
       }
    }
