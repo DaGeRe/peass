@@ -30,7 +30,7 @@ public class TestKiekerEnvironmentPreparer {
    @Test
    public void testAOPXMLGeneration() throws IOException, InterruptedException {
       Set<String> includedMethodPatterns = new HashSet<String>();
-      includedMethodPatterns.add("public void defaultpackage.NormalDependency.methodA(String,int)");
+      includedMethodPatterns.add("public void defaultpackage.NormalDependency.methodA(java.lang.String,int)");
       includedMethodPatterns.add("private int defaultpackage.NormalDependency.methodB()");
       List<File> modules = new LinkedList<File>();
       modules.add(DependencyTestConstants.CURRENT);
