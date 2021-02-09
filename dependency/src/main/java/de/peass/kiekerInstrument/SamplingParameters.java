@@ -4,15 +4,15 @@ public class SamplingParameters {
    private final String counterName, sumName;
    private final String signature;
 
-   public SamplingParameters(String signature, int counterIndex) {
+   public SamplingParameters(final String signature, final int counterIndex) {
       final String nameBeforeParanthesis = signature.substring(0, signature.indexOf('('));
       final String methodNameSubstring = nameBeforeParanthesis.substring(nameBeforeParanthesis.lastIndexOf('.') + 1);
       if (methodNameSubstring.equals("<init>")) {
-         counterName = "initCounter" + counterIndex;
-         sumName = "initSum" + counterIndex;
+         counterName = InstrumentationConstants.PREFIX + "initCounter" + counterIndex;
+         sumName = InstrumentationConstants.PREFIX + "initSum" + counterIndex;
       } else {
-         counterName = methodNameSubstring + "Counter" + counterIndex;
-         sumName = methodNameSubstring + "Sum" + counterIndex;
+         counterName = InstrumentationConstants.PREFIX + methodNameSubstring + "Counter" + counterIndex;
+         sumName = InstrumentationConstants.PREFIX + methodNameSubstring + "Sum" + counterIndex;
       }
 
       this.signature = signature;
@@ -26,14 +26,15 @@ public class SamplingParameters {
       return sumName;
    }
 
-   public String getFinalBlock(String signature, int count) {
+   public String getFinalBlock(final String signature, final int count) {
       return "// measure after\n" +
-            "         final long tout = MonitoringController.getInstance().getTimeSource().getTime();\n" +
+            "         final long " + InstrumentationConstants.PREFIX + "tout = MonitoringController.getInstance().getTimeSource().getTime();\n" +
             "        " + sumName + "+=tout-tin;\n" +
             "if (" + counterName + "++%" + count + "==0){\n" +
-            "final String signature = \"" + signature + "\";\n" +
-            "final long calculatedTout=tin+" + sumName + ";\n" +
-            "MonitoringController.getInstance().newMonitoringRecord(new ReducedOperationExecutionRecord(signature, tin, calculatedTout));\n"
+            "final String " + InstrumentationConstants.PREFIX + "signature = \"" + signature + "\";\n" +
+            "final long " + InstrumentationConstants.PREFIX + "calculatedTout=tin+" + sumName + ";\n" +
+            "MonitoringController.getInstance().newMonitoringRecord(new ReducedOperationExecutionRecord(" + InstrumentationConstants.PREFIX + "signature, "
+            + InstrumentationConstants.PREFIX + "tin, " + InstrumentationConstants.PREFIX + "calculatedTout));\n"
             + sumName + "=0;}\n";
    }
 

@@ -88,13 +88,13 @@ public class BlockBuilder {
    private void buildHeader(final BlockStmt originalBlock, final String signature, final boolean addReturn, final BlockStmt replacedStatement) {
       if (enableDeactivation) {
          replacedStatement.addAndGetStatement("if (!MonitoringController.getInstance().isMonitoringEnabled()) {\n" +
-               originalBlock.toString() + "\n"+
+               originalBlock.toString() + "\n" +
                (addReturn ? "return;" : "") +
                "      }");
       }
-      replacedStatement.addAndGetStatement("final String signature = \"" + signature + "\";");
+      replacedStatement.addAndGetStatement("final String " + InstrumentationConstants.PREFIX + "signature = \"" + signature + "\";");
       if (enableDeactivation) {
-         replacedStatement.addAndGetStatement("if (!MonitoringController.getInstance().isProbeActivated(signature)) {\n" +
+         replacedStatement.addAndGetStatement("if (!MonitoringController.getInstance().isProbeActivated(" + InstrumentationConstants.PREFIX + "signature)) {\n" +
                originalBlock.toString() +
                (addReturn ? "return;" : "") +
                "      }");

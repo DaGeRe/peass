@@ -36,7 +36,7 @@ public class SamplingBlockBuilder extends BlockBuilder {
 
    public BlockStmt buildSelectiveSamplingStatement(final BlockStmt originalBlock, final boolean addReturn, final SamplingParameters parameters) {
       BlockStmt replacedStatement = new BlockStmt();
-      replacedStatement.addAndGetStatement("      final long tin = MonitoringController.getInstance().getTimeSource().getTime();");
+      replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.SAMPLING.getBefore());
 
       int count = 1000;
 
@@ -51,7 +51,7 @@ public class SamplingBlockBuilder extends BlockBuilder {
    public BlockStmt buildConstructorStatement(final SamplingParameters parameters) {
       BlockStmt replacedStatement = new BlockStmt();
       int count = 1000;
-      replacedStatement.addAndGetStatement("      final long tin = MonitoringController.getInstance().getTimeSource().getTime();");
+      replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.SAMPLING.getBefore());
       replacedStatement.addAndGetStatement(parameters.getFinalBlock(parameters.getSignature(), count));
       return replacedStatement;
    }
