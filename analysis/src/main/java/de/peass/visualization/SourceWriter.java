@@ -63,7 +63,7 @@ class SourceWriter {
    private void readMethod(final GraphNode node, final String currentPattern) throws IOException {
       final String key = KiekerPatternConverter.getKey(currentPattern);
       String fileNameStart = KiekerPatternConverter.getFileNameStart(currentPattern);
-      if (node.getModule() != null) {
+      if (node.getModule() != null && !node.getModule().equals("")) {
          fileNameStart = node.getModule() + ChangedEntity.MODULE_SEPARATOR + fileNameStart;
       }
       
