@@ -78,30 +78,30 @@ public class KiekerResultReader {
    public void readAggregatedData(final File kiekerTraceFolder) throws JsonParseException, JsonMappingException, IOException {
       final Map<AggregatedDataNode, AggregatedData> fullDataMap = AggregatedDataReader.getFullDataMap(kiekerTraceFolder);
       for (final CallTreeNode node : includedNodes) {
-         boolean nodeFound = false;
-         final CallTreeNode examinedNode = otherVersion ? node.getOtherVersionNode() : node;
-         final String nodeCall = KiekerPatternConverter.fixParameters(examinedNode.getKiekerPattern());
-         final List<StatisticalSummary> values = new LinkedList<>();
-         for (final Entry<AggregatedDataNode, AggregatedData> entry : fullDataMap.entrySet()) {
-        	 if (isSameNode(examinedNode, nodeCall, entry.getKey())) {
-               for (final StatisticalSummary dataSlice : entry.getValue().getStatistic().values()) {
-                  values.add(dataSlice);
-               }
-               nodeFound = true;
-            } else {
-               if (nodeCall.contains("DiskFileItem.<init>")) {
-                  LOG.debug("Testing " + entry.getKey());
-               }
-            }
-         }
+         readNode(fullDataMap, node);
+      }
+   }
 
-         if (nodeFound) {
-            LOG.debug("Setting measurement: {} {} {}", version, nodeCall, values.size());
-            // System.out.println(StatisticUtil.getMean(values) + " ");
-            node.addAggregatedMeasurement(version, values);
-         } else {
-            LOG.warn("Node {} ({}) did not find measurement values", nodeCall, node.getOtherVersionNode());
-         }
+   private void readNode(final Map<AggregatedDataNode, AggregatedData> fullDataMap, final CallTreeNode node) {
+      boolean nodeFound = false;
+      final CallTreeNode examinedNode = otherVersion ? node.getOtherVersionNode() : node;
+      final String nodeCall = KiekerPatternConverter.fixParameters(examinedNode.getKiekerPattern());
+      final List<StatisticalSummary> values = new LinkedList<>();
+      for (final Entry<AggregatedDataNode, AggregatedData> entry : fullDataMap.entrySet()) {
+       if (isSameNode(examinedNode, nodeCall, entry.getKey())) {
+            for (final StatisticalSummary dataSlice : entry.getValue().getStatistic().values()) {
+               values.add(dataSlice);
+            }
+            nodeFound = true;
+         } 
+      }
+
+      if (nodeFound) {
+         LOG.debug("Setting measurement: {} {} {}", version, nodeCall, values.size());
+         // System.out.println(StatisticUtil.getMean(values) + " ");
+         node.addAggregatedMeasurement(version, values);
+      } else {
+         LOG.warn("Node {} ({}) did not find measurement values, measured methods: {}", nodeCall, node.getOtherVersionNode(), fullDataMap.entrySet().size());
       }
    }
 
