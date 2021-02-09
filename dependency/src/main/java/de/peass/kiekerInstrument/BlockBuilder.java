@@ -122,7 +122,7 @@ public class BlockBuilder {
    private void buildHeader(final BlockStmt originalBlock, final String signature, final boolean addReturn, final BlockStmt replacedStatement) {
       if (enableDeactivation) {
          replacedStatement.addAndGetStatement("if (!MonitoringController.getInstance().isMonitoringEnabled()) {\n" +
-               originalBlock.toString() +
+               originalBlock.toString() + "\n"+
                (addReturn ? "return;" : "") +
                "      }");
       }
@@ -162,7 +162,7 @@ public class BlockBuilder {
    }
 
    private void buildReducedOperationExecutionRecordDefaultConstructor(final String signature, final BlockStmt replacedStatement) {
-      buildHeader(replacedStatement, signature, false, replacedStatement);
+      buildHeader(new BlockStmt(), signature, false, replacedStatement);
       replacedStatement.addAndGetStatement("      final long tin = MonitoringController.getInstance().getTimeSource().getTime();");
       replacedStatement.addAndGetStatement("// measure after\n");
       replacedStatement.addAndGetStatement("final long tout = MonitoringController.getInstance().getTimeSource().getTime()");
