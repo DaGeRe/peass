@@ -27,14 +27,14 @@ public class InstrumentKiekerSource {
    private final BlockBuilder blockBuilder;
 
    public InstrumentKiekerSource(final AllowedKiekerRecord usedRecord) {
-      configuration = new InstrumentationConfiguration(usedRecord, false, true, true, new HashSet<>());
+      configuration = new InstrumentationConfiguration(usedRecord, false, true, true, new HashSet<>(), false);
       configuration.getIncludedPatterns().add("*");
       this.blockBuilder = configuration.isSample() ? new SamplingBlockBuilder(configuration.getUsedRecord()) : new BlockBuilder(configuration.getUsedRecord(), true);
    }
 
    public InstrumentKiekerSource(final InstrumentationConfiguration configuration) {
       this.configuration = configuration;
-      this.blockBuilder = configuration.isSample() ? new SamplingBlockBuilder(configuration.getUsedRecord()) : new BlockBuilder(configuration.getUsedRecord(), false);
+      this.blockBuilder = configuration.isSample() ? new SamplingBlockBuilder(configuration.getUsedRecord()) : new BlockBuilder(configuration.getUsedRecord(), configuration.isEnableDeactivation());
    }
 
    public void instrumentProject(final File projectFolder) throws IOException {

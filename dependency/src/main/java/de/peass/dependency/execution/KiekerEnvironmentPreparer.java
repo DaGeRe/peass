@@ -34,10 +34,10 @@ public class KiekerEnvironmentPreparer {
       if (config.isUseSourceInstrumentation()) {
          final InstrumentKiekerSource instrumentKiekerSource;
          if (!config.isUseSelectiveInstrumentation()) {
-            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), false, includedMethodPattern, config.isEnableAdaptiveConfig());
+            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), false, includedMethodPattern, config.isEnableAdaptiveConfig(), false);
             instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
          } else {
-            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), config.isUseSampling(), includedMethodPattern, config.isEnableAdaptiveConfig());
+            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), config.isUseSampling(), includedMethodPattern, config.isEnableAdaptiveConfig(), true);
             instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
          }
          instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
