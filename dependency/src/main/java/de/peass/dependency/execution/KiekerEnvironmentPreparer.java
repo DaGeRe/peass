@@ -15,7 +15,7 @@ import de.peass.kiekerInstrument.InstrumentationConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 public class KiekerEnvironmentPreparer {
-   
+
    private final Set<String> includedMethodPattern;
    private final PeASSFolders folders;
    private final JUnitTestTransformer testTransformer;
@@ -36,10 +36,12 @@ public class KiekerEnvironmentPreparer {
       if (config.isUseSourceInstrumentation()) {
          final InstrumentKiekerSource instrumentKiekerSource;
          if (!config.isUseSelectiveInstrumentation()) {
-            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), false, includedMethodPattern, config.isEnableAdaptiveConfig(), false);
+            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), false, includedMethodPattern, config.isEnableAdaptiveConfig(),
+                  false);
             instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
          } else {
-            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), config.isUseSampling(), includedMethodPattern, config.isEnableAdaptiveConfig(), true);
+            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), config.isUseSampling(), includedMethodPattern,
+                  config.isEnableAdaptiveConfig(), true);
             instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
          }
          instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
@@ -110,9 +112,10 @@ public class KiekerEnvironmentPreparer {
                final File folder = new File(module, potentialReadFolder);
                folder.mkdirs();
                final File goalFile2 = new File(folder, "aop.xml");
-               Set<String> clazzes = new HashSet<String>();
+               final Set<String> clazzes = new HashSet<String>();
                for (String method : includedMethodPattern) {
-                  String clazz = method.substring(method.lastIndexOf(' '), method.lastIndexOf('.'));
+                  final String methodBeforeParameters = method.substring(0, method.indexOf('('));
+                  final String clazz = methodBeforeParameters.substring(methodBeforeParameters.lastIndexOf(' ') + 1, methodBeforeParameters.lastIndexOf('.'));
                   clazzes.add(clazz);
                }
                AOPXMLHelper.writeAOPXMLToFile(new LinkedList<String>(clazzes), goalFile2, aspect);
