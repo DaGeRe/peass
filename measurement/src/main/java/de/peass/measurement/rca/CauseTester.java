@@ -80,11 +80,7 @@ public class CauseTester extends AdaptiveTester {
 
    @Override
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      final int samplingfactor = configuration.isUseSampling() ? 1000 : 1;
-      final int warmup = configuration.getWarmup() * configuration.getRepetitions() / samplingfactor;
-
       LOG.debug("Adaptive execution: " + includedNodes);
-
       super.evaluate(testcase);
    }
 
@@ -92,9 +88,6 @@ public class CauseTester extends AdaptiveTester {
    protected synchronized TestExecutor getExecutor(final PeASSFolders temporaryFolders, final String version) {
       final TestExecutor testExecutor = super.getExecutor(temporaryFolders, version);
       JUnitTestTransformer testTransformer = testExecutor.getTestTransformer();
-      if (!testTransformer.getConfig().isUseSelectiveInstrumentation()) {
-         testTransformer.setAdaptiveExecution(true);
-      }
       testTransformer.setAggregatedWriter(causeConfig.isUseAggregation());
       testTransformer.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
       generatePatternSet(version);
@@ -151,7 +144,7 @@ public class CauseTester extends AdaptiveTester {
       }
    }
 
-   private boolean checkLevelDecidable(final int vmid, boolean allDecidable, final CallTreeNode includedNode) throws JAXBException {
+   private boolean checkLevelDecidable(final int vmid, final boolean allDecidable, final CallTreeNode includedNode) throws JAXBException {
       final SummaryStatistics statisticsOld = includedNode.getStatistics(configuration.getVersionOld());
       final SummaryStatistics statistics = includedNode.getStatistics(configuration.getVersion());
       final EarlyBreakDecider decider = new EarlyBreakDecider(configuration, statisticsOld, statistics);
@@ -229,7 +222,7 @@ public class CauseTester extends AdaptiveTester {
       // manager.evaluate(test);
    }
 
-   public void setCurrentVersion(String version) {
+   public void setCurrentVersion(final String version) {
       configuration.setVersion(version);
       configuration.setVersionOld(version + "~1");
    }

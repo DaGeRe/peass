@@ -79,7 +79,6 @@ public class JUnitTestTransformer {
    protected DataCollectorList datacollectorlist;
    protected final MeasurementConfiguration config;
    protected File projectFolder;
-   protected boolean adaptiveExecution = false;
    protected boolean aggregatedWriter = false;
    protected boolean ignoreEOIs = false;
    protected Charset charset = StandardCharsets.UTF_8;
@@ -105,7 +104,7 @@ public class JUnitTestTransformer {
     * @param projectFolder
     * @param timeout
     */
-   public JUnitTestTransformer(File projectFolder, long timeout) {
+   public JUnitTestTransformer(final File projectFolder, final long timeout) {
       this.projectFolder = projectFolder;
       config = new MeasurementConfiguration(1, timeout);
       config.setIterations(1);
@@ -572,14 +571,6 @@ public class JUnitTestTransformer {
       return new JUnitTestGenerator(module, generatedClazz, callee, method, this).generateClazz();
    }
 
-   public void setAdaptiveExecution(final boolean adaptiveExecution) {
-      this.adaptiveExecution = adaptiveExecution;
-   }
-
-   public boolean isAdaptiveExecution() {
-      return adaptiveExecution;
-   }
-
    public boolean isAggregatedWriter() {
       return aggregatedWriter;
    }
@@ -588,7 +579,7 @@ public class JUnitTestTransformer {
       this.aggregatedWriter = aggregatedWriter;
    }
 
-   public void setIgnoreEOIs(boolean ignoreEOIs) {
+   public void setIgnoreEOIs(final boolean ignoreEOIs) {
       this.ignoreEOIs = ignoreEOIs;
    }
 

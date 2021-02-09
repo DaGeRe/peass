@@ -51,22 +51,16 @@ public class AOPXMLHelper {
          if (transformer.isIgnoreEOIs()) {
             writer.write("kieker.monitoring.writer.filesystem.AggregatedTreeWriter.ignoreEOIs=true\n");
          }
-         if (transformer.isAdaptiveExecution()) {
-            if (transformer.getConfig().isUseSourceInstrumentation()) {
-               writer.write("kieker.monitoring.adaptiveMonitoring.enabled=true\n");
-               writer.write("kieker.monitoring.adaptiveMonitoring.configFile=" + MavenTestExecutor.KIEKER_ADAPTIVE_FILENAME + "\n");
-               writer.write("kieker.monitoring.adaptiveMonitoring.readInterval=15\n");
-            } else {
-               writer.write("kieker.monitoring.adaptiveMonitoring.enabled=true\n");
-               writer.write("kieker.monitoring.adaptiveMonitoring.configFile=" + MavenTestExecutor.KIEKER_ADAPTIVE_FILENAME + "\n");
-               writer.write("kieker.monitoring.adaptiveMonitoring.readInterval=15\n");
-            }
+         if (transformer.getConfig().isEnableAdaptiveConfig()) {
+            writer.write("kieker.monitoring.adaptiveMonitoring.enabled=true\n");
+            writer.write("kieker.monitoring.adaptiveMonitoring.configFile=" + MavenTestExecutor.KIEKER_ADAPTIVE_FILENAME + "\n");
+            writer.write("kieker.monitoring.adaptiveMonitoring.readInterval=15\n");
          }
 
          final int queueSize = 10000000;
          writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueSize=" + queueSize + "\n");
          writer.write("kieker.monitoring.writer.filesystem.ChangeableFolderWriter.flush=false\n");
-//         writer.write("kieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler\n");
+         // writer.write("kieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler\n");
          writer.flush();
       }
    }

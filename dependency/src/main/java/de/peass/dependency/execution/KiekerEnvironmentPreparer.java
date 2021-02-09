@@ -4,6 +4,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -41,23 +43,20 @@ public class KiekerEnvironmentPreparer {
             instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
          }
          instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
-         if (testTransformer.isAdaptiveExecution()) {
+         if (config.isEnableAdaptiveConfig()) {
             writeConfig();
          }
          generateKiekerMonitoringProperties();
       } else {
-         if (testTransformer.isAdaptiveExecution()) {
+         if (config.isEnableAdaptiveConfig()) {
             prepareAdaptiveExecution();
          }
-         if (AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION.equals(config.getRecord()) && testTransformer.isAdaptiveExecution()) {
+         if (AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION.equals(config.getRecord()) && config.isEnableAdaptiveConfig()) {
             generateAOPXML(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION);
             generateKiekerMonitoringProperties();
          } else {
             generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION);
             generateKiekerMonitoringProperties();
-         }
-         if (testTransformer.isAggregatedWriter()) {
-
          }
       }
    }
@@ -111,7 +110,12 @@ public class KiekerEnvironmentPreparer {
                final File folder = new File(module, potentialReadFolder);
                folder.mkdirs();
                final File goalFile2 = new File(folder, "aop.xml");
-               AOPXMLHelper.writeAOPXMLToFile(existingClasses, goalFile2, aspect);
+               Set<String> clazzes = new HashSet<String>();
+               for (String method : includedMethodPattern) {
+                  String clazz = method.substring(method.lastIndexOf(' '), method.lastIndexOf('.'));
+                  clazzes.add(clazz);
+               }
+               AOPXMLHelper.writeAOPXMLToFile(new LinkedList<String>(clazzes), goalFile2, aspect);
             }
          }
       } catch (IOException e) {

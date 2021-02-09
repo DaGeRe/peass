@@ -44,7 +44,7 @@ public class ArgLineBuilder {
             writerConfig = "";
          }
 
-         if (!testTransformer.isAdaptiveExecution()) {
+         if (!testTransformer.getConfig().isEnableAdaptiveConfig()) {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
                argline = TEMP_DIR + valueSeparator + tempFolder.getAbsolutePath();
                if (!writerConfig.equals("")) {
