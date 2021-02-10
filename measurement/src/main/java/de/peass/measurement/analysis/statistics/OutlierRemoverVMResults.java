@@ -13,19 +13,14 @@ public class OutlierRemoverVMResults {
    private static final Logger LOG = LogManager.getLogger(OutlierRemoverVMResults.class);
 
    public static void getValuesWithoutOutliers(final List<OneVMResult> results, final SummaryStatistics statistics) {
-      if (results.size() > 3) {
-         SummaryStatistics fullStatistic = new SummaryStatistics();
-         addAll(results, fullStatistic);
+      final SummaryStatistics fullStatistic = new SummaryStatistics();
+      addAll(results, fullStatistic);
 
-         double min = fullStatistic.getMean() - OutlierRemover.Z_SCORE * fullStatistic.getStandardDeviation();
-         double max = fullStatistic.getMean() + OutlierRemover.Z_SCORE * fullStatistic.getStandardDeviation();
+      double min = fullStatistic.getMean() - OutlierRemover.Z_SCORE * fullStatistic.getStandardDeviation();
+      double max = fullStatistic.getMean() + OutlierRemover.Z_SCORE * fullStatistic.getStandardDeviation();
 
-         LOG.debug("Removing outliers between {} and {} - Old vm count: {}", min, max, results.size());
-         addNonOutlier(results, statistics, min, max);
-      } else {
-         LOG.debug("Skipping outlier removal because of VM count below 2: {}", results.size());
-         addAll(results, statistics);
-      }
+      LOG.debug("Removing outliers between {} and {} - Old vm count: {}", min, max, results.size());
+      addNonOutlier(results, statistics, min, max);
       LOG.debug("Final VM count: {}", statistics.getN());
    }
 
