@@ -1,4 +1,4 @@
-package de.peass.dependency.execution;
+package net.kieker.sourceinstrumentation;
 
 public enum AllowedKiekerRecord {
    OPERATIONEXECUTION("kieker.monitoring.probe.aspectj.operationExecution.OperationExecutionAspectFull", 

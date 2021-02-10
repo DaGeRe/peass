@@ -2,8 +2,6 @@ package net.kieker.sourceinstrumentation;
 
 import java.util.Set;
 
-import de.peass.dependency.execution.AllowedKiekerRecord;
-
 public class InstrumentationConfiguration {
    private final AllowedKiekerRecord usedRecord;
    private final boolean sample;

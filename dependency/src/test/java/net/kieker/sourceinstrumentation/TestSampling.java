@@ -12,7 +12,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.peass.TestConstants;
-import de.peass.dependency.execution.AllowedKiekerRecord;
 import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
 import net.kieker.sourceinstrumentation.InstrumentationConstants;
 import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;

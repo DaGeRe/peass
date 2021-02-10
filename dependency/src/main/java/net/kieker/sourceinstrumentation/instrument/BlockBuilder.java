@@ -9,7 +9,7 @@ import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.TryStmt;
 
-import de.peass.dependency.execution.AllowedKiekerRecord;
+import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import net.kieker.sourceinstrumentation.InstrumentationCodeBlocks;
 import net.kieker.sourceinstrumentation.InstrumentationConstants;
 

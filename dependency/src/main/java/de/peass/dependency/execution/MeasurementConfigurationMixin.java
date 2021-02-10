@@ -1,5 +1,6 @@
 package de.peass.dependency.execution;
 
+import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import picocli.CommandLine.Option;
 
 public class MeasurementConfigurationMixin {

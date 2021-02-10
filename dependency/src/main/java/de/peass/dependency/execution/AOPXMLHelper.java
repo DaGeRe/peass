@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 import de.peass.testtransformation.JUnitTestTransformer;
+import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class AOPXMLHelper {
 

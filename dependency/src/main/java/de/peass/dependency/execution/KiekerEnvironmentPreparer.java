@@ -11,6 +11,7 @@ import java.util.Set;
 
 import de.peass.dependency.PeASSFolders;
 import de.peass.testtransformation.JUnitTestTransformer;
+import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
 import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
