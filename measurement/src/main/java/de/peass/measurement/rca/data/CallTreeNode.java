@@ -49,7 +49,7 @@ public class CallTreeNode extends BasicNode {
    /**
     * Creates a root node
     */
-   public CallTreeNode(final String call, final String kiekerPattern, final String otherKiekerPattern, MeasurementConfiguration config) {
+   public CallTreeNode(final String call, final String kiekerPattern, final String otherKiekerPattern, final MeasurementConfiguration config) {
       super(call, kiekerPattern, otherKiekerPattern);
       this.parent = null;
       this.config = config;
@@ -61,10 +61,11 @@ public class CallTreeNode extends BasicNode {
       this.config = parent.config;
    }
 
-   public void setConfig(MeasurementConfiguration config) {
+   public void setConfig(final MeasurementConfiguration config) {
       this.config = config;
    }
    
+   @Override
    public List<CallTreeNode> getChildren() {
       return children;
    }
@@ -178,7 +179,7 @@ public class CallTreeNode extends BasicNode {
    }
 
    public void createStatistics(final String version) {
-      LOG.debug("Creating statistics: {}", version);
+      LOG.debug("Creating statistics: {} Call: {}", version, call);
       final CallTreeStatistics callTreeStatistics = data.get(version);
       callTreeStatistics.createStatistics();
    }
