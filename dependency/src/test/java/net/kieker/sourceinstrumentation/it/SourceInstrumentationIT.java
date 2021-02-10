@@ -1,4 +1,4 @@
-package de.peass.kiekerInstrument;
+package net.kieker.sourceinstrumentation.it;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -18,8 +18,10 @@ import de.peass.TestConstants;
 import de.peass.dependency.execution.AllowedKiekerRecord;
 import de.peass.dependency.execution.MavenTestExecutor;
 import de.peass.utils.StreamGobbler;
+import net.kieker.sourceinstrumentation.SourceInstrumentationTestUtil;
+import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
-public class SourceInstrumentationCollissionIT {
+public class SourceInstrumentationIT {
    
    @BeforeEach
    public void before() throws IOException {
@@ -41,7 +43,7 @@ public class SourceInstrumentationCollissionIT {
 
    @Test
    public void testExecution() throws IOException {
-      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2_complex/");
+      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2/");
       File adaptiveFile = writeAdaptiveInstrumentationInfo();
 
       File tempFolder = new File(TestConstants.CURRENT_FOLDER, "results");

@@ -1,4 +1,4 @@
-package de.peass.kiekerInstrument;
+package net.kieker.sourceinstrumentation;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +11,8 @@ import org.junit.jupiter.api.Test;
 
 import de.peass.TestConstants;
 import de.peass.dependency.execution.AllowedKiekerRecord;
+import net.kieker.sourceinstrumentation.InstrumentationConstants;
+import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public class TestSourceInstrumentation {
 

@@ -1,4 +1,4 @@
-package de.peass.kiekerInstrument;
+package net.kieker.sourceinstrumentation.instrument;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,6 +28,7 @@ import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.testtransformation.ParseUtil;
 import kieker.monitoring.core.signaturePattern.InvalidPatternException;
 import kieker.monitoring.core.signaturePattern.PatternParser;
+import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
 
 public class FileInstrumenter {
 

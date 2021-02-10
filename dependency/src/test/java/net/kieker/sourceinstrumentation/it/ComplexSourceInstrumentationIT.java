@@ -1,4 +1,4 @@
-package de.peass.kiekerInstrument;
+package net.kieker.sourceinstrumentation.it;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -15,6 +15,8 @@ import org.junit.jupiter.api.Test;
 import de.peass.TestConstants;
 import de.peass.dependency.execution.AllowedKiekerRecord;
 import de.peass.utils.StreamGobbler;
+import net.kieker.sourceinstrumentation.SourceInstrumentationTestUtil;
+import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public class ComplexSourceInstrumentationIT {
 

@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Set;
 
 import de.peass.dependency.PeASSFolders;
-import de.peass.kiekerInstrument.InstrumentKiekerSource;
-import de.peass.kiekerInstrument.InstrumentationConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
+import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
+import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public class KiekerEnvironmentPreparer {
 

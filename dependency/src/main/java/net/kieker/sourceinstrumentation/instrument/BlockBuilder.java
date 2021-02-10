@@ -1,4 +1,4 @@
-package de.peass.kiekerInstrument;
+package net.kieker.sourceinstrumentation.instrument;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -10,6 +10,8 @@ import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.TryStmt;
 
 import de.peass.dependency.execution.AllowedKiekerRecord;
+import net.kieker.sourceinstrumentation.InstrumentationCodeBlocks;
+import net.kieker.sourceinstrumentation.InstrumentationConstants;
 
 public class BlockBuilder {
 

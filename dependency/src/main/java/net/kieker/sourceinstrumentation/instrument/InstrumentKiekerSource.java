@@ -1,4 +1,4 @@
-package de.peass.kiekerInstrument;
+package net.kieker.sourceinstrumentation.instrument;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.peass.dependency.execution.AllowedKiekerRecord;
+import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
 
 /**
  * Adds kieker monitoring code to existing source code *in-place*, i.e. the existing .java-files will get changed.

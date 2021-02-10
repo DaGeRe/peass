@@ -1,4 +1,4 @@
-package de.peass.kiekerInstrument;
+package net.kieker.sourceinstrumentation.instrument;
 
 import java.util.Arrays;
 import java.util.LinkedList;

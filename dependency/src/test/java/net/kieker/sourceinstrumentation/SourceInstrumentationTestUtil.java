@@ -1,4 +1,4 @@
-package de.peass.kiekerInstrument;
+package net.kieker.sourceinstrumentation;
 
 import java.io.File;
 import java.io.IOException;

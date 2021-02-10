@@ -1,4 +1,6 @@
-package de.peass.kiekerInstrument;
+package net.kieker.sourceinstrumentation.instrument;
+
+import net.kieker.sourceinstrumentation.InstrumentationConstants;
 
 public class SamplingParameters {
    private final String counterName, sumName;

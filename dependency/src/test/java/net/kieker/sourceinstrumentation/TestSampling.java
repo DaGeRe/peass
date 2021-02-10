@@ -1,4 +1,4 @@
-package de.peass.kiekerInstrument;
+package net.kieker.sourceinstrumentation;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +13,9 @@ import org.junit.Test;
 
 import de.peass.TestConstants;
 import de.peass.dependency.execution.AllowedKiekerRecord;
+import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
+import net.kieker.sourceinstrumentation.InstrumentationConstants;
+import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public class TestSampling {
    @Test

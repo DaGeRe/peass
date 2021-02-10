@@ -1,10 +1,11 @@
-package de.peass.kiekerInstrument;
+package net.kieker.sourceinstrumentation;
 
 import java.io.File;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
 
 import de.peass.dependency.execution.AllowedKiekerRecord;
+import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 

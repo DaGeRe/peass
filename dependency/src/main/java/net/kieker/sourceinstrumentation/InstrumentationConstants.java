@@ -1,4 +1,4 @@
-package de.peass.kiekerInstrument;
+package net.kieker.sourceinstrumentation;
 
 public enum InstrumentationConstants {
    ;

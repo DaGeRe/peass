@@ -1,10 +1,11 @@
-package de.peass.kiekerInstrument;
+package net.kieker.sourceinstrumentation.instrument;
 
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.TryStmt;
 
 import de.peass.dependency.execution.AllowedKiekerRecord;
+import net.kieker.sourceinstrumentation.InstrumentationCodeBlocks;
 
 public class SamplingBlockBuilder extends BlockBuilder {
 
