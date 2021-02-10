@@ -22,14 +22,14 @@ public class OutlierRemoverVMResults {
 
          LOG.debug("Removing outliers between {} and {} - Old vm count: {}", min, max, results.size());
          addNonOutlier(results, statistics, min, max);
-         LOG.debug("VM count after removal: {}", statistics.getN());
       } else {
-         LOG.debug("Skipping outlier removal because of VM count below 2");
+         LOG.debug("Skipping outlier removal because of VM count below 2: {}", results.size());
          addAll(results, statistics);
       }
+      LOG.debug("Final VM count: {}", statistics.getN());
    }
 
-   private static void addNonOutlier(final List<OneVMResult> results, final SummaryStatistics statistics, double min, double max) {
+   private static void addNonOutlier(final List<OneVMResult> results, final SummaryStatistics statistics, final double min, final double max) {
       for (final OneVMResult result : results) {
          final double average = result.getAverage();
          if (average >= min && average <= max) {
