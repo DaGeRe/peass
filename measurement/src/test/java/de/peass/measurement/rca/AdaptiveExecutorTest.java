@@ -13,6 +13,7 @@ import org.aspectj.util.FileUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
@@ -25,6 +26,7 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
+import de.peass.measurement.rca.helper.OnFailureLogSafer;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.VCSTestUtils;
 import de.peass.vcs.GitUtils;
@@ -41,14 +43,17 @@ public class AdaptiveExecutorTest {
    private static final File SOURCE_DIR = new File("src/test/resources/rootCauseIT/basic_state/");
    private final TestCase TEST = new TestCase("defaultpackage.TestMe", "testMe");
 
-   private File tempDir = TestConstants.getCurrentFolder();
    private File projectFolder;
    private CauseTester executor;
+
+   @Rule
+   public OnFailureLogSafer logSafer = new OnFailureLogSafer(TestConstants.CURRENT_FOLDER, 
+         new File(TestConstants.CURRENT_FOLDER.getParentFile(), TestConstants.CURRENT_FOLDER.getName()+"_peass"));
 
    @Before
    public void setUp() {
       try {
-         projectFolder = new File(tempDir, "project");
+         projectFolder = TestConstants.getCurrentFolder();
 
          FileUtil.copyDir(SOURCE_DIR, projectFolder);
 
@@ -57,7 +62,7 @@ public class AdaptiveExecutorTest {
          PowerMockito.mockStatic(GitUtils.class);
 
          VCSTestUtils.mockGoToTagAny(SOURCE_DIR);
-         final MeasurementConfiguration config  = new MeasurementConfiguration(2, "000001", "000001~1");
+         final MeasurementConfiguration config = new MeasurementConfiguration(2, "000001", "000001~1");
          config.setUseKieker(true);
          config.setIterations(2);
          config.setRepetitions(2);
@@ -71,7 +76,7 @@ public class AdaptiveExecutorTest {
    @Test
    public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       final Set<CallTreeNode> included = new HashSet<>();
-      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1", 
+      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1",
             "public void defaultpackage.NormalDependency.child1()", "public void defaultpackage.NormalDependency.child1()", new MeasurementConfiguration(5));
       nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);
@@ -91,7 +96,7 @@ public class AdaptiveExecutorTest {
    @Test
    public void testConstructorExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       final Set<CallTreeNode> included = new HashSet<>();
-      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#<init>", 
+      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#<init>",
             "public new defaultpackage.NormalDependency.<init>()", "public new defaultpackage.NormalDependency.<init>()", new MeasurementConfiguration(5));
       nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);

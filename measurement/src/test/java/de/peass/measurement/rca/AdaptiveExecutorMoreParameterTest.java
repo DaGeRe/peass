@@ -3,7 +3,6 @@ package de.peass.measurement.rca;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +14,7 @@ import org.aspectj.util.FileUtil;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
@@ -27,6 +27,7 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
+import de.peass.measurement.rca.helper.OnFailureLogSafer;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.VCSTestUtils;
 import de.peass.vcs.GitUtils;
@@ -44,15 +45,17 @@ public class AdaptiveExecutorMoreParameterTest {
    private static final TestCase TEST = new TestCase("defaultpackage.TestMe", "testMe");
    public static CauseSearcherConfig FULL_CASE_CONFIG = new CauseSearcherConfig(TEST, false, true, 5.0, false, 0.1, false, false, RCAStrategy.COMPLETE);
 
-   private File tempDir;
    private File projectFolder;
    private CauseTester executor;
+   
+   @Rule
+   public OnFailureLogSafer logSafer = new OnFailureLogSafer(TestConstants.CURRENT_FOLDER, 
+         new File(TestConstants.CURRENT_FOLDER.getParentFile(), TestConstants.CURRENT_FOLDER.getName()+"_peass"));
 
    @Before
    public void setUp() {
       try {
-         tempDir = Files.createTempDirectory(new File("target").toPath(), "peass_").toFile();
-         projectFolder = new File(tempDir, "project");
+         projectFolder = TestConstants.getCurrentFolder();
 
          FileUtil.copyDir(SOURCE_DIR, projectFolder);
 

@@ -28,8 +28,10 @@ public class TestConstants {
       SIMPLE_MEASUREMENT_CONFIG_KIEKER.setUseKieker(true);
    }
    
+   public static final File CURRENT_FOLDER = new File(new File("target"), "current");
+   
    public static File getCurrentFolder() {
-      final File current = new File(new File("target"), "current");
+      final File current = CURRENT_FOLDER;
       try {
          FileUtils.deleteDirectory(current);
          FileUtils.deleteDirectory(new File(new File("target"), "current_peass"));
