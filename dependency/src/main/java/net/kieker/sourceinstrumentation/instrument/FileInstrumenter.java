@@ -17,6 +17,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
@@ -55,7 +56,8 @@ public class FileInstrumenter {
 
    public void instrument() throws IOException {
       TypeDeclaration<?> clazz = ParseUtil.getClass(unit);
-      final String packageName = unit.getPackageDeclaration().get().getNameAsString();
+      Optional<PackageDeclaration> packageDeclaration = unit.getPackageDeclaration();
+      final String packageName = packageDeclaration.isPresent() ? packageDeclaration.get().getNameAsString() : "";
       handleTypeDeclaration(clazz, packageName);
       TypeDeclaration<?> enumDecl = ParseUtil.getEnum(unit);
       handleTypeDeclaration(enumDecl, packageName);
