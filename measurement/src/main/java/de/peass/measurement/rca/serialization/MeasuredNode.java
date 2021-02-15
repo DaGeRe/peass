@@ -34,6 +34,7 @@ public class MeasuredNode extends BasicNode {
       super(call, kiekerPattern, otherKiekerPattern);
    }
 
+   @Override
    public String getCall() {
       return call;
    }
@@ -42,6 +43,7 @@ public class MeasuredNode extends BasicNode {
       this.call = call;
    }
 
+   @Override
    public String getKiekerPattern() {
       return kiekerPattern;
    }
@@ -58,6 +60,24 @@ public class MeasuredNode extends BasicNode {
       this.statistic = statistic;
    }
 
+   /**
+    * Gets VMs that are there without processing (i.e. outliers are still contained)
+    * @return
+    */
+   @JsonIgnore
+   public int getPureVMs() {
+      return values.getValues().size();
+   }
+   
+   /**
+    * Gets precessor version VMs that are there without processing (i.e. outliers are still contained)
+    * @return
+    */
+   @JsonIgnore
+   public int getVMsOld() {
+      return valuesPredecessor.getValues().size();
+   }
+   
    public List<MeasuredNode> getChilds() {
       return childs;
    }
@@ -72,7 +92,7 @@ public class MeasuredNode extends BasicNode {
       return childs;
    }
    
-   public MeasuredNode getChildByPattern(String name) {
+   public MeasuredNode getChildByPattern(final String name) {
       MeasuredNode result = null;
       for (MeasuredNode node : childs) {
          if (node.getKiekerPattern().contentEquals(name)) {
