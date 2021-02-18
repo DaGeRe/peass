@@ -20,7 +20,7 @@ public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
    private final List<CallTreeNode> includedNodes = new LinkedList<>();
    private final MeasurementConfiguration config;
 
-   public SourceChangeTreeAnalyzer(final CallTreeNode root, final CallTreeNode rootPredecessor, File sourceFolder, MeasurementConfiguration config) {
+   public SourceChangeTreeAnalyzer(final CallTreeNode root, final CallTreeNode rootPredecessor, final File sourceFolder, final MeasurementConfiguration config) {
       // Only nodes with equal structure may have equal source
       List<CallTreeNode> includableNodes = new StructureChangeTreeAnalyzer(root, rootPredecessor).getMeasurementNodesPredecessor();
       this.config = config;
@@ -29,18 +29,9 @@ public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
       includedNodes.addAll(includeNodes);
    }
 
-   private Set<CallTreeNode> calculateIncludedNodes(File sourceFolder, List<CallTreeNode> includableNodes) {
-      Set<CallTreeNode> includeNodes = new HashSet<>();
-      LOG.debug("Searching in {}", sourceFolder);
-      File parentFolder = null;
-      for (File candidate : new File(sourceFolder, "methods").listFiles()) {
-         if (candidate.getName().equals(config.getVersion())) {
-            parentFolder = candidate;
-         }
-      }
-      if (parentFolder == null) {
-         throw new RuntimeException("Did not find property folder for " + config.getVersion() + " in " + sourceFolder.getAbsolutePath());
-      }
+   private Set<CallTreeNode> calculateIncludedNodes(final File sourceFolder, final List<CallTreeNode> includableNodes) {
+      final File parentFolder = getParentFolder(sourceFolder);
+      final Set<CallTreeNode> includeNodes = new HashSet<>();
       for (CallTreeNode node : includableNodes) {
          String fileNameStart = KiekerPatternConverter.getFileNameStart(node.getKiekerPattern());
          final File currentSourceFile = new File(parentFolder, fileNameStart + "_main.txt");
@@ -61,7 +52,24 @@ public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
       return includeNodes;
    }
 
-   public void addParents(CallTreeNode current, Set<CallTreeNode> includeNodes) {
+   private File getParentFolder(final File sourceFolder) {
+      if (sourceFolder == null) {
+         throw new RuntimeException("Unable to search source code in null folder");
+      }
+      LOG.debug("Searching in {}", sourceFolder);
+      File parentFolder = null;
+      for (File candidate : new File(sourceFolder, "methods").listFiles()) {
+         if (candidate.getName().equals(config.getVersion())) {
+            parentFolder = candidate;
+         }
+      }
+      if (parentFolder == null) {
+         throw new RuntimeException("Did not find property folder for " + config.getVersion() + " in " + sourceFolder.getAbsolutePath());
+      }
+      return parentFolder;
+   }
+
+   public void addParents(final CallTreeNode current, final Set<CallTreeNode> includeNodes) {
       includeNodes.add(current);
       if (current.getParent() != null) {
          addParents(current.getParent(), includeNodes);
