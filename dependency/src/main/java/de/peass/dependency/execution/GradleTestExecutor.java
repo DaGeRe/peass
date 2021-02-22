@@ -77,9 +77,9 @@ public class GradleTestExecutor extends TestExecutor {
    }
 
    /**
-    * With some configurations, this should be test, with others testRelease
+    * With some configurations, this should be test, with others testRelease (or more general testVariantName)
     */
-   private static final String TEST_RELEASE_TASK_NAME = "test";
+   private static final String TEST_RELEASE_TASK_NAME = "testRelease";
 
    protected Process buildProcess(final File folder, final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
       final String[] originals;
