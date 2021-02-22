@@ -152,7 +152,7 @@ public abstract class TestExecutor {
    public void transformTests() {
       try {
          final List<File> modules = getModules();
-         testTransformer.determineVersions(modules, "src/test/");
+         testTransformer.determineVersions(modules);
          testTransformer.transformTests();
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();

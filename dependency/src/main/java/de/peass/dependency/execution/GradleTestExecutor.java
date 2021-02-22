@@ -76,13 +76,18 @@ public class GradleTestExecutor extends TestExecutor {
       }
    }
 
+   /**
+    * With some configurations, this should be test, with others testRelease
+    */
+   private static final String TEST_RELEASE_TASK_NAME = "testRelease";
+
    protected Process buildProcess(final File folder, final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
       final String[] originals;
       if (isAndroid) {
          originals = new String[] { new File(folders.getProjectFolder(), "gradlew").getAbsolutePath(),
                "--init-script", new File(folders.getGradleHome(), "init.gradle").getAbsolutePath(),
                "--no-daemon",
-               "cleanTest", "testRelease" };
+               "cleanTest", TEST_RELEASE_TASK_NAME };
       } else {
          originals = new String[] { new File(folders.getProjectFolder(), "gradlew").getAbsolutePath(),
                "--init-script", new File(folders.getGradleHome(), "init.gradle").getAbsolutePath(),

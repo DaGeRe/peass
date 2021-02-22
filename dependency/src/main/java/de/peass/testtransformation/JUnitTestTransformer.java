@@ -122,19 +122,21 @@ public class JUnitTestTransformer {
    private Map<File, Integer> junitVersions;
 
    public void determineVersions(final List<File> modules) {
-      determineVersions(modules, "src/test/");
+      determineVersionsForPaths(modules, "src/test/", "src/androidTest");
    }
 
-   public void determineVersions(final List<File> modules, final String testPath) {
+   public void determineVersionsForPaths(final List<File> modules, final String... testPaths) {
       loadedFiles = new HashMap<>();
       junitVersions = new HashMap<>();
 
       for (final File module : modules) {
-         final File testFolder = new File(module, testPath);
-         if (testFolder.exists()) {
-            determineVersions(testFolder);
-         } else {
-            LOG.error("Test folder " + testFolder.getAbsolutePath() + " does not exist.");
+         for (String testPath : testPaths) {
+            final File testFolder = new File(module, testPath);
+            if (testFolder.exists()) {
+               determineVersions(testFolder);
+            } else {
+               LOG.error("Test folder " + testFolder.getAbsolutePath() + " does not exist.");
+            }
          }
       }
    }

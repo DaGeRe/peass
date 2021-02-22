@@ -173,7 +173,9 @@ public class FileInstrumenter {
             oneHasChanged = true;
          }
       } else {
-         LOG.info("Unable to instrument " + name + "." + method.getNameAsString() + " because it has no body");
+         if (!method.isAbstract()) {
+            LOG.info("Unable to instrument " + name + "." + method.getNameAsString() + " because it has no body");
+         }
       }
       return counterIndex;
    }
