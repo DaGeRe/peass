@@ -298,9 +298,9 @@ public final class GitUtils {
       synchronized (projectFolder) {
          LOG.debug("Pulling", projectFolder.getAbsolutePath());
          try {
-            Process pReset = Runtime.getRuntime().exec("git fetch --all", new String[0], projectFolder);
-            final String out = StreamGobbler.getFullProcess(pReset, false);
-            pReset.waitFor();
+            Process pullProcess = Runtime.getRuntime().exec("git pull origin HEAD", new String[0], projectFolder);
+            final String out = StreamGobbler.getFullProcess(pullProcess, false);
+            pullProcess.waitFor();
             LOG.debug(out);
          } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -319,29 +319,46 @@ public final class GitUtils {
          synchronized (projectFolder) {
             LOG.debug("Going to tag {} folder: {}", tag, projectFolder.getAbsolutePath());
             final Process pReset = Runtime.getRuntime().exec("git reset --hard", new String[0], projectFolder);
-            final String out = StreamGobbler.getFullProcess(pReset, false);
+            final String outReset = StreamGobbler.getFullProcess(pReset, false);
             pReset.waitFor();
-
+            System.out.println(outReset);
+            
             final Process pClean = Runtime.getRuntime().exec("git clean -df", new String[0], projectFolder);
             final String outClean = StreamGobbler.getFullProcess(pClean, false);
             pClean.waitFor();
-
-            final String gitCommand = "git checkout -f " + tag;
-            LOG.trace(gitCommand);
-            final Process pCheckout = Runtime.getRuntime().exec(gitCommand, new String[0], projectFolder);
-            final String outCheckout = StreamGobbler.getFullProcess(pCheckout, false);
-            pCheckout.waitFor();
-
-            System.out.println(out);
             System.out.println(outClean);
-            System.out.println(outCheckout);
-            LOG.trace("Ausführung beendet");
+
+            int worked = checkout(tag, projectFolder);
+            
+            if (worked != 0) {
+               LOG.info("Return value was !=0 - fetching" );
+               final Process pFetch = Runtime.getRuntime().exec("git fetch --all", new String[0], projectFolder);
+               final String outFetch = StreamGobbler.getFullProcess(pFetch, false);
+               pFetch.waitFor();
+               System.out.println(outFetch);
+               
+               int secondCheckoutWorked = checkout(tag, projectFolder);
+               
+               if (secondCheckoutWorked != 0) {
+                  LOG.error("Second checkout did not work - an old version is probably analyzed");
+               }
+            }
          }
       } catch (final IOException e) {
          e.printStackTrace();
       } catch (final InterruptedException e) {
          e.printStackTrace();
       }
+   }
+
+   private static int checkout(final String tag, final File projectFolder) throws IOException, InterruptedException {
+      final String gitCommand = "git checkout -f " + tag;
+      LOG.trace(gitCommand);
+      final Process pCheckout = Runtime.getRuntime().exec(gitCommand, new String[0], projectFolder);
+      final String outCheckout = StreamGobbler.getFullProcess(pCheckout, false);
+      int worked = pCheckout.waitFor();
+      System.out.println(outCheckout);
+      return worked;
    }
 
    public static void goToTagSoft(final String tag, final File projectFolder) {

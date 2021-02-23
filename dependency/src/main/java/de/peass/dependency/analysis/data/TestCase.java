@@ -107,7 +107,7 @@ public class TestCase implements Comparable<TestCase> {
    public String getModule() {
       return module;
    }
-   
+
    @JsonIgnore
    public String getTestclazzWithModuleName() {
       String testcase;
@@ -163,7 +163,11 @@ public class TestCase implements Comparable<TestCase> {
 
    @Override
    public String toString() {
-      return "TestCase [clazz=" + clazz + ", method=" + method + "]";
+      if (module != null && !"".equals(module)) {
+         return "TestCase [clazz=" + clazz + ", method=" + method + ", module=" + module + "]";
+      } else {
+         return "TestCase [clazz=" + clazz + ", method=" + method + "]";
+      }
    }
 
    @JsonIgnore
