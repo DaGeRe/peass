@@ -5,11 +5,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Set;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +21,6 @@ import de.peass.dependency.persistence.InitialDependency;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.Constants;
-import de.peass.vcs.GitCommit;
 
 public class TestTestChooser {
    
@@ -42,7 +38,7 @@ public class TestTestChooser {
    public void testBasicChoosing() throws Exception {
       Dependencies dependencies = createDependencies();
       
-      TestChooser chooser = new TestChooser(false, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), new GitCommit(testVersion, "", "", ""), new File("target/views"), new File("target/properties"), 1, new LinkedList<>());
+      TestChooser chooser = new TestChooser(false, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), testVersion, new File("target/views"), new File("target/properties"), 1, new LinkedList<>());
       Set<TestCase> tests = chooser.getTestSet(dependencies);
       
       Assert.assertEquals(tests.iterator().next(), new TestCase("defaultpackage.TestMe#testMe"));
@@ -52,7 +48,7 @@ public class TestTestChooser {
    public void testViewChoosing() throws Exception {
       Dependencies dependencies = createDependencies();
       
-      TestChooser chooser = new TestChooser(true, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), new GitCommit(testVersion, "", "", ""), new File("target/views"), new File("target/properties"), 1, new LinkedList<>());
+      TestChooser chooser = new TestChooser(true, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), testVersion, new File("target/views"), new File("target/properties"), 1, new LinkedList<>());
       Set<TestCase> tests = chooser.getTestSet(dependencies);
       
       Assert.assertEquals(tests.iterator().next(), new TestCase("defaultpackage.TestMe#testMe"));
