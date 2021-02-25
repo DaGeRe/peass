@@ -35,8 +35,8 @@ public class MeasurementConfiguration {
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
    private MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
 
-   private String version;
-   private String versionOld;
+   private String version = "HEAD";
+   private String versionOld = "HEAD~1";
 
    public MeasurementConfiguration(final int vms) {
       this.timeout = 20 * 60 * 1000; // 20 minutes

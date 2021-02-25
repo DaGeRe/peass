@@ -22,7 +22,6 @@ import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.traces.ViewGenerator;
 import de.peass.utils.Constants;
-import de.peass.vcs.GitCommit;
 
 public class TestChooser {
 
@@ -31,13 +30,13 @@ public class TestChooser {
    private final boolean useViews;
    private File localFolder;
    private PeASSFolders folders;
-   private GitCommit version;
+   private String version;
    private final File viewFolder;
    private final File propertyFolder;
    private final int threads;
    private final List<String> includes;
 
-   public TestChooser(final boolean useViews, final File localFolder, final PeASSFolders folders, final GitCommit version, final File viewFolder, final File propertyFolder,
+   public TestChooser(final boolean useViews, final File localFolder, final PeASSFolders folders, final String version, final File viewFolder, final File propertyFolder,
          final int threads, final List<String> includes) {
       this.useViews = useViews;
       this.localFolder = localFolder;
@@ -116,19 +115,19 @@ public class TestChooser {
          generateViews(dependencies, executeFile);
       }
       ExecutionData traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
-      if (!traceTests.getVersions().containsKey(version.getTag())) {
+      if (!traceTests.getVersions().containsKey(version)) {
          generateViews(dependencies, executeFile);
          traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
       }
 
       LOG.debug("Version: {} Path: {}", version, executeFile.getAbsolutePath());
-      final TestSet traceTestSet = traceTests.getVersions().get(version.getTag());
+      final TestSet traceTestSet = traceTests.getVersions().get(version);
 
       return traceTestSet;
    }
 
    private void generateViews(final Dependencies dependencies, final File executeFile) throws Exception {
-      File logFile = new File(executeFile.getParentFile(), "executionreading_" + version.getTag() + ".txt");
+      File logFile = new File(executeFile.getParentFile(), "executionreading_" + version + ".txt");
       LOG.info("Executig regression test selection (part 2) - Log goes to {}", logFile.getAbsolutePath());
 
       try (LogRedirector director = new LogRedirector(logFile)) {

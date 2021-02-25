@@ -37,7 +37,7 @@ public class ContinuousExecutor {
    private final int threads;
    private final boolean useViews;
 
-   private GitCommit version;
+   private String version;
    private String versionOld;
 
    private final File localFolder;
@@ -81,7 +81,7 @@ public class ContinuousExecutor {
       final VersionIteratorGit iterator = buildIterator();
       final String url = GitUtils.getURL(projectFolder);
       
-      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(version.getTag(), projectFolderLocal, dependencyFile);
+      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(version, projectFolderLocal, dependencyFile);
       final Dependencies dependencies = dependencyReader.getDependencies(iterator, url);
 
       if (dependencies.getVersions().size() > 0) {
@@ -105,14 +105,14 @@ public class ContinuousExecutor {
 
    private File measure(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final File fullResultsVersion = getFullResultsVersion();
-      final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(version.getTag(), versionOld, folders, measurementConfig);
+      final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(version, versionOld, folders, measurementConfig);
       final File measurementFolder = measurementExecutor.executeMeasurements(tests, fullResultsVersion);
       return measurementFolder;
    }
 
    private void analyzeMeasurements(final File measurementFolder) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
       final File changefile = new File(localFolder, "changes.json");
-      AnalyseOneTest.setResultFolder(new File(localFolder, version.getTag() + "_graphs"));
+      AnalyseOneTest.setResultFolder(new File(localFolder, version + "_graphs"));
       final ProjectStatistics statistics = new ProjectStatistics();
       ModuleClassMapping mapping = new ModuleClassMapping(projectFolder);
       final AnalyseFullData afd = new AnalyseFullData(changefile, statistics, mapping);
@@ -121,13 +121,13 @@ public class ContinuousExecutor {
    }
 
    private VersionIteratorGit buildIterator() {
-      versionOld = GitUtils.getName("HEAD~1", projectFolderLocal);
-      version = new GitCommit(GitUtils.getName("HEAD", projectFolderLocal), "", "", "");
+      versionOld = GitUtils.getName(measurementConfig.getVersionOld(), projectFolderLocal);
+      version = GitUtils.getName(measurementConfig.getVersion(), projectFolderLocal);
       
       final List<GitCommit> entries = new LinkedList<>();
       final GitCommit prevCommit = new GitCommit(versionOld, "", "", "");
       entries.add(prevCommit);
-      entries.add(new GitCommit(version.getTag(), "", "", ""));
+      entries.add(new GitCommit(version, "", "", ""));
       final VersionIteratorGit iterator = new VersionIteratorGit(projectFolderLocal, entries, prevCommit);
       return iterator;
    }
@@ -163,7 +163,7 @@ public class ContinuousExecutor {
    }
 
    public String getLatestVersion() {
-      return version.getTag();
+      return version;
    }
 
    public PeASSFolders getFolders() {
@@ -183,7 +183,7 @@ public class ContinuousExecutor {
    }
    
    public File getFullResultsVersion() {
-      final File fullResultsVersion = new File(localFolder, version.getTag());
+      final File fullResultsVersion = new File(localFolder, version);
       return fullResultsVersion;
    }
 }
