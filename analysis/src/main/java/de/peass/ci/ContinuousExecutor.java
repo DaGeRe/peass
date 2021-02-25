@@ -46,7 +46,8 @@ public class ContinuousExecutor {
    private final File viewFolder;
    private final File propertyFolder;
 
-   public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final int threads, final boolean useViews) throws InterruptedException, IOException {
+   public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final int threads, final boolean useViews)
+         throws InterruptedException, IOException {
       this.projectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
       this.threads = threads;
@@ -70,7 +71,7 @@ public class ContinuousExecutor {
 
       propertyFolder = new File(localFolder, "properties");
    }
-   
+
    public void execute() throws Exception {
       execute(new LinkedList<>());
    }
@@ -79,15 +80,15 @@ public class ContinuousExecutor {
       final File dependencyFile = new File(localFolder, "dependencies.json");
       final VersionIteratorGit iterator = buildIterator();
       final String url = GitUtils.getURL(projectFolder);
-      
+
       ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(version, versionOld, projectFolderLocal, dependencyFile);
       final Dependencies dependencies = dependencyReader.getDependencies(iterator, url);
 
       if (dependencies.getVersions().size() > 0) {
          final Set<TestCase> tests = selectIncludedTests(includes, dependencies);
-         
+
          final File measurementFolder = measure(tests);
-         
+
          analyzeMeasurements(measurementFolder);
       } else {
          LOG.info("No test executed - version did not contain changed tests.");
@@ -95,7 +96,7 @@ public class ContinuousExecutor {
    }
 
    private Set<TestCase> selectIncludedTests(final List<String> includes, final Dependencies dependencies) throws Exception {
-      final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version, 
+      final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version,
             viewFolder, propertyFolder, threads, includes);
       final Set<TestCase> tests = chooser.getTestSet(dependencies);
       LOG.debug("Executing measurement on {}", tests);
@@ -122,7 +123,7 @@ public class ContinuousExecutor {
    private VersionIteratorGit buildIterator() {
       versionOld = GitUtils.getName(measurementConfig.getVersionOld(), projectFolderLocal);
       version = GitUtils.getName(measurementConfig.getVersion(), projectFolderLocal);
-      
+
       final List<GitCommit> entries = new LinkedList<>();
       final GitCommit prevCommit = new GitCommit(versionOld, "", "", "");
       entries.add(prevCommit);
@@ -180,9 +181,9 @@ public class ContinuousExecutor {
    public File getProjectFolder() {
       return folders.getProjectFolder();
    }
-   
+
    public File getFullResultsVersion() {
-      final File fullResultsVersion = new File(localFolder, version);
+      final File fullResultsVersion = new File(localFolder, version + "_" + versionOld);
       return fullResultsVersion;
    }
 }

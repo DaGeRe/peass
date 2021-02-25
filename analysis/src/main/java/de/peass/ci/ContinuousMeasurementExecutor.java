@@ -36,7 +36,6 @@ public class ContinuousMeasurementExecutor {
          File logFile = new File(fullResultsVersion.getParentFile(), "dependencyreading_" + version + "_" + versionOld + ".txt");
          LOG.info("Executing measurement - Log goes to {}", logFile.getAbsolutePath());
          try (LogRedirector director = new LogRedirector(logFile)) {
-
             MeasurementConfiguration copied = new MeasurementConfiguration(measurementConfig);
             copied.setUseKieker(false);
             copied.setVersion(version);
