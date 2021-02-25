@@ -99,7 +99,7 @@ public class MeasurementConfiguration {
       this.version = version;
       this.versionOld = versionOld;
    }
-
+   
    /**
     * Copy constructor
     * 
@@ -115,8 +115,14 @@ public class MeasurementConfiguration {
       this.iterations = other.iterations;
       this.repetitions = other.repetitions;
       this.logFullData = other.logFullData;
+      this.removeSnapshots = other.removeSnapshots;
       this.useKieker = other.useKieker;
+      this.useSourceInstrumentation = other.useSourceInstrumentation;
+      this.useSelectiveInstrumentation = other.useSelectiveInstrumentation;
+      this.useSampling = other.useSampling;
+      this.useCircularQueue = other.useCircularQueue;
       this.redirectToNull = other.redirectToNull;
+      this.enableAdaptiveMonitoring = other.enableAdaptiveMonitoring;
       this.useGC = other.useGC;
       this.kiekerAggregationInterval = other.kiekerAggregationInterval;
       this.javaVersion = other.javaVersion;
