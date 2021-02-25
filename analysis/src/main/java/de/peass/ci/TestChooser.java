@@ -37,7 +37,8 @@ public class TestChooser {
    private final int threads;
    private final List<String> includes;
 
-   public TestChooser(final boolean useViews, final File localFolder, final PeASSFolders folders, final GitCommit version, final File viewFolder, final File propertyFolder, final int threads, final List<String> includes) {
+   public TestChooser(final boolean useViews, final File localFolder, final PeASSFolders folders, final GitCommit version, final File viewFolder, final File propertyFolder,
+         final int threads, final List<String> includes) {
       this.useViews = useViews;
       this.localFolder = localFolder;
       this.folders = folders;
@@ -56,10 +57,14 @@ public class TestChooser {
 
       if (useViews) {
          final TestSet traceTestSet = getViewTests(dependencies);
-         for (final Map.Entry<ChangedEntity, Set<String>> test : traceTestSet.getTestcases().entrySet()) {
-            for (final String method : test.getValue()) {
-               TestCase dynamicallySelectedTest = new TestCase(test.getKey().getClazz(), method, test.getKey().getModule());
-               tests.add(dynamicallySelectedTest);
+         if (traceTestSet == null) {
+            LOG.error("No tests were included!");
+         } else {
+            for (final Map.Entry<ChangedEntity, Set<String>> test : traceTestSet.getTestcases().entrySet()) {
+               for (final String method : test.getValue()) {
+                  TestCase dynamicallySelectedTest = new TestCase(test.getKey().getClazz(), method, test.getKey().getModule());
+                  tests.add(dynamicallySelectedTest);
+               }
             }
          }
       } else {
@@ -131,6 +136,6 @@ public class TestChooser {
          viewgenerator.processCommandline();
          final PropertyReader propertyReader = new PropertyReader(propertyFolder, folders.getProjectFolder(), viewFolder);
          propertyReader.readAllTestsProperties(viewgenerator.getChangedTraceMethods());
-      } 
+      }
    }
 }

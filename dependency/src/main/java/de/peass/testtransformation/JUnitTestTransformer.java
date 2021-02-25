@@ -283,7 +283,11 @@ public class JUnitTestTransformer {
             LOG.error("Clazz {} has no JUnit version", clazzFile);
          }
       } else {
-         LOG.error("Did not find {} for {}", clazzFile, clazzname);
+         /**
+          * By default, the dependency selection adds all changed clazzes as tests (since a class not containing a test may
+          * contain a new test), so this is mostly not a real error
+          */
+         LOG.error("Did not find {} for {} - class not loaded (since it is not a test class?)", clazzFile, clazzname);
       }
 
       return methods;
