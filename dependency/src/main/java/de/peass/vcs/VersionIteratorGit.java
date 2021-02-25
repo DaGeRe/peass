@@ -113,6 +113,11 @@ public class VersionIteratorGit extends VersionIterator {
       return entries.get(tagid).getTag();
    }
    
+   @Override
+   public String getPredecessor() {
+      return previous.getTag();
+   }
+   
    public GitCommit getPrevious() {
       return previous;
    }

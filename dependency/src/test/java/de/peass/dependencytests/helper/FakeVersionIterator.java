@@ -61,7 +61,7 @@ public class FakeVersionIterator extends VersionIterator {
    }
 
    @Override
-   public boolean isPredecessor(String lastRunningVersion) {
+   public boolean isPredecessor(final String lastRunningVersion) {
       throw new RuntimeException("Not implemented on purpose - this is only a testing mock with limited functionality.");
    }
    
@@ -71,7 +71,12 @@ public class FakeVersionIterator extends VersionIterator {
    }
    
    @Override
-   public VersionDiff getChangedClasses(File projectFolder2, List<File> genericModules, String lastVersion) {
+   public VersionDiff getChangedClasses(final File projectFolder2, final List<File> genericModules, final String lastVersion) {
       throw new RuntimeException("Not implemented on purpose - this is only a testing mock with limited functionality.");
+   }
+
+   @Override
+   public String getPredecessor() {
+      throw new RuntimeException("Not implemented yet.");
    }
 }

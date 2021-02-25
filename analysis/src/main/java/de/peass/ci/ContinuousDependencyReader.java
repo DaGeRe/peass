@@ -73,7 +73,7 @@ public class ContinuousDependencyReader {
       final String lastVersionName = dependencies.getNewestVersion();
       Version versionDependency = dependencies.getVersions().get(lastVersionName);
       if (!lastVersionName.equals(version) || !versionDependency.getPredecessor().equals(versionOld)) {
-         File logFile = new File(dependencyFile.getParentFile(), "dependencyreading_" + version + ".txt");
+         File logFile = new File(dependencyFile.getParentFile(), "dependencyreading_" + version + "_" + versionOld + ".txt");
          LOG.info("Executing regression test selection update - Log goes to ", logFile.getAbsolutePath());
 
          try (LogRedirector director = new LogRedirector(logFile)) {
@@ -89,7 +89,7 @@ public class ContinuousDependencyReader {
 
    private Dependencies fullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
          throws Exception {
-      File logFile = new File(dependencyFile.getParentFile(), "dependencyreading_" + iterator.getTag() + ".txt");
+      File logFile = new File(dependencyFile.getParentFile(), "dependencyreading_" + iterator.getTag() + "_" + iterator.getPredecessor() + ".txt");
       LOG.info("Executing regression test selection - Log goes to {}", logFile.getAbsolutePath());
 
       try (LogRedirector director = new LogRedirector(logFile)) {

@@ -18,7 +18,7 @@ class CopyFileVisitor extends SimpleFileVisitor<Path> {
    private final Path targetPath;
    private Path sourcePath = null;
 
-   public CopyFileVisitor(Path targetPath) {
+   public CopyFileVisitor(final Path targetPath) {
       this.targetPath = targetPath;
    }
 
@@ -40,7 +40,7 @@ class CopyFileVisitor extends SimpleFileVisitor<Path> {
 
 public class FakeFileIterator extends VersionIterator {
 
-   public static void copy(File src, File dest) throws IOException {
+   public static void copy(final File src, final File dest) throws IOException {
       Files.walkFileTree(src.toPath(), new CopyFileVisitor(dest.toPath()));
    }
 
@@ -53,7 +53,7 @@ public class FakeFileIterator extends VersionIterator {
       tagDiff = 0;
    }
 
-   public FakeFileIterator(final File folder, final List<File> commits, int tagDiff) {
+   public FakeFileIterator(final File folder, final List<File> commits, final int tagDiff) {
       super(folder);
       this.commits = commits;
       this.tagDiff = tagDiff;
@@ -118,7 +118,7 @@ public class FakeFileIterator extends VersionIterator {
    }
 
    @Override
-   public boolean isPredecessor(String lastRunningVersion) {
+   public boolean isPredecessor(final String lastRunningVersion) {
       return lastRunningVersion.equals("00000" + (tag - 1 + tagDiff));
    }
 
@@ -128,7 +128,12 @@ public class FakeFileIterator extends VersionIterator {
    }
 
    @Override
-   public VersionDiff getChangedClasses(File projectFolder, List<File> genericModules, String lastVersion) {
+   public VersionDiff getChangedClasses(final File projectFolder, final List<File> genericModules, final String lastVersion) {
+      throw new RuntimeException("Not implemented yet.");
+   }
+
+   @Override
+   public String getPredecessor() {
       throw new RuntimeException("Not implemented yet.");
    }
 }

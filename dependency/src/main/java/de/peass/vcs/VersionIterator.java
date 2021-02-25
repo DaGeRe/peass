@@ -48,6 +48,12 @@ public abstract class VersionIterator {
 	 * @return current tag
 	 */
 	public abstract String getTag();
+	
+	/**
+	 * Returns the predecessor tag
+	 * @return
+	 */
+	public abstract String getPredecessor();
 
 	/**
 	 * Whether a next commit is present
@@ -80,5 +86,7 @@ public abstract class VersionIterator {
    public abstract boolean goToPreviousCommit();
 
    public abstract VersionDiff getChangedClasses(File projectFolder2, List<File> genericModules, String lastVersion);
+
+   
 
 }
