@@ -15,17 +15,16 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.AdaptiveTester;
-import de.peass.testtransformation.JUnitTestTransformer;
 
 public class ContinuousMeasurementExecutor {
-   
+
    private static final Logger LOG = LogManager.getLogger(ContinuousMeasurementExecutor.class);
-   
+
    private final String version, versionOld;
    private final PeASSFolders folders;
    private final MeasurementConfiguration measurementConfig;
-   
-   public ContinuousMeasurementExecutor(String version, String versionOld, PeASSFolders folders, MeasurementConfiguration measurementConfig) {
+
+   public ContinuousMeasurementExecutor(final String version, final String versionOld, final PeASSFolders folders, final MeasurementConfiguration measurementConfig) {
       this.version = version;
       this.versionOld = versionOld;
       this.folders = folders;
@@ -34,21 +33,27 @@ public class ContinuousMeasurementExecutor {
 
    public File executeMeasurements(final Set<TestCase> tests, final File fullResultsVersion) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       if (!fullResultsVersion.exists()) {
-         MeasurementConfiguration copied = new MeasurementConfiguration(measurementConfig);
-         copied.setUseKieker(false);
-         copied.setVersion(version);
-         copied.setVersionOld(versionOld);
+         File logFile = new File(fullResultsVersion.getParentFile(), "dependencyreading_" + version + "_" + versionOld + ".txt");
+         LOG.info("Executing measurement - Log goes to {}", logFile.getAbsolutePath());
+         try (LogRedirector director = new LogRedirector(logFile)) {
 
-         final AdaptiveTester tester = new AdaptiveTester(folders, copied);
-         for (final TestCase test : tests) {
-            tester.evaluate(test);
+            MeasurementConfiguration copied = new MeasurementConfiguration(measurementConfig);
+            copied.setUseKieker(false);
+            copied.setVersion(version);
+            copied.setVersionOld(versionOld);
+
+            final AdaptiveTester tester = new AdaptiveTester(folders, copied);
+            for (final TestCase test : tests) {
+               tester.evaluate(test);
+            }
+
+            final File fullResultsFolder = folders.getFullMeasurementFolder();
+            LOG.debug("Moving to: {}", fullResultsVersion.getAbsolutePath());
+            FileUtils.moveDirectory(fullResultsFolder, fullResultsVersion);
          }
-
-         final File fullResultsFolder = folders.getFullMeasurementFolder();
-         LOG.debug("Moving to: {}", fullResultsVersion.getAbsolutePath());
-         FileUtils.moveDirectory(fullResultsFolder, fullResultsVersion);
+      } else {
+         LOG.info("Skipping measurement - result folder {} already existing", fullResultsVersion.getAbsolutePath());
       }
-
       final File measurementFolder = new File(fullResultsVersion, "measurements");
       return measurementFolder;
    }
