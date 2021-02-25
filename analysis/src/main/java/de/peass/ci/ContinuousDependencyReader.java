@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.peass.dependency.persistence.Dependencies;
+import de.peass.dependency.persistence.Version;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependency.reader.VersionKeeper;
 import de.peass.dependencyprocessors.VersionComparator;
@@ -23,11 +24,12 @@ public class ContinuousDependencyReader {
 
    private static final Logger LOG = LogManager.getLogger(ContinuousDependencyReader.class);
 
-   private final String version;
+   private final String version, versionOld;
    private final File projectFolder, dependencyFile;
 
-   public ContinuousDependencyReader(final String version, final File projectFolder, final File dependencyFile) {
+   public ContinuousDependencyReader(final String version, final String versionOld, final File projectFolder, final File dependencyFile) {
       this.version = version;
+      this.versionOld = versionOld;
       this.projectFolder = projectFolder;
       this.dependencyFile = dependencyFile;
    }
@@ -68,8 +70,9 @@ public class ContinuousDependencyReader {
    }
 
    private void partiallyLoadDependencies(final Dependencies dependencies) throws FileNotFoundException, Exception {
-      final String lastVersionName = dependencies.getVersionNames()[dependencies.getVersions().size() - 1];
-      if (!lastVersionName.equals(version)) {
+      final String lastVersionName = dependencies.getNewestVersion();
+      Version versionDependency = dependencies.getVersions().get(lastVersionName);
+      if (!lastVersionName.equals(version) || !versionDependency.getPredecessor().equals(versionOld)) {
          File logFile = new File(dependencyFile.getParentFile(), "dependencyreading_" + version + ".txt");
          LOG.info("Executing regression test selection update - Log goes to ", logFile.getAbsolutePath());
 

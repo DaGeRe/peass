@@ -18,7 +18,7 @@ public class Dependencies extends SelectedTests {
 
    }
 
-   public Dependencies(ExecutionData executiondata) {
+   public Dependencies(final ExecutionData executiondata) {
       setUrl(executiondata.getUrl());
       String first = executiondata.getVersions().values().iterator().next().getPredecessor();
       initialversion.setVersion(first);

@@ -61,8 +61,7 @@ public class ContinuousExecutor {
          }
       } else {
          GitUtils.pull(projectFolderLocal);
-         final String head = GitUtils.getName("HEAD", projectFolder);
-         GitUtils.goToTag(head, projectFolderLocal);
+         GitUtils.goToTag(measurementConfig.getVersion(), projectFolderLocal);
       }
 
       folders = new PeASSFolders(projectFolderLocal);
@@ -81,7 +80,7 @@ public class ContinuousExecutor {
       final VersionIteratorGit iterator = buildIterator();
       final String url = GitUtils.getURL(projectFolder);
       
-      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(version, projectFolderLocal, dependencyFile);
+      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(version, versionOld, projectFolderLocal, dependencyFile);
       final Dependencies dependencies = dependencyReader.getDependencies(iterator, url);
 
       if (dependencies.getVersions().size() > 0) {

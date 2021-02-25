@@ -112,6 +112,10 @@ public class VersionIteratorGit extends VersionIterator {
    public String getTag() {
       return entries.get(tagid).getTag();
    }
+   
+   public GitCommit getPrevious() {
+      return previous;
+   }
 
    @Override
    public int getSize() {
@@ -130,12 +134,12 @@ public class VersionIteratorGit extends VersionIterator {
    }
 
    @Override
-   public boolean isPredecessor(String lastRunningVersion) {
+   public boolean isPredecessor(final String lastRunningVersion) {
       return entries.get(tagid - 1).getTag().equals(lastRunningVersion);
    }
    
    @Override
-   public VersionDiff getChangedClasses(File projectFolder, List<File> genericModules, String lastVersion) {
+   public VersionDiff getChangedClasses(final File projectFolder, final List<File> genericModules, final String lastVersion) {
       VersionDiff diff = GitUtils.getChangedClasses(projectFolder, genericModules, lastVersion);
       return diff;
    }

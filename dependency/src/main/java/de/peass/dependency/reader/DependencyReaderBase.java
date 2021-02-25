@@ -94,7 +94,7 @@ public abstract class DependencyReaderBase {
       String predecessor;
       if (iterator.isPredecessor(lastRunningVersion)) {
          changes = changeManager.getChanges(null);
-         predecessor = version + "~1";
+         predecessor = lastRunningVersion;
       } else {
          changes = changeManager.getChanges(lastRunningVersion);
          predecessor = lastRunningVersion;
@@ -115,7 +115,7 @@ public abstract class DependencyReaderBase {
       }
    }
 
-   private int analyseChanges(final String version, final Map<ChangedEntity, ClazzChangeData> changes, String predecessor)
+   private int analyseChanges(final String version, final Map<ChangedEntity, ClazzChangeData> changes, final String predecessor)
          throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException {
       final ChangeTestMapping changeTestMap = dependencyManager.getDependencyMap().getChangeTestMap(changes); // tells which tests need to be run, and
                                                                                                               // because of

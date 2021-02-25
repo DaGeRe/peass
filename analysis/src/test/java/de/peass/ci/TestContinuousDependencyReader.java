@@ -3,13 +3,7 @@ package de.peass.ci;
 import java.io.File;
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import org.apache.commons.io.FileUtils;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -26,7 +20,6 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.vcs.GitUtils;
-import de.peass.vcs.VersionIterator;
 import de.peass.vcs.VersionIteratorGit;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -49,12 +42,12 @@ public class TestContinuousDependencyReader {
    @Test
    public void testBasicVersionReading() throws Exception {
       builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/changed_class"), "test 1");
-      
-      VersionIterator iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
+
+      VersionIteratorGit iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
       iterator.goToFirstCommit();
       iterator.goToNextCommit();
 
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(iterator.getTag(), TestConstants.CURRENT_FOLDER, dependencyFile);
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(iterator.getTag(), iterator.getPrevious().getTag(), TestConstants.CURRENT_FOLDER, dependencyFile);
       Dependencies dependencies = reader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
@@ -69,16 +62,16 @@ public class TestContinuousDependencyReader {
 
       String newVersion = builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/basic_state"), "test 2");
 
-      VersionIterator iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
+      VersionIteratorGit iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
 
-      final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(newVersion, TestConstants.CURRENT_FOLDER, dependencyFile);
+      final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(newVersion, iterator.getPrevious().getTag(), TestConstants.CURRENT_FOLDER, dependencyFile);
       Dependencies dependencies = spiedReader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
       checkVersion(dependencies, lastTag, 2);
    }
 
-   private void checkVersion(Dependencies dependencies, final String newestVersion, int versions) {
+   private void checkVersion(final Dependencies dependencies, final String newestVersion, final int versions) {
       Assert.assertTrue(dependencyFile.exists());
       MatcherAssert.assertThat(dependencies.getVersions(), Matchers.aMapWithSize(versions));
 
@@ -87,7 +80,7 @@ public class TestContinuousDependencyReader {
       Assert.assertEquals(new TestCase("defaultpackage.TestMe#testMe"), testSet.getTests().toArray()[0]);
    }
 
-   private TestSet getTestset(Dependencies dependencies, String newestVersion) {
+   private TestSet getTestset(final Dependencies dependencies, final String newestVersion) {
       final TestSet testSet = dependencies.getVersions().get(newestVersion)
             .getChangedClazzes()
             .get(new ChangedEntity("defaultpackage.NormalDependency", "", ""));
