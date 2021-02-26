@@ -105,8 +105,7 @@ public class TestChooser {
       return isIncluded;
    }
 
-   private TestSet getViewTests(final Dependencies dependencies)
-         throws Exception {
+   private TestSet getViewTests(final Dependencies dependencies) throws Exception {
       final File executeFile = new File(localFolder, "execute.json");
 
       FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
@@ -125,7 +124,7 @@ public class TestChooser {
 
       return traceTestSet;
    }
-   
+
    public File getExecutionreadingFolder() {
       File folder = new File(localFolder, "executionreading");
       if (!folder.exists()) {
