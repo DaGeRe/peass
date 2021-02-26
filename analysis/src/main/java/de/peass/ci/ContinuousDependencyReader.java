@@ -73,8 +73,8 @@ public class ContinuousDependencyReader {
       final String lastVersionName = dependencies.getNewestVersion();
       Version versionDependency = dependencies.getVersions().get(lastVersionName);
       if (!lastVersionName.equals(version) || !versionDependency.getPredecessor().equals(versionOld)) {
-         File logFile = new File(dependencyFile.getParentFile(), "dependencyreading_" + version + "_" + versionOld + ".txt");
-         LOG.info("Executing regression test selection update - Log goes to ", logFile.getAbsolutePath());
+         File logFile = new File(getDependencyreadingFolder(), version + "_" + versionOld + ".txt");
+         LOG.info("Executing regression test selection update (step 1) - Log goes to ", logFile.getAbsolutePath());
 
          try (LogRedirector director = new LogRedirector(logFile)) {
             VersionIterator newIterator = getIterator(lastVersionName);
@@ -86,11 +86,19 @@ public class ContinuousDependencyReader {
          }
       }
    }
+   
+   public File getDependencyreadingFolder() {
+      File folder = new File(dependencyFile.getParentFile(), "dependencyreading");
+      if (!folder.exists()) {
+         folder.mkdirs();
+      }
+      return folder;
+   }
 
    private Dependencies fullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
          throws Exception {
-      File logFile = new File(dependencyFile.getParentFile(), "dependencyreading_" + iterator.getTag() + "_" + iterator.getPredecessor() + ".txt");
-      LOG.info("Executing regression test selection - Log goes to {}", logFile.getAbsolutePath());
+      File logFile = new File(getDependencyreadingFolder(), iterator.getTag() + "_" + iterator.getPredecessor() + ".txt");
+      LOG.info("Executing regression test selection (step 1) - Log goes to {}", logFile.getAbsolutePath());
 
       try (LogRedirector director = new LogRedirector(logFile)) {
          final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, TIMEOUT, nonChanges);

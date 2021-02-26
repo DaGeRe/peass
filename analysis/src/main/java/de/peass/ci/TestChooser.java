@@ -30,7 +30,7 @@ public class TestChooser {
    private final boolean useViews;
    private File localFolder;
    private PeASSFolders folders;
-   private String version;
+   private final String version;
    private final File viewFolder;
    private final File propertyFolder;
    private final int threads;
@@ -125,10 +125,18 @@ public class TestChooser {
 
       return traceTestSet;
    }
+   
+   public File getExecutionreadingFolder() {
+      File folder = new File(localFolder, "executionreading");
+      if (!folder.exists()) {
+         folder.mkdirs();
+      }
+      return folder;
+   }
 
    private void generateViews(final Dependencies dependencies, final File executeFile) throws Exception {
-      File logFile = new File(executeFile.getParentFile(), "executionreading_" + version + ".txt");
-      LOG.info("Executig regression test selection (part 2) - Log goes to {}", logFile.getAbsolutePath());
+      File logFile = new File(getExecutionreadingFolder(), version + "_" + dependencies.getVersions().get(version).getPredecessor() + ".txt");
+      LOG.info("Executig regression test selection (step 2) - Log goes to {}", logFile.getAbsolutePath());
 
       try (LogRedirector director = new LogRedirector(logFile)) {
          final ViewGenerator viewgenerator = new ViewGenerator(folders.getProjectFolder(), dependencies, executeFile, viewFolder, threads, 15);

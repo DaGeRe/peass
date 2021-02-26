@@ -31,7 +31,7 @@ public class ExecutionData extends SelectedTests {
    public ExecutionData() {
    }
    
-   public ExecutionData(Dependencies dependencies) {
+   public ExecutionData(final Dependencies dependencies) {
       setUrl(dependencies.getUrl());
       for (Map.Entry<String, Version> version : dependencies.getVersions().entrySet()) {
          versions.put(version.getKey(), version.getValue().getTests());
@@ -69,16 +69,6 @@ public class ExecutionData extends SelectedTests {
       }
       executes.addTest(testcase);
    }
-
-   // @JsonIgnore
-   // public void addCall(final String version, final TestCase testcase) {
-   // TestSet executes = versions.get(version);
-   // if (executes == null) {
-   // executes = new TestSet();
-   // versions.put(version, executes);
-   // }
-   // executes.addTest(testcase);
-   // }
 
    @JsonIgnore
    public boolean versionContainsTest(final String version, final TestCase currentIterationTest) {
