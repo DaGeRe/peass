@@ -27,6 +27,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.github.javaparser.ParseProblemException;
 
+import de.peass.config.ExecutionConfig;
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.persistence.Dependencies;
@@ -46,8 +47,8 @@ public class DependencyReader extends DependencyReaderBase {
    private int overallSize = 0, prunedSize = 0;
    
    public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final int timeout,
-         final ChangeManager changeManager, final String testGoal) {
-      super(new Dependencies(), projectFolder, dependencyFile, timeout, new VersionKeeper(new File("/dev/null")), testGoal);
+         final ChangeManager changeManager, final ExecutionConfig executionConfig) {
+      super(new Dependencies(), projectFolder, dependencyFile, timeout, new VersionKeeper(new File("/dev/null")), executionConfig);
 
       this.iterator = iterator;
 
@@ -66,8 +67,8 @@ public class DependencyReader extends DependencyReaderBase {
     * @param iterator
     */
    public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final int timeout,
-         final VersionKeeper nochange, final String testGoal) {
-      super(new Dependencies(), projectFolder, dependencyFile, timeout, nochange, testGoal);
+         final VersionKeeper nochange, final ExecutionConfig executionConfig) {
+      super(new Dependencies(), projectFolder, dependencyFile, timeout, nochange, executionConfig);
 
       this.iterator = iterator;
 
@@ -88,9 +89,9 @@ public class DependencyReader extends DependencyReaderBase {
     * @param timeout Timeout in Minutes
     */
    public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, 
-         final int timeout, final String testGoal) {
+         final int timeout, final ExecutionConfig executionConfig) {
       this(projectFolder, dependencyFile, url, iterator, timeout,
-            new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")), testGoal);
+            new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")), executionConfig);
    }
 
 

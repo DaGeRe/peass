@@ -31,6 +31,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.BuildtoolProjectNameReader;
+import de.peass.config.ExecutionConfig;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
@@ -52,14 +53,15 @@ public class KiekerResultManager {
    protected final PeASSFolders folders;
    protected final JUnitTestTransformer testTransformer;
 
-   public KiekerResultManager(final PeASSFolders folders, final long timeout, final String testGoal) {
+   public KiekerResultManager(final PeASSFolders folders, final long timeout, final ExecutionConfig executionConfig) {
       this.folders = folders;
       MeasurementConfiguration fakeConfig = new MeasurementConfiguration(1, timeout);
       fakeConfig.setIterations(1);
       fakeConfig.setWarmup(0);
       fakeConfig.setUseKieker(true);
       fakeConfig.setUseSourceInstrumentation(true);
-      fakeConfig.setTestGoal(testGoal);
+      fakeConfig.setTestGoal(executionConfig.getTestGoal());
+      fakeConfig.setIncludes(executionConfig.getIncludes());
       testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), fakeConfig);
       executor = ExecutorCreator.createExecutor(folders, testTransformer);
    }

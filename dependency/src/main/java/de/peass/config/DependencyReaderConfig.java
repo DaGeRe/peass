@@ -56,4 +56,10 @@ public class DependencyReaderConfig {
       return endversion;
    }
 
+   public ExecutionConfig getExecutionConfig() {
+      ExecutionConfig config = new ExecutionConfig();
+      config.setTestGoal(testGoal);
+      return config;
+   }
+
 }

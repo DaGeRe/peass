@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.config.ExecutionConfig;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.parallel.OneReader;
 import de.peass.dependency.traces.TemporaryProjectFolderUtil;
@@ -32,12 +33,12 @@ public class DependencyParallelReader {
    private final File[] outFiles;
    private final File tempResultFolder;
    private final String project;
-   private final String testGoal;
+   private final ExecutionConfig executionConfig;
 
    public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<GitCommit> commits, final int threadCount,
-         final int timeout, final String testGoal) {
+         final int timeout, final ExecutionConfig executionConfig) {
       url = GitUtils.getURL(projectFolder);
-      this.testGoal = testGoal;
+      this.executionConfig = executionConfig;
       LOG.debug(url);
       folders = new PeASSFolders(projectFolder);
       this.commits = commits;
@@ -111,7 +112,7 @@ public class DependencyParallelReader {
       LOG.debug(currentCommits);
       final VersionIterator iterator = new VersionIteratorGit(projectFolderTemp, currentCommits, null);
       FirstRunningVersionFinder finder = new FirstRunningVersionFinder(new PeASSFolders(projectFolderTemp), nonRunning, iterator, timeout);
-      final DependencyReader reader = new DependencyReader(projectFolderTemp, currentOutFile, url, iterator, timeout, nonChanges, testGoal);
+      final DependencyReader reader = new DependencyReader(projectFolderTemp, currentOutFile, url, iterator, timeout, nonChanges, executionConfig);
       final VersionIteratorGit reserveIterator = new VersionIteratorGit(projectFolderTemp, reserveCommits, null);
       final Runnable current = new OneReader(minimumCommit, currentOutFile, reserveIterator, reader, finder);
       service.submit(current);

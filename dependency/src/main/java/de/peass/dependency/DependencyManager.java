@@ -35,6 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.peass.config.ExecutionConfig;
 import de.peass.dependency.analysis.CalledMethodLoader;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.CalledMethods;
@@ -67,8 +68,8 @@ public class DependencyManager extends KiekerResultManager {
     * 
     * @param projectFolder
     */
-   public DependencyManager(final PeASSFolders folders, final long timeout, final String testGoal) {
-      super(folders, timeout, testGoal);
+   public DependencyManager(final PeASSFolders folders, final long timeout, final ExecutionConfig executionConfig) {
+      super(folders, timeout, executionConfig);
    }
    
    public DependencyManager(final TestExecutor executor, final PeASSFolders folders, final JUnitTestTransformer testTransformer) {

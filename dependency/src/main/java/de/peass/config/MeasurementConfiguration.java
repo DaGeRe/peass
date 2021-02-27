@@ -362,4 +362,8 @@ public class MeasurementConfiguration {
    public void setIncludes(final List<String> includes) {
       executionConfig.setIncludes(includes);
    }
+
+   public ExecutionConfig getExecutionConfig() {
+      return executionConfig;
+   }
 }

@@ -15,6 +15,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.github.javaparser.ParseException;
 
+import de.peass.config.ExecutionConfig;
 import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
@@ -30,7 +31,7 @@ public class ViewGeneratorThread implements Runnable {
    private static final Logger LOG = LogManager.getLogger(ViewGenerator.class);
 
    private final String version, predecessor;
-   private final String testGoal;
+   private final ExecutionConfig executionConfig;
    private final PeASSFolders folders;
    private final File viewFolder, executeFile;
    private final TestSet testset;
@@ -39,7 +40,7 @@ public class ViewGeneratorThread implements Runnable {
 
    public ViewGeneratorThread(final String version, final String predecessor, final PeASSFolders folders, final File viewFolder, final File executeFile, final TestSet testset,
          final ExecutionData changedTraceMethods,
-         final int timeout, final String testGoal) {
+         final int timeout, final ExecutionConfig executionConfig) {
       this.version = version;
       this.predecessor = predecessor;
       this.folders = folders;
@@ -48,7 +49,7 @@ public class ViewGeneratorThread implements Runnable {
       this.testset = testset;
       this.changedTraceMethods = changedTraceMethods;
       this.timeout = timeout;
-      this.testGoal = testGoal;
+      this.executionConfig = executionConfig;
    }
 
    @Override
@@ -110,7 +111,7 @@ public class ViewGeneratorThread implements Runnable {
          throws IOException, InterruptedException, com.github.javaparser.ParseException, ViewNotFoundException, XmlPullParserException {
       boolean gotAllData = true;
 
-      final KiekerResultManager resultsManager = new KiekerResultManager(folders, timeout, testGoal);
+      final KiekerResultManager resultsManager = new KiekerResultManager(folders, timeout, executionConfig);
       LOG.info("View Comparing {} against {}", version, predecessor);
       for (final String githash : new String[] { predecessor, version }) {
          LOG.debug("Checkout... {}", folders.getProjectFolder());

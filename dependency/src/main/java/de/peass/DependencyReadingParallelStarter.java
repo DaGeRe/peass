@@ -40,7 +40,7 @@ public class DependencyReadingParallelStarter implements Callable<Void> {
       VersionComparator.setVersions(commits);
       
       final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), config.getProjectFolder().getName(), commits, 
-            config.getThreads(), config.getTimeout(), config.getTestGoal());
+            config.getThreads(), config.getTimeout(), config.getExecutionConfig());
       final File[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);

@@ -27,7 +27,7 @@ public class TreeReader extends KiekerResultManager {
    private final MeasurementConfiguration config;
    
    TreeReader(final File projectFolder, final MeasurementConfiguration config) throws InterruptedException, IOException {
-      super(new PeASSFolders(projectFolder), config.getTimeoutInMinutes(), config.getTestGoal());
+      super(new PeASSFolders(projectFolder), config.getTimeoutInMinutes(), config.getExecutionConfig());
       this.config = config;
    }
 
