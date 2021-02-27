@@ -67,11 +67,11 @@ public class DependencyManager extends KiekerResultManager {
     * 
     * @param projectFolder
     */
-   public DependencyManager(final PeASSFolders folders, long timeout) {
-      super(folders, timeout);
+   public DependencyManager(final PeASSFolders folders, final long timeout, final String testGoal) {
+      super(folders, timeout, testGoal);
    }
    
-   public DependencyManager(TestExecutor executor, PeASSFolders folders, JUnitTestTransformer testTransformer) {
+   public DependencyManager(final TestExecutor executor, final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
       super(executor, folders, testTransformer);
    }
    
@@ -83,7 +83,7 @@ public class DependencyManager extends KiekerResultManager {
       return deleteFolderSize;
    }
 
-   public void setDeleteFolderSize(int deleteFolderSize) {
+   public void setDeleteFolderSize(final int deleteFolderSize) {
       this.deleteFolderSize = deleteFolderSize;
    }
 

@@ -119,7 +119,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       return previousVersion;
    }
 
-   static DependencyReader createReader(DependencyReaderConfig config, final File dependencyFile, final Dependencies dependencies, String previousVersion,
+   static DependencyReader createReader(final DependencyReaderConfig config, final File dependencyFile, final Dependencies dependencies, final String previousVersion,
          final int timeout, final VersionControlSystem vcs) {
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.GIT)) {
@@ -128,7 +128,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
          // VersionComparator.setVersions(commits);
          final GitCommit previous = new GitCommit(previousVersion, "", "", "");
          final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previous);
-         reader = new DependencyReader(config.getProjectFolder(), dependencyFile, dependencies.getUrl(), iterator, timeout);
+         reader = new DependencyReader(config.getProjectFolder(), dependencyFile, dependencies.getUrl(), iterator, timeout, dependencies.getTestGoal());
          iterator.goTo0thCommit();
       } else if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");

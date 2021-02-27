@@ -115,7 +115,7 @@ public class DependencyDetectorIT {
 
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager, null);
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 

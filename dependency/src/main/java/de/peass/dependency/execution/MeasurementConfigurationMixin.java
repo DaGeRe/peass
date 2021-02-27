@@ -45,6 +45,11 @@ public class MeasurementConfigurationMixin {
    @Option(names = { "-record", "--record" }, description = "Kieker Record type to use for monitoring ")
    protected AllowedKiekerRecord record;
    
+   @Option(names = { "-testGoal", "--testGoal" }, description = "Test goal that should be used; default testRelease for Android projects and test for all others. "
+         + "If you want to use test<VariantName> for Android, please specify a goal (i.e. task name) here."
+         + "If you want to run integration tests in maven e.g. by calling failsafe, also specify it here. ")
+   protected String testGoal;
+   
    @Option(names = { "-measurementStrategy", "--measurementStrategy" }, description = "Measurement strategy (Default: SEQUENTIAL) ")
    protected MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
 
@@ -145,6 +150,14 @@ public class MeasurementConfigurationMixin {
       this.record = record;
    }
 
+   public void setTestGoal(final String testGoal) {
+      this.testGoal = testGoal;
+   }
+   
+   public String getTestGoal() {
+      return testGoal;
+   }
+   
    public void setMeasurementStrategy(final MeasurementStrategy measurementStrategy) {
       this.measurementStrategy = measurementStrategy;
    }

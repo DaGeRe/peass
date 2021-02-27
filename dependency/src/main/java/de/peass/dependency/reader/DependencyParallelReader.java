@@ -32,10 +32,12 @@ public class DependencyParallelReader {
    private final File[] outFiles;
    private final File tempResultFolder;
    private final String project;
+   private final String testGoal;
 
    public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<GitCommit> commits, final int threadCount,
-         final int timeout) {
+         final int timeout, final String testGoal) {
       url = GitUtils.getURL(projectFolder);
+      this.testGoal = testGoal;
       LOG.debug(url);
       folders = new PeASSFolders(projectFolder);
       this.commits = commits;
@@ -109,7 +111,7 @@ public class DependencyParallelReader {
       LOG.debug(currentCommits);
       final VersionIterator iterator = new VersionIteratorGit(projectFolderTemp, currentCommits, null);
       FirstRunningVersionFinder finder = new FirstRunningVersionFinder(new PeASSFolders(projectFolderTemp), nonRunning, iterator, timeout);
-      final DependencyReader reader = new DependencyReader(projectFolderTemp, currentOutFile, url, iterator, timeout, nonChanges);
+      final DependencyReader reader = new DependencyReader(projectFolderTemp, currentOutFile, url, iterator, timeout, nonChanges, testGoal);
       final VersionIteratorGit reserveIterator = new VersionIteratorGit(projectFolderTemp, reserveCommits, null);
       final Runnable current = new OneReader(minimumCommit, currentOutFile, reserveIterator, reader, finder);
       service.submit(current);

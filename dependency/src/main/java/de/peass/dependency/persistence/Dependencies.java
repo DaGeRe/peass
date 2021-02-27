@@ -11,6 +11,7 @@ import de.peass.dependency.analysis.data.TestSet;
 
 public class Dependencies extends SelectedTests {
 
+   private String testGoal;
    private InitialVersion initialversion = new InitialVersion();
    private Map<String, Version> versions = new LinkedHashMap<>();
 
@@ -31,6 +32,14 @@ public class Dependencies extends SelectedTests {
             initialversion.addDependency(new ChangedEntity(test.getClazz(), "", test.getMethod()), new ChangedEntity(test.getClazz(), ""));
          }
       }
+   }
+   
+   public void setTestGoal(final String testGoal) {
+      this.testGoal = testGoal;
+   }
+   
+   public String getTestGoal() {
+      return testGoal;
    }
 
    public InitialVersion getInitialversion() {

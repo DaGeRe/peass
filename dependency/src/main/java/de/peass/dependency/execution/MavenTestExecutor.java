@@ -86,10 +86,10 @@ public class MavenTestExecutor extends TestExecutor {
       }
    }
 
-   protected Process buildProcess(final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
-      final String[] originals;
-      originals = new String[] { "mvn",
-            "test",
+   protected Process buildMavenProcess(final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
+      final String testGoal = getTestGoal();
+      final String[] originals = new String[] { "mvn",
+            testGoal,
             "-fn",
             "-Dcheckstyle.skip=true",
             // "-Dmaven.compiler.source=" + JAVA_VERSION,
@@ -183,7 +183,7 @@ public class MavenTestExecutor extends TestExecutor {
    @Override
    protected void runTest(final File module, final File logFile, final String testname, final long timeout) {
       try {
-         final Process process = buildProcess(logFile, "-Dtest=" + testname);
+         final Process process = buildMavenProcess(logFile, "-Dtest=" + testname);
          execute(testname, timeout, process);
       } catch (final InterruptedException | IOException | XmlPullParserException e) {
          e.printStackTrace();

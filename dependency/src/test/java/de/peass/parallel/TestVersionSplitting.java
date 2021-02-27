@@ -21,8 +21,8 @@ import org.mockito.Mockito;
 
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.DependencyManager;
-import de.peass.dependency.parallel.PartialDependenciesMerger;
 import de.peass.dependency.parallel.OneReader;
+import de.peass.dependency.parallel.PartialDependenciesMerger;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.InitialVersion;
 import de.peass.dependency.reader.DependencyReader;
@@ -38,13 +38,13 @@ public class TestVersionSplitting {
 
    static class DummyReader extends DependencyReader {
 
-      public DummyReader(File dummyFolder, VersionIterator iterator, ChangeManager manager) throws IOException {
-         super(dummyFolder, null, null, iterator, 1, manager);
+      public DummyReader(final File dummyFolder, final VersionIterator iterator, final ChangeManager manager) throws IOException {
+         super(dummyFolder, null, null, iterator, 1, manager, null);
       }
 
       @Override
       public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException {
-         dependencyManager = new DependencyManager(folders, Integer.MAX_VALUE);
+         dependencyManager = new DependencyManager(folders, Integer.MAX_VALUE, "test");
          dependencyResult.setInitialversion(new InitialVersion());
          dependencyResult.getInitialversion().setVersion(iterator.getTag());
          return true;
@@ -125,7 +125,7 @@ public class TestVersionSplitting {
       Assert.assertEquals(7, merged.getVersions().size());
    }
 
-   private void readUntilMax(List<GitCommit> commits, List<Dependencies> dependencies, int i, int min, final int max) throws IOException {
+   private void readUntilMax(final List<GitCommit> commits, final List<Dependencies> dependencies, final int i, final int min, final int max) throws IOException {
       final List<GitCommit> currentCommits = commits.subList(min, max);
       final List<GitCommit> reserveCommits = commits.subList(max - 1, commits.size());
       final GitCommit minimumCommit = commits.get(Math.min(max, commits.size() - 1));
@@ -133,7 +133,7 @@ public class TestVersionSplitting {
       readDummyDependencies(dependencies, i, currentCommits, reserveCommits, minimumCommit);
    }
 
-   private void readDummyDependencies(List<Dependencies> dependencies, int i, final List<GitCommit> currentCommits, final List<GitCommit> reserveCommits,
+   private void readDummyDependencies(final List<Dependencies> dependencies, final int i, final List<GitCommit> currentCommits, final List<GitCommit> reserveCommits,
          final GitCommit minimumCommit)
          throws IOException {
       File dummyFolder = new File(testFolder.getRoot(), "part_" + i);

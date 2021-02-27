@@ -61,7 +61,8 @@ public class DependencyExecutionReader implements Callable<Void>{
    }
 
    public void readExecutions(final String project, final List<GitCommit> commits) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, JAXBException {
-      final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, commits, config.getThreads(), config.getTimeout());
+      final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, commits, 
+            config.getThreads(), config.getTimeout(), config.getTestGoal());
       final File[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);
@@ -76,7 +77,7 @@ public class DependencyExecutionReader implements Callable<Void>{
       final File executeOut = new File(config.getResultBaseFolder(), "execute_" + project + ".json");
       final File viewFolder = new File(config.getResultBaseFolder(), "views_" + project);
 
-      final ViewGenerator viewGenerator = new ViewGenerator(config.getProjectFolder(), all, executeOut, viewFolder, config.getThreads(), config.getTimeout());
+      final ViewGenerator viewGenerator = new ViewGenerator(config.getProjectFolder(), all, executeOut, viewFolder, config.getThreads(), config.getTimeout(), config.getTestGoal());
       viewGenerator.processCommandline();
       
       final File propertyFolders = new File(config.getResultBaseFolder(), "properties_" + project);

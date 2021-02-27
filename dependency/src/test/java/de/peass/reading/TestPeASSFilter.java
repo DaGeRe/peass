@@ -45,7 +45,7 @@ public class TestPeASSFilter {
 
    @Test
    public void testExecution() throws ViewNotFoundException, IOException, XmlPullParserException, InterruptedException {
-      final KiekerResultManager manager = new KiekerResultManager(new PeASSFolders(CURRENT), 5000);
+      final KiekerResultManager manager = new KiekerResultManager(new PeASSFolders(CURRENT), 5000, null);
       final TestSet ts = new TestSet();
       final TestCase testcase = new TestCase("defaultpackage.TestMe", "testMe", "");
       ts.addTest(testcase);
@@ -76,7 +76,7 @@ public class TestPeASSFilter {
 
    }
 
-   private List<TraceElement> regenerateTrace(final KiekerResultManager manager, final TestSet ts, final TestCase testcase, final ModuleClassMapping mapping, int i)
+   private List<TraceElement> regenerateTrace(final KiekerResultManager manager, final TestSet ts, final TestCase testcase, final ModuleClassMapping mapping, final int i)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, FileNotFoundException {
       cleanup();
       new PeASSFolders(CURRENT);

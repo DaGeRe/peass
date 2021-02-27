@@ -78,7 +78,7 @@ public class ContinuousDependencyReader {
 
          try (LogRedirector director = new LogRedirector(logFile)) {
             VersionIterator newIterator = getIterator(lastVersionName);
-            DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, dependencies.getUrl(), newIterator, TIMEOUT);
+            DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, dependencies.getUrl(), newIterator, TIMEOUT, null);
             newIterator.goTo0thCommit();
 
             reader.readCompletedVersions(dependencies);
@@ -101,7 +101,7 @@ public class ContinuousDependencyReader {
       LOG.info("Executing regression test selection (step 1) - Log goes to {}", logFile.getAbsolutePath());
 
       try (LogRedirector director = new LogRedirector(logFile)) {
-         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, TIMEOUT, nonChanges);
+         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, TIMEOUT, nonChanges, null);
          iterator.goToPreviousCommit();
          if (!reader.readInitialVersion()) {
             LOG.error("Analyzing first version was not possible");

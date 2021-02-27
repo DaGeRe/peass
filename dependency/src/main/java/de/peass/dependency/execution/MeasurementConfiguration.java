@@ -35,6 +35,8 @@ public class MeasurementConfiguration {
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
    private MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
 
+   private String testGoal;
+   
    private String version = "HEAD";
    private String versionOld = "HEAD~1";
 
@@ -81,6 +83,7 @@ public class MeasurementConfiguration {
       setUseGC(mixin.isUseGC());
       setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
+      setTestGoal(mixin.getTestGoal());
    }
 
    @JsonCreator
@@ -128,6 +131,7 @@ public class MeasurementConfiguration {
       this.javaVersion = other.javaVersion;
       this.record = other.record;
       this.measurementStrategy = other.measurementStrategy;
+      this.testGoal = other.testGoal;
       this.version = other.version;
       this.versionOld = other.versionOld;
    }
@@ -339,5 +343,13 @@ public class MeasurementConfiguration {
    
    public boolean isRemoveSnapshots() {
       return removeSnapshots;
+   }
+
+   public void setTestGoal(final String testGoal) {
+      this.testGoal = testGoal;
+   }
+   
+   public String getTestGoal() {
+      return testGoal;
    }
 }

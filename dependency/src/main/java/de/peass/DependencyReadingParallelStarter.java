@@ -38,7 +38,8 @@ public class DependencyReadingParallelStarter implements Callable<Void> {
       final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(config.getStartversion(), config.getEndversion(), config.getProjectFolder());
       VersionComparator.setVersions(commits);
       
-      final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), config.getProjectFolder().getName(), commits, config.getThreads(), config.getTimeout());
+      final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), config.getProjectFolder().getName(), commits, 
+            config.getThreads(), config.getTimeout(), config.getTestGoal());
       final File[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);

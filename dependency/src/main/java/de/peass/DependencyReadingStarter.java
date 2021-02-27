@@ -97,7 +97,7 @@ public class DependencyReadingStarter implements Callable<Void> {
          if (!init) {
             throw new RuntimeException("No analyzable version");
          }
-         reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, timeout, nonChanges);
+         reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, timeout, nonChanges, config.getTestGoal());
          LOG.debug("Reader initalized");
       } else {
          throw new RuntimeException("Unknown version control system");
@@ -111,7 +111,7 @@ public class DependencyReadingStarter implements Callable<Void> {
       return null;
    }
 
-   public static List<GitCommit> getGitCommits(String startversion, String endversion, final File projectFolder) {
+   public static List<GitCommit> getGitCommits(final String startversion, final String endversion, final File projectFolder) {
       final List<GitCommit> commits = GitUtils.getCommits(projectFolder);
 
       LOG.info("Processing git repo, commits: {}", commits.size());

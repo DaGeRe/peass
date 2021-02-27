@@ -22,6 +22,15 @@ public class DependencyReaderConfig {
 
    @Option(names = { "-endversion", "--endversion" }, description = "Last version that should be analysed")
    private String endversion;
+   
+   @Option(names = { "-testGoal", "--testGoal" }, description = "Test goal that should be used; default testRelease for Android projects and test for all others. "
+         + "If you want to use test<VariantName> for Android, please specify a goal (i.e. task name) here."
+         + "If you want to run integration tests in maven e.g. by calling failsafe, also specify it here. ")
+   private String testGoal;
+   
+   public String getTestGoal() {
+      return testGoal;
+   }
 
    public File getProjectFolder() {
       return projectFolder;

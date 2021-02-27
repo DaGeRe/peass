@@ -59,7 +59,7 @@ public class DependencyDetectorTestUtil {
    
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator)
          throws IOException, InterruptedException, XmlPullParserException {
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager, null);
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
       fakeIterator.goToNextCommit();

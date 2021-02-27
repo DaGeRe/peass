@@ -48,6 +48,7 @@ public abstract class TestExecutor {
    protected final JUnitTestTransformer testTransformer;
    protected List<String> existingClasses;
    protected Set<String> includedMethodPattern;
+   protected boolean isAndroid;
 
    protected boolean buildfileExists = false;
 
@@ -89,6 +90,16 @@ public abstract class TestExecutor {
          }
       }
       return testcases;
+   }
+   
+   protected String getTestGoal() {
+      String testGoal;
+      if (isAndroid) {
+         testGoal = testTransformer.getConfig().getTestGoal() != null ? testTransformer.getConfig().getTestGoal() : "testRelease";
+      } else {
+         testGoal = testTransformer.getConfig().getTestGoal() != null ? testTransformer.getConfig().getTestGoal() : "test";
+      }
+      return testGoal;
    }
 
    protected Process buildFolderProcess(final File currentFolder, final File logFile, final String[] vars) throws IOException {

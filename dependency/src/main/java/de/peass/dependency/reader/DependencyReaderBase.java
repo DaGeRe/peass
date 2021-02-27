@@ -51,6 +51,7 @@ public abstract class DependencyReaderBase {
    protected String lastRunningVersion;
    protected final int timeout;
    private final VersionKeeper skippedNoChange;
+   private final String testGoal;
 
    /**
     * Initializes the reader with the given result-object, the folder to examine an the file to write to
@@ -59,12 +60,13 @@ public abstract class DependencyReaderBase {
     * @param projectFolder Folder to examine
     * @param dependencyFile File to write results to
     */
-   public DependencyReaderBase(final Dependencies dependencyResult, final File projectFolder, final File dependencyFile, final int timeout, final VersionKeeper skippedNoChange) {
+   public DependencyReaderBase(final Dependencies dependencyResult, final File projectFolder, final File dependencyFile, final int timeout, final VersionKeeper skippedNoChange, final String testGoal) {
       this.dependencyResult = dependencyResult;
       this.dependencyFile = dependencyFile;
       this.folders = new PeASSFolders(projectFolder);
       this.timeout = timeout;
       this.skippedNoChange = skippedNoChange;
+      this.testGoal = testGoal;
    }
 
    /**
@@ -183,7 +185,7 @@ public abstract class DependencyReaderBase {
    }
 
    public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException {
-      dependencyManager = new DependencyManager(folders, timeout);
+      dependencyManager = new DependencyManager(folders, timeout, testGoal);
       InitialVersionReader initialVersionReader = new InitialVersionReader(dependencyResult, dependencyManager, iterator);
       if (initialVersionReader.readInitialVersion()) {
          DependencyReaderUtil.write(dependencyResult, dependencyFile);
@@ -198,7 +200,7 @@ public abstract class DependencyReaderBase {
       dependencyResult.setVersions(initialdependencies.getVersions());
       dependencyResult.setInitialversion(initialdependencies.getInitialversion());
       
-      dependencyManager = new DependencyManager(folders, timeout);
+      dependencyManager = new DependencyManager(folders, timeout, testGoal);
 
       InitialVersionReader initialVersionReader = new InitialVersionReader(initialdependencies, dependencyManager, iterator);
       initialVersionReader.readCompletedVersions();

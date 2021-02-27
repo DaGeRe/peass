@@ -123,7 +123,7 @@ public class ViewGeneratorIT {
    private void executeTraceGetting(final File project, final String githash)
          throws IOException, ParseException, ViewNotFoundException, XmlPullParserException, InterruptedException {
       init(project);
-      final KiekerResultManager tracereader = new KiekerResultManager(new PeASSFolders(TestConstants.CURRENT_FOLDER), 5000);
+      final KiekerResultManager tracereader = new KiekerResultManager(new PeASSFolders(TestConstants.CURRENT_FOLDER), 5000, null);
       final TestSet testset = new TestSet();
       testset.addTest(new TestCase("viewtest.TestMe", "test", ""));
       tracereader.getExecutor().loadClasses();

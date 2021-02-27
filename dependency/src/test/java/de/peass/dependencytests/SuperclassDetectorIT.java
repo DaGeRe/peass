@@ -49,7 +49,7 @@ public class SuperclassDetectorIT {
 
 		final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(secondVersion));
 
-		final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
+		final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager, null);
 		reader.readInitialVersion();
 		fakeIterator.goToNextCommit();
 

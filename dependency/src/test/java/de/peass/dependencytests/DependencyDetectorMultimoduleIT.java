@@ -65,7 +65,7 @@ public class DependencyDetectorMultimoduleIT {
       ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
       
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager, null);
 
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
@@ -96,7 +96,7 @@ public class DependencyDetectorMultimoduleIT {
 
       ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager);
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager, null);
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 

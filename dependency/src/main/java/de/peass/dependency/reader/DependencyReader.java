@@ -46,8 +46,8 @@ public class DependencyReader extends DependencyReaderBase {
    private int overallSize = 0, prunedSize = 0;
    
    public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final int timeout,
-         final ChangeManager changeManager) {
-      super(new Dependencies(), projectFolder, dependencyFile, timeout, new VersionKeeper(new File("/dev/null")));
+         final ChangeManager changeManager, final String testGoal) {
+      super(new Dependencies(), projectFolder, dependencyFile, timeout, new VersionKeeper(new File("/dev/null")), testGoal);
 
       this.iterator = iterator;
 
@@ -66,8 +66,8 @@ public class DependencyReader extends DependencyReaderBase {
     * @param iterator
     */
    public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final int timeout,
-         final VersionKeeper nochange) {
-      super(new Dependencies(), projectFolder, dependencyFile, timeout, nochange);
+         final VersionKeeper nochange, final String testGoal) {
+      super(new Dependencies(), projectFolder, dependencyFile, timeout, nochange, testGoal);
 
       this.iterator = iterator;
 
@@ -88,9 +88,9 @@ public class DependencyReader extends DependencyReaderBase {
     * @param timeout Timeout in Minutes
     */
    public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, 
-         final int timeout) {
+         final int timeout, final String testGoal) {
       this(projectFolder, dependencyFile, url, iterator, timeout,
-            new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")));
+            new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")), testGoal);
    }
 
 

@@ -20,8 +20,6 @@ public class GradleTestExecutor extends TestExecutor {
 
    private static final Logger LOG = LogManager.getLogger(GradleTestExecutor.class);
 
-   private boolean isAndroid;
-
    public GradleTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
       super(folders, testTransformer);
    }
@@ -76,24 +74,12 @@ public class GradleTestExecutor extends TestExecutor {
       }
    }
 
-   /**
-    * With some configurations, this should be test, with others testRelease (or more general testVariantName)
-    */
-   private static final String TEST_RELEASE_TASK_NAME = "testRelease";
-
    protected Process buildProcess(final File folder, final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
-      final String[] originals;
-      if (isAndroid) {
-         originals = new String[] { new File(folders.getProjectFolder(), "gradlew").getAbsolutePath(),
-               "--init-script", new File(folders.getGradleHome(), "init.gradle").getAbsolutePath(),
-               "--no-daemon",
-               "cleanTest", TEST_RELEASE_TASK_NAME };
-      } else {
-         originals = new String[] { new File(folders.getProjectFolder(), "gradlew").getAbsolutePath(),
-               "--init-script", new File(folders.getGradleHome(), "init.gradle").getAbsolutePath(),
-               "--no-daemon",
-               "cleanTest", "test" };
-      }
+      final String testGoal = getTestGoal();
+      final String[] originals = new String[] { new File(folders.getProjectFolder(), "gradlew").getAbsolutePath(),
+            "--init-script", new File(folders.getGradleHome(), "init.gradle").getAbsolutePath(),
+            "--no-daemon",
+            "cleanTest", testGoal };
 
       final String[] vars = new String[commandLineAddition.length + originals.length];
       for (int i = 0; i < originals.length; i++) {
@@ -105,6 +91,7 @@ public class GradleTestExecutor extends TestExecutor {
 
       return buildFolderProcess(folder, logFile, vars);
    }
+
 
    /**
     * Since older gradle versions do not re-execute tests, the build-folder need to be cleared before test re-execution

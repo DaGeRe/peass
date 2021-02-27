@@ -55,7 +55,7 @@ public class ViewGeneratorTest {
 
       final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, Dependencies.class);
       VersionComparator.setDependencies(dependencies);
-      final ViewGenerator generator = new ViewGenerator(TestConstants.CURRENT_FOLDER, dependencies, executefile, viewFolder, 1, 60000);
+      final ViewGenerator generator = new ViewGenerator(TestConstants.CURRENT_FOLDER, dependencies, executefile, viewFolder, 1, 60000, null);
 
       mockGitHandling();
 
