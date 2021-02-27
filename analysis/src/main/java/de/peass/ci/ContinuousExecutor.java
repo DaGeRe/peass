@@ -72,11 +72,8 @@ public class ContinuousExecutor {
       propertyFolder = new File(localFolder, "properties");
    }
 
-   public void execute() throws Exception {
-      execute(new LinkedList<>());
-   }
 
-   public void execute(final List<String> includes) throws Exception {
+   public void execute() throws Exception {
       final File dependencyFile = new File(localFolder, "dependencies.json");
       final VersionIteratorGit iterator = buildIterator();
       final String url = GitUtils.getURL(projectFolder);
@@ -85,7 +82,7 @@ public class ContinuousExecutor {
       final Dependencies dependencies = dependencyReader.getDependencies(iterator, url);
 
       if (dependencies.getVersions().size() > 0) {
-         final Set<TestCase> tests = selectIncludedTests(includes, dependencies);
+         final Set<TestCase> tests = selectIncludedTests(dependencies);
 
          final File measurementFolder = measure(tests);
 
@@ -95,9 +92,9 @@ public class ContinuousExecutor {
       }
    }
 
-   private Set<TestCase> selectIncludedTests(final List<String> includes, final Dependencies dependencies) throws Exception {
+   private Set<TestCase> selectIncludedTests(final Dependencies dependencies) throws Exception {
       final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version,
-            viewFolder, propertyFolder, threads, includes);
+            viewFolder, propertyFolder, threads, measurementConfig.getIncludes());
       final Set<TestCase> tests = chooser.getTestSet(dependencies);
       LOG.debug("Executing measurement on {}", tests);
       return tests;

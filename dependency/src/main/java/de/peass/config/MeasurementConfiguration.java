@@ -1,5 +1,7 @@
 package de.peass.config;
 
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -36,10 +38,10 @@ public class MeasurementConfiguration {
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
    private MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
 
-   private String testGoal;
-   
    private String version = "HEAD";
    private String versionOld = "HEAD~1";
+   
+   private ExecutionConfig executionConfig = new ExecutionConfig();
 
    public MeasurementConfiguration(final int vms) {
       this.timeout = 20 * 60 * 1000; // 20 minutes
@@ -84,7 +86,7 @@ public class MeasurementConfiguration {
       setUseGC(mixin.isUseGC());
       setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
-      setTestGoal(mixin.getTestGoal());
+      executionConfig.setTestGoal(mixin.getTestGoal());
    }
 
    @JsonCreator
@@ -132,7 +134,6 @@ public class MeasurementConfiguration {
       this.javaVersion = other.javaVersion;
       this.record = other.record;
       this.measurementStrategy = other.measurementStrategy;
-      this.testGoal = other.testGoal;
       this.version = other.version;
       this.versionOld = other.versionOld;
    }
@@ -345,12 +346,20 @@ public class MeasurementConfiguration {
    public boolean isRemoveSnapshots() {
       return removeSnapshots;
    }
-
-   public void setTestGoal(final String testGoal) {
-      this.testGoal = testGoal;
-   }
    
    public String getTestGoal() {
-      return testGoal;
+      return executionConfig.getTestGoal();
+   }
+
+   public void setTestGoal(final String testGoal) {
+      executionConfig.setTestGoal(testGoal);
+   }
+
+   public List<String> getIncludes() {
+      return executionConfig.getIncludes();
+   }
+
+   public void setIncludes(final List<String> includes) {
+      executionConfig.setIncludes(includes);
    }
 }
