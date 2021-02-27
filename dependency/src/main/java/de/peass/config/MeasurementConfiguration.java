@@ -1,9 +1,10 @@
-package de.peass.dependency.execution;
+package de.peass.config;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import de.peass.dependency.execution.MeasurementConfigurationMixin;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class MeasurementConfiguration {

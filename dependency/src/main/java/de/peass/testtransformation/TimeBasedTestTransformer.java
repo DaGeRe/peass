@@ -34,8 +34,8 @@ import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.changesreading.JavaParserProvider;
-import de.peass.dependency.execution.MeasurementConfiguration;
 
 
 /**

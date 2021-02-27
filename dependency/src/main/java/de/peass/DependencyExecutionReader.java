@@ -14,6 +14,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.analysis.properties.PropertyReader;
+import de.peass.config.DependencyReaderConfig;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.parallel.PartialDependenciesMerger;
 import de.peass.dependency.persistence.Dependencies;

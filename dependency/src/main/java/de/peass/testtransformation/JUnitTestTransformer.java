@@ -61,10 +61,10 @@ import com.github.javaparser.ast.type.TypeParameter;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.parsing.JUnitParseUtil;
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.changesreading.JavaParserProvider;
-import de.peass.dependency.execution.MeasurementConfiguration;
 
 /**
  * Transforms JUnit-Tests to performance tests.

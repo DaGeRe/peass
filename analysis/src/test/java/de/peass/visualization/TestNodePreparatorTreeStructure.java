@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.peass.dependency.execution.MeasurementConfiguration;
+import de.peass.config.MeasurementConfiguration;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.serialization.MeasuredNode;

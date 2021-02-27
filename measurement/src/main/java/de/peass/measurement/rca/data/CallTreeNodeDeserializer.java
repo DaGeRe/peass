@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import de.peass.dependency.execution.MeasurementConfiguration;
+import de.peass.config.MeasurementConfiguration;
 
 class CallTreeNodeDeserializer extends JsonDeserializer<CallTreeNode> {
 

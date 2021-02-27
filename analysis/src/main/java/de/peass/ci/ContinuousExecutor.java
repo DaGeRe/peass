@@ -15,10 +15,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.measurement.analysis.AnalyseFullData;
 import de.peass.measurement.analysis.ProjectStatistics;

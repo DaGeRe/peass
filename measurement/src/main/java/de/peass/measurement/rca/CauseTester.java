@@ -14,10 +14,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.dependencyprocessors.ViewNotFoundException;

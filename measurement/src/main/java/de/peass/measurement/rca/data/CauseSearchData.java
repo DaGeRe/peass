@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.serialization.MeasuredNode;
 

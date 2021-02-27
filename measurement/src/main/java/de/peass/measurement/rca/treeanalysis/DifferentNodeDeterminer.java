@@ -9,7 +9,7 @@ import org.apache.commons.math3.stat.inference.TestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.dependency.execution.MeasurementConfiguration;
+import de.peass.config.MeasurementConfiguration;
 import de.peass.measurement.analysis.Relation;
 import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.rca.CauseSearcherConfig;

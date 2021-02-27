@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.KiekerReader;
@@ -13,7 +14,6 @@ import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.PeASSFilter;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;

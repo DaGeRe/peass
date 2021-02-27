@@ -11,9 +11,9 @@ import org.hamcrest.core.IsIterableContaining;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.CauseSearcherConfigMixin;

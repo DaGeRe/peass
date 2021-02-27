@@ -24,6 +24,7 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.config.DependencyReaderConfig;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependency.reader.FirstRunningVersionFinder;

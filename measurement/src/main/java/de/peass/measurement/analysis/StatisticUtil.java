@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.peass.dependency.execution.MeasurementConfiguration;
+import de.peass.config.MeasurementConfiguration;
 import de.precision.analysis.repetitions.bimodal.BimodalityTester;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 

@@ -13,6 +13,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.config.DependencyReaderConfig;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.statistics.DependencyStatistics;

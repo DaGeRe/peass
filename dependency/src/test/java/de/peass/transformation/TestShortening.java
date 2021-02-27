@@ -12,8 +12,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestShortener;
 import de.peass.testtransformation.JUnitTestTransformer;
 

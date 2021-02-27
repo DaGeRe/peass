@@ -4,7 +4,7 @@ import org.hamcrest.number.IsNaN;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.peass.dependency.execution.MeasurementConfiguration;
+import de.peass.config.MeasurementConfiguration;
 
 public class TestCallTreeStatistics {
    

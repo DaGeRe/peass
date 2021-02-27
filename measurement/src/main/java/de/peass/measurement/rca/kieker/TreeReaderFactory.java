@@ -3,8 +3,8 @@ package de.peass.measurement.rca.kieker;
 import java.io.File;
 import java.io.IOException;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.traces.TemporaryProjectFolderUtil;
 import de.peass.vcs.GitUtils;
 

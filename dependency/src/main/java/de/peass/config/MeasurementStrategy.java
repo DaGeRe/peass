@@ -1,4 +1,4 @@
-package de.peass.dependency.execution;
+package de.peass.config;
 
 public enum MeasurementStrategy {
    SEQUENTIAL, PARALLEL;

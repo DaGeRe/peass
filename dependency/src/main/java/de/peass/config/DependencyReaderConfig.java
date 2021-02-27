@@ -1,4 +1,4 @@
-package de.peass;
+package de.peass.config;
 
 import java.io.File;
 

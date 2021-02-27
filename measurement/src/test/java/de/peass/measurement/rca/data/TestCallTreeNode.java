@@ -3,8 +3,8 @@ package de.peass.measurement.rca.data;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.TreeBuilderBig;
 

@@ -4,7 +4,7 @@ package de.peass.measurement.rca;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.dependency.execution.MeasurementConfiguration;
+import de.peass.config.MeasurementConfiguration;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.treeanalysis.TreeUtil;
 

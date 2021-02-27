@@ -7,8 +7,8 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
-import de.peass.DependencyReaderConfig;
 import de.peass.DependencyReadingStarter;
+import de.peass.config.DependencyReaderConfig;
 import de.peass.dependency.parallel.PartialDependenciesMerger;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.vcs.GitCommit;

@@ -20,11 +20,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.ci.ContinuousExecutor;
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependency.execution.MeasurementConfigurationMixin;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;

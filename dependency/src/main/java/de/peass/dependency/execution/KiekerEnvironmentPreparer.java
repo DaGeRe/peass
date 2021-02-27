@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.PeASSFolders;
 import de.peass.testtransformation.JUnitTestTransformer;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;

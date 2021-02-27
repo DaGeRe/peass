@@ -17,8 +17,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.peass.PeassGlobalInfos;
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 

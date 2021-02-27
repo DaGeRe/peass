@@ -3,10 +3,10 @@ package de.peass.measurement.rca.kieker;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.data.CallTreeNode;
 import kieker.analysis.IProjectContext;
 import kieker.analysis.plugin.annotation.InputPort;

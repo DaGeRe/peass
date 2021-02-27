@@ -7,6 +7,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 public class TestArgLineBuilder {

@@ -11,8 +11,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.data.CallTreeNode;

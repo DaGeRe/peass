@@ -21,10 +21,10 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.dagere.kopeme.generated.Result;
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.measurement.MavenTestExecutorMocker;
 import de.peass.measurement.analysis.ResultLoader;

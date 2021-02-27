@@ -8,10 +8,10 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import de.peass.config.MeasurementConfiguration;
+import de.peass.config.MeasurementStrategy;
 import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.execution.MeasurementConfiguration;
-import de.peass.dependency.execution.MeasurementStrategy;
 import de.peass.dependencyprocessors.DependencyTester;
 import de.peass.measurement.analysis.TestDependencyTester;
 import de.peass.measurement.rca.helper.VCSTestUtils;

@@ -13,8 +13,8 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.rca.KiekerResultReader;
 import de.peass.measurement.rca.data.CallTreeNode;
 

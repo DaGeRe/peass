@@ -10,9 +10,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.measurement.analysis.EarlyBreakDecider;
 import de.peass.measurement.analysis.ResultLoader;
 import de.peass.measurement.organize.FolderDeterminer;

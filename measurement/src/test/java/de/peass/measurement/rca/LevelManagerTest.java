@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import de.peass.dependency.execution.MeasurementConfiguration;
+import de.peass.config.MeasurementConfiguration;
 import de.peass.measurement.PersistedTestDataBuilder;
 import de.peass.measurement.rca.LevelManager;
 import de.peass.measurement.rca.data.CallTreeNode;

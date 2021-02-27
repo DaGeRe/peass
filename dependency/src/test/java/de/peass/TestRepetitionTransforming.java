@@ -23,8 +23,8 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.changesreading.JavaParserProvider;
-import de.peass.dependency.execution.MeasurementConfiguration;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.testtransformation.ParseUtil;
 import de.peass.transformation.TestTransformation;

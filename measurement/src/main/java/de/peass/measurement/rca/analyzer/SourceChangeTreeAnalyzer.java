@@ -9,7 +9,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.dependency.execution.MeasurementConfiguration;
+import de.peass.config.MeasurementConfiguration;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.kieker.KiekerPatternConverter;
 
