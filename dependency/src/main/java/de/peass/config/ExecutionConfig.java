@@ -16,7 +16,7 @@ public class ExecutionConfig {
    /**
     * Timeout in milliseconds, default 5 minutes
     */
-   private int timeout;
+   private final int timeout;
    private String testGoal;
    private List<String> includes;
 
@@ -29,7 +29,7 @@ public class ExecutionConfig {
    public ExecutionConfig(final int timeoutInMinutes) {
       includes = new LinkedList<String>();
       testGoal = null;
-      this.timeout = timeout * 60 * 1000;
+      this.timeout = timeoutInMinutes * 60 * 1000;
    }
 
    public ExecutionConfig(@JsonProperty("includes") final List<String> includes,
@@ -37,10 +37,6 @@ public class ExecutionConfig {
       this.includes = includes;
       this.testGoal = testGoal;
       this.timeout = 5 * 60 * 1000;
-   }
-
-   public void setTimeout(final int timeout) {
-      this.timeout = timeout;
    }
 
    public int getTimeout() {
