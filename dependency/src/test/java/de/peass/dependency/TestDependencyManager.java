@@ -15,6 +15,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import de.peass.TestConstants;
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.testtransformation.JUnitTestTransformer;
 
@@ -33,7 +34,9 @@ public class TestDependencyManager {
       
       prepareMock(folders, testExecutorMock, testFolder, rubishFile);
 
-      DependencyManager manager = new DependencyManager(testExecutorMock, folders, Mockito.mock(JUnitTestTransformer.class));
+      JUnitTestTransformer transformer = Mockito.mock(JUnitTestTransformer.class);
+      Mockito.when(transformer.getConfig()).thenReturn(new MeasurementConfiguration(5));
+      DependencyManager manager = new DependencyManager(testExecutorMock, folders, transformer);
 
       manager.setDeleteFolderSize(1);
       manager.initialyGetTraces("1");
@@ -46,7 +49,7 @@ public class TestDependencyManager {
       try {
          Mockito.doAnswer(new Answer<Void>() {
             @Override
-            public Void answer(InvocationOnMock invocation) throws Throwable {
+            public Void answer(final InvocationOnMock invocation) throws Throwable {
                folders.getTempMeasurementFolder().mkdir();
                testFolder.mkdirs();
                try (BufferedWriter writer = new BufferedWriter(new FileWriter(rubishFile))) {
