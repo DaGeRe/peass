@@ -11,7 +11,7 @@ import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class MeasurementConfiguration {
 
-   public static final MeasurementConfiguration DEFAULT = new MeasurementConfiguration(300, 30, 0.01, 0.01);
+   public static final MeasurementConfiguration DEFAULT = new MeasurementConfiguration(60 * 1000, 30, 0.01, 0.01);
 
    private final int vms;
    private double type1error;
@@ -22,8 +22,8 @@ public class MeasurementConfiguration {
    private int repetitions = 1;
    private boolean logFullData = true;
    private boolean removeSnapshots = false;
-   
-   //Kieker config
+
+   // Kieker config
    private boolean useKieker = false;
    private boolean useSourceInstrumentation = false;
    private boolean useSelectiveInstrumentation = false;
@@ -39,7 +39,7 @@ public class MeasurementConfiguration {
 
    private String version = "HEAD";
    private String versionOld = "HEAD~1";
-   
+
    private final ExecutionConfig executionConfig;
 
    public MeasurementConfiguration(final int vms) {
@@ -104,7 +104,7 @@ public class MeasurementConfiguration {
       this.version = version;
       this.versionOld = versionOld;
    }
-   
+
    /**
     * Copy constructor
     * 
@@ -166,7 +166,7 @@ public class MeasurementConfiguration {
 
    @JsonIgnore
    public int getTimeoutInMinutes() {
-      return executionConfig.getTimeoutInMinutes() ;
+      return executionConfig.getTimeoutInMinutes();
    }
 
    public int getVms() {
@@ -312,11 +312,11 @@ public class MeasurementConfiguration {
    public void setUseSampling(final boolean useSampling) {
       this.useSampling = useSampling;
    }
-   
+
    public boolean isEnableAdaptiveConfig() {
       return enableAdaptiveMonitoring;
    }
-   
+
    public void setEnableAdaptiveConfig(final boolean allowAdaptiveConfig) {
       this.enableAdaptiveMonitoring = allowAdaptiveConfig;
    }
@@ -328,9 +328,10 @@ public class MeasurementConfiguration {
    public void setMeasurementStrategy(final MeasurementStrategy measurementStrategy) {
       this.measurementStrategy = measurementStrategy;
    }
-   
+
    /**
-    * Returns the warmup that should be ignored when individual nodes are measured 
+    * Returns the warmup that should be ignored when individual nodes are measured
+    * 
     * @return
     */
    @JsonIgnore
@@ -343,11 +344,11 @@ public class MeasurementConfiguration {
    public void setRemoveSnapshots(final boolean removeSnapshots) {
       this.removeSnapshots = removeSnapshots;
    }
-   
+
    public boolean isRemoveSnapshots() {
       return removeSnapshots;
    }
-   
+
    public String getTestGoal() {
       return executionConfig.getTestGoal();
    }
