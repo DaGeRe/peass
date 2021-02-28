@@ -46,9 +46,9 @@ public class DependencyReader extends DependencyReaderBase {
    private final ChangeManager changeManager;
    private int overallSize = 0, prunedSize = 0;
    
-   public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final int timeout,
+   public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, 
          final ChangeManager changeManager, final ExecutionConfig executionConfig) {
-      super(new Dependencies(), projectFolder, dependencyFile, timeout, new VersionKeeper(new File("/dev/null")), executionConfig);
+      super(new Dependencies(), projectFolder, dependencyFile, new VersionKeeper(new File("/dev/null")), executionConfig);
 
       this.iterator = iterator;
 
@@ -66,9 +66,9 @@ public class DependencyReader extends DependencyReaderBase {
     * @param url
     * @param iterator
     */
-   public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final int timeout,
+   public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, 
          final VersionKeeper nochange, final ExecutionConfig executionConfig) {
-      super(new Dependencies(), projectFolder, dependencyFile, timeout, nochange, executionConfig);
+      super(new Dependencies(), projectFolder, dependencyFile, nochange, executionConfig);
 
       this.iterator = iterator;
 
@@ -88,10 +88,8 @@ public class DependencyReader extends DependencyReaderBase {
     * @param initialdependencies
     * @param timeout Timeout in Minutes
     */
-   public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, 
-         final int timeout, final ExecutionConfig executionConfig) {
-      this(projectFolder, dependencyFile, url, iterator, timeout,
-            new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")), executionConfig);
+   public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final ExecutionConfig executionConfig) {
+      this(projectFolder, dependencyFile, url, iterator, new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")), executionConfig);
    }
 
 

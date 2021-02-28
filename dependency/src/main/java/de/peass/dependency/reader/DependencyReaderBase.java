@@ -50,7 +50,6 @@ public abstract class DependencyReaderBase {
    protected VersionIterator iterator;
    // protected TestDependencies dependencyMap;
    protected String lastRunningVersion;
-   protected final int timeout;
    private final VersionKeeper skippedNoChange;
    private final ExecutionConfig executionConfig;
 
@@ -61,12 +60,11 @@ public abstract class DependencyReaderBase {
     * @param projectFolder Folder to examine
     * @param dependencyFile File to write results to
     */
-   public DependencyReaderBase(final Dependencies dependencyResult, final File projectFolder, final File dependencyFile, final int timeout, 
+   public DependencyReaderBase(final Dependencies dependencyResult, final File projectFolder, final File dependencyFile, 
          final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig) {
       this.dependencyResult = dependencyResult;
       this.dependencyFile = dependencyFile;
       this.folders = new PeASSFolders(projectFolder);
-      this.timeout = timeout;
       this.skippedNoChange = skippedNoChange;
       this.executionConfig = executionConfig;
    }

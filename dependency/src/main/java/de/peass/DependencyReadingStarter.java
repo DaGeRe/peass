@@ -98,7 +98,7 @@ public class DependencyReadingStarter implements Callable<Void> {
          if (!init) {
             throw new RuntimeException("No analyzable version");
          }
-         reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, timeout, nonChanges, config.getExecutionConfig());
+         reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, nonChanges, config.getExecutionConfig());
          LOG.debug("Reader initalized");
       } else {
          throw new RuntimeException("Unknown version control system");

@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.config.ExecutionConfig;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.reader.DependencyReader;
@@ -78,7 +79,7 @@ public class ContinuousDependencyReader {
 
          try (LogRedirector director = new LogRedirector(logFile)) {
             VersionIterator newIterator = getIterator(lastVersionName);
-            DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, dependencies.getUrl(), newIterator, TIMEOUT, null);
+            DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, dependencies.getUrl(), newIterator, new ExecutionConfig(TIMEOUT));
             newIterator.goTo0thCommit();
 
             reader.readCompletedVersions(dependencies);
@@ -101,7 +102,7 @@ public class ContinuousDependencyReader {
       LOG.info("Executing regression test selection (step 1) - Log goes to {}", logFile.getAbsolutePath());
 
       try (LogRedirector director = new LogRedirector(logFile)) {
-         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, TIMEOUT, nonChanges, null);
+         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, nonChanges, new ExecutionConfig(TIMEOUT));
          iterator.goToPreviousCommit();
          if (!reader.readInitialVersion()) {
             LOG.error("Analyzing first version was not possible");

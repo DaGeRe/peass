@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import co.unruly.matchers.StreamMatchers;
+import de.peass.config.ExecutionConfig;
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestSet;
@@ -65,7 +66,7 @@ public class DependencyDetectorMultimoduleIT {
       ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
       
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager, null);
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, changeManager, new ExecutionConfig(5));
 
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
@@ -96,7 +97,7 @@ public class DependencyDetectorMultimoduleIT {
 
       ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager, null);
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, changeManager, new ExecutionConfig(5));
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 

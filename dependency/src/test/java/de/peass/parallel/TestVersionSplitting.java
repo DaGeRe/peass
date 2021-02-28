@@ -40,7 +40,7 @@ public class TestVersionSplitting {
    static class DummyReader extends DependencyReader {
 
       public DummyReader(final File dummyFolder, final VersionIterator iterator, final ChangeManager manager) throws IOException {
-         super(dummyFolder, null, null, iterator, 1, manager, null);
+         super(dummyFolder, null, null, iterator, manager, new ExecutionConfig(1));
       }
 
       @Override

@@ -33,7 +33,7 @@ public class TestGenerateDependencies {
 
       final FakeFileIterator iterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, Arrays.asList(ViewGeneratorIT.REPETITION));
       final File dependencyFile = new File(ViewGeneratorIT.VIEW_IT, "dependencies.json");
-      final DependencyReader reader = new DependencyReader(TestConstants.CURRENT_FOLDER, dependencyFile, "", iterator, 5000, VersionKeeper.INSTANCE, new ExecutionConfig());
+      final DependencyReader reader = new DependencyReader(TestConstants.CURRENT_FOLDER, dependencyFile, "", iterator, VersionKeeper.INSTANCE, new ExecutionConfig(5));
 
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);

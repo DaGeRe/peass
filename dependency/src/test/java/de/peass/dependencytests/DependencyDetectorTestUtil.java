@@ -10,6 +10,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.mockito.Mockito;
 
+import de.peass.config.ExecutionConfig;
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestSet;
@@ -59,7 +60,7 @@ public class DependencyDetectorTestUtil {
    
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator)
          throws IOException, InterruptedException, XmlPullParserException {
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, 5000, changeManager, null);
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, changeManager, new ExecutionConfig(5));
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
       fakeIterator.goToNextCommit();

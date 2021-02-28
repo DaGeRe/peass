@@ -129,9 +129,9 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
          // VersionComparator.setVersions(commits);
          final GitCommit previous = new GitCommit(previousVersion, "", "", "");
          final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previous);
-         ExecutionConfig executionConfig = new ExecutionConfig();
+         ExecutionConfig executionConfig = new ExecutionConfig(timeout);
          executionConfig.setTestGoal(dependencies.getTestGoal());
-         reader = new DependencyReader(config.getProjectFolder(), dependencyFile, dependencies.getUrl(), iterator, timeout, executionConfig);
+         reader = new DependencyReader(config.getProjectFolder(), dependencyFile, dependencies.getUrl(), iterator, executionConfig);
          iterator.goTo0thCommit();
       } else if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");
