@@ -76,7 +76,7 @@ public class MeasurementConfiguration {
    }
 
    public MeasurementConfiguration(final MeasurementConfigurationMixin mixin) {
-      this(mixin.getTimeout(), mixin.getVms(), mixin.getType1error(), mixin.getType2error());
+      this(mixin.getTimeout() * 60 * 1000, mixin.getVms(), mixin.getType1error(), mixin.getType2error());
       setEarlyStop(mixin.isEarlyStop());
       setUseKieker(mixin.isUseKieker());
       setIterations(mixin.getIterations());
