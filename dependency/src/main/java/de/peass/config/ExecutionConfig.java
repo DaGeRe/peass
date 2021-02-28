@@ -12,9 +12,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class ExecutionConfig {
-   
+
    /**
-    * Timeout in milliseconds
+    * Timeout in milliseconds, default 5 minutes
     */
    private int timeout;
    private String testGoal;
@@ -23,18 +23,26 @@ public class ExecutionConfig {
    public ExecutionConfig() {
       includes = new LinkedList<String>();
       testGoal = null;
+      this.timeout = 5 * 60 * 1000;
    }
    
+   public ExecutionConfig(final int timeoutInMinutes) {
+      includes = new LinkedList<String>();
+      testGoal = null;
+      this.timeout = timeout * 60 * 1000;
+   }
+
    public ExecutionConfig(@JsonProperty("includes") final List<String> includes,
          @JsonProperty("testGoal") final String testGoal) {
       this.includes = includes;
       this.testGoal = testGoal;
+      this.timeout = 5 * 60 * 1000;
    }
-   
+
    public void setTimeout(final int timeout) {
       this.timeout = timeout;
    }
-   
+
    public int getTimeout() {
       return timeout;
    }

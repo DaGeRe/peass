@@ -40,24 +40,24 @@ public class MeasurementConfiguration {
    private String version = "HEAD";
    private String versionOld = "HEAD~1";
    
-   private ExecutionConfig executionConfig = new ExecutionConfig();
+   private final ExecutionConfig executionConfig;
 
    public MeasurementConfiguration(final int vms) {
-      executionConfig.setTimeout(20 * 60 * 1000); // 20 minutes
+      executionConfig = new ExecutionConfig(20);
       this.vms = vms;
       this.type1error = 0.01;
       this.type2error = 0.01;
    }
 
    public MeasurementConfiguration(final int vms, final int timeoutInMinutes) {
-      executionConfig.setTimeout(timeoutInMinutes * 60 * 1000); // timeout in minutes is converted to milliseconds
+      executionConfig = new ExecutionConfig(timeoutInMinutes);
       this.vms = vms;
       this.type1error = 0.01;
       this.type2error = 0.01;
    }
 
    public MeasurementConfiguration(final int vms, final String version, final String versionOld) {
-      executionConfig.setTimeout(20 * 60 * 1000); // 20 minutes
+      executionConfig = new ExecutionConfig(20);
       this.vms = vms;
       this.type1error = 0.01;
       this.type2error = 0.01;
@@ -69,7 +69,7 @@ public class MeasurementConfiguration {
          @JsonProperty("vms") final int vms,
          @JsonProperty("type1error") final double type1error,
          @JsonProperty("type2error") final double type2error) {
-      executionConfig.setTimeout(timeout * 1000 * 60); // timeout in minutes is converted to milliseconds
+      executionConfig = new ExecutionConfig(timeout / (60 * 1000));
       this.vms = vms;
       this.type1error = type1error;
       this.type2error = type2error;
@@ -96,7 +96,7 @@ public class MeasurementConfiguration {
          @JsonProperty("earlystop") final boolean earlyStop,
          @JsonProperty("version") final String version,
          @JsonProperty("versionOld") final String versionOld) {
-      executionConfig.setTimeout(timeout); // timeout in minutes is NOT converted, since it is the exact serialized timeout
+      executionConfig = new ExecutionConfig(timeout / (60 * 1000));
       this.vms = vms;
       this.type1error = type1error;
       this.type2error = type2error;
@@ -111,7 +111,7 @@ public class MeasurementConfiguration {
     * @param other Configuration to copy
     */
    public MeasurementConfiguration(final MeasurementConfiguration other) {
-      this.executionConfig.setTimeout(other.getTimeout());
+      executionConfig = new ExecutionConfig(other.getTimeoutInMinutes());
       executionConfig.setTestGoal(other.getTestGoal());
       executionConfig.setIncludes(other.getIncludes());
       this.vms = other.vms;

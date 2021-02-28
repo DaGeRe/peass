@@ -78,7 +78,7 @@ public class DependencyExecutionReader implements Callable<Void>{
       final File executeOut = new File(config.getResultBaseFolder(), "execute_" + project + ".json");
       final File viewFolder = new File(config.getResultBaseFolder(), "views_" + project);
 
-      final ViewGenerator viewGenerator = new ViewGenerator(config.getProjectFolder(), all, executeOut, viewFolder, config.getThreads(), config.getTimeout(), config.getExecutionConfig());
+      final ViewGenerator viewGenerator = new ViewGenerator(config.getProjectFolder(), all, executeOut, viewFolder, config.getThreads(), config.getExecutionConfig());
       viewGenerator.processCommandline();
       
       final File propertyFolders = new File(config.getResultBaseFolder(), "properties_" + project);

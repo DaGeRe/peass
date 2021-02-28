@@ -36,11 +36,10 @@ public class ViewGeneratorThread implements Runnable {
    private final File viewFolder, executeFile;
    private final TestSet testset;
    private final ExecutionData changedTraceMethods;
-   private final int timeout;
 
    public ViewGeneratorThread(final String version, final String predecessor, final PeASSFolders folders, final File viewFolder, final File executeFile, final TestSet testset,
          final ExecutionData changedTraceMethods,
-         final int timeout, final ExecutionConfig executionConfig) {
+         final ExecutionConfig executionConfig) {
       this.version = version;
       this.predecessor = predecessor;
       this.folders = folders;
@@ -48,7 +47,6 @@ public class ViewGeneratorThread implements Runnable {
       this.executeFile = executeFile;
       this.testset = testset;
       this.changedTraceMethods = changedTraceMethods;
-      this.timeout = timeout;
       this.executionConfig = executionConfig;
    }
 
@@ -111,7 +109,7 @@ public class ViewGeneratorThread implements Runnable {
          throws IOException, InterruptedException, com.github.javaparser.ParseException, ViewNotFoundException, XmlPullParserException {
       boolean gotAllData = true;
 
-      final KiekerResultManager resultsManager = new KiekerResultManager(folders, timeout, executionConfig);
+      final KiekerResultManager resultsManager = new KiekerResultManager(folders, executionConfig);
       LOG.info("View Comparing {} against {}", version, predecessor);
       for (final String githash : new String[] { predecessor, version }) {
          LOG.debug("Checkout... {}", folders.getProjectFolder());

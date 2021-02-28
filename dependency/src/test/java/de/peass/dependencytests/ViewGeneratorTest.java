@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.peass.TestConstants;
+import de.peass.config.ExecutionConfig;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestSet;
@@ -55,7 +56,7 @@ public class ViewGeneratorTest {
 
       final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, Dependencies.class);
       VersionComparator.setDependencies(dependencies);
-      final ViewGenerator generator = new ViewGenerator(TestConstants.CURRENT_FOLDER, dependencies, executefile, viewFolder, 1, 60000, null);
+      final ViewGenerator generator = new ViewGenerator(TestConstants.CURRENT_FOLDER, dependencies, executefile, viewFolder, 1, new ExecutionConfig());
 
       mockGitHandling();
 

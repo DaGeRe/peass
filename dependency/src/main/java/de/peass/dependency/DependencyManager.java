@@ -68,8 +68,8 @@ public class DependencyManager extends KiekerResultManager {
     * 
     * @param projectFolder
     */
-   public DependencyManager(final PeASSFolders folders, final int timeout, final ExecutionConfig executionConfig) {
-      super(folders, timeout, executionConfig);
+   public DependencyManager(final PeASSFolders folders, final ExecutionConfig executionConfig) {
+      super(folders, executionConfig);
    }
    
    public DependencyManager(final TestExecutor executor, final PeASSFolders folders, final JUnitTestTransformer testTransformer) {

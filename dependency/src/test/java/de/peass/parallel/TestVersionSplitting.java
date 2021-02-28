@@ -45,7 +45,7 @@ public class TestVersionSplitting {
 
       @Override
       public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException {
-         dependencyManager = new DependencyManager(folders, Integer.MAX_VALUE, new ExecutionConfig());
+         dependencyManager = new DependencyManager(folders, new ExecutionConfig(60));
          dependencyResult.setInitialversion(new InitialVersion());
          dependencyResult.getInitialversion().setVersion(iterator.getTag());
          return true;
