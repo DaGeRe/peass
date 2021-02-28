@@ -3,6 +3,7 @@ package de.peass.config;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -57,5 +58,10 @@ public class ExecutionConfig {
 
    public void setIncludes(final List<String> includes) {
       this.includes = includes;
+   }
+
+   @JsonIgnore
+   public int getTimeoutInMinutes() {
+      return timeout / 60 / 1000;
    }
 }

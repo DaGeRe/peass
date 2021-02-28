@@ -166,7 +166,7 @@ public class MeasurementConfiguration {
 
    @JsonIgnore
    public int getTimeoutInMinutes() {
-      return executionConfig.getTimeout() / 60 / 1000;
+      return executionConfig.getTimeoutInMinutes() ;
    }
 
    public int getVms() {

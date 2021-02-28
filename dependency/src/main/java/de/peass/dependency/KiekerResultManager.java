@@ -55,7 +55,7 @@ public class KiekerResultManager {
 
    public KiekerResultManager(final PeASSFolders folders, final ExecutionConfig executionConfig) {
       this.folders = folders;
-      MeasurementConfiguration fakeConfig = new MeasurementConfiguration(1, executionConfig.getTimeout());
+      MeasurementConfiguration fakeConfig = new MeasurementConfiguration(1, executionConfig.getTimeoutInMinutes());
       fakeConfig.setIterations(1);
       fakeConfig.setWarmup(0);
       fakeConfig.setUseKieker(true);
