@@ -28,6 +28,9 @@ public class ExecutionConfig {
    }
    
    public ExecutionConfig(final int timeoutInMinutes) {
+      if (timeoutInMinutes <= 0) {
+         throw new RuntimeException("Illegal timeout: " + timeoutInMinutes);
+      }
       includes = new LinkedList<String>();
       testGoal = null;
       this.timeout = timeoutInMinutes * 60 * 1000;
