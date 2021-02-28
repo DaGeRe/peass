@@ -53,7 +53,7 @@ public class KiekerResultManager {
    protected final PeASSFolders folders;
    protected final JUnitTestTransformer testTransformer;
 
-   public KiekerResultManager(final PeASSFolders folders, final long timeout, final ExecutionConfig executionConfig) {
+   public KiekerResultManager(final PeASSFolders folders, final int timeout, final ExecutionConfig executionConfig) {
       this.folders = folders;
       MeasurementConfiguration fakeConfig = new MeasurementConfiguration(1, timeout);
       fakeConfig.setIterations(1);

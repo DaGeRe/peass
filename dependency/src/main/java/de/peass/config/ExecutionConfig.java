@@ -12,6 +12,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *
  */
 public class ExecutionConfig {
+   
+   /**
+    * Timeout in milliseconds
+    */
+   private int timeout;
    private String testGoal;
    private List<String> includes;
 
@@ -24,6 +29,14 @@ public class ExecutionConfig {
          @JsonProperty("testGoal") final String testGoal) {
       this.includes = includes;
       this.testGoal = testGoal;
+   }
+   
+   public void setTimeout(final int timeout) {
+      this.timeout = timeout;
+   }
+   
+   public int getTimeout() {
+      return timeout;
    }
 
    public String getTestGoal() {

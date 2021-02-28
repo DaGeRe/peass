@@ -104,7 +104,7 @@ public class JUnitTestTransformer {
     * @param projectFolder
     * @param timeout
     */
-   public JUnitTestTransformer(final File projectFolder, final long timeout) {
+   public JUnitTestTransformer(final File projectFolder, final int timeout) {
       this.projectFolder = projectFolder;
       config = new MeasurementConfiguration(1, timeout);
       config.setIterations(1);
