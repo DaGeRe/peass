@@ -71,15 +71,15 @@ public class DependencyManager extends KiekerResultManager {
    public DependencyManager(final PeASSFolders folders, final ExecutionConfig executionConfig) {
       super(folders, executionConfig);
    }
-   
+
    public DependencyManager(final TestExecutor executor, final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
       super(executor, folders, testTransformer);
    }
-   
+
    public TestDependencies getDependencyMap() {
       return dependencies;
    }
-   
+
    public int getDeleteFolderSize() {
       return deleteFolderSize;
    }
@@ -97,7 +97,14 @@ public class DependencyManager extends KiekerResultManager {
       executor.loadClasses();
       final File logFile = new File(folders.getLogFolder(), version + File.separator + "init_log.txt");
       logFile.getParentFile().mkdirs();
-      executor.executeAllKoPeMeTests(logFile);
+
+      if (testTransformer.getConfig().getExecutionConfig().getIncludes() == null ||
+            testTransformer.getConfig().getExecutionConfig().getIncludes().isEmpty()) {
+         executor.executeAllKoPeMeTests(logFile);
+      } else {
+         TestSet includedTests = new TestSet(testTransformer.getConfig().getExecutionConfig().getIncludes());
+         runTraceTests(includedTests, version);
+      }
 
       if (folders.getTempMeasurementFolder().exists()) {
          return readInitialResultFiles(mapping);
@@ -271,7 +278,7 @@ public class DependencyManager extends KiekerResultManager {
     */
    public TestExistenceChanges updateDependencies(final TestSet testsToUpdate, final String version, final ModuleClassMapping mapping) throws IOException, XmlPullParserException {
       final Map<ChangedEntity, Map<ChangedEntity, Set<String>>> oldDepdendencies = dependencies.getCopiedDependencies();
-      
+
       // Remove all old dependencies where changes happened, because they may
       // have been deleted
       for (final Entry<ChangedEntity, Set<String>> className : testsToUpdate.entrySet()) {

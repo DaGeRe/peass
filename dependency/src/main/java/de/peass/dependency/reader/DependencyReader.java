@@ -86,7 +86,6 @@ public class DependencyReader extends DependencyReaderBase {
     * @param url
     * @param iterator
     * @param initialdependencies
-    * @param timeout Timeout in Minutes
     */
    public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final ExecutionConfig executionConfig) {
       this(projectFolder, dependencyFile, url, iterator, new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")), executionConfig);

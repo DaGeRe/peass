@@ -18,6 +18,7 @@ package de.peass.dependency.analysis.data;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -84,8 +85,14 @@ public class TestSet {
       addTest(new TestCase(testcase));
    }
 
-   public TestSet(TestCase testcase) {
+   public TestSet(final TestCase testcase) {
       addTest(testcase);
+   }
+
+   public TestSet(final List<String> testcases) {
+      for (String testcase : testcases) {
+         addTest(new TestCase(testcase));
+      }
    }
 
    @JsonIgnore

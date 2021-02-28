@@ -65,13 +65,12 @@ public class KiekerResultManager {
       testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), fakeConfig);
       executor = ExecutorCreator.createExecutor(folders, testTransformer);
    }
-   
+
    public KiekerResultManager(final TestExecutor executor, final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
       this.executor = executor;
       this.folders = folders;
       this.testTransformer = testTransformer;
    }
-
 
    public JUnitTestTransformer getTestTransformer() {
       return testTransformer;
@@ -85,12 +84,19 @@ public class KiekerResultManager {
       final TestSet tests = new TestSet();
       testTransformer.determineVersions(executor.getModules());
       for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {
+         final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
          final File moduleFolder = new File(folders.getProjectFolder(), clazzname.getModule());
-
-         final List<String> methods = testTransformer.getTests(moduleFolder, clazzname);
-         for (final String method : methods) {
-            tests.addTest(clazzname, method);
+         if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
+            final List<String> methods = testTransformer.getTests(moduleFolder, clazzname);
+            for (final String method : methods) {
+               tests.addTest(clazzname, method);
+            }
+         } else {
+            for (final String method : currentClazzMethods) {
+               tests.addTest(clazzname, method);
+            }
          }
+
       }
       executeKoPeMeKiekerRun(tests, version);
    }
