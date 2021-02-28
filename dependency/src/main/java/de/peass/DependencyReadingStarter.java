@@ -25,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.peass.config.DependencyReaderConfig;
+import de.peass.config.ExecutionConfig;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependency.reader.FirstRunningVersionFinder;
@@ -80,6 +81,8 @@ public class DependencyReadingStarter implements Callable<Void> {
       final VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
 
       final int timeout = config.getTimeout();
+      ExecutionConfig executionConfig = new ExecutionConfig(timeout);
+      executionConfig.setTestGoal(config.getTestGoal());
 
       System.setOut(new PrintStream(outputFile));
 
@@ -94,7 +97,7 @@ public class DependencyReadingStarter implements Callable<Void> {
          final List<GitCommit> commits = getGitCommits(config.getStartversion(), config.getEndversion(), projectFolder);
          LOG.debug(url);
          final VersionIterator iterator = new VersionIteratorGit(projectFolder, commits, null);
-         boolean init = new FirstRunningVersionFinder(new PeASSFolders(projectFolder), nonRunning, iterator, timeout).searchFirstRunningCommit();
+         boolean init = new FirstRunningVersionFinder(new PeASSFolders(projectFolder), nonRunning, iterator, executionConfig).searchFirstRunningCommit();
          if (!init) {
             throw new RuntimeException("No analyzable version");
          }

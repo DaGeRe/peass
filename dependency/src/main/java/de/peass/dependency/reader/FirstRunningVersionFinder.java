@@ -3,6 +3,7 @@ package de.peass.dependency.reader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.config.ExecutionConfig;
 import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.execution.TestExecutor;
@@ -16,13 +17,13 @@ public class FirstRunningVersionFinder {
    private final PeASSFolders folders;
    private final VersionKeeper nonRunning;
    private final VersionIterator iterator;
-   private final int timeout;
+   private final ExecutionConfig executionConfig;
 
-   public FirstRunningVersionFinder(final PeASSFolders folders, final VersionKeeper nonRunning, final VersionIterator iterator, final int timeout) {
+   public FirstRunningVersionFinder(final PeASSFolders folders, final VersionKeeper nonRunning, final VersionIterator iterator, final ExecutionConfig executionConfig) {
       this.folders = folders;
       this.nonRunning = nonRunning;
       this.iterator = iterator;
-      this.timeout = timeout;
+      this.executionConfig = executionConfig;
    }
 
    /**
@@ -34,7 +35,7 @@ public class FirstRunningVersionFinder {
       goToCommit(iterator);
       boolean isVersionRunning = false;
       // The local test transformer enables testing whether a version runs without full configuration
-      final JUnitTestTransformer testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), timeout);
+      final JUnitTestTransformer testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), executionConfig);
       while (!isVersionRunning && iterator.hasNextCommit()) {
          if (ExecutorCreator.hasBuildfile(folders)) {
             isVersionRunning = tryCommit(iterator, testTransformer);

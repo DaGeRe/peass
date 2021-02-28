@@ -24,7 +24,6 @@ public class DependencyParallelReader {
    private static final Logger LOG = LogManager.getLogger(DependencyParallelReader.class);
 
    private final String url;
-   private final int timeout;
    private final VersionKeeper nonRunning;
    private final VersionKeeper nonChanges;
    private final List<GitCommit> commits;
@@ -57,8 +56,6 @@ public class DependencyParallelReader {
       outFiles = commits.size() > 2 * threadCount ? new File[threadCount] : new File[1];
 
       LOG.debug("Threads: {} Size per Thread: {} OutFile: {}", threadCount, sizePerThread, outFiles.length);
-
-      this.timeout = timeout;
    }
 
    public File[] readDependencies() throws InterruptedException, IOException {
@@ -111,7 +108,7 @@ public class DependencyParallelReader {
       LOG.debug("Start: {} End: {}", currentCommits.get(0), currentCommits.get(currentCommits.size() - 1));
       LOG.debug(currentCommits);
       final VersionIterator iterator = new VersionIteratorGit(projectFolderTemp, currentCommits, null);
-      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(new PeASSFolders(projectFolderTemp), nonRunning, iterator, timeout);
+      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(new PeASSFolders(projectFolderTemp), nonRunning, iterator, executionConfig);
       final DependencyReader reader = new DependencyReader(projectFolderTemp, currentOutFile, url, iterator, nonChanges, executionConfig);
       final VersionIteratorGit reserveIterator = new VersionIteratorGit(projectFolderTemp, reserveCommits, null);
       final Runnable current = new OneReader(minimumCommit, currentOutFile, reserveIterator, reader, finder);

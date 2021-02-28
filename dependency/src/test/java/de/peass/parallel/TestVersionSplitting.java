@@ -148,7 +148,7 @@ public class TestVersionSplitting {
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(null);
 
-      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(null, null, null, 0) {
+      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(null, null, null, null) {
          @Override
          public boolean searchFirstRunningCommit() {
             return true;

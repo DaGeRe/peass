@@ -61,6 +61,7 @@ import com.github.javaparser.ast.type.TypeParameter;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.parsing.JUnitParseUtil;
+import de.peass.config.ExecutionConfig;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
@@ -104,12 +105,13 @@ public class JUnitTestTransformer {
     * @param projectFolder
     * @param timeout
     */
-   public JUnitTestTransformer(final File projectFolder, final int timeout) {
+   public JUnitTestTransformer(final File projectFolder, final ExecutionConfig executionConfig) {
       this.projectFolder = projectFolder;
-      config = new MeasurementConfiguration(1, timeout);
+      config = new MeasurementConfiguration(1, executionConfig.getTimeoutInMinutes());
       config.setIterations(1);
       config.setWarmup(0);
       config.setUseKieker(true);
+      config.setTestGoal(executionConfig.getTestGoal());
       datacollectorlist = DataCollectorList.ONLYTIME;
    }
 
