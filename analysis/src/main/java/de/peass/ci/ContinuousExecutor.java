@@ -94,7 +94,7 @@ public class ContinuousExecutor {
 
    private Set<TestCase> selectIncludedTests(final Dependencies dependencies) throws Exception {
       final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version,
-            viewFolder, propertyFolder, threads, measurementConfig.getIncludes());
+            viewFolder, propertyFolder, threads, measurementConfig.getExecutionConfig());
       final Set<TestCase> tests = chooser.getTestSet(dependencies);
       LOG.debug("Executing measurement on {}", tests);
       return tests;

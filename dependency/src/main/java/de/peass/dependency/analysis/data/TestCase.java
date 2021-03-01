@@ -172,7 +172,12 @@ public class TestCase implements Comparable<TestCase> {
 
    @JsonIgnore
    public String getExecutable() {
-      return clazz + "#" + method;
+      if (method != null) {
+         return clazz + "#" + method;
+      } else {
+         return clazz;
+      }
+
    }
 
    @JsonIgnore

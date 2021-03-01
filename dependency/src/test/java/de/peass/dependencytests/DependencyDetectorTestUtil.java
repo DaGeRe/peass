@@ -58,6 +58,16 @@ public class DependencyDetectorTestUtil {
       return changeManager;
    }
    
+   public static ChangeManager mockAddedChangeManager() {
+      final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
+      changes.put(new ChangedEntity("defaultpackage.NormalDependency", ""), new ClazzChangeData("defaultpackage.NormalDependency", false));
+      changes.put(new ChangedEntity("defaultpackage.TestMeAlso", ""), new ClazzChangeData("defaultpackage.TestMeAlso", false));
+
+      final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
+      Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
+      return changeManager;
+   }
+   
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator)
          throws IOException, InterruptedException, XmlPullParserException {
       return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5));

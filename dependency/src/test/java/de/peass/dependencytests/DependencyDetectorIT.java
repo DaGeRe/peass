@@ -83,12 +83,7 @@ public class DependencyDetectorIT {
    public void testAddedClass() throws IOException, InterruptedException, XmlPullParserException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "added_class");
 
-      final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
-      changes.put(new ChangedEntity("defaultpackage.NormalDependency", ""), new ClazzChangeData("defaultpackage.NormalDependency", false));
-      changes.put(new ChangedEntity("defaultpackage.TestMeAlso", ""), new ClazzChangeData("defaultpackage.TestMeAlso", false));
-
-      final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
-      Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
+      final ChangeManager changeManager = DependencyDetectorTestUtil.mockAddedChangeManager();
 
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 

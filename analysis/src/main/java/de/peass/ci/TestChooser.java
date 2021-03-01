@@ -2,13 +2,10 @@ package de.peass.ci;
 
 import java.io.File;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,10 +32,10 @@ public class TestChooser {
    private final File viewFolder;
    private final File propertyFolder;
    private final int threads;
-   private final List<String> includes;
+   private final ExecutionConfig config;
 
    public TestChooser(final boolean useViews, final File localFolder, final PeASSFolders folders, final String version, final File viewFolder, final File propertyFolder,
-         final int threads, final List<String> includes) {
+         final int threads, final ExecutionConfig config) {
       this.useViews = useViews;
       this.localFolder = localFolder;
       this.folders = folders;
@@ -46,7 +43,7 @@ public class TestChooser {
       this.viewFolder = viewFolder;
       this.propertyFolder = propertyFolder;
       this.threads = threads;
-      this.includes = includes;
+      this.config = config;
    }
 
    public Set<TestCase> getTestSet(final Dependencies dependencies) throws Exception {
@@ -73,37 +70,8 @@ public class TestChooser {
          }
       }
 
-      if (includes.size() > 0) {
-         removeNotIncluded(tests);
-      }
+      NonIncludedTestRemover.removeNotIncluded(tests, config);
       return tests;
-   }
-
-   private void removeNotIncluded(final Set<TestCase> tests) {
-      for (Iterator<TestCase> it = tests.iterator(); it.hasNext();) {
-         TestCase test = it.next();
-         boolean isIncluded = isTestIncluded(test, includes);
-         if (!isIncluded) {
-            LOG.info("Excluding non-included test {}", test);
-            it.remove();
-         }
-      }
-   }
-
-   public static boolean isTestIncluded(final TestCase test, final List<String> includes) {
-      if (includes.size() == 0) {
-         return true;
-      }
-      boolean isIncluded = false;
-      for (String include : includes) {
-         boolean match = FilenameUtils.wildcardMatch(test.getExecutable(), include);
-         LOG.info("Testing {} {} {}", test.getExecutable(), include, match);
-         if (match) {
-            isIncluded = true;
-            break;
-         }
-      }
-      return isIncluded;
    }
 
    private TestSet getViewTests(final Dependencies dependencies) throws Exception {

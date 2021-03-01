@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import de.peass.ci.NonIncludedTestRemover;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.DependencyManager;
@@ -140,6 +141,8 @@ public abstract class DependencyReaderBase {
       final TestSet testsToRun = dependencyManager.getTestsToRun(changes); // contains only the tests that need to be run -> could be changeTestMap.values() und dann umwandeln
       Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + version + ".json"), testsToRun.entrySet());
 
+      NonIncludedTestRemover.removeNotIncluded(testsToRun, executionConfig);
+      
       final int changedTests;
       if (testsToRun.classCount() > 0) {
          changedTests = analyzeTests(version, newVersionInfo, testsToRun);

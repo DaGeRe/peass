@@ -2,7 +2,6 @@ package de.peass.ci;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.Test;
 
 import de.peass.TestConstants;
 import de.peass.ci.helper.GitProjectBuilder;
+import de.peass.config.ExecutionConfig;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
@@ -38,7 +38,7 @@ public class TestTestChooser {
    public void testBasicChoosing() throws Exception {
       Dependencies dependencies = createDependencies();
       
-      TestChooser chooser = new TestChooser(false, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), testVersion, new File("target/views"), new File("target/properties"), 1, new LinkedList<>());
+      TestChooser chooser = new TestChooser(false, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), testVersion, new File("target/views"), new File("target/properties"), 1, new ExecutionConfig(1));
       Set<TestCase> tests = chooser.getTestSet(dependencies);
       
       Assert.assertEquals(tests.iterator().next(), new TestCase("defaultpackage.TestMe#testMe"));
@@ -48,7 +48,7 @@ public class TestTestChooser {
    public void testViewChoosing() throws Exception {
       Dependencies dependencies = createDependencies();
       
-      TestChooser chooser = new TestChooser(true, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), testVersion, new File("target/views"), new File("target/properties"), 1, new LinkedList<>());
+      TestChooser chooser = new TestChooser(true, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), testVersion, new File("target/views"), new File("target/properties"), 1, new ExecutionConfig(1));
       Set<TestCase> tests = chooser.getTestSet(dependencies);
       
       Assert.assertEquals(tests.iterator().next(), new TestCase("defaultpackage.TestMe#testMe"));
