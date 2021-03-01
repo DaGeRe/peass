@@ -60,6 +60,7 @@ public class VersionIteratorGit extends VersionIterator {
       if (previousCommit != null) {
          for (int i = 0; i < entries.size(); i++) {
             if (entries.get(i).getTag().equals(previousCommit.getTag())) {
+               LOG.debug("{} equals {}, setting start index to {}", entries.get(i).getTag(), previousCommit.getTag(), i);
                index = i;
             }
          }

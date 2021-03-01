@@ -21,8 +21,6 @@ import de.peass.vcs.VersionIteratorGit;
 
 public class ContinuousDependencyReader {
 
-   private static final int TIMEOUT = 10;
-
    private static final Logger LOG = LogManager.getLogger(ContinuousDependencyReader.class);
 
    private final ExecutionConfig executionConfig;
