@@ -86,6 +86,11 @@ public class MeasurementConfiguration {
       setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
       executionConfig.setTestGoal(mixin.getTestGoal());
+      if (mixin.getIncludes() != null) {
+         for (String include : mixin.getIncludes()) {
+            executionConfig.getIncludes().add(include);
+         }
+      }
    }
 
    @JsonCreator

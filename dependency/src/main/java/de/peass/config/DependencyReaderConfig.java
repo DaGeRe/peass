@@ -28,6 +28,9 @@ public class DependencyReaderConfig {
          + "If you want to run integration tests in maven e.g. by calling failsafe, also specify it here. ")
    private String testGoal;
    
+   @Option(names = { "-includes", "--includes" }, description = "Testcases for inclusion (default: empty, includes all tests)")
+   protected String[] includes;
+   
    public String getTestGoal() {
       return testGoal;
    }
@@ -57,9 +60,22 @@ public class DependencyReaderConfig {
    }
 
    public ExecutionConfig getExecutionConfig() {
-      ExecutionConfig config = new ExecutionConfig();
-      config.setTestGoal(testGoal);
-      return config;
+      ExecutionConfig executionConfig = new ExecutionConfig();
+      executionConfig.setTestGoal(testGoal);
+      if (includes != null) {
+         for (String include : includes) {
+            executionConfig.getIncludes().add(include);
+         }
+      }
+      return executionConfig;
+   }
+   
+   public void setIncludes(final String[] includes) {
+      this.includes = includes;
+   }
+   
+   public String[] getIncludes() {
+      return includes;
    }
 
 }

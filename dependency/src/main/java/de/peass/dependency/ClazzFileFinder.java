@@ -38,7 +38,7 @@ public class ClazzFileFinder {
    }
 
    /**
-    * Returns a list of all classes of a maven project
+    * Returns a list of all classes of a maven project as Java FQN
     * 
     * @param projectFolder Folder where to search for classes
     * @return list of classes
@@ -66,6 +66,11 @@ public class ClazzFileFinder {
       return clazzes;
    }
 
+   /**
+    * Returns a list of classes or a project as Java FQN
+    * @param src
+    * @return
+    */
    public static List<String> getTestClazzes(final File src) {
       final List<String> clazzes = new LinkedList<>();
       final File testFolder = getTestFolder(src);

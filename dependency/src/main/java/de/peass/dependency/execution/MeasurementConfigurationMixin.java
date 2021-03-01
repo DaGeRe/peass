@@ -54,6 +54,8 @@ public class MeasurementConfigurationMixin {
    @Option(names = { "-measurementStrategy", "--measurementStrategy" }, description = "Measurement strategy (Default: SEQUENTIAL) ")
    protected MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
 
+   @Option(names = { "-includes", "--includes" }, description = "Testcases for inclusion (default: empty, includes all tests)")
+   protected String[] includes;
 
    public int getVms() {
       return vms;
@@ -167,4 +169,11 @@ public class MeasurementConfigurationMixin {
       return measurementStrategy;
    }
    
+   public void setIncludes(final String[] includes) {
+      this.includes = includes;
+   }
+   
+   public String[] getIncludes() {
+      return includes;
+   }
 }

@@ -35,6 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.peass.ci.NonIncludedTestRemover;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.analysis.CalledMethodLoader;
 import de.peass.dependency.analysis.ModuleClassMapping;
@@ -102,8 +103,8 @@ public class DependencyManager extends KiekerResultManager {
             testTransformer.getConfig().getExecutionConfig().getIncludes().isEmpty()) {
          executor.executeAllKoPeMeTests(logFile);
       } else {
-         TestSet includedTests = new TestSet(testTransformer.getConfig().getExecutionConfig().getIncludes());
-         runTraceTests(includedTests, version);
+         TestSet tests = findIncludedTests();
+         runTraceTests(tests, version);
       }
 
       if (folders.getTempMeasurementFolder().exists()) {
@@ -111,6 +112,19 @@ public class DependencyManager extends KiekerResultManager {
       } else {
          return printErrors();
       }
+   }
+
+   private TestSet findIncludedTests() throws IOException, XmlPullParserException {
+      final TestSet tests = new TestSet();
+      for (final File module : executor.getModules()) {
+         for (final String clazz : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
+            TestCase test = new TestCase(clazz);
+            if (NonIncludedTestRemover.isTestIncluded(test, testTransformer.getConfig().getExecutionConfig().getIncludes())) {
+               tests.addTest(new TestCase(clazz));
+            }
+         }
+      }
+      return tests;
    }
 
    private boolean printErrors() throws IOException {
@@ -213,6 +227,21 @@ public class DependencyManager extends KiekerResultManager {
 
       final Map<ChangedEntity, Set<String>> calledClasses = new CalledMethodLoader(kiekerResultFolder, mapping).getCalledMethods(kiekerOutputFile);
 
+      removeNotExistingClazzes(calledClasses);
+      for (final Iterator<ChangedEntity> iterator = calledClasses.keySet().iterator(); iterator.hasNext();) {
+         final ChangedEntity clazz = iterator.next();
+         if (clazz.getModule() == null) {
+            throw new RuntimeException("Class " + clazz.getJavaClazzName() + " has no module!");
+         }
+      }
+
+      LOG.debug("Test: {} ", testClassName);
+      LOG.debug("Kieker: {} Dependencies: {}", kiekerResultFolder.getAbsolutePath(), calledClasses.size());
+      setDependencies(testClassName, calledClasses);
+
+   }
+
+   private void removeNotExistingClazzes(final Map<ChangedEntity, Set<String>> calledClasses) {
       for (final Iterator<ChangedEntity> iterator = calledClasses.keySet().iterator(); iterator.hasNext();) {
          final ChangedEntity entity = iterator.next();
          final String wholeClassName = entity.getJavaClazzName();
@@ -227,17 +256,6 @@ public class DependencyManager extends KiekerResultManager {
             LOG.trace("Existing: " + outerClazzName);
          }
       }
-      for (final Iterator<ChangedEntity> iterator = calledClasses.keySet().iterator(); iterator.hasNext();) {
-         final ChangedEntity clazz = iterator.next();
-         if (clazz.getModule() == null) {
-            throw new RuntimeException("Class " + clazz.getJavaClazzName() + " has no module!");
-         }
-      }
-
-      LOG.debug("Test: {} ", testClassName);
-      LOG.debug("Kieker: {} Dependencies: {}", kiekerResultFolder.getAbsolutePath(), calledClasses.size());
-      setDependencies(testClassName, calledClasses);
-
    }
 
    /**

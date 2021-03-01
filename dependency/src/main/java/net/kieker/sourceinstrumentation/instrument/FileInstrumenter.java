@@ -93,7 +93,15 @@ public class FileInstrumenter {
       boolean constructorFound = false;
       for (Node child : clazz.getChildNodes()) {
          if (child instanceof MethodDeclaration) {
-            instrumentMethod(name, child);
+            MethodDeclaration method = (MethodDeclaration) child;
+            if (clazz instanceof ClassOrInterfaceDeclaration) {
+               ClassOrInterfaceDeclaration declaringEntity = (ClassOrInterfaceDeclaration) clazz;
+               if (!declaringEntity.isInterface() || method.getBody().isPresent()) {
+                  instrumentMethod(name, method);
+               }
+            } else {
+               instrumentMethod(name, method);
+            }
          } else if (child instanceof ConstructorDeclaration) {
             instrumentConstructor(clazz, name, child);
             constructorFound = true;
@@ -154,8 +162,7 @@ public class FileInstrumenter {
       return parameters;
    }
 
-   private int instrumentMethod(final String name, final Node child) {
-      MethodDeclaration method = (MethodDeclaration) child;
+   private int instrumentMethod(final String name, final MethodDeclaration method) {
       final Optional<BlockStmt> body = method.getBody();
 
       if (body.isPresent()) {
