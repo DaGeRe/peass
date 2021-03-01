@@ -24,7 +24,7 @@ public class MethodReader {
 
    private final ClassOrInterfaceDeclaration clazz;
 
-   public MethodReader(ClassOrInterfaceDeclaration clazz) {
+   public MethodReader(final ClassOrInterfaceDeclaration clazz) {
       this.clazz = clazz;
    }
 

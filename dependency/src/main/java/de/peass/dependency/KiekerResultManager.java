@@ -87,7 +87,7 @@ public class KiekerResultManager {
          final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
          final File moduleFolder = new File(folders.getProjectFolder(), clazzname.getModule());
          if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
-            final List<String> methods = testTransformer.getTests(moduleFolder, clazzname);
+            final List<String> methods = testTransformer.getTestMethodNames(moduleFolder, clazzname);
             for (final String method : methods) {
                tests.addTest(clazzname, method);
             }

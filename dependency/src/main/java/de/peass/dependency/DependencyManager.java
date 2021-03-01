@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -103,7 +104,7 @@ public class DependencyManager extends KiekerResultManager {
             testTransformer.getConfig().getExecutionConfig().getIncludes().isEmpty()) {
          executor.executeAllKoPeMeTests(logFile);
       } else {
-         TestSet tests = findIncludedTests();
+         TestSet tests = findIncludedTests(mapping);
          runTraceTests(tests, version);
       }
 
@@ -114,14 +115,21 @@ public class DependencyManager extends KiekerResultManager {
       }
    }
 
-   private TestSet findIncludedTests() throws IOException, XmlPullParserException {
+   private TestSet findIncludedTests(final ModuleClassMapping mapping) throws IOException, XmlPullParserException {
+      testTransformer.determineVersions(executor.getModules());
       final TestSet tests = new TestSet();
       for (final File module : executor.getModules()) {
          for (final String clazz : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
-            TestCase test = new TestCase(clazz);
-            if (NonIncludedTestRemover.isTestIncluded(test, testTransformer.getConfig().getExecutionConfig().getIncludes())) {
-               tests.addTest(new TestCase(clazz));
+            String currentModule = mapping.getModuleOfClass(clazz);
+            List<String> testMethodNames = testTransformer.getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
+            for (String method : testMethodNames) {
+               TestCase test = new TestCase(clazz, method, currentModule);
+               List<String> includes = testTransformer.getConfig().getExecutionConfig().getIncludes();
+               if (NonIncludedTestRemover.isTestIncluded(test, includes)) {
+                  tests.addTest(new TestCase(clazz, method));
+               }
             }
+            
          }
       }
       return tests;

@@ -82,7 +82,7 @@ public abstract class TestExecutor {
          for (final String test : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
             final String moduleName = ModuleClassMapping.getModuleName(folders.getProjectFolder(), module);
             final ChangedEntity entity = new ChangedEntity(test, moduleName);
-            final List<String> testMethods = testTransformer.getTests(module, entity);
+            final List<String> testMethods = testTransformer.getTestMethodNames(module, entity);
             for (final String method : testMethods) {
                final TestCase tc = new TestCase(test, method, moduleName);
                testcases.add(tc);

@@ -262,7 +262,7 @@ public class JUnitTestTransformer {
       return extensions;
    }
 
-   public List<String> getTests(final File module, final ChangedEntity clazzname) {
+   public List<String> getTestMethodNames(final File module, final ChangedEntity clazzname) {
       final List<String> methods = new LinkedList<>();
       final File clazzFile = ClazzFileFinder.getClazzFile(module, clazzname);
       final CompilationUnit unit = loadedFiles.get(clazzFile);
@@ -286,8 +286,7 @@ public class JUnitTestTransformer {
          }
       } else {
          /**
-          * By default, the dependency selection adds all changed clazzes as tests (since a class not containing a test may
-          * contain a new test), so this is mostly not a real error
+          * By default, the dependency selection adds all changed clazzes as tests (since a class not containing a test may contain a new test), so this is mostly not a real error
           */
          LOG.error("Did not find {} for {} - class not loaded (since it is not a test class?)", clazzFile, clazzname);
       }
@@ -413,23 +412,8 @@ public class JUnitTestTransformer {
       final SingleMemberAnnotationExpr extendAnnotation = new SingleMemberAnnotationExpr(new Name("ExtendWith"), new ClassExpr(new TypeParameter("KoPeMeExtension")));
       clazz.addAnnotation(extendAnnotation);
 
-      for (final MethodDeclaration method : clazz.getMethods()) {
-         boolean performanceTestFound = false;
-         boolean testFound = false;
-         for (final AnnotationExpr annotation : method.getAnnotations()) {
-            final String currentName = annotation.getNameAsString();
-            if (currentName.equals("de.dagere.kopeme.annotations.PerformanceTest") || currentName.equals("PerformanceTest")) {
-               performanceTestFound = true;
-            }
-            if (currentName.equals("org.junit.Test") || currentName.equals("org.junit.jupiter.api.Test") || currentName.equals("Test")) {
-               testFound = true;
-            }
-         }
-         if (testFound && !performanceTestFound) {
-            setPublic(method);
-            addAnnotation(method);
-         }
-      }
+      List<MethodDeclaration> testMethods = TestMethodFinder.getJUnit5TestMethods(clazz);
+      prepareTestMethods(testMethods);
    }
 
    void editJUnit4(final CompilationUnit unit) {
@@ -446,22 +430,14 @@ public class JUnitTestTransformer {
          addRule(clazz);
       }
 
-      for (final MethodDeclaration method : clazz.getMethods()) {
-         boolean performanceTestFound = false;
-         boolean testFound = false;
-         for (final AnnotationExpr annotation : method.getAnnotations()) {
-            final String currentName = annotation.getNameAsString();
-            if (currentName.equals("de.dagere.kopeme.annotations.PerformanceTest") || currentName.equals("PerformanceTest")) {
-               performanceTestFound = true;
-            }
-            if (currentName.equals("org.junit.Test") || currentName.equals("org.junit.jupiter.api.Test") || currentName.equals("Test")) {
-               testFound = true;
-            }
-         }
-         if (testFound && !performanceTestFound) {
-            setPublic(method);
-            addAnnotation(method);
-         }
+      List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit4TestMethods(clazz);
+      prepareTestMethods(testMethods);
+   }
+
+   private void prepareTestMethods(final List<MethodDeclaration> testMethods) {
+      for (MethodDeclaration testMethod : testMethods) {
+         setPublic(testMethod);
+         addAnnotation(testMethod);
       }
    }
 
