@@ -2,46 +2,17 @@ package de.peass;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.ci.ContinuousExecutor;
 import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.ExecutionConfigMixin;
 import de.peass.dependency.execution.MeasurementConfigurationMixin;
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.ExecutionData;
-import de.peass.dependency.persistence.Version;
-import de.peass.dependency.reader.DependencyReader;
-import de.peass.dependency.reader.VersionKeeper;
-import de.peass.dependency.traces.ViewGenerator;
-import de.peass.dependencyprocessors.AdaptiveTester;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.measurement.analysis.AnalyseFullData;
-import de.peass.measurement.analysis.ProjectStatistics;
-import de.peass.testtransformation.JUnitTestTransformer;
-import de.peass.utils.Constants;
-import de.peass.vcs.GitCommit;
-import de.peass.vcs.GitUtils;
-import de.peass.vcs.VersionIteratorGit;
-import de.peran.AnalyseOneTest;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -60,6 +31,9 @@ import picocli.CommandLine.Option;
 public class ContinuousExecutionStarter implements Callable<Void> {
    private static final Logger LOG = LogManager.getLogger(ContinuousExecutionStarter.class);
 
+   @Mixin
+   ExecutionConfigMixin executionMixin;
+   
    @Mixin
    MeasurementConfigurationMixin measurementConfigMixin;
 
@@ -82,7 +56,7 @@ public class ContinuousExecutionStarter implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(measurementConfigMixin);
+      final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(measurementConfigMixin, executionMixin);
       final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, threads, useViews);
       executor.execute();
       return null;

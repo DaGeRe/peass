@@ -69,7 +69,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       
       final String predecessor = versionInfo.getPredecessor();
 
-      LOG.debug("Timeout in minutes: {}", measurementConfigMixin.getTimeout());
+      LOG.debug("Timeout in minutes: {}", executionMixin.getTimeout());
       final MeasurementConfiguration measurementConfiguration = getConfiguration(predecessor);
 
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, causeSearchConfigMixin);
@@ -83,7 +83,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
    }
 
    private MeasurementConfiguration getConfiguration(final String predecessor) {
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(measurementConfigMixin);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(measurementConfigMixin, executionMixin);
       measurementConfiguration.setUseKieker(true);
       measurementConfiguration.setKiekerAggregationInterval(kiekerConfigMixin.getWriteInterval());
       measurementConfiguration.setVersion(version);

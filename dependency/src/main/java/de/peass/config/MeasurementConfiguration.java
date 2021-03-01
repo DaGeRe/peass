@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import de.peass.dependency.execution.ExecutionConfigMixin;
 import de.peass.dependency.execution.MeasurementConfigurationMixin;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
@@ -75,8 +76,8 @@ public class MeasurementConfiguration {
       this.type2error = type2error;
    }
 
-   public MeasurementConfiguration(final MeasurementConfigurationMixin mixin) {
-      this(mixin.getTimeout() * 60 * 1000, mixin.getVms(), mixin.getType1error(), mixin.getType2error());
+   public MeasurementConfiguration(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin) {
+      this(executionMixin.getTimeout() * 60 * 1000, mixin.getVms(), mixin.getType1error(), mixin.getType2error());
       setEarlyStop(mixin.isEarlyStop());
       setUseKieker(mixin.isUseKieker());
       setIterations(mixin.getIterations());
@@ -85,9 +86,9 @@ public class MeasurementConfiguration {
       setUseGC(mixin.isUseGC());
       setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
-      executionConfig.setTestGoal(mixin.getTestGoal());
-      if (mixin.getIncludes() != null) {
-         for (String include : mixin.getIncludes()) {
+      executionConfig.setTestGoal(executionMixin.getTestGoal());
+      if (executionMixin.getIncludes() != null) {
+         for (String include : executionMixin.getIncludes()) {
             executionConfig.getIncludes().add(include);
          }
       }

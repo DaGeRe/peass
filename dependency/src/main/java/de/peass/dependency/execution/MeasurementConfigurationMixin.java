@@ -28,10 +28,11 @@ public class MeasurementConfigurationMixin {
 
    @Option(names = { "-earlyStop", "--earlyStop" }, description = "Whether to stop early (i.e. execute VMs until type 1 and type 2 error are met)")
    protected boolean earlyStop = false;
-   
-   @Option(names = { "-removeSnapshots", "--removeSnapshots" }, description = "Activates removing SNAPSHOTS (if older versions should be analysed, this should be activated; for performance measurement in CI, this should not be activated)")
+
+   @Option(names = { "-removeSnapshots",
+         "--removeSnapshots" }, description = "Activates removing SNAPSHOTS (if older versions should be analysed, this should be activated; for performance measurement in CI, this should not be activated)")
    protected boolean removeSnapshots = false;
-   
+
    @Option(names = { "-type1error",
          "--type1error" }, description = "Type 1 error of agnostic-t-test, i.e. probability of considering measurements equal when they are unequal (requires earlyStop)")
    public double type1error = 0.05;
@@ -40,22 +41,11 @@ public class MeasurementConfigurationMixin {
          "--type2error" }, description = "Type 2 error of agnostic-t-test, i.e. probability of considering measurements unequal when they are equal (requires earlyStop)")
    protected double type2error = 0.01;
 
-   @Option(names = { "-timeout", "--timeout" }, description = "Timeout in minutes for each VM start")
-   protected int timeout = 5;
-
    @Option(names = { "-record", "--record" }, description = "Kieker Record type to use for monitoring ")
    protected AllowedKiekerRecord record;
-   
-   @Option(names = { "-testGoal", "--testGoal" }, description = "Test goal that should be used; default testRelease for Android projects and test for all others. "
-         + "If you want to use test<VariantName> for Android, please specify a goal (i.e. task name) here."
-         + "If you want to run integration tests in maven e.g. by calling failsafe, also specify it here. ")
-   protected String testGoal;
-   
+
    @Option(names = { "-measurementStrategy", "--measurementStrategy" }, description = "Measurement strategy (Default: SEQUENTIAL) ")
    protected MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
-
-   @Option(names = { "-includes", "--includes" }, description = "Testcases for inclusion (default: empty, includes all tests)")
-   protected String[] includes;
 
    public int getVms() {
       return vms;
@@ -95,10 +85,6 @@ public class MeasurementConfigurationMixin {
 
    public double getType2error() {
       return type2error;
-   }
-
-   public int getTimeout() {
-      return timeout;
    }
 
    public void setVms(final int vms) {
@@ -141,10 +127,6 @@ public class MeasurementConfigurationMixin {
       this.type2error = type2error;
    }
 
-   public void setTimeout(final int timeout) {
-      this.timeout = timeout;
-   }
-
    public AllowedKiekerRecord getRecord() {
       return record;
    }
@@ -153,27 +135,11 @@ public class MeasurementConfigurationMixin {
       this.record = record;
    }
 
-   public void setTestGoal(final String testGoal) {
-      this.testGoal = testGoal;
-   }
-   
-   public String getTestGoal() {
-      return testGoal;
-   }
-   
    public void setMeasurementStrategy(final MeasurementStrategy measurementStrategy) {
       this.measurementStrategy = measurementStrategy;
    }
-   
+
    public MeasurementStrategy getMeasurementStrategy() {
       return measurementStrategy;
-   }
-   
-   public void setIncludes(final String[] includes) {
-      this.includes = includes;
-   }
-   
-   public String[] getIncludes() {
-      return includes;
    }
 }

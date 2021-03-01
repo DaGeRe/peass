@@ -18,11 +18,8 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.execution.MeasurementConfigurationMixin;
 import de.peass.dependency.persistence.Version;
-import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.dependencyprocessors.DependencyTester;
 import de.peass.dependencyprocessors.PairProcessor;
-import de.peass.testtransformation.JUnitTestTransformer;
-import de.peass.testtransformation.TimeBasedTestTransformer;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -88,12 +85,12 @@ public class DependencyTestStarter extends PairProcessor {
 //         testTransformer.getConfig().setUseKieker(measurementConfigMixin.isUseKieker());
 //         tester = new DependencyTester(folders, testTransformer);
       } else {
-         tester = new DependencyTester(folders, new MeasurementConfiguration(measurementConfigMixin));
+         tester = new DependencyTester(folders, new MeasurementConfiguration(measurementConfigMixin, executionMixin));
       }
    }
 
    private MeasurementConfiguration createConfig() {
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(measurementConfigMixin);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(measurementConfigMixin, executionMixin);
       return measurementConfiguration;
    }
 

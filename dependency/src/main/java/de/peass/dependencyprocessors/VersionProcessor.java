@@ -17,6 +17,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.execution.ExecutionConfigMixin;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.InitialVersion;
@@ -25,6 +26,7 @@ import de.peass.dependency.traces.ViewGenerator;
 import de.peass.utils.Constants;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 /**
@@ -37,6 +39,9 @@ public abstract class VersionProcessor implements Callable<Void> {
 
    private static final Logger LOG = LogManager.getLogger(VersionProcessor.class);
 
+   @Mixin
+   protected ExecutionConfigMixin executionMixin;
+
    @Option(names = { "-folder", "--folder" }, description = "Folder of the project that should be analyzed", required = true)
    protected File projectFolder;
 
@@ -45,13 +50,8 @@ public abstract class VersionProcessor implements Callable<Void> {
    protected Dependencies dependencies;
    protected ExecutionData executionData;
 
-   @Option(names = { "-startversion", "--startversion" }, description = "First version that should be analysed")
    protected String startversion;
-
-   @Option(names = { "-endversion", "--endversion" }, description = "Last version that should be analysed")
    protected String endversion;
-   
-   @Option(names = { "-version", "--version" }, description = "Only version to analyze - do not use together with startversion and endversion!")
    protected String version;
 
    @Option(names = { "-threads", "--threads" }, description = "Number of parallel threads for analysis")
@@ -79,10 +79,13 @@ public abstract class VersionProcessor implements Callable<Void> {
       this.endversion = endversion;
    }
 
-   public VersionProcessor()  {
-      
+   public VersionProcessor() {
+      if (executionMixin != null) {
+         startversion = executionMixin.getStartversion();
+         endversion = executionMixin.getEndversion();
+         version = executionMixin.getVersion();
+      }
    }
-
 
    public void processCommandline() throws JAXBException {
       LOG.debug("Processing initial");
@@ -144,16 +147,20 @@ public abstract class VersionProcessor implements Callable<Void> {
       if (executionData == null && dependencies == null) {
          throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");
       }
-      
+
       folders = new PeASSFolders(projectFolder);
       if (!projectFolder.exists()) {
          GitUtils.downloadProject(dependencies.getUrl(), projectFolder);
       }
-      
+
       if (startversion != null || endversion != null) {
          LOG.info("Version: " + startversion + " - " + endversion);
       }
-      
+
+      if (executionMixin.getVersionOld() != null && startversion == null) {
+         throw new RuntimeException("If versionOld is specified, always specify version!");
+      }
+
       if (version != null) {
          if (startversion != null || endversion != null) {
             throw new RuntimeException("Both, version and (startversion or endversion), are defined - define version, or startversion/endversion!");
@@ -162,7 +169,7 @@ public abstract class VersionProcessor implements Callable<Void> {
          endversion = version;
          LOG.info("Version: " + startversion + " - " + endversion);
       }
-      
+
       VersionComparator.setDependencies(dependencies);
       vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
    }
