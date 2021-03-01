@@ -38,9 +38,6 @@ public class MeasurementConfiguration {
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
    private MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
 
-   private String version = "HEAD";
-   private String versionOld = "HEAD~1";
-
    private final ExecutionConfig executionConfig;
 
    public MeasurementConfiguration(final int vms) {
@@ -62,8 +59,8 @@ public class MeasurementConfiguration {
       this.vms = vms;
       this.type1error = 0.01;
       this.type2error = 0.01;
-      this.version = version;
-      this.versionOld = versionOld;
+      executionConfig.setVersion(version);
+      executionConfig.setVersionOld(versionOld);
    }
 
    public MeasurementConfiguration(@JsonProperty("timeout") final int timeout,
@@ -86,6 +83,12 @@ public class MeasurementConfiguration {
       setUseGC(mixin.isUseGC());
       setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
+      
+      executionConfig.setVersion(executionMixin.getVersion());
+      executionConfig.setVersionOld(executionMixin.getVersionOld());
+      executionConfig.setStartversion(executionMixin.getStartversion());
+      executionConfig.setEndversion(executionMixin.getEndversion());
+      
       executionConfig.setTestGoal(executionMixin.getTestGoal());
       if (executionMixin.getIncludes() != null) {
          for (String include : executionMixin.getIncludes()) {
@@ -107,8 +110,8 @@ public class MeasurementConfiguration {
       this.type1error = type1error;
       this.type2error = type2error;
       this.earlyStop = earlyStop;
-      this.version = version;
-      this.versionOld = versionOld;
+      executionConfig.setVersion(version);
+      executionConfig.setVersionOld(versionOld);
    }
 
    /**
@@ -120,6 +123,10 @@ public class MeasurementConfiguration {
       executionConfig = new ExecutionConfig(other.getTimeoutInMinutes());
       executionConfig.setTestGoal(other.getTestGoal());
       executionConfig.setIncludes(other.getIncludes());
+      executionConfig.setVersion(other.getExecutionConfig().getVersion());
+      executionConfig.setVersionOld(other.getExecutionConfig().getVersionOld());
+      executionConfig.setStartversion(other.getExecutionConfig().getStartversion());
+      executionConfig.setEndversion(other.getExecutionConfig().getEndversion());
       this.vms = other.vms;
       this.type1error = other.type1error;
       this.type2error = other.type2error;
@@ -141,8 +148,7 @@ public class MeasurementConfiguration {
       this.javaVersion = other.javaVersion;
       this.record = other.record;
       this.measurementStrategy = other.measurementStrategy;
-      this.version = other.version;
-      this.versionOld = other.versionOld;
+      
    }
 
    /**
@@ -204,19 +210,19 @@ public class MeasurementConfiguration {
    }
 
    public String getVersion() {
-      return version;
+      return executionConfig.getVersion();
    }
 
    public void setVersion(final String version) {
-      this.version = version;
+      executionConfig.setVersion(version);
    }
 
    public String getVersionOld() {
-      return versionOld;
+      return executionConfig.getVersionOld();
    }
 
    public void setVersionOld(final String versionOld) {
-      this.versionOld = versionOld;
+      executionConfig.setVersionOld(versionOld);
    }
 
    public int getWarmup() {

@@ -25,12 +25,11 @@ public class ContinuousDependencyReader {
 
    private static final Logger LOG = LogManager.getLogger(ContinuousDependencyReader.class);
 
-   private final String version, versionOld;
+   private final ExecutionConfig executionConfig;
    private final File projectFolder, dependencyFile;
 
-   public ContinuousDependencyReader(final String version, final String versionOld, final File projectFolder, final File dependencyFile) {
-      this.version = version;
-      this.versionOld = versionOld;
+   public ContinuousDependencyReader(final ExecutionConfig executionConfig, final File projectFolder, final File dependencyFile) {
+      this.executionConfig = executionConfig;
       this.projectFolder = projectFolder;
       this.dependencyFile = dependencyFile;
    }
@@ -59,8 +58,8 @@ public class ContinuousDependencyReader {
    }
 
    public VersionIterator getIterator(final String lastVersionName) {
-      GitCommit lastAnalyzedCommit = new GitCommit(lastVersionName, "", "", "");
-      GitCommit currentCommit = new GitCommit(version, "", "", "");
+      GitCommit lastAnalyzedCommit = new GitCommit(executionConfig.getVersionOld(), "", "", "");
+      GitCommit currentCommit = new GitCommit(executionConfig.getVersion(), "", "", "");
 
       List<GitCommit> commits = new LinkedList<>();
       commits.add(lastAnalyzedCommit);
@@ -73,13 +72,13 @@ public class ContinuousDependencyReader {
    private void partiallyLoadDependencies(final Dependencies dependencies) throws FileNotFoundException, Exception {
       final String lastVersionName = dependencies.getNewestVersion();
       Version versionDependency = dependencies.getVersions().get(lastVersionName);
-      if (!lastVersionName.equals(version) || !versionDependency.getPredecessor().equals(versionOld)) {
-         File logFile = new File(getDependencyreadingFolder(), version + "_" + versionOld + ".txt");
+      if (!lastVersionName.equals(executionConfig.getVersion()) || !versionDependency.getPredecessor().equals(executionConfig.getVersionOld())) {
+         File logFile = new File(getDependencyreadingFolder(), executionConfig.getVersion() + "_" + executionConfig.getVersionOld() + ".txt");
          LOG.info("Executing regression test selection update (step 1) - Log goes to ", logFile.getAbsolutePath());
 
          try (LogRedirector director = new LogRedirector(logFile)) {
             VersionIterator newIterator = getIterator(lastVersionName);
-            DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, dependencies.getUrl(), newIterator, new ExecutionConfig(TIMEOUT));
+            DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, dependencies.getUrl(), newIterator, executionConfig);
             newIterator.goTo0thCommit();
 
             reader.readCompletedVersions(dependencies);
@@ -102,7 +101,7 @@ public class ContinuousDependencyReader {
       LOG.info("Executing regression test selection (step 1) - Log goes to {}", logFile.getAbsolutePath());
 
       try (LogRedirector director = new LogRedirector(logFile)) {
-         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, nonChanges, new ExecutionConfig(TIMEOUT));
+         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, nonChanges, executionConfig);
          iterator.goToPreviousCommit();
          if (!reader.readInitialVersion()) {
             LOG.error("Analyzing first version was not possible");

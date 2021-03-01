@@ -15,6 +15,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import de.peass.TestConstants;
 import de.peass.ci.helper.GitProjectBuilder;
+import de.peass.config.ExecutionConfig;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
@@ -46,8 +47,12 @@ public class TestContinuousDependencyReader {
       VersionIteratorGit iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
       iterator.goToFirstCommit();
       iterator.goToNextCommit();
+      
+      ExecutionConfig executionConfig = new ExecutionConfig();
+      executionConfig.setVersion(iterator.getTag());
+      executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(iterator.getTag(), iterator.getPrevious().getTag(), TestConstants.CURRENT_FOLDER, dependencyFile);
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(executionConfig, TestConstants.CURRENT_FOLDER, dependencyFile);
       Dependencies dependencies = reader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
@@ -64,7 +69,11 @@ public class TestContinuousDependencyReader {
 
       VersionIteratorGit iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
 
-      final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(newVersion, iterator.getPrevious().getTag(), TestConstants.CURRENT_FOLDER, dependencyFile);
+      ExecutionConfig executionConfig = new ExecutionConfig();
+      executionConfig.setVersion(newVersion);
+      executionConfig.setVersionOld(iterator.getPrevious().getTag());
+      
+      final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(executionConfig, TestConstants.CURRENT_FOLDER, dependencyFile);
       Dependencies dependencies = spiedReader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);

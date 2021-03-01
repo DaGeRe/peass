@@ -20,6 +20,12 @@ public class ExecutionConfig {
    private final int timeout;
    private String testGoal;
    private List<String> includes;
+   
+   private String version = "HEAD";
+   private String versionOld = "HEAD~1";
+   protected String startversion;
+   protected String endversion;
+   
 
    public ExecutionConfig() {
       includes = new LinkedList<String>();
@@ -66,5 +72,37 @@ public class ExecutionConfig {
    @JsonIgnore
    public int getTimeoutInMinutes() {
       return timeout / 60 / 1000;
+   }
+
+   public String getVersion() {
+      return version;
+   }
+
+   public void setVersion(final String version) {
+      this.version = version;
+   }
+
+   public String getVersionOld() {
+      return versionOld;
+   }
+
+   public void setVersionOld(final String versionOld) {
+      this.versionOld = versionOld;
+   }
+
+   public String getStartversion() {
+      return startversion;
+   }
+
+   public void setStartversion(final String startversion) {
+      this.startversion = startversion;
+   }
+
+   public String getEndversion() {
+      return endversion;
+   }
+
+   public void setEndversion(final String endversion) {
+      this.endversion = endversion;
    }
 }

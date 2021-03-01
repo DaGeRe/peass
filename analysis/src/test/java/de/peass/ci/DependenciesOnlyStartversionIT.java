@@ -14,6 +14,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import de.peass.TestConstants;
 import de.peass.ci.helper.GitProjectBuilder;
+import de.peass.config.ExecutionConfig;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
@@ -38,7 +39,10 @@ public class DependenciesOnlyStartversionIT {
       VersionIteratorGit iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
       iterator.goToFirstCommit();
       
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(iterator.getTag(), iterator.getPrevious().getTag(), TestConstants.CURRENT_FOLDER, TestContinuousDependencyReader.dependencyFile);
+      ExecutionConfig executionConfig = new ExecutionConfig();
+      executionConfig.setVersion(iterator.getTag());
+      executionConfig.setVersionOld(iterator.getPrevious().getTag());
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(executionConfig, TestConstants.CURRENT_FOLDER, TestContinuousDependencyReader.dependencyFile);
       dependencies = reader.getDependencies(iterator, "");
       
       Assert.assertEquals(0, dependencies.getVersions().size());
@@ -53,7 +57,10 @@ public class DependenciesOnlyStartversionIT {
       iterator.goToFirstCommit();
       iterator.goToNextCommit();
       
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(iterator.getTag(), iterator.getPrevious().getTag(), TestConstants.CURRENT_FOLDER, TestContinuousDependencyReader.dependencyFile);
+      ExecutionConfig executionConfig = new ExecutionConfig();
+      executionConfig.setVersion(iterator.getTag());
+      executionConfig.setVersionOld(iterator.getPrevious().getTag());
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(executionConfig, TestConstants.CURRENT_FOLDER, TestContinuousDependencyReader.dependencyFile);
       dependencies = reader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);

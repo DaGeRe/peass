@@ -70,6 +70,9 @@ public class ContinuousExecutor {
       viewFolder.mkdir();
 
       propertyFolder = new File(localFolder, "properties");
+      
+      version = measurementConfig.getVersion();
+      versionOld = measurementConfig.getVersionOld();
    }
 
 
@@ -78,7 +81,7 @@ public class ContinuousExecutor {
       final VersionIteratorGit iterator = buildIterator();
       final String url = GitUtils.getURL(projectFolder);
 
-      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(version, versionOld, projectFolderLocal, dependencyFile);
+      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(measurementConfig.getExecutionConfig(), projectFolderLocal, dependencyFile);
       final Dependencies dependencies = dependencyReader.getDependencies(iterator, url);
 
       if (dependencies.getVersions().size() > 0) {
