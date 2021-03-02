@@ -3,7 +3,7 @@ Peass
 
 Peass (from Performance analysis of software system versions) is a tool to analyse the evolution of performance during its versions. Base of this analysis is the transformation of JUnit (3 and 4 stable, 5 experimental) tests to performance tests. Since performance measurements need to be repeated often in order to produce statistically reliable results, they need much time. In order to reduce measurement time as far as possible, the regression test selection PRONTO (PeRfOrmance regressiON Test selectiOn) should be executed first. This is done in the `dependency`-module. Afterwards, the `measurement`-module supports execution of the measurements in the selected tests and versions. This measurements can be analyzed using the `analysis`-module later.
 
-All modules should be built with `mvn clean package` before execution. In order to build peass, you'll need to install KoPeMe (https://github.com/DaGeRe/KoPeMe) first or have maven snapshot repo in your `settings.xml`.
+All modules should be built with `mvn clean package` before execution. Peass relies on the measurement framework KoPeMe (https://github.com/DaGeRe/KoPeMe) - by default, Peass uses its SNAPSHOT versions, if you want to change anything to these SNAPSHOTs, please clone and install KoPeMe manually.
 
 In order get help, you can also just run `./peass`. If you need tab-completion in bash, run `. peass_completion` after `mvn install` is finished.
 
