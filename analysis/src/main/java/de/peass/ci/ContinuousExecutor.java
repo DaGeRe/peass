@@ -145,8 +145,8 @@ public class ContinuousExecutor {
                + "currently, only git projects are supported");
       }
    }
-
-   public File getLocalFolder() {
+   
+   public static File getLocalFolder(final String name) {
       final String homeFolderName = System.getenv("PEASS_HOME") != null ? System.getenv("PEASS_HOME") : System.getenv("HOME") + File.separator + ".peass" + File.separator;
       final File peassFolder = new File(homeFolderName);
 
@@ -154,12 +154,14 @@ public class ContinuousExecutor {
          peassFolder.mkdirs();
       }
       LOG.debug("PeASS-Folder: {} Exists: {}", peassFolder, peassFolder.exists());
-      //
-      LOG.debug("Folder: {}", projectFolder);
-      final File cloneProjectFolder = projectFolder;
+      LOG.debug("Folder: {}", name);
 
-      final File localFolder = new File(peassFolder, cloneProjectFolder.getName() + "_full");
+      final File localFolder = new File(peassFolder, name + "_full");
       return localFolder;
+   }
+
+   public File getLocalFolder() {
+      return getLocalFolder(projectFolder.getName());
    }
 
    public String getLatestVersion() {
