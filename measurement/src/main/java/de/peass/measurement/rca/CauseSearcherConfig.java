@@ -1,6 +1,7 @@
 package de.peass.measurement.rca;
 
 import java.io.File;
+import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -9,7 +10,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.peass.dependency.analysis.data.TestCase;
 
-public class CauseSearcherConfig {
+public class CauseSearcherConfig implements Serializable {
+   
+   private static final long serialVersionUID = 5893295648840988829L;
    
    private final TestCase testCase;
    private final boolean ignoreEOIs;
@@ -49,11 +52,17 @@ public class CauseSearcherConfig {
       }
    }
    
-   public CauseSearcherConfig(TestCase test, CauseSearcherConfigMixin config) {
+   public CauseSearcherConfig(final TestCase test, final CauseSearcherConfigMixin config) {
       this(test, !config.isUseNonAggregatedWriter(), !config.isSaveNothing(),
             config.getOutlierFactor(), !config.isNotSplitAggregated(), config.getMinTime(), config.isUseCalibrationRun(), !config.isUseEOIs(), 
             config.getStrategy());
       this.propertyFolder = config.getPropertyFolder();
+   }
+
+   public CauseSearcherConfig(final TestCase testCase, final CauseSearcherConfig causeConfig) {
+      this(testCase, causeConfig.isUseAggregation(), causeConfig.isSaveAll(), 
+            causeConfig.getOutlierFactor(), causeConfig.isSplitAggregated(), causeConfig.getMinTime(), causeConfig.useCalibrationRun(), causeConfig.isIgnoreEOIs(), 
+            causeConfig.getRcaStrategy());
    }
 
    public TestCase getTestCase() {
