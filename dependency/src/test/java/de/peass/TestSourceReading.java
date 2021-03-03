@@ -16,7 +16,7 @@ import de.peass.dependency.traces.requitur.content.TraceElementContent;
 
 public class TestSourceReading {
 
-   private static final File baseFolder = new File("src" + File.separator + "test" + File.separator + "methodFinding");
+   private static final File baseFolder = new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "methodFinding");
 
    @Test
    public void testGenericClass() throws FileNotFoundException {
