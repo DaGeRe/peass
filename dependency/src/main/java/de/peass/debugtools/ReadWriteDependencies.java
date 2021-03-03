@@ -15,7 +15,7 @@ import de.peass.dependency.persistence.ExecutionData;
 import de.peass.utils.Constants;
 
 /**
- * Read and write dependency, in order to get standardized sorting
+ * Read and write dependency, in order to get standardized sorting (just local debug code - no public use intended)
  * 
  * @author reichelt
  *

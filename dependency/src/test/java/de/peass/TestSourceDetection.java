@@ -2,7 +2,6 @@ package de.peass;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -10,21 +9,16 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 
 import de.peass.dependency.changesreading.JavaParserProvider;
 import de.peass.dependency.traces.TraceReadUtils;
-import de.peass.dependency.traces.requitur.content.TraceElementContent;
 
 public class TestSourceDetection {
-   public static final File SOURCE = new File("src/test/resources/detection/");
-
-   
+   public static final File SOURCE = new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "detection");
 
    @Test
    public void testAnonymousList() throws FileNotFoundException {

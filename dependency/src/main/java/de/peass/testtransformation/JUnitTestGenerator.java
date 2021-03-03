@@ -50,7 +50,8 @@ public class JUnitTestGenerator {
       final File calleeClazzFile = ClazzFileFinder.getClazzFile(module, callee);
       final int version = transformer.getVersion(calleeClazzFile);
 
-      final File testClazzFolder = new File(module, calleeClazzFile.getAbsolutePath().contains("src/test/java") ? "src/test/java" : "src/test");
+      String testFolderName = calleeClazzFile.getAbsolutePath().contains("src " + File.separator + "test " + File.separator + "java") ? "src" + File.separator +"test" + File.separator + "java" : "src" + File.separator + "test";
+      final File testClazzFolder = new File(module, testFolderName);
       final String packageFolder = generatedName.getPackage().replaceAll("\\.", File.separator);
       final File generatedClassFile = new File(testClazzFolder, packageFolder + File.separator + generatedName.getSimpleClazzName() + ".java");
       generatedClassFile.getParentFile().mkdirs();
@@ -90,7 +91,7 @@ public class JUnitTestGenerator {
       return generatedClassFile;
    }
 
-   List<ClassOrInterfaceDeclaration> getSuperclasses(final ClassOrInterfaceDeclaration calleeClass, CompilationUnit unit) {
+   List<ClassOrInterfaceDeclaration> getSuperclasses(final ClassOrInterfaceDeclaration calleeClass, final CompilationUnit unit) {
       List<ClassOrInterfaceDeclaration> superClazzes = new LinkedList<>();
       for (ClassOrInterfaceType superclass : calleeClass.getExtendedTypes()) {
          if (!superclass.getNameAsString().equals("TestCase") && !superclass.getNameAsString().equals("junit.framework.TestCase")
@@ -118,7 +119,7 @@ public class JUnitTestGenerator {
       return superClazzes;
    }
 
-   void makeSetUpPublic(final File superClazzFile, CompilationUnit superUnit, final ClassOrInterfaceDeclaration superClass) {
+   void makeSetUpPublic(final File superClazzFile, final CompilationUnit superUnit, final ClassOrInterfaceDeclaration superClass) {
       boolean change = false;
       for (MethodDeclaration method : superClass.getMethods()) {
          if (!method.getModifiers().contains(Modifier.publicModifier())) {
@@ -205,7 +206,7 @@ public class JUnitTestGenerator {
    }
 
    private void addMethods(final ClassOrInterfaceDeclaration calleeClass, final ChangedEntity callee, final ClassOrInterfaceDeclaration generatedClass,
-         List<ClassOrInterfaceDeclaration> superclasses) {
+         final List<ClassOrInterfaceDeclaration> superclasses) {
 
       final List<ConstructorDeclaration> calleeConstructors = calleeClass.getConstructors();
       if (calleeConstructors.size() > 0) {
@@ -260,7 +261,7 @@ public class JUnitTestGenerator {
       // }
    }
 
-   boolean findMethodByName(final ClassOrInterfaceDeclaration calleeClass, final ClassOrInterfaceDeclaration generatedClass, String methodName) {
+   boolean findMethodByName(final ClassOrInterfaceDeclaration calleeClass, final ClassOrInterfaceDeclaration generatedClass, final String methodName) {
       boolean found = false;
       for (final MethodDeclaration method : calleeClass.getMethods()) {
          if (method.getNameAsString().equals(methodName)) {
@@ -271,7 +272,7 @@ public class JUnitTestGenerator {
       return found;
    }
 
-   boolean findMethodByAnnotation(final ClassOrInterfaceDeclaration calleeClass, final ClassOrInterfaceDeclaration generatedClass, String annotationName) {
+   boolean findMethodByAnnotation(final ClassOrInterfaceDeclaration calleeClass, final ClassOrInterfaceDeclaration generatedClass, final String annotationName) {
       boolean found = false;
       for (final MethodDeclaration method : calleeClass.getMethods()) {
          if (method.getAnnotationByName(annotationName).isPresent()) {

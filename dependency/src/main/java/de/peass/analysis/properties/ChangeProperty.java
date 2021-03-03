@@ -42,9 +42,6 @@ public class ChangeProperty {
       setOldTime(change.getOldTime());
       setChangePercent(change.getChangePercent());
       setDiff(change.getDiff());
-//      if (change.getType() != null) {
-//         getTypes().addAll(change.getType());
-//      }
    }
 
    public int getNewLines() {
@@ -187,7 +184,7 @@ public class ChangeProperty {
       return affectedMethods;
    }
 
-   public void setAffectedMethods(Set<String> affectedMethods) {
+   public void setAffectedMethods(final Set<String> affectedMethods) {
       this.affectedMethods = affectedMethods;
    }
 }

@@ -120,7 +120,7 @@ public class TraceMethodReader {
       return clazzFile;
    }
 
-   public CompilationUnit getCU(File clazzFile) throws FileNotFoundException {
+   public CompilationUnit getCU(final File clazzFile) throws FileNotFoundException {
       CompilationUnit cu = loadedUnits.get(clazzFile);
       if (cu == null) {
          LOG.debug("CU {} not imported yet", clazzFile);
@@ -143,10 +143,10 @@ public class TraceMethodReader {
       final File projectFolder = new File(args[1]);
       final File clazzFolder[] = new File[4];
 
-      clazzFolder[0] = new File(projectFolder, "src/main/java");
-      clazzFolder[1] = new File(projectFolder, "src/java");
-      clazzFolder[2] = new File(projectFolder, "src/test/java");
-      clazzFolder[3] = new File(projectFolder, "src/test");
+      clazzFolder[0] = new File(projectFolder, "src" + File.separator + "main" + File.separator + "java");
+      clazzFolder[1] = new File(projectFolder, "src" + File.separator + "java");
+      clazzFolder[2] = new File(projectFolder, "src" + File.separator + "test" + File.separator + "java");
+      clazzFolder[3] = new File(projectFolder, "src" + File.separator + "test");
 
       final TraceMethodReader reader = new TraceMethodReader(traceFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING, clazzFolder);
       reader.getTraceWithMethods();

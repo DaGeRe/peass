@@ -126,7 +126,6 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       if (vcs.equals(VersionControlSystem.GIT)) {
          final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(config.getStartversion(), config.getEndversion(), config.getProjectFolder());
          commits.add(0, new GitCommit(previousVersion, "", "", ""));
-         // VersionComparator.setVersions(commits);
          final GitCommit previous = new GitCommit(previousVersion, "", "", "");
          final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previous);
          ExecutionConfig executionConfig = new ExecutionConfig(timeout);
@@ -149,8 +148,5 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
             it.remove();
          }
       }
-      // if (versions.size() > 0) {
-      // LOG.debug("Letzte vorgeladene Version: " + versions.get(versions.size() - 1).getKey());
-      // }
    }
 }

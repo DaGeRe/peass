@@ -56,6 +56,11 @@ public class PropertyReadHelper {
    private final File viewFolder;
    private final File methodFolder;
 
+   /**
+    * Just for local debugging purposes - no public use intended
+    * @param args
+    * @throws IOException
+    */
    public static void main(final String[] args) throws IOException {
       final ChangedEntity ce = new ChangedEntity("org.apache.commons.fileupload.StreamingTest", "");
       final Change change = new Change();
@@ -172,7 +177,7 @@ public class PropertyReadHelper {
       }
    }
 
-   public void getKeywordChanges(final ChangeProperty property, final MethodChangeReader changeManager, ChangedEntity entity) throws FileNotFoundException {
+   public void getKeywordChanges(final ChangeProperty property, final MethodChangeReader changeManager, final ChangedEntity entity) throws FileNotFoundException {
       final Patch<String> patch = changeManager.getKeywordChanges(entity);
 
       final Map<String, Integer> vNewkeywords = new HashMap<>();

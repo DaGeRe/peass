@@ -129,7 +129,7 @@ public class DependencyManager extends KiekerResultManager {
                   tests.addTest(test);
                }
             }
-            
+
          }
       }
       return tests;
@@ -154,7 +154,7 @@ public class DependencyManager extends KiekerResultManager {
 
    private boolean searchTestFiles(boolean sourceFound) throws IOException, XmlPullParserException {
       for (final File module : executor.getModules()) {
-         final File testSourceFolder = new File(module, "src/test");
+         final File testSourceFolder = new File(module, "src" + File.separator + "test");
          if (testSourceFolder.exists()) {
             final Collection<File> javaTestFiles = FileUtils.listFiles(testSourceFolder, new WildcardFileFilter("*test*.java", IOCase.INSENSITIVE), TrueFileFilter.INSTANCE);
             if (javaTestFiles.size() > 0) {
