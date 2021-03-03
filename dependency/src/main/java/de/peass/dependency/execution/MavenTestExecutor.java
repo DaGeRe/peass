@@ -169,9 +169,9 @@ public class MavenTestExecutor extends TestExecutor {
 
    @Override
    public void executeTest(final TestCase test, final File logFolder, final long timeout) {
-      final File module = new File(folders.getProjectFolder(), test.getModule());
+      final File moduleFolder = new File(folders.getProjectFolder(), test.getModule());
       final ChangedEntity testClazzEntity = new ChangedEntity(test.getClazz(), test.getModule());
-      runMethod(logFolder, testClazzEntity, module, test.getMethod(), timeout);
+      runMethod(logFolder, testClazzEntity, moduleFolder, test.getMethod(), timeout);
    }
 
    /**

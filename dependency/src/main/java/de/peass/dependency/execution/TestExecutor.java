@@ -128,10 +128,10 @@ public abstract class TestExecutor {
       return process;
    }
 
-   protected abstract void runTest(File module, final File logFile, final String testname, final long timeout);
+   protected abstract void runTest(File moduleFolder, final File logFile, final String testname, final long timeout);
 
-   void runMethod(final File logFolder, final ChangedEntity clazz, final File module, final String method, final long timeout) {
-      try (final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, module, clazz, method)) {
+   void runMethod(final File logFolder, final ChangedEntity clazz, final File moduleFolder, final String method, final long timeout) {
+      try (final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, moduleFolder, clazz, method)) {
          File clazzLogFolder = new File(logFolder, "log_" + clazz.getJavaClazzName());
          if (!clazzLogFolder.exists()) {
             clazzLogFolder.mkdir();
@@ -141,7 +141,7 @@ public abstract class TestExecutor {
          clean(cleanFile);
 
          final File logFile = new File(clazzLogFolder, method + ".txt");
-         runTest(module, logFile, clazz.getJavaClazzName(), timeout);
+         runTest(moduleFolder, logFile, clazz.getJavaClazzName(), timeout);
       } catch (Exception e1) {
          e1.printStackTrace();
       }

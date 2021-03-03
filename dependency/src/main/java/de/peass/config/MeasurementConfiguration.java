@@ -1,5 +1,6 @@
 package de.peass.config;
 
+import java.io.Serializable;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -10,7 +11,9 @@ import de.peass.dependency.execution.ExecutionConfigMixin;
 import de.peass.dependency.execution.MeasurementConfigurationMixin;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
-public class MeasurementConfiguration {
+public class MeasurementConfiguration implements Serializable {
+   
+   private static final long serialVersionUID = -6936740902708676182L;
 
    public static final MeasurementConfiguration DEFAULT = new MeasurementConfiguration(60 * 1000, 30, 0.01, 0.01);
 

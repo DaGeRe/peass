@@ -120,13 +120,13 @@ public class DependencyManager extends KiekerResultManager {
       final TestSet tests = new TestSet();
       for (final File module : executor.getModules()) {
          for (final String clazz : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
-            String currentModule = mapping.getModuleOfClass(clazz);
-            List<String> testMethodNames = testTransformer.getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
+            final String currentModule = mapping.getModuleOfClass(clazz);
+            final List<String> testMethodNames = testTransformer.getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
             for (String method : testMethodNames) {
-               TestCase test = new TestCase(clazz, method, currentModule);
-               List<String> includes = testTransformer.getConfig().getExecutionConfig().getIncludes();
+               final TestCase test = new TestCase(clazz, method, currentModule);
+               final List<String> includes = testTransformer.getConfig().getExecutionConfig().getIncludes();
                if (NonIncludedTestRemover.isTestIncluded(test, includes)) {
-                  tests.addTest(new TestCase(clazz, method));
+                  tests.addTest(test);
                }
             }
             

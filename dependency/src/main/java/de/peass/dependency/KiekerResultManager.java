@@ -81,6 +81,11 @@ public class KiekerResultManager {
       // TODO Verschieben
 
       LOG.debug("Executing dependency update test, results folder: {}", folders.getTempMeasurementFolder());
+      final TestSet tests = buildTestMethodSet(testsToUpdate);
+      executeKoPeMeKiekerRun(tests, version);
+   }
+
+   private TestSet buildTestMethodSet(final TestSet testsToUpdate) throws IOException, XmlPullParserException {
       final TestSet tests = new TestSet();
       testTransformer.determineVersions(executor.getModules());
       for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {
@@ -96,9 +101,8 @@ public class KiekerResultManager {
                tests.addTest(clazzname, method);
             }
          }
-
       }
-      executeKoPeMeKiekerRun(tests, version);
+      return tests;
    }
 
    private void truncateKiekerResults() {

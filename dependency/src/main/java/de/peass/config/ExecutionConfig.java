@@ -1,5 +1,6 @@
 package de.peass.config;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,8 +13,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author DaGeRe
  *
  */
-public class ExecutionConfig {
+public class ExecutionConfig implements Serializable {
 
+   private static final long serialVersionUID = -6642358125854337047L;
+   
    /**
     * Timeout in milliseconds, default 5 minutes
     */
