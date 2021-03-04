@@ -37,8 +37,9 @@ public class ArgLineBuilder {
       String argline;
       if (testTransformer.getConfig().isUseKieker()) {
          String writerConfig;
+         String tempFolderPath = "'" + tempFolder.getAbsolutePath() + "'";
          if (testTransformer.isAggregatedWriter()) {
-            final String bulkFolder = "-Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.customStoragePath" + valueSeparator + tempFolder.getAbsolutePath();
+            final String bulkFolder = "-Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.customStoragePath" + valueSeparator + tempFolderPath;
             writerConfig = bulkFolder;
          } else {
             writerConfig = "";
@@ -46,23 +47,23 @@ public class ArgLineBuilder {
 
          if (!testTransformer.getConfig().isEnableAdaptiveConfig()) {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-               argline = TEMP_DIR + valueSeparator + tempFolder.getAbsolutePath();
+               argline = TEMP_DIR + valueSeparator + tempFolderPath;
                if (!writerConfig.equals("")) {
                   argline += entrySeparator + writerConfig;
                }
 
             } else {
                argline = kiekerLine +
-                     entrySeparator + TEMP_DIR + valueSeparator + tempFolder.getAbsolutePath() +
+                     entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath +
                      entrySeparator + writerConfig;
             }
          } else {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-               argline = TEMP_DIR + valueSeparator + tempFolder.getAbsolutePath() +
+               argline = TEMP_DIR + valueSeparator + tempFolderPath +
                      entrySeparator + writerConfig;
             } else {
                argline = kiekerLine +
-                     entrySeparator + TEMP_DIR + valueSeparator + tempFolder.getAbsolutePath() +
+                     entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath +
                      entrySeparator + writerConfig;
             }
          }

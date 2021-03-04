@@ -3,7 +3,6 @@ package de.peass.visualization;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -60,7 +59,7 @@ public class VisualizeRCA implements Callable<Void> {
    public VisualizeRCA() {
    }
    
-   public VisualizeRCA(File[] data, File resultFolder) {
+   public VisualizeRCA(final File[] data, final File resultFolder) {
       this.data = data;
       this.resultFolder = resultFolder;
    }
@@ -130,7 +129,7 @@ public class VisualizeRCA implements Callable<Void> {
       return data;
    }
 
-   public void setData(File[] data) {
+   public void setData(final File[] data) {
       this.data = data;
    }
 
@@ -138,7 +137,7 @@ public class VisualizeRCA implements Callable<Void> {
       return propertyFolder;
    }
 
-   public void setPropertyFolder(File propertyFolder) {
+   public void setPropertyFolder(final File propertyFolder) {
       this.propertyFolder = propertyFolder;
    }
 
@@ -146,7 +145,7 @@ public class VisualizeRCA implements Callable<Void> {
       return resultFolder;
    }
 
-   public void setResultFolder(File resultFolder) {
+   public void setResultFolder(final File resultFolder) {
       this.resultFolder = resultFolder;
    }
 
