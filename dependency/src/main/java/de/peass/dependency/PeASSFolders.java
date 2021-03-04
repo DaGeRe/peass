@@ -26,6 +26,11 @@ public class PeASSFolders {
    private File gradleHome;
 
    protected final File peassFolder;
+   
+   public static File getPeassFolder(final File projectFolder) {
+      File peassFolder = new File(projectFolder, ".." + File.separator + projectFolder.getName() + "_peass");
+      return peassFolder;
+   }
 
    public PeASSFolders(final File folder) {
       if (!folder.getName().endsWith(PEASS_POSTFIX)) {

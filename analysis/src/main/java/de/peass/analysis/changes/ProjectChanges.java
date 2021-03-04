@@ -25,6 +25,8 @@ import de.peass.measurement.analysis.Relation;
  */
 public class ProjectChanges implements Serializable {
 
+   private static final long serialVersionUID = 5377574657253392155L;
+
    private static final Logger LOG = LogManager.getLogger(ProjectChanges.class);
 
    // Metadata for analysis
