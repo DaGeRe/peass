@@ -16,7 +16,6 @@ import de.peass.dependency.analysis.data.TestCase;
 import de.peass.measurement.analysis.EarlyBreakDecider;
 import de.peass.measurement.analysis.ResultLoader;
 import de.peass.measurement.organize.FolderDeterminer;
-import de.peass.testtransformation.JUnitTestTransformer;
 
 public class AdaptiveTester extends DependencyTester {
 
@@ -30,6 +29,7 @@ public class AdaptiveTester extends DependencyTester {
 
    }
 
+   @Override
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getVersionOld(), configuration.getVersion());
 
@@ -53,7 +53,7 @@ public class AdaptiveTester extends DependencyTester {
 
          final boolean shouldBreak = updateExecutions(testcase, finishedVMs);
          if (shouldBreak) {
-            LOG.debug("Too less executions possible - finishing testing.");
+            LOG.debug("Too few executions possible - finishing testing.");
             break;
          }
          long durationInSeconds = (System.currentTimeMillis() - comparisonStart)/1000;
@@ -65,6 +65,7 @@ public class AdaptiveTester extends DependencyTester {
       return finishedVMs;
    }
 
+   @Override
    public boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {
       final boolean savelyDecidable;
       if (configuration.isEarlyStop()) {

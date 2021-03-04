@@ -1,5 +1,6 @@
 package de.peass.analysis.changes;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,7 @@ import de.peass.measurement.analysis.Relation;
  * @author reichelt
  *
  */
-public class ProjectChanges {
+public class ProjectChanges implements Serializable {
 
    private static final Logger LOG = LogManager.getLogger(ProjectChanges.class);
 

@@ -130,13 +130,7 @@ public class PropertyReadHelper {
 
          final Set<String> merged = getMergedCalls(traceCurrent, traceOld);
 
-         for (final String calledInOneMethod : merged) {
-            LOG.debug("Loading: " + calledInOneMethod);
-            final ChangedEntity entity = determineEntity(calledInOneMethod);
-            final MethodChangeReader reader = new MethodChangeReader(methodFolder, folders.getProjectFolder(), folders.getOldSources(), entity, version);
-            reader.readMethodChangeData();
-            getKeywordChanges(property, reader, entity);
-         }
+         readMethodSources(property, folders, merged);
 
          identifyAffectedClasses(property, merged);
 
@@ -152,6 +146,16 @@ public class PropertyReadHelper {
 
       }
 
+   }
+
+   private void readMethodSources(final ChangeProperty property, final PeASSFolders folders, final Set<String> merged) throws FileNotFoundException, IOException {
+      for (final String calledInOneMethod : merged) {
+         LOG.debug("Loading: " + calledInOneMethod);
+         final ChangedEntity entity = determineEntity(calledInOneMethod);
+         final MethodChangeReader reader = new MethodChangeReader(methodFolder, folders.getProjectFolder(), folders.getOldSources(), entity, version);
+         reader.readMethodChangeData();
+         getKeywordChanges(property, reader, entity);
+      }
    }
 
    private void identifyAffectedClasses(final ChangeProperty property, final Set<String> calls) throws FileNotFoundException, IOException {

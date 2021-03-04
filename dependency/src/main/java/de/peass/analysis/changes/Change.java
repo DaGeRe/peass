@@ -1,12 +1,17 @@
 package de.peass.analysis.changes;
 
+import java.io.Serializable;
+
 /**
  * Saves information about one change
  * 
  * @author reichelt
  *
  */
-public class Change {
+public class Change implements Serializable {
+   
+   private static final long serialVersionUID = -3691925375556886338L;
+
    private String diff;
    private String method;
    private double oldTime;
@@ -17,7 +22,7 @@ public class Change {
    public Change() {
    }
    
-   public Change(String diff, String method) {
+   public Change(final String diff, final String method) {
       this.diff = diff;
       this.method = method;
    }
@@ -26,7 +31,7 @@ public class Change {
       return vms;
    }
 
-   public void setVms(long vms) {
+   public void setVms(final long vms) {
       this.vms = vms;
    }
 

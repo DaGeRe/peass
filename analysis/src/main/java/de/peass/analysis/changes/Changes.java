@@ -1,5 +1,6 @@
 package de.peass.analysis.changes;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -14,7 +15,10 @@ import de.peass.dependency.analysis.data.TestCase;
  * @author reichelt
  *
  */
-public class Changes {
+public class Changes implements Serializable {
+   
+   private static final long serialVersionUID = -7339774896217980704L;
+
    private Map<String, List<Change>> testcaseChanges = new TreeMap<>();
 
    public Map<String, List<Change>> getTestcaseChanges() {

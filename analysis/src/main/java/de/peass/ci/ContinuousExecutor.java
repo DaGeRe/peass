@@ -53,7 +53,7 @@ public class ContinuousExecutor {
       this.threads = threads;
       this.useViews = useViews;
 
-      localFolder = getLocalFolder();
+      localFolder = getLocalFolder(projectFolder);
       projectFolderLocal = new File(localFolder, projectFolder.getName());
       if (!localFolder.exists() || !projectFolderLocal.exists()) {
          cloneProject(projectFolder, localFolder);
@@ -146,6 +146,15 @@ public class ContinuousExecutor {
       }
    }
    
+   public static File getLocalFolder(final File projectFolder) {
+      return new File(projectFolder, ".." + File.separator + projectFolder.getName() + "_fullPeass");
+   }
+   
+   /**
+    * @deprecated Having a local Peass folder somewhere in the filesystem makes it way harder to copy files in remote execution.
+    * Therefore, just use projectFolder_fullPeass like in getLocalFolder(final File projectFolder)
+    */
+   @Deprecated
    public static File getLocalFolder(final String name) {
       final String homeFolderName = System.getenv("PEASS_HOME") != null ? System.getenv("PEASS_HOME") : System.getenv("HOME") + File.separator + ".peass" + File.separator;
       final File peassFolder = new File(homeFolderName);
@@ -160,6 +169,11 @@ public class ContinuousExecutor {
       return localFolder;
    }
 
+   /**
+    * @deprecated Having a local Peass folder somewhere in the filesystem makes it way harder to copy files in remote execution.
+    * Therefore, just use projectFolder_fullPeass like in getLocalFolder(final File projectFolder)
+    */
+   @Deprecated
    public File getLocalFolder() {
       return getLocalFolder(projectFolder.getName());
    }
