@@ -28,7 +28,7 @@ public class StatisticUtil {
       return vals.getMean();
    }
 
-   public static Relation bimodalTTest(List<Result> valuesPrev, List<Result> valuesVersion, double type1error) {
+   public static Relation bimodalTTest(final List<Result> valuesPrev, final List<Result> valuesVersion, final double type1error) {
       CompareData data = new CompareData(valuesPrev, valuesVersion);
       final BimodalityTester tester = new BimodalityTester(data);
       if (tester.isTChange(type1error)) {
@@ -37,8 +37,8 @@ public class StatisticUtil {
          return Relation.EQUAL;
       }
    }
-   
-   public static boolean isBimodal(List<Result> valuesPrev, List<Result> valuesVersion) {
+
+   public static boolean isBimodal(final List<Result> valuesPrev, final List<Result> valuesVersion) {
       CompareData data = new CompareData(valuesPrev, valuesVersion);
       final BimodalityTester tester = new BimodalityTester(data);
       return tester.isBimodal();
@@ -262,5 +262,17 @@ public class StatisticUtil {
          shortenedValues.add(resultShort);
       }
       return shortenedValues;
+   }
+
+   public static Relation isDifferent(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final MeasurementConfiguration measurementConfig) {
+      switch (measurementConfig.getStatisticsConfig().getStatisticTest()) {
+      case AGNOSTIC_T_TEST:
+         return agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig);
+      case MANN_WHITNEY_TEST:
+      case BIMODAL_T_TEST:
+//         return bimodalTTest(valuesPrev, valuesVersion, measurementConfig.getType1error());
+      default:
+         throw new RuntimeException("Test " + measurementConfig.getStatisticsConfig().getStatisticTest() + " currently not implemented");
+      }
    }
 }

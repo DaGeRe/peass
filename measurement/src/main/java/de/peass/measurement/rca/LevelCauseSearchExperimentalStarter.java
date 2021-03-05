@@ -20,7 +20,6 @@ import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.searcher.LevelCauseSearcher;
-import de.peass.testtransformation.JUnitTestTransformer;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class LevelCauseSearchExperimentalStarter {
@@ -35,7 +34,7 @@ public class LevelCauseSearchExperimentalStarter {
 
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(15 * 1000 * 60, 5, 0.01, 0.01, true, version, version + "~1");
       measurementConfiguration.setUseKieker(true);
-      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, true, false, 5.0, false, 0.1, false, false, RCAStrategy.COMPLETE);
+      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, true, false, false, 0.1, false, false, RCAStrategy.COMPLETE);
       final CauseSearchFolders folders2 = new CauseSearchFolders(projectFolder);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders2);
 

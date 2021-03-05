@@ -16,10 +16,10 @@ public class TestConstants {
    public static final String V2 = "000001";
    
    public final static CauseSearcherConfig SIMPLE_CAUSE_CONFIG = new CauseSearcherConfig(new TestCase("Test#test"), 
-         true, false, 5.0, false, 0.1, 
+         true, false, false, 0.1, 
          false, true, RCAStrategy.COMPLETE);
    public final static CauseSearcherConfig SIMPLE_CAUSE_CONFIG_TESTME = new CauseSearcherConfig(new TestCase("defaultpackage.TestMe", "testMe"), 
-         true, false, 5.0, false, 0.1,
+         true, false, false, 0.1,
          false, true, RCAStrategy.COMPLETE);
    public final static MeasurementConfiguration SIMPLE_MEASUREMENT_CONFIG = new MeasurementConfiguration(2, V2, V1);
    public final static MeasurementConfiguration SIMPLE_MEASUREMENT_CONFIG_KIEKER = new MeasurementConfiguration(2, V2, V1);

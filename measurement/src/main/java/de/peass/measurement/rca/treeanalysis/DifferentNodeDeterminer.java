@@ -53,7 +53,7 @@ public abstract class DifferentNodeDeterminer {
       } else {
          printComparisonInfos(currentPredecessorNode, statisticsPredecessor, statisticsVersion);
          if (statisticsPredecessor.getN() > 0 && statisticsVersion.getN() > 0) {
-            final Relation relation = StatisticUtil.agnosticTTest(statisticsPredecessor, statisticsVersion, measurementConfig);
+            final Relation relation = StatisticUtil.isDifferent(statisticsPredecessor, statisticsVersion, measurementConfig);
             LOG.debug("Relation: {}", relation);
             if (relation == Relation.UNEQUAL && needsEnoughTime(statisticsPredecessor, statisticsVersion)) {
                addChildsToMeasurement(currentPredecessorNode, statisticsPredecessor, statisticsVersion);

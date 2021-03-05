@@ -18,7 +18,6 @@ public class CauseSearcherConfig implements Serializable {
    private final boolean ignoreEOIs;
    private final boolean useAggregation;
    private final boolean saveAll;
-   private final double outlierFactor;
    private final boolean splitAggregated;
    private final double minTime;
    private final boolean calibrationRun;
@@ -31,7 +30,6 @@ public class CauseSearcherConfig implements Serializable {
    public CauseSearcherConfig(@JsonProperty("testcase") final TestCase testCase,
          @JsonProperty("useAggregation") final boolean useAggregation,
          @JsonProperty("saveAll") final boolean saveAll,
-         @JsonProperty("outlierFactor") final double outlierFactor,
          @JsonProperty("splitAggregated") final boolean splitAggregated,
          @JsonProperty("minTime") final double minTime,
          @JsonProperty("calibrationRun") final boolean calibrationRun,
@@ -40,7 +38,6 @@ public class CauseSearcherConfig implements Serializable {
       this.testCase = testCase;
       this.useAggregation = useAggregation;
       this.saveAll = saveAll;
-      this.outlierFactor = outlierFactor;
       this.splitAggregated = splitAggregated;
       this.minTime = minTime;
       this.calibrationRun = calibrationRun;
@@ -54,14 +51,14 @@ public class CauseSearcherConfig implements Serializable {
    
    public CauseSearcherConfig(final TestCase test, final CauseSearcherConfigMixin config) {
       this(test, !config.isUseNonAggregatedWriter(), !config.isSaveNothing(),
-            config.getOutlierFactor(), !config.isNotSplitAggregated(), config.getMinTime(), config.isUseCalibrationRun(), !config.isUseEOIs(), 
+            !config.isNotSplitAggregated(), config.getMinTime(), config.isUseCalibrationRun(), !config.isUseEOIs(), 
             config.getStrategy());
       this.propertyFolder = config.getPropertyFolder();
    }
 
    public CauseSearcherConfig(final TestCase testCase, final CauseSearcherConfig causeConfig) {
       this(testCase, causeConfig.isUseAggregation(), causeConfig.isSaveAll(), 
-            causeConfig.getOutlierFactor(), causeConfig.isSplitAggregated(), causeConfig.getMinTime(), causeConfig.useCalibrationRun(), causeConfig.isIgnoreEOIs(), 
+            causeConfig.isSplitAggregated(), causeConfig.getMinTime(), causeConfig.useCalibrationRun(), causeConfig.isIgnoreEOIs(), 
             causeConfig.getRcaStrategy());
    }
 
@@ -75,10 +72,6 @@ public class CauseSearcherConfig implements Serializable {
 
    public boolean isSaveAll() {
       return saveAll;
-   }
-
-   public double getOutlierFactor() {
-      return outlierFactor;
    }
 
    public boolean isSplitAggregated() {
