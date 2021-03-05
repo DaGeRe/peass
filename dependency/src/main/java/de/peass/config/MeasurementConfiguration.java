@@ -364,6 +364,7 @@ public class MeasurementConfiguration implements Serializable {
       return removeSnapshots;
    }
 
+   @JsonIgnore
    public String getTestGoal() {
       return executionConfig.getTestGoal();
    }
@@ -372,6 +373,7 @@ public class MeasurementConfiguration implements Serializable {
       executionConfig.setTestGoal(testGoal);
    }
 
+   @JsonIgnore
    public List<String> getIncludes() {
       return executionConfig.getIncludes();
    }

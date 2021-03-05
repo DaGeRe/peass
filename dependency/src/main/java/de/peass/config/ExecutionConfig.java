@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -93,6 +94,7 @@ public class ExecutionConfig implements Serializable {
       this.versionOld = versionOld;
    }
 
+   @JsonInclude(JsonInclude.Include.NON_NULL)
    public String getStartversion() {
       return startversion;
    }
@@ -101,6 +103,7 @@ public class ExecutionConfig implements Serializable {
       this.startversion = startversion;
    }
 
+   @JsonInclude(JsonInclude.Include.NON_NULL)
    public String getEndversion() {
       return endversion;
    }
