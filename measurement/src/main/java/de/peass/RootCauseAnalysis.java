@@ -7,6 +7,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.config.ImplementedTests;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
@@ -25,6 +26,7 @@ import de.peass.measurement.rca.searcher.TreeAnalyzerCreator;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
+import picocli.CommandLine.Option;
 
 @Command(description = "Searches for root cause of a performance change, i.e. method causing the performance change", name = "searchcause")
 public class RootCauseAnalysis extends DependencyTestStarter {
@@ -36,6 +38,9 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
    @Mixin
    private KiekerConfigMixin kiekerConfigMixin;
+   
+   @Option(names = { "-statisticTest", "--statisticTest" }, description = "Statistic test to use for comparison, default agnostic t test", required = false)
+   private ImplementedTests statisticTest = ImplementedTests.AGNOSTIC_T_TEST;
 
    public static void main(final String[] args) throws JAXBException, IOException {
       final RootCauseAnalysis command = new RootCauseAnalysis();
@@ -96,6 +101,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       } else {
          measurementConfiguration.setUseSelectiveInstrumentation(true);
       }
+      measurementConfiguration.getStatisticsConfig().setStatisticTest(statisticTest);
 
       measurementConfiguration.setUseSampling(kiekerConfigMixin.isUseSampling());
       LOG.info("Use source instrumentation: {}", kiekerConfigMixin.isUseSourceInstrumentation());
