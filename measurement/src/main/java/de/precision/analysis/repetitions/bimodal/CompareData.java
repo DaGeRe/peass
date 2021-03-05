@@ -10,22 +10,33 @@ import de.peass.measurement.rca.data.OneVMResult;
 public final class CompareData {
    private final double[] before;
    private final double[] after;
-   private final SummaryStatistics beforeStat = new SummaryStatistics();
-   private final SummaryStatistics afterStat = new SummaryStatistics();
+   private final SummaryStatistics beforeStat;
+   private final SummaryStatistics afterStat;
 
    public CompareData(final double[] before, final double[] after) {
       this.before = before;
       this.after = after;
-      for (double beforeVal : before) {
-         beforeStat.addValue(beforeVal);
+      if (before != null) {
+         beforeStat = new SummaryStatistics();
+         for (double beforeVal : before) {
+            beforeStat.addValue(beforeVal);
+         }
+      } else {
+         beforeStat = null;
       }
-      for (double afterVal : after) {
-         afterStat.addValue(afterVal);
+      if (after != null) {
+         afterStat = new SummaryStatistics();
+         for (double afterVal : after) {
+            afterStat.addValue(afterVal);
+         }
+      } else {
+         afterStat = null;
       }
    }
 
    public CompareData(final List<Result> beforeShortened, final List<Result> afterShortened) {
       {
+         beforeStat = new SummaryStatistics();
          before = new double[beforeShortened.size()];
          int index = 0;
          for (Result result : beforeShortened) {
@@ -36,6 +47,7 @@ public final class CompareData {
       }
 
       {
+         afterStat = new SummaryStatistics();
          after = new double[afterShortened.size()];
          int index = 0;
          for (Result result : afterShortened) {
@@ -47,27 +59,30 @@ public final class CompareData {
    }
 
    /**
-    * Creates a CompareData instance from Lists of OneVMResults. Can't be a constructor, since it is not possible to have constructors
-    * with the same erasure (i.e. List, List)
+    * Creates a CompareData instance from Lists of OneVMResults. Can't be a constructor, since it is not possible to have constructors with the same erasure (i.e. List, List)
     */
    public static CompareData createCompareDataFromOneVMResults(final List<OneVMResult> beforeVals, final List<OneVMResult> afterVals) {
-      double[] before = new double[beforeVals.size()];
-      double[] after = new double[afterVals.size()];
-      {
-         int index = 0;
-         for (OneVMResult result : beforeVals) {
-            before[index] = result.getAverage();
-            index++;
-         }
-      }
-      {
-         int index = 0;
-         for (OneVMResult result : afterVals) {
-            after[index] = result.getAverage();
-            index++;
-         }
-      }
+      final double[] before = getDoubleArray(beforeVals);
+      final double[] after = getDoubleArray(afterVals);
+
       return new CompareData(before, after);
+   }
+
+   private static double[] getDoubleArray(final List<OneVMResult> sourceVals) {
+      final double[] valueArray;
+      if (sourceVals != null) {
+         valueArray = new double[sourceVals.size()];
+         {
+            int index = 0;
+            for (OneVMResult result : sourceVals) {
+               valueArray[index] = result.getAverage();
+               index++;
+            }
+         }
+      } else {
+         valueArray = null;
+      }
+      return valueArray;
    }
 
    public double getAvgAfter() {

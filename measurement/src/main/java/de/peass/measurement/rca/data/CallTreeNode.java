@@ -174,8 +174,8 @@ public class CallTreeNode extends BasicNode {
    }
    
    public CompareData getComparableStatistics(final String versionOld, final String version) {
-      List<OneVMResult> before = data.get(versionOld).getResults();
-      List<OneVMResult> after = data.get(version).getResults();
+      List<OneVMResult> before = data.get(versionOld) != null ? data.get(versionOld).getResults() :null;
+      List<OneVMResult> after = data.get(version) != null ? data.get(version).getResults() : null;
       
       CompareData cd = CompareData.createCompareDataFromOneVMResults(before, after);
       return cd;
