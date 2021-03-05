@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -57,6 +58,7 @@ public class ExecutionConfig implements Serializable {
       return timeout;
    }
 
+   @JsonInclude(Include.NON_NULL)
    public String getTestGoal() {
       return testGoal;
    }
@@ -65,6 +67,7 @@ public class ExecutionConfig implements Serializable {
       this.testGoal = testGoal;
    }
 
+   @JsonInclude(Include.NON_NULL)
    public List<String> getIncludes() {
       return includes;
    }

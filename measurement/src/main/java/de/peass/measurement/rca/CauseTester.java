@@ -205,7 +205,7 @@ public class CauseTester extends AdaptiveTester {
       final String version = "4ed6e923cb2033272fcb993978d69e325990a5aa";
       final TestCase test = new TestCase("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");
 
-      final MeasurementConfiguration config = new MeasurementConfiguration(15 * 1000 * 60, 15, 0.01, 0.05, true, version, version + "~1");
+      final MeasurementConfiguration config = new MeasurementConfiguration(15 * 1000 * 60, 15, true, version, version + "~1");
       config.setUseKieker(true);
       final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, true, false, 0.01, false, false, RCAStrategy.COMPLETE);
       final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), config, causeConfig);

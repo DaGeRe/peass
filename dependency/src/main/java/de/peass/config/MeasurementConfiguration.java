@@ -96,15 +96,11 @@ public class MeasurementConfiguration implements Serializable {
    @JsonCreator
    public MeasurementConfiguration(@JsonProperty("timeout") final int timeout,
          @JsonProperty("vms") final int vms,
-         @JsonProperty("type1error") final double type1error,
-         @JsonProperty("type2error") final double type2error,
          @JsonProperty("earlystop") final boolean earlyStop,
          @JsonProperty("version") final String version,
          @JsonProperty("versionOld") final String versionOld) {
       executionConfig = new ExecutionConfig(timeout / (60 * 1000));
       this.vms = vms;
-      statisticsConfig.setType1error(type1error);
-      statisticsConfig.setType2error(type2error);
       this.earlyStop = earlyStop;
       executionConfig.setVersion(version);
       executionConfig.setVersionOld(versionOld);
@@ -373,7 +369,7 @@ public class MeasurementConfiguration implements Serializable {
    public String getTestGoal() {
       return executionConfig.getTestGoal();
    }
-
+   
    public void setTestGoal(final String testGoal) {
       executionConfig.setTestGoal(testGoal);
    }
