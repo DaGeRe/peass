@@ -9,6 +9,7 @@ import org.apache.commons.math3.stat.descriptive.AggregateSummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
+import org.apache.commons.math3.stat.inference.TTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,6 +31,10 @@ public class StatisticUtil {
 
    public static Relation bimodalTTest(final List<Result> valuesPrev, final List<Result> valuesVersion, final double type1error) {
       CompareData data = new CompareData(valuesPrev, valuesVersion);
+      return bimodalTTest(data, type1error);
+   }
+
+   private static Relation bimodalTTest( final CompareData data, final double type1error) {
       final BimodalityTester tester = new BimodalityTester(data);
       if (tester.isTChange(type1error)) {
          return tester.getRelation();
@@ -49,6 +54,7 @@ public class StatisticUtil {
     */
    public static Relation agnosticTTest(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final double type1error, final double type2error) {
       final double tValue = getTValue(statisticsPrev, statisticsVersion, 0);
+      System.out.println(tValue);
       return agnosticTTest(tValue, statisticsPrev.getN() + statisticsVersion.getN() - 2, type1error, type2error);
    }
 
@@ -263,14 +269,25 @@ public class StatisticUtil {
       }
       return shortenedValues;
    }
+   
+   public static Relation getTTestRelation(final CompareData data, final double type1error) {
+      final boolean tchange = new TTest().homoscedasticTTest(data.getBefore(), data.getAfter(), type1error);
+      if (tchange) {
+         return data.getAvgBefore() < data.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;
+      } else {
+         return Relation.EQUAL;
+      }
+   }
 
-   public static Relation isDifferent(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final MeasurementConfiguration measurementConfig) {
+   public static Relation isDifferent(final CompareData cd, final MeasurementConfiguration measurementConfig) {
       switch (measurementConfig.getStatisticsConfig().getStatisticTest()) {
       case AGNOSTIC_T_TEST:
-         return agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig);
-      case MANN_WHITNEY_TEST:
+         return agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), measurementConfig);
       case BIMODAL_T_TEST:
-//         return bimodalTTest(valuesPrev, valuesVersion, measurementConfig.getType1error());
+         return bimodalTTest(cd, measurementConfig.getType1error());
+      case T_TEST:
+         return getTTestRelation(cd, measurementConfig.getType1error());
+      case MANN_WHITNEY_TEST:
       default:
          throw new RuntimeException("Test " + measurementConfig.getStatisticsConfig().getStatisticTest() + " currently not implemented");
       }

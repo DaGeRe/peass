@@ -2,13 +2,20 @@ package de.peass.measurement.rca.data;
 
 import org.hamcrest.number.IsNaN;
 import org.junit.Assert;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.peass.config.MeasurementConfiguration;
 
 public class TestCallTreeStatistics {
    
-   private static final MeasurementConfiguration CONFIG = new MeasurementConfiguration(10);
+   public static final MeasurementConfiguration CONFIG = new MeasurementConfiguration(10);
+   
+   @BeforeEach
+   public void init() {
+      CONFIG.setVersionOld("B");
+      CONFIG.setVersion("A");
+   }
    
    @Test
    public void testStatistics() {
@@ -16,7 +23,7 @@ public class TestCallTreeStatistics {
       final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()", CONFIG);
       node.setOtherVersionNode(otherVersionNode);
 
-      node.setVersions("A", "B");
+      node.initVersions();
       for (int vm = 0; vm < CONFIG.getVms(); vm++) {
          addVMMeasurements("A", node);
          addVMMeasurements("B", node);
@@ -38,7 +45,7 @@ public class TestCallTreeStatistics {
       final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", CauseSearchData.ADDED, CONFIG);
       node.setOtherVersionNode(otherVersionNode);
 
-      node.setVersions("A", "B");
+      node.initVersions();
       for (int vm = 0; vm < CONFIG.getVms(); vm++) {
          addVMMeasurements("A", node);
       }
@@ -62,7 +69,7 @@ public class TestCallTreeStatistics {
       final CallTreeNode otherVersionNode = new CallTreeNode(CauseSearchData.ADDED, CauseSearchData.ADDED, "public void de.mypackage.Test.callMethod()", CONFIG);
       node.setOtherVersionNode(otherVersionNode);
 
-      node.setVersions("A", "B");
+      node.initVersions();
       for (int vm = 0; vm < CONFIG.getVms(); vm++) {
          addVMMeasurements("B", node);
       }

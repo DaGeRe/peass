@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
-import de.peass.measurement.analysis.statistics.OutlierRemover;
 import de.peass.measurement.analysis.statistics.OutlierRemoverVMResults;
 
 public class CallTreeStatistics {
@@ -21,7 +20,7 @@ public class CallTreeStatistics {
    
    /***
     * Adds *one* measurement to the current (last) VM of the node - suitable for measurements per iteration. If aggregated data are obtained, 
-    * rather use setMeasurement
+    * rather use addAggregatedMeasurement
     * @param duration   duration of one iteration
     */
    public void addMeasurement(final Long duration) {

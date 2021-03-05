@@ -14,6 +14,7 @@ import de.peass.measurement.analysis.Relation;
 import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.data.CallTreeNode;
+import de.precision.analysis.repetitions.bimodal.CompareData;
 
 public abstract class DifferentNodeDeterminer {
 
@@ -40,23 +41,22 @@ public abstract class DifferentNodeDeterminer {
       for (; predecessorIterator.hasNext();) {
          final CallTreeNode currentPredecessorNode = predecessorIterator.next();
          // final CallTreeNode currentVersionNode = currentIterator.next();
-         final SummaryStatistics statisticsPredecessor = currentPredecessorNode.getStatistics(measurementConfig.getVersionOld());
-         final SummaryStatistics statisticsVersion = currentPredecessorNode.getStatistics(measurementConfig.getVersion());
-         calculateNodeDifference(currentPredecessorNode, statisticsPredecessor, statisticsVersion);
+         CompareData cd = currentPredecessorNode.getComparableStatistics(measurementConfig.getVersionOld(), measurementConfig.getVersion());
+         calculateNodeDifference(currentPredecessorNode, cd);
       }
    }
 
-   private void calculateNodeDifference(final CallTreeNode currentPredecessorNode, final SummaryStatistics statisticsPredecessor, final SummaryStatistics statisticsVersion) {
-      if (statisticsPredecessor == null || statisticsVersion == null) {
-         LOG.debug("Statistics is null, is different: {} vs {}", statisticsPredecessor, statisticsVersion);
+   private void calculateNodeDifference(final CallTreeNode currentPredecessorNode, final CompareData cd) {
+      if (cd.getBeforeStat() == null || cd.getAfterStat() == null) {
+         LOG.debug("Statistics is null, is different: {} vs {}", cd.getBeforeStat(), cd.getAfterStat());
          currentLevelDifferent.add(currentPredecessorNode);
       } else {
-         printComparisonInfos(currentPredecessorNode, statisticsPredecessor, statisticsVersion);
-         if (statisticsPredecessor.getN() > 0 && statisticsVersion.getN() > 0) {
-            final Relation relation = StatisticUtil.isDifferent(statisticsPredecessor, statisticsVersion, measurementConfig);
+         printComparisonInfos(currentPredecessorNode, cd.getBeforeStat(), cd.getAfterStat());
+         if (cd.getBeforeStat().getN() > 0 && cd.getAfterStat().getN() > 0) {
+            final Relation relation = StatisticUtil.isDifferent(cd, measurementConfig);
             LOG.debug("Relation: {}", relation);
-            if (relation == Relation.UNEQUAL && needsEnoughTime(statisticsPredecessor, statisticsVersion)) {
-               addChildsToMeasurement(currentPredecessorNode, statisticsPredecessor, statisticsVersion);
+            if (relation == Relation.UNEQUAL && needsEnoughTime(cd.getBeforeStat(), cd.getAfterStat())) {
+               addChildsToMeasurement(currentPredecessorNode, cd.getBeforeStat(), cd.getAfterStat());
             } else {
                LOG.info("No remeasurement");
             }

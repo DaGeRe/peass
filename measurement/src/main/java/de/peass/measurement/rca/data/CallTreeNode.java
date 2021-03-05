@@ -21,6 +21,7 @@ import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.precision.analysis.repetitions.bimodal.CompareData;
 
 /**
  * Saves the call tree structure and measurement data of the call tree
@@ -171,6 +172,14 @@ public class CallTreeNode extends BasicNode {
          data.put(version, statistics);
       }
    }
+   
+   public CompareData getComparableStatistics(final String versionOld, final String version) {
+      List<OneVMResult> before = data.get(versionOld).getResults();
+      List<OneVMResult> after = data.get(version).getResults();
+      
+      CompareData cd = CompareData.createCompareDataFromOneVMResults(before, after);
+      return cd;
+   }
 
    public SummaryStatistics getStatistics(final String version) {
       LOG.trace("Getting data: {}", version);
@@ -245,6 +254,9 @@ public class CallTreeNode extends BasicNode {
       return (second == null || second.getN() == 0) && (first != null && first.getN() > 0);
    }
 
+   /**
+    * @deprecated use initVersions instead, and asure that the MeasurementConfig already has the correct versions
+    */
    @Deprecated
    @JsonIgnore
    public void setVersions(final String version, final String predecessor) {
@@ -253,6 +265,12 @@ public class CallTreeNode extends BasicNode {
       resetStatistics();
       newVersion(version);
       newVersion(predecessor);
+   }
+   
+   public void initVersions() {
+      resetStatistics();
+      newVersion(config.getVersionOld());
+      newVersion(config.getVersion());
    }
 
    @JsonIgnore
