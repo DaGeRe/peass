@@ -111,8 +111,8 @@ public class ChangeManager {
     * @throws FileNotFoundException
     */
    public Patch<String> getKeywordChanges(final ChangedEntity clazz) throws FileNotFoundException {
-      final String method = FileComparisonUtil.getMethod(folders.getProjectFolder(), clazz, clazz.getMethod());
-      final String methodOld = FileComparisonUtil.getMethod(folders.getOldSources(), clazz, clazz.getMethod());
+      final String method = FileComparisonUtil.getMethodSource(folders.getProjectFolder(), clazz, clazz.getMethod());
+      final String methodOld = FileComparisonUtil.getMethodSource(folders.getOldSources(), clazz, clazz.getMethod());
 
       final Patch<String> patch = DiffUtils.diff(Arrays.asList(method.split("\n")), Arrays.asList(methodOld.split("\n")));
       return patch;

@@ -160,19 +160,19 @@ public final class FileComparisonUtil {
       return result;
    }
 
-   public static String getMethod(final File projectFolder, final ChangedEntity entity, final String method) throws FileNotFoundException {
+   public static String getMethodSource(final File projectFolder, final ChangedEntity entity, final String method) throws FileNotFoundException {
       final File file = ClazzFileFinder.getSourceFile(projectFolder, entity);
       if (file != null) {
          LOG.debug("Found:  {} {}", file, file.exists());
          final CompilationUnit cu = JavaParserProvider.parse(file);
 
-         return getMethod(entity, method, cu);
+         return getMethodSource(entity, method, cu);
       } else {
          return "";
       }
    }
 
-   public static String getMethod(ChangedEntity entity, String method, CompilationUnit clazzUnit) {
+   public static String getMethodSource(ChangedEntity entity, String method, CompilationUnit clazzUnit) {
       TraceElementContent traceElement = new TraceElementContent(entity.getJavaClazzName(), 
             method, entity.getModule(), entity.getParameters().toArray(new String[0]), 0);
 

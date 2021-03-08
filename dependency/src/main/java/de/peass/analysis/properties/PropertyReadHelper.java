@@ -54,7 +54,7 @@ public class PropertyReadHelper {
    private final File projectFolder;
 
    private final File viewFolder;
-   private final File methodFolder;
+   private final File methodSourceFolder;
 
    /**
     * Just for local debugging purposes - no public use intended
@@ -75,7 +75,7 @@ public class PropertyReadHelper {
    }
 
    public PropertyReadHelper(final String version, final String prevVersion, final ChangedEntity clazz,
-         final Change change, final File projectFolder, final File viewFolder, final File methodFolder) {
+         final Change change, final File projectFolder, final File viewFolder, final File methodSourceFolder) {
       this.version = version;
       this.prevVersion = prevVersion;
       if (clazz.getMethod() != null) {
@@ -85,7 +85,7 @@ public class PropertyReadHelper {
       this.change = change;
       this.projectFolder = projectFolder;
       this.viewFolder = viewFolder;
-      this.methodFolder = methodFolder;
+      this.methodSourceFolder = methodSourceFolder;
    }
 
    public ChangeProperty read() throws IOException {
@@ -114,9 +114,9 @@ public class PropertyReadHelper {
 
    public void getSourceInfos(final ChangeProperty property) throws FileNotFoundException, IOException {
       final File folder = new File(viewFolder, "view_" + version + File.separator + testClazz + File.separator + property.getMethod());
-      final File fileCurrent = new File(folder, version.substring(0, 6) + "_method");
-      final File fileOld = new File(folder, getShortPrevVersion() + "_method");
-      if (fileCurrent.exists() && fileOld.exists()) {
+      final File traceFileCurrent = new File(folder, version.substring(0, 6) + "_method");
+      final File traceFileOld = new File(folder, getShortPrevVersion() + "_method");
+      if (traceFileCurrent.exists() && traceFileOld.exists()) {
          final PeASSFolders folders = new PeASSFolders(projectFolder);
          final VersionIteratorGit iterator = new VersionIteratorGit(folder,
                Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), new GitCommit(prevVersion, null, null, null) }),
@@ -124,8 +124,8 @@ public class PropertyReadHelper {
          final ChangeManager changeManager = new ChangeManager(folders, iterator);
          final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(prevVersion, version);
 
-         final List<String> traceCurrent = Sequitur.getExpandedTrace(fileCurrent);
-         final List<String> traceOld = Sequitur.getExpandedTrace(fileOld);
+         final List<String> traceCurrent = Sequitur.getExpandedTrace(traceFileCurrent);
+         final List<String> traceOld = Sequitur.getExpandedTrace(traceFileOld);
          determineTraceSizeChanges(property, traceCurrent, traceOld);
 
          final Set<String> merged = getMergedCalls(traceCurrent, traceOld);
@@ -138,10 +138,10 @@ public class PropertyReadHelper {
 
          getTestSourceAffection(property, merged, folders, changes);
       } else {
-         if (!fileCurrent.exists()) {
-            LOG.error("Not found: {}", fileCurrent);
+         if (!traceFileCurrent.exists()) {
+            LOG.error("Tracefile not found: {}", traceFileCurrent);
          } else {
-            LOG.error("Not found: {}", fileOld);
+            LOG.error("Tracefile not found: {}", traceFileOld);
          }
 
       }
@@ -152,7 +152,7 @@ public class PropertyReadHelper {
       for (final String calledInOneMethod : merged) {
          LOG.debug("Loading: " + calledInOneMethod);
          final ChangedEntity entity = determineEntity(calledInOneMethod);
-         final MethodChangeReader reader = new MethodChangeReader(methodFolder, folders.getProjectFolder(), folders.getOldSources(), entity, version);
+         final MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, folders.getProjectFolder(), folders.getOldSources(), entity, version);
          reader.readMethodChangeData();
          getKeywordChanges(property, reader, entity);
       }

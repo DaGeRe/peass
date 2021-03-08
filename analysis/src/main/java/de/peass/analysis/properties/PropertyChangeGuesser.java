@@ -36,8 +36,8 @@ public class PropertyChangeGuesser {
             // If only method change..
             if (changedClazz.getValue() != null) {
                for (String method : changedClazz.getValue()) {
-                  final String source = FileComparisonUtil.getMethod(changedEntity.getKey(), method, clazzUnit);
-                  final String sourceOld = FileComparisonUtil.getMethod(changedEntity.getKey(), method, clazzUnitOld);
+                  final String source = FileComparisonUtil.getMethodSource(changedEntity.getKey(), method, clazzUnit);
+                  final String sourceOld = FileComparisonUtil.getMethodSource(changedEntity.getKey(), method, clazzUnitOld);
                   final Patch<String> changedLinesMethod = DiffUtils.diff(Arrays.asList(sourceOld.split("\n")), Arrays.asList(source.split("\n")));
 
                   for (final Delta<String> delta : changedLinesMethod.getDeltas()) {

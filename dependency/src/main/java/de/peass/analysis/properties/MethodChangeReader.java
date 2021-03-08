@@ -16,27 +16,27 @@ import difflib.Patch;
 
 public class MethodChangeReader {
 
-   private final File outFolder;
+   private final File methodSourceFolder;
    private final ChangedEntity clazz;
 
    private final String version;
 
    private final String method, methodOld;
 
-   public MethodChangeReader(final File outFolder, final File sourceFolder, final File oldSourceFolder, final ChangedEntity clazz, final String version)
+   public MethodChangeReader(final File methodSourceFolder, final File sourceFolder, final File oldSourceFolder, final ChangedEntity clazz, final String version)
          throws FileNotFoundException {
-      this.outFolder = outFolder;
+      this.methodSourceFolder = methodSourceFolder;
       this.clazz = clazz;
       this.version = version;
 
-      method = FileComparisonUtil.getMethod(sourceFolder, clazz, clazz.getMethod());
-      methodOld = FileComparisonUtil.getMethod(oldSourceFolder, clazz, clazz.getMethod());
+      method = FileComparisonUtil.getMethodSource(sourceFolder, clazz, clazz.getMethod());
+      methodOld = FileComparisonUtil.getMethodSource(oldSourceFolder, clazz, clazz.getMethod());
    }
 
    public void readMethodChangeData() throws IOException {
       final File clazzFolder = getClazzFolder();
       final String methodString = clazz.getMethod() + "_" + clazz.getParametersPrintable();
-      final File goalFile = new File(clazzFolder, methodString + "_diff.txt");
+      final File goalFile = getMethodDiffFile(methodSourceFolder, version, clazz);
       if (!method.equals(methodOld)) {
 
          final File main = new File(clazzFolder, methodString + "_main.txt");
@@ -51,7 +51,7 @@ public class MethodChangeReader {
    }
 
    private File getClazzFolder() {
-      final File versionFolder = new File(outFolder, version);
+      final File versionFolder = new File(methodSourceFolder, version);
       versionFolder.mkdirs();
       final String clazzFolderName = (clazz.getModule() != null && !clazz.getModule().equals("")) ? 
             clazz.getModule() + ChangedEntity.MODULE_SEPARATOR + clazz.getJavaClazzName()
@@ -64,5 +64,18 @@ public class MethodChangeReader {
    public Patch<String> getKeywordChanges(final ChangedEntity clazz) throws FileNotFoundException {
       final Patch<String> patch = DiffUtils.diff(Arrays.asList(method.split("\n")), Arrays.asList(methodOld.split("\n")));
       return patch;
+   }
+   
+   public static File getMethodDiffFile(final File methodSourceFolder, final String version, final ChangedEntity clazz) {
+      final File versionFolder = new File(methodSourceFolder, version);
+      versionFolder.mkdirs();
+      final String clazzFolderName = (clazz.getModule() != null && !clazz.getModule().equals("")) ? 
+            clazz.getModule() + ChangedEntity.MODULE_SEPARATOR + clazz.getJavaClazzName()
+            : clazz.getJavaClazzName();
+      final File clazzFolder = new File(versionFolder, clazzFolderName);
+      clazzFolder.mkdirs();
+      final String methodString = clazz.getMethod() + "_" + clazz.getParametersPrintable();
+      final File methodDiffFile = new File(clazzFolder, methodString + "_diff.txt");
+      return methodDiffFile;
    }
 }

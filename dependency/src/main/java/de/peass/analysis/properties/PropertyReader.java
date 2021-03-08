@@ -57,7 +57,7 @@ public class PropertyReader {
       }
    }
 
-   private void readMethod(final File methodFolder, final Map.Entry<String, TestSet> version, final Entry<ChangedEntity, Set<String>> testclazz,
+   private void readMethod(final File methodSourceFolder, final Map.Entry<String, TestSet> version, final Entry<ChangedEntity, Set<String>> testclazz,
          final List<ChangeProperty> properties, final String testmethod) throws IOException {
       final Change testcaseChange = new Change();
       testcaseChange.setMethod(testmethod);
@@ -66,7 +66,7 @@ public class PropertyReader {
       final PropertyReadHelper reader = new PropertyReadHelper(version.getKey(), version.getValue().getPredecessor(), 
             entity, testcaseChange, 
             projectFolder,
-            viewFolder, methodFolder);
+            viewFolder, methodSourceFolder);
       final ChangeProperty currentProperty = reader.read();
       if (currentProperty != null) {
          properties.add(currentProperty);

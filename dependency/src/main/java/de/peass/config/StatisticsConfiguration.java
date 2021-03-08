@@ -1,6 +1,10 @@
 package de.peass.config;
 
-public class StatisticsConfiguration {
+import java.io.Serializable;
+
+public class StatisticsConfiguration implements Serializable {
+   private static final long serialVersionUID = -6193031432004031500L;
+   
    private double type1error = 0.01;
    private double type2error = 0.01;
    private double outlierFactor;
@@ -37,6 +41,5 @@ public class StatisticsConfiguration {
    public void setStatisticTest(final ImplementedTests statisticTest) {
       this.statisticTest = statisticTest;
    }
-   
-   
+
 }
