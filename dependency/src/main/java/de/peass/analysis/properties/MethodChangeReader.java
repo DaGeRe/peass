@@ -72,7 +72,10 @@ public class MethodChangeReader {
             : clazz.getJavaClazzName();
       final File clazzFolder = new File(versionFolder, clazzFolderName);
       clazzFolder.mkdirs();
-      final String methodString = clazz.getMethod() + "_" + clazz.getParametersPrintable();
+      String methodFilename = clazz.getMethod()
+            .replace("<", "(")
+            .replace(">", ")");
+      final String methodString = methodFilename + "_" + clazz.getParametersPrintable();
       final File methodDiffFile = new File(clazzFolder, methodString + "_" + modifier + ".txt");
       return methodDiffFile;
    }
