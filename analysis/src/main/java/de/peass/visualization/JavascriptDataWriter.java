@@ -20,12 +20,12 @@ public class JavascriptDataWriter {
    private final File propertyFolder;
    private final GraphNode root;
 
-   public JavascriptDataWriter(File propertyFolder, GraphNode root) {
+   public JavascriptDataWriter(final File propertyFolder, final GraphNode root) {
       this.propertyFolder = propertyFolder;
       this.root = root;
    }
 
-   public void writeJS(final CauseSearchData data, final File output, final String jsName, KoPeMeTreeConverter converter) throws IOException, JsonProcessingException {
+   public void writeJS(final CauseSearchData data, final File output, final String jsName, final KoPeMeTreeConverter converter) throws IOException, JsonProcessingException {
       File outputJS = new File(output.getParentFile(), jsName);
       try (final BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputJS))) {
          fileWriter.write("if (document.getElementById('testcaseDiv') != null) \n   document.getElementById('testcaseDiv').innerHTML=\"Version: <a href='"

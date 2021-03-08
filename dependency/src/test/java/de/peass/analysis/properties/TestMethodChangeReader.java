@@ -8,29 +8,34 @@ import java.nio.charset.Charset;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
 
-public class TestPropertyReadHelper {
+public class TestMethodChangeReader {
+   
+   public static final File methodSourceFolder = new File("target" + File.separator + "current_sources");
 
    private static final String VERSION = "000001";
 
-   public TestPropertyReadHelper() {
+   public TestMethodChangeReader() {
       System.out.println("Contains System.out");
    }
 
    public void init() {
       System.err.println("Contains System.err");
    }
-
-   @Test
-   public void testSourceWriting() throws FileNotFoundException, IOException {
-      File methodSourceFolder = new File("target" + File.separator + "current_sources");
+   
+   @Before
+   public void before() {
       if (!methodSourceFolder.exists()) {
          methodSourceFolder.mkdirs();
       }
-      
+   }
+
+   @Test
+   public void testSourceWriting() throws FileNotFoundException, IOException {
       ChangedEntity constructorEntity = writeConstructor(methodSourceFolder);
       ChangedEntity initMethodEntity = writeInit(methodSourceFolder);
       
@@ -38,16 +43,16 @@ public class TestPropertyReadHelper {
       checkInitMethod(methodSourceFolder, initMethodEntity);
    }
 
-   private ChangedEntity writeInit(final File methodSourceFolder) throws FileNotFoundException, IOException {
-      ChangedEntity initMethodEntity = new ChangedEntity("de.peass.analysis.properties.TestPropertyReadHelper", "", "init");
+   public static ChangedEntity writeInit(final File methodSourceFolder) throws FileNotFoundException, IOException {
+      ChangedEntity initMethodEntity = new ChangedEntity("de.peass.analysis.properties.TestMethodChangeReader", "", "init");
       MethodChangeReader reader2 = new MethodChangeReader(methodSourceFolder, new File("."), 
             new File("."), initMethodEntity, VERSION);
       reader2.readMethodChangeData();
       return initMethodEntity;
    }
 
-   private ChangedEntity writeConstructor(final File methodSourceFolder) throws FileNotFoundException, IOException {
-      ChangedEntity constructorEntity = new ChangedEntity("de.peass.analysis.properties.TestPropertyReadHelper", "", "<init>");
+   public static ChangedEntity writeConstructor(final File methodSourceFolder) throws FileNotFoundException, IOException {
+      ChangedEntity constructorEntity = new ChangedEntity("de.peass.analysis.properties.TestMethodChangeReader", "", "<init>");
       MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, new File("."), 
             new File("."), constructorEntity, VERSION);
       reader.readMethodChangeData();
