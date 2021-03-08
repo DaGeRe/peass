@@ -37,8 +37,8 @@ public class MethodChangeReader {
       final File goalFile = getMethodDiffFile(methodSourceFolder, version, clazz);
       if (!method.equals(methodOld)) {
 
-         final File main = getMethodMainFile(goalFile, version, clazz);
-         final File old = getMethodOldFile(goalFile, version, clazz);
+         final File main = getMethodMainFile(methodSourceFolder, version, clazz);
+         final File old = getMethodOldFile(methodSourceFolder, version, clazz);
 
          FileUtils.writeStringToFile(main, method, Charset.defaultCharset());
          FileUtils.writeStringToFile(old, methodOld, Charset.defaultCharset());
