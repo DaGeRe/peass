@@ -9,9 +9,9 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.analysis.properties.MethodChangeReader;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.measurement.rca.data.CallTreeNode;
-import de.peass.measurement.rca.kieker.KiekerPatternConverter;
 
 public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
 
@@ -30,18 +30,17 @@ public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
    }
 
    private Set<CallTreeNode> calculateIncludedNodes(final File sourceFolder, final List<CallTreeNode> includableNodes) {
-      final File parentFolder = getParentFolder(sourceFolder);
+      File methodSourceFolder = new File(sourceFolder, "methods");
       final Set<CallTreeNode> includeNodes = new HashSet<>();
       for (CallTreeNode node : includableNodes) {
-         String fileNameStart = KiekerPatternConverter.getFileNameStart(node.getKiekerPattern());
-         final File currentSourceFile = new File(parentFolder, fileNameStart + "_main.txt");
-         final File predecessorSourceFile = new File(parentFolder, fileNameStart + "_predecessor.txt");
-         if (!currentSourceFile.exists() && !predecessorSourceFile.exists()) {
-            final File currentDiffFile = new File(parentFolder, fileNameStart + "_diff.txt");
-            if (currentDiffFile.exists()) {
+         File mainSourceFile = MethodChangeReader.getMethodMainFile(methodSourceFolder, config.getVersion(), node.toEntity());
+         File oldSourceFile = MethodChangeReader.getMethodOldFile(methodSourceFolder, config.getVersion(), node.toEntity());
+         if (!mainSourceFile.exists() && !oldSourceFile.exists()) {
+            File diffSourceFile = MethodChangeReader.getMethodDiffFile(methodSourceFolder, config.getVersion(), node.toEntity());
+            if (diffSourceFile.exists()) {
                LOG.trace("Node {} has no change", node);
             } else {
-               LOG.error("Error - file {} did not exist", currentDiffFile);
+               LOG.error("Error - file {} did not exist", diffSourceFile);
             }
          } else {
             LOG.info("Node {} has change, so itself and all parents are included", node);
@@ -50,23 +49,6 @@ public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
       }
       LOG.debug("Identified {} included nodes", includableNodes.size());
       return includeNodes;
-   }
-
-   private File getParentFolder(final File sourceFolder) {
-      if (sourceFolder == null) {
-         throw new RuntimeException("Unable to search source code in null folder");
-      }
-      LOG.debug("Searching in {}", sourceFolder);
-      File parentFolder = null;
-      for (File candidate : new File(sourceFolder, "methods").listFiles()) {
-         if (candidate.getName().equals(config.getVersion())) {
-            parentFolder = candidate;
-         }
-      }
-      if (parentFolder == null) {
-         throw new RuntimeException("Did not find property folder for " + config.getVersion() + " in " + sourceFolder.getAbsolutePath());
-      }
-      return parentFolder;
    }
 
    public void addParents(final CallTreeNode current, final Set<CallTreeNode> includeNodes) {

@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 
+import de.peass.analysis.properties.MethodChangeReader;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.kieker.KiekerPatternConverter;
@@ -16,14 +17,16 @@ import de.peass.measurement.rca.kieker.KiekerPatternConverter;
 class SourceWriter {
    private final GraphNode root;
    private final BufferedWriter fileWriter;
-   private File sourceFolder;
+   private File methodSourceFolder;
    private final Map<String, String> nameSourceCurrent = new HashMap<>();
    private final Map<String, String> nameSourceOld = new HashMap<>();
+   private final String version;
 
-   public SourceWriter(final GraphNode root, final BufferedWriter fileWriter, final File sourceFolder) {
+   public SourceWriter(final GraphNode root, final BufferedWriter fileWriter, final File methodSourceFolder, final String version) {
       this.root = root;
       this.fileWriter = fileWriter;
-      this.sourceFolder = sourceFolder;
+      this.methodSourceFolder = methodSourceFolder;
+      this.version = version;
    }
 
    void writeSources() throws IOException {
@@ -61,14 +64,12 @@ class SourceWriter {
    }
 
    private void readMethod(final GraphNode node, final String currentPattern) throws IOException {
-      final String key = KiekerPatternConverter.getKey(currentPattern);
-      String fileNameStart = KiekerPatternConverter.getFileNameStart(currentPattern);
-      if (node.getModule() != null && !node.getModule().equals("")) {
-         fileNameStart = node.getModule() + ChangedEntity.MODULE_SEPARATOR + fileNameStart;
-      }
+      ChangedEntity clazzEntity = getChangedEntity(node, currentPattern);
       
-      final File currentSourceFile = new File(sourceFolder, fileNameStart + "_main.txt");
-      final File oldSourceFile = new File(sourceFolder, fileNameStart + "_old.txt");
+      final String key = KiekerPatternConverter.getKey(currentPattern);
+      
+      final File currentSourceFile = MethodChangeReader.getMethodMainFile(methodSourceFolder, version, clazzEntity);
+      final File oldSourceFile = MethodChangeReader.getMethodMainFile(methodSourceFolder, version, clazzEntity);
       if (currentSourceFile.exists() && oldSourceFile.exists()) {
          node.setHasSourceChange(true);
          final String sourceCurrent = FileUtils.readFileToString(currentSourceFile, Charset.defaultCharset());
@@ -76,13 +77,22 @@ class SourceWriter {
          final String sourceOld = FileUtils.readFileToString(oldSourceFile, Charset.defaultCharset());
          nameSourceOld.put(key, sourceOld);
       } else {
-         final File diffSourceFile = new File(sourceFolder, fileNameStart + "_diff.txt");
+         final File diffSourceFile = MethodChangeReader.getMethodDiffFile(methodSourceFolder, version, clazzEntity);
          if (diffSourceFile.exists()) {
             final String source = FileUtils.readFileToString(diffSourceFile, Charset.defaultCharset());
             nameSourceCurrent.put(key, source);
             nameSourceOld.put(key, source);
          }
       }
+   }
+
+   private ChangedEntity getChangedEntity(final GraphNode node, final String currentPattern) {
+      final String call = currentPattern.substring(currentPattern.lastIndexOf(' ') + 1, currentPattern.lastIndexOf('('));
+      final int dotIndex = call.lastIndexOf(".");
+      String method = call.substring(dotIndex + 1);
+      String clazz = call.substring(0, dotIndex);
+      ChangedEntity clazzEntity = new ChangedEntity(clazz, node.getModule(), method);
+      return clazzEntity;
    }
    
 

@@ -38,8 +38,8 @@ public class JavascriptDataWriter {
          
          fileWriter.write("\n");
          if (propertyFolder != null) {
-            final File sourceFolder = new File(propertyFolder, "methods" + File.separator + data.getMeasurementConfig().getVersion());
-            final SourceWriter writer = new SourceWriter(root, fileWriter, sourceFolder);
+            final File methodSourceFolder = new File(propertyFolder, "methods");
+            final SourceWriter writer = new SourceWriter(root, fileWriter, methodSourceFolder, data.getMeasurementConfig().getVersion());
             writer.writeSources();
          }
          writeColoredTree(fileWriter);
