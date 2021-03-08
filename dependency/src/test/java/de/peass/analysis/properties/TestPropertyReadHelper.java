@@ -25,7 +25,7 @@ public class TestPropertyReadHelper {
    }
 
    @Test
-   public void testSourceReading() throws FileNotFoundException, IOException {
+   public void testSourceWriting() throws FileNotFoundException, IOException {
       File methodSourceFolder = new File("target" + File.separator + "current_sources");
       if (!methodSourceFolder.exists()) {
          methodSourceFolder.mkdirs();
@@ -66,9 +66,5 @@ public class TestPropertyReadHelper {
       String initContent = FileUtils.readFileToString(expectedInitFile, Charset.defaultCharset());
       Assert.assertThat(initContent, Matchers.not(Matchers.containsString("System.out")));
       Assert.assertThat(initContent, Matchers.containsString("System.err"));
-   }
-
-   public void testSourceWriting() {
-
    }
 }
