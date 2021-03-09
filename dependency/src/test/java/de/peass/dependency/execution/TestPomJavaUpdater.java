@@ -35,8 +35,11 @@ public class TestPomJavaUpdater {
    }
 
    private Xpp3Dom getConfig() throws IOException, XmlPullParserException, FileNotFoundException {
-      final MavenXpp3Reader reader = new MavenXpp3Reader();
-      final Model model = reader.read(new FileInputStream(experimentFile));
+      final Model model;
+      try (FileInputStream inputStream = new FileInputStream(experimentFile)){
+         final MavenXpp3Reader reader = new MavenXpp3Reader();
+         model = reader.read(inputStream);
+      }
       final Plugin compilerPlugin = MavenPomUtil.findPlugin(model, MavenPomUtil.COMPILER_ARTIFACTID, MavenPomUtil.ORG_APACHE_MAVEN_PLUGINS);
       final Xpp3Dom conf = (Xpp3Dom) compilerPlugin.getConfiguration();
       return conf;
