@@ -66,6 +66,7 @@ public class TestTraceMethodReader {
    public void testTraceLengthSimpleFor() throws ParseException, IOException {
       System.out.println("Searching: " + SLF4J_API_JAR + " " + new File(SLF4J_API_JAR).exists());
       System.out.println("Searching: " + SLF4J_IMPL_JAR + " " + new File(SLF4J_IMPL_JAR).exists());
+      System.out.println("Javaagent: " + MavenTestExecutor.KIEKER_ASPECTJ_JAR.getAbsolutePath() + " " + MavenTestExecutor.KIEKER_ASPECTJ_JAR.exists());
       final ProcessBuilder builder = new ProcessBuilder("java",
             "-javaagent:" + MavenTestExecutor.KIEKER_ASPECTJ_JAR,
             "-Dorg.aspectj.weaver.loadtime.configuration=file:src" + File.separator + "test" + File.separator + "resources" + File.separator + "aop.xml",
