@@ -42,6 +42,7 @@ public class TestPeASSFilter {
       FileUtils.deleteDirectory(CURRENT);
       FileUtils.deleteDirectory(new File(CURRENT.getParentFile(), CURRENT.getName() + "_peass"));
       FileUtils.copyDirectory(BASIC_STATE, CURRENT);
+      LOG.info("Created test folder {} Exists: {}", CURRENT.getAbsolutePath(), CURRENT.exists());
    }
 
    @Test
