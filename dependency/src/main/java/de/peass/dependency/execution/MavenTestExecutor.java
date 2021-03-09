@@ -57,7 +57,7 @@ public class MavenTestExecutor extends TestExecutor {
    public static final String SUREFIRE_VERSION = "3.0.0-M3";
    public static final String DEFAULT_JAVA_VERSION = "1.8";
 
-   public static final String KIEKER_ADAPTIVE_FILENAME = "config/kieker.adaptiveMonitoring.conf";
+   public static final String KIEKER_ADAPTIVE_FILENAME = "config" + File.separator + "kieker.adaptiveMonitoring.conf";
    public static final File KIEKER_ASPECTJ_JAR = new File(ArgLineBuilder.KIEKER_FOLDER_MAVEN.replace("${user.home}", System.getProperty("user.home")));
 
    protected Charset lastEncoding = StandardCharsets.UTF_8;

@@ -10,15 +10,16 @@ public class ArgLineBuilder {
 
    public static final String JAVA_AGENT = "-javaagent";
 
-   public static final String KIEKER_FOLDER_MAVEN = "${user.home}/.m2/repository/net/kieker-monitoring/kieker/" + MavenPomUtil.KIEKER_VERSION + "/kieker-"
+   public static final String RELATIVE_MAVEN_FOLDER = ".m2" + File.separator + "repository" + File.separator + "net" + File.separator
+         + "kieker-monitoring" + File.separator + "kieker" + File.separator + MavenPomUtil.KIEKER_VERSION + File.separator + "kieker-"
          + MavenPomUtil.KIEKER_VERSION + "-aspectj.jar";
+   public static final String KIEKER_FOLDER_MAVEN = "${user.home}" + File.separator + RELATIVE_MAVEN_FOLDER;
    /**
     * This is added to surefire, assuming that kieker has been downloaded already, so that the aspectj-weaving can take place.
     */
    protected static final String KIEKER_ARG_LINE_MAVEN = JAVA_AGENT + ":" + KIEKER_FOLDER_MAVEN;
 
-   public static final String KIEKER_FOLDER_GRADLE = "${System.properties['user.home']}/.m2/repository/net/kieker-monitoring/kieker/" + MavenPomUtil.KIEKER_VERSION
-         + "/kieker-" + MavenPomUtil.KIEKER_VERSION + "-aspectj.jar";
+   public static final String KIEKER_FOLDER_GRADLE = "${System.properties['user.home']}" + File.separator + RELATIVE_MAVEN_FOLDER;
 
    protected static final String KIEKER_ARG_LINE_GRADLE = JAVA_AGENT + ":" + KIEKER_FOLDER_GRADLE;
 

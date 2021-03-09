@@ -30,7 +30,7 @@ import de.peass.utils.StreamGobbler;
  */
 public class TestTraceMethodReader {
 
-   private final File tmpFolder = new File("target/kieker_results_test/");
+   private final File tmpFolder = new File("target" + File.separator + "kieker_results_test");
    private static final String REPO = System.getenv("HOME") + "/.m2/repository";
    private static final String KOPEME_JAR = REPO + "/de/dagere/kopeme/kopeme-core/" + MavenPomUtil.KOPEME_VERSION + "/kopeme-core-" + MavenPomUtil.KOPEME_VERSION + ".jar";
    private static final String SLF4J_IMPL_VERSION = "2.14.0";
@@ -63,7 +63,7 @@ public class TestTraceMethodReader {
       System.out.println("Searching: " + SLF4J_IMPL_JAR + " " + new File(SLF4J_IMPL_JAR).exists());
       final ProcessBuilder builder = new ProcessBuilder("java",
             "-javaagent:" + MavenTestExecutor.KIEKER_ASPECTJ_JAR,
-            "-Dorg.aspectj.weaver.loadtime.configuration=file:src/test/resources/aop.xml",
+            "-Dorg.aspectj.weaver.loadtime.configuration=file:src" + File.separator + "test" + File.separator + "resources" + File.separator + "aop.xml",
             "-cp", JAR_PATH,
             "de.peass.example.CallerSimpleFor");
       final Process process = builder.start();
@@ -75,7 +75,7 @@ public class TestTraceMethodReader {
       final File traceFolder = kiekerFolders[0];
       //
       final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING).getShortTrace(""),
-            new File("src/test/java"));
+            new File("src" + File.separator + "test" + File.separator + "java"));
       final TraceWithMethods trace = reader.getTraceWithMethods();
 
       System.out.println(trace.getWholeTrace());
@@ -90,7 +90,7 @@ public class TestTraceMethodReader {
    public void testTraceLengthLongFor() throws ParseException, IOException {
       final ProcessBuilder builder = new ProcessBuilder("java",
             "-javaagent:" + MavenTestExecutor.KIEKER_ASPECTJ_JAR,
-            "-Dorg.aspectj.weaver.loadtime.configuration=file:src/test/resources/aop.xml",
+            "-Dorg.aspectj.weaver.loadtime.configuration=file:src" + File.separator + "test" + File.separator + "resources" + File.separator + "aop.xml",
             "-cp", JAR_PATH,
             "de.peass.example.CallerLongFor");
       final Process process = builder.start();
@@ -101,7 +101,7 @@ public class TestTraceMethodReader {
       final File traceFolder = kiekerFolders[0];
 
       final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING).getShortTrace(""),
-            new File("src/test/java"));
+            new File("src" + File.separator + "test" + File.separator + "java"));
       final TraceWithMethods trace = reader.getTraceWithMethods();
 
       System.out.println(trace.getWholeTrace());
