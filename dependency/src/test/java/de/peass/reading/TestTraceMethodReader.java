@@ -38,8 +38,8 @@ public class TestTraceMethodReader {
    private static final String SLF4J_IMPL_JAR = REPO + File.separator + "org" + File.separator + "apache" + File.separator + "logging" + File.separator + "log4j" + File.separator
          + "log4j-slf4j-impl" + File.separator + SLF4J_IMPL_VERSION + File.separator + "log4j-slf4j-impl-" + SLF4J_IMPL_VERSION + ".jar";
    private static final String SLF4J_API_VERSION = "1.7.30";
-   private static final String SLF4J_API_JAR = REPO + File.separator + "org" + File.separator + "slf4j/slf4j-api/" + SLF4J_API_VERSION + "/slf4j-api-" + SLF4J_API_VERSION
-         + ".jar";
+   private static final String SLF4J_API_JAR = REPO + File.separator + "org" + File.separator + "slf4j" + File.separator + "slf4j-api" + File.separator + SLF4J_API_VERSION
+         + File.separator + "slf4j-api-" + SLF4J_API_VERSION + ".jar";
    private static final String LOG4J_FOLDER = REPO + File.separator + "org" + File.separator + "apache" + File.separator + "logging" + File.separator + "log4j";
    private static final String LOG4J_IMPL_JAR = LOG4J_FOLDER + File.separator + "log4j-core" + File.separator + "2.14.0" + File.separator + File.separator
          + "log4j-core-2.14.0.jar";
