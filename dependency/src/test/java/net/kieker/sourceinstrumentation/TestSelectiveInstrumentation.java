@@ -8,7 +8,6 @@ import java.util.Set;
 import org.junit.Test;
 
 import de.peass.TestConstants;
-import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
 import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public class TestSelectiveInstrumentation {

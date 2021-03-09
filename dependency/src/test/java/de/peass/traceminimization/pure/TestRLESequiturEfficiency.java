@@ -2,19 +2,14 @@ package de.peass.traceminimization.pure;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map.Entry;
 
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.dependency.traces.TraceWithMethods;
-import de.peass.dependency.traces.requitur.ReducedTraceElement;
-import de.peass.dependency.traces.requitur.Rule;
 import de.peass.dependency.traces.requitur.RunLengthEncodingSequitur;
 import de.peass.dependency.traces.requitur.Sequitur;
 import de.peass.dependency.traces.requitur.TraceStateTester;
 import de.peass.dependency.traces.requitur.content.Content;
-import de.peass.dependency.traces.requitur.content.RuleContent;
 
 public class TestRLESequiturEfficiency {
 

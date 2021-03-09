@@ -10,7 +10,6 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.peass.TestConstants;
-import net.kieker.sourceinstrumentation.InstrumentationConstants;
 import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public class TestSourceInstrumentation {

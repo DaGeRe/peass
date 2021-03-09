@@ -68,15 +68,17 @@ public class GradleParseUtil {
    }
 
    public static FindDependencyVisitor parseBuildfile(final File buildfile) throws IOException, FileNotFoundException {
-      FindDependencyVisitor visitor;
-      final AstBuilder builder = new AstBuilder();
-      final List<ASTNode> nodes = builder.buildFromString(IOUtil.toString(new FileInputStream(buildfile), "UTF-8"));
+      
+      try (FileInputStream inputStream = new FileInputStream(buildfile)){
+         final AstBuilder builder = new AstBuilder();
+         final List<ASTNode> nodes = builder.buildFromString(IOUtil.toString(inputStream, "UTF-8"));
 
-      visitor = new FindDependencyVisitor();
-      for (final ASTNode node : nodes) {
-         node.visit(visitor);
+         FindDependencyVisitor visitor = new FindDependencyVisitor();
+         for (final ASTNode node : nodes) {
+            node.visit(visitor);
+         }
+         return visitor;
       }
-      return visitor;
    }
 
    public static void updateBuildTools(final FindDependencyVisitor visitor, final List<String> gradleFileContents) {

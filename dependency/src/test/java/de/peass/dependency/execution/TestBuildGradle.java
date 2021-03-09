@@ -2,13 +2,10 @@ package de.peass.dependency.execution;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matchers;
-import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,16 +61,14 @@ public class TestBuildGradle {
 
       GradleParseUtil.addDependencies(mockedTransformer, destFile, new File("xyz"));
 
-      final List<String> gradleFileContents = Files.readAllLines(Paths.get(destFile.toURI()));
+      final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
 
       if (buildtools) {
-         Assert.assertThat(gradleFileContents, IsCollectionContaining.hasItem(
-               Matchers.anyOf(
-                     Matchers.containsString("'buildTools': '19.1.0'"),
-                     Matchers.containsString("buildToolsVersion 19.1.0"))));
+         Assert.assertThat(gradleFileContents, Matchers.anyOf(Matchers.containsString("'buildTools': '19.1.0'"),
+                     Matchers.containsString("buildToolsVersion 19.1.0")));
       }
       
 
-      Assert.assertThat(gradleFileContents, IsCollectionContaining.hasItem(Matchers.containsString("de.dagere.kopeme:kopeme-junit")));
+      Assert.assertThat(gradleFileContents, Matchers.containsString("de.dagere.kopeme:kopeme-junit"));
    }
 }

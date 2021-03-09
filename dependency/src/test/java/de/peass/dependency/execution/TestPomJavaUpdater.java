@@ -16,11 +16,12 @@ import org.junit.jupiter.api.Test;
 
 public class TestPomJavaUpdater {
 
-   private final File experimentFile = new File("target/pom.xml");
+   private final File experimentFile = new File("target" + File.separator + "pom.xml");
+   private static final File dependencyITFolder = new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "dependencyIT");
 
    @Test
    public void testNoCompilerPluginPom() throws IOException, XmlPullParserException {
-      File originalPom = new File("src/test/resources/dependencyIT/normal_change/pom.xml");
+      File originalPom = new File(dependencyITFolder, "normal_change" + File.separator + "pom.xml");
 
       FileUtils.copyFile(originalPom, experimentFile);
 
@@ -43,7 +44,7 @@ public class TestPomJavaUpdater {
 
    @Test
    public void testJava11Pom() throws IOException, XmlPullParserException {
-      File originalPom = new File("src/test/resources/dependencyIT/pom-11.xml");
+      File originalPom = new File(dependencyITFolder, "pom-11.xml");
 
       FileUtils.copyFile(originalPom, experimentFile);
 

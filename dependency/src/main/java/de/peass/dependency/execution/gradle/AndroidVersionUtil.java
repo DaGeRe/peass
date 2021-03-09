@@ -35,7 +35,7 @@ public class AndroidVersionUtil {
             final String[] runningAndroidVersions = IOUtils.toString(versionFile, Charset.defaultCharset()).split("\n");
             for (final String line : runningAndroidVersions) {
                final String version = line.substring(line.indexOf(';') + 1);
-               versions.put(getMajorVersion(version), version);
+               versions.put(getMajorVersion(version), version.replace("\r", ""));
                acceptedVersion.add(version);
             }
          } catch (final IOException e) {
@@ -51,7 +51,7 @@ public class AndroidVersionUtil {
       }
    }
 
-   public static boolean isLegelBuildTools(String versionString) {
+   public static boolean isLegelBuildTools(final String versionString) {
       return !acceptedVersion.contains(versionString) &&
             !versionString.equals("rootProject.buildToolsVersion") &&
             !versionString.equals("rootProject.compileSdkVersion") &&
@@ -59,7 +59,7 @@ public class AndroidVersionUtil {
             !versionString.equals("buildConfig.buildTools");
    }
    
-   public static boolean isLegalBuildToolsVersion(String versionString) {
+   public static boolean isLegalBuildToolsVersion(final String versionString) {
       return !acceptedVersion.contains(versionString) 
             && !versionString.equals("rootProject.buildToolsVersion") 
             && !versionString.equals("rootProject.compileSdkVersion")
@@ -80,7 +80,7 @@ public class AndroidVersionUtil {
 
    }
 
-   public static String getRunningVersion(String versionString) {
+   public static String getRunningVersion(final String versionString) {
       int majorVersion = getMajorVersion(versionString);
       return versions.get(majorVersion);
    }
