@@ -39,11 +39,12 @@ public class ViewGeneratorIT {
    private static final Logger LOG = LogManager.getLogger(ViewGeneratorIT.class);
 
    public static final File VIEW_IT = new File("target", "view_it");
-   public static final File BASIC = new File("src/test/resources/viewtests/basic");
-   public static final File REPETITION = new File("src/test/resources/viewtests/repetition");
-   private static final File REPETITION_MULTIPLE = new File("src/test/resources/viewtests/repetition_multiple");
-   private static final File REPETITION_DEEP = new File("src/test/resources/viewtests/repetition_deep");
-   private static final File REPETITION_REPETITION = new File("src/test/resources/viewtests/repetition_of_repetition");
+   private static final File resourcesFolder = new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "viewtests");
+   public static final File BASIC = new File(resourcesFolder, "basic");
+   public static final File REPETITION = new File(resourcesFolder, "repetition");
+   private static final File REPETITION_MULTIPLE = new File(resourcesFolder, "repetition_multiple");
+   private static final File REPETITION_DEEP = new File(resourcesFolder, "repetition_deep");
+   private static final File REPETITION_REPETITION = new File(resourcesFolder, "repetition_of_repetition");
 
    private static final File viewFolder = new File(VIEW_IT, "views");
 
