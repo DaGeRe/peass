@@ -31,7 +31,7 @@ import de.peass.utils.StreamGobbler;
 public class TestTraceMethodReader {
 
    private final File tmpFolder = new File("target" + File.separator + "kieker_results_test");
-   private static final String REPO = System.getenv("HOME") + File.separator + ".m2" + File.separator + "repository";
+   private static final String REPO = System.getProperty("user.home") + File.separator + ".m2" + File.separator + "repository";
    private static final String KOPEME_JAR = REPO + File.separator + "de" + File.separator + "dagere" + File.separator + "kopeme" + File.separator + "kopeme-core" + File.separator
          + MavenPomUtil.KOPEME_VERSION + File.separator + "kopeme-core-" + MavenPomUtil.KOPEME_VERSION + ".jar";
    private static final String SLF4J_IMPL_VERSION = "2.14.0";
