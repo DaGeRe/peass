@@ -69,7 +69,7 @@ public class TestTraceMethodReader {
       System.out.println("Javaagent: " + MavenTestExecutor.KIEKER_ASPECTJ_JAR.getAbsolutePath() + " " + MavenTestExecutor.KIEKER_ASPECTJ_JAR.exists());
       System.out.println(JAR_PATH);
       final ProcessBuilder builder = new ProcessBuilder("java",
-            "-javaagent:" + MavenTestExecutor.KIEKER_ASPECTJ_JAR,
+            "-javaagent:\"" + MavenTestExecutor.KIEKER_ASPECTJ_JAR + "\"",
             "-Dorg.aspectj.weaver.loadtime.configuration=file:src" + File.separator + "test" + File.separator + "resources" + File.separator + "aop.xml",
             "-cp", JAR_PATH,
             "de.peass.example.CallerSimpleFor");
@@ -97,7 +97,7 @@ public class TestTraceMethodReader {
    @Test
    public void testTraceLengthLongFor() throws ParseException, IOException {
       final ProcessBuilder builder = new ProcessBuilder("java",
-            "-javaagent:" + MavenTestExecutor.KIEKER_ASPECTJ_JAR,
+            "-javaagent:\"" + MavenTestExecutor.KIEKER_ASPECTJ_JAR + "\"",
             "-Dorg.aspectj.weaver.loadtime.configuration=file:src" + File.separator + "test" + File.separator + "resources" + File.separator + "aop.xml",
             "-cp", JAR_PATH,
             "de.peass.example.CallerLongFor");
