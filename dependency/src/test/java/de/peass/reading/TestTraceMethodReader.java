@@ -31,14 +31,19 @@ import de.peass.utils.StreamGobbler;
 public class TestTraceMethodReader {
 
    private final File tmpFolder = new File("target" + File.separator + "kieker_results_test");
-   private static final String REPO = System.getenv("HOME") + "/.m2/repository";
-   private static final String KOPEME_JAR = REPO + "/de/dagere/kopeme/kopeme-core/" + MavenPomUtil.KOPEME_VERSION + "/kopeme-core-" + MavenPomUtil.KOPEME_VERSION + ".jar";
+   private static final String REPO = System.getenv("HOME") + File.separator + ".m2" + File.separator + "repository";
+   private static final String KOPEME_JAR = REPO + File.separator + "de" + File.separator + "dagere" + File.separator + "kopeme" + File.separator + "kopeme-core" + File.separator
+         + MavenPomUtil.KOPEME_VERSION + File.separator + "kopeme-core-" + MavenPomUtil.KOPEME_VERSION + ".jar";
    private static final String SLF4J_IMPL_VERSION = "2.14.0";
-   private static final String SLF4J_IMPL_JAR = REPO + "/org/apache/logging/log4j/log4j-slf4j-impl/" + SLF4J_IMPL_VERSION + "/log4j-slf4j-impl-" + SLF4J_IMPL_VERSION + ".jar";
+   private static final String SLF4J_IMPL_JAR = REPO + File.separator + "org" + File.separator + "apache" + File.separator + "logging" + File.separator + "log4j" + File.separator
+         + "log4j-slf4j-impl" + File.separator + SLF4J_IMPL_VERSION + File.separator + "log4j-slf4j-impl-" + SLF4J_IMPL_VERSION + ".jar";
    private static final String SLF4J_API_VERSION = "1.7.30";
-   private static final String SLF4J_API_JAR = REPO + "/org/slf4j/slf4j-api/" + SLF4J_API_VERSION + "/slf4j-api-" + SLF4J_API_VERSION + ".jar";
-   private static final String LOG4J_IMPL_JAR = REPO + "/org/apache/logging/log4j/log4j-core/2.14.0/log4j-core-2.14.0.jar";
-   private static final String LOG4J_API_JAR = REPO + "/org/apache/logging/log4j/log4j-api/2.14.0/log4j-api-2.14.0.jar";
+   private static final String SLF4J_API_JAR = REPO + File.separator + "org" + File.separator + "slf4j/slf4j-api/" + SLF4J_API_VERSION + "/slf4j-api-" + SLF4J_API_VERSION
+         + ".jar";
+   private static final String LOG4J_FOLDER = REPO + File.separator + "org" + File.separator + "apache" + File.separator + "logging" + File.separator + "log4j";
+   private static final String LOG4J_IMPL_JAR = LOG4J_FOLDER + File.separator + "log4j-core" + File.separator + "2.14.0" + File.separator + File.separator
+         + "log4j-core-2.14.0.jar";
+   private static final String LOG4J_API_JAR = LOG4J_FOLDER + File.separator + "log4j-api" + File.separator + "2.14.0" + File.separator + "log4j-api-2.14.0.jar";
 
    private static final String JAR_PATH = KOPEME_JAR + ":" + SLF4J_API_JAR + ":" + SLF4J_IMPL_JAR + ":" + LOG4J_IMPL_JAR + ":" + LOG4J_API_JAR + ":target/test-classes/";
 
