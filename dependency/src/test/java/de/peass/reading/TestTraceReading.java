@@ -28,11 +28,14 @@ public class TestTraceReading {
 
    private static final Logger LOG = LogManager.getLogger(TestTraceReading.class);
 
+   private static final File EXAMPLE_TRACE_FOLDER = new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "kieker-example");
+   private static final File EXAMPLE_SOURCE_FOLDER = new File("src" + File.separator + "test" + File.separator + "java");
+
    @Test
    public void testSimpleTraceReading() throws ParseException, IOException {
-      final TraceMethodReader tmr = new TraceMethodReader(new File("src/test/resources/kieker-example/simple/"), 
-            ModuleClassMapping.SINGLE_MODULE_MAPPING, 
-            new File("src/test/java"));
+      final TraceMethodReader tmr = new TraceMethodReader(new File(EXAMPLE_TRACE_FOLDER, "simple"),
+            ModuleClassMapping.SINGLE_MODULE_MAPPING,
+            EXAMPLE_SOURCE_FOLDER);
       // The path to the kieker-trace-data (first argument) and the path to the classes must match
       final TraceWithMethods trace = tmr.getTraceWithMethods();
       LOG.info("Trace length: " + trace.getLength());
@@ -50,7 +53,8 @@ public class TestTraceReading {
 
    @Test
    public void testLongTraceReading() throws ParseException, IOException {
-      final TraceMethodReader tmr = new TraceMethodReader(new File("src/test/resources/kieker-example/long/"), ModuleClassMapping.SINGLE_MODULE_MAPPING, new File("src/test/java"));
+      final TraceMethodReader tmr = new TraceMethodReader(new File(EXAMPLE_TRACE_FOLDER, "long"), ModuleClassMapping.SINGLE_MODULE_MAPPING,
+            EXAMPLE_SOURCE_FOLDER);
       // The path to the kieker-trace-data (first argument) and the path to the classes must match
       final TraceWithMethods trace = tmr.getTraceWithMethods();
       LOG.info("Trace length: " + trace.getLength());
@@ -60,11 +64,6 @@ public class TestTraceReading {
       }
 
       Assert.assertNull(trace.getMethod(1));
-
-      // Assert.assertEquals("main", trace.getTraceElement(0).getMethod());
-      // Assert.assertEquals("callMe", trace.getTraceElement(2).getMethod());
-      // Assert.assertEquals("callMe4", trace.getTraceElement(5).getMethod());
-      // Assert.assertEquals("10 repetitions of 3 calls", trace.getTraceElement(6).getMethod());
 
       Assert.assertEquals("public static void main(final String[] args) {", trace.getMethod(0).substring(0, trace.getMethod(0).indexOf("\n")));
       Assert.assertEquals("public void callMe() {", trace.getMethod(2).substring(0, trace.getMethod(2).indexOf("\n")));
