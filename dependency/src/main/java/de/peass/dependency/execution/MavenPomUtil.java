@@ -29,7 +29,7 @@ public class MavenPomUtil {
    public static final String ORG_APACHE_MAVEN_PLUGINS = "org.apache.maven.plugins";
    public static final String SUREFIRE_ARTIFACTID = "maven-surefire-plugin";
    public static final String COMPILER_ARTIFACTID = "maven-compiler-plugin";
-   
+
    public static final String COMPILER_PLUGIN_VERSION = "3.8.1";
 
    private static final Logger LOG = LogManager.getLogger(MavenPomUtil.class);
@@ -63,8 +63,11 @@ public class MavenPomUtil {
             }
          }
 
-         final MavenXpp3Writer writer = new MavenXpp3Writer();
-         writer.write(new FileWriter(pomFile), model);
+         try (FileWriter fileWriter = new FileWriter(pomFile)) {
+            final MavenXpp3Writer writer = new MavenXpp3Writer();
+            writer.write(fileWriter, model);
+         }
+
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();
       }
@@ -76,13 +79,12 @@ public class MavenPomUtil {
       if (dependencies != null) {
          for (final Dependency dep : dependencies) {
             if (dep.getVersion() != null) {
-               if (!dep.getArtifactId().equals("kopeme-junit") && 
-                     !dep.getArtifactId().equals("kopeme-junit3") && 
+               if (!dep.getArtifactId().equals("kopeme-junit") &&
+                     !dep.getArtifactId().equals("kopeme-junit3") &&
                      !dep.getArtifactId().equals("kieker-monitoring") &&
-                     !dep.getGroupId().startsWith(selfGroupId) && 
-                     !selfGroupId.startsWith(dep.getGroupId())
-                     ) {
-                      
+                     !dep.getGroupId().startsWith(selfGroupId) &&
+                     !selfGroupId.startsWith(dep.getGroupId())) {
+
                   if (dep.getVersion().endsWith("-SNAPSHOT")) {
                      dep.setVersion(dep.getVersion().replaceAll("-SNAPSHOT", ""));
                   }
@@ -98,8 +100,10 @@ public class MavenPomUtil {
          final Model model = reader.read(new FileInputStream(pomFile));
          if (model.getPackaging().equals("pom") && model.getModules() == null || model.getModules().size() == 0) {
             model.setPackaging("jar");
-            final MavenXpp3Writer writer = new MavenXpp3Writer();
-            writer.write(new FileWriter(pomFile), model);
+            try (FileWriter fileWriter = new FileWriter(pomFile)) {
+               final MavenXpp3Writer writer = new MavenXpp3Writer();
+               writer.write(fileWriter, model);
+            }
          }
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();

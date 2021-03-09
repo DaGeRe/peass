@@ -241,9 +241,13 @@ public class MavenTestExecutor extends TestExecutor {
    }
 
    private void editOneBuildfile(final boolean update, final File pomFile) {
-      final MavenXpp3Reader reader = new MavenXpp3Reader();
       try {
-         final Model model = reader.read(new FileInputStream(pomFile));
+         final Model model;
+         try (FileInputStream fileInputStream = new FileInputStream(pomFile)) {
+            final MavenXpp3Reader reader = new MavenXpp3Reader();
+            model = reader.read(fileInputStream);
+         }
+
          if (model.getBuild() == null) {
             model.setBuild(new Build());
          }
@@ -257,8 +261,10 @@ public class MavenTestExecutor extends TestExecutor {
          }
          MavenPomUtil.extendDependencies(model, testTransformer.isJUnit3());
 
-         final MavenXpp3Writer writer = new MavenXpp3Writer();
-         writer.write(new FileWriter(pomFile), model);
+         try (FileWriter fileWriter = new FileWriter(pomFile)) {
+            final MavenXpp3Writer writer = new MavenXpp3Writer();
+            writer.write(fileWriter, model);
+         }
 
          lastEncoding = MavenPomUtil.getEncoding(model);
       } catch (IOException | XmlPullParserException e) {

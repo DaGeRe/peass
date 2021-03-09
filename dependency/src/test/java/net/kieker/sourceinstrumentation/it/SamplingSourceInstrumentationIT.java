@@ -31,11 +31,11 @@ import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 public class SamplingSourceInstrumentationIT {
 
    File tempFolder;
-   
+
    @BeforeEach
    public void before() throws IOException {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
-      
+
       SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2/");
 
       tempFolder = new File(TestConstants.CURRENT_FOLDER, "results");
@@ -52,9 +52,9 @@ public class SamplingSourceInstrumentationIT {
       final HashSet<String> includedPatterns = new HashSet<>();
       includedPatterns.add("public * de.peass.C0_0.*(..)");
       // Kieker currently does not accept <init> if only * is passed, therefore, <init> needs to be added as separate pattern
-      includedPatterns.add("public new de.peass.C0_0.<init>(..)"); 
+      includedPatterns.add("public new de.peass.C0_0.<init>(..)");
       includedPatterns.add("public new de.peass.C1_0.<init>(..)");
-      
+
       includedPatterns.add("public * de.peass.C0_0$MyInnerClass.*(..)");
       includedPatterns.add("new de.peass.C0_0$MyInnerClass.<init>(..)");
       includedPatterns.add("public * de.peass.MainTest.*(..)");
@@ -90,7 +90,10 @@ public class SamplingSourceInstrumentationIT {
       final File pomFile = new File(TestConstants.CURRENT_FOLDER, "pom.xml");
       final Model model = reader.read(new FileInputStream(pomFile));
       MavenPomUtil.extendDependencies(model, false);
-      final MavenXpp3Writer writer = new MavenXpp3Writer();
-      writer.write(new FileWriter(pomFile), model);
+
+      try (FileWriter fileWriter = new FileWriter(pomFile)) {
+         final MavenXpp3Writer writer = new MavenXpp3Writer();
+         writer.write(fileWriter, model);
+      }
    }
 }
