@@ -86,10 +86,10 @@ public class TraceMethodReader {
             final Node method = TraceReadUtils.getMethod(te, cu);
 
             if (method != null) {
-               final String commentedMethod = method.toString().intern();
+               final String commentedMethod = method.toString().replace("\r", "").intern();
                trace.setElementSource(te, commentedMethod);
                method.setComment(null);
-               final String noCommentMethod = method.toString().intern();
+               final String noCommentMethod = method.toString().replace("\r", "").intern();
                trace.setElementSourceNoComment(te, noCommentMethod);
             } else {
                LOG.debug("Not found: " + te);
