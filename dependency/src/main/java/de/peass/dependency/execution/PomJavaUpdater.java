@@ -18,47 +18,54 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class PomJavaUpdater {
 
    private static final Logger LOG = LogManager.getLogger(PomJavaUpdater.class);
-   
+
    private static final int CURRENT_MAVEN_DEFAULT = 5;
 
    public static void fixCompilerVersion(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
       int version = getCompilerVersion(pom);
       if (version < 8) {
          final MavenXpp3Reader reader = new MavenXpp3Reader();
-         final Model model = reader.read(new FileInputStream(pom));
-         setCompiler(model, MavenTestExecutor.DEFAULT_JAVA_VERSION);
+         final Model model;
+         try (FileInputStream inputStream = new FileInputStream(pom)) {
+            model = reader.read(inputStream);
+            setCompiler(model, MavenTestExecutor.DEFAULT_JAVA_VERSION);
+         }
 
-         final MavenXpp3Writer writer = new MavenXpp3Writer();
-         writer.write(new FileWriter(pom), model);
+         try (FileWriter fileWriter = new FileWriter(pom)) {
+            final MavenXpp3Writer writer = new MavenXpp3Writer();
+            writer.write(fileWriter, model);
+         }
+
       }
    }
 
    private static int getCompilerVersion(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
       final MavenXpp3Reader reader = new MavenXpp3Reader();
-      final Model model = reader.read(new FileInputStream(pom));
-      final Plugin compilerPlugin = MavenPomUtil.findPlugin(model, MavenPomUtil.COMPILER_ARTIFACTID, MavenPomUtil.ORG_APACHE_MAVEN_PLUGINS);
-
-      if (compilerPlugin != null) {
-         final Xpp3Dom conf = (Xpp3Dom) compilerPlugin.getConfiguration();
-         if (conf != null) {
-            Xpp3Dom confProperty = conf.getChild("source");
-            if (confProperty != null) {
-               String value = confProperty.getValue();
-               if (value.contains(".")) {
-                  final String versionPart = value.substring(value.indexOf(".")+1);
-                  return Integer.parseInt(versionPart);
+      try (FileInputStream inputStream = new FileInputStream(pom)) {
+         final Model model = reader.read(inputStream);
+         final Plugin compilerPlugin = MavenPomUtil.findPlugin(model, MavenPomUtil.COMPILER_ARTIFACTID, MavenPomUtil.ORG_APACHE_MAVEN_PLUGINS);
+         if (compilerPlugin != null) {
+            final Xpp3Dom conf = (Xpp3Dom) compilerPlugin.getConfiguration();
+            if (conf != null) {
+               Xpp3Dom confProperty = conf.getChild("source");
+               if (confProperty != null) {
+                  String value = confProperty.getValue();
+                  if (value.contains(".")) {
+                     final String versionPart = value.substring(value.indexOf(".") + 1);
+                     return Integer.parseInt(versionPart);
+                  } else {
+                     return Integer.parseInt(value);
+                  }
                } else {
-                  return Integer.parseInt(value);
+                  return CURRENT_MAVEN_DEFAULT;
                }
             } else {
                return CURRENT_MAVEN_DEFAULT;
             }
+
          } else {
             return CURRENT_MAVEN_DEFAULT;
          }
-
-      } else {
-         return CURRENT_MAVEN_DEFAULT;
       }
    }
 
