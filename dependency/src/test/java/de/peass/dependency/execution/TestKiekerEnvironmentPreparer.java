@@ -43,8 +43,10 @@ public class TestKiekerEnvironmentPreparer {
       File aopXml = new File(DependencyTestConstants.CURRENT, "src/main/resources/META-INF/aop.xml");
       Assert.assertTrue(aopXml.exists());
       
-      String fileText = IOUtils.toString(new FileInputStream(aopXml), "UTF-8");
-      Assert.assertThat(fileText, Matchers.containsString("defaultpackage.NormalDependency"));
+      try (FileInputStream inputStream = new FileInputStream(aopXml)){
+         String fileText = IOUtils.toString(inputStream, "UTF-8");
+         Assert.assertThat(fileText, Matchers.containsString("defaultpackage.NormalDependency"));
+      }
    }
 
 }
