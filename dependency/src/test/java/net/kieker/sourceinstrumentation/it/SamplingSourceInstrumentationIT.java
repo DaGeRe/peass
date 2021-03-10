@@ -88,12 +88,14 @@ public class SamplingSourceInstrumentationIT {
    private void extendMaven() throws IOException, XmlPullParserException, FileNotFoundException {
       final MavenXpp3Reader reader = new MavenXpp3Reader();
       final File pomFile = new File(TestConstants.CURRENT_FOLDER, "pom.xml");
-      final Model model = reader.read(new FileInputStream(pomFile));
-      MavenPomUtil.extendDependencies(model, false);
+      try (FileInputStream inputStream = new FileInputStream(pomFile)) {
+         final Model model = reader.read(inputStream);
+         MavenPomUtil.extendDependencies(model, false);
 
-      try (FileWriter fileWriter = new FileWriter(pomFile)) {
-         final MavenXpp3Writer writer = new MavenXpp3Writer();
-         writer.write(fileWriter, model);
+         try (FileWriter fileWriter = new FileWriter(pomFile)) {
+            final MavenXpp3Writer writer = new MavenXpp3Writer();
+            writer.write(fileWriter, model);
+         }
       }
    }
 }

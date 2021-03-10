@@ -40,8 +40,8 @@ public class MavenPomUtil {
     */
    public static void cleanSnapshotDependencies(final File pomFile) {
       final MavenXpp3Reader reader = new MavenXpp3Reader();
-      try {
-         final Model model = reader.read(new FileInputStream(pomFile));
+      try (FileInputStream inputStream = new FileInputStream(pomFile)) {
+         final Model model = reader.read(inputStream);
          Build build = model.getBuild();
          if (build == null) {
             build = new Build();
@@ -95,9 +95,9 @@ public class MavenPomUtil {
    }
 
    public static void cleanType(final File pomFile) {
-      try {
+      try (FileInputStream inputStream = new FileInputStream(pomFile)) {
          final MavenXpp3Reader reader = new MavenXpp3Reader();
-         final Model model = reader.read(new FileInputStream(pomFile));
+         final Model model = reader.read(inputStream);
          if (model.getPackaging().equals("pom") && model.getModules() == null || model.getModules().size() == 0) {
             model.setPackaging("jar");
             try (FileWriter fileWriter = new FileWriter(pomFile)) {
@@ -144,38 +144,44 @@ public class MavenPomUtil {
 
    public static boolean isMultiModuleProject(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
       final MavenXpp3Reader reader = new MavenXpp3Reader();
-      final Model model = reader.read(new FileInputStream(pom));
-      return model.getModules() != null;
+      try (FileInputStream inputStream = new FileInputStream(pom)) {
+         final Model model = reader.read(inputStream);
+         return model.getModules() != null;
+      }
+
    }
 
    public static List<File> getModules(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
-      final MavenXpp3Reader reader = new MavenXpp3Reader();
-      final Model model = reader.read(new FileInputStream(pom));
-      final List<File> modules = new LinkedList<>();
-      if (model.getModules() != null && model.getModules().size() > 0) {
-         for (final String module : model.getModules()) {
-            final File moduleFile = new File(pom.getParentFile(), module);
-            modules.add(moduleFile);
+      try (FileInputStream inputStream = new FileInputStream(pom)) {
+         final MavenXpp3Reader reader = new MavenXpp3Reader();
+         final Model model = reader.read(inputStream);
+         final List<File> modules = new LinkedList<>();
+         if (model.getModules() != null && model.getModules().size() > 0) {
+            for (final String module : model.getModules()) {
+               final File moduleFile = new File(pom.getParentFile(), module);
+               modules.add(moduleFile);
+            }
+         } else {
+            modules.add(pom.getParentFile());
          }
-      } else {
-         modules.add(pom.getParentFile());
+         return modules;
       }
-
-      return modules;
    }
 
    public static List<String> getModuleNames(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
-      final MavenXpp3Reader reader = new MavenXpp3Reader();
-      final Model model = reader.read(new FileInputStream(pom));
-      final List<String> modules = new LinkedList<>();
-      if (model.getModules() != null && model.getModules().size() > 0) {
-         for (final String module : model.getModules()) {
-            modules.add(module);
+      try (FileInputStream inputStream = new FileInputStream(pom)) {
+         final MavenXpp3Reader reader = new MavenXpp3Reader();
+         final Model model = reader.read(inputStream);
+         final List<String> modules = new LinkedList<>();
+         if (model.getModules() != null && model.getModules().size() > 0) {
+            for (final String module : model.getModules()) {
+               modules.add(module);
+            }
+         } else {
+            modules.add("");
          }
-      } else {
-         modules.add("");
+         return modules;
       }
-      return modules;
    }
 
    public static Charset getEncoding(final Model model) {
