@@ -115,6 +115,9 @@ public class MavenTestExecutor extends TestExecutor {
 
    @Override
    protected void clean(final File logFile) throws IOException, InterruptedException {
+      if (!folders.getProjectFolder().exists()) {
+         throw new RuntimeException("Can not execute clean - folder " + folders.getProjectFolder().getAbsolutePath() + " does not exist");
+      }
       final String[] originalsClean = new String[] { "mvn", "clean" };
       final ProcessBuilder pbClean = new ProcessBuilder(originalsClean);
       pbClean.directory(folders.getProjectFolder());
