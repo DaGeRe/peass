@@ -45,7 +45,6 @@ public class TestTraceMethodReader {
          + "log4j-core-2.14.0.jar";
    private static final String LOG4J_API_JAR = LOG4J_FOLDER + File.separator + "log4j-api" + File.separator + "2.14.0" + File.separator + "log4j-api-2.14.0.jar";
 
-   private static final String JAR_PATH = KOPEME_JAR + ":" + SLF4J_API_JAR + ":" + SLF4J_IMPL_JAR + ":" + LOG4J_IMPL_JAR + ":" + LOG4J_API_JAR + ":target/test-classes/";
 
    @Before
    public void init() {
@@ -66,12 +65,14 @@ public class TestTraceMethodReader {
    public void testTraceLengthSimpleFor() throws ParseException, IOException {
       System.out.println("Searching: " + SLF4J_API_JAR + " " + new File(SLF4J_API_JAR).exists());
       System.out.println("Searching: " + SLF4J_IMPL_JAR + " " + new File(SLF4J_IMPL_JAR).exists());
-      System.out.println("Javaagent: " + MavenTestExecutor.KIEKER_ASPECTJ_JAR.getAbsolutePath() + " " + MavenTestExecutor.KIEKER_ASPECTJ_JAR.exists());
-      System.out.println(JAR_PATH);
+
+      String jarPath = getJarPath();
+      String agentPath = getAgentPath();
+
       final ProcessBuilder builder = new ProcessBuilder("java",
-            "-javaagent:\"" + MavenTestExecutor.KIEKER_ASPECTJ_JAR + "\"",
+            "-javaagent:" + agentPath,
             "-Dorg.aspectj.weaver.loadtime.configuration=file:src" + File.separator + "test" + File.separator + "resources" + File.separator + "aop.xml",
-            "-cp", JAR_PATH,
+            "-cp", jarPath,
             "de.peass.example.CallerSimpleFor");
       System.out.println("Command: " + builder.command());
       final Process process = builder.start();
@@ -94,12 +95,42 @@ public class TestTraceMethodReader {
       Assert.assertEquals(11, trace.getLength());
    }
 
+   private String getAgentPath() {
+      String agentPath;
+      if (!System.getProperty("os.name").startsWith("Windows")) {
+         agentPath = MavenTestExecutor.KIEKER_ASPECTJ_JAR.getAbsolutePath();
+      } else {
+         agentPath = "\"" + MavenTestExecutor.KIEKER_ASPECTJ_JAR.getAbsolutePath() + "\"";
+      }
+      System.out.println(agentPath);
+      return agentPath;
+   }
+
+   private String getJarPath() {
+      String jarPath;
+      if (!System.getProperty("os.name").startsWith("Windows")) {
+         jarPath = KOPEME_JAR + ":" + SLF4J_API_JAR + ":" + SLF4J_IMPL_JAR + ":" + LOG4J_IMPL_JAR + ":" + LOG4J_API_JAR + ":target" + File.separator + "test-classes";
+      } else {
+         jarPath = "\"" + KOPEME_JAR + "\"" + ":" +
+               "\"" + SLF4J_API_JAR + "\"" + ":" +
+               "\"" + SLF4J_IMPL_JAR + "\"" + ":" +
+               "\"" + LOG4J_IMPL_JAR + "\"" + ":" +
+               "\"" + LOG4J_API_JAR + "\"" + ":" +
+               "target" + File.separator + "test-classes";
+      }
+      System.out.println(jarPath);
+      return jarPath;
+   }
+
    @Test
    public void testTraceLengthLongFor() throws ParseException, IOException {
+      String jarPath = getJarPath();
+      String agentPath = getAgentPath();
+      
       final ProcessBuilder builder = new ProcessBuilder("java",
-            "-javaagent:\"" + MavenTestExecutor.KIEKER_ASPECTJ_JAR + "\"",
+            "-javaagent:" + agentPath,
             "-Dorg.aspectj.weaver.loadtime.configuration=file:src" + File.separator + "test" + File.separator + "resources" + File.separator + "aop.xml",
-            "-cp", JAR_PATH,
+            "-cp", jarPath,
             "de.peass.example.CallerLongFor");
       final Process process = builder.start();
 
