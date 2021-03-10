@@ -67,7 +67,6 @@ public class CalledMethodLoader {
     * @return
     */
    public Map<ChangedEntity, Set<String>> getCalledMethods(final File kiekerOutputFile) {
-      Map<ChangedEntity, Set<String>> calledClasses = null;
       try {
          System.setOut(new PrintStream(kiekerOutputFile));
          System.setErr(new PrintStream(kiekerOutputFile));
@@ -79,7 +78,7 @@ public class CalledMethodLoader {
          System.setOut(realSystemOut);
          System.setErr(realSystemErr);
       }
-      return calledClasses;
+      return null;
    }
 
    /**
@@ -122,6 +121,8 @@ public class CalledMethodLoader {
             kopemeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
 
       analysisController.run();
+      
+      reader.analysisController.terminate();
       return kopemeFilter;
    }
 
