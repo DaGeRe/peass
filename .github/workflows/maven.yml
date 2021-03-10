@@ -21,10 +21,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: Java ${{ matrix.java }} OS ${{ matrix.os }} sample
     steps:
-    - name: Set Git Property
+    - name: Set Git Property and output path
       run: |
         if [ "$RUNNER_OS" == "Windows" ]; then
           git config --system core.longpaths true
+          echo %Path%
+          where mvn
         fi
       shell: bash
     - uses: actions/checkout@v2
