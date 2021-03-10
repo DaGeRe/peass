@@ -25,8 +25,9 @@ jobs:
       run: |
         if [ "$RUNNER_OS" == "Windows" ]; then
           git config --system core.longpaths true
-          echo %Path%
+          echo %PATH%
           where mvn
+          mvn -version
         fi
       shell: bash
     - uses: actions/checkout@v2
