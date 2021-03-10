@@ -109,13 +109,14 @@ public class TestTraceMethodReader {
    private String getJarPath() {
       String jarPath;
       if (!System.getProperty("os.name").startsWith("Windows")) {
-         jarPath = KOPEME_JAR + ":" + SLF4J_API_JAR + ":" + SLF4J_IMPL_JAR + ":" + LOG4J_IMPL_JAR + ":" + LOG4J_API_JAR + ":target" + File.separator + "test-classes";
+         jarPath = KOPEME_JAR + File.pathSeparator + SLF4J_API_JAR + File.pathSeparator + SLF4J_IMPL_JAR + File.pathSeparator + 
+               LOG4J_IMPL_JAR + File.pathSeparator + LOG4J_API_JAR + File.pathSeparator + "target" + File.separator + "test-classes";
       } else {
-         jarPath = "\"" + KOPEME_JAR + "\"" + ":" +
-               "\"" + SLF4J_API_JAR + "\"" + ":" +
-               "\"" + SLF4J_IMPL_JAR + "\"" + ":" +
-               "\"" + LOG4J_IMPL_JAR + "\"" + ":" +
-               "\"" + LOG4J_API_JAR + "\"" + ":" +
+         jarPath = "\"" + KOPEME_JAR + "\"" + File.pathSeparator +
+               "\"" + SLF4J_API_JAR + "\"" + File.pathSeparator +
+               "\"" + SLF4J_IMPL_JAR + "\"" + File.pathSeparator +
+               "\"" + LOG4J_IMPL_JAR + "\"" + File.pathSeparator +
+               "\"" + LOG4J_API_JAR + "\"" + File.pathSeparator +
                "target" + File.separator + "test-classes";
       }
       System.out.println(jarPath);
