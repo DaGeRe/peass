@@ -119,7 +119,7 @@ public class MavenTestExecutor extends TestExecutor {
       if (!System.getProperty("os.name").startsWith("Windows")) {
          mvnCall = "mvn";
       } else {
-         mvnCall = "cmd \\c mvn";
+         mvnCall = "mvn.cmd";
       }
       return mvnCall;
    }

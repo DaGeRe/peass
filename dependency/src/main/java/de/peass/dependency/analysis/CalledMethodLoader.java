@@ -50,8 +50,8 @@ public class CalledMethodLoader {
 
    private static final Logger LOG = LogManager.getLogger(CalledMethodLoader.class);
 
-//   private TraceReconstructionFilter traceReconstructionFilter;
-//   private final AnalysisController analysisController = new AnalysisController();
+   // private TraceReconstructionFilter traceReconstructionFilter;
+   // private final AnalysisController analysisController = new AnalysisController();
    private final File kiekerTraceFolder;
    private final ModuleClassMapping mapping;
 
@@ -67,9 +67,9 @@ public class CalledMethodLoader {
     * @return
     */
    public Map<ChangedEntity, Set<String>> getCalledMethods(final File kiekerOutputFile) {
-      try {
-         System.setOut(new PrintStream(kiekerOutputFile));
-         System.setErr(new PrintStream(kiekerOutputFile));
+      try (PrintStream kiekerOutStream = new PrintStream(kiekerOutputFile)) {
+         System.setOut(kiekerOutStream);
+         System.setErr(kiekerOutStream);
          final PeASSFilter peassFilter = executePeassFilter(null);
          return peassFilter.getCalledMethods();
       } catch (IllegalStateException | AnalysisConfigurationException | FileNotFoundException e) {
@@ -111,7 +111,7 @@ public class CalledMethodLoader {
       KiekerReader reader = new KiekerReader(kiekerTraceFolder);
       reader.initBasic();
       TraceReconstructionFilter traceReconstructionFilter = reader.initTraceReconstruction();
-      
+
       AnalysisController analysisController = reader.getAnalysisController();
 
       // TODO In case of error, logging for TraceReconstructionFilter should be disabled, since this produces huge traces
@@ -121,7 +121,7 @@ public class CalledMethodLoader {
             kopemeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
 
       analysisController.run();
-      
+
       reader.analysisController.terminate();
       return kopemeFilter;
    }
