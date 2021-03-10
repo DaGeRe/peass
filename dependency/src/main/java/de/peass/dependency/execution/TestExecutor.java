@@ -123,9 +123,15 @@ public abstract class TestExecutor {
       }
 
       final Process process = pb.start();
-      final int pid = Integer.parseInt(new File("/proc/self").getCanonicalFile().getName());
-      LOG.debug("Process started: {} Used PIDs: {} Log to: {}", pid, getProcessCount(), logFile);
+      printPIDInfo(logFile);
       return process;
+   }
+
+   private void printPIDInfo(final File logFile) throws IOException {
+      if (!System.getProperty("os.name").startsWith("Windows")) {
+         final int pid = Integer.parseInt(new File("/proc/self").getCanonicalFile().getName());
+         LOG.debug("Process started: {} Used PIDs: {} Log to: {}", pid, getProcessCount(), logFile);
+      }
    }
 
    protected abstract void runTest(File moduleFolder, final File logFile, final String testname, final long timeout);
