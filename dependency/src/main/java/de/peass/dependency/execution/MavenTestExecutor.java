@@ -88,12 +88,7 @@ public class MavenTestExecutor extends TestExecutor {
 
    protected Process buildMavenProcess(final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
       final String testGoal = getTestGoal();
-      String mvnCall;
-      if (!System.getProperty("os.name").startsWith("Windows")) {
-         mvnCall = "mvn";
-      } else {
-         mvnCall = "cmd \\c mvn";
-      }
+      String mvnCall = getMavenCall();
       final String[] originals = new String[] { mvnCall,
             testGoal,
             "-fn",
@@ -119,6 +114,16 @@ public class MavenTestExecutor extends TestExecutor {
       return buildFolderProcess(folders.getProjectFolder(), logFile, vars);
    }
 
+   private String getMavenCall() {
+      String mvnCall;
+      if (!System.getProperty("os.name").startsWith("Windows")) {
+         mvnCall = "mvn";
+      } else {
+         mvnCall = "cmd \\c mvn";
+      }
+      return mvnCall;
+   }
+
    @Override
    protected void clean(final File logFile) throws IOException, InterruptedException {
       if (!folders.getProjectFolder().exists()) {
@@ -129,7 +134,7 @@ public class MavenTestExecutor extends TestExecutor {
                folders.getProjectFolder().exists(),
                folders.getProjectFolder().isDirectory());
       }
-      final String[] originalsClean = new String[] { "mvn", "clean" };
+      final String[] originalsClean = new String[] { getMavenCall(), "clean" };
       final ProcessBuilder pbClean = new ProcessBuilder(originalsClean);
       pbClean.directory(folders.getProjectFolder());
       if (logFile != null) {
@@ -218,7 +223,8 @@ public class MavenTestExecutor extends TestExecutor {
                updateJava();
                MavenPomUtil.cleanType(pomFile);
                return testRunningSuccess(version,
-                     new String[] { "mvn", "clean", "test-compile",
+                     new String[] { getMavenCall(),
+                           "clean", "test-compile",
                            "-DskipTests=true",
                            "-Dmaven.test.skip.exec",
                            "-Dcheckstyle.skip=true",
