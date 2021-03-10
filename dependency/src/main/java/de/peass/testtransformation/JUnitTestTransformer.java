@@ -551,10 +551,6 @@ public class JUnitTestTransformer {
       return junit3;
    }
 
-   public File generateClazz(final File module, final ChangedEntity generatedClazz, final ChangedEntity callee, final String method) {
-      return new JUnitTestGenerator(module, generatedClazz, callee, method, this).generateClazz();
-   }
-
    public boolean isAggregatedWriter() {
       return aggregatedWriter;
    }
