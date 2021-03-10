@@ -88,7 +88,13 @@ public class MavenTestExecutor extends TestExecutor {
 
    protected Process buildMavenProcess(final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
       final String testGoal = getTestGoal();
-      final String[] originals = new String[] { "mvn",
+      String mvnCall;
+      if (!System.getProperty("os.name").startsWith("Windows")) {
+         mvnCall = "mvn";
+      } else {
+         mvnCall = "cmd \\c mvn";
+      }
+      final String[] originals = new String[] { mvnCall,
             testGoal,
             "-fn",
             "-Dcheckstyle.skip=true",
