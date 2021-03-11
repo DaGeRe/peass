@@ -5,11 +5,11 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ master ]
+    branches: [ * ]
   pull_request:
-    branches: [ master ]
+    branches: [ * ]
   workflow_dispatch:
-    branches: [ master ]
+    branches: [ * ]
 
 jobs:
   build:
@@ -52,7 +52,7 @@ jobs:
       if: ${{ always() }}
       uses: actions/upload-artifact@v2
       with:
-        name: Unit Test Results (Java ${{ matrix.java }})
+        name: Unit Test Results (Java ${{ matrix.java }} OS ${{ matrix.os }})
         path: |
           dependency/target/surefire-reports/*
           measurement/target/surefire-reports/*
