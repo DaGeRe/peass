@@ -23,9 +23,6 @@ public class CauseSearcherConfigMixin {
    @Option(names = { "-notSplitAggregated", "--notSplitAggregated" }, description = "Whether to split the aggregated data (produces aggregated data per time slice)")
    private boolean notSplitAggregated = false;
 
-   @Option(names = { "-outlierFactor", "--outlierFactor" }, description = "Whether outliers should be removed with z-score higher than the given value")
-   private double outlierFactor = 5.0;
-   
    @Option(names = { "-propertyFolder", "--propertyFolder" }, description = "Path to property folder", required = false)
    protected File propertyFolder;
 
@@ -56,10 +53,6 @@ public class CauseSearcherConfigMixin {
 
    public boolean isNotSplitAggregated() {
       return notSplitAggregated;
-   }
-
-   public double getOutlierFactor() {
-      return outlierFactor;
    }
 
    public double getMinTime() {

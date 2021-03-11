@@ -69,8 +69,8 @@ public class MeasurementConfiguration implements Serializable {
       statisticsConfig.setType2error(type2error);
    }
 
-   public MeasurementConfiguration(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin) {
-      this(executionMixin.getTimeout() * 60 * 1000, mixin.getVms(), mixin.getType1error(), mixin.getType2error());
+   public MeasurementConfiguration(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin, final StatisticsConfigurationMixin statisticMixin) {
+      this(executionMixin.getTimeout() * 60 * 1000, mixin.getVms(), statisticMixin.getType1error(), statisticMixin.getType2error());
       setEarlyStop(mixin.isEarlyStop());
       setUseKieker(mixin.isUseKieker());
       setIterations(mixin.getIterations());
@@ -80,8 +80,6 @@ public class MeasurementConfiguration implements Serializable {
       setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
 
-      statisticsConfig.setOutlierFactor(mixin.getOutlierFactor());
-      
       executionConfig.setVersion(executionMixin.getVersion());
       executionConfig.setVersionOld(executionMixin.getVersionOld());
       executionConfig.setStartversion(executionMixin.getStartversion());

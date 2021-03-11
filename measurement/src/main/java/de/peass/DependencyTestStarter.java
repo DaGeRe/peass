@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peass.config.MeasurementConfiguration;
+import de.peass.config.StatisticsConfigurationMixin;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
@@ -37,6 +38,9 @@ public class DependencyTestStarter extends PairProcessor {
 
    @Mixin
    MeasurementConfigurationMixin measurementConfigMixin;
+   
+   @Mixin
+   private StatisticsConfigurationMixin statisticConfigMixin;
 
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
@@ -85,12 +89,12 @@ public class DependencyTestStarter extends PairProcessor {
 //         testTransformer.getConfig().setUseKieker(measurementConfigMixin.isUseKieker());
 //         tester = new DependencyTester(folders, testTransformer);
       } else {
-         tester = new DependencyTester(folders, new MeasurementConfiguration(measurementConfigMixin, executionMixin));
+         tester = new DependencyTester(folders, new MeasurementConfiguration(measurementConfigMixin, executionMixin, statisticConfigMixin));
       }
    }
 
    private MeasurementConfiguration createConfig() {
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(measurementConfigMixin, executionMixin);
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(measurementConfigMixin, executionMixin, statisticConfigMixin);
       return measurementConfiguration;
    }
 

@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.peass.ci.ContinuousExecutor;
 import de.peass.config.MeasurementConfiguration;
+import de.peass.config.StatisticsConfigurationMixin;
 import de.peass.dependency.execution.ExecutionConfigMixin;
 import de.peass.dependency.execution.MeasurementConfigurationMixin;
 import picocli.CommandLine;
@@ -36,6 +37,9 @@ public class ContinuousExecutionStarter implements Callable<Void> {
    
    @Mixin
    MeasurementConfigurationMixin measurementConfigMixin;
+   
+   @Mixin
+   private StatisticsConfigurationMixin statisticConfigMixin;
 
    @Option(names = { "-threads", "--threads" }, description = "Count of threads")
    int threads = 100;
@@ -56,7 +60,7 @@ public class ContinuousExecutionStarter implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(measurementConfigMixin, executionMixin);
+      final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(measurementConfigMixin, executionMixin, statisticConfigMixin);
       final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, threads, useViews);
       executor.execute();
       return null;

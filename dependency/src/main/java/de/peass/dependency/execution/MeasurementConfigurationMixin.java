@@ -33,31 +33,11 @@ public class MeasurementConfigurationMixin {
          "--removeSnapshots" }, description = "Activates removing SNAPSHOTS (if older versions should be analysed, this should be activated; for performance measurement in CI, this should not be activated)")
    protected boolean removeSnapshots = false;
 
-   @Option(names = { "-type1error",
-         "--type1error" }, description = "Type 1 error of agnostic-t-test, i.e. probability of considering measurements equal when they are unequal (requires earlyStop)")
-   public double type1error = 0.05;
-
-   @Option(names = { "-type2error",
-         "--type2error" }, description = "Type 2 error of agnostic-t-test, i.e. probability of considering measurements unequal when they are equal (requires earlyStop)")
-   protected double type2error = 0.01;
-
-   @Option(names = { "-outlierFactor",
-         "--outlierFactor" }, description = "OutlierFactor; if 0, no outliers are removed. Default 3.27 (keeps 99% of standard distributions values).")
-   protected double outlierFactor = 0.01;
-
    @Option(names = { "-record", "--record" }, description = "Kieker Record type to use for monitoring ")
    protected AllowedKiekerRecord record;
 
    @Option(names = { "-measurementStrategy", "--measurementStrategy" }, description = "Measurement strategy (Default: SEQUENTIAL) ")
    protected MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
-
-   public double getOutlierFactor() {
-      return outlierFactor;
-   }
-
-   public void setOutlierFactor(final double outlierFactor) {
-      this.outlierFactor = outlierFactor;
-   }
 
    public int getVms() {
       return vms;
@@ -91,14 +71,6 @@ public class MeasurementConfigurationMixin {
       return earlyStop;
    }
 
-   public double getType1error() {
-      return type1error;
-   }
-
-   public double getType2error() {
-      return type2error;
-   }
-
    public void setVms(final int vms) {
       this.vms = vms;
    }
@@ -129,14 +101,6 @@ public class MeasurementConfigurationMixin {
 
    public void setEarlyStop(final boolean earlyStop) {
       this.earlyStop = earlyStop;
-   }
-
-   public void setType1error(final double type1error) {
-      this.type1error = type1error;
-   }
-
-   public void setType2error(final double type2error) {
-      this.type2error = type2error;
    }
 
    public AllowedKiekerRecord getRecord() {

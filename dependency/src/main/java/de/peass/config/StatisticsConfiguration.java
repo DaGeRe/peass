@@ -7,7 +7,7 @@ public class StatisticsConfiguration implements Serializable {
    
    private double type1error = 0.01;
    private double type2error = 0.01;
-   private double outlierFactor;
+   private double outlierFactor = 5.0;
    private ImplementedTests statisticTest = ImplementedTests.AGNOSTIC_T_TEST;
 
    public double getType1error() {
