@@ -41,11 +41,23 @@ public class MeasurementConfigurationMixin {
          "--type2error" }, description = "Type 2 error of agnostic-t-test, i.e. probability of considering measurements unequal when they are equal (requires earlyStop)")
    protected double type2error = 0.01;
 
+   @Option(names = { "-outlierFactor",
+         "--outlierFactor" }, description = "OutlierFactor; if 0, no outliers are removed. Default 3.27 (keeps 99% of standard distributions values).")
+   protected double outlierFactor = 0.01;
+
    @Option(names = { "-record", "--record" }, description = "Kieker Record type to use for monitoring ")
    protected AllowedKiekerRecord record;
 
    @Option(names = { "-measurementStrategy", "--measurementStrategy" }, description = "Measurement strategy (Default: SEQUENTIAL) ")
    protected MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
+
+   public double getOutlierFactor() {
+      return outlierFactor;
+   }
+
+   public void setOutlierFactor(final double outlierFactor) {
+      this.outlierFactor = outlierFactor;
+   }
 
    public int getVms() {
       return vms;

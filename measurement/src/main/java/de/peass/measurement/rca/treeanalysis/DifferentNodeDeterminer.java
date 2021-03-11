@@ -15,6 +15,7 @@ import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.precision.analysis.repetitions.bimodal.CompareData;
+import de.precision.analysis.repetitions.bimodal.OutlierRemoverBimodal;
 
 public abstract class DifferentNodeDeterminer {
 
@@ -42,7 +43,12 @@ public abstract class DifferentNodeDeterminer {
          final CallTreeNode currentPredecessorNode = predecessorIterator.next();
          // final CallTreeNode currentVersionNode = currentIterator.next();
          CompareData cd = currentPredecessorNode.getComparableStatistics(measurementConfig.getVersionOld(), measurementConfig.getVersion());
-         calculateNodeDifference(currentPredecessorNode, cd);
+         if (measurementConfig.getStatisticsConfig().getOutlierFactor() != 0) {
+            CompareData cleaned = OutlierRemoverBimodal.removeOutliers(cd);
+            calculateNodeDifference(currentPredecessorNode, cleaned);
+         } else {
+            calculateNodeDifference(currentPredecessorNode, cd);
+         }
       }
    }
 

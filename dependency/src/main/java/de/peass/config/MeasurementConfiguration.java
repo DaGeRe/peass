@@ -79,6 +79,8 @@ public class MeasurementConfiguration implements Serializable {
       setUseGC(mixin.isUseGC());
       setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
+
+      statisticsConfig.setOutlierFactor(mixin.getOutlierFactor());
       
       executionConfig.setVersion(executionMixin.getVersion());
       executionConfig.setVersionOld(executionMixin.getVersionOld());
