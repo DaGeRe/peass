@@ -43,12 +43,7 @@ public abstract class DifferentNodeDeterminer {
          final CallTreeNode currentPredecessorNode = predecessorIterator.next();
          // final CallTreeNode currentVersionNode = currentIterator.next();
          CompareData cd = currentPredecessorNode.getComparableStatistics(measurementConfig.getVersionOld(), measurementConfig.getVersion());
-         if (measurementConfig.getStatisticsConfig().getOutlierFactor() != 0) {
-            CompareData cleaned = OutlierRemoverBimodal.removeOutliers(cd);
-            calculateNodeDifference(currentPredecessorNode, cleaned);
-         } else {
-            calculateNodeDifference(currentPredecessorNode, cd);
-         }
+         calculateNodeDifference(currentPredecessorNode, cd);
       }
    }
 
@@ -57,15 +52,30 @@ public abstract class DifferentNodeDeterminer {
          LOG.debug("Statistics is null, is different: {} vs {}", cd.getBeforeStat(), cd.getAfterStat());
          currentLevelDifferent.add(currentPredecessorNode);
       } else {
-         printComparisonInfos(currentPredecessorNode, cd.getBeforeStat(), cd.getAfterStat());
-         if (cd.getBeforeStat().getN() > 0 && cd.getAfterStat().getN() > 0) {
-            final Relation relation = StatisticUtil.isDifferent(cd, measurementConfig);
-            LOG.debug("Relation: {}", relation);
-            if (relation == Relation.UNEQUAL && needsEnoughTime(cd.getBeforeStat(), cd.getAfterStat())) {
-               addChildsToMeasurement(currentPredecessorNode, cd.getBeforeStat(), cd.getAfterStat());
-            } else {
-               LOG.info("No remeasurement");
-            }
+         final CompareData cleaned = removeOutliers(cd);
+         printComparisonInfos(currentPredecessorNode, cleaned.getBeforeStat(), cleaned.getAfterStat());
+         checkNodeDiffering(currentPredecessorNode, cleaned);
+      }
+   }
+
+   private CompareData removeOutliers(final CompareData cd) {
+      final CompareData cleaned;
+      if (measurementConfig.getStatisticsConfig().getOutlierFactor() != 0) {
+         cleaned = OutlierRemoverBimodal.removeOutliers(cd);
+      } else {
+         cleaned = cd;
+      }
+      return cleaned;
+   }
+
+   private void checkNodeDiffering(final CallTreeNode currentPredecessorNode, final CompareData cleaned) {
+      if (cleaned.getBeforeStat().getN() > 0 && cleaned.getAfterStat().getN() > 0) {
+         final Relation relation = StatisticUtil.isDifferent(cleaned, measurementConfig);
+         LOG.debug("Relation: {}", relation);
+         if (relation == Relation.UNEQUAL && needsEnoughTime(cleaned.getBeforeStat(), cleaned.getAfterStat())) {
+            addChildsToMeasurement(currentPredecessorNode, cleaned.getBeforeStat(), cleaned.getAfterStat());
+         } else {
+            LOG.info("No remeasurement");
          }
       }
    }
