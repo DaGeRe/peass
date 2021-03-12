@@ -117,7 +117,8 @@ public class ResultOrganizer {
                   saveResults(version, vmid, oneResultFile, oneResultData, testcaseList);
 
                   if (isUseKieker) {
-                     saveKiekerFiles(folder, folders.getFullResultFolder(testcase, mainVersion, version));
+                     File destFolder = folders.getFullResultFolder(testcase, mainVersion, version);
+                     saveKiekerFiles(folder, destFolder);
                   }
                } else {
                   LOG.error("No data - measurement failed?");
@@ -212,7 +213,11 @@ public class ResultOrganizer {
          FileUtils.deleteDirectory(kiekerFolder);
       } else {
          final File dest = new File(destFolder, kiekerFolder.getName());
-         kiekerFolder.renameTo(dest);
+         if (!kiekerFolder.renameTo(dest)) {
+            LOG.error("Renaming {} to {} failed",
+                  kiekerFolder.getAbsolutePath(),
+                  dest.getAbsolutePath());
+         }
       }
    }
 

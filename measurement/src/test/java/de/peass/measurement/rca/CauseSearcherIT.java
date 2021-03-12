@@ -48,7 +48,7 @@ public class CauseSearcherIT {
    private static final Logger LOG = LogManager.getLogger(CauseSearcherIT.class);
    
    public final static CauseSearcherConfig CAUSE_CONFIG_TESTME_COMPLETE = new CauseSearcherConfig(new TestCase("defaultpackage.TestMe", "testMe"), 
-         false, false, false, 0.1,
+         false, false, 0.1,
          false, false, RCAStrategy.COMPLETE);
    
    public static final File CURRENT = new File(new File("target"), "current");

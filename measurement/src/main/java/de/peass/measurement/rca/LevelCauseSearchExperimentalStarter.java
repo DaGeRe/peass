@@ -34,7 +34,7 @@ public class LevelCauseSearchExperimentalStarter {
 
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(15 * 1000 * 60, 5, true, version, version + "~1");
       measurementConfiguration.setUseKieker(true);
-      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, true, false, false, 0.1, false, false, RCAStrategy.COMPLETE);
+      final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, true, false, 0.1, false, false, RCAStrategy.COMPLETE);
       final CauseSearchFolders folders2 = new CauseSearchFolders(projectFolder);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders2);
 

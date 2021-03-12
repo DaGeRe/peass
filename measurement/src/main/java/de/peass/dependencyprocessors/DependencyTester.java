@@ -6,7 +6,6 @@ import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -28,7 +27,6 @@ import de.peass.measurement.organize.FolderDeterminer;
 import de.peass.measurement.organize.ResultOrganizer;
 import de.peass.measurement.organize.ResultOrganizerParallel;
 import de.peass.testtransformation.JUnitTestTransformer;
-import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 
 /**
@@ -183,8 +181,8 @@ public class DependencyTester implements KiekerResultHandler {
       return versions;
    }
 
-   private void runParallel(final File logFolder, final TestCase testcase, final int vmid, String[] versions) throws InterruptedException {
-      ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), false, testcase,
+   private void runParallel(final File logFolder, final TestCase testcase, final int vmid, final String[] versions) throws InterruptedException {
+      ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(), testcase,
             configuration.getIterations());
       currentOrganizer = organizer;
       Thread[] threads = new Thread[2];
@@ -217,7 +215,7 @@ public class DependencyTester implements KiekerResultHandler {
       }
    }
 
-   private void runSequential(final File logFolder, final TestCase testcase, final int vmid, String versions[])
+   private void runSequential(final File logFolder, final TestCase testcase, final int vmid, final String versions[])
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       for (String version : versions) {
          runOnce(testcase, version, vmid, logFolder);
@@ -251,6 +249,7 @@ public class DependencyTester implements KiekerResultHandler {
     * 
     * @param folder
     */
+   @Override
    public void handleKiekerResults(final String version, final File folder) {
 
    }

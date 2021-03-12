@@ -17,7 +17,6 @@ public class CauseSearcherConfig implements Serializable {
    private final TestCase testCase;
    private final boolean ignoreEOIs;
    private final boolean useAggregation;
-   private final boolean saveAll;
    private final boolean splitAggregated;
    private final double minTime;
    private final boolean calibrationRun;
@@ -29,7 +28,6 @@ public class CauseSearcherConfig implements Serializable {
    @JsonCreator
    public CauseSearcherConfig(@JsonProperty("testcase") final TestCase testCase,
          @JsonProperty("useAggregation") final boolean useAggregation,
-         @JsonProperty("saveAll") final boolean saveAll,
          @JsonProperty("splitAggregated") final boolean splitAggregated,
          @JsonProperty("minTime") final double minTime,
          @JsonProperty("calibrationRun") final boolean calibrationRun,
@@ -37,7 +35,6 @@ public class CauseSearcherConfig implements Serializable {
          @JsonProperty("rcaStrategy") final RCAStrategy rcaStrategy) {
       this.testCase = testCase;
       this.useAggregation = useAggregation;
-      this.saveAll = saveAll;
       this.splitAggregated = splitAggregated;
       this.minTime = minTime;
       this.calibrationRun = calibrationRun;
@@ -50,14 +47,14 @@ public class CauseSearcherConfig implements Serializable {
    }
    
    public CauseSearcherConfig(final TestCase test, final CauseSearcherConfigMixin config) {
-      this(test, !config.isUseNonAggregatedWriter(), !config.isSaveNothing(),
+      this(test, !config.isUseNonAggregatedWriter(), 
             !config.isNotSplitAggregated(), config.getMinTime(), config.isUseCalibrationRun(), !config.isUseEOIs(), 
             config.getStrategy());
       this.propertyFolder = config.getPropertyFolder();
    }
 
    public CauseSearcherConfig(final TestCase testCase, final CauseSearcherConfig causeConfig) {
-      this(testCase, causeConfig.isUseAggregation(), causeConfig.isSaveAll(), 
+      this(testCase, causeConfig.isUseAggregation(),
             causeConfig.isSplitAggregated(), causeConfig.getMinTime(), causeConfig.useCalibrationRun(), causeConfig.isIgnoreEOIs(), 
             causeConfig.getRcaStrategy());
    }
@@ -68,10 +65,6 @@ public class CauseSearcherConfig implements Serializable {
 
    public boolean isUseAggregation() {
       return useAggregation;
-   }
-
-   public boolean isSaveAll() {
-      return saveAll;
    }
 
    public boolean isSplitAggregated() {

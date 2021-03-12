@@ -13,9 +13,6 @@ public class CauseSearcherConfigMixin {
          "--useNonAggregatedWriter" }, description = "Whether to save non-aggregated JSON data for measurement results - if true, full kieker record data are stored")
    private boolean useNonAggregatedWriter = false;
 
-   @Option(names = { "-saveKieker", "--saveKieker" }, description = "Save no kieker results in order to use less space - default false")
-   private boolean saveNothing = false;
-
    @Option(names = { "-useEOIs",
          "--useEOIs" }, description = "Use EOIs - nodes will be considered different if their kieker pattern or ess differ (needs space and computation time for big trees)")
    private boolean useEOIs = false;
@@ -41,10 +38,6 @@ public class CauseSearcherConfigMixin {
 
    public boolean isUseNonAggregatedWriter() {
       return useNonAggregatedWriter;
-   }
-
-   public boolean isSaveNothing() {
-      return saveNothing;
    }
 
    public boolean isUseEOIs() {

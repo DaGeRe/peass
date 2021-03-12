@@ -101,7 +101,7 @@ public class CauseTester extends AdaptiveTester {
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
 
       currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart,
-            configuration.isUseKieker(), causeConfig.isSaveAll(), testcase,
+            configuration.isUseKieker(), configuration.isSaveAll(), testcase,
             configuration.getIterations());
       super.runOnce(testcase, version, vmid, logFolder);
    }
@@ -207,7 +207,7 @@ public class CauseTester extends AdaptiveTester {
 
       final MeasurementConfiguration config = new MeasurementConfiguration(15 * 1000 * 60, 15, true, version, version + "~1");
       config.setUseKieker(true);
-      final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, true, false, 0.01, false, false, RCAStrategy.COMPLETE);
+      final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, false, 0.01, false, false, RCAStrategy.COMPLETE);
       final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), config, causeConfig);
 
       final CallTreeNode node = new CallTreeNode("FileUploadTestCase#parseUpload",

@@ -33,6 +33,9 @@ public class MeasurementConfigurationMixin {
          "--removeSnapshots" }, description = "Activates removing SNAPSHOTS (if older versions should be analysed, this should be activated; for performance measurement in CI, this should not be activated)")
    protected boolean removeSnapshots = false;
 
+   @Option(names = { "-saveKieker", "--saveKieker" }, description = "Save no kieker results in order to use less space - default false")
+   private boolean saveNothing = false;
+   
    @Option(names = { "-record", "--record" }, description = "Kieker Record type to use for monitoring ")
    protected AllowedKiekerRecord record;
 
@@ -49,6 +52,14 @@ public class MeasurementConfigurationMixin {
 
    public int getWarmup() {
       return warmup;
+   }
+   
+   public boolean isSaveNothing() {
+      return saveNothing;
+   }
+   
+   public boolean isRemoveSnapshots() {
+      return removeSnapshots;
    }
 
    public int getIterations() {

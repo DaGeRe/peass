@@ -24,6 +24,7 @@ public class MeasurementConfiguration implements Serializable {
    private int repetitions = 1;
    private boolean logFullData = true;
    private boolean removeSnapshots = false;
+   private boolean useGC = true;
 
    // Kieker config
    private boolean useKieker = false;
@@ -33,7 +34,8 @@ public class MeasurementConfiguration implements Serializable {
    private boolean useCircularQueue = false;
    private boolean redirectToNull = true;
    private boolean enableAdaptiveMonitoring = false;
-   private boolean useGC = true;
+   private boolean saveAll = true;
+   
    private int kiekerAggregationInterval = 5000;
    private String javaVersion = System.getProperty("java.version");
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
@@ -80,6 +82,9 @@ public class MeasurementConfiguration implements Serializable {
       setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
 
+      saveAll = !mixin.isSaveNothing();
+      removeSnapshots = mixin.isRemoveSnapshots();
+      
       executionConfig.setVersion(executionMixin.getVersion());
       executionConfig.setVersionOld(executionMixin.getVersionOld());
       executionConfig.setStartversion(executionMixin.getStartversion());
@@ -142,7 +147,7 @@ public class MeasurementConfiguration implements Serializable {
       this.javaVersion = other.javaVersion;
       this.record = other.record;
       this.measurementStrategy = other.measurementStrategy;
-      
+      this.saveAll = other.saveAll;
    }
    
    public StatisticsConfiguration getStatisticsConfig() {
@@ -153,6 +158,14 @@ public class MeasurementConfiguration implements Serializable {
       this.statisticsConfig = statisticsConfig;
    }
 
+   public void setSaveAll(final boolean saveAll) {
+      this.saveAll = saveAll;
+   }
+   
+   public boolean isSaveAll() {
+      return saveAll;
+   }
+   
    /**
     * Whether to execute a GC before every iteration (bunch of repetitions)
     * 
