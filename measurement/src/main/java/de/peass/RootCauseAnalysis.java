@@ -8,7 +8,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.peass.config.MeasurementConfiguration;
-import de.peass.config.StatisticsConfigurationMixin;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.persistence.Version;
@@ -38,10 +37,6 @@ public class RootCauseAnalysis extends DependencyTestStarter {
    @Mixin
    private KiekerConfigMixin kiekerConfigMixin;
    
-   @Mixin
-   private StatisticsConfigurationMixin statisticConfigMixin;
-   
-
    public static void main(final String[] args) throws JAXBException, IOException {
       final RootCauseAnalysis command = new RootCauseAnalysis();
       final CommandLine commandLine = new CommandLine(command);

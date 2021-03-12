@@ -40,7 +40,7 @@ public class DependencyTestStarter extends PairProcessor {
    MeasurementConfigurationMixin measurementConfigMixin;
    
    @Mixin
-   private StatisticsConfigurationMixin statisticConfigMixin;
+   protected StatisticsConfigurationMixin statisticConfigMixin;
 
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
