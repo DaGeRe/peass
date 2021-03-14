@@ -72,7 +72,8 @@ public abstract class DifferentNodeDeterminer {
       if (cleaned.getBeforeStat().getN() > 0 && cleaned.getAfterStat().getN() > 0) {
          final Relation relation = StatisticUtil.isDifferent(cleaned, measurementConfig);
          LOG.debug("Relation: {}", relation);
-         if (relation == Relation.UNEQUAL && needsEnoughTime(cleaned.getBeforeStat(), cleaned.getAfterStat())) {
+         if ((relation == Relation.UNEQUAL || relation == Relation.GREATER_THAN || relation == Relation.LESS_THAN)
+               && needsEnoughTime(cleaned.getBeforeStat(), cleaned.getAfterStat())) {
             addChildsToMeasurement(currentPredecessorNode, cleaned.getBeforeStat(), cleaned.getAfterStat());
          } else {
             LOG.info("No remeasurement");
