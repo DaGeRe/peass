@@ -84,6 +84,9 @@ public class MeasurementConfiguration implements Serializable {
       setUseGC(mixin.isUseGC());
       setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
+      
+      statisticsConfig.setStatisticTest(statisticMixin.getStatisticTest());
+      statisticsConfig.setOutlierFactor(statisticMixin.getOutlierFactor());
 
       saveAll = !mixin.isSaveNothing();
       removeSnapshots = mixin.isRemoveSnapshots();
