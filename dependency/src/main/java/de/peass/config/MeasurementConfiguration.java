@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.peass.dependency.execution.ExecutionConfigMixin;
@@ -34,6 +35,8 @@ public class MeasurementConfiguration implements Serializable {
    private boolean useCircularQueue = false;
    private boolean redirectToNull = true;
    private boolean enableAdaptiveMonitoring = false;
+   
+   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
    private boolean saveAll = true;
    
    private int kiekerAggregationInterval = 5000;
