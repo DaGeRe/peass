@@ -69,19 +69,25 @@ public class ContinuousDependencyReader {
 
    private void partiallyLoadDependencies(final Dependencies dependencies) throws FileNotFoundException, Exception {
       final String lastVersionName = dependencies.getNewestVersion();
-      Version versionDependency = dependencies.getVersions().get(lastVersionName);
-      if (!lastVersionName.equals(executionConfig.getVersion()) || !versionDependency.getPredecessor().equals(executionConfig.getVersionOld())) {
-         File logFile = new File(getDependencyreadingFolder(), executionConfig.getVersion() + "_" + executionConfig.getVersionOld() + ".txt");
-         LOG.info("Executing regression test selection update (step 1) - Log goes to ", logFile.getAbsolutePath());
+      final Version versionDependency = dependencies.getVersions().get(lastVersionName);
+      final String predecessingVersionName = versionDependency.getPredecessor();
+      
+      if (!lastVersionName.equals(executionConfig.getVersion()) || !predecessingVersionName.equals(executionConfig.getVersionOld())) {
+         executePartialRTS(dependencies, lastVersionName);
+      }
+   }
 
-         try (LogRedirector director = new LogRedirector(logFile)) {
-            VersionIterator newIterator = getIterator(lastVersionName);
-            DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, dependencies.getUrl(), newIterator, executionConfig);
-            newIterator.goTo0thCommit();
+   private void executePartialRTS(final Dependencies dependencies, final String lastVersionName) throws FileNotFoundException {
+      File logFile = new File(getDependencyreadingFolder(), executionConfig.getVersion() + "_" + executionConfig.getVersionOld() + ".txt");
+      LOG.info("Executing regression test selection update (step 1) - Log goes to ", logFile.getAbsolutePath());
 
-            reader.readCompletedVersions(dependencies);
-            reader.readDependencies();
-         }
+      try (LogRedirector director = new LogRedirector(logFile)) {
+         VersionIterator newIterator = getIterator(lastVersionName);
+         DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, dependencies.getUrl(), newIterator, executionConfig);
+         newIterator.goTo0thCommit();
+
+         reader.readCompletedVersions(dependencies);
+         reader.readDependencies();
       }
    }
    
