@@ -109,7 +109,7 @@ public final class GitUtils {
       }
       final ProcessBuilder builder = new ProcessBuilder("git", "clone", clonedProject, goalFolder);
       builder.directory(projectFolderDest.getParentFile());
-      builder.start().waitFor();
+      StreamGobbler.showFullProcess(builder.start());
    }
 
    /**

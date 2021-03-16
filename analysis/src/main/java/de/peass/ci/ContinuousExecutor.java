@@ -25,6 +25,7 @@ import de.peass.measurement.analysis.ProjectStatistics;
 import de.peass.utils.Constants;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
+import de.peass.vcs.VersionControlSystem;
 import de.peass.vcs.VersionIteratorGit;
 import de.peran.AnalyseOneTest;
 
@@ -53,12 +54,13 @@ public class ContinuousExecutor {
       this.threads = threads;
       this.useViews = useViews;
 
-      localFolder = getLocalFolder(projectFolder);
-      projectFolderLocal = new File(localFolder, projectFolder.getName());
+      File vcsFolder = VersionControlSystem.findVCSFolder(projectFolder);
+      localFolder = ContinuousFolderUtil.getLocalFolder(vcsFolder);
+      projectFolderLocal = ContinuousFolderUtil.getProjectLocalFolder(localFolder, projectFolder);
       if (!localFolder.exists() || !projectFolderLocal.exists()) {
-         cloneProject(projectFolder, localFolder);
+         ContinuousFolderUtil.cloneProject(projectFolder, localFolder);
          if (!projectFolderLocal.exists()) {
-            throw new RuntimeException("Was not able to clone project!");
+            throw new RuntimeException("Was not able to clone project to " + projectFolderLocal.getAbsolutePath() + " (folder not existing)");
          }
       } else {
          GitUtils.pull(projectFolderLocal);
@@ -70,11 +72,10 @@ public class ContinuousExecutor {
       viewFolder.mkdir();
 
       propertyFolder = new File(localFolder, "properties");
-      
+
       version = measurementConfig.getVersion();
       versionOld = measurementConfig.getVersionOld();
    }
-
 
    public void execute() throws Exception {
       final File dependencyFile = new File(localFolder, "dependencies.json");
@@ -130,52 +131,6 @@ public class ContinuousExecutor {
       entries.add(new GitCommit(version, "", "", ""));
       final VersionIteratorGit iterator = new VersionIteratorGit(projectFolderLocal, entries, prevCommit);
       return iterator;
-   }
-
-   private static void cloneProject(final File cloneProjectFolder, final File localFolder) throws InterruptedException, IOException {
-      localFolder.mkdirs();
-      File gitFolder = new File(cloneProjectFolder, ".git");
-      if (gitFolder.exists()) {
-         LOG.info("Cloning using git clone");
-         final ProcessBuilder builder = new ProcessBuilder("git", "clone", cloneProjectFolder.getAbsolutePath());
-         builder.directory(localFolder);
-         builder.start().waitFor();
-      } else {
-         throw new RuntimeException("No git folder " + gitFolder.getAbsolutePath() + " present - "
-               + "currently, only git projects are supported");
-      }
-   }
-   
-   public static File getLocalFolder(final File projectFolder) {
-      return new File(projectFolder, ".." + File.separator + projectFolder.getName() + "_fullPeass");
-   }
-   
-   /**
-    * @deprecated Having a local Peass folder somewhere in the filesystem makes it way harder to copy files in remote execution.
-    * Therefore, just use projectFolder_fullPeass like in getLocalFolder(final File projectFolder)
-    */
-   @Deprecated
-   public static File getLocalFolder(final String name) {
-      final String homeFolderName = System.getenv("PEASS_HOME") != null ? System.getenv("PEASS_HOME") : System.getenv("HOME") + File.separator + ".peass" + File.separator;
-      final File peassFolder = new File(homeFolderName);
-
-      if (!peassFolder.exists()) {
-         peassFolder.mkdirs();
-      }
-      LOG.debug("PeASS-Folder: {} Exists: {}", peassFolder, peassFolder.exists());
-      LOG.debug("Folder: {}", name);
-
-      final File localFolder = new File(peassFolder, name + "_full");
-      return localFolder;
-   }
-
-   /**
-    * @deprecated Having a local Peass folder somewhere in the filesystem makes it way harder to copy files in remote execution.
-    * Therefore, just use projectFolder_fullPeass like in getLocalFolder(final File projectFolder)
-    */
-   @Deprecated
-   public File getLocalFolder() {
-      return getLocalFolder(projectFolder.getName());
    }
 
    public String getLatestVersion() {

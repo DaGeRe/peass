@@ -30,7 +30,6 @@ public enum VersionControlSystem {
 
    private static boolean parentFolderHasVCS(final File folder, final String vcsFileName) {
       File potentialVCSFile = new File(folder, vcsFileName);
-      System.out.println(potentialVCSFile.getAbsoluteFile());
       if (potentialVCSFile.exists()) {
          return true;
       } else {
@@ -40,7 +39,28 @@ public enum VersionControlSystem {
          } else {
             return false;
          }
-
+      }
+   }
+   
+   public static File findVCSFolder(final File folder) {
+      try {
+         return findVCSFolder(folder.getCanonicalFile(), ".git");
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+   }
+   
+   public static File findVCSFolder(final File folder, final String vcsFileName) {
+      File potentialVCSFile = new File(folder, vcsFileName);
+      if (potentialVCSFile.exists()) {
+         return folder;
+      } else {
+         File parentFile = folder.getParentFile();
+         if (parentFile != null) {
+            return findVCSFolder(parentFile, vcsFileName);
+         } else {
+            return null;
+         }
       }
    }
 
