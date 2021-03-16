@@ -17,22 +17,44 @@
 package de.peass.vcs;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Represents the used version control system
+ * 
  * @author reichelt
  *
  */
 public enum VersionControlSystem {
-	SVN, GIT;
+   SVN, GIT;
 
-	public static VersionControlSystem getVersionControlSystem(final File projectFolder) {
-		if (new File(projectFolder, ".svn").exists()) {
-			return SVN;
-		} else if (new File(projectFolder, ".git").exists()) {
-			return GIT;
-		} else {
-			throw new RuntimeException("Unknown version control system type in " + projectFolder.getAbsolutePath() + " - .git and .svn not found");
-		}
-	}
+   private static boolean parentFolderHasVCS(final File folder, final String vcsFileName) {
+      File potentialVCSFile = new File(folder, vcsFileName);
+      System.out.println(potentialVCSFile.getAbsoluteFile());
+      if (potentialVCSFile.exists()) {
+         return true;
+      } else {
+         File parentFile = folder.getParentFile();
+         if (parentFile != null) {
+            return parentFolderHasVCS(parentFile, vcsFileName);
+         } else {
+            return false;
+         }
+
+      }
+   }
+
+   public static VersionControlSystem getVersionControlSystem(final File projectFolder) {
+      try {
+         if (parentFolderHasVCS(projectFolder.getCanonicalFile(), ".svn")) {
+            return SVN;
+         } else if (parentFolderHasVCS(projectFolder.getCanonicalFile(), ".git")) {
+            return GIT;
+         } else {
+            throw new RuntimeException("Unknown version control system type in " + projectFolder.getAbsolutePath() + " - .git and .svn not found");
+         }
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+   }
 }
