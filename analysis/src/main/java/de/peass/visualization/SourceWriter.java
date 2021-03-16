@@ -69,7 +69,7 @@ class SourceWriter {
       final String key = KiekerPatternConverter.getKey(currentPattern);
       
       final File currentSourceFile = MethodChangeReader.getMethodMainFile(methodSourceFolder, version, clazzEntity);
-      final File oldSourceFile = MethodChangeReader.getMethodMainFile(methodSourceFolder, version, clazzEntity);
+      final File oldSourceFile = MethodChangeReader.getMethodOldFile(methodSourceFolder, version, clazzEntity);
       if (currentSourceFile.exists() && oldSourceFile.exists()) {
          node.setHasSourceChange(true);
          final String sourceCurrent = FileUtils.readFileToString(currentSourceFile, Charset.defaultCharset());
