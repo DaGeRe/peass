@@ -255,7 +255,8 @@ public class MavenTestExecutor extends TestExecutor {
          lastTmpFile = Files.createTempDirectory(folders.getKiekerTempFolder().toPath(), "kiekerTemp").toFile();
          for (final File module : getModules()) {
             editOneBuildfile(true, new File(module, "pom.xml"));
-            File potentialModuleFile = new File(module, "src/main/resources/module-info.java");
+            final File potentialModuleFile = new File(module, "src/main/java/module-info.java");
+            LOG.debug("Checking {}", potentialModuleFile.getAbsolutePath());
             if (potentialModuleFile.exists()) {
                ModuleInfoEditor.addKiekerRequires(potentialModuleFile);
             }
