@@ -56,7 +56,7 @@ public class ContinuousExecutor {
 
       File vcsFolder = VersionControlSystem.findVCSFolder(projectFolder);
       localFolder = ContinuousFolderUtil.getLocalFolder(vcsFolder);
-      projectFolderLocal = ContinuousFolderUtil.getProjectLocalFolder(localFolder, projectFolder);
+      projectFolderLocal = new File(localFolder, ContinuousFolderUtil.getSubFolderPath(projectFolder));
       if (!localFolder.exists() || !projectFolderLocal.exists()) {
          ContinuousFolderUtil.cloneProject(projectFolder, localFolder);
          if (!projectFolderLocal.exists()) {

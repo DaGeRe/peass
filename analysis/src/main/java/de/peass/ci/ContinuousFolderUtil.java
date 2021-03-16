@@ -11,18 +11,24 @@ import de.peass.vcs.VersionControlSystem;
 
 public enum ContinuousFolderUtil {
    ;
-   
+
    private static final Logger LOG = LogManager.getLogger(ContinuousExecutor.class);
-   
+
    public static File getLocalFolder(final File projectFolder) {
       return new File(projectFolder, ".." + File.separator + projectFolder.getName() + "_fullPeass");
    }
-   
-   public static File getProjectLocalFolder(final File localFolder, final File projectFolder) throws IOException {
+
+   public static String getSubFolderPath(final File projectFolder) throws IOException {
       File vcsFolder = VersionControlSystem.findVCSFolder(projectFolder);
       if (vcsFolder != null) {
-         String localSuffix = projectFolder.getCanonicalPath().substring(vcsFolder.getCanonicalPath().length() + 1);
-         return new File(localFolder, vcsFolder.getName() + File.separator + localSuffix);
+         String projectCanonicalPath = projectFolder.getCanonicalPath();
+         String vcsCanonicalPath = vcsFolder.getCanonicalPath();
+         if (projectCanonicalPath.length() > vcsCanonicalPath.length()) {
+            String localSuffix = projectCanonicalPath.substring(vcsCanonicalPath.length() + 1);
+            return vcsFolder.getName() + File.separator + localSuffix;
+         } else {
+            return vcsFolder.getName();
+         }
       } else {
          return null;
       }
