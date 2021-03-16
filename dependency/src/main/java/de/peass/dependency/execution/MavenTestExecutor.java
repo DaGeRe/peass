@@ -41,6 +41,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.moduleinfo.ModuleInfoEditor;
 import de.peass.testtransformation.JUnitTestTransformer;
 
 /**
@@ -254,6 +255,10 @@ public class MavenTestExecutor extends TestExecutor {
          lastTmpFile = Files.createTempDirectory(folders.getKiekerTempFolder().toPath(), "kiekerTemp").toFile();
          for (final File module : getModules()) {
             editOneBuildfile(true, new File(module, "pom.xml"));
+            File potentialModuleFile = new File(module, "src/main/resources/module-info.java");
+            if (potentialModuleFile.exists()) {
+               ModuleInfoEditor.addKiekerRequires(potentialModuleFile);
+            }
          }
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();
