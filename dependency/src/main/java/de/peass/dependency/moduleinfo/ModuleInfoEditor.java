@@ -29,7 +29,7 @@ public enum ModuleInfoEditor {
       Files.write(moduleInfoFile.toPath(), unit.toString().getBytes(StandardCharsets.UTF_8));
    }
 
-   private static void addRequiresKieker(ModuleDeclaration module) {
+   private static void addRequiresKieker(final ModuleDeclaration module) {
       ModuleRequiresDirective kiekerRequirement = new ModuleRequiresDirective();
       kiekerRequirement.setName("kieker");
       module.getDirectives().add(kiekerRequirement);

@@ -12,6 +12,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.measurement.rca.KiekerResultReader;
@@ -19,7 +20,6 @@ import de.peass.measurement.rca.data.CallTreeNode;
 import kieker.analysis.exception.AnalysisConfigurationException;
 import kieker.common.configuration.Configuration;
 import kieker.common.record.controlflow.OperationExecutionRecord;
-import kieker.monitoring.writer.filesystem.AggregatedTreeWriter;
 
 public class TestCompleteReading {
 

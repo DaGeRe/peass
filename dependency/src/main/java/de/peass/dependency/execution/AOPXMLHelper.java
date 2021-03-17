@@ -32,6 +32,9 @@ public class AOPXMLHelper {
       }
    }
 
+   public static final String AGGREGATED_WRITER = "de.dagere.kopeme.kieker.writer.AggregatedTreeWriter";
+   public static final String CHANGEABLE_WRITER = "de.dagere.kopeme.kieker.writer.ChangeableFolderWriter";
+
    public static void writeKiekerMonitoringProperties(final File goalFile, final JUnitTestTransformer transformer) throws IOException {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(goalFile))) {
          writer.write("kieker.monitoring.name=KIEKER-KoPeMe\n");
@@ -43,14 +46,14 @@ public class AOPXMLHelper {
             writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueFQN=java.util.concurrent.LinkedBlockingQueue\n");
          }
          if (transformer.isAggregatedWriter()) {
-            writer.write("kieker.monitoring.writer=kieker.monitoring.writer.filesystem.AggregatedTreeWriter\n");
-            writer.write("kieker.monitoring.writer.filesystem.AggregatedTreeWriter.writeInterval=" + transformer.getConfig().getKiekerAggregationInterval() + "\n");
+            writer.write("kieker.monitoring.writer=" + AGGREGATED_WRITER + "\n");
+            writer.write(AGGREGATED_WRITER + ".writeInterval=" + transformer.getConfig().getKiekerAggregationInterval() + "\n");
          } else {
-            writer.write("kieker.monitoring.writer=kieker.monitoring.writer.filesystem.ChangeableFolderWriter\n");
-            writer.write("kieker.monitoring.writer.filesystem.ChangeableFolderWriter.realwriter=FileWriter\n");
+            writer.write("kieker.monitoring.writer=" + CHANGEABLE_WRITER + "\n");
+            writer.write(CHANGEABLE_WRITER + ".realwriter=FileWriter\n");
          }
          if (transformer.isIgnoreEOIs()) {
-            writer.write("kieker.monitoring.writer.filesystem.AggregatedTreeWriter.ignoreEOIs=true\n");
+            writer.write(AGGREGATED_WRITER + ".ignoreEOIs=true\n");
          }
          if (transformer.getConfig().isEnableAdaptiveConfig()) {
             writer.write("kieker.monitoring.adaptiveMonitoring.enabled=true\n");
@@ -60,7 +63,7 @@ public class AOPXMLHelper {
 
          final int queueSize = 10000000;
          writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueSize=" + queueSize + "\n");
-         writer.write("kieker.monitoring.writer.filesystem.ChangeableFolderWriter.flush=false\n");
+         writer.write(CHANGEABLE_WRITER + ".flush=false\n");
          // writer.write("kieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler\n");
          writer.flush();
       }

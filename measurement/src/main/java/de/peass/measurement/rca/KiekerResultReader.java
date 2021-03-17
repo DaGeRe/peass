@@ -18,6 +18,9 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.kopeme.kieker.aggregateddata.AggregatedData;
+import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
+import de.dagere.kopeme.kieker.writer.AggregatedDataReader;
 import de.peass.dependency.analysis.KiekerReader;
 import de.peass.dependency.analysis.PeASSFilter;
 import de.peass.dependency.analysis.data.TestCase;
@@ -27,9 +30,6 @@ import de.peass.measurement.rca.kieker.DurationFilter;
 import de.peass.measurement.rca.kieker.KiekerPatternConverter;
 import kieker.analysis.AnalysisController;
 import kieker.analysis.exception.AnalysisConfigurationException;
-import kieker.monitoring.writer.filesystem.AggregatedDataReader;
-import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedData;
-import kieker.monitoring.writer.filesystem.aggregateddata.AggregatedDataNode;
 import kieker.tools.trace.analysis.filter.executionRecordTransformation.ExecutionRecordTransformationFilter;
 
 public class KiekerResultReader {

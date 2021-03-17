@@ -40,7 +40,7 @@ public class ArgLineBuilder {
          String writerConfig;
          String tempFolderPath = "'" + tempFolder.getAbsolutePath() + "'";
          if (testTransformer.isAggregatedWriter()) {
-            final String bulkFolder = "-Dkieker.monitoring.writer.filesystem.AggregatedTreeWriter.customStoragePath" + valueSeparator + tempFolderPath;
+            final String bulkFolder = "-D" + AOPXMLHelper.AGGREGATED_WRITER + ".customStoragePath" + valueSeparator + tempFolderPath;
             writerConfig = bulkFolder;
          } else {
             writerConfig = "";

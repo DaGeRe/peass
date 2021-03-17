@@ -2,7 +2,7 @@ package de.peass.example;
 
 import java.io.File;
 
-import kieker.monitoring.writer.filesystem.ChangeableFolderWriter;
+import de.dagere.kopeme.kieker.writer.ChangeableFolderWriter;
 
 public class CallerLongFor {
 
