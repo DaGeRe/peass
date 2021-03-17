@@ -36,7 +36,9 @@ class RequiredDependency{
       
       all.add(new RequiredDependency("org.apache.logging.log4j", "log4j-slf4j-impl", "2.14.0", "", null));
       
-      all.add(new RequiredDependency("org.aspectj", "aspectjweaver", "1.9.5", "", null));
+      all.add(new RequiredDependency("org.jctools", "jctools-core", "3.3.0", "", null));
+      
+      all.add(new RequiredDependency("org.aspectj", "aspectjweaver", "1.9.6", "", null));
       
       return all;
    }

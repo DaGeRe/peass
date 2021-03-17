@@ -3,13 +3,13 @@ package net.kieker.sourceinstrumentation;
 public enum AllowedKiekerRecord {
    OPERATIONEXECUTION("kieker.monitoring.probe.aspectj.operationExecution.OperationExecutionAspectFull", 
          "kieker.common.record.controlflow.OperationExecutionRecord"), 
-   REDUCED_OPERATIONEXECUTION("kieker.monitoring.probe.aspectj.operationExecution.ReducedOperationExecutionAspectFull",
-         "kieker.common.record.controlflow.ReducedOperationExecutionRecord");
+   REDUCED_OPERATIONEXECUTION("de.dagere.kopeme.kieker.record.probe.ReducedOperationExecutionAspectFull",
+         "de.dagere.kopeme.kieker.record.ReducedOperationExecutionRecord");
    
    private String fullName;
    private String record;
    
-   private AllowedKiekerRecord(String fullName, String record) {
+   private AllowedKiekerRecord(final String fullName, final String record) {
       this.fullName = fullName;
       this.record = record;
    }
