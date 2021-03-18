@@ -9,6 +9,7 @@ import org.apache.commons.math3.stat.descriptive.AggregateSummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
+import org.apache.commons.math3.stat.inference.MannWhitneyUTest;
 import org.apache.commons.math3.stat.inference.TTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +35,7 @@ public class StatisticUtil {
       return bimodalTTest(data, type1error);
    }
 
-   private static Relation bimodalTTest( final CompareData data, final double type1error) {
+   private static Relation bimodalTTest(final CompareData data, final double type1error) {
       final BimodalityTester tester = new BimodalityTester(data);
       if (tester.isTChange(type1error)) {
          return tester.getRelation();
@@ -269,11 +270,22 @@ public class StatisticUtil {
       }
       return shortenedValues;
    }
-   
-   public static Relation getTTestRelation(final CompareData data, final double type1error) {
-      final boolean tchange = new TTest().homoscedasticTTest(data.getBefore(), data.getAfter(), type1error);
+
+   public static Relation getTTestRelation(final CompareData cd, final double type1error) {
+      final boolean tchange = new TTest().homoscedasticTTest(cd.getBefore(), cd.getAfter(), type1error);
       if (tchange) {
-         return data.getAvgBefore() < data.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;
+         return cd.getAvgBefore() < cd.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;
+      } else {
+         return Relation.EQUAL;
+      }
+   }
+
+   public static Relation getMannWhitneyRelation(final CompareData cd, final double type1error) {
+      final double statistic = new MannWhitneyUTest().mannWhitneyUTest(cd.getBefore(), cd.getAfter());
+      LOG.trace(statistic);
+      final boolean mannchange = statistic < type1error;
+      if (mannchange) {
+         return cd.getAvgBefore() < cd.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;
       } else {
          return Relation.EQUAL;
       }
@@ -288,6 +300,17 @@ public class StatisticUtil {
       case T_TEST:
          return getTTestRelation(cd, measurementConfig.getType1error());
       case MANN_WHITNEY_TEST:
+         return getMannWhitneyRelation(cd, measurementConfig.getType1error());
+      case ANY:
+         boolean isChange = agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), measurementConfig) != Relation.EQUAL
+               || bimodalTTest(cd, measurementConfig.getType1error())  != Relation.EQUAL
+               || getTTestRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL
+               || getMannWhitneyRelation(cd, measurementConfig.getType1error())  != Relation.EQUAL;
+         if (isChange) {
+            return cd.getAvgBefore() < cd.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;
+         } else {
+            return Relation.EQUAL;
+         }
       default:
          throw new RuntimeException("Test " + measurementConfig.getStatisticsConfig().getStatisticTest() + " currently not implemented");
       }
