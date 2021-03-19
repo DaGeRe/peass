@@ -32,6 +32,11 @@ public class KiekerPatternConverter {
 
    }
 
+   /**
+    * Expects a call in the form 'de.test.Class#method(int,String)'
+    * @param kiekerCall
+    * @return
+    */
    public static String getKiekerPattern(final String kiekerCall) {
       final int parametersBegin = kiekerCall.indexOf('(');
       String namePart = kiekerCall.substring(0, parametersBegin);
