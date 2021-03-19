@@ -12,12 +12,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.peass.measurement.analysis.Relation;
-import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.serialization.MeasuredNode;
 import de.peass.measurement.rca.serialization.MeasuredValues;
 import de.peass.measurement.rca.treeanalysis.TreeUtil;
+import de.peass.statistics.StatisticUtil;
 import de.peass.visualization.GraphNode.State;
 
 public class NodePreparator {

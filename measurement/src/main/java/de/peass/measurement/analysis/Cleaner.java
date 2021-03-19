@@ -31,6 +31,7 @@ import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.TestData;
+import de.peass.statistics.StatisticUtil;
 import de.peass.utils.Constants;
 import de.peass.utils.OptionConstants;
 

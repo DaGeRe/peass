@@ -19,8 +19,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.peass.PeassGlobalInfos;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.peass.statistics.StatisticUtil;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 
 /**

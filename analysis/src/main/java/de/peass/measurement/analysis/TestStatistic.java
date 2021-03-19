@@ -13,9 +13,9 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.generated.Result;
 import de.peass.measurement.analysis.MultipleVMTestUtil;
 import de.peass.measurement.analysis.Relation;
-import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.statistics.ConfidenceIntervalInterpretion;
+import de.peass.statistics.StatisticUtil;
 import de.peran.FolderSearcher;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 

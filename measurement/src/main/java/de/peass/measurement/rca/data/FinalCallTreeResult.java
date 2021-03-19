@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 
-import de.peass.measurement.analysis.StatisticUtil;
+import de.peass.statistics.StatisticUtil;
 
 
 /**

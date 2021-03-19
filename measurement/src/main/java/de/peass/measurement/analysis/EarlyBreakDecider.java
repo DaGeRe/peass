@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.peass.config.MeasurementConfiguration;
+import de.peass.statistics.StatisticUtil;
 
 public class EarlyBreakDecider {
 

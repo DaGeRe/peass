@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
 import de.peass.breaksearch.FindLowestPossibleIterations;
-import de.peass.measurement.analysis.StatisticUtil;
+import de.peass.statistics.StatisticUtil;
 
 /**
  * Determines the minimal count of executions keeping the same result.

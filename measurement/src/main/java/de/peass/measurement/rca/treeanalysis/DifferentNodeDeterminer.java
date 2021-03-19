@@ -11,9 +11,9 @@ import org.apache.logging.log4j.Logger;
 
 import de.peass.config.MeasurementConfiguration;
 import de.peass.measurement.analysis.Relation;
-import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.data.CallTreeNode;
+import de.peass.statistics.StatisticUtil;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 import de.precision.analysis.repetitions.bimodal.OutlierRemoverBimodal;
 

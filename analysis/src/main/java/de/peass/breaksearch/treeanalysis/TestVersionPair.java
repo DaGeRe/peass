@@ -4,9 +4,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.peass.measurement.analysis.Relation;
-import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.serialization.MeasuredNode;
+import de.peass.statistics.StatisticUtil;
 
 class TestVersionPair {
    private List<CauseSearchData> datas = new LinkedList<>();

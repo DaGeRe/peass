@@ -10,6 +10,7 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.measurement.analysis.statistics.DescribedChunk;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.TestData;
+import de.peass.statistics.StatisticUtil;
 
 /**
  * Creates clean data based on measurement data containing all values, but only takes into account measurements where we can say by a given alpha and beta error, that the

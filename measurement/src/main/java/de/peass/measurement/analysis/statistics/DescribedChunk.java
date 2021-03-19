@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
-import de.peass.measurement.analysis.StatisticUtil;
+import de.peass.statistics.StatisticUtil;
 
 public class DescribedChunk {
    private static final Logger LOG = LogManager.getLogger(DescribedChunk.class);

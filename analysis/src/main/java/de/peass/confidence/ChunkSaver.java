@@ -19,8 +19,8 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.measurement.analysis.MeasurementFileFinder;
 import de.peass.measurement.analysis.Relation;
-import de.peass.measurement.analysis.StatisticUtil;
 import de.peass.measurement.analysis.statistics.DescribedChunk;
+import de.peass.statistics.StatisticUtil;
 
 /**
  * Saves chunks from cleaned data. Assumes that one clean-folder contains only one chunk (else, only one chunk is saved to cleaned data).

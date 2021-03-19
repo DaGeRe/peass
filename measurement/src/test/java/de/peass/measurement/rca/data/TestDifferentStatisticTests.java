@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import de.peass.config.ImplementedTests;
 import de.peass.measurement.analysis.Relation;
-import de.peass.measurement.analysis.StatisticUtil;
+import de.peass.statistics.StatisticUtil;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 
 public class TestDifferentStatisticTests {
