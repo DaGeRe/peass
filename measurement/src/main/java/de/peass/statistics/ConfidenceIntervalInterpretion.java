@@ -24,6 +24,11 @@ public class ConfidenceIntervalInterpretion {
       return compare(data, 96);
    }
 
+   public static Relation compare(final CompareData data, final double type1error) {
+      int confidenceIntervalPercentage = (int) (100 - type1error * 100);
+      return compare(data, confidenceIntervalPercentage);
+   }
+
    /**
     * Returns the relation of the two empirical results, based on confidence interval interpretation, viewed from the _first_ result. E.g. LESS_THAN means that the first result is
     * LESS_THAN the second, and GREATER_THAN means the first result is GREATER_THAN the second.
@@ -33,6 +38,9 @@ public class ConfidenceIntervalInterpretion {
     * @return
     */
    public static Relation compare(final CompareData data, final int percentage) {
+      if (percentage < 1 || percentage > 99) {
+         throw new RuntimeException("Percentage between 1 and 99 expected");
+      }
       final ConfidenceInterval intervalBefore = getConfidenceInterval(data.getBefore(), percentage);
       final ConfidenceInterval intervalAfter = getConfidenceInterval(data.getAfter(), percentage);
 

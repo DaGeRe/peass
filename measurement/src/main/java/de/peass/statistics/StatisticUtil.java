@@ -267,14 +267,14 @@ public class StatisticUtil {
       case MANN_WHITNEY_TEST:
          return getMannWhitneyRelation(cd, measurementConfig.getType1error());
       case CONFIDENCE_INTERVAL:
-         return ConfidenceIntervalInterpretion.compare(cd);
+         return ConfidenceIntervalInterpretion.compare(cd, measurementConfig.getType1error());
       case ANY:
          LOG.info("Test results ");
          LOG.info("Agnostic t: {}", agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), measurementConfig) != Relation.EQUAL);
          LOG.info("Bimodal T: {}", bimodalTTest(cd, measurementConfig.getType1error()) != Relation.EQUAL);
          LOG.info("T Test: {}", getTTestRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL);
          LOG.info("Mann-Whitney: {}", getMannWhitneyRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL);
-         LOG.info("Confidence interval: {}", ConfidenceIntervalInterpretion.compare(cd));
+         LOG.info("Confidence interval: {}", ConfidenceIntervalInterpretion.compare(cd, measurementConfig.getType1error()));
          boolean isChange = agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), measurementConfig) != Relation.EQUAL
                || bimodalTTest(cd, measurementConfig.getType1error()) != Relation.EQUAL
                || getTTestRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL

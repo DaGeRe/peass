@@ -38,6 +38,14 @@ public class TestDifferentStatisticTests {
       TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(ImplementedTests.BIMODAL_T_TEST);
       Relation relation = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG);
       Assert.assertEquals(Relation.LESS_THAN, relation);
+      
+      TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(ImplementedTests.MANN_WHITNEY_TEST);
+      Relation relationMannWhitney = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG);
+      Assert.assertEquals(Relation.LESS_THAN, relationMannWhitney);
+      
+      TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(ImplementedTests.CONFIDENCE_INTERVAL);
+      Relation relationConfidence = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG);
+      Assert.assertEquals(Relation.EQUAL, relationConfidence);
    }
 
    private void buildBimodalMeasurementValues(final CallTreeNode node) {
