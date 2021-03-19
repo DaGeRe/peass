@@ -9,17 +9,14 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.KiekerReader;
 import de.peass.dependency.analysis.ModuleClassMapping;
-import de.peass.dependency.analysis.PeASSFilter;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
-import kieker.analysis.AnalysisController;
+import de.peass.measurement.rca.kiekerReading.KiekerDurationReader;
 import kieker.analysis.exception.AnalysisConfigurationException;
-import kieker.tools.trace.analysis.filter.traceReconstruction.TraceReconstructionFilter;
 
 public class TreeReader extends KiekerResultManager {
 
@@ -53,20 +50,11 @@ public class TreeReader extends KiekerResultManager {
    }
 
    private CallTreeNode readTree(final TestCase testcase, final File kiekerTraceFolder) throws AnalysisConfigurationException, IOException, XmlPullParserException {
-      KiekerReader reader = new KiekerReader(kiekerTraceFolder);
-      reader.initBasic();
-      TraceReconstructionFilter traceReconstructionFilter = reader.initTraceReconstruction();
-
       final ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder());
       
-      AnalysisController analysisController = reader.getAnalysisController();
-      final TreeFilter treeFilter = new TreeFilter(null, analysisController, testcase, ignoreEOIs, config, mapping);
-      analysisController.connect(traceReconstructionFilter, TraceReconstructionFilter.OUTPUT_PORT_NAME_EXECUTION_TRACE,
-            treeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
+      TreeStage stage = KiekerDurationReader.executeDurationStage(kiekerTraceFolder, null, testcase, ignoreEOIs, config, mapping);
 
-      analysisController.run();
-
-      CallTreeNode root = treeFilter.getRoot();
+      CallTreeNode root = stage.getRoot();
       if (root == null) {
          throw new RuntimeException("An error occured - root node of " + testcase + " could not be identified!");
       }

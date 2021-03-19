@@ -70,8 +70,4 @@ public class KiekerReader {
    public AnalysisController getAnalysisController() {
       return analysisController;
    }
-
-   public ExecutionRecordTransformationFilter getExecutionFilter() {
-      return executionRecordTransformationFilter;
-   }
 }

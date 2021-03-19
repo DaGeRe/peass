@@ -24,15 +24,20 @@ public class KiekerReaderConfiguration extends Configuration {
    }
 
    public PeassStage exampleReader(final File kiekerTraceFolder, final String prefix, final ModuleClassMapping mapping) {
-      final ExecutionRecordTransformationStage executionRecordTransformationStage = prepareTillExecutions(kiekerTraceFolder);
-      
-      TraceReconstructionStage traceReconstructionStage = new TraceReconstructionStage(systemModelRepositoryNew, TimeUnit.MILLISECONDS, false, Long.MAX_VALUE);
-      this.connectPorts(executionRecordTransformationStage.getOutputPort(), traceReconstructionStage.getInputPort());
+      TraceReconstructionStage traceReconstructionStage = prepareTillExecutionTrace(kiekerTraceFolder);
 
       PeassStage myStage = new PeassStage(systemModelRepositoryNew, prefix, mapping);
       this.connectPorts(traceReconstructionStage.getExecutionTraceOutputPort(), myStage.getInputPort());
 
       return myStage;
+   }
+
+   protected TraceReconstructionStage prepareTillExecutionTrace(final File kiekerTraceFolder) {
+      final ExecutionRecordTransformationStage executionRecordTransformationStage = prepareTillExecutions(kiekerTraceFolder);
+      
+      TraceReconstructionStage traceReconstructionStage = new TraceReconstructionStage(systemModelRepositoryNew, TimeUnit.MILLISECONDS, false, Long.MAX_VALUE);
+      this.connectPorts(executionRecordTransformationStage.getOutputPort(), traceReconstructionStage.getInputPort());
+      return traceReconstructionStage;
    }
    
    protected ExecutionRecordTransformationStage prepareTillExecutions(final File kiekerTraceFolder) {
