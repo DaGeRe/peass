@@ -3,7 +3,6 @@ package de.peass.statistics;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.distribution.TDistribution;
 import org.apache.commons.math3.stat.descriptive.AggregateSummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -167,43 +166,8 @@ public class StatisticUtil {
          if (Math.abs(tValue) < 10) {
             r1 = Relation.UNKOWN;
          }
-         final Relation r2 = isConfidenceIntervalOverlap(statisticsPrev, statisticsVersion, measurementConfig.getType2error());
-         final Relation result = ((r1 == r2) && (r2 == Relation.UNEQUAL)) ? Relation.UNEQUAL : Relation.UNKOWN;
-         return result;
+         return r1;
       }
-   }
-
-   public static Relation isConfidenceIntervalOverlap(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final double confidenceLevel) {
-      final double confidenceSpreadPrev = getConfidenceSpread(statisticsPrev, confidenceLevel);
-      final double confidenceSpreadVersion = getConfidenceSpread(statisticsVersion, confidenceLevel);
-      final double lowerPrev = statisticsPrev.getMean() - confidenceSpreadPrev;
-      final double upperVersion = statisticsVersion.getMean() + confidenceSpreadVersion;
-      final double lowerVersion = statisticsVersion.getMean() - confidenceSpreadVersion;
-      final double upperPrev = statisticsPrev.getMean() + confidenceSpreadPrev;
-      if (statisticsPrev.getMean() > statisticsVersion.getMean()) {
-         if (lowerPrev > upperVersion) {
-            return Relation.UNEQUAL;
-         } else {
-            return Relation.EQUAL;
-         }
-      } else {
-
-         if (lowerVersion > upperPrev) {
-            return Relation.UNEQUAL;
-         } else {
-            return Relation.EQUAL;
-         }
-      }
-   }
-
-   public static double getConfidenceSpread(final StatisticalSummary statistics, final double confidenceLevel) {
-      final double standarderror = Math.sqrt(statistics.getStandardDeviation() * statistics.getStandardDeviation() / statistics.getN());
-      // final TDistribution tDistribution = new TDistribution(null, statistics.getN());
-      final NormalDistribution tDistribution = new NormalDistribution();
-      final double areaSize = (1 - confidenceLevel) / 2;
-      final double criticalValue = Math.abs(tDistribution.inverseCumulativeProbability(areaSize));
-      // System.out.println(standarderror + " " + criticalValue);
-      return criticalValue * standarderror;
    }
 
    public static Result shortenResult(final Result result, final int start, final int end) {

@@ -10,29 +10,6 @@ import de.peass.statistics.StatisticUtil;
 public class TestStatisticUtil {
 
    @Test
-   public void testConfidenceInterval() {
-      final double[] values = new double[] { 1.0, 1.1, 1.2, 1.2, 1.1 };
-      final DescriptiveStatistics statistics1 = new DescriptiveStatistics(values);
-      System.out.println(statistics1.getMean() + " " + statistics1.getStandardDeviation());
-
-      Assert.assertEquals(0.06, StatisticUtil.getConfidenceSpread(statistics1, 0.9), 0.01);
-      Assert.assertEquals(0.07, StatisticUtil.getConfidenceSpread(statistics1, 0.95), 0.01);
-      Assert.assertEquals(0.09, StatisticUtil.getConfidenceSpread(statistics1, 0.99), 0.01);
-   }
-   
-   @Test
-   public void testConfidenceOverlap() {
-      final double[] values = new double[] { 1.0, 1.1, 1.2, 1.2, 1.1 };
-      final double[] values2 = new double[] { 1.3, 1.3, 1.5, 1.3, 1.3 };
-      final DescriptiveStatistics statistics1 = new DescriptiveStatistics(values);
-      final DescriptiveStatistics statistics2 = new DescriptiveStatistics(values2);
-      
-      Assert.assertEquals(Relation.UNEQUAL, StatisticUtil.isConfidenceIntervalOverlap(statistics1, statistics2, 0.99));
-      Assert.assertEquals(Relation.UNEQUAL, StatisticUtil.isConfidenceIntervalOverlap(statistics2, statistics1, 0.99));
-      Assert.assertEquals(Relation.EQUAL, StatisticUtil.isConfidenceIntervalOverlap(statistics1, statistics1, 0.99));
-   }
-
-   @Test
    public void testAlternativeT() {
       final double[] vals = new double[] { 1.1, 1.1, 1.2, 1.3, 1.4, 1.1, 1.2, 1.3, 1.4, 1.23, 1.1, 1.1, 1.2, 1.3, 1.4, 1.1, 1.2, 1.3, 1.4, 1.23 };
       final double[] vals2 = new double[] { 1.3, 1.1, 1.2, 1.5, 1.4, 1.2, 1.3, 1.5, 1.4, 1.4 };
