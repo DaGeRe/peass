@@ -59,7 +59,7 @@ public class TestPeASSFilter {
       final ModuleClassMapping mapping = new ModuleClassMapping(manager.getExecutor());
       final List<TraceElement> referenceTrace = new CalledMethodLoader(kiekerFolder, mapping).getShortTrace("");
 
-      for (int i = 1; i <= 5; i++) {
+      for (int i = 1; i <= 3; i++) {
          final List<TraceElement> compareTrace = regenerateTrace(manager, ts, testcase, mapping, i);
          
          LOG.debug("Old");

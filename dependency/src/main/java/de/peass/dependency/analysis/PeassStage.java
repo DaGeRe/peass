@@ -1,19 +1,3 @@
-/**
- *     This file is part of PerAn.
- *
- *     PerAn is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     PerAn is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
- */
 package de.peass.dependency.analysis;
 
 import java.util.ArrayList;
@@ -29,27 +13,14 @@ import org.apache.logging.log4j.Logger;
 import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TraceElement;
-import kieker.analysis.IProjectContext;
-import kieker.analysis.plugin.annotation.InputPort;
-import kieker.analysis.plugin.annotation.Plugin;
-import kieker.analysis.plugin.filter.AbstractFilterPlugin;
-import kieker.common.configuration.Configuration;
-import kieker.tools.trace.analysis.systemModel.Execution;
-import kieker.tools.trace.analysis.systemModel.ExecutionTrace;
+import kieker.analysis.trace.AbstractTraceProcessingStage;
+import kieker.model.repository.SystemModelRepository;
+import kieker.model.system.model.Execution;
+import kieker.model.system.model.ExecutionTrace;
 
-/**
- * Loads all methods for parsing the trace
- * 
- * @author reichelt
- *
- */
-@Plugin(description = "A filter to transform PeASS-Traces")
-@Deprecated
-public class PeASSFilter extends AbstractFilterPlugin {
-   
-   private static final Logger LOG = LogManager.getLogger(PeASSFilter.class);
-   
-   public static final String INPUT_EXECUTION_TRACE = "INPUT_EXECUTION_TRACE";
+public class PeassStage extends AbstractTraceProcessingStage<ExecutionTrace> {
+
+   private static final Logger LOG = LogManager.getLogger(PeassStage.class);
 
    private final Map<ChangedEntity, Set<String>> classes = new HashMap<>();
    private final ArrayList<TraceElement> calls = new ArrayList<>();
@@ -58,19 +29,14 @@ public class PeASSFilter extends AbstractFilterPlugin {
 
    private final static int CALLCOUNT = 10000000;
 
-   public PeASSFilter(final String prefix, final Configuration configuration, final IProjectContext projectContext, final ModuleClassMapping mapping) {
-      super(configuration, projectContext);
+   public PeassStage(final SystemModelRepository systemModelRepository, final String prefix, final ModuleClassMapping mapping) {
+      super(systemModelRepository);
       this.prefix = prefix;
       this.mapping = mapping;
    }
 
    @Override
-   public Configuration getCurrentConfiguration() {
-      return super.configuration;
-   }
-
-   @InputPort(name = INPUT_EXECUTION_TRACE, eventTypes = { ExecutionTrace.class })
-   public void handleInputs(final ExecutionTrace trace) {
+   protected void execute(final ExecutionTrace trace) throws Exception {
       LOG.info("Trace: " + trace.getTraceId());
 
       for (final Execution execution : trace.getTraceAsSortedExecutionSet()) {
@@ -95,7 +61,7 @@ public class PeASSFilter extends AbstractFilterPlugin {
                   && !methodname.equals("getRepetitions")
                   && !methodname.equals("getDataCollectors")) {
                final TraceElement traceelement = buildTraceElement(execution, fullClassname, methodname);
-               
+
                calls.add(traceelement);
                // final String clazzFilename = ClazzFinder.getClassFilename(projectFolder, fullClassname);
                final String outerClazzName = ClazzFileFinder.getOuterClass(fullClassname);
@@ -135,5 +101,4 @@ public class PeASSFilter extends AbstractFilterPlugin {
    public Map<ChangedEntity, Set<String>> getCalledMethods() {
       return classes;
    }
-
 }

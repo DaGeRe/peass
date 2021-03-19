@@ -21,16 +21,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedData;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
 import de.dagere.kopeme.kieker.writer.AggregatedDataReader;
-import de.peass.dependency.analysis.KiekerReader;
-import de.peass.dependency.analysis.PeASSFilter;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.measurement.rca.data.CallTreeNode;
-import de.peass.measurement.rca.kieker.DurationFilter;
 import de.peass.measurement.rca.kieker.KiekerPatternConverter;
-import kieker.analysis.AnalysisController;
+import de.peass.measurement.rca.kiekerReading.KiekerDurationReader;
 import kieker.analysis.exception.AnalysisConfigurationException;
-import kieker.tools.trace.analysis.filter.executionRecordTransformation.ExecutionRecordTransformationFilter;
 
 public class KiekerResultReader {
 
@@ -125,15 +121,7 @@ public class KiekerResultReader {
       }
    }
 
-   public void readNonAggregated(final File kiekerTraceFile) throws AnalysisConfigurationException {
-      final KiekerReader reader = new KiekerReader(kiekerTraceFile);
-      reader.initBasic();
-      final AnalysisController analysisController = reader.getAnalysisController();
-
-      final DurationFilter kopemeFilter = new DurationFilter(includedNodes, analysisController, version);
-      analysisController.connect(reader.getExecutionFilter(), ExecutionRecordTransformationFilter.OUTPUT_PORT_NAME_EXECUTIONS,
-            kopemeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
-
-      analysisController.run();
+   public void readNonAggregated(final File kiekerTraceFolder) throws AnalysisConfigurationException {
+      KiekerDurationReader.executeDurationStage(kiekerTraceFolder, includedNodes, version);
    }
 }

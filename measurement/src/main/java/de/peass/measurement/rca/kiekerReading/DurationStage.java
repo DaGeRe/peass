@@ -1,4 +1,4 @@
-package de.peass.measurement.rca.kieker;
+package de.peass.measurement.rca.kiekerReading;
 
 import java.util.Set;
 
@@ -6,33 +6,27 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.peass.measurement.rca.data.CallTreeNode;
-import kieker.analysis.IProjectContext;
-import kieker.analysis.plugin.annotation.InputPort;
-import kieker.analysis.plugin.annotation.Plugin;
-import kieker.analysis.plugin.filter.AbstractFilterPlugin;
-import kieker.common.configuration.Configuration;
-import kieker.tools.trace.analysis.systemModel.Execution;
+import kieker.analysis.trace.AbstractTraceProcessingStage;
+import kieker.model.repository.SystemModelRepository;
+import kieker.model.system.model.Execution;
 
-@Plugin(description = "A filter to get durations from execution traces")
-public class DurationFilter extends AbstractFilterPlugin {
+public class DurationStage extends AbstractTraceProcessingStage<Execution> {
 
-   private static final Logger LOG = LogManager.getLogger(DurationFilter.class);
-
-   public static final String INPUT_EXECUTION_TRACE = "INPUT_EXECUTION_TRACE";
+   private static final Logger LOG = LogManager.getLogger(DurationStage.class);
 
    private final Set<CallTreeNode> measuredNodes;
    private final String version;
 
-   public DurationFilter(final Set<CallTreeNode> measuredNodes, final IProjectContext projectContext, final String version) {
-      super(new Configuration(), projectContext);
+   public DurationStage(final SystemModelRepository systemModelRepository, final Set<CallTreeNode> measuredNodes, final String version) {
+      super(systemModelRepository);
       this.measuredNodes = measuredNodes;
       this.version = version;
 
       measuredNodes.forEach(node -> node.newVM(version));
    }
 
-   @InputPort(name = INPUT_EXECUTION_TRACE, eventTypes = { Execution.class })
-   public void handleInputs(final Execution execution) {
+   @Override
+   protected void execute(final Execution execution) throws Exception {
       LOG.trace("Trace: " + execution.getTraceId());
 
       final String fullClassname = execution.getOperation().getComponentType().getFullQualifiedName().intern();
@@ -52,9 +46,18 @@ public class DurationFilter extends AbstractFilterPlugin {
       }
    }
 
-   @Override
-   public Configuration getCurrentConfiguration() {
-      return super.configuration;
-   }
+   public static class DurationStageFactory {
+      private final Set<CallTreeNode> measuredNodes;
+      private final String version;
 
+      public DurationStageFactory(final Set<CallTreeNode> measuredNodes, final String version) {
+         this.measuredNodes = measuredNodes;
+         this.version = version;
+      }
+      
+      public DurationStage getStage(final SystemModelRepository systemModelRepository) {
+         return new DurationStage(systemModelRepository, measuredNodes, version);
+      }
+
+   }
 }

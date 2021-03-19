@@ -28,8 +28,9 @@ public class TestTraceReading {
 
    private static final Logger LOG = LogManager.getLogger(TestTraceReading.class);
 
-   private static final File EXAMPLE_TRACE_FOLDER = new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "kieker-example");
-   private static final File EXAMPLE_SOURCE_FOLDER = new File("src" + File.separator + "test" + File.separator + "java");
+   private static File TEST_FOLDER = new File("src" + File.separator + "test");
+   private static final File EXAMPLE_TRACE_FOLDER = new File(TEST_FOLDER, "resources" + File.separator + "kieker-example");
+   private static final File EXAMPLE_SOURCE_FOLDER = new File(TEST_FOLDER, "java");
 
    @Test
    public void testSimpleTraceReading() throws ParseException, IOException {

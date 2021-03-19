@@ -89,6 +89,12 @@
 			<version>1.15-SNAPSHOT</version>
 			<classifier>aspectj</classifier>
 		</dependency>
+		<dependency>
+			<groupId>net.sourceforge.teetime</groupId>
+			<artifactId>teetime</artifactId>
+			<version>3.0</version>
+		</dependency>
+		
 		<!-- Normally, we just use log4j2. Since kieker relies on slf4j, we need 
 			to add the bridge -->
 		<dependency>

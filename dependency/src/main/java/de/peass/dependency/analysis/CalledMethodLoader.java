@@ -30,10 +30,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TraceElement;
-import kieker.analysis.AnalysisController;
 import kieker.analysis.exception.AnalysisConfigurationException;
-import kieker.common.configuration.Configuration;
-import kieker.tools.trace.analysis.filter.traceReconstruction.TraceReconstructionFilter;
 
 /**
  * Loads the methods that have been called from an given kieker-trace
@@ -70,7 +67,7 @@ public class CalledMethodLoader {
       try (PrintStream kiekerOutStream = new PrintStream(kiekerOutputFile)) {
          System.setOut(kiekerOutStream);
          System.setErr(kiekerOutStream);
-         final PeASSFilter peassFilter = executePeassFilter(null);
+         final PeassStage peassFilter = executePeassFilter(null);
          return peassFilter.getCalledMethods();
       } catch (IllegalStateException | AnalysisConfigurationException | FileNotFoundException e) {
          e.printStackTrace();
@@ -95,7 +92,7 @@ public class CalledMethodLoader {
 
          LOG.debug("Größe: {} ({}) Ordner: {}", sizeInMB, size, kiekerTraceFolder);
          if (sizeInMB < TRACE_MAX_SIZE) {
-            final PeASSFilter peassFilter = executePeassFilter(prefix);
+            final PeassStage peassFilter = executePeassFilter(prefix);
             return peassFilter.getCalls();
          } else {
             LOG.error("Trace size: {} MB - skipping", sizeInMB);
@@ -107,23 +104,9 @@ public class CalledMethodLoader {
       }
    }
 
-   private PeASSFilter executePeassFilter(final String prefix) throws AnalysisConfigurationException {
-      KiekerReader reader = new KiekerReader(kiekerTraceFolder);
-      reader.initBasic();
-      TraceReconstructionFilter traceReconstructionFilter = reader.initTraceReconstruction();
-
-      AnalysisController analysisController = reader.getAnalysisController();
-
-      // TODO In case of error, logging for TraceReconstructionFilter should be disabled, since this produces huge traces
-      // and errors are expected (if calls get a timeout)
-      final PeASSFilter kopemeFilter = new PeASSFilter(prefix, new Configuration(), analysisController, mapping);
-      analysisController.connect(traceReconstructionFilter, TraceReconstructionFilter.OUTPUT_PORT_NAME_EXECUTION_TRACE,
-            kopemeFilter, PeASSFilter.INPUT_EXECUTION_TRACE);
-
-      analysisController.run();
-
-      reader.analysisController.terminate();
-      return kopemeFilter;
+   private PeassStage executePeassFilter(final String prefix) throws AnalysisConfigurationException {
+      PeassStage peassStage = KiekerReaderNew.getPeassStage(kiekerTraceFolder, prefix, mapping);
+      return peassStage;
    }
 
    public static void main(final String[] args) {
