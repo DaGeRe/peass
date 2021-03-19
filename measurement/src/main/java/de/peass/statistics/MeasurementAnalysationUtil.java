@@ -1,4 +1,4 @@
-package de.peass.measurement.analysis.statistics;
+package de.peass.statistics;
 
 import java.io.File;
 import java.util.Collection;
@@ -29,34 +29,32 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.peass.statistics.ConfidenceInterval;
-import de.peass.statistics.PerformanceChange;
 
 public final class MeasurementAnalysationUtil {
 
 	private static final class DummyStatistic implements StorelessUnivariateStatistic {
       @Override
-      public double evaluate(double[] values, int begin, int length) throws MathIllegalArgumentException {
+      public double evaluate(final double[] values, final int begin, final int length) throws MathIllegalArgumentException {
          return 0;
       }
 
       @Override
-      public double evaluate(double[] values) throws MathIllegalArgumentException {
+      public double evaluate(final double[] values) throws MathIllegalArgumentException {
          return 0;
       }
 
       @Override
-      public void incrementAll(double[] values, int start, int length) throws MathIllegalArgumentException {
+      public void incrementAll(final double[] values, final int start, final int length) throws MathIllegalArgumentException {
          // TODO Auto-generated method stub
          
       }
 
       @Override
-      public void incrementAll(double[] values) throws MathIllegalArgumentException {
+      public void incrementAll(final double[] values) throws MathIllegalArgumentException {
       }
 
       @Override
-      public void increment(double d) {
+      public void increment(final double d) {
       }
 
       @Override
@@ -105,42 +103,6 @@ public final class MeasurementAnalysationUtil {
 			}
 		}
 		return data;
-	}
-
-	public static ChangeData getChanges(final File[] files) throws JAXBException {
-		final ChangeData revisionChangeMap = new ChangeData();
-
-		int fileCount = 0;
-		for (int i = 0; i < files.length; i++) {
-			final LinkedHashMap<PerformanceChange, File> allChanges = new LinkedHashMap<>();
-			final File file = files[i];
-			// allChanges.put(file, new LinkedList<>());
-			LOG.debug("Analysiere: {}", file);
-			if (file.isDirectory()) {
-				final Map<File, Kopemedata> dataList = getData(file);
-				fileCount += dataList.size();
-				int finishedFiles = 0;
-				for (final Map.Entry<File, Kopemedata> data : dataList.entrySet()) {
-					// if (data.getKey().getName().contains("testMakeDirectoryOnly")){
-					LOG.debug("Analysiere {} / {} {} ", finishedFiles, dataList.size(), data.getKey());
-					final List<PerformanceChange> currentChanges = analyzeKopemeData(data.getValue());
-					currentChanges.forEach(change -> allChanges.put(change, file));
-					finishedFiles++;
-					// }
-				}
-			} else {
-				LOG.error("{} ist kein Verzeichnis.", file);
-			}
-			LOG.info("Änderungen: {}  / {} (Versionen {} bis {})", allChanges.size(), fileCount, earliestVersion, lastVersion);
-
-			for (final Map.Entry<PerformanceChange, File> entry : allChanges.entrySet()) {
-				revisionChangeMap.addChange(entry.getKey(), entry.getValue());
-			}
-
-			LOG.debug("Änderungen in Versionen: {}", revisionChangeMap.getAllChanges().size());
-		}
-
-		return revisionChangeMap;
 	}
 
 	public static List<PerformanceChange> analyzeKopemeData(final Kopemedata data) {

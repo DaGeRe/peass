@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.kopeme.generated.Result;
 import de.peass.analysis.changes.ProjectChanges;
-import de.peass.analysis.statistics.ConfidenceIntervalInterpretion;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.persistence.Dependencies;
@@ -29,6 +28,7 @@ import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.MeanCoVData;
 import de.peass.measurement.analysis.statistics.MeanHistogramData;
 import de.peass.measurement.analysis.statistics.TestData;
+import de.peass.statistics.ConfidenceIntervalInterpretion;
 import de.peass.utils.Constants;
 import de.peran.AnalyseOneTest;
 import de.peran.FolderSearcher;

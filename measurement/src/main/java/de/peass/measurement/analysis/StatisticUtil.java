@@ -18,6 +18,7 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.peass.config.MeasurementConfiguration;
+import de.peass.statistics.ConfidenceIntervalInterpretion;
 import de.precision.analysis.repetitions.bimodal.BimodalityTester;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 
@@ -301,11 +302,20 @@ public class StatisticUtil {
          return getTTestRelation(cd, measurementConfig.getType1error());
       case MANN_WHITNEY_TEST:
          return getMannWhitneyRelation(cd, measurementConfig.getType1error());
+      case CONFIDENCE_INTERVAL:
+         return ConfidenceIntervalInterpretion.compare(cd);
       case ANY:
+         LOG.info("Test results ");
+         LOG.info("Agnostic t: {}", agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), measurementConfig) != Relation.EQUAL);
+         LOG.info("Bimodal T: {}", bimodalTTest(cd, measurementConfig.getType1error()) != Relation.EQUAL);
+         LOG.info("T Test: {}", getTTestRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL);
+         LOG.info("Mann-Whitney: {}", getMannWhitneyRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL);
+         LOG.info("Confidence interval: {}", ConfidenceIntervalInterpretion.compare(cd));
          boolean isChange = agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), measurementConfig) != Relation.EQUAL
-               || bimodalTTest(cd, measurementConfig.getType1error())  != Relation.EQUAL
+               || bimodalTTest(cd, measurementConfig.getType1error()) != Relation.EQUAL
                || getTTestRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL
-               || getMannWhitneyRelation(cd, measurementConfig.getType1error())  != Relation.EQUAL;
+               || getMannWhitneyRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL
+               || ConfidenceIntervalInterpretion.compare(cd) != Relation.EQUAL;
          if (isChange) {
             return cd.getAvgBefore() < cd.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;
          } else {

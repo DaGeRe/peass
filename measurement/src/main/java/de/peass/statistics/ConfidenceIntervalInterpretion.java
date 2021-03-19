@@ -1,4 +1,4 @@
-package de.peass.analysis.statistics;
+package de.peass.statistics;
 
 import java.util.List;
 
@@ -8,9 +8,6 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
 import de.peass.measurement.analysis.Relation;
-import de.peass.measurement.analysis.statistics.MeasurementAnalysationUtil;
-import de.peass.statistics.ConfidenceInterval;
-import de.peass.statistics.PerformanceChange;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 
 public class ConfidenceIntervalInterpretion {
@@ -23,7 +20,7 @@ public class ConfidenceIntervalInterpretion {
       return ds;
    }
 
-   public static Relation compare(CompareData data) {
+   public static Relation compare(final CompareData data) {
       return compare(data, 96);
    }
 
@@ -35,7 +32,7 @@ public class ConfidenceIntervalInterpretion {
     * @param after
     * @return
     */
-   public static Relation compare(CompareData data, int percentage) {
+   public static Relation compare(final CompareData data, final int percentage) {
       final ConfidenceInterval intervalBefore = getConfidenceInterval(data.getBefore(), percentage);
       final ConfidenceInterval intervalAfter = getConfidenceInterval(data.getAfter(), percentage);
 
@@ -67,7 +64,7 @@ public class ConfidenceIntervalInterpretion {
       return Relation.EQUAL;
    }
 
-   public static ConfidenceInterval getConfidenceInterval(final double[] valuesBefore, int percentage) {
+   public static ConfidenceInterval getConfidenceInterval(final double[] valuesBefore, final int percentage) {
       // LOG.info(valuesBefore + " " + valuesBefore.length);
       final ConfidenceInterval intervalBefore = MeasurementAnalysationUtil.getBootstrapConfidenceInterval(valuesBefore, valuesBefore.length, 100, percentage);
       return intervalBefore;
