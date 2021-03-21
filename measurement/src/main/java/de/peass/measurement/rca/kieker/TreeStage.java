@@ -9,6 +9,7 @@ import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.measurement.rca.data.CallTreeNode;
 import kieker.analysis.trace.AbstractTraceProcessingStage;
+import kieker.common.util.signature.Signature;
 import kieker.model.repository.SystemModelRepository;
 import kieker.model.system.model.Execution;
 import kieker.model.system.model.ExecutionTrace;
@@ -52,14 +53,49 @@ public class TreeStage extends AbstractTraceProcessingStage<ExecutionTrace> {
          final String fullClassname = execution.getOperation().getComponentType().getFullQualifiedName().intern();
          final String methodname = execution.getOperation().getSignature().getName().intern();
          final String call = fullClassname + "#" + methodname;
-         final String kiekerPattern = KiekerPatternConverter.getKiekerPattern(execution.getOperation().toString());
-         LOG.trace("{} {}", kiekerPattern, execution.getEss());
+         final String kiekerPattern = getKiekerSignature(execution);
+//         final String kiekerPattern = KiekerPatternConverter.getKiekerPattern(signature);
+         LOG.debug("{} {}", kiekerPattern, execution.getEss());
 
          // ignore synthetic java methods
          if (!methodname.equals("class$") && !methodname.startsWith("access$")) {
             addExecutionToTree(execution, fullClassname, methodname, call, kiekerPattern);
          }
       }
+   }
+   
+   private String getKiekerSignature(final Execution execution) {
+      StringBuilder signatureBuilder = new StringBuilder();
+      for (String modifier : execution.getOperation().getSignature().getModifier()) {
+         signatureBuilder.append(modifier);
+         signatureBuilder.append(' ');
+      }
+      if (execution.getOperation().getSignature().getReturnType().equals(Signature.NO_RETURN_TYPE)) {
+         if (!signatureBuilder.toString().contains("new ")) {
+            signatureBuilder.append("new");
+            signatureBuilder.append(' ');
+         }
+      } else {
+         signatureBuilder.append(execution.getOperation().getSignature().getReturnType());
+         signatureBuilder.append(' ');
+      }
+      signatureBuilder.append(execution.getOperation().getComponentType().getFullQualifiedName());
+      signatureBuilder.append('.');
+      signatureBuilder.append(execution.getOperation().getSignature().getName());
+      signatureBuilder.append('(');
+      boolean first = true;
+      for (final String paramType : execution.getOperation().getSignature().getParamTypeList()) {
+         if (!first) {
+            signatureBuilder.append(',');
+         } else {
+            first = false;
+         }
+         signatureBuilder.append(paramType);
+      }
+      signatureBuilder.append(')');
+
+      String signature = signatureBuilder.toString();
+      return signature;
    }
 
    private void addExecutionToTree(final Execution execution, final String fullClassname, final String methodname, final String call, final String kiekerPattern) {
