@@ -71,9 +71,9 @@ public abstract class DifferentNodeDeterminer {
    private void checkNodeDiffering(final CallTreeNode currentPredecessorNode, final CompareData cleaned) {
       if (cleaned.getBeforeStat().getN() > 0 && cleaned.getAfterStat().getN() > 0) {
          final Relation relation = StatisticUtil.isDifferent(cleaned, measurementConfig);
-         LOG.debug("Relation: {}", relation);
-         if ((relation == Relation.UNEQUAL || relation == Relation.GREATER_THAN || relation == Relation.LESS_THAN)
-               && needsEnoughTime(cleaned.getBeforeStat(), cleaned.getAfterStat())) {
+         boolean needsEnoughTime = needsEnoughTime(cleaned.getBeforeStat(), cleaned.getAfterStat());
+         LOG.debug("Relation: {} Needs enough time: {}", relation, needsEnoughTime);
+         if ((relation == Relation.UNEQUAL || relation == Relation.GREATER_THAN || relation == Relation.LESS_THAN)) {
             addChildsToMeasurement(currentPredecessorNode, cleaned.getBeforeStat(), cleaned.getAfterStat());
          } else {
             LOG.info("No remeasurement");
