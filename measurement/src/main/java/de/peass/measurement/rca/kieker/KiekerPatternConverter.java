@@ -5,7 +5,7 @@ import java.io.File;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import kieker.tools.trace.analysis.systemModel.Operation;
+import kieker.model.system.model.Operation;
 
 public class KiekerPatternConverter {
 
@@ -34,6 +34,7 @@ public class KiekerPatternConverter {
 
    /**
     * Expects a call in the form 'de.test.Class#method(int,String)'
+    * 
     * @param kiekerCall
     * @return
     */
@@ -75,39 +76,42 @@ public class KiekerPatternConverter {
    }
 
    public static String getKiekerPattern(final Operation operation) {
-      final StringBuilder strBuild = new StringBuilder();
+      final StringBuilder signatureBuilder = new StringBuilder();
       boolean containsNew = false;
       for (final String modifier : operation.getSignature().getModifier()) {
-         strBuild.append(modifier).append(' ');
+         signatureBuilder.append(modifier).append(' ');
          if ("new".equals(modifier)) {
             containsNew = true;
          }
       }
       if (operation.getSignature().hasReturnType()) {
-         strBuild.append(operation.getSignature().getReturnType())
+         signatureBuilder.append(operation.getSignature().getReturnType())
                .append(' ');
       } else {
          // Only add new if it is not already present (since source instrumentation adds new itself)
          if (!containsNew) {
-            strBuild.append("new").append(' ');
+            signatureBuilder.append("new").append(' ');
          }
 
       }
-      strBuild.append(operation.getComponentType().getFullQualifiedName()).append('.');
-      strBuild.append(operation.getSignature().getName()).append('(');
-      
+      signatureBuilder.append(operation.getComponentType().getFullQualifiedName())
+            .append('.')
+            .append(operation.getSignature().getName())
+            .append('(');
+
       boolean first = true;
-      for (final String t : operation.getSignature().getParamTypeList()) {
+      for (final String paramType : operation.getSignature().getParamTypeList()) {
          if (!first) {
-            strBuild.append(',');
+            signatureBuilder.append(',');
          } else {
             first = false;
          }
-         strBuild.append(t);
+         signatureBuilder.append(paramType);
       }
-      strBuild.append(')');
+      signatureBuilder.append(')');
 
-      return strBuild.toString();
+      String signature = signatureBuilder.toString();
+      return signature;
    }
 
    public static String getFileNameStart(final String kiekerPattern) {
