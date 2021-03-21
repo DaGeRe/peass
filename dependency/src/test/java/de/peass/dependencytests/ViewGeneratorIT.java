@@ -49,6 +49,7 @@ public class ViewGeneratorIT {
    private static final File viewFolder = new File(VIEW_IT, "views");
 
    public static void init(final File folder) {
+      File peassDirectory = new File(TestConstants.CURRENT_FOLDER.getParentFile(), TestConstants.CURRENT_FOLDER.getName() + "_peass");
       try {
          if (!VIEW_IT.exists()) {
             VIEW_IT.mkdirs();
@@ -57,10 +58,14 @@ public class ViewGeneratorIT {
             viewFolder.mkdir();
          }
          FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
-         FileUtils.deleteDirectory(new File(TestConstants.CURRENT_FOLDER.getParentFile(), TestConstants.CURRENT_FOLDER.getName() + "_peass"));
+         FileUtils.deleteDirectory(peassDirectory);
          FileUtils.copyDirectory(folder, TestConstants.CURRENT_FOLDER);
       } catch (final IOException e) {
          e.printStackTrace();
+         LOG.error("Part of the I/O-process failed; files in {}", peassDirectory.getAbsolutePath(), peassDirectory.listFiles().length);
+         for (File child : peassDirectory.listFiles()) {
+            LOG.error(child.getAbsolutePath());
+         }
       }
    }
 
