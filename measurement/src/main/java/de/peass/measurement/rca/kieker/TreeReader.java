@@ -12,6 +12,7 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
@@ -23,8 +24,8 @@ public class TreeReader extends KiekerResultManager {
    private boolean ignoreEOIs = true;
    private final MeasurementConfiguration config;
    
-   TreeReader(final PeASSFolders folders, final MeasurementConfiguration config) throws InterruptedException, IOException {
-      super(folders, config.getExecutionConfig());
+   TreeReader(final PeASSFolders folders, final MeasurementConfiguration config, final EnvironmentVariables env) throws InterruptedException, IOException {
+      super(folders, config.getExecutionConfig(), env);
       this.config = config;
    }
 

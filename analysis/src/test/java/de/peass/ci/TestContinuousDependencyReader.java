@@ -20,6 +20,7 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIteratorGit;
@@ -53,7 +54,7 @@ public class TestContinuousDependencyReader {
       executionConfig.setVersion(iterator.getTag());
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER), dependencyFile);
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER), dependencyFile, new EnvironmentVariables());
       Dependencies dependencies = reader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
@@ -74,7 +75,7 @@ public class TestContinuousDependencyReader {
       executionConfig.setVersion(newVersion);
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
       
-      final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER), dependencyFile);
+      final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER), dependencyFile, new EnvironmentVariables());
       Dependencies dependencies = spiedReader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);

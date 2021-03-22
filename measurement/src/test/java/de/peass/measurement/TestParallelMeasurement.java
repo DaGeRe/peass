@@ -12,6 +12,7 @@ import de.peass.config.MeasurementConfiguration;
 import de.peass.config.MeasurementStrategy;
 import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.DependencyTester;
 import de.peass.measurement.analysis.TestDependencyTester;
 import de.peass.measurement.rca.helper.VCSTestUtils;
@@ -37,7 +38,7 @@ public class TestParallelMeasurement {
       VCSTestUtils.mockGetVCS();
       VCSTestUtils.mockGoToTagAny();
 
-      final DependencyTester tester = new DependencyTester(folders, configuration);
+      final DependencyTester tester = new DependencyTester(folders, configuration, new EnvironmentVariables());
 
       tester.evaluate(TestDependencyTester.EXAMPLE_TESTCASE);
 

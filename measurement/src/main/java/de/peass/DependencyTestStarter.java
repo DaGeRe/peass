@@ -17,6 +17,7 @@ import de.peass.config.StatisticsConfigurationMixin;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.execution.MeasurementConfigurationMixin;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependencyprocessors.DependencyTester;
@@ -79,17 +80,8 @@ public class DependencyTestStarter extends PairProcessor {
    private void createTester(final MeasurementConfiguration measurementConfiguration) throws IOException {
       if (measurementConfigMixin.getDuration() != 0) {
          throw new RuntimeException("Time-based running currently not supported; eventually fix commented-out code to get it running again");
-//         TimeBasedTestTransformer testTransformer = new TimeBasedTestTransformer(folders.getProjectFolder());
-//         ((TimeBasedTestTransformer) testTransformer).setDuration(measurementConfigMixin.getDuration());
-//         if (measurementConfigMixin.getRepetitions() != 1) {
-//            testTransformer.getConfig().setRepetitions(measurementConfigMixin.getRepetitions());
-//         }
-//         testTransformer.getConfig().setIterations(0);
-//         testTransformer.getConfig().setWarmup(0);
-//         testTransformer.getConfig().setUseKieker(measurementConfigMixin.isUseKieker());
-//         tester = new DependencyTester(folders, testTransformer);
       } else {
-         tester = new DependencyTester(folders, new MeasurementConfiguration(measurementConfigMixin, executionMixin, statisticConfigMixin));
+         tester = new DependencyTester(folders, new MeasurementConfiguration(measurementConfigMixin, executionMixin, statisticConfigMixin), new EnvironmentVariables());
       }
    }
 

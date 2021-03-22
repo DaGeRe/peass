@@ -29,6 +29,7 @@ import org.apache.logging.log4j.Logger;
 import de.peass.DependencyReadingStarter;
 import de.peass.config.DependencyReaderConfig;
 import de.peass.config.ExecutionConfig;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.reader.DependencyReader;
@@ -130,7 +131,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
          final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previous);
          ExecutionConfig executionConfig = new ExecutionConfig(timeout);
          executionConfig.setTestGoal(dependencies.getTestGoal());
-         reader = new DependencyReader(config.getProjectFolder(), dependencyFile, dependencies.getUrl(), iterator, executionConfig);
+         reader = new DependencyReader(config.getProjectFolder(), dependencyFile, dependencies.getUrl(), iterator, executionConfig, new EnvironmentVariables());
          iterator.goTo0thCommit();
       } else if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");

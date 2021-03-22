@@ -20,6 +20,7 @@ import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.dependencyprocessors.ViewNotFoundException;
@@ -36,10 +37,11 @@ public class ViewGeneratorThread implements Runnable {
    private final File viewFolder, executeFile;
    private final TestSet testset;
    private final ExecutionData changedTraceMethods;
+   private final EnvironmentVariables env;
 
    public ViewGeneratorThread(final String version, final String predecessor, final PeASSFolders folders, final File viewFolder, final File executeFile, final TestSet testset,
          final ExecutionData changedTraceMethods,
-         final ExecutionConfig executionConfig) {
+         final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.version = version;
       this.predecessor = predecessor;
       this.folders = folders;
@@ -48,6 +50,7 @@ public class ViewGeneratorThread implements Runnable {
       this.testset = testset;
       this.changedTraceMethods = changedTraceMethods;
       this.executionConfig = executionConfig;
+      this.env = env;
    }
 
    @Override
@@ -108,7 +111,7 @@ public class ViewGeneratorThread implements Runnable {
          throws IOException, InterruptedException, com.github.javaparser.ParseException, ViewNotFoundException, XmlPullParserException {
       boolean gotAllData = true;
 
-      final KiekerResultManager resultsManager = new KiekerResultManager(folders, executionConfig);
+      final KiekerResultManager resultsManager = new KiekerResultManager(folders, executionConfig, env);
       LOG.info("View Comparing {} against {}", version, predecessor);
       for (final String githash : new String[] { predecessor, version }) {
          LOG.debug("Checkout... {}", folders.getProjectFolder());

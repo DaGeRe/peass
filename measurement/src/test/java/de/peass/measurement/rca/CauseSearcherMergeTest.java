@@ -18,6 +18,7 @@ import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.measurement.rca.data.CallTreeNode;
@@ -73,7 +74,7 @@ public class CauseSearcherMergeTest {
       final CauseTester measurer = Mockito.mock(CauseTester.class);
       final CauseSearcher searcher = new LevelCauseSearcher(treeReader, 
             new CauseSearcherConfig(new TestCase("Test#test"), true, false, 0.1, false, true, RCAStrategy.COMPLETE),
-            measurer, measurementConfig, new CauseSearchFolders(folder));
+            measurer, measurementConfig, new CauseSearchFolders(folder), new EnvironmentVariables());
 
       final Set<ChangedEntity> changes = searcher.search();
 

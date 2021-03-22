@@ -27,6 +27,7 @@ import org.apache.logging.log4j.Logger;
 import de.peass.config.DependencyReaderConfig;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependency.reader.FirstRunningVersionFinder;
 import de.peass.dependency.reader.VersionKeeper;
@@ -97,11 +98,11 @@ public class DependencyReadingStarter implements Callable<Void> {
          final List<GitCommit> commits = getGitCommits(config.getStartversion(), config.getEndversion(), projectFolder);
          LOG.debug(url);
          final VersionIterator iterator = new VersionIteratorGit(projectFolder, commits, null);
-         boolean init = new FirstRunningVersionFinder(new PeASSFolders(projectFolder), nonRunning, iterator, executionConfig).searchFirstRunningCommit();
+         boolean init = new FirstRunningVersionFinder(new PeASSFolders(projectFolder), nonRunning, iterator, executionConfig, new EnvironmentVariables()).searchFirstRunningCommit();
          if (!init) {
             throw new RuntimeException("No analyzable version");
          }
-         reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, nonChanges, config.getExecutionConfig());
+         reader = new DependencyReader(new PeASSFolders(projectFolder), dependencyFile, url, iterator, nonChanges, config.getExecutionConfig(), new EnvironmentVariables());
          LOG.debug("Reader initalized");
       } else {
          throw new RuntimeException("Unknown version control system");

@@ -16,10 +16,12 @@ import org.mockito.Mockito;
 
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.ChangeManager;
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.changesreading.ClazzChangeData;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependencytests.helper.FakeFileIterator;
@@ -111,7 +113,7 @@ public class DependencyDetectorIT {
 
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, changeManager, new ExecutionConfig(5));
+      final DependencyReader reader = new DependencyReader(new PeASSFolders(DependencyTestConstants.CURRENT), new File("/dev/null"), null, fakeIterator, changeManager, new ExecutionConfig(5), new EnvironmentVariables());
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 

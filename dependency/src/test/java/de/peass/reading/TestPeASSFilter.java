@@ -21,6 +21,7 @@ import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.analysis.data.TraceElement;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.dependencytests.ViewGeneratorIT;
 
@@ -47,7 +48,7 @@ public class TestPeASSFilter {
 
    @Test
    public void testExecution() throws ViewNotFoundException, IOException, XmlPullParserException, InterruptedException {
-      final KiekerResultManager manager = new KiekerResultManager(new PeASSFolders(CURRENT), new ExecutionConfig(5));
+      final KiekerResultManager manager = new KiekerResultManager(new PeASSFolders(CURRENT), new ExecutionConfig(5), new EnvironmentVariables());
       final TestSet ts = new TestSet();
       final TestCase testcase = new TestCase("defaultpackage.TestMe", "testMe", "");
       ts.addTest(testcase);

@@ -24,6 +24,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.OnFailureLogSafer;
@@ -66,7 +67,7 @@ public class AdaptiveExecutorTest {
          config.setUseKieker(true);
          config.setIterations(2);
          config.setRepetitions(2);
-         executor = new CauseTester(new CauseSearchFolders(projectFolder), config, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME);
+         executor = new CauseTester(new CauseSearchFolders(projectFolder), config, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME, new EnvironmentVariables());
          LOG.debug("Executor: {}", executor);
       } catch (final IOException e) {
          e.printStackTrace();

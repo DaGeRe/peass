@@ -4,7 +4,6 @@ import java.io.File;
 
 import javax.xml.bind.JAXBException;
 
-import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -18,11 +17,10 @@ import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.execution.MavenTestExecutor;
 import de.peass.dependency.execution.TestExecutor;
-import de.peass.dependencyprocessors.OnceRunner;
 import de.peass.testtransformation.JUnitTestTransformer;
-import groovyjarjarantlr4.v4.parse.ANTLRParser.terminal_return;
 
 public class MavenTestExecutorMocker {
    public static void mockExecutor() {
@@ -36,18 +34,18 @@ public class MavenTestExecutorMocker {
             return manager;
          }
       }).when(ExecutorCreator.class);
-      ExecutorCreator.createExecutor(Mockito.any(PeASSFolders.class), Mockito.any(JUnitTestTransformer.class));
+      ExecutorCreator.createExecutor(Mockito.any(PeASSFolders.class), Mockito.any(JUnitTestTransformer.class), Mockito.any(EnvironmentVariables.class));
    }
 
-   public static void mockExecutor(final PeASSFolders folders, MeasurementConfiguration config) throws Exception {
+   public static void mockExecutor(final PeASSFolders folders, final MeasurementConfiguration config) throws Exception {
       final TestExecutor mockedExecutor = Mockito.mock(TestExecutor.class);
 
       PowerMockito.mockStatic(ExecutorCreator.class);
-      PowerMockito.when(ExecutorCreator.createExecutor(Mockito.any(), Mockito.any()))
+      PowerMockito.when(ExecutorCreator.createExecutor(Mockito.any(), Mockito.any(), Mockito.any()))
             .then(new Answer<TestExecutor>() {
 
                @Override
-               public TestExecutor answer(InvocationOnMock invocation) throws Throwable {
+               public TestExecutor answer(final InvocationOnMock invocation) throws Throwable {
                   PeASSFolders folders = invocation.getArgument(0);
                   writeValue(folders, 100);
                   return mockedExecutor;
@@ -69,7 +67,7 @@ public class MavenTestExecutorMocker {
       System.out.println("Storing success");
    }
 
-   private static void buildFulldata(final int average, Result result) {
+   private static void buildFulldata(final int average, final Result result) {
       final Fulldata values = new Fulldata();
       for (long i = average - 10; i <= average + 10; i++) {
          Value value = new Value();

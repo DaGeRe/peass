@@ -16,13 +16,13 @@ public class ExecutorCreator {
       return pom.exists() || buildGradle.exists();
    }
 
-   public static TestExecutor createExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
+   public static TestExecutor createExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
       final File pom = new File(folders.getProjectFolder(), "pom.xml");
       final File buildGradle = new File(folders.getProjectFolder(), "build.gradle");
       if (buildGradle.exists()) {
-         return new GradleTestExecutor(folders, testTransformer, new EnvironmentVariables());
+         return new GradleTestExecutor(folders, testTransformer, env);
       } else if (pom.exists()) {
-         return new MavenTestExecutor(folders, testTransformer, new EnvironmentVariables());
+         return new MavenTestExecutor(folders, testTransformer, env);
       } else {
          throw new RuntimeException("No known buildfile (pom.xml  or build.gradle) in " + folders.getProjectFolder().getAbsolutePath() + " found; can not create test executor.");
       }

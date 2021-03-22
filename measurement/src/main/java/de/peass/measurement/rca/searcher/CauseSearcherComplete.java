@@ -10,12 +10,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.CausePersistenceManager;
 import de.peass.measurement.rca.CauseSearcherConfig;
@@ -25,7 +23,6 @@ import de.peass.measurement.rca.analyzer.TreeAnalyzer;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
-import de.peass.testtransformation.JUnitTestTransformer;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**
@@ -42,12 +39,12 @@ public class CauseSearcherComplete extends CauseSearcher {
 
    public CauseSearcherComplete(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer,
          final MeasurementConfiguration measurementConfig,
-         final CauseSearchFolders folders) throws InterruptedException, IOException {
-      super(reader, causeSearchConfig, measurer, measurementConfig, folders);
+         final CauseSearchFolders folders, final EnvironmentVariables env) throws InterruptedException, IOException {
+      super(reader, causeSearchConfig, measurer, measurementConfig, folders, env);
       persistenceManager = new CausePersistenceManager(causeSearchConfig, measurementConfig, folders);
       creator = new TreeAnalyzerCreator() {
          @Override
-         public TreeAnalyzer getAnalyzer(BothTreeReader reader, CauseSearcherConfig config) {
+         public TreeAnalyzer getAnalyzer(final BothTreeReader reader, final CauseSearcherConfig config) {
             return new CompleteTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
          }
       };
@@ -55,8 +52,8 @@ public class CauseSearcherComplete extends CauseSearcher {
    
    public CauseSearcherComplete(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer,
          final MeasurementConfiguration measurementConfig,
-         final CauseSearchFolders folders, TreeAnalyzerCreator creator) throws InterruptedException, IOException {
-      super(reader, causeSearchConfig, measurer, measurementConfig, folders);
+         final CauseSearchFolders folders, final TreeAnalyzerCreator creator, final EnvironmentVariables env) throws InterruptedException, IOException {
+      super(reader, causeSearchConfig, measurer, measurementConfig, folders, env);
       persistenceManager = new CausePersistenceManager(causeSearchConfig, measurementConfig, folders);
       this.creator = creator;
    }
@@ -94,7 +91,7 @@ public class CauseSearcherComplete extends CauseSearcher {
       config.setRepetitions(measurementConfig.getRepetitions());
       config.setWarmup(measurementConfig.getWarmup());
       config.setUseKieker(true);
-      final CauseTester calibrationMeasurer = new CauseTester(folders, config, causeSearchConfig);
+      final CauseTester calibrationMeasurer = new CauseTester(folders, config, causeSearchConfig, env);
       final AllDifferingDeterminer calibrationRunner = new AllDifferingDeterminer(predecessorNodeList, causeSearchConfig, config);
       calibrationMeasurer.measureVersion(predecessorNodeList);
       final List<CallTreeNode> includableByMinTime = calibrationRunner.getIncludableNodes();

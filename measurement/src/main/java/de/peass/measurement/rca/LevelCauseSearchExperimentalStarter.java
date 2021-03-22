@@ -16,6 +16,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.kieker.BothTreeReader;
@@ -36,10 +37,10 @@ public class LevelCauseSearchExperimentalStarter {
       measurementConfiguration.setUseKieker(true);
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, true, false, 0.1, false, false, RCAStrategy.COMPLETE);
       final CauseSearchFolders folders2 = new CauseSearchFolders(projectFolder);
-      final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders2);
+      final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders2, new EnvironmentVariables());
 
-      final CauseTester measurer = new CauseTester(folders2, measurementConfiguration, causeSearcherConfig);
-      final LevelCauseSearcher searcher = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, folders2);
+      final CauseTester measurer = new CauseTester(folders2, measurementConfiguration, causeSearcherConfig, new EnvironmentVariables());
+      final LevelCauseSearcher searcher = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, folders2, new EnvironmentVariables());
       reader.readTrees();
 
       List<CallTreeNode> predecessor = Arrays.asList(new CallTreeNode[] { reader.getRootPredecessor() });

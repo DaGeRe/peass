@@ -15,10 +15,13 @@ import org.mockito.Mockito;
 import de.peass.TestConstants;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.ChangeManager;
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.changesreading.ClazzChangeData;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependency.reader.VersionKeeper;
+import de.peass.dependencytests.DependencyTestConstants;
 import de.peass.dependencytests.ViewGeneratorIT;
 import de.peass.dependencytests.helper.FakeFileIterator;
 import de.peass.utils.Constants;
@@ -33,7 +36,7 @@ public class TestGenerateDependencies {
 
       final FakeFileIterator iterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, Arrays.asList(ViewGeneratorIT.REPETITION));
       final File dependencyFile = new File(ViewGeneratorIT.VIEW_IT, "dependencies.json");
-      final DependencyReader reader = new DependencyReader(TestConstants.CURRENT_FOLDER, dependencyFile, "", iterator, VersionKeeper.INSTANCE, new ExecutionConfig(5));
+      final DependencyReader reader = new DependencyReader(new PeASSFolders(DependencyTestConstants.CURRENT), dependencyFile, "", iterator, VersionKeeper.INSTANCE, new ExecutionConfig(5), new EnvironmentVariables());
 
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);

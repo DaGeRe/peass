@@ -14,6 +14,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.AdaptiveTester;
 
 public class ContinuousMeasurementExecutor {
@@ -23,12 +24,14 @@ public class ContinuousMeasurementExecutor {
    private final String version, versionOld;
    private final PeASSFolders folders;
    private final MeasurementConfiguration measurementConfig;
+   private final EnvironmentVariables env; 
 
-   public ContinuousMeasurementExecutor(final String version, final String versionOld, final PeASSFolders folders, final MeasurementConfiguration measurementConfig) {
+   public ContinuousMeasurementExecutor(final String version, final String versionOld, final PeASSFolders folders, final MeasurementConfiguration measurementConfig, final EnvironmentVariables env) {
       this.version = version;
       this.versionOld = versionOld;
       this.folders = folders;
       this.measurementConfig = measurementConfig;
+      this.env = env;
    }
 
    public File executeMeasurements(final Set<TestCase> tests, final File fullResultsVersion) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
@@ -41,7 +44,7 @@ public class ContinuousMeasurementExecutor {
             copied.setVersion(version);
             copied.setVersionOld(versionOld);
 
-            final AdaptiveTester tester = new AdaptiveTester(folders, copied);
+            final AdaptiveTester tester = new AdaptiveTester(folders, copied, env);
             for (final TestCase test : tests) {
                tester.evaluate(test);
             }

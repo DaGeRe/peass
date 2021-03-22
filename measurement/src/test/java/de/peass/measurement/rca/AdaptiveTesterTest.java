@@ -25,6 +25,7 @@ import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.measurement.MavenTestExecutorMocker;
 import de.peass.measurement.analysis.ResultLoader;
@@ -155,7 +156,7 @@ public class AdaptiveTesterTest {
       final PeASSFolders folders = Mockito.mock(PeASSFolders.class);
       Mockito.when(folders.getProjectFolder()).thenReturn(folder.newFolder("test"));
 
-      AdaptiveTester tester = new AdaptiveTester(folders, testGenerator.getConfig());
+      AdaptiveTester tester = new AdaptiveTester(folders, testGenerator.getConfig(), new EnvironmentVariables());
       AdaptiveTester tester2 = Mockito.spy(tester);
       Mockito.doNothing().when(tester2).runOneComparison(Mockito.any(File.class), Mockito.any(TestCase.class), Mockito.anyInt());
       return tester2;

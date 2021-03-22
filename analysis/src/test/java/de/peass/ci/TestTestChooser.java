@@ -16,6 +16,7 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.InitialDependency;
 import de.peass.dependency.persistence.Version;
@@ -38,7 +39,7 @@ public class TestTestChooser {
    public void testBasicChoosing() throws Exception {
       Dependencies dependencies = createDependencies();
       
-      TestChooser chooser = new TestChooser(false, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), testVersion, new File("target/views"), new File("target/properties"), 1, new ExecutionConfig(1));
+      TestChooser chooser = new TestChooser(false, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), testVersion, new File("target/views"), new File("target/properties"), 1, new ExecutionConfig(1), new EnvironmentVariables());
       Set<TestCase> tests = chooser.getTestSet(dependencies);
       
       Assert.assertEquals(tests.iterator().next(), new TestCase("defaultpackage.TestMe#testMe"));
@@ -48,7 +49,7 @@ public class TestTestChooser {
    public void testViewChoosing() throws Exception {
       Dependencies dependencies = createDependencies();
       
-      TestChooser chooser = new TestChooser(true, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), testVersion, new File("target/views"), new File("target/properties"), 1, new ExecutionConfig(1));
+      TestChooser chooser = new TestChooser(true, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), testVersion, new File("target/views"), new File("target/properties"), 1, new ExecutionConfig(1), new EnvironmentVariables());
       Set<TestCase> tests = chooser.getTestSet(dependencies);
       
       Assert.assertEquals(tests.iterator().next(), new TestCase("defaultpackage.TestMe#testMe"));

@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Version;
@@ -37,8 +38,9 @@ public class ViewGenerator extends PairProcessor {
    private File executeFile;
    private ExecutionData changedTraceMethods = new ExecutionData();
    private final ExecutionConfig executionConfig;
+   private final EnvironmentVariables env;
 
-   public ViewGenerator(final File projectFolder, final Dependencies dependencies, final File executefile, final File viewFolder, final int threads, final ExecutionConfig executionConfig) {
+   public ViewGenerator(final File projectFolder, final Dependencies dependencies, final File executefile, final File viewFolder, final int threads, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       super(projectFolder, dependencies);
       this.viewFolder = viewFolder;
       this.executeFile = executefile;
@@ -46,11 +48,13 @@ public class ViewGenerator extends PairProcessor {
       processInitialVersion(dependencies.getInitialversion());
       changedTraceMethods.setAndroid(dependencies.isAndroid());
       this.executionConfig = executionConfig;
+      this.env = env;
       init();
    }
 
    public ViewGenerator() {
       executionConfig = new ExecutionConfig();
+      env = null;
    }
 
    public void init() {
@@ -144,7 +148,7 @@ public class ViewGenerator extends PairProcessor {
       LOG.info("Starting {}", version);
       return new ViewGeneratorThread(version, predecessor, folders,
             viewFolder, executeFile,
-            testset, changedTraceMethods, executionConfig);
+            testset, changedTraceMethods, executionConfig, env);
    }
 
    public File getExecuteFile() {

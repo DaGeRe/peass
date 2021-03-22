@@ -18,6 +18,7 @@ import de.peass.config.MeasurementStrategy;
 import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependency.traces.TemporaryProjectFolderUtil;
 import de.peass.measurement.analysis.Cleaner;
@@ -41,13 +42,15 @@ public class DependencyTester implements KiekerResultHandler {
 
    protected final PeASSFolders folders;
    protected final MeasurementConfiguration configuration;
+   protected final EnvironmentVariables env;
    private final VersionControlSystem vcs;
    protected ResultOrganizer currentOrganizer;
    protected long currentChunkStart = 0;
 
-   public DependencyTester(final PeASSFolders folders, final MeasurementConfiguration measurementConfig) throws IOException {
+   public DependencyTester(final PeASSFolders folders, final MeasurementConfiguration measurementConfig, final EnvironmentVariables env) throws IOException {
       this.folders = folders;
       this.configuration = measurementConfig;
+      this.env = env;
 
       vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
 
@@ -240,7 +243,7 @@ public class DependencyTester implements KiekerResultHandler {
 
    protected synchronized TestExecutor getExecutor(final PeASSFolders currentFolders, final String version) {
       final JUnitTestTransformer testTransformer = new JUnitTestTransformer(currentFolders.getProjectFolder(), configuration);
-      final TestExecutor testExecutor = ExecutorCreator.createExecutor(currentFolders, testTransformer);
+      final TestExecutor testExecutor = ExecutorCreator.createExecutor(currentFolders, testTransformer, env);
       return testExecutor;
    }
 

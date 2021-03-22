@@ -12,9 +12,11 @@ import org.mockito.Mockito;
 
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.ChangeManager;
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.changesreading.ClazzChangeData;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.reader.DependencyReader;
@@ -75,7 +77,7 @@ public class DependencyDetectorTestUtil {
    
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config)
          throws IOException, InterruptedException, XmlPullParserException {
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.CURRENT, new File("/dev/null"), null, fakeIterator, changeManager, config);
+      final DependencyReader reader = new DependencyReader(new PeASSFolders(DependencyTestConstants.CURRENT), new File("/dev/null"), null, fakeIterator, changeManager, config, new EnvironmentVariables());
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
       fakeIterator.goToNextCommit();

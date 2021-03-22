@@ -29,6 +29,7 @@ import de.peass.config.ExecutionConfig;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Version;
@@ -56,7 +57,7 @@ public class ViewGeneratorTest {
 
       final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, Dependencies.class);
       VersionComparator.setDependencies(dependencies);
-      final ViewGenerator generator = new ViewGenerator(TestConstants.CURRENT_FOLDER, dependencies, executefile, viewFolder, 1, new ExecutionConfig());
+      final ViewGenerator generator = new ViewGenerator(TestConstants.CURRENT_FOLDER, dependencies, executefile, viewFolder, 1, new ExecutionConfig(), new EnvironmentVariables());
 
       mockGitHandling();
 

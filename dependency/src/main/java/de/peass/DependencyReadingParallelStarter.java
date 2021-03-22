@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.peass.config.DependencyReaderConfig;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.parallel.PartialDependenciesMerger;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.reader.DependencyParallelReader;
@@ -40,7 +41,7 @@ public class DependencyReadingParallelStarter implements Callable<Void> {
       VersionComparator.setVersions(commits);
       
       final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), config.getProjectFolder().getName(), commits, 
-            config.getThreads(), config.getTimeout(), config.getExecutionConfig());
+            config.getThreads(), config.getTimeout(), config.getExecutionConfig(), new EnvironmentVariables());
       final File[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);

@@ -20,6 +20,7 @@ import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.measurement.analysis.AnalyseFullData;
 import de.peass.measurement.analysis.ProjectStatistics;
@@ -46,16 +47,19 @@ public class ContinuousExecutor {
    private final PeASSFolders folders;
    private final File viewFolder;
    private final File propertyFolder;
-   
-   private final Map<String, String> environmentVariables;
 
-   public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final int threads, final boolean useViews, final Map<String, String> environmentVariables)
+   private final EnvironmentVariables env = new EnvironmentVariables();
+
+   public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final int threads, final boolean useViews,
+         final Map<String, String> environmentVariables)
          throws InterruptedException, IOException {
       this.projectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
       this.threads = threads;
       this.useViews = useViews;
-      this.environmentVariables = environmentVariables;
+      for (Map.Entry<String, String> environment : environmentVariables.entrySet()) {
+         env.getEnvironmentVariables().put(environment.getKey(), environment.getValue());
+      }
 
       File vcsFolder = VersionControlSystem.findVCSFolder(projectFolder);
       localFolder = ContinuousFolderUtil.getLocalFolder(vcsFolder);
@@ -85,7 +89,7 @@ public class ContinuousExecutor {
       final VersionIteratorGit iterator = buildIterator();
       final String url = GitUtils.getURL(projectFolder);
 
-      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(measurementConfig.getExecutionConfig(), folders, dependencyFile);
+      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(measurementConfig.getExecutionConfig(), folders, dependencyFile, env);
       final Dependencies dependencies = dependencyReader.getDependencies(iterator, url);
 
       if (dependencies.getVersions().size() > 0) {
@@ -101,7 +105,7 @@ public class ContinuousExecutor {
 
    private Set<TestCase> selectIncludedTests(final Dependencies dependencies) throws Exception {
       final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version,
-            viewFolder, propertyFolder, threads, measurementConfig.getExecutionConfig());
+            viewFolder, propertyFolder, threads, measurementConfig.getExecutionConfig(), env);
       final Set<TestCase> tests = chooser.getTestSet(dependencies);
       LOG.debug("Executing measurement on {}", tests);
       return tests;
@@ -109,7 +113,7 @@ public class ContinuousExecutor {
 
    private File measure(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final File fullResultsVersion = getFullResultsVersion();
-      final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(version, versionOld, folders, measurementConfig);
+      final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(version, versionOld, folders, measurementConfig, env);
       final File measurementFolder = measurementExecutor.executeMeasurements(tests, fullResultsVersion);
       return measurementFolder;
    }

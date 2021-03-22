@@ -18,6 +18,7 @@ import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.dependencyprocessors.ViewNotFoundException;
@@ -44,9 +45,9 @@ public class CauseTester extends AdaptiveTester {
    private final CauseSearchFolders folders;
    private int levelId = 0;
 
-   public CauseTester(final CauseSearchFolders project, final MeasurementConfiguration measurementConfig, final CauseSearcherConfig causeConfig)
+   public CauseTester(final CauseSearchFolders project, final MeasurementConfiguration measurementConfig, final CauseSearcherConfig causeConfig, final EnvironmentVariables env)
          throws IOException {
-      super(project, measurementConfig);
+      super(project, measurementConfig, env);
       this.testcase = causeConfig.getTestCase();
       this.causeConfig = causeConfig;
       this.folders = project;
@@ -208,7 +209,7 @@ public class CauseTester extends AdaptiveTester {
       final MeasurementConfiguration config = new MeasurementConfiguration(15 * 1000 * 60, 15, true, version, version + "~1");
       config.setUseKieker(true);
       final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, false, 0.01, false, false, RCAStrategy.COMPLETE);
-      final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), config, causeConfig);
+      final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), config, causeConfig, new EnvironmentVariables());
 
       final CallTreeNode node = new CallTreeNode("FileUploadTestCase#parseUpload",
             "protected java.util.List org.apache.commons.fileupload.FileUploadTestCase.parseUpload(byte[],java.lang.String)",

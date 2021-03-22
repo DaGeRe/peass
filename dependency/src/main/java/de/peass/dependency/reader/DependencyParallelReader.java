@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.parallel.OneReader;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
@@ -32,15 +33,17 @@ public class DependencyParallelReader {
    private final File tempResultFolder;
    private final String project;
    private final ExecutionConfig executionConfig;
+   private final EnvironmentVariables env;
 
    public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<GitCommit> commits, final int threadCount,
-         final int timeout, final ExecutionConfig executionConfig) {
+         final int timeout, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       url = GitUtils.getURL(projectFolder);
       this.executionConfig = executionConfig;
       LOG.debug(url);
       folders = new PeASSFolders(projectFolder);
       this.commits = commits;
       this.project = project;
+      this.env = env;
 
       tempResultFolder = new File(resultBaseFolder, "temp_" + project);
       if (!tempResultFolder.exists()) {
@@ -106,8 +109,8 @@ public class DependencyParallelReader {
       LOG.debug("Start: {} End: {}", currentCommits.get(0), currentCommits.get(currentCommits.size() - 1));
       LOG.debug(currentCommits);
       final VersionIterator iterator = new VersionIteratorGit(foldersTemp.getProjectFolder(), currentCommits, null);
-      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(foldersTemp, nonRunning, iterator, executionConfig);
-      final DependencyReader reader = new DependencyReader(foldersTemp.getProjectFolder(), currentOutFile, url, iterator, nonChanges, executionConfig);
+      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(foldersTemp, nonRunning, iterator, executionConfig, env);
+      final DependencyReader reader = new DependencyReader(foldersTemp, currentOutFile, url, iterator, nonChanges, executionConfig, env);
       final VersionIteratorGit reserveIterator = new VersionIteratorGit(foldersTemp.getProjectFolder(), reserveCommits, null);
       final Runnable current = new OneReader(minimumCommit, currentOutFile, reserveIterator, reader, finder);
       service.submit(current);

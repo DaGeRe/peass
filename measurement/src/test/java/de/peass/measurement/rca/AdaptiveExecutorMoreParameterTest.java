@@ -25,6 +25,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.OnFailureLogSafer;
@@ -91,13 +92,15 @@ public class AdaptiveExecutorMoreParameterTest {
 
    @Test
    public void testFullMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      executor = new CauseTester(new CauseSearchFolders(projectFolder), TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER, FULL_CASE_CONFIG);
+      CauseSearchFolders folders = new CauseSearchFolders(projectFolder);
+      executor = new CauseTester(folders, TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER, FULL_CASE_CONFIG, new EnvironmentVariables());
       testSuccessfull();
    }
 
    @Test
    public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      executor = new CauseTester(new CauseSearchFolders(projectFolder), TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME);
+      CauseSearchFolders folders = new CauseSearchFolders(projectFolder);
+      executor = new CauseTester(folders, TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME, new EnvironmentVariables());
       testSuccessfull();
    }
 

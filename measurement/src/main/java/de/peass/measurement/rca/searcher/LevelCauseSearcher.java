@@ -15,6 +15,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.organize.FolderDeterminer;
 import de.peass.measurement.rca.CausePersistenceManager;
@@ -38,14 +39,14 @@ public class LevelCauseSearcher extends CauseSearcher {
     * @throws InterruptedException
     * @throws IOException
     */
-   public LevelCauseSearcher(final CauseTester measurer, final CauseSearchData finishedData, final CauseSearchFolders folders) throws InterruptedException, IOException {
-      super(null, finishedData.getCauseConfig(), measurer, finishedData.getMeasurementConfig(), folders);
+   public LevelCauseSearcher(final CauseTester measurer, final CauseSearchData finishedData, final CauseSearchFolders folders, final EnvironmentVariables env) throws InterruptedException, IOException {
+      super(null, finishedData.getCauseConfig(), measurer, finishedData.getMeasurementConfig(), folders, env);
       persistenceManager = new CausePersistenceManager(finishedData, folders);
    }
    
    public LevelCauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer, final MeasurementConfiguration measurementConfig,
-         final CauseSearchFolders folders) throws InterruptedException, IOException {
-      super(reader, causeSearchConfig, measurer, measurementConfig, folders);
+         final CauseSearchFolders folders, final EnvironmentVariables env) throws InterruptedException, IOException {
+      super(reader, causeSearchConfig, measurer, measurementConfig, folders, env);
       persistenceManager = new CausePersistenceManager(causeSearchConfig, measurementConfig, folders);
 
       final File potentialOldFolder = new File(folders.getArchiveResultFolder(measurementConfig.getVersion(), causeSearchConfig.getTestCase()), "0");
@@ -55,6 +56,7 @@ public class LevelCauseSearcher extends CauseSearcher {
       new FolderDeterminer(folders).testResultFolders(measurementConfig.getVersion(), measurementConfig.getVersionOld(), causeSearchConfig.getTestCase());
    }
    
+   @Override
    protected Set<ChangedEntity> searchCause()
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       reader.getRootPredecessor().setOtherVersionNode(reader.getRootVersion());

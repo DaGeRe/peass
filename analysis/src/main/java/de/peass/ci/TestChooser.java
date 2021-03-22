@@ -15,6 +15,7 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependency.persistence.Version;
@@ -33,9 +34,10 @@ public class TestChooser {
    private final File propertyFolder;
    private final int threads;
    private final ExecutionConfig config;
+   private final EnvironmentVariables env;
 
    public TestChooser(final boolean useViews, final File localFolder, final PeASSFolders folders, final String version, final File viewFolder, final File propertyFolder,
-         final int threads, final ExecutionConfig config) {
+         final int threads, final ExecutionConfig config, final EnvironmentVariables env) {
       this.useViews = useViews;
       this.localFolder = localFolder;
       this.folders = folders;
@@ -44,6 +46,7 @@ public class TestChooser {
       this.propertyFolder = propertyFolder;
       this.threads = threads;
       this.config = config;
+      this.env = env;
    }
 
    public Set<TestCase> getTestSet(final Dependencies dependencies) throws Exception {
@@ -107,7 +110,7 @@ public class TestChooser {
       LOG.info("Executig regression test selection (step 2) - Log goes to {}", logFile.getAbsolutePath());
 
       try (LogRedirector director = new LogRedirector(logFile)) {
-         final ViewGenerator viewgenerator = new ViewGenerator(folders.getProjectFolder(), dependencies, executeFile, viewFolder, threads, new ExecutionConfig(15));
+         final ViewGenerator viewgenerator = new ViewGenerator(folders.getProjectFolder(), dependencies, executeFile, viewFolder, threads, new ExecutionConfig(15), env);
          viewgenerator.processCommandline();
          final PropertyReader propertyReader = new PropertyReader(propertyFolder, folders.getProjectFolder(), viewFolder);
          propertyReader.readAllTestsProperties(viewgenerator.getChangedTraceMethods());

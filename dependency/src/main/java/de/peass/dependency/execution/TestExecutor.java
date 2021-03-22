@@ -322,7 +322,7 @@ public abstract class TestExecutor {
    }
 
    public static List<File> getModules(final PeASSFolders folders) throws IOException, XmlPullParserException {
-      TestExecutor tempExecutor = ExecutorCreator.createExecutor(folders, null);
+      TestExecutor tempExecutor = ExecutorCreator.createExecutor(folders, null, null);
       return tempExecutor.getModules();
    }
 

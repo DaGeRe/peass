@@ -11,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.dependencytests.helper.FakeFileIterator;
 import de.peass.measurement.rca.data.CallTreeNode;
@@ -68,7 +69,7 @@ public class TestTreeFilter {
    }
 
    public CallTreeNode getTree() throws IOException, XmlPullParserException, InterruptedException, FileNotFoundException, ViewNotFoundException, AnalysisConfigurationException {
-      TreeReader executor = TreeReaderFactory.createTestTreeReader(projectFolder, 15);
+      TreeReader executor = TreeReaderFactory.createTestTreeReader(projectFolder, 15, new EnvironmentVariables());
       
       TestCase test = new TestCase("defaultpackage.TestMe", "testMe");
 //      executor.executeKoPeMeKiekerRun(new TestSet(test), "1");

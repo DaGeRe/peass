@@ -10,6 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.reader.DependencyReader;
@@ -27,11 +28,13 @@ public class ContinuousDependencyReader {
    private final ExecutionConfig executionConfig;
    private final PeASSFolders folders;
    private final File dependencyFile;
+   private final EnvironmentVariables env;
 
-   public ContinuousDependencyReader(final ExecutionConfig executionConfig, final PeASSFolders folders, final File dependencyFile) {
+   public ContinuousDependencyReader(final ExecutionConfig executionConfig, final PeASSFolders folders, final File dependencyFile, final EnvironmentVariables env) {
       this.executionConfig = executionConfig;
       this.folders = folders;
       this.dependencyFile = dependencyFile;
+      this.env = env;
    }
 
    Dependencies getDependencies(final VersionIterator iterator, final String url)
@@ -85,7 +88,7 @@ public class ContinuousDependencyReader {
 
       try (LogRedirector director = new LogRedirector(logFile)) {
          VersionIterator newIterator = getIterator(lastVersionName);
-         DependencyReader reader = new DependencyReader(folders.getProjectFolder(), dependencyFile, dependencies.getUrl(), newIterator, executionConfig);
+         DependencyReader reader = new DependencyReader(folders.getProjectFolder(), dependencyFile, dependencies.getUrl(), newIterator, executionConfig, env);
          newIterator.goTo0thCommit();
 
          reader.readCompletedVersions(dependencies);
@@ -107,7 +110,7 @@ public class ContinuousDependencyReader {
       LOG.info("Executing regression test selection (step 1) - Log goes to {}", logFile.getAbsolutePath());
 
       try (LogRedirector director = new LogRedirector(logFile)) {
-         final DependencyReader reader = new DependencyReader(folders.getProjectFolder(), dependencyFile, url, iterator, nonChanges, executionConfig);
+         final DependencyReader reader = new DependencyReader(folders, dependencyFile, url, iterator, nonChanges, executionConfig, env);
          iterator.goToPreviousCommit();
          if (!reader.readInitialVersion()) {
             LOG.error("Analyzing first version was not possible");

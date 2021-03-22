@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.peass.analysis.properties.PropertyReader;
 import de.peass.config.DependencyReaderConfig;
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.parallel.PartialDependenciesMerger;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.reader.DependencyParallelReader;
@@ -63,7 +64,7 @@ public class DependencyExecutionReader implements Callable<Void>{
 
    public void readExecutions(final String project, final List<GitCommit> commits) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, JAXBException {
       final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, commits, 
-            config.getThreads(), config.getTimeout(), config.getExecutionConfig());
+            config.getThreads(), config.getTimeout(), config.getExecutionConfig(), new EnvironmentVariables());
       final File[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);
@@ -78,7 +79,7 @@ public class DependencyExecutionReader implements Callable<Void>{
       final File executeOut = new File(config.getResultBaseFolder(), "execute_" + project + ".json");
       final File viewFolder = new File(config.getResultBaseFolder(), "views_" + project);
 
-      final ViewGenerator viewGenerator = new ViewGenerator(config.getProjectFolder(), all, executeOut, viewFolder, config.getThreads(), config.getExecutionConfig());
+      final ViewGenerator viewGenerator = new ViewGenerator(config.getProjectFolder(), all, executeOut, viewFolder, config.getThreads(), config.getExecutionConfig(), new EnvironmentVariables());
       viewGenerator.processCommandline();
       
       final File propertyFolders = new File(config.getResultBaseFolder(), "properties_" + project);

@@ -47,6 +47,7 @@ import de.peass.dependency.analysis.data.TestDependencies;
 import de.peass.dependency.analysis.data.TestExistenceChanges;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.changesreading.ClazzChangeData;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.testtransformation.JUnitTestTransformer;
@@ -70,8 +71,8 @@ public class DependencyManager extends KiekerResultManager {
     * 
     * @param projectFolder
     */
-   public DependencyManager(final PeASSFolders folders, final ExecutionConfig executionConfig) {
-      super(folders, executionConfig);
+   public DependencyManager(final PeASSFolders folders, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+      super(folders, executionConfig, env);
    }
 
    public DependencyManager(final TestExecutor executor, final PeASSFolders folders, final JUnitTestTransformer testTransformer) {

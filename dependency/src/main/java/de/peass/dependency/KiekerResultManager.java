@@ -36,6 +36,7 @@ import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.testtransformation.JUnitTestTransformer;
 
@@ -53,7 +54,7 @@ public class KiekerResultManager {
    protected final PeASSFolders folders;
    protected final JUnitTestTransformer testTransformer;
 
-   public KiekerResultManager(final PeASSFolders folders, final ExecutionConfig executionConfig) {
+   public KiekerResultManager(final PeASSFolders folders, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.folders = folders;
       MeasurementConfiguration fakeConfig = new MeasurementConfiguration(1, executionConfig.getTimeoutInMinutes());
       fakeConfig.setIterations(1);
@@ -63,7 +64,7 @@ public class KiekerResultManager {
       fakeConfig.setTestGoal(executionConfig.getTestGoal());
       fakeConfig.setIncludes(executionConfig.getIncludes());
       testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), fakeConfig);
-      executor = ExecutorCreator.createExecutor(folders, testTransformer);
+      executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
    }
 
    public KiekerResultManager(final TestExecutor executor, final PeASSFolders folders, final JUnitTestTransformer testTransformer) {

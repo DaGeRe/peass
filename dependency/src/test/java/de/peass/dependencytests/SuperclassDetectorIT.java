@@ -15,10 +15,12 @@ import org.mockito.Mockito;
 
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.ChangeManager;
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.changesreading.ClazzChangeData;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependencytests.helper.FakeFileIterator;
 import de.peass.vcs.VersionIterator;
@@ -27,15 +29,14 @@ public class SuperclassDetectorIT {
 
 
 	private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT");
-	private static final File CURRENT = new File("target", "current");
 	private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "superclass_old");
 
 	@Before
 	public void initialize() throws IOException, InterruptedException {
 		Assert.assertTrue(VERSIONS_FOLDER.exists());
 
-		FileUtils.deleteDirectory(CURRENT);
-		FileUtils.copyDirectory(BASIC_STATE, CURRENT);
+		FileUtils.deleteDirectory(DependencyTestConstants.CURRENT);
+		FileUtils.copyDirectory(BASIC_STATE, DependencyTestConstants.CURRENT);
 	}
 
 	@Test
@@ -48,9 +49,9 @@ public class SuperclassDetectorIT {
 		final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
 		Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
 
-		final VersionIterator fakeIterator = new FakeFileIterator(CURRENT, Arrays.asList(secondVersion));
+		final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
-		final DependencyReader reader = new DependencyReader(CURRENT, new File("/dev/null"), null, fakeIterator, changeManager, new ExecutionConfig(5));
+		final DependencyReader reader = new DependencyReader(new PeASSFolders(DependencyTestConstants.CURRENT), new File("/dev/null"), null, fakeIterator, changeManager, new ExecutionConfig(5), new EnvironmentVariables());
 		reader.readInitialVersion();
 		fakeIterator.goToNextCommit();
 

@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.CausePersistenceManager;
 import de.peass.measurement.rca.CauseSearcherConfig;
@@ -36,6 +37,7 @@ public abstract class CauseSearcher {
    protected final CauseSearchFolders folders;
    protected final CauseSearcherConfig causeSearchConfig;
    protected final MeasurementConfiguration measurementConfig;
+   protected final EnvironmentVariables env;
 
    // Classes doing the real work
    protected final BothTreeReader reader;
@@ -46,13 +48,13 @@ public abstract class CauseSearcher {
    protected CausePersistenceManager persistenceManager;
 
    public CauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer, final MeasurementConfiguration measurementConfig,
-         final CauseSearchFolders folders)
-         throws InterruptedException, IOException {
+         final CauseSearchFolders folders, final EnvironmentVariables env) {
       this.reader = reader;
       this.measurer = measurer;
       this.measurementConfig = measurementConfig;
       this.folders = folders;
       this.causeSearchConfig = causeSearchConfig;
+      this.env = env;
 
    }
 
@@ -94,7 +96,7 @@ public abstract class CauseSearcher {
       writeTreeState();
    }
    
-   private void addMeasurements(final List<CallTreeNode> includableNodes, CallTreeNode parent) {
+   private void addMeasurements(final List<CallTreeNode> includableNodes, final CallTreeNode parent) {
       for (CallTreeNode child : parent.getChildren()) {
          if (includableNodes.contains(child)) {
             LOG.debug("Analyzing: {}", child);

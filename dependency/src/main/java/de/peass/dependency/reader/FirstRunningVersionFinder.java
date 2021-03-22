@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.testtransformation.JUnitTestTransformer;
 import de.peass.vcs.VersionIterator;
@@ -18,12 +19,14 @@ public class FirstRunningVersionFinder {
    private final VersionKeeper nonRunning;
    private final VersionIterator iterator;
    private final ExecutionConfig executionConfig;
+   private final EnvironmentVariables env;
 
-   public FirstRunningVersionFinder(final PeASSFolders folders, final VersionKeeper nonRunning, final VersionIterator iterator, final ExecutionConfig executionConfig) {
+   public FirstRunningVersionFinder(final PeASSFolders folders, final VersionKeeper nonRunning, final VersionIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.folders = folders;
       this.nonRunning = nonRunning;
       this.iterator = iterator;
       this.executionConfig = executionConfig;
+      this.env = env;
    }
 
    /**
@@ -49,7 +52,7 @@ public class FirstRunningVersionFinder {
 
    private boolean tryCommit(final VersionIterator iterator, final JUnitTestTransformer testTransformer) {
       boolean isVersionRunning;
-      TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer);
+      TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
       isVersionRunning = executor.isVersionRunning(iterator.getTag());
 
       if (!isVersionRunning) {

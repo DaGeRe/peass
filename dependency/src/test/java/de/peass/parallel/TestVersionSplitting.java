@@ -22,6 +22,8 @@ import org.mockito.Mockito;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.DependencyManager;
+import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.parallel.OneReader;
 import de.peass.dependency.parallel.PartialDependenciesMerger;
 import de.peass.dependency.persistence.Dependencies;
@@ -40,12 +42,12 @@ public class TestVersionSplitting {
    static class DummyReader extends DependencyReader {
 
       public DummyReader(final File dummyFolder, final VersionIterator iterator, final ChangeManager manager) throws IOException {
-         super(dummyFolder, null, null, iterator, manager, new ExecutionConfig(1));
+         super(new PeASSFolders(dummyFolder), null, null, iterator, manager, new ExecutionConfig(1), new EnvironmentVariables());
       }
 
       @Override
       public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException {
-         dependencyManager = new DependencyManager(folders, new ExecutionConfig(60));
+         dependencyManager = new DependencyManager(folders, new ExecutionConfig(60), new EnvironmentVariables());
          dependencyResult.setInitialversion(new InitialVersion());
          dependencyResult.getInitialversion().setVersion(iterator.getTag());
          return true;
@@ -148,7 +150,7 @@ public class TestVersionSplitting {
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(null);
 
-      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(null, null, null, null) {
+      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(null, null, null, null, null) {
          @Override
          public boolean searchFirstRunningCommit() {
             return true;

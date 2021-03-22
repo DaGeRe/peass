@@ -31,7 +31,9 @@ import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.ViewNotFoundException;
+import de.peass.dependencytests.DependencyTestConstants;
 import de.peass.measurement.rca.helper.VCSTestUtils;
 import de.peass.measurement.rca.kieker.BothTreeReader;
 import de.peass.measurement.rca.searcher.CauseSearcher;
@@ -51,7 +53,6 @@ public class CauseSearcherIT {
          false, false, 0.1,
          false, false, RCAStrategy.COMPLETE);
    
-   public static final File CURRENT = new File(new File("target"), "current");
    private static final File VERSIONS_FOLDER = new File("src/test/resources/rootCauseIT");
    private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
    private static final File SLOW_STATE = new File(VERSIONS_FOLDER, "slow_state");
@@ -59,14 +60,14 @@ public class CauseSearcherIT {
    @Before
    public void setUp() throws InterruptedException, IOException {
       try {
-         FileUtils.deleteDirectory(CURRENT);
+         FileUtils.deleteDirectory(DependencyTestConstants.CURRENT);
          FileUtils.deleteDirectory(new File(new File("target"), "current_peass"));
-         FileUtils.copyDirectory(BASIC_STATE, CURRENT);
+         FileUtils.copyDirectory(BASIC_STATE, DependencyTestConstants.CURRENT);
       } catch (final IOException e) {
          e.printStackTrace();
       }
       
-      final PeASSFolders folders = new PeASSFolders(CURRENT);
+      final PeASSFolders folders = new PeASSFolders(DependencyTestConstants.CURRENT);
       final File projectFolderTemp = new File(folders.getTempProjectFolder(), "000001");
       
       VCSTestUtils.mockGetVCS();
@@ -82,7 +83,7 @@ public class CauseSearcherIT {
 
          @Override
          public Void answer(final InvocationOnMock invocation) throws Throwable {
-            FileUtils.copyDirectory(CURRENT, projectFolderTemp);
+            FileUtils.copyDirectory(DependencyTestConstants.CURRENT, projectFolderTemp);
             return null;
          }
       }).when(GitUtils.class);
@@ -122,11 +123,12 @@ public class CauseSearcherIT {
       measurementConfiguration.setUseKieker(true);
       final CauseSearcherConfig causeSearcherConfig = CAUSE_CONFIG_TESTME_COMPLETE;
       
-      final CauseSearchFolders folders = new CauseSearchFolders(CURRENT);
-      final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders);
-      final CauseTester measurer = new CauseTester(folders, measurementConfiguration, causeSearcherConfig);
+      final CauseSearchFolders folders = new CauseSearchFolders(DependencyTestConstants.CURRENT);
+      final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders, new EnvironmentVariables());
+      EnvironmentVariables emptyEnv = new EnvironmentVariables();
+      final CauseTester measurer = new CauseTester(folders, measurementConfiguration, causeSearcherConfig, emptyEnv);
       
-      final CauseSearcher searcher = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, folders);
+      final CauseSearcher searcher = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, folders, emptyEnv);
       final Set<ChangedEntity> changedEntities = searcher.search();
 
       checkChangelistContainsChild12(changedEntities);

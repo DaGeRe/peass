@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.data.CallTreeNode;
@@ -30,15 +31,16 @@ public class BothTreeReader {
    private final CauseSearcherConfig causeSearchConfig;
    private final MeasurementConfiguration config;
    private final CauseSearchFolders folders;
+   private final EnvironmentVariables env;
    
    final File potentialCacheFileOld;
    final File potentialCacheFile;
 
-   public BothTreeReader(final CauseSearcherConfig causeSearchConfig, final MeasurementConfiguration config, final CauseSearchFolders folders) {
-      super();
+   public BothTreeReader(final CauseSearcherConfig causeSearchConfig, final MeasurementConfiguration config, final CauseSearchFolders folders, final EnvironmentVariables env) {
       this.causeSearchConfig = causeSearchConfig;
       this.config = config;
       this.folders = folders;
+      this.env = env;
       
       potentialCacheFileOld = new File(folders.getTreeCacheFolder(config.getVersion(), causeSearchConfig.getTestCase()), config.getVersionOld());
       potentialCacheFile = new File(folders.getTreeCacheFolder(config.getVersion(), causeSearchConfig.getTestCase()), config.getVersion());
@@ -57,7 +59,7 @@ public class BothTreeReader {
       setConfig(rootVersion);
    }
 
-   private void setConfig(CallTreeNode node) {
+   private void setConfig(final CallTreeNode node) {
       for (CallTreeNode child : node.getChildren()) {
          child.setConfig(config);
          setConfig(child);
@@ -77,10 +79,10 @@ public class BothTreeReader {
    }
 
    private void determineTrees() throws InterruptedException, IOException, FileNotFoundException, XmlPullParserException, ViewNotFoundException, AnalysisConfigurationException {
-      final TreeReader resultsManager = TreeReaderFactory.createTreeReader(folders, config.getVersionOld(), config, causeSearchConfig.isIgnoreEOIs());
+      final TreeReader resultsManager = TreeReaderFactory.createTreeReader(folders, config.getVersionOld(), config, causeSearchConfig.isIgnoreEOIs(), env);
       rootPredecessor = resultsManager.getTree(causeSearchConfig.getTestCase(), config.getVersionOld());
 
-      final TreeReader resultsManagerPrevious = TreeReaderFactory.createTreeReader(folders, config.getVersion(), config, causeSearchConfig.isIgnoreEOIs());
+      final TreeReader resultsManagerPrevious = TreeReaderFactory.createTreeReader(folders, config.getVersion(), config, causeSearchConfig.isIgnoreEOIs(), env);
       rootVersion = resultsManagerPrevious.getTree(causeSearchConfig.getTestCase(), config.getVersion());
       LOG.info("Traces equal: {}", TreeUtil.areTracesEqual(rootPredecessor, rootVersion));
    }

@@ -13,6 +13,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.measurement.analysis.EarlyBreakDecider;
 import de.peass.measurement.analysis.ResultLoader;
 import de.peass.measurement.organize.FolderDeterminer;
@@ -23,9 +24,9 @@ public class AdaptiveTester extends DependencyTester {
 
    private int finishedVMs = 0;
 
-   public AdaptiveTester(final PeASSFolders folders, final MeasurementConfiguration measurementConfig)
+   public AdaptiveTester(final PeASSFolders folders, final MeasurementConfiguration measurementConfig, final EnvironmentVariables env)
          throws IOException {
-      super(folders, measurementConfig);
+      super(folders, measurementConfig, env);
 
    }
 

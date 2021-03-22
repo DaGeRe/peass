@@ -19,6 +19,7 @@ import org.mockito.Mockito;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.measurement.rca.CauseTester;
@@ -160,8 +161,9 @@ public class LevelCauseSearcherTest {
    private void searchChanges() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       final CauseTester measurer = Mockito.mock(CauseTester.class);
       CauseTesterMockUtil.mockMeasurement(measurer, builderPredecessor);
+      CauseSearchFolders folders = new CauseSearchFolders(folder);
       final CauseSearcher searcher = new LevelCauseSearcher(treeReader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, measurementConfig,
-            new CauseSearchFolders(folder));
+            folders, new EnvironmentVariables());
 
       changes = searcher.search();
       data = searcher.getRCAData();

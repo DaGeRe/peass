@@ -25,6 +25,7 @@ import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.VCSTestUtils;
@@ -72,9 +73,9 @@ public class CauseSearcherCompleteIT {
       final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(2, "000001", "000001~1");
       measurementConfiguration.setUseKieker(true);
       final CauseSearchFolders folders = new CauseSearchFolders(CURRENT);
-      final BothTreeReader reader = new BothTreeReader(TestConstants.SIMPLE_CAUSE_CONFIG, measurementConfiguration, folders);
-      final CauseTester measurer = new CauseTester(folders, measurementConfiguration, TestConstants.SIMPLE_CAUSE_CONFIG);
-      final CauseSearcher searcher = new LevelCauseSearcher(reader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, measurementConfiguration, folders);
+      final BothTreeReader reader = new BothTreeReader(TestConstants.SIMPLE_CAUSE_CONFIG, measurementConfiguration, folders, new EnvironmentVariables());
+      final CauseTester measurer = new CauseTester(folders, measurementConfiguration, TestConstants.SIMPLE_CAUSE_CONFIG, new EnvironmentVariables());
+      final CauseSearcher searcher = new LevelCauseSearcher(reader, TestConstants.SIMPLE_CAUSE_CONFIG, measurer, measurementConfiguration, folders, new EnvironmentVariables());
       final Set<ChangedEntity> changedEntities = searcher.search();
 
       LOG.debug(changedEntities);

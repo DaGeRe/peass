@@ -21,6 +21,7 @@ import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.ExecutorCreator;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.DependencyTester;
 import de.peass.measurement.MavenTestExecutorMocker;
 import de.peass.measurement.rca.helper.VCSTestUtils;
@@ -45,7 +46,7 @@ public class TestDependencyTester {
 
       VCSTestUtils.mockGetVCS();
 
-      final DependencyTester tester = new DependencyTester(folders, configuration);
+      final DependencyTester tester = new DependencyTester(folders, configuration, new EnvironmentVariables());
       
       tester.evaluate(EXAMPLE_TESTCASE);
 
