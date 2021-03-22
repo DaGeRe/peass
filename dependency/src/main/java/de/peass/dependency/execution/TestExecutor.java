@@ -108,18 +108,7 @@ public abstract class TestExecutor {
       LOG.debug("Command: {}", Arrays.toString(vars));
 
       final ProcessBuilder pb = new ProcessBuilder(vars);
-      LOG.debug("KOPEME_HOME={}", folders.getTempMeasurementFolder().getAbsolutePath());
-      pb.environment().put("KOPEME_HOME", folders.getTempMeasurementFolder().getAbsolutePath());
-      if (this instanceof GradleTestExecutor) {
-         pb.environment().put("GRADLE_HOME", folders.getGradleHome().getAbsolutePath());
-      }
-      LOG.debug("LD_LIBRARY_PATH: {}", System.getenv().get("LD_LIBRARY_PATH"));
-      for (final Map.Entry<String, String> env : System.getenv().entrySet()) {
-         pb.environment().put(env.getKey(), env.getValue());
-      }
-      for (Map.Entry<String, String> entry : env.getEnvironmentVariables().entrySet()) {
-         pb.environment().put(entry.getKey(), entry.getValue());
-      }
+      overwriteEnvVars(pb);
 
       pb.directory(currentFolder);
       if (logFile != null) {
@@ -130,6 +119,22 @@ public abstract class TestExecutor {
       final Process process = pb.start();
       printPIDInfo(logFile);
       return process;
+   }
+
+   private void overwriteEnvVars(final ProcessBuilder pb) {
+      LOG.debug("KOPEME_HOME={}", folders.getTempMeasurementFolder().getAbsolutePath());
+      pb.environment().put("KOPEME_HOME", folders.getTempMeasurementFolder().getAbsolutePath());
+      if (this instanceof GradleTestExecutor) {
+         pb.environment().put("GRADLE_HOME", folders.getGradleHome().getAbsolutePath());
+      }
+      LOG.debug("LD_LIBRARY_PATH: {}", System.getenv().get("LD_LIBRARY_PATH"));
+      for (final Map.Entry<String, String> env : System.getenv().entrySet()) {
+         pb.environment().put(env.getKey(), env.getValue());
+      }
+      
+      for (Map.Entry<String, String> entry : env.getEnvironmentVariables().entrySet()) {
+         pb.environment().put(entry.getKey(), entry.getValue());
+      }
    }
 
    private void printPIDInfo(final File logFile) throws IOException {
@@ -213,9 +218,9 @@ public abstract class TestExecutor {
       try {
          final ProcessBuilder pb = new ProcessBuilder(vars);
          pb.directory(folders.getProjectFolder());
-         if (this instanceof GradleTestExecutor) {
-            pb.environment().put("GRADLE_HOME", folders.getGradleHome().getAbsolutePath());
-         }
+
+         overwriteEnvVars(pb);
+         
          LOG.debug("Executing run success test {}", folders.getProjectFolder());
          final File versionFolder = getVersionFolder(version);
          final File logFile = new File(versionFolder, "testRunning.log");

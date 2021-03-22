@@ -63,7 +63,7 @@ public abstract class DependencyReaderBase {
     * @param projectFolder Folder to examine
     * @param dependencyFile File to write results to
     */
-   public DependencyReaderBase(final Dependencies dependencyResult, final PeASSFolders folders, final File dependencyFile, 
+   public DependencyReaderBase(final Dependencies dependencyResult, final PeASSFolders folders, final File dependencyFile,
          final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.dependencyResult = dependencyResult;
       this.dependencyFile = dependencyFile;
@@ -145,7 +145,7 @@ public abstract class DependencyReaderBase {
       Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + version + ".json"), testsToRun.entrySet());
 
       NonIncludedTestRemover.removeNotIncluded(testsToRun, executionConfig);
-      
+
       final int changedTests;
       if (testsToRun.classCount() > 0) {
          changedTests = analyzeTests(version, newVersionInfo, testsToRun);
@@ -201,11 +201,11 @@ public abstract class DependencyReaderBase {
          return false;
       }
    }
-   
+
    public void readCompletedVersions(final Dependencies initialdependencies) {
       dependencyResult.setVersions(initialdependencies.getVersions());
       dependencyResult.setInitialversion(initialdependencies.getInitialversion());
-      
+
       dependencyManager = new DependencyManager(folders, executionConfig, env);
 
       InitialVersionReader initialVersionReader = new InitialVersionReader(initialdependencies, dependencyManager, iterator);
