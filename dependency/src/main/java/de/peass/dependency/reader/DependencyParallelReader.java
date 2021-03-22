@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.parallel.OneReader;
-import de.peass.dependency.traces.TemporaryProjectFolderUtil;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIterator;
@@ -73,10 +72,9 @@ public class DependencyParallelReader {
       for (int i = 0; i < outFiles.length; i++) {
          final int readableIndex = i + 1;
          outFiles[i] = new File(tempResultFolder, "deps_" + project + "_" + readableIndex + ".json");
-         final File projectFolderTemp = new File(folders.getTempProjectFolder(), "" + readableIndex);
-         TemporaryProjectFolderUtil.cloneForcefully(folders, projectFolderTemp);
+         PeASSFolders foldersTemp = folders.getTempFolder("" + readableIndex);
          final File currentOutFile = outFiles[i];
-         startPartProcess(currentOutFile, service, i, projectFolderTemp);
+         startPartProcess(currentOutFile, service, i, foldersTemp);
       }
       service.shutdown();
       try {
@@ -90,7 +88,7 @@ public class DependencyParallelReader {
       return outFiles;
    }
 
-   public void startPartProcess(final File currentOutFile, final ExecutorService service, final int i, final File projectFolderTemp) throws InterruptedException {
+   public void startPartProcess(final File currentOutFile, final ExecutorService service, final int i, final PeASSFolders foldersTemp) throws InterruptedException {
       final int min = i * sizePerThread;
       final int max = Math.min((i + 1) * sizePerThread + 1, commits.size());
       LOG.debug("Min: {} Max: {} Size: {}", min, max, commits.size());
@@ -99,18 +97,18 @@ public class DependencyParallelReader {
       final GitCommit minimumCommit = commits.get(Math.min(max, commits.size() - 1));
 
       if (currentCommits.size() > 0) {
-         processCommits(currentOutFile, service, projectFolderTemp, currentCommits, reserveCommits, minimumCommit);
+         processCommits(currentOutFile, service, foldersTemp, currentCommits, reserveCommits, minimumCommit);
       }
    }
 
-   void processCommits(final File currentOutFile, final ExecutorService service, final File projectFolderTemp, final List<GitCommit> currentCommits,
+   void processCommits(final File currentOutFile, final ExecutorService service, final PeASSFolders foldersTemp, final List<GitCommit> currentCommits,
          final List<GitCommit> reserveCommits, final GitCommit minimumCommit) throws InterruptedException {
       LOG.debug("Start: {} End: {}", currentCommits.get(0), currentCommits.get(currentCommits.size() - 1));
       LOG.debug(currentCommits);
-      final VersionIterator iterator = new VersionIteratorGit(projectFolderTemp, currentCommits, null);
-      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(new PeASSFolders(projectFolderTemp), nonRunning, iterator, executionConfig);
-      final DependencyReader reader = new DependencyReader(projectFolderTemp, currentOutFile, url, iterator, nonChanges, executionConfig);
-      final VersionIteratorGit reserveIterator = new VersionIteratorGit(projectFolderTemp, reserveCommits, null);
+      final VersionIterator iterator = new VersionIteratorGit(foldersTemp.getProjectFolder(), currentCommits, null);
+      FirstRunningVersionFinder finder = new FirstRunningVersionFinder(foldersTemp, nonRunning, iterator, executionConfig);
+      final DependencyReader reader = new DependencyReader(foldersTemp.getProjectFolder(), currentOutFile, url, iterator, nonChanges, executionConfig);
+      final VersionIteratorGit reserveIterator = new VersionIteratorGit(foldersTemp.getProjectFolder(), reserveCommits, null);
       final Runnable current = new OneReader(minimumCommit, currentOutFile, reserveIterator, reader, finder);
       service.submit(current);
       Thread.sleep(5);

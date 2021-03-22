@@ -23,8 +23,8 @@ public class TreeReader extends KiekerResultManager {
    private boolean ignoreEOIs = true;
    private final MeasurementConfiguration config;
    
-   TreeReader(final File projectFolder, final MeasurementConfiguration config) throws InterruptedException, IOException {
-      super(new PeASSFolders(projectFolder), config.getExecutionConfig());
+   TreeReader(final PeASSFolders folders, final MeasurementConfiguration config) throws InterruptedException, IOException {
+      super(folders, config.getExecutionConfig());
       this.config = config;
    }
 

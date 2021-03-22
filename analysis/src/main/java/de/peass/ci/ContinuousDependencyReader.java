@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.peass.config.ExecutionConfig;
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.Version;
 import de.peass.dependency.reader.DependencyReader;
@@ -24,11 +25,12 @@ public class ContinuousDependencyReader {
    private static final Logger LOG = LogManager.getLogger(ContinuousDependencyReader.class);
 
    private final ExecutionConfig executionConfig;
-   private final File projectFolder, dependencyFile;
+   private final PeASSFolders folders;
+   private final File dependencyFile;
 
-   public ContinuousDependencyReader(final ExecutionConfig executionConfig, final File projectFolder, final File dependencyFile) {
+   public ContinuousDependencyReader(final ExecutionConfig executionConfig, final PeASSFolders folders, final File dependencyFile) {
       this.executionConfig = executionConfig;
-      this.projectFolder = projectFolder;
+      this.folders = folders;
       this.dependencyFile = dependencyFile;
    }
 
@@ -36,7 +38,7 @@ public class ContinuousDependencyReader {
          throws Exception {
       Dependencies dependencies;
 
-      final VersionKeeper noChanges = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonChanges_" + projectFolder.getName() + ".json"));
+      final VersionKeeper noChanges = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonChanges_" + folders.getProjectFolder().getName() + ".json"));
 
       if (!dependencyFile.exists()) {
          dependencies = fullyLoadDependencies(url, iterator, noChanges);
@@ -63,7 +65,7 @@ public class ContinuousDependencyReader {
       commits.add(lastAnalyzedCommit);
       commits.add(currentCommit);
       LOG.info("Analyzing {} - {}", lastAnalyzedCommit, currentCommit);
-      VersionIteratorGit newIterator = new VersionIteratorGit(projectFolder, commits, lastAnalyzedCommit);
+      VersionIteratorGit newIterator = new VersionIteratorGit(folders.getProjectFolder(), commits, lastAnalyzedCommit);
       return newIterator;
    }
 
@@ -83,7 +85,7 @@ public class ContinuousDependencyReader {
 
       try (LogRedirector director = new LogRedirector(logFile)) {
          VersionIterator newIterator = getIterator(lastVersionName);
-         DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, dependencies.getUrl(), newIterator, executionConfig);
+         DependencyReader reader = new DependencyReader(folders.getProjectFolder(), dependencyFile, dependencies.getUrl(), newIterator, executionConfig);
          newIterator.goTo0thCommit();
 
          reader.readCompletedVersions(dependencies);
@@ -105,7 +107,7 @@ public class ContinuousDependencyReader {
       LOG.info("Executing regression test selection (step 1) - Log goes to {}", logFile.getAbsolutePath());
 
       try (LogRedirector director = new LogRedirector(logFile)) {
-         final DependencyReader reader = new DependencyReader(projectFolder, dependencyFile, url, iterator, nonChanges, executionConfig);
+         final DependencyReader reader = new DependencyReader(folders.getProjectFolder(), dependencyFile, url, iterator, nonChanges, executionConfig);
          iterator.goToPreviousCommit();
          if (!reader.readInitialVersion()) {
             LOG.error("Analyzing first version was not possible");

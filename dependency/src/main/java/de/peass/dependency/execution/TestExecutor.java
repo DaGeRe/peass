@@ -51,10 +51,12 @@ public abstract class TestExecutor {
    protected boolean isAndroid;
 
    protected boolean buildfileExists = false;
+   private final EnvironmentVariables env;
 
-   public TestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
+   public TestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
       this.folders = folders;
       this.testTransformer = testTransformer;
+      this.env = env;
    }
 
    public void setJDKVersion(final int jdk_version) {
@@ -91,7 +93,7 @@ public abstract class TestExecutor {
       }
       return testcases;
    }
-   
+
    protected String getTestGoal() {
       String testGoal;
       if (isAndroid) {
@@ -114,6 +116,9 @@ public abstract class TestExecutor {
       LOG.debug("LD_LIBRARY_PATH: {}", System.getenv().get("LD_LIBRARY_PATH"));
       for (final Map.Entry<String, String> env : System.getenv().entrySet()) {
          pb.environment().put(env.getKey(), env.getValue());
+      }
+      for (Map.Entry<String, String> entry : env.getEnvironmentVariables().entrySet()) {
+         pb.environment().put(entry.getKey(), entry.getValue());
       }
 
       pb.directory(currentFolder);
@@ -175,7 +180,7 @@ public abstract class TestExecutor {
          e.printStackTrace();
       }
    }
-   
+
    protected void prepareKiekerSource() throws IOException, XmlPullParserException, InterruptedException {
       if (testTransformer.getConfig().isUseKieker()) {
          final KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPattern, folders, testTransformer, getModules(), existingClasses);
@@ -316,11 +321,11 @@ public abstract class TestExecutor {
       this.includedMethodPattern = includedMethodPattern;
    }
 
-   public static List<File> getModules(final PeASSFolders folders) throws IOException, XmlPullParserException{
+   public static List<File> getModules(final PeASSFolders folders) throws IOException, XmlPullParserException {
       TestExecutor tempExecutor = ExecutorCreator.createExecutor(folders, null);
       return tempExecutor.getModules();
    }
-   
+
    public JUnitTestTransformer getTestTransformer() {
       return testTransformer;
    }

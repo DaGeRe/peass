@@ -20,8 +20,8 @@ public class GradleTestExecutor extends TestExecutor {
 
    private static final Logger LOG = LogManager.getLogger(GradleTestExecutor.class);
 
-   public GradleTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
-      super(folders, testTransformer);
+   public GradleTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
+      super(folders, testTransformer, env);
    }
 
    @Override

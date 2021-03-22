@@ -63,8 +63,8 @@ public class MavenTestExecutor extends TestExecutor {
 
    protected Charset lastEncoding = StandardCharsets.UTF_8;
 
-   public MavenTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
-      super(folders, testTransformer);
+   public MavenTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
+      super(folders, testTransformer, env);
    }
 
    /**

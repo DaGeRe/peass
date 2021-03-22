@@ -1,9 +1,11 @@
 package de.peass.dependency;
 
 import java.io.File;
+import java.io.IOException;
 
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.GradleParseUtil;
+import de.peass.dependency.traces.TemporaryProjectFolderUtil;
 
 /**
  * Helps managing the PeASS-folders and their existance
@@ -146,6 +148,12 @@ public class PeASSFolders {
          debugFolder.mkdir();
       }
       return debugFolder;
+   }
+   
+   public PeASSFolders getTempFolder(final String name) throws IOException, InterruptedException {
+      final File nowFolder = new File(getTempProjectFolder(), name);
+      PeASSFolders folders = TemporaryProjectFolderUtil.cloneForcefully(this, nowFolder);
+      return folders;
    }
 
 }

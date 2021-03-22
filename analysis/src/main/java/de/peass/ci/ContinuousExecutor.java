@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
@@ -42,21 +43,23 @@ public class ContinuousExecutor {
    private String versionOld;
 
    private final File localFolder;
-   private final File projectFolderLocal;
    private final PeASSFolders folders;
    private final File viewFolder;
    private final File propertyFolder;
+   
+   private final Map<String, String> environmentVariables;
 
-   public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final int threads, final boolean useViews)
+   public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final int threads, final boolean useViews, final Map<String, String> environmentVariables)
          throws InterruptedException, IOException {
       this.projectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
       this.threads = threads;
       this.useViews = useViews;
+      this.environmentVariables = environmentVariables;
 
       File vcsFolder = VersionControlSystem.findVCSFolder(projectFolder);
       localFolder = ContinuousFolderUtil.getLocalFolder(vcsFolder);
-      projectFolderLocal = new File(localFolder, ContinuousFolderUtil.getSubFolderPath(projectFolder));
+      File projectFolderLocal = new File(localFolder, ContinuousFolderUtil.getSubFolderPath(projectFolder));
       if (!localFolder.exists() || !projectFolderLocal.exists()) {
          ContinuousFolderUtil.cloneProject(projectFolder, localFolder);
          if (!projectFolderLocal.exists()) {
@@ -82,7 +85,7 @@ public class ContinuousExecutor {
       final VersionIteratorGit iterator = buildIterator();
       final String url = GitUtils.getURL(projectFolder);
 
-      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(measurementConfig.getExecutionConfig(), projectFolderLocal, dependencyFile);
+      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(measurementConfig.getExecutionConfig(), folders, dependencyFile);
       final Dependencies dependencies = dependencyReader.getDependencies(iterator, url);
 
       if (dependencies.getVersions().size() > 0) {
@@ -122,14 +125,14 @@ public class ContinuousExecutor {
    }
 
    private VersionIteratorGit buildIterator() {
-      versionOld = GitUtils.getName(measurementConfig.getVersionOld(), projectFolderLocal);
-      version = GitUtils.getName(measurementConfig.getVersion(), projectFolderLocal);
+      versionOld = GitUtils.getName(measurementConfig.getVersionOld(), folders.getProjectFolder());
+      version = GitUtils.getName(measurementConfig.getVersion(), folders.getProjectFolder());
 
       final List<GitCommit> entries = new LinkedList<>();
       final GitCommit prevCommit = new GitCommit(versionOld, "", "", "");
       entries.add(prevCommit);
       entries.add(new GitCommit(version, "", "", ""));
-      final VersionIteratorGit iterator = new VersionIteratorGit(projectFolderLocal, entries, prevCommit);
+      final VersionIteratorGit iterator = new VersionIteratorGit(folders.getProjectFolder(), entries, prevCommit);
       return iterator;
    }
 

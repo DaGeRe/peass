@@ -2,6 +2,7 @@ package de.peass;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBException;
@@ -61,7 +62,7 @@ public class ContinuousExecutionStarter implements Callable<Void> {
    @Override
    public Void call() throws Exception {
       final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(measurementConfigMixin, executionMixin, statisticConfigMixin);
-      final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, threads, useViews);
+      final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, threads, useViews, new TreeMap<String, String>());
       executor.execute();
       return null;
    }

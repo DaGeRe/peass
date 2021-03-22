@@ -101,8 +101,7 @@ public class ViewGeneratorThread implements Runnable {
    }
 
    private PeASSFolders initProjectFolder() throws InterruptedException, IOException {
-      final File projectFolderTemp = new File(folders.getTempProjectFolder(), "" + VersionComparator.getVersionIndex(version));
-      return TemporaryProjectFolderUtil.cloneForcefully(folders, projectFolderTemp);
+      return folders.getTempFolder("" + VersionComparator.getVersionIndex(version));
    }
 
    protected boolean generateTraces(final PeASSFolders folders, final Map<String, List<File>> traceFileMap)

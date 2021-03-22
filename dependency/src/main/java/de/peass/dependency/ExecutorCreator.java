@@ -2,6 +2,7 @@ package de.peass.dependency;
 
 import java.io.File;
 
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.execution.GradleTestExecutor;
 import de.peass.dependency.execution.MavenTestExecutor;
 import de.peass.dependency.execution.TestExecutor;
@@ -19,9 +20,9 @@ public class ExecutorCreator {
       final File pom = new File(folders.getProjectFolder(), "pom.xml");
       final File buildGradle = new File(folders.getProjectFolder(), "build.gradle");
       if (buildGradle.exists()) {
-         return new GradleTestExecutor(folders, testTransformer);
+         return new GradleTestExecutor(folders, testTransformer, new EnvironmentVariables());
       } else if (pom.exists()) {
-         return new MavenTestExecutor(folders, testTransformer);
+         return new MavenTestExecutor(folders, testTransformer, new EnvironmentVariables());
       } else {
          throw new RuntimeException("No known buildfile (pom.xml  or build.gradle) in " + folders.getProjectFolder().getAbsolutePath() + " found; can not create test executor.");
       }
