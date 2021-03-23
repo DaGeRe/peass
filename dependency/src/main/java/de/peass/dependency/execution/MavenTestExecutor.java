@@ -87,7 +87,7 @@ public class MavenTestExecutor extends TestExecutor {
       }
    }
 
-   protected Process buildMavenProcess(final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
+   public Process buildMavenProcess(final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
       final String testGoal = getTestGoal();
       String mvnCall = getMavenCall();
       final String[] originals = new String[] { mvnCall,
@@ -104,14 +104,7 @@ public class MavenTestExecutor extends TestExecutor {
             "-Djacoco.skip=true",
             "-Djava.io.tmpdir=" + folders.getTempDir().getAbsolutePath() };
 
-      final String[] vars = new String[commandLineAddition.length + originals.length];
-      for (int i = 0; i < originals.length; i++) {
-         vars[i] = originals[i];
-      }
-      for (int i = 0; i < commandLineAddition.length; i++) {
-         vars[originals.length + i] = commandLineAddition[i];
-      }
-
+      final String[] vars = concatenateCommandArrays(originals, commandLineAddition);
       return buildFolderProcess(folders.getProjectFolder(), logFile, vars);
    }
 

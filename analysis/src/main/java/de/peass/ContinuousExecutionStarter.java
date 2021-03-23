@@ -2,7 +2,6 @@ package de.peass;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBException;
@@ -13,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import de.peass.ci.ContinuousExecutor;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.config.StatisticsConfigurationMixin;
+import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.execution.ExecutionConfigMixin;
 import de.peass.dependency.execution.MeasurementConfigurationMixin;
 import picocli.CommandLine;
@@ -47,6 +47,9 @@ public class ContinuousExecutionStarter implements Callable<Void> {
 
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
+   
+   @Option(names = { "-properties", "--properties" }, description = "Properties that should be passed to the build process")
+   String properties;
 
    @Option(names = { "-folder", "--folder" }, description = "Folder of the project that should be analyzed", required = true)
    protected File projectFolder;
@@ -62,7 +65,7 @@ public class ContinuousExecutionStarter implements Callable<Void> {
    @Override
    public Void call() throws Exception {
       final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(measurementConfigMixin, executionMixin, statisticConfigMixin);
-      final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, threads, useViews, new TreeMap<String, String>());
+      final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, threads, useViews, new EnvironmentVariables(properties));
       executor.execute();
       return null;
    }

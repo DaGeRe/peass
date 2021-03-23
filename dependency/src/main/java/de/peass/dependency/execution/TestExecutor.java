@@ -2,6 +2,7 @@ package de.peass.dependency.execution;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -104,10 +105,12 @@ public abstract class TestExecutor {
       return testGoal;
    }
 
-   protected Process buildFolderProcess(final File currentFolder, final File logFile, final String[] vars) throws IOException {
+   public Process buildFolderProcess(final File currentFolder, final File logFile, final String[] vars) throws IOException {
       LOG.debug("Command: {}", Arrays.toString(vars));
 
-      final ProcessBuilder pb = new ProcessBuilder(vars);
+      String[] varsWithProperties = concatenateCommandArrays(vars, env.getProperties().split(" "));
+      
+      final ProcessBuilder pb = new ProcessBuilder(varsWithProperties);
       overwriteEnvVars(pb);
 
       pb.directory(currentFolder);
@@ -119,6 +122,17 @@ public abstract class TestExecutor {
       final Process process = pb.start();
       printPIDInfo(logFile);
       return process;
+   }
+   
+   protected String[] concatenateCommandArrays(final String[] first, final String[] second) {
+      final String[] vars = new String[first.length + second.length];
+      for (int i = 0; i < first.length; i++) {
+         vars[i] = first[i];
+      }
+      for (int i = 0; i < second.length; i++) {
+         vars[first.length + i] = second[i];
+      }
+      return vars;
    }
 
    private void overwriteEnvVars(final ProcessBuilder pb) {
@@ -237,12 +251,7 @@ public abstract class TestExecutor {
          final int returncode = process.exitValue();
          if (returncode != 0) {
             isRunning = false;
-            try (BufferedReader br = new BufferedReader(new FileReader(logFile))) {
-               String line;
-               while ((line = br.readLine()) != null) {
-                  System.out.println(line);
-               }
-            }
+            printFailureLogToCommandline(logFile);
 
          } else {
             isRunning = true;
@@ -253,6 +262,15 @@ public abstract class TestExecutor {
          e.printStackTrace();
       }
       return isRunning;
+   }
+
+   private void printFailureLogToCommandline(final File logFile) throws IOException, FileNotFoundException {
+      try (BufferedReader br = new BufferedReader(new FileReader(logFile))) {
+         String line;
+         while ((line = br.readLine()) != null) {
+            System.out.println(line);
+         }
+      }
    }
 
    /**

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
@@ -48,18 +47,16 @@ public class ContinuousExecutor {
    private final File viewFolder;
    private final File propertyFolder;
 
-   private final EnvironmentVariables env = new EnvironmentVariables();
+   private final EnvironmentVariables env;
 
    public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final int threads, final boolean useViews,
-         final Map<String, String> environmentVariables)
+         final EnvironmentVariables env)
          throws InterruptedException, IOException {
       this.projectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
       this.threads = threads;
       this.useViews = useViews;
-      for (Map.Entry<String, String> environment : environmentVariables.entrySet()) {
-         env.getEnvironmentVariables().put(environment.getKey(), environment.getValue());
-      }
+      this.env = env;
 
       File vcsFolder = VersionControlSystem.findVCSFolder(projectFolder);
       localFolder = ContinuousFolderUtil.getLocalFolder(vcsFolder);
