@@ -106,10 +106,10 @@ public abstract class TestExecutor {
    }
 
    public Process buildFolderProcess(final File currentFolder, final File logFile, final String[] vars) throws IOException {
-      LOG.debug("Command: {}", Arrays.toString(vars));
-
-      String[] varsWithProperties = concatenateCommandArrays(vars, env.getProperties().length() > 0 ? env.getProperties().split(" ") : new String[0]);
-
+      String[] envPropertyArray = env.getProperties().length() > 0 ? env.getProperties().split(" ") : new String[0];
+      final String[] varsWithProperties = concatenateCommandArrays(vars, envPropertyArray);
+      LOG.debug("Command: {}", Arrays.toString(varsWithProperties));
+      
       final ProcessBuilder pb = new ProcessBuilder(varsWithProperties);
       overwriteEnvVars(pb);
 
@@ -230,19 +230,13 @@ public abstract class TestExecutor {
    protected boolean testRunningSuccess(final String version, final String[] vars) {
       boolean isRunning = false;
       try {
-         final ProcessBuilder pb = new ProcessBuilder(vars);
-         pb.directory(folders.getProjectFolder());
-
-         overwriteEnvVars(pb);
-
          LOG.debug("Executing run success test {}", folders.getProjectFolder());
          final File versionFolder = getVersionFolder(version);
          final File logFile = new File(versionFolder, "testRunning.log");
-         pb.redirectOutput(Redirect.appendTo(logFile));
-         pb.redirectError(Redirect.appendTo(logFile));
-
+         
+         Process process = buildFolderProcess(folders.getProjectFolder(), logFile, vars);
          LOG.debug("Waiting for {} minutes", testTransformer.getConfig().getTimeoutInMinutes());
-         final Process process = pb.start();
+         
          process.waitFor(testTransformer.getConfig().getTimeoutInMinutes(), TimeUnit.MINUTES);
          if (process.isAlive()) {
             LOG.debug("Destroying process");
