@@ -108,8 +108,8 @@ public abstract class TestExecutor {
    public Process buildFolderProcess(final File currentFolder, final File logFile, final String[] vars) throws IOException {
       LOG.debug("Command: {}", Arrays.toString(vars));
 
-      String[] varsWithProperties = concatenateCommandArrays(vars, env.getProperties().split(" "));
-      
+      String[] varsWithProperties = concatenateCommandArrays(vars, env.getProperties().length() > 0 ? env.getProperties().split(" ") : new String[0]);
+
       final ProcessBuilder pb = new ProcessBuilder(varsWithProperties);
       overwriteEnvVars(pb);
 
@@ -123,7 +123,7 @@ public abstract class TestExecutor {
       printPIDInfo(logFile);
       return process;
    }
-   
+
    protected String[] concatenateCommandArrays(final String[] first, final String[] second) {
       final String[] vars = new String[first.length + second.length];
       for (int i = 0; i < first.length; i++) {
@@ -145,7 +145,7 @@ public abstract class TestExecutor {
       for (final Map.Entry<String, String> env : System.getenv().entrySet()) {
          pb.environment().put(env.getKey(), env.getValue());
       }
-      
+
       for (Map.Entry<String, String> entry : env.getEnvironmentVariables().entrySet()) {
          pb.environment().put(entry.getKey(), entry.getValue());
       }
@@ -234,7 +234,7 @@ public abstract class TestExecutor {
          pb.directory(folders.getProjectFolder());
 
          overwriteEnvVars(pb);
-         
+
          LOG.debug("Executing run success test {}", folders.getProjectFolder());
          final File versionFolder = getVersionFolder(version);
          final File logFile = new File(versionFolder, "testRunning.log");
