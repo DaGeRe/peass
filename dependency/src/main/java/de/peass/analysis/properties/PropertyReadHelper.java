@@ -225,10 +225,7 @@ public class PropertyReadHelper {
       final ChangedEntity entity = new ChangedEntity(clazz, module, method);
       if (openingParenthesis != -1) {
          final String parameterString = clazzMethodName.substring(openingParenthesis + 1, clazzMethodName.length() - 1);
-         final String[] parameters = parameterString.split(",");
-         for (final String parameter : parameters) {
-            entity.getParameters().add(parameter);
-         }
+         entity.createParameters(parameterString);
       }
       return entity;
    }

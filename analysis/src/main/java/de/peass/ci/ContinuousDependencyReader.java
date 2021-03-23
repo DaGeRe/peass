@@ -85,7 +85,7 @@ public class ContinuousDependencyReader {
    private void executePartialRTS(final Dependencies dependencies, final String lastVersionName) throws FileNotFoundException {
       File logFile = new File(getDependencyreadingFolder(), executionConfig.getVersion() + "_" + executionConfig.getVersionOld() + ".txt");
       LOG.info("Executing regression test selection update (step 1) - Log goes to ", logFile.getAbsolutePath());
-
+      
       try (LogRedirector director = new LogRedirector(logFile)) {
          VersionIterator newIterator = getIterator(lastVersionName);
          DependencyReader reader = new DependencyReader(folders.getProjectFolder(), dependencyFile, dependencies.getUrl(), newIterator, executionConfig, env);

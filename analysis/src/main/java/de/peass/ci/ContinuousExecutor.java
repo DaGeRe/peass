@@ -57,6 +57,7 @@ public class ContinuousExecutor {
       this.threads = threads;
       this.useViews = useViews;
       this.env = env;
+      LOG.info("Properties: " + env.getProperties());
 
       File vcsFolder = VersionControlSystem.findVCSFolder(projectFolder);
       localFolder = ContinuousFolderUtil.getLocalFolder(vcsFolder);

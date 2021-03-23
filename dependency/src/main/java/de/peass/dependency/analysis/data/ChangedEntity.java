@@ -203,4 +203,16 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       return result.length() > 0 ? result.substring(0, result.length() - 1) : "";
    }
 
+   public void createParameters(final String parameterString) {
+      final String[] parameters = parameterString.split(",");
+      for (final String parameter : parameters) {
+         int dotIndex = parameter.lastIndexOf('.');
+         if (dotIndex != -1) {
+            this.parameters.add(parameter.substring(dotIndex + 1));
+         } else {
+            this.parameters.add(parameter);
+         }
+      }
+   }
+
 }

@@ -53,29 +53,29 @@ public class MethodChangeReader {
       return patch;
    }
    
-   public static File getMethodMainFile(final File methodSourceFolder, final String version, final ChangedEntity clazz) {
-      return getMethodModifierFile(methodSourceFolder, version, clazz, "main");
+   public static File getMethodMainFile(final File methodSourceFolder, final String version, final ChangedEntity methodEntity) {
+      return getMethodModifierFile(methodSourceFolder, version, methodEntity, "main");
    }
    
-   public static File getMethodOldFile(final File methodSourceFolder, final String version, final ChangedEntity clazz) {
-      return getMethodModifierFile(methodSourceFolder, version, clazz, "old");
+   public static File getMethodOldFile(final File methodSourceFolder, final String version, final ChangedEntity methodEntity) {
+      return getMethodModifierFile(methodSourceFolder, version, methodEntity, "old");
    }
 
-   public static File getMethodDiffFile(final File methodSourceFolder, final String version, final ChangedEntity clazz) {
-      return getMethodModifierFile(methodSourceFolder, version, clazz, "diff");
+   public static File getMethodDiffFile(final File methodSourceFolder, final String version, final ChangedEntity methodEntity) {
+      return getMethodModifierFile(methodSourceFolder, version, methodEntity, "diff");
    }
 
-   private static File getMethodModifierFile(final File methodSourceFolder, final String version, final ChangedEntity clazz, final String modifier) {
+   private static File getMethodModifierFile(final File methodSourceFolder, final String version, final ChangedEntity methodEntity, final String modifier) {
       final File versionFolder = new File(methodSourceFolder, version);
       versionFolder.mkdirs();
-      final String clazzFolderName = (clazz.getModule() != null && !clazz.getModule().equals("")) ? clazz.getModule() + ChangedEntity.MODULE_SEPARATOR + clazz.getJavaClazzName()
-            : clazz.getJavaClazzName();
+      final String clazzFolderName = (methodEntity.getModule() != null && !methodEntity.getModule().equals("")) ? methodEntity.getModule() + ChangedEntity.MODULE_SEPARATOR + methodEntity.getJavaClazzName()
+            : methodEntity.getJavaClazzName();
       final File clazzFolder = new File(versionFolder, clazzFolderName);
       clazzFolder.mkdirs();
-      String methodFilename = clazz.getMethod()
+      String methodFilename = methodEntity.getMethod()
             .replace("<", "(")
             .replace(">", ")");
-      final String methodString = methodFilename + "_" + clazz.getParametersPrintable();
+      final String methodString = methodFilename + "_" + methodEntity.getParametersPrintable();
       final File methodDiffFile = new File(clazzFolder, methodString + "_" + modifier + ".txt");
       return methodDiffFile;
    }
