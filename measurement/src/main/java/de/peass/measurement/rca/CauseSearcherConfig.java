@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.peass.dependency.analysis.data.TestCase;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CauseSearcherConfig implements Serializable {
    
    private static final long serialVersionUID = 5893295648840988829L;

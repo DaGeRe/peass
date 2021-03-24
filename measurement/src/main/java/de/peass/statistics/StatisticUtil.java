@@ -286,6 +286,22 @@ public class StatisticUtil {
          } else {
             return Relation.EQUAL;
          }
+      case ANY_NO_AGNOSTIC:
+         boolean isChangeNoAgnostic = bimodalTTest(cd, measurementConfig.getType1error()) != Relation.EQUAL
+         || getTTestRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL
+         || getMannWhitneyRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL
+         || ConfidenceIntervalInterpretion.compare(cd) != Relation.EQUAL;
+         LOG.info("Test results ");
+         LOG.info("Bimodal T: {}", bimodalTTest(cd, measurementConfig.getType1error()) != Relation.EQUAL);
+         LOG.info("T Test: {}", getTTestRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL);
+         LOG.info("Mann-Whitney: {}", getMannWhitneyRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL);
+         LOG.info("Confidence interval: {}", ConfidenceIntervalInterpretion.compare(cd, measurementConfig.getType1error()) != Relation.EQUAL);
+         LOG.info("isChange: {}", isChangeNoAgnostic);
+         if (isChangeNoAgnostic) {
+            return cd.getAvgBefore() < cd.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;
+         } else {
+            return Relation.EQUAL;
+         }
       default:
          throw new RuntimeException("Test " + measurementConfig.getStatisticsConfig().getStatisticTest() + " currently not implemented");
       }
