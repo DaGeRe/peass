@@ -139,7 +139,7 @@ public class GradleTestExecutor extends TestExecutor {
          try {
             boolean isAndroid = false;
             for (final File module : getModules().getModules()) {
-               final File buildfile = new File(module, "build.gradle");
+               final File buildfile = GradleParseUtil.findGradleFile(module);
                final FindDependencyVisitor visitor = GradleParseUtil.setAndroidTools(buildfile);
                if (visitor.isAndroid()) {
                   isAndroid = true;
