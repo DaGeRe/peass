@@ -81,7 +81,7 @@ public abstract class TestExecutor {
 
    protected List<TestCase> getTestCases() throws IOException, XmlPullParserException {
       final List<TestCase> testcases = new LinkedList<>();
-      for (final File module : getModules()) {
+      for (final File module : getModules().getModules()) {
          for (final String test : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
             final String moduleName = ModuleClassMapping.getModuleName(folders.getProjectFolder(), module);
             final ChangedEntity entity = new ChangedEntity(test, moduleName);
@@ -192,7 +192,7 @@ public abstract class TestExecutor {
 
    public void transformTests() {
       try {
-         final List<File> modules = getModules();
+         final List<File> modules = getModules().getModules();
          testTransformer.determineVersions(modules);
          testTransformer.transformTests();
       } catch (IOException | XmlPullParserException e) {
@@ -202,7 +202,7 @@ public abstract class TestExecutor {
 
    protected void prepareKiekerSource() throws IOException, XmlPullParserException, InterruptedException {
       if (testTransformer.getConfig().isUseKieker()) {
-         final KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPattern, folders, testTransformer, getModules(), existingClasses);
+         final KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPattern, folders, testTransformer, getModules().getModules(), existingClasses);
          kiekerEnvironmentPreparer.prepareKieker();
       }
    }
@@ -305,7 +305,7 @@ public abstract class TestExecutor {
       return versionFolder;
    }
 
-   public abstract List<File> getModules() throws IOException, XmlPullParserException;
+   public abstract ProjectModules getModules() throws IOException, XmlPullParserException;
 
    public List<String> getExistingClasses() {
       return existingClasses;
@@ -316,7 +316,7 @@ public abstract class TestExecutor {
    public void loadClasses() {
       existingClasses = new LinkedList<>();
       try {
-         for (final File module : getModules()) {
+         for (final File module : getModules().getModules()) {
             final List<String> currentClasses = ClazzFileFinder.getClasses(module);
             existingClasses.addAll(currentClasses);
          }
@@ -337,7 +337,7 @@ public abstract class TestExecutor {
       this.includedMethodPattern = includedMethodPattern;
    }
 
-   public static List<File> getModules(final PeASSFolders folders) throws IOException, XmlPullParserException {
+   public static ProjectModules getModules(final PeASSFolders folders) throws IOException, XmlPullParserException {
       TestExecutor tempExecutor = ExecutorCreator.createExecutor(folders, null, null);
       return tempExecutor.getModules();
    }

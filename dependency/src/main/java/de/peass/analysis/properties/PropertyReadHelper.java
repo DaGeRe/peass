@@ -160,7 +160,7 @@ public class PropertyReadHelper {
 
    private void identifyAffectedClasses(final ChangeProperty property, final Set<String> calls) throws FileNotFoundException, IOException {
       try {
-         final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, MavenPomUtil.getGenericModules(projectFolder), version);
+         final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, MavenPomUtil.getGenericModules(projectFolder).getModules(), version);
          for (final Iterator<ChangedEntity> it = diff.getChangedClasses().iterator(); it.hasNext();) {
             final ChangedEntity entity = it.next();
             boolean called = false;

@@ -110,36 +110,17 @@ public class GradleParseUtil {
       }
    }
 
-   public static FindDependencyVisitor addDependencies(final JUnitTestTransformer testTransformer, final File buildfile, final File tempFolder) {
+   public static FindDependencyVisitor addDependencies(final JUnitTestTransformer testTransformer, final File buildfile, final File tempFolder, final ProjectModules modules) {
       FindDependencyVisitor visitor = null;
       try {
          LOG.debug("Editing buildfile: {}", buildfile.getAbsolutePath());
          visitor = parseBuildfile(buildfile);
          final List<String> gradleFileContents = Files.readAllLines(Paths.get(buildfile.toURI()));
          if (visitor.isUseJava() == true) {
-            if (visitor.getBuildTools() != -1) {
-               updateBuildTools(visitor, gradleFileContents);
-            }
-
-            if (visitor.getBuildToolsVersion() != -1) {
-               updateBuildToolsVersion(visitor, gradleFileContents);
-            }
-
-            if (visitor.getDependencyLine() != -1) {
-               for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
-                  final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
-                  gradleFileContents.add(visitor.getDependencyLine() - 1, dependencyGradle);
-               }
-            } else {
-               gradleFileContents.add("dependencies { ");
-               for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
-                  final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
-                  gradleFileContents.add(dependencyGradle);
-               }
-               gradleFileContents.add("}");
-            }
-
-            addKiekerLine(testTransformer, tempFolder, visitor, gradleFileContents);
+            editGradlefileContents(testTransformer, tempFolder, visitor, gradleFileContents);
+         } else {
+            LOG.debug("Buildfile itself does not contain Java plugin, checking parent projects");
+            
          }
 
          LOG.debug("Writing changed buildfile: {}", buildfile.getAbsolutePath());
@@ -148,6 +129,33 @@ public class GradleParseUtil {
          e.printStackTrace();
       }
       return visitor;
+   }
+
+   private static void editGradlefileContents(final JUnitTestTransformer testTransformer, final File tempFolder, final FindDependencyVisitor visitor,
+         final List<String> gradleFileContents) {
+      if (visitor.getBuildTools() != -1) {
+         updateBuildTools(visitor, gradleFileContents);
+      }
+
+      if (visitor.getBuildToolsVersion() != -1) {
+         updateBuildToolsVersion(visitor, gradleFileContents);
+      }
+
+      if (visitor.getDependencyLine() != -1) {
+         for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
+            final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
+            gradleFileContents.add(visitor.getDependencyLine() - 1, dependencyGradle);
+         }
+      } else {
+         gradleFileContents.add("dependencies { ");
+         for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
+            final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
+            gradleFileContents.add(dependencyGradle);
+         }
+         gradleFileContents.add("}");
+      }
+
+      addKiekerLine(testTransformer, tempFolder, visitor, gradleFileContents);
    }
 
    public static void addKiekerLine(final JUnitTestTransformer testTransformer, final File tempFolder, final FindDependencyVisitor visitor, final List<String> gradleFileContents) {
@@ -171,7 +179,7 @@ public class GradleParseUtil {
       }
    }
 
-   public static List<File> getModules(final File projectFolder) throws FileNotFoundException, IOException {
+   public static ProjectModules getModules(final File projectFolder) throws FileNotFoundException, IOException {
       final File settingsFile = new File(projectFolder, "settings.gradle");
       final List<File> modules = new LinkedList<>();
       if (settingsFile.exists()) {
@@ -185,7 +193,7 @@ public class GradleParseUtil {
          LOG.debug("settings-file {} not found", settingsFile);
          modules.add(projectFolder);
       }
-      return modules;
+      return new ProjectModules(modules);
    }
 
    private static void parseModuleLine(final File projectFolder, final List<File> modules, final String line) {

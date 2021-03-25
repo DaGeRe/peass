@@ -12,6 +12,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.peass.dependency.ClazzFileFinder;
 import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.execution.ProjectModules;
 import de.peass.dependency.execution.TestExecutor;
 
 public class ModuleClassMapping {
@@ -25,8 +26,8 @@ public class ModuleClassMapping {
 
    private final Map<String, String> mapping = new HashMap<>();
 
-   public ModuleClassMapping(final File baseFolder, final List<File> modules) {
-      for (final File module : modules) {
+   public ModuleClassMapping(final File baseFolder, final ProjectModules modules) {
+      for (final File module : modules.getModules()) {
          final List<String> classes = ClazzFileFinder.getClasses(module);
          String moduleName;
          if (module.equals(baseFolder)) {
@@ -42,7 +43,7 @@ public class ModuleClassMapping {
    }
    
    public ModuleClassMapping(final File baseFolder) throws IOException, XmlPullParserException {
-      final List<File> modules = TestExecutor.getModules(new PeASSFolders(baseFolder));
+      final List<File> modules = TestExecutor.getModules(new PeASSFolders(baseFolder)).getModules();
       for (final File module : modules) {
          final List<String> classes = ClazzFileFinder.getClasses(module);
          String moduleName;

@@ -171,7 +171,7 @@ public class MavenTestExecutor extends TestExecutor {
          MavenPomUtil.cleanSnapshotDependencies(pomFile);
       }
       PomJavaUpdater.fixCompilerVersion(pomFile);
-      for (File module : getModules()) {
+      for (File module : getModules().getModules()) {
          final File pomFileModule = new File(module, "pom.xml");
          if (testTransformer.getConfig().isRemoveSnapshots()) {
             MavenPomUtil.cleanSnapshotDependencies(pomFileModule);
@@ -246,7 +246,7 @@ public class MavenTestExecutor extends TestExecutor {
    public void preparePom() {
       try {
          lastTmpFile = Files.createTempDirectory(folders.getKiekerTempFolder().toPath(), "kiekerTemp").toFile();
-         for (final File module : getModules()) {
+         for (final File module : getModules().getModules()) {
             editOneBuildfile(true, new File(module, "pom.xml"));
             final File potentialModuleFile = new File(module, "src/main/java/module-info.java");
             LOG.debug("Checking {}", potentialModuleFile.getAbsolutePath());
@@ -296,7 +296,7 @@ public class MavenTestExecutor extends TestExecutor {
    }
 
    @Override
-   public List<File> getModules() throws IOException, XmlPullParserException {
+   public ProjectModules getModules() throws IOException, XmlPullParserException {
       return MavenPomUtil.getModules(new File(folders.getProjectFolder(), "pom.xml"));
    }
 

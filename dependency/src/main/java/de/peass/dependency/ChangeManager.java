@@ -41,7 +41,7 @@ public class ChangeManager {
    private final PeASSFolders folders;
    private final VersionIterator iterator;
 
-   public ChangeManager(final PeASSFolders folders, VersionIterator iterator) {
+   public ChangeManager(final PeASSFolders folders, final VersionIterator iterator) {
       this.folders = folders;
       this.iterator = iterator;
    }
@@ -55,7 +55,8 @@ public class ChangeManager {
     * @throws FileNotFoundException
     */
    private List<ChangedEntity> getChangedClasses(final String lastVersion) throws FileNotFoundException, IOException, XmlPullParserException {
-      final VersionDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), MavenPomUtil.getGenericModules(folders.getProjectFolder()), lastVersion);
+      List<File> moduleFiles = MavenPomUtil.getGenericModules(folders.getProjectFolder()).getModules();
+      final VersionDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), moduleFiles, lastVersion);
       LOG.info("Changed classes: " + diff.getChangedClasses().size());
       return diff.getChangedClasses();
    }
@@ -67,7 +68,7 @@ public class ChangeManager {
             FileUtils.deleteDirectory(folders.getOldSources());
          }
          folders.getOldSources().mkdir();
-         for (final File module : MavenPomUtil.getGenericModules(folders.getProjectFolder())) {
+         for (final File module : MavenPomUtil.getGenericModules(folders.getProjectFolder()).getModules()) {
             saveModule(module);
          }
       } catch (final IOException | XmlPullParserException e) {
@@ -90,7 +91,7 @@ public class ChangeManager {
        FileUtils.copyDirectory(srcDir, destModuleDir, new FileFilter() {
          
          @Override
-         public boolean accept(File pathname) {
+         public boolean accept(final File pathname) {
             return pathname.canRead() && pathname.canWrite();
          }
       });

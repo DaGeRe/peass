@@ -151,7 +151,7 @@ public class MavenPomUtil {
 
    }
 
-   public static List<File> getModules(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
+   public static ProjectModules getModules(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
       try (FileInputStream inputStream = new FileInputStream(pom)) {
          final MavenXpp3Reader reader = new MavenXpp3Reader();
          final Model model = reader.read(inputStream);
@@ -164,7 +164,7 @@ public class MavenPomUtil {
          } else {
             modules.add(pom.getParentFile());
          }
-         return modules;
+         return new ProjectModules(modules);
       }
    }
 
@@ -311,7 +311,7 @@ public class MavenPomUtil {
       return confProperty;
    }
 
-   public static List<File> getGenericModules(final File projectFolder) throws FileNotFoundException, IOException, XmlPullParserException {
+   public static ProjectModules getGenericModules(final File projectFolder) throws FileNotFoundException, IOException, XmlPullParserException {
       final File pomXml = new File(projectFolder, "pom.xml");
       if (pomXml.exists()) {
          return MavenPomUtil.getModules(pomXml);

@@ -35,7 +35,7 @@ public class TestBuildGradle {
       final File destFile = new File(CURRENT, "build.gradle");
       FileUtils.copyFile(gradleFile, destFile);
 
-      GradleParseUtil.addDependencies(mockedTransformer, destFile, new File("xyz"));
+      GradleParseUtil.addDependencies(mockedTransformer, destFile, new File("xyz"), new ProjectModules(CURRENT));
 
       Assert.assertTrue(FileUtils.contentEquals(gradleFile, destFile));
    }
@@ -59,7 +59,7 @@ public class TestBuildGradle {
       final File destFile = new File(CURRENT, "build.gradle");
       FileUtils.copyFile(gradleFile, destFile);
 
-      GradleParseUtil.addDependencies(mockedTransformer, destFile, new File("xyz"));
+      GradleParseUtil.addDependencies(mockedTransformer, destFile, new File("xyz"), new ProjectModules(CURRENT));
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
 

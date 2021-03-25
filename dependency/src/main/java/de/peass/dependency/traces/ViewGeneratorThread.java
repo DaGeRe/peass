@@ -131,7 +131,7 @@ public class ViewGeneratorThread implements Runnable {
          }
 
          resultsManager.deleteTempFiles();
-         for (final File moduleFolder : resultsManager.getExecutor().getModules()) {
+         for (final File moduleFolder : resultsManager.getExecutor().getModules().getModules()) {
             final File xmlFileFolder2 = resultsManager.getXMLFileFolder(moduleFolder);
             LOG.debug("Deleting folder: {}", xmlFileFolder2);
             FileUtils.deleteDirectory(xmlFileFolder2);

@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -55,11 +54,11 @@ public class GradleTestExecutor extends TestExecutor {
       try {
          lastTmpFile = Files.createTempDirectory("kiekerTemp").toFile();
          isAndroid = false;
-         LOG.debug("Preparing modules: {}", getModules());
-         for (final File module : getModules()) {
+         ProjectModules modules = getModules();
+         LOG.debug("Preparing modules: {}", modules);
+         for (final File module : modules.getModules()) {
             final File gradleFile = findGradleFile(module);
-            LOG.debug("Editing: {}", gradleFile.getAbsolutePath());
-            editOneBuildfile(gradleFile);
+            editOneBuildfile(gradleFile, modules);
          }
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();
@@ -77,12 +76,12 @@ public class GradleTestExecutor extends TestExecutor {
       return gradleFile;
    }
 
-   private void editOneBuildfile(final File gradleFile) {
+   private void editOneBuildfile(final File gradleFile, final ProjectModules modules) {
       final FindDependencyVisitor visitor;
       if (testTransformer.getConfig().isUseKieker()) {
-         visitor = GradleParseUtil.addDependencies(testTransformer, gradleFile, lastTmpFile);
+         visitor = GradleParseUtil.addDependencies(testTransformer, gradleFile, lastTmpFile, modules);
       } else {
-         visitor = GradleParseUtil.addDependencies(testTransformer, gradleFile, null);
+         visitor = GradleParseUtil.addDependencies(testTransformer, gradleFile, null, modules);
       }
       if (visitor.isAndroid()) {
          isAndroid = true;
@@ -152,7 +151,7 @@ public class GradleTestExecutor extends TestExecutor {
       if (buildfileExists) {
          try {
             boolean isAndroid = false;
-            for (final File module : getModules()) {
+            for (final File module : getModules().getModules()) {
                final File buildfile = new File(module, "build.gradle");
                final FindDependencyVisitor visitor = GradleParseUtil.setAndroidTools(buildfile);
                if (visitor.isAndroid()) {
@@ -173,7 +172,7 @@ public class GradleTestExecutor extends TestExecutor {
    }
 
    @Override
-   public List<File> getModules() throws IOException, XmlPullParserException {
+   public ProjectModules getModules() throws IOException, XmlPullParserException {
       return GradleParseUtil.getModules(folders.getProjectFolder());
    }
 

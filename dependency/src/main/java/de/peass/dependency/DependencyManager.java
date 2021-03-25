@@ -117,9 +117,9 @@ public class DependencyManager extends KiekerResultManager {
    }
 
    private TestSet findIncludedTests(final ModuleClassMapping mapping) throws IOException, XmlPullParserException {
-      testTransformer.determineVersions(executor.getModules());
+      testTransformer.determineVersions(executor.getModules().getModules());
       final TestSet tests = new TestSet();
-      for (final File module : executor.getModules()) {
+      for (final File module : executor.getModules().getModules()) {
          for (final String clazz : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
             final String currentModule = mapping.getModuleOfClass(clazz);
             final List<String> testMethodNames = testTransformer.getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
@@ -154,7 +154,7 @@ public class DependencyManager extends KiekerResultManager {
    }
 
    private boolean searchTestFiles(boolean sourceFound) throws IOException, XmlPullParserException {
-      for (final File module : executor.getModules()) {
+      for (final File module : executor.getModules().getModules()) {
          final File testSourceFolder = new File(module, "src" + File.separator + "test");
          if (testSourceFolder.exists()) {
             final Collection<File> javaTestFiles = FileUtils.listFiles(testSourceFolder, new WildcardFileFilter("*test*.java", IOCase.INSENSITIVE), TrueFileFilter.INSTANCE);

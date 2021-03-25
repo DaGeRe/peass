@@ -18,6 +18,7 @@ import de.peass.dependency.analysis.ModuleClassMapping;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.analysis.data.TraceElement;
+import de.peass.dependency.execution.ProjectModules;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 
 public class OneTraceGenerator {
@@ -35,10 +36,10 @@ public class OneTraceGenerator {
    private final Map<String, List<File>> traceFileMap;
    private final String version;
    private final File resultsFolder;
-   private final List<File> modules;
+   private final ProjectModules modules;
 
    public OneTraceGenerator(final File viewFolder, final PeASSFolders folders, final TestCase testcase, final Map<String, List<File>> traceFileMap, final String version,
-         final File resultsFolder, final List<File> modules) {
+         final File resultsFolder, final ProjectModules modules) {
       super();
       this.viewFolder = viewFolder;
       this.folders = folders;
@@ -104,8 +105,8 @@ public class OneTraceGenerator {
 
    private List<File> getClasspathFolders() {
       final List<File> files = new LinkedList<>();
-      for (int i = 0; i < modules.size(); i++) {
-         final File module = modules.get(i);
+      for (int i = 0; i < modules.getModules().size(); i++) {
+         final File module = modules.getModules().get(i);
          for (int folderIndex = 0; folderIndex < ChangedEntity.potentialClassFolders.length; folderIndex++) {
             final String path = ChangedEntity.potentialClassFolders[folderIndex];
             files.add(new File(module, path));

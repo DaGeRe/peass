@@ -88,7 +88,7 @@ public class KiekerResultManager {
 
    private TestSet buildTestMethodSet(final TestSet testsToUpdate) throws IOException, XmlPullParserException {
       final TestSet tests = new TestSet();
-      testTransformer.determineVersions(executor.getModules());
+      testTransformer.determineVersions(executor.getModules().getModules());
       for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {
          final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
          final File moduleFolder = new File(folders.getProjectFolder(), clazzname.getModule());
