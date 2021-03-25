@@ -55,9 +55,10 @@ public class GradleTestExecutor extends TestExecutor {
       try {
          lastTmpFile = Files.createTempDirectory("kiekerTemp").toFile();
          isAndroid = false;
+         LOG.debug("Preparing modules: {}", getModules());
          for (final File module : getModules()) {
             final File gradleFile = findGradleFile(module);
-            
+            LOG.debug("Editing: {}", gradleFile.getAbsolutePath());
             editOneBuildfile(gradleFile);
          }
       } catch (IOException | XmlPullParserException e) {

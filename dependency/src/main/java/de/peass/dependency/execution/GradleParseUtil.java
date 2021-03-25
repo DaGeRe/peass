@@ -113,6 +113,7 @@ public class GradleParseUtil {
    public static FindDependencyVisitor addDependencies(final JUnitTestTransformer testTransformer, final File buildfile, final File tempFolder) {
       FindDependencyVisitor visitor = null;
       try {
+         LOG.debug("Editing buildfile: {}", buildfile.getAbsolutePath());
          visitor = parseBuildfile(buildfile);
          final List<String> gradleFileContents = Files.readAllLines(Paths.get(buildfile.toURI()));
          if (visitor.isUseJava() == true) {
@@ -141,6 +142,7 @@ public class GradleParseUtil {
             addKiekerLine(testTransformer, tempFolder, visitor, gradleFileContents);
          }
 
+         LOG.debug("Writing changed buildfile: {}", buildfile.getAbsolutePath());
          Files.write(buildfile.toPath(), gradleFileContents, StandardCharsets.UTF_8);
       } catch (final IOException e) {
          e.printStackTrace();
