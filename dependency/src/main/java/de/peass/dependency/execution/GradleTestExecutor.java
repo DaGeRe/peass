@@ -1,11 +1,13 @@
 package de.peass.dependency.execution;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -54,7 +56,8 @@ public class GradleTestExecutor extends TestExecutor {
          lastTmpFile = Files.createTempDirectory("kiekerTemp").toFile();
          isAndroid = false;
          for (final File module : getModules()) {
-            final File gradleFile = new File(module, "build.gradle");
+            final File gradleFile = findGradleFile(module);
+            
             editOneBuildfile(gradleFile);
          }
       } catch (IOException | XmlPullParserException e) {
@@ -62,8 +65,19 @@ public class GradleTestExecutor extends TestExecutor {
       }
    }
 
+   private File findGradleFile(final File module) {
+      File gradleFile = new File(module, "build.gradle");
+      if (!gradleFile.exists()) {
+         gradleFile = module.listFiles((FileFilter) new WildcardFileFilter("*.gradle"))[0];
+      }
+      if (!gradleFile.exists()) {
+         throw new RuntimeException("There was no .gradle file in " + module.getAbsolutePath());
+      }
+      return gradleFile;
+   }
+
    private void editOneBuildfile(final File gradleFile) {
-      FindDependencyVisitor visitor;
+      final FindDependencyVisitor visitor;
       if (testTransformer.getConfig().isUseKieker()) {
          visitor = GradleParseUtil.addDependencies(testTransformer, gradleFile, lastTmpFile);
       } else {
