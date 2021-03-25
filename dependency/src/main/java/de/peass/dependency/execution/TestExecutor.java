@@ -246,7 +246,6 @@ public abstract class TestExecutor {
          if (returncode != 0) {
             isRunning = false;
             printFailureLogToCommandline(logFile);
-
          } else {
             isRunning = true;
          }
