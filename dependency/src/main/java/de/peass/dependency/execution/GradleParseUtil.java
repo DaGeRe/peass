@@ -66,11 +66,11 @@ public class GradleParseUtil {
          final List<String> gradleFileContents = Files.readAllLines(Paths.get(buildfile.toURI()));
 
          if (visitor.getBuildTools() != -1) {
-            updateBuildTools(visitor, gradleFileContents);
+            updateBuildTools(visitor);
          }
 
          if (visitor.getBuildToolsVersion() != -1) {
-            updateBuildToolsVersion(visitor, gradleFileContents);
+            updateBuildToolsVersion(visitor);
          }
 
          Files.write(buildfile.toPath(), gradleFileContents, StandardCharsets.UTF_8);
@@ -86,7 +86,7 @@ public class GradleParseUtil {
          final AstBuilder builder = new AstBuilder();
          final List<ASTNode> nodes = builder.buildFromString(IOUtil.toString(inputStream, "UTF-8"));
 
-         FindDependencyVisitor visitor = new FindDependencyVisitor();
+         FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile);
          for (final ASTNode node : nodes) {
             node.visit(visitor);
          }
@@ -94,29 +94,29 @@ public class GradleParseUtil {
       }
    }
 
-   public static void updateBuildTools(final FindDependencyVisitor visitor, final List<String> gradleFileContents) {
+   public static void updateBuildTools(final FindDependencyVisitor visitor) {
       final int lineIndex = visitor.getBuildTools() - 1;
-      final String versionLine = gradleFileContents.get(lineIndex).trim().replaceAll("'", "").replace("\"", "");
+      final String versionLine = visitor.getLines().get(lineIndex).trim().replaceAll("'", "").replace("\"", "");
       final String versionString = versionLine.split(":")[1].trim();
       if (AndroidVersionUtil.isLegelBuildTools(versionString)) {
          final String runningVersion = AndroidVersionUtil.getRunningVersion(versionString);
          if (runningVersion != null) {
-            gradleFileContents.set(lineIndex, "'buildTools': '" + runningVersion + "'");
+            visitor.getLines().set(lineIndex, "'buildTools': '" + runningVersion + "'");
          } else {
             visitor.setHasVersion(false);
          }
       }
    }
 
-   public static void updateBuildToolsVersion(final FindDependencyVisitor visitor, final List<String> gradleFileContents) {
+   public static void updateBuildToolsVersion(final FindDependencyVisitor visitor) {
       final int lineIndex = visitor.getBuildToolsVersion() - 1;
-      final String versionLine = gradleFileContents.get(lineIndex).trim().replaceAll("'", "").replace("\"", "");
+      final String versionLine = visitor.getLines().get(lineIndex).trim().replaceAll("'", "").replace("\"", "");
       final String versionString = versionLine.split(" ")[1].trim();
       if (AndroidVersionUtil.isLegalBuildToolsVersion(versionString)) {
          LOG.info(lineIndex + " " + versionLine);
          final String runningVersion = AndroidVersionUtil.getRunningVersion(versionString);
          if (runningVersion != null) {
-            gradleFileContents.set(lineIndex, "buildToolsVersion " + runningVersion);
+            visitor.getLines().set(lineIndex, "buildToolsVersion " + runningVersion);
          } else {
             visitor.setHasVersion(false);
          }
@@ -128,78 +128,85 @@ public class GradleParseUtil {
       try {
          LOG.debug("Editing buildfile: {}", buildfile.getAbsolutePath());
          visitor = parseBuildfile(buildfile);
-         final List<String> gradleFileContents = Files.readAllLines(Paths.get(buildfile.toURI()));
          if (visitor.isUseJava() == true) {
-            editGradlefileContents(testTransformer, tempFolder, visitor, gradleFileContents);
+            editGradlefileContents(testTransformer, tempFolder, visitor);
          } else {
             LOG.debug("Buildfile itself does not contain Java plugin, checking parent projects");
-            List<File> parentProjects = modules.getParents(buildfile.getParentFile());
-            boolean isUseJava = false;
-            for (File parentProject : parentProjects) {
-               File parentBuildfile = findGradleFile(parentProject);
-               LOG.debug("Reading " + parentBuildfile);
-               FindDependencyVisitor parentVisitor = parseBuildfile(parentBuildfile);
-               if (parentVisitor.isSubprojectJava()) {
-                  isUseJava = true;
-               }
-            }
+            boolean isUseJava = isParentUseJava(buildfile, modules);
             if (isUseJava) {
-               editGradlefileContents(testTransformer, tempFolder, visitor, gradleFileContents);
+               editGradlefileContents(testTransformer, tempFolder, visitor);
             }
 
          }
 
          LOG.debug("Writing changed buildfile: {}", buildfile.getAbsolutePath());
-         Files.write(buildfile.toPath(), gradleFileContents, StandardCharsets.UTF_8);
+         Files.write(buildfile.toPath(), visitor.getLines(), StandardCharsets.UTF_8);
       } catch (final IOException e) {
          e.printStackTrace();
       }
       return visitor;
    }
 
-   private static void editGradlefileContents(final JUnitTestTransformer testTransformer, final File tempFolder, final FindDependencyVisitor visitor,
-         final List<String> gradleFileContents) {
+   private static boolean isParentUseJava(final File buildfile, final ProjectModules modules) throws IOException, FileNotFoundException {
+      List<File> parentProjects = modules.getParents(buildfile.getParentFile());
+      boolean isUseJava = false;
+      for (File parentProject : parentProjects) {
+         File parentBuildfile = findGradleFile(parentProject);
+         LOG.debug("Reading " + parentBuildfile);
+         FindDependencyVisitor parentVisitor = parseBuildfile(parentBuildfile);
+         if (parentVisitor.isSubprojectJava()) {
+            isUseJava = true;
+         }
+      }
+      return isUseJava;
+   }
+
+   private static void editGradlefileContents(final JUnitTestTransformer testTransformer, final File tempFolder, final FindDependencyVisitor visitor) {
       if (visitor.getBuildTools() != -1) {
-         updateBuildTools(visitor, gradleFileContents);
+         updateBuildTools(visitor);
       }
 
       if (visitor.getBuildToolsVersion() != -1) {
-         updateBuildToolsVersion(visitor, gradleFileContents);
+         updateBuildToolsVersion(visitor);
       }
 
+      addDependencies(visitor);
+
+      addKiekerLine(testTransformer, tempFolder, visitor);
+   }
+
+   private static void addDependencies(final FindDependencyVisitor visitor) {
       if (visitor.getDependencyLine() != -1) {
          for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
             final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
-            gradleFileContents.add(visitor.getDependencyLine() - 1, dependencyGradle);
+            visitor.addLine(visitor.getDependencyLine() - 1, dependencyGradle);
          }
       } else {
-         gradleFileContents.add("dependencies { ");
+         visitor.getLines().add("dependencies { ");
          for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
             final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
-            gradleFileContents.add(dependencyGradle);
+            visitor.getLines().add(dependencyGradle);
          }
-         gradleFileContents.add("}");
+         visitor.getLines().add("}");
       }
-
-      addKiekerLine(testTransformer, tempFolder, visitor, gradleFileContents);
    }
 
-   public static void addKiekerLine(final JUnitTestTransformer testTransformer, final File tempFolder, final FindDependencyVisitor visitor, final List<String> gradleFileContents) {
+   public static void addKiekerLine(final JUnitTestTransformer testTransformer, final File tempFolder, final FindDependencyVisitor visitor) {
       if (tempFolder != null) {
          final String javaagentArgument = new ArgLineBuilder(testTransformer).buildArglineGradle(tempFolder);
          if (visitor.getAndroidLine() != -1) {
             if (visitor.getUnitTestsAll() != -1) {
-               gradleFileContents.add(visitor.getUnitTestsAll() - 1, javaagentArgument);
+               visitor.addLine(visitor.getUnitTestsAll() - 1, javaagentArgument);
             } else if (visitor.getTestOptionsAndroid() != -1) {
-               gradleFileContents.add(visitor.getTestOptionsAndroid() - 1, "unitTests.all{" + javaagentArgument + "}");
+               visitor.addLine(visitor.getTestOptionsAndroid() - 1, "unitTests.all{" + javaagentArgument + "}");
             } else {
-               gradleFileContents.add(visitor.getAndroidLine() - 1, "testOptions{ unitTests.all{" + javaagentArgument + "} }");
+               visitor.addLine(visitor.getAndroidLine() - 1, "testOptions{ unitTests.all{" + javaagentArgument + "} }");
             }
          } else {
             if (visitor.getTestLine() != -1) {
-               gradleFileContents.add(visitor.getDependencyLine() - 1, javaagentArgument);
+               visitor.addLine(visitor.getTestLine() - 1, javaagentArgument);
             } else {
-               gradleFileContents.add("test { " + javaagentArgument + "}");
+               visitor.getLines().add("test { " + javaagentArgument + "}");
             }
          }
       }

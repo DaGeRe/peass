@@ -15,6 +15,10 @@ dependencies {
   testCompile 'junit:junit:4.13.2'
 }
 
+test {
+  useJUnitPlatform()
+}
+
 subprojects {    
     apply plugin: "java"
 }

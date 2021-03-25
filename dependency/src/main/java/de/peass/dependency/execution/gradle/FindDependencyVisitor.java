@@ -1,5 +1,11 @@
 package de.peass.dependency.execution.gradle;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.groovy.ast.CodeVisitorSupport;
@@ -25,6 +31,11 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
    private boolean useJava = false;
    private boolean hasVersion = true;
    private boolean subprojectJava = false;
+   private List<String> gradleFileContents;
+
+   public FindDependencyVisitor(final File buildfile) throws IOException {
+      gradleFileContents = Files.readAllLines(Paths.get(buildfile.toURI()));
+   }
 
    @Override
    public void visitMethodCallExpression(final MethodCallExpression call) {
@@ -77,7 +88,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
                   }
                }
             }
-            
+
          }
       }
 
@@ -155,6 +166,35 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
 
    public boolean isSubprojectJava() {
       return subprojectJava;
+   }
+
+   public List<String> getLines() {
+      return gradleFileContents;
+   }
+
+   public void addLine(final int lineIndex, final String textForAdding) {
+      gradleFileContents.add(lineIndex, textForAdding);
+      if (lineIndex < dependencyLine) {
+         dependencyLine++;
+      }
+      if (lineIndex < testLine) {
+         testLine++;
+      }
+      if (lineIndex < androidLine) {
+         androidLine++;
+      }
+      if (lineIndex < testOptionsAndroid) {
+         testOptionsAndroid++;
+      }
+      if (lineIndex < unitTestsAll) {
+         unitTestsAll++;
+      }
+      if (lineIndex < buildTools) {
+         buildTools++;
+      }
+      if (lineIndex < buildToolsVersion) {
+         buildToolsVersion++;
+      }
    }
 
 }
