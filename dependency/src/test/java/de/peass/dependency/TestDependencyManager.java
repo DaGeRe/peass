@@ -16,6 +16,7 @@ import org.mockito.stubbing.Answer;
 
 import de.peass.TestConstants;
 import de.peass.config.MeasurementConfiguration;
+import de.peass.dependency.execution.ProjectModules;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.testtransformation.JUnitTestTransformer;
 
@@ -61,6 +62,7 @@ public class TestDependencyManager {
                return null;
             }
          }).when(testExecutorMock).executeAllKoPeMeTests(Mockito.any());
+         Mockito.when(testExecutorMock.getModules()).thenReturn(Mockito.mock(ProjectModules.class));
       } catch (IOException | XmlPullParserException | InterruptedException e) {
          e.printStackTrace();
       }
