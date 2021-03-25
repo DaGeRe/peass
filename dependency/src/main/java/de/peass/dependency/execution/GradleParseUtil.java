@@ -194,7 +194,7 @@ public class GradleParseUtil {
          if (module.exists()) {
             modules.add(module);
          } else {
-            LOG.error(line + " not found!");
+            LOG.error(line + " not found! Was looking in " + module.getAbsolutePath());
          }
       }
    }
