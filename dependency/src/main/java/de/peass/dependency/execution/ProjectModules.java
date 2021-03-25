@@ -19,4 +19,16 @@ public class ProjectModules {
    public List<File> getModules() {
       return modules;
    }
+
+   public List<File> getParents(final File moduleFile) {
+      final List<File> parents = new LinkedList<File>();
+      for (File potentialParent : modules) {
+         String potentialParentPath = potentialParent.getAbsolutePath();
+         String moduleAbsolutePath = moduleFile.getAbsolutePath();
+         if (moduleAbsolutePath.contains(potentialParentPath) && !potentialParent.equals(moduleFile)) {
+            parents.add(potentialParent);
+         }
+      }
+      return parents;
+   }
 }

@@ -2,6 +2,7 @@ package de.peass.dependency.execution;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -14,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.groovy.ast.ASTNode;
@@ -44,6 +46,17 @@ public class GradleParseUtil {
          }
       }
    }
+   
+   public static File findGradleFile(final File module) {
+      File gradleFile = new File(module, "build.gradle");
+      if (!gradleFile.exists()) {
+         gradleFile = module.listFiles((FileFilter) new WildcardFileFilter("*.gradle"))[0];
+      }
+      if (!gradleFile.exists()) {
+         throw new RuntimeException("There was no .gradle file in " + module.getAbsolutePath());
+      }
+      return gradleFile;
+   }
 
    public static FindDependencyVisitor setAndroidTools(final File buildfile) {
       FindDependencyVisitor visitor = null;
@@ -68,8 +81,8 @@ public class GradleParseUtil {
    }
 
    public static FindDependencyVisitor parseBuildfile(final File buildfile) throws IOException, FileNotFoundException {
-      
-      try (FileInputStream inputStream = new FileInputStream(buildfile)){
+
+      try (FileInputStream inputStream = new FileInputStream(buildfile)) {
          final AstBuilder builder = new AstBuilder();
          final List<ASTNode> nodes = builder.buildFromString(IOUtil.toString(inputStream, "UTF-8"));
 
@@ -120,7 +133,20 @@ public class GradleParseUtil {
             editGradlefileContents(testTransformer, tempFolder, visitor, gradleFileContents);
          } else {
             LOG.debug("Buildfile itself does not contain Java plugin, checking parent projects");
-            
+            List<File> parentProjects = modules.getParents(buildfile.getParentFile());
+            boolean isUseJava = false;
+            for (File parentProject : parentProjects) {
+               File parentBuildfile = findGradleFile(parentProject);
+               LOG.debug("Reading " + parentBuildfile);
+               FindDependencyVisitor parentVisitor = parseBuildfile(parentBuildfile);
+               if (parentVisitor.isSubprojectJava()) {
+                  isUseJava = true;
+               }
+            }
+            if (isUseJava) {
+               editGradlefileContents(testTransformer, tempFolder, visitor, gradleFileContents);
+            }
+
          }
 
          LOG.debug("Writing changed buildfile: {}", buildfile.getAbsolutePath());
@@ -193,6 +219,7 @@ public class GradleParseUtil {
          LOG.debug("settings-file {} not found", settingsFile);
          modules.add(projectFolder);
       }
+      modules.add(projectFolder);
       return new ProjectModules(modules);
    }
 

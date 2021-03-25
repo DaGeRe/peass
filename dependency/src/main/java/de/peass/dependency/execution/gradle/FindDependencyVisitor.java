@@ -15,15 +15,16 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
 
    private static final Logger LOG = LogManager.getLogger(FindDependencyVisitor.class);
 
-   int dependencyLine = -1;
-   int testLine = -1;
-   int androidLine = -1;
-   int testOptionsAndroid = -1;
-   int unitTestsAll = -1;
+   private int dependencyLine = -1;
+   private int testLine = -1;
+   private int androidLine = -1;
+   private int testOptionsAndroid = -1;
+   private int unitTestsAll = -1;
    private int buildTools = -1;
    private int buildToolsVersion = -1;
-   boolean useJava = false;
-   boolean hasVersion = true;
+   private boolean useJava = false;
+   private boolean hasVersion = true;
+   private boolean subprojectJava = false;
 
    @Override
    public void visitMethodCallExpression(final MethodCallExpression call) {
@@ -36,15 +37,19 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
                ArgumentListExpression list = (ArgumentListExpression) expression;
                for (Expression pluginExpression : list.getExpressions()) {
                   ClosureExpression closurePluginExpression = (ClosureExpression) pluginExpression;
-                  for (Statement statement : ((BlockStatement)closurePluginExpression.getCode()).getStatements()) {
+                  for (Statement statement : ((BlockStatement) closurePluginExpression.getCode()).getStatements()) {
                      String text = statement.getText();
-                     handlePluginName(text);
+                     if (isJavaPlugin(text)) {
+                        useJava = true;
+                     }
                   }
-               } 
+               }
             }
          } else if (call.getMethodAsString().equals("apply")) {
             final String text = call.getArguments().getText();
-            handlePluginName(text);
+            if (isJavaPlugin(text)) {
+               useJava = true;
+            }
          } else if (call.getMethodAsString().equals("dependencies")) {
             // System.out.println(call);
             dependencyLine = call.getLastLineNumber();
@@ -58,6 +63,21 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
             unitTestsAll = call.getLastLineNumber();
          } else if (call.getMethodAsString().equals("buildToolsVersion")) {
             buildToolsVersion = call.getLastLineNumber();
+         } else if (call.getMethodAsString().equals("subprojects")) {
+            Expression expression = call.getArguments();
+            if (expression instanceof ArgumentListExpression) {
+               ArgumentListExpression list = (ArgumentListExpression) expression;
+               for (Expression pluginExpression : list.getExpressions()) {
+                  ClosureExpression closurePluginExpression = (ClosureExpression) pluginExpression;
+                  for (Statement statement : ((BlockStatement) closurePluginExpression.getCode()).getStatements()) {
+                     String text = statement.getText();
+                     if (isJavaPlugin(text)) {
+                        subprojectJava = true;
+                     }
+                  }
+               }
+            }
+            
          }
       }
 
@@ -65,12 +85,14 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       super.visitMethodCallExpression(call);
    }
 
-   private void handlePluginName(final String text) {
+   private boolean isJavaPlugin(final String text) {
       if (text.contains("plugin:java") ||
             text.contains("plugin:com.android.library") ||
             text.contains("plugin:com.android.application") ||
             text.contains("com.android.application")) {
-         useJava = true;
+         return true;
+      } else {
+         return false;
       }
    }
 
@@ -129,6 +151,10 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
 
    public int getBuildToolsVersion() {
       return buildToolsVersion;
+   }
+
+   public boolean isSubprojectJava() {
+      return subprojectJava;
    }
 
 }

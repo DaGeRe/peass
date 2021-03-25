@@ -10,7 +10,6 @@ import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -25,17 +24,16 @@ public class TestGradleParseUtil {
    public void testModuleGetting() throws FileNotFoundException, IOException {
       List<File> modules = GradleParseUtil.getModules(new File("src/test/resources/gradle-multimodule-example")).getModules();
       
-      Assert.assertThat(modules.size(), Matchers.is(2));
+      Assert.assertThat(modules.size(), Matchers.is(3));
    }
    
    @Test
    public void testModuleGettingSpaces() throws FileNotFoundException, IOException {
       List<File> modules = GradleParseUtil.getModules(new File("src/test/resources/gradle-multimodule-example-spaces")).getModules();
       
-      Assert.assertThat(modules.size(), Matchers.is(2));
+      Assert.assertThat(modules.size(), Matchers.is(3));
    }
    
-   @Ignore
    @Test
    public void testSubprojectInstrumentation() throws IOException, XmlPullParserException, InterruptedException {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);

@@ -1,12 +1,10 @@
 package de.peass.dependency.execution;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -57,23 +55,12 @@ public class GradleTestExecutor extends TestExecutor {
          ProjectModules modules = getModules();
          LOG.debug("Preparing modules: {}", modules);
          for (final File module : modules.getModules()) {
-            final File gradleFile = findGradleFile(module);
+            final File gradleFile = GradleParseUtil.findGradleFile(module);
             editOneBuildfile(gradleFile, modules);
          }
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();
       }
-   }
-
-   private File findGradleFile(final File module) {
-      File gradleFile = new File(module, "build.gradle");
-      if (!gradleFile.exists()) {
-         gradleFile = module.listFiles((FileFilter) new WildcardFileFilter("*.gradle"))[0];
-      }
-      if (!gradleFile.exists()) {
-         throw new RuntimeException("There was no .gradle file in " + module.getAbsolutePath());
-      }
-      return gradleFile;
    }
 
    private void editOneBuildfile(final File gradleFile, final ProjectModules modules) {
