@@ -224,7 +224,6 @@ public class GradleParseUtil {
          }
       } else {
          LOG.debug("settings-file {} not found", settingsFile);
-         modules.add(projectFolder);
       }
       modules.add(projectFolder);
       return new ProjectModules(modules);
