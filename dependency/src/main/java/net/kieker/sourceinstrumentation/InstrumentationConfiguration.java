@@ -19,7 +19,7 @@ public class InstrumentationConfiguration {
       this.sample = sample;
       this.includedPatterns = includedPatterns;
       this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
-      this.createDefaultConstructor = false;
+      this.createDefaultConstructor = true;
       this.enableDeactivation = enableDecativation;
    }
 
