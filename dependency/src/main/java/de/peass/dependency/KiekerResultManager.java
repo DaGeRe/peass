@@ -63,6 +63,7 @@ public class KiekerResultManager {
       fakeConfig.setUseSourceInstrumentation(true);
       fakeConfig.setTestGoal(executionConfig.getTestGoal());
       fakeConfig.setIncludes(executionConfig.getIncludes());
+      fakeConfig.getExecutionConfig().setCreateDefaultConstructor(executionConfig.isCreateDefaultConstructor());
       testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), fakeConfig);
       executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
    }

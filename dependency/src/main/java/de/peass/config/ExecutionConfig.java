@@ -30,6 +30,7 @@ public class ExecutionConfig implements Serializable {
    private String versionOld = "HEAD~1";
    protected String startversion;
    protected String endversion;
+   private boolean createDefaultConstructor = true;
    
 
    public ExecutionConfig() {
@@ -113,5 +114,13 @@ public class ExecutionConfig implements Serializable {
 
    public void setEndversion(final String endversion) {
       this.endversion = endversion;
+   }
+
+   public boolean isCreateDefaultConstructor() {
+      return createDefaultConstructor;
+   }
+
+   public void setCreateDefaultConstructor(final boolean createDefaultConstructor) {
+      this.createDefaultConstructor = createDefaultConstructor;
    }
 }

@@ -35,7 +35,6 @@ public class MeasurementConfiguration implements Serializable {
    private boolean useCircularQueue = false;
    private boolean redirectToNull = true;
    private boolean enableAdaptiveMonitoring = false;
-   private boolean createDefaultConstructor = true;
    
    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
    private boolean saveAll = true;
@@ -131,6 +130,7 @@ public class MeasurementConfiguration implements Serializable {
       executionConfig.setVersionOld(other.getExecutionConfig().getVersionOld());
       executionConfig.setStartversion(other.getExecutionConfig().getStartversion());
       executionConfig.setEndversion(other.getExecutionConfig().getEndversion());
+      executionConfig.setCreateDefaultConstructor(other.getExecutionConfig().isCreateDefaultConstructor());
       this.vms = other.vms;
       statisticsConfig.setType1error(other.getType1error());
       statisticsConfig.setType2error(other.getType2error());
@@ -155,7 +155,6 @@ public class MeasurementConfiguration implements Serializable {
       this.record = other.record;
       this.measurementStrategy = other.measurementStrategy;
       this.saveAll = other.saveAll;
-      this.createDefaultConstructor = other.createDefaultConstructor;
    }
    
    public StatisticsConfiguration getStatisticsConfig() {
@@ -406,13 +405,5 @@ public class MeasurementConfiguration implements Serializable {
 
    public ExecutionConfig getExecutionConfig() {
       return executionConfig;
-   }
-
-   public boolean isCreateDefaultConstructor() {
-      return createDefaultConstructor;
-   }
-
-   public void setCreateDefaultConstructor(final boolean createDefaultConstructor) {
-      this.createDefaultConstructor = createDefaultConstructor;
    }
 }

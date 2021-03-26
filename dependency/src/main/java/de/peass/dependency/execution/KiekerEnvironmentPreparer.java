@@ -9,6 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.PeASSFolders;
 import de.peass.testtransformation.JUnitTestTransformer;
@@ -17,6 +20,8 @@ import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
 import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public class KiekerEnvironmentPreparer {
+   
+   private static final Logger LOG = LogManager.getLogger(KiekerEnvironmentPreparer.class);
 
    private final Set<String> includedMethodPattern;
    private final PeASSFolders folders;
@@ -37,12 +42,13 @@ public class KiekerEnvironmentPreparer {
       final MeasurementConfiguration config = testTransformer.getConfig();
       if (config.isUseSourceInstrumentation()) {
          final InstrumentKiekerSource instrumentKiekerSource;
+         LOG.debug("Create default constructor: {}", config.getExecutionConfig().isCreateDefaultConstructor());
          if (!config.isUseSelectiveInstrumentation()) {
-            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), false, config.isCreateDefaultConstructor(),
+            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), false, config.getExecutionConfig().isCreateDefaultConstructor(),
                   config.isEnableAdaptiveConfig(), includedMethodPattern, false);
             instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
          } else {
-            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), config.isUseSampling(), config.isCreateDefaultConstructor(),
+            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), config.isUseSampling(), config.getExecutionConfig().isCreateDefaultConstructor(),
                   config.isEnableAdaptiveConfig(), includedMethodPattern, true);
             instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
          }
