@@ -34,7 +34,8 @@ public class MethodReader {
          if (node instanceof MethodDeclaration) {
             final MethodDeclaration method = (MethodDeclaration) node;
             if (method.getNameAsString().equals(currentTraceElement.getMethod())) {
-               LOG.trace("Parameter: {} Trace-Parameter: {}", method.getParameters().size(), currentTraceElement.getParameterTypes().length);
+               //TODO LOG.trace
+               LOG.debug("Parameter: {} Trace-Parameter: {}", method.getParameters().size(), currentTraceElement.getParameterTypes().length);
                if (parametersEqual(currentTraceElement, method)) {
                   if (parent instanceof TypeDeclaration<?>) {
                      final TypeDeclaration<?> clazz = (TypeDeclaration<?>) parent;
@@ -75,15 +76,16 @@ public class MethodReader {
       return null;
    }
 
-   private boolean parametersEqual(final TraceElementContent te, final CallableDeclaration<?> method) {
-      if (te.getParameterTypes().length == 0 && method.getParameters().size() == 0) {
+   private boolean parametersEqual(final TraceElementContent traceElement, final CallableDeclaration<?> method) {
+      if (traceElement.getParameterTypes().length == 0 && method.getParameters().size() == 0) {
          return true;
       } else if (method.getParameters().size() == 0) {
          return false;
       }
       int parameterIndex = 0;
       final List<Parameter> parameters = method.getParameters();
-      String[] traceParameterTypes = getCleanedTraceParameters(te);
+      String[] traceParameterTypes = getCleanedTraceParameters(traceElement);
+      LOG.debug("Length: {} vs {}", traceParameterTypes.length, parameters.size()); //TODO delete
       if (traceParameterTypes.length != parameters.size() && !parameters.get(parameters.size() - 1).isVarArgs()) {
          return false;
       } else if (parameters.get(parameters.size() - 1).isVarArgs()) {
@@ -157,7 +159,7 @@ public class MethodReader {
    }
 
    public static String getSimpleType(final String traceParameterType) {
-      LOG.debug("Getting simple type of {}", traceParameterType);
+      LOG.debug("Getting simple type of {}", traceParameterType); //TODO delete
       final String result;
       if (traceParameterType.contains("<")) {
          String withoutGenerics = traceParameterType.substring(0, traceParameterType.indexOf("<"));
@@ -165,6 +167,7 @@ public class MethodReader {
       } else {
          result = traceParameterType.substring(traceParameterType.lastIndexOf('.') + 1);
       }
+      LOG.debug("Simple type: {}", result); //TODO delete
       return result;
    }
 
