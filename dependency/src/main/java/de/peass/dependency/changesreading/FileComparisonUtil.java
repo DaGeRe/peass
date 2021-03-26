@@ -173,8 +173,9 @@ public final class FileComparisonUtil {
    }
 
    public static String getMethodSource(ChangedEntity entity, String method, CompilationUnit clazzUnit) {
+      String[] parameters = entity.getParameters().toArray(new String[0]);
       TraceElementContent traceElement = new TraceElementContent(entity.getJavaClazzName(), 
-            method, entity.getModule(), entity.getParameters().toArray(new String[0]), 0);
+            method, entity.getModule(), parameters, 0);
 
       final Node node = TraceReadUtils.getMethod(traceElement, clazzUnit);
       if (node != null) {
