@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -87,13 +90,35 @@ public class PeassStage extends AbstractTraceProcessingStage<ExecutionTrace> {
       }
       final String[] paramTypeList = execution.getOperation().getSignature().getParamTypeList();
       LOG.info("Parameters " + fullClassname + " " + methodname + " " + Arrays.toString(paramTypeList));
-      LOG.debug(paramTypeList.length); //TODO delete
-      final String[] internParamTypeList = new String[paramTypeList.length];
-      for (int i = 0; i < paramTypeList.length; i++) {
-         internParamTypeList[i] = paramTypeList[i].intern();
-      }
-      traceelement.setParameterTypes(paramTypeList);
+      LOG.debug(paramTypeList.length); // TODO delete
+      final String[] internParamTypeList = getInternTypeList(paramTypeList);
+      traceelement.setParameterTypes(internParamTypeList);
       return traceelement;
+   }
+
+   public static String[] getInternTypeList(final String[] paramTypeList) {
+      List<String> parameters = new LinkedList<>();
+      int remainingOpen = 0;
+      for (int i = 0; i < paramTypeList.length; i++) {
+         if (remainingOpen > 0) {
+            int openCount = StringUtils.countMatches(paramTypeList[i], '<');
+            int closeCount = StringUtils.countMatches(paramTypeList[i], '>');
+            remainingOpen += openCount - closeCount;
+            String appendedParameter = parameters.get(parameters.size() - 1) + paramTypeList[i];
+            parameters.set(parameters.size() - 1, appendedParameter);
+         } else {
+            if (paramTypeList[i].contains("<")) {
+               int openCount = StringUtils.countMatches(paramTypeList[i], '<');
+               int closeCount = StringUtils.countMatches(paramTypeList[i], '>');
+               remainingOpen = openCount - closeCount;
+               parameters.add(paramTypeList[i]);
+            } else {
+               parameters.add(paramTypeList[i].intern());
+            }
+         }
+      }
+      final String[] internParamTypeList = parameters.toArray(new String[0]);
+      return internParamTypeList;
    }
 
    public ArrayList<TraceElement> getCalls() {
