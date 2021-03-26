@@ -87,6 +87,7 @@ public class TestChooser {
       }
       ExecutionData traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
       if (!traceTests.getVersions().containsKey(version)) {
+         LOG.debug("Version {} was not contained in tests, executing view creation", version);
          generateViews(dependencies, executeFile);
          traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
       }
