@@ -1,5 +1,6 @@
 package de.peass.dependency.traces;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -37,6 +38,7 @@ public class MethodReader {
                //TODO LOG.trace
                LOG.debug("Parameter: {} Trace-Parameter: {}", method.getParameters().size(), currentTraceElement.getParameterTypes().length);
                LOG.debug(method.getParameters()); //TODO delete
+               LOG.debug(Arrays.toString(currentTraceElement.getParameterTypes()));
                if (parametersEqual(currentTraceElement, method)) {
                   if (parent instanceof TypeDeclaration<?>) {
                      final TypeDeclaration<?> clazz = (TypeDeclaration<?>) parent;

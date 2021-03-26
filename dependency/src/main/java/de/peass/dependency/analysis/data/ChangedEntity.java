@@ -189,7 +189,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          return new ChangedEntity(clazzName, module, "");
       }
    }
-
+   
    public List<String> getParameters() {
       return parameters;
    }

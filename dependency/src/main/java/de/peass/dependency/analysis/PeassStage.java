@@ -86,6 +86,7 @@ public class PeassStage extends AbstractTraceProcessingStage<ExecutionTrace> {
          traceelement.setStatic(true);
       }
       final String[] paramTypeList = execution.getOperation().getSignature().getParamTypeList();
+      LOG.info("Parameters " + fullClassname + " " + methodname + " " + Arrays.toString(paramTypeList));
       final String[] internParamTypeList = new String[paramTypeList.length];
       for (int i = 0; i < paramTypeList.length; i++) {
          internParamTypeList[i] = paramTypeList[i].intern();
