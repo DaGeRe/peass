@@ -34,6 +34,13 @@ public class TestGradleParseUtil {
 
       Assert.assertThat(modules.size(), Matchers.is(3));
    }
+   
+   @Test
+   public void testModuleGettingComma() throws FileNotFoundException, IOException {
+      List<File> modules = GradleParseUtil.getModules(new File("src/test/resources/gradle-multimodule-example-comma")).getModules();
+      
+      Assert.assertThat(modules.size(), Matchers.is(2));
+   }
 
    @Test
    public void testSubprojectInstrumentation() throws IOException, XmlPullParserException, InterruptedException {
