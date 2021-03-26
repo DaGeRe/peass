@@ -11,8 +11,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
-import de.peass.measurement.analysis.MultipleVMTestUtil;
-import de.peass.measurement.analysis.Relation;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.statistics.ConfidenceIntervalInterpretion;
 import de.peass.statistics.StatisticUtil;
@@ -79,14 +77,16 @@ public class TestStatistic {
       if (info != null) {
          info.addMeasurement(data.getVersion(), data.getTestcase(), statisticsPrevious, statisticsCurrent, resultslength);
          try {
-            FolderSearcher.MAPPER.writeValue(new File("results/statistics.json"), info);
+            File resultFolder = new File("results");
+            resultFolder.mkdir();
+            FolderSearcher.MAPPER.writeValue(new File(resultFolder, "statistics.json"), info);
          } catch (final IOException e) {
             e.printStackTrace();
          }
       }
    }
 
-   private void checkData(final EvaluationPair data, List<Result> previous, List<Result> current) {
+   private void checkData(final EvaluationPair data, final List<Result> previous, final List<Result> current) {
       if (previous.size() == 0 || current.size() == 0) {
          LOG.error("Data empty: {} {}", data.getVersion());
          if (previous.size() == 0) {
