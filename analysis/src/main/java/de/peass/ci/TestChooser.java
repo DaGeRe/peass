@@ -110,7 +110,7 @@ public class TestChooser {
       LOG.info("Executig regression test selection (step 2) - Log goes to {}", logFile.getAbsolutePath());
 
       try (LogRedirector director = new LogRedirector(logFile)) {
-         final ViewGenerator viewgenerator = new ViewGenerator(folders.getProjectFolder(), dependencies, executeFile, viewFolder, threads, new ExecutionConfig(15), env);
+         final ViewGenerator viewgenerator = new ViewGenerator(folders.getProjectFolder(), dependencies, executeFile, viewFolder, threads, config, env);
          viewgenerator.processCommandline();
          final PropertyReader propertyReader = new PropertyReader(propertyFolder, folders.getProjectFolder(), viewFolder);
          propertyReader.readAllTestsProperties(viewgenerator.getChangedTraceMethods());
