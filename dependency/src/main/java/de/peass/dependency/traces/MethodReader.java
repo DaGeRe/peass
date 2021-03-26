@@ -156,11 +156,16 @@ public class MethodReader {
       }
    }
 
-   private String getSimpleType(final String traceParameterType) {
+   public static String getSimpleType(final String traceParameterType) {
       LOG.debug("Getting simple type of {}", traceParameterType);
-      final String withoutPackage = traceParameterType.substring(traceParameterType.lastIndexOf('.') + 1);
-      final String withoutGenerics = (withoutPackage.contains("<")) ? withoutPackage.substring(0, withoutPackage.indexOf("<")) : withoutPackage;
-      return withoutGenerics;
+      final String result;
+      if (traceParameterType.contains("<")) {
+         String withoutGenerics = traceParameterType.substring(0, traceParameterType.indexOf("<"));
+         result = withoutGenerics.substring(withoutGenerics.lastIndexOf('.') + 1);
+      } else {
+         result = traceParameterType.substring(traceParameterType.lastIndexOf('.') + 1);
+      }
+      return result;
    }
 
    private boolean isTypeParameter(final String typeString) {
