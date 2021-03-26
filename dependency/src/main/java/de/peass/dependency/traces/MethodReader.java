@@ -36,6 +36,7 @@ public class MethodReader {
             if (method.getNameAsString().equals(currentTraceElement.getMethod())) {
                //TODO LOG.trace
                LOG.debug("Parameter: {} Trace-Parameter: {}", method.getParameters().size(), currentTraceElement.getParameterTypes().length);
+               LOG.debug(method.getParameters()); //TODO delete
                if (parametersEqual(currentTraceElement, method)) {
                   if (parent instanceof TypeDeclaration<?>) {
                      final TypeDeclaration<?> clazz = (TypeDeclaration<?>) parent;

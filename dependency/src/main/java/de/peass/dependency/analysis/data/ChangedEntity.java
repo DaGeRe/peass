@@ -204,6 +204,42 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    }
 
    public void createParameters(final String parameterString) {
+      if (parameterString.contains("<")) {
+         addParameterWithGenerics(parameterString.replaceAll(" ", ""));
+      } else {
+         addGenericFreePart(parameterString.replaceAll(" ", ""));
+      }
+   }
+
+   private void addParameterWithGenerics(final String parameterString) {
+      final String[] genericSplitted = parameterString.split(">");
+      for (String genericPart : genericSplitted) {
+         if (genericPart.length() > 0) {
+            if (genericPart.startsWith(",")) {
+               genericPart = genericPart.substring(1);
+            }
+            if (genericPart.contains("<")) {
+               final String beforeGeneric = genericPart.substring(0, genericPart.indexOf('<'));
+               final String[] beforeGenericEnding = beforeGeneric.split(",");
+               if (beforeGenericEnding.length > 1) {
+                  for (int i = 0; i < beforeGenericEnding.length - 1; i++) {
+                     this.parameters.add(beforeGenericEnding[i]);
+                  }
+               }
+               String genericParameter = beforeGenericEnding[beforeGenericEnding.length - 1] + genericPart.substring(genericPart.indexOf('<')) + '>';
+               this.parameters.add(genericParameter);
+            } else {
+               addGenericFreePart(genericPart);
+            }
+         } else {
+            String lastParameter = this.parameters.get(this.parameters.size() - 1);
+            lastParameter += ">";
+            this.parameters.set(this.parameters.size() - 1, lastParameter);
+         }
+      }
+   }
+
+   private void addGenericFreePart(final String parameterString) {
       final String[] parameters = parameterString.split(",");
       for (final String parameter : parameters) {
          int dotIndex = parameter.lastIndexOf('.');
