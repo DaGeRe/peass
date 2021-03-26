@@ -81,12 +81,15 @@ public class TestChooser {
       final File executeFile = new File(localFolder, "execute.json");
 
       FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
+      
+      boolean alreadyTried = false;
       if (!executeFile.exists()) {
          LOG.debug("Expected file {} does not exist, executing view creation", executeFile);
          generateViews(dependencies, executeFile);
+         alreadyTried = true;
       }
       ExecutionData traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
-      if (!traceTests.getVersions().containsKey(version)) {
+      if (!traceTests.getVersions().containsKey(version) && !alreadyTried) {
          LOG.debug("Version {} was not contained in tests, executing view creation", version);
          generateViews(dependencies, executeFile);
          traceTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
