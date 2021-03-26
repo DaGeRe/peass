@@ -32,6 +32,18 @@ public class TestSourceReading {
 
       Assert.assertNotNull(genericMethodNode);
    }
+   
+   @Test
+   public void testGenericClass2() throws FileNotFoundException {
+      final CompilationUnit cu = JavaParserProvider.parse(new File(baseFolder, "GenericsExample.java"));
+
+      String[] parameters = new String[] {"Map<ClassA, ClassB>", "TimeRange"};
+      final TraceElementContent exampleTrace = new TraceElementContent("GenericsExample", "test1", parameters, 1);
+      final Node exampleMethod = TraceReadUtils.getMethod(exampleTrace, cu);
+
+      Assert.assertNotNull(exampleMethod);
+
+   }
 
    @Test
    public void testAnonymousClass() throws FileNotFoundException {

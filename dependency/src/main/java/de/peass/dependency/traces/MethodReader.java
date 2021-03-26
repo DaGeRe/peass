@@ -12,7 +12,6 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
-import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.type.TypeParameter;
 
@@ -136,7 +135,7 @@ public class MethodReader {
    private boolean testParameter(final String traceParameterTypes[], final int parameterIndex, final Type type, final boolean varArgAllowed) {
       final String traceParameterType = traceParameterTypes[parameterIndex];
       final String simpleTraceParameterType = traceParameterType.substring(traceParameterType.lastIndexOf('.') + 1);
-      final String typeString = type instanceof ClassOrInterfaceType ? ((ClassOrInterfaceType) type).getNameAsString() : type.toString();
+      final String typeString = type.toString();
       // ClassOrInterfaceType
       if (typeString.equals(simpleTraceParameterType)) {
          return true;
