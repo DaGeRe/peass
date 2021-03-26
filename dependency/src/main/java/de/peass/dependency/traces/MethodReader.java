@@ -12,6 +12,7 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.type.TypeParameter;
 
@@ -133,9 +134,8 @@ public class MethodReader {
    }
 
    private boolean testParameter(final String traceParameterTypes[], final int parameterIndex, final Type type, final boolean varArgAllowed) {
-      final String traceParameterType = traceParameterTypes[parameterIndex];
-      final String simpleTraceParameterType = traceParameterType.substring(traceParameterType.lastIndexOf('.') + 1);
-      final String typeString = type.toString();
+      final String simpleTraceParameterType = getSimpleType(traceParameterTypes[parameterIndex]);
+      final String typeString = type instanceof ClassOrInterfaceType ? ((ClassOrInterfaceType) type).getNameAsString() : type.toString();
       // ClassOrInterfaceType
       if (typeString.equals(simpleTraceParameterType)) {
          return true;
@@ -154,6 +154,12 @@ public class MethodReader {
       } else {
          return false;
       }
+   }
+
+   private String getSimpleType(final String traceParameterType) {
+      final String withGenericsType = traceParameterType.substring(traceParameterType.lastIndexOf('.') + 1);
+      final String simpleTraceParameterType = (withGenericsType.contains("<")) ? withGenericsType.substring(0, traceParameterType.indexOf("<")) : withGenericsType;
+      return simpleTraceParameterType;
    }
 
    private boolean isTypeParameter(final String typeString) {
