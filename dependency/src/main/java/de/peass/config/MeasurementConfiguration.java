@@ -155,6 +155,7 @@ public class MeasurementConfiguration implements Serializable {
       this.record = other.record;
       this.measurementStrategy = other.measurementStrategy;
       this.saveAll = other.saveAll;
+      this.createDefaultConstructor = other.createDefaultConstructor;
    }
    
    public StatisticsConfiguration getStatisticsConfig() {
