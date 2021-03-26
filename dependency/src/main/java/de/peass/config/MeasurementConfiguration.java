@@ -35,6 +35,7 @@ public class MeasurementConfiguration implements Serializable {
    private boolean useCircularQueue = false;
    private boolean redirectToNull = true;
    private boolean enableAdaptiveMonitoring = false;
+   private boolean createDefaultConstructor = true;
    
    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
    private boolean saveAll = true;
@@ -404,5 +405,13 @@ public class MeasurementConfiguration implements Serializable {
 
    public ExecutionConfig getExecutionConfig() {
       return executionConfig;
+   }
+
+   public boolean isCreateDefaultConstructor() {
+      return createDefaultConstructor;
+   }
+
+   public void setCreateDefaultConstructor(final boolean createDefaultConstructor) {
+      this.createDefaultConstructor = createDefaultConstructor;
    }
 }
