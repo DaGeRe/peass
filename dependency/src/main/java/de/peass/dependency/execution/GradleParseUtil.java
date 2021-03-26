@@ -230,8 +230,8 @@ public class GradleParseUtil {
    }
 
    private static void parseModuleLine(final File projectFolder, final List<File> modules, final String line) {
-      final String[] splitted = line.replaceAll(" +", " ").split(" ");
-      if (splitted.length == 2 && splitted[0].equals("include")) {
+      final String[] splitted = line.replaceAll(" +"," ").replaceAll(",","").split(" ");
+      if (splitted[0].equals("include")) {
          final String candidate = splitted[1].substring(1, splitted[1].length() - 1);
          final File module = new File(projectFolder, candidate.replace(':', File.separatorChar));
          if (module.exists()) {
