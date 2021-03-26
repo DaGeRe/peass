@@ -158,7 +158,7 @@ public class MethodReader {
 
    private String getSimpleType(final String traceParameterType) {
       final String withGenericsType = traceParameterType.substring(traceParameterType.lastIndexOf('.') + 1);
-      final String simpleTraceParameterType = (withGenericsType.contains("<")) ? withGenericsType.substring(0, traceParameterType.indexOf("<")) : withGenericsType;
+      final String simpleTraceParameterType = (withGenericsType.contains("<")) ? withGenericsType.substring(0, withGenericsType.indexOf("<")) : withGenericsType;
       return simpleTraceParameterType;
    }
 
