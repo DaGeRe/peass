@@ -157,6 +157,7 @@ public class MethodReader {
    }
 
    private String getSimpleType(final String traceParameterType) {
+      LOG.debug("Getting simple type of {}", traceParameterType);
       final String withoutPackage = traceParameterType.substring(traceParameterType.lastIndexOf('.') + 1);
       final String withoutGenerics = (withoutPackage.contains("<")) ? withoutPackage.substring(0, withoutPackage.indexOf("<")) : withoutPackage;
       return withoutGenerics;
