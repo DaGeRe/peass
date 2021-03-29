@@ -22,6 +22,8 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.kopeme.parsing.GradleParseHelper;
+
 public class MavenPomUtil {
 
    public static final String KOPEME_VERSION = "0.14-SNAPSHOT";
@@ -315,7 +317,7 @@ public class MavenPomUtil {
       final File pomXml = new File(projectFolder, "pom.xml");
       if (pomXml.exists()) {
          return MavenPomUtil.getModules(pomXml);
-      } else if (new File(projectFolder, "build.gradle").exists()) {
+      } else if (GradleParseHelper.searchGradleFiles(projectFolder).length != 0) {
          return GradleParseUtil.getModules(projectFolder);
       } else {
          return null;

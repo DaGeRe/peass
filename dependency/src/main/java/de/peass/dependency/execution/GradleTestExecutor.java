@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
@@ -55,7 +56,7 @@ public class GradleTestExecutor extends TestExecutor {
          ProjectModules modules = getModules();
          LOG.debug("Preparing modules: {}", modules);
          for (final File module : modules.getModules()) {
-            final File gradleFile = GradleParseUtil.findGradleFile(module);
+            final File gradleFile = GradleParseHelper.findGradleFile(module);
             editOneBuildfile(gradleFile, modules);
          }
       } catch (IOException | XmlPullParserException e) {
@@ -139,7 +140,7 @@ public class GradleTestExecutor extends TestExecutor {
          try {
             boolean isAndroid = false;
             for (final File module : getModules().getModules()) {
-               final File buildfile = GradleParseUtil.findGradleFile(module);
+               final File buildfile = GradleParseHelper.findGradleFile(module);
                final FindDependencyVisitor visitor = GradleParseUtil.setAndroidTools(buildfile);
                if (visitor.isAndroid()) {
                   isAndroid = true;

@@ -2,7 +2,6 @@ package de.peass.dependency.execution;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -15,13 +14,13 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.builder.AstBuilder;
 import org.codehaus.plexus.util.IOUtil;
 
+import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.peass.dependency.execution.gradle.AndroidVersionUtil;
 import de.peass.dependency.execution.gradle.FindDependencyVisitor;
 import de.peass.testtransformation.JUnitTestTransformer;
@@ -47,17 +46,6 @@ public class GradleParseUtil {
       }
    }
    
-   public static File findGradleFile(final File module) {
-      File gradleFile = new File(module, "build.gradle");
-      if (!gradleFile.exists()) {
-         gradleFile = module.listFiles((FileFilter) new WildcardFileFilter("*.gradle"))[0];
-      }
-      if (!gradleFile.exists()) {
-         throw new RuntimeException("There was no .gradle file in " + module.getAbsolutePath());
-      }
-      return gradleFile;
-   }
-
    public static FindDependencyVisitor setAndroidTools(final File buildfile) {
       FindDependencyVisitor visitor = null;
       try {
@@ -151,7 +139,7 @@ public class GradleParseUtil {
       List<File> parentProjects = modules.getParents(buildfile.getParentFile());
       boolean isUseJava = false;
       for (File parentProject : parentProjects) {
-         File parentBuildfile = findGradleFile(parentProject);
+         File parentBuildfile = GradleParseHelper.findGradleFile(parentProject);
          LOG.debug("Reading " + parentBuildfile);
          FindDependencyVisitor parentVisitor = parseBuildfile(parentBuildfile);
          if (parentVisitor.isSubprojectJava()) {
