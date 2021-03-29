@@ -77,9 +77,11 @@ public class TestStatistic {
       if (info != null) {
          info.addMeasurement(data.getVersion(), data.getTestcase(), statisticsPrevious, statisticsCurrent, resultslength);
          try {
-            File resultFolder = new File("results");
+            final File resultFolder = new File("results");
             resultFolder.mkdir();
-            FolderSearcher.MAPPER.writeValue(new File(resultFolder, "statistics.json"), info);
+            File statisticsFile = new File(resultFolder, "statistics.json");
+            LOG.debug("Writing to: {} Parent exists: {}", statisticsFile.getAbsolutePath(), resultFolder.exists());
+            FolderSearcher.MAPPER.writeValue(statisticsFile, info);
          } catch (final IOException e) {
             e.printStackTrace();
          }
