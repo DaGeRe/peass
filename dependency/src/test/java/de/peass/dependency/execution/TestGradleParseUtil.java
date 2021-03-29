@@ -6,10 +6,13 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.hamcrest.core.IsIterableContaining;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -32,7 +35,15 @@ public class TestGradleParseUtil {
    public void testModuleGettingSpaces() throws FileNotFoundException, IOException {
       List<File> modules = GradleParseUtil.getModules(new File("src/test/resources/gradle-multimodule-example-spaces")).getModules();
 
-      Assert.assertThat(modules.size(), Matchers.is(3));
+      List<String> moduleNameList = modules.stream().map(file -> file.getName()).collect(Collectors.toList());
+      MatcherAssert.assertThat(moduleNameList, IsIterableContaining.hasItem("gradle-multimodule-example-spaces"));
+      MatcherAssert.assertThat(moduleNameList, IsIterableContaining.hasItem("myModule1"));
+      MatcherAssert.assertThat(moduleNameList, IsIterableContaining.hasItem("myModule2"));
+      MatcherAssert.assertThat(moduleNameList, IsIterableContaining.hasItem("myModule3"));
+      MatcherAssert.assertThat(moduleNameList, IsIterableContaining.hasItem("myModule4"));
+      
+
+      Assert.assertThat(modules.size(), Matchers.is(5));
    }
 
    @Test
@@ -60,7 +71,7 @@ public class TestGradleParseUtil {
       String gradleParentContent = FileUtils.readFileToString(resultParentFile, Charset.defaultCharset());
       Assert.assertThat(gradleParentContent, Matchers.containsString("kopeme"));
       String afterTest = gradleParentContent.substring(gradleParentContent.indexOf("test {"));
-      
+
       Assert.assertThat(afterTest, Matchers.containsString("-javaagent"));
       System.out.println(afterTest);
    }

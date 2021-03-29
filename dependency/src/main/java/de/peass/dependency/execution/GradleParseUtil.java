@@ -45,7 +45,7 @@ public class GradleParseUtil {
          }
       }
    }
-   
+
    public static FindDependencyVisitor setAndroidTools(final File buildfile) {
       FindDependencyVisitor visitor = null;
       try {
@@ -218,15 +218,18 @@ public class GradleParseUtil {
    }
 
    private static void parseModuleLine(final File projectFolder, final List<File> modules, final String line) {
-      final String[] splitted = line.replaceAll(" +", " ").split(" ");
-      if (splitted.length == 2 && splitted[0].equals("include")) {
-         final String candidate = splitted[1].substring(1, splitted[1].length() - 1);
-         final File module = new File(projectFolder, candidate.replace(':', File.separatorChar));
-         if (module.exists()) {
-            modules.add(module);
-         } else {
-            LOG.error(line + " not found! Was looking in " + module.getAbsolutePath());
+      final String[] splitted = line.replaceAll("[ ,]+", " ").split(" ");
+      if (splitted[0].equals("include")) {
+         for (int candidateIndex = 1; candidateIndex < splitted.length; candidateIndex++) {
+            final String candidate = splitted[candidateIndex].substring(1, splitted[candidateIndex].length() - 1);
+            final File module = new File(projectFolder, candidate.replace(':', File.separatorChar));
+            if (module.exists()) {
+               modules.add(module);
+            } else {
+               LOG.error(line + " not found! Was looking in " + module.getAbsolutePath());
+            }
          }
+
       }
    }
 }
