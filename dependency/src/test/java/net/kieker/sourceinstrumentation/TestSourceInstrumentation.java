@@ -40,6 +40,18 @@ public class TestSourceInstrumentation {
       testFileIsInstrumented(testFile, "public static java.util.Date com.test.Utils.utilMethod(java.lang.String)", "OperationExecutionRecord");
    }
 
+   @Test
+   public void testGenericsClass() throws IOException {
+      TestConstants.CURRENT_FOLDER.mkdirs();
+
+      File testFile = SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/C0_0.java", "/sourceInstrumentation/project_2_complex/");
+
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION);
+      instrumenter.instrument(testFile);
+
+      testFileIsInstrumented(testFile, "public java.util.Collection de.peass.C0_0.myCollection(java.util.List)", "OperationExecutionRecord");
+   }
+   
    public static void testFileIsInstrumented(final File testFile, final String fqn, final String recordName) throws IOException {
       String changedSource = FileUtils.readFileToString(testFile, StandardCharsets.UTF_8);
 
