@@ -105,16 +105,16 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
    public static CauseSearcher getCauseSeacher(final MeasurementConfiguration measurementConfiguration,
          final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader) throws IOException, InterruptedException {
-      EnvironmentVariables emptyEnv = new EnvironmentVariables();
+      EnvironmentVariables env = reader.getEnv();
       final CauseSearcher tester;
-      final CauseTester measurer = new CauseTester(alternateFolders, measurementConfiguration, causeSearcherConfig, emptyEnv);
+      final CauseTester measurer = new CauseTester(alternateFolders, measurementConfiguration, causeSearcherConfig, env);
       if (causeSearcherConfig.getRcaStrategy() != null) {
          switch (causeSearcherConfig.getRcaStrategy()) {
          case COMPLETE:
-            tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, emptyEnv);
+            tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, env);
             break;
          case LEVELWISE:
-            tester = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, emptyEnv);
+            tester = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, env);
             break;
          case CONSTANT_LEVELS:
             throw new RuntimeException("Measurement for constant count of level currently not supported");
@@ -126,7 +126,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
                   return new SourceChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor(), config.getPropertyFolder(), measurementConfiguration);
                }
             };
-            tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creatorSource, emptyEnv);
+            tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creatorSource, env);
             break;
          case UNTIL_STRUCTURE_CHANGE:
             TreeAnalyzerCreator creator = new TreeAnalyzerCreator() {
@@ -136,7 +136,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
                   return new StructureChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
                }
             };
-            tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creator, emptyEnv);
+            tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creator, env);
             break;
          default:
             throw new RuntimeException("Strategy " + causeSearcherConfig.getRcaStrategy() + " not expected");
@@ -150,7 +150,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
                return new StructureChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor());
             }
          };
-         tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creator, emptyEnv);
+         tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creator, env);
       }
       return tester;
    }

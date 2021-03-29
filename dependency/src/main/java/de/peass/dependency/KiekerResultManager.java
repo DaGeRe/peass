@@ -144,7 +144,6 @@ public class KiekerResultManager {
             executor.executeTest(testcase, logVersionFolder, testTransformer.getConfig().getTimeoutInMinutes());
          }
       }
-      new RuntimeException().printStackTrace();
       cleanAboveSize(logVersionFolder, 100, "txt");
       
       LOG.debug("KoPeMe-Kieker-Run finished");

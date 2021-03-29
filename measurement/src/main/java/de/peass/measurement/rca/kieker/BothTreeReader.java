@@ -94,4 +94,8 @@ public class BothTreeReader {
    public CallTreeNode getRootVersion() {
       return rootVersion;
    }
+
+   public EnvironmentVariables getEnv() {
+      return env;
+   }
 }
