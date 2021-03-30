@@ -61,7 +61,7 @@ public class TreeStage extends AbstractTraceProcessingStage<ExecutionTrace> {
          }
       }
    }
-   
+
    private void addExecutionToTree(final Execution execution, final String fullClassname, final String methodname, final String call, final String kiekerPattern) {
       if (test.getClazz().equals(fullClassname) && test.getMethod().equals(methodname)) {
          readRoot(execution, call, kiekerPattern);
@@ -123,7 +123,11 @@ public class TreeStage extends AbstractTraceProcessingStage<ExecutionTrace> {
    }
 
    private void readRoot(final Execution execution, final String call, final String kiekerPattern) {
-      root = new CallTreeNode(call, kiekerPattern, null, measurementConfig);
+      if (kiekerPattern.startsWith("public ")) {
+         root = new CallTreeNode(call, kiekerPattern, null, measurementConfig);
+      } else {
+         root = new CallTreeNode(call, "public " + kiekerPattern, null, measurementConfig);
+      }
       lastParent = root;
       testTraceId = execution.getTraceId();
    }
