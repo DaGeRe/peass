@@ -67,7 +67,6 @@ public class SourceInstrumentationCollissionIT {
       
       String monitorLogs = FileUtils.readFileToString(resultFile, StandardCharsets.UTF_8);
       Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.MainTest.testMe()"));
-      Assert.assertThat(monitorLogs, Matchers.containsString("public java.util.Collection de.peass.C0_0.myCollection(java.util.List)"));
       Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.AddRandomNumbers.addSomething();")));
    }
 }
