@@ -50,6 +50,7 @@ public class TestSourceInstrumentation {
       instrumenter.instrument(testFile);
 
       testFileIsInstrumented(testFile, "public java.util.Collection de.peass.C0_0.myCollection(java.util.List)", "OperationExecutionRecord");
+      testFileIsInstrumented(testFile, "public java.util.Collection[] de.peass.C0_0.myCollection2(java.util.List)", "OperationExecutionRecord");
    }
    
    public static void testFileIsInstrumented(final File testFile, final String fqn, final String recordName) throws IOException {

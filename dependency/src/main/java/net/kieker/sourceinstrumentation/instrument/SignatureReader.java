@@ -124,10 +124,13 @@ public class SignatureReader {
 
    private String getTypeFQN(final Type type) {
       String typeName = type.asString();
-      
-      //TODO By this implementation, generics are just removed; in general, source instrumentation would allow to capture the generic declaration
+
+      // TODO By this implementation, generics are just removed; in general, source instrumentation would allow to capture the generic declaration
       if (typeName.contains("<")) {
-         typeName = typeName.substring(0, typeName.indexOf('<'));
+         String beforeGenerics = typeName.substring(0, typeName.indexOf('<'));
+         String afterGenerics = typeName.substring(typeName.lastIndexOf('>') + 1, typeName.length());
+         typeName = beforeGenerics + afterGenerics;
+
       }
       if (typeName.equals("void")) {
          return typeName;

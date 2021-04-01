@@ -22,4 +22,8 @@ class C0_0{
  public Collection<String> myCollection(List<String> parameter){
     return null;
  }
+ 
+ public Collection<String>[] myCollection2(List<String> parameter){
+    return null;
+ }
 }
