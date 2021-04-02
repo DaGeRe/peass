@@ -11,6 +11,8 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.config.ImplementedTests;
+import de.peass.config.MeasurementConfiguration;
 import de.peass.measurement.analysis.Relation;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
@@ -19,6 +21,7 @@ import de.peass.measurement.rca.serialization.MeasuredValues;
 import de.peass.measurement.rca.treeanalysis.TreeUtil;
 import de.peass.statistics.StatisticUtil;
 import de.peass.visualization.GraphNode.State;
+import de.precision.analysis.repetitions.bimodal.CompareData;
 
 public class NodePreparator {
 
@@ -183,12 +186,7 @@ public class NodePreparator {
    }
 
    private double[] getValueArray(final MeasuredValues measured) {
-      final double[] values = new double[measured.getValues().size()];
-      for (int i = 0; i < values.length; i++) {
-         final List<StatisticalSummary> statistics = measured.getValues().get(i);
-         values[i] = StatisticUtil.getMean(statistics);
-      }
-      return values;
+      return measured.getValuesArray();
    }
 
    private void setNodeColor(final MeasuredNode measuredNode, final GraphNode graphNode) {
@@ -213,7 +211,7 @@ public class NodePreparator {
       graphNode.setInVMDeviation(statistic.getMean());
    }
 
-   private SummaryStatistics getInVMDeviationStatistic(Map<Integer, List<StatisticalSummary>> values) {
+   private SummaryStatistics getInVMDeviationStatistic(final Map<Integer, List<StatisticalSummary>> values) {
       SummaryStatistics statistic = new SummaryStatistics();
       for (List<StatisticalSummary> oneVMRun : values.values()) {
          SummaryStatistics vmAverage = new SummaryStatistics();
@@ -228,7 +226,11 @@ public class NodePreparator {
    private void setColorFullStatistics(final MeasuredNode measuredNode, final GraphNode graphNode, final StatisticalSummary statisticsOld,
          final StatisticalSummary statisticsCurrent) {
       if (measuredNode.getStatistic().getMeanCurrent() > 0.001 && measuredNode.getStatistic().getMeanOld() > 0.001) {
-         final boolean isChange = StatisticUtil.isChange(statisticsOld, statisticsCurrent, data.getMeasurementConfig()) == Relation.UNEQUAL;
+         CompareData cd = new CompareData(measuredNode.getValuesPredecessor().getValuesArray(), measuredNode.getValues().getValuesArray());
+         MeasurementConfiguration measurementConfig = new MeasurementConfiguration(-1);
+         measurementConfig.getStatisticsConfig().setStatisticTest(ImplementedTests.MANN_WHITNEY_TEST);
+         boolean isChange = StatisticUtil.isDifferent(cd, measurementConfig) != Relation.EQUAL;
+//         final boolean isChange = StatisticUtil.isChange(statisticsOld, statisticsCurrent, data.getMeasurementConfig()) == Relation.UNEQUAL;
          if (isChange) {
             if (measuredNode.getStatistic().getTvalue() < 0) {
                graphNode.setSlower();
