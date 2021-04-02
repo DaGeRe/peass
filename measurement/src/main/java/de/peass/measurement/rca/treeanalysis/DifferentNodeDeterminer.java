@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.peass.config.MeasurementConfiguration;
 import de.peass.measurement.analysis.Relation;
+import de.peass.measurement.analysis.statistics.OutlierRemover;
 import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.statistics.StatisticUtil;
@@ -61,7 +62,7 @@ public abstract class DifferentNodeDeterminer {
    private CompareData removeOutliers(final CompareData cd) {
       final CompareData cleaned;
       if (measurementConfig.getStatisticsConfig().getOutlierFactor() != 0) {
-         cleaned = OutlierRemoverBimodal.removeOutliers(cd);
+         cleaned = OutlierRemoverBimodal.removeOutliers(cd, OutlierRemover.Z_SCORE);
       } else {
          cleaned = cd;
       }

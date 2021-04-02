@@ -2,13 +2,11 @@ package de.precision.analysis.repetitions.bimodal;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-import org.codehaus.groovy.runtime.ArrayUtil;
 
 import de.dagere.kopeme.generated.Result;
 import de.peass.measurement.analysis.MultipleVMTestUtil;
@@ -62,32 +60,32 @@ public class OutlierRemoverBimodal {
       }
    }
 
-   public static CompareData removeOutliers(CompareData data) {
+   public static CompareData removeOutliers(final CompareData data, final double outlierFactor) {
       CompareData result;
       final BimodalityTester isBismodal = new BimodalityTester(data);
       if (isBismodal.isBimodal()) {
-         double[] valuesBefore = removeOutliersBimodal(data.getBefore(), isBismodal.getDataBefore());
-         double[] valuesAfter = removeOutliersBimodal(data.getAfter(), isBismodal.getDataAfter());
+         double[] valuesBefore = removeOutliersBimodal(data.getBefore(), isBismodal.getDataBefore(), outlierFactor);
+         double[] valuesAfter = removeOutliersBimodal(data.getAfter(), isBismodal.getDataAfter(), outlierFactor);
          result = new CompareData(valuesBefore, valuesAfter);
       } else {
-         double[] valuesBefore = removeOutliers(data.getBefore(), data.getBeforeStat());
-         double[] valuesAfter = removeOutliers(data.getAfter(), data.getAfterStat());
+         double[] valuesBefore = removeOutliers(data.getBefore(), data.getBeforeStat(), outlierFactor);
+         double[] valuesAfter = removeOutliers(data.getAfter(), data.getAfterStat(), outlierFactor);
          result = new CompareData(valuesBefore, valuesAfter);
       }
       return result;
    }
 
-   private static double[] removeOutliersBimodal(double[] values, final IsBimodal beforeData) {
+   private static double[] removeOutliersBimodal(final double[] values, final IsBimodal beforeData, final double outlierFactor) {
       List<Double> containedValues = new ArrayList<>(values.length);
       for (double value : values) {
          if (value < beforeData.getAvgValue()) {
             double zscore = Math.abs(value - beforeData.getStat1().getMean()) / beforeData.getStat1().getStandardDeviation();
-            if (!(zscore > OutlierRemover.Z_SCORE)) {
+            if (!(zscore > outlierFactor)) {
                containedValues.add(value);
             }
          } else {
             double zscore = Math.abs(value - beforeData.getStat2().getMean()) / beforeData.getStat2().getStandardDeviation();
-            if (!(zscore > OutlierRemover.Z_SCORE)) {
+            if (!(zscore > outlierFactor)) {
                containedValues.add(value);
             }
          }
@@ -96,11 +94,11 @@ public class OutlierRemoverBimodal {
       return containedResults;
    }
 
-   private static double[] removeOutliers(double[] original, StatisticalSummary statistics) {
+   private static double[] removeOutliers(final double[] original, final StatisticalSummary statistics, final double outlierFactor) {
       List<Double> containedValues = new ArrayList<>(original.length);
       for (double value : original) {
          double zscore = Math.abs(value - statistics.getMean()) / statistics.getStandardDeviation();
-         if (!(zscore > OutlierRemover.Z_SCORE)) {
+         if (!(zscore > outlierFactor)) {
             containedValues.add(value);
          }
       }
