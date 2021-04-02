@@ -7,8 +7,10 @@ public class StatisticsConfiguration implements Serializable {
 
    private double type1error = 0.01;
    private double type2error = 0.01;
-   private double outlierFactor = 5.0;
+   private double outlierFactor = DEFAULT_OUTLIER_FACTOR;
    private ImplementedTests statisticTest = ImplementedTests.BIMODAL_T_TEST;
+   
+   public static final double DEFAULT_OUTLIER_FACTOR = 3.29; // Does not remove 99% of all values in gaussian distribution
 
    public double getType1error() {
       return type1error;
