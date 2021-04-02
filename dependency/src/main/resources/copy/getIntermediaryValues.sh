@@ -35,7 +35,7 @@ function writeValues {
 		rm $target
 	fi
 	
-	for file in $(ls $source/ | grep -v ".xml")
+	for file in $(ls $source/ | grep -v ".xml" | grep -v ".tmp")
 	do
 		cat $source/$file/*/kieker*/*csv | awk -F';' '{print $5}' | tail -n 3 | getSum >> $target
 		current=$(cat $source/$file/*/kieker*/*csv | awk -F';' '{sum+=$7} END {print sum}')

@@ -16,21 +16,22 @@ public class ResultOrganizerParallel extends ResultOrganizer {
    
    private static final Logger LOG = LogManager.getLogger(ResultOrganizerParallel.class);
 
-   private Map<String, PeASSFolders> sourceFolders = new HashMap<>();
+   private final Map<String, PeASSFolders> sourceFolders = new HashMap<>();
    
-   public ResultOrganizerParallel(PeASSFolders folders, String currentVersion, long currentChunkStart, boolean isUseKieker, boolean saveAll, TestCase test,
-         int expectedIterations) {
+   public ResultOrganizerParallel(final PeASSFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll, final TestCase test,
+         final int expectedIterations) {
       super(folders, currentVersion, currentChunkStart, isUseKieker, saveAll, test, expectedIterations);
    }
 
-   public void setFolder(String version, PeASSFolders versionTempFolder) {
+   public void setFolder(final String version, final PeASSFolders versionTempFolder) {
+      LOG.debug("Adding version: {}", version);
       sourceFolders.put(version, versionTempFolder);
    }
    
    @Override
    public File getTempResultsFolder(final String version) {
       PeASSFolders currentFolders = sourceFolders.get(version);
-      LOG.info("Searching method: {}", testcase);
+      LOG.info("Searching method: {} Version: {}", testcase, version);
       final String expectedFolderName = "*" + testcase.getClazz();
       final File containingFolder = currentFolders.getTempMeasurementFolder();
       final Collection<File> folderCandidates = findFolder(containingFolder, new WildcardFileFilter(expectedFolderName));
