@@ -45,11 +45,11 @@ public class KiekerEnvironmentPreparer {
          LOG.debug("Create default constructor: {}", config.getExecutionConfig().isCreateDefaultConstructor());
          if (!config.isUseSelectiveInstrumentation()) {
             InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), false, config.getExecutionConfig().isCreateDefaultConstructor(),
-                  config.isEnableAdaptiveConfig(), includedMethodPattern, false);
+                  config.isEnableAdaptiveConfig(), includedMethodPattern, false, config.getRepetitions());
             instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
          } else {
             InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), config.isUseSampling(), config.getExecutionConfig().isCreateDefaultConstructor(),
-                  config.isEnableAdaptiveConfig(), includedMethodPattern, true);
+                  config.isEnableAdaptiveConfig(), includedMethodPattern, true, config.getRepetitions());
             instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
          }
          instrumentKiekerSource.instrumentProject(folders.getProjectFolder());

@@ -9,8 +9,11 @@ import net.kieker.sourceinstrumentation.InstrumentationCodeBlocks;
 
 public class SamplingBlockBuilder extends BlockBuilder {
 
-   public SamplingBlockBuilder(final AllowedKiekerRecord recordType) {
+   private final int count;
+   
+   public SamplingBlockBuilder(final AllowedKiekerRecord recordType, final int count) {
       super(recordType, false);
+      this.count = count;
    }
 
    @Override
@@ -39,8 +42,6 @@ public class SamplingBlockBuilder extends BlockBuilder {
       BlockStmt replacedStatement = new BlockStmt();
       replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.SAMPLING.getBefore());
 
-      int count = 1000;
-
       BlockStmt finallyBlock = new BlockStmt();
       finallyBlock.addAndGetStatement(parameters.getFinalBlock(parameters.getSignature(), count));
       TryStmt stmt = new TryStmt(originalBlock, new NodeList<>(), finallyBlock);
@@ -51,7 +52,6 @@ public class SamplingBlockBuilder extends BlockBuilder {
    
    public BlockStmt buildConstructorStatement(final SamplingParameters parameters) {
       BlockStmt replacedStatement = new BlockStmt();
-      int count = 1000;
       replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.SAMPLING.getBefore());
       replacedStatement.addAndGetStatement(parameters.getFinalBlock(parameters.getSignature(), count));
       return replacedStatement;
