@@ -40,25 +40,26 @@ public class AdaptiveTester extends DependencyTester {
 
       currentChunkStart = System.currentTimeMillis();
       
-      ProgressWriter writer = new ProgressWriter(new File(folders.getFullMeasurementFolder(), "progress.txt"), configuration.getVms());
-      for (finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
-         long comparisonStart = System.currentTimeMillis();
-         runOneComparison(logFolder, testcase, finishedVMs);
+      try (ProgressWriter writer = new ProgressWriter(new File(folders.getFullMeasurementFolder(), "progress.txt"), configuration.getVms())){
+         for (finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
+            long comparisonStart = System.currentTimeMillis();
+            runOneComparison(logFolder, testcase, finishedVMs);
 
-         final boolean savelyDecidable = checkIsDecidable(testcase, finishedVMs);
+            final boolean savelyDecidable = checkIsDecidable(testcase, finishedVMs);
 
-         if (savelyDecidable) {
-            LOG.debug("Savely decidable - finishing testing");
-            break;
+            if (savelyDecidable) {
+               LOG.debug("Savely decidable - finishing testing");
+               break;
+            }
+
+            final boolean shouldBreak = updateExecutions(testcase, finishedVMs);
+            if (shouldBreak) {
+               LOG.debug("Too few executions possible - finishing testing.");
+               break;
+            }
+            long durationInSeconds = (System.currentTimeMillis() - comparisonStart)/1000;
+            writer.write(durationInSeconds, finishedVMs);
          }
-
-         final boolean shouldBreak = updateExecutions(testcase, finishedVMs);
-         if (shouldBreak) {
-            LOG.debug("Too few executions possible - finishing testing.");
-            break;
-         }
-         long durationInSeconds = (System.currentTimeMillis() - comparisonStart)/1000;
-         writer.write(durationInSeconds, finishedVMs);
       }
    }
 

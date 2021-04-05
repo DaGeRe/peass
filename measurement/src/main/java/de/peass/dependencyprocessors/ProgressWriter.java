@@ -6,17 +6,17 @@ import java.io.PrintWriter;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
-public class ProgressWriter {
+public class ProgressWriter implements AutoCloseable {
    private final PrintWriter progressFileWriter;
    private final SummaryStatistics durationStatistics = new SummaryStatistics();
    private final int vms;
 
-   public ProgressWriter(File resultFile, int vms) throws FileNotFoundException {
+   public ProgressWriter(final File resultFile, final int vms) throws FileNotFoundException {
       progressFileWriter = new PrintWriter(resultFile);
       this.vms = vms;
    }
 
-   public void write(long durationInSeconds, int finishedVMs) {
+   public void write(final long durationInSeconds, final int finishedVMs) {
       durationStatistics.addValue(durationInSeconds);
 
       final int duration = (int) ((vms - finishedVMs) * durationStatistics.getMean() / 60);
@@ -29,5 +29,10 @@ public class ProgressWriter {
             " Avg: " + durationStatistics.getMean()
             + " Remaining: " + hours + "h " + minutes + "\n");
       progressFileWriter.flush();
+   }
+
+   @Override
+   public void close() {
+      progressFileWriter.close();
    }
 }
