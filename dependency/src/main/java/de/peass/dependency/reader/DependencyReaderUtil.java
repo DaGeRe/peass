@@ -160,7 +160,7 @@ public class DependencyReaderUtil {
    }
 
    public static void write(final Dependencies deps, final File file) {
-      LOG.debug("Schreibe in: {}", file);
+      LOG.debug("Writing to: {}", file);
       try {
          Constants.OBJECTMAPPER.writeValue(file, deps);
       } catch (final IOException e) {

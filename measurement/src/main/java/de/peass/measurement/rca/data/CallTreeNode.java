@@ -105,13 +105,14 @@ public class CallTreeNode extends BasicNode {
          StatisticalSummary borderSummary = null;
          for (Iterator<StatisticalSummary> it = statistic.iterator(); it.hasNext();) {
             StatisticalSummary chunk = it.next();
-            if (remainingWarmup - chunk.getN() > 0) {
-               remainingWarmup -= chunk.getN();
-               LOG.debug("Reducing warmup by {}, remaining warmup {}", chunk.getN(), remainingWarmup);
+            long countOfExecutions = chunk.getN() * config.getRepetitions();
+            if (remainingWarmup - countOfExecutions > 0) {
+               remainingWarmup -= countOfExecutions;
+               LOG.debug("Reducing warmup by {}, remaining warmup {}", countOfExecutions, remainingWarmup);
                it.remove();
             } else {
                if (remainingWarmup > 0) {
-                  final long reducedN = chunk.getN() - remainingWarmup;
+                  final long reducedN = countOfExecutions - remainingWarmup;
                   borderSummary = new StatisticalSummaryValues(chunk.getMean(), chunk.getVariance(), reducedN,
                         chunk.getMax(), chunk.getMin(), chunk.getMean() * reducedN);
                } else {
@@ -165,7 +166,7 @@ public class CallTreeNode extends BasicNode {
    }
 
    private void newVersion(final String version) {
-      LOG.trace("Adding version: {}", version);
+      LOG.debug("Adding version: {}", version);
       CallTreeStatistics statistics = data.get(version);
       if (statistics == null) {
          statistics = new CallTreeStatistics(config.getNodeWarmup());
@@ -211,6 +212,7 @@ public class CallTreeNode extends BasicNode {
 
    @JsonIgnore
    public TestcaseStatistic getTestcaseStatistic() {
+      LOG.debug("Creating statistics for {} {} Keys: {}", config.getVersion(), config.getVersionOld(), data.keySet());
       final CallTreeStatistics currentVersionStatistics = data.get(config.getVersion());
       final SummaryStatistics current = currentVersionStatistics.getStatistics();
       final CallTreeStatistics previousVersionStatistics = data.get(config.getVersionOld());
@@ -261,6 +263,7 @@ public class CallTreeNode extends BasicNode {
    @Deprecated
    @JsonIgnore
    public void setVersions(final String version, final String predecessor) {
+      LOG.debug("Set versions: {}", version, predecessor);
       config.setVersion(version);
       config.setVersionOld(predecessor);
       resetStatistics();
@@ -269,6 +272,7 @@ public class CallTreeNode extends BasicNode {
    }
    
    public void initVersions() {
+      LOG.debug("Init versions: {}", config.getVersion(), config.getVersionOld());
       resetStatistics();
       newVersion(config.getVersionOld());
       newVersion(config.getVersion());

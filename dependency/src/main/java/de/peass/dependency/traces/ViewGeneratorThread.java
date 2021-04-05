@@ -134,7 +134,8 @@ public class ViewGeneratorThread implements Runnable {
          for (final File moduleFolder : resultsManager.getExecutor().getModules().getModules()) {
             final File xmlFileFolder2 = resultsManager.getXMLFileFolder(moduleFolder);
             LOG.debug("Deleting folder: {}", xmlFileFolder2);
-            FileUtils.deleteDirectory(xmlFileFolder2);
+            FileUtils.forceDelete(xmlFileFolder2);
+
          }
       }
       LOG.debug("Finished: {} (Part-)Success: {}", version, gotAllData);

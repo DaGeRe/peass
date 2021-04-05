@@ -86,10 +86,12 @@ class FullCallTreeStatistic extends CallTreeStatistics {
       super(warmup);
    }
 
+   @Override
    public void addMeasurement(final Long duration) {
       results.get(results.size() - 1).add(duration);
    }
 
+   @Override
    public void newResult() {
       results.add(new ValueVMResult());
    }
@@ -160,14 +162,6 @@ class FullDataCallTreeNode extends CallTreeNode {
       final FullDataCallTreeNode added = new FullDataCallTreeNode(mirrorNode, this);
       children.add(added);
       return added;
-   }
-
-   private void newVersion(final String version) {
-      CallTreeStatistics statistics = data.get(version);
-      if (statistics == null) {
-         statistics = new FullCallTreeStatistic(0);
-         data.put(version, statistics);
-      }
    }
 
    public TestcaseStatistic getMinTestcaseStatistic(final int iterations) {
