@@ -2,8 +2,8 @@ package de.peass.measurement.rca.data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
@@ -65,7 +65,7 @@ public class CallTreeNode extends BasicNode {
    public void setConfig(final MeasurementConfiguration config) {
       this.config = config;
    }
-   
+
    @Override
    public List<CallTreeNode> getChildren() {
       return children;
@@ -102,30 +102,26 @@ public class CallTreeNode extends BasicNode {
    private void removeWarmup(final List<StatisticalSummary> statistic) {
       if (config.getNodeWarmup() > 0) {
          int remainingWarmup = config.getNodeWarmup();
-         StatisticalSummary borderSummary = null;
-         for (Iterator<StatisticalSummary> it = statistic.iterator(); it.hasNext();) {
+         for (ListIterator<StatisticalSummary> it = statistic.listIterator(); it.hasNext();) {
             StatisticalSummary chunk = it.next();
             long countOfExecutions = chunk.getN() * config.getRepetitions();
-            if (remainingWarmup - countOfExecutions > 0) {
+            if (remainingWarmup > countOfExecutions) {
                remainingWarmup -= countOfExecutions;
                LOG.debug("Reducing warmup by {}, remaining warmup {}", countOfExecutions, remainingWarmup);
                it.remove();
+            } else if (remainingWarmup > 0) {
+               final long reducedN = countOfExecutions - remainingWarmup;
+               remainingWarmup = 0;
+               final StatisticalSummary replacement = new StatisticalSummaryValues(chunk.getMean(), chunk.getVariance(), reducedN,
+                     chunk.getMax(), chunk.getMin(), chunk.getMean() * reducedN);
+               it.set(replacement);
             } else {
-               if (remainingWarmup > 0) {
-                  final long reducedN = countOfExecutions - remainingWarmup;
-                  borderSummary = new StatisticalSummaryValues(chunk.getMean(), chunk.getVariance(), reducedN,
-                        chunk.getMax(), chunk.getMin(), chunk.getMean() * reducedN);
-               } else {
-                  // Since there is no warmup remaining, the first summary is just removed and added later on
-                  borderSummary = chunk;
-               }
-               it.remove();
-               break;
+               final StatisticalSummary replacement = new StatisticalSummaryValues(chunk.getMean(), chunk.getVariance(), countOfExecutions,
+                     chunk.getMax(), chunk.getMin(), chunk.getMean() * countOfExecutions);
+               it.set(replacement);
             }
          }
-         if (borderSummary != null) {
-            statistic.add(0, borderSummary);
-         } else {
+         if (remainingWarmup > 0) {
             LOG.warn("Warning! Reading aggregated data which contain less executions than the warmup " + config.getNodeWarmup());
          }
          for (StatisticalSummary summary : statistic) {
@@ -173,11 +169,11 @@ public class CallTreeNode extends BasicNode {
          data.put(version, statistics);
       }
    }
-   
+
    public CompareData getComparableStatistics(final String versionOld, final String version) {
-      List<OneVMResult> before = data.get(versionOld) != null ? data.get(versionOld).getResults() :null;
+      List<OneVMResult> before = data.get(versionOld) != null ? data.get(versionOld).getResults() : null;
       List<OneVMResult> after = data.get(version) != null ? data.get(version).getResults() : null;
-      
+
       CompareData cd = CompareData.createCompareDataFromOneVMResults(before, after);
       return cd;
    }
@@ -270,7 +266,7 @@ public class CallTreeNode extends BasicNode {
       newVersion(version);
       newVersion(predecessor);
    }
-   
+
    public void initVersions() {
       LOG.debug("Init versions: {}", config.getVersion(), config.getVersionOld());
       resetStatistics();

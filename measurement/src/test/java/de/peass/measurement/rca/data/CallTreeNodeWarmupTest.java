@@ -33,7 +33,33 @@ public class CallTreeNodeWarmupTest {
       
       node.initVersions();
       node.addAggregatedMeasurement("1", values);
+
+      node.createStatistics("1");
+      Assert.assertEquals(50.0, node.getStatistics("1").getMean(), 0.01);
+   }
+   
+   @Test
+   public void testWarmupWithRepetitions() {
+      MeasurementConfiguration config = new MeasurementConfiguration(5, "1", "1");
+      config.setWarmup(20);
+      config.setRepetitions(10);
+      final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", 
+            "public void de.mypackage.Test.callMethod()", 
+            "public void de.mypackage.Test.callMethod()", 
+            config);
+      final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", 
+            "public void de.mypackage.Test.callMethod()", 
+            "public void de.mypackage.Test.callMethod()", 
+            config);
+      node.setOtherVersionNode(otherVersionNode);
       
+      List<StatisticalSummary> values = new LinkedList<>();
+      values.add(new StatisticalSummaryValues(100, 10, 70, 100, 100, 70*100));
+      values.add(new StatisticalSummaryValues(25, 5, 100, 25, 25, 100*25));
+      
+      node.initVersions();
+      node.addAggregatedMeasurement("1", values);
+
       node.createStatistics("1");
       Assert.assertEquals(50.0, node.getStatistics("1").getMean(), 0.01);
    }
