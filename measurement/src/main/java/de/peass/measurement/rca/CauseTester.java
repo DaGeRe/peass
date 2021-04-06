@@ -23,7 +23,6 @@ import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependencyprocessors.AdaptiveTester;
 import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.analysis.EarlyBreakDecider;
-import de.peass.measurement.organize.ResultOrganizer;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.testtransformation.JUnitTestTransformer;
 import kieker.analysis.exception.AnalysisConfigurationException;
@@ -57,7 +56,7 @@ public class CauseTester extends AdaptiveTester {
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       includedNodes = prepareNodes(nodes);
       evaluate(causeConfig.getTestCase());
-      if (!currentOrganizer.isSuccess()) {
+      if (!getCurrentOrganizer().isSuccess()) {
          boolean shouldBreak = reduceExecutions(false, configuration.getIterations() / 2);
          configuration.setIterations(configuration.getIterations() / 2);
          if (shouldBreak) {
@@ -95,16 +94,6 @@ public class CauseTester extends AdaptiveTester {
       final HashSet<String> includedMethodPattern = new HashSet<>(includedPattern);
       testExecutor.setIncludedMethods(includedMethodPattern);
       return testExecutor;
-   }
-
-   @Override
-   public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
-         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-
-      currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart,
-            configuration.isUseKieker(), configuration.isSaveAll(), testcase,
-            configuration.getIterations());
-      super.runOnce(testcase, version, vmid, logFolder);
    }
 
    private void generatePatternSet(final String version) {
@@ -158,7 +147,7 @@ public class CauseTester extends AdaptiveTester {
 
    @Override
    public void handleKiekerResults(final String version, final File versionResultFolder) {
-      if (currentOrganizer.testSuccess(version)) {
+      if (getCurrentOrganizer().testSuccess(version)) {
          LOG.info("Did succeed in measurement - analyse values");
          final KiekerResultReader kiekerResultReader = new KiekerResultReader(causeConfig.isUseAggregation(), includedNodes, version, testcase,
                version.equals(configuration.getVersion()));

@@ -44,7 +44,7 @@ public class DependencyTester implements KiekerResultHandler {
    protected final MeasurementConfiguration configuration;
    protected final EnvironmentVariables env;
    private final VersionControlSystem vcs;
-   protected ResultOrganizer currentOrganizer;
+   private ResultOrganizer currentOrganizer;
    protected long currentChunkStart = 0;
 
    public DependencyTester(final PeASSFolders folders, final MeasurementConfiguration measurementConfig, final EnvironmentVariables env) throws IOException {
@@ -137,7 +137,7 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    public Result getLastResult(final String version, final TestCase testcase, final int vmid) throws JAXBException {
-      final File resultFile = currentOrganizer.getResultFile(testcase, vmid, version);
+      final File resultFile = getCurrentOrganizer().getResultFile(testcase, vmid, version);
       if (resultFile.exists()) {
          final Kopemedata data = new XMLDataLoader(resultFile).getFullData();
          final Result lastResult = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);
@@ -151,8 +151,8 @@ public class DependencyTester implements KiekerResultHandler {
    public void postEvaluate() {
       final File cleanFolder = new File(folders.getCleanFolder(), configuration.getVersion() + File.separator +
             configuration.getVersionOld() + File.separator +
-            currentOrganizer.getTest().getClazz() + File.separator +
-            currentOrganizer.getTest().getMethod());
+            getCurrentOrganizer().getTest().getClazz() + File.separator +
+            getCurrentOrganizer().getTest().getMethod());
       final Cleaner cleaner = new Cleaner(cleanFolder);
       for (final File clazzFile : folders.getDetailResultFolder().listFiles()) {
          final Map<String, TestData> testdata = DataReader.readClassFolder(clazzFile);
@@ -167,12 +167,10 @@ public class DependencyTester implements KiekerResultHandler {
       String[] versions = getVersions();
 
       if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.SEQUENTIAL)) {
-         currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), false, testcase,
-               configuration.getIterations());
          LOG.info("Running sequential");
          runSequential(logFolder, testcase, vmid, versions);
       } else if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.PARALLEL)) {
-         System.out.println("Running parallel");
+         LOG.info("Running parallel");
          runParallel(logFolder, testcase, vmid, versions);
       }
    }
@@ -185,10 +183,10 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    private void runParallel(final File logFolder, final TestCase testcase, final int vmid, final String[] versions) throws InterruptedException {
-      ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(), testcase,
+      final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(), testcase,
             configuration.getIterations());
       currentOrganizer = organizer;
-      Thread[] threads = new Thread[2];
+      final Thread[] threads = new Thread[2];
       for (int i = 0; i < 2; i++) {
          final String version = versions[i];
          threads[i] = new Thread(new Runnable() {
@@ -204,7 +202,7 @@ public class DependencyTester implements KiekerResultHandler {
                   }
                   organizer.setFolder(version, temporaryFolders);
                   final TestExecutor testExecutor = getExecutor(temporaryFolders, version);
-                  final OnceRunner runner = new OnceRunner(temporaryFolders, vcs, testExecutor, currentOrganizer, DependencyTester.this);
+                  final OnceRunner runner = new OnceRunner(temporaryFolders, vcs, testExecutor, getCurrentOrganizer(), DependencyTester.this);
                   runner.runOnce(testcase, version, vmid, logFolder);
                } catch (IOException | InterruptedException | JAXBException | XmlPullParserException e) {
                   e.printStackTrace();
@@ -220,6 +218,8 @@ public class DependencyTester implements KiekerResultHandler {
 
    private void runSequential(final File logFolder, final TestCase testcase, final int vmid, final String versions[])
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+      currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(), 
+            testcase, configuration.getIterations());
       for (String version : versions) {
          runOnce(testcase, version, vmid, logFolder);
       }
@@ -237,7 +237,7 @@ public class DependencyTester implements KiekerResultHandler {
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final TestExecutor testExecutor = getExecutor(folders, version);
-      final OnceRunner runner = new OnceRunner(folders, vcs, testExecutor, currentOrganizer, this);
+      final OnceRunner runner = new OnceRunner(folders, vcs, testExecutor, getCurrentOrganizer(), this);
       runner.runOnce(testcase, version, vmid, logFolder);
    }
 
@@ -264,5 +264,9 @@ public class DependencyTester implements KiekerResultHandler {
 
    protected boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {
       return false;
+   }
+
+   public ResultOrganizer getCurrentOrganizer() {
+      return currentOrganizer;
    }
 }

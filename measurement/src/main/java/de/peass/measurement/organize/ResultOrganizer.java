@@ -35,7 +35,7 @@ public class ResultOrganizer {
    private final boolean isUseKieker;
    private int thresholdForZippingInMB = 5;
    private final FolderDeterminer determiner;
-   private boolean saveAll = false;
+   private final boolean saveAll;
    protected final TestCase testcase;
    private boolean success = true;
    private final int expectedIterations;
@@ -249,10 +249,6 @@ public class ResultOrganizer {
 
    public boolean isSaveAll() {
       return saveAll;
-   }
-
-   public void setSaveAll(final boolean saveAll) {
-      this.saveAll = saveAll;
    }
 
    public TestCase getTest() {
