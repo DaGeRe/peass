@@ -15,7 +15,7 @@ public class CallTreeNodeWarmupTest {
    
    @Test
    public void testWarmup() {
-      MeasurementConfiguration config = new MeasurementConfiguration(5);
+      MeasurementConfiguration config = new MeasurementConfiguration(5, "1", "1");
       config.setWarmup(25);
       final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", 
             "public void de.mypackage.Test.callMethod()", 
@@ -31,7 +31,7 @@ public class CallTreeNodeWarmupTest {
       values.add(new StatisticalSummaryValues(100, 10, 75, 100, 100, 75*100));
       values.add(new StatisticalSummaryValues(25, 5, 100, 25, 25, 100*25));
       
-      node.setVersions("1", "1~1");
+      node.initVersions();
       node.addAggregatedMeasurement("1", values);
       
       node.createStatistics("1");
