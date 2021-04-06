@@ -194,7 +194,7 @@
 
 })(typeof exports === 'undefined' ? this['mannwhitneyu'] = {} : exports);
 
-function getVmGraph(currentArray) {
+function getVmGraph(currentArray, vmId) {
 	var xvals = [], yvals = [];
 	var n = 0;
 	for (i = 0; i < currentArray.length; i++) {
@@ -207,6 +207,7 @@ function getVmGraph(currentArray) {
 		y: yvals,
 		type: 'scatter',
 		mode: 'lines+markers',
+		name: 'VM ' + vmId,
 		marker: { size: 3 }
 	};
 	return data;
@@ -217,11 +218,13 @@ var xstart = null, xend = null, histStart = null, histEnd = null;
 function plotVMGraph(divName, node, ids, idsPredecessor, name) {
 	var data = [];
 	console.log(ids.length);
-	for (id = 0; id < ids.length; id++) {
-		data[id] = getVmGraph(node.vmValues.values[id]);
+	for (idIndex = 0; idIndex < ids.length; idIndex++) {
+		var currentId = ids[idIndex];
+		data[idIndex] = getVmGraph(node.vmValues.values[currentId], currentId);
 	}
-	for (id = 0; id < idsPredecessor.length; id++) {
-		data[id + ids.length] = getVmGraph(node.vmValuesPredecessor.values[id]);
+	for (idIndex = 0; idIndex < idsPredecessor.length; idIndex++) {
+		var currentId = idsPredecessor[idIndex];
+		data[idIndex + ids.length] = getVmGraph(node.vmValuesPredecessor.values[currentId], currentId);
 	}
 
 	var layout = {
@@ -258,7 +261,7 @@ function visualizeGraph(divId, selectId) {
 	var select = document.getElementById(selectId);
 	var selectedOptions = $('#' + selectId + ' :selected');
 	for (i = 0; i < selectedOptions.length; i++) {
-		var vmId = select.options[i].value;
+		var vmId = selectedOptions[i].value;
 		ids[i] = vmId;
 	}
 	if (selectId == "predecessorSelect") {
