@@ -215,11 +215,15 @@ public class MavenTestExecutor extends TestExecutor {
             final boolean multimodule = MavenPomUtil.isMultiModuleProject(potentialPom);
             if (multimodule || testFolder.exists()) {
                updateJava();
+               String goal = "test-compile";
+               if (folders.getProjectFolder().getName().equals("jetty.project")) {
+                  goal = "package";
+               }
                MavenPomUtil.cleanType(pomFile);
                return testRunningSuccess(version,
                      new String[] { getMavenCall(),
-                           "clean", "test-compile",
-                           "-DskipTests=true",
+                           "clean", goal,
+                           "-DskipTests",
                            "-Dmaven.test.skip.exec",
                            "-Dcheckstyle.skip=true",
                            // "-Dmaven.compiler.source=" + DEFAULT_JAVA_VERSION,
