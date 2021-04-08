@@ -29,14 +29,14 @@ public class TestParallelMeasurement {
 
    @Test
    public void testFiles() throws Exception {
+      VCSTestUtils.mockGetVCS();
+      VCSTestUtils.mockGoToTagAny();
+      
       final PeASSFolders folders = new PeASSFolders(folder.getRoot());
       final MeasurementConfiguration configuration = new MeasurementConfiguration(4, "2", "1");
       configuration.setMeasurementStrategy(MeasurementStrategy.PARALLEL);
 
       MavenTestExecutorMocker.mockExecutor(folders, configuration);
-
-      VCSTestUtils.mockGetVCS();
-      VCSTestUtils.mockGoToTagAny();
 
       final DependencyTester tester = new DependencyTester(folders, configuration, new EnvironmentVariables());
 

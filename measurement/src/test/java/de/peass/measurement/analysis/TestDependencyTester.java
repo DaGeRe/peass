@@ -39,12 +39,12 @@ public class TestDependencyTester {
 
    @Test
    public void testFiles() throws Exception {
+      VCSTestUtils.mockGetVCS();
+      
       final PeASSFolders folders = new PeASSFolders(folder.getRoot());
       final MeasurementConfiguration configuration = new MeasurementConfiguration(4, "2", "1");
 
       MavenTestExecutorMocker.mockExecutor(folders, configuration);
-
-      VCSTestUtils.mockGetVCS();
 
       final DependencyTester tester = new DependencyTester(folders, configuration, new EnvironmentVariables());
       
