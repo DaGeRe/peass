@@ -11,20 +11,20 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.vcs.GitUtils;
 
 public class TemporaryProjectFolderUtil {
-   
+
    private static final Logger LOG = LogManager.getLogger(TemporaryProjectFolderUtil.class);
-   
-   public static PeASSFolders cloneForcefully(PeASSFolders originalFolders, File dest) throws IOException, InterruptedException {
+
+   public static PeASSFolders cloneForcefully(final PeASSFolders originalFolders, final File dest) throws IOException, InterruptedException {
       if (dest.exists()) {
          LOG.warn("Deleting existing folder {}", dest);
          FileUtils.deleteDirectory(dest);
-         File peassFolder = new File(dest.getParentFile(), dest.getName() + "_peass");
+         File peassFolder = new File(dest.getParentFile(), dest.getName() + PeASSFolders.PEASS_POSTFIX);
          if (peassFolder.exists()) {
             FileUtils.deleteDirectory(peassFolder);
          }
       }
       GitUtils.clone(originalFolders, dest);
-      final PeASSFolders folders = new PeASSFolders(dest);
+      final PeASSFolders folders = new PeASSFolders(dest, originalFolders.getProjectName());
       return folders;
    }
 }

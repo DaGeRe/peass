@@ -168,7 +168,7 @@ public class ViewGenerator extends PairProcessor {
    public Void call() throws Exception {
       super.call();
       // final File resultFolder = DependencyReadingStarter.getResultFolder();
-      final String projectName = folders.getProjectFolder().getName();
+      final String projectName = folders.getProjectName();
       init();
 
       if (out == null) {

@@ -41,7 +41,7 @@ public class ContinuousDependencyReader {
          throws Exception {
       Dependencies dependencies;
 
-      final VersionKeeper noChanges = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonChanges_" + folders.getProjectFolder().getName() + ".json"));
+      final VersionKeeper noChanges = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonChanges_" + folders.getProjectName() + ".json"));
 
       if (!dependencyFile.exists()) {
          dependencies = fullyLoadDependencies(url, iterator, noChanges);

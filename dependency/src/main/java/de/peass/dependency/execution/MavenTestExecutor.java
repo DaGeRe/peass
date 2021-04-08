@@ -216,7 +216,7 @@ public class MavenTestExecutor extends TestExecutor {
             if (multimodule || testFolder.exists()) {
                updateJava();
                String goal = "test-compile";
-               if (folders.getProjectFolder().getName().equals("jetty.project")) {
+               if (folders.getProjectName().equals("jetty.project")) {
                   goal = "package";
                }
                MavenPomUtil.cleanType(pomFile);

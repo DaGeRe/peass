@@ -15,7 +15,7 @@ import de.peass.vcs.VersionControlSystem;
  *
  */
 public class PeASSFolders {
-   private static final String PEASS_POSTFIX = "_peass";
+   public static final String PEASS_POSTFIX = "_peass";
    
    protected final File projectFolder;
    // private final File resultFolder;
@@ -30,13 +30,15 @@ public class PeASSFolders {
    private final VersionControlSystem vcs;
 
    protected final File peassFolder;
+   private final String projectName;
    
    public static File getPeassFolder(final File projectFolder) {
-      File peassFolder = new File(projectFolder, ".." + File.separator + projectFolder.getName() + "_peass");
+      File peassFolder = new File(projectFolder, ".." + File.separator + projectFolder.getName() + PEASS_POSTFIX);
       return peassFolder;
    }
-
-   public PeASSFolders(final File folder) {
+   
+   public PeASSFolders(final File folder, final String name) {
+      this.projectName = name;
       if (!folder.getName().endsWith(PEASS_POSTFIX)) {
          projectFolder = folder;
          peassFolder = new File(projectFolder.getParentFile(), projectFolder.getName() + PEASS_POSTFIX);
@@ -66,7 +68,10 @@ public class PeASSFolders {
       tempResultFolder.mkdir();
       kiekerTemp = new File(peassFolder, "kiekerTemp");
       tempProjectFolder = new File(peassFolder, "projectTemp");
-      // tempProjectFolder.mkdir();
+   }
+
+   public PeASSFolders(final File folder) {
+      this(folder, (folder != null ? folder.getName() : null));
    }
 
    public File getGradleHome() {
@@ -162,6 +167,10 @@ public class PeASSFolders {
 
    public VersionControlSystem getVCS() {
       return vcs;
+   }
+
+   public String getProjectName() {
+      return projectName;
    }
 
 }
