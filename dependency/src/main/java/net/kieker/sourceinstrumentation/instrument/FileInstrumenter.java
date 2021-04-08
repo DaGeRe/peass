@@ -57,7 +57,7 @@ public class FileInstrumenter {
    public void instrument() throws IOException {
       TypeDeclaration<?> clazz = ParseUtil.getClass(unit);
       Optional<PackageDeclaration> packageDeclaration = unit.getPackageDeclaration();
-      final String packageName = packageDeclaration.isPresent() ? packageDeclaration.get().getNameAsString() : "";
+      final String packageName = packageDeclaration.isPresent() ? packageDeclaration.get().getNameAsString() + "." : "";
       handleTypeDeclaration(clazz, packageName);
       TypeDeclaration<?> enumDecl = ParseUtil.getEnum(unit);
       handleTypeDeclaration(enumDecl, packageName);
@@ -65,7 +65,7 @@ public class FileInstrumenter {
 
    private void handleTypeDeclaration(final TypeDeclaration<?> clazz, final String packageName) throws IOException {
       if (clazz != null) {
-         final String name = packageName + "." + clazz.getNameAsString();
+         final String name = packageName + clazz.getNameAsString();
 
          boolean fileContainsChange = handleChildren(clazz, name);
 

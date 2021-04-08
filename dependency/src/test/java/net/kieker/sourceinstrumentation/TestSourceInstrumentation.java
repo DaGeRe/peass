@@ -53,6 +53,18 @@ public class TestSourceInstrumentation {
       testFileIsInstrumented(testFile, "public java.util.Collection[] de.peass.C0_0.myCollection2(java.util.List)", "OperationExecutionRecord");
    }
    
+   @Test
+   public void testNoPackageClass() throws IOException {
+      TestConstants.CURRENT_FOLDER.mkdirs();
+
+      File testFile = SourceInstrumentationTestUtil.copyResource("src/main/java/NoPackageExample.java", "/sourceInstrumentation/project_2_complex/");
+
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION);
+      instrumenter.instrument(testFile);
+
+      testFileIsInstrumented(testFile, "public ReturnType NoPackageExample.newStuff", "OperationExecutionRecord");
+   }
+   
    public static void testFileIsInstrumented(final File testFile, final String fqn, final String recordName) throws IOException {
       String changedSource = FileUtils.readFileToString(testFile, StandardCharsets.UTF_8);
 

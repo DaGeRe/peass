@@ -3,11 +3,13 @@ package net.kieker.sourceinstrumentation.instrument;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.PackageDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
@@ -176,12 +178,14 @@ public class SignatureReader {
             matchingInnerClass = innerClass;
          }
       }
+      Optional<PackageDeclaration> packageDeclaration = unit.getPackageDeclaration();
+      String packageName = packageDeclaration.isPresent() ? packageDeclaration.get().getNameAsString() + "." : "";
       if (matchingInnerClass != null) {
-         fqn = unit.getPackageDeclaration().get().getNameAsString() + "." + matchingInnerClass;
+         fqn = packageName + matchingInnerClass;
       } else if (javaLangClasses.contains(typeNameWithoutArray)) {
          fqn = "java.lang." + typeNameWithoutArray;
       } else {
-         fqn = unit.getPackageDeclaration().get().getNameAsString() + "." + typeNameWithoutArray;
+         fqn = packageName + typeNameWithoutArray;
       }
       return fqn;
    }
