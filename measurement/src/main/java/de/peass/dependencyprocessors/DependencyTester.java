@@ -192,9 +192,9 @@ public class DependencyTester implements KiekerResultHandler {
          threads[i] = new Thread(new Runnable() {
             @Override
             public void run() {
-               File projectFolderTemp = new File(folders.getTempProjectFolder(), "parallel_" + version);
                try {
-                  PeASSFolders temporaryFolders;
+                  final File projectFolderTemp = new File(folders.getTempProjectFolder(), "parallel_" + version);
+                  final PeASSFolders temporaryFolders;
                   if (!projectFolderTemp.exists()) {
                      temporaryFolders = TemporaryProjectFolderUtil.cloneForcefully(folders, projectFolderTemp);
                   } else {
@@ -202,7 +202,7 @@ public class DependencyTester implements KiekerResultHandler {
                   }
                   organizer.setFolder(version, temporaryFolders);
                   final TestExecutor testExecutor = getExecutor(temporaryFolders, version);
-                  final OnceRunner runner = new OnceRunner(temporaryFolders, vcs, testExecutor, getCurrentOrganizer(), DependencyTester.this);
+                  final OnceRunner runner = new OnceRunner(temporaryFolders, vcs, testExecutor, organizer, DependencyTester.this);
                   runner.runOnce(testcase, version, vmid, logFolder);
                } catch (IOException | InterruptedException | JAXBException | XmlPullParserException e) {
                   e.printStackTrace();
