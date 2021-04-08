@@ -20,7 +20,6 @@ import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.execution.TestExecutor;
-import de.peass.dependency.traces.TemporaryProjectFolderUtil;
 import de.peass.measurement.analysis.Cleaner;
 import de.peass.measurement.analysis.DataReader;
 import de.peass.measurement.analysis.statistics.TestData;
@@ -182,33 +181,15 @@ public class DependencyTester implements KiekerResultHandler {
       return versions;
    }
 
-   private void runParallel(final File logFolder, final TestCase testcase, final int vmid, final String[] versions) throws InterruptedException {
+   private void runParallel(final File logFolder, final TestCase testcase, final int vmid, final String[] versions) throws InterruptedException, IOException {
       final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(), testcase,
             configuration.getIterations());
       currentOrganizer = organizer;
       final Thread[] threads = new Thread[2];
       for (int i = 0; i < 2; i++) {
          final String version = versions[i];
-         threads[i] = new Thread(new Runnable() {
-            @Override
-            public void run() {
-               try {
-                  final File projectFolderTemp = new File(folders.getTempProjectFolder(), "parallel_" + version);
-                  final PeASSFolders temporaryFolders;
-                  if (!projectFolderTemp.exists()) {
-                     temporaryFolders = TemporaryProjectFolderUtil.cloneForcefully(folders, projectFolderTemp);
-                  } else {
-                     temporaryFolders = new PeASSFolders(projectFolderTemp);
-                  }
-                  organizer.setFolder(version, temporaryFolders);
-                  final TestExecutor testExecutor = getExecutor(temporaryFolders, version);
-                  final OnceRunner runner = new OnceRunner(temporaryFolders, vcs, testExecutor, organizer, DependencyTester.this);
-                  runner.runOnce(testcase, version, vmid, logFolder);
-               } catch (IOException | InterruptedException | JAXBException | XmlPullParserException e) {
-                  e.printStackTrace();
-               }
-            }
-         });
+         final ParallelExecutionRunnable executionRunnable = new ParallelExecutionRunnable(organizer, version, testcase, vmid, logFolder, this);
+         threads[i] = new Thread(executionRunnable);
          threads[i].start();
       }
       for (int i = 0; i < 2; i++) {
@@ -237,7 +218,7 @@ public class DependencyTester implements KiekerResultHandler {
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final TestExecutor testExecutor = getExecutor(folders, version);
-      final OnceRunner runner = new OnceRunner(folders, vcs, testExecutor, getCurrentOrganizer(), this);
+      final OnceRunner runner = new OnceRunner(folders, testExecutor, getCurrentOrganizer(), this);
       runner.runOnce(testcase, version, vmid, logFolder);
    }
 
@@ -268,5 +249,9 @@ public class DependencyTester implements KiekerResultHandler {
 
    public ResultOrganizer getCurrentOrganizer() {
       return currentOrganizer;
+   }
+   
+   public PeASSFolders getFolders() {
+      return folders;
    }
 }

@@ -6,6 +6,7 @@ import java.io.IOException;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.GradleParseUtil;
 import de.peass.dependency.traces.TemporaryProjectFolderUtil;
+import de.peass.vcs.VersionControlSystem;
 
 /**
  * Helps managing the PeASS-folders and their existance
@@ -26,6 +27,7 @@ public class PeASSFolders {
    private final File cleanFolder;
    private final File debugFolder;
    private File gradleHome;
+   private final VersionControlSystem vcs;
 
    protected final File peassFolder;
    
@@ -41,8 +43,10 @@ public class PeASSFolders {
          if (!peassFolder.exists()) {
             peassFolder.mkdir();
          }
+         vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
       } else {
          projectFolder = null;
+         vcs = null;
          peassFolder = folder;
       }
 
@@ -154,6 +158,10 @@ public class PeASSFolders {
       final File nowFolder = new File(getTempProjectFolder(), name);
       PeASSFolders folders = TemporaryProjectFolderUtil.cloneForcefully(this, nowFolder);
       return folders;
+   }
+
+   public VersionControlSystem getVCS() {
+      return vcs;
    }
 
 }

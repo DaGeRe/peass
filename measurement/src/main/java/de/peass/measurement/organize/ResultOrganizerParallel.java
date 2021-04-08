@@ -24,7 +24,7 @@ public class ResultOrganizerParallel extends ResultOrganizer {
       LOG.debug("Creating new ResultOrganizerParallel");
    }
 
-   public void setFolder(final String version, final PeASSFolders versionTempFolder) {
+   public void addVersionFolders(final String version, final PeASSFolders versionTempFolder) {
       LOG.debug("Adding version: {}", version);
       sourceFolders.put(version, versionTempFolder);
    }

@@ -42,7 +42,7 @@ public class TestResultOrganizerParallel {
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, TestResultOrganizer.searchedTest);
 
-      organizer.setFolder(PARALLEL_VERSION, parallelProjectFolders);
+      organizer.addVersionFolders(PARALLEL_VERSION, parallelProjectFolders);
 
       Assert.assertTrue(organizer.testSuccess("1"));
    }
@@ -55,7 +55,7 @@ public class TestResultOrganizerParallel {
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, TestResult.BOUNDARY_SAVE_FILE * 2, TestResultOrganizer.searchedTest);
 
-      organizer.setFolder(PARALLEL_VERSION, parallelProjectFolders);
+      organizer.addVersionFolders(PARALLEL_VERSION, parallelProjectFolders);
 
       Assert.assertTrue(organizer.testSuccess("1"));
       

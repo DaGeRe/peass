@@ -19,9 +19,9 @@ import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionControlSystem;
 
 public class OnceRunner {
-   
+
    private static final Logger LOG = LogManager.getLogger(OnceRunner.class);
-   
+
    protected final PeASSFolders folders;
    private final VersionControlSystem vcs;
    protected final JUnitTestTransformer testTransformer;
@@ -30,10 +30,9 @@ public class OnceRunner {
    protected final ResultOrganizer currentOrganizer;
    private final KiekerResultHandler resultHandler;
 
-   public OnceRunner(PeASSFolders folders, VersionControlSystem vcs, TestExecutor testExecutor, ResultOrganizer currentOrganizer, 
-         KiekerResultHandler resultHandler) {
+   public OnceRunner(final PeASSFolders folders, final TestExecutor testExecutor, final ResultOrganizer currentOrganizer, final KiekerResultHandler resultHandler) {
       this.folders = folders;
-      this.vcs = vcs;
+      this.vcs = folders.getVCS();
       this.testTransformer = testExecutor.getTestTransformer();
       this.testExecutor = testExecutor;
       this.currentOrganizer = currentOrganizer;
@@ -65,7 +64,7 @@ public class OnceRunner {
 
       cleanup();
    }
-   
+
    private File initVMFolder(final String version, final int vmid, final File logFolder) {
       File vmidFolder = new File(logFolder, "vm_" + vmid + "_" + version);
       if (vmidFolder.exists()) {
@@ -76,14 +75,14 @@ public class OnceRunner {
       LOG.info("Initial checkout finished, VM-Folder " + vmidFolder.getAbsolutePath() + " exists: " + vmidFolder.exists());
       return vmidFolder;
    }
-   
+
    void cleanup() throws InterruptedException {
       emptyFolder(folders.getTempDir());
       emptyFolder(folders.getKiekerTempFolder());
       System.gc();
       Thread.sleep(1);
    }
-   
+
    private void emptyFolder(final File tempDir) {
       for (final File createdTempFile : tempDir.listFiles()) {
          try {
