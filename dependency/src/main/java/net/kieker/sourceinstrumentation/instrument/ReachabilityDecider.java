@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.CatchClause;
 import com.github.javaparser.ast.stmt.DoStmt;
+import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.ThrowStmt;
 import com.github.javaparser.ast.stmt.TryStmt;
@@ -36,6 +37,8 @@ public class ReachabilityDecider {
                   afterUnreachable &= isAfterUnreachable(catchClause.getBody());
                }
             }
+         } else if (last instanceof ReturnStmt) {
+            afterUnreachable = true;
          } else if (last instanceof BlockStmt) {
             return isAfterUnreachable((BlockStmt) last);
          }
