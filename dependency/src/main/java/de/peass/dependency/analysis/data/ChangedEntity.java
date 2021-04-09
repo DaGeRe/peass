@@ -253,4 +253,8 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       }
    }
 
+   public String[] getParameterTypes() {
+      throw new RuntimeException("Not implemented yet");
+   }
+
 }

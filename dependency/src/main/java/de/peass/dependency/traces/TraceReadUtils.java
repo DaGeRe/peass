@@ -16,6 +16,7 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.BodyDeclaration;
+import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
@@ -111,7 +112,7 @@ public class TraceReadUtils {
       return foundDeclaredClasses;
    }
 
-   public static Node getMethod(final TraceElementContent currentTraceElement, final CompilationUnit cu) {
+   public static CallableDeclaration<?> getMethod(final TraceElementContent currentTraceElement, final CompilationUnit cu) {
       if (currentTraceElement.getClazz().contains("$")) {
          final String indexString = currentTraceElement.getClazz().split("\\$")[1];
          if (indexString.matches("[0-9]+")) {
@@ -120,7 +121,7 @@ public class TraceReadUtils {
             return getMethodNamedInnerClass(currentTraceElement, cu);
          }
       }
-      Node method = null;
+      CallableDeclaration<?> method = null;
       for (final Node node : cu.getChildNodes()) {
          if (node instanceof ClassOrInterfaceDeclaration) {
             MethodReader reader = new MethodReader((ClassOrInterfaceDeclaration) node);
@@ -141,7 +142,7 @@ public class TraceReadUtils {
       return method;
    }
 
-   private static Node getMethodNamedInnerClass(final TraceElementContent currentTraceElement, final CompilationUnit cu) {
+   private static CallableDeclaration<?> getMethodNamedInnerClass(final TraceElementContent currentTraceElement, final CompilationUnit cu) {
       final Map<String, TypeDeclaration<?>> namedClasses = getNamedClasses(cu, "");
       final String clazz = currentTraceElement.getClazz().substring(currentTraceElement.getClazz().lastIndexOf('.') + 1);
       final TypeDeclaration<?> declaration = namedClasses.get(clazz);
@@ -149,14 +150,14 @@ public class TraceReadUtils {
       return reader.getMethod(declaration, currentTraceElement);
    }
 
-   private static Node getMethodAnonymousClass(final TraceElementContent currentTraceElement, final CompilationUnit cu, final String indexString) {
+   private static CallableDeclaration<?> getMethodAnonymousClass(final TraceElementContent currentTraceElement, final CompilationUnit cu, final String indexString) {
       final int index = Integer.parseInt(indexString) - 1;
       final List<NodeList<BodyDeclaration<?>>> anonymousClazzes = getAnonymusClasses(cu);
       final NodeList<BodyDeclaration<?>> nodes = anonymousClazzes.get(index);
       MethodReader reader = new MethodReader(null);
       for (final Node candidate : nodes) {
          LOG.trace(candidate);
-         final Node ret = reader.getMethod(candidate, currentTraceElement);
+         final CallableDeclaration<?> ret = reader.getMethod(candidate, currentTraceElement);
          if (ret != null) {
             return ret;
          }

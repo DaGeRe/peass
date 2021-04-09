@@ -29,7 +29,7 @@ public class MethodReader {
       this.clazz = clazz;
    }
 
-   public Node getMethod(final Node node, final TraceElementContent currentTraceElement) {
+   public CallableDeclaration<?> getMethod(final Node node, final TraceElementContent currentTraceElement) {
       if (node != null && node.getParentNode().isPresent()) {
          final Node parent = node.getParentNode().get();
          if (node instanceof MethodDeclaration) {
@@ -59,7 +59,7 @@ public class MethodReader {
                   LOG.trace(clazz.getNameAsString() + " " + currentTraceElement.getClazz());
                   if (clazz.getNameAsString().equals(currentTraceElement.getSimpleClazz())) {
                      if (parametersEqual(currentTraceElement, constructor)) {
-                        return node;
+                        return (CallableDeclaration) node;
                      }
                   }
                }
@@ -68,7 +68,7 @@ public class MethodReader {
          }
 
          for (final Node child : node.getChildNodes()) {
-            final Node possibleMethod = getMethod(child, currentTraceElement);
+            final CallableDeclaration possibleMethod = getMethod(child, currentTraceElement);
             if (possibleMethod != null) {
                return possibleMethod;
             }
