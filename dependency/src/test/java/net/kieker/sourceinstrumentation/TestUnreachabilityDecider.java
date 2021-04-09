@@ -18,6 +18,22 @@ public class TestUnreachabilityDecider {
       boolean isUnreachable = ReachabilityDecider.isAfterUnreachable(method.getBody().get());
       Assert.assertTrue(isUnreachable);
    }
+   
+   @Test
+   public void testCatchException() {
+      CompilationUnit unit = new JavaParser().parse("class Test { public void test() { try { throw new RuntimeException(); } catch (Throwable t) {throw new RuntimeException(); } } }").getResult().get();
+      MethodDeclaration method = unit.getClassByName("Test").get().getMethodsByName("test").get(0);
+      boolean isUnreachable = ReachabilityDecider.isAfterUnreachable(method.getBody().get());
+      Assert.assertTrue(isUnreachable);
+   }
+   
+   @Test
+   public void testCatchNotUnreachable() {
+      CompilationUnit unit = new JavaParser().parse("class Test { public void test() { try { } catch (Throwable t) {throw new RuntimeException(); } } }").getResult().get();
+      MethodDeclaration method = unit.getClassByName("Test").get().getMethodsByName("test").get(0);
+      boolean isUnreachable = ReachabilityDecider.isAfterUnreachable(method.getBody().get());
+      Assert.assertFalse(isUnreachable);
+   }
 
    @Test
    public void testWhileLoop() {
