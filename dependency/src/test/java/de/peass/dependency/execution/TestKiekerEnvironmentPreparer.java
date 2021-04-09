@@ -36,7 +36,7 @@ public class TestKiekerEnvironmentPreparer {
       List<File> modules = new LinkedList<File>();
       modules.add(DependencyTestConstants.CURRENT);
       KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPatterns, new PeASSFolders(DependencyTestConstants.CURRENT),
-            new JUnitTestTransformer(DependencyTestConstants.CURRENT, new ExecutionConfig(10)), modules, null);
+            new JUnitTestTransformer(DependencyTestConstants.CURRENT, new ExecutionConfig(10)), modules);
       
       kiekerEnvironmentPreparer.prepareKieker();
       

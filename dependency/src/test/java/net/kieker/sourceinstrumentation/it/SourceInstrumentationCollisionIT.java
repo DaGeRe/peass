@@ -18,7 +18,7 @@ import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import net.kieker.sourceinstrumentation.SourceInstrumentationTestUtil;
 import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
-public class ComplexSourceInstrumentationIT {
+public class SourceInstrumentationCollisionIT {
 
    @BeforeEach
    public void before() throws IOException {

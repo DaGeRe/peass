@@ -21,8 +21,8 @@ public class SourceInstrumentationStarter implements Callable<Integer>{
    @Override
    public Integer call() throws Exception {
       final HashSet<String> includedPatterns = new HashSet<>();
-      includedPatterns.add("public new org.apache.commons.fileupload.disk.DiskFileItem.<init>(..)");
-      final InstrumentationConfiguration configuration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, true, false, includedPatterns, true, 1000);
+      includedPatterns.add("*");
+      final InstrumentationConfiguration configuration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, true, false, includedPatterns, true, 1000);
       final InstrumentKiekerSource sourceInstrumenter = new InstrumentKiekerSource(configuration);
       sourceInstrumenter.instrumentProject(projectFolder);;
       return 0;

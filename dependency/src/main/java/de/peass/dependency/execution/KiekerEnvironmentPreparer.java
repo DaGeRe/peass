@@ -27,15 +27,12 @@ public class KiekerEnvironmentPreparer {
    private final PeASSFolders folders;
    private final JUnitTestTransformer testTransformer;
    private List<File> modules;
-   private List<String> existingClasses;
 
-   public KiekerEnvironmentPreparer(final Set<String> includedMethodPattern, final PeASSFolders folders, final JUnitTestTransformer testTransformer, final List<File> modules,
-         final List<String> existingClasses) {
+   public KiekerEnvironmentPreparer(final Set<String> includedMethodPattern, final PeASSFolders folders, final JUnitTestTransformer testTransformer, final List<File> modules) {
       this.includedMethodPattern = includedMethodPattern;
       this.folders = folders;
       this.testTransformer = testTransformer;
       this.modules = modules;
-      this.existingClasses = existingClasses;
    }
 
    public void prepareKieker() throws IOException, InterruptedException {
