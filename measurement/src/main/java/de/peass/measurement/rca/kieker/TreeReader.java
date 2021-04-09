@@ -53,7 +53,7 @@ public class TreeReader extends KiekerResultManager {
    private CallTreeNode readTree(final TestCase testcase, final File kiekerTraceFolder) throws AnalysisConfigurationException, IOException, XmlPullParserException {
       final ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder());
       
-      TreeStage stage = KiekerDurationReader.executeDurationStage(kiekerTraceFolder, null, testcase, ignoreEOIs, config, mapping);
+      TreeStage stage = KiekerDurationReader.executeDurationStage(kiekerTraceFolder, testcase, ignoreEOIs, config, mapping);
 
       CallTreeNode root = stage.getRoot();
       if (root == null) {

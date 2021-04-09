@@ -20,8 +20,8 @@ public class KiekerReaderConfigurationDuration extends KiekerReaderConfiguration
       this.connectPorts(executionStage.getOutputPort(), stage.getInputPort());
    }
    
-   public TreeStage readTree(final File kiekerTraceFolder, final String prefix, final TestCase test, final boolean ignoreEOIs, final MeasurementConfiguration config, final ModuleClassMapping mapping) {
-      TreeStage treeStage = new TreeStage(systemModelRepositoryNew, prefix, test, ignoreEOIs, config, mapping);
+   public TreeStage readTree(final File kiekerTraceFolder, final TestCase test, final boolean ignoreEOIs, final MeasurementConfiguration config, final ModuleClassMapping mapping) {
+      TreeStage treeStage = new TreeStage(systemModelRepositoryNew, test, ignoreEOIs, config, mapping);
       
       TraceReconstructionStage executionStage = prepareTillExecutionTrace(kiekerTraceFolder);
       this.connectPorts(executionStage.getExecutionTraceOutputPort(), treeStage.getInputPort());

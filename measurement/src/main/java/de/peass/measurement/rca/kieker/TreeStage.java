@@ -26,8 +26,8 @@ public class TreeStage extends AbstractTraceProcessingStage<ExecutionTrace> {
    private final boolean ignoreEOIs;
    private final ModuleClassMapping mapping;
 
-   public TreeStage(final SystemModelRepository systemModelRepository, final String prefix, final TestCase test,
-         final boolean ignoreEOIs, final MeasurementConfiguration config, final ModuleClassMapping mapping) {
+   public TreeStage(final SystemModelRepository systemModelRepository, final TestCase test, final boolean ignoreEOIs, final MeasurementConfiguration config,
+         final ModuleClassMapping mapping) {
       super(systemModelRepository);
 
       this.test = test;
