@@ -4,8 +4,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.expr.Expression;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
+import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.TryStmt;
 
@@ -91,18 +95,19 @@ public class BlockBuilder {
       boolean afterUnreachable = ReachabilityDecider.isAfterUnreachable(originalBlock);
 
       boolean addReturn = needsReturn && !afterUnreachable;
+      BlockStmt changed = addReturn ? originalBlock.addStatement("return;") : originalBlock;
+      
       if (enableDeactivation) {
-         replacedStatement.addAndGetStatement("if (!MonitoringController.getInstance().isMonitoringEnabled()) {\n" +
-               originalBlock.toString() + "\n" +
-               (addReturn ? "return;" : "") +
-               "      }");
+         Expression expr = new MethodCallExpr("!MonitoringController.getInstance().isMonitoringEnabled");
+         IfStmt ifS = new IfStmt(expr, changed, null);
+         replacedStatement.addStatement(ifS);
       }
       replacedStatement.addAndGetStatement("final String " + InstrumentationConstants.PREFIX + "signature = \"" + signature + "\";");
       if (enableDeactivation) {
-         replacedStatement.addAndGetStatement("if (!MonitoringController.getInstance().isProbeActivated(" + InstrumentationConstants.PREFIX + "signature)) {\n" +
-               originalBlock.toString() +
-               (addReturn ? "return;" : "") +
-               "      }");
+         NameExpr name = new NameExpr(InstrumentationConstants.PREFIX + "signature");
+         Expression expr = new MethodCallExpr("!MonitoringController.getInstance().isProbeActivated", name);
+         IfStmt ifS = new IfStmt(expr, changed, null);
+         replacedStatement.addStatement(ifS);
       }
    }
 

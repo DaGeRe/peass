@@ -13,7 +13,7 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import de.peass.dependency.analysis.data.ChangedEntity;
 
 public class ClazzFinder {
-   public static String getContainingClazz(Node statement) {
+   public static String getContainingClazz(final Node statement) {
       String clazz = "";
       Node current = statement;
       while (current.getParentNode().isPresent()) {
@@ -52,7 +52,7 @@ public class ClazzFinder {
       return declaration;
    }
    
-   public static List<String> getClazzes(final Node node, final String parent, String clazzSeparator) {
+   public static List<String> getClazzes(final Node node, final String parent, final String clazzSeparator) {
       final List<String> clazzes = new LinkedList<>();
       if (node instanceof ClassOrInterfaceDeclaration) {
          final ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) node;
@@ -69,7 +69,7 @@ public class ClazzFinder {
       return clazzes;
    }
    
-   public static List<String> getClazzes(CompilationUnit cu) {
+   public static List<String> getClazzes(final CompilationUnit cu) {
       final List<String> clazzes = new LinkedList<>();
       for (final Node node : cu.getChildNodes()) {
          clazzes.addAll(getClazzes(node, "", "$"));
@@ -77,7 +77,7 @@ public class ClazzFinder {
       return clazzes;
    }
    
-   public static List<ChangedEntity> getClazzEntities(CompilationUnit cu){
+   public static List<ChangedEntity> getClazzEntities(final CompilationUnit cu){
       List<String> clazzes = ClazzFinder.getClazzes(cu);
       List<ChangedEntity> entities = new LinkedList<>();
       for (String clazz : clazzes) {
