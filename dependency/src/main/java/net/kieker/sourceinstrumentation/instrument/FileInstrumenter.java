@@ -145,7 +145,7 @@ public class FileInstrumenter {
       if (oneMatches) {
          final SamplingParameters parameters = createParameters(signature);
 
-         final BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, true, parameters);
+         final BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, parameters);
 
          constructor.setBody(replacedStatement);
          oneHasChanged = true;

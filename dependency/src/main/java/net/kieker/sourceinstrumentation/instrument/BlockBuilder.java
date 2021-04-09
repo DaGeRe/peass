@@ -25,7 +25,7 @@ public class BlockBuilder {
       this.enableDeactivation = enableDeactivation;
    }
 
-   public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final boolean addReturn, final SamplingParameters parameters) {
+   public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final SamplingParameters parameters) {
       LOG.debug("Statements: " + originalBlock.getStatements().size() + " " + parameters.getSignature());
       final BlockStmt replacedStatement = new BlockStmt();
       final ExplicitConstructorInvocationStmt constructorStatement = findConstructorInvocation(originalBlock);
@@ -34,7 +34,7 @@ public class BlockBuilder {
          originalBlock.getStatements().remove(constructorStatement);
       }
 
-      final BlockStmt regularChangedStatement = buildStatement(originalBlock, addReturn, parameters);
+      final BlockStmt regularChangedStatement = buildStatement(originalBlock, true, parameters);
       for (Statement st : regularChangedStatement.getStatements()) {
          replacedStatement.addAndGetStatement(st);
       }
@@ -52,20 +52,20 @@ public class BlockBuilder {
       return constructorStatement;
    }
 
-   public BlockStmt buildStatement(final BlockStmt originalBlock, final boolean addReturn, final SamplingParameters parameters) {
+   public BlockStmt buildStatement(final BlockStmt originalBlock, final boolean mayNeedReturn, final SamplingParameters parameters) {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
-         return buildOperationExecutionStatement(originalBlock, parameters.getSignature(), addReturn);
+         return buildOperationExecutionStatement(originalBlock, parameters.getSignature(), mayNeedReturn);
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
-         return buildReducedOperationExecutionStatement(originalBlock, parameters.getSignature(), addReturn);
+         return buildReducedOperationExecutionStatement(originalBlock, parameters.getSignature(), mayNeedReturn);
       } else {
          throw new RuntimeException();
       }
    }
 
-   public BlockStmt buildReducedOperationExecutionStatement(final BlockStmt originalBlock, final String signature, final boolean addReturn) {
+   public BlockStmt buildReducedOperationExecutionStatement(final BlockStmt originalBlock, final String signature, final boolean mayNeedReturn) {
       BlockStmt replacedStatement = new BlockStmt();
 
-      buildHeader(originalBlock, signature, addReturn, replacedStatement);
+      buildHeader(originalBlock, signature, mayNeedReturn, replacedStatement);
       replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getBefore());
 
       BlockStmt finallyBlock = new BlockStmt();
@@ -75,10 +75,10 @@ public class BlockBuilder {
       return replacedStatement;
    }
 
-   public BlockStmt buildOperationExecutionStatement(final BlockStmt originalBlock, final String signature, final boolean addReturn) {
+   public BlockStmt buildOperationExecutionStatement(final BlockStmt originalBlock, final String signature, final boolean mayNeedReturn) {
       BlockStmt replacedStatement = new BlockStmt();
 
-      buildHeader(originalBlock, signature, addReturn, replacedStatement);
+      buildHeader(originalBlock, signature, mayNeedReturn, replacedStatement);
       replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore());
       BlockStmt finallyBlock = new BlockStmt();
       finallyBlock.addAndGetStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getAfter());
@@ -87,7 +87,10 @@ public class BlockBuilder {
       return replacedStatement;
    }
 
-   private void buildHeader(final BlockStmt originalBlock, final String signature, final boolean addReturn, final BlockStmt replacedStatement) {
+   private void buildHeader(final BlockStmt originalBlock, final String signature, final boolean needsReturn, final BlockStmt replacedStatement) {
+      boolean afterUnreachable = ReachabilityDecider.isAfterUnreachable(originalBlock);
+
+      boolean addReturn = needsReturn && !afterUnreachable;
       if (enableDeactivation) {
          replacedStatement.addAndGetStatement("if (!MonitoringController.getInstance().isMonitoringEnabled()) {\n" +
                originalBlock.toString() + "\n" +
