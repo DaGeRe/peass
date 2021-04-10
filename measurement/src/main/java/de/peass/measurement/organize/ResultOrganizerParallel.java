@@ -28,6 +28,7 @@ public class ResultOrganizerParallel extends ResultOrganizer {
    public void addVersionFolders(final String version, final PeASSFolders versionTempFolder) {
       LOG.debug("Adding version: {}", version);
       sourceFolders.put(version, versionTempFolder);
+      LOG.info("Instance: " + System.identityHashCode(this) + " Keys: " + sourceFolders.keySet());
    }
    
    @Override
