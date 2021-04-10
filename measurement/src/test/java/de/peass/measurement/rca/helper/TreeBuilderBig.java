@@ -4,7 +4,7 @@ import de.peass.measurement.rca.data.CallTreeNode;
 
 public class TreeBuilderBig extends TreeBuilder {
 
-   final CallTreeNode b2 = c.appendChild("ClassB#methodB", "public void ClassB.methodB", null);
+   final CallTreeNode b2 = c.appendChild("ClassB#methodB", "public void ClassB.methodB()", null);
    private final boolean secondBDiffering;
 
    public TreeBuilderBig(final boolean secondBDiffering) {
@@ -12,7 +12,7 @@ public class TreeBuilderBig extends TreeBuilder {
    }
 
    @Override
-   public void buildMeasurements(CallTreeNode... nodes) {
+   public void buildMeasurements(final CallTreeNode... nodes) {
 //      final CallTreeNode[] nodes = new CallTreeNode[] { root, a, b, c, constructor, b2 };
       initVersions(nodes);
       buildChunks(b2, version, 95);

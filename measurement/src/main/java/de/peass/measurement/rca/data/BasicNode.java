@@ -45,6 +45,12 @@ public abstract class BasicNode {
       if (otherKiekerPattern != null && otherKiekerPattern.contains("new new ")) {
          throw new RuntimeException("Illegal duplication of new identifier!");
       }
+      if (kiekerPattern != null && kiekerPattern != CauseSearchData.ADDED && (!kiekerPattern.contains("(") || !kiekerPattern.contains(")"))) {
+         throw new RuntimeException("KiekerPattern needs to contain parenthesis, at least () for empty parameters");
+      }
+      if (otherKiekerPattern != null && otherKiekerPattern != CauseSearchData.ADDED && (!otherKiekerPattern.contains("(") || !otherKiekerPattern.contains(")"))) {
+         throw new RuntimeException("KiekerPattern needs to contain parenthesis, at least () for empty parameters");
+      }
    }
 
    public String getModule() {
