@@ -103,9 +103,7 @@ public class CauseSearchData {
    }
 
    private MeasuredNode buildSerializedNode(final CallTreeNode rawDataNode) {
-      final MeasuredNode serializeNode = new MeasuredNode();
-      serializeNode.setCall(rawDataNode.getCall());
-      serializeNode.setKiekerPattern(rawDataNode.getKiekerPattern());
+      final MeasuredNode serializeNode = new MeasuredNode(rawDataNode.getCall(), rawDataNode.getKiekerPattern(), null);
       serializeNode.setModule(rawDataNode.getModule());
       serializeNode.setOtherKiekerPattern(rawDataNode.getOtherVersionNode() != null ? rawDataNode.getOtherVersionNode().getKiekerPattern() : "UNKNOWN");
       return serializeNode;

@@ -8,20 +8,14 @@ public class PersistedTestDataBuilder {
    final CauseSearchData data = new CauseSearchData();
 
    public PersistedTestDataBuilder() {
-      final MeasuredNode rootMeasured = new MeasuredNode();
-      rootMeasured.setCall("Test#test");
-      rootMeasured.setKiekerPattern("public void Test.test");
+      final MeasuredNode rootMeasured = new MeasuredNode("Test#test", "public void Test.test", null);
       data.setNodes(rootMeasured);
    }
    
    public void addSecondLevel() {
-      final MeasuredNode child1 = new MeasuredNode();
-      child1.setCall("ClassA.methodA");
-      child1.setKiekerPattern("public void ClassA.methodA");
+      final MeasuredNode child1 = new MeasuredNode("ClassA.methodA", "public void ClassA.methodA", null);
 
-      final MeasuredNode child2 = new MeasuredNode();
-      child2.setCall("ClassC.methodC");
-      child2.setKiekerPattern("public void ClassC.methodC");
+      final MeasuredNode child2 = new MeasuredNode("ClassC.methodC", "public void ClassC.methodC", null);
 
       final MeasuredNode rootMeasured = data.getNodes();
       data.setNodes(rootMeasured);

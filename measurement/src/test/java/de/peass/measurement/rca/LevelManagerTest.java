@@ -9,7 +9,6 @@ import org.mockito.Mockito;
 
 import de.peass.config.MeasurementConfiguration;
 import de.peass.measurement.PersistedTestDataBuilder;
-import de.peass.measurement.rca.LevelManager;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.helper.TreeBuilder;
@@ -39,7 +38,7 @@ public class LevelManagerTest {
       testMeasureListCorrectness(currentVersionNodeList, builder2);
    }
 
-   private void testMeasureListCorrectness(final LinkedList<CallTreeNode> currentVersionNodeList, TreeBuilder builder) {
+   private void testMeasureListCorrectness(final LinkedList<CallTreeNode> currentVersionNodeList, final TreeBuilder builder) {
       Assert.assertEquals(3, currentVersionNodeList.size());
       Assert.assertThat(currentVersionNodeList, Matchers.hasItem(builder.getA()));
       Assert.assertThat(currentVersionNodeList, Matchers.hasItem(builder.getC()));
@@ -66,9 +65,7 @@ public class LevelManagerTest {
    @Test
    public void testLongTree() {
       final CauseSearchData data = new CauseSearchData();
-      final MeasuredNode rootMeasured = new MeasuredNode();
-      rootMeasured.setCall("Test#test");
-      rootMeasured.setKiekerPattern("public void Test.test");
+      final MeasuredNode rootMeasured = new MeasuredNode("Test#test", "public void Test.test", null);
       data.setNodes(rootMeasured);
 
       final CallTreeNode root = new CallTreeNode("Test#test", "public void Test.test", "public void Test.test", (MeasurementConfiguration) null);
@@ -78,10 +75,8 @@ public class LevelManagerTest {
          final String call = "C" + i + ".method" + i;
          final String kiekerPattern = "public void " + call;
          current = current.appendChild(call, kiekerPattern, null);
-         final MeasuredNode childMeasured = new MeasuredNode();
+         final MeasuredNode childMeasured = new MeasuredNode(call, kiekerPattern, null);
          measuredCurrent.getChilds().add(childMeasured);
-         childMeasured.setCall(call);
-         childMeasured.setKiekerPattern(kiekerPattern);
          measuredCurrent = childMeasured;
       }
       current.appendChild("FinalClass.finalMethod", "public void FinalClass.finalMethod", null);

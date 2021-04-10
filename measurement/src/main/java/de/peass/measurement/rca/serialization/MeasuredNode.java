@@ -26,10 +26,6 @@ public class MeasuredNode extends BasicNode {
    @JsonInclude(Include.NON_NULL)
    private MeasuredValues valuesPredecessor;
 
-   public MeasuredNode() {
-      super(null, null, null);
-   }
-
    public MeasuredNode(final String call, final String kiekerPattern, final String otherKiekerPattern) {
       super(call, kiekerPattern, otherKiekerPattern);
    }
