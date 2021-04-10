@@ -253,6 +253,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       }
    }
 
+   @JsonIgnore
    public String[] getParameterTypes() {
       throw new RuntimeException("Not implemented yet");
    }
