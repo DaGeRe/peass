@@ -73,6 +73,10 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    public ChangedEntity(@JsonProperty("clazz") final String clazz, @JsonProperty("module") final String module, @JsonProperty("method") final String testMethodName) {
       this(clazz, module);
       method = testMethodName;
+      
+      if (method != null && (method.contains("(") || method.contains(")"))) {
+         throw new RuntimeException("Method should not included paranthesis, since it is only the method name without parameters");
+      }
    }
 
    @JsonIgnore
