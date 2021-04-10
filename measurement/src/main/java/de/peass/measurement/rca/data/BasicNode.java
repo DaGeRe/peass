@@ -15,7 +15,7 @@ public abstract class BasicNode {
    protected String call;
    protected String kiekerPattern;
    private String otherKiekerPattern;
-   private String module;
+   protected String module;
 
    public BasicNode(final String call, final String kiekerPattern, final String otherKiekerPattern) {
       int moduleSeparatorIndex = call.lastIndexOf(ChangedEntity.MODULE_SEPARATOR);

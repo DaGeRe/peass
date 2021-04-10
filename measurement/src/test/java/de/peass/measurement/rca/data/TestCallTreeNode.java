@@ -14,6 +14,15 @@ public class TestCallTreeNode {
       Assert.assertEquals(new ChangedEntity("de.mypackage.Test", "", "callMethod"), node.toEntity());
       Assert.assertEquals("de.mypackage.Test#callMethod", node.toEntity().toString());
    }
+   
+   @Test
+   public void testToEntityParameter() {
+      final CallTreeNode node = new CallTreeNode("moduleA" + ChangedEntity.MODULE_SEPARATOR + "de.mypackage.Test#callMethod", "public void "+ ChangedEntity.MODULE_SEPARATOR + "de.mypackage.Test.callMethod(int)", null, (MeasurementConfiguration) null);
+      ChangedEntity entity = node.toEntity();
+      Assert.assertEquals(new ChangedEntity("de.mypackage.Test", "moduleA", "callMethod"), entity);
+      Assert.assertEquals("moduleA" + ChangedEntity.MODULE_SEPARATOR + "de.mypackage.Test#callMethod", entity.toString());
+      Assert.assertEquals("int", entity.getParameterTypes()[0]);
+   }
 
    @Test
    public void testPosition() throws Exception {
