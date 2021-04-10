@@ -28,12 +28,6 @@ public class MeasuredNode extends BasicNode {
    @JsonInclude(Include.NON_NULL)
    private MeasuredValues valuesPredecessor;
 
-   /**
-    * 
-    */
-   public MeasuredNode() {
-      super(null, null, null);
-   }
 
    @JsonCreator
    public MeasuredNode(@JsonProperty("call") final String call,
