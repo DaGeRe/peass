@@ -201,7 +201,9 @@ public class CallTreeNode extends BasicNode {
          return otherVersionNode.toEntity();
       } else {
          final int index = call.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
-         final ChangedEntity entity = new ChangedEntity(call.substring(0, index), "", call.substring(index + 1));
+         String method = call.substring(index + 1);
+         final ChangedEntity entity = new ChangedEntity(call.substring(0, index), "", method.substring(0, method.indexOf('(')));
+         entity.createParameters(method.substring(method.indexOf('(')));
          return entity;
       }
    }

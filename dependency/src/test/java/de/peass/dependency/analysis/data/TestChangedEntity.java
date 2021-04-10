@@ -37,4 +37,13 @@ public class TestChangedEntity {
       System.out.println(entity.getParametersPrintable());
       Assert.assertThat(entity.getParameters(), Matchers.hasSize(3));
    }
+   
+   @Test
+   public void testParametersParenthesis() {
+      ChangedEntity entity = new ChangedEntity("de.ClassA", "moduleA", "methodA");
+      entity.createParameters("(Test, int, String)");
+      System.out.println(entity.getParametersPrintable());
+      Assert.assertThat(entity.getParameters().get(0), Matchers.not(Matchers.containsString("(")));
+      Assert.assertThat(entity.getParameters().get(2), Matchers.not(Matchers.containsString(")")));
+   }
 }
