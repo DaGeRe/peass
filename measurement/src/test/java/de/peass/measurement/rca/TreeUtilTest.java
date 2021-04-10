@@ -11,18 +11,18 @@ import de.peass.measurement.rca.treeanalysis.TreeUtil;
 public class TreeUtilTest {
    
 
-   private final CallTreeNode parent1 = new CallTreeNode("Test1#test", "public void Test1.test", null, (MeasurementConfiguration) null);
-   private final CallTreeNode parent2 = new CallTreeNode("Test1#test", "public void Test1.test", null, (MeasurementConfiguration) null);
+   private final CallTreeNode parent1 = new CallTreeNode("Test1#test", "public void Test1.test()", null, (MeasurementConfiguration) null);
+   private final CallTreeNode parent2 = new CallTreeNode("Test1#test", "public void Test1.test()", null, (MeasurementConfiguration) null);
    
    @Test
    public void testAddedMapping()  {
       createBasicTree();
       
-      parent2.appendChild("ClassA#G", "public void ClassA.G", null);
-      parent2.appendChild("ClassA#I", "public void ClassA.I", null);
-      parent2.appendChild("ClassA#J", "public void ClassA.J", null);
-      parent2.appendChild("ClassA#H", "public void ClassA.H", null);
-      parent2.appendChild("ClassA#K", "public void ClassA.K", null);
+      parent2.appendChild("ClassA#G", "public void ClassA.G()", null);
+      parent2.appendChild("ClassA#I", "public void ClassA.I()", null);
+      parent2.appendChild("ClassA#J", "public void ClassA.J()", null);
+      parent2.appendChild("ClassA#H", "public void ClassA.H()", null);
+      parent2.appendChild("ClassA#K", "public void ClassA.K()", null);
       
       TreeUtil.findChildMapping(parent1, parent2);
       
@@ -37,9 +37,9 @@ public class TreeUtilTest {
    public void testNondeterministicMapping()  {
       createBasicTree();
       
-      parent2.appendChild("ClassA#G", "public void ClassA.G", null);
-      parent2.appendChild("ClassA#I", "public void ClassA.I", null);
-      parent2.appendChild("ClassA#J", "public void ClassA.J", null);
+      parent2.appendChild("ClassA#G", "public void ClassA.G()", null);
+      parent2.appendChild("ClassA#I", "public void ClassA.I()", null);
+      parent2.appendChild("ClassA#J", "public void ClassA.J()", null);
       
       TreeUtil.findChildMapping(parent1, parent2);
       

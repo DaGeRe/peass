@@ -65,21 +65,21 @@ public class LevelManagerTest {
    @Test
    public void testLongTree() {
       final CauseSearchData data = new CauseSearchData();
-      final MeasuredNode rootMeasured = new MeasuredNode("Test#test", "public void Test.test", null);
+      final MeasuredNode rootMeasured = new MeasuredNode("Test#test", "public void Test.test()", null);
       data.setNodes(rootMeasured);
 
-      final CallTreeNode root = new CallTreeNode("Test#test", "public void Test.test", "public void Test.test", (MeasurementConfiguration) null);
+      final CallTreeNode root = new CallTreeNode("Test#test", "public void Test.test()", "public void Test.test()", (MeasurementConfiguration) null);
       CallTreeNode current = root;
       MeasuredNode measuredCurrent = rootMeasured;
       for (int i = 0; i < 20; i++) {
          final String call = "C" + i + ".method" + i;
-         final String kiekerPattern = "public void " + call;
+         final String kiekerPattern = "public void " + call + "()";
          current = current.appendChild(call, kiekerPattern, null);
          final MeasuredNode childMeasured = new MeasuredNode(call, kiekerPattern, null);
          measuredCurrent.getChilds().add(childMeasured);
          measuredCurrent = childMeasured;
       }
-      current.appendChild("FinalClass.finalMethod", "public void FinalClass.finalMethod", null);
+      current.appendChild("FinalClass.finalMethod", "public void FinalClass.finalMethod()", null);
 
       final BothTreeReader mock = Mockito.mock(BothTreeReader.class);
       Mockito.when(mock.getRootPredecessor()).thenReturn(root);

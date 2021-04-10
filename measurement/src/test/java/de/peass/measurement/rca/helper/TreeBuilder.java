@@ -32,17 +32,17 @@ public class TreeBuilder {
       this.config = config;
       this.useFullLogAPI = useFullLogAPI;
 
-      root = new CallTreeNode("Test#test", "public void Test.test()", "public void Test.test", config);
-      a = root.appendChild("ClassA#methodA", "public void ClassA.methodA()", "public void ClassA.methodA");
-      b = a.appendChild("ClassB#methodB", "public void ClassB.methodB()", "public void ClassB.methodB");
-      c = root.appendChild("ClassC#methodC", "public void ClassC.methodC()", "public void ClassC.methodC");
-      constructor = root.appendChild("ClassA#<init>", "new public void ClassA.<init>()", "new public void ClassA.<init>");
+      root = new CallTreeNode("Test#test", "public void Test.test()", "public void Test.test()", config);
+      a = root.appendChild("ClassA#methodA", "public void ClassA.methodA()", "public void ClassA.methodA()");
+      b = a.appendChild("ClassB#methodB", "public void ClassB.methodB()", "public void ClassB.methodB()");
+      c = root.appendChild("ClassC#methodC", "public void ClassC.methodC()", "public void ClassC.methodC()");
+      constructor = root.appendChild("ClassA#<init>", "new public void ClassA.<init>()", "new public void ClassA.<init>()");
 
-      root.setOtherVersionNode(new CallTreeNode("Test#test", "public void Test.test()", "public void Test.test", config));
-      a.setOtherVersionNode(new CallTreeNode("ClassA#methodA", "public void ClassA.methodA()", "public void ClassA.methodA", config));
-      b.setOtherVersionNode(new CallTreeNode("ClassA#methodB", "public void ClassA.methodB()", "public void ClassA.methodB", config));
-      c.setOtherVersionNode(new CallTreeNode("ClassA#methodC", "public void ClassA.methodC()", "public void ClassA.methodB", config));
-      constructor.setOtherVersionNode(new CallTreeNode("ClassA#<init>", "new public void ClassA.<init>()", "new public void ClassA.<init>", config));
+      root.setOtherVersionNode(new CallTreeNode("Test#test", "public void Test.test()", "public void Test.test()", config));
+      a.setOtherVersionNode(new CallTreeNode("ClassA#methodA", "public void ClassA.methodA()", "public void ClassA.methodA()", config));
+      b.setOtherVersionNode(new CallTreeNode("ClassA#methodB", "public void ClassA.methodB()", "public void ClassA.methodB()", config));
+      c.setOtherVersionNode(new CallTreeNode("ClassA#methodC", "public void ClassA.methodC()", "public void ClassA.methodB()", config));
+      constructor.setOtherVersionNode(new CallTreeNode("ClassA#<init>", "new public void ClassA.<init>()", "new public void ClassA.<init>()", config));
    }
 
    public TreeBuilder() {
