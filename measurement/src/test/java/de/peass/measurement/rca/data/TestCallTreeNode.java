@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.TreeBuilderBig;
 
 public class TestCallTreeNode {
@@ -36,5 +35,12 @@ public class TestCallTreeNode {
       Assert.assertEquals(4, builder.getB2().getEoi());
    }
 
-   
+   @Test
+   public void testModuleSeparation() {
+      String call = "moduleA" + ChangedEntity.MODULE_SEPARATOR + "ClazzA" + ChangedEntity.METHOD_SEPARATOR + "test";
+      CallTreeNode node = new CallTreeNode(call, "public void " + call.replace("#", ".") +"()", null, new MeasurementConfiguration(1));
+      
+      Assert.assertEquals(node.getCall(), "ClazzA" + ChangedEntity.METHOD_SEPARATOR + "test");
+      Assert.assertEquals(node.getModule(), "moduleA");
+   }
 }
