@@ -6,9 +6,11 @@ import java.util.List;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.inference.TestUtils;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.measurement.rca.data.BasicNode;
@@ -26,7 +28,17 @@ public class MeasuredNode extends BasicNode {
    @JsonInclude(Include.NON_NULL)
    private MeasuredValues valuesPredecessor;
 
-   public MeasuredNode(final String call, final String kiekerPattern, final String otherKiekerPattern) {
+   /**
+    * 
+    */
+   public MeasuredNode() {
+      super(null, null, null);
+   }
+
+   @JsonCreator
+   public MeasuredNode(@JsonProperty("call") final String call,
+         @JsonProperty("kiekerPattern") final String kiekerPattern,
+         @JsonProperty("otherKiekerPattern") final String otherKiekerPattern) {
       super(call, kiekerPattern, otherKiekerPattern);
    }
 
@@ -58,22 +70,24 @@ public class MeasuredNode extends BasicNode {
 
    /**
     * Gets VMs that are there without processing (i.e. outliers are still contained)
+    * 
     * @return
     */
    @JsonIgnore
    public int getPureVMs() {
       return values.getValues().size();
    }
-   
+
    /**
     * Gets precessor version VMs that are there without processing (i.e. outliers are still contained)
+    * 
     * @return
     */
    @JsonIgnore
    public int getVMsOld() {
       return valuesPredecessor.getValues().size();
    }
-   
+
    public List<MeasuredNode> getChilds() {
       return childs;
    }
@@ -81,13 +95,13 @@ public class MeasuredNode extends BasicNode {
    public void setChilds(final List<MeasuredNode> childs) {
       this.childs = childs;
    }
-   
+
    @JsonIgnore
    @Override
    public List<MeasuredNode> getChildren() {
       return childs;
    }
-   
+
    public MeasuredNode getChildByPattern(final String name) {
       MeasuredNode result = null;
       for (MeasuredNode node : childs) {
@@ -117,7 +131,7 @@ public class MeasuredNode extends BasicNode {
    @JsonIgnore
    public boolean isChange(final double type2error) {
       final double tValue = TestUtils.t(statistic.getStatisticsCurrent(), statistic.getStatisticsOld());
-//      System.out.println(tValue);
+      // System.out.println(tValue);
       final boolean value = TestUtils.tTest(statistic.getStatisticsCurrent(), statistic.getStatisticsOld(), type2error);
       return value;
    }
