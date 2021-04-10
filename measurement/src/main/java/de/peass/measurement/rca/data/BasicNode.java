@@ -22,7 +22,7 @@ public abstract class BasicNode {
       if (moduleSeparatorIndex != -1) {
          this.call = call.substring(moduleSeparatorIndex + 1);
          this.module = call.substring(0, moduleSeparatorIndex);
-         this.kiekerPattern = kiekerPattern.replaceFirst(module + ChangedEntity.MODULE_SEPARATOR, "");
+         this.kiekerPattern = kiekerPattern != null ? kiekerPattern.replaceFirst(module + ChangedEntity.MODULE_SEPARATOR, "") : null;
          this.otherKiekerPattern = otherKiekerPattern;
       } else {
          this.call = call;
