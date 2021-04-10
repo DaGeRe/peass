@@ -301,7 +301,8 @@ public class MavenTestExecutor extends TestExecutor {
 
    @Override
    public ProjectModules getModules() throws IOException, XmlPullParserException {
-      return MavenPomUtil.getModules(new File(folders.getProjectFolder(), "pom.xml"));
+      File pomFile = new File(folders.getProjectFolder(), "pom.xml");
+      return MavenPomUtil.getModules(pomFile);
    }
 
 }
