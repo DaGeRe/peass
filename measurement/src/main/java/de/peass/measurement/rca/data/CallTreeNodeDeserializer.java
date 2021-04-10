@@ -16,7 +16,7 @@ class CallTreeNodeDeserializer extends JsonDeserializer<CallTreeNode> {
    public CallTreeNode deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
       final JsonNode node = p.getCodec().readTree(p);
       final String call = node.get("call").asText();
-      final String kiekerPattern = node.get("kiekerPattern").asText();
+      final String kiekerPattern = !node.get("kiekerPattern").isNull() ? node.get("kiekerPattern").asText() : null;
       final String module = node.get("module") != null ? node.get("module").asText() : null;
       final JsonNode children = node.get("children");
       final CallTreeNode root = new CallTreeNode(call, kiekerPattern, null, (MeasurementConfiguration) null);
