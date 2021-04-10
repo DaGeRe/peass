@@ -147,13 +147,14 @@ public class ClazzFileFinder {
       return clazzFile;
    }
 
-   public static File getClazzFile(final File module, final ChangedEntity name) {
-      LOG.debug("Searching: {} in {}", name, module.getAbsolutePath());
-      final String clazzFileName = name.getClazz().endsWith(".java") ? name.getClazz() : name.getClazz().replace('.', File.separatorChar) + ".java";
+   public static File getClazzFile(final File module, final ChangedEntity entity) {
+      LOG.debug("Searching: {} in {}", entity, module.getAbsolutePath());
+      String clazzName = getOuterClass(entity.getClazz());
+      final String clazzFileName = clazzName.endsWith(".java") ? clazzName : clazzName.replace('.', File.separatorChar) + ".java";
       final File naturalCandidate = new File(module, clazzFileName);
       File potentialFile = findFile(module, clazzFileName, naturalCandidate);
-      if (potentialFile == null && name.getModule() != null && !name.getModule().equals("")) {
-         File moduleFolder = new File(module, name.getModule());
+      if (potentialFile == null && entity.getModule() != null && !entity.getModule().equals("")) {
+         File moduleFolder = new File(module, entity.getModule());
          potentialFile = findFile(moduleFolder, clazzFileName, naturalCandidate);
       }
       return potentialFile;
