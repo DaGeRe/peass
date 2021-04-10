@@ -25,18 +25,20 @@ public class TraceElementContent extends Content {
       this.depth = element.getDepth();
       this.isStatic = element.isStatic();
    }
-   
+
    public TraceElementContent(final String clazz, final String method, final String parameterTypes[], final int depth) {
       this.clazz = clazz;
       this.method = method;
+      if (method.contains("(") || method.contains(")")) {
+         throw new RuntimeException("Method should not included paranthesis, since it is only the method name without parameters");
+      }
       this.module = null;
       this.depth = depth;
       this.parameterTypes = parameterTypes;
       this.isStatic = false;
    }
 
-
-   public TraceElementContent(final String clazz, final String method, String module, final String parameterTypes[], final int depth) {
+   public TraceElementContent(final String clazz, final String method, final String module, final String parameterTypes[], final int depth) {
       this.clazz = clazz;
       this.method = method;
       this.module = module;
@@ -46,26 +48,26 @@ public class TraceElementContent extends Content {
    }
 
    @Override
-	public boolean equals(final Object obj) {
-		if (obj instanceof TraceElementContent) {
-			final TraceElementContent other = (TraceElementContent) obj;
-			if (module == null && other.module == null) {
-			   return other.getClazz().equals(this.getClazz()) &&
-	               other.getMethod().equals(this.getMethod()) &&
-	               Arrays.equals(other.getParameterTypes(), this.getParameterTypes());
-			}else if ((module == null) != (other.module == null)){
-			   return false;
-			}else {
-			   return other.getModule().equals(this.getModule()) &&  
-			         other.getClazz().equals(this.getClazz()) &&
+   public boolean equals(final Object obj) {
+      if (obj instanceof TraceElementContent) {
+         final TraceElementContent other = (TraceElementContent) obj;
+         if (module == null && other.module == null) {
+            return other.getClazz().equals(this.getClazz()) &&
                   other.getMethod().equals(this.getMethod()) &&
                   Arrays.equals(other.getParameterTypes(), this.getParameterTypes());
-			}
-			
-		} else {
-			return false;
-		}
-	}
+         } else if ((module == null) != (other.module == null)) {
+            return false;
+         } else {
+            return other.getModule().equals(this.getModule()) &&
+                  other.getClazz().equals(this.getClazz()) &&
+                  other.getMethod().equals(this.getMethod()) &&
+                  Arrays.equals(other.getParameterTypes(), this.getParameterTypes());
+         }
+
+      } else {
+         return false;
+      }
+   }
 
    @Override
    public int hashCode() {
@@ -97,7 +99,7 @@ public class TraceElementContent extends Content {
    public String getMethod() {
       return method;
    }
-   
+
    public String getModule() {
       return module;
    }
