@@ -22,6 +22,7 @@ public class ResultOrganizerParallel extends ResultOrganizer {
          final int expectedIterations) {
       super(folders, currentVersion, currentChunkStart, isUseKieker, saveAll, test, expectedIterations);
       LOG.debug("Creating new ResultOrganizerParallel");
+      LOG.info("Instance: " + System.identityHashCode(this));
    }
 
    public void addVersionFolders(final String version, final PeASSFolders versionTempFolder) {
@@ -33,6 +34,7 @@ public class ResultOrganizerParallel extends ResultOrganizer {
    public File getTempResultsFolder(final String version) {
       PeASSFolders currentFolders = sourceFolders.get(version);
       LOG.info("Searching method: {} Version: {} Existing versions: {}", testcase, version, sourceFolders.keySet());
+      LOG.info("Instance: " + System.identityHashCode(this));
       final String expectedFolderName = "*" + testcase.getClazz();
       final File containingFolder = currentFolders.getTempMeasurementFolder();
       final Collection<File> folderCandidates = findFolder(containingFolder, new WildcardFileFilter(expectedFolderName));
