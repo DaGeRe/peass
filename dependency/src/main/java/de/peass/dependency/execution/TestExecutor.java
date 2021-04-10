@@ -152,7 +152,7 @@ public abstract class TestExecutor {
    }
 
    private void printPIDInfo(final File logFile) throws IOException {
-      if (!System.getProperty("os.name").startsWith("Windows")) {
+      if (!System.getProperty("os.name").startsWith("Windows") && !System.getProperty("os.name").startsWith("Mac")) {
          final int pid = Integer.parseInt(new File("/proc/self").getCanonicalFile().getName());
          LOG.debug("Process started: {} Used PIDs: {} Log to: {}", pid, getProcessCount(), logFile);
       }
