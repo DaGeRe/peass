@@ -119,7 +119,7 @@ public class CauseSearcherIT {
 
    @Test
    public void testSlowerState() throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(2, "000001", "000001~1");
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(5, "000001", "000001~1");
       measurementConfiguration.setUseKieker(true);
       final CauseSearcherConfig causeSearcherConfig = CAUSE_CONFIG_TESTME_COMPLETE;
       
