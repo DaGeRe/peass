@@ -153,6 +153,15 @@ public class MavenPomUtil {
       }
    }
 
+   /**
+    * This gets a list of all dependent modules of one maven module, so only these can be included in measurement; since
+    * maven does not provide a way to easily determine the project structure, we call the (currently effectless) pre-clean goal
+    * and parse the output (relying on constant output format) 
+    * @param projectFolder
+    * @param pl
+    * @return
+    * @throws IOException
+    */
    public static List<String> getDependentModules(final File projectFolder, final String pl) throws IOException {
       ProcessBuilder pb = new ProcessBuilder("mvn", "-B", "pre-clean", "-pl", pl, "-am");
       pb.directory(projectFolder);
