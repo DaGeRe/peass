@@ -66,20 +66,30 @@ public class DependencyParallelReader {
          int threadcount = 0;
 
          @Override
-         public Thread newThread(final Runnable r) {
+         public Thread newThread(final Runnable runnable) {
             threadcount++;
-            return new Thread(r, "dependencypool-" + threadcount);
+            return new Thread(runnable, "dependencypool-" + threadcount);
          }
       });
 
-      for (int i = 0; i < outFiles.length; i++) {
-         final int readableIndex = i + 1;
-         outFiles[i] = new File(tempResultFolder, "deps_" + project + "_" + readableIndex + ".json");
-         PeASSFolders foldersTemp = folders.getTempFolder("" + readableIndex);
-         final File currentOutFile = outFiles[i];
-         startPartProcess(currentOutFile, service, i, foldersTemp);
-      }
+      startAllProcesses(service);
       service.shutdown();
+      waitForAll(service);
+
+      return outFiles;
+   }
+
+   private void startAllProcesses(final ExecutorService service) throws IOException, InterruptedException {
+      for (int outfileIndex = 0; outfileIndex < outFiles.length; outfileIndex++) {
+         final int readableIndex = outfileIndex + 1;
+         outFiles[outfileIndex] = new File(tempResultFolder, "deps_" + project + "_" + readableIndex + ".json");
+         PeASSFolders foldersTemp = folders.getTempFolder("" + readableIndex);
+         final File currentOutFile = outFiles[outfileIndex];
+         startPartProcess(currentOutFile, service, outfileIndex, foldersTemp);
+      }
+   }
+
+   private void waitForAll(final ExecutorService service) {
       try {
          LOG.debug("Wait for finish");
          final boolean success = service.awaitTermination(Long.MAX_VALUE, TimeUnit.HOURS);
@@ -87,13 +97,11 @@ public class DependencyParallelReader {
       } catch (final InterruptedException e) {
          e.printStackTrace();
       }
-
-      return outFiles;
    }
 
-   public void startPartProcess(final File currentOutFile, final ExecutorService service, final int i, final PeASSFolders foldersTemp) throws InterruptedException {
-      final int min = i * sizePerThread;
-      final int max = Math.min((i + 1) * sizePerThread + 1, commits.size());
+   public void startPartProcess(final File currentOutFile, final ExecutorService service, final int outfileIndex, final PeASSFolders foldersTemp) throws InterruptedException {
+      final int min = outfileIndex * sizePerThread;
+      final int max = Math.min((outfileIndex + 1) * sizePerThread + 1, commits.size());
       LOG.debug("Min: {} Max: {} Size: {}", min, max, commits.size());
       final List<GitCommit> currentCommits = commits.subList(min, max);
       final List<GitCommit> reserveCommits = commits.subList(max - 1, commits.size());

@@ -99,6 +99,8 @@ public abstract class TestExecutor {
       String testGoal;
       if (isAndroid) {
          testGoal = testTransformer.getConfig().getTestGoal() != null ? testTransformer.getConfig().getTestGoal() : "testRelease";
+      } else if (folders.getProjectFolder().getName().equals("jetty.project")) {
+         testGoal = "package";
       } else {
          testGoal = testTransformer.getConfig().getTestGoal() != null ? testTransformer.getConfig().getTestGoal() : "test";
       }
@@ -109,7 +111,7 @@ public abstract class TestExecutor {
       String[] envPropertyArray = env.getProperties().length() > 0 ? env.getProperties().split(" ") : new String[0];
       final String[] varsWithProperties = concatenateCommandArrays(vars, envPropertyArray);
       LOG.debug("Command: {}", Arrays.toString(varsWithProperties));
-      
+
       final ProcessBuilder pb = new ProcessBuilder(varsWithProperties);
       overwriteEnvVars(pb);
 
@@ -233,10 +235,10 @@ public abstract class TestExecutor {
          LOG.debug("Executing run success test {}", folders.getProjectFolder());
          final File versionFolder = getVersionFolder(version);
          final File logFile = new File(versionFolder, "testRunning.log");
-         
+
          Process process = buildFolderProcess(folders.getProjectFolder(), logFile, vars);
          LOG.debug("Waiting for {} minutes", testTransformer.getConfig().getTimeoutInMinutes());
-         
+
          process.waitFor(testTransformer.getConfig().getTimeoutInMinutes(), TimeUnit.MINUTES);
          if (process.isAlive()) {
             LOG.debug("Destroying process");

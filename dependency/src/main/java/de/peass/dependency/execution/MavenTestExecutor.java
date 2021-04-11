@@ -94,8 +94,6 @@ public class MavenTestExecutor extends TestExecutor {
             testGoal,
             "-fn",
             "-Dcheckstyle.skip=true",
-            // "-Dmaven.compiler.source=" + JAVA_VERSION,
-            // "-Dmaven.compiler.target=" + JAVA_VERSION,
             "-Dmaven.javadoc.skip=true",
             "-Danimal.sniffer.skip=true",
             "-Denforcer.skip=true",
@@ -103,9 +101,15 @@ public class MavenTestExecutor extends TestExecutor {
             "-Drat.skip=true",
             "-Djacoco.skip=true",
             "-Djava.io.tmpdir=" + folders.getTempDir().getAbsolutePath() };
-
       final String[] vars = concatenateCommandArrays(originals, commandLineAddition);
-      return buildFolderProcess(folders.getProjectFolder(), logFile, vars);
+
+      if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
+         String[] projectListArray = new String[] { "-pl", testTransformer.getConfig().getExecutionConfig().getPl(), "-am" };
+         String[] withPl = concatenateCommandArrays(vars, projectListArray);
+         return buildFolderProcess(folders.getProjectFolder(), logFile, withPl);
+      } else {
+         return buildFolderProcess(folders.getProjectFolder(), logFile, vars);
+      }
    }
 
    private String getMavenCall() {
