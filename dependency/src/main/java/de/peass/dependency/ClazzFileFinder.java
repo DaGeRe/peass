@@ -107,9 +107,6 @@ public class ClazzFileFinder {
          final String clazz = getClazz(folder, clazzFile);
          final String packageName = clazz.lastIndexOf('.') != -1 ? clazz.substring(0, clazz.lastIndexOf('.')) : clazz;
 
-         if (clazz.contains("HttpMethod")) {
-            System.out.println("test");
-         }
          try {
             final CompilationUnit cu = JavaParserProvider.parse(clazzFile);
             for (final Node node : cu.getChildNodes()) {

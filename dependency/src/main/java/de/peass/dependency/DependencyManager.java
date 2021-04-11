@@ -102,13 +102,8 @@ public class DependencyManager extends KiekerResultManager {
       final File logFile = new File(folders.getLogFolder(), version + File.separator + "init_log.txt");
       logFile.getParentFile().mkdirs();
 
-      if (testTransformer.getConfig().getExecutionConfig().getIncludes() == null ||
-            testTransformer.getConfig().getExecutionConfig().getIncludes().isEmpty()) {
-         executor.executeAllKoPeMeTests(logFile);
-      } else {
-         TestSet tests = findIncludedTests(mapping);
-         runTraceTests(tests, version);
-      }
+      TestSet tests = findIncludedTests(mapping);
+      runTraceTests(tests, version);
 
       if (folders.getTempMeasurementFolder().exists()) {
          return readInitialResultFiles(mapping);
@@ -121,6 +116,7 @@ public class DependencyManager extends KiekerResultManager {
       List<String> includedModules;
       if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
          includedModules = MavenPomUtil.getDependentModules(folders.getProjectFolder(), testTransformer.getConfig().getExecutionConfig().getPl());
+         LOG.debug("Included modules: {}", includedModules);
       } else {
          includedModules = null;
       }
@@ -142,6 +138,7 @@ public class DependencyManager extends KiekerResultManager {
             }
          }
       }
+      LOG.info("Included tests: {}", tests.getTests().size());
       return tests;
    }
 
