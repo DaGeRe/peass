@@ -31,7 +31,7 @@ public class ClazzFinder {
       }
       return clazz;
    }
-   
+
    public static ClassOrInterfaceDeclaration findClazz(final ChangedEntity entity, final List<Node> nodes) {
       ClassOrInterfaceDeclaration declaration = null;
       for (final Node node : nodes) {
@@ -61,6 +61,13 @@ public class ClazzFinder {
          for (final Node child : node.getChildNodes()) {
             clazzes.addAll(getClazzes(child, clazzname, clazzSeparator));
          }
+      } else if (node instanceof EnumDeclaration) {
+         final EnumDeclaration enumDecl = (EnumDeclaration) node;
+         final String enumName = parent.length() > 0 ? parent + clazzSeparator + enumDecl.getName().getIdentifier() : enumDecl.getName().getIdentifier();
+         clazzes.add(enumName);
+         for (final Node child : node.getChildNodes()) {
+            clazzes.addAll(getClazzes(child, enumName, clazzSeparator));
+         }
       } else {
          for (final Node child : node.getChildNodes()) {
             clazzes.addAll(getClazzes(child, parent, clazzSeparator));
@@ -68,7 +75,7 @@ public class ClazzFinder {
       }
       return clazzes;
    }
-   
+
    public static List<String> getClazzes(final CompilationUnit cu) {
       final List<String> clazzes = new LinkedList<>();
       for (final Node node : cu.getChildNodes()) {
@@ -76,8 +83,8 @@ public class ClazzFinder {
       }
       return clazzes;
    }
-   
-   public static List<ChangedEntity> getClazzEntities(final CompilationUnit cu){
+
+   public static List<ChangedEntity> getClazzEntities(final CompilationUnit cu) {
       List<String> clazzes = ClazzFinder.getClazzes(cu);
       List<ChangedEntity> entities = new LinkedList<>();
       for (String clazz : clazzes) {

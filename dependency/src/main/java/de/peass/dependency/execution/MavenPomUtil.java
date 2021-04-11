@@ -168,7 +168,9 @@ public class MavenPomUtil {
                final File moduleFile = new File(pom.getParentFile(), module);
                List<File> subModules = getModuleFiles(new File(moduleFile, "pom.xml"));
                modules.addAll(subModules);
-               modules.add(moduleFile);
+               if (!subModules.contains(moduleFile)) {
+                  modules.add(moduleFile);
+               }
             }
          } else {
             modules.add(pom.getParentFile());

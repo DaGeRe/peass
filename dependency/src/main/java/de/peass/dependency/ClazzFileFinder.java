@@ -2,6 +2,7 @@ package de.peass.dependency;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -101,10 +102,14 @@ public class ClazzFileFinder {
     * @param folder Main folder that should be searched
     */
    private static void addClazzes(final List<String> clazzes, final File folder) {
-      for (final File clazzFile : FileUtils.listFiles(folder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE)) {
+      Collection<File> javaFiles = FileUtils.listFiles(folder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE);
+      for (final File clazzFile : javaFiles) {
          final String clazz = getClazz(folder, clazzFile);
          final String packageName = clazz.lastIndexOf('.') != -1 ? clazz.substring(0, clazz.lastIndexOf('.')) : clazz;
 
+         if (clazz.contains("HttpMethod")) {
+            System.out.println("test");
+         }
          try {
             final CompilationUnit cu = JavaParserProvider.parse(clazzFile);
             for (final Node node : cu.getChildNodes()) {
