@@ -73,7 +73,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    public ChangedEntity(@JsonProperty("clazz") final String clazz, @JsonProperty("module") final String module, @JsonProperty("method") final String testMethodName) {
       this(clazz, module);
       method = testMethodName;
-      
+
       if (method != null && (method.contains("(") || method.contains(")"))) {
          throw new RuntimeException("Method should not included paranthesis, since it is only the method name without parameters");
       }
@@ -196,7 +196,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          return new ChangedEntity(clazzName, module, "");
       }
    }
-   
+
    public List<String> getParameters() {
       return parameters;
    }
@@ -250,13 +250,17 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    }
 
    private void addGenericFreePart(final String parameterString) {
-      final String[] parameters = parameterString.split(",");
-      for (final String parameter : parameters) {
-         int dotIndex = parameter.lastIndexOf('.');
-         if (dotIndex != -1) {
-            this.parameters.add(parameter.substring(dotIndex + 1));
-         } else {
-            this.parameters.add(parameter);
+      if (parameterString.length() == 0) {
+         this.parameters.clear();
+      } else {
+         final String[] parameters = parameterString.split(",");
+         for (final String parameter : parameters) {
+            int dotIndex = parameter.lastIndexOf('.');
+            if (dotIndex != -1) {
+               this.parameters.add(parameter.substring(dotIndex + 1));
+            } else {
+               this.parameters.add(parameter);
+            }
          }
       }
    }

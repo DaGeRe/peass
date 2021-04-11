@@ -13,6 +13,7 @@ public class TestCallTreeNode {
       final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()", (MeasurementConfiguration) null);
       Assert.assertEquals(new ChangedEntity("de.mypackage.Test", "", "callMethod"), node.toEntity());
       Assert.assertEquals("de.mypackage.Test#callMethod", node.toEntity().toString());
+      Assert.assertEquals(0, node.toEntity().getParameterTypes().length);
    }
    
    @Test
