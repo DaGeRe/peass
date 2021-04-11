@@ -23,6 +23,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
+import de.peass.utils.StreamGobbler;
 
 public class MavenPomUtil {
 
@@ -150,7 +151,23 @@ public class MavenPomUtil {
          final Model model = reader.read(inputStream);
          return model.getModules() != null;
       }
+   }
 
+   public static List<String> getDependentModules(final File projectFolder, final String pl) throws IOException {
+      ProcessBuilder pb = new ProcessBuilder("mvn", "-B", "pre-clean", "-pl", pl, "-am");
+      pb.directory(projectFolder);
+      String output = StreamGobbler.getFullProcess(pb.start(), false);
+      List<String> modules = new LinkedList<>();
+      for (String line : output.split("\n")) {
+         if (line.contains("-----------------<")) {
+            String[] parts = line.split(" ");
+            String groupAnArtifactPart = parts[2];
+            String artifact = groupAnArtifactPart.split(":")[1];
+            modules.add(artifact);
+            
+         }
+      }
+      return modules;
    }
 
    public static ProjectModules getModules(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {

@@ -18,27 +18,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ExecutionConfig implements Serializable {
 
    private static final long serialVersionUID = -6642358125854337047L;
-   
+
    /**
     * Timeout in milliseconds, default 5 minutes
     */
    private final int timeout;
    private String testGoal;
    private List<String> includes;
-   
+
    private String version = "HEAD";
    private String versionOld = "HEAD~1";
    protected String startversion;
    protected String endversion;
+   private String pl;
    private boolean createDefaultConstructor = true;
-   
 
    public ExecutionConfig() {
       includes = new LinkedList<String>();
       testGoal = null;
       this.timeout = 5 * 60 * 1000;
    }
-   
+
    public ExecutionConfig(final int timeoutInMinutes) {
       if (timeoutInMinutes <= 0) {
          throw new RuntimeException("Illegal timeout: " + timeoutInMinutes);
@@ -122,5 +122,13 @@ public class ExecutionConfig implements Serializable {
 
    public void setCreateDefaultConstructor(final boolean createDefaultConstructor) {
       this.createDefaultConstructor = createDefaultConstructor;
+   }
+
+   public String getPl() {
+      return pl;
+   }
+
+   public void setPl(final String pl) {
+      this.pl = pl;
    }
 }

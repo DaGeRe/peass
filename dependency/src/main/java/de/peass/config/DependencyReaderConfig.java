@@ -31,6 +31,9 @@ public class DependencyReaderConfig {
    @Option(names = { "-includes", "--includes" }, description = "Testcases for inclusion (default: empty, includes all tests)")
    protected String[] includes;
    
+   @Option(names = { "-pl", "--pl" }, description = "Projectlist (-pl) argument for maven (e.g. :submodule) - only the submodule and its dependencies are analyzed (using -am)")
+   protected String pl;
+   
    public String getTestGoal() {
       return testGoal;
    }
@@ -67,6 +70,7 @@ public class DependencyReaderConfig {
             executionConfig.getIncludes().add(include);
          }
       }
+      executionConfig.setPl(pl);
       return executionConfig;
    }
    
@@ -76,6 +80,14 @@ public class DependencyReaderConfig {
    
    public String[] getIncludes() {
       return includes;
+   }
+   
+   public String getPl() {
+      return pl;
+   }
+   
+   public void setPl(final String pl) {
+      this.pl = pl;
    }
 
 }

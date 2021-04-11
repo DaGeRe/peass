@@ -48,6 +48,7 @@ import de.peass.dependency.analysis.data.TestExistenceChanges;
 import de.peass.dependency.analysis.data.TestSet;
 import de.peass.dependency.changesreading.ClazzChangeData;
 import de.peass.dependency.execution.EnvironmentVariables;
+import de.peass.dependency.execution.MavenPomUtil;
 import de.peass.dependency.execution.TestExecutor;
 import de.peass.dependency.traces.KiekerFolderUtil;
 import de.peass.testtransformation.JUnitTestTransformer;
@@ -117,6 +118,13 @@ public class DependencyManager extends KiekerResultManager {
    }
 
    private TestSet findIncludedTests(final ModuleClassMapping mapping) throws IOException, XmlPullParserException {
+      List<String> includedModules;
+      if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
+         includedModules = MavenPomUtil.getDependentModules(folders.getProjectFolder(), testTransformer.getConfig().getExecutionConfig().getPl());
+      } else {
+         includedModules = null;
+      }
+
       testTransformer.determineVersions(executor.getModules().getModules());
       final TestSet tests = new TestSet();
       for (final File module : executor.getModules().getModules()) {
@@ -127,10 +135,11 @@ public class DependencyManager extends KiekerResultManager {
                final TestCase test = new TestCase(clazz, method, currentModule);
                final List<String> includes = testTransformer.getConfig().getExecutionConfig().getIncludes();
                if (NonIncludedTestRemover.isTestIncluded(test, includes)) {
-                  tests.addTest(test);
+                  if (includedModules == null || includedModules.contains(test.getModule())) {
+                     tests.addTest(test);
+                  }
                }
             }
-
          }
       }
       return tests;
