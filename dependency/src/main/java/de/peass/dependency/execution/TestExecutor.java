@@ -99,8 +99,6 @@ public abstract class TestExecutor {
       String testGoal;
       if (isAndroid) {
          testGoal = testTransformer.getConfig().getTestGoal() != null ? testTransformer.getConfig().getTestGoal() : "testRelease";
-      } else if (folders.getProjectFolder().getName().equals("jetty.project")) {
-         testGoal = "package";
       } else {
          testGoal = testTransformer.getConfig().getTestGoal() != null ? testTransformer.getConfig().getTestGoal() : "test";
       }
