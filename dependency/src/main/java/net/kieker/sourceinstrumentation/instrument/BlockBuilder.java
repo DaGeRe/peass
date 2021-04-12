@@ -30,7 +30,7 @@ public class BlockBuilder {
    }
 
    public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final SamplingParameters parameters) {
-      LOG.debug("Statements: " + originalBlock.getStatements().size() + " " + parameters.getSignature());
+      LOG.trace("Statements: " + originalBlock.getStatements().size() + " " + parameters.getSignature());
       final BlockStmt replacedStatement = new BlockStmt();
       final ExplicitConstructorInvocationStmt constructorStatement = findConstructorInvocation(originalBlock);
       if (constructorStatement != null) {
