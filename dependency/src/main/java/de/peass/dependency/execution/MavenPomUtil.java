@@ -131,7 +131,7 @@ public class MavenPomUtil {
    public static void extendDependencies(final Model model, final boolean junit3) {
       for (final Dependency dependency : model.getDependencies()) {
          if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
-            dependency.setVersion("4.13");
+            dependency.setVersion("4.13.2");
          }
          if (dependency.getArtifactId().equals("junit-jupiter") && dependency.getGroupId().equals("org.junit.jupiter")) {
             dependency.setVersion("5.7.0");
@@ -141,7 +141,22 @@ public class MavenPomUtil {
       final List<Dependency> dependencies = model.getDependencies();
 
       for (RequiredDependency dependency : RequiredDependency.getAll(junit3)) {
-         dependencies.add(dependency.getMavenDependency());
+         if (dependency.getMavenDependency().getArtifactId().contains("slf4j-impl")) {
+            Dependency originalSlf4j = null;
+            for (Dependency original : dependencies) {
+               if (original.getArtifactId().contains("slf4j-impl")) {
+                  originalSlf4j = original;
+               }
+            }
+            if (originalSlf4j != null) {
+               originalSlf4j.setScope(null);
+            } else {
+               dependencies.add(dependency.getMavenDependency());
+            }
+         } else {
+            dependencies.add(dependency.getMavenDependency());
+         }
+
       }
    }
 
@@ -154,9 +169,9 @@ public class MavenPomUtil {
    }
 
    /**
-    * This gets a list of all dependent modules of one maven module, so only these can be included in measurement; since
-    * maven does not provide a way to easily determine the project structure, we call the (currently effectless) pre-clean goal
-    * and parse the output (relying on constant output format) 
+    * This gets a list of all dependent modules of one maven module, so only these can be included in measurement; since maven does not provide a way to easily determine the
+    * project structure, we call the (currently effectless) pre-clean goal and parse the output (relying on constant output format)
+    * 
     * @param projectFolder
     * @param pl
     * @return
@@ -173,7 +188,7 @@ public class MavenPomUtil {
             String groupAnArtifactPart = parts[2];
             String artifact = groupAnArtifactPart.split(":")[1];
             modules.add(artifact);
-            
+
          }
       }
       return modules;
