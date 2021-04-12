@@ -20,10 +20,8 @@ import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.builder.AstBuilder;
 import org.codehaus.plexus.util.IOUtil;
 
-import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.peass.dependency.execution.gradle.AndroidVersionUtil;
 import de.peass.dependency.execution.gradle.FindDependencyVisitor;
-import de.peass.testtransformation.JUnitTestTransformer;
 
 public class GradleParseUtil {
 
@@ -50,6 +48,7 @@ public class GradleParseUtil {
       FindDependencyVisitor visitor = null;
       try {
          LOG.debug("Editing: {}", buildfile);
+
          visitor = parseBuildfile(buildfile);
          final List<String> gradleFileContents = Files.readAllLines(Paths.get(buildfile.toURI()));
 
@@ -107,95 +106,6 @@ public class GradleParseUtil {
             visitor.getLines().set(lineIndex, "buildToolsVersion " + runningVersion);
          } else {
             visitor.setHasVersion(false);
-         }
-      }
-   }
-
-   public static FindDependencyVisitor addDependencies(final JUnitTestTransformer testTransformer, final File buildfile, final File tempFolder, final ProjectModules modules) {
-      FindDependencyVisitor visitor = null;
-      try {
-         LOG.debug("Editing buildfile: {}", buildfile.getAbsolutePath());
-         visitor = parseBuildfile(buildfile);
-         if (visitor.isUseJava() == true) {
-            editGradlefileContents(testTransformer, tempFolder, visitor);
-         } else {
-            LOG.debug("Buildfile itself does not contain Java plugin, checking parent projects");
-            boolean isUseJava = isParentUseJava(buildfile, modules);
-            if (isUseJava) {
-               editGradlefileContents(testTransformer, tempFolder, visitor);
-            }
-
-         }
-
-         LOG.debug("Writing changed buildfile: {}", buildfile.getAbsolutePath());
-         Files.write(buildfile.toPath(), visitor.getLines(), StandardCharsets.UTF_8);
-      } catch (final IOException e) {
-         e.printStackTrace();
-      }
-      return visitor;
-   }
-
-   private static boolean isParentUseJava(final File buildfile, final ProjectModules modules) throws IOException, FileNotFoundException {
-      List<File> parentProjects = modules.getParents(buildfile.getParentFile());
-      boolean isUseJava = false;
-      for (File parentProject : parentProjects) {
-         File parentBuildfile = GradleParseHelper.findGradleFile(parentProject);
-         LOG.debug("Reading " + parentBuildfile);
-         FindDependencyVisitor parentVisitor = parseBuildfile(parentBuildfile);
-         if (parentVisitor.isSubprojectJava()) {
-            isUseJava = true;
-         }
-      }
-      return isUseJava;
-   }
-
-   private static void editGradlefileContents(final JUnitTestTransformer testTransformer, final File tempFolder, final FindDependencyVisitor visitor) {
-      if (visitor.getBuildTools() != -1) {
-         updateBuildTools(visitor);
-      }
-
-      if (visitor.getBuildToolsVersion() != -1) {
-         updateBuildToolsVersion(visitor);
-      }
-
-      addDependencies(visitor);
-
-      addKiekerLine(testTransformer, tempFolder, visitor);
-   }
-
-   private static void addDependencies(final FindDependencyVisitor visitor) {
-      if (visitor.getDependencyLine() != -1) {
-         for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
-            final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
-            visitor.addLine(visitor.getDependencyLine() - 1, dependencyGradle);
-         }
-      } else {
-         visitor.getLines().add("dependencies { ");
-         for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
-            final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
-            visitor.getLines().add(dependencyGradle);
-         }
-         visitor.getLines().add("}");
-      }
-   }
-
-   public static void addKiekerLine(final JUnitTestTransformer testTransformer, final File tempFolder, final FindDependencyVisitor visitor) {
-      if (tempFolder != null) {
-         final String javaagentArgument = new ArgLineBuilder(testTransformer).buildArglineGradle(tempFolder);
-         if (visitor.getAndroidLine() != -1) {
-            if (visitor.getUnitTestsAll() != -1) {
-               visitor.addLine(visitor.getUnitTestsAll() - 1, javaagentArgument);
-            } else if (visitor.getTestOptionsAndroid() != -1) {
-               visitor.addLine(visitor.getTestOptionsAndroid() - 1, "unitTests.all{" + javaagentArgument + "}");
-            } else {
-               visitor.addLine(visitor.getAndroidLine() - 1, "testOptions{ unitTests.all{" + javaagentArgument + "} }");
-            }
-         } else {
-            if (visitor.getTestLine() != -1) {
-               visitor.addLine(visitor.getTestLine() - 1, javaagentArgument);
-            } else {
-               visitor.getLines().add("test { " + javaagentArgument + "}");
-            }
          }
       }
    }

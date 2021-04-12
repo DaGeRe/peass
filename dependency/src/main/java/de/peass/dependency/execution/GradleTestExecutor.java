@@ -66,10 +66,11 @@ public class GradleTestExecutor extends TestExecutor {
 
    private void editOneBuildfile(final File gradleFile, final ProjectModules modules) {
       final FindDependencyVisitor visitor;
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(testTransformer, gradleFile, modules);
       if (testTransformer.getConfig().isUseKieker()) {
-         visitor = GradleParseUtil.addDependencies(testTransformer, gradleFile, lastTmpFile, modules);
+         visitor = editor.addDependencies(lastTmpFile);
       } else {
-         visitor = GradleParseUtil.addDependencies(testTransformer, gradleFile, null, modules);
+         visitor = editor.addDependencies(null);
       }
       if (visitor.isAndroid()) {
          isAndroid = true;
@@ -87,7 +88,6 @@ public class GradleTestExecutor extends TestExecutor {
 
       return buildFolderProcess(folder, logFile, vars);
    }
-
 
    /**
     * Since older gradle versions do not re-execute tests, the build-folder need to be cleared before test re-execution

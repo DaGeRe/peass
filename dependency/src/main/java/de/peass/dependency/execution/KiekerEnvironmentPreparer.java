@@ -20,9 +20,12 @@ import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
 import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public class KiekerEnvironmentPreparer {
-   
+
    private static final Logger LOG = LogManager.getLogger(KiekerEnvironmentPreparer.class);
 
+   private static final String[] metaInfFolders = new String[] { "src/main/resources/META-INF", "src/java/META-INF", "src/test/resources/META-INF", "src/test/META-INF",
+   "target/test-classes/META-INF" };
+   
    private final Set<String> includedMethodPattern;
    private final PeASSFolders folders;
    private final JUnitTestTransformer testTransformer;
@@ -40,13 +43,18 @@ public class KiekerEnvironmentPreparer {
       if (config.isUseSourceInstrumentation()) {
          final InstrumentKiekerSource instrumentKiekerSource;
          LOG.debug("Create default constructor: {}", config.getExecutionConfig().isCreateDefaultConstructor());
+         final HashSet<String> excludedPatterns = new HashSet<>();
+
+         buildJettyExclusion(excludedPatterns);
+
          if (!config.isUseSelectiveInstrumentation()) {
             InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), false, config.getExecutionConfig().isCreateDefaultConstructor(),
-                  config.isEnableAdaptiveConfig(), includedMethodPattern, false, config.getRepetitions());
+                  config.isEnableAdaptiveConfig(), includedMethodPattern, excludedPatterns, false, config.getRepetitions());
             instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
          } else {
-            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), config.isUseSampling(), config.getExecutionConfig().isCreateDefaultConstructor(),
-                  config.isEnableAdaptiveConfig(), includedMethodPattern, true, config.getRepetitions());
+            InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), config.isUseSampling(),
+                  config.getExecutionConfig().isCreateDefaultConstructor(),
+                  config.isEnableAdaptiveConfig(), includedMethodPattern, excludedPatterns, true, config.getRepetitions());
             instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
          }
          instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
@@ -65,6 +73,20 @@ public class KiekerEnvironmentPreparer {
             generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION);
             generateKiekerMonitoringProperties();
          }
+      }
+   }
+
+   private void buildJettyExclusion(final HashSet<String> excludedPatterns) {
+      for (String notInstrumenting : new String[] { "org.eclipse.jetty.logging.JettyLevel", "org.eclipse.jetty.logging.JettyLoggerConfiguration",
+            "org.eclipse.jetty.logging.JettyLoggingServiceProvider", "org.eclipse.jetty.logging.JettyLoggerFactory", "org.eclipse.jetty.logging.StdErrAppender",
+            "org.eclipse.jetty.logging.Timestamp","org.eclipse.jetty.logging.Timestamp$Tick",
+            "org.eclipse.jetty.logging.JettyLogger" }) {
+         excludedPatterns.add("new " + notInstrumenting + ".<init>(..)");
+         excludedPatterns.add("* " + notInstrumenting + ".*(..)"); // package visibility things from JettyLoggingServiceProvider with any return
+         excludedPatterns.add("*.* " + notInstrumenting + ".*(..)");
+         excludedPatterns.add("*.*.* " + notInstrumenting + ".*(..)");
+         excludedPatterns.add("*.*.*.* " + notInstrumenting + ".*(..)");
+         excludedPatterns.add("*.*.*.*.* " + notInstrumenting + ".*(..)");
       }
    }
 
@@ -106,9 +128,6 @@ public class KiekerEnvironmentPreparer {
          writer.flush();
       }
    }
-
-   private static final String[] metaInfFolders = new String[] { "src/main/resources/META-INF", "src/java/META-INF", "src/test/resources/META-INF", "src/test/META-INF",
-         "target/test-classes/META-INF" };
 
    private void generateAOPXML(final AllowedKiekerRecord aspect) {
       try {

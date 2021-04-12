@@ -55,7 +55,7 @@ public class MavenTestExecutor extends TestExecutor {
    private static final Logger LOG = LogManager.getLogger(MavenTestExecutor.class);
 
    /** M5 has some problems finding JUnit 5 tests; so stay at M3 */
-   public static final String SUREFIRE_VERSION = "3.0.0-M3";
+   public static final String SUREFIRE_VERSION = "3.0.0-M5";
    public static final String DEFAULT_JAVA_VERSION = "1.8";
 
    public static final String KIEKER_ADAPTIVE_FILENAME = "config" + File.separator + "kieker.adaptiveMonitoring.conf";
@@ -278,7 +278,7 @@ public class MavenTestExecutor extends TestExecutor {
          if (model.getBuild() == null) {
             model.setBuild(new Build());
          }
-         final String argline = new ArgLineBuilder(testTransformer).buildArgline(lastTmpFile);
+         final String argline = new ArgLineBuilder(testTransformer, pomFile.getParentFile()).buildArgline(lastTmpFile);
 
          MavenPomUtil.extendSurefire(argline, model, update, testTransformer.getConfig().getTimeoutInMinutes() * 2);
 

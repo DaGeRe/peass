@@ -19,7 +19,7 @@ public class TestArgLineBuilder {
       config.setUseKieker(true);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
 
-      ArgLineBuilder builder = new ArgLineBuilder(mockedTransformer);
+      ArgLineBuilder builder = new ArgLineBuilder(mockedTransformer, new File("/tmp/asd"));
 
       String argLineMaven = builder.buildArgline(new File("/tmp/asd"));
       MatcherAssert.assertThat(argLineMaven, Matchers.containsString("-javaagent"));
@@ -35,7 +35,7 @@ public class TestArgLineBuilder {
       config.setUseKieker(false);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
 
-      ArgLineBuilder builder = new ArgLineBuilder(mockedTransformer);
+      ArgLineBuilder builder = new ArgLineBuilder(mockedTransformer, new File("/tmp/asd"));
 
       String argLineMaven = builder.buildArgline(new File("/tmp/asd"));
       MatcherAssert.assertThat(argLineMaven, Matchers.not(Matchers.containsString("-javaagent")));
