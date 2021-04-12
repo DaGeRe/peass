@@ -78,23 +78,27 @@ public class ChangeManager {
    }
 
    void saveModule(final File module) throws IOException {
-      File destModuleDir;
-      if (!module.equals(folders.getProjectFolder())) {
-         final String relative = folders.getProjectFolder().toURI().relativize(module.toURI()).getPath();
-         destModuleDir = new File(folders.getOldSources(), relative + File.separator + "src");
-      } else {
-         destModuleDir = new File(folders.getOldSources(), "src");
-      }
       final File srcDir = new File(module, "src");
-      LOG.debug("Copying from {} to {}", srcDir.getAbsolutePath(), destModuleDir.getAbsolutePath());
-//      Files.copy(srcDir.toPath(), destModuleDir.toPath());
-       FileUtils.copyDirectory(srcDir, destModuleDir, new FileFilter() {
-         
-         @Override
-         public boolean accept(final File pathname) {
-            return pathname.canRead() && pathname.canWrite();
+      
+      // Only copy existing source directories, since multimodule modules may not contain a src directory
+      if (srcDir.exists()) {
+         File destModuleDir;
+         if (!module.equals(folders.getProjectFolder())) {
+            final String relative = folders.getProjectFolder().toURI().relativize(module.toURI()).getPath();
+            destModuleDir = new File(folders.getOldSources(), relative + File.separator + "src");
+         } else {
+            destModuleDir = new File(folders.getOldSources(), "src");
          }
-      });
+         LOG.debug("Copying from {} to {}", srcDir.getAbsolutePath(), destModuleDir.getAbsolutePath());
+         FileUtils.copyDirectory(srcDir, destModuleDir, new FileFilter() {
+            
+            @Override
+            public boolean accept(final File pathname) {
+               return pathname.canRead() && pathname.canWrite();
+            }
+         });
+      }
+       
    }
 
    public Map<ChangedEntity, ClazzChangeData> getChanges(final String version1, final String version2) {
