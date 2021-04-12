@@ -39,10 +39,14 @@ public class SelectiveSourceInstrumentationIT {
       Set<String> includedPatterns = new HashSet<>();
       includedPatterns.add("public void de.peass.MainTest.testMe()");
       includedPatterns.add("public void de.peass.C0_0.method0()");
+      includedPatterns.add("public void de.peass.AddRandomNumbers.*()");
       // Kieker pattern parser currently does not accept new, even if it the "return value" which is inside of the records signature
       includedPatterns.add("* de.peass.C0_0.<init>()");
       
-      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, true, false, includedPatterns, true, 1000);
+      Set<String> excluded = new HashSet<>();
+      excluded.add("public void de.peass.AddRandomNumbers.addSomething()");
+      
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, true, false, includedPatterns, excluded, true, 1000);
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 

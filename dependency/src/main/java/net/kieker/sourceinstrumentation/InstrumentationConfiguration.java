@@ -1,5 +1,6 @@
 package net.kieker.sourceinstrumentation;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class InstrumentationConfiguration {
@@ -10,6 +11,7 @@ public class InstrumentationConfiguration {
    private final boolean createDefaultConstructor;
    private final boolean enableAdaptiveMonitoring;
    private final Set<String> includedPatterns;
+   private final Set<String> excludedPatterns;
    
    /**
     * Simple constructor, setting default values for everything except usedRecord, sample and includedPatterns
@@ -19,6 +21,7 @@ public class InstrumentationConfiguration {
       this.usedRecord = usedRecord;
       this.sample = sample;
       this.includedPatterns = includedPatterns;
+      excludedPatterns = new HashSet<String>();
       this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
       this.createDefaultConstructor = true;
       this.enableDeactivation = enableDecativation;
@@ -33,6 +36,20 @@ public class InstrumentationConfiguration {
       this.createDefaultConstructor = createDefaultConstructor;
       this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
       this.includedPatterns = includedPatterns;
+      excludedPatterns = new HashSet<String>();
+      this.enableDeactivation = enableDecativation;
+      this.samplingCount = samplingCount;
+   }
+   
+   public InstrumentationConfiguration(final AllowedKiekerRecord usedRecord, final boolean sample, 
+         final boolean createDefaultConstructor, final boolean enableAdaptiveMonitoring,
+         final Set<String> includedPatterns, final Set<String> excludedPatterns, final boolean enableDecativation, final int samplingCount) {
+      this.usedRecord = usedRecord;
+      this.sample = sample;
+      this.createDefaultConstructor = createDefaultConstructor;
+      this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
+      this.includedPatterns = includedPatterns;
+      this.excludedPatterns = excludedPatterns;
       this.enableDeactivation = enableDecativation;
       this.samplingCount = samplingCount;
    }
@@ -55,6 +72,10 @@ public class InstrumentationConfiguration {
 
    public Set<String> getIncludedPatterns() {
       return includedPatterns;
+   }
+   
+   public Set<String> getExcludedPatterns() {
+      return excludedPatterns;
    }
    
    public boolean isEnableAdaptiveMonitoring() {
