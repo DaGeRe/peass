@@ -18,6 +18,7 @@ import de.peass.dependency.reader.VersionKeeper;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.utils.Constants;
 import de.peass.vcs.GitCommit;
+import de.peass.vcs.GitUtils;
 import de.peass.vcs.VersionIterator;
 import de.peass.vcs.VersionIteratorGit;
 
@@ -61,8 +62,9 @@ public class ContinuousDependencyReader {
    }
 
    public VersionIterator getIterator(final String lastVersionName) {
-      GitCommit lastAnalyzedCommit = new GitCommit(executionConfig.getVersionOld(), "", "", "");
-      GitCommit currentCommit = new GitCommit(executionConfig.getVersion(), "", "", "");
+      GitCommit lastAnalyzedCommit = new GitCommit(executionConfig.getVersionOld() != null ? executionConfig.getVersionOld() : lastVersionName, "", "", "");
+      String versionName = GitUtils.getName(executionConfig.getVersion() != null ? executionConfig.getVersion() : "HEAD", folders.getProjectFolder());
+      GitCommit currentCommit = new GitCommit(versionName, "", "", "");
 
       List<GitCommit> commits = new LinkedList<>();
       commits.add(lastAnalyzedCommit);
@@ -76,18 +78,18 @@ public class ContinuousDependencyReader {
       final String lastVersionName = dependencies.getNewestVersion();
       final Version versionDependency = dependencies.getVersions().get(lastVersionName);
       final String predecessingVersionName = versionDependency.getPredecessor();
-      
+
       if (!lastVersionName.equals(executionConfig.getVersion()) || !predecessingVersionName.equals(executionConfig.getVersionOld())) {
          executePartialRTS(dependencies, lastVersionName);
       }
    }
 
    private void executePartialRTS(final Dependencies dependencies, final String lastVersionName) throws FileNotFoundException {
-      File logFile = new File(getDependencyreadingFolder(), executionConfig.getVersion() + "_" + executionConfig.getVersionOld() + ".txt");
-      LOG.info("Executing regression test selection update (step 1) - Log goes to ", logFile.getAbsolutePath());
-      
+      VersionIterator newIterator = getIterator(lastVersionName);
+      File logFile = new File(getDependencyreadingFolder(), newIterator.getTag() + "_" + lastVersionName + ".txt");
+      LOG.info("Executing regression test selection update (step 1) - Log goes to {}", logFile.getAbsolutePath());
+
       try (LogRedirector director = new LogRedirector(logFile)) {
-         VersionIterator newIterator = getIterator(lastVersionName);
          DependencyReader reader = new DependencyReader(folders.getProjectFolder(), dependencyFile, dependencies.getUrl(), newIterator, executionConfig, env);
          newIterator.goTo0thCommit();
 
@@ -95,7 +97,7 @@ public class ContinuousDependencyReader {
          reader.readDependencies();
       }
    }
-   
+
    public File getDependencyreadingFolder() {
       File folder = new File(dependencyFile.getParentFile(), "dependencyreading");
       if (!folder.exists()) {

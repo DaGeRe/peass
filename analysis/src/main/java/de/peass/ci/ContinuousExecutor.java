@@ -127,8 +127,8 @@ public class ContinuousExecutor {
    }
 
    private VersionIteratorGit buildIterator() {
-      versionOld = GitUtils.getName(measurementConfig.getVersionOld(), folders.getProjectFolder());
-      version = GitUtils.getName(measurementConfig.getVersion(), folders.getProjectFolder());
+      versionOld = GitUtils.getName(measurementConfig.getVersionOld() != null ? measurementConfig.getVersionOld() : "HEAD~1", folders.getProjectFolder());
+      version = GitUtils.getName(measurementConfig.getVersion() != null ? measurementConfig.getVersion() : "HEAD", folders.getProjectFolder());
 
       final List<GitCommit> entries = new LinkedList<>();
       final GitCommit prevCommit = new GitCommit(versionOld, "", "", "");
