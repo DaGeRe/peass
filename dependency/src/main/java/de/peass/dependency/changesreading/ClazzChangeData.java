@@ -39,21 +39,21 @@ public class ClazzChangeData {
    private final Set<ChangedEntity> importChanges = new HashSet<>();
    private ChangedEntity containingFile;
 
-   public ClazzChangeData(ChangedEntity containingFile) {
+   public ClazzChangeData(final ChangedEntity containingFile) {
       this.containingFile = containingFile;
    }
 
-   public ClazzChangeData(ChangedEntity containingFile, boolean isOnlyMethodChange) {
+   public ClazzChangeData(final ChangedEntity containingFile, final boolean isOnlyMethodChange) {
       this.containingFile = containingFile;
       changedMethods.put(containingFile.getSimpleClazzName(), null);
       this.isOnlyMethodChange = isOnlyMethodChange;
    }
 
-   public ClazzChangeData(String clazz, boolean isOnlyMethodChange) {
+   public ClazzChangeData(final String clazz, final boolean isOnlyMethodChange) {
       this(new ChangedEntity(clazz, ""), isOnlyMethodChange);
    }
 
-   public ClazzChangeData(String clazz, String method) {
+   public ClazzChangeData(final String clazz, final String method) {
       addChange(clazz.substring(clazz.lastIndexOf('.') + 1), method);
       containingFile = new ChangedEntity(clazz, "");
    }
@@ -83,7 +83,7 @@ public class ClazzChangeData {
       return "clazz: " + changedMethods.keySet() + " " + isChange + " " + isOnlyMethodChange + " " + changedMethods.values();
    }
 
-   public void addChange(String clazzWithoutPackage, String method) {
+   public void addChange(final String clazzWithoutPackage, final String method) {
       if (clazzWithoutPackage.contains(".")) {
          throw new RuntimeException("Clazz " + clazzWithoutPackage + " must not contain package!");
       }
@@ -99,7 +99,7 @@ public class ClazzChangeData {
       methods.add(method);
    }
 
-   public void addClazzChange(String clazzWithoutPackage) {
+   public void addClazzChange(final String clazzWithoutPackage) {
       if (clazzWithoutPackage.contains(".")) {
          throw new RuntimeException("Clazz " + clazzWithoutPackage + " must not contain package!");
       }
@@ -114,7 +114,7 @@ public class ClazzChangeData {
       isOnlyMethodChange = false;
    }
 
-   public void addClazzChange(ChangedEntity clazz) {
+   public void addClazzChange(final ChangedEntity clazz) {
       addClazzChange(clazz.getSimpleClazzName());
    }
 
@@ -140,14 +140,23 @@ public class ClazzChangeData {
    public Set<ChangedEntity> getChanges() {
       Set<ChangedEntity> entities = new HashSet<>();
       for (Map.Entry<String, Set<String>> change : changedMethods.entrySet()) {
+         String fullQualifiedClassname = containingFile.getPackage() + "." + change.getKey();
          if (change.getValue() != null) {
             for (String method : change.getValue()) {
-               ChangedEntity entitity = new ChangedEntity(containingFile.getPackage() + "." + change.getKey(), containingFile.getModule(), method);
-               entities.add(entitity);
+               if (method.contains("(")) {
+                  String methodWithoutParameters = method.substring(0, method.indexOf('('));
+                  ChangedEntity entity = new ChangedEntity(fullQualifiedClassname, containingFile.getModule(), methodWithoutParameters);
+                  entity.createParameters(method.substring(method.indexOf('(')));
+                  entities.add(entity);
+               } else {
+                  ChangedEntity entity = new ChangedEntity(fullQualifiedClassname, containingFile.getModule(), method);
+                  entities.add(entity);
+               }
+
             }
          } else {
-            ChangedEntity entitity = new ChangedEntity(containingFile.getPackage() + "." + change.getKey(), containingFile.getModule());
-            entities.add(entitity);
+            ChangedEntity entity = new ChangedEntity(fullQualifiedClassname, containingFile.getModule());
+            entities.add(entity);
          }
       }
       return entities;
@@ -157,11 +166,11 @@ public class ClazzChangeData {
       return importChanges;
    }
 
-   public void addImportChange(String name, List<ChangedEntity> entities) {
+   public void addImportChange(final String name, final List<ChangedEntity> entities) {
       importChanges.add(new ChangedEntity(name, ""));
       isChange = true;
       isOnlyMethodChange = false;
-      
+
       for (ChangedEntity entity : entities) {
          addClazzChange(entity);
       }

@@ -75,7 +75,7 @@ public class PomJavaUpdater {
       if (compilerPlugin.getConfiguration() == null) {
          compilerPlugin.setConfiguration(new Xpp3Dom("configuration"));
       }
-      LOG.debug("Compiler" + model.getClass() + " " + compilerPlugin.getConfiguration().getClass());
+      LOG.trace("Compiler {} {}", model.getClass(), compilerPlugin.getConfiguration().getClass());
       compilerPlugin.setVersion(MavenPomUtil.COMPILER_PLUGIN_VERSION);
 
       // Only set java version to 8 if not java 11 or above is specified

@@ -62,7 +62,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          method = clazz.substring(clazz.lastIndexOf(ChangedEntity.METHOD_SEPARATOR) + 1);
       }
       if (method != null && (method.contains("(") || method.contains(")"))) {
-         throw new RuntimeException("Method should not included paranthesis, since it is only the method name without parameters");
+         throw new RuntimeException("Method (" + method + ") should not included paranthesis, since it is only the method name without parameters");
       }
 
       LOG.trace(javaClazzName + " " + clazz);
