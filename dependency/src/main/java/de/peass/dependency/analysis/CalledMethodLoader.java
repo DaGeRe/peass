@@ -47,8 +47,6 @@ public class CalledMethodLoader {
 
    private static final Logger LOG = LogManager.getLogger(CalledMethodLoader.class);
 
-   // private TraceReconstructionFilter traceReconstructionFilter;
-   // private final AnalysisController analysisController = new AnalysisController();
    private final File kiekerTraceFolder;
    private final ModuleClassMapping mapping;
 

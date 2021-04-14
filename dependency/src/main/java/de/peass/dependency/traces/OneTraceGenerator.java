@@ -23,7 +23,6 @@ import de.peass.dependencyprocessors.ViewNotFoundException;
 
 public class OneTraceGenerator {
 
-   private static final int MAX_SIZE_MB = 100;
    static final String METHOD = "_method";
    static final String METHOD_EXPANDED = "_method_expanded";
    public static final String NOCOMMENT = "_nocomment";
@@ -72,7 +71,7 @@ public class OneTraceGenerator {
       final long size = FileUtils.sizeOfDirectory(kiekerResultFolder);
       final long sizeInMB = size / (1024 * 1024);
       LOG.debug("Filesize: {} ({})", sizeInMB, size);
-      if (sizeInMB < MAX_SIZE_MB) {
+      if (sizeInMB < CalledMethodLoader.TRACE_MAX_SIZE_IN_MB) {
          final ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), modules);
          final List<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, mapping).getShortTrace("");
          if (shortTrace != null) {
@@ -81,13 +80,7 @@ public class OneTraceGenerator {
             if (shortTrace.size() > 0) {
                final TraceMethodReader traceMethodReader = new TraceMethodReader(shortTrace, files.toArray(new File[0]));
                final TraceWithMethods trace = traceMethodReader.getTraceWithMethods();
-               List<File> traceFiles = traceFileMap.get(testcase.toString());
-               if (traceFiles == null) {
-                  traceFiles = new LinkedList<>();
-                  traceFileMap.put(testcase.toString(), traceFiles);
-               }
-               TraceWriter traceWriter = new TraceWriter(version, testcase, viewFolder);
-               traceWriter.writeTrace(versionCurrent, sizeInMB, traceMethodReader, trace, traceFiles);
+               writeTrace(versionCurrent, sizeInMB, traceMethodReader, trace);
                success = true;
             } else {
                LOG.error("Trace empty!");
@@ -97,6 +90,16 @@ public class OneTraceGenerator {
          LOG.error("File size exceeds 2000 MB");
       }
       return success;
+   }
+
+   private void writeTrace(final String versionCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace) throws IOException {
+      List<File> traceFiles = traceFileMap.get(testcase.toString());
+      if (traceFiles == null) {
+         traceFiles = new LinkedList<>();
+         traceFileMap.put(testcase.toString(), traceFiles);
+      }
+      TraceWriter traceWriter = new TraceWriter(version, testcase, viewFolder);
+      traceWriter.writeTrace(versionCurrent, sizeInMB, traceMethodReader, trace, traceFiles);
    }
 
    
