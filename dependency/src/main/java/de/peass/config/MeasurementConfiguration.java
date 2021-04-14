@@ -102,6 +102,15 @@ public class MeasurementConfiguration implements Serializable {
             executionConfig.getIncludes().add(include);
          }
       }
+      if (executionMixin.getExcludes() != null) {
+         for (String exclude : executionMixin.getExcludes()) {
+            executionConfig.getExcludes().add(exclude);
+         }
+         throw new RuntimeException("Not implemented yet");
+      }
+      if (executionMixin.getPl() != null) {
+         executionConfig.setPl(executionMixin.getPl());
+      }
    }
 
    @JsonCreator

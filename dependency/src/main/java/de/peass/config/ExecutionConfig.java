@@ -25,6 +25,7 @@ public class ExecutionConfig implements Serializable {
    private final int timeout;
    private String testGoal;
    private List<String> includes;
+   private List<String> excludes;
 
    private String version = "HEAD";
    private String versionOld = "HEAD~1";
@@ -34,7 +35,8 @@ public class ExecutionConfig implements Serializable {
    private boolean createDefaultConstructor = true;
 
    public ExecutionConfig() {
-      includes = new LinkedList<String>();
+      includes = new LinkedList<>();
+      excludes = new LinkedList<>();
       testGoal = null;
       this.timeout = 5 * 60 * 1000;
    }
@@ -43,7 +45,8 @@ public class ExecutionConfig implements Serializable {
       if (timeoutInMinutes <= 0) {
          throw new RuntimeException("Illegal timeout: " + timeoutInMinutes);
       }
-      includes = new LinkedList<String>();
+      includes = new LinkedList<>();
+      excludes = new LinkedList<>();
       testGoal = null;
       this.timeout = timeoutInMinutes * 60 * 1000;
    }
@@ -51,6 +54,7 @@ public class ExecutionConfig implements Serializable {
    public ExecutionConfig(@JsonProperty("includes") final List<String> includes,
          @JsonProperty("testGoal") final String testGoal) {
       this.includes = includes;
+      excludes = new LinkedList<>();
       this.testGoal = testGoal;
       this.timeout = 5 * 60 * 1000;
    }
@@ -75,6 +79,15 @@ public class ExecutionConfig implements Serializable {
 
    public void setIncludes(final List<String> includes) {
       this.includes = includes;
+   }
+   
+   @JsonInclude(Include.NON_NULL)
+   public List<String> getExcludes() {
+      return excludes;
+   }
+   
+   public void setExcludes(final List<String> excludes) {
+      this.excludes = excludes;
    }
 
    @JsonIgnore
