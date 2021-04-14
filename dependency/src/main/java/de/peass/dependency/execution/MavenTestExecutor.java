@@ -224,20 +224,26 @@ public class MavenTestExecutor extends TestExecutor {
                   goal = "package";
                }
                MavenPomUtil.cleanType(pomFile);
-               return testRunningSuccess(version,
-                     new String[] { getMavenCall(),
-                           "clean", goal,
-                           "-DskipTests",
-                           "-Dmaven.test.skip.exec",
-                           "-Dcheckstyle.skip=true",
-                           // "-Dmaven.compiler.source=" + DEFAULT_JAVA_VERSION,
-                           // "-Dmaven.compiler.target=" + DEFAULT_JAVA_VERSION,
-                           "-Dmaven.javadoc.skip=true",
-                           "-Danimal.sniffer.skip=true",
-                           "-Djacoco.skip=true",
-                           "-Drat.skip=true",
-                           "-Denforcer.skip=true",
-                           "-DfailIfNoTests=false" });
+               String[] basicParameters = new String[] { getMavenCall(),
+                     "clean", goal,
+                     "-DskipTests",
+                     "-Dmaven.test.skip.exec",
+                     "-Dcheckstyle.skip=true",
+                     // "-Dmaven.compiler.source=" + DEFAULT_JAVA_VERSION,
+                     // "-Dmaven.compiler.target=" + DEFAULT_JAVA_VERSION,
+                     "-Dmaven.javadoc.skip=true",
+                     "-Danimal.sniffer.skip=true",
+                     "-Djacoco.skip=true",
+                     "-Drat.skip=true",
+                     "-Denforcer.skip=true",
+                     "-DfailIfNoTests=false" };
+               if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
+                  String[] projectListArray = new String[] { "-pl", testTransformer.getConfig().getExecutionConfig().getPl(), "-am" };
+                  String[] withPl = concatenateCommandArrays(basicParameters, projectListArray);
+                  return testRunningSuccess(version, withPl);
+               } else {
+                  return testRunningSuccess(version, basicParameters);
+               }
             } else {
                LOG.error("Expected src/test to exist");
                return false;
