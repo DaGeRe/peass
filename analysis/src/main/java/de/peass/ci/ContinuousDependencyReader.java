@@ -12,7 +12,6 @@ import de.peass.config.ExecutionConfig;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.Version;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependency.reader.VersionKeeper;
 import de.peass.dependencyprocessors.VersionComparator;
@@ -62,9 +61,13 @@ public class ContinuousDependencyReader {
    }
 
    public VersionIterator getIterator(final String lastVersionName) {
-      GitCommit lastAnalyzedCommit = new GitCommit(executionConfig.getVersionOld() != null ? executionConfig.getVersionOld() : lastVersionName, "", "", "");
       String versionName = GitUtils.getName(executionConfig.getVersion() != null ? executionConfig.getVersion() : "HEAD", folders.getProjectFolder());
+      if (versionName.equals(lastVersionName)) {
+         return null;
+      }
       GitCommit currentCommit = new GitCommit(versionName, "", "", "");
+      GitCommit lastAnalyzedCommit = new GitCommit(executionConfig.getVersionOld() != null ? executionConfig.getVersionOld() : lastVersionName, "", "", "");
+      
 
       List<GitCommit> commits = new LinkedList<>();
       commits.add(lastAnalyzedCommit);
@@ -76,17 +79,15 @@ public class ContinuousDependencyReader {
 
    private void partiallyLoadDependencies(final Dependencies dependencies) throws FileNotFoundException, Exception {
       final String lastVersionName = dependencies.getNewestVersion();
-      final Version versionDependency = dependencies.getVersions().get(lastVersionName);
-      final String predecessingVersionName = versionDependency.getPredecessor();
-
-      if (!lastVersionName.equals(executionConfig.getVersion()) || !predecessingVersionName.equals(executionConfig.getVersionOld())) {
-         executePartialRTS(dependencies, lastVersionName);
+      
+      VersionIterator newIterator = getIterator(lastVersionName);
+      if (newIterator != null) {
+         executePartialRTS(dependencies, newIterator);
       }
    }
 
-   private void executePartialRTS(final Dependencies dependencies, final String lastVersionName) throws FileNotFoundException {
-      VersionIterator newIterator = getIterator(lastVersionName);
-      File logFile = new File(getDependencyreadingFolder(), newIterator.getTag() + "_" + lastVersionName + ".txt");
+   private void executePartialRTS(final Dependencies dependencies, final VersionIterator newIterator) throws FileNotFoundException {
+      File logFile = new File(getDependencyreadingFolder(), newIterator.getTag() + "_" + newIterator.getPredecessor() + ".txt");
       LOG.info("Executing regression test selection update (step 1) - Log goes to {}", logFile.getAbsolutePath());
 
       try (LogRedirector director = new LogRedirector(logFile)) {
