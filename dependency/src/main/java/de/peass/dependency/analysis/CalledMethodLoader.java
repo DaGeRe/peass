@@ -40,7 +40,7 @@ import kieker.analysis.exception.AnalysisConfigurationException;
  */
 public class CalledMethodLoader {
 
-   public static final int TRACE_MAX_SIZE = 50;
+   public static final int TRACE_MAX_SIZE_IN_MB = 10;
 
    private static final PrintStream realSystemOut = System.out;
    private static final PrintStream realSystemErr = System.err;
@@ -90,8 +90,8 @@ public class CalledMethodLoader {
          final long size = FileUtils.sizeOfDirectory(kiekerTraceFolder);
          final long sizeInMB = size / (1024 * 1024);
 
-         LOG.debug("Größe: {} ({}) Ordner: {}", sizeInMB, size, kiekerTraceFolder);
-         if (sizeInMB < TRACE_MAX_SIZE) {
+         LOG.debug("Size: {} ({}) Folder: {}", sizeInMB, size, kiekerTraceFolder);
+         if (sizeInMB < TRACE_MAX_SIZE_IN_MB) {
             final PeassStage peassFilter = executePeassFilter(prefix);
             return peassFilter.getCalls();
          } else {

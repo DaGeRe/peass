@@ -233,7 +233,7 @@ public class DependencyManager extends KiekerResultManager {
       final long sizeInMB = size / (1024 * 1024);
 
       LOG.debug("Size: {} Folder: {}", sizeInMB, kiekerResultFolder);
-      if (sizeInMB > CalledMethodLoader.TRACE_MAX_SIZE) {
+      if (sizeInMB > CalledMethodLoader.TRACE_MAX_SIZE_IN_MB) {
          LOG.error("Trace too big!");
          return;
       }

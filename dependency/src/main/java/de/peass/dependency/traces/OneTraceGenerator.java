@@ -40,7 +40,6 @@ public class OneTraceGenerator {
 
    public OneTraceGenerator(final File viewFolder, final PeASSFolders folders, final TestCase testcase, final Map<String, List<File>> traceFileMap, final String version,
          final File resultsFolder, final ProjectModules modules) {
-      super();
       this.viewFolder = viewFolder;
       this.folders = folders;
       this.testcase = testcase;

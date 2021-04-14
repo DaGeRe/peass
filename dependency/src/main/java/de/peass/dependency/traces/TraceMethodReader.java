@@ -41,7 +41,6 @@ public class TraceMethodReader {
 
    private static final Logger LOG = LogManager.getLogger(TraceMethodReader.class);
 
-   private final List<TraceElement> calls;
    private final File[] clazzFolder;
 
    private final Map<File, CompilationUnit> loadedUnits = new HashMap<>();
@@ -49,18 +48,17 @@ public class TraceMethodReader {
    final Sequitur seq = new Sequitur();
 
    public TraceMethodReader(final List<TraceElement> calls, final File... clazzFolder) throws FileNotFoundException {
-      this.calls = calls;
       this.clazzFolder = clazzFolder;
-      trace = loadTrace();
+      trace = loadTrace(calls);
    }
 
    public TraceMethodReader(final File traceFolder, final ModuleClassMapping mapping, final File... clazzFolder) throws FileNotFoundException {
-      this.calls = new CalledMethodLoader(traceFolder, mapping).getShortTrace(null);
+      List<TraceElement> calls = new CalledMethodLoader(traceFolder, mapping).getShortTrace(null);
       this.clazzFolder = clazzFolder;
-      trace = loadTrace();
+      trace = loadTrace(calls);
    }
 
-   private TraceWithMethods loadTrace() throws FileNotFoundException {
+   private TraceWithMethods loadTrace(final List<TraceElement> calls) throws FileNotFoundException {
       LOG.debug("Trace Length: {}", calls.size());
       seq.addTraceElements(calls);
       final RunLengthEncodingSequitur runLengthEncodingSequitur = new RunLengthEncodingSequitur(seq);
