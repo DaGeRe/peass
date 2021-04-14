@@ -87,7 +87,8 @@ public class OneTraceGenerator {
                   traceFiles = new LinkedList<>();
                   traceFileMap.put(testcase.toString(), traceFiles);
                }
-               new TraceWriter(version, testcase, viewFolder).writeTrace(versionCurrent, sizeInMB, traceMethodReader, trace, traceFiles);
+               TraceWriter traceWriter = new TraceWriter(version, testcase, viewFolder);
+               traceWriter.writeTrace(versionCurrent, sizeInMB, traceMethodReader, trace, traceFiles);
                success = true;
             } else {
                LOG.error("Trace empty!");

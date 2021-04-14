@@ -45,10 +45,6 @@ public class SignatureMatchChecker {
             pattern = fixConstructorPattern(pattern);
             try {
                Pattern patternP = PatternParser.parseToPattern(pattern);
-               if (signature.contains("JettyLoggingServiceProvider")) {
-                  System.out.println("Testing " + signature + " Pattern: " + pattern + " " + patternP.matcher(signature).matches());
-                  System.out.println("   " + patternP);
-               }
                if (patternP.matcher(signature).matches()) {
                   oneMatches = false;
                   break;
