@@ -91,7 +91,6 @@ public class MavenTestExecutor extends TestExecutor {
       final String testGoal = getTestGoal();
       String mvnCall = getMavenCall();
       final String[] originals = new String[] { mvnCall,
-            "-X",
             testGoal,
             "-fn",
             "-Dcheckstyle.skip=true",
