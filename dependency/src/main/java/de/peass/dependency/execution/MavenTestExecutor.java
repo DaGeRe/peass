@@ -91,6 +91,7 @@ public class MavenTestExecutor extends TestExecutor {
       final String testGoal = getTestGoal();
       String mvnCall = getMavenCall();
       final String[] originals = new String[] { mvnCall,
+            "-X",
             testGoal,
             "-fn",
             "-Dcheckstyle.skip=true",
@@ -114,7 +115,9 @@ public class MavenTestExecutor extends TestExecutor {
 
    private String getMavenCall() {
       String mvnCall;
-      if (!System.getProperty("os.name").startsWith("Windows")) {
+      if (env.getEnvironmentVariables().containsKey("MVN_CMD")) {
+         mvnCall = env.getEnvironmentVariables().get("MVN_CMD");
+      } else if (!System.getProperty("os.name").startsWith("Windows")) {
          mvnCall = "mvn";
       } else {
          mvnCall = "mvn.cmd";

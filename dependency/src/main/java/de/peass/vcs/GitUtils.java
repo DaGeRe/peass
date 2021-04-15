@@ -318,15 +318,9 @@ public final class GitUtils {
       try {
          synchronized (projectFolder) {
             LOG.debug("Going to tag {} folder: {}", tag, projectFolder.getAbsolutePath());
-            final Process pReset = Runtime.getRuntime().exec("git reset --hard", new String[0], projectFolder);
-            final String outReset = StreamGobbler.getFullProcess(pReset, false);
-            pReset.waitFor();
-            System.out.println(outReset);
+            reset(projectFolder);
             
-            final Process pClean = Runtime.getRuntime().exec("git clean -df", new String[0], projectFolder);
-            final String outClean = StreamGobbler.getFullProcess(pClean, false);
-            pClean.waitFor();
-            System.out.println(outClean);
+            clean(projectFolder);
 
             int worked = checkout(tag, projectFolder);
             
@@ -349,6 +343,20 @@ public final class GitUtils {
       } catch (final InterruptedException e) {
          e.printStackTrace();
       }
+   }
+
+   public static void clean(final File projectFolder) throws IOException, InterruptedException {
+      final Process pClean = Runtime.getRuntime().exec("git clean -df", new String[0], projectFolder);
+      final String outClean = StreamGobbler.getFullProcess(pClean, false);
+      pClean.waitFor();
+      System.out.println(outClean);
+   }
+
+   public static void reset(final File projectFolder) throws IOException, InterruptedException {
+      final Process pReset = Runtime.getRuntime().exec("git reset --hard", new String[0], projectFolder);
+      final String outReset = StreamGobbler.getFullProcess(pReset, false);
+      pReset.waitFor();
+      System.out.println(outReset);
    }
 
    private static int checkout(final String tag, final File projectFolder) throws IOException, InterruptedException {

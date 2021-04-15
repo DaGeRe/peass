@@ -68,6 +68,8 @@ public class ContinuousExecutor {
             throw new RuntimeException("Was not able to clone project to " + projectFolderLocal.getAbsolutePath() + " (folder not existing)");
          }
       } else {
+         GitUtils.reset(projectFolderLocal);
+         GitUtils.clean(projectFolderLocal);
          GitUtils.pull(projectFolderLocal);
          GitUtils.goToTag(measurementConfig.getVersion(), projectFolderLocal);
       }

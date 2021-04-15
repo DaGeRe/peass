@@ -52,7 +52,7 @@ public abstract class TestExecutor {
    protected boolean isAndroid;
 
    protected boolean buildfileExists = false;
-   private final EnvironmentVariables env;
+   protected final EnvironmentVariables env;
 
    public TestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
       this.folders = folders;
@@ -147,6 +147,7 @@ public abstract class TestExecutor {
       }
 
       for (Map.Entry<String, String> entry : env.getEnvironmentVariables().entrySet()) {
+         LOG.trace("Environment: {} = {}", entry.getKey(), entry.getValue());
          pb.environment().put(entry.getKey(), entry.getValue());
       }
    }
