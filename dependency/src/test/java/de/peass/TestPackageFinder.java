@@ -16,8 +16,8 @@ public class TestPackageFinder {
 	public void testDependencyModule(){
 		final List<String> lowestPackage = ClazzFileFinder.getClasses(new File("."));
 		System.out.println(lowestPackage);
-		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.peass.DependencyReadingStarter"));
-		Assert.assertThat(lowestPackage, Matchers.not(IsCollectionContaining.hasItem("de.peass.DependencyReadingStarter.DependencyReadingStarter")));
+		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.peass.DependencyReadingParallelStarter"));
+		Assert.assertThat(lowestPackage, Matchers.not(IsCollectionContaining.hasItem("de.peass.DependencyReadingParallelStarter.DependencyReadingParallelStarter")));
 		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.peass.statistics.DependencyStatisticAnalyzer"));
 		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.peass.statistics.DependencyStatistics"));
 		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.peass.TestPackageFinder"));
