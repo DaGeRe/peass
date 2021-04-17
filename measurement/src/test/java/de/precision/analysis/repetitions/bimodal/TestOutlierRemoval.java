@@ -15,7 +15,7 @@ public class TestOutlierRemoval {
       new OutlierRemoverBimodal(basicValues);
       Assert.assertEquals(200, basicValues.size());
       
-      addValue(basicValues, 50.5);
+      addValue(basicValues, 50.01);
       new OutlierRemoverBimodal(basicValues);
       Assert.assertEquals(201, basicValues.size());
    }
@@ -37,8 +37,8 @@ public class TestOutlierRemoval {
       new OutlierRemoverBimodal(basicValues);
       Assert.assertEquals(200, basicValues.size());
 
-      addValue(basicValues, 50.5);
-      addValue(basicValues, 100.5);
+      addValue(basicValues, 50.01);
+      addValue(basicValues, 100.01);
       new OutlierRemoverBimodal(basicValues);
       Assert.assertEquals(202, basicValues.size());
    }
@@ -54,7 +54,7 @@ public class TestOutlierRemoval {
       Assert.assertEquals(200, basicValues.size()); 
    }
    
-   private void addValue(List<Result> basicValues, final double value) {
+   private void addValue(final List<Result> basicValues, final double value) {
       final Result result2 = new Result();
       result2.setValue(value);
       basicValues.add(result2);
