@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.peass.config.DependencyConfig;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.execution.EnvironmentVariables;
@@ -35,7 +36,7 @@ public class DependencyParallelReader {
    private final ExecutionConfig executionConfig;
    private final EnvironmentVariables env;
 
-   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<GitCommit> commits, final int threadCount,
+   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<GitCommit> commits, final DependencyConfig dependencyConfig,
          final int timeout, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       url = GitUtils.getURL(projectFolder);
       this.executionConfig = executionConfig;
@@ -54,10 +55,10 @@ public class DependencyParallelReader {
       nonRunning = new VersionKeeper(new File(tempResultFolder, "nonRunning_" + project + ".json"));
       nonChanges = new VersionKeeper(new File(tempResultFolder, "nonChanges_" + project + ".json"));
 
-      sizePerThread = commits.size() > 2 * threadCount ? commits.size() / threadCount : 2;
-      outFiles = commits.size() > 2 * threadCount ? new File[threadCount] : new File[1];
+      sizePerThread = commits.size() > 2 * dependencyConfig.getThreads() ? commits.size() / dependencyConfig.getThreads() : 2;
+      outFiles = commits.size() > 2 * dependencyConfig.getThreads() ? new File[dependencyConfig.getThreads()] : new File[1];
 
-      LOG.debug("Threads: {} Size per Thread: {} OutFile: {}", threadCount, sizePerThread, outFiles.length);
+      LOG.debug("Threads: {} Size per Thread: {} OutFile: {}", dependencyConfig.getThreads(), sizePerThread, outFiles.length);
    }
 
    public File[] readDependencies() throws InterruptedException, IOException {

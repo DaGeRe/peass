@@ -26,7 +26,7 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.DependencyReadingStarter;
+import de.peass.CommitUtil;
 import de.peass.config.DependencyReaderConfigMixin;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.execution.EnvironmentVariables;
@@ -125,7 +125,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
          final int timeout, final VersionControlSystem vcs) {
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.GIT)) {
-         final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(config.getStartversion(), config.getEndversion(), config.getProjectFolder());
+         final List<GitCommit> commits = CommitUtil.getGitCommits(config.getStartversion(), config.getEndversion(), config.getProjectFolder());
          commits.add(0, new GitCommit(previousVersion, "", "", ""));
          final GitCommit previous = new GitCommit(previousVersion, "", "", "");
          final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previous);

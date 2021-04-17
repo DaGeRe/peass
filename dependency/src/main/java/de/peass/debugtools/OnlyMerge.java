@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
-import de.peass.DependencyReadingStarter;
+import de.peass.CommitUtil;
 import de.peass.config.DependencyReaderConfigMixin;
 import de.peass.dependency.parallel.PartialDependenciesMerger;
 import de.peass.dependencyprocessors.VersionComparator;
@@ -32,7 +32,7 @@ public class OnlyMerge implements Callable<Void>{
    @Override
    public Void call() throws Exception {
       final File projectFolder = config.getProjectFolder();
-      final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(config.getStartversion(), config.getEndversion(), projectFolder);
+      final List<GitCommit> commits = CommitUtil.getGitCommits(config.getStartversion(), config.getEndversion(), projectFolder);
       VersionComparator.setVersions(commits);
       
       final File[] files = config.getResultBaseFolder().listFiles((FilenameFilter) new WildcardFileFilter("deps*.json"));

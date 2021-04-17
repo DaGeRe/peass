@@ -55,7 +55,7 @@ public class DependencyExecutionReader implements Callable<Void>{
    public Void call() throws Exception {
       final String project = config.getProjectFolder().getName();
       
-      final List<GitCommit> commits = DependencyReadingStarter.getGitCommits(config.getStartversion(), config.getEndversion(), config.getProjectFolder());
+      final List<GitCommit> commits = CommitUtil.getGitCommits(config.getStartversion(), config.getEndversion(), config.getProjectFolder());
       VersionComparator.setVersions(commits);
       
       readExecutions(project, commits);
@@ -64,7 +64,7 @@ public class DependencyExecutionReader implements Callable<Void>{
 
    public void readExecutions(final String project, final List<GitCommit> commits) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, JAXBException {
       final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, commits, 
-            config.getThreads(), config.getTimeout(), config.getExecutionConfig(), new EnvironmentVariables());
+            config.getDependencyConfig(), config.getTimeout(), config.getExecutionConfig(), new EnvironmentVariables());
       final File[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);

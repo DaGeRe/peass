@@ -11,11 +11,11 @@ public class DependencyReaderConfigMixin {
    @Option(names = { "-out", "--out" }, description = "Folder for results")
    private File resultBaseFolder = new File("results");
 
-   @Option(names = { "-timeout", "--timeout" }, description = "Timeout for each VM start")
+   @Option(names = { "-timeout", "--timeout" }, description = "Timeout for each VM start, default 5")
    private int timeout = 5;
 
-   @Option(names = { "-threads", "--threads" }, description = "Number of parallel threads for analysis")
-   private int threads = 4;
+   @Option(names = { "-threads", "--threads" }, description = "Number of parallel threads for analysis, default 2")
+   private int threads = 2;
 
    @Option(names = { "-startversion", "--startversion" }, description = "First version that should be analysed")
    private String startversion;
@@ -35,7 +35,7 @@ public class DependencyReaderConfigMixin {
    protected String pl;
    
    @Option(names = {"-doNotUpdateDependencies", "--doNotUpdateDependencies"}, description = "Disable updating of dependencies. This will make results for more than one version unusable, but increase dependency creation speed.")
-   public boolean doNotUpdateDependencies;
+   public boolean doNotUpdateDependencies = false;
    
    public String getTestGoal() {
       return testGoal;
@@ -65,18 +65,6 @@ public class DependencyReaderConfigMixin {
       return endversion;
    }
 
-   public ExecutionConfig getExecutionConfig() {
-      ExecutionConfig executionConfig = new ExecutionConfig();
-      executionConfig.setTestGoal(testGoal);
-      if (includes != null) {
-         for (String include : includes) {
-            executionConfig.getIncludes().add(include);
-         }
-      }
-      executionConfig.setPl(pl);
-      return executionConfig;
-   }
-   
    public void setIncludes(final String[] includes) {
       this.includes = includes;
    }
@@ -99,5 +87,21 @@ public class DependencyReaderConfigMixin {
    
    public boolean isDoNotUpdateDependencies() {
       return doNotUpdateDependencies;
+   }
+   
+   public ExecutionConfig getExecutionConfig() {
+      ExecutionConfig executionConfig = new ExecutionConfig();
+      executionConfig.setTestGoal(testGoal);
+      if (includes != null) {
+         for (String include : includes) {
+            executionConfig.getIncludes().add(include);
+         }
+      }
+      executionConfig.setPl(pl);
+      return executionConfig;
+   }
+   
+   public DependencyConfig getDependencyConfig() {
+      return new DependencyConfig(threads, doNotUpdateDependencies);
    }
 }
