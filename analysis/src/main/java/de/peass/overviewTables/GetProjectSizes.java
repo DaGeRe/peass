@@ -33,7 +33,7 @@ public class GetProjectSizes {
       System.out.println("Projekt & Versionen & Analysierbar & Geändert & Selektiert & Tests\\\\ \\hline");
       for (final String project: CleanAll.allProjects) {
          final File projectFolder = new File("../../projekte/" + project);
-         final int commits = GitUtils.getCommits(projectFolder).size();
+         final int commits = GitUtils.getCommits(projectFolder, true).size();
          
          final File executionFile = new File(dependencyFolder, "execute_" + project+".json");
          

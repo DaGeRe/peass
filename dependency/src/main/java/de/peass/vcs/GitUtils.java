@@ -62,7 +62,7 @@ public final class GitUtils {
          File candidate = new File(System.getenv(Constants.PEASS_PROJECTS), project);
          if (candidate.exists()) {
             repoFound = true;
-            final List<GitCommit> commits = GitUtils.getCommits(candidate);
+            final List<GitCommit> commits = GitUtils.getCommits(candidate, false);
             VersionComparator.setVersions(commits);
          }
       }
@@ -83,7 +83,7 @@ public final class GitUtils {
       if (!repoFound) {
          final File tempDir = Files.createTempDirectory("gitTemp").toFile();
          GitUtils.downloadProject(url, tempDir);
-         final List<GitCommit> commits = GitUtils.getCommits(tempDir);
+         final List<GitCommit> commits = GitUtils.getCommits(tempDir, false);
          VersionComparator.setVersions(commits);
          FileUtils.deleteDirectory(tempDir);
       }
@@ -161,7 +161,7 @@ public final class GitUtils {
    }
 
    public static List<GitCommit> getCommits(final File folder, final String startversion, final String endversion) {
-      final List<GitCommit> commits = getCommits(folder);
+      final List<GitCommit> commits = getCommits(folder, true);
       GitUtils.filterList(startversion, endversion, commits);
       return commits;
    }
@@ -172,10 +172,11 @@ public final class GitUtils {
     * @param folder
     * @return
     */
-   public static List<GitCommit> getCommits(final File folder) {
+   public static List<GitCommit> getCommits(final File folder, final boolean includeAllBranches) {
       final List<GitCommit> commits = new LinkedList<>();
       try {
-         final Process p = Runtime.getRuntime().exec("git log --all", new String[0], folder);
+         String command = includeAllBranches ? "git log --all" : "git log";
+         final Process p = Runtime.getRuntime().exec(command, new String[0], folder);
          final BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
          String line;
          while ((line = input.readLine()) != null) {

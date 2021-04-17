@@ -34,7 +34,7 @@ public class GetValidationExecutionFile {
 
    public static List<String> excluded = new LinkedList<>();
 
-   public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final RepoFolders folders = new RepoFolders();
 
       File projectsFolder = new File(System.getenv(Constants.PEASS_PROJECTS));
@@ -50,7 +50,7 @@ public class GetValidationExecutionFile {
       FolderSearcher.MAPPER.writeValue(new File(folders.getCleanDataFolder().getParentFile(), "validation" + File.separator + "performance_commits.json"), projectCommits);
    }
 
-   public static void readNoPerformanceChanges(File noPerformanceChangeFile) throws FileNotFoundException, IOException {
+   public static void readNoPerformanceChanges(final File noPerformanceChangeFile) throws FileNotFoundException, IOException {
       try (BufferedReader reader = new BufferedReader(new FileReader(noPerformanceChangeFile))) {
          String line;
          while ((line = reader.readLine()) != null) {
@@ -60,7 +60,7 @@ public class GetValidationExecutionFile {
       }
    }
 
-   public static void getProjectValidationExecution(final RepoFolders folders, File projectsFolder, String project, Map<String, Map<String, String>> projectsCommits)
+   public static void getProjectValidationExecution(final RepoFolders folders, final File projectsFolder, final String project, final Map<String, Map<String, String>> projectsCommits)
          throws JsonParseException, JsonMappingException, IOException, JsonGenerationException {
       final ExecutionData changedTests = folders.getExecutionData(project);
 
@@ -69,7 +69,7 @@ public class GetValidationExecutionFile {
       selected.setUrl(changedTests.getUrl());
 
       File projectFolder = new File(projectsFolder, project);
-      List<GitCommit> commits = GitUtils.getCommits(projectFolder);
+      List<GitCommit> commits = GitUtils.getCommits(projectFolder, false);
       VersionComparator.setVersions(commits);
 
       Map<String, String> projectCommits = new LinkedHashMap<>();
@@ -81,13 +81,13 @@ public class GetValidationExecutionFile {
       FolderSearcher.MAPPER.writeValue(dest, selected);
    }
 
-   public static File getValidationExecutionFile(String project) {
+   public static File getValidationExecutionFile(final String project) {
       File dest = new File("results", "reexecute-validation" + File.separator + "execute_" + project + "_validation.json");
       dest.getParentFile().mkdirs();
       return dest;
    }
 
-   public static void checkVersions(final ExecutionData changedTests, final ExecutionData selected, List<GitCommit> commits, Map<String, String> projectCommits) {
+   public static void checkVersions(final ExecutionData changedTests, final ExecutionData selected, final List<GitCommit> commits, final Map<String, String> projectCommits) {
       for (GitCommit commit : commits) {
          boolean contains = Arrays.stream(CHANGE_INDICATORS).anyMatch(commit.getMessage()::contains);
          if (contains && !excluded.contains(commit.getTag())) {

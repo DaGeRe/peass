@@ -81,7 +81,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       final File dependencyFileIn = getDependencyInFile();
 
       final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, Dependencies.class);
-      VersionComparator.setVersions(GitUtils.getCommits(projectFolder));
+      VersionComparator.setVersions(GitUtils.getCommits(projectFolder, false));
 
       String previousVersion = getPreviousVersion(config.getStartversion(), projectFolder, dependencies);
 

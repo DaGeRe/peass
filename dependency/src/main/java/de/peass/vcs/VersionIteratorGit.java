@@ -41,7 +41,7 @@ public class VersionIteratorGit extends VersionIterator {
    public VersionIteratorGit(final File projectFolder) {
       super(projectFolder);
       previous = new GitCommit(GitUtils.getName("HEAD~1", projectFolder), "", "", "");
-      entries = GitUtils.getCommits(projectFolder);
+      entries = GitUtils.getCommits(projectFolder, false);
       previousIndex = entries.indexOf(previous);
    }
    
