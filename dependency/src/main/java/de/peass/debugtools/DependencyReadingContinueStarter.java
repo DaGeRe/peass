@@ -17,7 +17,6 @@
 package de.peass.debugtools;
 
 import java.io.File;
-import java.io.PrintStream;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -77,37 +76,43 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
          throw new RuntimeException("Folder " + projectFolder.getAbsolutePath() + " does not exist.");
       }
 
-      final File dependencyFile = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + ".json");
+      final File dependencyFileOut = getDependencyOutFile();
 
-      final File dependencyFileIn;
-      if (this.dependencyFile != null) {
-         dependencyFileIn = this.dependencyFile;
-      } else {
-         dependencyFileIn = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + "_continue.json");
-      }
+      final File dependencyFileIn = getDependencyInFile();
 
       final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, Dependencies.class);
       VersionComparator.setVersions(GitUtils.getCommits(projectFolder));
 
       String previousVersion = getPreviousVersion(config.getStartversion(), projectFolder, dependencies);
 
-      File outputFile = projectFolder.getParentFile();
-      if (outputFile.isDirectory()) {
-         outputFile = new File(projectFolder.getParentFile(), "ausgabe.txt");
-      }
-
       final int timeout = config.getTimeout();
 
       LOG.debug("Lese {}", projectFolder.getAbsolutePath());
       final VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
 
-      System.setOut(new PrintStream(outputFile));
-
-      final DependencyReader reader = createReader(config, dependencyFile, dependencies, previousVersion, timeout, vcs);
+      final DependencyReader reader = createReader(config, dependencyFileOut, dependencies, previousVersion, timeout, vcs);
       reader.readCompletedVersions(dependencies);
       reader.readDependencies();
 
       return null;
+   }
+
+   private File getDependencyInFile() {
+      final File dependencyFileIn;
+      if (this.dependencyFile != null) {
+         dependencyFileIn = this.dependencyFile;
+      } else {
+         dependencyFileIn = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + "_continue.json");
+      }
+      return dependencyFileIn;
+   }
+
+   private File getDependencyOutFile() {
+      final File dependencyFile = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + ".json");
+      if (!dependencyFile.getParentFile().exists()) {
+         dependencyFile.getParentFile().mkdirs();
+      }
+      return dependencyFile;
    }
 
    static String getPreviousVersion(final String startversion, final File projectFolder, final Dependencies dependencies) {
@@ -130,7 +135,8 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
          final GitCommit previous = new GitCommit(previousVersion, "", "", "");
          final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previous);
          ExecutionConfig executionConfig = config.getExecutionConfig();
-         reader = new DependencyReader(config.getDependencyConfig(), config.getProjectFolder(), dependencyFile, dependencies.getUrl(), iterator, executionConfig, new EnvironmentVariables());
+         reader = new DependencyReader(config.getDependencyConfig(), config.getProjectFolder(), dependencyFile, dependencies.getUrl(), iterator, executionConfig,
+               new EnvironmentVariables());
          iterator.goTo0thCommit();
       } else if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");
