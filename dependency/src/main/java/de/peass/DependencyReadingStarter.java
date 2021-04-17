@@ -24,8 +24,7 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.config.DependencyReaderConfig;
-import de.peass.config.ExecutionConfig;
+import de.peass.config.DependencyReaderConfigMixin;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.reader.DependencyReader;
@@ -52,7 +51,7 @@ public class DependencyReadingStarter implements Callable<Void> {
    private static final Logger LOG = LogManager.getLogger(DependencyReadingStarter.class);
 
    @Mixin
-   private DependencyReaderConfig config;
+   private DependencyReaderConfigMixin config;
 
    public static void main(final String[] args) {
       try {
@@ -81,10 +80,6 @@ public class DependencyReadingStarter implements Callable<Void> {
       LOG.debug("Lese {}", projectFolder.getAbsolutePath());
       final VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
 
-      final int timeout = config.getTimeout();
-      ExecutionConfig executionConfig = new ExecutionConfig(timeout);
-      executionConfig.setTestGoal(config.getTestGoal());
-
       System.setOut(new PrintStream(outputFile));
 
       final VersionKeeper nonRunning = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonRunning_" + projectFolder.getName() + ".json"));
@@ -98,7 +93,7 @@ public class DependencyReadingStarter implements Callable<Void> {
          final List<GitCommit> commits = getGitCommits(config.getStartversion(), config.getEndversion(), projectFolder);
          LOG.debug(url);
          final VersionIterator iterator = new VersionIteratorGit(projectFolder, commits, null);
-         boolean init = new FirstRunningVersionFinder(new PeASSFolders(projectFolder), nonRunning, iterator, executionConfig, new EnvironmentVariables()).searchFirstRunningCommit();
+         boolean init = new FirstRunningVersionFinder(new PeASSFolders(projectFolder), nonRunning, iterator, config.getExecutionConfig(), new EnvironmentVariables()).searchFirstRunningCommit();
          if (!init) {
             throw new RuntimeException("No analyzable version");
          }

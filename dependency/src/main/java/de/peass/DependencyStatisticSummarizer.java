@@ -13,7 +13,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.config.DependencyReaderConfig;
+import de.peass.config.DependencyReaderConfigMixin;
 import de.peass.dependency.persistence.ExecutionData;
 import de.peass.statistics.DependencyStatisticAnalyzer;
 import de.peass.statistics.DependencyStatistics;
@@ -32,7 +32,7 @@ import picocli.CommandLine.Mixin;
 public class DependencyStatisticSummarizer implements Callable<Void> {
 
    @Mixin
-   private DependencyReaderConfig config;
+   private DependencyReaderConfigMixin config;
 
    public static void main(final String[] args) {
       try {

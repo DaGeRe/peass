@@ -27,7 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.peass.DependencyReadingStarter;
-import de.peass.config.DependencyReaderConfig;
+import de.peass.config.DependencyReaderConfigMixin;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.persistence.Dependencies;
@@ -56,7 +56,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
    private static final Logger LOG = LogManager.getLogger(DependencyReadingContinueStarter.class);
 
    @Mixin
-   private DependencyReaderConfig config;
+   private DependencyReaderConfigMixin config;
 
    @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Folder for dependencyfile")
    private File dependencyFile = null;
@@ -121,7 +121,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       return previousVersion;
    }
 
-   static DependencyReader createReader(final DependencyReaderConfig config, final File dependencyFile, final Dependencies dependencies, final String previousVersion,
+   static DependencyReader createReader(final DependencyReaderConfigMixin config, final File dependencyFile, final Dependencies dependencies, final String previousVersion,
          final int timeout, final VersionControlSystem vcs) {
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.GIT)) {

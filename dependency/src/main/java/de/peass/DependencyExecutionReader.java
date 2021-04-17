@@ -14,7 +14,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.analysis.properties.PropertyReader;
-import de.peass.config.DependencyReaderConfig;
+import de.peass.config.DependencyReaderConfigMixin;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.parallel.PartialDependenciesMerger;
@@ -40,7 +40,7 @@ public class DependencyExecutionReader implements Callable<Void>{
    private static final Logger LOG = LogManager.getLogger(DependencyExecutionReader.class);
 
    @Mixin
-   private DependencyReaderConfig config;
+   private DependencyReaderConfigMixin config;
 
    public static void main(final String[] args) {
       try {

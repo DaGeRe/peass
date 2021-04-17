@@ -4,7 +4,7 @@ import java.io.File;
 
 import picocli.CommandLine.Option;
 
-public class DependencyReaderConfig {
+public class DependencyReaderConfigMixin {
    @Option(names = { "-folder", "--folder" }, description = "Folder that should be analyzed", required = true)
    private File projectFolder;
 
@@ -33,6 +33,9 @@ public class DependencyReaderConfig {
    
    @Option(names = { "-pl", "--pl" }, description = "Projectlist (-pl) argument for maven (e.g. :submodule) - only the submodule and its dependencies are analyzed (using -am)")
    protected String pl;
+   
+   @Option(names = {"-doNotUpdateDependencies", "--doNotUpdateDependencies"}, description = "Disable updating of dependencies. This will make results for more than one version unusable, but increase dependency creation speed.")
+   public boolean doNotUpdateDependencies;
    
    public String getTestGoal() {
       return testGoal;
@@ -89,5 +92,12 @@ public class DependencyReaderConfig {
    public void setPl(final String pl) {
       this.pl = pl;
    }
-
+   
+   public void setDoNotUpdateDependencies(final boolean doNotUpdateDependencies) {
+      this.doNotUpdateDependencies = doNotUpdateDependencies;
+   }
+   
+   public boolean isDoNotUpdateDependencies() {
+      return doNotUpdateDependencies;
+   }
 }

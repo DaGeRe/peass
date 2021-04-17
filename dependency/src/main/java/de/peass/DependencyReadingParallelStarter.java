@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.config.DependencyReaderConfig;
+import de.peass.config.DependencyReaderConfigMixin;
 import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependency.parallel.PartialDependenciesMerger;
 import de.peass.dependency.persistence.Dependencies;
@@ -24,7 +24,7 @@ public class DependencyReadingParallelStarter implements Callable<Void> {
    private static final Logger LOG = LogManager.getLogger(DependencyReadingParallelStarter.class);
    
    @Mixin
-   private DependencyReaderConfig config;
+   private DependencyReaderConfigMixin config;
 
    public static void main(final String[] args) {
       try {
