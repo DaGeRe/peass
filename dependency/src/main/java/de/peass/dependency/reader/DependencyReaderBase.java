@@ -150,19 +150,19 @@ public abstract class DependencyReaderBase {
 
          NonIncludedTestRemover.removeNotIncluded(testsToRun, executionConfig);
 
-         final int changedTests;
          if (testsToRun.classCount() > 0) {
-            changedTests = analyzeTests(version, newVersionInfo, testsToRun);
-         } else {
-            changedTests = 0;
-         }
+            analyzeTests(version, newVersionInfo, testsToRun);
+         } 
          dependencyResult.getVersions().put(version, newVersionInfo);
-         return changedTests;
       } else {
          LOG.debug("Not updating dependencies since doNotUpdateDependencies was set - only returning dependencies based on changed classes");
-
-         throw new RuntimeException("Not implemented yet");
+         dependencyResult.getVersions().put(version, newVersionInfo);
       }
+      
+      final int changedClazzCount = newVersionInfo.getChangedClazzes().values().stream().mapToInt(value -> {
+         return value.getTestcases().values().stream().mapToInt(list -> list.size()).sum();
+      }).sum();
+      return changedClazzCount;
 
    }
 
@@ -176,7 +176,7 @@ public abstract class DependencyReaderBase {
       dependencyResult.getVersions().put(version, newVersionInfo);
    }
 
-   int analyzeTests(final String version, final Version newVersionInfo, final TestSet testsToRun)
+   void analyzeTests(final String version, final Version newVersionInfo, final TestSet testsToRun)
          throws IOException, XmlPullParserException, InterruptedException, JsonGenerationException, JsonMappingException {
       final ModuleClassMapping mapping = new ModuleClassMapping(dependencyManager.getExecutor());
       dependencyManager.runTraceTests(testsToRun, version);
@@ -193,11 +193,6 @@ public abstract class DependencyReaderBase {
 
       if (DETAIL_DEBUG)
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "final_" + version + ".json"), newVersionInfo);
-
-      final int changedClazzCount = newVersionInfo.getChangedClazzes().values().stream().mapToInt(value -> {
-         return value.getTestcases().values().stream().mapToInt(list -> list.size()).sum();
-      }).sum();
-      return changedClazzCount;
    }
 
    public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException {
