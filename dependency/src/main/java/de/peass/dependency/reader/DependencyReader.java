@@ -27,6 +27,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.github.javaparser.ParseProblemException;
 
+import de.peass.config.DependencyConfig;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.KiekerResultManager;
@@ -48,9 +49,9 @@ public class DependencyReader extends DependencyReaderBase {
    private final ChangeManager changeManager;
    private int overallSize = 0, prunedSize = 0;
    
-   public DependencyReader(final PeASSFolders folders, final File dependencyFile, final String url, final VersionIterator iterator, 
+   public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders, final File dependencyFile, final String url, final VersionIterator iterator, 
          final ChangeManager changeManager, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
-      super(new Dependencies(), folders, dependencyFile, new VersionKeeper(new File("/dev/null")), executionConfig, env);
+      super(dependencyConfig, new Dependencies(), folders, dependencyFile, new VersionKeeper(new File("/dev/null")), executionConfig, env);
 
       this.iterator = iterator;
 
@@ -68,9 +69,9 @@ public class DependencyReader extends DependencyReaderBase {
     * @param url
     * @param iterator
     */
-   public DependencyReader(final PeASSFolders folders, final File dependencyFile, final String url, final VersionIterator iterator, 
+   public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders, final File dependencyFile, final String url, final VersionIterator iterator, 
          final VersionKeeper nochange, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
-      super(new Dependencies(), folders, dependencyFile, nochange, executionConfig, env);
+      super(dependencyConfig, new Dependencies(), folders, dependencyFile, nochange, executionConfig, env);
 
       this.iterator = iterator;
 
@@ -89,8 +90,8 @@ public class DependencyReader extends DependencyReaderBase {
     * @param iterator
     * @param initialdependencies
     */
-   public DependencyReader(final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
-      this(new PeASSFolders(projectFolder), dependencyFile, url, iterator, 
+   public DependencyReader(final DependencyConfig dependencyConfig, final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+      this(dependencyConfig, new PeASSFolders(projectFolder), dependencyFile, url, iterator, 
             new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")), executionConfig,
             env);
    }

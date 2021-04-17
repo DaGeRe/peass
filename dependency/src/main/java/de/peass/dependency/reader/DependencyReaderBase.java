@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.peass.ci.NonIncludedTestRemover;
+import de.peass.config.DependencyConfig;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.DependencyManager;
@@ -45,6 +46,7 @@ public abstract class DependencyReaderBase {
 
    private static final Logger LOG = LogManager.getLogger(DependencyReaderBase.class);
 
+   private final DependencyConfig dependencyConfig;
    protected final Dependencies dependencyResult;
    protected final File dependencyFile;
    protected DependencyManager dependencyManager;
@@ -63,8 +65,9 @@ public abstract class DependencyReaderBase {
     * @param projectFolder Folder to examine
     * @param dependencyFile File to write results to
     */
-   public DependencyReaderBase(final Dependencies dependencyResult, final PeASSFolders folders, final File dependencyFile,
+   public DependencyReaderBase(final DependencyConfig dependencyConfig, final Dependencies dependencyResult, final PeASSFolders folders, final File dependencyFile,
          final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+      this.dependencyConfig = dependencyConfig;
       this.dependencyResult = dependencyResult;
       this.dependencyFile = dependencyFile;
       this.folders = folders;
@@ -139,21 +142,28 @@ public abstract class DependencyReaderBase {
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "versioninfo_" + version + ".json"), newVersionInfo);
       }
 
-      LOG.debug("Updating dependencies.. {}", version);
+      if (!dependencyConfig.isDoNotUpdateDependencies()) {
+         LOG.debug("Updating dependencies.. {}", version);
 
-      final TestSet testsToRun = dependencyManager.getTestsToRun(changes); // contains only the tests that need to be run -> could be changeTestMap.values() und dann umwandeln
-      Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + version + ".json"), testsToRun.entrySet());
+         final TestSet testsToRun = dependencyManager.getTestsToRun(changes); // contains only the tests that need to be run -> could be changeTestMap.values() und dann umwandeln
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + version + ".json"), testsToRun.entrySet());
 
-      NonIncludedTestRemover.removeNotIncluded(testsToRun, executionConfig);
+         NonIncludedTestRemover.removeNotIncluded(testsToRun, executionConfig);
 
-      final int changedTests;
-      if (testsToRun.classCount() > 0) {
-         changedTests = analyzeTests(version, newVersionInfo, testsToRun);
+         final int changedTests;
+         if (testsToRun.classCount() > 0) {
+            changedTests = analyzeTests(version, newVersionInfo, testsToRun);
+         } else {
+            changedTests = 0;
+         }
+         dependencyResult.getVersions().put(version, newVersionInfo);
+         return changedTests;
       } else {
-         changedTests = 0;
+         LOG.debug("Not updating dependencies since doNotUpdateDependencies was set - only returning dependencies based on changed classes");
+
+         throw new RuntimeException("Not implemented yet");
       }
-      dependencyResult.getVersions().put(version, newVersionInfo);
-      return changedTests;
+
    }
 
    public void documentFailure(final String version) {

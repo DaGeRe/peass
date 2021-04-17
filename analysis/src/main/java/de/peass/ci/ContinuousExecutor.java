@@ -15,6 +15,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.config.DependencyConfig;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.ModuleClassMapping;
@@ -46,6 +47,7 @@ public class ContinuousExecutor {
    private final PeASSFolders folders;
    private final File viewFolder;
    private final File propertyFolder;
+   private DependencyConfig dependencyConfig = new DependencyConfig(2, false);
 
    private final EnvironmentVariables env;
 
@@ -89,7 +91,7 @@ public class ContinuousExecutor {
       final VersionIteratorGit iterator = buildIterator();
       final String url = GitUtils.getURL(projectFolder);
 
-      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(measurementConfig.getExecutionConfig(), folders, dependencyFile, env);
+      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), folders, dependencyFile, env);
       final Dependencies dependencies = dependencyReader.getDependencies(iterator, url);
 
       if (dependencies.getVersions().size() > 0) {

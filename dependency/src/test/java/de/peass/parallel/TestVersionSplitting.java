@@ -30,6 +30,7 @@ import de.peass.dependency.persistence.Dependencies;
 import de.peass.dependency.persistence.InitialVersion;
 import de.peass.dependency.reader.DependencyReader;
 import de.peass.dependency.reader.FirstRunningVersionFinder;
+import de.peass.dependencytests.DependencyTestConstants;
 import de.peass.dependencytests.helper.FakeVersionIterator;
 import de.peass.vcs.GitCommit;
 import de.peass.vcs.VersionIterator;
@@ -42,7 +43,7 @@ public class TestVersionSplitting {
    static class DummyReader extends DependencyReader {
 
       public DummyReader(final File dummyFolder, final VersionIterator iterator, final ChangeManager manager) throws IOException {
-         super(new PeASSFolders(dummyFolder), null, null, iterator, manager, new ExecutionConfig(1), new EnvironmentVariables());
+         super(DependencyTestConstants.DEFAULT_CONFIG, new PeASSFolders(dummyFolder), null, null, iterator, manager, new ExecutionConfig(1), new EnvironmentVariables());
       }
 
       @Override
