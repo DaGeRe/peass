@@ -115,13 +115,23 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       return dependencyFile;
    }
 
+   /**
+    * Returns the previous version before the dependency reading starts, i.e. the version before the given startversion or
+    * if no startversion is given the latest version in the dependencies
+    * @param startversion
+    * @param projectFolder
+    * @param dependencies
+    * @return
+    */
    static String getPreviousVersion(final String startversion, final File projectFolder, final Dependencies dependencies) {
       String previousVersion;
       if (startversion != null) {
          truncateVersions(startversion, dependencies.getVersions());
          previousVersion = GitUtils.getPrevious(startversion, projectFolder);
       } else {
-         previousVersion = VersionComparator.getPreviousVersion(dependencies.getInitialversion().getVersion());
+         String[] versionNames = dependencies.getVersionNames();
+         String newestVersion = versionNames[versionNames.length - 1];
+         previousVersion = newestVersion;
       }
       return previousVersion;
    }
@@ -130,10 +140,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
          final int timeout, final VersionControlSystem vcs) {
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.GIT)) {
-         final List<GitCommit> commits = CommitUtil.getGitCommits(config.getStartversion(), config.getEndversion(), config.getProjectFolder());
-         commits.add(0, new GitCommit(previousVersion, "", "", ""));
-         final GitCommit previous = new GitCommit(previousVersion, "", "", "");
-         final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previous);
+         final VersionIterator iterator = createIterator(config, previousVersion);
          ExecutionConfig executionConfig = config.getExecutionConfig();
          reader = new DependencyReader(config.getDependencyConfig(), config.getProjectFolder(), dependencyFile, dependencies.getUrl(), iterator, executionConfig,
                new EnvironmentVariables());
@@ -144,6 +151,14 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
          throw new RuntimeException("Unknown version control system");
       }
       return reader;
+   }
+
+   private static VersionIterator createIterator(final DependencyReaderConfigMixin config, final String previousVersion) {
+      final List<GitCommit> commits = CommitUtil.getGitCommits(config.getStartversion(), config.getEndversion(), config.getProjectFolder());
+      commits.add(0, new GitCommit(previousVersion, "", "", ""));
+      final GitCommit previous = new GitCommit(previousVersion, "", "", "");
+      final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previous);
+      return iterator;
    }
 
    public static void truncateVersions(final String startversion, final Map<String, Version> versions) {

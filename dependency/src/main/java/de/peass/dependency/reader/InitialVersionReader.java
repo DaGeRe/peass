@@ -33,7 +33,7 @@ public class InitialVersionReader {
    protected TestDependencies dependencyMap;
    
    
-   public InitialVersionReader(Dependencies dependencyResult, DependencyManager dependencyManager, VersionIterator iterator) {
+   public InitialVersionReader(final Dependencies dependencyResult, final DependencyManager dependencyManager, final VersionIterator iterator) {
       this.dependencyResult = dependencyResult;
       this.dependencyManager = dependencyManager;
       this.iterator = iterator;
@@ -90,7 +90,7 @@ public class InitialVersionReader {
       checkCorrectness();
       
 
-      LOG.debug("Analysiere {} Einträge", iterator.getSize());
+      LOG.debug("Analyzing {} commits", iterator.getRemainingSize());
    }
 
    private void addVersionTestDependencies(final Version version) {

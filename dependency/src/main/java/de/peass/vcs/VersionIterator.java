@@ -41,7 +41,11 @@ public abstract class VersionIterator {
 	 * @return count of commits
 	 */
 	public abstract int getSize();
-
+	
+	public int getRemainingSize() {
+	   return -1;
+	}
+	
 	/**
 	 * Returns the current tag
 	 * 

@@ -127,6 +127,11 @@ public class VersionIteratorGit extends VersionIterator {
    public int getSize() {
       return entries.size();
    }
+   
+   @Override
+   public int getRemainingSize() {
+      return entries.size() - tagid;
+   }
 
    @Override
    public boolean goTo0thCommit() {

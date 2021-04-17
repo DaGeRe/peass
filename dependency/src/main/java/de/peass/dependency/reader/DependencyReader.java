@@ -102,7 +102,7 @@ public class DependencyReader extends DependencyReaderBase {
     */
    public boolean readDependencies() {
       try {
-         LOG.debug("Analysiere {} Einträge", iterator.getSize());
+         LOG.debug("Analysing {} entries", iterator.getRemainingSize());
 
          prunedSize += dependencyManager.getDependencyMap().size();
 
