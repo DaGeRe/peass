@@ -70,7 +70,7 @@ public class ArgLineBuilder {
                      entrySeparator + writerConfig;
             }
          }
-         argline += " -Dkieker.monitoring.configuration" + valueSeparator + modulePath.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties";
+         argline += " -Dkieker.monitoring.configuration" + valueSeparator + "\"" + modulePath.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties\"";
       } else {
          argline = "";
       }
