@@ -25,7 +25,7 @@ public class ArgLineBuilder {
 
    private final JUnitTestTransformer testTransformer;
    private final File modulePath;
-   
+
    public ArgLineBuilder(final JUnitTestTransformer testTransformer, final File modulePath) {
       this.testTransformer = testTransformer;
       this.modulePath = modulePath;
@@ -70,7 +70,11 @@ public class ArgLineBuilder {
                      entrySeparator + writerConfig;
             }
          }
-         argline += " -Dkieker.monitoring.configuration" + valueSeparator + "\"" + modulePath.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties\"";
+         if (!entrySeparator.contains("\"")) {
+            argline += " -Dkieker.monitoring.configuration" + valueSeparator + "\"" + modulePath.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties\"";
+         } else {
+            argline += " -Dkieker.monitoring.configuration" + valueSeparator + "'" + modulePath.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties'";
+         }
       } else {
          argline = "";
       }
