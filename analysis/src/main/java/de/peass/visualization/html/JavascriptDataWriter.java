@@ -1,4 +1,4 @@
-package de.peass.visualization;
+package de.peass.visualization.html;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.utils.Constants;
+import de.peass.visualization.GraphNode;
 
 public class JavascriptDataWriter {
 
@@ -25,7 +26,7 @@ public class JavascriptDataWriter {
       this.root = root;
    }
 
-   public void writeJS(final CauseSearchData data, final File output, final String jsName, final KoPeMeTreeConverter converter) throws IOException, JsonProcessingException {
+   public void writeJS(final CauseSearchData data, final File output, final String jsName, final GraphNode converted) throws IOException, JsonProcessingException {
       File outputJS = new File(output.getParentFile(), jsName);
       try (final BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputJS))) {
          fileWriter.write("if (document.getElementById('testcaseDiv') != null) \n   document.getElementById('testcaseDiv').innerHTML=\"Version: <a href='"
@@ -47,7 +48,7 @@ public class JavascriptDataWriter {
          writeTreeDivSizes(fileWriter);
 
          fileWriter.write("var kopemeData = [\n");
-         fileWriter.write(Constants.OBJECTMAPPER.writeValueAsString(converter.getData()));
+         fileWriter.write(Constants.OBJECTMAPPER.writeValueAsString(converted));
          fileWriter.write("];\n");
       }
    }

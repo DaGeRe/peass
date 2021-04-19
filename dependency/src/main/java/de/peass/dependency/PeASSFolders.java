@@ -120,6 +120,12 @@ public class PeASSFolders {
       return measurementsFolder;
    }
 
+   public File getFullSummaryFile(final TestCase testcase) {
+      final String shortClazzName = testcase.getShortClazz();
+      final File fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".xml");
+      return fullResultFile;
+   }
+   
    public File getFullResultFolder(final TestCase testcase, final String mainVersion, final String version) {
       final File destFolder = new File(getDetailResultFolder(), testcase.getClazz());
       System.out.println("Creating: " + destFolder + " " + mainVersion + " " + testcase.getClazz());

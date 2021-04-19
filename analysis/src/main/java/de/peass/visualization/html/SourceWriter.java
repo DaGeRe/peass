@@ -1,4 +1,4 @@
-package de.peass.visualization;
+package de.peass.visualization.html;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -16,8 +16,9 @@ import de.peass.ci.ContinuousDependencyReader;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.kieker.KiekerPatternConverter;
+import de.peass.visualization.GraphNode;
 
-class SourceWriter {
+public class SourceWriter {
    
    private static final Logger LOG = LogManager.getLogger(ContinuousDependencyReader.class);
    
@@ -35,7 +36,7 @@ class SourceWriter {
       this.version = version;
    }
 
-   void writeSources() throws IOException {
+   public void writeSources() throws IOException {
       readSources(root);
       fileWriter.write("var source = {");
       fileWriter.write("\"current\":\n{\n ");

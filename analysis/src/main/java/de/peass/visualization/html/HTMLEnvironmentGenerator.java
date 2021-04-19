@@ -1,4 +1,4 @@
-package de.peass.visualization;
+package de.peass.visualization.html;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import de.peass.measurement.rca.data.CauseSearchData;
+import de.peass.visualization.VisualizeRCA;
 
 public class HTMLEnvironmentGenerator {
 
@@ -16,7 +16,7 @@ public class HTMLEnvironmentGenerator {
       this.fileWriter = fileWriter;
    }
 
-   void writeHTML(final String name) throws IOException {
+   public void writeHTML(final String name) throws IOException {
       final InputStream htmlStream = VisualizeRCA.class.getClassLoader().getResourceAsStream(name);
       try (final BufferedReader reader = new BufferedReader(new InputStreamReader(htmlStream))) {
          String line;

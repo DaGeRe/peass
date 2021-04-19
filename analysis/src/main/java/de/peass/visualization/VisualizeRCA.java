@@ -2,12 +2,15 @@ package de.peass.visualization;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,8 +20,15 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import de.dagere.kopeme.datastorage.XMLDataLoader;
+import de.dagere.kopeme.generated.Kopemedata;
+import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.generated.TestcaseType;
+import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.analysis.all.RepoFolders;
 import de.peass.dependency.CauseSearchFolders;
+import de.peass.dependency.PeASSFolders;
+import de.peass.dependency.analysis.data.TestCase;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.utils.Constants;
@@ -70,12 +80,36 @@ public class VisualizeRCA implements Callable<Void> {
          resultFolder.mkdir();
       }
       
-      List<File> rcaFilesToHandle = new RCAFolderSearcher(data).searchRCAFiles();
-      for (File rcaFile : rcaFilesToHandle) {
-         analyzeFile(resultFolder, rcaFile);
+      List<File> rcaFolderToHandle = new RCAFolderSearcher(data).searchRCAFiles();
+      for (File rcaFolder : rcaFolderToHandle) {
+         analyzeFile(resultFolder, rcaFolder);
+      }
+      List<File> peassFolderToHandle = new RCAFolderSearcher(data).searchPeassFiles();
+      for (File peassFolder : peassFolderToHandle) {
+         analyzeFile(peassFolder);
       }
       
       return null;
+   }
+
+   private void analyzeFile(File peassFolder) throws JAXBException {
+      PeASSFolders folders = new PeASSFolders(peassFolder);
+      for (File kopemeFile : folders.getFullMeasurementFolder().listFiles((FilenameFilter) new WildcardFileFilter("*xml"))) {
+         Kopemedata data = XMLDataLoader.loadData(kopemeFile);
+         for (TestcaseType test : data.getTestcases().getTestcase()) {
+            for (Chunk chunk : test.getDatacollector().get(0).getChunk()) {
+               List<String> versions = new LinkedList<>();
+               for (Result result : chunk.getResult()) {
+                  if (!versions.contains(result.getVersion().getGitversion())) {
+                     versions.add(result.getVersion().getGitversion());
+                  }
+               }
+               TestCase testcase = new TestCase(data.getTestcases().getClazz(), test.getName()); 
+               KoPeMeTreeConverter koPeMeTreeConverter = new KoPeMeTreeConverter(folders, versions.get(0), versions.get(1), testcase);
+               GraphNode node = koPeMeTreeConverter.getData();
+            }
+         }
+      }
    }
 
    private void getFullTree(final RCAGenerator rcaGenerator, final CauseSearchData data, final File treeFolder) throws IOException, JsonParseException, JsonMappingException {

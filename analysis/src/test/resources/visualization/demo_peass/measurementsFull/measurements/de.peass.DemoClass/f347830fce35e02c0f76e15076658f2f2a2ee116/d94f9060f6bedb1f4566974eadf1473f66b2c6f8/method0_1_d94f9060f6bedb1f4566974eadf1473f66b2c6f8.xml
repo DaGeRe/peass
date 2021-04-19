@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="de.peass.DemoClass">
+  <testcase name="method0">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz" memory="MemTotal: 16285348 kB" date="1618779783496">
+     <value>3.354700376E9</value>
+     <deviation>0.08271391939517808</deviation>
+     <warmupExecutions>0</warmupExecutions>
+     <executionTimes>0</executionTimes>
+     <warmup>10</warmup>
+     <iterations>5</iterations>
+     <repetitions>1000</repetitions>
+     <min>3.178538429E9</min>
+     <max>3.847831691E9</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>true</redirectToNull>
+     <javaVersion>11.0.10</javaVersion>
+     <fulldata>
+      <value start="1618779766546">3178538429</value>
+      <value start="1618779769724">3260256934</value>
+      <value start="1618779772984">3250202882</value>
+      <value start="1618779776235">3236671944</value>
+      <value start="1618779779471">3847831691</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

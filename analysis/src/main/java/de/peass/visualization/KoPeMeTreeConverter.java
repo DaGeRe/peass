@@ -8,19 +8,17 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.apache.commons.math3.stat.descriptive.AggregateSummaryStatistics;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.dagere.kopeme.generated.Versioninfo;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.peass.dependency.CauseSearchFolders;
+import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.peass.measurement.rca.serialization.MeasuredValues;
@@ -41,11 +39,20 @@ public class KoPeMeTreeConverter {
       readStatistics(folders, version, testcase);
    }
 
+   public KoPeMeTreeConverter(final PeASSFolders folders, final String version, final String predecessor, final TestCase testcase) throws JAXBException {
+      node = new GraphNode("overall", "public overall.overall()", "public overall.overall()");
+      node.setVmValues(new MeasuredValues());
+      node.setVmValuesPredecessor(new MeasuredValues());
+
+      final File kopemeFile = folders.getFullSummaryFile(testcase);
+      readFile(version, testcase, predecessor, kopemeFile);
+   }
+
    private void readStatistics(final CauseSearchFolders folders, final String version, final TestCase testcase) throws JAXBException {
       for (File versionFolder : folders.getArchiveResultFolder(version, testcase).listFiles()) {
          File levelFolder = new File(versionFolder, "0"); // For the beginning, just analyze topmost KoPeMe-measurement
          for (File kopemeFile : levelFolder.listFiles((FilenameFilter) new WildcardFileFilter(testcase.getMethod() + "*.xml"))) {
-            readFile(version, testcase, versionFolder, kopemeFile);
+            readFile(version, testcase, versionFolder.getName(), kopemeFile);
          }
       }
 
@@ -56,7 +63,7 @@ public class KoPeMeTreeConverter {
       node.setValuesPredecessor(statisticsOld.getValues());
    }
 
-   private void readFile(final String version, final TestCase testcase, File versionFolder, File kopemeFile)
+   private void readFile(final String version, final TestCase testcase, final String currentVersion, final File kopemeFile)
          throws JAXBException {
       String stringIndex = kopemeFile.getName().substring(testcase.getMethod().length() + 1, kopemeFile.getName().lastIndexOf('_'));
       int index = Integer.parseInt(stringIndex);
@@ -64,15 +71,15 @@ public class KoPeMeTreeConverter {
       final Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
       if (datacollector.getChunk().size() > 0) {
          for (Result result : datacollector.getChunk().get(0).getResult()) {
-            readResult(version, versionFolder.getName(), result, index);
+            readResult(version, currentVersion, result, index);
          }
       }
       for (Result result : datacollector.getResult()) {
-         readResult(version, versionFolder.getName(), result, index);
+         readResult(version, currentVersion, result, index);
       }
    }
 
-   private void readResult(final String version, String currentVersion, Result result, int index) {
+   private void readResult(final String version, final String currentVersion, final Result result, final int index) {
       if (currentVersion.equals(version)) {
          statisticsCurrent.addValue(result.getValue() / result.getRepetitions() / NANO_TO_MICRO);
          calls += result.getIterations();
@@ -88,7 +95,7 @@ public class KoPeMeTreeConverter {
       }
    }
 
-   private List<StatisticalSummary> getCourse(Result result) {
+   private List<StatisticalSummary> getCourse(final Result result) {
       List<StatisticalSummary> course = new LinkedList<>();
       for (Value value : result.getFulldata().getValue()) {
          double mean = ((double) value.getValue()) / result.getRepetitions() / NANO_TO_MICRO; // Convert nanoseconds (from KoPeMe) to microseconds

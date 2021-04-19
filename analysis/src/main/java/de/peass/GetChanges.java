@@ -78,18 +78,17 @@ public class GetChanges implements Callable<Void> {
    }
 
    private ChangeReader createReader(final File statisticFolder) throws FileNotFoundException {
-      RunCommandWriterRCA runCommandWriter;
-      RunCommandWriterSlurmRCA runCommandWriterSlurm;
-      if (VersionComparator.getDependencies().getUrl() != null && !VersionComparator.getDependencies().getUrl().isEmpty()) {
-         final PrintStream runCommandPrinter = new PrintStream(new File(statisticFolder, "run-rca-" + VersionComparator.getProjectName() + ".sh"));
-         runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", VersionComparator.getDependencies());
-         final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticFolder, "run-rca-slurm-" + VersionComparator.getProjectName() + ".sh"));
-         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", VersionComparator.getDependencies());
-      } else {
-         runCommandWriter = null;
-         runCommandWriterSlurm = null;
+      RunCommandWriterRCA runCommandWriter = null;
+      RunCommandWriterSlurmRCA runCommandWriterSlurm = null;
+      if (executionData != null) {
+         if (VersionComparator.getDependencies().getUrl() != null && !VersionComparator.getDependencies().getUrl().isEmpty()) {
+            final PrintStream runCommandPrinter = new PrintStream(new File(statisticFolder, "run-rca-" + VersionComparator.getProjectName() + ".sh"));
+            runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", VersionComparator.getDependencies());
+            final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticFolder, "run-rca-slurm-" + VersionComparator.getProjectName() + ".sh"));
+            runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", VersionComparator.getDependencies());
+         }
       }
-      
+
       final ChangeReader reader = new ChangeReader(statisticFolder, runCommandWriter, runCommandWriterSlurm);
       reader.setType1error(type1error);
       reader.setType2error(type2error);
@@ -117,8 +116,8 @@ public class GetChanges implements Callable<Void> {
             VersionComparator.setDependencies(dependencies);
          }
       }
-      if (executionData == null && dependencies == null) {
-         throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined and valid!");
-      }
+//      if (executionData == null && dependencies == null) {
+//         throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined and valid!");
+//      }
    }
 }

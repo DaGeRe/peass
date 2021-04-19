@@ -14,6 +14,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import de.peass.analysis.properties.TestMethodChangeReader;
+import de.peass.visualization.html.SourceWriter;
 
 public class TestSourceWriter {
 

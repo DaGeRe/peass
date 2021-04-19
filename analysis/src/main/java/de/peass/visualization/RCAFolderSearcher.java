@@ -14,12 +14,24 @@ public class RCAFolderSearcher {
 
    private File[] data;
 
-   public RCAFolderSearcher(File data) {
+   public RCAFolderSearcher(final File data) {
       this.data = new File[] { data };
    }
 
-   public RCAFolderSearcher(File[] data) {
+   public RCAFolderSearcher(final File[] data) {
       this.data = data;
+   }
+
+   public List<File> searchPeassFiles() throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException {
+      List<File> peassFilesToHandle = new LinkedList<>();
+      for (final File source : data) {
+         if (source.isDirectory()) {
+            if (source.getName().endsWith("_peass")) {
+               peassFilesToHandle.add(source);
+            }
+         }
+      }
+      return peassFilesToHandle;
    }
 
    public List<File> searchRCAFiles() throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException {

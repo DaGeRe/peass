@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import de.peass.measurement.rca.data.CauseSearchData;
+import de.peass.visualization.html.HTMLEnvironmentGenerator;
 
 public class NodeDashboardWriter {
    private final File destination;

@@ -179,8 +179,7 @@ public class ResultOrganizer {
 
    public void saveSummaryFile(final String version, final List<TestcaseType> testcaseList, final File oneResultFile) throws JAXBException {
       final TestcaseType oneRundata = testcaseList.get(0);
-      final String shortClazzName = testcase.getShortClazz();
-      final File fullResultFile = new File(folders.getFullMeasurementFolder(), shortClazzName + "_" + testcase.getMethod() + ".xml");
+      final File fullResultFile = folders.getFullSummaryFile(testcase);
       MultipleVMTestUtil.saveSummaryData(fullResultFile, oneResultFile, oneRundata, testcase, version, currentChunkStart);
    }
 
