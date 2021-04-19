@@ -1,4 +1,4 @@
-**/generated/
+G**/generated/
 target/*
 target/**/*
 */target/*
@@ -42,6 +42,8 @@ out.txt
 /target/
 peass_completion
 measurement/src/test/resources/sourceChangeRCATest/project_3_peass/**/*sh
+analysis/src/test/resources/visualization/project_3_peass/*sh
+analysis/src/test/resources/visualization/project_3_peass/rca/*.sh
 analysis/src/test/resources/visualization/project_test_peass/clearRCA.sh
 analysis/src/test/resources/visualization/project_test_peass/getProgress.sh
 analysis/src/test/resources/visualization/project_test_peass/rca/getIntermediaryValues.sh
