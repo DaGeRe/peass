@@ -41,7 +41,7 @@ public class VisualizeRegularMeasurement {
             for (Chunk chunk : test.getDatacollector().get(0).getChunk()) {
                List<String> versions = getVersions(chunk);
                TestCase testcase = new TestCase(data.getTestcases().getClazz(), test.getName());
-               KoPeMeTreeConverter koPeMeTreeConverter = new KoPeMeTreeConverter(folders, versions.get(0), versions.get(1), testcase);
+               KoPeMeTreeConverter koPeMeTreeConverter = new KoPeMeTreeConverter(folders, versions.get(0), testcase);
                GraphNode node = koPeMeTreeConverter.getData();
                if (node != null) {
                   File destFolder = new File(resultFolder, versions.get(0));
