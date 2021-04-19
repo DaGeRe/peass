@@ -1,6 +1,7 @@
 package de.peass.visualization;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,8 +45,15 @@ public class KoPeMeTreeConverter {
       node.setVmValues(new MeasuredValues());
       node.setVmValuesPredecessor(new MeasuredValues());
 
-      final File kopemeFile = folders.getFullSummaryFile(testcase);
-      readFile(version, testcase, predecessor, kopemeFile);
+      File versionFolder = new File(folders.getDetailResultFolder(), testcase.getClazz() + File.separator + version);
+      for (File measuredVersionFolder : versionFolder.listFiles()) {
+         for (File xmlFolder : measuredVersionFolder.listFiles((FileFilter) new WildcardFileFilter("*xml"))) {
+//            final File kopemeFile = folders.getFullSummaryFile(testcase);
+            readFile(version, testcase, predecessor, xmlFolder);
+         }
+      }
+      // for (File xmlFile : folders.getDetailResultFolder()
+      
    }
 
    private void readStatistics(final CauseSearchFolders folders, final String version, final TestCase testcase) throws JAXBException {

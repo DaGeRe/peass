@@ -26,12 +26,15 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.peass.analysis.all.RepoFolders;
+import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.PeASSFolders;
 import de.peass.dependency.analysis.data.TestCase;
+import de.peass.measurement.rca.CauseSearcherConfig;
 import de.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.utils.Constants;
+import de.peass.visualization.html.HTMLWriter;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -65,10 +68,10 @@ public class VisualizeRCA implements Callable<Void> {
       final CommandLine commandLine = new CommandLine(new VisualizeRCA());
       System.exit(commandLine.execute(args));
    }
-   
+
    public VisualizeRCA() {
    }
-   
+
    public VisualizeRCA(final File[] data, final File resultFolder) {
       this.data = data;
       this.resultFolder = resultFolder;
@@ -79,7 +82,7 @@ public class VisualizeRCA implements Callable<Void> {
       if (!resultFolder.exists()) {
          resultFolder.mkdir();
       }
-      
+
       List<File> rcaFolderToHandle = new RCAFolderSearcher(data).searchRCAFiles();
       for (File rcaFolder : rcaFolderToHandle) {
          analyzeFile(resultFolder, rcaFolder);
@@ -88,28 +91,42 @@ public class VisualizeRCA implements Callable<Void> {
       for (File peassFolder : peassFolderToHandle) {
          analyzeFile(peassFolder);
       }
-      
+
       return null;
    }
 
-   private void analyzeFile(File peassFolder) throws JAXBException {
+   private void analyzeFile(final File peassFolder) throws JAXBException, JsonProcessingException, FileNotFoundException, IOException {
       PeASSFolders folders = new PeASSFolders(peassFolder);
       for (File kopemeFile : folders.getFullMeasurementFolder().listFiles((FilenameFilter) new WildcardFileFilter("*xml"))) {
          Kopemedata data = XMLDataLoader.loadData(kopemeFile);
          for (TestcaseType test : data.getTestcases().getTestcase()) {
             for (Chunk chunk : test.getDatacollector().get(0).getChunk()) {
-               List<String> versions = new LinkedList<>();
-               for (Result result : chunk.getResult()) {
-                  if (!versions.contains(result.getVersion().getGitversion())) {
-                     versions.add(result.getVersion().getGitversion());
-                  }
-               }
-               TestCase testcase = new TestCase(data.getTestcases().getClazz(), test.getName()); 
+               List<String> versions = getVersions(chunk);
+               TestCase testcase = new TestCase(data.getTestcases().getClazz(), test.getName());
                KoPeMeTreeConverter koPeMeTreeConverter = new KoPeMeTreeConverter(folders, versions.get(0), versions.get(1), testcase);
                GraphNode node = koPeMeTreeConverter.getData();
+               File destFolder = new File(resultFolder, versions.get(0));
+               GraphNode emptyNode = new GraphNode(testcase.getExecutable(), "void " + testcase.getExecutable().replace("#", ".") + "()", CauseSearchData.ADDED);
+               emptyNode.setName(testcase.getExecutable());
+               CauseSearchData data2 = new CauseSearchData();
+               data2.setCauseConfig(new CauseSearcherConfig(testcase, false, false, 1.0, false, false, null));
+               data2.setConfig(new MeasurementConfiguration(2, versions.get(0), versions.get(1)));
+               HTMLWriter htmlWriter = new HTMLWriter(emptyNode, data2, destFolder, null,
+                     node);
+               htmlWriter.writeHTML();
             }
          }
       }
+   }
+
+   private List<String> getVersions(final Chunk chunk) {
+      List<String> versions = new LinkedList<>();
+      for (Result result : chunk.getResult()) {
+         if (!versions.contains(result.getVersion().getGitversion())) {
+            versions.add(result.getVersion().getGitversion());
+         }
+      }
+      return versions;
    }
 
    private void getFullTree(final RCAGenerator rcaGenerator, final CauseSearchData data, final File treeFolder) throws IOException, JsonParseException, JsonMappingException {
@@ -127,7 +144,7 @@ public class VisualizeRCA implements Callable<Void> {
    private void analyzeFile(final File versionResultFolder, final File treeFile)
          throws JsonParseException, JsonMappingException, IOException, JsonProcessingException, FileNotFoundException, JAXBException {
       final CauseSearchFolders folders = getCauseSearchFolders(treeFile);
-      
+
       final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, versionResultFolder, folders);
       final File propertyFolder = getPropertyFolder(projectName);
       rcaGenerator.setPropertyFolder(propertyFolder);

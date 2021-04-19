@@ -31,7 +31,7 @@ public abstract class BasicNode {
       }
 
       if (kiekerPattern != null && !kiekerPattern.contains(this.call.replace("#", "."))) {
-         throw new RuntimeException("Pattern " + kiekerPattern + " must contain " + this.call);
+         throw new RuntimeException("Pattern " + kiekerPattern + " must contain " + this.call.replace("#", "."));
       }
       if (kiekerPattern != null && kiekerPattern.contains("<init>") && !kiekerPattern.contains("new")) {
          throw new RuntimeException("Pattern " + kiekerPattern + " not legal - Constructor must contain new as return type!");
