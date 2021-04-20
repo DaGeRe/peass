@@ -412,7 +412,7 @@ public class JUnitTestTransformer {
       final SingleMemberAnnotationExpr extendAnnotation = new SingleMemberAnnotationExpr(new Name("ExtendWith"), new ClassExpr(new TypeParameter("KoPeMeExtension")));
       clazz.addAnnotation(extendAnnotation);
 
-      List<MethodDeclaration> testMethods = TestMethodFinder.getJUnit5TestMethods(clazz);
+      List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit5TestMethods(clazz);
       prepareTestMethods(testMethods);
    }
 

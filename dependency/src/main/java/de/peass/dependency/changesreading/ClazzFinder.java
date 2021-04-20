@@ -92,5 +92,33 @@ public class ClazzFinder {
       }
       return entities;
    }
+   
+   public static List<ClassOrInterfaceDeclaration> getClazzDeclarations(final Node node) {
+      final List<ClassOrInterfaceDeclaration> clazzes = new LinkedList<>();
+      if (node instanceof ClassOrInterfaceDeclaration) {
+         final ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) node;
+         clazzes.add(clazz);
+         for (final Node child : node.getChildNodes()) {
+            clazzes.addAll(getClazzDeclarations(child));
+         }
+      } else if (node instanceof EnumDeclaration) {
+         for (final Node child : node.getChildNodes()) {
+            clazzes.addAll(getClazzDeclarations(child));
+         }
+      } else {
+         for (final Node child : node.getChildNodes()) {
+            clazzes.addAll(getClazzDeclarations(child));
+         }
+      }
+      return clazzes;
+   }
+   
+   public static List<ClassOrInterfaceDeclaration> getClazzDeclarations(final CompilationUnit cu) {
+      final List<ClassOrInterfaceDeclaration> clazzes = new LinkedList<>();
+      for (final Node node : cu.getChildNodes()) {
+         clazzes.addAll(getClazzDeclarations(node));
+      }
+      return clazzes;
+   }
 
 }

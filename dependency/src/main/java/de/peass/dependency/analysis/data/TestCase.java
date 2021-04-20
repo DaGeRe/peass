@@ -190,4 +190,8 @@ public class TestCase implements Comparable<TestCase> {
       return toString().compareTo(arg0.toString());
    }
 
+   public ChangedEntity toEntity() {
+      return new ChangedEntity(clazz, module, method);
+   }
+
 }

@@ -8,7 +8,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 
 public class TestMethodFinder {
-   public static List<MethodDeclaration> getJUnit5TestMethods(final ClassOrInterfaceDeclaration clazz) {
+   public static List<MethodDeclaration> findJUnit5TestMethods(final ClassOrInterfaceDeclaration clazz) {
       List<MethodDeclaration> testMethods = new LinkedList<>();
       for (final MethodDeclaration method : clazz.getMethods()) {
          boolean performanceTestFound = false;
