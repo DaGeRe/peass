@@ -1,6 +1,7 @@
 package de.peass.measurement.analysis.statistics;
 
 import java.io.File;
+import java.util.Comparator;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -19,13 +20,15 @@ import de.peass.dependencyprocessors.VersionComparator;
  *
  */
 public class TestData {
+   
+   public static Comparator<String> comparator = VersionComparator.INSTANCE;
 
 	private static final Logger LOG = LogManager.getLogger(TestData.class);
 
 	private final TestCase testcase;
 	private final File origin;
 
-	private final SortedMap<String, EvaluationPair> data = new TreeMap<>(VersionComparator.INSTANCE);
+	private final SortedMap<String, EvaluationPair> data = new TreeMap<>(comparator);
 
 	public TestData(final TestCase testcase, final File origin) {
 		this.testcase = testcase;
