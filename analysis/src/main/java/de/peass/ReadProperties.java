@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.measurement.analysis.VersionSorter;
 import de.peass.analysis.all.ReadAllProperties;
 import de.peass.analysis.all.RepoFolders;
 import de.peass.analysis.changes.Change;
@@ -78,14 +79,14 @@ public class ReadProperties implements Callable<Void> {
    public Void call() throws Exception {
       final RepoFolders folders = new RepoFolders();
       final String projectName = projectFolder.getName();
-      GetChanges.getVersionOrder(dependencyFile, executionFile, folders.getDependencyFile(projectName));
+      VersionSorter.getVersionOrder(dependencyFile, executionFile, folders.getDependencyFile(projectName));
 
       if (!projectFolder.exists()) {
          GitUtils.downloadProject(VersionComparator.getDependencies().getUrl(), projectFolder);
       }
 
-      final ExecutionData changedTests = GetChanges.executionData != null ? GetChanges.executionData : folders.getExecutionData(projectName);
-      final File viewFolder = GetChanges.executionData != null ? new File(executionFile.getParentFile(), "views_" + projectName) : folders.getViewFolder(projectName);
+      final ExecutionData changedTests = VersionSorter.executionData != null ? VersionSorter.executionData : folders.getExecutionData(projectName);
+      final File viewFolder = VersionSorter.executionData != null ? new File(executionFile.getParentFile(), "views_" + projectName) : folders.getViewFolder(projectName);
       if (ReadAllProperties.readAll) {
          final File resultFile = new File("results" + File.separator + projectName + File.separator + "properties_alltests.json");
          out = resultFile;

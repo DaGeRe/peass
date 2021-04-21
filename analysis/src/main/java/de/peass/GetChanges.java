@@ -2,21 +2,15 @@ package de.peass;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.concurrent.Callable;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
+import de.dagere.peass.measurement.analysis.VersionSorter;
 import de.peass.analysis.changes.ChangeReader;
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.ExecutionData;
 import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.utils.Constants;
 import de.peass.utils.RunCommandWriterRCA;
 import de.peass.utils.RunCommandWriterSlurmRCA;
 import picocli.CommandLine;
@@ -57,7 +51,7 @@ public class GetChanges implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      getVersionOrder(dependencyFile, executionFile);
+      VersionSorter.getVersionOrder(dependencyFile, executionFile);
 
       if (!out.exists()) {
          out.mkdirs();
@@ -80,7 +74,7 @@ public class GetChanges implements Callable<Void> {
    private ChangeReader createReader(final File statisticFolder) throws FileNotFoundException {
       RunCommandWriterRCA runCommandWriter = null;
       RunCommandWriterSlurmRCA runCommandWriterSlurm = null;
-      if (executionData != null) {
+      if (VersionSorter.executionData != null) {
          if (VersionComparator.getDependencies().getUrl() != null && !VersionComparator.getDependencies().getUrl().isEmpty()) {
             final PrintStream runCommandPrinter = new PrintStream(new File(statisticFolder, "run-rca-" + VersionComparator.getProjectName() + ".sh"));
             runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", VersionComparator.getDependencies());
@@ -94,30 +88,5 @@ public class GetChanges implements Callable<Void> {
       reader.setType2error(type2error);
       return reader;
    }
-
-   static ExecutionData executionData;
-
-   public static void getVersionOrder(final File dependencyFile, final File executionFile, final File... additionalDependencyFiles)
-         throws IOException, JsonParseException, JsonMappingException {
-      Dependencies dependencies = null;
-      executionData = null;
-      if (dependencyFile != null) {
-         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-         VersionComparator.setDependencies(dependencies);
-      }
-      if (executionFile != null) {
-         executionData = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
-         dependencies = new Dependencies(executionData);
-         VersionComparator.setDependencies(dependencies);
-      }
-      if (dependencies == null) {
-         for (final File dependencytest : additionalDependencyFiles) {
-            dependencies = Constants.OBJECTMAPPER.readValue(dependencytest, Dependencies.class);
-            VersionComparator.setDependencies(dependencies);
-         }
-      }
-//      if (executionData == null && dependencies == null) {
-//         throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined and valid!");
-//      }
-   }
+   
 }

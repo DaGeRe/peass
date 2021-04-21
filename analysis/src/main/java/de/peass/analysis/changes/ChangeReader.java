@@ -69,7 +69,7 @@ public class ChangeReader {
       }
    }
    
-   public ChangeReader(final File statisticsFolder, RunCommandWriterRCA runCommandWriter, RunCommandWriterSlurmRCA runCommandWriterSlurm) throws FileNotFoundException {
+   public ChangeReader(final File statisticsFolder, final RunCommandWriterRCA runCommandWriter, final RunCommandWriterSlurmRCA runCommandWriterSlurm) throws FileNotFoundException {
       this.statisticsFolder = statisticsFolder;
       this.runCommandWriter = runCommandWriter;
       this.runCommandWriterSlurm = runCommandWriterSlurm;
@@ -143,7 +143,7 @@ public class ChangeReader {
       }
    }
 
-   private void readCleanFolder(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, File cleanFolder) throws JAXBException {
+   private void readCleanFolder(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File cleanFolder) throws JAXBException {
       LOG.info("Handling: {}", cleanFolder);
       File versionFolder = cleanFolder.listFiles()[0].listFiles()[0];
       File testcaseFolder = versionFolder.listFiles()[0].listFiles()[0];

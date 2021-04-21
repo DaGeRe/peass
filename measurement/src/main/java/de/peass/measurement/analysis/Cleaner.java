@@ -9,10 +9,6 @@ import java.util.stream.Collectors;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,7 +23,6 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.kopeme.generated.Versioninfo;
 import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.reader.DependencyReaderUtil;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.TestData;
@@ -44,33 +39,9 @@ import de.peass.utils.OptionConstants;
  * @author reichelt
  *
  */
-public class Cleaner extends DataAnalyser {
+public class Cleaner extends DataAnalyser  {
 
    private static final Logger LOG = LogManager.getLogger(Cleaner.class);
-
-   public static void main(final String[] args) throws ParseException, JAXBException, JsonParseException, JsonMappingException, IOException {
-      final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE, OptionConstants.DATA);
-
-      final CommandLineParser parser = new DefaultParser();
-      final CommandLine line = parser.parse(options, args);
-
-      loadDependencies(line);
-
-      for (int i = 0; i < line.getOptionValues(OptionConstants.DATA.getName()).length; i++) {
-         final File folder = new File(line.getOptionValues(OptionConstants.DATA.getName())[i]);
-         LOG.info("Searching in " + folder);
-         final File cleanFolder = new File(folder.getParentFile(), "clean");
-         cleanFolder.mkdirs();
-         final File sameNameFolder = new File(cleanFolder, folder.getName());
-         sameNameFolder.mkdirs();
-         final File fulldataFolder = new File(sameNameFolder, "measurementsFull");
-         fulldataFolder.mkdirs();
-         final Cleaner transformer = new Cleaner(fulldataFolder);
-         LOG.info("Start");
-         transformer.processDataFolder(folder);
-         LOG.info("Finish");
-      }
-   }
 
    private final File measurementsFull;
    private int correct = 0;
@@ -88,11 +59,6 @@ public class Cleaner extends DataAnalyser {
       this.measurementsFull = measurementsFull;
       if (measurementsFull.exists()) {
          throw new RuntimeException("Clean already finished - delete " + measurementsFull.getAbsolutePath() + ", if you want to clean!");
-         // try {
-         // FileUtils.deleteDirectory(measurementsFull);
-         // } catch (IOException e) {
-         // e.printStackTrace();
-         // }
       } else {
          measurementsFull.mkdirs();
       }
@@ -161,7 +127,7 @@ public class Cleaner extends DataAnalyser {
       return -Math.floorDiv(-x, y);
    }
 
-   private List<Result> getChunk(final String version, final long minExecutionCount, List<Result> previous) {
+   private List<Result> getChunk(final String version, final long minExecutionCount, final List<Result> previous) {
       final List<Result> previousClean = StatisticUtil.shortenValues(previous);
       return previousClean.stream()
             .filter(result -> {
@@ -188,7 +154,7 @@ public class Cleaner extends DataAnalyser {
       result.setFulldata(new Fulldata());
       return result;
    }
-   
+
    public static void loadDependencies(final CommandLine line) throws JsonParseException, JsonMappingException, IOException {
       if (line.hasOption(OptionConstants.DEPENDENCYFILE.getName())) {
          final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
