@@ -52,12 +52,12 @@ public class OneTraceGenerator {
          throws com.github.javaparser.ParseException, IOException, ViewNotFoundException, XmlPullParserException {
       boolean success = false;
       try {
-         final File methodResult = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder);
-         LOG.debug("Searching for: {}", methodResult);
-         if (methodResult.exists() && methodResult.isDirectory()) {
-            success = generateTraceFiles(versionCurrent, methodResult);
+         final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder);
+         LOG.debug("Searching for: {}", kiekerResultFolder);
+         if (kiekerResultFolder.exists() && kiekerResultFolder.isDirectory()) {
+            success = generateTraceFiles(versionCurrent, kiekerResultFolder);
          } else {
-            LOG.error("Error: {} does not produce {}", versionCurrent, methodResult.getAbsolutePath());
+            LOG.error("Error: {} does not produce {}", versionCurrent, kiekerResultFolder.getAbsolutePath());
          }
       } catch (final RuntimeException | ViewNotFoundException e) {
          e.printStackTrace();

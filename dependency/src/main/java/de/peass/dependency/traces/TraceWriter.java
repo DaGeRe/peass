@@ -29,6 +29,21 @@ public class TraceWriter {
 
    public void writeTrace(final String versionCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace, final List<File> traceFiles)
          throws IOException {
+      final File methodDir = getMethodDir();
+      String shortVersion = getShortVersion(versionCurrent);
+      final File methodTrace = writeTraces(sizeInMB, traceMethodReader, trace, traceFiles, methodDir, shortVersion);
+      LOG.debug("Datei {} existiert: {}", methodTrace.getAbsolutePath(), methodTrace.exists());
+   }
+
+   public static String getShortVersion(final String versionCurrent) {
+      String shortVersion = versionCurrent.substring(0, 6);
+      if (versionCurrent.endsWith("~1")) {
+         shortVersion = shortVersion + "~1";
+      }
+      return shortVersion;
+   }
+
+   public File getMethodDir() {
       final File methodDir = new File(getClazzDir(version, testcase), testcase.getMethod());
       if (!methodDir.exists()) {
          boolean create = methodDir.mkdir();
@@ -36,12 +51,7 @@ public class TraceWriter {
       } else {
          LOG.debug("Directory {} already existing", methodDir.getAbsolutePath());
       }
-      String shortVersion = versionCurrent.substring(0, 6);
-      if (versionCurrent.endsWith("~1")) {
-         shortVersion = shortVersion + "~1";
-      }
-      final File methodTrace = writeTraces(sizeInMB, traceMethodReader, trace, traceFiles, methodDir, shortVersion);
-      LOG.debug("Datei {} existiert: {}", methodTrace.getAbsolutePath(), methodTrace.exists());
+      return methodDir;
    }
 
    private File getClazzDir(final String version, final TestCase testcase) {

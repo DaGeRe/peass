@@ -82,7 +82,7 @@ public class TraceElement {
       return module;
    }
 	
-	public void setModule(String module) {
+	public void setModule(final String module) {
       this.module = module;
    }
 
@@ -105,7 +105,7 @@ public class TraceElement {
 	@Override
 	public String toString() {
 	   StringBuffer result = new StringBuffer();
-	   if (module != null) {
+	   if (module != null && !module.equals("")) {
          result.append(module);
          result.append(ChangedEntity.MODULE_SEPARATOR);
       }
