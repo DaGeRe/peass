@@ -40,7 +40,8 @@ public class ViewGenerator extends PairProcessor {
    private final ExecutionConfig executionConfig;
    private final EnvironmentVariables env;
 
-   public ViewGenerator(final File projectFolder, final Dependencies dependencies, final File executefile, final File viewFolder, final int threads, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+   public ViewGenerator(final File projectFolder, final Dependencies dependencies, final File executefile, final File viewFolder, final int threads,
+         final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       super(projectFolder, dependencies);
       this.viewFolder = viewFolder;
       this.executeFile = executefile;
@@ -53,7 +54,11 @@ public class ViewGenerator extends PairProcessor {
    }
 
    public ViewGenerator(final EnvironmentVariables env) {
-      executionConfig = new ExecutionConfig();
+      if (executionMixin != null) {
+         executionConfig = new ExecutionConfig(executionMixin);
+      } else {
+         executionConfig = new ExecutionConfig();
+      }
       this.env = env;
    }
 
@@ -71,7 +76,6 @@ public class ViewGenerator extends PairProcessor {
       LOG.debug("Before Start Version {}: {}", startversion, beforeStartVersion);
       LOG.debug("Before End Version {}: {}", endversion, beforeEndVersion);
 
-      
       final TestSet tests = new TestSet();
       for (final TestCase testcase : testcases) {
          if (beforeStartVersion && beforeEndVersion) {

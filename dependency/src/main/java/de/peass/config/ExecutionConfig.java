@@ -9,6 +9,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import de.peass.dependency.execution.ExecutionConfigMixin;
+
 /**
  * Configuration properties of Peass-executions that are used in every circumstance, i.e. for regression test selection, measurement and root cause analysis
  * 
@@ -57,6 +59,30 @@ public class ExecutionConfig implements Serializable {
       excludes = new LinkedList<>();
       this.testGoal = testGoal;
       this.timeout = 5 * 60 * 1000;
+   }
+   
+   public ExecutionConfig(final ExecutionConfigMixin executionMixin) {
+      timeout = executionMixin.getTimeout();
+      setVersion(executionMixin.getVersion());
+      setVersionOld(executionMixin.getVersionOld());
+      setStartversion(executionMixin.getStartversion());
+      setEndversion(executionMixin.getEndversion());
+      
+      setTestGoal(executionMixin.getTestGoal());
+      if (getIncludes() != null) {
+         for (String include : executionMixin.getIncludes()) {
+            getIncludes().add(include);
+         }
+      }
+      if (getExcludes() != null) {
+         for (String exclude : executionMixin.getExcludes()) {
+            getExcludes().add(exclude);
+         }
+         throw new RuntimeException("Not implemented yet");
+      }
+      if (getPl() != null) {
+         setPl(executionMixin.getPl());
+      }
    }
 
    public int getTimeout() {
