@@ -62,8 +62,8 @@ public class ExecutionConfig implements Serializable {
    }
    
    public ExecutionConfig(final ExecutionConfigMixin executionMixin) {
-      timeout = executionMixin.getTimeout();
-      setVersion(executionMixin.getVersion());
+      timeout = executionMixin.getTimeout() * 60 * 1000;
+      version = executionMixin.getVersion();
       setVersionOld(executionMixin.getVersionOld());
       setStartversion(executionMixin.getStartversion());
       setEndversion(executionMixin.getEndversion());
