@@ -25,8 +25,10 @@ import de.peass.dependencyprocessors.PairProcessor;
 import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.vcs.GitUtils;
 import picocli.CommandLine;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
+@Command(description = "Generates traces with source code snippets for each called method", name = "generateViews")
 public class ViewGenerator extends PairProcessor {
 
    private static final Logger LOG = LogManager.getLogger(ViewGenerator.class);
@@ -37,8 +39,8 @@ public class ViewGenerator extends PairProcessor {
    private File viewFolder;
    private File executeFile;
    private ExecutionData changedTraceMethods = new ExecutionData();
-   private final ExecutionConfig executionConfig;
-   private final EnvironmentVariables env;
+   private ExecutionConfig executionConfig;
+   private EnvironmentVariables env;
 
    public ViewGenerator(final File projectFolder, final Dependencies dependencies, final File executefile, final File viewFolder, final int threads,
          final ExecutionConfig executionConfig, final EnvironmentVariables env) {
@@ -53,13 +55,7 @@ public class ViewGenerator extends PairProcessor {
       init();
    }
 
-   public ViewGenerator(final EnvironmentVariables env) {
-      if (executionMixin != null) {
-         executionConfig = new ExecutionConfig(executionMixin);
-      } else {
-         executionConfig = new ExecutionConfig();
-      }
-      this.env = env;
+   public ViewGenerator() {
    }
 
    public void init() {
@@ -160,7 +156,7 @@ public class ViewGenerator extends PairProcessor {
    }
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, JAXBException, IOException {
-      final CommandLine commandLine = new CommandLine(new ViewGenerator(new EnvironmentVariables()));
+      final CommandLine commandLine = new CommandLine(new ViewGenerator());
       commandLine.execute(args);
    }
 
@@ -171,6 +167,13 @@ public class ViewGenerator extends PairProcessor {
    @Override
    public Void call() throws Exception {
       super.call();
+      if (executionMixin != null) {
+         executionConfig = new ExecutionConfig(executionMixin);
+      } else {
+         executionConfig = new ExecutionConfig();
+      }
+      this.env = new EnvironmentVariables();
+      
       // final File resultFolder = DependencyReadingStarter.getResultFolder();
       final String projectName = folders.getProjectName();
       init();

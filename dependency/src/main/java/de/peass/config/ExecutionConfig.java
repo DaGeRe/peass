@@ -69,19 +69,19 @@ public class ExecutionConfig implements Serializable {
       setEndversion(executionMixin.getEndversion());
       
       setTestGoal(executionMixin.getTestGoal());
-      if (getIncludes() != null) {
+      if (executionMixin.getIncludes() != null) {
          for (String include : executionMixin.getIncludes()) {
-            getIncludes().add(include);
+            includes.add(include);
          }
       }
-      if (getExcludes() != null) {
+      if (executionMixin.getExcludes() != null) {
          for (String exclude : executionMixin.getExcludes()) {
-            getExcludes().add(exclude);
+            excludes.add(exclude);
          }
          throw new RuntimeException("Not implemented yet");
       }
-      if (getPl() != null) {
-         setPl(executionMixin.getPl());
+      if (executionMixin.getPl() != null) {
+         pl = executionMixin.getPl();
       }
    }
 
