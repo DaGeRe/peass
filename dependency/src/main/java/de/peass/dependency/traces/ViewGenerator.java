@@ -52,9 +52,9 @@ public class ViewGenerator extends PairProcessor {
       init();
    }
 
-   public ViewGenerator() {
+   public ViewGenerator(final EnvironmentVariables env) {
       executionConfig = new ExecutionConfig();
-      env = null;
+      this.env = env;
    }
 
    public void init() {
@@ -156,7 +156,7 @@ public class ViewGenerator extends PairProcessor {
    }
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, JAXBException, IOException {
-      final CommandLine commandLine = new CommandLine(new ViewGenerator());
+      final CommandLine commandLine = new CommandLine(new ViewGenerator(new EnvironmentVariables()));
       commandLine.execute(args);
    }
 

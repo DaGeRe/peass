@@ -41,19 +41,25 @@ public class VisualizeRegularMeasurement {
             for (Chunk chunk : test.getDatacollector().get(0).getChunk()) {
                List<String> versions = getVersions(chunk);
                TestCase testcase = new TestCase(data.getTestcases().getClazz(), test.getName());
-               KoPeMeTreeConverter koPeMeTreeConverter = new KoPeMeTreeConverter(folders, versions.get(0), testcase);
-               GraphNode node = koPeMeTreeConverter.getData();
-               if (node != null) {
-                  File destFolder = new File(resultFolder, versions.get(0));
-                  GraphNode emptyNode = new GraphNode(testcase.getExecutable(), "void " + testcase.getExecutable().replace("#", ".") + "()", CauseSearchData.ADDED);
-                  emptyNode.setName(testcase.getExecutable());
-                  CauseSearchData data2 = createEmptyData(versions, testcase);
-                  HTMLWriter htmlWriter = new HTMLWriter(emptyNode, data2, destFolder, null, node);
-                  htmlWriter.writeHTML();
+               for (String version : versions) {
+                  KoPeMeTreeConverter koPeMeTreeConverter = new KoPeMeTreeConverter(folders, version, testcase);
+                  GraphNode node = koPeMeTreeConverter.getData();
+                  if (node != null) {
+                     visualizeNode(versions, testcase, node);
+                  }
                }
             }
          }
       }
+   }
+
+   private void visualizeNode(final List<String> versions, final TestCase testcase, final GraphNode node) throws IOException, JsonProcessingException, FileNotFoundException, JAXBException {
+      File destFolder = new File(resultFolder, versions.get(0));
+      GraphNode emptyNode = new GraphNode(testcase.getExecutable(), "void " + testcase.getExecutable().replace("#", ".") + "()", CauseSearchData.ADDED);
+      emptyNode.setName(testcase.getExecutable());
+      CauseSearchData data2 = createEmptyData(versions, testcase);
+      HTMLWriter htmlWriter = new HTMLWriter(emptyNode, data2, destFolder, null, node);
+      htmlWriter.writeHTML();
    }
 
    private CauseSearchData createEmptyData(final List<String> versions, final TestCase testcase) {
