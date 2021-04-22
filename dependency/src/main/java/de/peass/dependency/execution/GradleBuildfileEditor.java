@@ -23,7 +23,6 @@ public class GradleBuildfileEditor {
    private final ProjectModules modules;
    
    public GradleBuildfileEditor(final JUnitTestTransformer testTransformer, final File buildfile, final ProjectModules modules) {
-      super();
       this.testTransformer = testTransformer;
       this.buildfile = buildfile;
       this.modules = modules;
@@ -84,15 +83,16 @@ public class GradleBuildfileEditor {
    
 
 
-   private static void addDependencies(final FindDependencyVisitor visitor) {
+   private void addDependencies(final FindDependencyVisitor visitor) {
+      boolean isAddJunit3 = testTransformer.isJUnit3();
       if (visitor.getDependencyLine() != -1) {
-         for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
+         for (RequiredDependency dependency : RequiredDependency.getAll(isAddJunit3)) {
             final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
             visitor.addLine(visitor.getDependencyLine() - 1, dependencyGradle);
          }
       } else {
          visitor.getLines().add("dependencies { ");
-         for (RequiredDependency dependency : RequiredDependency.getAll(false)) {
+         for (RequiredDependency dependency : RequiredDependency.getAll(isAddJunit3)) {
             final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
             visitor.getLines().add(dependencyGradle);
          }
