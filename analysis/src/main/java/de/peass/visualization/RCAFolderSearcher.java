@@ -10,6 +10,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.peass.dependency.PeASSFolders;
+
 public class RCAFolderSearcher {
 
    private File[] data;
@@ -26,9 +28,9 @@ public class RCAFolderSearcher {
       List<File> peassFilesToHandle = new LinkedList<>();
       for (final File source : data) {
          if (source.isDirectory()) {
-            if (source.getName().endsWith("_peass")) {
+            if (source.getName().endsWith(PeASSFolders.PEASS_POSTFIX)) {
                peassFilesToHandle.add(source);
-            }
+            } 
          }
       }
       return peassFilesToHandle;

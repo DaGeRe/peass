@@ -276,7 +276,8 @@ function getAverage(divId, vmValues, start, end) {
 	var select = document.getElementById(divId);
 	var selectedOptions = $('#' + divId + ' :selected');
 	for (i = 0; i < selectedOptions.length; i++) {
-		var vmId = select.options[i].value;
+		var selectedOption = selectedOptions[i];
+		var vmId = selectedOption.value;
 		var iteration = vmValues.values[vmId];
 		var mean = 0;
 		var count = 0, addedCount = 0;
