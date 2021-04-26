@@ -77,7 +77,7 @@ public class Cleaner extends DataAnalyser  {
       final String method = entry.getValue().getTestcase().getMethod();
       if (entry.getValue().getPrevius().size() >= 2 && entry.getValue().getCurrent().size() >= 2) {
          final Chunk currentChunk = new Chunk();
-         final long minExecutionCount = MultipleVMTestUtil.getMinExecutionCount(entry.getValue().getPrevius());
+         final long minExecutionCount = MultipleVMTestUtil.getMinIterationCount(entry.getValue().getPrevius());
 
          final List<Result> previous = getChunk(entry.getValue().getPreviousVersion(), minExecutionCount, entry.getValue().getPrevius());
          currentChunk.getResult().addAll(previous);
