@@ -26,6 +26,7 @@ public class MeasurementConfiguration implements Serializable {
    private boolean logFullData = true;
    private boolean removeSnapshots = false;
    private boolean useGC = true;
+   private boolean redirectSubprocessOutputToFile = true;
 
    // Kieker config
    private boolean useKieker = false;
@@ -164,6 +165,7 @@ public class MeasurementConfiguration implements Serializable {
       this.record = other.record;
       this.measurementStrategy = other.measurementStrategy;
       this.saveAll = other.saveAll;
+      this.redirectSubprocessOutputToFile = other.redirectSubprocessOutputToFile;
    }
    
    public StatisticsConfiguration getStatisticsConfig() {
@@ -182,6 +184,14 @@ public class MeasurementConfiguration implements Serializable {
       return saveAll;
    }
    
+   public boolean isRedirectSubprocessOutputToFile() {
+      return redirectSubprocessOutputToFile;
+   }
+
+   public void setRedirectSubprocessOutputToFile(final boolean redirectSubprocesses) {
+      this.redirectSubprocessOutputToFile = redirectSubprocesses;
+   }
+
    /**
     * Whether to execute a GC before every iteration (bunch of repetitions)
     * 
