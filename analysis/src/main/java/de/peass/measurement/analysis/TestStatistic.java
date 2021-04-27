@@ -1,7 +1,5 @@
 package de.peass.measurement.analysis;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -14,7 +12,6 @@ import de.dagere.kopeme.generated.Result;
 import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.statistics.ConfidenceIntervalInterpretion;
 import de.peass.statistics.StatisticUtil;
-import de.peran.FolderSearcher;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 
 public class TestStatistic {
@@ -76,15 +73,6 @@ public class TestStatistic {
    private void addToInfo(final EvaluationPair data, final ProjectStatistics info, final int resultslength) {
       if (info != null) {
          info.addMeasurement(data.getVersion(), data.getTestcase(), statisticsPrevious, statisticsCurrent, resultslength);
-         try {
-            final File resultFolder = new File("results");
-            resultFolder.mkdir();
-            File statisticsFile = new File(resultFolder, "statistics.json");
-            LOG.debug("Writing to: {} Parent exists: {}", statisticsFile.getAbsolutePath(), resultFolder.exists());
-            FolderSearcher.MAPPER.writeValue(statisticsFile, info);
-         } catch (final IOException e) {
-            e.printStackTrace();
-         }
       }
    }
 
