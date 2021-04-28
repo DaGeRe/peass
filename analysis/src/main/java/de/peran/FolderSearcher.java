@@ -19,10 +19,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import de.dagere.peass.measurement.analysis.AnalyseFullData;
 import de.dagere.peass.measurement.analysis.Cleaner;
+import de.dagere.peass.measurement.analysis.ProjectStatistics;
 import de.dagere.peass.utils.OptionConstants;
-import de.peass.measurement.analysis.AnalyseFullData;
-import de.peass.measurement.analysis.ProjectStatistics;
 
 /**
  * Analyzes data from all subfolders of one folder. It is assumed that the typical PeASS-folder-structure is given.

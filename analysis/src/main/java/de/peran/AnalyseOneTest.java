@@ -19,13 +19,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
+import de.dagere.peass.measurement.analysis.AnalyseFullData;
 import de.dagere.peass.measurement.analysis.Cleaner;
 import de.dagere.peass.measurement.analysis.DataReader;
 import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
+import de.dagere.peass.measurement.analysis.statistics.MeanCoVData;
 import de.dagere.peass.measurement.analysis.statistics.TestData;
 import de.dagere.peass.utils.OptionConstants;
-import de.peass.measurement.analysis.AnalyseFullData;
-import de.peass.measurement.analysis.statistics.MeanCoVData;
 
 public class AnalyseOneTest {
 

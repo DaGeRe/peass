@@ -23,10 +23,10 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.measurement.analysis.Cleaner;
 import de.dagere.peass.measurement.analysis.DataAnalyser;
 import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
+import de.dagere.peass.measurement.analysis.statistics.MeanCoVData;
 import de.dagere.peass.measurement.analysis.statistics.TestData;
 import de.dagere.peass.statistics.ConfidenceIntervalInterpretion;
 import de.dagere.peass.utils.OptionConstants;
-import de.peass.measurement.analysis.statistics.MeanCoVData;
 
 /**
  * Analyzes data from all subfolders of one folder. It is assumed that the typical PeASS-folder-structure is given.
