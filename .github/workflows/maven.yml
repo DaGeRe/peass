@@ -10,7 +10,7 @@ jobs:
     strategy: 
         matrix:
           os: [ubuntu-latest, macos-latest] # no windows since kieker currently does not support windows execution
-          java: [ 1.8, 11, 16 ]
+          java: [ 1.8, 11, 15 ]
         fail-fast: false
     runs-on: ${{ matrix.os }}
     name: Java ${{ matrix.java }} OS ${{ matrix.os }} sample
@@ -25,7 +25,7 @@ jobs:
         fi
       shell: bash
     - uses: actions/checkout@v2
-    - name: Set up JDK 1.8
+    - name: Set up JDK ${{ matrix.java }}
       uses: actions/setup-java@v1
       with:
         java-version: ${{ matrix.java }}
