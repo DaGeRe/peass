@@ -106,7 +106,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>de.peass</groupId>
+			<groupId>de.dagere.peass</groupId>
 			<artifactId>analysis</artifactId>
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
