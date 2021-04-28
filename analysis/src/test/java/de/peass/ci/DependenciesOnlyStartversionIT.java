@@ -20,9 +20,9 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.vcs.VersionIteratorGit;
 import de.peass.ci.helper.GitProjectBuilder;
-import de.peass.dependencytests.DependencyTestConstants;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DependenciesOnlyStartversionIT {

@@ -2,7 +2,7 @@ package de.dagere.peass;
 
 import java.io.File;
 
-import de.peass.dependencytests.ViewGeneratorIT;
+import de.dagere.peass.dependencytests.ViewGeneratorIT;
 
 public class TestConstants {
 

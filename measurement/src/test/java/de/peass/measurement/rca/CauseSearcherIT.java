@@ -33,6 +33,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
+import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.CauseTester;
 import de.dagere.peass.measurement.rca.RCAStrategy;
@@ -41,7 +42,6 @@ import de.dagere.peass.measurement.rca.searcher.CauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.CauseSearcherComplete;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
-import de.peass.dependencytests.DependencyTestConstants;
 import de.peass.measurement.rca.helper.VCSTestUtils;
 import kieker.analysis.exception.AnalysisConfigurationException;
 

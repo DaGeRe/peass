@@ -27,7 +27,7 @@ import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.testtransformation.ParseUtil;
-import de.peass.transformation.TestTransformation;
+import de.dagere.peass.transformation.TestTransformation;
 
 public class TestRepetitionTransforming {
    @ClassRule

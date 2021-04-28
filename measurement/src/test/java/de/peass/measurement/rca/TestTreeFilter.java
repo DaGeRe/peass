@@ -13,10 +13,10 @@ import org.junit.jupiter.params.provider.ValueSource;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
+import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.TreeReader;
 import de.dagere.peass.measurement.rca.kieker.TreeReaderFactory;
-import de.peass.dependencytests.helper.FakeFileIterator;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class TestTreeFilter {
