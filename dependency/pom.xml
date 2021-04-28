@@ -17,7 +17,7 @@
 	<inceptionYear>2017</inceptionYear>
 
 	<parent>
-		<groupId>de.peass</groupId>
+		<groupId>de.dagere.peass</groupId>
 		<artifactId>peass-parent</artifactId>
 		<version>0.1-SNAPSHOT</version>
 	</parent>
