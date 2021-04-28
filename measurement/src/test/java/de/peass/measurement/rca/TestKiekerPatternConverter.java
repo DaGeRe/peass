@@ -3,7 +3,7 @@ package de.peass.measurement.rca;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.measurement.rca.kieker.KiekerPatternConverter;
+import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
 
 public class TestKiekerPatternConverter {
 

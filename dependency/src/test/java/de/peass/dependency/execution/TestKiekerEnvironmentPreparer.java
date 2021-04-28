@@ -15,10 +15,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.peass.config.ExecutionConfig;
-import de.peass.dependency.PeASSFolders;
+import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.execution.KiekerEnvironmentPreparer;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.peass.dependencytests.DependencyTestConstants;
-import de.peass.testtransformation.JUnitTestTransformer;
 
 public class TestKiekerEnvironmentPreparer {
 

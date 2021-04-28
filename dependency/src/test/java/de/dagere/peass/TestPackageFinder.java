@@ -8,7 +8,7 @@ import org.hamcrest.core.IsCollectionContaining;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.dependency.ClazzFileFinder;
+import de.dagere.peass.dependency.ClazzFileFinder;
 
 public class TestPackageFinder {
 	
@@ -16,10 +16,10 @@ public class TestPackageFinder {
 	public void testDependencyModule(){
 		final List<String> lowestPackage = ClazzFileFinder.getClasses(new File("."));
 		System.out.println(lowestPackage);
-		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.peass.DependencyReadingParallelStarter"));
-		Assert.assertThat(lowestPackage, Matchers.not(IsCollectionContaining.hasItem("de.peass.DependencyReadingParallelStarter.DependencyReadingParallelStarter")));
-		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.peass.statistics.DependencyStatisticAnalyzer"));
-		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.peass.statistics.DependencyStatistics"));
-		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.peass.TestPackageFinder"));
+		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.dagere.peass.DependencyReadingParallelStarter"));
+		Assert.assertThat(lowestPackage, Matchers.not(IsCollectionContaining.hasItem("de.dagere.peass.DependencyReadingParallelStarter.DependencyReadingParallelStarter")));
+		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.dagere.peass.statistics.DependencyStatisticAnalyzer"));
+		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.dagere.peass.statistics.DependencyStatistics"));
+		Assert.assertThat(lowestPackage, IsCollectionContaining.hasItem("de.dagere.peass.TestPackageFinder"));
 	}
 }

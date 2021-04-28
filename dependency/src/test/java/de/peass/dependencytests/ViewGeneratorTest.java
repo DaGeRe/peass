@@ -25,18 +25,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.dagere.peass.TestConstants;
-import de.peass.config.ExecutionConfig;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.ExecutionData;
-import de.peass.dependency.persistence.Version;
-import de.peass.dependency.traces.ViewGenerator;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.utils.Constants;
-import de.peass.vcs.GitUtils;
+import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.traces.ViewGenerator;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.utils.Constants;
+import de.dagere.peass.vcs.GitUtils;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(GitUtils.class)

@@ -12,13 +12,13 @@ import org.junit.Test;
 
 import com.github.javaparser.ParseException;
 
-import de.peass.dependency.analysis.CalledMethodLoader;
-import de.peass.dependency.analysis.ModuleClassMapping;
-import de.peass.dependency.execution.MavenPomUtil;
-import de.peass.dependency.execution.MavenTestExecutor;
-import de.peass.dependency.traces.TraceMethodReader;
-import de.peass.dependency.traces.TraceWithMethods;
-import de.peass.utils.StreamGobbler;
+import de.dagere.peass.dependency.analysis.CalledMethodLoader;
+import de.dagere.peass.dependency.analysis.ModuleClassMapping;
+import de.dagere.peass.dependency.execution.MavenPomUtil;
+import de.dagere.peass.dependency.execution.MavenTestExecutor;
+import de.dagere.peass.dependency.traces.TraceMethodReader;
+import de.dagere.peass.dependency.traces.TraceWithMethods;
+import de.dagere.peass.utils.StreamGobbler;
 
 /**
  * Testet, ob bei einem Trace, bei dem eine Methode oder eine Folge von Methoden mehrmals aufgerufen wird, das Lesen des Traces korrekt funktioniert.

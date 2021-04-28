@@ -11,8 +11,8 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 
-import de.peass.dependency.analysis.data.VersionDiff;
-import de.peass.vcs.VersionIterator;
+import de.dagere.peass.dependency.analysis.data.VersionDiff;
+import de.dagere.peass.vcs.VersionIterator;
 
 class CopyFileVisitor extends SimpleFileVisitor<Path> {
    private final Path targetPath;

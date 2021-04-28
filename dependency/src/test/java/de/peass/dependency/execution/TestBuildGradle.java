@@ -11,8 +11,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import de.peass.config.MeasurementConfiguration;
-import de.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.execution.GradleBuildfileEditor;
+import de.dagere.peass.dependency.execution.ProjectModules;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestBuildGradle {
 

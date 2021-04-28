@@ -3,9 +3,9 @@ package de.peass.dependencytests.helper;
 import java.io.File;
 import java.util.List;
 
-import de.peass.dependency.analysis.data.VersionDiff;
-import de.peass.vcs.GitCommit;
-import de.peass.vcs.VersionIterator;
+import de.dagere.peass.dependency.analysis.data.VersionDiff;
+import de.dagere.peass.vcs.GitCommit;
+import de.dagere.peass.vcs.VersionIterator;
 
 /**
  * An iterator which only goes to the versions but does not change anything on the filesystem

@@ -17,7 +17,7 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.type.ArrayType;
 import com.github.javaparser.ast.type.Type;
 
-import de.peass.dependency.changesreading.ClazzFinder;
+import de.dagere.peass.dependency.changesreading.ClazzFinder;
 
 public class SignatureReader {
 

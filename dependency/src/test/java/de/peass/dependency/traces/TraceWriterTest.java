@@ -10,9 +10,12 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.traces.requitur.ReducedTraceElement;
-import de.peass.dependency.traces.requitur.content.StringContent;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.traces.TraceMethodReader;
+import de.dagere.peass.dependency.traces.TraceWithMethods;
+import de.dagere.peass.dependency.traces.TraceWriter;
+import de.dagere.peass.dependency.traces.requitur.ReducedTraceElement;
+import de.dagere.peass.dependency.traces.requitur.content.StringContent;
 
 public class TraceWriterTest {
    @Rule

@@ -6,11 +6,11 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.InitialVersion;
-import de.peass.dependency.reader.DependencyReaderUtil;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.vcs.GitCommit;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.InitialVersion;
+import de.dagere.peass.dependency.reader.DependencyReaderUtil;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.vcs.GitCommit;
 
 public class TestMerging {
    @Test

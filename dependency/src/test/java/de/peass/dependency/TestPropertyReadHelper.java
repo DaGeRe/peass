@@ -3,8 +3,8 @@ package de.peass.dependency;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.analysis.properties.PropertyReadHelper;
-import de.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.analysis.properties.PropertyReadHelper;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 
 public class TestPropertyReadHelper {
    @Test

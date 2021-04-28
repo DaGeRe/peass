@@ -21,19 +21,19 @@ import org.junit.Test;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.TestConstants;
-import de.peass.config.ExecutionConfig;
-import de.peass.dependency.KiekerResultManager;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.CalledMethodLoader;
-import de.peass.dependency.analysis.ModuleClassMapping;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.analysis.data.TraceElement;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependency.traces.KiekerFolderUtil;
-import de.peass.dependency.traces.TraceMethodReader;
-import de.peass.dependency.traces.TraceWithMethods;
-import de.peass.dependencyprocessors.ViewNotFoundException;
+import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.KiekerResultManager;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.CalledMethodLoader;
+import de.dagere.peass.dependency.analysis.ModuleClassMapping;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.data.TraceElement;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.traces.KiekerFolderUtil;
+import de.dagere.peass.dependency.traces.TraceMethodReader;
+import de.dagere.peass.dependency.traces.TraceWithMethods;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 
 public class ViewGeneratorIT {
 

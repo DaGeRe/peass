@@ -10,10 +10,11 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependency.execution.MavenTestExecutor;
-import de.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.execution.MavenTestExecutor;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestMavenTestExecutor {
    

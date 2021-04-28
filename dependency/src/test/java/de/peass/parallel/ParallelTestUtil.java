@@ -3,8 +3,8 @@ package de.peass.parallel;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.vcs.GitCommit;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.vcs.GitCommit;
 
 public class ParallelTestUtil {
    public static List<GitCommit> getCommits() {

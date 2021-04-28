@@ -14,6 +14,9 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.dependency.execution.MavenPomUtil;
+import de.dagere.peass.dependency.execution.PomJavaUpdater;
+
 public class TestPomJavaUpdater {
 
    private final File experimentFile = new File("target" + File.separator + "pom.xml");

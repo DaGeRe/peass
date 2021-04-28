@@ -10,9 +10,9 @@ import org.junit.Test;
 
 import com.github.javaparser.ParseException;
 
-import de.peass.dependency.analysis.ModuleClassMapping;
-import de.peass.dependency.traces.TraceMethodReader;
-import de.peass.dependency.traces.TraceWithMethods;
+import de.dagere.peass.dependency.analysis.ModuleClassMapping;
+import de.dagere.peass.dependency.traces.TraceMethodReader;
+import de.dagere.peass.dependency.traces.TraceWithMethods;
 
 /**
  * Tests whether trace reading for the purpose of experiment result analysis is working corretly.

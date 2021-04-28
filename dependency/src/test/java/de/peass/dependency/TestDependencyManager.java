@@ -15,10 +15,12 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import de.dagere.peass.TestConstants;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.execution.ProjectModules;
-import de.peass.dependency.execution.TestExecutor;
-import de.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.DependencyManager;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.execution.ProjectModules;
+import de.dagere.peass.dependency.execution.TestExecutor;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestDependencyManager {
    

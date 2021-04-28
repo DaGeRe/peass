@@ -10,17 +10,17 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.mockito.Mockito;
 
-import de.peass.config.ExecutionConfig;
-import de.peass.dependency.ChangeManager;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.changesreading.ClazzChangeData;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.Version;
-import de.peass.dependency.reader.DependencyReader;
-import de.peass.vcs.VersionIterator;
+import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.ChangeManager;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.changesreading.ClazzChangeData;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.vcs.VersionIterator;
 
 public class DependencyDetectorTestUtil {
    

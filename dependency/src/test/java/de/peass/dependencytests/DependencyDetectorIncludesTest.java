@@ -11,15 +11,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.peass.config.ExecutionConfig;
-import de.peass.dependency.ChangeManager;
-import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.persistence.InitialDependency;
-import de.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.ChangeManager;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.persistence.InitialDependency;
+import de.dagere.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.vcs.VersionIterator;
 import de.peass.dependencytests.helper.FakeFileIterator;
-import de.peass.vcs.VersionIterator;
 
 public class DependencyDetectorIncludesTest {
    @Before

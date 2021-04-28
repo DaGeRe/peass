@@ -11,7 +11,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.analysis.properties.MethodChangeReader;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 
 public class TestMethodChangeReader {
 

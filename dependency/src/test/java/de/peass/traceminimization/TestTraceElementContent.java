@@ -3,8 +3,8 @@ package de.peass.traceminimization;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.dependency.analysis.data.TraceElement;
-import de.peass.dependency.traces.requitur.content.TraceElementContent;
+import de.dagere.peass.dependency.analysis.data.TraceElement;
+import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;
 
 public class TestTraceElementContent {
 	

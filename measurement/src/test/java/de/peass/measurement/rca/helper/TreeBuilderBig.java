@@ -1,6 +1,6 @@
 package de.peass.measurement.rca.helper;
 
-import de.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.data.CallTreeNode;
 
 public class TreeBuilderBig extends TreeBuilder {
 

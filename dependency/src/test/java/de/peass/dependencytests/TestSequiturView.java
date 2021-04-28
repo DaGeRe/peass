@@ -13,8 +13,8 @@ import org.junit.Test;
 
 import com.github.javaparser.ParseException;
 
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependencyprocessors.ViewNotFoundException;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 
 public class TestSequiturView {
 

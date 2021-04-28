@@ -10,7 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.dependency.moduleinfo.ModuleInfoEditor;
+import de.dagere.peass.dependency.moduleinfo.ModuleInfoEditor;
 
 public class TestModuleInfoEditor {
 

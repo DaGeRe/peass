@@ -9,8 +9,8 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import de.dagere.kopeme.generated.Result;
-import de.peass.measurement.analysis.MultipleVMTestUtil;
-import de.peass.measurement.analysis.statistics.OutlierRemover;
+import de.dagere.peass.measurement.analysis.MultipleVMTestUtil;
+import de.dagere.peass.measurement.analysis.statistics.OutlierRemover;
 
 public class OutlierRemoverBimodal {
    public OutlierRemoverBimodal(final List<Result> results) {

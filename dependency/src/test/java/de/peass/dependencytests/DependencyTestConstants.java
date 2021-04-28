@@ -2,7 +2,7 @@ package de.peass.dependencytests;
 
 import java.io.File;
 
-import de.peass.config.DependencyConfig;
+import de.dagere.peass.config.DependencyConfig;
 
 public class DependencyTestConstants {
 

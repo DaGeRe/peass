@@ -10,6 +10,7 @@ import org.junit.Test;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.peass.measurement.analysis.MeasurementFileFinder;
 
 public class TestMearementFileFinder {
    

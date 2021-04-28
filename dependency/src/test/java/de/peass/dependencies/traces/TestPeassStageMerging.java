@@ -4,7 +4,7 @@ import org.hamcrest.collection.IsArrayWithSize;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.peass.dependency.analysis.PeassStage;
+import de.dagere.peass.dependency.analysis.PeassStage;
 
 public class TestPeassStageMerging {
    

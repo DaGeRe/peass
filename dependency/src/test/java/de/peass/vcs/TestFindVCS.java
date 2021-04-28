@@ -6,6 +6,8 @@ import java.io.IOException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.dagere.peass.vcs.VersionControlSystem;
+
 /**
  * Tests whether the vcs is identified correctly - assumes that Peass still lies in a git repo and that this test still is in the dependency-module
  * 

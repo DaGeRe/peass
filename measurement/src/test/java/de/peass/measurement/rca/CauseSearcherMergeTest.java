@@ -14,20 +14,23 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.measurement.rca.CauseSearcherConfig;
+import de.dagere.peass.measurement.rca.CauseTester;
+import de.dagere.peass.measurement.rca.RCAStrategy;
+import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
+import de.dagere.peass.measurement.rca.searcher.CauseSearcher;
+import de.dagere.peass.measurement.rca.searcher.LevelCauseSearcher;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.CauseSearchFolders;
 import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependency.execution.EnvironmentVariables;
 import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.measurement.analysis.statistics.TestcaseStatistic;
-import de.peass.measurement.rca.data.CallTreeNode;
-import de.peass.measurement.rca.data.CauseSearchData;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.TreeBuilderLeafs;
-import de.peass.measurement.rca.kieker.BothTreeReader;
-import de.peass.measurement.rca.searcher.CauseSearcher;
-import de.peass.measurement.rca.searcher.LevelCauseSearcher;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**

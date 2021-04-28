@@ -13,8 +13,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.measurement.analysis.Cleaner;
-import de.peass.measurement.analysis.statistics.TestData;
+import de.dagere.peass.measurement.analysis.statistics.TestData;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 

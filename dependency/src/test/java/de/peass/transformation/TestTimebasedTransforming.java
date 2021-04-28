@@ -23,10 +23,10 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 
-import de.peass.dependency.changesreading.JavaParserProvider;
-import de.peass.testtransformation.JUnitTestTransformer;
-import de.peass.testtransformation.ParseUtil;
-import de.peass.testtransformation.TimeBasedTestTransformer;
+import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.ParseUtil;
+import de.dagere.peass.testtransformation.TimeBasedTestTransformer;
 
 public class TestTimebasedTransforming {
 	@ClassRule

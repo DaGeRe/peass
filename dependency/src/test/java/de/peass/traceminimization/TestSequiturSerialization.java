@@ -13,10 +13,10 @@ import org.junit.Test;
 
 import com.github.javaparser.ParseException;
 
-import de.peass.dependency.analysis.data.TraceElement;
-import de.peass.dependency.traces.TraceMethodReader;
-import de.peass.dependency.traces.TraceWithMethods;
-import de.peass.dependency.traces.requitur.Sequitur;
+import de.dagere.peass.dependency.analysis.data.TraceElement;
+import de.dagere.peass.dependency.traces.TraceMethodReader;
+import de.dagere.peass.dependency.traces.TraceWithMethods;
+import de.dagere.peass.dependency.traces.requitur.Sequitur;
 
 public class TestSequiturSerialization {
 

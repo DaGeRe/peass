@@ -5,6 +5,7 @@ import java.io.File;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.utils.Constants;
 

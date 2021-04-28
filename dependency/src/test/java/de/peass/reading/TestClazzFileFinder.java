@@ -7,7 +7,7 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.dependency.ClazzFileFinder;
+import de.dagere.peass.dependency.ClazzFileFinder;
 
 public class TestClazzFileFinder {
    

@@ -13,9 +13,9 @@ import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.TestcaseType;
+import de.dagere.peass.measurement.analysis.MultipleVMTestUtil;
 import de.peass.dependency.analysis.data.TestCase;
 import de.peass.dependencyprocessors.DummyKoPeMeDataCreator;
-import de.peass.measurement.analysis.MultipleVMTestUtil;
 
 public class TestSummaryFileSaving {
    

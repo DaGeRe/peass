@@ -9,8 +9,8 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
-import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.changesreading.ClazzFinder;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.changesreading.ClazzFinder;
 
 public class TestClazzFinder {
    

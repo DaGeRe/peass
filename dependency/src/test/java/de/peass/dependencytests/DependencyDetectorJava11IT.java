@@ -12,12 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledForJreRange;
 import org.junit.jupiter.api.condition.JRE;
 
-import de.peass.dependency.ChangeManager;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.dependency.ChangeManager;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.vcs.VersionIterator;
 import de.peass.dependencytests.helper.FakeFileIterator;
-import de.peass.vcs.VersionIterator;
 
 public class DependencyDetectorJava11IT {
 

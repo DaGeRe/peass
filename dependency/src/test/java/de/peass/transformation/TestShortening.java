@@ -12,10 +12,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.testtransformation.JUnitTestShortener;
-import de.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.testtransformation.JUnitTestShortener;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestShortening {
 

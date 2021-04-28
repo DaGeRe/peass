@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.dependency.traces.requitur.Rule;
-import de.peass.dependency.traces.requitur.Sequitur;
-import de.peass.dependency.traces.requitur.TraceStateTester;
-import de.peass.dependency.traces.requitur.content.Content;
-import de.peass.dependency.traces.requitur.content.RuleContent;
-import de.peass.dependency.traces.requitur.content.StringContent;
+import de.dagere.peass.dependency.traces.requitur.Rule;
+import de.dagere.peass.dependency.traces.requitur.Sequitur;
+import de.dagere.peass.dependency.traces.requitur.TraceStateTester;
+import de.dagere.peass.dependency.traces.requitur.content.Content;
+import de.dagere.peass.dependency.traces.requitur.content.RuleContent;
+import de.dagere.peass.dependency.traces.requitur.content.StringContent;
 
 /**
  * Tests only sequitur on artificial examples given by manually constructed traces.

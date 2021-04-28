@@ -13,16 +13,16 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.peass.config.ExecutionConfig;
-import de.peass.dependency.KiekerResultManager;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.CalledMethodLoader;
-import de.peass.dependency.analysis.ModuleClassMapping;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.analysis.data.TraceElement;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependencyprocessors.ViewNotFoundException;
+import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.KiekerResultManager;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.CalledMethodLoader;
+import de.dagere.peass.dependency.analysis.ModuleClassMapping;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.analysis.data.TraceElement;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.dependencytests.ViewGeneratorIT;
 
 public class TestPeASSFilter {

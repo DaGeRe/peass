@@ -4,6 +4,8 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+
 public class TestChangedEntity {
    
    @Test

@@ -14,8 +14,8 @@ import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.BodyDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 
-import de.peass.dependency.changesreading.JavaParserProvider;
-import de.peass.dependency.traces.TraceReadUtils;
+import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.peass.dependency.traces.TraceReadUtils;
 
 public class TestSourceDetection {
    public static final File SOURCE = new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "detection");

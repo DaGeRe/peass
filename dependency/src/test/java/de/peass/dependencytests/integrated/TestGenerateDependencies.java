@@ -13,18 +13,18 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import de.dagere.peass.TestConstants;
-import de.peass.config.ExecutionConfig;
-import de.peass.dependency.ChangeManager;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.changesreading.ClazzChangeData;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependency.reader.DependencyReader;
-import de.peass.dependency.reader.VersionKeeper;
+import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.ChangeManager;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.changesreading.ClazzChangeData;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.dependency.reader.VersionKeeper;
+import de.dagere.peass.utils.Constants;
 import de.peass.dependencytests.DependencyTestConstants;
 import de.peass.dependencytests.ViewGeneratorIT;
 import de.peass.dependencytests.helper.FakeFileIterator;
-import de.peass.utils.Constants;
 
 public class TestGenerateDependencies {
 

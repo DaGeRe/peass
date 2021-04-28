@@ -11,9 +11,9 @@ import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
-import de.peass.dependency.changesreading.JavaParserProvider;
-import de.peass.dependency.traces.TraceReadUtils;
-import de.peass.dependency.traces.requitur.content.TraceElementContent;
+import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.peass.dependency.traces.TraceReadUtils;
+import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;
 
 public class TestSourceDetectionInnerClass {
    @Test

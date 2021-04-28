@@ -4,9 +4,9 @@ package de.peass.measurement.rca;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil;
 import de.peass.config.MeasurementConfiguration;
-import de.peass.measurement.rca.data.CallTreeNode;
-import de.peass.measurement.rca.treeanalysis.TreeUtil;
 
 public class TreeUtilTest {
    

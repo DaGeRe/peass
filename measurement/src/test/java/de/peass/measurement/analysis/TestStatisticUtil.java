@@ -5,7 +5,8 @@ import org.apache.commons.math3.stat.inference.TestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.statistics.StatisticUtil;
+import de.dagere.peass.measurement.analysis.Relation;
+import de.dagere.peass.statistics.StatisticUtil;
 
 public class TestStatisticUtil {
 

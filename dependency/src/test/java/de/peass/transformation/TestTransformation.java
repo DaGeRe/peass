@@ -43,9 +43,9 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.MemberValuePair;
 
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.changesreading.JavaParserProvider;
-import de.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 /**
  * Tests the transformation of classes.

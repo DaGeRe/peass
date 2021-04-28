@@ -19,21 +19,21 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
-import de.peass.config.ExecutionConfig;
-import de.peass.dependency.ChangeManager;
-import de.peass.dependency.DependencyManager;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependency.parallel.OneReader;
-import de.peass.dependency.parallel.PartialDependenciesMerger;
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.InitialVersion;
-import de.peass.dependency.reader.DependencyReader;
-import de.peass.dependency.reader.FirstRunningVersionFinder;
+import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.ChangeManager;
+import de.dagere.peass.dependency.DependencyManager;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.parallel.OneReader;
+import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.InitialVersion;
+import de.dagere.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
+import de.dagere.peass.vcs.GitCommit;
+import de.dagere.peass.vcs.VersionIterator;
 import de.peass.dependencytests.DependencyTestConstants;
 import de.peass.dependencytests.helper.FakeVersionIterator;
-import de.peass.vcs.GitCommit;
-import de.peass.vcs.VersionIterator;
 
 public class TestVersionSplitting {
 

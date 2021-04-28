@@ -9,12 +9,12 @@ import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.persistence.ExecutionData;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.utils.Constants;
-import de.peass.vcs.GitCommit;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.utils.Constants;
+import de.dagere.peass.vcs.GitCommit;
 
 public class TestChangedTraceTestSerialisation {
    

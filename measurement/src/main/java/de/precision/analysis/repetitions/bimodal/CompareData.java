@@ -5,7 +5,7 @@ import java.util.List;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import de.dagere.kopeme.generated.Result;
-import de.peass.measurement.rca.data.OneVMResult;
+import de.dagere.peass.measurement.rca.data.OneVMResult;
 
 public final class CompareData {
    private final double[] before;

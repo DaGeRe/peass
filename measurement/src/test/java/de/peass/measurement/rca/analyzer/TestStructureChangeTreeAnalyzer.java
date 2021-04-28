@@ -4,7 +4,8 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.analyzer.StructureChangeTreeAnalyzer;
+import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.peass.measurement.rca.helper.TreeBuilder;
 import de.peass.measurement.rca.helper.TreeBuilderBig;
 

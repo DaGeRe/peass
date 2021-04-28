@@ -14,9 +14,9 @@ import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.peass.measurement.organize.ResultOrganizer;
+import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
 import de.peass.dependency.PeASSFolders;
-import de.peass.measurement.organize.ResultOrganizer;
-import de.peass.measurement.organize.ResultOrganizerParallel;
 
 public class TestResultOrganizerParallel {
 

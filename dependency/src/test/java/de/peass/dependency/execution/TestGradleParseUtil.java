@@ -18,9 +18,12 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import de.dagere.peass.TestConstants;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.PeASSFolders;
-import de.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.execution.GradleParseUtil;
+import de.dagere.peass.dependency.execution.GradleTestExecutor;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestGradleParseUtil {
 

@@ -7,9 +7,10 @@ import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.config.ExecutionConfig;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.ci.NonIncludedTestRemover;
+import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
 
 public class TestNonIncludedTestRemover {
 

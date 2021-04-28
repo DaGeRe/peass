@@ -13,11 +13,11 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.config.DependencyReaderConfigMixin;
-import de.peass.dependency.persistence.ExecutionData;
-import de.peass.statistics.DependencyStatisticAnalyzer;
-import de.peass.statistics.DependencyStatistics;
-import de.peass.utils.Constants;
+import de.dagere.peass.config.DependencyReaderConfigMixin;
+import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.statistics.DependencyStatisticAnalyzer;
+import de.dagere.peass.statistics.DependencyStatistics;
+import de.dagere.peass.utils.Constants;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;

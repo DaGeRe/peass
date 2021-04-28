@@ -17,17 +17,17 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import co.unruly.matchers.StreamMatchers;
-import de.peass.config.ExecutionConfig;
-import de.peass.dependency.ChangeManager;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.changesreading.ClazzChangeData;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependency.persistence.InitialDependency;
-import de.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.ChangeManager;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.changesreading.ClazzChangeData;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.persistence.InitialDependency;
+import de.dagere.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.vcs.VersionIterator;
 import de.peass.dependencytests.helper.FakeFileIterator;
-import de.peass.vcs.VersionIterator;
 
 public class DependencyDetectorMultimoduleIT {
 

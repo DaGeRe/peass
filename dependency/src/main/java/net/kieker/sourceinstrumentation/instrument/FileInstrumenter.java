@@ -24,8 +24,8 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 
-import de.peass.dependency.changesreading.JavaParserProvider;
-import de.peass.testtransformation.ParseUtil;
+import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.peass.testtransformation.ParseUtil;
 import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
 
 public class FileInstrumenter {

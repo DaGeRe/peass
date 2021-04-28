@@ -6,10 +6,10 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.dependency.traces.requitur.RunLengthEncodingSequitur;
-import de.peass.dependency.traces.requitur.Sequitur;
-import de.peass.dependency.traces.requitur.TraceStateTester;
-import de.peass.dependency.traces.requitur.content.Content;
+import de.dagere.peass.dependency.traces.requitur.RunLengthEncodingSequitur;
+import de.dagere.peass.dependency.traces.requitur.Sequitur;
+import de.dagere.peass.dependency.traces.requitur.TraceStateTester;
+import de.dagere.peass.dependency.traces.requitur.content.Content;
 
 /**
  * Tests Run-Length-Encoding with Sequitur on artificial examples given by manually constructed traces.
