@@ -6,8 +6,8 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
-import de.peass.measurement.rca.data.CauseSearchData;
-import de.peass.utils.Constants;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.utils.Constants;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
@@ -16,7 +16,7 @@ public class ClassifyByRCA implements Callable<Void> {
    @Option(names = { "-datafolder", "--datafolder" }, description = "Folder which should be used for analysis", required = true)
    private File datafolder;
 
-   public static void main(String[] args) {
+   public static void main(final String[] args) {
       final CommandLine commandLine = new CommandLine(new ClassifyByRCA());
       commandLine.execute(args);
    }

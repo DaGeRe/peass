@@ -9,9 +9,9 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.analysis.properties.MethodChangeReader;
+import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import de.peass.analysis.properties.MethodChangeReader;
-import de.peass.config.MeasurementConfiguration;
 
 public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
 

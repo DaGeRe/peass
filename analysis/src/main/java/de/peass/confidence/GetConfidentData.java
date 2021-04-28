@@ -9,9 +9,9 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.peass.clean.CleaningData;
 import de.peass.clean.TestCleaner;
-import de.peass.dependencyprocessors.VersionComparator;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
@@ -26,7 +26,7 @@ public class GetConfidentData extends TestCleaner {
 
    private static final Logger LOG = LogManager.getLogger(GetConfidentData.class);
 
-   public static void main(String[] args) throws ParseException, JAXBException, IOException {
+   public static void main(final String[] args) throws ParseException, JAXBException, IOException {
       GetConfidentData command = new GetConfidentData();
       CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);

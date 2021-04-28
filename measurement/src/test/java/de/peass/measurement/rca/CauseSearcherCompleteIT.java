@@ -21,20 +21,20 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.CauseSearchFolders;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.measurement.rca.CauseTester;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.searcher.CauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.LevelCauseSearcher;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.CauseSearchFolders;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependencyprocessors.ViewNotFoundException;
+import de.dagere.peass.vcs.GitUtils;
+import de.dagere.peass.vcs.VersionControlSystem;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.VCSTestUtils;
-import de.peass.vcs.GitUtils;
-import de.peass.vcs.VersionControlSystem;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 @RunWith(PowerMockRunner.class)

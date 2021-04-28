@@ -10,9 +10,9 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
-import de.peass.dependencyprocessors.ViewNotFoundException;
 import de.peass.measurement.rca.helper.TestConstants;
 import de.peass.measurement.rca.helper.TreeBuilder;
 import kieker.analysis.exception.AnalysisConfigurationException;

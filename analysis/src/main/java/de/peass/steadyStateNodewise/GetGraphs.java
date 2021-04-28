@@ -10,12 +10,12 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.measurement.rca.data.CauseSearchData;
-import de.peass.measurement.rca.serialization.MeasuredValues;
-import de.peass.utils.Constants;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
+import de.dagere.peass.utils.Constants;
 
 public class GetGraphs {
-   public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       File file = new File(args[0]);
       CauseSearchData data = Constants.OBJECTMAPPER.readValue(file, CauseSearchData.class);
 
@@ -26,7 +26,7 @@ public class GetGraphs {
 
    }
 
-   public static void printValues(CauseSearchData data, MeasuredValues values) {
+   public static void printValues(final CauseSearchData data, final MeasuredValues values) {
       System.out.println(data.getTestcase());
 
       for (int i = 0; i < 100; i++) {

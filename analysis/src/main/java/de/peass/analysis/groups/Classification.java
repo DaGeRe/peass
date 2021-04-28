@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 
 public class Classification {
    private static final Logger LOG = LogManager.getLogger(Classification.class);

@@ -6,8 +6,8 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.utils.StreamGobbler;
-import de.peass.vcs.VersionControlSystem;
+import de.dagere.peass.utils.StreamGobbler;
+import de.dagere.peass.vcs.VersionControlSystem;
 
 public enum ContinuousFolderUtil {
    ;

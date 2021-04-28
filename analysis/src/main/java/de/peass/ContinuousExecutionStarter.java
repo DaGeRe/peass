@@ -9,12 +9,12 @@ import javax.xml.bind.JAXBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.StatisticsConfigurationMixin;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.execution.ExecutionConfigMixin;
+import de.dagere.peass.dependency.execution.MeasurementConfigurationMixin;
 import de.peass.ci.ContinuousExecutor;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.config.StatisticsConfigurationMixin;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependency.execution.ExecutionConfigMixin;
-import de.peass.dependency.execution.MeasurementConfigurationMixin;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;

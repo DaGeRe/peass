@@ -7,8 +7,8 @@ import java.util.List;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
+import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import de.peass.config.MeasurementConfiguration;
 
 public class TreeBuilder {
    protected final CallTreeNode root, a, b, c, constructor;

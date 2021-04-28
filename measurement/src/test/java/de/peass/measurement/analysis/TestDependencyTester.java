@@ -17,15 +17,15 @@ import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.ExecutorCreator;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.DependencyTester;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.ExecutorCreator;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.vcs.VersionControlSystem;
 import de.peass.measurement.MavenTestExecutorMocker;
 import de.peass.measurement.rca.helper.VCSTestUtils;
-import de.peass.vcs.VersionControlSystem;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ VersionControlSystem.class, ExecutorCreator.class })

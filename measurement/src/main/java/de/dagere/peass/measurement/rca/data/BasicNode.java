@@ -2,7 +2,7 @@ package de.dagere.peass.measurement.rca.data;
 
 import java.util.List;
 
-import de.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 
 /**
  * Base class for node implementations: - CallTreeNode contains the measured data during measurement - MeasuredNode contains the measured data during serialization - GraphNode

@@ -21,11 +21,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedData;
 import de.dagere.kopeme.kieker.aggregateddata.AggregatedDataNode;
 import de.dagere.kopeme.kieker.writer.AggregatedDataReader;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
 import de.dagere.peass.measurement.rca.kiekerReading.KiekerDurationReader;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.traces.KiekerFolderUtil;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class KiekerResultReader {

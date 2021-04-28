@@ -10,6 +10,11 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.analysis.properties.ChangeProperties;
+import de.dagere.peass.analysis.properties.ChangeProperty;
+import de.dagere.peass.analysis.properties.ChangeProperty.TraceChange;
+import de.dagere.peass.analysis.properties.VersionChangeProperties;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.analysis.all.RepoFolders;
 import de.peass.analysis.groups.Classification;
 import de.peass.analysis.groups.TestcaseClass;
@@ -17,11 +22,6 @@ import de.peass.analysis.groups.VersionClass;
 import de.peass.analysis.guessing.ExpectedDirection;
 import de.peass.analysis.guessing.Guess;
 import de.peass.analysis.guessing.GuessDecider;
-import de.peass.analysis.properties.ChangeProperties;
-import de.peass.analysis.properties.ChangeProperty;
-import de.peass.analysis.properties.ChangeProperty.TraceChange;
-import de.peass.analysis.properties.VersionChangeProperties;
-import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peran.FolderSearcher;
 import difflib.Delta;
 import difflib.Patch;
@@ -42,7 +42,7 @@ public class GuessClassificationsByRules implements Callable<Void> {
 
    private int correct = 0, all = 0, wrong = 0;
 
-   public static void main(String[] args) {
+   public static void main(final String[] args) {
       CommandLine commandLine = new CommandLine(new GuessClassificationsByRules());
       commandLine.execute(args);
    }
@@ -66,7 +66,7 @@ public class GuessClassificationsByRules implements Callable<Void> {
       return null;
    }
 
-   private void guessVersion(Classification manual, Entry<String, ChangeProperties> version) throws IOException {
+   private void guessVersion(final Classification manual, final Entry<String, ChangeProperties> version) throws IOException {
       File versionFolder = new File(methodFileFolder, version.getKey());
       for (Entry<String, List<ChangeProperty>> testcase : version.getValue().getProperties().entrySet()) {
 
@@ -98,7 +98,7 @@ public class GuessClassificationsByRules implements Callable<Void> {
       }
    }
 
-   private void checkCorrectness(Guess guess, TestcaseClass testcaseClass, String version, ChangedEntity entity) {
+   private void checkCorrectness(final Guess guess, final TestcaseClass testcaseClass, final String version, final ChangedEntity entity) {
       boolean oneCorrect = false;
       boolean oneWrong = false;
       for (Map.Entry<String, ExpectedDirection> type : guess.getDirections().entrySet()) {
@@ -123,7 +123,7 @@ public class GuessClassificationsByRules implements Callable<Void> {
       }
    }
 
-   private void testStructuralChanges(GuessDecider guesser, ChangeProperty property, Guess guess) throws IOException {
+   private void testStructuralChanges(final GuessDecider guesser, final ChangeProperty property, final Guess guess) throws IOException {
       if (property.getTraceChangeType().equals(TraceChange.ADDED_CALLS) || property.getTraceChangeType().equals(TraceChange.NO_CALL_CHANGE)) {
          for (String method : property.getAffectedMethods()) {
             Patch<String> patch = guesser.getDiff(method);

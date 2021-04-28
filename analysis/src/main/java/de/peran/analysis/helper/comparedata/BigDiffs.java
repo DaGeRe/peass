@@ -3,8 +3,8 @@ package de.peran.analysis.helper.comparedata;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 
 public class BigDiffs {
    Map<String, TestcaseDiff> diffs = new LinkedHashMap<>();
@@ -24,32 +24,32 @@ public class BigDiffs {
       measurements.getMeasurements().put(folder, statistic);
    }
    
-   public void addChange(String folder, String version, TestCase testcase, TestcaseStatistic statistic) {
+   public void addChange(final String folder, final String version, final TestCase testcase, final TestcaseStatistic statistic) {
       // TODO Auto-generated method stub
       
    }
 
-   public void incrementDiff(String folder) {
+   public void incrementDiff(final String folder) {
       DecissionCount diff = getDiff(folder);
       diff.setBigDiff(diff.getBigDiff() + 1);
    }
 
-   public void incrementTTestDiff(String folder) {
+   public void incrementTTestDiff(final String folder) {
       DecissionCount diff = getDiff(folder);
       diff.settTestDiff(diff.gettTestDiff() + 1);
    }
    
-   public void incrementMeasurements(String folder) {
+   public void incrementMeasurements(final String folder) {
       DecissionCount diff = getDiff(folder);
       diff.setMeasurements(diff.getMeasurements() + 1);
    }
    
-   public void incrementConfidenceDiff(String folder) {
+   public void incrementConfidenceDiff(final String folder) {
       DecissionCount diff = getDiff(folder);
       diff.setConfidenceDiff(diff.getConfidenceDiff() + 1);
    }
 
-   private DecissionCount getDiff(String folder) {
+   private DecissionCount getDiff(final String folder) {
       DecissionCount diff = diffCount.get(folder);
       if (diff == null) {
          diff = new DecissionCount();
@@ -62,7 +62,7 @@ public class BigDiffs {
       return diffCount;
    }
 
-   public void setDiffCount(Map<String, DecissionCount> diffCount) {
+   public void setDiffCount(final Map<String, DecissionCount> diffCount) {
       this.diffCount = diffCount;
    }
 

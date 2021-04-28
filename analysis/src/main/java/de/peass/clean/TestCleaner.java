@@ -14,11 +14,11 @@ import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.measurement.analysis.Cleaner;
-import de.peass.utils.Constants;
-import de.peass.vcs.GitUtils;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.measurement.analysis.Cleaner;
+import de.dagere.peass.utils.Constants;
+import de.dagere.peass.vcs.GitUtils;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -46,7 +46,7 @@ public class TestCleaner implements Callable<Void> {
       System.exit(commandLine.execute(args));
    }
 
-   public static void cleanFolder(Cleaner transformer, final File dataFolder, final File projectNameFolder) {
+   public static void cleanFolder(final Cleaner transformer, final File dataFolder, final File projectNameFolder) {
       LOG.info("Start: " + dataFolder.getAbsolutePath());
       transformer.processDataFolder(dataFolder);
       LOG.info("Finish, read: " + transformer.getRead() + " correct: " + transformer.getCorrect());
@@ -100,7 +100,7 @@ public class TestCleaner implements Callable<Void> {
       return null;
    }
 
-   private void executeCleaning(CleaningData cleaner, Map<File, List<File>> commonParentFiles) throws JAXBException, IOException {
+   private void executeCleaning(final CleaningData cleaner, final Map<File, List<File>> commonParentFiles) throws JAXBException, IOException {
       for (Map.Entry<File, List<File>> entry : commonParentFiles.entrySet()) {
          File projectNameFolder = entry.getKey();
 
@@ -122,7 +122,7 @@ public class TestCleaner implements Callable<Void> {
       }
    }
 
-   private Map<File, List<File>> sortFolders(CleaningData cleaner) {
+   private Map<File, List<File>> sortFolders(final CleaningData cleaner) {
       Map<File, List<File>> commonParentFiles = new HashMap<>();
 
       for (int i = 0; i < cleaner.getDataValue().length; i++) {

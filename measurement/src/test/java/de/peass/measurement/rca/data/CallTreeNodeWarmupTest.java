@@ -8,8 +8,8 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import de.peass.config.MeasurementConfiguration;
 
 
 public class CallTreeNodeWarmupTest {

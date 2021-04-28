@@ -10,13 +10,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.TestExecutor;
-import de.peass.testtransformation.JUnitTestTransformer;
-import de.peass.vcs.GitUtils;
-import de.peass.vcs.VersionControlSystem;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.vcs.GitUtils;
+import de.dagere.peass.vcs.VersionControlSystem;
 
 public class OnceRunner {
 

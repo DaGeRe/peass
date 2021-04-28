@@ -27,9 +27,9 @@ import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
-import de.dagere.peass.statistics.StatisticUtil;
 import de.dagere.kopeme.generated.Versioninfo;
-import de.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.statistics.StatisticUtil;
 
 /**
  * Provides utilities for reading KoPeMe-data from multiple runs which should be summarized into one file.

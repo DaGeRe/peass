@@ -11,12 +11,12 @@ import java.util.Set;
 
 import com.github.javaparser.ast.CompilationUnit;
 
-import de.peass.dependency.ClazzFileFinder;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.changesreading.ClazzChangeData;
-import de.peass.dependency.changesreading.FileComparisonUtil;
-import de.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.peass.dependency.ClazzFileFinder;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.changesreading.ClazzChangeData;
+import de.dagere.peass.dependency.changesreading.FileComparisonUtil;
+import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;

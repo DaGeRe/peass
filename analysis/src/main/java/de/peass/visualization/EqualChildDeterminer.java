@@ -5,8 +5,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import de.peass.measurement.rca.data.BasicNode;
-import de.peass.measurement.rca.treeanalysis.TreeUtil;
+import de.dagere.peass.measurement.rca.data.BasicNode;
+import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil;
 
 class EqualChildDeterminer {
    Map<String, List<BasicNode>> alreadyAdded = new HashMap<>();

@@ -2,7 +2,7 @@ package de.dagere.peass.utils;
 
 import java.io.PrintStream;
 
-import de.peass.dependency.persistence.SelectedTests;
+import de.dagere.peass.dependency.persistence.SelectedTests;
 
 public class RunCommandWriterSlurm extends RunCommandWriter {
 
@@ -35,6 +35,7 @@ public class RunCommandWriterSlurm extends RunCommandWriter {
 
    private final String slurmOutputFolder;
 
+   @Override
    public void createSingleMethodCommand(final int versionIndex, final String endversion, final String testcaseName) {
       if (!inited) {
          init();

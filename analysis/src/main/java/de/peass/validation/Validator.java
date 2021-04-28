@@ -11,17 +11,17 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.analysis.changes.Change;
+import de.dagere.peass.analysis.changes.Change;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.vcs.GitUtils;
 import de.peass.analysis.changes.Changes;
 import de.peass.analysis.changes.ProjectChanges;
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.ExecutionData;
-import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.ProjectStatistics;
 import de.peass.validation.data.ProjectValidation;
 import de.peass.validation.data.Validation;
 import de.peass.validation.data.ValidationChange;
-import de.peass.vcs.GitUtils;
 import de.peran.FolderSearcher;
 
 public class Validator {
@@ -37,7 +37,7 @@ public class Validator {
    private final ProjectChanges changes;
    private final ProjectStatistics statistics;
 
-   public Validator(final File dependencyFolder, final File changeFolder, String project) throws JsonParseException, JsonMappingException, IOException {
+   public Validator(final File dependencyFolder, final File changeFolder, final String project) throws JsonParseException, JsonMappingException, IOException {
       final File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
       changedTests = FolderSearcher.MAPPER.readValue(executionFile, ExecutionData.class);
 
@@ -61,7 +61,7 @@ public class Validator {
       projectName = project;
    }
 
-   public File getStatisticsFile(final File changeFolder, String project) {
+   public File getStatisticsFile(final File changeFolder, final String project) {
       File statisticFile = new File(changeFolder, project + File.separator + "statistics" + File.separator + project + ".json");
       if (!statisticFile.exists()) {
          statisticFile = new File(changeFolder, project + File.separator + "statistics" + File.separator + "raw.json");
@@ -72,7 +72,7 @@ public class Validator {
       return statisticFile;
    }
 
-   public File getChangefile(final File changeFolder, String project) {
+   public File getChangefile(final File changeFolder, final String project) {
       File changeFile = new File(changeFolder, project + File.separator + project + ".json");
       if (!changeFile.exists()) {
          changeFile = new File(changeFolder, project + File.separator + "raw.json");
@@ -83,7 +83,7 @@ public class Validator {
       return changeFile;
    }
 
-   ProjectValidation validateProject(Validation old, final Map<String, String> commits)
+   ProjectValidation validateProject(final Validation old, final Map<String, String> commits)
          throws IOException, JsonParseException, JsonMappingException {
       final ProjectValidation projectValidation = new ProjectValidation();
 
@@ -142,7 +142,7 @@ public class Validator {
       return projectValidation;
    }
 
-   private void getOldExplanation(Validation old, final String commit, final ValidationChange change) {
+   private void getOldExplanation(final Validation old, final String commit, final ValidationChange change) {
       if (old != null && old.getProjects().get(projectName) != null) {
          if (old.getProjects().get(projectName).getChanges().get(commit) != null) {
             ValidationChange oldChange = old.getProjects().get(projectName).getChanges().get(commit);

@@ -10,8 +10,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import de.peass.measurement.rca.data.CauseSearchData;
-import de.peass.utils.Constants;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.utils.Constants;
 import de.peass.visualization.GraphNode;
 
 public class JavascriptDataWriter {

@@ -11,14 +11,14 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.CauseSearchFolders;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.CauseSearchFolders;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependencyprocessors.ViewNotFoundException;
-import de.peass.utils.Constants;
+import de.dagere.peass.utils.Constants;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class BothTreeReader {

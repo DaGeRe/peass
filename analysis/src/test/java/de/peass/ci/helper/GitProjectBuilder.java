@@ -2,16 +2,14 @@ package de.peass.ci.helper;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.utils.StreamGobbler;
+import de.dagere.peass.utils.StreamGobbler;
 
 /**
  * Builds a git project which can be used for integration testing 
@@ -25,7 +23,7 @@ public class GitProjectBuilder {
    private final File gitFolder;
    private final List<String> tags = new LinkedList<>();
    
-   public GitProjectBuilder(File destination, File firstVersionFolder) throws InterruptedException, IOException {
+   public GitProjectBuilder(final File destination, final File firstVersionFolder) throws InterruptedException, IOException {
       this.gitFolder = destination;
       if (!gitFolder.exists()) {
          gitFolder.mkdirs();
@@ -40,7 +38,7 @@ public class GitProjectBuilder {
       addVersion(firstVersionFolder, "Initial Commit");
    }
 
-   private void configLocalUser(File destination) throws IOException {
+   private void configLocalUser(final File destination) throws IOException {
       final Process setEmailProcess = Runtime.getRuntime().exec("git config user.email \"test@peass.github.com\"", new String[0], destination);
       String setEmailOutput = StreamGobbler.getFullProcess(setEmailProcess, false);
       LOG.debug("setEmailOutput output: {}", setEmailOutput);
@@ -55,7 +53,7 @@ public class GitProjectBuilder {
     * @throws IOException 
     * @throws InterruptedException 
     */
-   public String addVersion(File versionFolder, String commitMessage) throws IOException, InterruptedException {
+   public String addVersion(final File versionFolder, final String commitMessage) throws IOException, InterruptedException {
       FileUtils.copyDirectory(versionFolder, gitFolder);
       
       final Process addProcess = Runtime.getRuntime().exec("git add -A", new String[0], gitFolder);

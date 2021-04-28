@@ -12,15 +12,15 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.analysis.properties.ChangeProperties;
+import de.dagere.peass.analysis.properties.ChangeProperty;
+import de.dagere.peass.analysis.properties.PropertyProcessor;
+import de.dagere.peass.analysis.properties.VersionChangeProperties;
+import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.utils.Constants;
+import de.dagere.peass.vcs.GitUtils;
 import de.peass.analysis.changes.ProjectChanges;
-import de.peass.analysis.properties.ChangeProperties;
-import de.peass.analysis.properties.ChangeProperty;
-import de.peass.analysis.properties.PropertyProcessor;
-import de.peass.analysis.properties.VersionChangeProperties;
-import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.persistence.ExecutionData;
-import de.peass.utils.Constants;
-import de.peass.vcs.GitUtils;
 import de.peran.FolderSearcher;
 import de.peran.analysis.helper.all.CleanAll;
 

@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.utils.Constants;
+import de.dagere.peass.utils.Constants;
 
 /**
  * Reads validation data from extra executed validation-experiments (are saved in $PEASS_REPOS/measurementdata/validation/).
@@ -21,7 +21,7 @@ public class GetValidationExtra {
 
    private static final Logger LOG = LogManager.getLogger(GetValidationExtra.class);
 
-   public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       File repoFolder = new File(args.length > 0 ? args[0] : System.getenv(Constants.PEASS_REPOS));
       if (!repoFolder.exists()) {
          LOG.error("Folder " + repoFolder.getAbsolutePath() + " should exist!");

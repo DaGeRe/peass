@@ -19,21 +19,20 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.dependency.reader.DependencyReaderUtil;
-import de.peass.measurement.analysis.Cleaner;
-import de.peass.measurement.analysis.DataAnalyser;
+import de.dagere.peass.measurement.analysis.Cleaner;
+import de.dagere.peass.measurement.analysis.DataAnalyser;
+import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
+import de.dagere.peass.measurement.analysis.statistics.TestData;
+import de.dagere.peass.utils.OptionConstants;
 import de.peass.measurement.analysis.TestStatistic;
-import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.MeanCoVData;
-import de.peass.measurement.analysis.statistics.TestData;
-import de.peass.utils.OptionConstants;
 import de.peran.FolderSearcher;
 
 public class FindLowestVMCount extends DataAnalyser {
 
    private static final Logger LOG = LogManager.getLogger(FindLowestVMCount.class);
 
-   public static void main(String[] args) throws JAXBException, ParseException, InterruptedException, JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws JAXBException, ParseException, InterruptedException, JsonParseException, JsonMappingException, IOException {
       final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE);
       options.addOption(FolderSearcher.DATAOPTION);
 
@@ -53,7 +52,7 @@ public class FindLowestVMCount extends DataAnalyser {
    private BufferedWriter writer;
 
    @Override
-   public void processTestdata(TestData measurementEntry) {
+   public void processTestdata(final TestData measurementEntry) {
       try {
          final File folder = new File("results/csvs/");
          if (!folder.exists()) {

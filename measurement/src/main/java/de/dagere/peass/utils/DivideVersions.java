@@ -12,12 +12,11 @@ import javax.xml.bind.JAXBException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.ExecutionData;
-import de.peass.utils.Constants;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.ExecutionData;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -79,15 +78,15 @@ public class DivideVersions implements Callable<Void> {
       return null;
    }
 
-   public static void generateExecuteCommands(final Dependencies dependencies, final ExecutionData changedTests, final String experimentId, PrintStream goal) throws IOException {
+   public static void generateExecuteCommands(final Dependencies dependencies, final ExecutionData changedTests, final String experimentId, final PrintStream goal) throws IOException {
       generateExecuteCommands(dependencies, changedTests, experimentId, new RunCommandWriterSlurm(goal, experimentId, dependencies));
    }
 
-   public static void generateExecuteCommands(final ExecutionData changedTests, final String experimentId, PrintStream goal) throws IOException {
+   public static void generateExecuteCommands(final ExecutionData changedTests, final String experimentId, final PrintStream goal) throws IOException {
       generateExecuteCommands(changedTests, experimentId, new RunCommandWriterSlurm(goal, experimentId, changedTests));
    }
 
-   public static void generateExecuteCommands(final ExecutionData changedTests, final String experimentId, RunCommandWriter writer)
+   public static void generateExecuteCommands(final ExecutionData changedTests, final String experimentId, final RunCommandWriter writer)
          throws IOException {
       int i = 0;
       for (Map.Entry<String, TestSet> entry : changedTests.getVersions().entrySet()) {
@@ -102,7 +101,7 @@ public class DivideVersions implements Callable<Void> {
       }
    }
 
-   public static void generateExecuteCommands(final Dependencies dependencies, final ExecutionData changedTests, final String experimentId, RunCommandWriter writer)
+   public static void generateExecuteCommands(final Dependencies dependencies, final ExecutionData changedTests, final String experimentId, final RunCommandWriter writer)
          throws IOException {
       final String[] versions = dependencies.getVersionNames();
       for (int versionIndex = 0; versionIndex < dependencies.getVersions().size(); versionIndex++) {

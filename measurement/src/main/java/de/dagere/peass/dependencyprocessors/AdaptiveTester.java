@@ -10,13 +10,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.measurement.analysis.EarlyBreakDecider;
 import de.dagere.peass.measurement.analysis.ResultLoader;
 import de.dagere.peass.measurement.organize.FolderDeterminer;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.EnvironmentVariables;
 
 public class AdaptiveTester extends DependencyTester {
 

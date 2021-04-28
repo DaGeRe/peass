@@ -21,14 +21,14 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.kopeme.generated.Versioninfo;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
 import de.dagere.peass.measurement.analysis.statistics.TestData;
 import de.dagere.peass.statistics.StatisticUtil;
+import de.dagere.peass.utils.Constants;
 import de.dagere.peass.utils.OptionConstants;
-import de.dagere.kopeme.generated.Versioninfo;
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.utils.Constants;
 
 /**
  * Cleans measurement data by reading all iteration-values of every VM, dividing them in the middle and saving the results in a clean-folder in single chunk-entries in a

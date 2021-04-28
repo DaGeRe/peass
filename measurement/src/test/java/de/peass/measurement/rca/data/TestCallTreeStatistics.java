@@ -5,9 +5,9 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
-import de.peass.config.MeasurementConfiguration;
 
 public class TestCallTreeStatistics {
    

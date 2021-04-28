@@ -14,11 +14,11 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.analysis.changes.Change;
+import de.dagere.peass.analysis.properties.VersionChangeProperties;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.peass.analysis.all.RepoFolders;
-import de.peass.analysis.changes.Change;
 import de.peass.analysis.changes.ProjectChanges;
-import de.peass.analysis.properties.VersionChangeProperties;
-import de.peass.dependency.analysis.data.ChangedEntity;
 import de.peran.FolderSearcher;
 
 public class CreateClassificationData {

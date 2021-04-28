@@ -18,15 +18,15 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.measurement.analysis.MeasurementFileFinder;
 import de.peass.analysis.all.RepoFolders;
-import de.peass.dependency.persistence.ExecutionData;
-import de.peass.measurement.analysis.MeasurementFileFinder;
 import de.peran.FolderSearcher;
 
 public class CopyFromFull {
    private static final Logger LOG = LogManager.getLogger(CopyFromFull.class);
 
-   public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException, InterruptedException, JAXBException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException, InterruptedException, JAXBException {
       final RepoFolders folders = new RepoFolders();
 
       File reexecuteFolder = new File("results/reexecute-validation");
@@ -44,7 +44,7 @@ public class CopyFromFull {
       }
    }
 
-   private static void mergeAllFiles(final ExecutionData tests, final File source, File goal) throws JAXBException {
+   private static void mergeAllFiles(final ExecutionData tests, final File source, final File goal) throws JAXBException {
       if (source.exists()) {
          for (File measurementFile : source.listFiles()) {
             if (measurementFile.getName().endsWith(".xml")) {
@@ -54,7 +54,7 @@ public class CopyFromFull {
       }
    }
 
-   public static void checkFileMerging(final File goal, final ExecutionData tests, File source) throws JAXBException {
+   public static void checkFileMerging(final File goal, final ExecutionData tests, final File source) throws JAXBException {
       Kopemedata kopemeData = XMLDataLoader.loadData(source);
       Testcases testcase = kopemeData.getTestcases();
       TestcaseType testcaseType = testcase.getTestcase().get(0);
@@ -71,7 +71,7 @@ public class CopyFromFull {
       }
    }
 
-   public static void checkChunkMerging(final File validationDataFolder, final ExecutionData tests, String clazz, String method, Chunk chunk) throws JAXBException {
+   public static void checkChunkMerging(final File validationDataFolder, final ExecutionData tests, final String clazz, final String method, final Chunk chunk) throws JAXBException {
       String version = chunk.getResult().get(chunk.getResult().size() - 1).getVersion().getGitversion();
       if (tests.getVersions().containsKey(version)) {
          System.out.println(version);
@@ -86,7 +86,7 @@ public class CopyFromFull {
       }
    }
 
-   public static boolean checkEqualVersion(String version, MeasurementFileFinder finder) {
+   public static boolean checkEqualVersion(final String version, final MeasurementFileFinder finder) {
       boolean otherHasAlreadyData = false;
       for (Chunk otherChunk : finder.getDataCollector().getChunk()) {
          String otherVersion = otherChunk.getResult().get(otherChunk.getResult().size() - 1).getVersion().getGitversion();

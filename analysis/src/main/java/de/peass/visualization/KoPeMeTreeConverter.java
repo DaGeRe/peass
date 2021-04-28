@@ -18,11 +18,11 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.peass.dependency.CauseSearchFolders;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.measurement.analysis.statistics.TestcaseStatistic;
-import de.peass.measurement.rca.serialization.MeasuredValues;
+import de.dagere.peass.dependency.CauseSearchFolders;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
 
 public class KoPeMeTreeConverter {
 

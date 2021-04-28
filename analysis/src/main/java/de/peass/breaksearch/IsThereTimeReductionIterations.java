@@ -22,14 +22,13 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.peass.dependency.reader.DependencyReaderUtil;
-import de.peass.measurement.analysis.Cleaner;
-import de.peass.measurement.analysis.DataAnalyser;
-import de.peass.measurement.analysis.DataReader;
+import de.dagere.peass.measurement.analysis.Cleaner;
+import de.dagere.peass.measurement.analysis.DataAnalyser;
+import de.dagere.peass.measurement.analysis.DataReader;
+import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
+import de.dagere.peass.measurement.analysis.statistics.TestData;
+import de.dagere.peass.utils.OptionConstants;
 import de.peass.measurement.analysis.TestStatistic;
-import de.peass.measurement.analysis.statistics.EvaluationPair;
-import de.peass.measurement.analysis.statistics.TestData;
-import de.peass.utils.OptionConstants;
 import de.peran.FolderSearcher;
 
 public class IsThereTimeReductionIterations extends DataAnalyser {

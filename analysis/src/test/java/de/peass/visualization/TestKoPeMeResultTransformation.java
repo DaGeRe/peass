@@ -7,8 +7,8 @@ import javax.xml.bind.JAXBException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.peass.dependency.CauseSearchFolders;
-import de.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.CauseSearchFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class TestKoPeMeResultTransformation {
    @Test

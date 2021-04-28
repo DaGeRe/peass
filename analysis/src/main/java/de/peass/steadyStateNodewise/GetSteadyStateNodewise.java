@@ -14,9 +14,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import de.peass.measurement.rca.data.CauseSearchData;
-import de.peass.measurement.rca.serialization.MeasuredNode;
-import de.peass.utils.Constants;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
+import de.dagere.peass.utils.Constants;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -106,7 +106,7 @@ public class GetSteadyStateNodewise implements Callable<Void> {
       printInVMDeviations(node);
    }
 
-   public void printInVMDeviations(MeasuredNode node) {
+   public void printInVMDeviations(final MeasuredNode node) {
       // final Collection<List<StatisticalSummary>> values = ;
 
       new PerVMDeviationDeriver(node.getKiekerPattern(), node.getValues().getValues().values()).printDeviations();

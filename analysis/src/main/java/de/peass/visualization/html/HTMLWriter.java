@@ -13,8 +13,8 @@ import org.apache.commons.io.FileUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.peass.visualization.GraphNode;
 import de.peass.visualization.NodeDashboardWriter;
 import de.peass.visualization.RCAGenerator;

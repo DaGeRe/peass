@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import de.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CauseSearcherConfig implements Serializable {

@@ -12,10 +12,10 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.analysis.properties.PropertyReader;
+import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.vcs.GitUtils;
 import de.peass.ReadProperties;
-import de.peass.analysis.properties.PropertyReader;
-import de.peass.dependency.persistence.ExecutionData;
-import de.peass.vcs.GitUtils;
 import de.peran.FolderSearcher;
 
 public class ReadAllProperties {

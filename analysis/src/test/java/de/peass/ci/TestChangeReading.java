@@ -8,13 +8,13 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Test;
 
+import de.dagere.peass.dependency.analysis.ModuleClassMapping;
+import de.dagere.peass.dependency.execution.ProjectModules;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.vcs.GitCommit;
 import de.peass.analysis.changes.ProjectChanges;
-import de.peass.dependency.analysis.ModuleClassMapping;
-import de.peass.dependency.execution.ProjectModules;
-import de.peass.dependencyprocessors.VersionComparator;
 import de.peass.measurement.analysis.AnalyseFullData;
 import de.peass.measurement.analysis.ProjectStatistics;
-import de.peass.vcs.GitCommit;
 
 public class TestChangeReading {
    @Test

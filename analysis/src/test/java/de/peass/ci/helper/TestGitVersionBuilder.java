@@ -2,6 +2,7 @@ package de.peass.ci.helper;
 
 import java.io.File;
 import java.io.IOException;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hamcrest.MatcherAssert;
@@ -11,7 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import de.peass.utils.StreamGobbler;
+import de.dagere.peass.utils.StreamGobbler;
 
 public class TestGitVersionBuilder {
    
@@ -38,7 +39,7 @@ public class TestGitVersionBuilder {
       MatcherAssert.assertThat(builder.getTags().get(0), Matchers.not(Matchers.is(builder.getTags().get(1))));
    }
 
-   private void testLogContains(File tempFolder, final String... commitMessages) throws IOException {
+   private void testLogContains(final File tempFolder, final String... commitMessages) throws IOException {
       final Process logProcess = Runtime.getRuntime().exec("git log", new String[0], tempFolder);
       String logOutput = StreamGobbler.getFullProcess(logProcess, false);
       LOG.debug("Output: {}", logOutput);

@@ -8,16 +8,16 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementStrategy;
+import de.dagere.peass.dependency.ExecutorCreator;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.DependencyTester;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.config.MeasurementStrategy;
-import de.peass.dependency.ExecutorCreator;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.vcs.GitUtils;
+import de.dagere.peass.vcs.VersionControlSystem;
 import de.peass.measurement.analysis.TestDependencyTester;
 import de.peass.measurement.rca.helper.VCSTestUtils;
-import de.peass.vcs.GitUtils;
-import de.peass.vcs.VersionControlSystem;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ VersionControlSystem.class, ExecutorCreator.class, GitUtils.class })

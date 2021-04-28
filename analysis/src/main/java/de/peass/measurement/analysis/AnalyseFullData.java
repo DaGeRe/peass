@@ -19,17 +19,20 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.kopeme.generated.Result;
+import de.dagere.peass.dependency.analysis.ModuleClassMapping;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.measurement.analysis.DataAnalyser;
+import de.dagere.peass.measurement.analysis.Relation;
+import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
+import de.dagere.peass.measurement.analysis.statistics.TestData;
+import de.dagere.peass.statistics.ConfidenceIntervalInterpretion;
+import de.dagere.peass.utils.Constants;
+import de.dagere.peass.utils.StreamGobbler;
 import de.peass.analysis.changes.ProjectChanges;
-import de.peass.dependency.analysis.ModuleClassMapping;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.measurement.analysis.statistics.EvaluationPair;
 import de.peass.measurement.analysis.statistics.MeanCoVData;
 import de.peass.measurement.analysis.statistics.MeanHistogramData;
-import de.peass.measurement.analysis.statistics.TestData;
-import de.peass.statistics.ConfidenceIntervalInterpretion;
-import de.peass.utils.Constants;
 import de.peran.AnalyseOneTest;
 import de.peran.FolderSearcher;
 
@@ -251,7 +254,7 @@ public class AnalyseFullData extends DataAnalyser {
       final ProcessBuilder pb2 = new ProcessBuilder(command);
       pb2.directory(folder);
       final Process p2 = pb2.start();
-      de.peass.utils.StreamGobbler.showFullProcess(p2);
+      StreamGobbler.showFullProcess(p2);
    }
 
    private static void removeOutliers(final List<Result> previus) {

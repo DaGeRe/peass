@@ -3,10 +3,10 @@ package de.dagere.peass.measurement.rca.kieker;
 import java.io.File;
 import java.io.IOException;
 
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.vcs.GitUtils;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.vcs.GitUtils;
 
 public class TreeReaderFactory {
    

@@ -17,10 +17,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.dagere.peass.PeassGlobalInfos;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.statistics.StatisticUtil;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.analysis.data.ChangedEntity;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 
 /**

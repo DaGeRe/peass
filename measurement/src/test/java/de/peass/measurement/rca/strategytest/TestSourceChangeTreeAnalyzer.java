@@ -11,15 +11,15 @@ import org.hamcrest.core.IsIterableContaining;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.CauseSearchFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.CauseSearcherConfigMixin;
 import de.dagere.peass.measurement.rca.analyzer.SourceChangeTreeAnalyzer;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.CauseSearchFolders;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependencyprocessors.ViewNotFoundException;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class TestSourceChangeTreeAnalyzer {

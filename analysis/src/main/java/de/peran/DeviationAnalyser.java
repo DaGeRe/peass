@@ -20,14 +20,13 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.dependency.reader.DependencyReaderUtil;
-import de.peass.measurement.analysis.Cleaner;
-import de.peass.measurement.analysis.DataAnalyser;
-import de.peass.measurement.analysis.statistics.EvaluationPair;
+import de.dagere.peass.measurement.analysis.Cleaner;
+import de.dagere.peass.measurement.analysis.DataAnalyser;
+import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
+import de.dagere.peass.measurement.analysis.statistics.TestData;
+import de.dagere.peass.statistics.ConfidenceIntervalInterpretion;
+import de.dagere.peass.utils.OptionConstants;
 import de.peass.measurement.analysis.statistics.MeanCoVData;
-import de.peass.measurement.analysis.statistics.TestData;
-import de.peass.statistics.ConfidenceIntervalInterpretion;
-import de.peass.utils.OptionConstants;
 
 /**
  * Analyzes data from all subfolders of one folder. It is assumed that the typical PeASS-folder-structure is given.
@@ -97,7 +96,7 @@ public class DeviationAnalyser extends DataAnalyser {
 	}
 
 	@Override
-	public void processTestdata(TestData measurementEntry) {
+	public void processTestdata(final TestData measurementEntry) {
 		try {
 			for (final Map.Entry<String, EvaluationPair> entry : measurementEntry.getMeasurements().entrySet()) {
 				final DescriptiveStatistics statistics1 = ConfidenceIntervalInterpretion.getStatistics(entry.getValue().getPrevius());

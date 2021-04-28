@@ -8,11 +8,11 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.VersionSorter;
+import de.dagere.peass.utils.RunCommandWriterRCA;
+import de.dagere.peass.utils.RunCommandWriterSlurmRCA;
 import de.peass.analysis.changes.ChangeReader;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.utils.RunCommandWriterRCA;
-import de.peass.utils.RunCommandWriterSlurmRCA;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;

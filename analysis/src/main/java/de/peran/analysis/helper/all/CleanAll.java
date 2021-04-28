@@ -8,10 +8,10 @@ import javax.xml.bind.JAXBException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.measurement.analysis.Cleaner;
-import de.peass.utils.Constants;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.measurement.analysis.Cleaner;
+import de.dagere.peass.utils.Constants;
 
 public class CleanAll {
    public static final String[] allProjects = new String[] { "commons-compress", "commons-csv", "commons-dbcp", "commons-fileupload", "commons-imaging", "commons-io",

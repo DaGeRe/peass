@@ -11,7 +11,8 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.utils.Constants;
+import de.dagere.peass.analysis.changes.Change;
+import de.dagere.peass.utils.Constants;
 
 public class GetChangeClasses {
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {

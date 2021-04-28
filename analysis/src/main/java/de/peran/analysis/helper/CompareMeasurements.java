@@ -11,13 +11,13 @@ import java.util.Set;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.analysis.changes.Change;
+import de.dagere.peass.analysis.changes.Change;
 import de.peass.analysis.changes.Changes;
 import de.peass.analysis.changes.ProjectChanges;
 import de.peran.FolderSearcher;
 
 public class CompareMeasurements {
-   public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       File changeFile1 = new File(args[0]);
       File changeFile2 = new File(args[1]);
 
@@ -48,7 +48,7 @@ public class CompareMeasurements {
       // for (changes1.getVersionChanges().key)
    }
 
-   private static int findMissing(String changedClazz, Map<String, List<Change>> testcaseChanges2, Map<String, List<Change>> testcaseChanges) {
+   private static int findMissing(final String changedClazz, final Map<String, List<Change>> testcaseChanges2, final Map<String, List<Change>> testcaseChanges) {
       int notfound = 0;
       List<Change> changes = testcaseChanges.get(changedClazz);
       if (changes != null) {

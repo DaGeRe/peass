@@ -11,11 +11,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.analysis.properties.MethodChangeReader;
+import de.dagere.peass.analysis.properties.MethodChangeReader;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
 import de.peass.ci.ContinuousDependencyReader;
-import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.measurement.rca.data.CauseSearchData;
-import de.peass.measurement.rca.kieker.KiekerPatternConverter;
 import de.peass.visualization.GraphNode;
 
 public class SourceWriter {

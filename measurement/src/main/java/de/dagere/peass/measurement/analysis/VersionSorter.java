@@ -6,10 +6,10 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.ExecutionData;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.utils.Constants;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.utils.Constants;
 
 public class VersionSorter {
    public static ExecutionData executionData;

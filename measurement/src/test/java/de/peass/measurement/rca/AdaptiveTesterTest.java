@@ -21,18 +21,18 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.dagere.kopeme.generated.Result;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.ExecutorCreator;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.AdaptiveTester;
 import de.dagere.peass.measurement.analysis.ResultLoader;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.ExecutorCreator;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.vcs.GitUtils;
+import de.dagere.peass.vcs.VersionControlSystem;
 import de.peass.measurement.MavenTestExecutorMocker;
 import de.peass.measurement.rca.helper.VCSTestUtils;
-import de.peass.testtransformation.JUnitTestTransformer;
-import de.peass.vcs.GitUtils;
-import de.peass.vcs.VersionControlSystem;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ GitUtils.class, VersionControlSystem.class, ExecutorCreator.class, ResultLoader.class })

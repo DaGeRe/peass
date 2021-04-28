@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
+import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import de.peass.config.MeasurementConfiguration;
 
 /**
  * Determines the differing nodes analyzing the whole tree at once

@@ -8,10 +8,10 @@ import org.apache.commons.math3.stat.descriptive.moment.Kurtosis;
 import org.apache.commons.math3.stat.descriptive.moment.Skewness;
 
 import de.dagere.kopeme.generated.Result;
-import de.peass.utils.StreamGobbler;
+import de.dagere.peass.utils.StreamGobbler;
 
 public class MultimodalUtil {
-   public static boolean isMultimodalCoefficient(List<Result> list) {
+   public static boolean isMultimodalCoefficient(final List<Result> list) {
       final double[] values = new double[list.size()];
       int i = 0;
       for (final Result r : list) {
@@ -41,12 +41,12 @@ public class MultimodalUtil {
       return false;
    }
    
-   public static boolean isMultimodalSilverman(List<Result> list) {
+   public static boolean isMultimodalSilverman(final List<Result> list) {
       final double pvalue = getPValue(list);
       return pvalue > 0.5;
    }
 
-   private static double getPValue(List<Result> list) {
+   private static double getPValue(final List<Result> list) {
       String arrayString = "";
       for (final Result r : list) {
          arrayString += r.getValue()+",";

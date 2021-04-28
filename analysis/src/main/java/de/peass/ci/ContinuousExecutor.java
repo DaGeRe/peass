@@ -15,20 +15,20 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.config.DependencyConfig;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.ModuleClassMapping;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.ModuleClassMapping;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.utils.Constants;
+import de.dagere.peass.vcs.GitCommit;
+import de.dagere.peass.vcs.GitUtils;
+import de.dagere.peass.vcs.VersionControlSystem;
+import de.dagere.peass.vcs.VersionIteratorGit;
 import de.peass.measurement.analysis.AnalyseFullData;
 import de.peass.measurement.analysis.ProjectStatistics;
-import de.peass.utils.Constants;
-import de.peass.vcs.GitCommit;
-import de.peass.vcs.GitUtils;
-import de.peass.vcs.VersionControlSystem;
-import de.peass.vcs.VersionIteratorGit;
 import de.peran.AnalyseOneTest;
 
 public class ContinuousExecutor {

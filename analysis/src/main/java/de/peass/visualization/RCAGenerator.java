@@ -13,11 +13,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.dependency.CauseSearchFolders;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.measurement.rca.data.CallTreeNode;
-import de.peass.measurement.rca.data.CauseSearchData;
-import de.peass.utils.Constants;
+import de.dagere.peass.dependency.CauseSearchFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.utils.Constants;
 import de.peass.visualization.html.HTMLWriter;
 
 public class RCAGenerator {

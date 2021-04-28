@@ -13,15 +13,14 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.ExecutionData;
-import de.peass.utils.Constants;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.ExecutionData;
 
 public class DivideAllVersions {
 
    private static final Logger LOG = LogManager.getLogger(DivideAllVersions.class);
 
-   public static void main(String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
       String repoName = System.getenv(Constants.PEASS_REPOS);
       File repos = new File(repoName);
       if (!repos.exists()) {

@@ -18,11 +18,11 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.measurement.rca.CauseSearcherConfig;
-import de.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.measurement.rca.CauseSearcherConfig;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.peass.visualization.html.HTMLWriter;
 
 public class VisualizeRegularMeasurement {

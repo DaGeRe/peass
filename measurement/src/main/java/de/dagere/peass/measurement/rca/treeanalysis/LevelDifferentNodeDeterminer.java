@@ -11,10 +11,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependencyprocessors.ViewNotFoundException;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**

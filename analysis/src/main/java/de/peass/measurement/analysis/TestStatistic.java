@@ -9,9 +9,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
-import de.peass.measurement.analysis.statistics.EvaluationPair;
-import de.peass.statistics.ConfidenceIntervalInterpretion;
-import de.peass.statistics.StatisticUtil;
+import de.dagere.peass.measurement.analysis.MultipleVMTestUtil;
+import de.dagere.peass.measurement.analysis.Relation;
+import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
+import de.dagere.peass.statistics.ConfidenceIntervalInterpretion;
+import de.dagere.peass.statistics.StatisticUtil;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 
 public class TestStatistic {

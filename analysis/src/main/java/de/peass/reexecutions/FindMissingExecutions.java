@@ -12,11 +12,11 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.utils.Constants;
 import de.peass.analysis.all.RepoFolders;
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.ExecutionData;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.utils.Constants;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -40,7 +40,7 @@ public class FindMissingExecutions implements Callable<Void> {
 
    }
 
-   private void findMissing(final String project, File reexecuteFolder, RepoFolders folders) throws IOException, JsonParseException, JsonMappingException, JAXBException {
+   private void findMissing(final String project, final File reexecuteFolder, final RepoFolders folders) throws IOException, JsonParseException, JsonMappingException, JAXBException {
       final File dependencyfile = new File(folders.getDependencyFolder(), "deps_" + project + ".json");
       final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, Dependencies.class);
       VersionComparator.setDependencies(dependencies);
@@ -52,7 +52,7 @@ public class FindMissingExecutions implements Callable<Void> {
       missingExecutionFinder.findMissing(dataFolder);
    }
 
-   private File[] getDataFolder(final String project, RepoFolders folders) {
+   private File[] getDataFolder(final String project, final RepoFolders folders) {
       final File[] dataFolders;
       if (data.length == 0) {
          dataFolders = new File[1];

@@ -12,6 +12,10 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.analysis.properties.ChangeProperties;
+import de.dagere.peass.analysis.properties.ChangeProperty;
+import de.dagere.peass.analysis.properties.PropertyReadHelper;
+import de.dagere.peass.analysis.properties.VersionChangeProperties;
 import de.peran.FolderSearcher;
 
 public class GetCorrelations {
@@ -20,7 +24,7 @@ public class GetCorrelations {
       final VersionChangeProperties props = FolderSearcher.MAPPER.readValue(propertyFile, VersionChangeProperties.class);
 
       int count = 0;
-      for (final Map.Entry<String, ChangeProperties> version : props.getVersions().entrySet()) {
+      for (final Entry<String, ChangeProperties> version : props.getVersions().entrySet()) {
          for (final Entry<String, List<ChangeProperty>> testcase : version.getValue().getProperties().entrySet()) {
             count += testcase.getValue().size();
          }

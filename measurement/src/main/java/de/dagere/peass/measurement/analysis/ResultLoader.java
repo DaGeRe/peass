@@ -15,8 +15,8 @@ import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class ResultLoader {
 
@@ -30,7 +30,7 @@ public class ResultLoader {
    private final List<Double> before = new LinkedList<>();
    private final List<Double> after = new LinkedList<>();
 
-   public ResultLoader(MeasurementConfiguration config, final File measurementFolder, final TestCase testcase,
+   public ResultLoader(final MeasurementConfiguration config, final File measurementFolder, final TestCase testcase,
          final long currentChunkStart) {
       this.config = config;
       this.measurementFolder = measurementFolder;

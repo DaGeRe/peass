@@ -3,10 +3,10 @@ package de.peass.measurement.rca.data;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
-import de.peass.config.MeasurementConfiguration;
 
 public class TestCauseSearchData {
    
@@ -30,7 +30,7 @@ public class TestCauseSearchData {
       Assert.assertNotNull(diff);
    }
 
-   private CallTreeNode buildAdditionalNode(CallTreeNode bStructure) {
+   private CallTreeNode buildAdditionalNode(final CallTreeNode bStructure) {
       CallTreeNode cStructure = bStructure.appendChild("C", "public void C.c()", null);
       cStructure.setOtherVersionNode(new CallTreeNode("C", "public void C.c()", null, new MeasurementConfiguration(-1)));
       cStructure.setVersions("1", "2");

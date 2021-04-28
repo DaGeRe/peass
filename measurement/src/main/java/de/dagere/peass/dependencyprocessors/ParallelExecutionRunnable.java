@@ -7,11 +7,11 @@ import javax.xml.bind.JAXBException;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.execution.TestExecutor;
+import de.dagere.peass.dependency.traces.TemporaryProjectFolderUtil;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.TestExecutor;
-import de.peass.dependency.traces.TemporaryProjectFolderUtil;
 
 public class ParallelExecutionRunnable implements Runnable {
    

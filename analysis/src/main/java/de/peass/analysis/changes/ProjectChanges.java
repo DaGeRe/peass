@@ -12,10 +12,11 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.dagere.peass.analysis.changes.Change;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.measurement.analysis.Relation;
 import de.peass.analysis.changes.processors.ChangeProcessor;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.measurement.analysis.Relation;
 
 /**
  * Saves knowledge about changes. Truly a statistics file. This should be in analysis.

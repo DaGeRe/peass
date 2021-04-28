@@ -6,11 +6,11 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.persistence.ExecutionData;
-import de.peass.dependency.reader.VersionKeeper;
-import de.peass.utils.Constants;
-import de.peass.vcs.GitUtils;
+import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.reader.VersionKeeper;
+import de.dagere.peass.utils.Constants;
+import de.dagere.peass.vcs.GitUtils;
 import de.peran.analysis.helper.all.CleanAll;
 
 /**

@@ -6,12 +6,12 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.measurement.rca.data.CauseSearchData;
-import de.peass.measurement.rca.serialization.MeasuredNode;
-import de.peass.utils.Constants;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
+import de.dagere.peass.utils.Constants;
 
 public class Merger {
-   public static void main(String[] args) throws JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final File source = new File(args[0]);
       final File source2 = new File(args[1]);
 
@@ -27,7 +27,7 @@ public class Merger {
       Constants.OBJECTMAPPER.writeValue(mergedFile, first);
    }
 
-   private static void merge(MeasuredNode firstNode, MeasuredNode secondNode) {
+   private static void merge(final MeasuredNode firstNode, final MeasuredNode secondNode) {
       for (int i = 0; i < firstNode.getChildren().size(); i++) {
          MeasuredNode child1 = firstNode.getChildren().get(i);
          MeasuredNode child2 = secondNode.getChildren().get(i);

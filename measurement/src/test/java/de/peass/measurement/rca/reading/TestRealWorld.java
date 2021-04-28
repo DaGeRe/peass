@@ -13,10 +13,10 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.rca.KiekerResultReader;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.analysis.data.TestCase;
 
 public class TestRealWorld {
 
@@ -51,7 +51,7 @@ public class TestRealWorld {
       Assert.assertEquals(10, rootNode.getStatistics("bcf50e2832b63a1ad44c5627862ef62e92ea605a~1").getN());
    }
 
-   private void read(File parentFolder, final String version, Set<CallTreeNode> includedNodes) throws JsonParseException, JsonMappingException, IOException {
+   private void read(final File parentFolder, final String version, final Set<CallTreeNode> includedNodes) throws JsonParseException, JsonMappingException, IOException {
       final boolean isOtherVersionNode = !version.equals(version);
       KiekerResultReader reader = new KiekerResultReader(true, includedNodes,
             version, new TestCase("de.peass.MainTest#testMe"), isOtherVersionNode);

@@ -20,10 +20,10 @@ import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
-import de.dagere.peass.measurement.analysis.MultipleVMTestUtil;
 import de.dagere.kopeme.generated.TestcaseType;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.measurement.analysis.MultipleVMTestUtil;
 
 public class ResultOrganizer {
 

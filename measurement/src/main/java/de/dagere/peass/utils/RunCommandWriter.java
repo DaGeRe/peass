@@ -3,8 +3,8 @@ package de.dagere.peass.utils;
 import java.io.PrintStream;
 import java.util.Set;
 
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.persistence.SelectedTests;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.persistence.SelectedTests;
 
 public class RunCommandWriter {
    protected final PrintStream goal;
@@ -14,7 +14,7 @@ public class RunCommandWriter {
    protected String url;
    protected int nice = 1000000;
 
-   public RunCommandWriter(PrintStream goal, String experimentId, final SelectedTests dependencies) {
+   public RunCommandWriter(final PrintStream goal, final String experimentId, final SelectedTests dependencies) {
       super();
       this.goal = goal;
       this.experimentId = experimentId;
@@ -25,7 +25,7 @@ public class RunCommandWriter {
       url = dependencies.getUrl();
    }
 
-   public RunCommandWriter(PrintStream goal, String experimentId, String name, String url) {
+   public RunCommandWriter(final PrintStream goal, final String experimentId, final String name, final String url) {
       super();
       this.goal = goal;
       this.experimentId = experimentId;
@@ -33,11 +33,11 @@ public class RunCommandWriter {
       this.url = url;
    }
 
-   public void setNice(int nice) {
+   public void setNice(final int nice) {
       this.nice = nice;
    }
    
-   public void createFullVersionCommand(int versionIndex, final String endversion, Set<TestCase> tests) {
+   public void createFullVersionCommand(final int versionIndex, final String endversion, final Set<TestCase> tests) {
       for (TestCase testcase : tests) {
          final String testcaseName = testcase.getClazz() + "#" + testcase.getMethod();
          createSingleMethodCommand(versionIndex, endversion, testcaseName);

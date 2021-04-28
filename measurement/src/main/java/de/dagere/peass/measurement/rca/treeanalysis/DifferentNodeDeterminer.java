@@ -9,12 +9,12 @@ import org.apache.commons.math3.stat.inference.TestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.measurement.analysis.Relation;
 import de.dagere.peass.measurement.analysis.statistics.OutlierRemover;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.statistics.StatisticUtil;
-import de.peass.config.MeasurementConfiguration;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 import de.precision.analysis.repetitions.bimodal.OutlierRemoverBimodal;
 

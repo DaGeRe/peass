@@ -17,10 +17,11 @@ import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
-import de.peass.measurement.analysis.MeasurementFileFinder;
-import de.peass.measurement.analysis.Relation;
-import de.peass.measurement.analysis.statistics.DescribedChunk;
-import de.peass.statistics.StatisticUtil;
+import de.dagere.peass.confidence.KoPeMeDataHelper;
+import de.dagere.peass.measurement.analysis.MeasurementFileFinder;
+import de.dagere.peass.measurement.analysis.Relation;
+import de.dagere.peass.measurement.analysis.statistics.DescribedChunk;
+import de.dagere.peass.statistics.StatisticUtil;
 
 /**
  * Saves chunks from cleaned data. Assumes that one clean-folder contains only one chunk (else, only one chunk is saved to cleaned data).
@@ -69,7 +70,7 @@ public class ChunkSaver {
    final TestcaseType testcaseType;
    final String method;
 
-   public ChunkSaver(double type1error, double type2error, File measurementFile, File projectOutFolder) throws JAXBException {
+   public ChunkSaver(final double type1error, final double type2error, final File measurementFile, final File projectOutFolder) throws JAXBException {
       super();
       this.type1error = type1error;
       this.type2error = type2error;
@@ -83,7 +84,7 @@ public class ChunkSaver {
       method = testcaseType.getName();
    }
 
-   public boolean checkChunk(Chunk currentChunk) {
+   public boolean checkChunk(final Chunk currentChunk) {
       if (currentChunk.getResult().size() > 60) {
          String versionOld = currentChunk.getResult().get(0).getVersion().getGitversion();
          String versionNew = currentChunk.getResult().get(currentChunk.getResult().size() - 1).getVersion().getGitversion();
@@ -118,7 +119,7 @@ public class ChunkSaver {
       }
    }
 
-   private void saveChunk(Chunk currentChunk) throws JAXBException {
+   private void saveChunk(final Chunk currentChunk) throws JAXBException {
       final MeasurementFileFinder finder = new MeasurementFileFinder(projectOutFolder, clazz, method);
       final File goal = finder.getMeasurementFile();
       final Kopemedata oneResultData = finder.getOneResultData();
@@ -130,7 +131,7 @@ public class ChunkSaver {
       XMLDataStorer.storeData(goal, oneResultData);
    }
 
-   private void checkMultipleMeasurements(Chunk currentChunk, Datacollector datacollector) {
+   private void checkMultipleMeasurements(final Chunk currentChunk, final Datacollector datacollector) {
       String[] currentVersions = KoPeMeDataHelper.getVersions(currentChunk);
       for (Chunk chunk : datacollector.getChunk()) {
          String[] versions = KoPeMeDataHelper.getVersions(chunk);

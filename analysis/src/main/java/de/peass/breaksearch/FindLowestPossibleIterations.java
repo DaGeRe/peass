@@ -19,13 +19,13 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.measurement.analysis.DataReader;
-import de.peass.measurement.analysis.MultipleVMTestUtil;
-import de.peass.measurement.analysis.statistics.TestData;
-import de.peass.utils.Constants;
-import de.peass.utils.OptionConstants;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.measurement.analysis.DataReader;
+import de.dagere.peass.measurement.analysis.MultipleVMTestUtil;
+import de.dagere.peass.measurement.analysis.statistics.TestData;
+import de.dagere.peass.utils.Constants;
+import de.dagere.peass.utils.OptionConstants;
 import de.peran.FolderSearcher;
 import de.peran.breaksearch.helper.MinimalVMDeterminer;
 

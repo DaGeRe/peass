@@ -6,8 +6,8 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.statistics.StatisticUtil;
-import de.peass.config.MeasurementConfiguration;
 
 public class EarlyBreakDecider {
 

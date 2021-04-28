@@ -14,13 +14,13 @@ import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.ExecutorCreator;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependency.execution.MavenTestExecutor;
-import de.peass.dependency.execution.TestExecutor;
-import de.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.ExecutorCreator;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.execution.MavenTestExecutor;
+import de.dagere.peass.dependency.execution.TestExecutor;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class MavenTestExecutorMocker {
    public static void mockExecutor() {

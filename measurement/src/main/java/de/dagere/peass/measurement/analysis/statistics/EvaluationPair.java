@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import de.dagere.kopeme.generated.Result;
-import de.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 
 /**
  * Represents an pair of measurement results that should be evaluated, i.e. the versions of both measurements and its results.

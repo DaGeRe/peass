@@ -8,10 +8,10 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.dependency.analysis.data.ChangedEntity;
 
 public class CauseSearchData {
 

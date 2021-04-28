@@ -11,7 +11,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.statistics.PerformanceChange;
+import de.dagere.peass.statistics.PerformanceChange;
 
 /**
  * Saves in which version which performance changes took place and which measurement files influenced this.

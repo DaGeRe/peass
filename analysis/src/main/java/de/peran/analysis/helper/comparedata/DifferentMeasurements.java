@@ -3,7 +3,7 @@ package de.peran.analysis.helper.comparedata;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import de.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 
 public class DifferentMeasurements {
    Map<String, TestcaseStatistic> measurements = new LinkedHashMap<>();

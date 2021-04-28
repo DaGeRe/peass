@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import de.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.analysis.changes.Change;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 
 /**
  * Saves all changes for one version. For each testcase it is saved which change has happened with method, difference in percent etc.

@@ -8,9 +8,9 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 
 public class ProjectStatistics {
 
@@ -26,7 +26,7 @@ public class ProjectStatistics {
       this.statistics = statistics;
    }
 
-   public void addMeasurement(final String version, final TestCase test, DescriptiveStatistics statisticsOld, DescriptiveStatistics statisticsCurrent, int calls) {
+   public void addMeasurement(final String version, final TestCase test, final DescriptiveStatistics statisticsOld, final DescriptiveStatistics statisticsCurrent, final int calls) {
       final TestcaseStatistic statistic = new TestcaseStatistic(statisticsOld, statisticsCurrent, calls, calls);
       addMeasurement(version, test, statistic);
    }

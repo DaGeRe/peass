@@ -11,9 +11,9 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 
-import de.peass.dependency.PeASSFolders;
-import de.peass.vcs.GitUtils;
-import de.peass.vcs.VersionControlSystem;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.vcs.GitUtils;
+import de.dagere.peass.vcs.VersionControlSystem;
 
 public class VCSTestUtils {
    

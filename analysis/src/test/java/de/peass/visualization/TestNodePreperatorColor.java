@@ -3,14 +3,13 @@ package de.peass.visualization;
 import java.util.Arrays;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.peass.config.MeasurementConfiguration;
-import de.peass.measurement.analysis.statistics.TestcaseStatistic;
-import de.peass.measurement.rca.data.CauseSearchData;
-import de.peass.measurement.rca.serialization.MeasuredNode;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
 
 public class TestNodePreperatorColor {
    

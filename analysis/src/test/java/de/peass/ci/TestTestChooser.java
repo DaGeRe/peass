@@ -9,19 +9,19 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.peass.TestConstants;
+import de.dagere.peass.TestConstants;
+import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.InitialDependency;
+import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.utils.Constants;
 import de.peass.ci.helper.GitProjectBuilder;
-import de.peass.config.ExecutionConfig;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.ChangedEntity;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.analysis.data.TestSet;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.persistence.InitialDependency;
-import de.peass.dependency.persistence.Version;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.utils.Constants;
 
 public class TestTestChooser {
    

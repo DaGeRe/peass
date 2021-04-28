@@ -6,12 +6,11 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import de.peass.measurement.analysis.statistics.TestcaseStatistic;
-import de.peass.measurement.rca.data.BasicNode;
-import de.peass.measurement.rca.data.CauseSearchData;
-import de.peass.measurement.rca.kieker.KiekerPatternConverter;
-import de.peass.measurement.rca.serialization.MeasuredValues;
-import de.peass.visualization.GraphNode.State;
+import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.measurement.rca.data.BasicNode;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
+import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
 
 public class GraphNode extends BasicNode {
 
@@ -55,7 +54,7 @@ public class GraphNode extends BasicNode {
       return key;
    }
 
-   public void setKey(String key) {
+   public void setKey(final String key) {
       this.key = key;
    }
 
@@ -63,7 +62,7 @@ public class GraphNode extends BasicNode {
       return ess;
    }
 
-   public void setEss(int ess) {
+   public void setEss(final int ess) {
       this.ess = ess;
    }
 
@@ -71,7 +70,7 @@ public class GraphNode extends BasicNode {
       return otherKey;
    }
 
-   public void setOtherKey(String otherKey) {
+   public void setOtherKey(final String otherKey) {
       this.otherKey = otherKey;
    }
 
@@ -95,7 +94,7 @@ public class GraphNode extends BasicNode {
       return vmValues;
    }
 
-   public void setVmValues(MeasuredValues vmValues) {
+   public void setVmValues(final MeasuredValues vmValues) {
       this.vmValues = vmValues;
    }
 
@@ -103,7 +102,7 @@ public class GraphNode extends BasicNode {
       return vmValuesPredecessor;
    }
 
-   public void setVmValuesPredecessor(MeasuredValues vmValuesPredecessor) {
+   public void setVmValuesPredecessor(final MeasuredValues vmValuesPredecessor) {
       this.vmValuesPredecessor = vmValuesPredecessor;
    }
 
@@ -119,7 +118,7 @@ public class GraphNode extends BasicNode {
       return inVMDeviationPredecessor;
    }
 
-   public void setInVMDeviationPredecessor(double inVMDeviationPredecessor) {
+   public void setInVMDeviationPredecessor(final double inVMDeviationPredecessor) {
       this.inVMDeviationPredecessor = inVMDeviationPredecessor;
    }
 
@@ -127,7 +126,7 @@ public class GraphNode extends BasicNode {
       return inVMDeviation;
    }
 
-   public void setInVMDeviation(double inVMDeviation) {
+   public void setInVMDeviation(final double inVMDeviation) {
       this.inVMDeviation = inVMDeviation;
    }
 

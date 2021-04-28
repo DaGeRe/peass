@@ -14,9 +14,8 @@ import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.dagere.peass.measurement.organize.ResultOrganizer;
+import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
-import de.peass.dependency.PeASSFolders;
 
 public class TestResultOrganizerParallel {
 
@@ -73,7 +72,7 @@ public class TestResultOrganizerParallel {
       Assert.assertTrue(fulldataFile.exists());
    }
    
-   private File getVersionMeasurementFolder(String mainVersion, String subVersion) {
+   private File getVersionMeasurementFolder(final String mainVersion, final String subVersion) {
       File versionFolder = new File(folders.getFullMeasurementFolder(), "measurements" + File.separator +
             TestResultOrganizer.searchedTest.getClazz() + File.separator +
             mainVersion + File.separator +

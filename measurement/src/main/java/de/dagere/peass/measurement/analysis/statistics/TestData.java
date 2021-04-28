@@ -10,8 +10,8 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
 
 /**
  * Saves the measurement data of one testclass in every version and every run.

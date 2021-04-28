@@ -3,7 +3,7 @@ package de.dagere.peass.utils;
 import java.io.PrintStream;
 
 import de.dagere.peass.RootCauseAnalysis;
-import de.peass.dependency.persistence.SelectedTests;
+import de.dagere.peass.dependency.persistence.SelectedTests;
 
 public class RunCommandWriterRCA extends RunCommandWriter {
 
@@ -16,7 +16,7 @@ public class RunCommandWriterRCA extends RunCommandWriter {
       createSingleMethodCommand(versionIndex, endversion, testcaseName, 1000, 10000, 10000, 100);
    }
 
-   public void createSingleMethodCommand(final int versionIndex, final String endversion, final String testcaseName, int warmup, int iterations, int repetitions, int vms) {
+   public void createSingleMethodCommand(final int versionIndex, final String endversion, final String testcaseName, final int warmup, final int iterations, final int repetitions, final int vms) {
       goal.println("java -cp distribution/target/peass-distribution-0.1-SNAPSHOT.jar " + RootCauseAnalysis.class.getCanonicalName() + " "
             + "-rcaStrategy COMPLETE "
             + "-test " + testcaseName + " "

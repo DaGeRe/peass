@@ -9,10 +9,10 @@ import org.apache.commons.cli.ParseException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.dependency.persistence.Version;
-import de.peass.dependencyprocessors.VersionProcessor;
-import de.peass.utils.StreamGobbler;
-import de.peass.vcs.GitUtils;
+import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependencyprocessors.VersionProcessor;
+import de.dagere.peass.utils.StreamGobbler;
+import de.dagere.peass.vcs.GitUtils;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -32,7 +32,7 @@ public class VersionRunStarter extends VersionProcessor {
    }
 
    @Override
-   protected void processVersion(String version, final Version versioninfo) {
+   protected void processVersion(final String version, final Version versioninfo) {
       GitUtils.goToTag(version, folders.getProjectFolder());
       try {
          final Process p = Runtime.getRuntime().exec("mvn clean package -DskipTests=true", null, folders.getProjectFolder());

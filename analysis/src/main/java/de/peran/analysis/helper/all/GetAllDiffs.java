@@ -13,16 +13,15 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.analysis.properties.ChangeProperties;
-import de.peass.analysis.properties.ChangeProperty;
-import de.peass.analysis.properties.PropertyProcessor;
-import de.peass.analysis.properties.VersionChangeProperties;
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.traces.OneTraceGenerator;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.utils.Constants;
-import de.peass.utils.StreamGobbler;
-import de.peran.FolderSearcher;
+import de.dagere.peass.analysis.properties.ChangeProperties;
+import de.dagere.peass.analysis.properties.ChangeProperty;
+import de.dagere.peass.analysis.properties.PropertyProcessor;
+import de.dagere.peass.analysis.properties.VersionChangeProperties;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.traces.OneTraceGenerator;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.utils.Constants;
+import de.dagere.peass.utils.StreamGobbler;
 import de.peran.analysis.helper.AnalysisUtil;
 
 public class GetAllDiffs {
@@ -38,7 +37,7 @@ public class GetAllDiffs {
          AnalysisUtil.setProjectName(project);
          final File resultFile = new File("results" + File.separator + project + File.separator + "properties.json");
 
-         final VersionChangeProperties versionProperties = FolderSearcher.MAPPER.readValue(resultFile, VersionChangeProperties.class);
+         final VersionChangeProperties versionProperties = Constants.OBJECTMAPPER.readValue(resultFile, VersionChangeProperties.class);
 
          versionProperties.executeProcessor(new PropertyProcessor() {
 

@@ -13,19 +13,19 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.config.DependencyConfig;
-import de.peass.config.ExecutionConfig;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependency.reader.DependencyReader;
-import de.peass.dependency.reader.VersionKeeper;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.utils.Constants;
-import de.peass.vcs.GitCommit;
-import de.peass.vcs.GitUtils;
-import de.peass.vcs.VersionIterator;
-import de.peass.vcs.VersionIteratorGit;
+import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.dependency.reader.VersionKeeper;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.utils.Constants;
+import de.dagere.peass.vcs.GitCommit;
+import de.dagere.peass.vcs.GitUtils;
+import de.dagere.peass.vcs.VersionIterator;
+import de.dagere.peass.vcs.VersionIteratorGit;
 
 public class ContinuousDependencyReader {
 

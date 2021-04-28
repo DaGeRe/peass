@@ -13,11 +13,11 @@ import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class DummyKoPeMeDataCreator {
    
-   public static void initDummyTestfile(final File methodFolder, int iterations, TestCase testcase) throws JAXBException {
+   public static void initDummyTestfile(final File methodFolder, final int iterations, final TestCase testcase) throws JAXBException {
       XMLDataStorer storer = new XMLDataStorer(methodFolder, testcase.getClazz(), testcase.getMethod());
 
       final Result result = new Result();
@@ -28,7 +28,7 @@ public class DummyKoPeMeDataCreator {
       storer.storeValue(result, testcase.getExecutable(), TimeDataCollector.class.getName());
    }
    
-   private static void initDummyFulldata(final Result result, int count) {
+   private static void initDummyFulldata(final Result result, final int count) {
       result.setFulldata(new Fulldata());
       final Value value = new Value();
       value.setValue(15);
@@ -48,7 +48,7 @@ public class DummyKoPeMeDataCreator {
       }
    }
 
-   private static void writeToDisk(int count, ResultTempWriter writer) {
+   private static void writeToDisk(final int count, final ResultTempWriter writer) {
       DataCollector[] collectors = new DataCollector[] {new DataCollector() {
          @Override
          public void stopCollection() {

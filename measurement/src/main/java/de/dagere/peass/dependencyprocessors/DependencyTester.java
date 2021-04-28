@@ -13,21 +13,21 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementStrategy;
+import de.dagere.peass.dependency.ExecutorCreator;
+import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.measurement.analysis.Cleaner;
 import de.dagere.peass.measurement.analysis.DataReader;
 import de.dagere.peass.measurement.analysis.statistics.TestData;
 import de.dagere.peass.measurement.organize.FolderDeterminer;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.config.MeasurementStrategy;
-import de.peass.dependency.ExecutorCreator;
-import de.peass.dependency.PeASSFolders;
-import de.peass.dependency.analysis.data.TestCase;
-import de.peass.dependency.execution.EnvironmentVariables;
-import de.peass.dependency.execution.TestExecutor;
-import de.peass.testtransformation.JUnitTestTransformer;
-import de.peass.vcs.VersionControlSystem;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.vcs.VersionControlSystem;
 
 /**
  * Runs a PeASS with only running the tests where a changed class is present.

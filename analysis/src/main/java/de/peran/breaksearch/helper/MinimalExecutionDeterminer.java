@@ -7,8 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
+import de.dagere.peass.statistics.StatisticUtil;
 import de.peass.breaksearch.FindLowestPossibleIterations;
-import de.peass.statistics.StatisticUtil;
 
 /**
  * Determines the minimal count of executions keeping the same result.
@@ -38,7 +38,7 @@ public class MinimalExecutionDeterminer extends MinimalValueDeterminer {
 
 	
 	
-	public static DescriptiveStatistics getStatistic(List<Result> values) {
+	public static DescriptiveStatistics getStatistic(final List<Result> values) {
 	   DescriptiveStatistics statistics = new DescriptiveStatistics();
 	   for (Result r : values) {
 	      statistics.addValue(r.getValue());

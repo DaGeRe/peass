@@ -8,13 +8,13 @@ import javax.xml.bind.JAXBException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.peass.dependency.persistence.Dependencies;
-import de.peass.dependencyprocessors.VersionComparator;
-import de.peass.measurement.analysis.Cleaner;
-import de.peass.utils.Constants;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.measurement.analysis.Cleaner;
+import de.dagere.peass.utils.Constants;
 
 public class CleanSync {
-   public static void main(String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
       File dependencyFolder = new File(CleanAll.defaultDependencyFolder);
       File dataFolder = new File("../measurement/scripts/versions/sync/");
       for (String project : new String[] { "commons-io", "commons-dbcp", "commons-csv", "commons-fileupload", "commons-compress" }) {

@@ -11,15 +11,15 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.config.ImplementedTests;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.measurement.analysis.Relation;
-import de.peass.measurement.rca.data.CallTreeNode;
-import de.peass.measurement.rca.data.CauseSearchData;
-import de.peass.measurement.rca.serialization.MeasuredNode;
-import de.peass.measurement.rca.serialization.MeasuredValues;
-import de.peass.measurement.rca.treeanalysis.TreeUtil;
-import de.peass.statistics.StatisticUtil;
+import de.dagere.peass.config.ImplementedTests;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.measurement.analysis.Relation;
+import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
+import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
+import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
+import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil;
+import de.dagere.peass.statistics.StatisticUtil;
 import de.peass.visualization.GraphNode.State;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 

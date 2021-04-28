@@ -3,7 +3,7 @@ package de.peass.analysis.helper.read;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import de.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 
 public class FolderValues {
    private Map<String, TestcaseStatistic> values = new LinkedHashMap<>();
@@ -18,11 +18,11 @@ public class FolderValues {
       return values;
    }
 
-   public void setValues(Map<String, TestcaseStatistic> values) {
+   public void setValues(final Map<String, TestcaseStatistic> values) {
       this.values = values;
    }
 
-   public void setIsTChange(Map<String, Boolean> isTChange) {
+   public void setIsTChange(final Map<String, Boolean> isTChange) {
       this.isTChange = isTChange;
    }
 
@@ -30,7 +30,7 @@ public class FolderValues {
       return isConfidenceChange;
    }
 
-   public void setIsConfidenceChange(Map<String, Boolean> isConfidenceChange) {
+   public void setIsConfidenceChange(final Map<String, Boolean> isConfidenceChange) {
       this.isConfidenceChange = isConfidenceChange;
    }
 }

@@ -7,12 +7,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.measurement.rca.LevelManager;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
-import de.peass.config.MeasurementConfiguration;
 import de.peass.measurement.PersistedTestDataBuilder;
 import de.peass.measurement.rca.helper.TreeBuilder;
 

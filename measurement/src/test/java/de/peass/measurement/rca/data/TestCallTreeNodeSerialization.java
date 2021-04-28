@@ -5,9 +5,9 @@ import java.io.File;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import de.peass.config.MeasurementConfiguration;
-import de.peass.utils.Constants;
+import de.dagere.peass.utils.Constants;
 
 public class TestCallTreeNodeSerialization {
    @Test
