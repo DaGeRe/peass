@@ -2,11 +2,16 @@ package de.peass.ci;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.peass.config.DependencyConfig;
 import de.peass.config.ExecutionConfig;
@@ -32,7 +37,8 @@ public class ContinuousDependencyReader {
    private final File dependencyFile;
    private final EnvironmentVariables env;
 
-   public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final PeASSFolders folders, final File dependencyFile, final EnvironmentVariables env) {
+   public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final PeASSFolders folders, final File dependencyFile,
+         final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
       this.executionConfig = executionConfig;
       this.folders = folders;
@@ -70,7 +76,6 @@ public class ContinuousDependencyReader {
       }
       GitCommit currentCommit = new GitCommit(versionName, "", "", "");
       GitCommit lastAnalyzedCommit = new GitCommit(executionConfig.getVersionOld() != null ? executionConfig.getVersionOld() : lastVersionName, "", "", "");
-      
 
       List<GitCommit> commits = new LinkedList<>();
       commits.add(lastAnalyzedCommit);
@@ -82,7 +87,7 @@ public class ContinuousDependencyReader {
 
    private void partiallyLoadDependencies(final Dependencies dependencies) throws FileNotFoundException, Exception {
       final String lastVersionName = dependencies.getNewestVersion();
-      
+
       VersionIterator newIterator = getIterator(lastVersionName);
       if (newIterator != null) {
          executePartialRTS(dependencies, newIterator);
@@ -90,16 +95,24 @@ public class ContinuousDependencyReader {
    }
 
    private void executePartialRTS(final Dependencies dependencies, final VersionIterator newIterator) throws FileNotFoundException {
-      File logFile = new File(getDependencyreadingFolder(), newIterator.getTag() + "_" + newIterator.getPredecessor() + ".txt");
-      LOG.info("Executing regression test selection update (step 1) - Log goes to {}", logFile.getAbsolutePath());
-
-      try (LogRedirector director = new LogRedirector(logFile)) {
-         DependencyReader reader = new DependencyReader(dependencyConfig, folders.getProjectFolder(), dependencyFile, dependencies.getUrl(), newIterator, executionConfig, env);
-         newIterator.goTo0thCommit();
-
-         reader.readCompletedVersions(dependencies);
-         reader.readDependencies();
+      if (executionConfig.isRedirectSubprocessOutputToFile()) {
+         File logFile = new File(getDependencyreadingFolder(), newIterator.getTag() + "_" + newIterator.getPredecessor() + ".txt");
+         LOG.info("Executing regression test selection update (step 1) - Log goes to {}", logFile.getAbsolutePath());
+         try (LogRedirector director = new LogRedirector(logFile)) {
+            doPartialRCS(dependencies, newIterator);
+         }
+      } else {
+         doPartialRCS(dependencies, newIterator);
       }
+
+   }
+
+   private void doPartialRCS(final Dependencies dependencies, final VersionIterator newIterator) {
+      DependencyReader reader = new DependencyReader(dependencyConfig, folders.getProjectFolder(), dependencyFile, dependencies.getUrl(), newIterator, executionConfig, env);
+      newIterator.goTo0thCommit();
+
+      reader.readCompletedVersions(dependencies);
+      reader.readDependencies();
    }
 
    public File getDependencyreadingFolder() {
@@ -112,19 +125,28 @@ public class ContinuousDependencyReader {
 
    private Dependencies fullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
          throws Exception {
-      File logFile = new File(getDependencyreadingFolder(), iterator.getTag() + "_" + iterator.getPredecessor() + ".txt");
-      LOG.info("Executing regression test selection (step 1) - Log goes to {}", logFile.getAbsolutePath());
+      if (executionConfig.isRedirectSubprocessOutputToFile()) {
+         File logFile = new File(getDependencyreadingFolder(), iterator.getTag() + "_" + iterator.getPredecessor() + ".txt");
+         LOG.info("Executing regression test selection (step 1) - Log goes to {}", logFile.getAbsolutePath());
 
-      try (LogRedirector director = new LogRedirector(logFile)) {
-         final DependencyReader reader = new DependencyReader(dependencyConfig, folders, dependencyFile, url, iterator, nonChanges, executionConfig, env);
-         iterator.goToPreviousCommit();
-         if (!reader.readInitialVersion()) {
-            LOG.error("Analyzing first version was not possible");
-         } else {
-            reader.readDependencies();
+         try (LogRedirector director = new LogRedirector(logFile)) {
+            return doFullyLoadDependencies(url, iterator, nonChanges);
          }
-         Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-         return dependencies;
+      } else {
+         return doFullyLoadDependencies(url, iterator, nonChanges);
       }
+   }
+
+   private Dependencies doFullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
+         throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException {
+      final DependencyReader reader = new DependencyReader(dependencyConfig, folders, dependencyFile, url, iterator, nonChanges, executionConfig, env);
+      iterator.goToPreviousCommit();
+      if (!reader.readInitialVersion()) {
+         LOG.error("Analyzing first version was not possible");
+      } else {
+         reader.readDependencies();
+      }
+      Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+      return dependencies;
    }
 }

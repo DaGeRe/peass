@@ -1,9 +1,12 @@
 package de.peass.ci;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -81,7 +84,7 @@ public class TestChooser {
       final File executeFile = new File(localFolder, "execute.json");
 
       FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
-      
+
       boolean alreadyTried = false;
       if (!executeFile.exists()) {
          LOG.debug("Expected file {} does not exist, executing view creation", executeFile);
@@ -110,14 +113,21 @@ public class TestChooser {
    }
 
    private void generateViews(final Dependencies dependencies, final File executeFile) throws Exception {
-      File logFile = new File(getExecutionreadingFolder(), version + "_" + dependencies.getVersions().get(version).getPredecessor() + ".txt");
-      LOG.info("Executig regression test selection (step 2) - Log goes to {}", logFile.getAbsolutePath());
-
-      try (LogRedirector director = new LogRedirector(logFile)) {
-         final ViewGenerator viewgenerator = new ViewGenerator(folders.getProjectFolder(), dependencies, executeFile, viewFolder, threads, config, env);
-         viewgenerator.processCommandline();
-         final PropertyReader propertyReader = new PropertyReader(propertyFolder, folders.getProjectFolder(), viewFolder);
-         propertyReader.readAllTestsProperties(viewgenerator.getChangedTraceMethods());
+      if (config.isRedirectSubprocessOutputToFile()) {
+         File logFile = new File(getExecutionreadingFolder(), version + "_" + dependencies.getVersions().get(version).getPredecessor() + ".txt");
+         LOG.info("Executig regression test selection (step 2) - Log goes to {}", logFile.getAbsolutePath());
+         try (LogRedirector director = new LogRedirector(logFile)) {
+            doGenerateViews(dependencies, executeFile);
+         }
+      } else {
+         doGenerateViews(dependencies, executeFile);
       }
+   }
+
+   private void doGenerateViews(final Dependencies dependencies, final File executeFile) throws JAXBException, IOException {
+      final ViewGenerator viewgenerator = new ViewGenerator(folders.getProjectFolder(), dependencies, executeFile, viewFolder, threads, config, env);
+      viewgenerator.processCommandline();
+      final PropertyReader propertyReader = new PropertyReader(propertyFolder, folders.getProjectFolder(), viewFolder);
+      propertyReader.readAllTestsProperties(viewgenerator.getChangedTraceMethods());
    }
 }
