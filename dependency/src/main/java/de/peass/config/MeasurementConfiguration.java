@@ -26,7 +26,6 @@ public class MeasurementConfiguration implements Serializable {
    private boolean logFullData = true;
    private boolean removeSnapshots = false;
    private boolean useGC = true;
-   private boolean redirectSubprocessOutputToFile = true;
 
    // Kieker config
    private boolean useKieker = false;
@@ -141,6 +140,7 @@ public class MeasurementConfiguration implements Serializable {
       executionConfig.setStartversion(other.getExecutionConfig().getStartversion());
       executionConfig.setEndversion(other.getExecutionConfig().getEndversion());
       executionConfig.setCreateDefaultConstructor(other.getExecutionConfig().isCreateDefaultConstructor());
+      executionConfig.setRedirectSubprocessOutputToFile(other.getExecutionConfig().isRedirectSubprocessOutputToFile());
       this.vms = other.vms;
       statisticsConfig.setType1error(other.getType1error());
       statisticsConfig.setType2error(other.getType2error());
@@ -165,7 +165,6 @@ public class MeasurementConfiguration implements Serializable {
       this.record = other.record;
       this.measurementStrategy = other.measurementStrategy;
       this.saveAll = other.saveAll;
-      this.redirectSubprocessOutputToFile = other.redirectSubprocessOutputToFile;
    }
    
    public StatisticsConfiguration getStatisticsConfig() {
@@ -185,11 +184,11 @@ public class MeasurementConfiguration implements Serializable {
    }
    
    public boolean isRedirectSubprocessOutputToFile() {
-      return redirectSubprocessOutputToFile;
+      return executionConfig.isRedirectSubprocessOutputToFile();
    }
 
    public void setRedirectSubprocessOutputToFile(final boolean redirectSubprocesses) {
-      this.redirectSubprocessOutputToFile = redirectSubprocesses;
+      executionConfig.setRedirectSubprocessOutputToFile(redirectSubprocesses);
    }
 
    /**

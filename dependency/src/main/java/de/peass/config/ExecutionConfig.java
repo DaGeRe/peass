@@ -35,6 +35,7 @@ public class ExecutionConfig implements Serializable {
    protected String endversion;
    private String pl;
    private boolean createDefaultConstructor = true;
+   private boolean redirectSubprocessOutputToFile = true;
 
    public ExecutionConfig() {
       includes = new LinkedList<>();
@@ -169,5 +170,13 @@ public class ExecutionConfig implements Serializable {
 
    public void setPl(final String pl) {
       this.pl = pl;
+   }
+
+   public boolean isRedirectSubprocessOutputToFile() {
+      return redirectSubprocessOutputToFile;
+   }
+
+   public void setRedirectSubprocessOutputToFile(final boolean redirectSubprocessOutputToFile) {
+      this.redirectSubprocessOutputToFile = redirectSubprocessOutputToFile;
    }
 }
