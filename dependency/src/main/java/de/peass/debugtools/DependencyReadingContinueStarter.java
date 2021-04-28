@@ -25,7 +25,7 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.peass.CommitUtil;
+import de.dagere.peass.CommitUtil;
 import de.peass.config.DependencyReaderConfigMixin;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.execution.EnvironmentVariables;

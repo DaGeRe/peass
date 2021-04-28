@@ -14,7 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import de.peass.TestConstants;
+import de.dagere.peass.TestConstants;
 import de.peass.config.MeasurementConfiguration;
 import de.peass.dependency.execution.ProjectModules;
 import de.peass.dependency.execution.TestExecutor;

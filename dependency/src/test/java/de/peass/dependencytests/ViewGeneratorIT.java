@@ -20,7 +20,7 @@ import org.junit.Test;
 
 import com.github.javaparser.ParseException;
 
-import de.peass.TestConstants;
+import de.dagere.peass.TestConstants;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.KiekerResultManager;
 import de.peass.dependency.PeASSFolders;

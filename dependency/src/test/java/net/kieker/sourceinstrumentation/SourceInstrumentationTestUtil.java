@@ -9,7 +9,7 @@ import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 
-import de.peass.TestConstants;
+import de.dagere.peass.TestConstants;
 
 public class SourceInstrumentationTestUtil {
    

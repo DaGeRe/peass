@@ -11,7 +11,7 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.peass.TestConstants;
+import de.dagere.peass.TestConstants;
 import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public class TestSampling {

@@ -12,7 +12,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import de.peass.TestConstants;
+import de.dagere.peass.TestConstants;
 import de.peass.config.ExecutionConfig;
 import de.peass.dependency.ChangeManager;
 import de.peass.dependency.PeASSFolders;
