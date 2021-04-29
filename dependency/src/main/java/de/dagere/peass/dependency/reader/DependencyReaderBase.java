@@ -66,6 +66,7 @@ public abstract class DependencyReaderBase {
       this.dependencyConfig = dependencyConfig;
       this.dependencyResult = dependencyResult;
       this.dependencyFile = dependencyFile;
+      this.iterator = iterator;
       this.folders = folders;
       this.skippedNoChange = skippedNoChange;
       this.executionConfig = executionConfig;
