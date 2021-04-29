@@ -174,7 +174,7 @@ public class DependencyDetectorIT {
       checkClassRemoved(reader);
    }
 
-   private void checkClassRemoved(final DependencyReader reader) {
+   public static void checkClassRemoved(final DependencyReader reader) {
       final Map<ChangedEntity, TestSet> changedClazzes = reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1).getChangedClazzes();
       System.out.println("Ergebnis: " + changedClazzes);
       final ChangedEntity key = new ChangedEntity("defaultpackage.TestMe", "");
