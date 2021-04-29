@@ -50,10 +50,7 @@ public class DependencyDetectorIT {
 
       System.out.println(reader.getDependencies());
 
-      final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", DependencyTestConstants.VERSION_1);
-      final TestCase testcase = testMe.getTests().iterator().next();
-      Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
-      Assert.assertEquals("testMe", testcase.getMethod());
+      DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.NormalDependency#executeThing", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
    }
 
    @Test
@@ -72,14 +69,8 @@ public class DependencyDetectorIT {
 
       System.out.println(reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1));
 
-      final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.TestMe#testMe", DependencyTestConstants.VERSION_1);
-      System.out.println(testMe);
-      final TestCase testcase = testMe.getTests().iterator().next();
-      Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
-      Assert.assertEquals("testMe", testcase.getMethod());
+      DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.TestMe#testMe", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
    }
-
-   
 
    @Test
    public void testAddedClass() throws IOException, InterruptedException, XmlPullParserException {
@@ -93,12 +84,7 @@ public class DependencyDetectorIT {
 
       System.out.println(reader.getDependencies());
 
-      final TestSet testMeAlso = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.TestMeAlso", DependencyTestConstants.VERSION_1);
-      final TestCase testcase = testMeAlso.getTests().iterator().next();
-
-      System.out.println(testMeAlso);
-      Assert.assertEquals("defaultpackage.TestMeAlso", testcase.getClazz());
-      Assert.assertEquals("testMe", testcase.getMethod());
+      DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.TestMeAlso", "defaultpackage.TestMeAlso", DependencyTestConstants.VERSION_1);
    }
 
    @Test
@@ -123,8 +109,6 @@ public class DependencyDetectorIT {
       fakeIterator.goToNextCommit();
 
       reader.analyseVersion(changeManager);
-
-      System.out.println(dependencies);
 
       final TestSet testMe = DependencyDetectorTestUtil.findDependency(dependencies, "defaultpackage.NormalDependency", DependencyTestConstants.VERSION_1);
 
@@ -187,6 +171,10 @@ public class DependencyDetectorIT {
 
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
+      checkClassRemoved(reader);
+   }
+
+   private void checkClassRemoved(final DependencyReader reader) {
       final Map<ChangedEntity, TestSet> changedClazzes = reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1).getChangedClazzes();
       System.out.println("Ergebnis: " + changedClazzes);
       final ChangedEntity key = new ChangedEntity("defaultpackage.TestMe", "");

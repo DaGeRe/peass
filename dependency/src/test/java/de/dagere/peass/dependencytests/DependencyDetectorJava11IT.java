@@ -37,9 +37,7 @@ public class DependencyDetectorJava11IT {
    @Test
    @EnabledForJreRange(min = JRE.JAVA_11)
    public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException {
-      final File secondVersion = new File("target/dependency_change", "normal_change");
-      FileUtils.copyDirectory(new File(DependencyTestConstants.VERSIONS_FOLDER, "normal_change"), secondVersion);
-      FileUtils.copyFile(new File(DependencyTestConstants.VERSIONS_FOLDER, "pom-11.xml"), new File(secondVersion, "pom.xml"));
+      final File secondVersion = buildSecondVersion();
 
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
@@ -53,5 +51,12 @@ public class DependencyDetectorJava11IT {
       final TestCase testcase = testMe.getTests().iterator().next();
       Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
       Assert.assertEquals("testMe", testcase.getMethod());
+   }
+
+   private File buildSecondVersion() throws IOException {
+      final File secondVersion = new File("target/dependency_change", "normal_change");
+      FileUtils.copyDirectory(new File(DependencyTestConstants.VERSIONS_FOLDER, "normal_change"), secondVersion);
+      FileUtils.copyFile(new File(DependencyTestConstants.VERSIONS_FOLDER, "pom-11.xml"), new File(secondVersion, "pom.xml"));
+      return secondVersion;
    }
 }

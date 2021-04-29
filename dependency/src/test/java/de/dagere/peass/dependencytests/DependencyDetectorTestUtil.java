@@ -14,6 +14,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -68,6 +69,14 @@ public class DependencyDetectorTestUtil {
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
       return changeManager;
+   }
+   
+   public static void checkTestMeAlsoTestChange(final DependencyReader reader, final String change, final String changedTest, final String version) {
+      final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), change, version);
+      System.out.println(testMe);
+      final TestCase testcase = testMe.getTests().iterator().next();
+      Assert.assertEquals(changedTest, testcase.getClazz());
+      Assert.assertEquals("testMe", testcase.getMethod());
    }
    
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator)

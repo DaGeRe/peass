@@ -10,8 +10,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.vcs.VersionIterator;
@@ -47,10 +45,7 @@ public class DependencyDetectorITGradle {
 
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
-      final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", DependencyTestConstants.VERSION_1);
-      final TestCase testcase = testMe.getTests().iterator().next();
-      Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
-      Assert.assertEquals("testMe", testcase.getMethod());
+      DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.NormalDependency#executeThing", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
    }
    
    @Test
@@ -63,10 +58,7 @@ public class DependencyDetectorITGradle {
 
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
-      final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "defaultpackage.NormalDependency#executeThing", DependencyTestConstants.VERSION_1);
-      final TestCase testcase = testMe.getTests().iterator().next();
-      Assert.assertEquals("defaultpackage.TestMe", testcase.getClazz());
-      Assert.assertEquals("testMe", testcase.getMethod());
+      DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.NormalDependency#executeThing", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
    }
 
 
