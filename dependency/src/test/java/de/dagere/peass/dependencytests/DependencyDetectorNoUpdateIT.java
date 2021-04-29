@@ -15,14 +15,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.DependencyConfig;
-import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
-import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.vcs.VersionIterator;
@@ -48,7 +45,7 @@ public class DependencyDetectorNoUpdateIT {
 
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
-      final DependencyReader reader = readTwoVersions(changeManager, fakeIterator);
+      final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
       System.out.println(reader.getDependencies());
 
@@ -70,7 +67,7 @@ public class DependencyDetectorNoUpdateIT {
 
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
-      final DependencyReader reader = readTwoVersions(changeManager, fakeIterator);
+      final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
       System.out.println(reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1));
 
@@ -94,7 +91,7 @@ public class DependencyDetectorNoUpdateIT {
 
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
-      final DependencyReader reader = readTwoVersions(changeManager, fakeIterator);
+      final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
       final Map<ChangedEntity, TestSet> changedClazzes = reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1).getChangedClazzes();
       System.out.println("Ergebnis: " + changedClazzes);
@@ -105,15 +102,4 @@ public class DependencyDetectorNoUpdateIT {
       Assert.assertThat("TestSet needs to contain removed test, since no update has been done", testSet.getTests(), Matchers.not(Matchers.empty()));
    }
 
-   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator)
-         throws IOException, InterruptedException, XmlPullParserException {
-      final DependencyReader reader = new DependencyReader(dependencyConfig, new PeASSFolders(DependencyTestConstants.CURRENT), new File("/dev/null"), null, fakeIterator,
-            changeManager, new ExecutionConfig(5), new EnvironmentVariables());
-      final boolean success = reader.readInitialVersion();
-      Assert.assertTrue(success);
-      fakeIterator.goToNextCommit();
-
-      reader.analyseVersion(changeManager);
-      return reader;
-   }
 }

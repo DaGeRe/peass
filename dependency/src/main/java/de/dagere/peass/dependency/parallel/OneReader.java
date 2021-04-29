@@ -22,7 +22,7 @@ public final class OneReader implements Runnable {
    final FirstRunningVersionFinder firstRunningVersionFinder;
    private final DependencyReader reader;
 
-   public OneReader(GitCommit minimumCommit, File currentOutFile, VersionIterator reserveIterator, DependencyReader reader, FirstRunningVersionFinder firstRunningVersionFinder) {
+   public OneReader(final GitCommit minimumCommit, final File currentOutFile, final VersionIterator reserveIterator, final DependencyReader reader, final FirstRunningVersionFinder firstRunningVersionFinder) {
       this.minimumCommit = minimumCommit;
       this.currentOutFile = currentOutFile;
       this.reserveIterator = reserveIterator;
