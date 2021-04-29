@@ -11,7 +11,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.DependencyConfig;
@@ -40,9 +39,6 @@ import de.dagere.peass.vcs.VersionIterator;
 public abstract class DependencyReaderBase {
 
    private static final boolean DETAIL_DEBUG = true;
-   static {
-      Constants.OBJECTMAPPER.enable(SerializationFeature.INDENT_OUTPUT);
-   }
 
    private static final Logger LOG = LogManager.getLogger(DependencyReaderBase.class);
 
@@ -66,7 +62,7 @@ public abstract class DependencyReaderBase {
     * @param dependencyFile File to write results to
     */
    public DependencyReaderBase(final DependencyConfig dependencyConfig, final Dependencies dependencyResult, final PeASSFolders folders, final File dependencyFile,
-         final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+         final VersionKeeper skippedNoChange, final VersionIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
       this.dependencyResult = dependencyResult;
       this.dependencyFile = dependencyFile;
@@ -208,15 +204,23 @@ public abstract class DependencyReaderBase {
    }
 
    public void readCompletedVersions(final Dependencies initialdependencies) {
+      dependencyManager = new DependencyManager(folders, executionConfig, env);
+      
       dependencyResult.setVersions(initialdependencies.getVersions());
       dependencyResult.setInitialversion(initialdependencies.getInitialversion());
-
-      dependencyManager = new DependencyManager(folders, executionConfig, env);
 
       InitialVersionReader initialVersionReader = new InitialVersionReader(initialdependencies, dependencyManager, iterator);
       initialVersionReader.readCompletedVersions();
       DependencyReaderUtil.write(dependencyResult, dependencyFile);
       lastRunningVersion = iterator.getTag();
+   }
+   
+   public Dependencies getDependencies() {
+      return dependencyResult;
+   }
+
+   public void setIterator(final VersionIterator reserveIterator) {
+      this.iterator = reserveIterator;
    }
 
 }

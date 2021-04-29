@@ -49,11 +49,10 @@ public class DependencyReader extends DependencyReaderBase {
    private final ChangeManager changeManager;
    private int overallSize = 0, prunedSize = 0;
    
-   public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders, final File dependencyFile, final String url, final VersionIterator iterator, 
+   public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders, 
+         final File dependencyFile, final String url, final VersionIterator iterator, 
          final ChangeManager changeManager, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
-      super(dependencyConfig, new Dependencies(), folders, dependencyFile, new VersionKeeper(new File("/dev/null")), executionConfig, env);
-
-      this.iterator = iterator;
+      super(dependencyConfig, new Dependencies(), folders, dependencyFile, new VersionKeeper(new File("/dev/null")), iterator, executionConfig, env);
 
       dependencyResult.setUrl(url);
       
@@ -71,31 +70,13 @@ public class DependencyReader extends DependencyReaderBase {
     */
    public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders, final File dependencyFile, final String url, final VersionIterator iterator, 
          final VersionKeeper nochange, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
-      super(dependencyConfig, new Dependencies(), folders, dependencyFile, nochange, executionConfig, env);
-
-      this.iterator = iterator;
+      super(dependencyConfig, new Dependencies(), folders, dependencyFile, nochange, iterator, executionConfig, env);
 
       dependencyResult.setUrl(url);
       
       changeManager = new ChangeManager(folders, iterator);
       
    }
-
-   /**
-    * Continues reading dependencies
-    * 
-    * @param projectFolder
-    * @param dependencyFile
-    * @param url
-    * @param iterator
-    * @param initialdependencies
-    */
-   public DependencyReader(final DependencyConfig dependencyConfig, final File projectFolder, final File dependencyFile, final String url, final VersionIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
-      this(dependencyConfig, new PeASSFolders(projectFolder), dependencyFile, url, iterator, 
-            new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")), executionConfig,
-            env);
-   }
-
 
    /**
     * Reads the dependencies of the tests
@@ -135,38 +116,11 @@ public class DependencyReader extends DependencyReaderBase {
          if (xmlFileFolder != null) {
             FileUtils.deleteDirectory(xmlFileFolder);
          }
-         cleanTooBigLogs();
+         TooBigLogCleaner.cleanTooBigLogs(folders, iterator.getTag());
       } catch (final ParseProblemException | XmlPullParserException | InterruptedException | IOException ppe) {
          LOG.debug("Exception while reading a version");
          ppe.printStackTrace();
       } 
-   }
-
-   public static final int MAX_SIZE_IN_MB = 10;
-
-   public void cleanTooBigLogs() {
-      File logFolder = folders.getLogFolder();
-      File versionFolder = new File(logFolder, iterator.getTag());
-      if (versionFolder.exists()) {
-         for (File clazzFolder : versionFolder.listFiles()) {
-            if (clazzFolder.isDirectory()) {
-               for (File methodLog : clazzFolder.listFiles()) {
-                  long sizeInMb = (methodLog.length() / (1024 * 1024));
-                  if (sizeInMb > MAX_SIZE_IN_MB) {
-                     methodLog.delete();
-                  }
-               }
-            }
-         }
-      }
-   }
-
-   public Dependencies getDependencies() {
-      return dependencyResult;
-   }
-
-   public void setIterator(final VersionIterator reserveIterator) {
-      this.iterator = reserveIterator;
    }
 
 }

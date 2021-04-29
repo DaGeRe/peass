@@ -28,10 +28,12 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.CommitUtil;
 import de.dagere.peass.config.DependencyReaderConfigMixin;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitCommit;
@@ -142,8 +144,9 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       if (vcs.equals(VersionControlSystem.GIT)) {
          final VersionIterator iterator = createIterator(config, previousVersion);
          ExecutionConfig executionConfig = config.getExecutionConfig();
-         reader = new DependencyReader(config.getDependencyConfig(), config.getProjectFolder(), dependencyFile, dependencies.getUrl(), iterator, executionConfig,
-               new EnvironmentVariables());
+         reader = new DependencyReader(config.getDependencyConfig(), new PeASSFolders(config.getProjectFolder()), 
+               dependencyFile, dependencies.getUrl(), iterator, new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")), 
+               executionConfig, new EnvironmentVariables());
          iterator.goTo0thCommit();
       } else if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");

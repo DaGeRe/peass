@@ -108,7 +108,8 @@ public class ContinuousDependencyReader {
    }
 
    private void doPartialRCS(final Dependencies dependencies, final VersionIterator newIterator) {
-      DependencyReader reader = new DependencyReader(dependencyConfig, folders.getProjectFolder(), dependencyFile, dependencies.getUrl(), newIterator, executionConfig, env);
+      DependencyReader reader = new DependencyReader(dependencyConfig, folders, dependencyFile, dependencies.getUrl(), newIterator, 
+            new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")), executionConfig, env);
       newIterator.goTo0thCommit();
 
       reader.readCompletedVersions(dependencies);
