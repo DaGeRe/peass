@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -20,7 +19,6 @@ import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
-import de.dagere.peass.dependency.KiekerResultManager;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
@@ -52,7 +50,6 @@ public class DependencyReader {
    protected DependencyManager dependencyManager;
    protected final PeASSFolders folders;
    protected VersionIterator iterator;
-   // protected TestDependencies dependencyMap;
    protected String lastRunningVersion;
    private final VersionKeeper skippedNoChange;
    private final ExecutionConfig executionConfig;
@@ -136,16 +133,15 @@ public class DependencyReader {
          LOG.info("Overall-tests: {} Executed tests with pruning: {}", overallSize, prunedSize);
 
          dependencyManager.getExecutor().deleteTemporaryFiles();
-         final File xmlFileFolder = KiekerResultManager.getXMLFileFolder(folders, folders.getProjectFolder());
-         if (xmlFileFolder != null) {
-            FileUtils.deleteDirectory(xmlFileFolder);
-         }
+         TooBigLogCleaner.cleanXMLFolder(folders);
          TooBigLogCleaner.cleanTooBigLogs(folders, iterator.getTag());
       } catch (final ParseProblemException | XmlPullParserException | InterruptedException | IOException ppe) {
          LOG.debug("Exception while reading a version");
          ppe.printStackTrace();
       } 
    }
+
+   
 
    /**
     * Determines the tests that may have got new dependencies, writes that changes (i.e. the tests that need to be run in that version) and re-runs the tests in order to get the
