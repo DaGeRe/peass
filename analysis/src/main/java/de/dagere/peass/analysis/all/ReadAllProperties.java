@@ -14,10 +14,17 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.ReadProperties;
 import de.dagere.peass.analysis.properties.PropertyReader;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.vcs.GitUtils;
 import de.peran.FolderSearcher;
 
+/**
+ * The goal was to derive patterns from simple properties. This did not work out, therefore this class will be removed in the future
+ * @author reichelt
+ *
+ */
+@Deprecated
 public class ReadAllProperties {
    public static final boolean readAll = System.getenv("read_all") != null ? Boolean.parseBoolean(System.getenv("read_all")) : false;
 
@@ -81,7 +88,8 @@ public class ReadAllProperties {
          }
       } else {
          final File resultFile = new File(folders.getPropertiesFolder(), project + File.separator + "properties_alltests.json");
-         new PropertyReader(resultFile.getParentFile(), projectFolder, viewFolder).readAllTestsProperties(changedTests);
+         ResultsFolders resultsFolders = new ResultsFolders(folders.getPropertiesFolder().getParentFile(), project);
+         new PropertyReader(resultsFolders, projectFolder).readAllTestsProperties(changedTests);
       }
    }
 }

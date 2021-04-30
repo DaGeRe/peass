@@ -16,6 +16,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.KiekerResultManager;
 import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -100,12 +101,11 @@ public class TraceGeneratorStarter implements Callable<Void> {
    }
 
    private void writeTrace(final String newestVersion, final TestCase testcase, final List<TraceElement> shortTrace) throws IOException {
-      File viewFolder = new File("results", "views_" + projectFolder.getName());
-      viewFolder.mkdirs();
-      TraceWriter tw = new TraceWriter(newestVersion, testcase, viewFolder);
+      ResultsFolders results = new ResultsFolders(new File("results"), projectFolder.getName());
+      TraceWriter tw = new TraceWriter(newestVersion, testcase, results);
 
       String shortVersion = TraceWriter.getShortVersion(newestVersion);
-      File methodDir = tw.getMethodDir();
+      File methodDir = results.getViewMethodDir(newestVersion, testcase);
 
       final File methodExpandedTrace = new File(methodDir, shortVersion + OneTraceGenerator.METHOD_EXPANDED);
       Files.write(methodExpandedTrace.toPath(), shortTrace

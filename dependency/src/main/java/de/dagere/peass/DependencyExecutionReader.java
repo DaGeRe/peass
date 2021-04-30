@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.config.DependencyReaderConfigMixin;
 import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
 import de.dagere.peass.dependency.persistence.Dependencies;
@@ -76,14 +77,13 @@ public class DependencyExecutionReader implements Callable<Void>{
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");
       folders.getTempProjectFolder().renameTo(dependencyTempFiles);
 
-      final File executeOut = new File(config.getResultBaseFolder(), "execute_" + project + ".json");
-      final File viewFolder = new File(config.getResultBaseFolder(), "views_" + project);
+      ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), project);
 
-      final ViewGenerator viewGenerator = new ViewGenerator(config.getProjectFolder(), all, executeOut, viewFolder, config.getThreads(), config.getExecutionConfig(), new EnvironmentVariables());
+      final ViewGenerator viewGenerator = new ViewGenerator(config.getProjectFolder(), all, resultsFolders, config.getThreads(), config.getExecutionConfig(), new EnvironmentVariables());
       viewGenerator.processCommandline();
       
       final File propertyFolders = new File(config.getResultBaseFolder(), "properties_" + project);
-      final PropertyReader propertyReader = new PropertyReader(propertyFolders, config.getProjectFolder(), viewFolder);
+      final PropertyReader propertyReader = new PropertyReader(resultsFolders, config.getProjectFolder());
       propertyReader.readAllTestsProperties(viewGenerator.getChangedTraceMethods());
    }
 

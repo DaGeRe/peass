@@ -18,6 +18,7 @@ import com.github.javaparser.ParseException;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.KiekerResultManager;
 import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -34,19 +35,18 @@ public class ViewGeneratorThread implements Runnable {
    private final String version, predecessor;
    private final ExecutionConfig executionConfig;
    private final PeASSFolders folders;
-   private final File viewFolder, executeFile;
+   private final ResultsFolders resultsFolders;
    private final TestSet testset;
    private final ExecutionData changedTraceMethods;
    private final EnvironmentVariables env;
 
-   public ViewGeneratorThread(final String version, final String predecessor, final PeASSFolders folders, final File viewFolder, final File executeFile, final TestSet testset,
+   public ViewGeneratorThread(final String version, final String predecessor, final PeASSFolders folders, final ResultsFolders resultsFolders, final TestSet testset,
          final ExecutionData changedTraceMethods,
          final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.version = version;
       this.predecessor = predecessor;
       this.folders = folders;
-      this.viewFolder = viewFolder;
-      this.executeFile = executeFile;
+      this.resultsFolders = resultsFolders;
       this.testset = testset;
       this.changedTraceMethods = changedTraceMethods;
       this.executionConfig = executionConfig;
@@ -56,10 +56,7 @@ public class ViewGeneratorThread implements Runnable {
    @Override
    public void run() {
       try {
-         final File viewResultsFolder = new File(viewFolder, "view_" + version);
-         if (!viewResultsFolder.exists()) {
-            viewResultsFolder.mkdir();
-         }
+         final File viewResultsFolder = resultsFolders.getVersionViewFolder(version);
 
          final File diffFolder = new File(viewResultsFolder, "diffs");
          if (!diffFolder.exists()) {
@@ -75,7 +72,7 @@ public class ViewGeneratorThread implements Runnable {
 
          synchronized (changedTraceMethods) {
             LOG.debug("Writing");
-            try (FileWriter fw = new FileWriter(executeFile)) {
+            try (FileWriter fw = new FileWriter(resultsFolders.getExecutionFile())) {
                fw.write(Constants.OBJECTMAPPER.writeValueAsString(changedTraceMethods));
                fw.flush();
             } catch (final IOException e) {
@@ -148,7 +145,7 @@ public class ViewGeneratorThread implements Runnable {
       boolean worked = false;
       for (final TestCase testcase : testset.getTests()) {
          final File moduleFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
-         final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(viewFolder, folders, testcase, traceFileMap, version, moduleFolder,
+         final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(resultsFolders, folders, testcase, traceFileMap, version, moduleFolder,
                resultsManager.getExecutor().getModules());
          final boolean workedLocal = oneViewGenerator.generateTrace(githash);
          if (!workedLocal) {

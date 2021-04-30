@@ -13,9 +13,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.analysis.properties.PropertyReader;
-import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -34,20 +34,18 @@ public class TestChooser {
    private File localFolder;
    private PeASSFolders folders;
    private final String version;
-   private final File viewFolder;
-   private final File propertyFolder;
+   private final ResultsFolders resultsFolders;
    private final int threads;
    private final ExecutionConfig config;
    private final EnvironmentVariables env;
 
-   public TestChooser(final boolean useViews, final File localFolder, final PeASSFolders folders, final String version, final File viewFolder, final File propertyFolder,
+   public TestChooser(final boolean useViews, final File localFolder, final PeASSFolders folders, final String version, final ResultsFolders resultsFolders, 
          final int threads, final ExecutionConfig config, final EnvironmentVariables env) {
       this.useViews = useViews;
       this.localFolder = localFolder;
       this.folders = folders;
       this.version = version;
-      this.viewFolder = viewFolder;
-      this.propertyFolder = propertyFolder;
+      this.resultsFolders = resultsFolders;
       this.threads = threads;
       this.config = config;
       this.env = env;
@@ -126,9 +124,9 @@ public class TestChooser {
    }
 
    private void doGenerateViews(final Dependencies dependencies, final File executeFile) throws JAXBException, IOException {
-      final ViewGenerator viewgenerator = new ViewGenerator(folders.getProjectFolder(), dependencies, executeFile, viewFolder, threads, config, env);
+      final ViewGenerator viewgenerator = new ViewGenerator(folders.getProjectFolder(), dependencies, resultsFolders, threads, config, env);
       viewgenerator.processCommandline();
-      final PropertyReader propertyReader = new PropertyReader(propertyFolder, folders.getProjectFolder(), viewFolder);
+      final PropertyReader propertyReader = new PropertyReader(resultsFolders, folders.getProjectFolder());
       propertyReader.readAllTestsProperties(viewgenerator.getChangedTraceMethods());
    }
 }

@@ -10,10 +10,8 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.traces.TraceMethodReader;
-import de.dagere.peass.dependency.traces.TraceWithMethods;
-import de.dagere.peass.dependency.traces.TraceWriter;
 import de.dagere.peass.dependency.traces.requitur.ReducedTraceElement;
 import de.dagere.peass.dependency.traces.requitur.content.StringContent;
 
@@ -23,25 +21,27 @@ public class TraceWriterTest {
 
    @Test
    public void testSimpleWriting() throws IOException {
-      TraceWriter writer = new TraceWriter("000001", new TestCase("ClazzA", "methodA"), folder.getRoot());
+      ResultsFolders resultsFolders = new ResultsFolders(folder.getRoot(), "test");
+      TraceWriter writer = new TraceWriter("000001", new TestCase("ClazzA", "methodA"), resultsFolders);
 
       TraceWithMethods exampleTrace = getTrace();
 
       writer.writeTrace("000002", 3, Mockito.mock(TraceMethodReader.class), exampleTrace, new LinkedList<>());
 
-      File expectedResultFile = new File(folder.getRoot(), "view_000001/ClazzA/methodA/000002_method");
+      File expectedResultFile = new File(resultsFolders.getViewFolder(), "view_000001/ClazzA/methodA/000002_method");
       Assert.assertTrue(expectedResultFile.exists());
    }
 
    @Test
    public void testModuleWriting() throws IOException {
-      TraceWriter writer = new TraceWriter("000001", new TestCase("ClazzA", "methodA", "moduleA"), folder.getRoot());
+      ResultsFolders resultsFolders = new ResultsFolders(folder.getRoot(), "test");
+      TraceWriter writer = new TraceWriter("000001", new TestCase("ClazzA", "methodA", "moduleA"), resultsFolders);
 
       TraceWithMethods exampleTrace = getTrace();
 
       writer.writeTrace("000002", 3, Mockito.mock(TraceMethodReader.class), exampleTrace, new LinkedList<>());
 
-      File expectedResultFile = new File(folder.getRoot(), "view_000001/moduleA§ClazzA/methodA/000002_method");
+      File expectedResultFile = new File(resultsFolders.getViewFolder(), "view_000001/moduleA§ClazzA/methodA/000002_method");
       Assert.assertTrue(expectedResultFile.exists());
    }
 

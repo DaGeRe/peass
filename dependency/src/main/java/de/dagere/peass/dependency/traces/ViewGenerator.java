@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -36,17 +37,15 @@ public class ViewGenerator extends PairProcessor {
    @Option(names = { "-out", "--out" }, description = "Path for saving the executionfile")
    File out;
 
-   private File viewFolder;
-   private File executeFile;
+   private ResultsFolders resultsFolders;
    private ExecutionData changedTraceMethods = new ExecutionData();
    private ExecutionConfig executionConfig;
    private EnvironmentVariables env;
 
-   public ViewGenerator(final File projectFolder, final Dependencies dependencies, final File executefile, final File viewFolder, final int threads,
+   public ViewGenerator(final File projectFolder, final Dependencies dependencies, final ResultsFolders resultsFolders, final int threads,
          final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       super(projectFolder, dependencies);
-      this.viewFolder = viewFolder;
-      this.executeFile = executefile;
+      this.resultsFolders = resultsFolders;
       this.threads = threads;
       processInitialVersion(dependencies.getInitialversion());
       changedTraceMethods.setAndroid(dependencies.isAndroid());
@@ -147,12 +146,8 @@ public class ViewGenerator extends PairProcessor {
    private Runnable createGeneratorRunnable(final String version, final String predecessor, final TestSet testset) {
       LOG.info("Starting {}", version);
       return new ViewGeneratorThread(version, predecessor, folders,
-            viewFolder, executeFile,
+            resultsFolders,
             testset, changedTraceMethods, executionConfig, env);
-   }
-
-   public File getExecuteFile() {
-      return executeFile;
    }
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, JAXBException, IOException {
@@ -182,11 +177,7 @@ public class ViewGenerator extends PairProcessor {
          out = new File("results");
       }
 
-      executeFile = new File(out, "execute-" + projectName + ".json");
-      viewFolder = new File(out, "views_" + projectName);
-      if (!viewFolder.exists()) {
-         viewFolder.mkdir();
-      }
+      resultsFolders = new ResultsFolders(out, projectName); 
 
       processCommandline();
 

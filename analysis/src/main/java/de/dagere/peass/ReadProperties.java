@@ -28,6 +28,7 @@ import de.dagere.peass.analysis.properties.ChangeProperty;
 import de.dagere.peass.analysis.properties.PropertyReadHelper;
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.analysis.properties.VersionChangeProperties;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -90,7 +91,8 @@ public class ReadProperties implements Callable<Void> {
       if (ReadAllProperties.readAll) {
          final File resultFile = new File("results" + File.separator + projectName + File.separator + "properties_alltests.json");
          out = resultFile;
-         final PropertyReader reader = new PropertyReader(out, projectFolder, viewFolder);
+         ResultsFolders resultsFolders = new ResultsFolders(out, projectName);
+         final PropertyReader reader = new PropertyReader(resultsFolders, projectFolder);
          reader.readAllTestsProperties(changedTests);
       } else {
          final File changefile = folders.getChangeFile(projectName);

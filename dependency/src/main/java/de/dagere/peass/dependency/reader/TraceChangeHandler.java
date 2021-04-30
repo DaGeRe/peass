@@ -68,6 +68,17 @@ public class TraceChangeHandler {
       dependencyManager.runTraceTests(testsToRun, version);
 
       handleDependencyChanges(newVersionInfo, testsToRun, mapping);
+      
+      //TODO Generate views if flag is set
+//      Map<String, List<File>> traceFileMap = new HashMap<>();
+//      for (TestCase testcase : testsToRun.getTests()) {
+//         dependencyManager.getExecutor().getModules();
+//         final File moduleFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
+//         final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(viewFolder, folders, testcase, traceFileMap, version, moduleFolder,
+//               dependencyManager.getExecutor().getModules());
+//         final boolean workedLocal = oneViewGenerator.generateTrace(version);
+//      }
+      
    }
 
    private void handleDependencyChanges(final Version newVersionInfo, final TestSet testsToRun, final ModuleClassMapping mapping)

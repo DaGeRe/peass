@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -45,8 +46,7 @@ public class ContinuousExecutor {
 
    private final File localFolder;
    private final PeASSFolders folders;
-   private final File viewFolder;
-   private final File propertyFolder;
+   private final ResultsFolders resultsFolders;
    private DependencyConfig dependencyConfig = new DependencyConfig(2, false);
 
    private final EnvironmentVariables env;
@@ -75,12 +75,9 @@ public class ContinuousExecutor {
          GitUtils.pull(projectFolderLocal);
          GitUtils.goToTag(measurementConfig.getVersion(), projectFolderLocal);
       }
+      resultsFolders = new ResultsFolders(projectFolderLocal, projectFolder.getName());
 
       folders = new PeASSFolders(projectFolderLocal);
-      viewFolder = new File(localFolder, "views");
-      viewFolder.mkdir();
-
-      propertyFolder = new File(localFolder, "properties");
 
       version = measurementConfig.getVersion();
       versionOld = measurementConfig.getVersionOld();
@@ -107,7 +104,7 @@ public class ContinuousExecutor {
 
    private Set<TestCase> selectIncludedTests(final Dependencies dependencies) throws Exception {
       final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version,
-            viewFolder, propertyFolder, threads, measurementConfig.getExecutionConfig(), env);
+            resultsFolders, threads, measurementConfig.getExecutionConfig(), env);
       final Set<TestCase> tests = chooser.getTestSet(dependencies);
       LOG.debug("Executing measurement on {}", tests);
       return tests;
@@ -152,10 +149,6 @@ public class ContinuousExecutor {
 
    public String getVersionOld() {
       return versionOld;
-   }
-
-   public File getPropertyFolder() {
-      return propertyFolder;
    }
 
    public File getProjectFolder() {

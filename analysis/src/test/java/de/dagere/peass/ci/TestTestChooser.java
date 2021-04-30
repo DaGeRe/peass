@@ -10,10 +10,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.TestConstants;
-import de.dagere.peass.ci.TestChooser;
 import de.dagere.peass.ci.helper.GitProjectBuilder;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -27,6 +27,7 @@ import de.dagere.peass.utils.Constants;
 public class TestTestChooser {
    
    private String testVersion;
+   private ResultsFolders resultsFolders;
    
    private GitProjectBuilder builder;
    
@@ -34,13 +35,15 @@ public class TestTestChooser {
    public void cleanDependencies() throws IOException, InterruptedException {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER.getParentFile());
       builder = new GitProjectBuilder(TestConstants.CURRENT_FOLDER, new File("../dependency/src/test/resources/dependencyIT/basic_state"));
+      
+      resultsFolders = new ResultsFolders(TestConstants.CURRENT_FOLDER, "test");
    }
    
    @Test
    public void testBasicChoosing() throws Exception {
       Dependencies dependencies = createDependencies();
       
-      TestChooser chooser = new TestChooser(false, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), testVersion, new File("target/views"), new File("target/properties"), 1, new ExecutionConfig(1), new EnvironmentVariables());
+      TestChooser chooser = new TestChooser(false, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), testVersion, resultsFolders, 1, new ExecutionConfig(1), new EnvironmentVariables());
       Set<TestCase> tests = chooser.getTestSet(dependencies);
       
       Assert.assertEquals(tests.iterator().next(), new TestCase("defaultpackage.TestMe#testMe"));
@@ -50,7 +53,7 @@ public class TestTestChooser {
    public void testViewChoosing() throws Exception {
       Dependencies dependencies = createDependencies();
       
-      TestChooser chooser = new TestChooser(true, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), testVersion, new File("target/views"), new File("target/properties"), 1, new ExecutionConfig(1), new EnvironmentVariables());
+      TestChooser chooser = new TestChooser(true, new File("target/view_it"), new PeASSFolders(TestConstants.CURRENT_FOLDER), testVersion, resultsFolders, 1, new ExecutionConfig(1), new EnvironmentVariables());
       Set<TestCase> tests = chooser.getTestSet(dependencies);
       
       Assert.assertEquals(tests.iterator().next(), new TestCase("defaultpackage.TestMe#testMe"));

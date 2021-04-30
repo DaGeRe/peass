@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.traces.requitur.content.RuleContent;
 
@@ -19,17 +19,17 @@ public class TraceWriter {
 
    private final String version;
    private final TestCase testcase;
-   private final File viewFolder;
+   private final ResultsFolders resultsFolders;
 
-   public TraceWriter(final String version, final TestCase testcase, final File viewFolder) {
+   public TraceWriter(final String version, final TestCase testcase, final ResultsFolders resultsFolders) {
       this.version = version;
       this.testcase = testcase;
-      this.viewFolder = viewFolder;
+      this.resultsFolders = resultsFolders;
    }
 
    public void writeTrace(final String versionCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace, final List<File> traceFiles)
          throws IOException {
-      final File methodDir = getMethodDir();
+      final File methodDir = resultsFolders.getViewMethodDir(version, testcase);
       String shortVersion = getShortVersion(versionCurrent);
       final File methodTrace = writeTraces(sizeInMB, traceMethodReader, trace, traceFiles, methodDir, shortVersion);
       LOG.debug("Datei {} existiert: {}", methodTrace.getAbsolutePath(), methodTrace.exists());
@@ -41,31 +41,6 @@ public class TraceWriter {
          shortVersion = shortVersion + "~1";
       }
       return shortVersion;
-   }
-
-   public File getMethodDir() {
-      final File methodDir = new File(getClazzDir(version, testcase), testcase.getMethod());
-      if (!methodDir.exists()) {
-         boolean create = methodDir.mkdir();
-         LOG.debug("Created directory {}", methodDir.getAbsolutePath(), create);
-      } else {
-         LOG.debug("Directory {} already existing", methodDir.getAbsolutePath());
-      }
-      return methodDir;
-   }
-
-   private File getClazzDir(final String version, final TestCase testcase) {
-      final File viewResultsFolder = new File(viewFolder, "view_" + version);
-      if (!viewResultsFolder.exists()) {
-         viewResultsFolder.mkdir();
-      }
-      String clazzDirName = (testcase.getModule() != null && !testcase.getModule().equals("")) ? testcase.getModule() + ChangedEntity.MODULE_SEPARATOR + testcase.getClazz()
-            : testcase.getClazz();
-      final File clazzDir = new File(viewResultsFolder, clazzDirName);
-      if (!clazzDir.exists()) {
-         clazzDir.mkdir();
-      }
-      return clazzDir;
    }
 
    private File writeTraces(final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace, final List<File> traceFiles, final File methodDir,

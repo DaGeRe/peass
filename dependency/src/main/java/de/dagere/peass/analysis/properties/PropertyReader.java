@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import de.dagere.peass.analysis.changes.Change;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -17,26 +18,23 @@ import de.dagere.peass.vcs.GitUtils;
 
 public class PropertyReader {
    
-   private final File outFolder, propertyFile;
-   private final File projectFolder, viewFolder;
-   int count = 0;
+   private final ResultsFolders resultsFolders;
+   private final File projectFolder;
+   private int count = 0;
    
-   public PropertyReader(final File outFolder, final File projectFolder, final File viewFolder) {
-      super();
-      this.outFolder = outFolder;
+   public PropertyReader(final ResultsFolders resultsFolders, final File projectFolder) {
+      this.resultsFolders = resultsFolders;
       this.projectFolder = projectFolder;
-      this.viewFolder = viewFolder;
-      this.propertyFile = new File(outFolder, "properties.json");
    }
 
    public void readAllTestsProperties(final ExecutionData changedTests) throws IOException {
       final VersionChangeProperties versionProperties = new VersionChangeProperties();
       
-      final File methodFolder = new File(outFolder, "methods");
+      final File methodFolder = new File(resultsFolders.getPropertiesFolder(), "methods");
       methodFolder.mkdirs();
       for (final Map.Entry<String, TestSet> version : changedTests.getVersions().entrySet()) {
          readVersion(versionProperties, methodFolder, version);
-         Constants.OBJECTMAPPER.writeValue(propertyFile, versionProperties);
+         Constants.OBJECTMAPPER.writeValue(resultsFolders.getPropertiesFile(), versionProperties);
       }
 
       System.out.println("Analyzed: " + count);
@@ -66,7 +64,7 @@ public class PropertyReader {
       final PropertyReadHelper reader = new PropertyReadHelper(version.getKey(), version.getValue().getPredecessor(), 
             entity, testcaseChange, 
             projectFolder,
-            viewFolder, methodSourceFolder);
+            resultsFolders.getViewFolder(), methodSourceFolder);
       final ChangeProperty currentProperty = reader.read();
       if (currentProperty != null) {
          properties.add(currentProperty);

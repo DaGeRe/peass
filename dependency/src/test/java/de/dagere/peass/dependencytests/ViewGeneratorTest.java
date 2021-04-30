@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -51,13 +52,11 @@ public class ViewGeneratorTest {
    public void testTwoVersions() throws IOException, InterruptedException, JAXBException {
       ViewGeneratorIT.init(ViewGeneratorIT.BASIC);
 
-      final File executefile = new File(ViewGeneratorIT.VIEW_IT, "execute.json");
-      final File viewFolder = new File(ViewGeneratorIT.VIEW_IT, "views");
-      // final File viewFolder = Files.createTempDirectory(ViewGeneratorIT.VIEW_IT.toPath(), "views").toFile();
-
       final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, Dependencies.class);
       VersionComparator.setDependencies(dependencies);
-      final ViewGenerator generator = new ViewGenerator(TestConstants.CURRENT_FOLDER, dependencies, executefile, viewFolder, 1, new ExecutionConfig(), new EnvironmentVariables());
+      
+      ResultsFolders resultsFolders = new ResultsFolders(ViewGeneratorIT.VIEW_IT, "test");
+      final ViewGenerator generator = new ViewGenerator(TestConstants.CURRENT_FOLDER, dependencies, resultsFolders, 1, new ExecutionConfig(), new EnvironmentVariables());
 
       mockGitHandling();
 
@@ -65,7 +64,7 @@ public class ViewGeneratorTest {
       final Version testVersion = dependencies.getVersions().get(version);
       generator.processVersion(version, testVersion);
 
-      final ExecutionData tests = Constants.OBJECTMAPPER.readValue(executefile, ExecutionData.class);
+      final ExecutionData tests = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
 
       Assert.assertEquals(1, tests.getVersions().size());
       Assert.assertEquals(1, tests.getVersions().get("000001").getTests().size());

@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -29,17 +30,17 @@ public class OneTraceGenerator {
 
    private static final Logger LOG = LogManager.getLogger(OneTraceGenerator.class);
 
-   private final File viewFolder;
    private final PeASSFolders folders;
    private final TestCase testcase;
    private final Map<String, List<File>> traceFileMap;
    private final String version;
    private final File resultsFolder;
    private final ProjectModules modules;
+   private final ResultsFolders resultsFolders;
 
-   public OneTraceGenerator(final File viewFolder, final PeASSFolders folders, final TestCase testcase, final Map<String, List<File>> traceFileMap, final String version,
+   public OneTraceGenerator(final ResultsFolders resultsFolders, final PeASSFolders folders, final TestCase testcase, final Map<String, List<File>> traceFileMap, final String version,
          final File resultsFolder, final ProjectModules modules) {
-      this.viewFolder = viewFolder;
+      this.resultsFolders = resultsFolders;
       this.folders = folders;
       this.testcase = testcase;
       this.traceFileMap = traceFileMap;
@@ -98,13 +99,9 @@ public class OneTraceGenerator {
          traceFiles = new LinkedList<>();
          traceFileMap.put(testcase.toString(), traceFiles);
       }
-      TraceWriter traceWriter = new TraceWriter(version, testcase, viewFolder);
+      TraceWriter traceWriter = new TraceWriter(version, testcase, resultsFolders);
       traceWriter.writeTrace(versionCurrent, sizeInMB, traceMethodReader, trace, traceFiles);
    }
-
-   
-
-   
 
    private List<File> getClasspathFolders() {
       final List<File> files = new LinkedList<>();
