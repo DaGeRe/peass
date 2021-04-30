@@ -34,7 +34,7 @@ public class ViewGenerator extends PairProcessor {
 
    private static final Logger LOG = LogManager.getLogger(ViewGenerator.class);
 
-   @Option(names = { "-out", "--out" }, description = "Path for saving the executionfile")
+   @Option(names = { "-out", "--out" }, description = "Path for saving the execution data (saves execute-$PROJECTNAME.json and views_$PROJECTNAME containing the traces)")
    File out;
 
    private ResultsFolders resultsFolders;
