@@ -3,8 +3,6 @@ package de.dagere.peass.dependency.reader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,17 +11,12 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.PeASSFolders;
-import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
-import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.Version;
@@ -70,7 +63,6 @@ public class DependencyReader {
       dependencyResult.setUrl(url);
 
       this.changeManager = changeManager;
-
    }
 
    /**
@@ -94,7 +86,6 @@ public class DependencyReader {
       dependencyResult.setUrl(url);
 
       changeManager = new ChangeManager(folders, iterator);
-
    }
 
    /**
@@ -124,9 +115,9 @@ public class DependencyReader {
    public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException {
       final int tests = analyseVersion(changeManager);
       DependencyReaderUtil.write(dependencyResult, dependencyFile);
-      
+
       sizeRecorder.addVersionSize(dependencyManager.getDependencyMap().size(), tests);
-      
+
       dependencyManager.getExecutor().deleteTemporaryFiles();
       TooBigLogCleaner.cleanXMLFolder(folders);
       TooBigLogCleaner.cleanTooBigLogs(folders, iterator.getTag());
@@ -182,7 +173,7 @@ public class DependencyReader {
       final Version newVersionInfo = handleStaticAnalysisChanges(version, input);
 
       if (!dependencyConfig.isDoNotUpdateDependencies()) {
-         handleTraceAnalysisChanges(version, input, newVersionInfo);
+         new TraceChangeHandler(dependencyManager, folders, executionConfig, dependencyResult, version).handleTraceAnalysisChanges(input, newVersionInfo);
       } else {
          LOG.debug("Not updating dependencies since doNotUpdateDependencies was set - only returning dependencies based on changed classes");
          dependencyResult.getVersions().put(version, newVersionInfo);
@@ -195,31 +186,16 @@ public class DependencyReader {
 
    }
 
-   private void handleTraceAnalysisChanges(final String version, final DependencyReadingInput input, final Version newVersionInfo)
-         throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException {
-      LOG.debug("Updating dependencies.. {}", version);
-
-      final TestSet testsToRun = dependencyManager.getTestsToRun(input.getChanges()); // contains only the tests that need to be run -> could be changeTestMap.values() und dann umwandeln
-      Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + version + ".json"), testsToRun.entrySet());
-
-      NonIncludedTestRemover.removeNotIncluded(testsToRun, executionConfig);
-
-      if (testsToRun.classCount() > 0) {
-         analyzeTests(version, newVersionInfo, testsToRun);
-      }
-      dependencyResult.getVersions().put(version, newVersionInfo);
-   }
-
    private Version handleStaticAnalysisChanges(final String version, final DependencyReadingInput input) throws IOException, JsonGenerationException, JsonMappingException {
       final ChangeTestMapping changeTestMap = dependencyManager.getDependencyMap().getChangeTestMap(input.getChanges()); // tells which tests need to be run, and
-                                                                                                              // because of
+      // because of
       LOG.debug("Change test mapping (without added tests): " + changeTestMap);
       // which change they need to be run
 
       if (DETAIL_DEBUG)
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changetest_" + version + ".json"), changeTestMap);
 
-      final Version newVersionInfo = DependencyReaderUtil.createVersionFromChangeMap(version, input.getChanges(), changeTestMap);
+      final Version newVersionInfo = DependencyReaderUtil.createVersionFromChangeMap(input.getChanges(), changeTestMap);
       newVersionInfo.setJdk(dependencyManager.getExecutor().getJDKVersion());
       newVersionInfo.setPredecessor(input.getPredecessor());
 
@@ -237,25 +213,6 @@ public class DependencyReader {
       final Version newVersionInfo = new Version();
       newVersionInfo.setRunning(false);
       dependencyResult.getVersions().put(version, newVersionInfo);
-   }
-
-   void analyzeTests(final String version, final Version newVersionInfo, final TestSet testsToRun)
-         throws IOException, XmlPullParserException, InterruptedException, JsonGenerationException, JsonMappingException {
-      final ModuleClassMapping mapping = new ModuleClassMapping(dependencyManager.getExecutor());
-      dependencyManager.runTraceTests(testsToRun, version);
-      final TestExistenceChanges testExistenceChanges = dependencyManager.updateDependencies(testsToRun, version, mapping);
-      final Map<ChangedEntity, Set<ChangedEntity>> newTestcases = testExistenceChanges.getAddedTests();
-
-      if (DETAIL_DEBUG) {
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "add_" + version + ".json"), newTestcases);
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "remove_" + version + ".json"), testExistenceChanges.getRemovedTests());
-      }
-
-      DependencyReaderUtil.removeDeletedTestcases(newVersionInfo, testExistenceChanges);
-      DependencyReaderUtil.addNewTestcases(newVersionInfo, newTestcases);
-
-      if (DETAIL_DEBUG)
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "final_" + version + ".json"), newVersionInfo);
    }
 
    public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException {

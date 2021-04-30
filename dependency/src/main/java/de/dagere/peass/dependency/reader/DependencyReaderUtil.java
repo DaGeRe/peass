@@ -97,12 +97,10 @@ public class DependencyReaderUtil {
       }
    }
 
-   static Version createVersionFromChangeMap(final String revision, final Map<ChangedEntity, ClazzChangeData> changedClassNames, final ChangeTestMapping changeTestMap) {
+   static Version createVersionFromChangeMap(final Map<ChangedEntity, ClazzChangeData> changedClassNames, final ChangeTestMapping changeTestMap) {
       final Version newVersionInfo = new Version();
       newVersionInfo.setRunning(true);
-      LOG.debug("Beginne schreiben");
-      // changeTestMap.keySet ist fast wie changedClassNames, bloß dass
-      // Klassen ohne Abhängigkeit drin sind
+      LOG.debug("Beginning to write");
       for (final Map.Entry<ChangedEntity, ClazzChangeData> changedClassName : changedClassNames.entrySet()) {
          ClazzChangeData changedClazzInsideFile = changedClassName.getValue();
          if (!changedClazzInsideFile.isOnlyMethodChange()) { // class changed as a whole
@@ -111,7 +109,6 @@ public class DependencyReaderUtil {
             handleMethodChange(changeTestMap, newVersionInfo, changedClazzInsideFile);
          }
       }
-      LOG.debug("Testrevision: " + revision);
       return newVersionInfo;
 
    }
