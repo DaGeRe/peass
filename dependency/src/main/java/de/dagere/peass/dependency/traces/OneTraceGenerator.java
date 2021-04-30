@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -32,13 +31,13 @@ public class OneTraceGenerator {
 
    private final PeASSFolders folders;
    private final TestCase testcase;
-   private final Map<String, List<File>> traceFileMap;
+   private final TraceFileMapping traceFileMap;
    private final String version;
    private final File resultsFolder;
    private final ProjectModules modules;
    private final ResultsFolders resultsFolders;
 
-   public OneTraceGenerator(final ResultsFolders resultsFolders, final PeASSFolders folders, final TestCase testcase, final Map<String, List<File>> traceFileMap, final String version,
+   public OneTraceGenerator(final ResultsFolders resultsFolders, final PeASSFolders folders, final TestCase testcase, final TraceFileMapping traceFileMap, final String version,
          final File resultsFolder, final ProjectModules modules) {
       this.resultsFolders = resultsFolders;
       this.folders = folders;
@@ -94,13 +93,8 @@ public class OneTraceGenerator {
    }
 
    private void writeTrace(final String versionCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace) throws IOException {
-      List<File> traceFiles = traceFileMap.get(testcase.toString());
-      if (traceFiles == null) {
-         traceFiles = new LinkedList<>();
-         traceFileMap.put(testcase.toString(), traceFiles);
-      }
       TraceWriter traceWriter = new TraceWriter(version, testcase, resultsFolders);
-      traceWriter.writeTrace(versionCurrent, sizeInMB, traceMethodReader, trace, traceFiles);
+      traceWriter.writeTrace(versionCurrent, sizeInMB, traceMethodReader, trace, traceFileMap);
    }
 
    private List<File> getClasspathFolders() {

@@ -176,6 +176,9 @@ public class ViewGeneratorIT {
          traceFile = new LinkedList<>();
          traceFileMap.put(testcase.getMethod(), traceFile);
       }
+      if (!clazzDir.exists()) {
+         clazzDir.mkdirs();
+      }
       final File currentTraceFile = new File(clazzDir, testcase.getMethod() + "_hash_" + githash);
       traceFile.add(currentTraceFile);
       try (final FileWriter fw = new FileWriter(currentTraceFile)) {

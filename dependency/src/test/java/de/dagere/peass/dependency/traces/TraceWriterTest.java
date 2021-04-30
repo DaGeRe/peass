@@ -26,7 +26,7 @@ public class TraceWriterTest {
 
       TraceWithMethods exampleTrace = getTrace();
 
-      writer.writeTrace("000002", 3, Mockito.mock(TraceMethodReader.class), exampleTrace, new LinkedList<>());
+      writer.writeTrace("000002", 3, Mockito.mock(TraceMethodReader.class), exampleTrace, new TraceFileMapping());
 
       File expectedResultFile = new File(resultsFolders.getViewFolder(), "view_000001/ClazzA/methodA/000002_method");
       Assert.assertTrue(expectedResultFile.exists());
@@ -39,7 +39,7 @@ public class TraceWriterTest {
 
       TraceWithMethods exampleTrace = getTrace();
 
-      writer.writeTrace("000002", 3, Mockito.mock(TraceMethodReader.class), exampleTrace, new LinkedList<>());
+      writer.writeTrace("000002", 3, Mockito.mock(TraceMethodReader.class), exampleTrace, new TraceFileMapping());
 
       File expectedResultFile = new File(resultsFolders.getViewFolder(), "view_000001/moduleA§ClazzA/methodA/000002_method");
       Assert.assertTrue(expectedResultFile.exists());

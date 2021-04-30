@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -63,7 +60,7 @@ public class ViewGeneratorThread implements Runnable {
             diffFolder.mkdirs();
          }
          final PeASSFolders folders = initProjectFolder();
-         final Map<String, List<File>> traceFileMap = new HashMap<>();
+         final TraceFileMapping traceFileMap = new TraceFileMapping();
          final boolean tracesWorked = generateTraces(folders, traceFileMap);
 
          for (final TestCase testcase : testset.getTests()) {
@@ -85,7 +82,7 @@ public class ViewGeneratorThread implements Runnable {
       }
    }
 
-   private void analyzeTestcase(final File diffFolder, final Map<String, List<File>> traceFileMap, final boolean tracesWorked, final TestCase testcase) throws IOException {
+   private void analyzeTestcase(final File diffFolder, final TraceFileMapping traceFileMap, final boolean tracesWorked, final TestCase testcase) throws IOException {
       if (tracesWorked && traceFileMap.size() > 0) {
          LOG.debug("Generating Diff " + testcase.getClazz() + "#" + testcase.getMethod() + " " + predecessor + " .." + version + " " + traceFileMap.size());
          DiffFileGenerator diffGenerator = new DiffFileGenerator();
@@ -105,7 +102,7 @@ public class ViewGeneratorThread implements Runnable {
       return folders.getTempFolder("" + VersionComparator.getVersionIndex(version));
    }
 
-   protected boolean generateTraces(final PeASSFolders folders, final Map<String, List<File>> traceFileMap)
+   protected boolean generateTraces(final PeASSFolders folders, final TraceFileMapping traceFileMap)
          throws IOException, InterruptedException, com.github.javaparser.ParseException, ViewNotFoundException, XmlPullParserException {
       boolean gotAllData = true;
 
@@ -141,7 +138,7 @@ public class ViewGeneratorThread implements Runnable {
       return gotAllData;
    }
 
-   public boolean generateVersionTraces(final PeASSFolders folders, final Map<String, List<File>> traceFileMap, final KiekerResultManager resultsManager, final String githash)
+   public boolean generateVersionTraces(final PeASSFolders folders, final TraceFileMapping traceFileMap, final KiekerResultManager resultsManager, final String githash)
          throws FileNotFoundException, IOException, XmlPullParserException, ParseException, ViewNotFoundException {
       boolean worked = false;
       for (final TestCase testcase : testset.getTests()) {

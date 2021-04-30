@@ -3,7 +3,6 @@ package de.dagere.peass.dependency.traces;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -25,12 +24,12 @@ public class DiffFileGenerator {
     * @return Whether a change happened
     * @throws IOException If files can't be read of written
     */
-   protected boolean generateDiffFiles(final TestCase testcase, final File diffFolder, final Map<String, List<File>> traceFileMap) throws IOException {
+   protected boolean generateDiffFiles(final TestCase testcase, final File diffFolder, final TraceFileMapping traceFileMap) throws IOException {
       final long size = FileUtils.sizeOfDirectory(diffFolder);
       final long sizeInMB = size / (1024 * 1024);
       LOG.debug("Filesize: {} ({})", sizeInMB, size);
       if (sizeInMB < 2000) {
-         final List<File> traceFiles = traceFileMap.get(testcase.toString());
+         List<File> traceFiles = traceFileMap.getTestcaseMap(testcase);
          if (traceFiles != null) {
             LOG.debug("Trace-Files: {}", traceFiles);
             if (traceFiles.size() > 1) {

@@ -3,7 +3,6 @@ package de.dagere.peass.dependency.traces;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -27,7 +26,7 @@ public class TraceWriter {
       this.resultsFolders = resultsFolders;
    }
 
-   public void writeTrace(final String versionCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace, final List<File> traceFiles)
+   public void writeTrace(final String versionCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace, final TraceFileMapping traceFiles)
          throws IOException {
       final File methodDir = resultsFolders.getViewMethodDir(version, testcase);
       String shortVersion = getShortVersion(versionCurrent);
@@ -43,10 +42,10 @@ public class TraceWriter {
       return shortVersion;
    }
 
-   private File writeTraces(final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace, final List<File> traceFiles, final File methodDir,
+   private File writeTraces(final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace, final TraceFileMapping traceFiles, final File methodDir,
          final String shortVersion) throws IOException {
       final File currentTraceFile = new File(methodDir, shortVersion);
-      traceFiles.add(currentTraceFile);
+      traceFiles.addTraceFile(testcase, currentTraceFile);
       Files.write(currentTraceFile.toPath(), trace.getWholeTrace().getBytes());
       final File commentlessTraceFile = new File(methodDir, shortVersion + OneTraceGenerator.NOCOMMENT);
       Files.write(commentlessTraceFile.toPath(), trace.getCommentlessTrace().getBytes());

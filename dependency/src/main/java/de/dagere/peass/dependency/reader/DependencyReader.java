@@ -22,6 +22,7 @@ import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.traces.TraceFileMapping;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.VersionIterator;
@@ -183,7 +184,8 @@ public class DependencyReader {
          traceChangeHandler.handleTraceAnalysisChanges(newVersionInfo);
 
          if (dependencyConfig.isGenerateViews()) {
-            TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version);
+            TraceFileMapping mapping = new TraceFileMapping();
+            TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, mapping);
             traceViewGenerator.generateViews(resultsFolders, newVersionInfo);
          }
       } else {

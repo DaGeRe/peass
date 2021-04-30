@@ -2,9 +2,6 @@ package de.dagere.peass.dependency.reader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
@@ -17,6 +14,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.dependency.traces.OneTraceGenerator;
+import de.dagere.peass.dependency.traces.TraceFileMapping;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 
 public class TraceViewGenerator {
@@ -24,19 +22,20 @@ public class TraceViewGenerator {
    private final DependencyManager dependencyManager;
    private final PeASSFolders folders;
    private final String version;
+   private final TraceFileMapping mapping;
    
-   public TraceViewGenerator(final DependencyManager dependencyManager, final PeASSFolders folders, final String version) {
+   public TraceViewGenerator(final DependencyManager dependencyManager, final PeASSFolders folders, final String version, final TraceFileMapping mapping) {
       this.dependencyManager = dependencyManager;
       this.folders = folders;
       this.version = version;
+      this.mapping = mapping;
    }
 
    public boolean generateViews(final ResultsFolders resultsFolders, final Version newVersionInfo) throws IOException, XmlPullParserException, ParseException, ViewNotFoundException {
       boolean allWorked = true;
-      Map<String, List<File>> traceFileMap = new HashMap<>();
       for (TestCase testcase : newVersionInfo.getTests().getTests()) {
          final File moduleFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
-         final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(resultsFolders, folders, testcase, traceFileMap, version, moduleFolder,
+         final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(resultsFolders, folders, testcase, mapping, version, moduleFolder,
                dependencyManager.getExecutor().getModules());
           final boolean workedLocal = oneViewGenerator.generateTrace(version);
           allWorked &= workedLocal;
