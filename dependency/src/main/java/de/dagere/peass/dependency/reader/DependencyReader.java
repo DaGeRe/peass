@@ -175,7 +175,7 @@ public class DependencyReader {
 
       if (!dependencyConfig.isDoNotUpdateDependencies()) {
          TraceChangeHandler traceChangeHandler = new TraceChangeHandler(dependencyManager, folders, executionConfig, version);
-         traceChangeHandler.handleTraceAnalysisChanges(input, newVersionInfo);
+         traceChangeHandler.handleTraceAnalysisChanges(newVersionInfo);
       } else {
          LOG.debug("Not updating dependencies since doNotUpdateDependencies was set - only returning dependencies based on changed classes");
       }

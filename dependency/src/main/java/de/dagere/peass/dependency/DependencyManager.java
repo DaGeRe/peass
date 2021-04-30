@@ -46,7 +46,6 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.MavenPomUtil;
 import de.dagere.peass.dependency.execution.TestExecutor;
@@ -294,7 +293,7 @@ public class DependencyManager extends KiekerResultManager {
       }
    }
 
-   public void setDependencies(final ChangedEntity testClassName, final Map<ChangedEntity, Set<String>> calledClasses) {
+   private void setDependencies(final ChangedEntity testClassName, final Map<ChangedEntity, Set<String>> calledClasses) {
       final Map<ChangedEntity, Set<String>> testDependencies = dependencies.getOrAddDependenciesForTest(testClassName);
       testDependencies.putAll(calledClasses);
    }
@@ -347,7 +346,7 @@ public class DependencyManager extends KiekerResultManager {
       return changes;
    }
 
-   File getTestclazzFolder(final Entry<ChangedEntity, Set<String>> entry) throws FileNotFoundException, IOException, XmlPullParserException {
+   public File getTestclazzFolder(final Entry<ChangedEntity, Set<String>> entry) throws FileNotFoundException, IOException, XmlPullParserException {
       final File testclazzFolder;
       if (entry.getKey().getModule().equals("")) {
          final File xmlFileFolder = getXMLFileFolder(folders.getProjectFolder());
@@ -427,36 +426,5 @@ public class DependencyManager extends KiekerResultManager {
             }
          }
       }
-   }
-
-   /**
-    * Returns the tests that need to be run in the current version based on the given changes, i.e. the given changed classes and changed methods
-    * 
-    * @param map from changed classes to changed methods (or, if class changed as a whole, an empty set)
-    * @return Map from testclasses to the test methods of the class that need to be run
-    */
-   public TestSet getTestsToRun(final Map<ChangedEntity, ClazzChangeData> changedClassNames) {
-      final TestSet testsToRun = new TestSet();
-      for (final ChangedEntity testName : changedClassNames.keySet()) {
-         if (testName.getJavaClazzName().toLowerCase().contains("test")) {
-            testsToRun.addTest(testName, null);
-         }
-      }
-      for (final Map.Entry<ChangedEntity, CalledMethods> testDependencies : dependencies.getDependencyMap().entrySet()) {
-         final Set<ChangedEntity> currentTestDependencies = testDependencies.getValue().getCalledClasses();
-         for (final ChangedEntity changedClass : changedClassNames.keySet()) {
-            LOG.trace("Prüfe Abhängigkeiten für {} von {}", changedClass, testDependencies.getKey());
-            LOG.trace("Abhängig: {} Abhängig von Testklasse: {}", currentTestDependencies.contains(changedClass), changedClass.equals(testDependencies.getKey()));
-            if (currentTestDependencies.contains(changedClass)) {
-               LOG.info("Test " + testDependencies.getKey() + " benötigt geänderte Klasse " + changedClass);
-               final String testMethodName = testDependencies.getKey().getMethod();
-               final ChangedEntity entity = testDependencies.getKey().copy();
-               entity.setMethod(null);
-               testsToRun.addTest(entity, testMethodName);
-               break;
-            }
-         }
-      }
-      return testsToRun;
    }
 }
