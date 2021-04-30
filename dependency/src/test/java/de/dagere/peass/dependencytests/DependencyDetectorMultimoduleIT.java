@@ -16,6 +16,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.github.javaparser.ParseException;
+
 import co.unruly.matchers.StreamMatchers;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
@@ -26,6 +28,7 @@ import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.vcs.VersionIterator;
 
@@ -58,7 +61,7 @@ public class DependencyDetectorMultimoduleIT {
    // }
 
    @Test
-   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException {
+   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       final File secondVersion = new File(VERSIONS_FOLDER, "normal_change");
 
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
@@ -90,7 +93,7 @@ public class DependencyDetectorMultimoduleIT {
 
    @Test
    public void testTwoChanges()
-         throws IOException, XmlPullParserException, InterruptedException {
+         throws IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final File thirdVersion = new File(VERSIONS_FOLDER, "another_change");
 
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(thirdVersion));

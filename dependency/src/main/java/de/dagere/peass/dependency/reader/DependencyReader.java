@@ -10,6 +10,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.github.javaparser.ParseException;
 
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
@@ -21,6 +22,7 @@ import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.VersionIterator;
 
@@ -74,7 +76,8 @@ public class DependencyReader {
     * @param url
     * @param iterator
     */
-   public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders, final ResultsFolders resultsFolders, final String url, final VersionIterator iterator,
+   public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders, final ResultsFolders resultsFolders, final String url,
+         final VersionIterator iterator,
          final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
       this.resultsFolders = resultsFolders;
@@ -107,13 +110,13 @@ public class DependencyReader {
 
          LOG.debug("Finished dependency-reading");
          return true;
-      } catch (IOException | XmlPullParserException | InterruptedException e) {
+      } catch (IOException | XmlPullParserException | InterruptedException | ParseException | ViewNotFoundException e) {
          e.printStackTrace();
          return false;
       }
    }
 
-   public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException {
+   public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final int tests = analyseVersion(changeManager);
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
 
@@ -137,8 +140,10 @@ public class DependencyReader {
     * @throws IOException
     * @throws XmlPullParserException
     * @throws InterruptedException
+    * @throws ViewNotFoundException 
+    * @throws ParseException 
     */
-   public int analyseVersion(final ChangeManager changeManager) throws IOException, XmlPullParserException, InterruptedException {
+   public int analyseVersion(final ChangeManager changeManager) throws IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final String version = iterator.getTag();
       if (!dependencyManager.getExecutor().isVersionRunning(iterator.getTag())) {
          documentFailure(version);
@@ -170,12 +175,17 @@ public class DependencyReader {
    }
 
    private int analyseChanges(final String version, final DependencyReadingInput input)
-         throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException {
+         throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final Version newVersionInfo = handleStaticAnalysisChanges(version, input);
 
       if (!dependencyConfig.isDoNotUpdateDependencies()) {
          TraceChangeHandler traceChangeHandler = new TraceChangeHandler(dependencyManager, folders, executionConfig, version);
          traceChangeHandler.handleTraceAnalysisChanges(newVersionInfo);
+
+         if (dependencyConfig.isGenerateViews()) {
+            TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version);
+            traceViewGenerator.generateViews(resultsFolders, newVersionInfo);
+         }
       } else {
          LOG.debug("Not updating dependencies since doNotUpdateDependencies was set - only returning dependencies based on changed classes");
       }

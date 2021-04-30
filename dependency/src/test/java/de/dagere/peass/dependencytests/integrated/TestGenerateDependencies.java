@@ -11,6 +11,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.github.javaparser.ParseException;
+
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
@@ -21,6 +23,7 @@ import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.dependencytests.ViewGeneratorIT;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
@@ -31,7 +34,7 @@ public class TestGenerateDependencies {
    private static final Logger LOG = LogManager.getLogger(TestGenerateDependencies.class);
 
    @Test
-   public void testGenerateDependencies() throws IOException, InterruptedException, XmlPullParserException {
+   public void testGenerateDependencies() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       ViewGeneratorIT.init(ViewGeneratorIT.BASIC);
 
       final FakeFileIterator iterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, Arrays.asList(ViewGeneratorIT.REPETITION));

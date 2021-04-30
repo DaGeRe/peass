@@ -10,8 +10,11 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.github.javaparser.ParseException;
+
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.VersionIterator;
@@ -28,7 +31,7 @@ public class DependencyDetectorJUnit5IT {
    }
 
    @Test
-   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException {
+   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "normal_change");
 
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();

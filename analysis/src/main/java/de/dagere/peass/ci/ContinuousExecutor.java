@@ -47,7 +47,7 @@ public class ContinuousExecutor {
    private final File localFolder;
    private final PeASSFolders folders;
    private final ResultsFolders resultsFolders;
-   private DependencyConfig dependencyConfig = new DependencyConfig(2, false);
+   private DependencyConfig dependencyConfig = new DependencyConfig(2, false, true);
 
    private final EnvironmentVariables env;
 

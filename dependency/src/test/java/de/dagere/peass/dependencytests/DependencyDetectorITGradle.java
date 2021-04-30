@@ -9,8 +9,11 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Test;
 
+import com.github.javaparser.ParseException;
+
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.vcs.VersionIterator;
 
@@ -36,7 +39,7 @@ public class DependencyDetectorITGradle {
    // }
 
    @Test
-   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException {
+   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       init(BASIC_STATE);
 
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
@@ -49,7 +52,7 @@ public class DependencyDetectorITGradle {
    }
    
    @Test
-   public void testNormalChangeAndroid() throws IOException, InterruptedException, XmlPullParserException {
+   public void testNormalChangeAndroid() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       init(BASIC_STATE_ANDROID);
       
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();

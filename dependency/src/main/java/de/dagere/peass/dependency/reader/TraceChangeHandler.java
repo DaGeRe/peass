@@ -2,8 +2,6 @@ package de.dagere.peass.dependency.reader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,15 +16,11 @@ import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.PeASSFolders;
-import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.Version;
-import de.dagere.peass.dependency.traces.KiekerFolderUtil;
-import de.dagere.peass.dependency.traces.OneTraceGenerator;
 import de.dagere.peass.utils.Constants;
 
 public class TraceChangeHandler {
@@ -74,21 +68,6 @@ public class TraceChangeHandler {
       dependencyManager.runTraceTests(testsToRun, version);
 
       handleDependencyChanges(newVersionInfo, testsToRun, mapping);
-      
-      //TODO Generate views if flag is set
-      if (false) {
-         Map<String, List<File>> traceFileMap = new HashMap<>();
-         ResultsFolders resultsFolders = new ResultsFolders(null, version);
-         for (TestCase testcase : testsToRun.getTests()) {
-            dependencyManager.getExecutor().getModules();
-            final File moduleFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
-            final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(resultsFolders, folders, testcase, traceFileMap, version, moduleFolder,
-                  dependencyManager.getExecutor().getModules());
-//            final boolean workedLocal = oneViewGenerator.generateTrace(version);
-         }
-      }
-      
-      
    }
 
    private void handleDependencyChanges(final Version newVersionInfo, final TestSet testsToRun, final ModuleClassMapping mapping)

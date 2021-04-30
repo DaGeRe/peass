@@ -47,7 +47,6 @@ public class Version {
    
    @JsonIgnore
    public TestSet getTests() {
-//      Iterator<TestSet> tests = changedClazzes.values().iterator();
       final TestSet union = new TestSet();
       for (final TestSet current : changedClazzes.values()) {
          union.addTestSet(current);

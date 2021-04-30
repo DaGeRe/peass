@@ -9,6 +9,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.mockito.Mockito;
 
+import com.github.javaparser.ParseException;
+
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.PeASSFolders;
@@ -20,6 +22,7 @@ import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.dependency.reader.DependencyReader;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.vcs.VersionIterator;
 
 public class DependencyDetectorTestUtil {
@@ -79,12 +82,12 @@ public class DependencyDetectorTestUtil {
    }
    
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator)
-         throws IOException, InterruptedException, XmlPullParserException {
+         throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5));
    }
    
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config)
-         throws IOException, InterruptedException, XmlPullParserException {
+         throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG, new PeASSFolders(DependencyTestConstants.CURRENT), DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager, config, new EnvironmentVariables());
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
