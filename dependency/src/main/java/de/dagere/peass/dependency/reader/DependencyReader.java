@@ -22,6 +22,7 @@ import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.dependency.traces.DiffFileGenerator;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
@@ -43,6 +44,7 @@ public class DependencyReader {
 
    private final DependencyConfig dependencyConfig;
    protected final Dependencies dependencyResult = new Dependencies();
+   private final ExecutionData executionResult = new ExecutionData();
    protected final ResultsFolders resultsFolders;
    protected DependencyManager dependencyManager;
    protected final PeASSFolders folders;
@@ -68,6 +70,7 @@ public class DependencyReader {
       this.env = env;
 
       dependencyResult.setUrl(url);
+      executionResult.setUrl(url);
 
       this.changeManager = changeManager;
    }
@@ -123,6 +126,9 @@ public class DependencyReader {
    public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final int tests = analyseVersion(changeManager);
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
+      if (dependencyConfig.isGenerateViews()) {
+         Constants.OBJECTMAPPER.writeValue(resultsFolders.getExecutionFile(), executionResult);
+      }
 
       sizeRecorder.addVersionSize(dependencyManager.getDependencyMap().size(), tests);
 
@@ -192,7 +198,10 @@ public class DependencyReader {
 
             DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getVersionDiffFolder(version));
             for (TestCase testcase : newVersionInfo.getTests().getTests()) {
-               diffGenerator.generateDiffFiles(testcase, mapping);
+               boolean somethingChanged = diffGenerator.generateDiffFiles(testcase, mapping);
+               if (somethingChanged) {
+                  executionResult.addCall(version, newVersionInfo.getPredecessor(), testcase);
+               }
             }
          }
       } else {
@@ -233,6 +242,7 @@ public class DependencyReader {
    public void documentFailure(final String version) {
       if (dependencyManager.getExecutor().isAndroid()) {
          dependencyResult.setAndroid(true);
+         executionResult.setAndroid(true);
       }
       LOG.error("Version not running");
       final Version newVersionInfo = new Version();

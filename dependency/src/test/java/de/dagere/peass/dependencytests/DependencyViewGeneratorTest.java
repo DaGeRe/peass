@@ -21,9 +21,11 @@ import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
+import de.dagere.peass.utils.Constants;
 
 public class DependencyViewGeneratorTest {
 
@@ -50,11 +52,10 @@ public class DependencyViewGeneratorTest {
       
       //TODO Test, that instrumentation sources are not added to the view
       
-      // TODO Test, whether executionfile is correct
-//      final ExecutionData tests = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+      final ExecutionData tests = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
 //
-//      Assert.assertEquals(1, tests.getVersions().size());
-//      Assert.assertEquals(1, tests.getVersions().get("000001").getTests().size());
+      Assert.assertEquals(1, tests.getVersions().size());
+      Assert.assertEquals(1, tests.getVersions().get("000002").getTests().size());
    }
 
    private FakeFileIterator mockIterator() {
