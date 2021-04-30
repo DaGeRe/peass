@@ -1,10 +1,12 @@
 package de.dagere.peass.dependency.parallel;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
@@ -22,7 +24,8 @@ public final class OneReader implements Runnable {
    final FirstRunningVersionFinder firstRunningVersionFinder;
    private final DependencyReader reader;
 
-   public OneReader(final GitCommit minimumCommit, final File currentOutFile, final VersionIterator reserveIterator, final DependencyReader reader, final FirstRunningVersionFinder firstRunningVersionFinder) {
+   public OneReader(final GitCommit minimumCommit, final File currentOutFile, final VersionIterator reserveIterator, final DependencyReader reader,
+         final FirstRunningVersionFinder firstRunningVersionFinder) {
       this.minimumCommit = minimumCommit;
       this.currentOutFile = currentOutFile;
       this.reserveIterator = reserveIterator;
@@ -50,17 +53,13 @@ public final class OneReader implements Runnable {
       }
    }
 
-   private void readRemaining(final DependencyReader reader) {
+   private void readRemaining(final DependencyReader reader) throws FileNotFoundException, IOException, XmlPullParserException, InterruptedException {
       String newest = reader.getDependencies().getNewestVersion();
       reader.setIterator(reserveIterator);
       while (reserveIterator.hasNextCommit() && VersionComparator.isBefore(newest, minimumCommit.getTag())) {
          reserveIterator.goToNextCommit();
          LOG.debug("Remaining: {} This: {}", reserveIterator.getTag(), this);
-         try {
-            reader.readVersion();
-         } catch (final IOException e) {
-            e.printStackTrace();
-         }
+         reader.readVersion();
          newest = reader.getDependencies().getNewestVersion();
       }
    }
