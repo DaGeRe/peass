@@ -17,6 +17,7 @@ public class ResultsFolders {
    
    public ResultsFolders(final File resultFolder, final String projectName) {
       this.resultFolder = resultFolder;
+      resultFolder.mkdirs();
       this.projectName = projectName;
    }
    

@@ -86,7 +86,7 @@ public class DependencyParallelReader {
    private void startAllProcesses(final ExecutorService service) throws IOException, InterruptedException {
       for (int outfileIndex = 0; outfileIndex < outFolders.length; outfileIndex++) {
          final int readableIndex = outfileIndex + 1;
-         outFolders[outfileIndex] = new ResultsFolders(new File(tempResultFolder, "temp_" + project + "_" + readableIndex + ".json"), project);
+         outFolders[outfileIndex] = new ResultsFolders(new File(tempResultFolder, "temp_" + project + "_" + readableIndex), project);
          PeASSFolders foldersTemp = folders.getTempFolder("" + readableIndex);
          final ResultsFolders currentOutFile = outFolders[outfileIndex];
          startPartProcess(currentOutFile, service, outfileIndex, foldersTemp);
