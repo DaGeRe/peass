@@ -19,9 +19,11 @@ import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.traces.DiffFileGenerator;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.utils.Constants;
@@ -52,6 +54,7 @@ public class DependencyReader {
 
    private final ChangeManager changeManager;
    private final DependencySizeRecorder sizeRecorder = new DependencySizeRecorder();
+   private final TraceFileMapping mapping = new TraceFileMapping();
 
    public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders,
          final ResultsFolders resultsFolders, final String url, final VersionIterator iterator,
@@ -184,9 +187,13 @@ public class DependencyReader {
          traceChangeHandler.handleTraceAnalysisChanges(newVersionInfo);
 
          if (dependencyConfig.isGenerateViews()) {
-            TraceFileMapping mapping = new TraceFileMapping();
             TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, mapping);
             traceViewGenerator.generateViews(resultsFolders, newVersionInfo);
+
+            DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getVersionDiffFolder(version));
+            for (TestCase testcase : newVersionInfo.getTests().getTests()) {
+               diffGenerator.generateDiffFiles(testcase, mapping);
+            }
          }
       } else {
          LOG.debug("Not updating dependencies since doNotUpdateDependencies was set - only returning dependencies based on changed classes");

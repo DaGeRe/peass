@@ -53,12 +53,7 @@ public class ViewGeneratorThread implements Runnable {
    @Override
    public void run() {
       try {
-         final File viewResultsFolder = resultsFolders.getVersionViewFolder(version);
-
-         final File diffFolder = new File(viewResultsFolder, "diffs");
-         if (!diffFolder.exists()) {
-            diffFolder.mkdirs();
-         }
+         final File diffFolder = resultsFolders.getVersionDiffFolder(version);
          final PeASSFolders folders = initProjectFolder();
          final TraceFileMapping traceFileMap = new TraceFileMapping();
          final boolean tracesWorked = generateTraces(folders, traceFileMap);
@@ -85,8 +80,8 @@ public class ViewGeneratorThread implements Runnable {
    private void analyzeTestcase(final File diffFolder, final TraceFileMapping traceFileMap, final boolean tracesWorked, final TestCase testcase) throws IOException {
       if (tracesWorked && traceFileMap.size() > 0) {
          LOG.debug("Generating Diff " + testcase.getClazz() + "#" + testcase.getMethod() + " " + predecessor + " .." + version + " " + traceFileMap.size());
-         DiffFileGenerator diffGenerator = new DiffFileGenerator();
-         final boolean somethingChanged = diffGenerator.generateDiffFiles(testcase, diffFolder, traceFileMap);
+         DiffFileGenerator diffGenerator = new DiffFileGenerator(diffFolder);
+         final boolean somethingChanged = diffGenerator.generateDiffFiles(testcase, traceFileMap);
 
          if (somethingChanged) {
             synchronized (changedTraceMethods) {

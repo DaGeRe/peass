@@ -15,6 +15,12 @@ public class DiffFileGenerator {
    
    private static final Logger LOG = LogManager.getLogger(DiffFileGenerator.class);
    
+   private final File diffFolder;
+   
+   public DiffFileGenerator(final File diffFolder) {
+      this.diffFolder = diffFolder;
+   }
+
    /**
     * Generates a human-analysable diff-file from traces
     * 
@@ -24,7 +30,7 @@ public class DiffFileGenerator {
     * @return Whether a change happened
     * @throws IOException If files can't be read of written
     */
-   protected boolean generateDiffFiles(final TestCase testcase, final File diffFolder, final TraceFileMapping traceFileMap) throws IOException {
+   public boolean generateDiffFiles(final TestCase testcase, final TraceFileMapping traceFileMap) throws IOException {
       final long size = FileUtils.sizeOfDirectory(diffFolder);
       final long sizeInMB = size / (1024 * 1024);
       LOG.debug("Filesize: {} ({})", sizeInMB, size);
@@ -37,7 +43,7 @@ public class DiffFileGenerator {
                      + OneTraceGenerator.NOCOMMENT));
                System.out.println(isDifferent);
                if (isDifferent.length() > 0) {
-                  createAllDiffs(testcase, diffFolder, traceFiles);
+                  createAllDiffs(testcase, traceFiles);
                   return true;
                } else {
                   LOG.info("No change; traces equal.");
@@ -57,7 +63,7 @@ public class DiffFileGenerator {
       }
    }
    
-   private void createAllDiffs(final TestCase testcase, final File diffFolder, final List<File> traceFiles) throws IOException {
+   private void createAllDiffs(final TestCase testcase, final List<File> traceFiles) throws IOException {
       final String testcaseName = testcase.getShortClazz() + "#" + testcase.getMethod();
       DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + ".txt"), traceFiles, "");
       DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD), traceFiles, OneTraceGenerator.METHOD);

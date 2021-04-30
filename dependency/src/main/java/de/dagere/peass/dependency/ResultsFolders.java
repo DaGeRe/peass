@@ -39,6 +39,12 @@ public class ResultsFolders {
       return new File(getPropertiesFolder(), "properties.json"); 
    }
    
+   public File getVersionDiffFolder(final String version) {
+      File diffsFolder = new File(getVersionViewFolder(version), "diffs");
+      diffsFolder.mkdirs();
+      return diffsFolder;
+   }
+   
    public File getVersionViewFolder(final String version) {
       File versionViewFolder = new File(getViewFolder(), "view_" + version);
       versionViewFolder.mkdirs();
