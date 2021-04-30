@@ -56,17 +56,21 @@ public class TraceChangeHandler {
    private TestSet getTestsToRun(final Version newVersionInfo) throws IOException, JsonGenerationException, JsonMappingException {
       final TestSet testsToRun = newVersionInfo.getTests() ; // contains only the tests that need to be run -> could be changeTestMap.values() und dann
                                                                                       // umwandeln
+      addAddedTests(newVersionInfo, testsToRun);
+      
+      Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + version + ".json"), testsToRun.entrySet());
+
+      NonIncludedTestRemover.removeNotIncluded(testsToRun, executionConfig);
+      return testsToRun;
+   }
+
+   private void addAddedTests(final Version newVersionInfo, final TestSet testsToRun) {
       for (final ChangedEntity testName : newVersionInfo.getChangedClazzes().keySet()) {
          if (testName.getJavaClazzName().toLowerCase().contains("test")) {
             ChangedEntity simplyClazz = testName.getSourceContainingClazz();
             testsToRun.addTest(simplyClazz, null);
          }
       }
-      
-      Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + version + ".json"), testsToRun.entrySet());
-
-      NonIncludedTestRemover.removeNotIncluded(testsToRun, executionConfig);
-      return testsToRun;
    }
 
    private void analyzeTests(final Version newVersionInfo, final TestSet testsToRun)

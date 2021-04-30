@@ -39,7 +39,7 @@ public class ViewGeneratorIT {
 
    private static final Logger LOG = LogManager.getLogger(ViewGeneratorIT.class);
 
-   public static final File VIEW_IT = new File("target", "view_it");
+   public static final File VIEW_IT_PROJECTFOLDER = new File("target", "view_it");
    private static final File resourcesFolder = new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "viewtests");
    public static final File BASIC = new File(resourcesFolder, "basic");
    public static final File REPETITION = new File(resourcesFolder, "repetition");
@@ -47,17 +47,15 @@ public class ViewGeneratorIT {
    private static final File REPETITION_DEEP = new File(resourcesFolder, "repetition_deep");
    private static final File REPETITION_REPETITION = new File(resourcesFolder, "repetition_of_repetition");
 
-   private static final File viewFolder = new File(VIEW_IT, "views");
+   private static final File VIEWS_FOLDER_TEST = new File(VIEW_IT_PROJECTFOLDER, "views_test");
 
    public static void init(final File folder) {
       File peassDirectory = new File(TestConstants.CURRENT_FOLDER.getParentFile(), TestConstants.CURRENT_FOLDER.getName() + "_peass");
       try {
-         if (!VIEW_IT.exists()) {
-            VIEW_IT.mkdirs();
+         if (VIEW_IT_PROJECTFOLDER.exists()) {
+            FileUtils.deleteDirectory(VIEW_IT_PROJECTFOLDER);
          }
-         if (!viewFolder.exists()) {
-            viewFolder.mkdir();
-         }
+         VIEW_IT_PROJECTFOLDER.mkdirs();
          FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
          FileUtils.deleteDirectory(peassDirectory);
          FileUtils.copyDirectory(folder, TestConstants.CURRENT_FOLDER);
@@ -105,7 +103,7 @@ public class ViewGeneratorIT {
       final String githash = "5";
       executeTraceGetting(project, githash);
 
-      final File viewFile = new File(viewFolder, "test_hash_5_method");
+      final File viewFile = new File(VIEWS_FOLDER_TEST, "test_hash_5_method");
 
       final List<String> expectedCalls = new LinkedList<>();
       expectedCalls.add("viewtest.TestMe#test");
@@ -139,7 +137,8 @@ public class ViewGeneratorIT {
 
       LOG.debug("Trace-Analysis..");
 
-      final boolean worked = analyseTrace(new TestCase("viewtest.TestMe", "test", ""), viewFolder, new HashMap<>(), githash, tracereader.getXMLFileFolder(TestConstants.CURRENT_FOLDER));
+      final boolean worked = analyseTrace(new TestCase("viewtest.TestMe", "test", ""), VIEWS_FOLDER_TEST, new HashMap<>(), githash,
+            tracereader.getXMLFileFolder(TestConstants.CURRENT_FOLDER));
       Assert.assertEquals(true, worked);
 
       tracereader.deleteTempFiles();
@@ -148,8 +147,6 @@ public class ViewGeneratorIT {
    public static boolean analyseTrace(final TestCase testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File resultsFolder)
          throws com.github.javaparser.ParseException, IOException, ViewNotFoundException {
       final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder);
-      // return kiekerResultFolder;
-      // final File kiekerResultFolder = getMethodFolder(testcase, resultsFolder);
 
       boolean success = false;
       final long size = FileUtils.sizeOfDirectory(kiekerResultFolder.getParentFile());
@@ -189,12 +186,5 @@ public class ViewGeneratorIT {
          LOG.debug("Methoden: " + trace.getTraceMethods().length());
          fw.write(trace.getTraceMethods());
       }
-   }
-
-   public static File getMethodFolder(final TestCase testcase, final File xmlFileFolder) throws ViewNotFoundException {
-      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, xmlFileFolder);
-//      final File[] possiblyMethodFolder = methodResult.listFiles();
-//      final File kiekerResultFolder = possiblyMethodFolder[0];
-      return kiekerResultFolder;
    }
 }

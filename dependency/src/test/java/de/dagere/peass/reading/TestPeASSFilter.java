@@ -22,8 +22,8 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
-import de.dagere.peass.dependencytests.ViewGeneratorIT;
 
 public class TestPeASSFilter {
    
@@ -55,7 +55,7 @@ public class TestPeASSFilter {
       manager.getExecutor().loadClasses();
       manager.executeKoPeMeKiekerRun(ts, "0");
       
-      final File kiekerFolder = ViewGeneratorIT.getMethodFolder(testcase, manager.getXMLFileFolder(CURRENT));
+      final File kiekerFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT));
       LOG.debug("Searching: " + kiekerFolder);
       final ModuleClassMapping mapping = new ModuleClassMapping(manager.getExecutor());
       final List<TraceElement> referenceTrace = new CalledMethodLoader(kiekerFolder, mapping).getShortTrace("");
@@ -85,7 +85,7 @@ public class TestPeASSFilter {
       new PeASSFolders(CURRENT);
       manager.getExecutor().loadClasses();
       manager.executeKoPeMeKiekerRun(ts, ""+i);
-      final File kiekerFolderComparison = ViewGeneratorIT.getMethodFolder(testcase, manager.getXMLFileFolder(CURRENT));
+      final File kiekerFolderComparison = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT));
       LOG.debug("Searching: " + kiekerFolderComparison);
       final List<TraceElement> compareTrace = new CalledMethodLoader(kiekerFolderComparison, mapping).getShortTrace("");
       return compareTrace;

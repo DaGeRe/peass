@@ -169,7 +169,6 @@ public class ViewGenerator extends PairProcessor {
       }
       this.env = new EnvironmentVariables();
       
-      // final File resultFolder = DependencyReadingStarter.getResultFolder();
       final String projectName = folders.getProjectName();
       init();
 
