@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependency.reader.DependencyReaderUtil;
@@ -25,13 +26,21 @@ public class PartialDependenciesMerger {
    private PartialDependenciesMerger() {
 
    }
-
+   
    public static Dependencies mergeVersions(final File out, final File[] partFiles) throws IOException, JsonGenerationException, JsonMappingException {
       final List<Dependencies> deps = readDependencies(partFiles);
       Dependencies merged = mergeDependencies(deps);
 
       Constants.OBJECTMAPPER.writeValue(out, merged);
       return merged;
+   }
+
+   public static Dependencies mergeVersions(final File out, final ResultsFolders[] partFolders) throws IOException, JsonGenerationException, JsonMappingException {
+      File[] partFiles = new File[partFolders.length];
+      for (int i = 0; i < partFolders.length; i++) {
+         partFiles[i] = partFolders[i].getDependencyFile();
+      }
+      return mergeVersions(out, partFiles);
    }
 
    static List<Dependencies> readDependencies(final File[] partFiles) {

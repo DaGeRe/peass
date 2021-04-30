@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import de.dagere.peass.TestConstants;
-import de.dagere.peass.ci.ContinuousDependencyReader;
 import de.dagere.peass.ci.helper.GitProjectBuilder;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeASSFolders;
@@ -34,8 +33,8 @@ public class DependenciesOnlyStartversionIT {
 
    @BeforeEach
    public void cleanDependencies() throws Exception {
-      TestContinuousDependencyReader.dependencyFile.delete();
-      Assert.assertFalse(TestContinuousDependencyReader.dependencyFile.exists());
+      FileUtils.deleteDirectory(TestContinuousDependencyReader.resultsFolders.getDependencyFile().getParentFile());
+      Assert.assertFalse(TestContinuousDependencyReader.resultsFolders.getDependencyFile().exists());
 
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
       builder = new GitProjectBuilder(TestConstants.CURRENT_FOLDER, new File("../dependency/src/test/resources/dependencyIT/basic_state"));
@@ -47,7 +46,7 @@ public class DependenciesOnlyStartversionIT {
       executionConfig.setVersion(iterator.getTag());
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
-            TestContinuousDependencyReader.dependencyFile, new EnvironmentVariables());
+            TestContinuousDependencyReader.resultsFolders, new EnvironmentVariables());
       dependencies = reader.getDependencies(iterator, "");
 
       Assert.assertEquals(0, dependencies.getVersions().size());
@@ -66,7 +65,7 @@ public class DependenciesOnlyStartversionIT {
       executionConfig.setVersion(iterator.getTag());
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
-            TestContinuousDependencyReader.dependencyFile, new EnvironmentVariables());
+            TestContinuousDependencyReader.resultsFolders, new EnvironmentVariables());
       dependencies = reader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
@@ -74,7 +73,7 @@ public class DependenciesOnlyStartversionIT {
    }
 
    private void checkVersion(final Dependencies dependencies, final String newestVersion, final int versions) {
-      Assert.assertTrue(TestContinuousDependencyReader.dependencyFile.exists());
+      Assert.assertTrue(TestContinuousDependencyReader.resultsFolders.getDependencyFile().exists());
       MatcherAssert.assertThat(dependencies.getVersions(), Matchers.aMapWithSize(versions));
 
       MatcherAssert.assertThat(dependencies.getVersions().get(newestVersion), Matchers.notNullValue());

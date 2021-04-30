@@ -16,6 +16,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
@@ -37,7 +38,7 @@ public class DependencyReader {
 
    private final DependencyConfig dependencyConfig;
    protected final Dependencies dependencyResult = new Dependencies();
-   protected final File dependencyFile;
+   protected final ResultsFolders resultsFolders;
    protected DependencyManager dependencyManager;
    protected final PeASSFolders folders;
    protected VersionIterator iterator;
@@ -50,10 +51,10 @@ public class DependencyReader {
    private final DependencySizeRecorder sizeRecorder = new DependencySizeRecorder();
 
    public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders,
-         final File dependencyFile, final String url, final VersionIterator iterator,
+         final ResultsFolders resultsFolders, final String url, final VersionIterator iterator,
          final ChangeManager changeManager, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
-      this.dependencyFile = dependencyFile;
+      this.resultsFolders = resultsFolders;
       this.iterator = iterator;
       this.folders = folders;
       this.skippedNoChange = new VersionKeeper(new File("/dev/null"));
@@ -73,10 +74,10 @@ public class DependencyReader {
     * @param url
     * @param iterator
     */
-   public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders, final File dependencyFile, final String url, final VersionIterator iterator,
+   public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders, final ResultsFolders resultsFolders, final String url, final VersionIterator iterator,
          final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
-      this.dependencyFile = dependencyFile;
+      this.resultsFolders = resultsFolders;
       this.iterator = iterator;
       this.folders = folders;
       this.skippedNoChange = skippedNoChange;
@@ -114,7 +115,7 @@ public class DependencyReader {
 
    public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException {
       final int tests = analyseVersion(changeManager);
-      DependencyReaderUtil.write(dependencyResult, dependencyFile);
+      DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
 
       sizeRecorder.addVersionSize(dependencyManager.getDependencyMap().size(), tests);
 
@@ -224,7 +225,7 @@ public class DependencyReader {
       dependencyManager = new DependencyManager(folders, executionConfig, env);
       InitialVersionReader initialVersionReader = new InitialVersionReader(dependencyResult, dependencyManager, iterator);
       if (initialVersionReader.readInitialVersion()) {
-         DependencyReaderUtil.write(dependencyResult, dependencyFile);
+         DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
          lastRunningVersion = iterator.getTag();
          return true;
       } else {
@@ -240,7 +241,7 @@ public class DependencyReader {
 
       InitialVersionReader initialVersionReader = new InitialVersionReader(initialdependencies, dependencyManager, iterator);
       initialVersionReader.readCompletedVersions();
-      DependencyReaderUtil.write(dependencyResult, dependencyFile);
+      DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
       lastRunningVersion = iterator.getTag();
    }
 

@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.reader.DependencyReader;
@@ -34,15 +35,15 @@ public class ContinuousDependencyReader {
    private final DependencyConfig dependencyConfig;
    private final ExecutionConfig executionConfig;
    private final PeASSFolders folders;
-   private final File dependencyFile;
+   private final ResultsFolders resultsFolders;
    private final EnvironmentVariables env;
 
-   public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final PeASSFolders folders, final File dependencyFile,
+   public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final PeASSFolders folders, final ResultsFolders resultsFolders,
          final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
       this.executionConfig = executionConfig;
       this.folders = folders;
-      this.dependencyFile = dependencyFile;
+      this.resultsFolders = resultsFolders;
       this.env = env;
    }
 
@@ -50,12 +51,12 @@ public class ContinuousDependencyReader {
          throws Exception {
       Dependencies dependencies;
 
-      final VersionKeeper noChanges = new VersionKeeper(new File(dependencyFile.getParentFile(), "nonChanges_" + folders.getProjectName() + ".json"));
+      final VersionKeeper noChanges = new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nonChanges_" + folders.getProjectName() + ".json"));
 
-      if (!dependencyFile.exists()) {
+      if (!resultsFolders.getDependencyFile().exists()) {
          dependencies = fullyLoadDependencies(url, iterator, noChanges);
       } else {
-         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+         dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
          VersionComparator.setDependencies(dependencies);
 
          if (dependencies.getVersions().size() > 0) {
@@ -108,8 +109,8 @@ public class ContinuousDependencyReader {
    }
 
    private void doPartialRCS(final Dependencies dependencies, final VersionIterator newIterator) {
-      DependencyReader reader = new DependencyReader(dependencyConfig, folders, dependencyFile, dependencies.getUrl(), newIterator, 
-            new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")), executionConfig, env);
+      DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, dependencies.getUrl(), newIterator, 
+            new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nochanges.json")), executionConfig, env);
       newIterator.goTo0thCommit();
 
       reader.readCompletedVersions(dependencies);
@@ -117,7 +118,7 @@ public class ContinuousDependencyReader {
    }
 
    public File getDependencyreadingFolder() {
-      File folder = new File(dependencyFile.getParentFile(), "dependencyreading");
+      File folder = new File(resultsFolders.getDependencyFile().getParentFile(), "dependencyreading");
       if (!folder.exists()) {
          folder.mkdirs();
       }
@@ -140,14 +141,14 @@ public class ContinuousDependencyReader {
 
    private Dependencies doFullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
          throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException {
-      final DependencyReader reader = new DependencyReader(dependencyConfig, folders, dependencyFile, url, iterator, nonChanges, executionConfig, env);
+      final DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, url, iterator, nonChanges, executionConfig, env);
       iterator.goToPreviousCommit();
       if (!reader.readInitialVersion()) {
          LOG.error("Analyzing first version was not possible");
       } else {
          reader.readDependencies();
       }
-      Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+      Dependencies dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
       return dependencies;
    }
 }

@@ -3,6 +3,7 @@ package de.dagere.peass.dependencytests;
 import java.io.File;
 
 import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.dependency.ResultsFolders;
 
 public class DependencyTestConstants {
 
@@ -14,5 +15,7 @@ public class DependencyTestConstants {
    public static final DependencyConfig DEFAULT_CONFIG = new DependencyConfig(1, false);
    
    public static final File CURRENT = new File(new File("target"), "current");
+   
+   public static final ResultsFolders NULL_RESULTS_FOLDERS = new ResultsFolders(new File("/dev/null"), "test");
 
 }

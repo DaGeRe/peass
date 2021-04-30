@@ -29,6 +29,7 @@ import de.dagere.peass.CommitUtil;
 import de.dagere.peass.config.DependencyReaderConfigMixin;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.Version;
@@ -78,8 +79,6 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
          throw new RuntimeException("Folder " + projectFolder.getAbsolutePath() + " does not exist.");
       }
 
-      final File dependencyFileOut = getDependencyOutFile();
-
       final File dependencyFileIn = getDependencyInFile();
 
       final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, Dependencies.class);
@@ -92,7 +91,8 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       LOG.debug("Lese {}", projectFolder.getAbsolutePath());
       final VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
 
-      final DependencyReader reader = createReader(config, dependencyFileOut, dependencies, previousVersion, timeout, vcs);
+      ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), config.getProjectFolder().getName() + "_out");
+      final DependencyReader reader = createReader(config, resultsFolders, dependencies, previousVersion, timeout, vcs);
       reader.readCompletedVersions(dependencies);
       reader.readDependencies();
 
@@ -107,14 +107,6 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
          dependencyFileIn = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + "_continue.json");
       }
       return dependencyFileIn;
-   }
-
-   private File getDependencyOutFile() {
-      final File dependencyFile = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + ".json");
-      if (!dependencyFile.getParentFile().exists()) {
-         dependencyFile.getParentFile().mkdirs();
-      }
-      return dependencyFile;
    }
 
    /**
@@ -138,14 +130,14 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       return previousVersion;
    }
 
-   static DependencyReader createReader(final DependencyReaderConfigMixin config, final File dependencyFile, final Dependencies dependencies, final String previousVersion,
+   static DependencyReader createReader(final DependencyReaderConfigMixin config, final ResultsFolders resultsFolders, final Dependencies dependencies, final String previousVersion,
          final int timeout, final VersionControlSystem vcs) {
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.GIT)) {
          final VersionIterator iterator = createIterator(config, previousVersion);
          ExecutionConfig executionConfig = config.getExecutionConfig();
          reader = new DependencyReader(config.getDependencyConfig(), new PeASSFolders(config.getProjectFolder()), 
-               dependencyFile, dependencies.getUrl(), iterator, new VersionKeeper(new File(dependencyFile.getParentFile(), "nochanges.json")), 
+               resultsFolders, dependencies.getUrl(), iterator, new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nochanges.json")), 
                executionConfig, new EnvironmentVariables());
          iterator.goTo0thCommit();
       } else if (vcs.equals(VersionControlSystem.SVN)) {

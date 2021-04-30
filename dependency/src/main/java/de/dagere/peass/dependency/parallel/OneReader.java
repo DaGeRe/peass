@@ -1,6 +1,5 @@
 package de.dagere.peass.dependency.parallel;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -19,15 +18,13 @@ public final class OneReader implements Runnable {
    private static final Logger LOG = LogManager.getLogger(OneReader.class);
 
    private final GitCommit minimumCommit;
-   private final File currentOutFile;
    private final VersionIterator reserveIterator;
    final FirstRunningVersionFinder firstRunningVersionFinder;
    private final DependencyReader reader;
 
-   public OneReader(final GitCommit minimumCommit, final File currentOutFile, final VersionIterator reserveIterator, final DependencyReader reader,
+   public OneReader(final GitCommit minimumCommit, final VersionIterator reserveIterator, final DependencyReader reader,
          final FirstRunningVersionFinder firstRunningVersionFinder) {
       this.minimumCommit = minimumCommit;
-      this.currentOutFile = currentOutFile;
       this.reserveIterator = reserveIterator;
       this.firstRunningVersionFinder = firstRunningVersionFinder;
       this.reader = reader;
@@ -38,7 +35,7 @@ public final class OneReader implements Runnable {
       try {
          boolean init = firstRunningVersionFinder.searchFirstRunningCommit();
          if (init) {
-            LOG.debug("Reader initalized: " + currentOutFile + " This: " + this);
+            LOG.debug("Reader initalized: " + reader + " This: " + this);
             if (!reader.readInitialVersion()) {
                LOG.error("Analyzing first version was not possible");
             } else {

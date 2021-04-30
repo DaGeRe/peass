@@ -71,6 +71,7 @@ public class TraceChangeHandler {
       
       //TODO Generate views if flag is set
 //      Map<String, List<File>> traceFileMap = new HashMap<>();
+//      ResultsFolders resultsFolders = new ResultsFolders(null, version);
 //      for (TestCase testcase : testsToRun.getTests()) {
 //         dependencyManager.getExecutor().getModules();
 //         final File moduleFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);

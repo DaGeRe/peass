@@ -14,10 +14,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
 import de.dagere.peass.TestConstants;
-import de.dagere.peass.ci.ContinuousDependencyReader;
 import de.dagere.peass.ci.helper.GitProjectBuilder;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -30,14 +30,14 @@ import de.dagere.peass.vcs.VersionIteratorGit;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class TestContinuousDependencyReader {
 
-   public static final File dependencyFile = new File("target", "dependencies.json");
+   public static final ResultsFolders resultsFolders = new ResultsFolders(new File("target/results-test"), "test");
 
    private static GitProjectBuilder builder;
 
    @BeforeAll
    public static void cleanDependencies() throws IOException, InterruptedException {
-      dependencyFile.delete();
-      Assert.assertFalse(dependencyFile.exists());
+      FileUtils.deleteDirectory(resultsFolders.getDependencyFile().getParentFile());
+      Assert.assertFalse(resultsFolders.getDependencyFile().exists());
 
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
       builder = new GitProjectBuilder(TestConstants.CURRENT_FOLDER, new File("../dependency/src/test/resources/dependencyIT/basic_state"));
@@ -57,7 +57,7 @@ public class TestContinuousDependencyReader {
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
-            dependencyFile, new EnvironmentVariables());
+            resultsFolders, new EnvironmentVariables());
       Dependencies dependencies = reader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
@@ -79,7 +79,7 @@ public class TestContinuousDependencyReader {
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
       final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG, executionConfig,
-            new PeASSFolders(TestConstants.CURRENT_FOLDER), dependencyFile, new EnvironmentVariables());
+            new PeASSFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
       Dependencies dependencies = spiedReader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
@@ -87,7 +87,7 @@ public class TestContinuousDependencyReader {
    }
 
    private void checkVersion(final Dependencies dependencies, final String newestVersion, final int versions) {
-      Assert.assertTrue(dependencyFile.exists());
+      Assert.assertTrue(resultsFolders.getDependencyFile().exists());
       MatcherAssert.assertThat(dependencies.getVersions(), Matchers.aMapWithSize(versions));
 
       MatcherAssert.assertThat(dependencies.getVersions().get(newestVersion), Matchers.notNullValue());

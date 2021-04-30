@@ -73,7 +73,7 @@ public class TestTestChooser {
       testVersion = builder.getTags().get(1);
       dependencies.getVersions().put(testVersion, version);
       
-      Constants.OBJECTMAPPER.writeValue(TestContinuousDependencyReader.dependencyFile, dependencies);
+      Constants.OBJECTMAPPER.writeValue(TestContinuousDependencyReader.resultsFolders.getDependencyFile(), dependencies);
       
       VersionComparator.setDependencies(dependencies);
       return dependencies;
