@@ -173,17 +173,22 @@ public class DependencyReader {
       final Version newVersionInfo = handleStaticAnalysisChanges(version, input);
 
       if (!dependencyConfig.isDoNotUpdateDependencies()) {
-         new TraceChangeHandler(dependencyManager, folders, executionConfig, dependencyResult, version).handleTraceAnalysisChanges(input, newVersionInfo);
+         TraceChangeHandler traceChangeHandler = new TraceChangeHandler(dependencyManager, folders, executionConfig, version);
+         traceChangeHandler.handleTraceAnalysisChanges(input, newVersionInfo);
       } else {
          LOG.debug("Not updating dependencies since doNotUpdateDependencies was set - only returning dependencies based on changed classes");
-         dependencyResult.getVersions().put(version, newVersionInfo);
       }
+      dependencyResult.getVersions().put(version, newVersionInfo);
 
+      final int changedClazzCount = calculateChangedClassCount(newVersionInfo);
+      return changedClazzCount;
+   }
+
+   private int calculateChangedClassCount(final Version newVersionInfo) {
       final int changedClazzCount = newVersionInfo.getChangedClazzes().values().stream().mapToInt(value -> {
          return value.getTestcases().values().stream().mapToInt(list -> list.size()).sum();
       }).sum();
       return changedClazzCount;
-
    }
 
    private Version handleStaticAnalysisChanges(final String version, final DependencyReadingInput input) throws IOException, JsonGenerationException, JsonMappingException {

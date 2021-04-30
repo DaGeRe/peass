@@ -20,7 +20,6 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.utils.Constants;
 
@@ -33,15 +32,13 @@ public class TraceChangeHandler {
    private final DependencyManager dependencyManager;
    private final PeASSFolders folders;
    private final ExecutionConfig executionConfig;
-   private final Dependencies dependencyResult;
    private final String version;
 
-   public TraceChangeHandler(final DependencyManager dependencyManager, final PeASSFolders folders, final ExecutionConfig executionConfig, final Dependencies dependencyResult,
+   public TraceChangeHandler(final DependencyManager dependencyManager, final PeASSFolders folders, final ExecutionConfig executionConfig,
          final String version) {
       this.dependencyManager = dependencyManager;
       this.folders = folders;
       this.executionConfig = executionConfig;
-      this.dependencyResult = dependencyResult;
       this.version = version;
    }
 
@@ -49,16 +46,20 @@ public class TraceChangeHandler {
          throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException {
       LOG.debug("Updating dependencies.. {}", version);
 
+      final TestSet testsToRun = getTestsToRun(input);
+
+      if (testsToRun.classCount() > 0) {
+         analyzeTests(newVersionInfo, testsToRun);
+      }
+   }
+
+   private TestSet getTestsToRun(final DependencyReadingInput input) throws IOException, JsonGenerationException, JsonMappingException {
       final TestSet testsToRun = dependencyManager.getTestsToRun(input.getChanges()); // contains only the tests that need to be run -> could be changeTestMap.values() und dann
                                                                                       // umwandeln
       Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + version + ".json"), testsToRun.entrySet());
 
       NonIncludedTestRemover.removeNotIncluded(testsToRun, executionConfig);
-
-      if (testsToRun.classCount() > 0) {
-         analyzeTests(newVersionInfo, testsToRun);
-      }
-      dependencyResult.getVersions().put(version, newVersionInfo);
+      return testsToRun;
    }
 
    private void analyzeTests(final Version newVersionInfo, final TestSet testsToRun)

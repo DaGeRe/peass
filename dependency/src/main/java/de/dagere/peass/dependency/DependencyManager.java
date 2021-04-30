@@ -324,6 +324,14 @@ public class DependencyManager extends KiekerResultManager {
 
       LOG.debug("Beginne Abhängigkeiten-Aktuallisierung für {} Klassen", testsToUpdate.getClasses().size());
 
+      final TestExistenceChanges changes = populateExistingTests(testsToUpdate, mapping, oldDepdendencies);
+
+      findAddedTests(oldDepdendencies, changes);
+      return changes;
+   }
+
+   private TestExistenceChanges populateExistingTests(final TestSet testsToUpdate, final ModuleClassMapping mapping,
+         final Map<ChangedEntity, Map<ChangedEntity, Set<String>>> oldDepdendencies) throws FileNotFoundException, IOException, XmlPullParserException {
       final TestExistenceChanges changes = new TestExistenceChanges();
 
       for (final Entry<ChangedEntity, Set<String>> entry : testsToUpdate.entrySet()) {
@@ -336,8 +344,6 @@ public class DependencyManager extends KiekerResultManager {
             checkRemoved(oldDepdendencies, changes, entry, testClassName, testclazzFolder);
          }
       }
-
-      findAddedTests(oldDepdendencies, changes);
       return changes;
    }
 
