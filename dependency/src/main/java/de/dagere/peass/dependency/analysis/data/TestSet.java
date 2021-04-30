@@ -110,7 +110,7 @@ public class TestSet {
     */
    public void addTest(final ChangedEntity classname, final String methodname) {
       if (classname.getMethod() != null && classname.getMethod() != "") {
-         throw new RuntimeException("A testset should only get Changed Entities with empty method");
+         throw new RuntimeException("A testset should only get Changed Entities with empty method, but was " + classname.getMethod());
       }
       Set<String> methods = testcases.get(classname);
       if (methods == null) {

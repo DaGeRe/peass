@@ -190,7 +190,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    @JsonIgnore
    public ChangedEntity getSourceContainingClazz() {
       if (!javaClazzName.contains(CLAZZ_SEPARATOR)) {
-         return this;
+         return new ChangedEntity(javaClazzName, module);
       } else {
          final String clazzName = javaClazzName.substring(0, javaClazzName.indexOf(CLAZZ_SEPARATOR));
          return new ChangedEntity(clazzName, module, "");
