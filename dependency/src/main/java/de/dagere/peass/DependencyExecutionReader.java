@@ -20,8 +20,8 @@ import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
 import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
-import de.dagere.peass.dependency.traces.ViewGenerator;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.vcs.GitCommit;
 import picocli.CommandLine;
@@ -77,15 +77,11 @@ public class DependencyExecutionReader implements Callable<Void>{
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");
       folders.getTempProjectFolder().renameTo(dependencyTempFiles);
 
-      ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), project);
-
-      final ViewGenerator viewGenerator = new ViewGenerator(config.getProjectFolder(), all, resultsFolders, config.getThreads(), config.getExecutionConfig(), new EnvironmentVariables());
-      viewGenerator.processCommandline();
+      final File executionOut = new File(config.getResultBaseFolder(), "execute_" + project + ".json");
+      ExecutionData executionData = PartialDependenciesMerger.mergeExecutions(executionOut, outFiles);
       
-      final File propertyFolders = new File(config.getResultBaseFolder(), "properties_" + project);
+      ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), project);
       final PropertyReader propertyReader = new PropertyReader(resultsFolders, config.getProjectFolder());
-      propertyReader.readAllTestsProperties(viewGenerator.getChangedTraceMethods());
+      propertyReader.readAllTestsProperties(executionData);
    }
-
-   
 }

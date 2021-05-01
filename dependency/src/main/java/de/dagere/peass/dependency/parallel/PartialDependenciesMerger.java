@@ -10,10 +10,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependency.reader.DependencyReaderUtil;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -78,6 +80,27 @@ public class PartialDependenciesMerger {
             }
          }
       }
+      return merged;
+   }
+   
+   public static ExecutionData mergeExecutiondata(final List<ExecutionData> executionData) {
+      ExecutionData merged = new ExecutionData();
+      for (ExecutionData data : executionData) {
+         merged.getVersions().putAll(data.getVersions());
+      }
+      return merged;
+   }
+
+   public static ExecutionData mergeExecutions(final File executionOut, final ResultsFolders[] outFiles) throws JsonParseException, JsonMappingException, IOException {
+      List<ExecutionData> executionData = new LinkedList<>();
+      for (ResultsFolders resultFolder : outFiles) {
+         if (resultFolder != null) {
+            ExecutionData currentData = Constants.OBJECTMAPPER.readValue(resultFolder.getExecutionFile(), ExecutionData.class);
+            executionData.add(currentData);
+         }
+      }
+      ExecutionData merged = mergeExecutiondata(executionData);
+      Constants.OBJECTMAPPER.writeValue(executionOut, merged);
       return merged;
    }
 }
