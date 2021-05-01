@@ -187,12 +187,10 @@ public class DependencyManager extends KiekerResultManager {
          updateDependenciesOnce(entity, parent, mapping);
       }
       LOG.debug("Result collection finished");
-
-      cleanResultFolder();
       return true;
    }
 
-   private void cleanResultFolder() {
+   public void cleanResultFolder() {
       final File movedInitialResults = new File(folders.getTempMeasurementFolder().getParentFile(), "initialresults_kieker");
       if (movedInitialResults.exists()) {
          try {
@@ -252,7 +250,6 @@ public class DependencyManager extends KiekerResultManager {
       LOG.debug("Test: {} ", testClassName);
       LOG.debug("Kieker: {} Dependencies: {}", kiekerResultFolder.getAbsolutePath(), calledClasses.size());
       setDependencies(testClassName, calledClasses);
-
    }
 
    private void removeNotExistingClazzes(final Map<ChangedEntity, Set<String>> calledClasses) {

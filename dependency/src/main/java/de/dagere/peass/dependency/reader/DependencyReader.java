@@ -263,6 +263,7 @@ public class DependencyReader {
             TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), mapping);
             traceViewGenerator.generateViews(resultsFolders, initialTests);
          }
+         dependencyManager.cleanResultFolder();
          return true;
       } else {
          return false;

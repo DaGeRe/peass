@@ -3,6 +3,8 @@ package de.dagere.peass.dependency.reader;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.github.javaparser.ParseException;
@@ -16,8 +18,11 @@ import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.dependency.traces.OneTraceGenerator;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
+import de.dagere.peass.vcs.GitUtils;
 
 public class TraceViewGenerator {
+   
+   private static final Logger LOG = LogManager.getLogger(TraceViewGenerator.class);
    
    private final DependencyManager dependencyManager;
    private final PeASSFolders folders;
@@ -31,8 +36,10 @@ public class TraceViewGenerator {
       this.mapping = mapping;
    }
 
-   public boolean generateViews(final ResultsFolders resultsFolders, final TestSet examinedTests) throws IOException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public boolean generateViews(final ResultsFolders resultsFolders, final TestSet examinedTests) throws IOException, XmlPullParserException, ParseException, ViewNotFoundException, InterruptedException {
+      LOG.debug("Generating views for {}", version);
       boolean allWorked = true;
+      GitUtils.reset(folders.getProjectFolder());
       for (TestCase testcase : examinedTests.getTests()) {
          final File moduleFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
          final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(resultsFolders, folders, testcase, mapping, version, moduleFolder,

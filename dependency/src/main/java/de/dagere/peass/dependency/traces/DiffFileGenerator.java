@@ -12,11 +12,11 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.vcs.GitUtils;
 
 public class DiffFileGenerator {
-   
+
    private static final Logger LOG = LogManager.getLogger(DiffFileGenerator.class);
-   
+
    private final File diffFolder;
-   
+
    public DiffFileGenerator(final File diffFolder) {
       this.diffFolder = diffFolder;
    }
@@ -39,8 +39,9 @@ public class DiffFileGenerator {
          if (traceFiles != null) {
             LOG.debug("Trace-Files: {}", traceFiles);
             if (traceFiles.size() > 1) {
-               final String isDifferent = GitUtils.getDiff(new File(traceFiles.get(0).getAbsolutePath() + OneTraceGenerator.NOCOMMENT), new File(traceFiles.get(1).getAbsolutePath()
-                     + OneTraceGenerator.NOCOMMENT));
+               File oldFile = new File(traceFiles.get(0).getAbsolutePath() + OneTraceGenerator.NOCOMMENT);
+               File newFile = new File(traceFiles.get(1).getAbsolutePath() + OneTraceGenerator.NOCOMMENT);
+               final String isDifferent = GitUtils.getDiff(oldFile, newFile);
                System.out.println(isDifferent);
                if (isDifferent.length() > 0) {
                   createAllDiffs(testcase, traceFiles);
@@ -62,7 +63,7 @@ public class DiffFileGenerator {
          return false;
       }
    }
-   
+
    private void createAllDiffs(final TestCase testcase, final List<File> traceFiles) throws IOException {
       final String testcaseName = testcase.getShortClazz() + "#" + testcase.getMethod();
       DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + ".txt"), traceFiles, "");
