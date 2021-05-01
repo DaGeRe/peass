@@ -42,6 +42,10 @@ public class TestCase implements Comparable<TestCase> {
       }
       this.method = method;
    }
+   
+   public TestCase(final ChangedEntity entity) {
+      this(entity.getClazz(), entity.getMethod(), entity.getModule());
+   }
 
    @JsonCreator
    public TestCase(@JsonProperty("clazz") final String clazz,

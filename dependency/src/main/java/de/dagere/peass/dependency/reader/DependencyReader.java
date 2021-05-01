@@ -20,6 +20,7 @@ import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -194,7 +195,7 @@ public class DependencyReader {
 
          if (dependencyConfig.isGenerateViews()) {
             TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, mapping);
-            traceViewGenerator.generateViews(resultsFolders, newVersionInfo);
+            traceViewGenerator.generateViews(resultsFolders, newVersionInfo.getTests());
 
             DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getVersionDiffFolder(version));
             for (TestCase testcase : newVersionInfo.getTests().getTests()) {
@@ -250,12 +251,18 @@ public class DependencyReader {
       dependencyResult.getVersions().put(version, newVersionInfo);
    }
 
-   public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException {
+   public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       dependencyManager = new DependencyManager(folders, executionConfig, env);
       InitialVersionReader initialVersionReader = new InitialVersionReader(dependencyResult, dependencyManager, iterator);
       if (initialVersionReader.readInitialVersion()) {
          DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
          lastRunningVersion = iterator.getTag();
+         
+         if (dependencyConfig.isGenerateViews()) {
+            TestSet initialTests = dependencyResult.getInitialversion().getInitialTests();
+            TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), mapping);
+            traceViewGenerator.generateViews(resultsFolders, initialTests);
+         }
          return true;
       } else {
          return false;

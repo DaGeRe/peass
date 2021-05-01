@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.TestSet.ChangedEntitityDeserializer;
 
 public class InitialVersion {
@@ -54,5 +56,15 @@ public class InitialVersion {
    @JsonIgnore
    public void sort(final ChangedEntity key) {
       Collections.sort(initialDependencies.get(key).getEntities());
+   }
+   
+   @JsonIgnore
+   public TestSet getInitialTests() {
+      TestSet initialTests = new TestSet();
+      for (ChangedEntity testEntity : initialDependencies.keySet()) {
+         TestCase initialTest = new TestCase(testEntity);
+         initialTests.addTest(initialTest);
+      }
+      return initialTests;
    }
 }

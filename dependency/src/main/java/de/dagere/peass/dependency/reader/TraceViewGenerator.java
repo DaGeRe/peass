@@ -11,7 +11,7 @@ import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.dependency.traces.OneTraceGenerator;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
@@ -31,9 +31,9 @@ public class TraceViewGenerator {
       this.mapping = mapping;
    }
 
-   public boolean generateViews(final ResultsFolders resultsFolders, final Version newVersionInfo) throws IOException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public boolean generateViews(final ResultsFolders resultsFolders, final TestSet examinedTests) throws IOException, XmlPullParserException, ParseException, ViewNotFoundException {
       boolean allWorked = true;
-      for (TestCase testcase : newVersionInfo.getTests().getTests()) {
+      for (TestCase testcase : examinedTests.getTests()) {
          final File moduleFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
          final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(resultsFolders, folders, testcase, mapping, version, moduleFolder,
                dependencyManager.getExecutor().getModules());

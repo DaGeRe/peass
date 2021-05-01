@@ -86,7 +86,7 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
       final int startTestCound = dependencies.getInitialversion().getInitialDependencies().size();
       final List<TestCase> currentContainedTests = new LinkedList<>();
       for (final ChangedEntity dependency : dependencies.getInitialversion().getInitialDependencies().keySet()) {
-         currentContainedTests.add(new TestCase(dependency.getClazz(), dependency.getMethod(), dependency.getModule()));
+         currentContainedTests.add(new TestCase(dependency));
       }
 
       LOG.trace("StartTest: {}", startTestCound);

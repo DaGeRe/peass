@@ -14,6 +14,8 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import com.github.javaparser.ParseException;
+
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
@@ -24,6 +26,7 @@ import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.utils.Constants;
 
@@ -32,7 +35,7 @@ public class DependencyViewGeneratorTest {
    private static final Logger LOG = LogManager.getLogger(ViewGeneratorIT.class);
 
    @Test
-   public void testTwoVersions() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   public void testTwoVersions() throws IOException, InterruptedException, JAXBException, XmlPullParserException, ParseException, ViewNotFoundException {
       ViewGeneratorIT.init(ViewGeneratorIT.BASIC);
 
       ResultsFolders resultsFolders = new ResultsFolders(ViewGeneratorIT.VIEW_IT_PROJECTFOLDER, "test");
