@@ -43,15 +43,15 @@ import de.dagere.peass.vcs.GitUtils;
 @PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class DependencyViewGeneratorTest {
 
-   private static final Logger LOG = LogManager.getLogger(ViewGeneratorIT.class);
+   private static final Logger LOG = LogManager.getLogger(TraceGettingIT.class);
 
    @Test
    public void testTwoVersions() throws IOException, InterruptedException, JAXBException, XmlPullParserException, ParseException, ViewNotFoundException {
       prepareGitUtils();
 
-      ViewGeneratorIT.init(ViewGeneratorIT.BASIC);
+      DependencyDetectorTestUtil.init(TraceGettingIT.BASIC);
 
-      ResultsFolders resultsFolders = new ResultsFolders(ViewGeneratorIT.VIEW_IT_PROJECTFOLDER, "test");
+      ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
 
       DependencyConfig dependencyConfig = new DependencyConfig(1, false, true);
 
@@ -90,7 +90,7 @@ public class DependencyViewGeneratorTest {
    }
 
    private FakeFileIterator mockIterator() {
-      List<File> versionList = Arrays.asList(ViewGeneratorIT.BASIC, ViewGeneratorIT.REPETITION);
+      List<File> versionList = Arrays.asList(TraceGettingIT.BASIC, TraceGettingIT.REPETITION);
 
       FakeFileIterator fakeIterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, versionList);
       fakeIterator.goToFirstCommit();

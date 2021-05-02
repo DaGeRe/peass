@@ -1,16 +1,21 @@
 package de.dagere.peass.dependencytests;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.mockito.Mockito;
 
 import com.github.javaparser.ParseException;
 
+import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.PeASSFolders;
@@ -26,6 +31,8 @@ import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.vcs.VersionIterator;
 
 public class DependencyDetectorTestUtil {
+   
+   private static final Logger LOG = LogManager.getLogger(DependencyDetectorTestUtil.class);
    
    public static TestSet findDependency(final Dependencies dependencies, final String changedClass, final String version) {
       final Version versionDependencies = dependencies.getVersions().get(version);
@@ -95,5 +102,24 @@ public class DependencyDetectorTestUtil {
 
       reader.analyseVersion(changeManager);
       return reader;
+   }
+
+   public static void init(final File folder) {
+      File peassDirectory = new File(TestConstants.CURRENT_FOLDER.getParentFile(), TestConstants.CURRENT_FOLDER.getName() + "_peass");
+      try {
+         if (TraceGettingIT.VIEW_IT_PROJECTFOLDER.exists()) {
+            FileUtils.deleteDirectory(TraceGettingIT.VIEW_IT_PROJECTFOLDER);
+         }
+         TraceGettingIT.VIEW_IT_PROJECTFOLDER.mkdirs();
+         FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
+         FileUtils.deleteDirectory(peassDirectory);
+         FileUtils.copyDirectory(folder, TestConstants.CURRENT_FOLDER);
+      } catch (final IOException e) {
+         e.printStackTrace();
+         LOG.error("Part of the I/O-process failed; files in {}", peassDirectory.getAbsolutePath(), peassDirectory.listFiles().length);
+         for (File child : peassDirectory.listFiles()) {
+            LOG.error(child.getAbsolutePath());
+         }
+      }
    }
 }

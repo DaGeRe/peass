@@ -35,9 +35,9 @@ import de.dagere.peass.dependency.traces.TraceMethodReader;
 import de.dagere.peass.dependency.traces.TraceWithMethods;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 
-public class ViewGeneratorIT {
+public class TraceGettingIT {
 
-   private static final Logger LOG = LogManager.getLogger(ViewGeneratorIT.class);
+   private static final Logger LOG = LogManager.getLogger(TraceGettingIT.class);
 
    public static final File VIEW_IT_PROJECTFOLDER = new File("target", "view_it");
    private static final File resourcesFolder = new File("src" + File.separator + "test" + File.separator + "resources" + File.separator + "viewtests");
@@ -48,25 +48,6 @@ public class ViewGeneratorIT {
    private static final File REPETITION_REPETITION = new File(resourcesFolder, "repetition_of_repetition");
 
    private static final File VIEWS_FOLDER_TEST = new File(VIEW_IT_PROJECTFOLDER, "views_test");
-
-   public static void init(final File folder) {
-      File peassDirectory = new File(TestConstants.CURRENT_FOLDER.getParentFile(), TestConstants.CURRENT_FOLDER.getName() + "_peass");
-      try {
-         if (VIEW_IT_PROJECTFOLDER.exists()) {
-            FileUtils.deleteDirectory(VIEW_IT_PROJECTFOLDER);
-         }
-         VIEW_IT_PROJECTFOLDER.mkdirs();
-         FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
-         FileUtils.deleteDirectory(peassDirectory);
-         FileUtils.copyDirectory(folder, TestConstants.CURRENT_FOLDER);
-      } catch (final IOException e) {
-         e.printStackTrace();
-         LOG.error("Part of the I/O-process failed; files in {}", peassDirectory.getAbsolutePath(), peassDirectory.listFiles().length);
-         for (File child : peassDirectory.listFiles()) {
-            LOG.error(child.getAbsolutePath());
-         }
-      }
-   }
 
    @Test
    public void testBasicView() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException {
@@ -128,7 +109,7 @@ public class ViewGeneratorIT {
 
    private void executeTraceGetting(final File project, final String githash)
          throws IOException, ParseException, ViewNotFoundException, XmlPullParserException, InterruptedException {
-      init(project);
+      DependencyDetectorTestUtil.init(project);
       final KiekerResultManager tracereader = new KiekerResultManager(new PeASSFolders(TestConstants.CURRENT_FOLDER), new ExecutionConfig(5), new EnvironmentVariables());
       final TestSet testset = new TestSet();
       testset.addTest(new TestCase("viewtest.TestMe", "test", ""));

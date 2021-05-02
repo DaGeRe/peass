@@ -24,8 +24,9 @@ import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
+import de.dagere.peass.dependencytests.DependencyDetectorTestUtil;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
-import de.dagere.peass.dependencytests.ViewGeneratorIT;
+import de.dagere.peass.dependencytests.TraceGettingIT;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.utils.Constants;
 
@@ -35,10 +36,10 @@ public class TestGenerateDependencies {
 
    @Test
    public void testGenerateDependencies() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
-      ViewGeneratorIT.init(ViewGeneratorIT.BASIC);
+      DependencyDetectorTestUtil.init(TraceGettingIT.BASIC);
 
-      final FakeFileIterator iterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, Arrays.asList(ViewGeneratorIT.REPETITION));
-      ResultsFolders resultsFolders = new ResultsFolders(ViewGeneratorIT.VIEW_IT_PROJECTFOLDER, "test");
+      final FakeFileIterator iterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, Arrays.asList(TraceGettingIT.REPETITION));
+      ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
       final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG, new PeASSFolders(TestConstants.CURRENT_FOLDER), resultsFolders, "", iterator, VersionKeeper.INSTANCE, new ExecutionConfig(5), new EnvironmentVariables());
 
       final boolean success = reader.readInitialVersion();

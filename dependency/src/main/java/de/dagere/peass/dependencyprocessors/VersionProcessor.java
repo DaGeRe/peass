@@ -4,9 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBException;
 
@@ -22,7 +19,6 @@ import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialVersion;
 import de.dagere.peass.dependency.persistence.Version;
-import de.dagere.peass.dependency.traces.ViewGenerator;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
@@ -92,23 +88,7 @@ public abstract class VersionProcessor implements Callable<Void> {
       processInitialVersion(dependencies.getInitialversion());
 
       if (threads != 1) {
-         final ExecutorService service = Executors.newFixedThreadPool(threads);
-         if (this instanceof ViewGenerator) {
-            final ViewGenerator generator = (ViewGenerator) this;
-            for (final Map.Entry<String, Version> version : dependencies.getVersions().entrySet()) {
-               generator.processVersion(version.getKey(), version.getValue(), service);
-            }
-         } else {
-            throw new RuntimeException("Parallel processing is not possible or implemented; do not set threads!");
-         }
-
-         service.shutdown();
-         try {
-            service.awaitTermination(Long.MAX_VALUE, TimeUnit.HOURS);
-         } catch (final InterruptedException e) {
-            e.printStackTrace();
-         }
-
+         throw new RuntimeException("Parallel processing is not possible or implemented; do not set threads!");
       } else {
          for (final Map.Entry<String, Version> version : dependencies.getVersions().entrySet()) {
             LOG.debug("Processing {}", version.getKey());
