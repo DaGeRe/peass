@@ -3,6 +3,7 @@ package de.dagere.peass.analysis.properties;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -24,7 +25,9 @@ import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.execution.MavenPomUtil;
 import de.dagere.peass.dependency.traces.requitur.Sequitur;
+import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
+import de.dagere.peass.vcs.VersionIteratorGit;
 import difflib.Delta;
 import difflib.Delta.TYPE;
 import difflib.DiffUtils;
@@ -55,6 +58,7 @@ public class PropertyReadHelper {
 
    /**
     * Just for local debugging purposes - no public use intended
+    * 
     * @param args
     * @throws IOException
     */
@@ -130,12 +134,12 @@ public class PropertyReadHelper {
 
    }
 
-   private void analyzeTraceFiles(final ChangeProperty property, final File traceFileCurrent, File traceFileOld) throws IOException, FileNotFoundException {
+   private void analyzeTraceFiles(final ChangeProperty property, final File traceFileCurrent, final File traceFileOld) throws IOException, FileNotFoundException {
       final PeASSFolders folders = new PeASSFolders(projectFolder);
-//         final VersionIteratorGit iterator = new VersionIteratorGit(folder,
-//               Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), new GitCommit(prevVersion, null, null, null) }),
-//               new GitCommit(prevVersion, null, null, null));
-      final ChangeManager changeManager = new ChangeManager(folders, null);
+      final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder,
+            Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), new GitCommit(prevVersion, null, null, null) }),
+            new GitCommit(prevVersion, null, null, null));
+      final ChangeManager changeManager = new ChangeManager(folders, iterator);
       final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(prevVersion, version);
 
       final List<String> traceCurrent = Sequitur.getExpandedTrace(traceFileCurrent);
