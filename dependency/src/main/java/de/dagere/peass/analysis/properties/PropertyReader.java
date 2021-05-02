@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -17,6 +20,8 @@ import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 
 public class PropertyReader {
+   
+   private static final Logger LOG = LogManager.getLogger(PropertyReader.class);
    
    private final ResultsFolders resultsFolders;
    private final File projectFolder;
@@ -42,6 +47,7 @@ public class PropertyReader {
 
    private void readVersion(final VersionChangeProperties versionProperties, final File methodFolder, final Map.Entry<String, TestSet> version) throws IOException {
       // String prevVersion = VersionComparator.getPreviousVersion(version.getKey());
+      LOG.debug("Reading {}", version.getKey());
       final ChangeProperties changeProperties = new ChangeProperties();
       changeProperties.setCommitText(GitUtils.getCommitText(projectFolder, version.getKey()));
       changeProperties.setCommitter(GitUtils.getCommitter(projectFolder, version.getKey()));
