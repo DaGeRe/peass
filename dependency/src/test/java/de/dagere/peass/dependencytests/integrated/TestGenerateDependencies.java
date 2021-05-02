@@ -1,6 +1,7 @@
 package de.dagere.peass.dependencytests.integrated;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -35,7 +36,7 @@ public class TestGenerateDependencies {
    private static final Logger LOG = LogManager.getLogger(TestGenerateDependencies.class);
 
    @Test
-   public void testGenerateDependencies() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testGenerateDependencies() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       DependencyDetectorTestUtil.init(TraceGettingIT.BASIC);
 
       final FakeFileIterator iterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, Arrays.asList(TraceGettingIT.REPETITION));

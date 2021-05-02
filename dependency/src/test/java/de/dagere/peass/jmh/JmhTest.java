@@ -1,4 +1,4 @@
-package de.dagere.peass.dependencytests;
+package de.dagere.peass.jmh;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,12 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -28,58 +24,49 @@ import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
-import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
+import de.dagere.peass.dependencytests.FakeGitUtil;
+import de.dagere.peass.dependencytests.TraceGettingIT;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
-import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 
+@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(GitUtils.class)
 @PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
-public class DependencyViewGeneratorTest {
-
-   private static final Logger LOG = LogManager.getLogger(TraceGettingIT.class);
-
+public class JmhTest {
+   
+   public static File JMH_EXAMPLE_FOLDER = new File("src/test/resources/jmh-it");
+   public static File BASIC_VERSION = new File(JMH_EXAMPLE_FOLDER, "basic_version");
+   public static File SLOWER_VERSION = new File(JMH_EXAMPLE_FOLDER, "slower_version");
+   
    @Test
-   public void testTwoVersions() throws IOException, InterruptedException, JAXBException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+   public void testVersionReading() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       FakeGitUtil.prepareGitUtils();
-
-      DependencyDetectorTestUtil.init(TraceGettingIT.BASIC);
-
+      FakeFileIterator iterator = mockIterator();
+      
       ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
-
+      
       DependencyConfig dependencyConfig = new DependencyConfig(1, false, true);
-
-      FakeFileIterator iteratorspied = mockIterator();
-
+      
+      ExecutionConfig jmhConfig = new ExecutionConfig();
+      jmhConfig.setTestTransformer("de.dagere.peass.dependency.jmh.JMHTestTransformer");
+      
       DependencyReader reader = new DependencyReader(dependencyConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
-            "", iteratorspied, new VersionKeeper(new File("/dev/null")), new ExecutionConfig(), new EnvironmentVariables());
+            "", iterator, new VersionKeeper(new File("/dev/null")), jmhConfig, new EnvironmentVariables());
       reader.readInitialVersion();
-      reader.readDependencies();
-
-      File expectedDiff = new File(resultsFolders.getVersionDiffFolder("000002"), "TestMe#test.txt");
-      System.out.println(expectedDiff.getAbsolutePath());
-      Assert.assertTrue(expectedDiff.exists());
-
-      // TODO Test, that instrumentation sources are not added to the view
-
-      final ExecutionData tests = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
-      //
-      Assert.assertEquals(1, tests.getVersions().size());
-      Assert.assertEquals(1, tests.getVersions().get("000002").getTests().size());
    }
-
+   
    private FakeFileIterator mockIterator() {
-      List<File> versionList = Arrays.asList(TraceGettingIT.BASIC, TraceGettingIT.REPETITION);
+      List<File> versionList = Arrays.asList(BASIC_VERSION, SLOWER_VERSION);
 
       FakeFileIterator fakeIterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, versionList);
       fakeIterator.goToFirstCommit();
       FakeFileIterator iteratorspied = Mockito.spy(fakeIterator);
       VersionDiff fakedDiff = new VersionDiff(Arrays.asList(TestConstants.CURRENT_FOLDER), TestConstants.CURRENT_FOLDER);
-      fakedDiff.addChange("src/test/java/viewtest/TestMe.java");
+      fakedDiff.addChange("src/test/java/de/dagere/peass/ExampleBenchmark.java");
 
       Mockito.doReturn(fakedDiff)
             .when(iteratorspied)

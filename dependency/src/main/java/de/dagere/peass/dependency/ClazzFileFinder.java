@@ -101,7 +101,7 @@ public class ClazzFileFinder {
     * @param clazzes List where classes should be added
     * @param folder Main folder that should be searched
     */
-   private static void addClazzes(final List<String> clazzes, final File folder) {
+   public static void addClazzes(final List<String> clazzes, final File folder) {
       Collection<File> javaFiles = FileUtils.listFiles(folder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE);
       for (final File clazzFile : javaFiles) {
          final String clazz = getClazz(folder, clazzFile);
@@ -113,7 +113,6 @@ public class ClazzFileFinder {
                final List<String> nodeChildClazzes = ClazzFinder.getClazzes(node, packageName, ".");
                clazzes.addAll(nodeChildClazzes);
             }
-
          } catch (final ParseProblemException e) {
             throw new RuntimeException("Problem parsing " + clazz + " from " + clazzFile.getAbsolutePath() + " Existing: " + clazzFile.exists(), e);
          } catch (final FileNotFoundException e) {
@@ -122,7 +121,7 @@ public class ClazzFileFinder {
       }
    }
 
-   private static String getClazz(final File folder, final File clazzFile) {
+   public static String getClazz(final File folder, final File clazzFile) {
       String path = clazzFile.getAbsolutePath();
       path = path.replace(folder.getAbsolutePath() + File.separator, "");
       path = path.substring(0, path.length() - 5);

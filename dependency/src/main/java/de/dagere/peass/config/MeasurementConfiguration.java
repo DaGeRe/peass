@@ -141,6 +141,8 @@ public class MeasurementConfiguration implements Serializable {
       executionConfig.setEndversion(other.getExecutionConfig().getEndversion());
       executionConfig.setCreateDefaultConstructor(other.getExecutionConfig().isCreateDefaultConstructor());
       executionConfig.setRedirectSubprocessOutputToFile(other.getExecutionConfig().isRedirectSubprocessOutputToFile());
+      executionConfig.setTestTransformer(other.getExecutionConfig().getTestTransformer());
+      executionConfig.setTestExecutor(other.getExecutionConfig().getTestExecutor());
       this.vms = other.vms;
       statisticsConfig.setType1error(other.getType1error());
       statisticsConfig.setType2error(other.getType2error());

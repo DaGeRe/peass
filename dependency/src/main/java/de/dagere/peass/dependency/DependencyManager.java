@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -36,7 +37,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
@@ -70,6 +70,13 @@ public class DependencyManager extends KiekerResultManager {
     * afterwards.
     * 
     * @param projectFolder
+    * @throws SecurityException 
+    * @throws NoSuchMethodException 
+    * @throws InvocationTargetException 
+    * @throws IllegalArgumentException 
+    * @throws IllegalAccessException 
+    * @throws InstantiationException 
+    * @throws ClassNotFoundException 
     */
    public DependencyManager(final PeASSFolders folders, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       super(folders, executionConfig, env);
@@ -121,24 +128,13 @@ public class DependencyManager extends KiekerResultManager {
       }
 
       testTransformer.determineVersions(executor.getModules().getModules());
-      final TestSet tests = new TestSet();
+      final TestSet allTests = new TestSet();
       for (final File module : executor.getModules().getModules()) {
-         for (final String clazz : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
-            final String currentModule = mapping.getModuleOfClass(clazz);
-            final List<String> testMethodNames = testTransformer.getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
-            for (String method : testMethodNames) {
-               final TestCase test = new TestCase(clazz, method, currentModule);
-               final List<String> includes = testTransformer.getConfig().getExecutionConfig().getIncludes();
-               if (NonIncludedTestRemover.isTestIncluded(test, includes)) {
-                  if (includedModules == null || includedModules.contains(test.getModule())) {
-                     tests.addTest(test);
-                  }
-               }
-            }
-         }
+         final TestSet moduleTests = testTransformer.findModuleTests(mapping, includedModules, module);
+         allTests.addTestSet(moduleTests);
       }
-      LOG.info("Included tests: {}", tests.getTests().size());
-      return tests;
+      LOG.info("Included tests: {}", allTests.getTests().size());
+      return allTests;
    }
 
    private boolean printErrors() throws IOException {

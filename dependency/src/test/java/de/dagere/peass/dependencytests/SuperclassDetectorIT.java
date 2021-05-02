@@ -2,6 +2,7 @@ package de.dagere.peass.dependencytests;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -48,7 +49,7 @@ public class SuperclassDetectorIT {
    }
 
    @Test
-   public void testSuperclassChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testSuperclassChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File secondVersion = new File(VERSIONS_FOLDER, "superclass_changed");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();

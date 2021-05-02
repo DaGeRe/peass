@@ -27,12 +27,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.rules.TestRule;
 
 import com.github.javaparser.JavaParser;
@@ -61,10 +63,14 @@ import com.github.javaparser.ast.type.TypeParameter;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.parsing.JUnitParseUtil;
+import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.ClazzFileFinder;
+import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 
 /**
@@ -73,7 +79,7 @@ import de.dagere.peass.dependency.changesreading.JavaParserProvider;
  * @author reichelt
  *
  */
-public class JUnitTestTransformer {
+public class JUnitTestTransformer implements TestTransformer {
 
    private static final Logger LOG = LogManager.getLogger(JUnitTestTransformer.class);
 
@@ -123,6 +129,7 @@ public class JUnitTestTransformer {
 
    private Map<File, Integer> junitVersions;
 
+   @Override
    public void determineVersions(final List<File> modules) {
       determineVersionsForPaths(modules, "src/test/", "src/androidTest");
    }
@@ -141,6 +148,46 @@ public class JUnitTestTransformer {
             }
          }
       }
+   }
+   
+   @Override
+   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) {
+      final TestSet moduleTests = new TestSet();
+      for (final String clazz : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
+         final String currentModule = mapping.getModuleOfClass(clazz);
+         final List<String> testMethodNames = getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
+         for (String method : testMethodNames) {
+            final TestCase test = new TestCase(clazz, method, currentModule);
+            final List<String> includes = getConfig().getExecutionConfig().getIncludes();
+            if (NonIncludedTestRemover.isTestIncluded(test, includes)) {
+               if (includedModules == null || includedModules.contains(test.getModule())) {
+                  moduleTests.addTest(test);
+               }
+            }
+         }
+      }
+      return moduleTests;
+   }
+   
+   @Override
+   public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules) throws IOException, XmlPullParserException {
+      final TestSet tests = new TestSet();
+      determineVersions(modules);
+      for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {
+         final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
+         final File moduleFolder = new File(projectFolder, clazzname.getModule());
+         if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
+            final List<String> methods = getTestMethodNames(moduleFolder, clazzname);
+            for (final String method : methods) {
+               tests.addTest(clazzname, method);
+            }
+         } else {
+            for (final String method : currentClazzMethods) {
+               tests.addTest(clazzname, method);
+            }
+         }
+      }
+      return tests;
    }
 
    /**
@@ -567,6 +614,7 @@ public class JUnitTestTransformer {
       return ignoreEOIs;
    }
 
+   @Override
    public MeasurementConfiguration getConfig() {
       return config;
    }

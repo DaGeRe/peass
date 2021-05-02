@@ -3,6 +3,7 @@ package de.dagere.peass.reading;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -47,7 +48,7 @@ public class TestPeASSFilter {
    }
 
    @Test
-   public void testExecution() throws ViewNotFoundException, IOException, XmlPullParserException, InterruptedException {
+   public void testExecution() throws ViewNotFoundException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final KiekerResultManager manager = new KiekerResultManager(new PeASSFolders(CURRENT), new ExecutionConfig(5), new EnvironmentVariables());
       final TestSet ts = new TestSet();
       final TestCase testcase = new TestCase("defaultpackage.TestMe", "testMe", "");
