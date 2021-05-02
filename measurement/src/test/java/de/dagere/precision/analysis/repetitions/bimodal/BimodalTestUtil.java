@@ -6,6 +6,11 @@ import java.util.Random;
 
 import de.dagere.kopeme.generated.Result;
 
+/**
+ * Provides demo data for testing bimodality; by calling the main method, the diff[] data can be regenerated (e.g. if new size is needed).
+ * @author reichelt
+ *
+ */
 public class BimodalTestUtil {
 
    private static double[] diffs = new double[] { 0.008236, 0.006328, 0.008502, 0.006951000000000001, 0.005308, 0.006927, 0.00884, 0.001687, 0.0027800000000000004, 0.005181, 2.3E-5,
