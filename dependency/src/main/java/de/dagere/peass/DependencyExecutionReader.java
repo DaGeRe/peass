@@ -70,18 +70,33 @@ public class DependencyExecutionReader implements Callable<Void>{
 
       LOG.debug("Files: {}", outFiles);
 
-      final File out = new File(config.getResultBaseFolder(), "deps_" + project + ".json");
+      ResultsFolders mergedFolders = new ResultsFolders(config.getResultBaseFolder(), project);
+      
+      final File out = mergedFolders.getDependencyFile();
       final Dependencies all = PartialDependenciesMerger.mergeVersions(out, outFiles);
 
       final PeASSFolders folders = new PeASSFolders(config.getProjectFolder());
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");
       folders.getTempProjectFolder().renameTo(dependencyTempFiles);
 
-      final File executionOut = new File(config.getResultBaseFolder(), "execute_" + project + ".json");
+      final File executionOut = mergedFolders.getExecutionFile();
       ExecutionData executionData = PartialDependenciesMerger.mergeExecutions(executionOut, outFiles);
+      
+      mergeViews(outFiles, mergedFolders);
       
       ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), project);
       final PropertyReader propertyReader = new PropertyReader(resultsFolders, config.getProjectFolder());
       propertyReader.readAllTestsProperties(executionData);
+   }
+
+   private void mergeViews(final ResultsFolders[] outFiles, final ResultsFolders mergedFolders) {
+      for (ResultsFolders resultsFolders : outFiles) {
+         for (File viewFolder : resultsFolders.getViewFolder().listFiles()) {
+            File dest = new File(mergedFolders.getViewFolder(), viewFolder.getName());
+            if (!dest.exists()) {
+               viewFolder.renameTo(dest);
+            }
+         }
+      }
    }
 }

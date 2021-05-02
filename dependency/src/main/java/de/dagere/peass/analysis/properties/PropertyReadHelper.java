@@ -3,7 +3,6 @@ package de.dagere.peass.analysis.properties;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -25,9 +24,7 @@ import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.execution.MavenPomUtil;
 import de.dagere.peass.dependency.traces.requitur.Sequitur;
-import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
-import de.dagere.peass.vcs.VersionIteratorGit;
 import difflib.Delta;
 import difflib.Delta.TYPE;
 import difflib.DiffUtils;
@@ -115,28 +112,13 @@ public class PropertyReadHelper {
    public void getSourceInfos(final ChangeProperty property) throws FileNotFoundException, IOException {
       final File folder = new File(viewFolder, "view_" + version + File.separator + testClazz + File.separator + property.getMethod());
       final File traceFileCurrent = new File(folder, version.substring(0, 6) + "_method");
-      final File traceFileOld = new File(folder, getShortPrevVersion() + "_method");
+      File traceFileOld = new File(folder, getShortPrevVersion() + "_method");
+      if (!traceFileOld.exists()) {
+         File predecessorFolder = new File(viewFolder, "view_" + prevVersion + File.separator + testClazz + File.separator + property.getMethod());
+         traceFileOld = new File(predecessorFolder, getShortPrevVersion() + "_method");
+      }
       if (traceFileCurrent.exists() && traceFileOld.exists()) {
-         final PeASSFolders folders = new PeASSFolders(projectFolder);
-         final VersionIteratorGit iterator = new VersionIteratorGit(folder,
-               Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), new GitCommit(prevVersion, null, null, null) }),
-               new GitCommit(prevVersion, null, null, null));
-         final ChangeManager changeManager = new ChangeManager(folders, iterator);
-         final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(prevVersion, version);
-
-         final List<String> traceCurrent = Sequitur.getExpandedTrace(traceFileCurrent);
-         final List<String> traceOld = Sequitur.getExpandedTrace(traceFileOld);
-         determineTraceSizeChanges(property, traceCurrent, traceOld);
-
-         final Set<String> merged = getMergedCalls(traceCurrent, traceOld);
-
-         readMethodSources(property, folders, merged);
-
-         identifyAffectedClasses(property, merged);
-
-         LOG.info("Calls: " + merged);
-
-         getTestSourceAffection(property, merged, folders, changes);
+         analyzeTraceFiles(property, traceFileCurrent, traceFileOld);
       } else {
          if (!traceFileCurrent.exists()) {
             LOG.error("Tracefile not found: {}", traceFileCurrent);
@@ -146,6 +128,29 @@ public class PropertyReadHelper {
 
       }
 
+   }
+
+   private void analyzeTraceFiles(final ChangeProperty property, final File traceFileCurrent, File traceFileOld) throws IOException, FileNotFoundException {
+      final PeASSFolders folders = new PeASSFolders(projectFolder);
+//         final VersionIteratorGit iterator = new VersionIteratorGit(folder,
+//               Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), new GitCommit(prevVersion, null, null, null) }),
+//               new GitCommit(prevVersion, null, null, null));
+      final ChangeManager changeManager = new ChangeManager(folders, null);
+      final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(prevVersion, version);
+
+      final List<String> traceCurrent = Sequitur.getExpandedTrace(traceFileCurrent);
+      final List<String> traceOld = Sequitur.getExpandedTrace(traceFileOld);
+      determineTraceSizeChanges(property, traceCurrent, traceOld);
+
+      final Set<String> merged = getMergedCalls(traceCurrent, traceOld);
+
+      readMethodSources(property, folders, merged);
+
+      identifyAffectedClasses(property, merged);
+
+      LOG.info("Calls: " + merged);
+
+      getTestSourceAffection(property, merged, folders, changes);
    }
 
    private void readMethodSources(final ChangeProperty property, final PeASSFolders folders, final Set<String> merged) throws FileNotFoundException, IOException {
