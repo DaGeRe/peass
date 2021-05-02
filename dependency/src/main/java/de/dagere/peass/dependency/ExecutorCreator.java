@@ -21,7 +21,7 @@ public class ExecutorCreator {
    public static TestExecutor createExecutor(final PeASSFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
       final File pom = new File(folders.getProjectFolder(), "pom.xml");
       final File buildGradle = new File(folders.getProjectFolder(), "build.gradle");
-      if (!"default".equals(testTransformer.getConfig().getExecutionConfig().getTestTransformer())) {
+      if (!"default".equals(testTransformer.getConfig().getExecutionConfig().getTestExecutor())) {
          return new JMHTestExecutor(folders, testTransformer, env);
       } else if (buildGradle.exists()) {
          return new GradleTestExecutor(folders, (JUnitTestTransformer) testTransformer, env);
