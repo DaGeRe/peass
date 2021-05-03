@@ -25,16 +25,17 @@ public class PropertyReader {
    
    private final ResultsFolders resultsFolders;
    private final File projectFolder;
+   private final ExecutionData changedTests;
    private int count = 0;
    
-   public PropertyReader(final ResultsFolders resultsFolders, final File projectFolder) {
+   public PropertyReader(final ResultsFolders resultsFolders, final File projectFolder, final ExecutionData changedTests) {
       this.resultsFolders = resultsFolders;
       this.projectFolder = projectFolder;
+      this.changedTests = changedTests;
    }
 
-   public void readAllTestsProperties(final ExecutionData changedTests) throws IOException {
+   public void readAllTestsProperties() throws IOException {
       final VersionChangeProperties versionProperties = new VersionChangeProperties();
-      
       final File methodFolder = new File(resultsFolders.getPropertiesFolder(), "methods");
       methodFolder.mkdirs();
       for (final Map.Entry<String, TestSet> version : changedTests.getVersions().entrySet()) {
@@ -70,7 +71,7 @@ public class PropertyReader {
       final PropertyReadHelper reader = new PropertyReadHelper(version.getKey(), version.getValue().getPredecessor(), 
             entity, testcaseChange, 
             projectFolder,
-            resultsFolders.getViewFolder(), methodSourceFolder);
+            resultsFolders.getViewFolder(), methodSourceFolder, changedTests);
       final ChangeProperty currentProperty = reader.read();
       if (currentProperty != null) {
          properties.add(currentProperty);

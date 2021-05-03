@@ -87,9 +87,8 @@ public class ReadAllProperties {
             System.err.println("Error: " + changeFile.getAbsolutePath() + " does not exist");
          }
       } else {
-         final File resultFile = new File(folders.getPropertiesFolder(), project + File.separator + "properties_alltests.json");
          ResultsFolders resultsFolders = new ResultsFolders(folders.getPropertiesFolder().getParentFile(), project);
-         new PropertyReader(resultsFolders, projectFolder).readAllTestsProperties(changedTests);
+         new PropertyReader(resultsFolders, projectFolder, changedTests).readAllTestsProperties();
       }
    }
 }

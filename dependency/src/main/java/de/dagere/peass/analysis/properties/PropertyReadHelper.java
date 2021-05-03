@@ -3,6 +3,7 @@ package de.dagere.peass.analysis.properties;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,6 +25,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.execution.MavenPomUtil;
+import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.traces.requitur.Sequitur;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
@@ -48,6 +50,7 @@ public class PropertyReadHelper {
          "try", "void", "volatile", "while",
          "System.out.println", "System.gc", "Thread.sleep" };
 
+   private final ExecutionData changedTests;
    private final ChangedEntity testClazz;
    private final String version, prevVersion;
    private final Change change;
@@ -71,12 +74,12 @@ public class PropertyReadHelper {
       final File viewFolder2 = new File("/home/reichelt/daten3/diss/repos/preprocessing/4/commons-fileupload/views_commons-fileupload/");
       final PropertyReadHelper propertyReadHelper = new PropertyReadHelper("96f8f56556a8592bfed25c82acedeffc4872ac1f",
             "09d16c", ce, change, projectFolder2, viewFolder2,
-            new File("/tmp/"));
+            new File("/tmp/"), null);
       propertyReadHelper.read();
    }
 
    public PropertyReadHelper(final String version, final String prevVersion, final ChangedEntity clazz,
-         final Change change, final File projectFolder, final File viewFolder, final File methodSourceFolder) {
+         final Change change, final File projectFolder, final File viewFolder, final File methodSourceFolder, final ExecutionData changedTests) {
       this.version = version;
       this.prevVersion = prevVersion;
       if (clazz.getMethod() != null) {
@@ -87,6 +90,7 @@ public class PropertyReadHelper {
       this.projectFolder = projectFolder;
       this.viewFolder = viewFolder;
       this.methodSourceFolder = methodSourceFolder;
+      this.changedTests = changedTests;
    }
 
    public ChangeProperty read() throws IOException {
@@ -117,10 +121,10 @@ public class PropertyReadHelper {
       final File folder = new File(viewFolder, "view_" + version + File.separator + testClazz + File.separator + property.getMethod());
       final File traceFileCurrent = new File(folder, version.substring(0, 6) + "_method");
       File traceFileOld = new File(folder, getShortPrevVersion() + "_method");
-      if (!traceFileOld.exists()) {
-         File predecessorFolder = new File(viewFolder, "view_" + prevVersion + File.separator + testClazz + File.separator + property.getMethod());
-         traceFileOld = new File(predecessorFolder, getShortPrevVersion() + "_method");
+      if (changedTests != null) {
+         traceFileOld = searchOldTraceFile(property, traceFileOld);
       }
+      
       if (traceFileCurrent.exists() && traceFileOld.exists()) {
          analyzeTraceFiles(property, traceFileCurrent, traceFileOld);
       } else {
@@ -134,11 +138,23 @@ public class PropertyReadHelper {
 
    }
 
+   private File searchOldTraceFile(final ChangeProperty property, File traceFileOld) {
+      List<String> versions = new ArrayList<>(changedTests.getVersions().keySet());
+      int index = versions.indexOf(prevVersion);
+      while (!traceFileOld.exists() && index > 0) {
+         String tryVersion = versions.get(index);
+         File predecessorFolder = new File(viewFolder, "view_" + tryVersion + File.separator + testClazz + File.separator + property.getMethod());
+         String tryVersionShort = tryVersion.substring(0, 6);
+         traceFileOld = new File(predecessorFolder, tryVersionShort + "_method");
+      }
+      return traceFileOld;
+   }
+
    private void analyzeTraceFiles(final ChangeProperty property, final File traceFileCurrent, final File traceFileOld) throws IOException, FileNotFoundException {
       final PeASSFolders folders = new PeASSFolders(projectFolder);
-      final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder,
-            Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), new GitCommit(prevVersion, null, null, null) }),
-            new GitCommit(prevVersion, null, null, null));
+      GitCommit firstCommit = new GitCommit(prevVersion, null, null, null);
+      List<GitCommit> commits = Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), firstCommit });
+      final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, commits, firstCommit);
       final ChangeManager changeManager = new ChangeManager(folders, iterator);
       final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(prevVersion, version);
 
