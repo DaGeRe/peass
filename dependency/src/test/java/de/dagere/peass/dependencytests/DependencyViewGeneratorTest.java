@@ -68,7 +68,7 @@ public class DependencyViewGeneratorTest {
 
       final ExecutionData tests = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
       //
-      Assert.assertEquals(1, tests.getVersions().size());
+      Assert.assertEquals(2, tests.getVersions().size());
       Assert.assertEquals(1, tests.getVersions().get("000002").getTests().size());
    }
 
