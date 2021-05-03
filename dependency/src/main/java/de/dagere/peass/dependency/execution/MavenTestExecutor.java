@@ -93,19 +93,13 @@ public class MavenTestExecutor extends TestExecutor {
       final String[] originals = new String[] { mvnCall,
             testGoal,
             "-fn",
-            "-Dcheckstyle.skip=true",
-            "-Dmaven.javadoc.skip=true",
-            "-Danimal.sniffer.skip=true",
-            "-Denforcer.skip=true",
-            "-DfailIfNoTests=false",
-            "-Drat.skip=true",
-            "-Djacoco.skip=true",
             "-Djava.io.tmpdir=" + folders.getTempDir().getAbsolutePath() };
-      final String[] vars = concatenateCommandArrays(originals, commandLineAddition);
+      String[] withMavendefaults = CommandConcatenator.concatenateCommandArrays(originals, CommandConcatenator.mavenCheckDeactivation);
+      final String[] vars = CommandConcatenator.concatenateCommandArrays(withMavendefaults, commandLineAddition);
 
       if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
          String[] projectListArray = new String[] { "-pl", testTransformer.getConfig().getExecutionConfig().getPl(), "-am" };
-         String[] withPl = concatenateCommandArrays(vars, projectListArray);
+         String[] withPl = CommandConcatenator.concatenateCommandArrays(vars, projectListArray);
          return buildFolderProcess(folders.getProjectFolder(), logFile, withPl);
       } else {
          return buildFolderProcess(folders.getProjectFolder(), logFile, vars);
@@ -229,22 +223,14 @@ public class MavenTestExecutor extends TestExecutor {
                String[] basicParameters = new String[] { getMavenCall(),
                      "clean", goal,
                      "-DskipTests",
-                     "-Dmaven.test.skip.exec",
-                     "-Dcheckstyle.skip=true",
-                     // "-Dmaven.compiler.source=" + DEFAULT_JAVA_VERSION,
-                     // "-Dmaven.compiler.target=" + DEFAULT_JAVA_VERSION,
-                     "-Dmaven.javadoc.skip=true",
-                     "-Danimal.sniffer.skip=true",
-                     "-Djacoco.skip=true",
-                     "-Drat.skip=true",
-                     "-Denforcer.skip=true",
-                     "-DfailIfNoTests=false" };
+                     "-Dmaven.test.skip.exec"};
+               String[] withMavendefaults = CommandConcatenator.concatenateCommandArrays(basicParameters, CommandConcatenator.mavenCheckDeactivation);
                if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
                   String[] projectListArray = new String[] { "-pl", testTransformer.getConfig().getExecutionConfig().getPl(), "-am" };
-                  String[] withPl = concatenateCommandArrays(basicParameters, projectListArray);
+                  String[] withPl = CommandConcatenator.concatenateCommandArrays(withMavendefaults, projectListArray);
                   return testRunningSuccess(version, withPl);
                } else {
-                  return testRunningSuccess(version, basicParameters);
+                  return testRunningSuccess(version, withMavendefaults);
                }
             } else {
                LOG.error("Expected src/test to exist");

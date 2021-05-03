@@ -84,7 +84,7 @@ public class GradleTestExecutor extends TestExecutor {
             "--no-daemon",
             "cleanTest", testGoal };
 
-      final String[] vars = concatenateCommandArrays(originals, commandLineAddition);
+      final String[] vars = CommandConcatenator.concatenateCommandArrays(originals, commandLineAddition);
 
       return buildFolderProcess(folder, logFile, vars);
    }

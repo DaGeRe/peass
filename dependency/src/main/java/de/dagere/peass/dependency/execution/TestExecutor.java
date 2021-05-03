@@ -107,7 +107,7 @@ public abstract class TestExecutor {
 
    public Process buildFolderProcess(final File currentFolder, final File logFile, final String[] vars) throws IOException {
       String[] envPropertyArray = env.getProperties().length() > 0 ? env.getProperties().split(" ") : new String[0];
-      final String[] varsWithProperties = concatenateCommandArrays(vars, envPropertyArray);
+      final String[] varsWithProperties = CommandConcatenator.concatenateCommandArrays(vars, envPropertyArray);
       LOG.debug("Command: {}", Arrays.toString(varsWithProperties));
 
       final ProcessBuilder pb = new ProcessBuilder(varsWithProperties);
@@ -122,17 +122,6 @@ public abstract class TestExecutor {
       final Process process = pb.start();
       printPIDInfo(logFile);
       return process;
-   }
-
-   protected String[] concatenateCommandArrays(final String[] first, final String[] second) {
-      final String[] vars = new String[first.length + second.length];
-      for (int i = 0; i < first.length; i++) {
-         vars[i] = first[i];
-      }
-      for (int i = 0; i < second.length; i++) {
-         vars[first.length + i] = second[i];
-      }
-      return vars;
    }
 
    private void overwriteEnvVars(final ProcessBuilder pb) {
