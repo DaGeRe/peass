@@ -124,7 +124,7 @@ public class PropertyReadHelper {
       if (changedTests != null) {
          traceFileOld = searchOldTraceFile(property, traceFileOld);
       }
-      
+
       if (traceFileCurrent.exists() && traceFileOld.exists()) {
          analyzeTraceFiles(property, traceFileCurrent, traceFileOld);
       } else {
@@ -141,11 +141,18 @@ public class PropertyReadHelper {
    private File searchOldTraceFile(final ChangeProperty property, File traceFileOld) {
       List<String> versions = new ArrayList<>(changedTests.getVersions().keySet());
       int index = versions.indexOf(prevVersion);
+      if (index == -1) {
+         index = versions.indexOf(version) - 1;
+      }
+      LOG.debug("Trying old versions starting with {} Versions: {}", index, changedTests.getVersions().keySet());
       while (!traceFileOld.exists() && index > 0) {
          String tryVersion = versions.get(index);
-         File predecessorFolder = new File(viewFolder, "view_" + tryVersion + File.separator + testClazz + File.separator + property.getMethod());
+         File versionFolder = new File(viewFolder, "view_" + tryVersion);
+         File predecessorFolder = new File(versionFolder, testClazz + File.separator + property.getMethod());
          String tryVersionShort = tryVersion.substring(0, 6);
          traceFileOld = new File(predecessorFolder, tryVersionShort + "_method");
+         LOG.debug("Trying file " + traceFileOld.getAbsolutePath());
+         index--;
       }
       return traceFileOld;
    }
