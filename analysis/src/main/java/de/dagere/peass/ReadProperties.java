@@ -43,9 +43,12 @@ import picocli.CommandLine.Option;
 /**
  * Reads a changes.json which contains all changes that happened in a project and determines properties of the changes.
  * 
+ * @deprecated property determination is now done directly when reading dependencies (so classes need only to be passed once)
+ * 
  * @author reichelt
  *
  */
+@Deprecated
 @Command(description = "Reads the properties of given changes", name = "readproperties")
 public class ReadProperties implements Callable<Void> {
 
@@ -92,8 +95,8 @@ public class ReadProperties implements Callable<Void> {
          final File resultFile = new File("results" + File.separator + projectName + File.separator + "properties_alltests.json");
          out = resultFile;
          ResultsFolders resultsFolders = new ResultsFolders(out, projectName);
-         final PropertyReader reader = new PropertyReader(resultsFolders, projectFolder);
-         reader.readAllTestsProperties(changedTests);
+         final PropertyReader reader = new PropertyReader(resultsFolders, projectFolder, changedTests);
+         reader.readAllTestsProperties();
       } else {
          final File changefile = folders.getChangeFile(projectName);
          // final File changefile = new File(commandLine.getOptionValue(OptionConstants.CHANGEFILE.getName()));
@@ -164,7 +167,7 @@ public class ReadProperties implements Callable<Void> {
          changeProperties.getProperties().put(testclazz, properties);
          for (final Change testcaseChange : changes.getValue()) {
             final PropertyReadHelper reader = new PropertyReadHelper(version, predecessor, new ChangedEntity(testclazz, ""), testcaseChange, projectFolder, viewFolder,
-                  methodFolder);
+                  methodFolder, null);
             final ChangeProperty currentProperty = reader.read();
             // if (currentProperty != null) {
             properties.add(currentProperty);

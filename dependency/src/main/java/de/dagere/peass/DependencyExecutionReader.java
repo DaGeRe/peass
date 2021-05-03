@@ -85,8 +85,8 @@ public class DependencyExecutionReader implements Callable<Void>{
       mergeViews(outFiles, mergedFolders);
       
       ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), project);
-      final PropertyReader propertyReader = new PropertyReader(resultsFolders, config.getProjectFolder());
-      propertyReader.readAllTestsProperties(executionData);
+      final PropertyReader propertyReader = new PropertyReader(resultsFolders, config.getProjectFolder(), executionData);
+      propertyReader.readAllTestsProperties();
    }
 
    private void mergeViews(final ResultsFolders[] outFiles, final ResultsFolders mergedFolders) {
