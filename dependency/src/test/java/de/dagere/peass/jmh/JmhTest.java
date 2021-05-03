@@ -38,9 +38,7 @@ import de.dagere.peass.vcs.GitUtils;
 @PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class JmhTest {
    
-   public static File JMH_EXAMPLE_FOLDER = new File("src/test/resources/jmh-it");
-   public static File BASIC_VERSION = new File(JMH_EXAMPLE_FOLDER, "basic_version");
-   public static File SLOWER_VERSION = new File(JMH_EXAMPLE_FOLDER, "slower_version");
+  
    
    @Test
    public void testVersionReading() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
@@ -60,7 +58,7 @@ public class JmhTest {
    }
    
    private FakeFileIterator mockIterator() {
-      List<File> versionList = Arrays.asList(BASIC_VERSION, SLOWER_VERSION);
+      List<File> versionList = Arrays.asList(JmhTestConstants.BASIC_VERSION, JmhTestConstants.SLOWER_VERSION);
 
       FakeFileIterator fakeIterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, versionList);
       fakeIterator.goToFirstCommit();

@@ -35,17 +35,6 @@ public class JMHTestTransformer implements TestTransformer {
       this.measurementConfig = measurementConfig;
    }
 
-   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) throws FileNotFoundException {
-      File srcFolder = new File(module, "src/main/java");
-      Collection<File> javaFiles = FileUtils.listFiles(srcFolder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE);
-      TestSet result = new TestSet();
-      for (File clazzFile : javaFiles) {
-         String moduleName = ModuleClassMapping.getModuleName(projectFolder, module);
-         findBenchmarksInClazzfile(moduleName, srcFolder, result, clazzFile);
-      }
-      return result;
-   }
-
    private void findBenchmarksInClazzfile(final String moduleName, final File srcFolder, final TestSet result, final File clazzFile) throws FileNotFoundException {
       String clazzName = ClazzFileFinder.getClazz(srcFolder, clazzFile);
       final CompilationUnit cu = JavaParserProvider.parse(clazzFile);
@@ -66,21 +55,30 @@ public class JMHTestTransformer implements TestTransformer {
 
    @Override
    public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules) throws IOException, XmlPullParserException {
-      // TODO Auto-generated method stub
-      return null;
+      throw new RuntimeException("Not implemented yet");
    }
 
-   @Override
-   public void determineVersions(final List<File> modules) {
-      // TODO Auto-generated method stub
-      
-   }
-
+   //TODO includedModules is currenctly ignored for jmh!
    @Override
    public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules)
          throws FileNotFoundException, IOException, XmlPullParserException {
-      // TODO Auto-generated method stub
-      return null;
+      TestSet allBenchmarks = new TestSet();
+      for (File module : modules.getModules()) {
+         TestSet moduleTests = findModuleTests(mapping, includedModules, module);
+         allBenchmarks.addTestSet(moduleTests);
+      }
+      return allBenchmarks;
+   }
+   
+   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) throws FileNotFoundException {
+      File srcFolder = new File(module, "src/main/java");
+      Collection<File> javaFiles = FileUtils.listFiles(srcFolder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE);
+      TestSet result = new TestSet();
+      for (File clazzFile : javaFiles) {
+         String moduleName = ModuleClassMapping.getModuleName(projectFolder, module);
+         findBenchmarksInClazzfile(moduleName, srcFolder, result, clazzFile);
+      }
+      return result;
    }
 
 }

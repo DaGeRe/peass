@@ -130,7 +130,6 @@ public class JUnitTestTransformer implements TestTransformer {
 
    private Map<File, Integer> junitVersions;
 
-   @Override
    public void determineVersions(final List<File> modules) {
       determineVersionsForPaths(modules, "src/test/", "src/androidTest");
    }

@@ -27,6 +27,4 @@ public interface TestTransformer {
    public TestSet buildTestMethodSet(final TestSet testsToUpdate, List<File> modules) throws IOException, XmlPullParserException;
    
    public MeasurementConfiguration getConfig();
-
-   public void determineVersions(List<File> modules);
 }

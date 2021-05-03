@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.dagere.peass</groupId>
-    <artifactId>example</artifactId>
+    <artifactId>using-module</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
 
-    <name>Peass JMH integration test - example</name>
+    <name>Peass JMH integration test - multimodule basic module</name>
 
     <dependencies>
         <dependency>
