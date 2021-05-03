@@ -41,8 +41,9 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.moduleinfo.ModuleInfoEditor;
 import de.dagere.peass.execution.maven.MavenCleaner;
+import de.dagere.peass.execution.maven.MavenRunningTester;
+import de.dagere.peass.execution.maven.MavenUpdater;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
-import de.dagere.peass.execution.processutils.ProcessSuccessTester;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 /**
@@ -128,6 +129,7 @@ public class MavenTestExecutor extends TestExecutor {
    }
 
    private void updateJava() throws FileNotFoundException, IOException, XmlPullParserException {
+      new MavenUpdater(folders, getModules(), testTransformer.getConfig()).updateJava();
       final File pomFile = new File(folders.getProjectFolder(), "pom.xml");
       if (testTransformer.getConfig().isRemoveSnapshots()) {
          MavenPomUtil.cleanSnapshotDependencies(pomFile);
@@ -167,44 +169,14 @@ public class MavenTestExecutor extends TestExecutor {
 
    @Override
    public boolean isVersionRunning(final String version) {
-      File pomFile = new File(folders.getProjectFolder(), "pom.xml");
-      final File potentialPom = pomFile;
-      final File testFolder = new File(folders.getProjectFolder(), "src/test");
-      boolean isRunning = false;
-      buildfileExists = potentialPom.exists();
-      if (potentialPom.exists()) {
-         try {
-            final boolean multimodule = MavenPomUtil.isMultiModuleProject(potentialPom);
-            if (multimodule || testFolder.exists()) {
-               updateJava();
-               String goal = "test-compile";
-               if (folders.getProjectName().equals("jetty.project")) {
-                  goal = "package";
-               }
-               MavenPomUtil.cleanType(pomFile);
-               String[] basicParameters = new String[] { env.fetchMavenCall(),
-                     "clean", goal,
-                     "-DskipTests",
-                     "-Dmaven.test.skip.exec"};
-               String[] withMavendefaults = CommandConcatenator.concatenateCommandArrays(basicParameters, CommandConcatenator.mavenCheckDeactivation);
-               if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
-                  String[] projectListArray = new String[] { "-pl", testTransformer.getConfig().getExecutionConfig().getPl(), "-am" };
-                  String[] withPl = CommandConcatenator.concatenateCommandArrays(withMavendefaults, projectListArray);
-                  isRunning = new ProcessSuccessTester(folders, testTransformer.getConfig(), env).testRunningSuccess(version, withPl);
-               } else {
-                  isRunning = new ProcessSuccessTester(folders, testTransformer.getConfig(), env).testRunningSuccess(version, withMavendefaults);
-               }
-            } else {
-               LOG.error("Expected src/test to exist");
-               return false;
-            }
-         } catch (IOException | XmlPullParserException e) {
-            e.printStackTrace();
-         }
-      } else {
-         LOG.error("No pom.xml in {}", version);
+      try {
+         MavenRunningTester mavenRunningTester = new MavenRunningTester(folders, env, testTransformer.getConfig(), getModules());
+         boolean isRunning = mavenRunningTester.isVersionRunning(version);
+         buildfileExists = mavenRunningTester.isBuildfileExists();
+         return isRunning;
+      } catch (IOException | XmlPullParserException e) {
+         throw new RuntimeException(e);
       }
-      return isRunning;
    }
 
    public void preparePom() {

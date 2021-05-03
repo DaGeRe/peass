@@ -12,6 +12,7 @@ import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.execution.CommandConcatenator;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.MavenPomUtil;
+import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.execution.processutils.ProcessSuccessTester;
 
 public class MavenRunningTester {
@@ -21,12 +22,14 @@ public class MavenRunningTester {
    private final PeASSFolders folders;
    private final EnvironmentVariables env;
    private final MeasurementConfiguration measurementConfig;
+   private final ProjectModules modules;
    private boolean buildfileExists;
    
-   public MavenRunningTester(final PeASSFolders folders, final EnvironmentVariables env, final MeasurementConfiguration measurementConfig) {
+   public MavenRunningTester(final PeASSFolders folders, final EnvironmentVariables env, final MeasurementConfiguration measurementConfig, final ProjectModules modules) {
       this.folders = folders;
       this.env = env;
       this.measurementConfig = measurementConfig;
+      this.modules = modules;
    }
 
    public boolean isVersionRunning(final String version) {
@@ -39,8 +42,7 @@ public class MavenRunningTester {
          try {
             final boolean multimodule = MavenPomUtil.isMultiModuleProject(potentialPom);
             if (multimodule || testFolder.exists()) {
-//               updateJava();
-               // TODO 
+               new MavenUpdater(folders, modules, measurementConfig).updateJava();
                String goal = "test-compile";
                if (folders.getProjectName().equals("jetty.project")) {
                   goal = "package";
@@ -69,6 +71,10 @@ public class MavenRunningTester {
          LOG.error("No pom.xml in {}", version);
       }
       return isRunning;
+   }
+   
+   public boolean isBuildfileExists() {
+      return buildfileExists;
    }
    
 }
