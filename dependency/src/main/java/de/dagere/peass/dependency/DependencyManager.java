@@ -121,15 +121,10 @@ public class DependencyManager extends KiekerResultManager {
    private TestSet findIncludedTests(final ModuleClassMapping mapping) throws IOException, XmlPullParserException {
       List<String> includedModules = getIncludedModules();
 
-      testTransformer.determineVersions(executor.getModules().getModules());
-      final TestSet allTests = new TestSet();
-      for (final File module : executor.getModules().getModules()) {
-         final TestSet moduleTests = testTransformer.findModuleTests(mapping, includedModules, module);
-         allTests.addTestSet(moduleTests);
-      }
-      LOG.info("Included tests: {}", allTests.getTests().size());
-      return allTests;
+      return testTransformer.findModuleTests(mapping, includedModules, executor.getModules());
    }
+
+   
 
    private List<String> getIncludedModules() throws IOException {
       List<String> includedModules;

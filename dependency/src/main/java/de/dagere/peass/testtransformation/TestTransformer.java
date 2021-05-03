@@ -10,6 +10,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.execution.ProjectModules;
 
 /**
  * Defines what should be done with tests; based on this class, extensions might define how to handle their tests.
@@ -21,7 +22,7 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
  */
 public interface TestTransformer {
    
-   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) throws FileNotFoundException;
+   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules) throws FileNotFoundException, IOException, XmlPullParserException;
 
    public TestSet buildTestMethodSet(final TestSet testsToUpdate, List<File> modules) throws IOException, XmlPullParserException;
    

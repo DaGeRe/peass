@@ -22,6 +22,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzFinder;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.testtransformation.TestTransformer;
 
 public class JMHTestTransformer implements TestTransformer {
@@ -34,7 +35,6 @@ public class JMHTestTransformer implements TestTransformer {
       this.measurementConfig = measurementConfig;
    }
 
-   @Override
    public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) throws FileNotFoundException {
       File srcFolder = new File(module, "src/main/java");
       Collection<File> javaFiles = FileUtils.listFiles(srcFolder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE);
@@ -74,6 +74,13 @@ public class JMHTestTransformer implements TestTransformer {
    public void determineVersions(final List<File> modules) {
       // TODO Auto-generated method stub
       
+   }
+
+   @Override
+   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules)
+         throws FileNotFoundException, IOException, XmlPullParserException {
+      // TODO Auto-generated method stub
+      return null;
    }
 
 }

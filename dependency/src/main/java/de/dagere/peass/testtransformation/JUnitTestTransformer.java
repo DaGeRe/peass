@@ -72,6 +72,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.peass.dependency.execution.ProjectModules;
 
 /**
  * Transforms JUnit-Tests to performance tests.
@@ -149,9 +150,20 @@ public class JUnitTestTransformer implements TestTransformer {
          }
       }
    }
-
+   
    @Override
-   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) {
+   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules) throws IOException, XmlPullParserException, FileNotFoundException {
+      determineVersions(modules.getModules());
+      final TestSet allTests = new TestSet();
+      for (final File module : modules.getModules()) {
+         final TestSet moduleTests = findModuleTests(mapping, includedModules, module);
+         allTests.addTestSet(moduleTests);
+      }
+      LOG.info("Included tests: {}", allTests.getTests().size());
+      return allTests;
+   }
+   
+   private TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) {
       final TestSet moduleTests = new TestSet();
       for (final String clazz : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
          final String currentModule = mapping.getModuleOfClass(clazz);
