@@ -21,13 +21,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.ProcessBuilder.Redirect;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +40,9 @@ import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.moduleinfo.ModuleInfoEditor;
+import de.dagere.peass.execution.maven.MavenCleaner;
+import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
+import de.dagere.peass.execution.processutils.ProcessSuccessTester;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 /**
@@ -89,7 +90,7 @@ public class MavenTestExecutor extends TestExecutor {
 
    public Process buildMavenProcess(final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
       final String testGoal = getTestGoal();
-      String mvnCall = getMavenCall();
+      String mvnCall = env.fetchMavenCall();
       final String[] originals = new String[] { mvnCall,
             testGoal,
             "-fn",
@@ -97,60 +98,21 @@ public class MavenTestExecutor extends TestExecutor {
       String[] withMavendefaults = CommandConcatenator.concatenateCommandArrays(originals, CommandConcatenator.mavenCheckDeactivation);
       final String[] vars = CommandConcatenator.concatenateCommandArrays(withMavendefaults, commandLineAddition);
 
+      ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
+      Process process;
       if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
          String[] projectListArray = new String[] { "-pl", testTransformer.getConfig().getExecutionConfig().getPl(), "-am" };
          String[] withPl = CommandConcatenator.concatenateCommandArrays(vars, projectListArray);
-         return buildFolderProcess(folders.getProjectFolder(), logFile, withPl);
+         process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, withPl);
       } else {
-         return buildFolderProcess(folders.getProjectFolder(), logFile, vars);
+         process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, vars);
       }
-   }
-
-   private String getMavenCall() {
-      String mvnCall;
-      if (env.getEnvironmentVariables().containsKey("MVN_CMD")) {
-         mvnCall = env.getEnvironmentVariables().get("MVN_CMD");
-      } else if (!System.getProperty("os.name").startsWith("Windows")) {
-         mvnCall = "mvn";
-      } else {
-         mvnCall = "mvn.cmd";
-      }
-      return mvnCall;
+      return process;
    }
 
    @Override
    protected void clean(final File logFile) throws IOException, InterruptedException {
-      if (!folders.getProjectFolder().exists()) {
-         throw new RuntimeException("Can not execute clean - folder " + folders.getProjectFolder().getAbsolutePath() + " does not exist");
-      } else {
-         LOG.debug("Folder {} exists {} and is directory - cleaning should be possible",
-               folders.getProjectFolder().getAbsolutePath(),
-               folders.getProjectFolder().exists(),
-               folders.getProjectFolder().isDirectory());
-      }
-      final String[] originalsClean = new String[] { getMavenCall(), "clean" };
-      final ProcessBuilder pbClean = new ProcessBuilder(originalsClean);
-      pbClean.directory(folders.getProjectFolder());
-      if (logFile != null) {
-         pbClean.redirectOutput(Redirect.appendTo(logFile));
-         pbClean.redirectError(Redirect.appendTo(logFile));
-      }
-
-      cleanSafely(pbClean);
-   }
-
-   private void cleanSafely(final ProcessBuilder pbClean) throws IOException, InterruptedException {
-      boolean finished = false;
-      int count = 0;
-      while (!finished && count < 10) {
-         final Process processClean = pbClean.start();
-         finished = processClean.waitFor(60, TimeUnit.MINUTES);
-         if (!finished) {
-            LOG.info("Clean process " + processClean + " was not finished successfully; trying again to clean");
-            processClean.destroyForcibly();
-         }
-         count++;
-      }
+      new MavenCleaner(folders, env).clean(logFile);
    }
 
    @Override
@@ -208,7 +170,7 @@ public class MavenTestExecutor extends TestExecutor {
       File pomFile = new File(folders.getProjectFolder(), "pom.xml");
       final File potentialPom = pomFile;
       final File testFolder = new File(folders.getProjectFolder(), "src/test");
-      final boolean isRunning = false;
+      boolean isRunning = false;
       buildfileExists = potentialPom.exists();
       if (potentialPom.exists()) {
          try {
@@ -220,7 +182,7 @@ public class MavenTestExecutor extends TestExecutor {
                   goal = "package";
                }
                MavenPomUtil.cleanType(pomFile);
-               String[] basicParameters = new String[] { getMavenCall(),
+               String[] basicParameters = new String[] { env.fetchMavenCall(),
                      "clean", goal,
                      "-DskipTests",
                      "-Dmaven.test.skip.exec"};
@@ -228,9 +190,9 @@ public class MavenTestExecutor extends TestExecutor {
                if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
                   String[] projectListArray = new String[] { "-pl", testTransformer.getConfig().getExecutionConfig().getPl(), "-am" };
                   String[] withPl = CommandConcatenator.concatenateCommandArrays(withMavendefaults, projectListArray);
-                  return testRunningSuccess(version, withPl);
+                  isRunning = new ProcessSuccessTester(folders, testTransformer.getConfig(), env).testRunningSuccess(version, withPl);
                } else {
-                  return testRunningSuccess(version, withMavendefaults);
+                  isRunning = new ProcessSuccessTester(folders, testTransformer.getConfig(), env).testRunningSuccess(version, withMavendefaults);
                }
             } else {
                LOG.error("Expected src/test to exist");

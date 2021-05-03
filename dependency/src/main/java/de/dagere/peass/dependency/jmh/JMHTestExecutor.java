@@ -8,10 +8,17 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.execution.MavenPomUtil;
 import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.dependency.execution.TestExecutor;
+import de.dagere.peass.execution.maven.MavenCleaner;
 import de.dagere.peass.testtransformation.TestTransformer;
 
+/**
+ * Supports the execution of JMH tests, which is necessary to do their regression test selection. Currently only supports maven projects.
+ * @author reichelt
+ *
+ */
 public class JMHTestExecutor extends TestExecutor {
 
    private final JMHTestTransformer transformer;
@@ -53,14 +60,13 @@ public class JMHTestExecutor extends TestExecutor {
 
    @Override
    public ProjectModules getModules() throws IOException, XmlPullParserException {
-      // TODO Auto-generated method stub
-      return null;
+      File pomFile = new File(folders.getProjectFolder(), "pom.xml");
+      return MavenPomUtil.getModules(pomFile);
    }
 
    @Override
    protected void clean(final File logFile) throws IOException, InterruptedException {
-      // TODO Auto-generated method stub
-
+      new MavenCleaner(folders, env).clean(logFile);
    }
 
 }

@@ -14,6 +14,8 @@ import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.gradle.FindDependencyVisitor;
+import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
+import de.dagere.peass.execution.processutils.ProcessSuccessTester;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class GradleTestExecutor extends TestExecutor {
@@ -85,8 +87,8 @@ public class GradleTestExecutor extends TestExecutor {
             "cleanTest", testGoal };
 
       final String[] vars = CommandConcatenator.concatenateCommandArrays(originals, commandLineAddition);
-
-      return buildFolderProcess(folder, logFile, vars);
+      ProcessBuilderHelper processBuilderHelper = new ProcessBuilderHelper(env, folders);
+      return processBuilderHelper.buildFolderProcess(folder, logFile, vars);
    }
 
    /**
@@ -154,7 +156,7 @@ public class GradleTestExecutor extends TestExecutor {
             e.printStackTrace();
          }
          final String[] vars = new String[] { "./gradlew", "--no-daemon", "assemble" };
-         isRunning = testRunningSuccess(version, vars);
+         isRunning = new ProcessSuccessTester(folders, testTransformer.getConfig(), env).testRunningSuccess(version, vars);
       }
       return isRunning;
    }
