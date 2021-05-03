@@ -119,13 +119,7 @@ public class DependencyManager extends KiekerResultManager {
    }
 
    private TestSet findIncludedTests(final ModuleClassMapping mapping) throws IOException, XmlPullParserException {
-      List<String> includedModules;
-      if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
-         includedModules = MavenPomUtil.getDependentModules(folders.getProjectFolder(), testTransformer.getConfig().getExecutionConfig().getPl());
-         LOG.debug("Included modules: {}", includedModules);
-      } else {
-         includedModules = null;
-      }
+      List<String> includedModules = getIncludedModules();
 
       testTransformer.determineVersions(executor.getModules().getModules());
       final TestSet allTests = new TestSet();
@@ -135,6 +129,17 @@ public class DependencyManager extends KiekerResultManager {
       }
       LOG.info("Included tests: {}", allTests.getTests().size());
       return allTests;
+   }
+
+   private List<String> getIncludedModules() throws IOException {
+      List<String> includedModules;
+      if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
+         includedModules = MavenPomUtil.getDependentModules(folders.getProjectFolder(), testTransformer.getConfig().getExecutionConfig().getPl());
+         LOG.debug("Included modules: {}", includedModules);
+      } else {
+         includedModules = null;
+      }
+      return includedModules;
    }
 
    private boolean printErrors() throws IOException {

@@ -149,7 +149,7 @@ public class JUnitTestTransformer implements TestTransformer {
          }
       }
    }
-   
+
    @Override
    public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) {
       final TestSet moduleTests = new TestSet();
@@ -158,32 +158,38 @@ public class JUnitTestTransformer implements TestTransformer {
          final List<String> testMethodNames = getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
          for (String method : testMethodNames) {
             final TestCase test = new TestCase(clazz, method, currentModule);
-            final List<String> includes = getConfig().getExecutionConfig().getIncludes();
-            if (NonIncludedTestRemover.isTestIncluded(test, includes)) {
-               if (includedModules == null || includedModules.contains(test.getModule())) {
-                  moduleTests.addTest(test);
-               }
+            if (includedModules == null || includedModules.contains(test.getModule())) {
+               addTestIfIncluded(moduleTests, test);
             }
          }
       }
       return moduleTests;
    }
-   
+
+   private void addTestIfIncluded(final TestSet moduleTests, final TestCase test) {
+      final List<String> includes = getConfig().getExecutionConfig().getIncludes();
+      if (NonIncludedTestRemover.isTestIncluded(test, includes)) {
+         moduleTests.addTest(test);
+      }
+   }
+
    @Override
    public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules) throws IOException, XmlPullParserException {
       final TestSet tests = new TestSet();
       determineVersions(modules);
       for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {
          final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
-         final File moduleFolder = new File(projectFolder, clazzname.getModule());
          if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
+            final File moduleFolder = new File(projectFolder, clazzname.getModule());
             final List<String> methods = getTestMethodNames(moduleFolder, clazzname);
             for (final String method : methods) {
-               tests.addTest(clazzname, method);
+               TestCase test = new TestCase(clazzname.getClazz(), method, clazzname.getModule());
+               addTestIfIncluded(tests, test);
             }
          } else {
             for (final String method : currentClazzMethods) {
-               tests.addTest(clazzname, method);
+               TestCase test = new TestCase(clazzname.getClazz(), method, clazzname.getModule());
+               addTestIfIncluded(tests, test);
             }
          }
       }
