@@ -34,7 +34,6 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.rules.TestRule;
 
 import com.github.javaparser.JavaParser;
@@ -151,7 +150,7 @@ public class JUnitTestTransformer implements TestTransformer {
    }
    
    @Override
-   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules) throws IOException, XmlPullParserException, FileNotFoundException {
+   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules) {
       determineVersions(modules.getModules());
       final TestSet allTests = new TestSet();
       for (final File module : modules.getModules()) {
@@ -185,7 +184,7 @@ public class JUnitTestTransformer implements TestTransformer {
    }
 
    @Override
-   public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules) throws IOException, XmlPullParserException {
+   public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules)  {
       final TestSet tests = new TestSet();
       determineVersions(modules);
       for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {

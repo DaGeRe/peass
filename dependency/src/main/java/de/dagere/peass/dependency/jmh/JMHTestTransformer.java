@@ -2,14 +2,12 @@ package de.dagere.peass.dependency.jmh;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -29,10 +27,47 @@ public class JMHTestTransformer implements TestTransformer {
 
    private final File projectFolder;
    private final MeasurementConfiguration measurementConfig;
-   
+
    public JMHTestTransformer(final File projectFolder, final MeasurementConfiguration measurementConfig) {
       this.projectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
+   }
+
+   @Override
+   public MeasurementConfiguration getConfig() {
+      return measurementConfig;
+   }
+
+   @Override
+   public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules) {
+      throw new RuntimeException("Not implemented yet");
+   }
+
+   // TODO includedModules is currenctly ignored for jmh!
+   @Override
+   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules) {
+      TestSet allBenchmarks = new TestSet();
+      try {
+         for (File module : modules.getModules()) {
+            TestSet moduleTests;
+            moduleTests = findModuleTests(mapping, includedModules, module);
+            allBenchmarks.addTestSet(moduleTests);
+         }
+      } catch (FileNotFoundException e) {
+         throw new RuntimeException("File was not found, can not handle this error", e);
+      }
+      return allBenchmarks;
+   }
+
+   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) throws FileNotFoundException {
+      File srcFolder = new File(module, "src/main/java");
+      Collection<File> javaFiles = FileUtils.listFiles(srcFolder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE);
+      TestSet result = new TestSet();
+      for (File clazzFile : javaFiles) {
+         String moduleName = ModuleClassMapping.getModuleName(projectFolder, module);
+         findBenchmarksInClazzfile(moduleName, srcFolder, result, clazzFile);
+      }
+      return result;
    }
 
    private void findBenchmarksInClazzfile(final String moduleName, final File srcFolder, final TestSet result, final File clazzFile) throws FileNotFoundException {
@@ -46,39 +81,6 @@ public class JMHTestTransformer implements TestTransformer {
             result.addTest(foundBenchmark);
          }
       }
-   }
-   
-   @Override
-   public MeasurementConfiguration getConfig() {
-      return measurementConfig;
-   }
-
-   @Override
-   public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules) throws IOException, XmlPullParserException {
-      throw new RuntimeException("Not implemented yet");
-   }
-
-   //TODO includedModules is currenctly ignored for jmh!
-   @Override
-   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules)
-         throws FileNotFoundException, IOException, XmlPullParserException {
-      TestSet allBenchmarks = new TestSet();
-      for (File module : modules.getModules()) {
-         TestSet moduleTests = findModuleTests(mapping, includedModules, module);
-         allBenchmarks.addTestSet(moduleTests);
-      }
-      return allBenchmarks;
-   }
-   
-   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) throws FileNotFoundException {
-      File srcFolder = new File(module, "src/main/java");
-      Collection<File> javaFiles = FileUtils.listFiles(srcFolder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE);
-      TestSet result = new TestSet();
-      for (File clazzFile : javaFiles) {
-         String moduleName = ModuleClassMapping.getModuleName(projectFolder, module);
-         findBenchmarksInClazzfile(moduleName, srcFolder, result, clazzFile);
-      }
-      return result;
    }
 
 }

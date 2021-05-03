@@ -1,11 +1,7 @@
 package de.dagere.peass.testtransformation;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
-
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
@@ -22,9 +18,16 @@ import de.dagere.peass.dependency.execution.ProjectModules;
  */
 public interface TestTransformer {
    
-   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules) throws FileNotFoundException, IOException, XmlPullParserException;
+   /**
+    * Returns a test set containing all modules of the test
+    * @param mapping
+    * @param includedModules
+    * @param modules
+    * @return
+    */
+   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules);
 
-   public TestSet buildTestMethodSet(final TestSet testsToUpdate, List<File> modules) throws IOException, XmlPullParserException;
+   public TestSet buildTestMethodSet(final TestSet testsToUpdate, List<File> modules);
    
    public MeasurementConfiguration getConfig();
 }
