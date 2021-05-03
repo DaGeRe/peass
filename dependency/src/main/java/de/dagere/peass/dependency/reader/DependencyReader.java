@@ -259,15 +259,21 @@ public class DependencyReader {
          lastRunningVersion = iterator.getTag();
          
          if (dependencyConfig.isGenerateViews()) {
-            TestSet initialTests = dependencyResult.getInitialversion().getInitialTests();
-            TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), mapping);
-            traceViewGenerator.generateViews(resultsFolders, initialTests);
+            generateInitialViews();
          }
          dependencyManager.cleanResultFolder();
          return true;
       } else {
          return false;
       }
+   }
+
+   private void generateInitialViews() throws IOException, XmlPullParserException, ParseException, ViewNotFoundException, InterruptedException {
+      TestSet initialTests = dependencyResult.getInitialversion().getInitialTests();
+      TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), mapping);
+      traceViewGenerator.generateViews(resultsFolders, initialTests);
+      
+      executionResult.getVersions().put(iterator.getTag(), new TestSet());
    }
 
    public void readCompletedVersions(final Dependencies initialdependencies) {
