@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -16,6 +17,7 @@ import de.dagere.kopeme.parsing.JUnitParseUtil;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzFinder;
@@ -40,7 +42,26 @@ public class JMHTestTransformer implements TestTransformer {
 
    @Override
    public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules) {
-      throw new RuntimeException("Not implemented yet");
+      final TestSet tests = new TestSet();
+      for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {
+         final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
+         if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
+            final File moduleFolder = new File(projectFolder, clazzname.getModule());
+            String moduleName = ModuleClassMapping.getModuleName(projectFolder, moduleFolder);
+            File clazzFile = ClazzFileFinder.getClazzFile(moduleFolder, clazzname);
+            try {
+               findBenchmarksInClazzfile(moduleName, new File(moduleFolder, "src/main/java"), tests, clazzFile);
+            } catch (FileNotFoundException e) {
+               throw new RuntimeException(e);
+            }
+         } else {
+            for (final String method : currentClazzMethods) {
+               TestCase test = new TestCase(clazzname.getClazz(), method, clazzname.getModule());
+               tests.addTest(test);
+            }
+         }
+      }
+      return tests;
    }
 
    // TODO includedModules is currenctly ignored for jmh!
