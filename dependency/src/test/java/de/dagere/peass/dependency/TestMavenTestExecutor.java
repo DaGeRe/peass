@@ -11,7 +11,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.MavenTestExecutor;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
@@ -40,7 +39,8 @@ public class TestMavenTestExecutor {
       String[] capturedValue = parametersCaptor.getValue();
       System.out.println("Captured: " + Arrays.toString(capturedValue));
       Assert.assertEquals("test", capturedValue[1]);
-      Assert.assertEquals("-Djava.io.tmpdir=/tmp/test2", capturedValue[10]);
+      Assert.assertEquals("-Djava.io.tmpdir=/tmp/test2", capturedValue[3]);
+      Assert.assertEquals("-DfailIfNoTests=false", capturedValue[10]);
       Assert.assertEquals("addition1", capturedValue[11]);
       Assert.assertEquals("addition3", capturedValue[13]);
    }
