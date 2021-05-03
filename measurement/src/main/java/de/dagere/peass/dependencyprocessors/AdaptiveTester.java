@@ -27,7 +27,6 @@ public class AdaptiveTester extends DependencyTester {
    public AdaptiveTester(final PeASSFolders folders, final MeasurementConfiguration measurementConfig, final EnvironmentVariables env)
          throws IOException {
       super(folders, measurementConfig, env);
-
    }
 
    @Override

@@ -28,34 +28,28 @@ public class ModuleClassMapping {
 
    public ModuleClassMapping(final File baseFolder, final ProjectModules modules) {
       for (final File module : modules.getModules()) {
-         final List<String> classes = ClazzFileFinder.getClasses(module);
-         String moduleName;
-         if (module.equals(baseFolder)) {
-            moduleName = "";
-         } else {
-            moduleName = getModuleName(baseFolder, module);
-         }
-         LOG.debug("Module: {} Name: {}", module.getAbsolutePath(), moduleName);
-         for (final String clazz : classes) {
-            mapping.put(clazz, moduleName);
-         }
+         populateModule(baseFolder, module);
       }
    }
    
    public ModuleClassMapping(final File baseFolder) throws IOException, XmlPullParserException {
       final List<File> modules = TestExecutor.getModules(new PeASSFolders(baseFolder)).getModules();
       for (final File module : modules) {
-         final List<String> classes = ClazzFileFinder.getClasses(module);
-         String moduleName;
-         if (module.equals(baseFolder)) {
-            moduleName = "";
-         } else {
-            moduleName = getModuleName(baseFolder, module);
-         }
-         LOG.debug("Module: {} Name: {}", module.getAbsolutePath(), moduleName);
-         for (final String clazz : classes) {
-            mapping.put(clazz, moduleName);
-         }
+         populateModule(baseFolder, module);
+      }
+   }
+
+   private void populateModule(final File baseFolder, final File module) {
+      final List<String> classes = ClazzFileFinder.getClasses(module);
+      String moduleName;
+      if (module.equals(baseFolder)) {
+         moduleName = "";
+      } else {
+         moduleName = getModuleName(baseFolder, module);
+      }
+      LOG.debug("Module: {} Name: {}", module.getAbsolutePath(), moduleName);
+      for (final String clazz : classes) {
+         mapping.put(clazz, moduleName);
       }
    }
 

@@ -65,6 +65,16 @@ public class ContinuousExecutor {
       File vcsFolder = VersionControlSystem.findVCSFolder(projectFolder);
       localFolder = ContinuousFolderUtil.getLocalFolder(vcsFolder);
       File projectFolderLocal = new File(localFolder, ContinuousFolderUtil.getSubFolderPath(projectFolder));
+      getGitRepo(projectFolder, measurementConfig, projectFolderLocal);
+      resultsFolders = new ResultsFolders(projectFolderLocal, projectFolder.getName());
+
+      folders = new PeASSFolders(projectFolderLocal);
+
+      version = measurementConfig.getVersion();
+      versionOld = measurementConfig.getVersionOld();
+   }
+
+   private void getGitRepo(final File projectFolder, final MeasurementConfiguration measurementConfig, File projectFolderLocal) throws InterruptedException, IOException {
       if (!localFolder.exists() || !projectFolderLocal.exists()) {
          ContinuousFolderUtil.cloneProject(projectFolder, localFolder);
          if (!projectFolderLocal.exists()) {
@@ -76,12 +86,6 @@ public class ContinuousExecutor {
          GitUtils.pull(projectFolderLocal);
          GitUtils.goToTag(measurementConfig.getVersion(), projectFolderLocal);
       }
-      resultsFolders = new ResultsFolders(projectFolderLocal, projectFolder.getName());
-
-      folders = new PeASSFolders(projectFolderLocal);
-
-      version = measurementConfig.getVersion();
-      versionOld = measurementConfig.getVersionOld();
    }
 
    public void execute() throws Exception {
