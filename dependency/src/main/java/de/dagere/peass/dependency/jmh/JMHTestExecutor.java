@@ -1,6 +1,7 @@
 package de.dagere.peass.dependency.jmh;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -57,39 +58,62 @@ public class JMHTestExecutor extends TestExecutor {
    @Override
    public void executeTest(final TestCase test, final File logFolder, final long timeout) {
       try {
-         String[] basicParameters;
-         if (testTransformer.getConfig().isUseKieker()) {
-            File moduleFolder = new File(folders.getProjectFolder(), test.getModule());
-            folders.getTempMeasurementFolder().mkdirs();
-            basicParameters = new String[] {
-                  "java",
-                  "-Dkieker.monitoring.configuration=" + moduleFolder.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties",
-                  "-Djava.io.tmpdir=" + folders.getTempMeasurementFolder().getAbsolutePath() };
-         } else {
-            basicParameters = new String[] { "java" };
-         }
-         String[] jmhParameters = new String[] {
-               "-jar",
-               "target/benchmarks.jar",
-               "-bm", "SingleShotTime",
-               "-f",
-               Integer.toString(transformer.getConfig().getVms()),
-               "-i",
-               Integer.toString(transformer.getConfig().getIterations()),
-               "-wi",
-               Integer.toString(transformer.getConfig().getWarmup()) };
-         String[] mergedParameters = CommandConcatenator.concatenateCommandArrays(basicParameters, jmhParameters);
+         String[] mergedParameters = buildParameterString(test);
 
          ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
          File logFile = getMethodLogFile(logFolder, test);
          Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, mergedParameters);
 
          execute(test.getExecutable(), transformer.getConfig().getTimeoutInMinutes(), process);
-      } catch (InterruptedException |
-
-            IOException e) {
+         
+         moveToMethodFolder(test);
+         
+      } catch (InterruptedException | IOException e) {
          throw new RuntimeException(e);
       }
+   }
+
+   private void moveToMethodFolder(final TestCase test) {
+      File[] files = folders.getTempMeasurementFolder().listFiles(new FileFilter() {
+         
+         @Override
+         public boolean accept(final File pathname) {
+            return pathname.getName().startsWith("kieker-");
+         }
+      });
+      File expectedResultFolder = files[0];
+      
+      File methodFolder = new File(folders.getTempMeasurementFolder(), test.getClazz() + File.separator + test.getMethod() + File.separator + System.currentTimeMillis());
+      methodFolder.mkdirs();
+      
+      File kiekerSubfolder = new File(methodFolder, expectedResultFolder.getName());
+      expectedResultFolder.renameTo(kiekerSubfolder);
+   }
+
+   private String[] buildParameterString(final TestCase test) {
+      String[] basicParameters;
+      if (testTransformer.getConfig().isUseKieker()) {
+         File moduleFolder = new File(folders.getProjectFolder(), test.getModule());
+         folders.getTempMeasurementFolder().mkdirs();
+         basicParameters = new String[] {
+               "java",
+               "-Dkieker.monitoring.configuration=" + moduleFolder.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties",
+               "-Djava.io.tmpdir=" + folders.getTempMeasurementFolder().getAbsolutePath() };
+      } else {
+         basicParameters = new String[] { "java" };
+      }
+      String[] jmhParameters = new String[] {
+            "-jar",
+            "target/benchmarks.jar",
+            "-bm", "SingleShotTime",
+            "-f",
+            Integer.toString(transformer.getConfig().getVms()),
+            "-i",
+            Integer.toString(transformer.getConfig().getIterations()),
+            "-wi",
+            Integer.toString(transformer.getConfig().getWarmup()) };
+      String[] mergedParameters = CommandConcatenator.concatenateCommandArrays(basicParameters, jmhParameters);
+      return mergedParameters;
    }
 
    @Override
