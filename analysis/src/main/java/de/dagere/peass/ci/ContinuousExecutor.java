@@ -17,15 +17,18 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.measurement.analysis.AnalyseFullData;
 import de.dagere.peass.measurement.analysis.ProjectStatistics;
+import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
@@ -74,7 +77,7 @@ public class ContinuousExecutor {
       versionOld = measurementConfig.getVersionOld();
    }
 
-   private void getGitRepo(final File projectFolder, final MeasurementConfiguration measurementConfig, File projectFolderLocal) throws InterruptedException, IOException {
+   private void getGitRepo(final File projectFolder, final MeasurementConfiguration measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {
       if (!localFolder.exists() || !projectFolderLocal.exists()) {
          ContinuousFolderUtil.cloneProject(projectFolder, localFolder);
          if (!projectFolderLocal.exists()) {
@@ -128,7 +131,9 @@ public class ContinuousExecutor {
       final File changefile = new File(localFolder, "changes.json");
       AnalyseOneTest.setResultFolder(new File(localFolder, version + "_graphs"));
       final ProjectStatistics statistics = new ProjectStatistics();
-      ModuleClassMapping mapping = new ModuleClassMapping(projectFolder);
+      TestTransformer testTransformer = ExecutorCreator.createTestTransformer(folders, measurementConfig.getExecutionConfig(), measurementConfig);
+      TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
+      ModuleClassMapping mapping = new ModuleClassMapping(projectFolder, executor.getModules());
       final AnalyseFullData afd = new AnalyseFullData(changefile, statistics, mapping);
       afd.analyseFolder(measurementFolder);
       Constants.OBJECTMAPPER.writeValue(new File(localFolder, "statistics.json"), statistics);

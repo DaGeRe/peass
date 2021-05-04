@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.PeASSFolders;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.TestTransformer;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
 import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
@@ -28,10 +28,10 @@ public class KiekerEnvironmentPreparer {
    
    private final Set<String> includedMethodPattern;
    private final PeASSFolders folders;
-   private final JUnitTestTransformer testTransformer;
+   private final TestTransformer testTransformer;
    private List<File> modules;
 
-   public KiekerEnvironmentPreparer(final Set<String> includedMethodPattern, final PeASSFolders folders, final JUnitTestTransformer testTransformer, final List<File> modules) {
+   public KiekerEnvironmentPreparer(final Set<String> includedMethodPattern, final PeASSFolders folders, final TestTransformer testTransformer, final List<File> modules) {
       this.includedMethodPattern = includedMethodPattern;
       this.folders = folders;
       this.testTransformer = testTransformer;

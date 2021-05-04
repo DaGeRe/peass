@@ -28,7 +28,7 @@ public class JMHTestExecutor extends TestExecutor {
    private final JMHTestTransformer transformer;
 
    public JMHTestExecutor(final PeASSFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
-      super(folders, null, env);
+      super(folders, testTransformer, env);
       this.transformer = (JMHTestTransformer) testTransformer;
    }
 

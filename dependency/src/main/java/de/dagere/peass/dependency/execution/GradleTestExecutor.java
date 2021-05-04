@@ -17,7 +17,7 @@ import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.execution.processutils.ProcessSuccessTester;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
-public class GradleTestExecutor extends TestExecutor {
+public class GradleTestExecutor extends KoPeMeExecutor {
 
    private static final Logger LOG = LogManager.getLogger(GradleTestExecutor.class);
 

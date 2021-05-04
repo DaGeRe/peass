@@ -165,9 +165,8 @@ public class JUnitTestTransformer implements TestTransformer {
       final TestSet moduleTests = new TestSet();
       for (final String clazz : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
          final String currentModule = mapping.getModuleOfClass(clazz);
-         final List<String> testMethodNames = getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
-         for (String method : testMethodNames) {
-            final TestCase test = new TestCase(clazz, method, currentModule);
+         final List<TestCase> testMethodNames = getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
+         for (TestCase test : testMethodNames) {
             if (includedModules == null || includedModules.contains(test.getModule())) {
                addTestIfIncluded(moduleTests, test);
             }
@@ -191,9 +190,8 @@ public class JUnitTestTransformer implements TestTransformer {
          final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
          if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
             final File moduleFolder = new File(projectFolder, clazzname.getModule());
-            final List<String> methods = getTestMethodNames(moduleFolder, clazzname);
-            for (final String method : methods) {
-               TestCase test = new TestCase(clazzname.getClazz(), method, clazzname.getModule());
+            final List<TestCase> methods = getTestMethodNames(moduleFolder, clazzname);
+            for (final TestCase test : methods) {
                addTestIfIncluded(tests, test);
             }
          } else {
@@ -325,8 +323,9 @@ public class JUnitTestTransformer implements TestTransformer {
       return extensions;
    }
 
-   public List<String> getTestMethodNames(final File module, final ChangedEntity clazzname) {
-      final List<String> methods = new LinkedList<>();
+   @Override
+   public List<TestCase> getTestMethodNames(final File module, final ChangedEntity clazzname) {
+      final List<TestCase> methods = new LinkedList<>();
       final File clazzFile = ClazzFileFinder.getClazzFile(module, clazzname);
       final CompilationUnit unit = loadedFiles.get(clazzFile);
       if (unit != null) {
@@ -336,13 +335,19 @@ public class JUnitTestTransformer implements TestTransformer {
             if (junit == 3) {
                for (final MethodDeclaration method : clazz.getMethods()) {
                   if (method.getNameAsString().toLowerCase().contains("test")) {
-                     methods.add(method.getNameAsString());
+                     methods.add(new TestCase(clazzname.getClazz(), method.getNameAsString(), clazzname.getModule()));
                   }
                }
             } else if (junit == 4) {
-               methods.addAll(getAnnotatedMethods(clazz, 4));
+               for (String junit4method : getAnnotatedMethods(clazz, 4)) {
+                  TestCase test = new TestCase(clazzname.getClazz(), junit4method, clazzname.getModule());
+                  methods.add(test);
+               }
             } else if (junit == 5) {
-               methods.addAll(getAnnotatedMethods(clazz, 5));
+               for (String junit4method : getAnnotatedMethods(clazz, 5)) {
+                  TestCase test = new TestCase(clazzname.getClazz(), junit4method, clazzname.getModule());
+                  methods.add(test);
+               }
             }
          } else {
             LOG.error("Clazz {} has no JUnit version", clazzFile);
@@ -604,6 +609,7 @@ public class JUnitTestTransformer implements TestTransformer {
       charset = encoding;
    }
 
+   @Override
    public boolean isJUnit3() {
       boolean junit3 = false;
       for (final Entry<File, Integer> clazz : junitVersions.entrySet()) {
@@ -614,6 +620,7 @@ public class JUnitTestTransformer implements TestTransformer {
       return junit3;
    }
 
+   @Override
    public boolean isAggregatedWriter() {
       return aggregatedWriter;
    }
@@ -626,6 +633,7 @@ public class JUnitTestTransformer implements TestTransformer {
       this.ignoreEOIs = ignoreEOIs;
    }
 
+   @Override
    public boolean isIgnoreEOIs() {
       return ignoreEOIs;
    }

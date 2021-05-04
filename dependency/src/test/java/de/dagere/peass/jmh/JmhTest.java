@@ -7,7 +7,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -32,7 +31,6 @@ import de.dagere.peass.dependencytests.TraceGettingIT;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.vcs.GitUtils;
 
-@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(GitUtils.class)
 @PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })

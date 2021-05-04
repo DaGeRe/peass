@@ -5,6 +5,8 @@ import java.util.List;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.execution.ProjectModules;
 
@@ -33,5 +35,14 @@ public interface TestTransformer {
 
    public boolean isAggregatedWriter();
 
+   public void setAggregatedWriter(boolean useAggregation);
+   
    public boolean isJUnit3();
+
+   public void setIgnoreEOIs(boolean ignoreEOIs);
+   
+   public boolean isIgnoreEOIs();
+
+   public List<TestCase> getTestMethodNames(File module, ChangedEntity entity);
+   
 }

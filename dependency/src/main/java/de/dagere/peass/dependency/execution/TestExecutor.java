@@ -16,13 +16,11 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.dependency.ClazzFileFinder;
-import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.testtransformation.JUnitTestShortener;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.TestTransformer;
 
 /**
  * Base functionality for executing tests with KoPeMe. The executor automates changing the buildfile, changing the tests both with and without Kieker.
@@ -39,7 +37,7 @@ public abstract class TestExecutor {
    protected final PeASSFolders folders;
    protected File lastTmpFile;
    protected int jdk_version = 8;
-   protected final JUnitTestTransformer testTransformer;
+   protected final TestTransformer testTransformer;
    protected List<String> existingClasses;
    protected Set<String> includedMethodPattern;
    protected boolean isAndroid;
@@ -47,7 +45,7 @@ public abstract class TestExecutor {
    protected boolean buildfileExists = false;
    protected final EnvironmentVariables env;
 
-   public TestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
+   public TestExecutor(final PeASSFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
       this.folders = folders;
       this.testTransformer = testTransformer;
       this.env = env;
@@ -75,12 +73,11 @@ public abstract class TestExecutor {
    protected List<TestCase> getTestCases() throws IOException, XmlPullParserException {
       final List<TestCase> testcases = new LinkedList<>();
       for (final File module : getModules().getModules()) {
-         for (final String test : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
+         for (final String testClazzFile : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
             final String moduleName = ModuleClassMapping.getModuleName(folders.getProjectFolder(), module);
-            final ChangedEntity entity = new ChangedEntity(test, moduleName);
-            final List<String> testMethods = testTransformer.getTestMethodNames(module, entity);
-            for (final String method : testMethods) {
-               final TestCase tc = new TestCase(test, method, moduleName);
+            final ChangedEntity entity = new ChangedEntity(testClazzFile, moduleName);
+            final List<TestCase> testMethods = testTransformer.getTestMethodNames(module, entity);
+            for (final TestCase tc : testMethods) {
                testcases.add(tc);
             }
          }
@@ -88,15 +85,7 @@ public abstract class TestExecutor {
       return testcases;
    }
 
-   protected String getTestGoal() {
-      String testGoal;
-      if (isAndroid) {
-         testGoal = testTransformer.getConfig().getTestGoal() != null ? testTransformer.getConfig().getTestGoal() : "testRelease";
-      } else {
-         testGoal = testTransformer.getConfig().getTestGoal() != null ? testTransformer.getConfig().getTestGoal() : "test";
-      }
-      return testGoal;
-   }
+   
 
    protected abstract void runTest(File moduleFolder, final File logFile, final String testname, final long timeout);
 
@@ -118,28 +107,9 @@ public abstract class TestExecutor {
       return logFile;
    }
    
-   void runMethod(final File logFolder, final TestCase test, final File moduleFolder, final long timeout) {
-      try (final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, moduleFolder, test.toEntity(), test.getMethod())) {
-         LOG.info("Cleaning...");
-         final File cleanFile = getCleanLogFile(logFolder, test);
-         clean(cleanFile);
+   
 
-         final File methodLogFile = getMethodLogFile(logFolder, test);
-         runTest(moduleFolder, methodLogFile, test.getClazz(), timeout);
-      } catch (Exception e1) {
-         e1.printStackTrace();
-      }
-   }
-
-   public void transformTests() {
-      try {
-         final List<File> modules = getModules().getModules();
-         testTransformer.determineVersions(modules);
-         testTransformer.transformTests();
-      } catch (IOException | XmlPullParserException e) {
-         e.printStackTrace();
-      }
-   }
+   
 
    protected void prepareKiekerSource() throws IOException, XmlPullParserException, InterruptedException {
       if (testTransformer.getConfig().isUseKieker()) {
@@ -230,13 +200,8 @@ public abstract class TestExecutor {
    public void setIncludedMethods(final Set<String> includedMethodPattern) {
       this.includedMethodPattern = includedMethodPattern;
    }
-
-   public static ProjectModules getModules(final PeASSFolders folders) throws IOException, XmlPullParserException {
-      TestExecutor tempExecutor = ExecutorCreator.createExecutor(folders, null, null);
-      return tempExecutor.getModules();
-   }
-
-   public JUnitTestTransformer getTestTransformer() {
+   
+   public TestTransformer getTestTransformer() {
       return testTransformer;
    }
 }

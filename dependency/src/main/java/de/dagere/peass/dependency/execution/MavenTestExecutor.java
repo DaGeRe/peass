@@ -42,7 +42,7 @@ import de.dagere.peass.testtransformation.JUnitTestTransformer;
  * @author reichelt
  *
  */
-public class MavenTestExecutor extends TestExecutor {
+public class MavenTestExecutor extends KoPeMeExecutor {
 
    private static final Logger LOG = LogManager.getLogger(MavenTestExecutor.class);
 
@@ -167,8 +167,6 @@ public class MavenTestExecutor extends TestExecutor {
          throw new RuntimeException(e);
       }
    }
-
-   
 
    public Charset getEncoding() {
       return lastEncoding;

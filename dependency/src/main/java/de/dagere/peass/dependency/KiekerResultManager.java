@@ -19,9 +19,6 @@ package de.dagere.peass.dependency;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -71,22 +68,13 @@ public class KiekerResultManager {
       fakeConfig.getExecutionConfig().setTestTransformer(executionConfig.getTestTransformer());
       fakeConfig.getExecutionConfig().setTestExecutor(executionConfig.getTestExecutor());
       
-      try {
-         Class<?> testTransformerClass = Class.forName(executionConfig.getTestTransformer());
-         if (!Arrays.asList(testTransformerClass.getInterfaces()).contains(TestTransformer.class)) {
-            throw new RuntimeException("TestTransformer needs to be implemented by " + executionConfig.getTestTransformer());
-         }
-         Constructor constructor = testTransformerClass.getConstructor(File.class, MeasurementConfiguration.class);
-         testTransformer = (TestTransformer) constructor.newInstance(folders.getProjectFolder(), fakeConfig);
-      } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-         LOG.debug("Initialization was not possible; this should be thrown uncatched");
-         e.printStackTrace();
-         throw new RuntimeException(e);
-      }
+      testTransformer = ExecutorCreator.createTestTransformer(folders, executionConfig, fakeConfig);
       
       // testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), fakeConfig);
       executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
    }
+
+  
 
    public KiekerResultManager(final TestExecutor executor, final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
       this.executor = executor;
