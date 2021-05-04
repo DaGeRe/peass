@@ -66,8 +66,7 @@ public class JMHTestTransformer implements TestTransformer {
       TestSet allBenchmarks = new TestSet();
       try {
          for (File module : modules.getModules()) {
-            TestSet moduleTests;
-            moduleTests = findModuleTests(mapping, includedModules, module);
+            TestSet moduleTests = findModuleTests(mapping, includedModules, module);
             allBenchmarks.addTestSet(moduleTests);
          }
       } catch (FileNotFoundException e) {
@@ -78,7 +77,7 @@ public class JMHTestTransformer implements TestTransformer {
 
    public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) throws FileNotFoundException {
       TestSet moduleTests = new TestSet();
-      for (final String clazz : ClazzFileFinder.getClasses(new File(module, "src"))) {
+      for (final String clazz : ClazzFileFinder.getClasses(module)) {
          String currentModule = ModuleClassMapping.getModuleName(projectFolder, module);
          final List<TestCase> testMethodNames = getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
          for (TestCase test : testMethodNames) {
