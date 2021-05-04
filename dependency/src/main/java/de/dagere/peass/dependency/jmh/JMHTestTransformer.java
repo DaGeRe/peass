@@ -29,6 +29,7 @@ public class JMHTestTransformer implements TestTransformer {
 
    private final File projectFolder;
    private final MeasurementConfiguration measurementConfig;
+   private boolean isAggregatedWriter;
 
    public JMHTestTransformer(final File projectFolder, final MeasurementConfiguration measurementConfig) {
       this.projectFolder = projectFolder;
@@ -102,6 +103,20 @@ public class JMHTestTransformer implements TestTransformer {
             result.addTest(foundBenchmark);
          }
       }
+   }
+
+   public void setAggregatedWriter(final boolean isAggregatedWriter) {
+      this.isAggregatedWriter = isAggregatedWriter;
+   }
+   
+   @Override
+   public boolean isAggregatedWriter() {
+      return isAggregatedWriter;
+   }
+
+   @Override
+   public boolean isJUnit3() {
+      return false;
    }
 
 }

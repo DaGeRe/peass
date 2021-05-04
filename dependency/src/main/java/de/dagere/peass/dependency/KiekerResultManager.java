@@ -68,6 +68,8 @@ public class KiekerResultManager {
       fakeConfig.getExecutionConfig().setIncludes(executionConfig.getIncludes());
       fakeConfig.getExecutionConfig().setPl(executionConfig.getPl());
       fakeConfig.getExecutionConfig().setCreateDefaultConstructor(executionConfig.isCreateDefaultConstructor());
+      fakeConfig.getExecutionConfig().setTestTransformer(executionConfig.getTestTransformer());
+      fakeConfig.getExecutionConfig().setTestExecutor(executionConfig.getTestExecutor());
       
       try {
          Class<?> testTransformerClass = Class.forName(executionConfig.getTestTransformer());

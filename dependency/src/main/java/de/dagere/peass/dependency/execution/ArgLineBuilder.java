@@ -2,7 +2,7 @@ package de.dagere.peass.dependency.execution;
 
 import java.io.File;
 
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.TestTransformer;
 
 public class ArgLineBuilder {
 
@@ -23,10 +23,10 @@ public class ArgLineBuilder {
 
    protected static final String KIEKER_ARG_LINE_GRADLE = JAVA_AGENT + ":" + KIEKER_FOLDER_GRADLE;
 
-   private final JUnitTestTransformer testTransformer;
+   private final TestTransformer testTransformer;
    private final File modulePath;
 
-   public ArgLineBuilder(final JUnitTestTransformer testTransformer, final File modulePath) {
+   public ArgLineBuilder(final TestTransformer testTransformer, final File modulePath) {
       this.testTransformer = testTransformer;
       this.modulePath = modulePath;
    }

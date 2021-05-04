@@ -65,7 +65,7 @@ public abstract class TestExecutor {
 
    public abstract void executeAllKoPeMeTests(final File logFile) throws IOException, XmlPullParserException, InterruptedException;
 
-   public abstract void executeTest(final TestCase tests, final File logFolder, long timeout);
+   public abstract void executeTest(final TestCase test, final File logFolder, long timeout);
 
    protected int getTestCount() throws IOException, XmlPullParserException {
       final List<TestCase> testcases = getTestCases();
@@ -100,18 +100,32 @@ public abstract class TestExecutor {
 
    protected abstract void runTest(File moduleFolder, final File logFile, final String testname, final long timeout);
 
-   void runMethod(final File logFolder, final ChangedEntity clazz, final File moduleFolder, final String method, final long timeout) {
-      try (final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, moduleFolder, clazz, method)) {
-         File clazzLogFolder = new File(logFolder, "log_" + clazz.getJavaClazzName());
-         if (!clazzLogFolder.exists()) {
-            clazzLogFolder.mkdir();
-         }
+   protected File getCleanLogFile(final File logFolder, final TestCase test) {
+      File clazzLogFolder = new File(logFolder, "log_" + test.getClazz());
+      if (!clazzLogFolder.exists()) {
+         clazzLogFolder.mkdir();
+      }
+      final File logFile = new File(clazzLogFolder, test.getMethod() + "_clean.txt");
+      return logFile;
+   }
+   
+   protected File getMethodLogFile(final File logFolder, final TestCase test) {
+      File clazzLogFolder = new File(logFolder, "log_" + test.getClazz());
+      if (!clazzLogFolder.exists()) {
+         clazzLogFolder.mkdir();
+      }
+      final File logFile = new File(clazzLogFolder, test.getMethod() + ".txt");
+      return logFile;
+   }
+   
+   void runMethod(final File logFolder, final TestCase test, final File moduleFolder, final long timeout) {
+      try (final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, moduleFolder, test.toEntity(), test.getMethod())) {
          LOG.info("Cleaning...");
-         final File cleanFile = new File(clazzLogFolder, method + "_clean.txt");
+         final File cleanFile = getCleanLogFile(logFolder, test);
          clean(cleanFile);
 
-         final File logFile = new File(clazzLogFolder, method + ".txt");
-         runTest(moduleFolder, logFile, clazz.getJavaClazzName(), timeout);
+         final File methodLogFile = getMethodLogFile(logFolder, test);
+         runTest(moduleFolder, methodLogFile, test.getClazz(), timeout);
       } catch (Exception e1) {
          e1.printStackTrace();
       }

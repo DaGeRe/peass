@@ -30,4 +30,8 @@ public interface TestTransformer {
    public TestSet buildTestMethodSet(final TestSet testsToUpdate, List<File> modules);
    
    public MeasurementConfiguration getConfig();
+
+   public boolean isAggregatedWriter();
+
+   public boolean isJUnit3();
 }

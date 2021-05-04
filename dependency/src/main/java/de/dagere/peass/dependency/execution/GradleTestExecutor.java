@@ -11,7 +11,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.dependency.PeASSFolders;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.gradle.FindDependencyVisitor;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
@@ -112,8 +111,7 @@ public class GradleTestExecutor extends TestExecutor {
    public void executeTest(final TestCase test, final File logFolder, final long timeout) {
       final File module = new File(folders.getProjectFolder(), test.getModule());
       cleanLastTest(module);
-      final ChangedEntity testClazzEntity = new ChangedEntity(test.getClazz(), test.getModule());
-      runMethod(logFolder, testClazzEntity, module, test.getMethod(), timeout);
+      runMethod(logFolder, test, module, timeout);
    }
 
    /**
