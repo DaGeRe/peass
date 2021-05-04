@@ -115,7 +115,9 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       prepareKiekerSource();
       transformTests();
 
-      new PomPreparer(testTransformer, getModules(), folders).preparePom();
+      PomPreparer pomPreparer = new PomPreparer(testTransformer, getModules(), folders);
+      pomPreparer.preparePom();
+      lastEncoding = pomPreparer.getLastEncoding();
    }
 
    private void updateJava() throws FileNotFoundException, IOException, XmlPullParserException {

@@ -87,4 +87,12 @@ public class PomPreparer {
          e.printStackTrace();
       }
    }
+   
+   public File getLastTmpFile() {
+      return lastTmpFile;
+   }
+
+   public Charset getLastEncoding() {
+      return lastEncoding;
+   }
 }

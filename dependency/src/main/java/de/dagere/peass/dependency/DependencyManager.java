@@ -202,7 +202,9 @@ public class DependencyManager extends KiekerResultManager {
       }
       for (File classFolder : movedInitialResults.listFiles()) {
          LOG.debug("Cleaning {}", classFolder.getAbsolutePath());
-         cleanFolderAboveSize(classFolder, deleteFolderSize);
+         if (classFolder.isDirectory()) {
+            cleanFolderAboveSize(classFolder, deleteFolderSize);
+         }
       }
    }
 
