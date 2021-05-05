@@ -1,7 +1,6 @@
 package de.dagere.peass.dependency.jmh;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -67,33 +66,11 @@ public class JMHTestExecutor extends TestExecutor {
 
          execute(test.getExecutable(), transformer.getConfig().getTimeoutInMinutes(), process);
 
-         moveToMethodFolder(test, jsonResultFile);
+         new JmhResultMover(folders).moveToMethodFolder(test, jsonResultFile);
 
       } catch (InterruptedException | IOException e) {
          throw new RuntimeException(e);
       }
-   }
-
-   private void moveToMethodFolder(final TestCase test, final File jsonResultFile) {
-      final File[] files = folders.getTempMeasurementFolder().listFiles(new FileFilter() {
-
-         @Override
-         public boolean accept(final File pathname) {
-            return pathname.getName().startsWith("kieker-");
-         }
-      });
-      final File expectedResultFolder = files[0];
-
-      final File clazzFolder = new File(folders.getTempMeasurementFolder(), test.getClazz());
-      
-      final File kiekerTimeFolder = new File(clazzFolder, Long.toString(System.currentTimeMillis()) + File.separator + test.getMethod());
-      kiekerTimeFolder.mkdirs();
-
-      final File kiekerSubfolder = new File(kiekerTimeFolder, expectedResultFolder.getName());
-      expectedResultFolder.renameTo(kiekerSubfolder);
-      
-      final File expectedKoPeMeFile = new File(clazzFolder, test.getMethod() + ".xml");
-      jsonResultFile.renameTo(expectedKoPeMeFile);
    }
 
    private String[] buildParameterString(final TestCase test, final File jsonResultFile) {

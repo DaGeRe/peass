@@ -7,7 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.junit.Ignore;
+import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -18,27 +19,32 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.TestConstants;
+import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.FakeGitUtil;
 import de.dagere.peass.dependencytests.TraceGettingIT;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
+import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 
-@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(GitUtils.class)
 @PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class JmhTest {
    
-  
+   @Before
+   public void clearCurrent() throws IOException {
+      TestUtil.deleteContents(TestConstants.CURRENT_FOLDER.getParentFile());
+   }
    
    @Test
    public void testVersionReading() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
@@ -56,6 +62,10 @@ public class JmhTest {
       DependencyReader reader = new DependencyReader(dependencyConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
             "", iterator, new VersionKeeper(new File("/dev/null")), jmhConfig, new EnvironmentVariables());
       reader.readInitialVersion();
+      
+      Dependencies dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
+      Assert.assertEquals(dependencies.getInitialversion().getInitialDependencies().size(), 2);
+      
    }
    
    private FakeFileIterator mockIterator() {
