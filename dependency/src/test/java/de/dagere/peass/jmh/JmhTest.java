@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,9 +26,11 @@ import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.ResultsFolders;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
@@ -64,7 +68,10 @@ public class JmhTest {
       reader.readInitialVersion();
       
       Dependencies dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
-      Assert.assertEquals(dependencies.getInitialversion().getInitialDependencies().size(), 2);
+      Map<ChangedEntity, InitialDependency> initialDependencies = dependencies.getInitialversion().getInitialDependencies();
+      Assert.assertThat(initialDependencies.keySet(), Matchers.hasSize(1));
+      InitialDependency initial = initialDependencies.get(new ChangedEntity("de.dagere.peass.ExampleBenchmark", null, "testMethod"));
+      Assert.assertThat(initial.getEntities(), Matchers.hasSize(2));
       
    }
    
