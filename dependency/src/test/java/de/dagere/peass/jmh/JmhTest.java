@@ -18,6 +18,8 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.TestConstants;
@@ -27,9 +29,11 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
@@ -67,12 +71,25 @@ public class JmhTest {
             "", iterator, new VersionKeeper(new File("/dev/null")), jmhConfig, new EnvironmentVariables());
       reader.readInitialVersion();
       
+      checkInitialVersion(resultsFolders);
+      
+      reader.readDependencies();
+      
+      checkChangedVersion(resultsFolders);
+   }
+
+   private void checkChangedVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
+      ExecutionData data = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+      TestCase changedBenchmark = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
+      Assert.assertThat(data.getVersions().get("000002").getTests(), Matchers.contains(changedBenchmark));
+   }
+
+   private void checkInitialVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
       Dependencies dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
       Map<ChangedEntity, InitialDependency> initialDependencies = dependencies.getInitialversion().getInitialDependencies();
       Assert.assertThat(initialDependencies.keySet(), Matchers.hasSize(1));
       InitialDependency initial = initialDependencies.get(new ChangedEntity("de.dagere.peass.ExampleBenchmark", null, "testMethod"));
       Assert.assertThat(initial.getEntities(), Matchers.hasSize(2));
-      
    }
    
    private FakeFileIterator mockIterator() {
