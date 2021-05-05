@@ -49,8 +49,8 @@ public class OneTraceGenerator {
          throws com.github.javaparser.ParseException, IOException, ViewNotFoundException, XmlPullParserException {
       boolean success = false;
       try {
-         final File resultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
-         final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder);
+         final File moduleResultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
+         final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultsFolder);
          LOG.debug("Searching for: {}", kiekerResultFolder);
          if (kiekerResultFolder.exists() && kiekerResultFolder.isDirectory()) {
             success = generateTraceFiles(versionCurrent, kiekerResultFolder);

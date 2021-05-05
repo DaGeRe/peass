@@ -97,7 +97,8 @@ public class KiekerFolderUtil {
    public static File getModuleResultFolder(final PeASSFolders folders, final TestCase testcase) {
       File moduleFolder;
       if (testcase.getModule() != null) {
-         moduleFolder = KiekerResultManager.getXMLFileFolder(folders, new File(folders.getProjectFolder(), testcase.getModule()));
+         File rawModuleFolder = new File(folders.getProjectFolder(), testcase.getModule());
+         moduleFolder = KiekerResultManager.getXMLFileFolder(folders, rawModuleFolder);
       } else {
          moduleFolder = KiekerResultManager.getXMLFileFolder(folders, folders.getProjectFolder());
       }

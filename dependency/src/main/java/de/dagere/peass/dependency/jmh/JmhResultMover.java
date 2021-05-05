@@ -5,16 +5,15 @@ import java.io.FileFilter;
 
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 
 public class JmhResultMover {
    
    private final PeASSFolders folders;
+   private final File sourceResultFolder;
    
    public JmhResultMover(final PeASSFolders folders) {
       this.folders = folders;
-   }
-
-   public void moveToMethodFolder(final TestCase test, final File jsonResultFile) {
       final File[] files = folders.getTempMeasurementFolder().listFiles(new FileFilter() {
 
          @Override
@@ -22,17 +21,20 @@ public class JmhResultMover {
             return pathname.getName().startsWith("kieker-");
          }
       });
-      final File expectedResultFolder = files[0];
+      sourceResultFolder = files[0];
+   }
 
-      final File clazzFolder = new File(folders.getTempMeasurementFolder(), test.getClazz());
+   public void moveToMethodFolder(final TestCase testcase, final File sourceJsonResultFile) {
+      final File moduleResultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
+      final File clazzResultFolder = new File(moduleResultsFolder, testcase.getClazz());
       
-      final File kiekerTimeFolder = new File(clazzFolder, Long.toString(System.currentTimeMillis()) + File.separator + test.getMethod());
+      final File kiekerTimeFolder = new File(clazzResultFolder, Long.toString(System.currentTimeMillis()) + File.separator + testcase.getMethod());
       kiekerTimeFolder.mkdirs();
 
-      final File kiekerSubfolder = new File(kiekerTimeFolder, expectedResultFolder.getName());
-      expectedResultFolder.renameTo(kiekerSubfolder);
+      final File kiekerSubfolder = new File(kiekerTimeFolder, sourceResultFolder.getName());
+      sourceResultFolder.renameTo(kiekerSubfolder);
       
-      final File expectedKoPeMeFile = new File(clazzFolder, test.getMethod() + ".xml");
-      jsonResultFile.renameTo(expectedKoPeMeFile);
+      final File expectedKoPeMeFile = new File(clazzResultFolder, testcase.getMethod() + ".xml");
+      sourceJsonResultFile.renameTo(expectedKoPeMeFile);
    }
 }

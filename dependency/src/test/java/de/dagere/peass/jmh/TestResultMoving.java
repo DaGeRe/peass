@@ -2,8 +2,12 @@ package de.dagere.peass.jmh;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,25 +17,40 @@ import de.dagere.peass.TestUtil;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.jmh.JmhResultMover;
+import de.dagere.peass.dependency.traces.KiekerFolderUtil;
+import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 
 public class TestResultMoving {
-   
+
    @Before
-   public void clearCurrent() {
-      TestUtil.deleteContents(TestConstants.CURRENT_FOLDER);
-   }
-   
-   @Test
-   public void testResultMoving() throws IOException {
+   public void clearCurrent() throws IOException {
+      TestUtil.deleteContents(TestConstants.CURRENT_FOLDER.getParentFile());
+
+      FileUtils.copyDirectory(JmhTestConstants.BASIC_VERSION, TestConstants.CURRENT_FOLDER);
+
       File currentPeassFolder = new File(JmhTestConstants.JMH_EXAMPLE_FOLDER, "current_peass");
       FileUtils.copyDirectory(currentPeassFolder, new File(TestConstants.CURRENT_FOLDER.getParentFile(), "current_peass"));
+   }
+
+   @Test
+   public void testResultMoving() throws IOException, ViewNotFoundException {
       PeASSFolders folders = new PeASSFolders(TestConstants.CURRENT_FOLDER);
-      
+
       File jsonResultFile = new File(folders.getTempMeasurementFolder(), "testMethod.json");
-      new JmhResultMover(folders).moveToMethodFolder(new TestCase("de.dagere.peass.ExampleBenchmark#testMethod"), jsonResultFile);
-      
-      //TODO Assert correct file and fix JmhResultMover
-      File expectedXMLFile = new File(folders.getTempMeasurementFolder(), "de.dagere.peass.ExampleBenchmark/testMethod.xml");
+      TestCase testcase = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
+      new JmhResultMover(folders).moveToMethodFolder(testcase, jsonResultFile);
+
+      // TODO Assert correct file and fix JmhResultMover
+      File expectedXMLFile = new File(folders.getTempMeasurementFolder(), "de.dagere.peass/example/de.dagere.peass.ExampleBenchmark/testMethod.xml");
       Assert.assertTrue(expectedXMLFile.exists());
+
+      final File moduleResultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
+      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultsFolder);
+      
+      List<File> fileNames = Arrays.asList(kiekerResultFolder.listFiles()).stream()
+            .filter(file -> file.getName().endsWith(".dat"))
+            .collect(Collectors.toList());
+      System.out.println(fileNames);
+      Assert.assertThat(fileNames.get(0).getName(), Matchers.startsWith("kieker-"));
    }
 }
