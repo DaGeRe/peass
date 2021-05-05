@@ -131,7 +131,7 @@ public class ContinuousDependencyReader {
          throws Exception {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
          File logFile = new File(getDependencyreadingFolder(), iterator.getTag() + "_" + iterator.getPredecessor() + ".txt");
-         LOG.info("Executing regression test selection (step 1) - Log goes to {}", logFile.getAbsolutePath());
+         LOG.info("Executing regression test selection - Log goes to {}", logFile.getAbsolutePath());
 
          try (LogRedirector director = new LogRedirector(logFile)) {
             return doFullyLoadDependencies(url, iterator, nonChanges);
