@@ -76,7 +76,7 @@ public class ContinuousExecutor {
          GitUtils.pull(projectFolderLocal);
          GitUtils.goToTag(measurementConfig.getVersion(), projectFolderLocal);
       }
-      resultsFolders = new ResultsFolders(projectFolderLocal, projectFolder.getName());
+      resultsFolders = new ResultsFolders(localFolder, projectFolder.getName());
 
       folders = new PeASSFolders(projectFolderLocal);
 
