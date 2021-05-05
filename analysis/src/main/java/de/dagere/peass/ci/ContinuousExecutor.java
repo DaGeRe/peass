@@ -69,7 +69,7 @@ public class ContinuousExecutor {
       localFolder = ContinuousFolderUtil.getLocalFolder(vcsFolder);
       File projectFolderLocal = new File(localFolder, ContinuousFolderUtil.getSubFolderPath(projectFolder));
       getGitRepo(projectFolder, measurementConfig, projectFolderLocal);
-      resultsFolders = new ResultsFolders(projectFolderLocal, projectFolder.getName());
+      resultsFolders = new ResultsFolders(localFolder, projectFolder.getName());
 
       folders = new PeASSFolders(projectFolderLocal);
 
