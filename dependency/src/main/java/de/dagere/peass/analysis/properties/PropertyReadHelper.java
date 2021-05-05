@@ -145,7 +145,7 @@ public class PropertyReadHelper {
          index = versions.indexOf(version) - 1;
       }
       LOG.debug("Trying old versions starting with {} Versions: {}", index, changedTests.getVersions().keySet());
-      while (!traceFileOld.exists() && index > 0) {
+      while (!traceFileOld.exists() && index >= 0) {
          String tryVersion = versions.get(index);
          File versionFolder = new File(viewFolder, "view_" + tryVersion);
          File predecessorFolder = new File(versionFolder, testClazz + File.separator + property.getMethod());
