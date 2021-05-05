@@ -2,13 +2,10 @@ package de.dagere.peass.dependency.traces;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.dependency.KiekerResultManager;
 import de.dagere.peass.dependency.PeASSFolders;
@@ -47,8 +44,6 @@ public class KiekerFolderUtil {
          throw new RuntimeException("Folder " + methodResult + " is no Kieker result folder!");
       }
    }
-
-   
 
    public static File getKiekerTraceFolder(final File kiekerResultFolder, final TestCase testcase) {
       File methodResult = new File(kiekerResultFolder, testcase.getMethod());
@@ -99,8 +94,7 @@ public class KiekerFolderUtil {
       return null;
    }
 
-   public static File getModuleResultFolder(final PeASSFolders folders, final TestCase testcase)
-         throws FileNotFoundException, IOException, XmlPullParserException {
+   public static File getModuleResultFolder(final PeASSFolders folders, final TestCase testcase) {
       File moduleFolder;
       if (testcase.getModule() != null) {
          moduleFolder = KiekerResultManager.getXMLFileFolder(folders, new File(folders.getProjectFolder(), testcase.getModule()));

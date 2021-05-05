@@ -30,19 +30,17 @@ public class OneTraceGenerator {
    private final TestCase testcase;
    private final TraceFileMapping traceFileMap;
    private final String version;
-   private final File resultsFolder;
    private final ResultsFolders resultsFolders;
    private final List<File> classpathFolders;
    private final ModuleClassMapping mapping;
 
    public OneTraceGenerator(final ResultsFolders resultsFolders, final PeASSFolders folders, final TestCase testcase, final TraceFileMapping traceFileMap, final String version,
-         final File resultsFolder, final List<File> classpathFolders, final ModuleClassMapping mapping) {
+         final List<File> classpathFolders, final ModuleClassMapping mapping) {
       this.resultsFolders = resultsFolders;
       this.folders = folders;
       this.testcase = testcase;
       this.traceFileMap = traceFileMap;
       this.version = version;
-      this.resultsFolder = resultsFolder;
       this.classpathFolders = classpathFolders;
       this.mapping = mapping;
    }
@@ -51,6 +49,7 @@ public class OneTraceGenerator {
          throws com.github.javaparser.ParseException, IOException, ViewNotFoundException, XmlPullParserException {
       boolean success = false;
       try {
+         final File resultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
          final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder);
          LOG.debug("Searching for: {}", kiekerResultFolder);
          if (kiekerResultFolder.exists() && kiekerResultFolder.isDirectory()) {
