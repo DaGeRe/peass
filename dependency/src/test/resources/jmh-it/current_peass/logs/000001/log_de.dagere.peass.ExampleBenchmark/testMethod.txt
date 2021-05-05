@@ -1,0 +1,65 @@
+# JMH version: 1.29
+# VM version: JDK 11.0.11, OpenJDK 64-Bit Server VM, 11.0.11+9-Ubuntu-0ubuntu2.20.04
+# VM invoker: /usr/lib/jvm/java-11-openjdk-amd64/bin/java
+# VM options: -Dkieker.monitoring.configuration=/home/reichelt/nvme/workspaces/dissworkspace/peass/dependency/target/view_it/current/src/main/resources/META-INF/kieker.monitoring.properties -Djava.io.tmpdir=/home/reichelt/nvme/workspaces/dissworkspace/peass/dependency/target/view_it/current_peass/measurementsTemp
+# Blackhole mode: full + dont-inline hint
+# Warmup: <none>
+# Measurement: 1 iterations, single-shot each
+# Timeout: 10 min per iteration
+# Threads: 1 thread
+# Benchmark mode: Single shot invocation time
+# Benchmark: de.dagere.peass.ExampleBenchmark.testMethod
+
+# Run progress: 0,00% complete, ETA 00:00:00
+# Fork: 1 of 1
+Iteration   1: WARNING: sun.reflect.Reflection.getCallerClass is not supported. This will impact performance.
+12:30:16.473 [de.dagere.peass.ExampleBenchmark.testMethod-jmh-worker-1] DEBUG kieker.monitoring.core.configuration.ConfigurationFactory:59 - Searching for JVM argument 'kieker.monitoring.configuration' ...
+12:30:16.476 [de.dagere.peass.ExampleBenchmark.testMethod-jmh-worker-1] INFO  kieker.monitoring.core.configuration.ConfigurationFactory:67 - Loading configuration from JVM-specified location: '/home/reichelt/nvme/workspaces/dissworkspace/peass/dependency/target/view_it/current/src/main/resources/META-INF/kieker.monitoring.properties'
+12:30:16.478 [de.dagere.peass.ExampleBenchmark.testMethod-jmh-worker-1] INFO  kieker.monitoring.core.controller.TCPController:79 - Could not parse port for the TCPController, deactivating this option. Received string was: 
+Mai 05, 2021 12:30:16 NACHM. de.dagere.kopeme.kieker.writer.ChangeableFolderWriter <init>
+INFORMATION: Init..
+12:30:16.499 [de.dagere.peass.ExampleBenchmark.testMethod-jmh-worker-1] DEBUG kieker.monitoring.core.controller.WriterController:258 - Initializing Writer Controller
+12:30:16.500 [de.dagere.peass.ExampleBenchmark.testMethod-jmh-worker-1] INFO  kieker.monitoring.core.controller.StateController:128 - Enabling monitoring
+12:30:16.500 [Thread-2] DEBUG kieker.monitoring.writer.MonitoringWriterThread:58 - kieker.monitoring.writer.MonitoringWriterThread is running.
+Initializing class de.dagere.kopeme.kieker.writer.ChangeableFolderWriter
+12:30:16.508 [de.dagere.peass.ExampleBenchmark.testMethod-jmh-worker-1] INFO  kieker.monitoring.core.controller.MonitoringController:172 - Current State of kieker.monitoring (1.15-SNAPSHOT) Status: 'enabled'
+	Name: 'KIEKER-KoPeMe'; Hostname: 'reichelt-desktop'; experimentID: '1'
+JMXController: JMX disabled
+TimeSource: 'kieker.monitoring.timer.SystemNanoTimer'
+	Time in nanoseconds (with nanoseconds precision) since Thu Jan 01 01:00:00 CET 1970'
+ProbeController: disabled
+WriterController:
+	Queue type: class java.util.concurrent.LinkedBlockingQueue
+	Queue capacity: 10000000
+	Insert behavior (a.k.a. QueueFullBehavior): class kieker.monitoring.queue.behavior.BlockOnFailedInsertBehavior
+		numBlocked: 0
+Writer: 'de.dagere.kopeme.kieker.writer.ChangeableFolderWriter'
+	Configuration:
+		de.dagere.kopeme.kieker.writer.ChangeableFolderWriter.realwriter='FileWriter'
+		de.dagere.kopeme.kieker.writer.ChangeableFolderWriter.flush='false'
+
+	Automatic assignment of logging timestamps: 'true'
+Sampling Controller: Periodic Sensor available: Poolsize: '0'; Scheduled Tasks: '0'
+12:30:16.509 [de.dagere.peass.ExampleBenchmark.testMethod-jmh-worker-1] INFO  kieker.monitoring.core.registry.ControlFlowRegistry:49 - First threadId will be 1540794022514130944
+0,001 s/op
+12:30:16.522 [Thread-3] INFO  kieker.monitoring.core.controller.MonitoringController:153 - ShutdownHook notifies controller to initiate shutdown.
+12:30:16.523 [Thread-3] INFO  kieker.monitoring.core.controller.MonitoringController:250 - Terminating monitoring...
+12:30:16.523 [Thread-3] INFO  kieker.monitoring.core.controller.MonitoringController:199 - Shutting down Monitoring Controller (KIEKER-KoPeMe)
+12:30:16.523 [Thread-3] DEBUG kieker.monitoring.core.controller.ProbeController:168 - Shutting down Probe Controller
+12:30:16.523 [Thread-3] DEBUG kieker.monitoring.core.controller.TimeSourceController:59 - Shutting down TimeSource Controller
+12:30:16.524 [Thread-3] DEBUG kieker.monitoring.core.controller.WriterController:267 - Shutting down Writer Controller
+
+
+
+# Run complete. Total time: 00:00:00
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+Benchmark                    Mode  Cnt  Score   Error  Units
+ExampleBenchmark.testMethod    ss       0,001           s/op
+
+Benchmark result is saved to /home/reichelt/nvme/workspaces/dissworkspace/peass/dependency/target/view_it/current_peass/measurementsTemp/testMethod.json

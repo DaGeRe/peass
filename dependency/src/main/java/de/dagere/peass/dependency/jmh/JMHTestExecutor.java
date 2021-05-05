@@ -58,39 +58,45 @@ public class JMHTestExecutor extends TestExecutor {
    @Override
    public void executeTest(final TestCase test, final File logFolder, final long timeout) {
       try {
-         String[] mergedParameters = buildParameterString(test);
+         File jsonResultFile = new File(folders.getTempMeasurementFolder(), test.getMethod()+ ".json");
+         String[] mergedParameters = buildParameterString(test, jsonResultFile);
 
          ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
          File logFile = getMethodLogFile(logFolder, test);
          Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, mergedParameters);
 
          execute(test.getExecutable(), transformer.getConfig().getTimeoutInMinutes(), process);
-         
-         moveToMethodFolder(test);
-         
+
+         moveToMethodFolder(test, jsonResultFile);
+
       } catch (InterruptedException | IOException e) {
          throw new RuntimeException(e);
       }
    }
 
-   private void moveToMethodFolder(final TestCase test) {
-      File[] files = folders.getTempMeasurementFolder().listFiles(new FileFilter() {
-         
+   private void moveToMethodFolder(final TestCase test, final File jsonResultFile) {
+      final File[] files = folders.getTempMeasurementFolder().listFiles(new FileFilter() {
+
          @Override
          public boolean accept(final File pathname) {
             return pathname.getName().startsWith("kieker-");
          }
       });
-      File expectedResultFolder = files[0];
+      final File expectedResultFolder = files[0];
+
+      final File clazzFolder = new File(folders.getTempMeasurementFolder(), test.getClazz());
       
-      File methodFolder = new File(folders.getTempMeasurementFolder(), test.getClazz() + File.separator + test.getMethod() + File.separator + System.currentTimeMillis());
-      methodFolder.mkdirs();
-      
-      File kiekerSubfolder = new File(methodFolder, expectedResultFolder.getName());
+      final File kiekerTimeFolder = new File(clazzFolder, Long.toString(System.currentTimeMillis()) + File.separator + test.getMethod());
+      kiekerTimeFolder.mkdirs();
+
+      final File kiekerSubfolder = new File(kiekerTimeFolder, expectedResultFolder.getName());
       expectedResultFolder.renameTo(kiekerSubfolder);
+      
+      final File expectedKoPeMeFile = new File(clazzFolder, test.getMethod() + ".xml");
+      jsonResultFile.renameTo(expectedKoPeMeFile);
    }
 
-   private String[] buildParameterString(final TestCase test) {
+   private String[] buildParameterString(final TestCase test, final File jsonResultFile) {
       String[] basicParameters;
       if (testTransformer.getConfig().isUseKieker()) {
          File moduleFolder = new File(folders.getProjectFolder(), test.getModule());
@@ -111,7 +117,9 @@ public class JMHTestExecutor extends TestExecutor {
             "-i",
             Integer.toString(transformer.getConfig().getIterations()),
             "-wi",
-            Integer.toString(transformer.getConfig().getWarmup()) };
+            Integer.toString(transformer.getConfig().getWarmup()),
+            "-rff",
+            jsonResultFile.getAbsolutePath()  };
       String[] mergedParameters = CommandConcatenator.concatenateCommandArrays(basicParameters, jmhParameters);
       return mergedParameters;
    }

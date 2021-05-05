@@ -115,12 +115,6 @@ public abstract class VersionProcessor implements Callable<Void> {
    }
 
    protected void initVersionProcessor() throws IOException, JsonParseException, JsonMappingException {
-      if (executionMixin != null) {
-         startversion = executionMixin.getStartversion();
-         endversion = executionMixin.getEndversion();
-         version = executionMixin.getVersion();
-      }
-      
       if (dependencyFile != null) {
          dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
          VersionComparator.setDependencies(dependencies);

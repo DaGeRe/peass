@@ -171,10 +171,10 @@ public class DependencyManager extends KiekerResultManager {
       final Collection<File> xmlFiles = FileUtils.listFiles(folders.getTempMeasurementFolder(), new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE);
       LOG.debug("Initial test execution finished, starting result collection, analyzing {} files", xmlFiles.size());
       for (final File testResultFile : xmlFiles) {
-         final String testClassName = testResultFile.getParentFile().getName();
+         final File parent = testResultFile.getParentFile();
+         final String testClassName = parent.getName();
          final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - 4); // remove
          // .xml
-         final File parent = testResultFile.getParentFile();
          final String moduleOfClass = mapping.getModuleOfClass(testClassName);
          if (moduleOfClass == null) {
             throw new RuntimeException("Module of class " + testClassName + " is null");
