@@ -1,0 +1,2 @@
+"Benchmark","Mode","Threads","Samples","Score","Score Error (99,9%)","Unit"
+"de.dagere.peass.ExampleBenchmark.testMethod","ss",1,1,"0,001119",NaN,"s/op"
