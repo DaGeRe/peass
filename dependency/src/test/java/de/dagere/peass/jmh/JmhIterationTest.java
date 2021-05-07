@@ -8,6 +8,7 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -63,6 +64,15 @@ public class JmhIterationTest {
       Assert.assertEquals(3, testcaseData.getDatacollector().get(0).getResult().size());
       List<Result> results = testcaseData.getDatacollector().get(0).getResult();
       Assert.assertEquals(4, results.get(0).getFulldata().getValue().size());
+      
+      for (Result result : results) {
+         DescriptiveStatistics statistics = new DescriptiveStatistics();
+         result.getFulldata().getValue().forEach(value -> statistics.addValue(value.getValue()));
+         
+         Assert.assertEquals(statistics.getMean(), result.getValue(), 0.01);
+         Assert.assertEquals(statistics.getStandardDeviation(), result.getDeviation(), 0.01);
+         
+      }
    }
 
 }

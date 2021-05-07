@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
+import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.jmh.JmhResultMover;
@@ -38,7 +39,7 @@ public class TestResultMoving {
 
       File jsonResultFile = new File(folders.getTempMeasurementFolder(), "testMethod.json");
       TestCase testcase = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
-      new JmhResultMover(folders).moveToMethodFolder(testcase, jsonResultFile);
+      new JmhResultMover(folders, new MeasurementConfiguration(1)).moveToMethodFolder(testcase, jsonResultFile);
 
       // TODO Assert correct file and fix JmhResultMover
       File expectedXMLFile = new File(folders.getTempMeasurementFolder(), "de.dagere.peass/example/de.dagere.peass.ExampleBenchmark/testMethod.xml");

@@ -66,7 +66,7 @@ public class JmhTestExecutor extends TestExecutor {
 
          execute(test.getExecutable(), transformer.getConfig().getTimeoutInMinutes(), process);
 
-         new JmhResultMover(folders).moveToMethodFolder(test, jsonResultFile);
+         new JmhResultMover(folders, transformer.getConfig()).moveToMethodFolder(test, jsonResultFile);
 
       } catch (InterruptedException | IOException e) {
          throw new RuntimeException(e);

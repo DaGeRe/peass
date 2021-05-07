@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
@@ -16,6 +18,7 @@ import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
@@ -25,10 +28,12 @@ public class JmhResultMover {
 
    private static final int SECONDS_TO_NANOSECONDS = 1000000000;
    private final PeASSFolders folders;
+   private final MeasurementConfiguration measurementConfig;
    private final File sourceResultFolder;
 
-   public JmhResultMover(final PeASSFolders folders) {
+   public JmhResultMover(final PeASSFolders folders, final MeasurementConfiguration measurementConfig) {
       this.folders = folders;
+      this.measurementConfig = measurementConfig;
       final File[] files = folders.getTempMeasurementFolder().listFiles(new FileFilter() {
 
          @Override
@@ -92,7 +97,7 @@ public class JmhResultMover {
       }
    }
 
-   private Result buildResult(JsonNode vmExecution) {
+   private Result buildResult(final JsonNode vmExecution) {
       Result result = new Result();
       result.setFulldata(new Fulldata());
       for (JsonNode iteration : vmExecution) {
@@ -101,6 +106,17 @@ public class JmhResultMover {
          value.setValue(iterationDuration);
          result.getFulldata().getValue().add(value);
       }
+      
+      DescriptiveStatistics statistics = new DescriptiveStatistics();
+      result.getFulldata().getValue().forEach(value -> statistics.addValue(value.getValue()));
+      result.setValue(statistics.getMean());
+      result.setDeviation(statistics.getStandardDeviation());
+      result.setIterations(result.getFulldata().getValue().size());
+      
+      // Assume that warmup and repetitions took place as defined, since they are not recorded by jmh
+      result.setWarmup(measurementConfig.getWarmup());
+      result.setRepetitions(measurementConfig.getRepetitions());
+      
       return result;
    }
 }
