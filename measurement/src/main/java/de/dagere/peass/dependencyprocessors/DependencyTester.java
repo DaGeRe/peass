@@ -68,7 +68,7 @@ public class DependencyTester implements KiekerResultHandler {
 
       LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getVersionOld(), configuration.getVersion());
 
-      final File logFolder = getLogFolder(configuration.getVersion(), testcase);
+      final File logFolder = folders.getLogFolder(configuration.getVersion(), testcase);
 
       currentChunkStart = System.currentTimeMillis();
       for (int finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
@@ -204,15 +204,6 @@ public class DependencyTester implements KiekerResultHandler {
       for (String version : versions) {
          runOnce(testcase, version, vmid, logFolder);
       }
-   }
-
-   public File getLogFolder(final String version, final TestCase testcase) {
-      File logFolder = new File(folders.getLogFolder(), version + File.separator + testcase.getMethod());
-      if (logFolder.exists()) {
-         logFolder = new File(folders.getLogFolder(), version + File.separator + testcase.getMethod() + "_new");
-      }
-      logFolder.mkdirs();
-      return logFolder;
    }
 
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)

@@ -1,7 +1,12 @@
 package de.dagere.peass.dependency;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.GradleParseUtil;
@@ -100,6 +105,15 @@ public class PeASSFolders {
    public File getLogFolder() {
       return logFolder;
    }
+   
+   public File getLogFolder(final String version, final TestCase testcase) {
+      File testLogFolder = new File(logFolder, version + File.separator + testcase.getMethod());
+      if (testLogFolder.exists()) {
+         testLogFolder = new File(logFolder, version + File.separator + testcase.getMethod() + "_new");
+      }
+      testLogFolder.mkdirs();
+      return testLogFolder;
+   }
 
    public File getOldSources() {
       if (!oldSourceFolder.exists()) {
@@ -114,6 +128,32 @@ public class PeASSFolders {
 
    public File getTempMeasurementFolder() {
       return tempResultFolder;
+   }
+   
+   /**
+    * Searches in subfolders for a clazz folder (necessary, since submodules may have arbitraty depth)
+    * @param baseFolder
+    * @param folderFilter
+    * @return
+    */
+   public List<File> findTempClazzFolder(final TestCase testcase) {
+      final String expectedFolderName = "*" + testcase.getClazz();
+      FileFilter folderFilter = new WildcardFileFilter(expectedFolderName);
+      return findTempClazzFolder(tempResultFolder, folderFilter);
+   }
+   
+   private List<File> findTempClazzFolder(final File baseFolder, final FileFilter folderFilter) {
+      final List<File> files = new LinkedList<>();
+      for (final File subfolder : baseFolder.listFiles()) {
+         if (subfolder.isDirectory()) {
+            if (folderFilter.accept(subfolder)) {
+               files.add(subfolder);
+            } else {
+               files.addAll(findTempClazzFolder(subfolder, folderFilter));
+            }
+         }
+      }
+      return files;
    }
 
    public File getDetailResultFolder() {

@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,12 +35,9 @@ public class ResultOrganizerParallel extends ResultOrganizer {
       PeASSFolders currentFolders = sourceFolders.get(version);
       LOG.info("Searching method: {} Version: {} Existing versions: {}", testcase, version, sourceFolders.keySet());
       LOG.info("Instance: " + System.identityHashCode(this));
-      final String expectedFolderName = "*" + testcase.getClazz();
-      final File containingFolder = currentFolders.getTempMeasurementFolder();
-      final Collection<File> folderCandidates = findFolder(containingFolder, new WildcardFileFilter(expectedFolderName));
+      final Collection<File> folderCandidates = currentFolders.findTempClazzFolder(testcase);
       if (folderCandidates.size() != 1) {
-         LOG.error("Folder with name {} is existing {} times.", expectedFolderName, folderCandidates.size());
-         LOG.error("Searched in: {}", containingFolder);
+         LOG.error("Folder with name {} is existing {} times.", testcase.getClazz(), folderCandidates.size());
          return null;
       } else {
          final File folder = folderCandidates.iterator().next();

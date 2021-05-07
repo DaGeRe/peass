@@ -1,17 +1,14 @@
 package de.dagere.peass.measurement.organize;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -29,7 +26,7 @@ public class ResultOrganizer {
 
    private static final Logger LOG = LogManager.getLogger(ResultOrganizer.class);
 
-   private final PeASSFolders folders;
+   protected final PeASSFolders folders;
    private final String mainVersion;
    private final long currentChunkStart;
    private final boolean isUseKieker;
@@ -134,10 +131,9 @@ public class ResultOrganizer {
 
    public File getTempResultsFolder(final String version) {
       LOG.info("Searching method: {}", testcase);
-      final String expectedFolderName = "*" + testcase.getClazz();
-      final Collection<File> folderCandidates = findFolder(folders.getTempMeasurementFolder(), new WildcardFileFilter(expectedFolderName));
+      final Collection<File> folderCandidates = folders.findTempClazzFolder(testcase); 
       if (folderCandidates.size() != 1) {
-         LOG.error("Ordner {} ist {} mal vorhanden.", expectedFolderName, folderCandidates.size());
+         LOG.error("Ordner {} ist {} mal vorhanden.", testcase.getClazz(), folderCandidates.size());
          return null;
       } else {
          final File folder = folderCandidates.iterator().next();
@@ -218,20 +214,6 @@ public class ResultOrganizer {
                   dest.getAbsolutePath());
          }
       }
-   }
-
-   protected static List<File> findFolder(final File baseFolder, final FileFilter folderFilter) {
-      final List<File> files = new LinkedList<>();
-      for (final File f : baseFolder.listFiles()) {
-         if (f.isDirectory()) {
-            if (folderFilter.accept(f)) {
-               files.add(f);
-            } else {
-               files.addAll(findFolder(f, folderFilter));
-            }
-         }
-      }
-      return files;
    }
 
    public int getThresholdForZippingInMB() {
