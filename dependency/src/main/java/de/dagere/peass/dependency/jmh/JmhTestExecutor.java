@@ -24,11 +24,11 @@ import de.dagere.peass.testtransformation.TestTransformer;
  * @author reichelt
  *
  */
-public class JMHTestExecutor extends TestExecutor {
+public class JmhTestExecutor extends TestExecutor {
 
    private final JMHTestTransformer transformer;
 
-   public JMHTestExecutor(final PeASSFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
+   public JmhTestExecutor(final PeASSFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
       super(folders, testTransformer, env);
       this.transformer = (JMHTestTransformer) testTransformer;
    }
@@ -95,6 +95,8 @@ public class JMHTestExecutor extends TestExecutor {
             Integer.toString(transformer.getConfig().getIterations()),
             "-wi",
             Integer.toString(transformer.getConfig().getWarmup()),
+            "-rf", 
+            "json", // JSON format is needed, since VM-internal measurement values are required
             "-rff",
             jsonResultFile.getAbsolutePath()  };
       String[] mergedParameters = CommandConcatenator.concatenateCommandArrays(basicParameters, jmhParameters);

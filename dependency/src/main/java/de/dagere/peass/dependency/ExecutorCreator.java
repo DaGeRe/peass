@@ -14,7 +14,7 @@ import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.GradleTestExecutor;
 import de.dagere.peass.dependency.execution.MavenTestExecutor;
 import de.dagere.peass.dependency.execution.TestExecutor;
-import de.dagere.peass.dependency.jmh.JMHTestExecutor;
+import de.dagere.peass.dependency.jmh.JmhTestExecutor;
 import de.dagere.peass.dependency.jmh.JMHTestTransformer;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.testtransformation.TestTransformer;
@@ -35,7 +35,7 @@ public class ExecutorCreator {
       final String executorName = testTransformer.getConfig().getExecutionConfig().getTestExecutor();
       System.out.println(executorName);
       if (testTransformer != null && (!"default".equals(executorName) || testTransformer instanceof JMHTestTransformer)) {
-         return new JMHTestExecutor(folders, testTransformer, env);
+         return new JmhTestExecutor(folders, testTransformer, env);
       } else if (buildGradle.exists()) {
          return new GradleTestExecutor(folders, (JUnitTestTransformer) testTransformer, env);
       } else if (pom.exists()) {
