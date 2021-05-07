@@ -3,6 +3,7 @@ package de.dagere.peass.jmh;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
@@ -16,6 +17,7 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
+import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
@@ -54,7 +56,12 @@ public class JmhIterationTest {
       Kopemedata data = XMLDataLoader.loadData(new File(clazzFolder, testcase.getMethod() + ".xml"));
       
       TestcaseType testcaseData = data.getTestcases().getTestcase().get(0);
-      Assert.assertEquals("de.dagere.peass.ExampleBenchmark", testcaseData.getName());
+      Assert.assertEquals("de.dagere.peass.ExampleBenchmark", data.getTestcases().getClazz());
+      Assert.assertEquals("testMethod", testcaseData.getName());
+      
+      Assert.assertEquals(3, testcaseData.getDatacollector().get(0).getResult().size());
+      List<Result> results = testcaseData.getDatacollector().get(0).getResult();
+      Assert.assertEquals(4, results.get(0).getFulldata().getValue().size());
    }
 
 }
