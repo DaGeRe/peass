@@ -22,14 +22,14 @@ import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.testtransformation.TestTransformer;
 
-public class JMHTestTransformer implements TestTransformer {
+public class JmhTestTransformer implements TestTransformer {
 
    private final File projectFolder;
    private final MeasurementConfiguration measurementConfig;
    private boolean isAggregatedWriter;
    private boolean ignoreEOIs;
 
-   public JMHTestTransformer(final File projectFolder, final MeasurementConfiguration measurementConfig) {
+   public JmhTestTransformer(final File projectFolder, final MeasurementConfiguration measurementConfig) {
       this.projectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
    }

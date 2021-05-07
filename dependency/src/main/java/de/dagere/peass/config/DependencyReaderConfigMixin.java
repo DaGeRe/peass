@@ -40,6 +40,9 @@ public class DependencyReaderConfigMixin {
    @Option(names = {"-doNotGenerateViews", "--doNotGenerateViews"}, description = "Disable generation of views. Is false by default, but will be activated automatically if --doNotUpdateDependencies is set.")
    public boolean doNotGenerateViews = false;
    
+   @Option(names = {"-workloadType", "--workloadType"}, description = "Which workload should be executed - by default JUNIT, can be changed to JMH")
+   public WorkloadType workloadType = WorkloadType.JUNIT;
+   
    public String getTestGoal() {
       return testGoal;
    }
@@ -101,10 +104,20 @@ public class DependencyReaderConfigMixin {
          }
       }
       executionConfig.setPl(pl);
+      executionConfig.setTestTransformer(workloadType.getTestTransformer());
+      executionConfig.setTestExecutor(workloadType.getTestExecutor());
       return executionConfig;
    }
    
    public DependencyConfig getDependencyConfig() {
       return new DependencyConfig(threads, doNotUpdateDependencies, !doNotGenerateViews);
+   }
+   
+   public WorkloadType getWorkloadType() {
+      return workloadType;
+   }
+   
+   public void setWorkloadType(final WorkloadType workloadType) {
+      this.workloadType = workloadType;
    }
 }

@@ -28,7 +28,7 @@ import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
-import de.dagere.peass.dependency.jmh.JMHTestTransformer;
+import de.dagere.peass.dependency.jmh.JmhTestTransformer;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 
 public class JmhIterationTest {
@@ -45,7 +45,7 @@ public class JmhIterationTest {
       MeasurementConfiguration measurementConfig = new MeasurementConfiguration(3);
       measurementConfig.setIterations(4);
       measurementConfig.setWarmup(2);
-      JMHTestTransformer transformer = new JMHTestTransformer(TestConstants.CURRENT_FOLDER, measurementConfig);
+      JmhTestTransformer transformer = new JmhTestTransformer(TestConstants.CURRENT_FOLDER, measurementConfig);
       PeASSFolders folders = new PeASSFolders(TestConstants.CURRENT_FOLDER);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, transformer, new EnvironmentVariables());
     

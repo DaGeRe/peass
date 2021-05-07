@@ -111,6 +111,8 @@ public class MeasurementConfiguration implements Serializable {
       if (executionMixin.getPl() != null) {
          executionConfig.setPl(executionMixin.getPl());
       }
+      executionConfig.setTestTransformer(executionMixin.getWorkloadType().getTestTransformer());
+      executionConfig.setTestExecutor(executionMixin.getWorkloadType().getTestExecutor());
    }
 
    @JsonCreator

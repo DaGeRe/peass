@@ -26,11 +26,11 @@ import de.dagere.peass.testtransformation.TestTransformer;
  */
 public class JmhTestExecutor extends TestExecutor {
 
-   private final JMHTestTransformer transformer;
+   private final JmhTestTransformer transformer;
 
    public JmhTestExecutor(final PeASSFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
       super(folders, testTransformer, env);
-      this.transformer = (JMHTestTransformer) testTransformer;
+      this.transformer = (JmhTestTransformer) testTransformer;
    }
 
    @Override

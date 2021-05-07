@@ -12,12 +12,12 @@ import org.junit.Test;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.jmh.JMHTestTransformer;
+import de.dagere.peass.dependency.jmh.JmhTestTransformer;
 
 public class TestBenchmarkChangeDetection {
    @Test
    public void testBenchmarkDetection() throws FileNotFoundException, IOException, XmlPullParserException {
-      JMHTestTransformer jmhTransformer = new JMHTestTransformer(JmhTestConstants.BASIC_VERSION, new MeasurementConfiguration(3));
+      JmhTestTransformer jmhTransformer = new JmhTestTransformer(JmhTestConstants.BASIC_VERSION, new MeasurementConfiguration(3));
       
       TestSet originalTests = new TestSet(new TestCase("de.dagere.peass.ExampleBenchmark", null, ""));
       
