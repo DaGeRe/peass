@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
@@ -25,6 +28,8 @@ import de.dagere.peass.testtransformation.TestTransformer;
 
 public class JmhTestTransformer implements TestTransformer {
 
+   private static final Logger LOG = LogManager.getLogger(JmhTestTransformer.class);
+
    private final File projectFolder;
    private final MeasurementConfiguration measurementConfig;
    private boolean isAggregatedWriter;
@@ -34,7 +39,7 @@ public class JmhTestTransformer implements TestTransformer {
       this.projectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
    }
-   
+
    public JmhTestTransformer(final File projectFolder, final ExecutionConfig executionConfig) {
       this.projectFolder = projectFolder;
       measurementConfig = new MeasurementConfiguration(1, executionConfig);
@@ -123,6 +128,7 @@ public class JmhTestTransformer implements TestTransformer {
       final List<TestCase> methods = new LinkedList<>();
       final File clazzFile = ClazzFileFinder.getClazzFile(module, clazzname);
       try {
+         LOG.debug("Parsing {} - {}", clazzFile, clazzname);
          final CompilationUnit unit = JavaParserProvider.parse(clazzFile);
          List<ClassOrInterfaceDeclaration> clazzDeclarations = ClazzFinder.getClazzDeclarations(unit);
          for (ClassOrInterfaceDeclaration clazz : clazzDeclarations) {
