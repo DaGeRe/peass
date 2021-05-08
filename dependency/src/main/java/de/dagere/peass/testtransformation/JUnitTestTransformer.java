@@ -113,11 +113,10 @@ public class JUnitTestTransformer implements TestTransformer {
     */
    public JUnitTestTransformer(final File projectFolder, final ExecutionConfig executionConfig) {
       this.projectFolder = projectFolder;
-      config = new MeasurementConfiguration(1, executionConfig.getTimeoutInMinutes());
+      config = new MeasurementConfiguration(1, executionConfig);
       config.setIterations(1);
       config.setWarmup(0);
       config.setUseKieker(true);
-      config.setTestGoal(executionConfig.getTestGoal());
       datacollectorlist = DataCollectorList.ONLYTIME;
    }
 
@@ -625,10 +624,12 @@ public class JUnitTestTransformer implements TestTransformer {
       return aggregatedWriter;
    }
 
+   @Override
    public void setAggregatedWriter(final boolean aggregatedWriter) {
       this.aggregatedWriter = aggregatedWriter;
    }
 
+   @Override
    public void setIgnoreEOIs(final boolean ignoreEOIs) {
       this.ignoreEOIs = ignoreEOIs;
    }

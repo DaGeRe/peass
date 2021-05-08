@@ -43,10 +43,7 @@ public class MavenRunningTester {
             final boolean multimodule = MavenPomUtil.isMultiModuleProject(potentialPom);
             if (multimodule || testFolder.exists()) {
                new MavenUpdater(folders, modules, measurementConfig).updateJava();
-               String goal = "test-compile";
-               if (folders.getProjectName().equals("jetty.project")) {
-                  goal = "package";
-               }
+               String goal = getGoal();
                MavenPomUtil.cleanType(pomFile);
                String[] basicParameters = new String[] { env.fetchMavenCall(),
                      "clean", goal,
@@ -71,6 +68,14 @@ public class MavenRunningTester {
          LOG.error("No pom.xml in {}", version);
       }
       return isRunning;
+   }
+
+   private String getGoal() {
+      String goal = "test-compile";
+      if (folders.getProjectName().equals("jetty.project")) {
+         goal = "package";
+      }
+      return goal;
    }
    
    public boolean isBuildfileExists() {

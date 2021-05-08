@@ -46,20 +46,35 @@ public class ExecutorCreator {
    }
    
    public static TestTransformer createTestTransformer(final PeASSFolders folders, final ExecutionConfig executionConfig, final MeasurementConfiguration measurementConfig) {
-      TestTransformer transformer;
       try {
          Class<?> testTransformerClass = Class.forName(executionConfig.getTestTransformer());
          if (!Arrays.asList(testTransformerClass.getInterfaces()).contains(TestTransformer.class)) {
             throw new RuntimeException("TestTransformer needs to be implemented by " + executionConfig.getTestTransformer());
          }
          Constructor<?> constructor = testTransformerClass.getConstructor(File.class, MeasurementConfiguration.class);
-         transformer = (TestTransformer) constructor.newInstance(folders.getProjectFolder(), measurementConfig);
+         TestTransformer transformer = (TestTransformer) constructor.newInstance(folders.getProjectFolder(), measurementConfig);
+         return transformer;
       } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
          LOG.debug("Initialization was not possible; this should be thrown uncatched");
          e.printStackTrace();
          throw new RuntimeException(e);
       }
-      return transformer;
+      
    }
-
+   
+   public static TestTransformer createTestTransformer(final PeASSFolders folders, final ExecutionConfig executionConfig) {
+      try {
+         Class<?> testTransformerClass = Class.forName(executionConfig.getTestTransformer());
+         if (!Arrays.asList(testTransformerClass.getInterfaces()).contains(TestTransformer.class)) {
+            throw new RuntimeException("TestTransformer needs to be implemented by " + executionConfig.getTestTransformer());
+         }
+         Constructor<?> constructor = testTransformerClass.getConstructor(File.class, ExecutionConfig.class);
+         TestTransformer transformer = (TestTransformer) constructor.newInstance(folders.getProjectFolder(), executionConfig);
+         return transformer;
+      } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+         LOG.debug("Initialization was not possible; this should be thrown uncatched");
+         e.printStackTrace();
+         throw new RuntimeException(e);
+      }
+   }
 }

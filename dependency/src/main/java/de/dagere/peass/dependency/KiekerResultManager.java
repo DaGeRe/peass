@@ -56,17 +56,12 @@ public class KiekerResultManager {
 
    public KiekerResultManager(final PeASSFolders folders, final ExecutionConfig executionConfig, final EnvironmentVariables env)  {
       this.folders = folders;
-      MeasurementConfiguration fakeConfig = new MeasurementConfiguration(1, executionConfig.getTimeoutInMinutes());
+      MeasurementConfiguration fakeConfig = new MeasurementConfiguration(1, executionConfig);
       fakeConfig.setIterations(1);
       fakeConfig.setWarmup(0);
       fakeConfig.setUseKieker(true);
       fakeConfig.setUseSourceInstrumentation(true);
       fakeConfig.setTestGoal(executionConfig.getTestGoal());
-      fakeConfig.getExecutionConfig().setIncludes(executionConfig.getIncludes());
-      fakeConfig.getExecutionConfig().setPl(executionConfig.getPl());
-      fakeConfig.getExecutionConfig().setCreateDefaultConstructor(executionConfig.isCreateDefaultConstructor());
-      fakeConfig.getExecutionConfig().setTestTransformer(executionConfig.getTestTransformer());
-      fakeConfig.getExecutionConfig().setTestExecutor(executionConfig.getTestExecutor());
       
       testTransformer = ExecutorCreator.createTestTransformer(folders, executionConfig, fakeConfig);
       

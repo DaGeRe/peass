@@ -52,8 +52,8 @@ public class MeasurementConfiguration implements Serializable {
       this.vms = vms;
    }
 
-   public MeasurementConfiguration(final int vms, final int timeoutInMinutes) {
-      executionConfig = new ExecutionConfig(timeoutInMinutes);
+   public MeasurementConfiguration(final int vms, final ExecutionConfig executionConfig) {
+      this.executionConfig = executionConfig;
       this.vms = vms;
    }
 
