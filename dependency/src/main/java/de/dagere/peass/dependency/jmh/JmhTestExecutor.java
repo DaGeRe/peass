@@ -87,7 +87,7 @@ public class JmhTestExecutor extends TestExecutor {
       }
       String[] jmhParameters = new String[] {
             "-jar",
-            "target/benchmarks.jar",
+            test.getModule() + File.separator + "target/benchmarks.jar",
             "-bm", "SingleShotTime",
             "-f",
             Integer.toString(transformer.getConfig().getVms()),
