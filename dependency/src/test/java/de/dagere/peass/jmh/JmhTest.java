@@ -64,8 +64,8 @@ public class JmhTest {
       DependencyConfig dependencyConfig = new DependencyConfig(1, false, true);
       
       ExecutionConfig jmhConfig = new ExecutionConfig();
-      jmhConfig.setTestTransformer("de.dagere.peass.dependency.jmh.JMHTestTransformer");
-      jmhConfig.setTestExecutor("de.dagere.peass.dependency.jmh.JMHTestExecutor");
+      jmhConfig.setTestTransformer("de.dagere.peass.dependency.jmh.JmhTestTransformer");
+      jmhConfig.setTestExecutor("de.dagere.peass.dependency.jmh.JmhTestExecutor");
       
       DependencyReader reader = new DependencyReader(dependencyConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
             "", iterator, new VersionKeeper(new File("/dev/null")), jmhConfig, new EnvironmentVariables());
