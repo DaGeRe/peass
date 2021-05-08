@@ -66,4 +66,15 @@ public class TestUnreachabilityDecider {
       boolean isUnreachable = ReachabilityDecider.isAfterUnreachable(method.getBody().get());
       Assert.assertTrue(isUnreachable);
    }
+   
+   @Test
+   public void testSwitch() {
+      CompilationUnit unit = new JavaParser().parse("class Test { int val; public void test() { "
+            + "switch (val) { "
+            + "case 1: case 2: return; default: throw new RuntimeException();}"
+            + "}}").getResult().get();
+      MethodDeclaration method = unit.getClassByName("Test").get().getMethodsByName("test").get(0);
+      boolean isUnreachable = ReachabilityDecider.isAfterUnreachable(method.getBody().get());
+      Assert.assertTrue(isUnreachable);
+   }
 }
