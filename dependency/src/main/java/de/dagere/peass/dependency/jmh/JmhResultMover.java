@@ -3,6 +3,7 @@ package de.dagere.peass.dependency.jmh;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
@@ -29,7 +30,7 @@ public class JmhResultMover {
    private static final int SECONDS_TO_NANOSECONDS = 1000000000;
    private final PeASSFolders folders;
    private final MeasurementConfiguration measurementConfig;
-   private final File sourceResultFolder;
+   private final File[] sourceResultFolders;
 
    public JmhResultMover(final PeASSFolders folders, final MeasurementConfiguration measurementConfig) {
       this.folders = folders;
@@ -42,9 +43,9 @@ public class JmhResultMover {
          }
       });
       if (files.length > 0) {
-         sourceResultFolder = files[0];
+         sourceResultFolders = files;
       } else {
-         sourceResultFolder = null;
+         sourceResultFolders = null;
       }
    }
 
@@ -58,43 +59,67 @@ public class JmhResultMover {
       final File expectedKoPeMeFile = new File(clazzResultFolder, testcase.getMethod() + ".xml");
       convertToXMLData(sourceJsonResultFile, expectedKoPeMeFile);
 
-      if (sourceResultFolder != null) {
-         final File kiekerSubfolder = new File(kiekerTimeFolder, sourceResultFolder.getName());
-         sourceResultFolder.renameTo(kiekerSubfolder);
+      if (sourceResultFolders != null) {
+         for (File sourceResultFolder : sourceResultFolders) {
+            final File kiekerSubfolder = new File(kiekerTimeFolder, sourceResultFolder.getName());
+            sourceResultFolder.renameTo(kiekerSubfolder);
+         }
       }
    }
 
    private void convertToXMLData(final File sourceJsonResultFile, final File expectedKoPeMeFile) {
       try {
          ArrayNode benchmarks = (ArrayNode) Constants.OBJECTMAPPER.readTree(sourceJsonResultFile);
-         JsonNode benchmark = benchmarks.get(0);
-         String name = benchmark.get("benchmark").asText();
-         JsonNode primaryMetric = benchmark.get("primaryMetric");
-         ArrayNode rawData = (ArrayNode) primaryMetric.get("rawData");
+         for (JsonNode benchmark : benchmarks) {
+            final String name = getBenchmarkName(benchmark);
 
-         Kopemedata transformed = new Kopemedata();
-         Testcases testcases = new Testcases();
-         testcases.setClazz(name.substring(0, name.lastIndexOf('.')));
-         transformed.setTestcases(testcases);
-         TestcaseType testclazz = new TestcaseType();
-         transformed.getTestcases().getTestcase().add(testclazz);
-         testclazz.setName(name.substring(name.lastIndexOf('.') + 1));
+            JsonNode primaryMetric = benchmark.get("primaryMetric");
+            ArrayNode rawData = (ArrayNode) primaryMetric.get("rawData");
 
-         Datacollector timeCollector = new Datacollector();
-         timeCollector.setName(TimeDataCollectorNoGC.class.getName());
-         testclazz.getDatacollector().add(timeCollector);
-         
-         for (JsonNode vmExecution : rawData) {
-            Result result = buildResult(vmExecution);
-            timeCollector.getResult().add(result);
+            Kopemedata transformed = new Kopemedata();
+            Testcases testcases = new Testcases();
+            testcases.setClazz(name.substring(0, name.lastIndexOf('.')));
+            transformed.setTestcases(testcases);
+            TestcaseType testclazz = new TestcaseType();
+            transformed.getTestcases().getTestcase().add(testclazz);
+            testclazz.setName(name.substring(name.lastIndexOf('.') + 1));
+
+            Datacollector timeCollector = new Datacollector();
+            timeCollector.setName(TimeDataCollectorNoGC.class.getName());
+            testclazz.getDatacollector().add(timeCollector);
+
+            for (JsonNode vmExecution : rawData) {
+               Result result = buildResult(vmExecution);
+               timeCollector.getResult().add(result);
+            }
+
+            // timeCollector.getResult().add(new Result())
+
+            XMLDataStorer.storeData(expectedKoPeMeFile, transformed);
          }
-         
-         // timeCollector.getResult().add(new Result())
 
-         XMLDataStorer.storeData(expectedKoPeMeFile, transformed);
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
+   }
+
+   private String getBenchmarkName(final JsonNode benchmark) {
+      JsonNode params = benchmark.get("params");
+      String paramString = "";
+      for (Iterator<String> fieldIterator = params.fieldNames(); fieldIterator.hasNext();) {
+         String field = fieldIterator.next();
+         paramString += params.get(field).asText();
+         if (fieldIterator.hasNext()) {
+            paramString += "-";
+         }
+      }
+      final String name;
+      if (!paramString.isEmpty()) {
+         name = benchmark.get("benchmark").asText() + "-" + paramString;
+      } else {
+         name = benchmark.get("benchmark").asText();
+      }
+      return name;
    }
 
    private Result buildResult(final JsonNode vmExecution) {
@@ -106,17 +131,17 @@ public class JmhResultMover {
          value.setValue(iterationDuration);
          result.getFulldata().getValue().add(value);
       }
-      
+
       DescriptiveStatistics statistics = new DescriptiveStatistics();
       result.getFulldata().getValue().forEach(value -> statistics.addValue(value.getValue()));
       result.setValue(statistics.getMean());
       result.setDeviation(statistics.getStandardDeviation());
       result.setIterations(result.getFulldata().getValue().size());
-      
+
       // Assume that warmup and repetitions took place as defined, since they are not recorded by jmh
       result.setWarmup(measurementConfig.getWarmup());
       result.setRepetitions(measurementConfig.getRepetitions());
-      
+
       return result;
    }
 }
