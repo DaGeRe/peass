@@ -9,6 +9,7 @@ import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.SwitchEntry;
 import com.github.javaparser.ast.stmt.SwitchStmt;
+import com.github.javaparser.ast.stmt.SynchronizedStmt;
 import com.github.javaparser.ast.stmt.ThrowStmt;
 import com.github.javaparser.ast.stmt.TryStmt;
 import com.github.javaparser.ast.stmt.WhileStmt;
@@ -50,7 +51,9 @@ public class ReachabilityDecider {
       } else if (last instanceof ReturnStmt) {
          afterUnreachable = true;
       } else if (last instanceof BlockStmt) {
-         return isAfterUnreachable((BlockStmt) last);
+         return isAfterUnreachable((BlockStmt) last); 
+      } else if (last instanceof SynchronizedStmt) {
+        return isAfterUnreachable(((SynchronizedStmt) last).getBody());
       } else if (last instanceof SwitchStmt) {
          SwitchStmt switchStmt = (SwitchStmt) last;
          Optional<SwitchEntry> optionalLastSwitch = switchStmt.getEntries().getLast();
