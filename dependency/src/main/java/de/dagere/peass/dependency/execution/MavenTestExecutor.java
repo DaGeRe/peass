@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.execution.maven.MavenCleaner;
@@ -90,14 +91,8 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       final String[] vars = CommandConcatenator.concatenateCommandArrays(withMavendefaults, commandLineAddition);
 
       ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
-      Process process;
-      if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
-         String[] projectListArray = new String[] { "-pl", testTransformer.getConfig().getExecutionConfig().getPl(), "-am" };
-         String[] withPl = CommandConcatenator.concatenateCommandArrays(vars, projectListArray);
-         process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, withPl);
-      } else {
-         process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, vars);
-      }
+      String[] withPl = addMavenPl(testTransformer.getConfig().getExecutionConfig(), vars);
+      Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, withPl);
       return process;
    }
 
@@ -178,6 +173,16 @@ public class MavenTestExecutor extends KoPeMeExecutor {
    public ProjectModules getModules() throws IOException, XmlPullParserException {
       File pomFile = new File(folders.getProjectFolder(), "pom.xml");
       return MavenPomUtil.getModules(pomFile);
+   }
+   
+   public static String[] addMavenPl(final ExecutionConfig config, final String[] original) {
+      if (config.getPl() != null) {
+         String[] projectListArray = new String[] { "-pl", config.getPl(), "-am" };
+         String[] withPl = CommandConcatenator.concatenateCommandArrays(original, projectListArray);
+         return withPl;
+      } else {
+         return original;
+      }
    }
 
 }

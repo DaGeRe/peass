@@ -10,6 +10,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.CommandConcatenator;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.MavenPomUtil;
+import de.dagere.peass.dependency.execution.MavenTestExecutor;
 import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.execution.maven.MavenCleaner;
@@ -43,9 +44,10 @@ public class JmhTestExecutor extends TestExecutor {
             "-DskipTests",
             "-Dmaven.test.skip.exec" };
       String[] withMavendefaults = CommandConcatenator.concatenateCommandArrays(basicParameters, CommandConcatenator.mavenCheckDeactivation);
+      String[] withPl = MavenTestExecutor.addMavenPl(testTransformer.getConfig().getExecutionConfig(), withMavendefaults);
 
       ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
-      Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, withMavendefaults);
+      Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, withPl);
       execute("jmh-package", transformer.getConfig().getTimeoutInMinutes(), process);
    }
 
