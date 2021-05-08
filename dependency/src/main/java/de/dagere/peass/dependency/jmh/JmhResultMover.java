@@ -56,8 +56,8 @@ public class JmhResultMover {
       final File kiekerTimeFolder = new File(clazzResultFolder, Long.toString(System.currentTimeMillis()) + File.separator + testcase.getMethod());
       kiekerTimeFolder.mkdirs();
 
-      final File expectedKoPeMeFile = new File(clazzResultFolder, testcase.getMethod() + ".xml");
-      convertToXMLData(sourceJsonResultFile, expectedKoPeMeFile);
+      // final File expectedKoPeMeFile = new File(clazzResultFolder, testcase.getMethod() + ".xml");
+      convertToXMLData(sourceJsonResultFile, clazzResultFolder);
 
       if (sourceResultFolders != null) {
          for (File sourceResultFolder : sourceResultFolders) {
@@ -67,11 +67,12 @@ public class JmhResultMover {
       }
    }
 
-   private void convertToXMLData(final File sourceJsonResultFile, final File expectedKoPeMeFile) {
+   private void convertToXMLData(final File sourceJsonResultFile, final File clazzResultFolder) {
       try {
          ArrayNode benchmarks = (ArrayNode) Constants.OBJECTMAPPER.readTree(sourceJsonResultFile);
          for (JsonNode benchmark : benchmarks) {
             final String name = getBenchmarkName(benchmark);
+            String benchmarkMethodName = name.substring(name.lastIndexOf('.') + 1);
 
             JsonNode primaryMetric = benchmark.get("primaryMetric");
             ArrayNode rawData = (ArrayNode) primaryMetric.get("rawData");
@@ -95,7 +96,8 @@ public class JmhResultMover {
 
             // timeCollector.getResult().add(new Result())
 
-            XMLDataStorer.storeData(expectedKoPeMeFile, transformed);
+            File koPeMeFile = new File(clazzResultFolder, benchmarkMethodName + ".xml");
+            XMLDataStorer.storeData(koPeMeFile, transformed);
          }
 
       } catch (IOException e) {
@@ -105,7 +107,7 @@ public class JmhResultMover {
 
    private String getBenchmarkName(final JsonNode benchmark) {
       String paramString = getParameterString(benchmark);
-      
+
       final String name;
       if (!paramString.isEmpty()) {
          name = benchmark.get("benchmark").asText() + "-" + paramString;
