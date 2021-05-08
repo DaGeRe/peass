@@ -69,37 +69,39 @@ public class JmhResultMover {
 
    private void convertToXMLData(final File sourceJsonResultFile, final File clazzResultFolder) {
       try {
-         ArrayNode benchmarks = (ArrayNode) Constants.OBJECTMAPPER.readTree(sourceJsonResultFile);
-         for (JsonNode benchmark : benchmarks) {
-            final String name = getBenchmarkName(benchmark);
-            String benchmarkMethodName = name.substring(name.lastIndexOf('.') + 1);
+         JsonNode rootNode = Constants.OBJECTMAPPER.readTree(sourceJsonResultFile);
+         if (rootNode != null && rootNode instanceof ArrayNode) {
+            ArrayNode benchmarks = (ArrayNode) rootNode;
+            for (JsonNode benchmark : benchmarks) {
+               final String name = getBenchmarkName(benchmark);
+               String benchmarkMethodName = name.substring(name.lastIndexOf('.') + 1);
 
-            JsonNode primaryMetric = benchmark.get("primaryMetric");
-            ArrayNode rawData = (ArrayNode) primaryMetric.get("rawData");
+               JsonNode primaryMetric = benchmark.get("primaryMetric");
+               ArrayNode rawData = (ArrayNode) primaryMetric.get("rawData");
 
-            Kopemedata transformed = new Kopemedata();
-            Testcases testcases = new Testcases();
-            testcases.setClazz(name.substring(0, name.lastIndexOf('.')));
-            transformed.setTestcases(testcases);
-            TestcaseType testclazz = new TestcaseType();
-            transformed.getTestcases().getTestcase().add(testclazz);
-            testclazz.setName(name.substring(name.lastIndexOf('.') + 1));
+               Kopemedata transformed = new Kopemedata();
+               Testcases testcases = new Testcases();
+               testcases.setClazz(name.substring(0, name.lastIndexOf('.')));
+               transformed.setTestcases(testcases);
+               TestcaseType testclazz = new TestcaseType();
+               transformed.getTestcases().getTestcase().add(testclazz);
+               testclazz.setName(name.substring(name.lastIndexOf('.') + 1));
 
-            Datacollector timeCollector = new Datacollector();
-            timeCollector.setName(TimeDataCollectorNoGC.class.getName());
-            testclazz.getDatacollector().add(timeCollector);
+               Datacollector timeCollector = new Datacollector();
+               timeCollector.setName(TimeDataCollectorNoGC.class.getName());
+               testclazz.getDatacollector().add(timeCollector);
 
-            for (JsonNode vmExecution : rawData) {
-               Result result = buildResult(vmExecution);
-               timeCollector.getResult().add(result);
+               for (JsonNode vmExecution : rawData) {
+                  Result result = buildResult(vmExecution);
+                  timeCollector.getResult().add(result);
+               }
+
+               // timeCollector.getResult().add(new Result())
+
+               File koPeMeFile = new File(clazzResultFolder, benchmarkMethodName + ".xml");
+               XMLDataStorer.storeData(koPeMeFile, transformed);
             }
-
-            // timeCollector.getResult().add(new Result())
-
-            File koPeMeFile = new File(clazzResultFolder, benchmarkMethodName + ".xml");
-            XMLDataStorer.storeData(koPeMeFile, transformed);
          }
-
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
