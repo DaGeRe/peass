@@ -104,15 +104,8 @@ public class JmhResultMover {
    }
 
    private String getBenchmarkName(final JsonNode benchmark) {
-      JsonNode params = benchmark.get("params");
-      String paramString = "";
-      for (Iterator<String> fieldIterator = params.fieldNames(); fieldIterator.hasNext();) {
-         String field = fieldIterator.next();
-         paramString += params.get(field).asText();
-         if (fieldIterator.hasNext()) {
-            paramString += "-";
-         }
-      }
+      String paramString = getParameterString(benchmark);
+      
       final String name;
       if (!paramString.isEmpty()) {
          name = benchmark.get("benchmark").asText() + "-" + paramString;
@@ -120,6 +113,21 @@ public class JmhResultMover {
          name = benchmark.get("benchmark").asText();
       }
       return name;
+   }
+
+   private String getParameterString(final JsonNode benchmark) {
+      String parameterString = "";
+      JsonNode params = benchmark.get("params");
+      if (params != null) {
+         for (Iterator<String> fieldIterator = params.fieldNames(); fieldIterator.hasNext();) {
+            String field = fieldIterator.next();
+            parameterString += params.get(field).asText();
+            if (fieldIterator.hasNext()) {
+               parameterString += "-";
+            }
+         }
+      }
+      return parameterString;
    }
 
    private Result buildResult(final JsonNode vmExecution) {
