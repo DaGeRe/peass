@@ -85,9 +85,10 @@ public class JmhTestExecutor extends TestExecutor {
       } else {
          basicParameters = new String[] { "java" };
       }
+      String jarPath = (test.getModule() == null || test.getModule().equals("")) ? "target/benchmarks.jar" : test.getModule() + File.separator + "target/benchmarks.jar";
       String[] jmhParameters = new String[] {
             "-jar",
-            test.getModule() + File.separator + "target/benchmarks.jar",
+            jarPath,
             "-bm", "SingleShotTime",
             "-f",
             Integer.toString(transformer.getConfig().getVms()),
