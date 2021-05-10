@@ -24,6 +24,20 @@ public class TestBenchmarkDetection {
       ProjectModules modules = new ProjectModules(JmhTestConstants.BASIC_VERSION);
       TestSet tests = jmhTransformer.findModuleTests(new ModuleClassMapping(JmhTestConstants.BASIC_VERSION, modules), null,
             modules);
+      
+      Assert.assertEquals(tests.getTests().size(), 1);
+      TestCase test = tests.getTests().iterator().next();
+      Assert.assertEquals("de.dagere.peass.ExampleBenchmark#testMethod", test.getExecutable());
+   }
+   
+   @Test
+   public void testBenchmarkDetectionInnerClass() throws FileNotFoundException, IOException, XmlPullParserException {
+      JmhTestTransformer jmhTransformer = new JmhTestTransformer(JmhTestConstants.INNER_CLASS_VERSION, new MeasurementConfiguration(3));
+      ProjectModules modules = new ProjectModules(JmhTestConstants.INNER_CLASS_VERSION);
+      TestSet tests = jmhTransformer.findModuleTests(new ModuleClassMapping(JmhTestConstants.INNER_CLASS_VERSION, modules), null,
+            modules);
+      
+      Assert.assertEquals(tests.getTests().size(), 1);
       TestCase test = tests.getTests().iterator().next();
       Assert.assertEquals("de.dagere.peass.ExampleBenchmark#testMethod", test.getExecutable());
    }

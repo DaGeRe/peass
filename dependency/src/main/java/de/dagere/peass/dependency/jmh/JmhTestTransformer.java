@@ -132,16 +132,32 @@ public class JmhTestTransformer implements TestTransformer {
          final CompilationUnit unit = JavaParserProvider.parse(clazzFile);
          List<ClassOrInterfaceDeclaration> clazzDeclarations = ClazzFinder.getClazzDeclarations(unit);
          for (ClassOrInterfaceDeclaration clazz : clazzDeclarations) {
-            List<String> benchmarkMethods = JUnitParseUtil.getAnnotatedMethods(clazz, "org.openjdk.jmh.annotations.Benchmark", "Benchmark");
-            for (String benchmarkMethod : benchmarkMethods) {
-               TestCase foundBenchmark = new TestCase(clazzname.getClazz(), benchmarkMethod, clazzname.getModule());
-               methods.add(foundBenchmark);
+            String parsedClassName = getFullName(clazz);
+            System.out.println(parsedClassName + " " + clazzname.getSimpleClazzName());
+            if (parsedClassName.equals(clazzname.getSimpleClazzName())) {
+               List<String> benchmarkMethods = JUnitParseUtil.getAnnotatedMethods(clazz, "org.openjdk.jmh.annotations.Benchmark", "Benchmark");
+               for (String benchmarkMethod : benchmarkMethods) {
+                  TestCase foundBenchmark = new TestCase(clazzname.getClazz(), benchmarkMethod, clazzname.getModule());
+                  methods.add(foundBenchmark);
+               }
             }
          }
       } catch (FileNotFoundException e) {
          throw new RuntimeException(e);
       }
       return methods;
+   }
+
+   private String getFullName(ClassOrInterfaceDeclaration clazz) {
+      String parsedClassName = clazz.getNameAsString();
+      boolean hasClassParent = clazz.getParentNode().isPresent() && clazz.getParentNode().get() instanceof ClassOrInterfaceDeclaration;
+      ClassOrInterfaceDeclaration parent = hasClassParent ? (ClassOrInterfaceDeclaration) clazz.getParentNode().get() : null;
+      while (parent != null) {
+         parsedClassName = parent.getNameAsString() + ChangedEntity.CLAZZ_SEPARATOR + parsedClassName;
+         hasClassParent = parent.getParentNode().isPresent() && parent.getParentNode().get() instanceof ClassOrInterfaceDeclaration;
+         parent = hasClassParent ? (ClassOrInterfaceDeclaration) parent.getParentNode().get() : null;
+      }
+      return parsedClassName;
    }
 
    private void addTestIfIncluded(final TestSet moduleTests, final TestCase test) {

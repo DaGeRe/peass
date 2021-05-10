@@ -22,6 +22,8 @@ public class TestBenchmarkChangeDetection {
       TestSet originalTests = new TestSet(new TestCase("de.dagere.peass.ExampleBenchmark", null, ""));
       
       TestSet changedTests = jmhTransformer.buildTestMethodSet(originalTests, Arrays.asList(new File[] {JmhTestConstants.BASIC_VERSION}));
+      Assert.assertEquals(changedTests.getTests().size(), 1);
+      
       TestCase test = changedTests.getTests().iterator().next();
       Assert.assertEquals("de.dagere.peass.ExampleBenchmark#testMethod", test.getExecutable());
    }
