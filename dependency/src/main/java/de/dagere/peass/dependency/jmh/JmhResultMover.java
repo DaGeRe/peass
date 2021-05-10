@@ -63,6 +63,7 @@ public class JmhResultMover {
 
       // final File expectedKoPeMeFile = new File(clazzResultFolder, testcase.getMethod() + ".xml");
       convertToXMLData(sourceJsonResultFile, clazzResultFolder);
+      sourceJsonResultFile.delete();
 
       if (sourceResultFolders != null) {
          for (File sourceResultFolder : sourceResultFolders) {
