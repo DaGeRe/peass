@@ -5,18 +5,23 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.util.Iterator;
 
+import javax.xml.bind.JAXBException;
+
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import de.dagere.kopeme.datacollection.TimeDataCollectorNoGC;
+import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
+import de.dagere.kopeme.generated.Result.Params;
+import de.dagere.kopeme.generated.Result.Params.Param;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.peass.config.MeasurementConfiguration;
@@ -73,65 +78,59 @@ public class JmhResultMover {
          if (rootNode != null && rootNode instanceof ArrayNode) {
             ArrayNode benchmarks = (ArrayNode) rootNode;
             for (JsonNode benchmark : benchmarks) {
-               final String name = getBenchmarkName(benchmark);
+
+               final String name = benchmark.get("benchmark").asText();
                String benchmarkMethodName = name.substring(name.lastIndexOf('.') + 1);
 
                JsonNode primaryMetric = benchmark.get("primaryMetric");
                ArrayNode rawData = (ArrayNode) primaryMetric.get("rawData");
 
-               Kopemedata transformed = new Kopemedata();
-               Testcases testcases = new Testcases();
-               testcases.setClazz(name.substring(0, name.lastIndexOf('.')));
-               transformed.setTestcases(testcases);
-               TestcaseType testclazz = new TestcaseType();
-               transformed.getTestcases().getTestcase().add(testclazz);
-               testclazz.setName(name.substring(name.lastIndexOf('.') + 1));
-
-               Datacollector timeCollector = new Datacollector();
-               timeCollector.setName(TimeDataCollectorNoGC.class.getName());
-               testclazz.getDatacollector().add(timeCollector);
+               File koPeMeFile = new File(clazzResultFolder, benchmarkMethodName + ".xml");
+               Kopemedata transformed;
+               Datacollector timeCollector;
+               if (koPeMeFile.exists()) {
+                  transformed = XMLDataLoader.loadData(koPeMeFile);
+                  timeCollector = transformed.getTestcases().getTestcase().get(0).getDatacollector().get(0);
+               } else {
+                  transformed = new Kopemedata();
+                  Testcases testcases = new Testcases();
+                  testcases.setClazz(name.substring(0, name.lastIndexOf('.')));
+                  transformed.setTestcases(testcases);
+                  TestcaseType testclazz = new TestcaseType();
+                  transformed.getTestcases().getTestcase().add(testclazz);
+                  testclazz.setName(name.substring(name.lastIndexOf('.') + 1));
+                  timeCollector = new Datacollector();
+                  timeCollector.setName(TimeDataCollectorNoGC.class.getName());
+                  testclazz.getDatacollector().add(timeCollector);
+               }
 
                for (JsonNode vmExecution : rawData) {
                   Result result = buildResult(vmExecution);
+                  JsonNode params = benchmark.get("params");
+                  if (params != null) {
+                     setParamMap(result, params);
+                  }
                   timeCollector.getResult().add(result);
                }
 
-               // timeCollector.getResult().add(new Result())
-
-               File koPeMeFile = new File(clazzResultFolder, benchmarkMethodName + ".xml");
                XMLDataStorer.storeData(koPeMeFile, transformed);
             }
          }
-      } catch (IOException e) {
+      } catch (IOException | JAXBException e) {
          throw new RuntimeException(e);
       }
    }
 
-   private String getBenchmarkName(final JsonNode benchmark) {
-      String paramString = getParameterString(benchmark);
-
-      final String name;
-      if (!paramString.isEmpty()) {
-         name = benchmark.get("benchmark").asText() + "-" + paramString;
-      } else {
-         name = benchmark.get("benchmark").asText();
+   private void setParamMap(final Result result, final JsonNode params) {
+      result.setParams(new Params());
+      for (Iterator<String> fieldIterator = params.fieldNames(); fieldIterator.hasNext();) {
+         final String field = fieldIterator.next();
+         final String value = params.get(field).asText();
+         final Param param = new Param();
+         param.setKey(field);
+         param.setValue(value);
+         result.getParams().getParam().add(param);
       }
-      return name;
-   }
-
-   private String getParameterString(final JsonNode benchmark) {
-      String parameterString = "";
-      JsonNode params = benchmark.get("params");
-      if (params != null) {
-         for (Iterator<String> fieldIterator = params.fieldNames(); fieldIterator.hasNext();) {
-            String field = fieldIterator.next();
-            parameterString += params.get(field).asText();
-            if (fieldIterator.hasNext()) {
-               parameterString += "-";
-            }
-         }
-      }
-      return parameterString;
    }
 
    private Result buildResult(final JsonNode vmExecution) {

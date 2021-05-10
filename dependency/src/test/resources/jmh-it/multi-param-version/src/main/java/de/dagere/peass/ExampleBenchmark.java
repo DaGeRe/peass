@@ -16,8 +16,15 @@ public class ExampleBenchmark {
    public void testMethod() {
       try {
          Thread.sleep(1);
+         if (parameter.equals("val1")) {
+            someCalledMethod();	
+         }
       } catch (InterruptedException e) {
          e.printStackTrace();
       }
+   }
+   
+   public void someCalledMethod() {
+   
    }
 }
