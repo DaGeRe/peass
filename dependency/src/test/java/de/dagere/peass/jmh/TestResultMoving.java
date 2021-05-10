@@ -46,7 +46,7 @@ public class TestResultMoving {
       Assert.assertTrue(expectedXMLFile.exists());
 
       final File moduleResultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
-      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultsFolder);
+      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultsFolder)[0];
       
       List<File> fileNames = Arrays.asList(kiekerResultFolder.listFiles()).stream()
             .filter(file -> file.getName().endsWith(".dat"))

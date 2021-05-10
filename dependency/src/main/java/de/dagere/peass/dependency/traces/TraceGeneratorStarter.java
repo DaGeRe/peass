@@ -85,7 +85,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
    private void writeTestcase(final String newestVersion, final PeASSFolders folders, final KiekerResultManager resultsManager, final TestCase testcase)
          throws FileNotFoundException, IOException, XmlPullParserException, ViewNotFoundException {
       final File moduleResultFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
-      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultFolder);
+      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultFolder)[0];
 
       final long size = FileUtils.sizeOfDirectory(kiekerResultFolder);
       final long sizeInMB = size / (1024 * 1024);

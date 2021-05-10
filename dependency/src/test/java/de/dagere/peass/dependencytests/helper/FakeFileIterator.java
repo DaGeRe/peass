@@ -10,6 +10,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.vcs.VersionIterator;
@@ -40,6 +42,8 @@ class CopyFileVisitor extends SimpleFileVisitor<Path> {
 
 public class FakeFileIterator extends VersionIterator {
 
+   private static final Logger LOG = LogManager.getLogger(FakeFileIterator.class);
+   
    public static void copy(final File src, final File dest) throws IOException {
       Files.walkFileTree(src.toPath(), new CopyFileVisitor(dest.toPath()));
    }
@@ -78,7 +82,7 @@ public class FakeFileIterator extends VersionIterator {
 
    @Override
    public boolean goToNextCommit() {
-      System.out.println("Loading commit: " + tag);
+      LOG.debug("Loading commit: " + tag);
       tag++;
       return loadVersionFiles(tag - 1);
    }
@@ -103,6 +107,7 @@ public class FakeFileIterator extends VersionIterator {
       try {
          FileUtils.deleteDirectory(projectFolder);
          File commitFolder = commits.get(goalTag);
+         LOG.debug("Loading commit: " + commitFolder);
          copy(commitFolder, projectFolder);
          return true;
       } catch (final IOException e) {

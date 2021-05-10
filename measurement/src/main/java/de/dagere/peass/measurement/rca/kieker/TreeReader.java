@@ -44,7 +44,7 @@ public class TreeReader extends KiekerResultManager {
       executeMeasurements(testcase, version);
       
       File resultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
-      File kiekerTraceFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder);
+      File kiekerTraceFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder)[0];
 
       CallTreeNode root = readTree(testcase, kiekerTraceFolder);
       return root;

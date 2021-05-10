@@ -16,7 +16,6 @@ import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
-import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 
 public class OneTraceGenerator {
 
@@ -46,45 +45,57 @@ public class OneTraceGenerator {
    }
 
    public boolean generateTrace(final String versionCurrent)
-         throws com.github.javaparser.ParseException, IOException, ViewNotFoundException, XmlPullParserException {
+         throws com.github.javaparser.ParseException, IOException, XmlPullParserException {
       boolean success = false;
       try {
          final File moduleResultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
-         final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultsFolder);
-         LOG.debug("Searching for: {}", kiekerResultFolder);
-         if (kiekerResultFolder.exists() && kiekerResultFolder.isDirectory()) {
-            success = generateTraceFiles(versionCurrent, kiekerResultFolder);
+         final File[] kiekerResultFolders = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultsFolder);
+         LOG.debug("Searching for: {}", kiekerResultFolders[0]);
+         if (kiekerResultFolders[0].exists() && kiekerResultFolders[0].isDirectory()) {
+            success = generateTraceFiles(versionCurrent, kiekerResultFolders);
          } else {
-            LOG.error("Error: {} does not produce {}", versionCurrent, kiekerResultFolder.getAbsolutePath());
+            LOG.error("Error: {} does not produce {}", versionCurrent, kiekerResultFolders[0].getAbsolutePath());
          }
-      } catch (final RuntimeException | ViewNotFoundException e) {
+      } catch (final RuntimeException e) {
          e.printStackTrace();
       }
       return success;
    }
 
-   private boolean generateTraceFiles(final String versionCurrent, final File kiekerResultFolder)
+   private boolean generateTraceFiles(final String versionCurrent, final File[] kiekerResultFolders)
          throws FileNotFoundException, IOException, XmlPullParserException, com.github.javaparser.ParseException {
       boolean success = false;
-      final long size = FileUtils.sizeOfDirectory(kiekerResultFolder);
-      final long sizeInMB = size / (1024 * 1024);
-      LOG.debug("Filesize: {} ({})", sizeInMB, size);
-      if (sizeInMB < CalledMethodLoader.TRACE_MAX_SIZE_IN_MB) {
-         final List<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, mapping).getShortTrace("");
-         if (shortTrace != null) {
-            LOG.debug("Short Trace: {} Folder: {} Project: {}", shortTrace.size(), kiekerResultFolder.getAbsolutePath(), folders.getProjectFolder());
-            if (shortTrace.size() > 0) {
-               final TraceMethodReader traceMethodReader = new TraceMethodReader(shortTrace, classpathFolders.toArray(new File[0]));
-               final TraceWithMethods trace = traceMethodReader.getTraceWithMethods();
-               writeTrace(versionCurrent, sizeInMB, traceMethodReader, trace);
-               success = true;
-            } else {
-               LOG.error("Trace empty!");
+      TraceWithMethods trace = null;
+      TraceMethodReader traceMethodReader = null;
+      int overallSizeInMb = 0;
+      for (File kiekerResultFolder : kiekerResultFolders) {
+         final long size = FileUtils.sizeOfDirectory(kiekerResultFolder);
+         final long sizeInMB = size / (1024 * 1024);
+         overallSizeInMb += sizeInMB;
+         LOG.debug("Filesize: {} ({})", sizeInMB, size);
+         if (sizeInMB < CalledMethodLoader.TRACE_MAX_SIZE_IN_MB) {
+            final List<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, mapping).getShortTrace("");
+            if (shortTrace != null) {
+               LOG.debug("Short Trace: {} Folder: {} Project: {}", shortTrace.size(), kiekerResultFolder.getAbsolutePath(), folders.getProjectFolder());
+               if (shortTrace.size() > 0) {
+                  traceMethodReader = new TraceMethodReader(shortTrace, classpathFolders.toArray(new File[0]));
+                  if (trace == null) {
+                     trace = traceMethodReader.getTraceWithMethods();
+                  } else {
+                     TraceWithMethods additionalTrace = traceMethodReader.getTraceWithMethods();
+                     trace.append(additionalTrace);
+                  }
+
+                  success = true;
+               } else {
+                  LOG.error("Trace empty!");
+               }
             }
+         } else {
+            LOG.error("File size exceeds 2000 MB");
          }
-      } else {
-         LOG.error("File size exceeds 2000 MB");
       }
+      writeTrace(versionCurrent, overallSizeInMb, traceMethodReader, trace);
       return success;
    }
 

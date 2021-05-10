@@ -128,7 +128,7 @@ public class TraceGettingIT {
 
    public static boolean analyseTrace(final TestCase testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File resultsFolder)
          throws com.github.javaparser.ParseException, IOException, ViewNotFoundException {
-      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder);
+      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder)[0];
 
       boolean success = false;
       final long size = FileUtils.sizeOfDirectory(kiekerResultFolder.getParentFile());

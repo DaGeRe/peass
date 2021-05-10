@@ -27,7 +27,7 @@ public class ExampleBenchmark {
    }
    
    public void someCalledMethod() {
-   
+   	System.out.println("This call is added");
    }
    
    public void otherCalledMethod() {

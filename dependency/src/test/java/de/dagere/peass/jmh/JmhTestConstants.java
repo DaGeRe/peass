@@ -11,4 +11,5 @@ public class JmhTestConstants {
    public static File MULTIMODULE_VERSION = new File(JmhTestConstants.JMH_EXAMPLE_FOLDER, "multimodule");
    
    public static File MULTIPARAM_VERSION = new File(JmhTestConstants.JMH_EXAMPLE_FOLDER, "multi-param-version");
+   public static File MULTIPARAM_VERSION_CHANGE = new File(JmhTestConstants.JMH_EXAMPLE_FOLDER, "multi-param-version-change");
 }

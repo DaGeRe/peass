@@ -56,7 +56,7 @@ public class TestPeASSFilter {
       manager.getExecutor().loadClasses();
       manager.executeKoPeMeKiekerRun(ts, "0");
       
-      final File kiekerFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT));
+      final File kiekerFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT))[0];
       LOG.debug("Searching: " + kiekerFolder);
       final ModuleClassMapping mapping = new ModuleClassMapping(manager.getExecutor());
       final List<TraceElement> referenceTrace = new CalledMethodLoader(kiekerFolder, mapping).getShortTrace("");
@@ -86,7 +86,7 @@ public class TestPeASSFilter {
       new PeASSFolders(CURRENT);
       manager.getExecutor().loadClasses();
       manager.executeKoPeMeKiekerRun(ts, ""+i);
-      final File kiekerFolderComparison = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT));
+      final File kiekerFolderComparison = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT))[0];
       LOG.debug("Searching: " + kiekerFolderComparison);
       final List<TraceElement> compareTrace = new CalledMethodLoader(kiekerFolderComparison, mapping).getShortTrace("");
       return compareTrace;
