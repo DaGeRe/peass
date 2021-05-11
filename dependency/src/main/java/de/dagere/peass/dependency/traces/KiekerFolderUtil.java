@@ -25,8 +25,9 @@ public class KiekerFolderUtil {
       });
       if (listFiles == null) {
          new ErrorLogWriter(testcase, resultsFolder).tryToWriteLastLog();
-         throw new RuntimeException("Probably project not running - Result folder: " + Arrays.toString(listFiles) + " ("
+         LOG.debug("Probably project not running - Result folder: " + Arrays.toString(listFiles) + " ("
                + (listFiles != null ? listFiles.length : "null") + ") in " + projectResultFolder.getAbsolutePath() + " should exist!");
+         return null;
       }
 
       File methodResult = getMethodFolder(testcase, listFiles);

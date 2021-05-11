@@ -219,7 +219,6 @@ public class DependencyManager extends KiekerResultManager {
       TestCase testcase = new TestCase(testClassName);
       final File moduleResultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
       final File[] kiekerResultFolders = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultsFolder);
-//      final File kiekerResultFolders[] = KiekerFolderUtil.findKiekerFolder(testClassName.getMethod(), parent);
 
       if (kiekerResultFolders == null) {
          LOG.error("No kieker folder found: " + parent);

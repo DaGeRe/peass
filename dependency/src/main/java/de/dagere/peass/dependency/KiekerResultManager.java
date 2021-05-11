@@ -54,7 +54,7 @@ public class KiekerResultManager {
    protected final PeASSFolders folders;
    protected final TestTransformer testTransformer;
 
-   public KiekerResultManager(final PeASSFolders folders, final ExecutionConfig executionConfig, final EnvironmentVariables env)  {
+   public KiekerResultManager(final PeASSFolders folders, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.folders = folders;
       MeasurementConfiguration fakeConfig = new MeasurementConfiguration(1, executionConfig);
       fakeConfig.setIterations(1);
@@ -62,14 +62,12 @@ public class KiekerResultManager {
       fakeConfig.setUseKieker(true);
       fakeConfig.setUseSourceInstrumentation(true);
       fakeConfig.setTestGoal(executionConfig.getTestGoal());
-      
+
       testTransformer = ExecutorCreator.createTestTransformer(folders, executionConfig, fakeConfig);
-      
+
       // testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), fakeConfig);
       executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
    }
-
-  
 
    public KiekerResultManager(final TestExecutor executor, final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
       this.executor = executor;
@@ -176,6 +174,8 @@ public class KiekerResultManager {
       if (buildtoolProjectNameReader.searchBuildfile(moduleFolder, 1)) {
          final String name = buildtoolProjectNameReader.getProjectName();
          xmlFileFolder = new File(folders.getTempMeasurementFolder(), name);
+      } else {
+         LOG.error("No buildfile found in {}", moduleFolder);
       }
       return xmlFileFolder;
    }
