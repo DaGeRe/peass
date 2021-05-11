@@ -44,6 +44,15 @@ public class ExecutionData extends SelectedTests {
    public Map<String, TestSet> getVersions() {
       return versions;
    }
+   
+   /**
+    * Adds a version in order to mark that the version has been analyzed (even without any tests to execute)
+    * @param version
+    */
+   @JsonIgnore
+   public void addVersion(final String version) {
+      versions.put(version, new TestSet());
+   }
 
    @JsonIgnore
    public void addCall(final String version, final TestSet tests) {

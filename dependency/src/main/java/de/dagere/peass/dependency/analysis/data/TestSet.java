@@ -74,6 +74,7 @@ public class TestSet {
       }
    }
 
+   @JsonInclude(JsonInclude.Include.NON_EMPTY)
    @JsonDeserialize(keyUsing = ChangedEntitityDeserializer.class, contentAs = TreeSet.class, as = TreeMap.class)
    private final Map<ChangedEntity, Set<String>> testcases = new TreeMap<>();
    private String predecessor;

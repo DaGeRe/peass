@@ -55,7 +55,7 @@ public class ResultsFolders {
       final File methodDir = new File(getClazzDir(version, testcase), testcase.getMethod());
       if (!methodDir.exists()) {
          boolean create = methodDir.mkdir();
-         LOG.debug("Created directory {}", methodDir.getAbsolutePath(), create);
+         LOG.debug("Created directory {} Success: {}", methodDir.getAbsolutePath(), create);
       } else {
          LOG.debug("Directory {} already existing", methodDir.getAbsolutePath());
       }
