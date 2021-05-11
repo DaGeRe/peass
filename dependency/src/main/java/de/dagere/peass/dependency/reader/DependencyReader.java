@@ -194,7 +194,7 @@ public class DependencyReader {
          traceChangeHandler.handleTraceAnalysisChanges(newVersionInfo);
 
          if (dependencyConfig.isGenerateViews()) {
-            executionResult.addVersion(version);
+            executionResult.addVersion(version, newVersionInfo.getPredecessor());
             
             TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, mapping);
             traceViewGenerator.generateViews(resultsFolders, newVersionInfo.getTests());
@@ -203,7 +203,7 @@ public class DependencyReader {
             for (TestCase testcase : newVersionInfo.getTests().getTests()) {
                boolean somethingChanged = diffGenerator.generateDiffFiles(testcase, mapping);
                if (somethingChanged) {
-                  executionResult.addCall(version, newVersionInfo.getPredecessor(), testcase);
+                  executionResult.addCall(version, testcase);
                }
             }
          }

@@ -50,8 +50,10 @@ public class ExecutionData extends SelectedTests {
     * @param version
     */
    @JsonIgnore
-   public void addVersion(final String version) {
-      versions.put(version, new TestSet());
+   public void addVersion(final String version, final String predecessor) {
+      TestSet testset = new TestSet();
+      testset.setPredecessor(predecessor);
+      versions.put(version, testset);
    }
 
    @JsonIgnore
@@ -65,15 +67,10 @@ public class ExecutionData extends SelectedTests {
    }
 
    @JsonIgnore
-   public void addCall(final String version, final String predecessor, final TestCase testcase) {
+   public void addCall(final String version, final TestCase testcase) {
       TestSet executes = versions.get(version);
       if (executes == null) {
-         executes = new TestSet();
-         versions.put(version, executes);
-         executes.setPredecessor(predecessor);
-      }
-      if (!executes.getPredecessor().equals(predecessor)) {
-         throw new RuntimeException("Unexpected: Different predecessor: " + predecessor + " " + executes.getPredecessor());
+         throw new RuntimeException("Version " + version + " was not existing; version is expected to exist");
       }
       executes.addTest(testcase);
    }

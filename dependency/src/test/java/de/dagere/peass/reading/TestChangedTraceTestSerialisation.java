@@ -44,8 +44,10 @@ public class TestChangedTraceTestSerialisation {
    @Test
    public void testVersionContent() throws IOException {
       final ExecutionData tests = new ExecutionData();
-      tests.addCall("v1", "v0", new TestCase("Test1#test"));
-      tests.addCall("v2", "v1", new TestCase("Test1#test"));
+      tests.addVersion("v1", "v0");
+      tests.addCall("v1", new TestCase("Test1#test"));
+      tests.addVersion("v2", "v1");
+      tests.addCall("v2", new TestCase("Test1#test"));
       
       final ObjectMapper mapper = Constants.OBJECTMAPPER;
       final String json =  mapper.writeValueAsString(tests);
