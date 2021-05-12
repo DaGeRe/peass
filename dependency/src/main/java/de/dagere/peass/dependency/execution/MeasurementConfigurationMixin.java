@@ -1,7 +1,6 @@
 package de.dagere.peass.dependency.execution;
 
 import de.dagere.peass.config.MeasurementStrategy;
-import de.dagere.peass.config.WorkloadType;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import picocli.CommandLine.Option;
 
@@ -42,9 +41,6 @@ public class MeasurementConfigurationMixin {
 
    @Option(names = { "-measurementStrategy", "--measurementStrategy" }, description = "Measurement strategy (Default: SEQUENTIAL) ")
    protected MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
-   
-   @Option(names = {"-workloadType", "--workloadType"}, description = "Which workload should be executed - by default JUNIT, can be changed to JMH")
-   public WorkloadType workloadType = WorkloadType.JUNIT;
 
    public int getVms() {
       return vms;
@@ -132,13 +128,5 @@ public class MeasurementConfigurationMixin {
 
    public MeasurementStrategy getMeasurementStrategy() {
       return measurementStrategy;
-   }
-   
-   public WorkloadType getWorkloadType() {
-      return workloadType;
-   }
-   
-   public void setWorkloadType(final WorkloadType workloadType) {
-      this.workloadType = workloadType;
    }
 }
