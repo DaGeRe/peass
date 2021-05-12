@@ -95,6 +95,8 @@ public class MeasurementConfiguration implements Serializable {
       executionConfig.setVersionOld(executionMixin.getVersionOld());
       executionConfig.setStartversion(executionMixin.getStartversion());
       executionConfig.setEndversion(executionMixin.getEndversion());
+      executionConfig.setTestTransformer(executionMixin.getWorkloadType().getTestTransformer());
+      executionConfig.setTestExecutor(executionMixin.getWorkloadType().getTestExecutor());
       
       executionConfig.setTestGoal(executionMixin.getTestGoal());
       if (executionMixin.getIncludes() != null) {
