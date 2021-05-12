@@ -27,7 +27,6 @@ import de.dagere.peass.measurement.organize.FolderDeterminer;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
-import de.dagere.peass.vcs.VersionControlSystem;
 
 /**
  * Runs a PeASS with only running the tests where a changed class is present.
@@ -42,7 +41,6 @@ public class DependencyTester implements KiekerResultHandler {
    protected final PeASSFolders folders;
    protected final MeasurementConfiguration configuration;
    protected final EnvironmentVariables env;
-   private final VersionControlSystem vcs;
    private ResultOrganizer currentOrganizer;
    protected long currentChunkStart = 0;
 
@@ -50,9 +48,6 @@ public class DependencyTester implements KiekerResultHandler {
       this.folders = folders;
       this.configuration = measurementConfig;
       this.env = env;
-
-      vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
-
    }
 
    /**
