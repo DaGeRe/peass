@@ -8,6 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -89,17 +90,20 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       measurementConfiguration.setKiekerAggregationInterval(kiekerConfigMixin.getWriteInterval());
       measurementConfiguration.setVersion(version);
       measurementConfiguration.setVersionOld(predecessor);
-      measurementConfiguration.setUseSourceInstrumentation(kiekerConfigMixin.isUseSourceInstrumentation());
-      measurementConfiguration.setEnableAdaptiveConfig(!kiekerConfigMixin.isUseSourceInstrumentation());
+      measurementConfiguration.setUseSourceInstrumentation(!kiekerConfigMixin.isNotUseSourceInstrumentation());
+      measurementConfiguration.setEnableAdaptiveConfig(!kiekerConfigMixin.isNotUseSourceInstrumentation());
       measurementConfiguration.setUseCircularQueue(kiekerConfigMixin.isUseCircularQueue());
-      if (kiekerConfigMixin.isUseSourceInstrumentation() && kiekerConfigMixin.isNotUseSelectiveInstrumentation()) {
+      if (kiekerConfigMixin.isNotUseSourceInstrumentation() && kiekerConfigMixin.isNotUseSelectiveInstrumentation()) {
          measurementConfiguration.setUseSelectiveInstrumentation(false);
       } else {
          measurementConfiguration.setUseSelectiveInstrumentation(true);
       }
-
+      if (kiekerConfigMixin.isNotUseSourceInstrumentation() && measurementConfiguration.getExecutionConfig().getTestTransformer().equals(WorkloadType.JMH.getTestTransformer())) {
+         throw new RuntimeException("AspectJ instrumentation and jmh currently not implemented!");
+      }
+      
       measurementConfiguration.setUseSampling(kiekerConfigMixin.isUseSampling());
-      LOG.info("Use source instrumentation: {}", kiekerConfigMixin.isUseSourceInstrumentation());
+      LOG.info("Use source instrumentation: {}", kiekerConfigMixin.isNotUseSourceInstrumentation());
       return measurementConfiguration;
    }
 
