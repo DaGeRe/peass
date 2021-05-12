@@ -26,7 +26,7 @@ import de.dagere.peass.measurement.analysis.statistics.TestData;
 import de.dagere.peass.measurement.organize.FolderDeterminer;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.TestTransformer;
 
 /**
  * Runs a PeASS with only running the tests where a changed class is present.
@@ -209,8 +209,8 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    protected synchronized TestExecutor getExecutor(final PeASSFolders currentFolders, final String version) {
-      final JUnitTestTransformer testTransformer = new JUnitTestTransformer(currentFolders.getProjectFolder(), configuration);
-      final TestExecutor testExecutor = ExecutorCreator.createExecutor(currentFolders, testTransformer, env);
+      TestTransformer transformer = ExecutorCreator.createTestTransformer(currentFolders, configuration.getExecutionConfig(), configuration);
+      final TestExecutor testExecutor = ExecutorCreator.createExecutor(currentFolders, transformer, env);
       return testExecutor;
    }
 

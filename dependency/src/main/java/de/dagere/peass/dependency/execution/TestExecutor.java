@@ -106,10 +106,6 @@ public abstract class TestExecutor {
       final File logFile = new File(clazzLogFolder, test.getMethod() + ".txt");
       return logFile;
    }
-   
-   
-
-   
 
    protected void prepareKiekerSource() throws IOException, XmlPullParserException, InterruptedException {
       if (testTransformer.getConfig().isUseKieker()) {
