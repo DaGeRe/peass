@@ -2,9 +2,9 @@ package de.dagere.peass.dependency.jmh;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
@@ -45,8 +45,8 @@ public class JmhKoPeMeConverter {
       this.measurementConfig = measurementConfig;
    }
 
-   public List<File> convertToXMLData(final File sourceJsonResultFile, final File clazzResultFolder) {
-      List<File> results = new LinkedList<>();
+   public Set<File> convertToXMLData(final File sourceJsonResultFile, final File clazzResultFolder) {
+      Set<File> results = new HashSet<>();
       try {
          JsonNode rootNode = Constants.OBJECTMAPPER.readTree(sourceJsonResultFile);
          if (rootNode != null && rootNode instanceof ArrayNode) {
@@ -147,13 +147,13 @@ public class JmhKoPeMeConverter {
 
    private static void convertFileNoData(final File child) throws JAXBException {
       JmhKoPeMeConverter converter = new JmhKoPeMeConverter(new MeasurementConfiguration(-1));
-      List<File> resultFiles = converter.convertToXMLData(child, child.getParentFile());
+      Set<File> resultFiles = converter.convertToXMLData(child, child.getParentFile());
 
       String currentVersion = child.getName().substring(0, child.getName().length() - ".json".length()); // Remove .json
       createChunk(resultFiles, currentVersion);
    }
 
-   private static void createChunk(final List<File> resultFiles, final String currentVersion) throws JAXBException {
+   private static void createChunk(final Set<File> resultFiles, final String currentVersion) throws JAXBException {
       for (File resultFile : resultFiles) {
          Kopemedata data = XMLDataLoader.loadData(resultFile);
          Chunk addedChunk = new Chunk();
