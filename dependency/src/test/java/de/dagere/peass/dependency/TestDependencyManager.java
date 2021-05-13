@@ -1,8 +1,6 @@
 package de.dagere.peass.dependency;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,8 +9,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.MeasurementConfiguration;
@@ -47,22 +43,8 @@ public class TestDependencyManager {
 
    private void prepareMock(final PeASSFolders folders, final TestExecutor testExecutorMock, final File testFolder, final File rubishFile) {
       try {
-         Mockito.doAnswer(new Answer<Void>() {
-            @Override
-            public Void answer(final InvocationOnMock invocation) throws Throwable {
-               folders.getTempMeasurementFolder().mkdir();
-               testFolder.mkdirs();
-               try (BufferedWriter writer = new BufferedWriter(new FileWriter(rubishFile))) {
-                  for (int i = 0; i < 2 * 1024 * 1024; i++) {
-                     writer.write(i % 256);
-                  }
-               }
-               LOG.info("Written: {}", rubishFile.length());
-               return null;
-            }
-         }).when(testExecutorMock).executeAllKoPeMeTests(Mockito.any());
          Mockito.when(testExecutorMock.getModules()).thenReturn(Mockito.mock(ProjectModules.class));
-      } catch (IOException | XmlPullParserException | InterruptedException e) {
+      } catch (IOException | XmlPullParserException  e) {
          e.printStackTrace();
       }
    }

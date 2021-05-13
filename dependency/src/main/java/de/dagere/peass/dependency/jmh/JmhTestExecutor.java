@@ -52,11 +52,6 @@ public class JmhTestExecutor extends TestExecutor {
    }
 
    @Override
-   public void executeAllKoPeMeTests(final File logFile) throws IOException, XmlPullParserException, InterruptedException {
-      throw new RuntimeException("Not implemented yet");
-   }
-
-   @Override
    public void executeTest(final TestCase test, final File logFolder, final long timeout) {
       try {
          File jsonResultFile = new File(folders.getTempMeasurementFolder(), test.getMethod()+ ".json");

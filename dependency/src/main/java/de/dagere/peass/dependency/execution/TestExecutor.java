@@ -61,8 +61,6 @@ public abstract class TestExecutor {
 
    public abstract void prepareKoPeMeExecution(File logFile) throws IOException, InterruptedException, XmlPullParserException;
 
-   public abstract void executeAllKoPeMeTests(final File logFile) throws IOException, XmlPullParserException, InterruptedException;
-
    public abstract void executeTest(final TestCase test, final File logFolder, long timeout);
 
    protected int getTestCount() throws IOException, XmlPullParserException {

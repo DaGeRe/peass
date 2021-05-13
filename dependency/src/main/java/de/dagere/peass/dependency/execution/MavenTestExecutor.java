@@ -21,7 +21,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -58,26 +57,6 @@ public class MavenTestExecutor extends KoPeMeExecutor {
 
    public MavenTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
       super(folders, testTransformer, env);
-   }
-
-   /**
-    * Runs all tests and saves the results to the given result folder
-    * 
-    * @param specialResultFolder Folder for saving the results
-    * @param tests Name of the test that should be run
-    */
-   @Override
-   public void executeAllKoPeMeTests(final File logFile) {
-      try {
-         prepareKoPeMeExecution(logFile);
-         final List<TestCase> testCases = getTestCases();
-         LOG.info("Starting Testcases: {}", testCases.size());
-         for (final TestCase test : testCases) {
-            executeTest(test, logFile.getParentFile(), testTransformer.getConfig().getTimeoutInMinutes());
-         }
-      } catch (final XmlPullParserException | IOException | InterruptedException e) {
-         e.printStackTrace();
-      }
    }
 
    public Process buildMavenProcess(final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {

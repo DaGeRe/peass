@@ -26,21 +26,6 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    }
 
    @Override
-   public void executeAllKoPeMeTests(final File logFile) throws IOException, XmlPullParserException, InterruptedException {
-      prepareKoPeMeExecution(logFile);
-      try {
-         final int testcount = getTestCount();
-         final Process process = buildProcess(folders.getProjectFolder(), logFile);
-         LOG.info("Starting Process, tests: {}", testcount);
-         final long timeout = 1l + testcount * this.testTransformer.getConfig().getTimeoutInMinutes();
-         execute("all", timeout, process);
-      } catch (InterruptedException | IOException | XmlPullParserException e) {
-         e.printStackTrace();
-      }
-
-   }
-
-   @Override
    public void prepareKoPeMeExecution(final File logFile) throws IOException, XmlPullParserException, InterruptedException {
       LOG.debug("Starting Test Transformation");
       prepareKiekerSource();
