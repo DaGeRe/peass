@@ -97,7 +97,7 @@ public class KiekerEnvironmentPreparer {
                final File folder = new File(module, potentialReadFolder);
                folder.mkdirs();
                final File propertiesFile = new File(folder, "kieker.monitoring.properties");
-               AOPXMLHelper.writeKiekerMonitoringProperties(propertiesFile, testTransformer);
+               AOPXMLHelper.writeKiekerMonitoringProperties(propertiesFile, testTransformer, folders);
             }
          }
       } catch (IOException e) {

@@ -39,14 +39,14 @@ public class ArgLineBuilder {
    private String buildGenericArgline(final File tempFolder, final String valueSeparator, final String entrySeparator, final String kiekerLine) {
       String argline;
       if (testTransformer.getConfig().isUseKieker()) {
-         String writerConfig;
+         String writerConfig = "";
          String tempFolderPath = "'" + tempFolder.getAbsolutePath() + "'";
-         if (testTransformer.isAggregatedWriter()) {
-            final String bulkFolder = "-D" + AOPXMLHelper.AGGREGATED_WRITER + ".customStoragePath" + valueSeparator + tempFolderPath;
-            writerConfig = bulkFolder;
-         } else {
-            writerConfig = "";
-         }
+         // if (testTransformer.isAggregatedWriter()) {
+         // final String bulkFolder = "-D" + AOPXMLHelper.AGGREGATED_WRITER + ".customStoragePath" + valueSeparator + tempFolderPath;
+         // writerConfig = bulkFolder;
+         // } else {
+         // writerConfig = "";
+         // }
 
          if (!testTransformer.getConfig().isEnableAdaptiveConfig()) {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
@@ -62,12 +62,15 @@ public class ArgLineBuilder {
             }
          } else {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-               argline = TEMP_DIR + valueSeparator + tempFolderPath +
-                     entrySeparator + writerConfig;
+               argline = TEMP_DIR + valueSeparator + tempFolderPath;
+               if (!writerConfig.equals("")) {
+                  argline += entrySeparator + writerConfig;
+               }
             } else {
-               argline = kiekerLine +
-                     entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath +
-                     entrySeparator + writerConfig;
+               argline = kiekerLine + entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath;
+               if (!writerConfig.equals("")) {
+                  argline += entrySeparator + writerConfig;
+               }
             }
          }
          if (!entrySeparator.contains("\"")) {
