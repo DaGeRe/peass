@@ -3,6 +3,8 @@ package de.dagere.peass.dependency.jmh;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
@@ -26,6 +28,12 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.utils.Constants;
 
+/**
+ * Converts JMH data into KoPeMe format to use change analysis afterwards
+ * 
+ * @author reichelt
+ *
+ */
 public class JmhKoPeMeConverter {
    private static final int SECONDS_TO_NANOSECONDS = 1000000000;
 
@@ -35,7 +43,8 @@ public class JmhKoPeMeConverter {
       this.measurementConfig = measurementConfig;
    }
 
-   public void convertToXMLData(final File sourceJsonResultFile, final File clazzResultFolder) {
+   public List<File> convertToXMLData(final File sourceJsonResultFile, final File clazzResultFolder) {
+      List<File> results = new LinkedList<>();
       try {
          JsonNode rootNode = Constants.OBJECTMAPPER.readTree(sourceJsonResultFile);
          if (rootNode != null && rootNode instanceof ArrayNode) {
@@ -49,6 +58,7 @@ public class JmhKoPeMeConverter {
                ArrayNode rawData = (ArrayNode) primaryMetric.get("rawData");
 
                File koPeMeFile = new File(clazzResultFolder, benchmarkMethodName + ".xml");
+               results.add(koPeMeFile);
                Kopemedata transformed;
                Datacollector timeCollector;
                if (koPeMeFile.exists()) {
@@ -82,6 +92,7 @@ public class JmhKoPeMeConverter {
       } catch (IOException | JAXBException e) {
          throw new RuntimeException(e);
       }
+      return results;
    }
 
    private void setParamMap(final Result result, final JsonNode params) {
@@ -117,5 +128,23 @@ public class JmhKoPeMeConverter {
       result.setRepetitions(measurementConfig.getRepetitions());
 
       return result;
+   }
+
+   public static void main(final String[] args) {
+      for (String input : args) {
+         File inputFile = new File(input);
+         if (inputFile.isDirectory()) {
+            for (File child : inputFile.listFiles()) {
+               convertFileNoData(child);
+            }
+         } else {
+            convertFileNoData(inputFile);
+         }
+      }
+   }
+
+   private static void convertFileNoData(final File child) {
+      JmhKoPeMeConverter converter = new JmhKoPeMeConverter(new MeasurementConfiguration(-1));
+      List<File> resultFiles = converter.convertToXMLData(child, child.getParentFile());
    }
 }
