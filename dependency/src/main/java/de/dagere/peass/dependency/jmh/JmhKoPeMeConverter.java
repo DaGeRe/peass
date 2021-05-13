@@ -25,6 +25,8 @@ import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.generated.Result.Params.Param;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.kopeme.generated.Versioninfo;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.utils.Constants;
 
@@ -130,7 +132,7 @@ public class JmhKoPeMeConverter {
       return result;
    }
 
-   public static void main(final String[] args) {
+   public static void main(final String[] args) throws JAXBException {
       for (String input : args) {
          File inputFile = new File(input);
          if (inputFile.isDirectory()) {
@@ -143,8 +145,27 @@ public class JmhKoPeMeConverter {
       }
    }
 
-   private static void convertFileNoData(final File child) {
+   private static void convertFileNoData(final File child) throws JAXBException {
       JmhKoPeMeConverter converter = new JmhKoPeMeConverter(new MeasurementConfiguration(-1));
       List<File> resultFiles = converter.convertToXMLData(child, child.getParentFile());
+
+      String currentVersion = child.getName().substring(0, child.getName().length() - ".json".length()); // Remove .json
+      createChunk(resultFiles, currentVersion);
+   }
+
+   private static void createChunk(final List<File> resultFiles, final String currentVersion) throws JAXBException {
+      for (File resultFile : resultFiles) {
+         Kopemedata data = XMLDataLoader.loadData(resultFile);
+         Chunk addedChunk = new Chunk();
+         Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
+         addedChunk.getResult().addAll(datacollector.getResult());
+         for (Result result : datacollector.getResult()) {
+            result.setVersion(new Versioninfo());
+            result.getVersion().setGitversion(currentVersion);
+         }
+         datacollector.getChunk().add(addedChunk);
+         datacollector.getResult().clear();
+         XMLDataStorer.storeData(resultFile, data);
+      }
    }
 }
