@@ -44,6 +44,8 @@ public abstract class KoPeMeExecutor extends TestExecutor {
       return testGoal;
    }
 
+   protected abstract void runTest(File moduleFolder, final File logFile, final String testname, final long timeout);
+   
    void runMethod(final File logFolder, final TestCase test, final File moduleFolder, final long timeout) {
       try (final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, moduleFolder, test.toEntity(), test.getMethod())) {
          LOG.info("Cleaning...");
@@ -57,6 +59,7 @@ public abstract class KoPeMeExecutor extends TestExecutor {
       }
    }
    
+   @Override
    public JUnitTestTransformer getTestTransformer() {
       return testTransformer;
    }

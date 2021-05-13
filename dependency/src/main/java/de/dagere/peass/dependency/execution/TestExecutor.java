@@ -85,10 +85,6 @@ public abstract class TestExecutor {
       return testcases;
    }
 
-   
-
-   protected abstract void runTest(File moduleFolder, final File logFile, final String testname, final long timeout);
-
    protected File getCleanLogFile(final File logFolder, final TestCase test) {
       File clazzLogFolder = new File(logFolder, "log_" + test.getClazz());
       if (!clazzLogFolder.exists()) {

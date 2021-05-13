@@ -33,7 +33,7 @@ public class JmhTestExecutor extends TestExecutor {
       super(folders, testTransformer, env);
       this.transformer = (JmhTestTransformer) testTransformer;
    }
-
+   
    @Override
    public void prepareKoPeMeExecution(final File logFile) throws IOException, InterruptedException, XmlPullParserException {
       prepareKiekerSource();
@@ -106,11 +106,6 @@ public class JmhTestExecutor extends TestExecutor {
             jsonResultFile.getAbsolutePath()  };
       String[] mergedParameters = CommandConcatenator.concatenateCommandArrays(basicParameters, jmhParameters);
       return mergedParameters;
-   }
-
-   @Override
-   protected void runTest(final File moduleFolder, final File logFile, final String testname, final long timeout) {
-      throw new RuntimeException("Not implemented yet");
    }
 
    @Override
