@@ -7,6 +7,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.execution.ArgLineBuilder;
 import de.dagere.peass.dependency.execution.CommandConcatenator;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.MavenPomUtil;
@@ -33,7 +34,7 @@ public class JmhTestExecutor extends TestExecutor {
       super(folders, testTransformer, env);
       this.transformer = (JmhTestTransformer) testTransformer;
    }
-   
+
    @Override
    public void prepareKoPeMeExecution(final File logFile) throws IOException, InterruptedException, XmlPullParserException {
       prepareKiekerSource();
@@ -54,7 +55,7 @@ public class JmhTestExecutor extends TestExecutor {
    @Override
    public void executeTest(final TestCase test, final File logFolder, final long timeout) {
       try {
-         File jsonResultFile = new File(folders.getTempMeasurementFolder(), test.getMethod()+ ".json");
+         File jsonResultFile = new File(folders.getTempMeasurementFolder(), test.getMethod() + ".json");
          String[] mergedParameters = buildParameterString(test, jsonResultFile);
 
          ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
@@ -75,10 +76,15 @@ public class JmhTestExecutor extends TestExecutor {
       if (testTransformer.getConfig().isUseKieker()) {
          File moduleFolder = new File(folders.getProjectFolder(), test.getModule());
          folders.getTempMeasurementFolder().mkdirs();
-         basicParameters = new String[] {
-               "java",
-               "-Dkieker.monitoring.configuration=" + moduleFolder.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties",
-               "-Djava.io.tmpdir=" + folders.getTempMeasurementFolder().getAbsolutePath() };
+
+         File lastTmpFile = folders.getTempMeasurementFolder();
+         ArgLineBuilder builder = new ArgLineBuilder(transformer, moduleFolder);
+         String argLine = builder.buildArgline(lastTmpFile)
+               .replace("'", "") // jmh does not accept ' surrounding the path
+               .replace("\"", "");
+         String[] splittedArgs = argLine.split(" ");
+         basicParameters = CommandConcatenator.concatenateCommandArrays(new String[] { "java" }, splittedArgs);
+
       } else {
          basicParameters = new String[] { "java" };
       }
@@ -95,10 +101,10 @@ public class JmhTestExecutor extends TestExecutor {
             Integer.toString(transformer.getConfig().getIterations()),
             "-wi",
             Integer.toString(transformer.getConfig().getWarmup()),
-            "-rf", 
+            "-rf",
             "json", // JSON format is needed, since VM-internal measurement values are required
             "-rff",
-            jsonResultFile.getAbsolutePath()  };
+            jsonResultFile.getAbsolutePath() };
       String[] mergedParameters = CommandConcatenator.concatenateCommandArrays(basicParameters, jmhParameters);
       return mergedParameters;
    }
