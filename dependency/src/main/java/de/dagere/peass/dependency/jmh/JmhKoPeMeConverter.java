@@ -57,6 +57,7 @@ public class JmhKoPeMeConverter {
                String benchmarkMethodName = name.substring(name.lastIndexOf('.') + 1);
 
                JsonNode primaryMetric = benchmark.get("primaryMetric");
+               String scoreUnit = primaryMetric.get("scoreUnit").asText();
                ArrayNode rawData = (ArrayNode) primaryMetric.get("rawData");
 
                File koPeMeFile = new File(clazzResultFolder, benchmarkMethodName + ".xml");
@@ -80,7 +81,7 @@ public class JmhKoPeMeConverter {
                }
 
                for (JsonNode vmExecution : rawData) {
-                  Result result = buildResult(vmExecution);
+                  Result result = buildResult(vmExecution, scoreUnit);
                   JsonNode params = benchmark.get("params");
                   if (params != null) {
                      setParamMap(result, params);
@@ -109,12 +110,18 @@ public class JmhKoPeMeConverter {
       }
    }
 
-   private Result buildResult(final JsonNode vmExecution) {
+   private Result buildResult(final JsonNode vmExecution, final String scoreUnit) {
       Result result = new Result();
       result.setFulldata(new Fulldata());
       for (JsonNode iteration : vmExecution) {
          Value value = new Value();
-         long iterationDuration = (long) (iteration.asDouble() * SECONDS_TO_NANOSECONDS);
+         long iterationDuration;
+         if (!scoreUnit.equals("ops/s")) {
+            iterationDuration = (long) (iteration.asDouble() * SECONDS_TO_NANOSECONDS);
+         } else {
+            iterationDuration = iteration.asLong();
+         }
+
          value.setValue(iterationDuration);
          result.getFulldata().getValue().add(value);
       }
@@ -137,7 +144,9 @@ public class JmhKoPeMeConverter {
          File inputFile = new File(input);
          if (inputFile.isDirectory()) {
             for (File child : inputFile.listFiles()) {
-               convertFileNoData(child);
+               if (child.getName().endsWith(".json")) {
+                  convertFileNoData(child);
+               }
             }
          } else {
             convertFileNoData(inputFile);
