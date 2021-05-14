@@ -111,7 +111,7 @@ public class ExternalJmhDataConverter {
       LOG.info("Params: {}", allParams);
       return allParams;
    }
-
+   
    public static String paramsToString(final Params params) {
       String result = "";
       if (params != null) {
