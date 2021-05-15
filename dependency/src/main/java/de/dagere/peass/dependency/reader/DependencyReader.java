@@ -163,12 +163,7 @@ public class DependencyReader {
 
       dependencyManager.getExecutor().loadClasses();
 
-      final DependencyReadingInput input;
-      if (iterator.isPredecessor(lastRunningVersion)) {
-         input = new DependencyReadingInput(changeManager.getChanges(null), lastRunningVersion);
-      } else {
-         input = new DependencyReadingInput(changeManager.getChanges(lastRunningVersion), lastRunningVersion);
-      }
+      final DependencyReadingInput input = new DependencyReadingInput(changeManager.getChanges(lastRunningVersion), lastRunningVersion);
       changeManager.saveOldClasses();
       lastRunningVersion = iterator.getTag();
 
