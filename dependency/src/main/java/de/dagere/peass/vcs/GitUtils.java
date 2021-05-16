@@ -171,7 +171,7 @@ public final class GitUtils {
    }
 
    public static List<GitCommit> getCommits(final File folder, final boolean includeAllBranches) {
-      return getCommits(folder, includeAllBranches, false, false);
+      return getCommits(folder, includeAllBranches, true, false);
    }
 
    /**
