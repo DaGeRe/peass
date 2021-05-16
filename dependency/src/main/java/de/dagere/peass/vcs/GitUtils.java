@@ -191,7 +191,7 @@ public final class GitUtils {
          final List<GitCommit> commits;
          if (getMetadata) {
             commits = getCommitsMetadata(folder, commitNames);
-         }else {
+         } else {
             commits = new LinkedList<>();
             commitNames.forEach(tag -> commits.add(new GitCommit(tag, null, null, null)));
          }
@@ -204,7 +204,7 @@ public final class GitUtils {
 
    private static List<String> getLinearCommitNames(final File folder) {
       try {
-         Process readOldestCommitProcess = Runtime.getRuntime().exec("git log --reverse  --oneline", new String[0], folder);
+         Process readOldestCommitProcess = Runtime.getRuntime().exec("git log --reverse  --pretty=tformat:%H", new String[0], folder);
          final BufferedReader readOldestCommitInput = new BufferedReader(new InputStreamReader(readOldestCommitProcess.getInputStream()));
          String oldestCommit = readOldestCommitInput.readLine().split(" ")[0];
 
@@ -223,6 +223,7 @@ public final class GitUtils {
                lastChild = ancestryHashes[0];
             }
          }
+         ouputCommitList.add(oldestCommit);
          return ouputCommitList;
       } catch (IOException e) {
          throw new RuntimeException(e);
