@@ -179,7 +179,9 @@ public final class GitUtils {
          final Process p = Runtime.getRuntime().exec(command, new String[0], folder);
          final BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
          String line;
+         List<String> commitNames = new LinkedList<>();
          while ((line = input.readLine()) != null) {
+            
             if (line.startsWith("commit")) {
                final String tag = line.substring(7);
                String nextTag = readCommit(commits, input, tag);
