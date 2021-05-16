@@ -166,68 +166,56 @@ public final class GitUtils {
       return commits;
    }
 
+   public static List<GitCommit> getCommits(final File folder, final boolean includeAllBranches) {
+      return getCommits(folder, includeAllBranches, false);
+   }
+
    /**
     * Returns the commits of the git repo in ascending order.
     * 
     * @param folder
     * @return
     */
-   public static List<GitCommit> getCommits(final File folder, final boolean includeAllBranches) {
+   public static List<GitCommit> getCommits(final File folder, final boolean includeAllBranches, final boolean linearizeHistory) {
       final List<GitCommit> commits = new LinkedList<>();
       try {
-         String command = includeAllBranches ? "git log --all" : "git log";
-         final Process p = Runtime.getRuntime().exec(command, new String[0], folder);
-         final BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-         String line;
-         List<String> commitNames = new LinkedList<>();
-         while ((line = input.readLine()) != null) {
-            
-            if (line.startsWith("commit")) {
-               final String tag = line.substring(7);
-               String nextTag = readCommit(commits, input, tag);
-               while (nextTag != null) {
-                  nextTag = readCommit(commits, input, nextTag);
+         List<String> commitNames = getCommitNames(folder, includeAllBranches);
+
+         for (String commit : commitNames) {
+            final Process readCommitProcess = Runtime.getRuntime().exec("git log -n 1 " + commit, new String[0], folder);
+            final BufferedReader readCommitInput = new BufferedReader(new InputStreamReader(readCommitProcess.getInputStream()));
+            String line = null;
+            String author = null, date = null, message = "";
+            while ((line = readCommitInput.readLine()) != null) {
+               if (line.startsWith("Author:")) {
+                  author = line.substring(8);
                }
-            }
-         }
-         p.waitFor();
-      } catch (IOException | InterruptedException e) {
-         e.printStackTrace();
-      }
-
-      // System.out.println("Commits: " + commits.size());
-      return commits;
-   }
-
-   public static String readCommit(final List<GitCommit> commits, final BufferedReader input, final String tag) throws IOException {
-      String nextTag = null;
-      String line;
-      line = input.readLine();
-      if (line.startsWith("Merge: ")) {
-         line = input.readLine();
-      }
-      if (line.startsWith("Author:")) {
-         final String author = line.substring(8);
-         line = input.readLine();
-         if (line.startsWith("Date: ")) {
-            final String date = line.substring(8);
-            String message = "";
-            while ((line = input.readLine()) != null) {
-               if (line.startsWith("commit")) {
-                  nextTag = line.substring(7);
-                  break;
-               } else {
+               if (line.startsWith("Date: ")) {
+                  date = line.substring(8);
+               } else if (author != null && date != null) {
                   message += line + " ";
                }
             }
-            // log.debug("Git Commit: {}", tag);
-            final GitCommit gc = new GitCommit(tag, author, date, message);
-            commits.add(0, gc);
+            final GitCommit gc = new GitCommit(commit, author, date, message);
+            commits.add(gc);
          }
-      } else {
-         LOG.error("Author tag missing - wrong default git log format? " + line);
+      } catch (IOException e) {
+         e.printStackTrace();
       }
-      return nextTag;
+      return commits;
+   }
+
+   private static List<String> getCommitNames(final File folder, final boolean includeAllBranches) throws IOException {
+      String command = includeAllBranches ? "git log --oneline --all" : "git log --oneline";
+      final Process p = Runtime.getRuntime().exec(command, new String[0], folder);
+      final BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+      String line;
+      List<String> commitNames = new LinkedList<>();
+      while ((line = input.readLine()) != null) {
+         String commit = line.split(" ")[0];
+         commitNames.add(commit);
+      }
+      return commitNames;
    }
 
    public static VersionDiff getChangedClasses(final File projectFolder, final List<File> modules, final String lastVersion) {
@@ -322,20 +310,20 @@ public final class GitUtils {
          synchronized (projectFolder) {
             LOG.debug("Going to tag {} folder: {}", tag, projectFolder.getAbsolutePath());
             reset(projectFolder);
-            
+
             clean(projectFolder);
 
             int worked = checkout(tag, projectFolder);
-            
+
             if (worked != 0) {
-               LOG.info("Return value was !=0 - fetching" );
+               LOG.info("Return value was !=0 - fetching");
                final Process pFetch = Runtime.getRuntime().exec("git fetch --all", new String[0], projectFolder);
                final String outFetch = StreamGobbler.getFullProcess(pFetch, false);
                pFetch.waitFor();
                System.out.println(outFetch);
-               
+
                int secondCheckoutWorked = checkout(tag, projectFolder);
-               
+
                if (secondCheckoutWorked != 0) {
                   LOG.error("Second checkout did not work - an old version is probably analyzed");
                }

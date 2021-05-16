@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +19,7 @@ public class TestGitUtils {
    private static final String FEATURE_A = "feature-A";
    private static final String PEASS_TEST_MAIN_BRANCH = "peass-test-main";
    private final static File PROJECT_FOLDER = new File(TestConstants.CURRENT_FOLDER, "demo-git");
-   
+
    private static final File exampleTextFile = new File(PROJECT_FOLDER, "file.txt");
    private static final File secondTextFile = new File(PROJECT_FOLDER, "second.txt");
 
@@ -28,7 +29,6 @@ public class TestGitUtils {
       PROJECT_FOLDER.mkdirs();
       ProjectBuilderHelper.init(PROJECT_FOLDER);
 
-      
       FileUtils.writeStringToFile(exampleTextFile, "Dummy", StandardCharsets.UTF_8);
       ProjectBuilderHelper.commit(PROJECT_FOLDER, "Dummy-version for avoiding branch clashes (default branch might be main or master)");
 
@@ -56,23 +56,34 @@ public class TestGitUtils {
 
    @Test
    public void testBasicCommitGetting() throws InterruptedException, IOException {
-      List<GitCommit> commitsAll = GitUtils.getCommits(PROJECT_FOLDER, true);
+      List<GitCommit> commitsAll = GitUtils.getCommits(PROJECT_FOLDER, true, false);
       Assert.assertEquals(commitsAll.size(), 7);
 
-      List<GitCommit> commits = GitUtils.getCommits(PROJECT_FOLDER, false);
+      List<GitCommit> commits = GitUtils.getCommits(PROJECT_FOLDER, false, false);
       Assert.assertEquals(commits.size(), 4);
 
       ProjectBuilderHelper.merge(PROJECT_FOLDER, FEATURE_A);
 
-      List<GitCommit> commitsMerged = GitUtils.getCommits(PROJECT_FOLDER, false);
+      List<GitCommit> commitsMerged = GitUtils.getCommits(PROJECT_FOLDER, false, false);
       Assert.assertEquals(commitsMerged.size(), 7);
+
+      Assert.assertThat(commitsMerged.get(0).getComitter(), Matchers.equalTo("Anonym <anonym@generated.org>"));
+      Assert.assertNotNull(commitsMerged.get(0).getDate());
+
+      Assert.assertThat(commitsMerged.get(0).getMessage(), Matchers.containsString("Version A2"));
+      Assert.assertThat(commitsMerged.get(commitsMerged.size() - 1).getMessage(), Matchers.containsString("Dummy-version for avoiding branch clashes"));
    }
 
    @Test
    public void testMergeCommits() throws InterruptedException, IOException {
-      FileUtils.writeStringToFile(secondTextFile, "Just some text", StandardCharsets.UTF_8);
       createMergeCommit(exampleTextFile, 6);
       createMergeCommit(exampleTextFile, 7);
+
+      List<GitCommit> commitsRegular = GitUtils.getCommits(PROJECT_FOLDER, false, false);
+      Assert.assertEquals(commitsRegular.size(), 13);
+
+      List<GitCommit> commitsLinear = GitUtils.getCommits(PROJECT_FOLDER, false, true);
+      Assert.assertEquals(commitsLinear.size(), 11);
    }
 
    private void createMergeCommit(final File exampleTextFile, final int index) throws InterruptedException, IOException {
