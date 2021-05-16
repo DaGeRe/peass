@@ -21,8 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -143,7 +146,7 @@ public final class GitUtils {
       boolean afterEnd = false;
       final List<GitCommit> notRelevantCommits = new LinkedList<>();
       for (final GitCommit commit : commits) {
-         LOG.trace("Processing " + commit.getTag() + " " + commit.getDate() + " " + beforeStart + " " + afterEnd);
+         LOG.debug("Processing " + commit.getTag() + " " + commit.getDate() + " " + beforeStart + " " + afterEnd);
          if (startversion != null && commit.getTag().startsWith(startversion)) {
             beforeStart = false;
          }
@@ -157,6 +160,7 @@ public final class GitUtils {
             }
          }
       }
+      System.out.println("Removing: " + notRelevantCommits.size());
       commits.removeAll(notRelevantCommits);
    }
 
@@ -167,7 +171,7 @@ public final class GitUtils {
    }
 
    public static List<GitCommit> getCommits(final File folder, final boolean includeAllBranches) {
-      return getCommits(folder, includeAllBranches, false);
+      return getCommits(folder, includeAllBranches, false, false);
    }
 
    /**
@@ -176,31 +180,74 @@ public final class GitUtils {
     * @param folder
     * @return
     */
-   public static List<GitCommit> getCommits(final File folder, final boolean includeAllBranches, final boolean linearizeHistory) {
-      final List<GitCommit> commits = new LinkedList<>();
+   public static List<GitCommit> getCommits(final File folder, final boolean includeAllBranches, final boolean linearizeHistory, final boolean getMetadata) {
       try {
-         List<String> commitNames = getCommitNames(folder, includeAllBranches);
-
-         for (String commit : commitNames) {
-            final Process readCommitProcess = Runtime.getRuntime().exec("git log -n 1 " + commit, new String[0], folder);
-            final BufferedReader readCommitInput = new BufferedReader(new InputStreamReader(readCommitProcess.getInputStream()));
-            String line = null;
-            String author = null, date = null, message = "";
-            while ((line = readCommitInput.readLine()) != null) {
-               if (line.startsWith("Author:")) {
-                  author = line.substring(8);
-               }
-               if (line.startsWith("Date: ")) {
-                  date = line.substring(8);
-               } else if (author != null && date != null) {
-                  message += line + " ";
-               }
-            }
-            final GitCommit gc = new GitCommit(commit, author, date, message);
-            commits.add(gc);
+         final List<String> commitNames;
+         if (!linearizeHistory) {
+            commitNames = getCommitNames(folder, includeAllBranches);
+         } else {
+            commitNames = getLinearCommitNames(folder);
          }
+         final List<GitCommit> commits;
+         if (getMetadata) {
+            commits = getCommitsMetadata(folder, commitNames);
+         }else {
+            commits = new LinkedList<>();
+            commitNames.forEach(tag -> commits.add(new GitCommit(tag, null, null, null)));
+         }
+         return commits;
       } catch (IOException e) {
-         e.printStackTrace();
+         throw new RuntimeException(e);
+      }
+
+   }
+
+   private static List<String> getLinearCommitNames(final File folder) {
+      try {
+         Process readOldestCommitProcess = Runtime.getRuntime().exec("git log --reverse  --oneline", new String[0], folder);
+         final BufferedReader readOldestCommitInput = new BufferedReader(new InputStreamReader(readOldestCommitProcess.getInputStream()));
+         String oldestCommit = readOldestCommitInput.readLine().split(" ")[0];
+
+         List<String> ouputCommitList = new LinkedList<>();
+         String lastChild = null;
+
+         final Process readCommitProcess = Runtime.getRuntime().exec("git rev-list --ancestry-path --children " + oldestCommit + "..HEAD", new String[0], folder);
+         final BufferedReader readCommitInput = new BufferedReader(new InputStreamReader(readCommitProcess.getInputStream()));
+         String line;
+
+         while ((line = readCommitInput.readLine()) != null) {
+            String[] ancestryHashes = line.split(" ");
+            Set<String> hashes = new HashSet<>(Arrays.asList(ancestryHashes));
+            if (lastChild == null || hashes.contains(lastChild)) {
+               ouputCommitList.add(0, ancestryHashes[0]);
+               lastChild = ancestryHashes[0];
+            }
+         }
+         return ouputCommitList;
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+   }
+
+   private static List<GitCommit> getCommitsMetadata(final File folder, final List<String> commitNames) throws IOException {
+      final List<GitCommit> commits = new LinkedList<>();
+      for (String commit : commitNames) {
+         final Process readCommitProcess = Runtime.getRuntime().exec("git log -n 1 " + commit, new String[0], folder);
+         final BufferedReader readCommitInput = new BufferedReader(new InputStreamReader(readCommitProcess.getInputStream()));
+         String line = null;
+         String author = null, date = null, message = "";
+         while ((line = readCommitInput.readLine()) != null) {
+            if (line.startsWith("Author:")) {
+               author = line.substring(8);
+            }
+            if (line.startsWith("Date: ")) {
+               date = line.substring(8);
+            } else if (author != null && date != null) {
+               message += line + " ";
+            }
+         }
+         final GitCommit gc = new GitCommit(commit, author, date, message);
+         commits.add(gc);
       }
       return commits;
    }
@@ -213,7 +260,7 @@ public final class GitUtils {
       List<String> commitNames = new LinkedList<>();
       while ((line = input.readLine()) != null) {
          String commit = line.split(" ")[0];
-         commitNames.add(commit);
+         commitNames.add(0, commit);
       }
       return commitNames;
    }

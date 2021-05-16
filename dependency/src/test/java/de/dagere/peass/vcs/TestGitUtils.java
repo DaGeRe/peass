@@ -56,34 +56,35 @@ public class TestGitUtils {
 
    @Test
    public void testBasicCommitGetting() throws InterruptedException, IOException {
-      List<GitCommit> commitsAll = GitUtils.getCommits(PROJECT_FOLDER, true, false);
+      List<GitCommit> commitsAll = GitUtils.getCommits(PROJECT_FOLDER, true, false, true);
       Assert.assertEquals(commitsAll.size(), 7);
 
-      List<GitCommit> commits = GitUtils.getCommits(PROJECT_FOLDER, false, false);
+      List<GitCommit> commits = GitUtils.getCommits(PROJECT_FOLDER, false, false, true);
       Assert.assertEquals(commits.size(), 4);
 
       ProjectBuilderHelper.merge(PROJECT_FOLDER, FEATURE_A);
 
-      List<GitCommit> commitsMerged = GitUtils.getCommits(PROJECT_FOLDER, false, false);
+      List<GitCommit> commitsMerged = GitUtils.getCommits(PROJECT_FOLDER, false, false, true);
       Assert.assertEquals(commitsMerged.size(), 7);
 
       Assert.assertThat(commitsMerged.get(0).getComitter(), Matchers.equalTo("Anonym <anonym@generated.org>"));
       Assert.assertNotNull(commitsMerged.get(0).getDate());
 
-      Assert.assertThat(commitsMerged.get(0).getMessage(), Matchers.containsString("Version A2"));
-      Assert.assertThat(commitsMerged.get(commitsMerged.size() - 1).getMessage(), Matchers.containsString("Dummy-version for avoiding branch clashes"));
+      Assert.assertThat(commitsMerged.get(commitsMerged.size() - 1).getMessage(), Matchers.containsString("Version A2"));
+      Assert.assertThat(commitsMerged.get(0).getMessage(), Matchers.containsString("Dummy-version for avoiding branch clashes"));
    }
 
    @Test
    public void testMergeCommits() throws InterruptedException, IOException {
-      createMergeCommit(exampleTextFile, 6);
-      createMergeCommit(exampleTextFile, 7);
+      createMergeCommit(exampleTextFile, 3);
+      createMergeCommit(exampleTextFile, 4);
 
-      List<GitCommit> commitsRegular = GitUtils.getCommits(PROJECT_FOLDER, false, false);
+      List<GitCommit> commitsRegular = GitUtils.getCommits(PROJECT_FOLDER, false, false, false);
       Assert.assertEquals(commitsRegular.size(), 13);
 
-      List<GitCommit> commitsLinear = GitUtils.getCommits(PROJECT_FOLDER, false, true);
-      Assert.assertEquals(commitsLinear.size(), 11);
+      // Test that seven commits are left (which happens due to the current linearization; 11 would also be reasonable with other linearization)
+      List<GitCommit> commitsLinear = GitUtils.getCommits(PROJECT_FOLDER, false, true, false);
+      Assert.assertEquals(commitsLinear.size(), 7);
    }
 
    private void createMergeCommit(final File exampleTextFile, final int index) throws InterruptedException, IOException {
