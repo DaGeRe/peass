@@ -128,17 +128,20 @@ public class JmhTestTransformer implements TestTransformer {
       final List<TestCase> methods = new LinkedList<>();
       final File clazzFile = ClazzFileFinder.getClazzFile(module, clazzname);
       try {
-         LOG.debug("Parsing {} - {}", clazzFile, clazzname);
-         final CompilationUnit unit = JavaParserProvider.parse(clazzFile);
-         List<ClassOrInterfaceDeclaration> clazzDeclarations = ClazzFinder.getClazzDeclarations(unit);
-         for (ClassOrInterfaceDeclaration clazz : clazzDeclarations) {
-            String parsedClassName = getFullName(clazz);
-            System.out.println(parsedClassName + " " + clazzname.getSimpleClazzName());
-            if (parsedClassName.equals(clazzname.getSimpleClazzName())) {
-               List<String> benchmarkMethods = JUnitParseUtil.getAnnotatedMethods(clazz, "org.openjdk.jmh.annotations.Benchmark", "Benchmark");
-               for (String benchmarkMethod : benchmarkMethods) {
-                  TestCase foundBenchmark = new TestCase(clazzname.getClazz(), benchmarkMethod, clazzname.getModule());
-                  methods.add(foundBenchmark);
+         // File might be removed or moved
+         if (clazzFile != null) {
+            LOG.debug("Parsing {} - {}", clazzFile, clazzname);
+            final CompilationUnit unit = JavaParserProvider.parse(clazzFile);
+            List<ClassOrInterfaceDeclaration> clazzDeclarations = ClazzFinder.getClazzDeclarations(unit);
+            for (ClassOrInterfaceDeclaration clazz : clazzDeclarations) {
+               String parsedClassName = getFullName(clazz);
+               System.out.println(parsedClassName + " " + clazzname.getSimpleClazzName());
+               if (parsedClassName.equals(clazzname.getSimpleClazzName())) {
+                  List<String> benchmarkMethods = JUnitParseUtil.getAnnotatedMethods(clazz, "org.openjdk.jmh.annotations.Benchmark", "Benchmark");
+                  for (String benchmarkMethod : benchmarkMethods) {
+                     TestCase foundBenchmark = new TestCase(clazzname.getClazz(), benchmarkMethod, clazzname.getModule());
+                     methods.add(foundBenchmark);
+                  }
                }
             }
          }
@@ -148,7 +151,7 @@ public class JmhTestTransformer implements TestTransformer {
       return methods;
    }
 
-   private String getFullName(ClassOrInterfaceDeclaration clazz) {
+   private String getFullName(final ClassOrInterfaceDeclaration clazz) {
       String parsedClassName = clazz.getNameAsString();
       boolean hasClassParent = clazz.getParentNode().isPresent() && clazz.getParentNode().get() instanceof ClassOrInterfaceDeclaration;
       ClassOrInterfaceDeclaration parent = hasClassParent ? (ClassOrInterfaceDeclaration) clazz.getParentNode().get() : null;
