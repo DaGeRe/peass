@@ -223,7 +223,7 @@ public final class GitUtils {
                lastChild = ancestryHashes[0];
             }
          }
-         ouputCommitList.add(oldestCommit);
+         ouputCommitList.add(0, oldestCommit);
          return ouputCommitList;
       } catch (IOException e) {
          throw new RuntimeException(e);
