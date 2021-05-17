@@ -14,7 +14,7 @@ import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 
@@ -24,7 +24,7 @@ public class OnceRunner {
 
    protected final PeASSFolders folders;
    private final VersionControlSystem vcs;
-   protected final JUnitTestTransformer testTransformer;
+   protected final TestTransformer testTransformer;
    protected final TestExecutor testExecutor;
 
    protected final ResultOrganizer currentOrganizer;

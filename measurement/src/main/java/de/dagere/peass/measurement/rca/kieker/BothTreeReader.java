@@ -42,8 +42,9 @@ public class BothTreeReader {
       this.folders = folders;
       this.env = env;
       
-      potentialCacheFileOld = new File(folders.getTreeCacheFolder(config.getVersion(), causeSearchConfig.getTestCase()), config.getVersionOld());
-      potentialCacheFile = new File(folders.getTreeCacheFolder(config.getVersion(), causeSearchConfig.getTestCase()), config.getVersion());
+      File treeCacheFolder = folders.getTreeCacheFolder(config.getVersion(), causeSearchConfig.getTestCase());
+      potentialCacheFileOld = new File(treeCacheFolder, config.getVersionOld());
+      potentialCacheFile = new File(treeCacheFolder, config.getVersion());
    }
    
    public void readCachedTrees() throws JsonParseException, JsonMappingException, IOException {

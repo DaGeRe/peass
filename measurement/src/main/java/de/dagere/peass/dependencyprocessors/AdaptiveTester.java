@@ -27,7 +27,6 @@ public class AdaptiveTester extends DependencyTester {
    public AdaptiveTester(final PeASSFolders folders, final MeasurementConfiguration measurementConfig, final EnvironmentVariables env)
          throws IOException {
       super(folders, measurementConfig, env);
-
    }
 
    @Override
@@ -36,7 +35,7 @@ public class AdaptiveTester extends DependencyTester {
 
       new FolderDeterminer(folders).testResultFolders(configuration.getVersion(), configuration.getVersionOld(), testcase);
 
-      final File logFolder = getLogFolder(configuration.getVersion(), testcase);
+      final File logFolder = folders.getLogFolder(configuration.getVersion(), testcase);
 
       currentChunkStart = System.currentTimeMillis();
       

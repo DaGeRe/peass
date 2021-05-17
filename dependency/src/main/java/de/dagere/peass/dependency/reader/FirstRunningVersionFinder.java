@@ -8,7 +8,7 @@ import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.vcs.VersionIterator;
 
 public class FirstRunningVersionFinder {
@@ -28,7 +28,6 @@ public class FirstRunningVersionFinder {
       this.executionConfig = executionConfig;
       this.env = env;
    }
-
    /**
     * Searches the first commit where a mvn clean packages runs correct, i.e. returns 1
     * 
@@ -38,10 +37,10 @@ public class FirstRunningVersionFinder {
       goToCommit(iterator);
       boolean isVersionRunning = false;
       // The local test transformer enables testing whether a version runs without full configuration
-      final JUnitTestTransformer testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), executionConfig);
+      TestTransformer transformer = ExecutorCreator.createTestTransformer(folders, executionConfig);
       while (!isVersionRunning && iterator.hasNextCommit()) {
          if (ExecutorCreator.hasBuildfile(folders)) {
-            isVersionRunning = tryCommit(iterator, testTransformer);
+            isVersionRunning = tryCommit(iterator, transformer);
          } else {
             nonRunning.addVersion(iterator.getTag(), "Buildfile does not exist.");
             iterator.goToNextCommit();
@@ -50,7 +49,7 @@ public class FirstRunningVersionFinder {
       return isVersionRunning;
    }
 
-   private boolean tryCommit(final VersionIterator iterator, final JUnitTestTransformer testTransformer) {
+   private boolean tryCommit(final VersionIterator iterator, final TestTransformer testTransformer) {
       boolean isVersionRunning;
       TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
       isVersionRunning = executor.isVersionRunning(iterator.getTag());

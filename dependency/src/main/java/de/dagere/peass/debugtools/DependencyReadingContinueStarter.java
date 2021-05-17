@@ -17,6 +17,7 @@
 package de.dagere.peass.debugtools;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -120,8 +121,11 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
    static String getPreviousVersion(final String startversion, final File projectFolder, final Dependencies dependencies) {
       String previousVersion;
       if (startversion != null) {
+         String[] versionNames = dependencies.getVersionNames();
+         int startVersionIndex = Arrays.asList(versionNames).indexOf(startversion);
+         String versionAfterStartVersion = versionNames[startVersionIndex - 1];
+         previousVersion = versionAfterStartVersion;
          truncateVersions(startversion, dependencies.getVersions());
-         previousVersion = GitUtils.getPrevious(startversion, projectFolder);
       } else {
          String[] versionNames = dependencies.getVersionNames();
          String newestVersion = versionNames[versionNames.length - 1];
@@ -156,6 +160,9 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       return iterator;
    }
 
+   /**
+    * Removes every version from the map that is before the given startversion
+    */
    public static void truncateVersions(final String startversion, final Map<String, Version> versions) {
       for (final java.util.Iterator<Entry<String, Version>> it = versions.entrySet().iterator(); it.hasNext();) {
          final Entry<String, Version> version = it.next();

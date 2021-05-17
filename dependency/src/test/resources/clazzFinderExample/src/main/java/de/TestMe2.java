@@ -34,7 +34,13 @@ public class TestMe2 extends TestCase{
 	}
 
 	class Inner{
-
+		class InnerInner {
+		
+		}
+	}
+	
+	static enum InnerEnum {
+		FIRST_VALUE;
 	}
 }
 

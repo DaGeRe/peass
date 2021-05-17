@@ -22,6 +22,9 @@ public class TestClazzFileFinder {
       Assert.assertThat(clazzes, Matchers.hasItem("de.TestMe1"));
       Assert.assertThat(clazzes, Matchers.hasItem("de.TestMe2"));
       Assert.assertThat(clazzes, Matchers.hasItem("de.Second"));
-      Assert.assertThat(clazzes, Matchers.hasItem("de.TestMe2.Inner"));
+      Assert.assertThat(clazzes, Matchers.hasItem("de.TestMe2$Inner"));
+      Assert.assertThat(clazzes, Matchers.hasItem("de.TestMe2$Inner$InnerInner"));
+      
+      Assert.assertThat(clazzes, Matchers.hasItem("de.TestMe2$InnerEnum"));
    }
 }

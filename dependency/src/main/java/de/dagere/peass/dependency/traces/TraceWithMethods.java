@@ -87,7 +87,7 @@ public class TraceWithMethods {
 		return result.toString();
 	}
 
-   private void writeMethodSource(final Map<TraceElementContent, String> currentSource, final StringBuilder result, final ReducedTraceElement te, String spaceString) {
+   private void writeMethodSource(final Map<TraceElementContent, String> currentSource, final StringBuilder result, final ReducedTraceElement te, final String spaceString) {
       final TraceElementContent traceContent = (TraceElementContent) te.getValue();
       final String source = currentSource.get(traceContent);
       if (source != null) {
@@ -97,7 +97,7 @@ public class TraceWithMethods {
       }
    }
 
-   private String getSpaceString(List<Integer> currentDepth, final List<Integer> newDepth) {
+   private String getSpaceString(final List<Integer> currentDepth, final List<Integer> newDepth) {
       String spaceString = "";
       for (final Integer depth : currentDepth) {
       	spaceString += " ";
@@ -116,4 +116,10 @@ public class TraceWithMethods {
 	public String toString() {
 		return getTraceString(null);
 	}
+
+   public void append(final TraceWithMethods additionalTrace) {
+      elements.addAll(additionalTrace.elements);
+      methods.putAll(additionalTrace.methods);
+      methodsWithoutComment.putAll(additionalTrace.methodsWithoutComment);
+   }
 }

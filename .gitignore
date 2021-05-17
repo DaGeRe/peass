@@ -46,6 +46,8 @@ out.txt
 **/.project
 .settings/
 /target/
+dependency/src/test/resources/jmh-it/multimodule/base-module/target/
+dependency/src/test/resources/jmh-it/multimodule/using-module/target/
 measurement/scripts/versions/dependencies/
 measurement/scripts/versions/laststart
 measurement/scripts/versions/sync2/

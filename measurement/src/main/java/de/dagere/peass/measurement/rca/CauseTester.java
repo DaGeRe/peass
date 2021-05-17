@@ -24,7 +24,7 @@ import de.dagere.peass.dependencyprocessors.AdaptiveTester;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.measurement.analysis.EarlyBreakDecider;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.TestTransformer;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**
@@ -87,7 +87,7 @@ public class CauseTester extends AdaptiveTester {
    @Override
    protected synchronized TestExecutor getExecutor(final PeASSFolders temporaryFolders, final String version) {
       final TestExecutor testExecutor = super.getExecutor(temporaryFolders, version);
-      JUnitTestTransformer testTransformer = testExecutor.getTestTransformer();
+      TestTransformer testTransformer = testExecutor.getTestTransformer();
       testTransformer.setAggregatedWriter(causeConfig.isUseAggregation());
       testTransformer.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
       generatePatternSet(version);

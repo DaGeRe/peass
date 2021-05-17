@@ -2,6 +2,9 @@ package de.dagere.peass.analysis.changes;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
 /**
  * Saves information about one change
  * 
@@ -14,6 +17,7 @@ public class Change implements Serializable {
 
    private String diff;
    private String method;
+   private String params;
    private double oldTime;
    private double changePercent;
    private double tvalue;
@@ -33,6 +37,15 @@ public class Change implements Serializable {
 
    public void setVms(final long vms) {
       this.vms = vms;
+   }
+   
+   @JsonInclude(Include.NON_EMPTY)
+   public String getParams() {
+      return params;
+   }
+   
+   public void setParams(final String params) {
+      this.params = params;
    }
 
    public String getDiff() {

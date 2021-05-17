@@ -26,8 +26,7 @@ import de.dagere.peass.measurement.analysis.statistics.TestData;
 import de.dagere.peass.measurement.organize.FolderDeterminer;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
-import de.dagere.peass.vcs.VersionControlSystem;
+import de.dagere.peass.testtransformation.TestTransformer;
 
 /**
  * Runs a PeASS with only running the tests where a changed class is present.
@@ -42,7 +41,6 @@ public class DependencyTester implements KiekerResultHandler {
    protected final PeASSFolders folders;
    protected final MeasurementConfiguration configuration;
    protected final EnvironmentVariables env;
-   private final VersionControlSystem vcs;
    private ResultOrganizer currentOrganizer;
    protected long currentChunkStart = 0;
 
@@ -50,9 +48,6 @@ public class DependencyTester implements KiekerResultHandler {
       this.folders = folders;
       this.configuration = measurementConfig;
       this.env = env;
-
-      vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
-
    }
 
    /**
@@ -68,7 +63,7 @@ public class DependencyTester implements KiekerResultHandler {
 
       LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getVersionOld(), configuration.getVersion());
 
-      final File logFolder = getLogFolder(configuration.getVersion(), testcase);
+      final File logFolder = folders.getLogFolder(configuration.getVersion(), testcase);
 
       currentChunkStart = System.currentTimeMillis();
       for (int finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
@@ -206,15 +201,6 @@ public class DependencyTester implements KiekerResultHandler {
       }
    }
 
-   public File getLogFolder(final String version, final TestCase testcase) {
-      File logFolder = new File(folders.getLogFolder(), version + File.separator + testcase.getMethod());
-      if (logFolder.exists()) {
-         logFolder = new File(folders.getLogFolder(), version + File.separator + testcase.getMethod() + "_new");
-      }
-      logFolder.mkdirs();
-      return logFolder;
-   }
-
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final TestExecutor testExecutor = getExecutor(folders, version);
@@ -223,8 +209,8 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    protected synchronized TestExecutor getExecutor(final PeASSFolders currentFolders, final String version) {
-      final JUnitTestTransformer testTransformer = new JUnitTestTransformer(currentFolders.getProjectFolder(), configuration);
-      final TestExecutor testExecutor = ExecutorCreator.createExecutor(currentFolders, testTransformer, env);
+      TestTransformer transformer = ExecutorCreator.createTestTransformer(currentFolders, configuration.getExecutionConfig(), configuration);
+      final TestExecutor testExecutor = ExecutorCreator.createExecutor(currentFolders, transformer, env);
       return testExecutor;
    }
 

@@ -3,6 +3,7 @@ package de.dagere.peass.dependency.traces;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -73,7 +74,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
       return null;
    }
 
-   private KiekerResultManager runTests(final String newestVersion, final TestSet tests, final PeASSFolders folders) throws IOException, XmlPullParserException, InterruptedException {
+   private KiekerResultManager runTests(final String newestVersion, final TestSet tests, final PeASSFolders folders) throws IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       ExecutionConfig executionConfig = new ExecutionConfig(executionMixin);
 
       KiekerResultManager resultsManager = new KiekerResultManager(folders, executionConfig, new EnvironmentVariables());
@@ -84,7 +85,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
    private void writeTestcase(final String newestVersion, final PeASSFolders folders, final KiekerResultManager resultsManager, final TestCase testcase)
          throws FileNotFoundException, IOException, XmlPullParserException, ViewNotFoundException {
       final File moduleResultFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
-      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultFolder);
+      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultFolder)[0];
 
       final long size = FileUtils.sizeOfDirectory(kiekerResultFolder);
       final long sizeInMB = size / (1024 * 1024);

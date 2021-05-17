@@ -19,7 +19,6 @@ package de.dagere.peass.dependency;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,6 +38,7 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.TestTransformer;
 
 /**
  * Handles the running of tests
@@ -52,20 +52,20 @@ public class KiekerResultManager {
 
    protected final TestExecutor executor;
    protected final PeASSFolders folders;
-   protected final JUnitTestTransformer testTransformer;
+   protected final TestTransformer testTransformer;
 
    public KiekerResultManager(final PeASSFolders folders, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.folders = folders;
-      MeasurementConfiguration fakeConfig = new MeasurementConfiguration(1, executionConfig.getTimeoutInMinutes());
+      MeasurementConfiguration fakeConfig = new MeasurementConfiguration(1, executionConfig);
       fakeConfig.setIterations(1);
       fakeConfig.setWarmup(0);
       fakeConfig.setUseKieker(true);
       fakeConfig.setUseSourceInstrumentation(true);
       fakeConfig.setTestGoal(executionConfig.getTestGoal());
-      fakeConfig.getExecutionConfig().setIncludes(executionConfig.getIncludes());
-      fakeConfig.getExecutionConfig().setPl(executionConfig.getPl());
-      fakeConfig.getExecutionConfig().setCreateDefaultConstructor(executionConfig.isCreateDefaultConstructor());
-      testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), fakeConfig);
+
+      testTransformer = ExecutorCreator.createTestTransformer(folders, executionConfig, fakeConfig);
+
+      // testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), fakeConfig);
       executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
    }
 
@@ -75,7 +75,7 @@ public class KiekerResultManager {
       this.testTransformer = testTransformer;
    }
 
-   public JUnitTestTransformer getTestTransformer() {
+   public TestTransformer getTestTransformer() {
       return testTransformer;
    }
 
@@ -84,28 +84,8 @@ public class KiekerResultManager {
       // TODO Verschieben
 
       LOG.debug("Executing dependency update test, results folder: {}", folders.getTempMeasurementFolder());
-      final TestSet tests = buildTestMethodSet(testsToUpdate);
+      final TestSet tests = testTransformer.buildTestMethodSet(testsToUpdate, executor.getModules().getModules());
       executeKoPeMeKiekerRun(tests, version);
-   }
-
-   private TestSet buildTestMethodSet(final TestSet testsToUpdate) throws IOException, XmlPullParserException {
-      final TestSet tests = new TestSet();
-      testTransformer.determineVersions(executor.getModules().getModules());
-      for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {
-         final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
-         final File moduleFolder = new File(folders.getProjectFolder(), clazzname.getModule());
-         if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
-            final List<String> methods = testTransformer.getTestMethodNames(moduleFolder, clazzname);
-            for (final String method : methods) {
-               tests.addTest(clazzname, method);
-            }
-         } else {
-            for (final String method : currentClazzMethods) {
-               tests.addTest(clazzname, method);
-            }
-         }
-      }
-      return tests;
    }
 
    private void truncateKiekerResults() {
@@ -146,9 +126,9 @@ public class KiekerResultManager {
          }
       }
       cleanAboveSize(logVersionFolder, 100, "txt");
-      
+
       LOG.debug("KoPeMe-Kieker-Run finished");
-      
+
    }
 
    /**
@@ -188,12 +168,14 @@ public class KiekerResultManager {
       return getXMLFileFolder(folders, moduleFolder);
    }
 
-   public static File getXMLFileFolder(final PeASSFolders folders, final File moduleFolder) throws FileNotFoundException, IOException, XmlPullParserException {
+   public static File getXMLFileFolder(final PeASSFolders folders, final File moduleFolder) {
       File xmlFileFolder = null;
       final BuildtoolProjectNameReader buildtoolProjectNameReader = new BuildtoolProjectNameReader();
       if (buildtoolProjectNameReader.searchBuildfile(moduleFolder, 1)) {
          final String name = buildtoolProjectNameReader.getProjectName();
          xmlFileFolder = new File(folders.getTempMeasurementFolder(), name);
+      } else {
+         LOG.error("No buildfile found in {}", moduleFolder);
       }
       return xmlFileFolder;
    }

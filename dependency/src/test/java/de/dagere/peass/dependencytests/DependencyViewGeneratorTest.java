@@ -2,6 +2,7 @@ package de.dagere.peass.dependencytests;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,9 +15,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -46,8 +44,8 @@ public class DependencyViewGeneratorTest {
    private static final Logger LOG = LogManager.getLogger(TraceGettingIT.class);
 
    @Test
-   public void testTwoVersions() throws IOException, InterruptedException, JAXBException, XmlPullParserException, ParseException, ViewNotFoundException {
-      prepareGitUtils();
+   public void testTwoVersions() throws IOException, InterruptedException, JAXBException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+      FakeGitUtil.prepareGitUtils();
 
       DependencyDetectorTestUtil.init(TraceGettingIT.BASIC);
 
@@ -72,21 +70,6 @@ public class DependencyViewGeneratorTest {
       //
       Assert.assertEquals(2, tests.getVersions().size());
       Assert.assertEquals(1, tests.getVersions().get("000002").getTests().size());
-   }
-
-   private void prepareGitUtils() throws IOException, InterruptedException {
-      PowerMockito.mockStatic(GitUtils.class);
-      PowerMockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            return null;
-         }
-      }).when(GitUtils.class);
-      GitUtils.reset(Mockito.any());
-
-      PowerMockito.doCallRealMethod().when(GitUtils.class);
-      GitUtils.getDiff(Mockito.any(), Mockito.any());
    }
 
    private FakeFileIterator mockIterator() {

@@ -59,18 +59,18 @@ public class ClazzFinder {
          final String clazzname = parent.length() > 0 ? parent + clazzSeparator + clazz.getName().getIdentifier() : clazz.getName().getIdentifier();
          clazzes.add(clazzname);
          for (final Node child : node.getChildNodes()) {
-            clazzes.addAll(getClazzes(child, clazzname, clazzSeparator));
+            clazzes.addAll(getClazzes(child, clazzname, ChangedEntity.CLAZZ_SEPARATOR));
          }
       } else if (node instanceof EnumDeclaration) {
          final EnumDeclaration enumDecl = (EnumDeclaration) node;
          final String enumName = parent.length() > 0 ? parent + clazzSeparator + enumDecl.getName().getIdentifier() : enumDecl.getName().getIdentifier();
          clazzes.add(enumName);
          for (final Node child : node.getChildNodes()) {
-            clazzes.addAll(getClazzes(child, enumName, clazzSeparator));
+            clazzes.addAll(getClazzes(child, enumName, ChangedEntity.CLAZZ_SEPARATOR));
          }
       } else {
          for (final Node child : node.getChildNodes()) {
-            clazzes.addAll(getClazzes(child, parent, clazzSeparator));
+            clazzes.addAll(getClazzes(child, parent, ChangedEntity.CLAZZ_SEPARATOR));
          }
       }
       return clazzes;

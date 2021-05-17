@@ -69,7 +69,7 @@
 
 	<profiles>
 		<profile>
-			<id>autompletion</id>
+			<id>autocompletion</id>
 			<activation>
 				<activeByDefault>false</activeByDefault>
 			</activation>
@@ -92,7 +92,7 @@
 										<argument>./peass</argument>
 										<argument>-o</argument>
 										<argument>${project.parent.basedir}/peass_completion</argument>
-										<argument>de.peass.PeASSMain</argument>
+										<argument>de.dagere.peass.PeASSMain</argument>
 										<argument>--force</argument>
 									</arguments>
 								</configuration>
