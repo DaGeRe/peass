@@ -42,8 +42,6 @@ public class ContinuousExecutor {
 
    private final File projectFolder;
    private final MeasurementConfiguration measurementConfig;
-   private final int threads;
-   private final boolean useViews;
 
    private String version;
    private String versionOld;
@@ -60,8 +58,7 @@ public class ContinuousExecutor {
          throws InterruptedException, IOException {
       this.projectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
-      this.threads = threads;
-      this.useViews = useViews;
+      this.dependencyConfig = new DependencyConfig(threads, false, useViews);
       this.env = env;
       LOG.info("Properties: " + env.getProperties());
 
