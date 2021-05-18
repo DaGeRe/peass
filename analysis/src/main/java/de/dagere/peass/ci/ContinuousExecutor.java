@@ -24,9 +24,6 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
-import de.dagere.peass.dependency.persistence.Dependencies;
-import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.measurement.analysis.AnalyseFullData;
 import de.dagere.peass.measurement.analysis.ProjectStatistics;
 import de.dagere.peass.testtransformation.TestTransformer;
@@ -94,36 +91,12 @@ public class ContinuousExecutor {
       final String url = GitUtils.getURL(projectFolder);
 
       ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), folders, resultsFolders, env);
-      final Dependencies dependencies = dependencyReader.getDependencies(iterator, url);
+      final Set<TestCase> tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
+      
+      final File measurementFolder = measure(tests);
 
-      if (dependencies.getVersions().size() > 0) {
-         Set<TestCase> tests;
-         if (dependencyConfig.isGenerateViews()) {
-            ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
-            tests = executionData.getVersions().get(version).getTests();
-         } else {
-            Version versionDependencies = dependencies.getVersions().get(dependencies.getNewestVersion());
-            tests = versionDependencies.getTests().getTests();
-         }
-
-         // final Set<TestCase> tests = selectIncludedTests(dependencies);
-         NonIncludedTestRemover.removeNotIncluded(tests, measurementConfig.getExecutionConfig());
-
-         final File measurementFolder = measure(tests);
-
-         analyzeMeasurements(measurementFolder);
-      } else {
-         LOG.info("No test executed - version did not contain changed tests.");
-      }
+      analyzeMeasurements(measurementFolder);
    }
-
-   // private Set<TestCase> selectIncludedTests(final Dependencies dependencies) throws Exception {
-   // final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version,
-   // resultsFolders, threads, measurementConfig.getExecutionConfig(), env);
-   // final Set<TestCase> tests = chooser.getTestSet(dependencies);
-   // LOG.debug("Executing measurement on {}", tests);
-   // return tests;
-   // }
 
    private File measure(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final File fullResultsVersion = getFullResultsVersion();

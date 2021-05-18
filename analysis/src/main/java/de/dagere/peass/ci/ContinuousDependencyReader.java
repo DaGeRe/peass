@@ -3,8 +3,10 @@ package de.dagere.peass.ci;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,10 +18,14 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.ResultsFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -47,6 +53,28 @@ public class ContinuousDependencyReader {
       this.folders = folders;
       this.resultsFolders = resultsFolders;
       this.env = env;
+   }
+   
+   public Set<TestCase> getTests(final VersionIterator iterator, final String url, final String version, final MeasurementConfiguration measurementConfig) throws Exception{
+      final Dependencies dependencies = getDependencies(iterator, url);
+      
+      final Set<TestCase> tests;
+      if (dependencies.getVersions().size() > 0) {
+         if (dependencyConfig.isGenerateViews()) {
+            ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+            tests = executionData.getVersions().get(version).getTests();
+         } else {
+            Version versionDependencies = dependencies.getVersions().get(dependencies.getNewestVersion());
+            tests = versionDependencies.getTests().getTests();
+         }
+
+         // final Set<TestCase> tests = selectIncludedTests(dependencies);
+         NonIncludedTestRemover.removeNotIncluded(tests, measurementConfig.getExecutionConfig());
+      } else {
+         tests = new HashSet<>();
+         LOG.info("No test executed - version did not contain changed tests.");
+      }
+      return tests;
    }
 
    Dependencies getDependencies(final VersionIterator iterator, final String url)
