@@ -61,11 +61,7 @@ public class ContinuousDependencyReader {
          dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
          VersionComparator.setDependencies(dependencies);
 
-         if (dependencies.getVersions().size() > 0) {
-            partiallyLoadDependencies(dependencies);
-         } else {
-            dependencies = fullyLoadDependencies(url, iterator, noChanges);
-         }
+         partiallyLoadDependencies(dependencies);
       }
       VersionComparator.setDependencies(dependencies);
 

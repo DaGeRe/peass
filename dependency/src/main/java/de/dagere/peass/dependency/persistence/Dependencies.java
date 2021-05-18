@@ -61,7 +61,10 @@ public class Dependencies extends SelectedTests {
    @JsonIgnore
    public String[] getVersionNames() {
       final String[] versionNames = versions.keySet().toArray(new String[0]);
-      return versionNames;
+      String[] withStartversion = new String[versionNames.length+1];
+      withStartversion[0] = initialversion.getVersion();
+      System.arraycopy(versionNames, 0, withStartversion, 1, versionNames.length);
+      return withStartversion;
    }
 
    @JsonIgnore
