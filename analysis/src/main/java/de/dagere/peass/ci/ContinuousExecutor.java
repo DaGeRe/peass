@@ -26,6 +26,7 @@ import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.measurement.analysis.AnalyseFullData;
 import de.dagere.peass.measurement.analysis.ProjectStatistics;
 import de.dagere.peass.testtransformation.TestTransformer;
@@ -49,7 +50,7 @@ public class ContinuousExecutor {
    private final File localFolder;
    private final PeASSFolders folders;
    private final ResultsFolders resultsFolders;
-   private DependencyConfig dependencyConfig = new DependencyConfig(2, false, true);
+   private final DependencyConfig dependencyConfig;
 
    private final EnvironmentVariables env;
 
@@ -96,11 +97,18 @@ public class ContinuousExecutor {
       final Dependencies dependencies = dependencyReader.getDependencies(iterator, url);
 
       if (dependencies.getVersions().size() > 0) {
-         ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
-         Set<TestCase> tests = executionData.getVersions().get(version).getTests();
-//         final Set<TestCase> tests = selectIncludedTests(dependencies);
+         Set<TestCase> tests;
+         if (dependencyConfig.isGenerateViews()) {
+            ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+            tests = executionData.getVersions().get(version).getTests();
+         } else {
+            Version versionDependencies = dependencies.getVersions().get(dependencies.getNewestVersion());
+            tests = versionDependencies.getTests().getTests();
+         }
+
+         // final Set<TestCase> tests = selectIncludedTests(dependencies);
          NonIncludedTestRemover.removeNotIncluded(tests, measurementConfig.getExecutionConfig());
-         
+
          final File measurementFolder = measure(tests);
 
          analyzeMeasurements(measurementFolder);
@@ -109,13 +117,13 @@ public class ContinuousExecutor {
       }
    }
 
-//   private Set<TestCase> selectIncludedTests(final Dependencies dependencies) throws Exception {
-//      final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version,
-//            resultsFolders, threads, measurementConfig.getExecutionConfig(), env);
-//      final Set<TestCase> tests = chooser.getTestSet(dependencies);
-//      LOG.debug("Executing measurement on {}", tests);
-//      return tests;
-//   }
+   // private Set<TestCase> selectIncludedTests(final Dependencies dependencies) throws Exception {
+   // final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version,
+   // resultsFolders, threads, measurementConfig.getExecutionConfig(), env);
+   // final Set<TestCase> tests = chooser.getTestSet(dependencies);
+   // LOG.debug("Executing measurement on {}", tests);
+   // return tests;
+   // }
 
    private File measure(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final File fullResultsVersion = getFullResultsVersion();
