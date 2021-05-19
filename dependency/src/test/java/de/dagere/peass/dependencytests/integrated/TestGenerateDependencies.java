@@ -41,7 +41,7 @@ public class TestGenerateDependencies {
 
       final FakeFileIterator iterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, Arrays.asList(TraceGettingIT.REPETITION));
       ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG, new PeASSFolders(TestConstants.CURRENT_FOLDER), resultsFolders, "", iterator, VersionKeeper.INSTANCE, new ExecutionConfig(5), new EnvironmentVariables());
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeASSFolders(TestConstants.CURRENT_FOLDER), resultsFolders, "", iterator, VersionKeeper.INSTANCE, new ExecutionConfig(5), new EnvironmentVariables());
 
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);

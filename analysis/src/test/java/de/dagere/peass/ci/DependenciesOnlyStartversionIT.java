@@ -45,7 +45,7 @@ public class DependenciesOnlyStartversionIT {
       ExecutionConfig executionConfig = new ExecutionConfig();
       executionConfig.setVersion(iterator.getTag());
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
             TestContinuousDependencyReader.resultsFolders, new EnvironmentVariables());
       dependencies = reader.getDependencies(iterator, "");
 
@@ -64,7 +64,7 @@ public class DependenciesOnlyStartversionIT {
       ExecutionConfig executionConfig = new ExecutionConfig();
       executionConfig.setVersion(iterator.getTag());
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
             TestContinuousDependencyReader.resultsFolders, new EnvironmentVariables());
       dependencies = reader.getDependencies(iterator, "");
 

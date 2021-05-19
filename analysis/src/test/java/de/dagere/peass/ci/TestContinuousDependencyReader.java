@@ -17,7 +17,6 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.ci.helper.GitProjectBuilder;
-import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.PeASSFolders;
@@ -114,7 +113,7 @@ public class TestContinuousDependencyReader {
       executionConfig.setVersion(newVersion);
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(new DependencyConfig(1, false, true), executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
             resultsFolders, new EnvironmentVariables());
       Set<TestCase> tests = reader.getTests(iterator, "", "", new MeasurementConfiguration(1));
 

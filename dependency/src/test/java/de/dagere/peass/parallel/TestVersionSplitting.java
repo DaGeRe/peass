@@ -43,7 +43,7 @@ public class TestVersionSplitting {
    static class DummyReader extends DependencyReader {
 
       public DummyReader(final File dummyFolder, final VersionIterator iterator, final ChangeManager manager) throws IOException {
-         super(DependencyTestConstants.DEFAULT_CONFIG, new PeASSFolders(dummyFolder), null, null, iterator, manager, new ExecutionConfig(1), new EnvironmentVariables());
+         super(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeASSFolders(dummyFolder), null, null, iterator, manager, new ExecutionConfig(1), new EnvironmentVariables());
       }
 
       @Override
