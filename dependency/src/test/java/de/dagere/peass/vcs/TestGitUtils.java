@@ -81,9 +81,9 @@ public class TestGitUtils {
       List<GitCommit> commitsRegular = GitUtils.getCommits(PROJECT_FOLDER, false, false, false);
       Assert.assertEquals(commitsRegular.size(), 13);
 
-      // Test that 8 commits are left (which happens due to the current linearization; 11 would also be reasonable with other linearization)
+      // Current linearization produces 7, 8 or 11 commits based on hashes; every of these linearizations is ok (it just should not be 13)
       List<GitCommit> commitsLinear = GitUtils.getCommits(PROJECT_FOLDER, false, true, false);
-      Assert.assertEquals(8, commitsLinear.size());
+      Assert.assertThat(commitsLinear.size(), Matchers.anyOf(Matchers.is(7), Matchers.is(8), Matchers.is(11)));
    }
 
    private void createMergeCommit(final File exampleTextFile, final int index) throws InterruptedException, IOException {
