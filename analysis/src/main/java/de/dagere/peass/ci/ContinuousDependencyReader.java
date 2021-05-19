@@ -124,7 +124,7 @@ public class ContinuousDependencyReader {
    private void executePartialRTS(final Dependencies dependencies, final VersionIterator newIterator) throws FileNotFoundException {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
          File logFile = new File(getDependencyreadingFolder(), newIterator.getTag() + "_" + newIterator.getPredecessor() + ".txt");
-         LOG.info("Executing regression test selection update (step 1) - Log goes to {}", logFile.getAbsolutePath());
+         LOG.info("Executing regression test selection update - Log goes to {}", logFile.getAbsolutePath());
          try (LogRedirector director = new LogRedirector(logFile)) {
             doPartialRCS(dependencies, newIterator);
          }
@@ -140,7 +140,17 @@ public class ContinuousDependencyReader {
       newIterator.goTo0thCommit();
 
       reader.readCompletedVersions(dependencies);
-      reader.readDependencies();
+      
+      try {
+         ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+         reader.setExecutionData(executions);
+         
+         reader.readDependencies();
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+      
+      
    }
 
    public File getDependencyreadingFolder() {

@@ -27,21 +27,21 @@ public class OneTraceGenerator {
 
    private final PeASSFolders folders;
    private final TestCase testcase;
-   private final TraceFileMapping traceFileMap;
+   private final TraceFileMapping traceFileMapping;
    private final String version;
    private final ResultsFolders resultsFolders;
    private final List<File> classpathFolders;
-   private final ModuleClassMapping mapping;
+   private final ModuleClassMapping moduleClassMapping;
 
-   public OneTraceGenerator(final ResultsFolders resultsFolders, final PeASSFolders folders, final TestCase testcase, final TraceFileMapping traceFileMap, final String version,
+   public OneTraceGenerator(final ResultsFolders resultsFolders, final PeASSFolders folders, final TestCase testcase, final TraceFileMapping traceFileMapping, final String version,
          final List<File> classpathFolders, final ModuleClassMapping mapping) {
       this.resultsFolders = resultsFolders;
       this.folders = folders;
       this.testcase = testcase;
-      this.traceFileMap = traceFileMap;
+      this.traceFileMapping = traceFileMapping;
       this.version = version;
       this.classpathFolders = classpathFolders;
-      this.mapping = mapping;
+      this.moduleClassMapping = mapping;
    }
 
    public boolean generateTrace(final String versionCurrent)
@@ -74,7 +74,7 @@ public class OneTraceGenerator {
          overallSizeInMb += sizeInMB;
          LOG.debug("Filesize: {} ({})", sizeInMB, size);
          if (sizeInMB < CalledMethodLoader.TRACE_MAX_SIZE_IN_MB) {
-            final List<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, mapping).getShortTrace("");
+            final List<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, moduleClassMapping).getShortTrace("");
             if (shortTrace != null) {
                LOG.debug("Short Trace: {} Folder: {} Project: {}", shortTrace.size(), kiekerResultFolder.getAbsolutePath(), folders.getProjectFolder());
                if (shortTrace.size() > 0) {
@@ -100,7 +100,7 @@ public class OneTraceGenerator {
    }
 
    private void writeTrace(final String versionCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace) throws IOException {
-      TraceWriter traceWriter = new TraceWriter(version, testcase, resultsFolders);
-      traceWriter.writeTrace(versionCurrent, sizeInMB, traceMethodReader, trace, traceFileMap);
+      TraceWriter traceWriter = new TraceWriter(version, testcase, resultsFolders, traceFileMapping);
+      traceWriter.writeTrace(versionCurrent, sizeInMB, traceMethodReader, trace);
    }
 }

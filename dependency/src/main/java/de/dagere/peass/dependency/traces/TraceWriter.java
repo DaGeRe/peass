@@ -19,18 +19,20 @@ public class TraceWriter {
    private final String version;
    private final TestCase testcase;
    private final ResultsFolders resultsFolders;
-
-   public TraceWriter(final String version, final TestCase testcase, final ResultsFolders resultsFolders) {
+   private final TraceFileMapping traceFileMapping;
+   
+   public TraceWriter(final String version, final TestCase testcase, final ResultsFolders resultsFolders, final TraceFileMapping traceFileMapping) {
       this.version = version;
       this.testcase = testcase;
       this.resultsFolders = resultsFolders;
+      this.traceFileMapping = traceFileMapping;
    }
 
-   public void writeTrace(final String versionCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace, final TraceFileMapping traceFiles)
+   public void writeTrace(final String versionCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace)
          throws IOException {
       final File methodDir = resultsFolders.getViewMethodDir(version, testcase);
       String shortVersion = getShortVersion(versionCurrent);
-      final File methodTrace = writeTraces(sizeInMB, traceMethodReader, trace, traceFiles, methodDir, shortVersion);
+      final File methodTrace = writeTraces(sizeInMB, traceMethodReader, trace, methodDir, shortVersion);
       LOG.debug("Datei {} existiert: {}", methodTrace.getAbsolutePath(), methodTrace.exists());
    }
 
@@ -42,10 +44,10 @@ public class TraceWriter {
       return shortVersion;
    }
 
-   private File writeTraces(final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace, final TraceFileMapping traceFiles, final File methodDir,
+   private File writeTraces(final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace, final File methodDir,
          final String shortVersion) throws IOException {
       final File currentTraceFile = new File(methodDir, shortVersion);
-      traceFiles.addTraceFile(testcase, currentTraceFile);
+      traceFileMapping.addTraceFile(testcase, currentTraceFile);
       Files.write(currentTraceFile.toPath(), trace.getWholeTrace().getBytes());
       final File commentlessTraceFile = new File(methodDir, shortVersion + OneTraceGenerator.NOCOMMENT);
       Files.write(commentlessTraceFile.toPath(), trace.getCommentlessTrace().getBytes());

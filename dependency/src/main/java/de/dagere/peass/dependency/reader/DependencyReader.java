@@ -291,4 +291,9 @@ public class DependencyReader {
       this.iterator = reserveIterator;
    }
 
+   public void setExecutionData(final ExecutionData executions) {
+      executionResult.setVersions(executions.getVersions());
+      
+      new OldTraceReader(mapping, dependencyResult, resultsFolders).addTraces();
+   }
 }

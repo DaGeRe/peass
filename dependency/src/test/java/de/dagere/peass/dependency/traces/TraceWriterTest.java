@@ -22,11 +22,11 @@ public class TraceWriterTest {
    @Test
    public void testSimpleWriting() throws IOException {
       ResultsFolders resultsFolders = new ResultsFolders(folder.getRoot(), "test");
-      TraceWriter writer = new TraceWriter("000001", new TestCase("ClazzA", "methodA"), resultsFolders);
+      TraceWriter writer = new TraceWriter("000001", new TestCase("ClazzA", "methodA"), resultsFolders, new TraceFileMapping());
 
       TraceWithMethods exampleTrace = getTrace();
 
-      writer.writeTrace("000002", 3, Mockito.mock(TraceMethodReader.class), exampleTrace, new TraceFileMapping());
+      writer.writeTrace("000002", 3, Mockito.mock(TraceMethodReader.class), exampleTrace);
 
       File expectedResultFile = new File(resultsFolders.getViewFolder(), "view_000001/ClazzA/methodA/000002_method");
       Assert.assertTrue(expectedResultFile.exists());
@@ -35,11 +35,11 @@ public class TraceWriterTest {
    @Test
    public void testModuleWriting() throws IOException {
       ResultsFolders resultsFolders = new ResultsFolders(folder.getRoot(), "test");
-      TraceWriter writer = new TraceWriter("000001", new TestCase("ClazzA", "methodA", "moduleA"), resultsFolders);
+      TraceWriter writer = new TraceWriter("000001", new TestCase("ClazzA", "methodA", "moduleA"), resultsFolders, new TraceFileMapping());
 
       TraceWithMethods exampleTrace = getTrace();
 
-      writer.writeTrace("000002", 3, Mockito.mock(TraceMethodReader.class), exampleTrace, new TraceFileMapping());
+      writer.writeTrace("000002", 3, Mockito.mock(TraceMethodReader.class), exampleTrace);
 
       File expectedResultFile = new File(resultsFolders.getViewFolder(), "view_000001/moduleA§ClazzA/methodA/000002_method");
       Assert.assertTrue(expectedResultFile.exists());
