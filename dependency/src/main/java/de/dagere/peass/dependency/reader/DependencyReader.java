@@ -175,9 +175,18 @@ public class DependencyReader {
       if (input.getChanges().size() > 0) {
          return analyseChanges(version, input);
       } else {
-         skippedNoChange.addVersion(version, "No Change at all");
+         addEmptyVersionData(version);
          return 0;
       }
+   }
+
+   private void addEmptyVersionData(final String version) {
+      dependencyResult.getVersions().put(version, new Version());
+      if (dependencyConfig.isGenerateViews()) {
+         TestSet emptyTestSet = new TestSet();
+         executionResult.getVersions().put(version, emptyTestSet);
+      }
+      skippedNoChange.addVersion(version, "No Change at all");
    }
 
    private int analyseChanges(final String version, final DependencyReadingInput input)

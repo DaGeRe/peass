@@ -22,6 +22,7 @@ import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.PeASSFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -62,7 +63,8 @@ public class ContinuousDependencyReader {
       if (dependencies.getVersions().size() > 0) {
          if (dependencyConfig.isGenerateViews()) {
             ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
-            tests = executionData.getVersions().get(version).getTests();
+            TestSet versionTestSet = executionData.getVersions().get(version);
+            tests = versionTestSet.getTests();
          } else {
             Version versionDependencies = dependencies.getVersions().get(dependencies.getNewestVersion());
             tests = versionDependencies.getTests().getTests();

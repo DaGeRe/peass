@@ -9,7 +9,6 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -98,7 +97,6 @@ public class TestContinuousDependencyReader {
       Assert.assertEquals(3, executions.getVersions().size());
    }
    
-   @Disabled
    @Order(3)
    @Test
    public void testEmptyVersion() throws Exception {
@@ -115,7 +113,7 @@ public class TestContinuousDependencyReader {
 
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
             resultsFolders, new EnvironmentVariables());
-      Set<TestCase> tests = reader.getTests(iterator, "", "", new MeasurementConfiguration(1));
+      Set<TestCase> tests = reader.getTests(iterator, "", newVersion, new MeasurementConfiguration(1));
 
       Assert.assertEquals(tests.size(), 0);
    }
