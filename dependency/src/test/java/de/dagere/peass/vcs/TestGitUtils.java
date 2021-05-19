@@ -21,7 +21,6 @@ public class TestGitUtils {
    private final static File PROJECT_FOLDER = new File(TestConstants.CURRENT_FOLDER, "demo-git");
 
    private static final File exampleTextFile = new File(PROJECT_FOLDER, "file.txt");
-   private static final File secondTextFile = new File(PROJECT_FOLDER, "second.txt");
 
    @Before
    public void prepareProject() throws InterruptedException, IOException {
