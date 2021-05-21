@@ -35,9 +35,8 @@ public class DependencyDetectorIncludesTest {
 
    @Test
    public void testNormalChangeIncluded() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
-      final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "normal_change");
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
-      final DependencyReader reader = executeWithInclude("defaultpackage.TestMe#testMe", secondVersion, changeManager);
+      final DependencyReader reader = executeWithInclude("defaultpackage.TestMe#testMe", DependencyTestConstants.NORMAL_CHANGE, changeManager);
       checkContainsOnlyTestMe(reader);
    }
    

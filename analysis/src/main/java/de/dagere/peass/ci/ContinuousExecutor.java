@@ -34,7 +34,7 @@ import de.peran.AnalyseOneTest;
 public class ContinuousExecutor {
 
    private static final Logger LOG = LogManager.getLogger(ContinuousExecutor.class);
-   
+
    private final MeasurementConfiguration measurementConfig;
    private final DependencyConfig dependencyConfig;
 
@@ -49,12 +49,35 @@ public class ContinuousExecutor {
 
    private final EnvironmentVariables env;
 
+   @Deprecated
    public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final int threads, final boolean useViews,
          final EnvironmentVariables env)
          throws InterruptedException, IOException {
       this.originalProjectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
       this.dependencyConfig = new DependencyConfig(threads, false, useViews);
+      this.env = env;
+      LOG.info("Properties: " + env.getProperties());
+
+      File vcsFolder = VersionControlSystem.findVCSFolder(projectFolder);
+      localFolder = ContinuousFolderUtil.getLocalFolder(vcsFolder);
+      File projectFolderLocal = new File(localFolder, ContinuousFolderUtil.getSubFolderPath(projectFolder));
+      getGitRepo(projectFolder, measurementConfig, projectFolderLocal);
+      resultsFolders = new ResultsFolders(localFolder, projectFolder.getName());
+
+      folders = new PeASSFolders(projectFolderLocal);
+
+      IteratorBuilder iteratorBuiler = new IteratorBuilder(measurementConfig, folders.getProjectFolder());
+      iterator = iteratorBuiler.getIterator();
+      version = iteratorBuiler.getVersion();
+      versionOld = iteratorBuiler.getVersionOld();
+   }
+
+   public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final DependencyConfig dependencyConfig, final EnvironmentVariables env)
+         throws InterruptedException, IOException {
+      this.originalProjectFolder = projectFolder;
+      this.measurementConfig = measurementConfig;
+      this.dependencyConfig = dependencyConfig;
       this.env = env;
       LOG.info("Properties: " + env.getProperties());
 
@@ -91,7 +114,7 @@ public class ContinuousExecutor {
 
       ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), folders, resultsFolders, env);
       final Set<TestCase> tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
-      
+
       final File measurementFolder = measure(tests);
 
       analyzeMeasurements(measurementFolder);

@@ -9,8 +9,9 @@ public class DependencyTestConstants {
 
    public static final String VERSION_1 = "000001";
    public static final String VERSION_2 = "000002";
-   public static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT");
+   public static final File VERSIONS_FOLDER = new File("../dependency/src/test/resources/dependencyIT");
    public static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
+   public static final File NORMAL_CHANGE  = new File(VERSIONS_FOLDER, "normal_change");
    
    public static final DependencyConfig DEFAULT_CONFIG = new DependencyConfig(1, false, true);
    public static final DependencyConfig DEFAULT_CONFIG_NO_VIEWS = new DependencyConfig(1, false, false);
