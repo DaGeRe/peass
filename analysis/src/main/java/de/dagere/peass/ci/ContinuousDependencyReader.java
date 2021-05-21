@@ -86,8 +86,10 @@ public class ContinuousDependencyReader {
       final VersionKeeper noChanges = new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nonChanges_" + folders.getProjectName() + ".json"));
 
       if (!resultsFolders.getDependencyFile().exists()) {
+         LOG.debug("Fully loading dependencies");
          dependencies = fullyLoadDependencies(url, iterator, noChanges);
       } else {
+         LOG.debug("Partially loading dependencies");
          dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
          VersionComparator.setDependencies(dependencies);
 
@@ -101,6 +103,7 @@ public class ContinuousDependencyReader {
    public VersionIterator getIterator(final String lastVersionName) {
       String versionName = GitUtils.getName(executionConfig.getVersion() != null ? executionConfig.getVersion() : "HEAD", folders.getProjectFolder());
       if (versionName.equals(lastVersionName)) {
+         LOG.info("Version {} is equal to newest version, not executing RTS", versionName);
          return null;
       }
       GitCommit currentCommit = new GitCommit(versionName, "", "", "");

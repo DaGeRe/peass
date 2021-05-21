@@ -151,8 +151,8 @@ public class DependencyReader {
     * @throws IOException
     * @throws XmlPullParserException
     * @throws InterruptedException
-    * @throws ViewNotFoundException 
-    * @throws ParseException 
+    * @throws ViewNotFoundException
+    * @throws ParseException
     */
    public int analyseVersion(final ChangeManager changeManager) throws IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final String version = iterator.getTag();
@@ -183,8 +183,7 @@ public class DependencyReader {
    private void addEmptyVersionData(final String version) {
       dependencyResult.getVersions().put(version, new Version());
       if (dependencyConfig.isGenerateViews()) {
-         TestSet emptyTestSet = new TestSet();
-         executionResult.getVersions().put(version, emptyTestSet);
+         executionResult.addEmptyVersion(version, null);
       }
       skippedNoChange.addVersion(version, "No Change at all");
    }
@@ -198,6 +197,7 @@ public class DependencyReader {
          traceChangeHandler.handleTraceAnalysisChanges(newVersionInfo);
 
          if (dependencyConfig.isGenerateViews()) {
+            executionResult.addEmptyVersion(version, newVersionInfo.getPredecessor());
             TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, mapping);
             traceViewGenerator.generateViews(resultsFolders, newVersionInfo.getTests());
 
@@ -205,7 +205,7 @@ public class DependencyReader {
             for (TestCase testcase : newVersionInfo.getTests().getTests()) {
                boolean somethingChanged = diffGenerator.generateDiffFiles(testcase, mapping);
                if (somethingChanged) {
-                  executionResult.addCall(version, newVersionInfo.getPredecessor(), testcase);
+                  executionResult.addCall(version, testcase);
                }
             }
          }
@@ -261,7 +261,7 @@ public class DependencyReader {
       if (initialVersionReader.readInitialVersion()) {
          DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
          lastRunningVersion = iterator.getTag();
-         
+
          if (dependencyConfig.isGenerateViews()) {
             generateInitialViews();
          }
@@ -276,7 +276,7 @@ public class DependencyReader {
       TestSet initialTests = dependencyResult.getInitialversion().getInitialTests();
       TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), mapping);
       traceViewGenerator.generateViews(resultsFolders, initialTests);
-      
+
       executionResult.getVersions().put(iterator.getTag(), new TestSet());
    }
 
@@ -302,7 +302,7 @@ public class DependencyReader {
 
    public void setExecutionData(final ExecutionData executions) {
       executionResult.setVersions(executions.getVersions());
-      
+
       new OldTraceReader(mapping, dependencyResult, resultsFolders).addTraces();
    }
 }

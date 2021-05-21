@@ -44,6 +44,12 @@ public class ExecutionData extends SelectedTests {
    public Map<String, TestSet> getVersions() {
       return versions;
    }
+   
+   public void addEmptyVersion(final String version, final String predecessor) {
+      TestSet tests = new TestSet();
+      tests.setPredecessor(predecessor);
+      versions.put(version, tests);
+   }
 
    @JsonIgnore
    public void addCall(final String version, final TestSet tests) {
@@ -56,15 +62,11 @@ public class ExecutionData extends SelectedTests {
    }
 
    @JsonIgnore
-   public void addCall(final String version, final String predecessor, final TestCase testcase) {
+   public void addCall(final String version, final TestCase testcase) {
       TestSet executes = versions.get(version);
       if (executes == null) {
          executes = new TestSet();
          versions.put(version, executes);
-         executes.setPredecessor(predecessor);
-      }
-      if (!executes.getPredecessor().equals(predecessor)) {
-         throw new RuntimeException("Unexpected: Different predecessor: " + predecessor + " " + executes.getPredecessor());
       }
       executes.addTest(testcase);
    }
