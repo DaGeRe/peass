@@ -2,8 +2,6 @@ package de.dagere.peass.ci;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
@@ -28,7 +26,6 @@ import de.dagere.peass.measurement.analysis.AnalyseFullData;
 import de.dagere.peass.measurement.analysis.ProjectStatistics;
 import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 import de.dagere.peass.vcs.VersionIteratorGit;
@@ -37,24 +34,25 @@ import de.peran.AnalyseOneTest;
 public class ContinuousExecutor {
 
    private static final Logger LOG = LogManager.getLogger(ContinuousExecutor.class);
-
-   private final File projectFolder;
+   
    private final MeasurementConfiguration measurementConfig;
+   private final DependencyConfig dependencyConfig;
 
-   private String version;
-   private String versionOld;
+   private final String version;
+   private final String versionOld;
+   private final VersionIteratorGit iterator;
 
+   private final File originalProjectFolder;
    private final File localFolder;
    private final PeASSFolders folders;
    private final ResultsFolders resultsFolders;
-   private final DependencyConfig dependencyConfig;
 
    private final EnvironmentVariables env;
 
    public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final int threads, final boolean useViews,
          final EnvironmentVariables env)
          throws InterruptedException, IOException {
-      this.projectFolder = projectFolder;
+      this.originalProjectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
       this.dependencyConfig = new DependencyConfig(threads, false, useViews);
       this.env = env;
@@ -68,8 +66,10 @@ public class ContinuousExecutor {
 
       folders = new PeASSFolders(projectFolderLocal);
 
-      version = measurementConfig.getVersion();
-      versionOld = measurementConfig.getVersionOld();
+      IteratorBuilder iteratorBuiler = new IteratorBuilder(measurementConfig, folders.getProjectFolder());
+      iterator = iteratorBuiler.getIterator();
+      version = iteratorBuiler.getVersion();
+      versionOld = iteratorBuiler.getVersionOld();
    }
 
    private void getGitRepo(final File projectFolder, final MeasurementConfiguration measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {
@@ -87,8 +87,7 @@ public class ContinuousExecutor {
    }
 
    public void execute() throws Exception {
-      final VersionIteratorGit iterator = buildIterator();
-      final String url = GitUtils.getURL(projectFolder);
+      final String url = GitUtils.getURL(originalProjectFolder);
 
       ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), folders, resultsFolders, env);
       final Set<TestCase> tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
@@ -111,22 +110,10 @@ public class ContinuousExecutor {
       final ProjectStatistics statistics = new ProjectStatistics();
       TestTransformer testTransformer = ExecutorCreator.createTestTransformer(folders, measurementConfig.getExecutionConfig(), measurementConfig);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
-      ModuleClassMapping mapping = new ModuleClassMapping(projectFolder, executor.getModules());
+      ModuleClassMapping mapping = new ModuleClassMapping(originalProjectFolder, executor.getModules());
       final AnalyseFullData afd = new AnalyseFullData(changefile, statistics, mapping);
       afd.analyseFolder(measurementFolder);
       Constants.OBJECTMAPPER.writeValue(new File(localFolder, "statistics.json"), statistics);
-   }
-
-   private VersionIteratorGit buildIterator() {
-      versionOld = GitUtils.getName(measurementConfig.getVersionOld() != null ? measurementConfig.getVersionOld() : "HEAD~1", folders.getProjectFolder());
-      version = GitUtils.getName(measurementConfig.getVersion() != null ? measurementConfig.getVersion() : "HEAD", folders.getProjectFolder());
-
-      final List<GitCommit> entries = new LinkedList<>();
-      final GitCommit prevCommit = new GitCommit(versionOld, "", "", "");
-      entries.add(prevCommit);
-      entries.add(new GitCommit(version, "", "", ""));
-      final VersionIteratorGit iterator = new VersionIteratorGit(folders.getProjectFolder(), entries, prevCommit);
-      return iterator;
    }
 
    public String getLatestVersion() {
