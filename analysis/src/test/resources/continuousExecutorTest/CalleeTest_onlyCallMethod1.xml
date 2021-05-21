@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="de.test.CalleeTest">
+  <testcase name="onlyCallMethod1">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <chunk chunkStartTime="1621608475097">
+     <result date="1621608480288">
+      <value>4507810.5</value>
+      <deviation>545556.2162092006</deviation>
+      <warmupExecutions>0</warmupExecutions>
+      <executionTimes>0</executionTimes>
+      <warmup>0</warmup>
+      <iterations>2</iterations>
+      <repetitions>2</repetitions>
+      <version>
+       <gitversion>33ce17c04b5218c25c40137d4d09f40fbb3e4f0f</gitversion>
+      </version>
+      <min>4122044.0</min>
+      <max>4893577.0</max>
+     </result>
+     <result date="1621608485977">
+      <value>2.45655605E7</value>
+      <deviation>566253.2316945308</deviation>
+      <warmupExecutions>0</warmupExecutions>
+      <executionTimes>0</executionTimes>
+      <warmup>0</warmup>
+      <iterations>2</iterations>
+      <repetitions>2</repetitions>
+      <version>
+       <gitversion>a23e385264c31def8dcda86c3cf64faa698c62d8</gitversion>
+      </version>
+      <min>2.4165159E7</min>
+      <max>2.4965962E7</max>
+     </result>
+     <result date="1621608491344">
+      <value>4583050.0</value>
+      <deviation>649075.9418681299</deviation>
+      <warmupExecutions>0</warmupExecutions>
+      <executionTimes>0</executionTimes>
+      <warmup>0</warmup>
+      <iterations>2</iterations>
+      <repetitions>2</repetitions>
+      <version>
+       <gitversion>33ce17c04b5218c25c40137d4d09f40fbb3e4f0f</gitversion>
+      </version>
+      <min>4124084.0</min>
+      <max>5042016.0</max>
+     </result>
+     <result date="1621608496690">
+      <value>2.4472315E7</value>
+      <deviation>405012.3794873436</deviation>
+      <warmupExecutions>0</warmupExecutions>
+      <executionTimes>0</executionTimes>
+      <warmup>0</warmup>
+      <iterations>2</iterations>
+      <repetitions>2</repetitions>
+      <version>
+       <gitversion>a23e385264c31def8dcda86c3cf64faa698c62d8</gitversion>
+      </version>
+      <min>2.4185928E7</min>
+      <max>2.4758702E7</max>
+     </result>
+    </chunk>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

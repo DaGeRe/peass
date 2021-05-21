@@ -112,15 +112,20 @@ public class ContinuousExecutor {
    public void execute() throws Exception {
       final String url = GitUtils.getURL(originalProjectFolder);
 
-      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), folders, resultsFolders, env);
-      final Set<TestCase> tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
+      final Set<TestCase> tests = executeRegressionTestSelection(url);
 
-      final File measurementFolder = measure(tests);
+      final File measurementFolder = executeMeasurement(tests);
 
       analyzeMeasurements(measurementFolder);
    }
 
-   private File measure(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   protected Set<TestCase> executeRegressionTestSelection(final String url) throws Exception {
+      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), folders, resultsFolders, env);
+      final Set<TestCase> tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
+      return tests;
+   }
+
+   protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final File fullResultsVersion = getFullResultsVersion();
       final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(version, versionOld, folders, measurementConfig, env);
       final File measurementFolder = measurementExecutor.executeMeasurements(tests, fullResultsVersion);

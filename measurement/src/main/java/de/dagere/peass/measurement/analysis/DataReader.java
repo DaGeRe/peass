@@ -58,7 +58,7 @@ public final class DataReader {
          final Map<String, TestData> currentMeasurement = readClassFolder(clazzFile);
 
          for (final TestData data : currentMeasurement.values()) {
-            LOG.trace("Add: {}", data.getTestClass() + " " + data.getTestMethod());
+            LOG.debug("Add: {}", data.getTestClass() + " " + data.getTestMethod());
             while (measurements.size() > MAX_QUEUE_SIZE) {
                LOG.info("Waiting, Measurements: {} Max-Queue-Size: {}", measurements.size(), MAX_QUEUE_SIZE);
                try {
