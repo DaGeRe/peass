@@ -9,19 +9,25 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import de.dagere.peass.TestUtil;
+import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
+import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.ProjectBuilderHelper;
 import net.lingala.zip4j.core.ZipFile;
@@ -58,7 +64,17 @@ public class TestContinuousExecutor {
 
       spied.execute();
       
-      //TODO Test that changes.json contains correct TestCase entries
+      checkChangesJson();
+   }
+
+
+   private void checkChangesJson() throws IOException, JsonParseException, JsonMappingException {
+      File changeFile = new File(fullPeassFolder, "changes.json");
+      ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changeFile, ProjectChanges.class);
+      
+      String changedTestClass = changes.getVersion("a23e385264c31def8dcda86c3cf64faa698c62d8").getTestcaseChanges().keySet().iterator().next();
+      TestCase tc = new TestCase(changedTestClass);
+      Assert.assertEquals("de.test.CalleeTest", tc.getClazz());
    }
 
 
