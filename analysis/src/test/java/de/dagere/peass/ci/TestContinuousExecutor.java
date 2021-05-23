@@ -30,7 +30,7 @@ import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.ProjectBuilderHelper;
-import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
 public class TestContinuousExecutor {
