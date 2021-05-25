@@ -65,7 +65,8 @@ public class GradleTestExecutor extends KoPeMeExecutor {
 
    protected Process buildProcess(final File folder, final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
       final String testGoal = getTestGoal();
-      final String[] originals = new String[] { new File(folders.getProjectFolder(), "gradlew").getAbsolutePath(),
+      String wrapper = new File(folders.getProjectFolder(), "gradlew").getAbsolutePath();
+      final String[] originals = new String[] { wrapper,
             "--init-script", new File(folders.getGradleHome(), "init.gradle").getAbsolutePath(),
             "--no-daemon",
             "cleanTest", testGoal };
