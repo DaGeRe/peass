@@ -38,8 +38,8 @@ public class DependencyParallelReader {
    private final ExecutionConfig executionConfig;
    private final EnvironmentVariables env;
 
-   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<GitCommit> commits, final DependencyConfig dependencyConfig,
-         final int timeout, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<GitCommit> commits,
+         final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       url = GitUtils.getURL(projectFolder);
       this.dependencyConfig = dependencyConfig;
       this.executionConfig = executionConfig;
@@ -103,7 +103,8 @@ public class DependencyParallelReader {
       }
    }
 
-   public void startPartProcess(final ResultsFolders currentOutFolders, final ExecutorService service, final int outfileIndex, final PeASSFolders foldersTemp) throws InterruptedException {
+   public void startPartProcess(final ResultsFolders currentOutFolders, final ExecutorService service, final int outfileIndex, final PeASSFolders foldersTemp)
+         throws InterruptedException {
       final int min = outfileIndex * sizePerThread;
       final int max = Math.min((outfileIndex + 1) * sizePerThread + 1, commits.size());
       LOG.debug("Min: {} Max: {} Size: {}", min, max, commits.size());

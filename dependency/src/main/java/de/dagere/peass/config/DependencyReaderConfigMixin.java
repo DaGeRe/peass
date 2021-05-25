@@ -96,7 +96,7 @@ public class DependencyReaderConfigMixin {
    }
    
    public ExecutionConfig getExecutionConfig() {
-      ExecutionConfig executionConfig = new ExecutionConfig();
+      ExecutionConfig executionConfig = new ExecutionConfig(timeout);
       executionConfig.setTestGoal(testGoal);
       if (includes != null) {
          for (String include : includes) {
