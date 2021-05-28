@@ -121,7 +121,8 @@ public class RootCauseAnalysis extends DependencyTestStarter {
             tester = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, env);
             break;
          case CONSTANT_LEVELS:
-            throw new RuntimeException("Measurement for constant count of level currently not supported");
+            tester = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, env);
+            break;
          case UNTIL_SOURCE_CHANGE:
             TreeAnalyzerCreator creatorSource = new TreeAnalyzerCreator() {
 
