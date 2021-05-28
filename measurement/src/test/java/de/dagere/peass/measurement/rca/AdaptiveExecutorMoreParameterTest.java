@@ -27,9 +27,6 @@ import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
-import de.dagere.peass.measurement.rca.CauseSearcherConfig;
-import de.dagere.peass.measurement.rca.CauseTester;
-import de.dagere.peass.measurement.rca.RCAStrategy;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.helper.OnFailureLogSafer;
 import de.dagere.peass.measurement.rca.helper.TestConstants;
@@ -47,7 +44,7 @@ public class AdaptiveExecutorMoreParameterTest {
 
    private static final File SOURCE_DIR = new File("src/test/resources/rootCauseIT/basic_state_moreparameters/");
    private static final TestCase TEST = new TestCase("defaultpackage.TestMe", "testMe");
-   public static CauseSearcherConfig FULL_CASE_CONFIG = new CauseSearcherConfig(TEST, false, false, 0.1, false, false, RCAStrategy.COMPLETE);
+   public static CauseSearcherConfig FULL_CASE_CONFIG = new CauseSearcherConfig(TEST, false, false, 0.1, false, false, RCAStrategy.COMPLETE, 1);
 
    private File projectFolder;
    private CauseTester executor;

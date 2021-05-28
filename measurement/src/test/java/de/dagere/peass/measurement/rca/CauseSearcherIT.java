@@ -34,9 +34,6 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
-import de.dagere.peass.measurement.rca.CauseSearcherConfig;
-import de.dagere.peass.measurement.rca.CauseTester;
-import de.dagere.peass.measurement.rca.RCAStrategy;
 import de.dagere.peass.measurement.rca.helper.VCSTestUtils;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.searcher.CauseSearcher;
@@ -54,7 +51,7 @@ public class CauseSearcherIT {
    
    public final static CauseSearcherConfig CAUSE_CONFIG_TESTME_COMPLETE = new CauseSearcherConfig(new TestCase("defaultpackage.TestMe", "testMe"), 
          false, false, 0.1,
-         false, false, RCAStrategy.COMPLETE);
+         false, false, RCAStrategy.COMPLETE, 1);
    
    private static final File VERSIONS_FOLDER = new File("src/test/resources/rootCauseIT");
    private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");

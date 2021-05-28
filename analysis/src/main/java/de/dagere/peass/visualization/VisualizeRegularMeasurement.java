@@ -64,7 +64,7 @@ public class VisualizeRegularMeasurement {
 
    private CauseSearchData createEmptyData(final List<String> versions, final TestCase testcase) {
       CauseSearchData data2 = new CauseSearchData();
-      data2.setCauseConfig(new CauseSearcherConfig(testcase, false, false, 1.0, false, false, null));
+      data2.setCauseConfig(new CauseSearcherConfig(testcase, false, false, 1.0, false, false, null, 1));
       data2.setConfig(new MeasurementConfiguration(2, versions.get(0), versions.get(1)));
       return data2;
    }

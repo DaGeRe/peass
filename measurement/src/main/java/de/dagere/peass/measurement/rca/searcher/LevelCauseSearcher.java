@@ -28,22 +28,24 @@ import de.dagere.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class LevelCauseSearcher extends CauseSearcher {
-   
+
    private static final Logger LOG = LogManager.getLogger(LevelCauseSearcher.class);
-   
+
    /**
     * Continues existing run
+    * 
     * @param measurer
     * @param finishedData
     * @param folders
     * @throws InterruptedException
     * @throws IOException
     */
-   public LevelCauseSearcher(final CauseTester measurer, final CauseSearchData finishedData, final CauseSearchFolders folders, final EnvironmentVariables env) throws InterruptedException, IOException {
+   public LevelCauseSearcher(final CauseTester measurer, final CauseSearchData finishedData, final CauseSearchFolders folders, final EnvironmentVariables env)
+         throws InterruptedException, IOException {
       super(null, finishedData.getCauseConfig(), measurer, finishedData.getMeasurementConfig(), folders, env);
       persistenceManager = new CausePersistenceManager(finishedData, folders);
    }
-   
+
    public LevelCauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer, final MeasurementConfiguration measurementConfig,
          final CauseSearchFolders folders, final EnvironmentVariables env) throws InterruptedException, IOException {
       super(reader, causeSearchConfig, measurer, measurementConfig, folders, env);
@@ -55,18 +57,25 @@ public class LevelCauseSearcher extends CauseSearcher {
       }
       new FolderDeterminer(folders).testResultFolders(measurementConfig.getVersion(), measurementConfig.getVersionOld(), causeSearchConfig.getTestCase());
    }
-   
+
    @Override
    protected Set<ChangedEntity> searchCause()
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       reader.getRootPredecessor().setOtherVersionNode(reader.getRootVersion());
       reader.getRootVersion().setOtherVersionNode(reader.getRootPredecessor());
-      isLevelDifferent(Arrays.asList(new CallTreeNode[] { reader.getRootPredecessor() }),
-            Arrays.asList(new CallTreeNode[] { reader.getRootVersion() }));
+      List<CallTreeNode> initialNodesPredecessor = Arrays.asList(new CallTreeNode[] { reader.getRootPredecessor() });
+      List<CallTreeNode> initialNodesCurrent = Arrays.asList(new CallTreeNode[] { reader.getRootVersion() });
+      if (causeSearchConfig.getLevels() > 1) {
+         int remainingLevels = causeSearchConfig.getLevels() - 1;
+         //TODO Add level nodes
+         for (int level = 0; level < remainingLevels; level++) {
+         }
+      }
+      isLevelDifferent(initialNodesPredecessor, initialNodesCurrent);
 
       return convertToChangedEntitites();
    }
-   
+
    public void isLevelDifferent(final List<CallTreeNode> currentPredecessorNodeList, final List<CallTreeNode> currentVersionNodeList)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       final LevelDifferentNodeDeterminer levelSearcher = new LevelDifferentNodeDeterminer(currentPredecessorNodeList, currentVersionNodeList, causeSearchConfig, measurementConfig);

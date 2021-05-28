@@ -26,6 +26,7 @@ public class CauseSearcherConfig implements Serializable {
    @JsonInclude(Include.NON_NULL)
    private File propertyFolder;
    private final RCAStrategy rcaStrategy;
+   private final int levels;
 
    @JsonCreator
    public CauseSearcherConfig(@JsonProperty("testcase") final TestCase testCase,
@@ -34,7 +35,8 @@ public class CauseSearcherConfig implements Serializable {
          @JsonProperty("minTime") final double minTime,
          @JsonProperty("calibrationRun") final boolean calibrationRun,
          @JsonProperty("ignoreEOIs") final boolean ignoreEOIs,
-         @JsonProperty("rcaStrategy") final RCAStrategy rcaStrategy) {
+         @JsonProperty("rcaStrategy") final RCAStrategy rcaStrategy,
+         @JsonProperty("levels") final int levels) {
       this.testCase = testCase;
       this.useAggregation = useAggregation;
       this.splitAggregated = splitAggregated;
@@ -42,6 +44,7 @@ public class CauseSearcherConfig implements Serializable {
       this.calibrationRun = calibrationRun;
       this.ignoreEOIs = ignoreEOIs;
       this.rcaStrategy = rcaStrategy;
+      this.levels = levels;
       propertyFolder = null;
       if (useAggregation && !ignoreEOIs) {
          throw new RuntimeException("EOIs need always to be ignored if aggregation is enabled!");
@@ -51,14 +54,14 @@ public class CauseSearcherConfig implements Serializable {
    public CauseSearcherConfig(final TestCase test, final CauseSearcherConfigMixin config) {
       this(test, !config.isUseNonAggregatedWriter(), 
             !config.isNotSplitAggregated(), config.getMinTime(), config.isUseCalibrationRun(), !config.isUseEOIs(), 
-            config.getStrategy());
+            config.getStrategy(), config.getLevels());
       this.propertyFolder = config.getPropertyFolder();
    }
 
    public CauseSearcherConfig(final TestCase testCase, final CauseSearcherConfig causeConfig) {
       this(testCase, causeConfig.isUseAggregation(),
             causeConfig.isSplitAggregated(), causeConfig.getMinTime(), causeConfig.useCalibrationRun(), causeConfig.isIgnoreEOIs(), 
-            causeConfig.getRcaStrategy());
+            causeConfig.getRcaStrategy(), causeConfig.getLevels());
    }
 
    public TestCase getTestCase() {
@@ -93,4 +96,7 @@ public class CauseSearcherConfig implements Serializable {
       return propertyFolder;
    }
    
+   public int getLevels() {
+      return levels;
+   }
 }

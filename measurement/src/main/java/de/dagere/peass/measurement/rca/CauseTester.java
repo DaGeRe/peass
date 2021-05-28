@@ -197,7 +197,7 @@ public class CauseTester extends AdaptiveTester {
 
       final MeasurementConfiguration config = new MeasurementConfiguration(15 * 1000 * 60, 15, true, version, version + "~1");
       config.setUseKieker(true);
-      final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, false, 0.01, false, false, RCAStrategy.COMPLETE);
+      final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, false, 0.01, false, false, RCAStrategy.COMPLETE, 1);
       final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), config, causeConfig, new EnvironmentVariables());
 
       final CallTreeNode node = new CallTreeNode("FileUploadTestCase#parseUpload",
