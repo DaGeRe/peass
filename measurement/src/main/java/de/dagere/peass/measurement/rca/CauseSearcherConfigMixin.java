@@ -31,7 +31,7 @@ public class CauseSearcherConfigMixin {
          "--rcaStrategy" }, description = "Strategy to select nodes which are measured (default: COMPLETE)")
    private RCAStrategy strategy = RCAStrategy.COMPLETE;
 
-   @Option(names = { "-levels", "--minTime" }, description = "Count of levels that should be measured at once; only allowed with strategy CONSTANT_LEVELS")
+   @Option(names = { "-levels", "--levels" }, description = "Count of levels that should be measured at once; only allowed with strategy CONSTANT_LEVELS")
    private int levels = 1;
 
    public boolean isUseCalibrationRun() {
