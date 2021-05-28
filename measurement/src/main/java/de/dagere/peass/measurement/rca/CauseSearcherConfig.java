@@ -49,6 +49,9 @@ public class CauseSearcherConfig implements Serializable {
       if (useAggregation && !ignoreEOIs) {
          throw new RuntimeException("EOIs need always to be ignored if aggregation is enabled!");
       }
+      if (rcaStrategy != RCAStrategy.CONSTANT_LEVELS && levels != 1) {
+         throw new RuntimeException("If levels != 1, strategy must be CONSTANT_LEVELS");
+      }
    }
    
    public CauseSearcherConfig(final TestCase test, final CauseSearcherConfigMixin config) {
