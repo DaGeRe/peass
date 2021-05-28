@@ -91,10 +91,12 @@ public class LevelCauseSearcherTest {
       builderPredecessor.buildMeasurements(builderPredecessor.getRoot());
 
       lcs.calculateDiffering();
-      Assert.assertEquals(3, lcs.getMeasureNextLevelPredecessor().size());
-      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(builderPredecessor.getA()));
-      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(builderPredecessor.getC()));
-      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(builderPredecessor.getConstructor()));
+      Assert.assertEquals(1, lcs.getLevelDifferentCurrent().size());
+      Assert.assertEquals(1, lcs.getLevelDifferentPredecessor().size());
+//      Assert.assertEquals(3, lcs.getMeasureNextLevelPredecessor().size());
+//      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(builderPredecessor.getA()));
+//      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(builderPredecessor.getC()));
+//      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(builderPredecessor.getConstructor()));
 
       Assert.assertEquals(0, lcs.getTreeStructureDifferingNodes().size());
    }
@@ -106,10 +108,7 @@ public class LevelCauseSearcherTest {
 
       searchChanges(TestConstants.SIMPLE_CAUSE_CONFIG);
       
-      System.out.println(changes);
-      Assert.assertEquals(1, changes.size());
-      Assert.assertEquals("ClassB#methodB", changes.iterator().next().toString());
-
+      checkChanges();
       
       final TestcaseStatistic nodeStatistic = data.getNodes().getStatistic();
       final double expectedT = new TTest().t(nodeStatistic.getStatisticsOld(), nodeStatistic.getStatisticsCurrent());
@@ -127,14 +126,19 @@ public class LevelCauseSearcherTest {
 
       searchChanges(config);
       
-      System.out.println(changes);
-      Assert.assertEquals(1, changes.size());
-      Assert.assertEquals("ClassB#methodB", changes.iterator().next().toString());
-
+      checkChanges();
       
       final TestcaseStatistic nodeStatistic = data.getNodes().getStatistic();
       final double expectedT = new TTest().t(nodeStatistic.getStatisticsOld(), nodeStatistic.getStatisticsCurrent());
       Assert.assertEquals(expectedT, nodeStatistic.getTvalue(), 0.01);
+   }
+   
+   private void checkChanges() {
+      System.out.println(changes);
+      Assert.assertEquals(3, changes.size());
+      Assert.assertThat(changes.toString(), Matchers.containsString("ClassB#methodB"));
+      Assert.assertThat(changes.toString(), Matchers.containsString("Test#test"));
+      Assert.assertThat(changes.toString(), Matchers.containsString("ClassA#methodA"));
    }
 
    @Test
@@ -149,10 +153,7 @@ public class LevelCauseSearcherTest {
 
       searchChanges(TestConstants.SIMPLE_CAUSE_CONFIG);
 
-      System.out.println(changes);
-      Assert.assertEquals(1, changes.size());
-      Assert.assertEquals("ClassB#methodB", changes.iterator().next().toString());
-
+      checkChanges();
       
       final TestcaseStatistic nodeStatistic = data.getNodes().getStatistic();
       final double expectedT = new TTest().t(nodeStatistic.getStatisticsOld(), nodeStatistic.getStatisticsCurrent());

@@ -75,29 +75,34 @@ public class LevelCauseSearcher extends CauseSearcher {
 
    public void isLevelDifferent(final List<CallTreeNode> currentPredecessorNodeList, final List<CallTreeNode> currentVersionNodeList)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      final LevelDifferentNodeDeterminer levelSearcher = new LevelDifferentNodeDeterminer(currentPredecessorNodeList, currentVersionNodeList, causeSearchConfig, measurementConfig);
+      final LevelDifferentNodeDeterminer levelDifferentNodeDeterminer = new LevelDifferentNodeDeterminer(currentPredecessorNodeList, currentVersionNodeList, causeSearchConfig, measurementConfig);
 
-      final List<CallTreeNode> measurePredecessor = levelSearcher.getMeasurePredecessor();
+      final List<CallTreeNode> measurePredecessor = levelDifferentNodeDeterminer.getMeasurePredecessor();
 
       LOG.info("Measure next level: {}", measurePredecessor);
       if (measurePredecessor.size() > 0) {
-         measureLevel(levelSearcher, measurePredecessor);
+         measureLevel(levelDifferentNodeDeterminer, measurePredecessor);
          writeTreeState();
 
-         isLevelDifferent(levelSearcher.getMeasureNextLevelPredecessor(), levelSearcher.getMeasureNextLevel());
+         List<CallTreeNode> differentNodesPredecessor = levelDifferentNodeDeterminer.getLevelDifferentPredecessor();
+         List<CallTreeNode> measureChildsPredecessor = new LevelChildDeterminer(differentNodesPredecessor, causeSearchConfig.getLevels()).getOnlyChildNodes();
+         List<CallTreeNode> differentNodesCurrent = levelDifferentNodeDeterminer.getLevelDifferentPredecessor();
+         List<CallTreeNode> measureChildsCurrent = new LevelChildDeterminer(differentNodesCurrent, causeSearchConfig.getLevels()).getOnlyChildNodes();
+         
+         isLevelDifferent(measureChildsPredecessor, measureChildsCurrent);
       }
    }
 
-   private void measureLevel(final LevelDifferentNodeDeterminer levelSearcher, final List<CallTreeNode> measuredPredecessor)
+   private void measureLevel(final LevelDifferentNodeDeterminer levelDifferentNodeDeterminer, final List<CallTreeNode> measuredPredecessor)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       measurer.measureVersion(measuredPredecessor);
-      levelSearcher.calculateDiffering();
+      levelDifferentNodeDeterminer.calculateDiffering();
 
       for (final CallTreeNode predecessorNode : measuredPredecessor) {
          persistenceManager.addMeasurement(predecessorNode);
       }
 
-      differingNodes.addAll(levelSearcher.getTreeStructureDifferingNodes());
-      differingNodes.addAll(levelSearcher.getCurrentLevelDifferent());
+      differingNodes.addAll(levelDifferentNodeDeterminer.getTreeStructureDifferingNodes());
+      differingNodes.addAll(levelDifferentNodeDeterminer.getLevelDifferentPredecessor());
    }
 }

@@ -63,13 +63,13 @@ public class LevelDifferentNodeDeterminer extends DifferentNodeDeterminer {
       }
    }
 
-   public List<CallTreeNode> getMeasureNextLevelPredecessor() {
-      return measureNextlevelPredecessor;
-   }
-
-   public List<CallTreeNode> getMeasureNextLevel() {
-      return measureNextLevel;
-   }
+//   public List<CallTreeNode> getMeasureNextLevelPredecessor() {
+//      return measureNextlevelPredecessor;
+//   }
+//
+//   public List<CallTreeNode> getMeasureNextLevel() {
+//      return measureNextLevel;
+//   }
 
    public List<CallTreeNode> getTreeStructureDifferingNodes() {
       return treeStructureDifferentNodes;
