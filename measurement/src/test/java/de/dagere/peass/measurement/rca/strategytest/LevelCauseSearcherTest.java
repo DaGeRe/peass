@@ -10,7 +10,6 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.stat.inference.TTest;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -108,7 +107,7 @@ public class LevelCauseSearcherTest {
 
       searchChanges(TestConstants.SIMPLE_CAUSE_CONFIG);
       
-      checkChanges();
+      StrategyTestUtil.checkChanges(changes);
       
       final TestcaseStatistic nodeStatistic = data.getNodes().getStatistic();
       final double expectedT = new TTest().t(nodeStatistic.getStatisticsOld(), nodeStatistic.getStatisticsCurrent());
@@ -126,21 +125,13 @@ public class LevelCauseSearcherTest {
 
       searchChanges(config);
       
-      checkChanges();
+      StrategyTestUtil.checkChanges(changes);
       
       final TestcaseStatistic nodeStatistic = data.getNodes().getStatistic();
       final double expectedT = new TTest().t(nodeStatistic.getStatisticsOld(), nodeStatistic.getStatisticsCurrent());
       Assert.assertEquals(expectedT, nodeStatistic.getTvalue(), 0.01);
    }
    
-   private void checkChanges() {
-      System.out.println(changes);
-      Assert.assertEquals(3, changes.size());
-      Assert.assertThat(changes.toString(), Matchers.containsString("ClassB#methodB"));
-      Assert.assertThat(changes.toString(), Matchers.containsString("Test#test"));
-      Assert.assertThat(changes.toString(), Matchers.containsString("ClassA#methodA"));
-   }
-
    @Test
    public void testWarmup()
          throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
@@ -153,7 +144,7 @@ public class LevelCauseSearcherTest {
 
       searchChanges(TestConstants.SIMPLE_CAUSE_CONFIG);
 
-      checkChanges();
+      StrategyTestUtil.checkChanges(changes);
       
       final TestcaseStatistic nodeStatistic = data.getNodes().getStatistic();
       final double expectedT = new TTest().t(nodeStatistic.getStatisticsOld(), nodeStatistic.getStatisticsCurrent());
