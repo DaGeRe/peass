@@ -1,6 +1,7 @@
 package de.dagere.peass;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -10,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.measurement.rca.CausePersistenceManager;
 import de.dagere.peass.measurement.rca.CauseTester;
 import de.dagere.peass.measurement.rca.LevelManager;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -40,19 +42,21 @@ public class RCALevelContinueStarter implements Callable<Void> {
    public Void call() throws Exception {
       final CauseSearchFolders folders = new CauseSearchFolders(projectFolder);
       final File resultFile = getResultFile(folders);
-      if (resultFile != null) {
+      final File resultFileFull = getFullResultFile(folders);
+      if (resultFile != null && resultFileFull != null) {
          final CauseSearchData data = Constants.OBJECTMAPPER.readValue(resultFile, CauseSearchData.class);
-
-         final File nowFolder = new File(folders.getTempProjectFolder(), "continue");
-         GitUtils.clone(folders, nowFolder);
-         final CauseSearchFolders alternateFolders = new CauseSearchFolders(nowFolder);
+         final CauseSearchData dataFull = Constants.OBJECTMAPPER.readValue(resultFileFull, CauseSearchData.class);
+         
+         final CauseSearchFolders alternateFolders = createAlternateFolders(folders);
 
          final BothTreeReader reader = new BothTreeReader(data.getCauseConfig(), data.getMeasurementConfig(), folders, new EnvironmentVariables());
          reader.readCachedTrees();
+         
+         CausePersistenceManager persistenceManager = new CausePersistenceManager(data, dataFull, alternateFolders);
 
          EnvironmentVariables emptyEnv = new EnvironmentVariables();
          final CauseTester measurer = new CauseTester(alternateFolders, data.getMeasurementConfig(), data.getCauseConfig(), emptyEnv);
-         final LevelCauseSearcher tester = new LevelCauseSearcher(measurer, data, alternateFolders, emptyEnv);
+         final LevelCauseSearcher tester = new LevelCauseSearcher(measurer, persistenceManager, emptyEnv);
 
          final List<CallTreeNode> currentVersionNodeList = new LinkedList<>();
          final List<CallTreeNode> currentPredecessorNodeList = new LinkedList<>();
@@ -65,11 +69,33 @@ public class RCALevelContinueStarter implements Callable<Void> {
       return null;
    }
 
+   private CauseSearchFolders createAlternateFolders(final CauseSearchFolders folders) throws InterruptedException, IOException {
+      final File nowFolder = new File(folders.getTempProjectFolder(), "continue");
+      GitUtils.clone(folders, nowFolder);
+      final CauseSearchFolders alternateFolders = new CauseSearchFolders(nowFolder);
+      return alternateFolders;
+   }
+
    private File getResultFile(final CauseSearchFolders folders) {
       File resultFile = null;
       for (final File versionFolder : folders.getRcaTreeFolder().listFiles()) {
          for (final File testcaseFolder : versionFolder.listFiles()) {
             for (final File treeFile : testcaseFolder.listFiles()) {
+               if (treeFile.getName().endsWith(".json")) {
+                  resultFile = treeFile;
+               }
+            }
+         }
+      }
+      return resultFile;
+   }
+   
+   private File getFullResultFile(final CauseSearchFolders folders) {
+      File resultFile = null;
+      for (final File versionFolder : folders.getRcaTreeFolder().listFiles()) {
+         for (final File testcaseFolder : versionFolder.listFiles()) {
+            File detailsFolder = new File(testcaseFolder, "details");
+            for (final File treeFile : detailsFolder.listFiles()) {
                if (treeFile.getName().endsWith(".json")) {
                   resultFile = treeFile;
                }

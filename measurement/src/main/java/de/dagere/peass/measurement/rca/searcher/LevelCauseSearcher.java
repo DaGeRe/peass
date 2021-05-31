@@ -22,7 +22,6 @@ import de.dagere.peass.measurement.rca.CausePersistenceManager;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.CauseTester;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
 import kieker.analysis.exception.AnalysisConfigurationException;
@@ -40,10 +39,10 @@ public class LevelCauseSearcher extends CauseSearcher {
     * @throws InterruptedException
     * @throws IOException
     */
-   public LevelCauseSearcher(final CauseTester measurer, final CauseSearchData finishedData, final CauseSearchFolders folders, final EnvironmentVariables env)
+   public LevelCauseSearcher(final CauseTester measurer, final CausePersistenceManager persistenceManager, final EnvironmentVariables env)
          throws InterruptedException, IOException {
-      super(null, finishedData.getCauseConfig(), measurer, finishedData.getMeasurementConfig(), folders, env);
-      persistenceManager = new CausePersistenceManager(finishedData, folders);
+      super(null, persistenceManager.getRCAData().getCauseConfig(), measurer, persistenceManager.getRCAData().getMeasurementConfig(), persistenceManager.getFolders(), env);
+      this.persistenceManager = persistenceManager;
    }
 
    public LevelCauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer, final MeasurementConfiguration measurementConfig,

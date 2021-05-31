@@ -16,19 +16,18 @@ public class CausePersistenceManager {
 
    protected final CauseSearchData data;
    protected final CauseSearchData dataDetails;
+   private final CauseSearchFolders folders;
    private final File treeDataFile;
    private final File treeDataFileDetails;
 
    public CausePersistenceManager(final CauseSearcherConfig causeSearchConfig, final MeasurementConfiguration measurementConfig, final CauseSearchFolders folders) {
-      this(new CauseSearchData(measurementConfig, causeSearchConfig), folders);
+      this(new CauseSearchData(measurementConfig, causeSearchConfig), new CauseSearchData(measurementConfig, causeSearchConfig), folders);
    }
 
-   public CausePersistenceManager(final CauseSearchData finishedData, final CauseSearchFolders folders) {
+   public CausePersistenceManager(final CauseSearchData finishedData, final CauseSearchData finishedDataFull, final CauseSearchFolders folders) {
       this.data = finishedData;
-      this.dataDetails = new CauseSearchData(finishedData.getMeasurementConfig(), finishedData.getCauseConfig());
-      if (data.getNodes() != null) {
-         dataDetails.setNodes(data.getNodes());
-      }
+      this.dataDetails = finishedDataFull;
+      this.folders = folders;
 
       final File treeDataFolder = folders.getRcaTreeFolder(finishedData.getMeasurementConfig().getVersion(), finishedData.getCauseConfig().getTestCase());
       treeDataFile = new File(treeDataFolder, finishedData.getCauseConfig().getTestCase().getMethod() + ".json");
@@ -52,5 +51,9 @@ public class CausePersistenceManager {
 
    public CauseSearchData getRCAData() {
       return data;
+   }
+
+   public CauseSearchFolders getFolders() {
+      return folders;
    }
 }
