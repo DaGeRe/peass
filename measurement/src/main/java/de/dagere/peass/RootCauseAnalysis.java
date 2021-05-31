@@ -120,9 +120,6 @@ public class RootCauseAnalysis extends DependencyTestStarter {
          case LEVELWISE:
             tester = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, env);
             break;
-         case CONSTANT_LEVELS:
-            tester = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, env);
-            break;
          case UNTIL_SOURCE_CHANGE:
             TreeAnalyzerCreator creatorSource = new TreeAnalyzerCreator() {
 

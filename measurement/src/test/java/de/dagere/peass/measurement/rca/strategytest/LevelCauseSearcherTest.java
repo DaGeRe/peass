@@ -121,7 +121,7 @@ public class LevelCauseSearcherTest {
       
       CauseSearcherConfig config = new CauseSearcherConfig(new TestCase("Test#test"), 
             true, false, 0.1, 
-            false, true, RCAStrategy.CONSTANT_LEVELS, 2);
+            false, true, RCAStrategy.LEVELWISE, 2);
 
       searchChanges(config);
       
