@@ -4,9 +4,6 @@ import org.apache.commons.cli.Option;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-
 /**
  * Analyzes data from all subfolders of one folder. It is assumed that the typical PeASS-folder-structure is given.
  * 
@@ -16,11 +13,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class FolderSearcher {
    private static final Logger LOG = LogManager.getLogger(FolderSearcher.class);
 
-   public final static ObjectMapper MAPPER = new ObjectMapper();
-   static {
-      MAPPER.enable(SerializationFeature.INDENT_OUTPUT);
-   }
-   
    public static final String DATA = "data";
 
    public static final Option DATAOPTION = Option.builder(DATA).required(true).hasArgs()

@@ -20,7 +20,6 @@ import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.analysis.properties.VersionChangeProperties;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.utils.Constants;
-import de.peran.FolderSearcher;
 
 public class CreateClassificationData {
    
@@ -108,7 +107,7 @@ public class CreateClassificationData {
          manualTemplate.addChange(version, testEntity, new HashSet<>(), direction);
       });
       
-      FolderSearcher.MAPPER.writeValue(new File(goalFile.getParent(), "temp.json"), manualTemplate);
+      Constants.OBJECTMAPPER.writeValue(new File(goalFile.getParent(), "temp.json"), manualTemplate);
       return manualTemplate;
    }
 

@@ -26,9 +26,9 @@ import de.dagere.peass.measurement.analysis.Relation;
 import de.dagere.peass.measurement.analysis.statistics.DescribedChunk;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.statistics.ConfidenceIntervalInterpretion;
+import de.dagere.peass.utils.Constants;
 import de.dagere.peass.utils.RunCommandWriterRCA;
 import de.dagere.peass.utils.RunCommandWriterSlurmRCA;
-import de.peran.FolderSearcher;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 
 /**
@@ -165,8 +165,8 @@ public class ChangeReader {
          final File resultfile = new File(statisticsFolder.getParentFile(), "changes_" + executorName + ".json");
          final File statisticFile = new File(statisticsFolder, executorName + ".json");
          try {
-            FolderSearcher.MAPPER.writeValue(resultfile, changes);
-            FolderSearcher.MAPPER.writeValue(statisticFile, info);
+            Constants.OBJECTMAPPER.writeValue(resultfile, changes);
+            Constants.OBJECTMAPPER.writeValue(statisticFile, info);
          } catch (final IOException e) {
             e.printStackTrace();
          }

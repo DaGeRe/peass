@@ -18,11 +18,11 @@ import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.ProjectStatistics;
+import de.dagere.peass.utils.Constants;
 import de.dagere.peass.validation.data.ProjectValidation;
 import de.dagere.peass.validation.data.Validation;
 import de.dagere.peass.validation.data.ValidationChange;
 import de.dagere.peass.vcs.GitUtils;
-import de.peran.FolderSearcher;
 
 public class Validator {
 
@@ -39,21 +39,21 @@ public class Validator {
 
    public Validator(final File dependencyFolder, final File changeFolder, final String project) throws JsonParseException, JsonMappingException, IOException {
       final File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
-      changedTests = FolderSearcher.MAPPER.readValue(executionFile, ExecutionData.class);
+      changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
 
       final File dependencyFile = new File(dependencyFolder, "deps_" + project + ".json");
-      final Dependencies dependencies = FolderSearcher.MAPPER.readValue(dependencyFile, Dependencies.class);
+      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       firstVersion = dependencies.getVersionNames()[0];
 
       File changeFile = getChangefile(changeFolder, project);
       if (changeFile.exists()) {
-         changes = FolderSearcher.MAPPER.readValue(changeFile, ProjectChanges.class);
+         changes = Constants.OBJECTMAPPER.readValue(changeFile, ProjectChanges.class);
       } else {
          changes = null;
       }
       File statisticFile = getStatisticsFile(changeFolder, project);
       if (statisticFile.exists()) {
-         statistics = FolderSearcher.MAPPER.readValue(statisticFile, ProjectStatistics.class);
+         statistics = Constants.OBJECTMAPPER.readValue(statisticFile, ProjectStatistics.class);
       } else {
          statistics = null;
       }

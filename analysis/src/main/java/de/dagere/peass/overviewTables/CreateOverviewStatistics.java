@@ -21,7 +21,6 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
-import de.peran.FolderSearcher;
 import de.peran.analysis.helper.all.CleanAll;
 
 /**
@@ -76,7 +75,7 @@ public class CreateOverviewStatistics {
          stats[0].addValue(versions);
          final File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
          if (executionFile.exists()) {
-            final ExecutionData changedTests = FolderSearcher.MAPPER.readValue(executionFile, ExecutionData.class);
+            final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
             System.out.print(changedTests.getVersions().size() + " & ");
             stats[1].addValue(changedTests.getVersions().size());
             int tests = 0;
@@ -92,12 +91,12 @@ public class CreateOverviewStatistics {
             final File potentialChangeFolder = new File(changeFolder, project);
             if (potentialChangeFolder.exists()) {
                final File changefile = new File(potentialChangeFolder, project + ".json");
-               final ProjectChanges measuredChanges = FolderSearcher.MAPPER.readValue(changefile, ProjectChanges.class);
+               final ProjectChanges measuredChanges = Constants.OBJECTMAPPER.readValue(changefile, ProjectChanges.class);
                changes = measuredChanges.getChangeCount();
 
                final File changefileOnlysource = new File(propertyFolder, project + "/" + project + ".json");
                if (changefileOnlysource.exists()) {
-                  final VersionChangeProperties measuredChangesOnlysource = FolderSearcher.MAPPER.readValue(changefileOnlysource, VersionChangeProperties.class);
+                  final VersionChangeProperties measuredChangesOnlysource = Constants.OBJECTMAPPER.readValue(changefileOnlysource, VersionChangeProperties.class);
                   for (final ChangeProperties changesAll : measuredChangesOnlysource.getVersions().values()) {
                      for (final List<ChangeProperty> method : changesAll.getProperties().values()) {
                         for (final ChangeProperty nowMetho : method) {
@@ -113,7 +112,7 @@ public class CreateOverviewStatistics {
 
             final File allTestProps = new File(propertyFolder, project + "/" + project + "_all.json");
             if (allTestProps.exists()) {
-               final VersionChangeProperties properties = FolderSearcher.MAPPER.readValue(allTestProps, VersionChangeProperties.class);
+               final VersionChangeProperties properties = Constants.OBJECTMAPPER.readValue(allTestProps, VersionChangeProperties.class);
                sourceTests = properties.getSourceChanges();
             }
 
@@ -128,7 +127,7 @@ public class CreateOverviewStatistics {
 
             final File changeTestProperties = new File(propertyFolder, project + File.separator + project + ".json");
             if (changeTestProperties.exists()) {
-               final VersionChangeProperties versionProperties = FolderSearcher.MAPPER.readValue(changeTestProperties, VersionChangeProperties.class);
+               final VersionChangeProperties versionProperties = Constants.OBJECTMAPPER.readValue(changeTestProperties, VersionChangeProperties.class);
 
                final ProjectStatistics projectStatistics = new ProjectStatistics();
                versionProperties.executeProcessor(projectStatistics);

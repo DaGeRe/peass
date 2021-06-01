@@ -12,7 +12,7 @@ import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.changes.Changes;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.measurement.analysis.ProjectStatistics;
-import de.peran.FolderSearcher;
+import de.dagere.peass.utils.Constants;
 
 public class WriteCorrectness {
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
@@ -20,9 +20,9 @@ public class WriteCorrectness {
       final File statisticsFile = new File(args[1]);
       final File changesUnsaveFile = new File(args[2]);
 
-      final ProjectChanges correctChanges = FolderSearcher.MAPPER.readValue(changesSaveFile, ProjectChanges.class);
-      final ProjectChanges unsaveChanges = FolderSearcher.MAPPER.readValue(changesUnsaveFile, ProjectChanges.class);
-      final ProjectStatistics info = FolderSearcher.MAPPER.readValue(statisticsFile, ProjectStatistics.class);
+      final ProjectChanges correctChanges = Constants.OBJECTMAPPER.readValue(changesSaveFile, ProjectChanges.class);
+      final ProjectChanges unsaveChanges = Constants.OBJECTMAPPER.readValue(changesUnsaveFile, ProjectChanges.class);
+      final ProjectStatistics info = Constants.OBJECTMAPPER.readValue(statisticsFile, ProjectStatistics.class);
 
       int correct = 0;
       final int incorrect = 0;
@@ -72,7 +72,7 @@ public class WriteCorrectness {
             }
          }
       }
-      FolderSearcher.MAPPER.writeValue(changesUnsaveFile, unsaveChanges);
+      Constants.OBJECTMAPPER.writeValue(changesUnsaveFile, unsaveChanges);
       System.out.println("Correct: " + correct + " Incorrect: " + incorrect);
    }
 }

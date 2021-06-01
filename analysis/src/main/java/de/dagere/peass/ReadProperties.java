@@ -36,7 +36,6 @@ import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.VersionSorter;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
-import de.peran.FolderSearcher;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -132,7 +131,7 @@ public class ReadProperties implements Callable<Void> {
          writeCSVHeadline(csvWriter);
          final VersionChangeProperties versionProperties = new VersionChangeProperties();
 
-         final ProjectChanges changes = FolderSearcher.MAPPER.readValue(changefile, ProjectChanges.class);
+         final ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changefile, ProjectChanges.class);
 
          int versionCount = 0, testcaseCount = 0;
          for (final Entry<String, Changes> versionChanges : changes.getVersionChanges().entrySet()) {
