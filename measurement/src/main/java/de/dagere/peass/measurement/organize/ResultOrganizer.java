@@ -1,14 +1,17 @@
 package de.dagere.peass.measurement.organize;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -180,14 +183,15 @@ public class ResultOrganizer {
    }
 
    private void saveKiekerFiles(final File folder, final File destFolder) throws IOException {
-      final File kiekerFolder = folder.listFiles()[0];
-      if (!kiekerFolder.getName().matches("[0-9]*")) {
-         throw new RuntimeException("Kieker folder is expected to consist only of numbers, but was " + kiekerFolder.getName());
+      final File[] kiekerFolders = folder.listFiles((FilenameFilter) new RegexFileFilter("[0-9]*"));
+      if (kiekerFolders.length != 1) {
+         String fileNameList = Arrays.toString(kiekerFolders);
+         throw new RuntimeException("It is expected that after one execution exactly one Kieker folder exists, but was " + fileNameList);
       }
       if (saveAll) {
-         moveOrCompressFile(destFolder, kiekerFolder);
+         moveOrCompressFile(destFolder, kiekerFolders[0]);
       } else {
-         FileUtils.deleteDirectory(kiekerFolder);
+         FileUtils.deleteDirectory(kiekerFolders[0]);
       }
    }
 
