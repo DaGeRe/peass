@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.utils.Constants;
-import de.peran.FolderSearcher;
 
 public class RepoFolders {
 
@@ -98,7 +97,7 @@ public class RepoFolders {
 
    public ExecutionData getExecutionData(final String project) throws JsonParseException, JsonMappingException, IOException {
       final File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
-      final ExecutionData changedTests = FolderSearcher.MAPPER.readValue(executionFile, ExecutionData.class);
+      final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
       return changedTests;
    }
 

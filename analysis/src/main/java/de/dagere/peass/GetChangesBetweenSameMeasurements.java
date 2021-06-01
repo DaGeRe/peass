@@ -27,6 +27,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.Cleaner;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.utils.Constants;
 import de.dagere.peass.utils.OptionConstants;
 import de.dagere.peass.utils.RunCommandWriter;
 import de.dagere.peass.utils.RunCommandWriterSlurm;
@@ -102,7 +103,7 @@ public class GetChangesBetweenSameMeasurements {
                changes++;
             }
          }
-         FolderSearcher.MAPPER.writeValue(new File(AnalysisUtil.getProjectResultFolder(), "differingmeasurements.json"), diffs);
+         Constants.OBJECTMAPPER.writeValue(new File(AnalysisUtil.getProjectResultFolder(), "differingmeasurements.json"), diffs);
       }
       System.out.println("Changes: " + changes + " / " + instances);
    }

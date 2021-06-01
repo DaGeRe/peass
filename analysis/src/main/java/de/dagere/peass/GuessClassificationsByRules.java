@@ -22,7 +22,7 @@ import de.dagere.peass.analysis.properties.ChangeProperty;
 import de.dagere.peass.analysis.properties.ChangeProperty.TraceChange;
 import de.dagere.peass.analysis.properties.VersionChangeProperties;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.peran.FolderSearcher;
+import de.dagere.peass.utils.Constants;
 import difflib.Delta;
 import difflib.Patch;
 import picocli.CommandLine;
@@ -53,9 +53,9 @@ public class GuessClassificationsByRules implements Callable<Void> {
 
       File propertyFile = new File(methodFileFolder.getParentFile(), project + ".json");
       File classificationFile = new File(repos.getClassificationFolder(), project + ".json");
-      Classification manual = FolderSearcher.MAPPER.readValue(classificationFile, Classification.class);
+      Classification manual = Constants.OBJECTMAPPER.readValue(classificationFile, Classification.class);
 
-      final VersionChangeProperties changes = FolderSearcher.MAPPER.readValue(propertyFile, VersionChangeProperties.class);
+      final VersionChangeProperties changes = Constants.OBJECTMAPPER.readValue(propertyFile, VersionChangeProperties.class);
 
       for (Entry<String, ChangeProperties> version : changes.getVersions().entrySet()) {
          guessVersion(manual, version);

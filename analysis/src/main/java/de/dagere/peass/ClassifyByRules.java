@@ -23,7 +23,7 @@ import de.dagere.peass.analysis.properties.ChangeProperties;
 import de.dagere.peass.analysis.properties.ChangeProperty;
 import de.dagere.peass.analysis.properties.VersionChangeProperties;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.peran.FolderSearcher;
+import de.dagere.peass.utils.Constants;
 import difflib.Delta;
 import difflib.Patch;
 import picocli.CommandLine;
@@ -59,9 +59,9 @@ public class ClassifyByRules implements Callable<Void> {
 
       final File learnFile = new File(repos.getClassificationFolder(), project + ".json");
       final File learnPropertyFile = repos.getProjectPropertyFile(project);
-      final Classification learn = FolderSearcher.MAPPER.readValue(learnFile, Classification.class);
+      final Classification learn = Constants.OBJECTMAPPER.readValue(learnFile, Classification.class);
 
-      final VersionChangeProperties changes = FolderSearcher.MAPPER.readValue(learnPropertyFile, VersionChangeProperties.class);
+      final VersionChangeProperties changes = Constants.OBJECTMAPPER.readValue(learnPropertyFile, VersionChangeProperties.class);
       final File methodFileFolder = new File(learnPropertyFile.getParentFile(), "methods");
       try (BufferedWriter csvWriter = new BufferedWriter(new FileWriter(new File(project + ".csv")))) {
          for (final Entry<String, ChangeProperties> version : changes.getVersions().entrySet()) {
@@ -132,8 +132,8 @@ public class ClassifyByRules implements Callable<Void> {
 
          final File learnFile = new File(repos.getClassificationFolder(), project + ".json");
          final File learnPropertyFile = repos.getProjectPropertyFile(project);
-         final Classification learn = FolderSearcher.MAPPER.readValue(learnFile, Classification.class);
-         final VersionChangeProperties changes = FolderSearcher.MAPPER.readValue(learnPropertyFile, VersionChangeProperties.class);
+         final Classification learn = Constants.OBJECTMAPPER.readValue(learnFile, Classification.class);
+         final VersionChangeProperties changes = Constants.OBJECTMAPPER.readValue(learnPropertyFile, VersionChangeProperties.class);
          final File methodFileFolder = new File(learnPropertyFile.getParentFile(), "methods");
 
          getAllWords(learn, changes, methodFileFolder, allFeatures);

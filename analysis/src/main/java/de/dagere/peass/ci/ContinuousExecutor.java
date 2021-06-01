@@ -29,7 +29,6 @@ import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 import de.dagere.peass.vcs.VersionIteratorGit;
-import de.peran.AnalyseOneTest;
 
 public class ContinuousExecutor {
 
@@ -134,7 +133,7 @@ public class ContinuousExecutor {
 
    private void analyzeMeasurements(final File measurementFolder) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
       final File changefile = new File(localFolder, "changes.json");
-      AnalyseOneTest.setResultFolder(new File(localFolder, version + "_graphs"));
+//      AnalyseOneTest.setResultFolder(new File(localFolder, version + "_graphs"));
       final ProjectStatistics statistics = new ProjectStatistics();
       TestTransformer testTransformer = ExecutorCreator.createTestTransformer(folders, measurementConfig.getExecutionConfig(), measurementConfig);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);

@@ -24,8 +24,6 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.measurement.analysis.DataAnalyser;
-import de.dagere.peass.measurement.analysis.Relation;
 import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
 import de.dagere.peass.measurement.analysis.statistics.MeanCoVData;
 import de.dagere.peass.measurement.analysis.statistics.MeanHistogramData;
@@ -33,8 +31,6 @@ import de.dagere.peass.measurement.analysis.statistics.TestData;
 import de.dagere.peass.statistics.ConfidenceIntervalInterpretion;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.utils.StreamGobbler;
-import de.peran.AnalyseOneTest;
-import de.peran.FolderSearcher;
 
 /**
  * Analyzes full data and tells which version contain changes based upon given statistical tests (confidence interval, MannWhitney, ..)
@@ -55,17 +51,13 @@ public class AnalyseFullData extends DataAnalyser {
 
    private final ProjectStatistics info;
 
-   public AnalyseFullData(final ProjectStatistics info) {
-      this(new File(AnalyseOneTest.RESULTFOLDER, "changes.json"), info, null);
-   }
-
    public AnalyseFullData(final File changesFile, final ProjectStatistics info, final ModuleClassMapping mapping) {
       this.changeFile = changesFile;
       this.mapping = mapping;
       this.info = info;
       LOG.info("Writing changes to: {}", changeFile.getAbsolutePath());
       try {
-         FolderSearcher.MAPPER.writeValue(changeFile, projectChanges);
+         Constants.OBJECTMAPPER.writeValue(changeFile, projectChanges);
       } catch (final IOException e) {
          e.printStackTrace();
       }
@@ -93,7 +85,7 @@ public class AnalyseFullData extends DataAnalyser {
             addChangeData(measurementEntry, versionEntry, version, teststatistic);
 
             try {
-               FolderSearcher.MAPPER.writeValue(changeFile, projectChanges);
+               Constants.OBJECTMAPPER.writeValue(changeFile, projectChanges);
             } catch (final IOException e) {
                e.printStackTrace();
             }
@@ -109,9 +101,9 @@ public class AnalyseFullData extends DataAnalyser {
       final File resultFile = generatePlots(measurementEntry, versionEntry, teststatistic.isChange());
       final File stuffFolder;
       if (teststatistic.isChange()) {
-         stuffFolder = new File(AnalyseOneTest.RESULTFOLDER, "graphs/results/change");
+         stuffFolder = new File(changeFile.getParentFile(), "graphs/results/change");
       } else {
-         stuffFolder = new File(AnalyseOneTest.RESULTFOLDER, "graphs/results/nochange");
+         stuffFolder = new File(changeFile.getParentFile(), "graphs/results/nochange");
       }
       try {
          FileUtils.copyFile(resultFile, new File(stuffFolder, version + "_" + measurementEntry.getTestMethod() + ".png"));
@@ -172,15 +164,15 @@ public class AnalyseFullData extends DataAnalyser {
       final MeanHistogramData histData = new MeanHistogramData(currentValues);
       final MeanHistogramData histDataPrev = new MeanHistogramData(previousValues);
 
-      final File folder = new File(AnalyseOneTest.RESULTFOLDER,
+      final File folder = new File(changeFile.getParentFile(),
             "graphs" + File.separator + entry.getKey() + File.separator + measurementEntry.getTestClass() + File.separator + measurementEntry.getTestMethod());
       if (!folder.exists()) {
          folder.mkdirs();
       }
-      final File multmimodal = new File(AnalyseOneTest.RESULTFOLDER, "graphs/multimodal");
-      final File multmimodalChange = new File(AnalyseOneTest.RESULTFOLDER, "graphs/multimodal/change");
-      final File unimodal = new File(AnalyseOneTest.RESULTFOLDER, "graphs/unimodal");
-      final File unimodalChange = new File(AnalyseOneTest.RESULTFOLDER, "graphs/unimodal/change/");
+      final File multmimodal = new File(changeFile.getParentFile(), "graphs/multimodal");
+      final File multmimodalChange = new File(changeFile.getParentFile(), "graphs/multimodal/change");
+      final File unimodal = new File(changeFile.getParentFile(), "graphs/unimodal");
+      final File unimodalChange = new File(changeFile.getParentFile(), "graphs/unimodal/change/");
       for (final File file : new File[] { multmimodal, multmimodalChange, unimodal, unimodalChange }) {
          if (!file.exists()) {
             file.mkdirs();
@@ -279,8 +271,9 @@ public class AnalyseFullData extends DataAnalyser {
       final File dependencyFile = new File(args[1]);
       final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       VersionComparator.setDependencies(dependencies);
-      final AnalyseFullData analyseFullData = new AnalyseFullData(new ProjectStatistics());
-      analyseFullData.analyseFolder(folder);
+      throw new RuntimeException("adapt if needed");
+//      final AnalyseFullData analyseFullData = new AnalyseFullData(new ProjectStatistics());
+//      analyseFullData.analyseFolder(folder);
 
    }
 

@@ -16,7 +16,6 @@ import de.dagere.peass.analysis.properties.VersionChangeProperties;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.utils.Constants;
-import de.peran.FolderSearcher;
 
 public class GetAllChanges {
    public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
@@ -69,7 +68,7 @@ public class GetAllChanges {
                // final ProjectChanges oldKnowledge = ProjectChanges.getOldChanges();
                // ProjectChanges.mergeKnowledge(oldKnowledge, knowledge);
                // ReadProperties.writeOnlySource(properties, oldKnowledge);
-               FolderSearcher.MAPPER.writeValue(folders.getProjectPropertyFile(project), properties);
+               Constants.OBJECTMAPPER.writeValue(folders.getProjectPropertyFile(project), properties);
             } catch (final IOException e) {
                e.printStackTrace();
             }

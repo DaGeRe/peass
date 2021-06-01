@@ -1,28 +1,11 @@
 package de.peran;
 
-import java.io.File;
-import java.io.IOException;
-
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
-import de.dagere.peass.measurement.analysis.AnalyseFullData;
-import de.dagere.peass.measurement.analysis.Cleaner;
-import de.dagere.peass.measurement.analysis.ProjectStatistics;
-import de.dagere.peass.utils.OptionConstants;
 
 /**
  * Analyzes data from all subfolders of one folder. It is assumed that the typical PeASS-folder-structure is given.
@@ -43,25 +26,25 @@ public class FolderSearcher {
    public static final Option DATAOPTION = Option.builder(DATA).required(true).hasArgs()
          .desc("Data folders that should be analyzed").build();
 
-   public static void main(final String[] args) throws ParseException, JAXBException, InterruptedException, JsonGenerationException, JsonMappingException, IOException {
-      final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE);
-      options.addOption(DATAOPTION);
-
-      final CommandLineParser parser = new DefaultParser();
-      final CommandLine line = parser.parse(options, args);
-
-      Cleaner.loadDependencies(line);
-
-      final ProjectStatistics info = new ProjectStatistics();
-
-      final AnalyseFullData afd = new AnalyseFullData(info);
-      for (int i = 0; i < line.getOptionValues(DATA).length; i++) {
-         final File folder = new File(line.getOptionValues(DATA)[i]);
-         LOG.info("Searching in " + folder);
-         afd.processDataFolder(folder);
-         MAPPER.writeValue(new File("results/statistics.json"), info);
-      }
-      LOG.info("Versions: {} Testcases: {} Changes: {}", afd.versions.size(), afd.testcases, afd.getChanges());
+//   public static void main(final String[] args) throws ParseException, JAXBException, InterruptedException, JsonGenerationException, JsonMappingException, IOException {
+//      final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE);
+//      options.addOption(DATAOPTION);
+//
+//      final CommandLineParser parser = new DefaultParser();
+//      final CommandLine line = parser.parse(options, args);
+//
+//      Cleaner.loadDependencies(line);
+//
+//      final ProjectStatistics info = new ProjectStatistics();
+//
+//      final AnalyseFullData afd = new AnalyseFullData(info);
+//      for (int i = 0; i < line.getOptionValues(DATA).length; i++) {
+//         final File folder = new File(line.getOptionValues(DATA)[i]);
+//         LOG.info("Searching in " + folder);
+//         afd.processDataFolder(folder);
+//         MAPPER.writeValue(new File("results/statistics.json"), info);
+//      }
+//      LOG.info("Versions: {} Testcases: {} Changes: {}", afd.versions.size(), afd.testcases, afd.getChanges());
 
 //      for (final Entry<String, Changes> entry : ProjectChanges.getOldChanges().getVersionChanges().entrySet()) {
 //         final Changes newChanges = afd.knowledge.getVersion(entry.getKey());
@@ -91,6 +74,6 @@ public class FolderSearcher {
 //         }
 //      }
 
-   }
+//   }
 
 }

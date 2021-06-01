@@ -22,7 +22,6 @@ import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
-import de.peran.FolderSearcher;
 
 public class GetValidationExecutionFile {
 
@@ -47,7 +46,7 @@ public class GetValidationExecutionFile {
          getProjectValidationExecution(folders, projectsFolder, project, projectCommits);
       }
 
-      FolderSearcher.MAPPER.writeValue(new File(folders.getCleanDataFolder().getParentFile(), "validation" + File.separator + "performance_commits.json"), projectCommits);
+      Constants.OBJECTMAPPER.writeValue(new File(folders.getCleanDataFolder().getParentFile(), "validation" + File.separator + "performance_commits.json"), projectCommits);
    }
 
    public static void readNoPerformanceChanges(final File noPerformanceChangeFile) throws FileNotFoundException, IOException {
@@ -78,7 +77,7 @@ public class GetValidationExecutionFile {
       checkVersions(changedTests, selected, commits, projectCommits);
 
       File dest = getValidationExecutionFile(project);
-      FolderSearcher.MAPPER.writeValue(dest, selected);
+      Constants.OBJECTMAPPER.writeValue(dest, selected);
    }
 
    public static File getValidationExecutionFile(final String project) {

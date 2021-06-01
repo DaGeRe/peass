@@ -14,15 +14,15 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.changes.Changes;
 import de.dagere.peass.analysis.changes.ProjectChanges;
-import de.peran.FolderSearcher;
+import de.dagere.peass.utils.Constants;
 
 public class CompareMeasurements {
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       File changeFile1 = new File(args[0]);
       File changeFile2 = new File(args[1]);
 
-      ProjectChanges changes1 = FolderSearcher.MAPPER.readValue(changeFile1, ProjectChanges.class);
-      ProjectChanges changes2 = FolderSearcher.MAPPER.readValue(changeFile2, ProjectChanges.class);
+      ProjectChanges changes1 = Constants.OBJECTMAPPER.readValue(changeFile1, ProjectChanges.class);
+      ProjectChanges changes2 = Constants.OBJECTMAPPER.readValue(changeFile2, ProjectChanges.class);
 
       Set<String> allVersions = new LinkedHashSet<>();
       allVersions.addAll(changes1.getVersionChanges().keySet());
