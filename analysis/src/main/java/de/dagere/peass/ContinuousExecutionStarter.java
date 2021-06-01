@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.ci.ContinuousExecutor;
+import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.config.StatisticsConfigurationMixin;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -65,7 +66,8 @@ public class ContinuousExecutionStarter implements Callable<Void> {
    @Override
    public Void call() throws Exception {
       final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(measurementConfigMixin, executionMixin, statisticConfigMixin);
-      final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, threads, useViews, new EnvironmentVariables(properties != null ? properties : ""));
+      DependencyConfig dependencyConfig = new DependencyConfig(threads, true, useViews);
+      final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, dependencyConfig, new EnvironmentVariables(properties != null ? properties : ""));
       executor.execute();
       return null;
    }
