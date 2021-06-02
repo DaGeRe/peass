@@ -66,7 +66,7 @@ public class ContinuousExecutionStarter implements Callable<Void> {
    @Override
    public Void call() throws Exception {
       final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(measurementConfigMixin, executionMixin, statisticConfigMixin);
-      DependencyConfig dependencyConfig = new DependencyConfig(threads, true, useViews);
+      DependencyConfig dependencyConfig = new DependencyConfig(threads, false, useViews);
       final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, dependencyConfig, new EnvironmentVariables(properties != null ? properties : ""));
       executor.execute();
       return null;
