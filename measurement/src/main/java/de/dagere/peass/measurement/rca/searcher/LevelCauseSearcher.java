@@ -87,6 +87,8 @@ public class LevelCauseSearcher extends CauseSearcher {
          List<CallTreeNode> measureChildsPredecessor = new LevelChildDeterminer(differentNodesPredecessor, causeSearchConfig.getLevels()).getOnlyChildNodes();
          List<CallTreeNode> differentNodesCurrent = levelDifferentNodeDeterminer.getLevelDifferentCurrent();
          List<CallTreeNode> measureChildsCurrent = new LevelChildDeterminer(differentNodesCurrent, causeSearchConfig.getLevels()).getOnlyChildNodes();
+         LOG.debug("Different nodes: {} {}", differentNodesPredecessor, differentNodesCurrent);
+         LOG.debug("Nodes for remeasurement: {} {}", measureChildsPredecessor, measureChildsPredecessor);
          
          isLevelDifferent(measureChildsPredecessor, measureChildsCurrent);
       }

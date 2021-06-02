@@ -24,9 +24,6 @@ public abstract class DifferentNodeDeterminer {
 
    protected List<CallTreeNode> measurePredecessor = new LinkedList<>();
 
-   // protected final List<CallTreeNode> measureNextlevelPredecessor = new LinkedList<>();
-   // protected final List<CallTreeNode> measureNextLevel = new LinkedList<>();
-
    protected final List<CallTreeNode> levelDifferentPrecessor = new LinkedList<>();
 
    protected final CauseSearcherConfig causeSearchConfig;
@@ -39,10 +36,8 @@ public abstract class DifferentNodeDeterminer {
 
    public void calculateDiffering() {
       final Iterator<CallTreeNode> predecessorIterator = measurePredecessor.iterator();
-      // final Iterator<CallTreeNode> currentIterator = needToMeasureCurrent.iterator();
       for (; predecessorIterator.hasNext();) {
          final CallTreeNode currentPredecessorNode = predecessorIterator.next();
-         // final CallTreeNode currentVersionNode = currentIterator.next();
          CompareData cd = currentPredecessorNode.getComparableStatistics(measurementConfig.getVersionOld(), measurementConfig.getVersion());
          calculateNodeDifference(currentPredecessorNode, cd);
       }
@@ -92,16 +87,8 @@ public abstract class DifferentNodeDeterminer {
    }
 
    private void addChildsToMeasurement(final CallTreeNode currentPredecessorNode, final SummaryStatistics statisticsPredecessor, final SummaryStatistics statisticsVersion) {
-      // measureNextlevelPredecessor.addAll(currentPredecessorNode.getChildren());
-      // final List<CallTreeNode> currentNodes = buildCurrentDiffering(currentPredecessorNode);
-      // measureNextLevel.addAll(currentNodes);
-
-      // final int childsRemeasure = getRemeasureChilds(currentPredecessorNode);
-
-      // if (childsRemeasure == 0) {
       LOG.debug("Adding {} - T={}", currentPredecessorNode, TestUtils.homoscedasticT(statisticsPredecessor, statisticsVersion));
       levelDifferentPrecessor.add(currentPredecessorNode);
-      // }
    }
 
    private boolean needsEnoughTime(final SummaryStatistics statisticsPredecessor, final SummaryStatistics statisticsVersion) {
@@ -112,24 +99,6 @@ public abstract class DifferentNodeDeterminer {
             Math.pow(relativeDeviationVersion, 2)) / 2);
       return relativeDifference > causeSearchConfig.getMinTime() * relativeStandardDeviation;
    }
-
-   // private List<CallTreeNode> buildCurrentDiffering(final CallTreeNode currentPredecessorNode) {
-   // final List<CallTreeNode> currentNodes = new LinkedList<>();
-   // currentPredecessorNode.getChildren().forEach(node -> currentNodes.add(node.getOtherVersionNode()));
-   // return currentNodes;
-   // }
-
-//   private int getRemeasureChilds(final CallTreeNode predecessorNode) {
-//      int childsRemeasure = 0;
-//      LOG.debug("Children: {}", predecessorNode.getChildren().size());
-//      for (final CallTreeNode testChild : predecessorNode.getChildren()) {
-//         LOG.debug("Child: {} Parent: {}", testChild, measureNextlevelPredecessor);
-//         if (measureNextlevelPredecessor.contains(testChild)) {
-//            childsRemeasure++;
-//         }
-//      }
-//      return childsRemeasure;
-//   }
 
    public List<CallTreeNode> getLevelDifferentPredecessor() {
       return levelDifferentPrecessor;
