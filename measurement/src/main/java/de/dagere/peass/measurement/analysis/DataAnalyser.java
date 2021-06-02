@@ -24,14 +24,7 @@ public abstract class DataAnalyser {
       TestData measurementEntry = measurements.take();
 
       while (measurementEntry != DataReader.POISON_PILL) {
-         try {
-            processTestdata(measurementEntry);
-         } catch (final RuntimeException e) {
-            e.printStackTrace();
-            // Show exception, but continue - exception may be
-            // caused by long-running testcases..
-         }
-         // LOG.info("Taking.." + measurements.size());
+         processTestdata(measurementEntry);
          measurementEntry = measurements.take();
       }
       // LOG.info("Finished");
