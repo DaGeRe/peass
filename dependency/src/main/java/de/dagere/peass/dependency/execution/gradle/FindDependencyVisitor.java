@@ -98,6 +98,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
 
    private boolean isJavaPlugin(final String text) {
       if (text.contains("plugin:java") ||
+            text.contains("this.id(java)") ||
             text.contains("plugin:com.android.library") ||
             text.contains("plugin:com.android.application") ||
             text.contains("com.android.application")) {

@@ -55,10 +55,9 @@ public class ContinuousMeasurementExecutor {
    }
 
    private void doMeasurement(final Set<TestCase> tests, final File fullResultsVersion) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      MeasurementConfiguration copied = new MeasurementConfiguration(measurementConfig);
-      copied.setUseKieker(false);
-      copied.setVersion(version);
-      copied.setVersionOld(versionOld);
+      MeasurementConfiguration copied = createCopiedConfiguration();
+      
+      cleanTemporaryFolders();
 
       final AdaptiveTester tester = new AdaptiveTester(folders, copied, env);
       for (final TestCase test : tests) {
@@ -68,5 +67,22 @@ public class ContinuousMeasurementExecutor {
       final File fullResultsFolder = folders.getFullMeasurementFolder();
       LOG.debug("Moving to: {}", fullResultsVersion.getAbsolutePath());
       FileUtils.moveDirectory(fullResultsFolder, fullResultsVersion);
+   }
+
+   private void cleanTemporaryFolders() throws IOException {
+      final File fullResultsFolder = folders.getFullMeasurementFolder();
+      FileUtils.deleteDirectory(fullResultsFolder);
+      fullResultsFolder.mkdirs();
+      folders.getDetailResultFolder().mkdirs();
+      FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
+      folders.getTempMeasurementFolder().mkdirs();
+   }
+
+   private MeasurementConfiguration createCopiedConfiguration() {
+      MeasurementConfiguration copied = new MeasurementConfiguration(measurementConfig);
+      copied.setUseKieker(false);
+      copied.setVersion(version);
+      copied.setVersionOld(versionOld);
+      return copied;
    }
 }
