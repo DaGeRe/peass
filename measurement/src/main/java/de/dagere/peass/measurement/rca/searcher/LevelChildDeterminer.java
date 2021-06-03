@@ -45,6 +45,11 @@ public class LevelChildDeterminer {
          }
       }
       List<CallTreeNode> result = new LinkedList<>();
+      for (CallTreeNode node : input) {
+         if (node.getEss() == maxLevel) {
+            result.add(node);
+         }
+      }
       return result;
    }
 }
