@@ -166,7 +166,11 @@ public class ClazzFileFinder {
          potentialFile = findFile(moduleFolder, clazzFileName, naturalCandidate);
       }
       try {
-         return potentialFile.getCanonicalFile();
+         if (potentialFile != null) {
+            return potentialFile.getCanonicalFile();
+         } else {
+            return null;
+         }
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
