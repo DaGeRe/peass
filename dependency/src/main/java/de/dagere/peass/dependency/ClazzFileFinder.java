@@ -2,6 +2,7 @@ package de.dagere.peass.dependency;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,6 +70,7 @@ public class ClazzFileFinder {
 
    /**
     * Returns a list of classes or a project as Java FQN
+    * 
     * @param src
     * @return
     */
@@ -122,11 +124,16 @@ public class ClazzFileFinder {
    }
 
    public static String getClazz(final File folder, final File clazzFile) {
-      String path = clazzFile.getAbsolutePath();
-      path = path.replace(folder.getAbsolutePath() + File.separator, "");
-      path = path.substring(0, path.length() - 5);
-      final String clazz = path.replace(File.separator, ".");
-      return clazz;
+      try {
+         String path = clazzFile.getCanonicalPath();
+         String projectFolderPrefix = folder.getCanonicalPath() + File.separator;
+         path = path.replace(projectFolderPrefix, "");
+         path = path.substring(0, path.length() - 5);
+         final String clazz = path.replace(File.separator, ".");
+         return clazz;
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    /**
