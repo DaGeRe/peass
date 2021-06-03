@@ -52,7 +52,7 @@ public class CauseSearcherConfig implements Serializable {
       if (rcaStrategy != RCAStrategy.LEVELWISE && levels > 1) {
          throw new RuntimeException("If levels > 1, strategy must be LEVELWISE");
       }
-      if (levels < 1) {
+      if (rcaStrategy == RCAStrategy.LEVELWISE && levels < 1) {
          // TODO It would be possible to refactor this to two strategies, UNTIL_SOURCE_CHANGE and LEVELWISE,
          // where -1 means complete tree and 1 and above mean constant count of levels; than this check needs to be changed
          throw new RuntimeException("Levels need to be 1 or above!");
