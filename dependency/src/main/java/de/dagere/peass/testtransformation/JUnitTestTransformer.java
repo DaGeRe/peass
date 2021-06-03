@@ -246,16 +246,17 @@ public class JUnitTestTransformer implements TestTransformer {
       extensions = new HashMap<>();
       for (final File javaFile : FileUtils.listFiles(testFolder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE)) {
          try {
-            final CompilationUnit unit = JavaParserProvider.parse(javaFile);
-            loadedFiles.put(javaFile, unit);
+            File canonicalJavaFile = javaFile.getCanonicalFile();
+            final CompilationUnit unit = JavaParserProvider.parse(canonicalJavaFile);
+            loadedFiles.put(canonicalJavaFile, unit);
             final boolean isJUnit4 = isJUnit(unit, 4);
             if (isJUnit4) {
-               junitVersions.put(javaFile, 4);
+               junitVersions.put(canonicalJavaFile, 4);
                // editJUnit4(javaFile);
             }
             final boolean isJUnit5 = isJUnit(unit, 5);
             if (isJUnit5) {
-               junitVersions.put(javaFile, 5);
+               junitVersions.put(canonicalJavaFile, 5);
                // editJUnit4(javaFile);
             }
             final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
@@ -270,11 +271,11 @@ public class JUnitTestTransformer implements TestTransformer {
                      extensionsOfBase = new LinkedList<>();
                      extensions.put(extensionName, extensionsOfBase);
                   }
-                  extensionsOfBase.add(javaFile);
+                  extensionsOfBase.add(canonicalJavaFile);
                }
             }
-         } catch (final FileNotFoundException e) {
-            e.printStackTrace();
+         } catch (final IOException e) {
+            throw new RuntimeException(e);
          }
       }
 

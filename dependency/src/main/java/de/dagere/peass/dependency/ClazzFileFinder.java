@@ -165,7 +165,11 @@ public class ClazzFileFinder {
          File moduleFolder = new File(module, entity.getModule());
          potentialFile = findFile(moduleFolder, clazzFileName, naturalCandidate);
       }
-      return potentialFile;
+      try {
+         return potentialFile.getCanonicalFile();
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    private static File findFile(final File sourceParentFolder, final String clazzFileName, final File naturalCandidate) {
