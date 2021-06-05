@@ -40,6 +40,9 @@ public class DependencyReaderConfigMixin {
    @Option(names = {"-doNotGenerateViews", "--doNotGenerateViews"}, description = "Disable generation of views. Is false by default, but will be activated automatically if --doNotUpdateDependencies is set.")
    public boolean doNotGenerateViews = false;
    
+   @Option(names = {"-doNotGenerateCoverageSelection", "--doNotGenerateCoverageSelection"}, description = "Disables coverage selection. Is false by default, but will be activated automatically if --doNotGenerateCoverageSelection is set.")
+   public boolean doNotGenerateCoverageSelection = false;
+   
    @Option(names = {"-workloadType", "--workloadType"}, description = "Which workload should be executed - by default JUNIT, can be changed to JMH")
    public WorkloadType workloadType = WorkloadType.JUNIT;
    
@@ -110,7 +113,7 @@ public class DependencyReaderConfigMixin {
    }
    
    public DependencyConfig getDependencyConfig() {
-      return new DependencyConfig(threads, doNotUpdateDependencies, !doNotGenerateViews);
+      return new DependencyConfig(threads, doNotUpdateDependencies, !doNotGenerateViews, !doNotGenerateCoverageSelection);
    }
    
    public WorkloadType getWorkloadType() {

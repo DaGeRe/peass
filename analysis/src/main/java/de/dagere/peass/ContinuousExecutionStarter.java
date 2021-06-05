@@ -56,6 +56,7 @@ public class ContinuousExecutionStarter implements Callable<Void> {
    protected File projectFolder;
    
    private final boolean useViews = true;
+   private final boolean generateCoverageSelection = true;
 
    public static void main(final String[] args) throws InterruptedException, IOException, JAXBException {
       final ContinuousExecutionStarter command = new ContinuousExecutionStarter();
@@ -66,7 +67,7 @@ public class ContinuousExecutionStarter implements Callable<Void> {
    @Override
    public Void call() throws Exception {
       final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(measurementConfigMixin, executionMixin, statisticConfigMixin);
-      DependencyConfig dependencyConfig = new DependencyConfig(threads, false, useViews);
+      DependencyConfig dependencyConfig = new DependencyConfig(threads, false, useViews, generateCoverageSelection);
       final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, dependencyConfig, new EnvironmentVariables(properties != null ? properties : ""));
       executor.execute();
       return null;

@@ -61,7 +61,7 @@ public class JmhDependencyReaderTest {
       
       ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
       
-      DependencyConfig dependencyConfig = new DependencyConfig(1, false, true);
+      DependencyConfig dependencyConfig = new DependencyConfig(1, false, true, false);
       
       ExecutionConfig jmhConfig = new ExecutionConfig();
       jmhConfig.setTestTransformer("de.dagere.peass.dependency.jmh.JmhTestTransformer");

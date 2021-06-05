@@ -51,7 +51,7 @@ public class DependencyViewGeneratorTest {
 
       ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
 
-      DependencyConfig dependencyConfig = new DependencyConfig(1, false, true);
+      DependencyConfig dependencyConfig = new DependencyConfig(1, false, true, false);
 
       FakeFileIterator iteratorspied = mockIterator();
 
