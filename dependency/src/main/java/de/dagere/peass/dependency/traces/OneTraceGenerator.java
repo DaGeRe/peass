@@ -96,7 +96,9 @@ public class OneTraceGenerator {
             LOG.error("File size exceeds 2000 MB");
          }
       }
-      writeTrace(versionCurrent, overallSizeInMb, traceMethodReader, trace);
+      if (success) {
+         writeTrace(versionCurrent, overallSizeInMb, traceMethodReader, trace);
+      }
       return success;
    }
 
