@@ -3,6 +3,8 @@ package de.dagere.peass.dependency.reader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,7 +28,10 @@ import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.dependency.traces.DiffFileGenerator;
+import de.dagere.peass.dependency.traces.OneTraceGenerator;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
+import de.dagere.peass.dependency.traces.coverage.CoverageBasedSelector;
+import de.dagere.peass.dependency.traces.coverage.TraceCallSummary;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.VersionIterator;
@@ -46,6 +51,7 @@ public class DependencyReader {
    private final DependencyConfig dependencyConfig;
    protected final Dependencies dependencyResult = new Dependencies();
    private final ExecutionData executionResult = new ExecutionData();
+   private final ExecutionData coverageBasedSelection = new ExecutionData();
    protected final ResultsFolders resultsFolders;
    protected DependencyManager dependencyManager;
    protected final PeASSFolders folders;
@@ -202,10 +208,24 @@ public class DependencyReader {
             traceViewGenerator.generateViews(resultsFolders, newVersionInfo.getTests());
 
             DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getVersionDiffFolder(version));
-            for (TestCase testcase : newVersionInfo.getTests().getTests()) {
-               boolean somethingChanged = diffGenerator.generateDiffFiles(testcase, mapping);
-               if (somethingChanged) {
-                  executionResult.addCall(version, testcase);
+            diffGenerator.generateAllDiffs(version, newVersionInfo, diffGenerator, mapping, executionResult);
+
+            if (dependencyConfig.isGenerateCoverageSelection()) {
+               List<TraceCallSummary> summaries = new LinkedList<>();
+               for (TestCase testcase : newVersionInfo.getTests().getTests()) {
+                  List<File> traceFiles = mapping.getTestcaseMap(testcase);
+                  if (traceFiles != null && traceFiles.size() > 1) {
+                     File oldFile = new File(traceFiles.get(0).getAbsolutePath() + OneTraceGenerator.SUMMARY);
+                     File newFile = new File(traceFiles.get(1).getAbsolutePath() + OneTraceGenerator.SUMMARY);
+                     TraceCallSummary oldSummary = Constants.OBJECTMAPPER.readValue(oldFile, TraceCallSummary.class);
+                     TraceCallSummary newSummary = Constants.OBJECTMAPPER.readValue(newFile, TraceCallSummary.class);
+                     summaries.add(oldSummary);
+                     summaries.add(newSummary);
+                  }
+               }
+               List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newVersionInfo.getChangedClazzes().keySet());
+               for (TestCase testcase : selected) {
+                  coverageBasedSelection.addCall(version, testcase);
                }
             }
          }
@@ -294,6 +314,14 @@ public class DependencyReader {
 
    public Dependencies getDependencies() {
       return dependencyResult;
+   }
+
+   public ExecutionData getExecutionResult() {
+      return executionResult;
+   }
+
+   public ExecutionData getCoverageBasedSelection() {
+      return coverageBasedSelection;
    }
 
    public void setIterator(final VersionIterator reserveIterator) {

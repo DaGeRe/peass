@@ -22,6 +22,7 @@ public class OneTraceGenerator {
    static final String METHOD = "_method";
    static final String METHOD_EXPANDED = "_method_expanded";
    public static final String NOCOMMENT = "_nocomment";
+   public static final String SUMMARY = "_summary";
 
    private static final Logger LOG = LogManager.getLogger(OneTraceGenerator.class);
 

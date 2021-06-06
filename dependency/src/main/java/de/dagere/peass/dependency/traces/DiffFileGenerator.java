@@ -9,6 +9,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.vcs.GitUtils;
 
 public class DiffFileGenerator {
@@ -19,6 +21,15 @@ public class DiffFileGenerator {
 
    public DiffFileGenerator(final File diffFolder) {
       this.diffFolder = diffFolder;
+   }
+   
+   public void generateAllDiffs(final String version, final Version newVersionInfo, final DiffFileGenerator diffGenerator, final TraceFileMapping mapping, final ExecutionData executionResult) throws IOException {
+      for (TestCase testcase : newVersionInfo.getTests().getTests()) {
+         boolean somethingChanged = diffGenerator.generateDiffFiles(testcase, mapping);
+         if (somethingChanged) {
+            executionResult.addCall(version, testcase);
+         }
+      }
    }
 
    /**

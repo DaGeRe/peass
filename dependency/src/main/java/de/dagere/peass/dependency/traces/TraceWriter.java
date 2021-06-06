@@ -10,7 +10,10 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.traces.coverage.TraceCallSummary;
+import de.dagere.peass.dependency.traces.coverage.TraceSummaryTransformer;
 import de.dagere.peass.dependency.traces.requitur.content.RuleContent;
+import de.dagere.peass.utils.Constants;
 
 public class TraceWriter {
 
@@ -62,6 +65,9 @@ public class TraceWriter {
       } else {
          LOG.debug("Do not write expanded trace - size: {} MB", sizeInMB);
       }
+      File summaryFile = new File(methodDir, shortVersion + OneTraceGenerator.SUMMARY);
+      TraceCallSummary traceSummary = TraceSummaryTransformer.transform(testcase, traceMethodReader.getExpandedTrace());
+      Constants.OBJECTMAPPER.writeValue(summaryFile, traceSummary);
       return methodTrace;
    }
 }

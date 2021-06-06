@@ -84,11 +84,18 @@ public class TraceElementContent extends Content {
       result.append(clazz);
       result.append(ChangedEntity.METHOD_SEPARATOR);
       result.append(method);
+
       if (parameterTypes.length != 0) {
          result.append("(");
-         result.append(Arrays.deepToString(parameterTypes));
+         StringBuffer parameterString = new StringBuffer();
+         for (String parameterType : parameterTypes) {
+            parameterString.append(parameterType);
+            parameterString.append(",");
+         }
+         result.append(parameterString.substring(0, parameterString.length() - 1));
          result.append(")");
       }
+
       return result.toString();
    }
 

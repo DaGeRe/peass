@@ -60,7 +60,7 @@ public class TestContinuousDependencyReader {
       executionConfig.setVersion(iterator.getTag());
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
             resultsFolders, new EnvironmentVariables());
       Dependencies dependencies = reader.getDependencies(iterator, "");
 
@@ -86,7 +86,7 @@ public class TestContinuousDependencyReader {
       executionConfig.setVersion(newVersion);
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
-      final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG, executionConfig,
+      final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig,
             new PeASSFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
       Dependencies dependencies = spiedReader.getDependencies(iterator, "");
 
@@ -111,7 +111,7 @@ public class TestContinuousDependencyReader {
       executionConfig.setVersion(newVersion);
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
             resultsFolders, new EnvironmentVariables());
       Set<TestCase> tests = reader.getTests(iterator, "", newVersion, new MeasurementConfiguration(1));
 

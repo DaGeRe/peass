@@ -106,7 +106,7 @@ public class DependencyDetectorIncludesTest {
      
       config.getIncludes().add(includeName);
       
-      final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator, config);
+      final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator, config, DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.NULL_RESULTS_FOLDERS);
       return reader;
    }
    
