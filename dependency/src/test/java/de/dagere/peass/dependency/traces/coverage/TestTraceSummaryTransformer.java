@@ -21,7 +21,7 @@ public class TestTraceSummaryTransformer {
       
       Assert.assertEquals(summary.getCallCounts().get("de.dagere.peass.ExampleClazz#method0").intValue(), 5);
       Assert.assertEquals(summary.getCallCounts().get("de.dagere.peass.ExampleClazz#method1").intValue(), 3);
-      Assert.assertEquals(summary.getCallCounts().get("de.dagere.peass.ExampleClazz#method1([int])").intValue(), 2);
+      Assert.assertEquals(summary.getCallCounts().get("de.dagere.peass.ExampleClazz#method2(int)").intValue(), 2);
    }
 
    public static List<Content> buildTestTrace() {
