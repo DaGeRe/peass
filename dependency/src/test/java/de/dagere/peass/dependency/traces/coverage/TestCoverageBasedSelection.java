@@ -2,9 +2,11 @@ package de.dagere.peass.dependency.traces.coverage;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.hamcrest.collection.IsEmptyCollection;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -14,6 +16,17 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.traces.requitur.content.Content;
 
 public class TestCoverageBasedSelection {
+   
+   @Test
+   public void selectNoTestSelection() {
+      List<TraceCallSummary> traces = new LinkedList<>();
+      Set<ChangedEntity> changes = new HashSet<>();
+      changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method1"));
+      List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
+      
+      Assert.assertThat(selected, IsEmptyCollection.empty());
+      
+   }
    
    @Test
    public void selectOneTestSelection() {

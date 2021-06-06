@@ -21,7 +21,7 @@ public class CoverageBasedSelector {
       Set<ChangedEntity> copiedChanges = new HashSet<>(changes);
       boolean changed = true;
       List<TestCase> resultTests = new LinkedList<>();
-      while (copiedChanges.size() > 0 && changed) {
+      while (copiedSummaries.size() > 0 && copiedChanges.size() > 0 && changed) {
          changed = false;
 
          TraceCallSummary selected = selectMaximumCalled(copiedChanges, copiedSummaries);
