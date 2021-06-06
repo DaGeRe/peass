@@ -79,8 +79,7 @@ public class DependencyExecutionReader implements Callable<Void>{
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");
       folders.getTempProjectFolder().renameTo(dependencyTempFiles);
 
-      final File executionOut = mergedFolders.getExecutionFile();
-      ExecutionData executionData = PartialDependenciesMerger.mergeExecutions(executionOut, outFiles);
+      ExecutionData executionData = PartialDependenciesMerger.mergeExecutions(mergedFolders, outFiles);
       
       mergeViews(outFiles, mergedFolders);
       
