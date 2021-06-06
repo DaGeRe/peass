@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.javaparser.ParseException;
 
@@ -135,6 +136,9 @@ public class DependencyReader {
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
       if (dependencyConfig.isGenerateViews()) {
          Constants.OBJECTMAPPER.writeValue(resultsFolders.getExecutionFile(), executionResult);
+         if (dependencyConfig.isGenerateCoverageSelection()) {
+            Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageSelectionFile(), coverageBasedSelection);
+         }
       }
 
       sizeRecorder.addVersionSize(dependencyManager.getDependencyMap().size(), tests);
@@ -211,22 +215,7 @@ public class DependencyReader {
             diffGenerator.generateAllDiffs(version, newVersionInfo, diffGenerator, mapping, executionResult);
 
             if (dependencyConfig.isGenerateCoverageSelection()) {
-               List<TraceCallSummary> summaries = new LinkedList<>();
-               for (TestCase testcase : newVersionInfo.getTests().getTests()) {
-                  List<File> traceFiles = mapping.getTestcaseMap(testcase);
-                  if (traceFiles != null && traceFiles.size() > 1) {
-                     File oldFile = new File(traceFiles.get(0).getAbsolutePath() + OneTraceGenerator.SUMMARY);
-                     File newFile = new File(traceFiles.get(1).getAbsolutePath() + OneTraceGenerator.SUMMARY);
-                     TraceCallSummary oldSummary = Constants.OBJECTMAPPER.readValue(oldFile, TraceCallSummary.class);
-                     TraceCallSummary newSummary = Constants.OBJECTMAPPER.readValue(newFile, TraceCallSummary.class);
-                     summaries.add(oldSummary);
-                     summaries.add(newSummary);
-                  }
-               }
-               List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newVersionInfo.getChangedClazzes().keySet());
-               for (TestCase testcase : selected) {
-                  coverageBasedSelection.addCall(version, testcase);
-               }
+               generateCoverageBasedSelection(version, newVersionInfo);
             }
          }
       } else {
@@ -236,6 +225,25 @@ public class DependencyReader {
 
       final int changedClazzCount = calculateChangedClassCount(newVersionInfo);
       return changedClazzCount;
+   }
+
+   private void generateCoverageBasedSelection(final String version, final Version newVersionInfo) throws IOException, JsonParseException, JsonMappingException {
+      List<TraceCallSummary> summaries = new LinkedList<>();
+      for (TestCase testcase : newVersionInfo.getTests().getTests()) {
+         List<File> traceFiles = mapping.getTestcaseMap(testcase);
+         if (traceFiles != null && traceFiles.size() > 1) {
+            File oldFile = new File(traceFiles.get(0).getAbsolutePath() + OneTraceGenerator.SUMMARY);
+            File newFile = new File(traceFiles.get(1).getAbsolutePath() + OneTraceGenerator.SUMMARY);
+            TraceCallSummary oldSummary = Constants.OBJECTMAPPER.readValue(oldFile, TraceCallSummary.class);
+            TraceCallSummary newSummary = Constants.OBJECTMAPPER.readValue(newFile, TraceCallSummary.class);
+            summaries.add(oldSummary);
+            summaries.add(newSummary);
+         }
+      }
+      List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newVersionInfo.getChangedClazzes().keySet());
+      for (TestCase testcase : selected) {
+         coverageBasedSelection.addCall(version, testcase);
+      }
    }
 
    private int calculateChangedClassCount(final Version newVersionInfo) {

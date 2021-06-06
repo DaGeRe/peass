@@ -29,6 +29,10 @@ public class ResultsFolders {
       return new File(resultFolder, "execute_" + projectName + ".json");
    }
    
+   public File getCoverageSelectionFile() {
+      return new File(resultFolder, "coverageSelection_" + projectName + ".json");
+   }
+   
    public File getViewFolder() {
       File viewFolder = new File(resultFolder, "views_" + projectName);
       viewFolder.mkdirs();
