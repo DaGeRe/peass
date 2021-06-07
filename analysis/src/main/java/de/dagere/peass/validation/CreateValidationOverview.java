@@ -7,10 +7,10 @@ import java.util.Map;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.utils.Constants;
 import de.dagere.peass.validation.data.ProjectValidation;
 import de.dagere.peass.validation.data.Validation;
 import de.dagere.peass.validation.data.ValidationChange;
-import de.peran.FolderSearcher;
 
 public class CreateValidationOverview {
    private static final boolean FOR_PHD_THESIS = false;
@@ -30,7 +30,7 @@ public class CreateValidationOverview {
       ValidationCounts overall = new ValidationCounts();
       ValidationCounts current = new ValidationCounts();
 
-      public void analyze(ProjectValidation project) {
+      public void analyze(final ProjectValidation project) {
          for (final ValidationChange change : project.getChanges().values()) {
             if (change.getType().equals("BEFORE")) {
                overall.before++;
@@ -97,7 +97,7 @@ public class CreateValidationOverview {
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
 
       final File validationFile = new File(args[0]);
-      final Validation validation = FolderSearcher.MAPPER.readValue(validationFile, Validation.class);
+      final Validation validation = Constants.OBJECTMAPPER.readValue(validationFile, Validation.class);
 
       Analyzer analyzer = new Analyzer();
 

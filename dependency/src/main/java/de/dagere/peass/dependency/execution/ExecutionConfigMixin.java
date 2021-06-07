@@ -1,5 +1,6 @@
 package de.dagere.peass.dependency.execution;
 
+import de.dagere.peass.config.WorkloadType;
 import picocli.CommandLine.Option;
 
 public class ExecutionConfigMixin {
@@ -32,6 +33,9 @@ public class ExecutionConfigMixin {
 
    @Option(names = { "-pl", "--pl" }, description = "Projectlist (-pl) argument for maven (e.g. :submodule) - only the submodule and its dependencies are analyzed (using -am)")
    protected String pl;
+   
+   @Option(names = {"-workloadType", "--workloadType"}, description = "Which workload should be executed - by default JUNIT, can be changed to JMH")
+   public WorkloadType workloadType = WorkloadType.JUNIT;
 
    public int getTimeout() {
       return timeout;
@@ -103,5 +107,13 @@ public class ExecutionConfigMixin {
 
    public void setExcludes(final String[] excludes) {
       this.excludes = excludes;
+   }
+   
+   public WorkloadType getWorkloadType() {
+      return workloadType;
+   }
+   
+   public void setWorkloadType(final WorkloadType workloadType) {
+      this.workloadType = workloadType;
    }
 }

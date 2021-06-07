@@ -20,7 +20,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.properties.ChangeProperty.TraceChange;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
@@ -158,7 +158,7 @@ public class PropertyReadHelper {
    }
 
    private void analyzeTraceFiles(final ChangeProperty property, final File traceFileCurrent, final File traceFileOld) throws IOException, FileNotFoundException {
-      final PeASSFolders folders = new PeASSFolders(projectFolder);
+      final PeassFolders folders = new PeassFolders(projectFolder);
       GitCommit firstCommit = new GitCommit(prevVersion, null, null, null);
       List<GitCommit> commits = Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), firstCommit });
       final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, commits, firstCommit);
@@ -180,7 +180,7 @@ public class PropertyReadHelper {
       getTestSourceAffection(property, merged, folders, changes);
    }
 
-   private void readMethodSources(final ChangeProperty property, final PeASSFolders folders, final Set<String> merged) throws FileNotFoundException, IOException {
+   private void readMethodSources(final ChangeProperty property, final PeassFolders folders, final Set<String> merged) throws FileNotFoundException, IOException {
       for (final String calledInOneMethod : merged) {
          LOG.debug("Loading: " + calledInOneMethod);
          final ChangedEntity entity = determineEntity(calledInOneMethod);
@@ -273,7 +273,7 @@ public class PropertyReadHelper {
       return merged;
    }
 
-   void getTestSourceAffection(final ChangeProperty property, final Set<String> calls, final PeASSFolders folders, final Map<ChangedEntity, ClazzChangeData> changes)
+   void getTestSourceAffection(final ChangeProperty property, final Set<String> calls, final PeassFolders folders, final Map<ChangedEntity, ClazzChangeData> changes)
          throws FileNotFoundException {
       final ClazzChangeData clazzChangeData = changes.get(testClazz);
       if (clazzChangeData != null) {

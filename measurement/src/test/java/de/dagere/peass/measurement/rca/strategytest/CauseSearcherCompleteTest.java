@@ -55,9 +55,7 @@ public class CauseSearcherCompleteTest {
 
       final Set<ChangedEntity> changes = getChanges(rootPredecessor, rootVersion);
 
-      System.out.println(changes);
-      Assert.assertEquals(1, changes.size());
-      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassB#methodB", "")));
+      StrategyTestUtil.checkChanges(changes);
    }
 
    @Test
@@ -70,10 +68,9 @@ public class CauseSearcherCompleteTest {
 
       final Set<ChangedEntity> changes = getChanges(rootPredecessor, rootVersion);
 
-      Assert.assertEquals(1, changes.size());
-      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassB#methodB", "")));
+      StrategyTestUtil.checkChanges(changes);
    }
-
+   
    @Test
    public void testDifferentTree() throws Exception {
       final TreeBuilder builderPredecessor = new TreeBuilder();

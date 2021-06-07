@@ -52,8 +52,8 @@ public class MeasurementConfiguration implements Serializable {
       this.vms = vms;
    }
 
-   public MeasurementConfiguration(final int vms, final int timeoutInMinutes) {
-      executionConfig = new ExecutionConfig(timeoutInMinutes);
+   public MeasurementConfiguration(final int vms, final ExecutionConfig executionConfig) {
+      this.executionConfig = executionConfig;
       this.vms = vms;
    }
 
@@ -95,6 +95,8 @@ public class MeasurementConfiguration implements Serializable {
       executionConfig.setVersionOld(executionMixin.getVersionOld());
       executionConfig.setStartversion(executionMixin.getStartversion());
       executionConfig.setEndversion(executionMixin.getEndversion());
+      executionConfig.setTestTransformer(executionMixin.getWorkloadType().getTestTransformer());
+      executionConfig.setTestExecutor(executionMixin.getWorkloadType().getTestExecutor());
       
       executionConfig.setTestGoal(executionMixin.getTestGoal());
       if (executionMixin.getIncludes() != null) {
@@ -111,6 +113,8 @@ public class MeasurementConfiguration implements Serializable {
       if (executionMixin.getPl() != null) {
          executionConfig.setPl(executionMixin.getPl());
       }
+      executionConfig.setTestTransformer(executionMixin.getWorkloadType().getTestTransformer());
+      executionConfig.setTestExecutor(executionMixin.getWorkloadType().getTestExecutor());
    }
 
    @JsonCreator
@@ -141,6 +145,8 @@ public class MeasurementConfiguration implements Serializable {
       executionConfig.setEndversion(other.getExecutionConfig().getEndversion());
       executionConfig.setCreateDefaultConstructor(other.getExecutionConfig().isCreateDefaultConstructor());
       executionConfig.setRedirectSubprocessOutputToFile(other.getExecutionConfig().isRedirectSubprocessOutputToFile());
+      executionConfig.setTestTransformer(other.getExecutionConfig().getTestTransformer());
+      executionConfig.setTestExecutor(other.getExecutionConfig().getTestExecutor());
       this.vms = other.vms;
       statisticsConfig.setType1error(other.getType1error());
       statisticsConfig.setType2error(other.getType2error());

@@ -17,6 +17,7 @@
 package de.dagere.peass.debugtools;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.CommitUtil;
 import de.dagere.peass.config.DependencyReaderConfigMixin;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
@@ -120,8 +121,11 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
    static String getPreviousVersion(final String startversion, final File projectFolder, final Dependencies dependencies) {
       String previousVersion;
       if (startversion != null) {
+         String[] versionNames = dependencies.getVersionNames();
+         int startVersionIndex = Arrays.asList(versionNames).indexOf(startversion);
+         String versionAfterStartVersion = versionNames[startVersionIndex - 1];
+         previousVersion = versionAfterStartVersion;
          truncateVersions(startversion, dependencies.getVersions());
-         previousVersion = GitUtils.getPrevious(startversion, projectFolder);
       } else {
          String[] versionNames = dependencies.getVersionNames();
          String newestVersion = versionNames[versionNames.length - 1];
@@ -136,7 +140,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       if (vcs.equals(VersionControlSystem.GIT)) {
          final VersionIterator iterator = createIterator(config, previousVersion);
          ExecutionConfig executionConfig = config.getExecutionConfig();
-         reader = new DependencyReader(config.getDependencyConfig(), new PeASSFolders(config.getProjectFolder()), 
+         reader = new DependencyReader(config.getDependencyConfig(), new PeassFolders(config.getProjectFolder()), 
                resultsFolders, dependencies.getUrl(), iterator, new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nochanges.json")), 
                executionConfig, new EnvironmentVariables());
          iterator.goTo0thCommit();
@@ -156,6 +160,9 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       return iterator;
    }
 
+   /**
+    * Removes every version from the map that is before the given startversion
+    */
    public static void truncateVersions(final String startversion, final Map<String, Version> versions) {
       for (final java.util.Iterator<Entry<String, Version>> it = versions.entrySet().iterator(); it.hasNext();) {
          final Entry<String, Version> version = it.next();

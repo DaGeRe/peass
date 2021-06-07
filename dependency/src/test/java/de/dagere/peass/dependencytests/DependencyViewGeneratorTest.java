@@ -2,6 +2,7 @@ package de.dagere.peass.dependencytests;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,9 +15,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -26,7 +24,7 @@ import com.github.javaparser.ParseException;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -46,18 +44,18 @@ public class DependencyViewGeneratorTest {
    private static final Logger LOG = LogManager.getLogger(TraceGettingIT.class);
 
    @Test
-   public void testTwoVersions() throws IOException, InterruptedException, JAXBException, XmlPullParserException, ParseException, ViewNotFoundException {
-      prepareGitUtils();
+   public void testTwoVersions() throws IOException, InterruptedException, JAXBException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+      FakeGitUtil.prepareGitUtils();
 
       DependencyDetectorTestUtil.init(TraceGettingIT.BASIC);
 
       ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
 
-      DependencyConfig dependencyConfig = new DependencyConfig(1, false, true);
+      DependencyConfig dependencyConfig = new DependencyConfig(1, false, true, false);
 
       FakeFileIterator iteratorspied = mockIterator();
 
-      DependencyReader reader = new DependencyReader(dependencyConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
+      DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
             "", iteratorspied, new VersionKeeper(new File("/dev/null")), new ExecutionConfig(), new EnvironmentVariables());
       reader.readInitialVersion();
       reader.readDependencies();
@@ -72,21 +70,6 @@ public class DependencyViewGeneratorTest {
       //
       Assert.assertEquals(2, tests.getVersions().size());
       Assert.assertEquals(1, tests.getVersions().get("000002").getTests().size());
-   }
-
-   private void prepareGitUtils() throws IOException, InterruptedException {
-      PowerMockito.mockStatic(GitUtils.class);
-      PowerMockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            return null;
-         }
-      }).when(GitUtils.class);
-      GitUtils.reset(Mockito.any());
-
-      PowerMockito.doCallRealMethod().when(GitUtils.class);
-      GitUtils.getDiff(Mockito.any(), Mockito.any());
    }
 
    private FakeFileIterator mockIterator() {

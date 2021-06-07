@@ -19,7 +19,7 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.ExecutorCreator;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.DependencyTester;
@@ -41,7 +41,7 @@ public class TestDependencyTester {
    public void testFiles() throws Exception {
       VCSTestUtils.mockGetVCS();
       
-      final PeASSFolders folders = new PeASSFolders(folder.getRoot());
+      final PeassFolders folders = new PeassFolders(folder.getRoot());
       final MeasurementConfiguration configuration = new MeasurementConfiguration(4, "2", "1");
 
       MavenTestExecutorMocker.mockExecutor(folders, configuration);
@@ -53,7 +53,7 @@ public class TestDependencyTester {
       checkResult(folders);
    }
 
-   public static void checkResult(final PeASSFolders folders) throws JAXBException {
+   public static void checkResult(final PeassFolders folders) throws JAXBException {
       final File expectedShortresultFile = new File(folders.getFullMeasurementFolder(), EXAMPLE_TESTCASE.getShortClazz() + "_" + EXAMPLE_TESTCASE.getMethod() + ".xml");
       Assert.assertTrue(expectedShortresultFile.exists());
 

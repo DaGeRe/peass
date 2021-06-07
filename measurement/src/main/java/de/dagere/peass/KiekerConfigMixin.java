@@ -6,8 +6,8 @@ public class KiekerConfigMixin {
    @Option(names = { "-writeInterval", "--writeInterval" }, description = "Interval for KoPeMe-aggregated-writing (in milliseconds)")
    public int writeInterval = 5000;
 
-   @Option(names = { "-useSourceInstrumentation", "--useSourceInstrumentation" }, description = "Use source instrumentation (default false - AspectJ instrumentation is used)")
-   public boolean useSourceInstrumentation = false;
+   @Option(names = { "-notUseSourceInstrumentation", "--notUseSourceInstrumentation" }, description = "Not use source instrumentation (disabling enables AspectJ instrumentation)")
+   public boolean notUseSourceInstrumentation = false;
 
    @Option(names = { "-useCircularQueue", "--useCircularQueue" }, description = "Use circular queue (default false - LinkedBlockingQueue is used)")
    public boolean useCircularQueue = false;
@@ -24,8 +24,8 @@ public class KiekerConfigMixin {
       return writeInterval;
    }
 
-   public boolean isUseSourceInstrumentation() {
-      return useSourceInstrumentation;
+   public boolean isNotUseSourceInstrumentation() {
+      return notUseSourceInstrumentation;
    }
 
    public boolean isUseCircularQueue() {

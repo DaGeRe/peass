@@ -10,33 +10,19 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
-import de.dagere.peass.dependency.PeASSFolders;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.gradle.FindDependencyVisitor;
+import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
+import de.dagere.peass.execution.processutils.ProcessSuccessTester;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
-public class GradleTestExecutor extends TestExecutor {
+public class GradleTestExecutor extends KoPeMeExecutor {
 
    private static final Logger LOG = LogManager.getLogger(GradleTestExecutor.class);
 
-   public GradleTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
+   public GradleTestExecutor(final PeassFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
       super(folders, testTransformer, env);
-   }
-
-   @Override
-   public void executeAllKoPeMeTests(final File logFile) throws IOException, XmlPullParserException, InterruptedException {
-      prepareKoPeMeExecution(logFile);
-      try {
-         final int testcount = getTestCount();
-         final Process process = buildProcess(folders.getProjectFolder(), logFile);
-         LOG.info("Starting Process, tests: {}", testcount);
-         final long timeout = 1l + testcount * this.testTransformer.getConfig().getTimeoutInMinutes();
-         execute("all", timeout, process);
-      } catch (InterruptedException | IOException | XmlPullParserException e) {
-         e.printStackTrace();
-      }
-
    }
 
    @Override
@@ -79,14 +65,15 @@ public class GradleTestExecutor extends TestExecutor {
 
    protected Process buildProcess(final File folder, final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
       final String testGoal = getTestGoal();
-      final String[] originals = new String[] { new File(folders.getProjectFolder(), "gradlew").getAbsolutePath(),
+      String wrapper = new File(folders.getProjectFolder(), "gradlew").getAbsolutePath();
+      final String[] originals = new String[] { wrapper,
             "--init-script", new File(folders.getGradleHome(), "init.gradle").getAbsolutePath(),
             "--no-daemon",
             "cleanTest", testGoal };
 
-      final String[] vars = concatenateCommandArrays(originals, commandLineAddition);
-
-      return buildFolderProcess(folder, logFile, vars);
+      final String[] vars = CommandConcatenator.concatenateCommandArrays(originals, commandLineAddition);
+      ProcessBuilderHelper processBuilderHelper = new ProcessBuilderHelper(env, folders);
+      return processBuilderHelper.buildFolderProcess(folder, logFile, vars);
    }
 
    /**
@@ -110,8 +97,7 @@ public class GradleTestExecutor extends TestExecutor {
    public void executeTest(final TestCase test, final File logFolder, final long timeout) {
       final File module = new File(folders.getProjectFolder(), test.getModule());
       cleanLastTest(module);
-      final ChangedEntity testClazzEntity = new ChangedEntity(test.getClazz(), test.getModule());
-      runMethod(logFolder, testClazzEntity, module, test.getMethod(), timeout);
+      runMethod(logFolder, test, module, timeout);
    }
 
    /**
@@ -154,7 +140,7 @@ public class GradleTestExecutor extends TestExecutor {
             e.printStackTrace();
          }
          final String[] vars = new String[] { "./gradlew", "--no-daemon", "assemble" };
-         isRunning = testRunningSuccess(version, vars);
+         isRunning = new ProcessSuccessTester(folders, testTransformer.getConfig(), env).testRunningSuccess(version, vars);
       }
       return isRunning;
    }

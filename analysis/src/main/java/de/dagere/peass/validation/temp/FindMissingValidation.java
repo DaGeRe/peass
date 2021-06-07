@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.analysis.all.RepoFolders;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.reexecutions.MissingExecutionFinder;
-import de.peran.FolderSearcher;
+import de.dagere.peass.utils.Constants;
 
 public class FindMissingValidation {
 
@@ -29,7 +29,7 @@ public class FindMissingValidation {
       for (String project : GetValidationExecutionFile.VALIDATION_PROJECTS) {
          LOG.info("Analyzing {}", project);
          File executionFile = GetValidationExecutionFile.getValidationExecutionFile(project);
-         ExecutionData tests = FolderSearcher.MAPPER.readValue(executionFile, ExecutionData.class);
+         ExecutionData tests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
 
          MissingExecutionFinder missingExecutionFinder = new MissingExecutionFinder(project, reexecuteFolder, tests, "commentExec");
          missingExecutionFinder.findMissing(new File[] { folders.getValidationDataFolder(project) });

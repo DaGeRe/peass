@@ -16,7 +16,6 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.utils.RunCommandWriter;
 import de.dagere.peass.utils.RunCommandWriterSlurm;
-import de.peran.FolderSearcher;
 
 public class FindWrong {
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
@@ -33,7 +32,7 @@ public class FindWrong {
             final String url = Constants.defaultUrls.get(projectName);
             RunCommandWriter writer = new RunCommandWriterSlurm(goal, "wrong_rerun", projectName, url);
             if (url != null) {
-               final Classification data = FolderSearcher.MAPPER.readValue(project, Classification.class);
+               final Classification data = Constants.OBJECTMAPPER.readValue(project, Classification.class);
                for (final Map.Entry<String, VersionClass> version : data.getVersions().entrySet()) {
                   for (final Map.Entry<ChangedEntity, TestcaseClass> method : version.getValue().getTestcases().entrySet()) {
                      if (method.getValue().getTypes().contains("WRONG") || method.getValue().getTypes().contains("WRONGTEST")) {

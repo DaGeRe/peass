@@ -34,8 +34,8 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.VersionSorter;
+import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
-import de.peran.FolderSearcher;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -131,7 +131,7 @@ public class ReadProperties implements Callable<Void> {
          writeCSVHeadline(csvWriter);
          final VersionChangeProperties versionProperties = new VersionChangeProperties();
 
-         final ProjectChanges changes = FolderSearcher.MAPPER.readValue(changefile, ProjectChanges.class);
+         final ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changefile, ProjectChanges.class);
 
          int versionCount = 0, testcaseCount = 0;
          for (final Entry<String, Changes> versionChanges : changes.getVersionChanges().entrySet()) {
@@ -171,7 +171,7 @@ public class ReadProperties implements Callable<Void> {
             final ChangeProperty currentProperty = reader.read();
             // if (currentProperty != null) {
             properties.add(currentProperty);
-            FolderSearcher.MAPPER.writeValue(out, versionProperties);
+            Constants.OBJECTMAPPER.writeValue(out, versionProperties);
             writeCSVLine(csvWriter, currentProperty, projectFolder.getName());
             // }
 
@@ -184,7 +184,7 @@ public class ReadProperties implements Callable<Void> {
    public static VersionChangeProperties readVersionProperties(final ProjectChanges knowledge, final File versionFile) {
       final VersionChangeProperties versionProperties = new VersionChangeProperties();
       try {
-         final VersionChangeProperties allProperties = FolderSearcher.MAPPER.readValue(versionFile, VersionChangeProperties.class);
+         final VersionChangeProperties allProperties = Constants.OBJECTMAPPER.readValue(versionFile, VersionChangeProperties.class);
          for (final Entry<String, Changes> versionChanges : knowledge.getVersionChanges().entrySet()) {
             final String version = versionChanges.getKey();
             final ChangeProperties allProps = allProperties.getVersions().get(version);

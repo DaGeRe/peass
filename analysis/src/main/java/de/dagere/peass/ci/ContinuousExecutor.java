@@ -2,8 +2,6 @@ package de.dagere.peass.ci;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import javax.xml.bind.JAXBException;
@@ -17,54 +15,62 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.ExecutorCreator;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
-import de.dagere.peass.dependency.persistence.Dependencies;
-import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.measurement.analysis.AnalyseFullData;
 import de.dagere.peass.measurement.analysis.ProjectStatistics;
+import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 import de.dagere.peass.vcs.VersionIteratorGit;
-import de.peran.AnalyseOneTest;
 
 public class ContinuousExecutor {
 
    private static final Logger LOG = LogManager.getLogger(ContinuousExecutor.class);
 
-   private final File projectFolder;
    private final MeasurementConfiguration measurementConfig;
-   private final int threads;
-   private final boolean useViews;
+   private final DependencyConfig dependencyConfig;
 
-   private String version;
-   private String versionOld;
+   private final String version;
+   private final String versionOld;
+   private final VersionIteratorGit iterator;
 
+   private final File originalProjectFolder;
    private final File localFolder;
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final ResultsFolders resultsFolders;
-   private DependencyConfig dependencyConfig = new DependencyConfig(2, false, true);
 
    private final EnvironmentVariables env;
 
-   public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final int threads, final boolean useViews,
-         final EnvironmentVariables env)
+   public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final DependencyConfig dependencyConfig, final EnvironmentVariables env)
          throws InterruptedException, IOException {
-      this.projectFolder = projectFolder;
+      this.originalProjectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
-      this.threads = threads;
-      this.useViews = useViews;
+      this.dependencyConfig = dependencyConfig;
       this.env = env;
       LOG.info("Properties: " + env.getProperties());
 
       File vcsFolder = VersionControlSystem.findVCSFolder(projectFolder);
       localFolder = ContinuousFolderUtil.getLocalFolder(vcsFolder);
       File projectFolderLocal = new File(localFolder, ContinuousFolderUtil.getSubFolderPath(projectFolder));
+      getGitRepo(projectFolder, measurementConfig, projectFolderLocal);
+      resultsFolders = new ResultsFolders(localFolder, projectFolder.getName());
+
+      folders = new PeassFolders(projectFolderLocal);
+
+      IteratorBuilder iteratorBuiler = new IteratorBuilder(measurementConfig, folders.getProjectFolder());
+      iterator = iteratorBuiler.getIterator();
+      version = iteratorBuiler.getVersion();
+      versionOld = iteratorBuiler.getVersionOld();
+   }
+
+   private void getGitRepo(final File projectFolder, final MeasurementConfiguration measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {
       if (!localFolder.exists() || !projectFolderLocal.exists()) {
          ContinuousFolderUtil.cloneProject(projectFolder, localFolder);
          if (!projectFolderLocal.exists()) {
@@ -76,44 +82,25 @@ public class ContinuousExecutor {
          GitUtils.pull(projectFolderLocal);
          GitUtils.goToTag(measurementConfig.getVersion(), projectFolderLocal);
       }
-      resultsFolders = new ResultsFolders(localFolder, projectFolder.getName());
-
-      folders = new PeASSFolders(projectFolderLocal);
-
-      version = measurementConfig.getVersion();
-      versionOld = measurementConfig.getVersionOld();
    }
 
    public void execute() throws Exception {
-      final VersionIteratorGit iterator = buildIterator();
-      final String url = GitUtils.getURL(projectFolder);
+      final String url = GitUtils.getURL(originalProjectFolder);
 
-      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), folders, resultsFolders, env);
-      final Dependencies dependencies = dependencyReader.getDependencies(iterator, url);
+      final Set<TestCase> tests = executeRegressionTestSelection(url);
 
-      if (dependencies.getVersions().size() > 0) {
-         ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
-         Set<TestCase> tests = executionData.getVersions().get(version).getTests();
-//         final Set<TestCase> tests = selectIncludedTests(dependencies);
-         NonIncludedTestRemover.removeNotIncluded(tests, measurementConfig.getExecutionConfig());
-         
-         final File measurementFolder = measure(tests);
+      final File measurementFolder = executeMeasurement(tests);
 
-         analyzeMeasurements(measurementFolder);
-      } else {
-         LOG.info("No test executed - version did not contain changed tests.");
-      }
+      analyzeMeasurements(measurementFolder);
    }
 
-//   private Set<TestCase> selectIncludedTests(final Dependencies dependencies) throws Exception {
-//      final TestChooser chooser = new TestChooser(useViews, localFolder, folders, version,
-//            resultsFolders, threads, measurementConfig.getExecutionConfig(), env);
-//      final Set<TestCase> tests = chooser.getTestSet(dependencies);
-//      LOG.debug("Executing measurement on {}", tests);
-//      return tests;
-//   }
+   protected Set<TestCase> executeRegressionTestSelection(final String url) throws Exception {
+      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), folders, resultsFolders, env);
+      final Set<TestCase> tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
+      return tests;
+   }
 
-   private File measure(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final File fullResultsVersion = getFullResultsVersion();
       final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(version, versionOld, folders, measurementConfig, env);
       final File measurementFolder = measurementExecutor.executeMeasurements(tests, fullResultsVersion);
@@ -122,31 +109,21 @@ public class ContinuousExecutor {
 
    private void analyzeMeasurements(final File measurementFolder) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
       final File changefile = new File(localFolder, "changes.json");
-      AnalyseOneTest.setResultFolder(new File(localFolder, version + "_graphs"));
+//      AnalyseOneTest.setResultFolder(new File(localFolder, version + "_graphs"));
       final ProjectStatistics statistics = new ProjectStatistics();
-      ModuleClassMapping mapping = new ModuleClassMapping(projectFolder);
+      TestTransformer testTransformer = ExecutorCreator.createTestTransformer(folders, measurementConfig.getExecutionConfig(), measurementConfig);
+      TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
+      ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), executor.getModules());
       final AnalyseFullData afd = new AnalyseFullData(changefile, statistics, mapping);
       afd.analyseFolder(measurementFolder);
       Constants.OBJECTMAPPER.writeValue(new File(localFolder, "statistics.json"), statistics);
-   }
-
-   private VersionIteratorGit buildIterator() {
-      versionOld = GitUtils.getName(measurementConfig.getVersionOld() != null ? measurementConfig.getVersionOld() : "HEAD~1", folders.getProjectFolder());
-      version = GitUtils.getName(measurementConfig.getVersion() != null ? measurementConfig.getVersion() : "HEAD", folders.getProjectFolder());
-
-      final List<GitCommit> entries = new LinkedList<>();
-      final GitCommit prevCommit = new GitCommit(versionOld, "", "", "");
-      entries.add(prevCommit);
-      entries.add(new GitCommit(version, "", "", ""));
-      final VersionIteratorGit iterator = new VersionIteratorGit(folders.getProjectFolder(), entries, prevCommit);
-      return iterator;
    }
 
    public String getLatestVersion() {
       return version;
    }
 
-   public PeASSFolders getFolders() {
+   public PeassFolders getFolders() {
       return folders;
    }
 

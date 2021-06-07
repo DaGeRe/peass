@@ -3,6 +3,7 @@ package de.dagere.peass.dependency.traces;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -15,7 +16,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.KiekerResultManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
@@ -62,7 +63,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
       TestSet tests = version.getTests();
 
       GitUtils.reset(projectFolder);
-      PeASSFolders folders = new PeASSFolders(projectFolder);
+      PeassFolders folders = new PeassFolders(projectFolder);
       
       KiekerResultManager resultsManager = runTests(newestVersion, tests, folders);
 
@@ -73,7 +74,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
       return null;
    }
 
-   private KiekerResultManager runTests(final String newestVersion, final TestSet tests, final PeASSFolders folders) throws IOException, XmlPullParserException, InterruptedException {
+   private KiekerResultManager runTests(final String newestVersion, final TestSet tests, final PeassFolders folders) throws IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       ExecutionConfig executionConfig = new ExecutionConfig(executionMixin);
 
       KiekerResultManager resultsManager = new KiekerResultManager(folders, executionConfig, new EnvironmentVariables());
@@ -81,10 +82,10 @@ public class TraceGeneratorStarter implements Callable<Void> {
       return resultsManager;
    }
 
-   private void writeTestcase(final String newestVersion, final PeASSFolders folders, final KiekerResultManager resultsManager, final TestCase testcase)
+   private void writeTestcase(final String newestVersion, final PeassFolders folders, final KiekerResultManager resultsManager, final TestCase testcase)
          throws FileNotFoundException, IOException, XmlPullParserException, ViewNotFoundException {
       final File moduleResultFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
-      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultFolder);
+      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultFolder)[0];
 
       final long size = FileUtils.sizeOfDirectory(kiekerResultFolder);
       final long sizeInMB = size / (1024 * 1024);
@@ -102,7 +103,6 @@ public class TraceGeneratorStarter implements Callable<Void> {
 
    private void writeTrace(final String newestVersion, final TestCase testcase, final List<TraceElement> shortTrace) throws IOException {
       ResultsFolders results = new ResultsFolders(new File("results"), projectFolder.getName());
-      TraceWriter tw = new TraceWriter(newestVersion, testcase, results);
 
       String shortVersion = TraceWriter.getShortVersion(newestVersion);
       File methodDir = results.getViewMethodDir(newestVersion, testcase);

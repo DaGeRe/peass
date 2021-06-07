@@ -16,7 +16,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.CauseSearchFolders;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
@@ -24,7 +24,7 @@ import de.dagere.peass.dependencyprocessors.AdaptiveTester;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.measurement.analysis.EarlyBreakDecider;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.TestTransformer;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**
@@ -85,9 +85,9 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   protected synchronized TestExecutor getExecutor(final PeASSFolders temporaryFolders, final String version) {
+   protected synchronized TestExecutor getExecutor(final PeassFolders temporaryFolders, final String version) {
       final TestExecutor testExecutor = super.getExecutor(temporaryFolders, version);
-      JUnitTestTransformer testTransformer = testExecutor.getTestTransformer();
+      TestTransformer testTransformer = testExecutor.getTestTransformer();
       testTransformer.setAggregatedWriter(causeConfig.isUseAggregation());
       testTransformer.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
       generatePatternSet(version);
@@ -197,7 +197,7 @@ public class CauseTester extends AdaptiveTester {
 
       final MeasurementConfiguration config = new MeasurementConfiguration(15 * 1000 * 60, 15, true, version, version + "~1");
       config.setUseKieker(true);
-      final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, false, 0.01, false, false, RCAStrategy.COMPLETE);
+      final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, false, 0.01, false, false, RCAStrategy.COMPLETE, 1);
       final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), config, causeConfig, new EnvironmentVariables());
 
       final CallTreeNode node = new CallTreeNode("FileUploadTestCase#parseUpload",

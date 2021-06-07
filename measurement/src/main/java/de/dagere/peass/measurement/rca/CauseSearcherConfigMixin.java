@@ -23,14 +23,16 @@ public class CauseSearcherConfigMixin {
    @Option(names = { "-propertyFolder", "--propertyFolder" }, description = "Path to property folder", required = false)
    protected File propertyFolder;
 
-   @Option(names = { "-minTime",
-         "--minTime" }, description = "Minimum node difference time compared to relative standard deviation. "
-               + "If a node takes less time, its childs won't be measured (since time measurement isn't below accurate below a certain value).")
+   @Option(names = { "-minTime", "--minTime" }, description = "Minimum node difference time compared to relative standard deviation. "
+         + "If a node takes less time, its childs won't be measured (since time measurement isn't below accurate below a certain value).")
    private double minTime = 0.1;
-   
+
    @Option(names = { "-rcaStrategy",
-   "--rcaStrategy" }, description = "Strategy to select nodes which are measured (default: COMPLETE)")
+         "--rcaStrategy" }, description = "Strategy to select nodes which are measured (default: COMPLETE)")
    private RCAStrategy strategy = RCAStrategy.COMPLETE;
+
+   @Option(names = { "-levels", "--levels" }, description = "Count of levels that should be measured at once; only allowed with strategy CONSTANT_LEVELS")
+   private int levels = 1;
 
    public boolean isUseCalibrationRun() {
       return useCalibrationRun;
@@ -51,13 +53,17 @@ public class CauseSearcherConfigMixin {
    public double getMinTime() {
       return minTime;
    }
-   
+
    public RCAStrategy getStrategy() {
       return strategy;
    }
-   
+
    public File getPropertyFolder() {
       return propertyFolder;
+   }
+   
+   public int getLevels() {
+      return levels;
    }
 
 }

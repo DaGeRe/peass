@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.config.DependencyReaderConfigMixin;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
@@ -65,7 +65,7 @@ public class DependencyExecutionReader implements Callable<Void>{
 
    public void readExecutions(final String project, final List<GitCommit> commits) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, JAXBException {
       final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, commits, 
-            config.getDependencyConfig(), config.getTimeout(), config.getExecutionConfig(), new EnvironmentVariables());
+            config.getDependencyConfig(), config.getExecutionConfig(), new EnvironmentVariables());
       final ResultsFolders[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);
@@ -75,12 +75,11 @@ public class DependencyExecutionReader implements Callable<Void>{
       final File out = mergedFolders.getDependencyFile();
       final Dependencies all = PartialDependenciesMerger.mergeVersions(out, outFiles);
 
-      final PeASSFolders folders = new PeASSFolders(config.getProjectFolder());
+      final PeassFolders folders = new PeassFolders(config.getProjectFolder());
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");
       folders.getTempProjectFolder().renameTo(dependencyTempFiles);
 
-      final File executionOut = mergedFolders.getExecutionFile();
-      ExecutionData executionData = PartialDependenciesMerger.mergeExecutions(executionOut, outFiles);
+      ExecutionData executionData = PartialDependenciesMerger.mergeExecutions(mergedFolders, outFiles);
       
       mergeViews(outFiles, mergedFolders);
       

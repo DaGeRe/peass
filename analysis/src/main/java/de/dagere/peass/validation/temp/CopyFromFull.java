@@ -21,7 +21,7 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.peass.analysis.all.RepoFolders;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.measurement.analysis.MeasurementFileFinder;
-import de.peran.FolderSearcher;
+import de.dagere.peass.utils.Constants;
 
 public class CopyFromFull {
    private static final Logger LOG = LogManager.getLogger(CopyFromFull.class);
@@ -35,7 +35,7 @@ public class CopyFromFull {
       for (String project : GetValidationExecutionFile.VALIDATION_PROJECTS) {
          LOG.info("Analyzing {}", project);
          File executionFile = GetValidationExecutionFile.getValidationExecutionFile(project);
-         final ExecutionData tests = FolderSearcher.MAPPER.readValue(executionFile, ExecutionData.class);
+         final ExecutionData tests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
 
          final File projectFolder = new File(folders.getCleanDataFolder(), project);
          File goal = folders.getValidationDataFolder(project);

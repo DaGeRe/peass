@@ -18,7 +18,8 @@ import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.TestUtil;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
 
@@ -31,7 +32,7 @@ public class TestResultOrganizer {
    private static final Logger LOG = LogManager.getLogger(TestResultOrganizer.class);
 
    public static final TestCase searchedTest = new TestCase("de.test.Test#testMethod");
-   private PeASSFolders folders;
+   private PeassFolders folders;
    private ResultOrganizer organizer;
    private File methodFolder;
 
@@ -39,7 +40,7 @@ public class TestResultOrganizer {
    public void setUp() {
       TestUtil.deleteOldFolders();
 
-      folders = new PeASSFolders(new File("target/current"));
+      folders = new PeassFolders(new File("target/current"));
       methodFolder = new File(folders.getTempMeasurementFolder(), searchedTest.getClazz());
       methodFolder.mkdir();
    }

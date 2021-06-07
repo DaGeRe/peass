@@ -7,10 +7,9 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.dagere.peass.dependency.execution.ExecutionConfigMixin;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Configuration properties of Peass-executions that are used in every circumstance, i.e. for regression test selection, measurement and root cause analysis
@@ -37,6 +36,9 @@ public class ExecutionConfig implements Serializable {
    private String pl;
    private boolean createDefaultConstructor = true;
    private boolean redirectSubprocessOutputToFile = true;
+   
+   private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
+   private String testExecutor = "default";
 
    public ExecutionConfig() {
       includes = new LinkedList<>();
@@ -179,5 +181,21 @@ public class ExecutionConfig implements Serializable {
 
    public void setRedirectSubprocessOutputToFile(final boolean redirectSubprocessOutputToFile) {
       this.redirectSubprocessOutputToFile = redirectSubprocessOutputToFile;
+   }
+
+   public String getTestTransformer() {
+      return testTransformer;
+   }
+
+   public void setTestTransformer(final String testTransformer) {
+      this.testTransformer = testTransformer;
+   }
+
+   public String getTestExecutor() {
+      return testExecutor;
+   }
+
+   public void setTestExecutor(final String testExecutor) {
+      this.testExecutor = testExecutor;
    }
 }

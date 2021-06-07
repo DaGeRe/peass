@@ -2,6 +2,7 @@ package de.dagere.peass.dependencytests;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -48,7 +49,7 @@ public class SuperclassDetectorIT {
    }
 
    @Test
-   public void testSuperclassChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testSuperclassChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File secondVersion = new File(VERSIONS_FOLDER, "superclass_changed");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
@@ -59,7 +60,7 @@ public class SuperclassDetectorIT {
 
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG, new PeASSFolders(DependencyTestConstants.CURRENT), DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager,
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(DependencyTestConstants.CURRENT), DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager,
             new ExecutionConfig(5), new EnvironmentVariables());
       reader.readInitialVersion();
 

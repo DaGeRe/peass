@@ -16,9 +16,11 @@ import org.mockito.Mockito;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.TestConstants;
+import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
+import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -31,9 +33,9 @@ import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.vcs.VersionIterator;
 
 public class DependencyDetectorTestUtil {
-   
+
    private static final Logger LOG = LogManager.getLogger(DependencyDetectorTestUtil.class);
-   
+
    public static TestSet findDependency(final Dependencies dependencies, final String changedClass, final String version) {
       final Version versionDependencies = dependencies.getVersions().get(version);
       System.out.println(dependencies.getVersions().keySet());
@@ -48,7 +50,7 @@ public class DependencyDetectorTestUtil {
       }
       return testcase;
    }
-   
+
    public static Map<ChangedEntity, ClazzChangeData> buildChanges(final String module, final String clazz, final String method) {
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
       addChange(changes, module, clazz, method);
@@ -61,7 +63,7 @@ public class DependencyDetectorTestUtil {
       methodChanges.addChange(clazz.substring(clazz.lastIndexOf('.') + 1), method);
       changes.put(baseChangedClazz, methodChanges);
    }
-   
+
    public static ChangeManager defaultChangeManager() {
       final Map<ChangedEntity, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("", "defaultpackage.NormalDependency", "executeThing");
 
@@ -69,7 +71,7 @@ public class DependencyDetectorTestUtil {
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
       return changeManager;
    }
-   
+
    public static ChangeManager mockAddedChangeManager() {
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
       changes.put(new ChangedEntity("defaultpackage.NormalDependency", ""), new ClazzChangeData("defaultpackage.NormalDependency", false));
@@ -79,29 +81,37 @@ public class DependencyDetectorTestUtil {
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
       return changeManager;
    }
-   
+
    public static void checkTestMeAlsoTestChange(final DependencyReader reader, final String change, final String changedTest, final String version) {
+      checkChange(reader, change, changedTest, version, "testMe");
+   }
+   
+   public static void checkChange(final DependencyReader reader, final String change, final String changedTest, final String version, final String testMethod) {
       final TestSet testMe = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), change, version);
       System.out.println(testMe);
       final TestCase testcase = testMe.getTests().iterator().next();
       Assert.assertEquals(changedTest, testcase.getClazz());
-      Assert.assertEquals("testMe", testcase.getMethod());
+      Assert.assertEquals(testMethod, testcase.getMethod());
    }
-   
+
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator)
          throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
-      return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5));
+      return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5), DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.NULL_RESULTS_FOLDERS);
    }
-   
-   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config)
-         throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG, new PeASSFolders(DependencyTestConstants.CURRENT), DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager, config, new EnvironmentVariables());
-      final boolean success = reader.readInitialVersion();
-      Assert.assertTrue(success);
-      fakeIterator.goToNextCommit();
 
-      reader.analyseVersion(changeManager);
-      return reader;
+   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config, final DependencyConfig dependencyConfig, final ResultsFolders resultsFolders) {
+      try {
+         final DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(DependencyTestConstants.CURRENT),
+               resultsFolders, null, fakeIterator, changeManager, config, new EnvironmentVariables());
+         boolean success = reader.readInitialVersion();
+         Assert.assertTrue(success);
+         fakeIterator.goToNextCommit();
+
+         reader.analyseVersion(changeManager);
+         return reader;
+      } catch (IOException | InterruptedException | XmlPullParserException | ParseException | ViewNotFoundException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    public static void init(final File folder) {

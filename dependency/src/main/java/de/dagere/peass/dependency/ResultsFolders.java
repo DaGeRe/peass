@@ -29,6 +29,10 @@ public class ResultsFolders {
       return new File(resultFolder, "execute_" + projectName + ".json");
    }
    
+   public File getCoverageSelectionFile() {
+      return new File(resultFolder, "coverageSelection_" + projectName + ".json");
+   }
+   
    public File getViewFolder() {
       File viewFolder = new File(resultFolder, "views_" + projectName);
       viewFolder.mkdirs();
@@ -54,7 +58,7 @@ public class ResultsFolders {
    public File getViewMethodDir(final String version, final TestCase testcase) {
       final File methodDir = new File(getClazzDir(version, testcase), testcase.getMethod());
       if (!methodDir.exists()) {
-         boolean create = methodDir.mkdir();
+         boolean create = methodDir.mkdirs();
          LOG.debug("Created directory {} Success: {}", methodDir.getAbsolutePath(), create);
       } else {
          LOG.debug("Directory {} already existing", methodDir.getAbsolutePath());

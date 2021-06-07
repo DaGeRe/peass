@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
-public class CauseSearchFolders extends PeASSFolders {
+public class CauseSearchFolders extends PeassFolders {
 
    private final File levelFolder;
    private final File archivedFolder;

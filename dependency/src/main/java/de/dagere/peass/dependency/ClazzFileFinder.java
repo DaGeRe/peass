@@ -2,6 +2,7 @@ package de.dagere.peass.dependency;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,6 +70,7 @@ public class ClazzFileFinder {
 
    /**
     * Returns a list of classes or a project as Java FQN
+    * 
     * @param src
     * @return
     */
@@ -101,7 +103,7 @@ public class ClazzFileFinder {
     * @param clazzes List where classes should be added
     * @param folder Main folder that should be searched
     */
-   private static void addClazzes(final List<String> clazzes, final File folder) {
+   public static void addClazzes(final List<String> clazzes, final File folder) {
       Collection<File> javaFiles = FileUtils.listFiles(folder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE);
       for (final File clazzFile : javaFiles) {
          final String clazz = getClazz(folder, clazzFile);
@@ -113,7 +115,6 @@ public class ClazzFileFinder {
                final List<String> nodeChildClazzes = ClazzFinder.getClazzes(node, packageName, ".");
                clazzes.addAll(nodeChildClazzes);
             }
-
          } catch (final ParseProblemException e) {
             throw new RuntimeException("Problem parsing " + clazz + " from " + clazzFile.getAbsolutePath() + " Existing: " + clazzFile.exists(), e);
          } catch (final FileNotFoundException e) {
@@ -122,12 +123,17 @@ public class ClazzFileFinder {
       }
    }
 
-   private static String getClazz(final File folder, final File clazzFile) {
-      String path = clazzFile.getAbsolutePath();
-      path = path.replace(folder.getAbsolutePath() + File.separator, "");
-      path = path.substring(0, path.length() - 5);
-      final String clazz = path.replace(File.separator, ".");
-      return clazz;
+   public static String getClazz(final File folder, final File clazzFile) {
+      try {
+         String path = clazzFile.getCanonicalPath();
+         String projectFolderPrefix = folder.getCanonicalPath() + File.separator;
+         path = path.replace(projectFolderPrefix, "");
+         path = path.substring(0, path.length() - 5);
+         final String clazz = path.replace(File.separator, ".");
+         return clazz;
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    /**
@@ -159,7 +165,15 @@ public class ClazzFileFinder {
          File moduleFolder = new File(module, entity.getModule());
          potentialFile = findFile(moduleFolder, clazzFileName, naturalCandidate);
       }
-      return potentialFile;
+      try {
+         if (potentialFile != null) {
+            return potentialFile.getCanonicalFile();
+         } else {
+            return null;
+         }
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    private static File findFile(final File sourceParentFolder, final String clazzFileName, final File naturalCandidate) {

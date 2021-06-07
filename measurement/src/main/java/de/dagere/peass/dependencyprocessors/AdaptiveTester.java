@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.measurement.analysis.EarlyBreakDecider;
@@ -24,10 +24,9 @@ public class AdaptiveTester extends DependencyTester {
 
    private int finishedVMs = 0;
 
-   public AdaptiveTester(final PeASSFolders folders, final MeasurementConfiguration measurementConfig, final EnvironmentVariables env)
+   public AdaptiveTester(final PeassFolders folders, final MeasurementConfiguration measurementConfig, final EnvironmentVariables env)
          throws IOException {
       super(folders, measurementConfig, env);
-
    }
 
    @Override
@@ -36,7 +35,7 @@ public class AdaptiveTester extends DependencyTester {
 
       new FolderDeterminer(folders).testResultFolders(configuration.getVersion(), configuration.getVersionOld(), testcase);
 
-      final File logFolder = getLogFolder(configuration.getVersion(), testcase);
+      final File logFolder = folders.getLogFolder(configuration.getVersion(), testcase);
 
       currentChunkStart = System.currentTimeMillis();
       

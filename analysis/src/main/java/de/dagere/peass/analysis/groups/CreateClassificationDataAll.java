@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.analysis.all.RepoFolders;
 import de.dagere.peass.analysis.changes.ProjectChanges;
-import de.peran.FolderSearcher;
+import de.dagere.peass.utils.Constants;
 
 public class CreateClassificationDataAll {
    
@@ -24,7 +24,7 @@ public class CreateClassificationDataAll {
          final File changeFile = new File(projectFile, project + ".json");
          final File goalFile = new File(folders.getClassificationFolder(), project + ".json");
          if (changeFile.exists()) {
-            final ProjectChanges changes = FolderSearcher.MAPPER.readValue(changeFile, ProjectChanges.class);
+            final ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changeFile, ProjectChanges.class);
             CreateClassificationData.createClassificationData(changes, goalFile, project);
          } else {
             LOG.error("No Change File: " + project);

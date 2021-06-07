@@ -19,7 +19,7 @@ import org.mockito.Mockito;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.GradleParseUtil;
 import de.dagere.peass.dependency.execution.GradleTestExecutor;
@@ -54,7 +54,7 @@ public class TestGradleParseUtil {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
       FileUtils.copyDirectory(new File("src/test/resources/gradle-multimodule-subprojectexample/"), TestConstants.CURRENT_FOLDER);
 
-      PeASSFolders folders = new PeASSFolders(TestConstants.CURRENT_FOLDER);
+      PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
       JUnitTestTransformer transformerMock = Mockito.mock(JUnitTestTransformer.class);
       MeasurementConfiguration measurementConfig = new MeasurementConfiguration(2);
       measurementConfig.setUseKieker(true);

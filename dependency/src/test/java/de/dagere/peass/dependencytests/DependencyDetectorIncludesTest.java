@@ -35,9 +35,8 @@ public class DependencyDetectorIncludesTest {
 
    @Test
    public void testNormalChangeIncluded() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
-      final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "normal_change");
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
-      final DependencyReader reader = executeWithInclude("defaultpackage.TestMe#testMe", secondVersion, changeManager);
+      final DependencyReader reader = executeWithInclude("defaultpackage.TestMe#testMe", DependencyTestConstants.NORMAL_CHANGE, changeManager);
       checkContainsOnlyTestMe(reader);
    }
    
@@ -107,7 +106,7 @@ public class DependencyDetectorIncludesTest {
      
       config.getIncludes().add(includeName);
       
-      final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator, config);
+      final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator, config, DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.NULL_RESULTS_FOLDERS);
       return reader;
    }
    

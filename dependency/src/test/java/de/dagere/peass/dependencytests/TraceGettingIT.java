@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -23,7 +24,7 @@ import com.github.javaparser.ParseException;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.KiekerResultManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -50,7 +51,7 @@ public class TraceGettingIT {
    private static final File VIEWS_FOLDER_TEST = new File(VIEW_IT_PROJECTFOLDER, "views_test");
 
    @Test
-   public void testBasicView() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException {
+   public void testBasicView() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File project = BASIC;
       final String githash = "1";
       executeTraceGetting(project, githash);
@@ -58,28 +59,28 @@ public class TraceGettingIT {
    }
 
    @Test
-   public void testRepetition() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException {
+   public void testRepetition() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File project = REPETITION;
       final String githash = "2";
       executeTraceGetting(project, githash);
    }
 
    @Test
-   public void testMultipleRepetition() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException {
+   public void testMultipleRepetition() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File project = REPETITION_MULTIPLE;
       final String githash = "3";
       executeTraceGetting(project, githash);
    }
 
    @Test
-   public void testDeepRepetition() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException {
+   public void testDeepRepetition() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File project = REPETITION_DEEP;
       final String githash = "4";
       executeTraceGetting(project, githash);
    }
 
    @Test
-   public void testRepetitionRepetition() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException {
+   public void testRepetitionRepetition() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final File project = REPETITION_REPETITION;
       final String githash = "5";
       executeTraceGetting(project, githash);
@@ -88,7 +89,7 @@ public class TraceGettingIT {
 
       final List<String> expectedCalls = new LinkedList<>();
       expectedCalls.add("viewtest.TestMe#test");
-      expectedCalls.add("viewtest.TestMe$InnerClass#<init>([viewtest.TestMe])");
+      expectedCalls.add("viewtest.TestMe$InnerClass#<init>(viewtest.TestMe)");
       expectedCalls.add("5x(2)");
       expectedCalls.add("viewtest.TestMe$InnerClass#method");
       expectedCalls.add("viewtest.TestMe#staticMethod");
@@ -108,9 +109,9 @@ public class TraceGettingIT {
    }
 
    private void executeTraceGetting(final File project, final String githash)
-         throws IOException, ParseException, ViewNotFoundException, XmlPullParserException, InterruptedException {
+         throws IOException, ParseException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       DependencyDetectorTestUtil.init(project);
-      final KiekerResultManager tracereader = new KiekerResultManager(new PeASSFolders(TestConstants.CURRENT_FOLDER), new ExecutionConfig(5), new EnvironmentVariables());
+      final KiekerResultManager tracereader = new KiekerResultManager(new PeassFolders(TestConstants.CURRENT_FOLDER), new ExecutionConfig(5), new EnvironmentVariables());
       final TestSet testset = new TestSet();
       testset.addTest(new TestCase("viewtest.TestMe", "test", ""));
       tracereader.getExecutor().loadClasses();
@@ -127,7 +128,7 @@ public class TraceGettingIT {
 
    public static boolean analyseTrace(final TestCase testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File resultsFolder)
          throws com.github.javaparser.ParseException, IOException, ViewNotFoundException {
-      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder);
+      final File kiekerResultFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, resultsFolder)[0];
 
       boolean success = false;
       final long size = FileUtils.sizeOfDirectory(kiekerResultFolder.getParentFile());

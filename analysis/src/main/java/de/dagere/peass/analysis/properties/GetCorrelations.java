@@ -12,16 +12,12 @@ import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.analysis.properties.ChangeProperties;
-import de.dagere.peass.analysis.properties.ChangeProperty;
-import de.dagere.peass.analysis.properties.PropertyReadHelper;
-import de.dagere.peass.analysis.properties.VersionChangeProperties;
-import de.peran.FolderSearcher;
+import de.dagere.peass.utils.Constants;
 
 public class GetCorrelations {
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final File propertyFile = new File("/home/reichelt/daten3/diss/repos/properties/properties/commons-io/commons-io.json");
-      final VersionChangeProperties props = FolderSearcher.MAPPER.readValue(propertyFile, VersionChangeProperties.class);
+      final VersionChangeProperties props = Constants.OBJECTMAPPER.readValue(propertyFile, VersionChangeProperties.class);
 
       int count = 0;
       for (final Entry<String, ChangeProperties> version : props.getVersions().entrySet()) {

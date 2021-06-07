@@ -22,7 +22,7 @@ import org.mockito.Mockito;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.parallel.OneReader;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
@@ -43,7 +43,7 @@ public class TestVersionSplitting {
    static class DummyReader extends DependencyReader {
 
       public DummyReader(final File dummyFolder, final VersionIterator iterator, final ChangeManager manager) throws IOException {
-         super(DependencyTestConstants.DEFAULT_CONFIG, new PeASSFolders(dummyFolder), null, null, iterator, manager, new ExecutionConfig(1), new EnvironmentVariables());
+         super(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(dummyFolder), null, null, iterator, manager, new ExecutionConfig(1), new EnvironmentVariables());
       }
 
       @Override

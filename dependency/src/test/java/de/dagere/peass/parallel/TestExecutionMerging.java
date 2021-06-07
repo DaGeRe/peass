@@ -43,7 +43,8 @@ public class TestExecutionMerging {
          Mockito.when(folders[i].getExecutionFile()).thenReturn(new File("target/execute-" + i + ".json"));
       }
       
-      ExecutionData merged = PartialDependenciesMerger.mergeExecutions(new File("target/execute-temp.json"), folders);
+      ResultsFolders out = new ResultsFolders(new File("target"), "mytest");
+      ExecutionData merged = PartialDependenciesMerger.mergeExecutions(out, folders);
       
       checkMergedResult(merged);
    }

@@ -1,7 +1,12 @@
 package de.dagere.peass.dependency;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.GradleParseUtil;
@@ -14,7 +19,7 @@ import de.dagere.peass.vcs.VersionControlSystem;
  * @author reichelt
  *
  */
-public class PeASSFolders {
+public class PeassFolders {
    public static final String PEASS_POSTFIX = "_peass";
    
    protected final File projectFolder;
@@ -37,7 +42,7 @@ public class PeASSFolders {
       return peassFolder;
    }
    
-   public PeASSFolders(final File folder, final String name) {
+   public PeassFolders(final File folder, final String name) {
       this.projectName = name;
       if (!folder.getName().endsWith(PEASS_POSTFIX)) {
          projectFolder = folder;
@@ -53,7 +58,6 @@ public class PeASSFolders {
       }
 
       logFolder = new File(peassFolder, "logs");
-      logFolder.mkdir();
       oldSourceFolder = new File(peassFolder, "lastSources");
       fullResultFolder = new File(peassFolder, "measurementsFull");
       fullResultFolder.mkdir();
@@ -70,7 +74,7 @@ public class PeASSFolders {
       tempProjectFolder = new File(peassFolder, "projectTemp");
    }
 
-   public PeASSFolders(final File folder) {
+   public PeassFolders(final File folder) {
       this(folder, (folder != null ? folder.getName() : null));
    }
 
@@ -98,7 +102,19 @@ public class PeASSFolders {
    }
 
    public File getLogFolder() {
+      if (!logFolder.exists()) {
+         logFolder.mkdirs();
+      }
       return logFolder;
+   }
+   
+   public File getLogFolder(final String version, final TestCase testcase) {
+      File testLogFolder = new File(logFolder, version + File.separator + testcase.getMethod());
+      if (testLogFolder.exists()) {
+         testLogFolder = new File(logFolder, version + File.separator + testcase.getMethod() + "_new");
+      }
+      testLogFolder.mkdirs();
+      return testLogFolder;
    }
 
    public File getOldSources() {
@@ -114,6 +130,32 @@ public class PeASSFolders {
 
    public File getTempMeasurementFolder() {
       return tempResultFolder;
+   }
+   
+   /**
+    * Searches in subfolders for a clazz folder (necessary, since submodules may have arbitraty depth)
+    * @param baseFolder
+    * @param folderFilter
+    * @return
+    */
+   public List<File> findTempClazzFolder(final TestCase testcase) {
+      final String expectedFolderName = "*" + testcase.getClazz();
+      FileFilter folderFilter = new WildcardFileFilter(expectedFolderName);
+      return findTempClazzFolder(tempResultFolder, folderFilter);
+   }
+   
+   private List<File> findTempClazzFolder(final File baseFolder, final FileFilter folderFilter) {
+      final List<File> files = new LinkedList<>();
+      for (final File subfolder : baseFolder.listFiles()) {
+         if (subfolder.isDirectory()) {
+            if (folderFilter.accept(subfolder)) {
+               files.add(subfolder);
+            } else {
+               files.addAll(findTempClazzFolder(subfolder, folderFilter));
+            }
+         }
+      }
+      return files;
    }
 
    public File getDetailResultFolder() {
@@ -165,9 +207,9 @@ public class PeASSFolders {
       return debugFolder;
    }
    
-   public PeASSFolders getTempFolder(final String name) throws IOException, InterruptedException {
+   public PeassFolders getTempFolder(final String name) throws IOException, InterruptedException {
       final File nowFolder = new File(getTempProjectFolder(), name);
-      PeASSFolders folders = TemporaryProjectFolderUtil.cloneForcefully(this, nowFolder);
+      PeassFolders folders = TemporaryProjectFolderUtil.cloneForcefully(this, nowFolder);
       return folders;
    }
 

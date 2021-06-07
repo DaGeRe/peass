@@ -91,7 +91,7 @@ public abstract class CauseSearcher {
       persistenceManager.addMeasurement(reader.getRootPredecessor());
       addMeasurements(includableNodes, reader.getRootPredecessor());
 
-      differingNodes.addAll(allSearcher.getCurrentLevelDifferent());
+      differingNodes.addAll(allSearcher.getLevelDifferentPredecessor());
 
       writeTreeState();
    }

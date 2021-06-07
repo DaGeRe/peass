@@ -8,19 +8,19 @@ import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.dependency.KiekerResultManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 
 public class TooBigLogCleaner {
    public static final int MAX_SIZE_IN_MB = 10;
 
-   public static void cleanXMLFolder(final PeASSFolders folders) throws FileNotFoundException, IOException, XmlPullParserException {
+   public static void cleanXMLFolder(final PeassFolders folders) throws FileNotFoundException, IOException, XmlPullParserException {
       final File xmlFileFolder = KiekerResultManager.getXMLFileFolder(folders, folders.getProjectFolder());
       if (xmlFileFolder != null) {
          FileUtils.deleteDirectory(xmlFileFolder);
       }
    }
    
-   public static void cleanTooBigLogs(final PeASSFolders folders, final String version) {
+   public static void cleanTooBigLogs(final PeassFolders folders, final String version) {
       File logFolder = folders.getLogFolder();
       File versionFolder = new File(logFolder, version);
       if (versionFolder.exists()) {

@@ -8,9 +8,9 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.utils.Constants;
 import de.dagere.peass.validation.data.ProjectValidation;
 import de.dagere.peass.validation.data.Validation;
-import de.peran.FolderSearcher;
 
 /**
  * Reads validation data from normal measurement results. This assumes that all experiments have been executed.
@@ -29,17 +29,17 @@ public class GetValidationdata {
       getValidation(changeFolder, dependencyFolder, commitFolder, new File("validation.json"));
    }
 
-   public static void getValidation(final File changeFolder, final File dependencyFolder, final File commitFolder, File validationFile)
+   public static void getValidation(final File changeFolder, final File dependencyFolder, final File commitFolder, final File validationFile)
          throws IOException, JsonParseException, JsonMappingException, JsonGenerationException {
       final File commitFile = new File(commitFolder, "performance_commits.json");
 
-      final Map<String, Map<String, String>> data = FolderSearcher.MAPPER.readValue(commitFile, Map.class);
+      final Map<String, Map<String, String>> data = Constants.OBJECTMAPPER.readValue(commitFile, Map.class);
 //      data.remove("commons-compress");
 //      data.remove("commons-jcs");
 
       Validation old;
       if (validationFile.exists()) {
-         old = FolderSearcher.MAPPER.readValue(validationFile, Validation.class);
+         old = Constants.OBJECTMAPPER.readValue(validationFile, Validation.class);
       } else {
          old = null;
       }
@@ -52,7 +52,7 @@ public class GetValidationdata {
          validation.getProjects().put(project.getKey(), projectValidation);
       }
 
-      FolderSearcher.MAPPER.writeValue(validationFile, validation);
+      Constants.OBJECTMAPPER.writeValue(validationFile, validation);
    }
 
 }

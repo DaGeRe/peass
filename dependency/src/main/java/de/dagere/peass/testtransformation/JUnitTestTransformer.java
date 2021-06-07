@@ -27,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -61,11 +62,16 @@ import com.github.javaparser.ast.type.TypeParameter;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.parsing.JUnitParseUtil;
+import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.ClazzFileFinder;
+import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.peass.dependency.execution.ProjectModules;
 
 /**
  * Transforms JUnit-Tests to performance tests.
@@ -73,7 +79,7 @@ import de.dagere.peass.dependency.changesreading.JavaParserProvider;
  * @author reichelt
  *
  */
-public class JUnitTestTransformer {
+public class JUnitTestTransformer implements TestTransformer {
 
    private static final Logger LOG = LogManager.getLogger(JUnitTestTransformer.class);
 
@@ -107,11 +113,10 @@ public class JUnitTestTransformer {
     */
    public JUnitTestTransformer(final File projectFolder, final ExecutionConfig executionConfig) {
       this.projectFolder = projectFolder;
-      config = new MeasurementConfiguration(1, executionConfig.getTimeoutInMinutes());
+      config = new MeasurementConfiguration(1, executionConfig);
       config.setIterations(1);
       config.setWarmup(0);
       config.setUseKieker(true);
-      config.setTestGoal(executionConfig.getTestGoal());
       datacollectorlist = DataCollectorList.ONLYTIME;
    }
 
@@ -141,6 +146,61 @@ public class JUnitTestTransformer {
             }
          }
       }
+   }
+   
+   @Override
+   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules) {
+      determineVersions(modules.getModules());
+      final TestSet allTests = new TestSet();
+      for (final File module : modules.getModules()) {
+         final TestSet moduleTests = findModuleTests(mapping, includedModules, module);
+         allTests.addTestSet(moduleTests);
+      }
+      LOG.info("Included tests: {}", allTests.getTests().size());
+      return allTests;
+   }
+   
+   private TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) {
+      final TestSet moduleTests = new TestSet();
+      for (final String clazz : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
+         final String currentModule = mapping.getModuleOfClass(clazz);
+         final List<TestCase> testMethodNames = getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
+         for (TestCase test : testMethodNames) {
+            if (includedModules == null || includedModules.contains(test.getModule())) {
+               addTestIfIncluded(moduleTests, test);
+            }
+         }
+      }
+      return moduleTests;
+   }
+
+   private void addTestIfIncluded(final TestSet moduleTests, final TestCase test) {
+      final List<String> includes = getConfig().getExecutionConfig().getIncludes();
+      if (NonIncludedTestRemover.isTestIncluded(test, includes)) {
+         moduleTests.addTest(test);
+      }
+   }
+
+   @Override
+   public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules)  {
+      final TestSet tests = new TestSet();
+      determineVersions(modules);
+      for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {
+         final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
+         if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
+            final File moduleFolder = new File(projectFolder, clazzname.getModule());
+            final List<TestCase> methods = getTestMethodNames(moduleFolder, clazzname);
+            for (final TestCase test : methods) {
+               addTestIfIncluded(tests, test);
+            }
+         } else {
+            for (final String method : currentClazzMethods) {
+               TestCase test = new TestCase(clazzname.getClazz(), method, clazzname.getModule());
+               addTestIfIncluded(tests, test);
+            }
+         }
+      }
+      return tests;
    }
 
    /**
@@ -186,16 +246,17 @@ public class JUnitTestTransformer {
       extensions = new HashMap<>();
       for (final File javaFile : FileUtils.listFiles(testFolder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE)) {
          try {
-            final CompilationUnit unit = JavaParserProvider.parse(javaFile);
-            loadedFiles.put(javaFile, unit);
+            File canonicalJavaFile = javaFile.getCanonicalFile();
+            final CompilationUnit unit = JavaParserProvider.parse(canonicalJavaFile);
+            loadedFiles.put(canonicalJavaFile, unit);
             final boolean isJUnit4 = isJUnit(unit, 4);
             if (isJUnit4) {
-               junitVersions.put(javaFile, 4);
+               junitVersions.put(canonicalJavaFile, 4);
                // editJUnit4(javaFile);
             }
             final boolean isJUnit5 = isJUnit(unit, 5);
             if (isJUnit5) {
-               junitVersions.put(javaFile, 5);
+               junitVersions.put(canonicalJavaFile, 5);
                // editJUnit4(javaFile);
             }
             final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
@@ -210,11 +271,11 @@ public class JUnitTestTransformer {
                      extensionsOfBase = new LinkedList<>();
                      extensions.put(extensionName, extensionsOfBase);
                   }
-                  extensionsOfBase.add(javaFile);
+                  extensionsOfBase.add(canonicalJavaFile);
                }
             }
-         } catch (final FileNotFoundException e) {
-            e.printStackTrace();
+         } catch (final IOException e) {
+            throw new RuntimeException(e);
          }
       }
 
@@ -262,8 +323,9 @@ public class JUnitTestTransformer {
       return extensions;
    }
 
-   public List<String> getTestMethodNames(final File module, final ChangedEntity clazzname) {
-      final List<String> methods = new LinkedList<>();
+   @Override
+   public List<TestCase> getTestMethodNames(final File module, final ChangedEntity clazzname) {
+      final List<TestCase> methods = new LinkedList<>();
       final File clazzFile = ClazzFileFinder.getClazzFile(module, clazzname);
       final CompilationUnit unit = loadedFiles.get(clazzFile);
       if (unit != null) {
@@ -273,13 +335,19 @@ public class JUnitTestTransformer {
             if (junit == 3) {
                for (final MethodDeclaration method : clazz.getMethods()) {
                   if (method.getNameAsString().toLowerCase().contains("test")) {
-                     methods.add(method.getNameAsString());
+                     methods.add(new TestCase(clazzname.getClazz(), method.getNameAsString(), clazzname.getModule()));
                   }
                }
             } else if (junit == 4) {
-               methods.addAll(getAnnotatedMethods(clazz, 4));
+               for (String junit4method : getAnnotatedMethods(clazz, 4)) {
+                  TestCase test = new TestCase(clazzname.getClazz(), junit4method, clazzname.getModule());
+                  methods.add(test);
+               }
             } else if (junit == 5) {
-               methods.addAll(getAnnotatedMethods(clazz, 5));
+               for (String junit4method : getAnnotatedMethods(clazz, 5)) {
+                  TestCase test = new TestCase(clazzname.getClazz(), junit4method, clazzname.getModule());
+                  methods.add(test);
+               }
             }
          } else {
             LOG.error("Clazz {} has no JUnit version", clazzFile);
@@ -541,6 +609,7 @@ public class JUnitTestTransformer {
       charset = encoding;
    }
 
+   @Override
    public boolean isJUnit3() {
       boolean junit3 = false;
       for (final Entry<File, Integer> clazz : junitVersions.entrySet()) {
@@ -551,22 +620,27 @@ public class JUnitTestTransformer {
       return junit3;
    }
 
+   @Override
    public boolean isAggregatedWriter() {
       return aggregatedWriter;
    }
 
+   @Override
    public void setAggregatedWriter(final boolean aggregatedWriter) {
       this.aggregatedWriter = aggregatedWriter;
    }
 
+   @Override
    public void setIgnoreEOIs(final boolean ignoreEOIs) {
       this.ignoreEOIs = ignoreEOIs;
    }
 
+   @Override
    public boolean isIgnoreEOIs() {
       return ignoreEOIs;
    }
 
+   @Override
    public MeasurementConfiguration getConfig() {
       return config;
    }

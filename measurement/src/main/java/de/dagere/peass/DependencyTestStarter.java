@@ -81,7 +81,7 @@ public class DependencyTestStarter extends PairProcessor {
       if (measurementConfigMixin.getDuration() != 0) {
          throw new RuntimeException("Time-based running currently not supported; eventually fix commented-out code to get it running again");
       } else {
-         tester = new DependencyTester(folders, new MeasurementConfiguration(measurementConfigMixin, executionMixin, statisticConfigMixin), new EnvironmentVariables());
+         tester = new DependencyTester(folders, measurementConfiguration, new EnvironmentVariables());
       }
    }
 

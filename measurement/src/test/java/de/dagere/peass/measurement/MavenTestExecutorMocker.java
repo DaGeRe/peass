@@ -16,7 +16,7 @@ import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.ExecutorCreator;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.MavenTestExecutor;
 import de.dagere.peass.dependency.execution.TestExecutor;
@@ -34,10 +34,10 @@ public class MavenTestExecutorMocker {
             return manager;
          }
       }).when(ExecutorCreator.class);
-      ExecutorCreator.createExecutor(Mockito.any(PeASSFolders.class), Mockito.any(JUnitTestTransformer.class), Mockito.any(EnvironmentVariables.class));
+      ExecutorCreator.createExecutor(Mockito.any(PeassFolders.class), Mockito.any(JUnitTestTransformer.class), Mockito.any(EnvironmentVariables.class));
    }
 
-   public static void mockExecutor(final PeASSFolders folders, final MeasurementConfiguration config) throws Exception {
+   public static void mockExecutor(final PeassFolders folders, final MeasurementConfiguration config) throws Exception {
       final TestExecutor mockedExecutor = Mockito.mock(TestExecutor.class);
 
       PowerMockito.mockStatic(ExecutorCreator.class);
@@ -46,7 +46,7 @@ public class MavenTestExecutorMocker {
 
                @Override
                public TestExecutor answer(final InvocationOnMock invocation) throws Throwable {
-                  PeASSFolders folders = invocation.getArgument(0);
+                  PeassFolders folders = invocation.getArgument(0);
                   writeValue(folders, 100);
                   return mockedExecutor;
                }
@@ -55,7 +55,7 @@ public class MavenTestExecutorMocker {
       Mockito.when(mockedExecutor.getTestTransformer()).thenReturn(new JUnitTestTransformer(folders.getProjectFolder(), config));
    }
 
-   public synchronized static void writeValue(final PeASSFolders folders, final int average) throws JAXBException {
+   public synchronized static void writeValue(final PeassFolders folders, final int average) throws JAXBException {
       final File measurementFile = new File(folders.getTempMeasurementFolder(), "de.peass.MyTest");
       measurementFile.mkdirs();
       final XMLDataStorer storer = new XMLDataStorer(measurementFile, "de.peass.MyTest", "test");

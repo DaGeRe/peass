@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
 
 /**
@@ -19,10 +18,12 @@ public class TestCase implements Comparable<TestCase> {
    private final String module;
    private final String clazz;
    private final String method;
+   private final String params;
 
-   public TestCase(final Kopemedata data) {
-      clazz = data.getTestcases().getClazz();
-      method = data.getTestcases().getTestcase().get(0).getName();
+   public TestCase(final Testcases data, final String params) {
+      clazz = data.getClazz();
+      method = data.getTestcase().get(0).getName();
+      this.params = params;
       module = "";
    }
 
@@ -41,16 +42,22 @@ public class TestCase implements Comparable<TestCase> {
          module = "";
       }
       this.method = method;
+      this.params = null;
    }
-   
+
    public TestCase(final ChangedEntity entity) {
-      this(entity.getClazz(), entity.getMethod(), entity.getModule());
+      this(entity.getClazz(), entity.getMethod(), entity.getModule(), null);
+   }
+
+   public TestCase(final String clazz, final String method, final String module) {
+      this(clazz, method, module, null);
    }
 
    @JsonCreator
    public TestCase(@JsonProperty("clazz") final String clazz,
          @JsonProperty("method") final String method,
-         @JsonProperty("module") final String module) {
+         @JsonProperty("module") final String module,
+         @JsonProperty("params") final String params) {
       if (clazz.contains(File.separator)) {
          throw new RuntimeException("Testcase " + clazz + " should be full qualified name, not path!");
       }
@@ -60,6 +67,7 @@ public class TestCase implements Comparable<TestCase> {
       this.clazz = clazz;
       this.method = method;
       this.module = module;
+      this.params = params;
    }
 
    public TestCase(final String testcase) {
@@ -92,12 +100,7 @@ public class TestCase implements Comparable<TestCase> {
          }
          method = testcase.substring(index + 1);
       }
-   }
-
-   public TestCase(final Testcases testcases) {
-      module = "";
-      clazz = testcases.getClazz();
-      method = testcases.getTestcase().get(0).getName();
+      params = null;
    }
 
    public String getClazz() {
@@ -110,6 +113,10 @@ public class TestCase implements Comparable<TestCase> {
 
    public String getModule() {
       return module;
+   }
+
+   public String getParams() {
+      return params;
    }
 
    @JsonIgnore

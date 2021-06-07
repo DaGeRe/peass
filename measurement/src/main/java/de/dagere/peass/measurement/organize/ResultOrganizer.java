@@ -1,17 +1,17 @@
 package de.dagere.peass.measurement.organize;
 
 import java.io.File;
-import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,7 +21,7 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.analysis.MultipleVMTestUtil;
 
@@ -29,7 +29,7 @@ public class ResultOrganizer {
 
    private static final Logger LOG = LogManager.getLogger(ResultOrganizer.class);
 
-   private final PeASSFolders folders;
+   protected final PeassFolders folders;
    private final String mainVersion;
    private final long currentChunkStart;
    private final boolean isUseKieker;
@@ -40,7 +40,7 @@ public class ResultOrganizer {
    private boolean success = true;
    private final int expectedIterations;
 
-   public ResultOrganizer(final PeASSFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll, final TestCase test,
+   public ResultOrganizer(final PeassFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll, final TestCase test,
          final int expectedIterations) {
       this.folders = folders;
       this.mainVersion = currentVersion;
@@ -134,10 +134,9 @@ public class ResultOrganizer {
 
    public File getTempResultsFolder(final String version) {
       LOG.info("Searching method: {}", testcase);
-      final String expectedFolderName = "*" + testcase.getClazz();
-      final Collection<File> folderCandidates = findFolder(folders.getTempMeasurementFolder(), new WildcardFileFilter(expectedFolderName));
+      final Collection<File> folderCandidates = folders.findTempClazzFolder(testcase); 
       if (folderCandidates.size() != 1) {
-         LOG.error("Ordner {} ist {} mal vorhanden.", expectedFolderName, folderCandidates.size());
+         LOG.error("Ordner {} ist {} mal vorhanden.", testcase.getClazz(), folderCandidates.size());
          return null;
       } else {
          final File folder = folderCandidates.iterator().next();
@@ -184,14 +183,15 @@ public class ResultOrganizer {
    }
 
    private void saveKiekerFiles(final File folder, final File destFolder) throws IOException {
-      final File kiekerFolder = folder.listFiles()[0];
-      if (!kiekerFolder.getName().matches("[0-9]*")) {
-         throw new RuntimeException("Kieker folder is expected to consist only of numbers, but was " + kiekerFolder.getName());
+      final File[] kiekerFolders = folder.listFiles((FilenameFilter) new RegexFileFilter("[0-9]*"));
+      if (kiekerFolders.length != 1) {
+         String fileNameList = Arrays.toString(kiekerFolders);
+         throw new RuntimeException("It is expected that after one execution exactly one Kieker folder exists, but was " + fileNameList);
       }
       if (saveAll) {
-         moveOrCompressFile(destFolder, kiekerFolder);
+         moveOrCompressFile(destFolder, kiekerFolders[0]);
       } else {
-         FileUtils.deleteDirectory(kiekerFolder);
+         FileUtils.deleteDirectory(kiekerFolders[0]);
       }
    }
 
@@ -218,20 +218,6 @@ public class ResultOrganizer {
                   dest.getAbsolutePath());
          }
       }
-   }
-
-   protected static List<File> findFolder(final File baseFolder, final FileFilter folderFilter) {
-      final List<File> files = new LinkedList<>();
-      for (final File f : baseFolder.listFiles()) {
-         if (f.isDirectory()) {
-            if (folderFilter.accept(f)) {
-               files.add(f);
-            } else {
-               files.addAll(findFolder(f, folderFilter));
-            }
-         }
-      }
-      return files;
    }
 
    public int getThresholdForZippingInMB() {

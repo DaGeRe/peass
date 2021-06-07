@@ -2,7 +2,7 @@ package de.dagere.peass.dependency.execution;
 
 import java.io.File;
 
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.TestTransformer;
 
 public class ArgLineBuilder {
 
@@ -23,10 +23,10 @@ public class ArgLineBuilder {
 
    protected static final String KIEKER_ARG_LINE_GRADLE = JAVA_AGENT + ":" + KIEKER_FOLDER_GRADLE;
 
-   private final JUnitTestTransformer testTransformer;
+   private final TestTransformer testTransformer;
    private final File modulePath;
 
-   public ArgLineBuilder(final JUnitTestTransformer testTransformer, final File modulePath) {
+   public ArgLineBuilder(final TestTransformer testTransformer, final File modulePath) {
       this.testTransformer = testTransformer;
       this.modulePath = modulePath;
    }
@@ -39,14 +39,14 @@ public class ArgLineBuilder {
    private String buildGenericArgline(final File tempFolder, final String valueSeparator, final String entrySeparator, final String kiekerLine) {
       String argline;
       if (testTransformer.getConfig().isUseKieker()) {
-         String writerConfig;
+         String writerConfig = "";
          String tempFolderPath = "'" + tempFolder.getAbsolutePath() + "'";
-         if (testTransformer.isAggregatedWriter()) {
-            final String bulkFolder = "-D" + AOPXMLHelper.AGGREGATED_WRITER + ".customStoragePath" + valueSeparator + tempFolderPath;
-            writerConfig = bulkFolder;
-         } else {
-            writerConfig = "";
-         }
+         // if (testTransformer.isAggregatedWriter()) {
+         // final String bulkFolder = "-D" + AOPXMLHelper.AGGREGATED_WRITER + ".customStoragePath" + valueSeparator + tempFolderPath;
+         // writerConfig = bulkFolder;
+         // } else {
+         // writerConfig = "";
+         // }
 
          if (!testTransformer.getConfig().isEnableAdaptiveConfig()) {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
@@ -62,12 +62,15 @@ public class ArgLineBuilder {
             }
          } else {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-               argline = TEMP_DIR + valueSeparator + tempFolderPath +
-                     entrySeparator + writerConfig;
+               argline = TEMP_DIR + valueSeparator + tempFolderPath;
+               if (!writerConfig.equals("")) {
+                  argline += entrySeparator + writerConfig;
+               }
             } else {
-               argline = kiekerLine +
-                     entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath +
-                     entrySeparator + writerConfig;
+               argline = kiekerLine + entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath;
+               if (!writerConfig.equals("")) {
+                  argline += entrySeparator + writerConfig;
+               }
             }
          }
          if (!entrySeparator.contains("\"")) {

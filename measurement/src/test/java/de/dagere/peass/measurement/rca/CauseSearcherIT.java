@@ -28,15 +28,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.CauseSearchFolders;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
-import de.dagere.peass.measurement.rca.CauseSearcherConfig;
-import de.dagere.peass.measurement.rca.CauseTester;
-import de.dagere.peass.measurement.rca.RCAStrategy;
 import de.dagere.peass.measurement.rca.helper.VCSTestUtils;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.searcher.CauseSearcher;
@@ -54,7 +51,7 @@ public class CauseSearcherIT {
    
    public final static CauseSearcherConfig CAUSE_CONFIG_TESTME_COMPLETE = new CauseSearcherConfig(new TestCase("defaultpackage.TestMe", "testMe"), 
          false, false, 0.1,
-         false, false, RCAStrategy.COMPLETE);
+         false, false, RCAStrategy.COMPLETE, 1);
    
    private static final File VERSIONS_FOLDER = new File("src/test/resources/rootCauseIT");
    private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
@@ -70,7 +67,7 @@ public class CauseSearcherIT {
          e.printStackTrace();
       }
       
-      final PeASSFolders folders = new PeASSFolders(DependencyTestConstants.CURRENT);
+      final PeassFolders folders = new PeassFolders(DependencyTestConstants.CURRENT);
       final File projectFolderTemp = new File(folders.getTempProjectFolder(), "000001");
       
       VCSTestUtils.mockGetVCS();
@@ -90,10 +87,10 @@ public class CauseSearcherIT {
             return null;
          }
       }).when(GitUtils.class);
-      GitUtils.clone(Mockito.any(PeASSFolders.class), Mockito.any(File.class));
+      GitUtils.clone(Mockito.any(PeassFolders.class), Mockito.any(File.class));
    }
 
-   private void mockGoToTag(final PeASSFolders folders, final File projectFolderTemp) {
+   private void mockGoToTag(final PeassFolders folders, final File projectFolderTemp) {
       PowerMockito.doAnswer(new Answer<Void>() {
 
          @Override

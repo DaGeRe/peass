@@ -20,8 +20,10 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,7 +38,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
@@ -70,12 +71,19 @@ public class DependencyManager extends KiekerResultManager {
     * afterwards.
     * 
     * @param projectFolder
+    * @throws SecurityException
+    * @throws NoSuchMethodException
+    * @throws InvocationTargetException
+    * @throws IllegalArgumentException
+    * @throws IllegalAccessException
+    * @throws InstantiationException
+    * @throws ClassNotFoundException
     */
-   public DependencyManager(final PeASSFolders folders, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+   public DependencyManager(final PeassFolders folders, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       super(folders, executionConfig, env);
    }
 
-   public DependencyManager(final TestExecutor executor, final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
+   public DependencyManager(final TestExecutor executor, final PeassFolders folders, final JUnitTestTransformer testTransformer) {
       super(executor, folders, testTransformer);
    }
 
@@ -112,6 +120,12 @@ public class DependencyManager extends KiekerResultManager {
    }
 
    private TestSet findIncludedTests(final ModuleClassMapping mapping) throws IOException, XmlPullParserException {
+      List<String> includedModules = getIncludedModules();
+
+      return testTransformer.findModuleTests(mapping, includedModules, executor.getModules());
+   }
+
+   private List<String> getIncludedModules() throws IOException {
       List<String> includedModules;
       if (testTransformer.getConfig().getExecutionConfig().getPl() != null) {
          includedModules = MavenPomUtil.getDependentModules(folders.getProjectFolder(), testTransformer.getConfig().getExecutionConfig().getPl());
@@ -119,26 +133,7 @@ public class DependencyManager extends KiekerResultManager {
       } else {
          includedModules = null;
       }
-
-      testTransformer.determineVersions(executor.getModules().getModules());
-      final TestSet tests = new TestSet();
-      for (final File module : executor.getModules().getModules()) {
-         for (final String clazz : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
-            final String currentModule = mapping.getModuleOfClass(clazz);
-            final List<String> testMethodNames = testTransformer.getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
-            for (String method : testMethodNames) {
-               final TestCase test = new TestCase(clazz, method, currentModule);
-               final List<String> includes = testTransformer.getConfig().getExecutionConfig().getIncludes();
-               if (NonIncludedTestRemover.isTestIncluded(test, includes)) {
-                  if (includedModules == null || includedModules.contains(test.getModule())) {
-                     tests.addTest(test);
-                  }
-               }
-            }
-         }
-      }
-      LOG.info("Included tests: {}", tests.getTests().size());
-      return tests;
+      return includedModules;
    }
 
    private boolean printErrors() throws IOException {
@@ -175,10 +170,10 @@ public class DependencyManager extends KiekerResultManager {
       final Collection<File> xmlFiles = FileUtils.listFiles(folders.getTempMeasurementFolder(), new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE);
       LOG.debug("Initial test execution finished, starting result collection, analyzing {} files", xmlFiles.size());
       for (final File testResultFile : xmlFiles) {
-         final String testClassName = testResultFile.getParentFile().getName();
+         final File parent = testResultFile.getParentFile();
+         final String testClassName = parent.getName();
          final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - 4); // remove
          // .xml
-         final File parent = testResultFile.getParentFile();
          final String moduleOfClass = mapping.getModuleOfClass(testClassName);
          if (moduleOfClass == null) {
             throw new RuntimeException("Module of class " + testClassName + " is null");
@@ -206,7 +201,9 @@ public class DependencyManager extends KiekerResultManager {
       }
       for (File classFolder : movedInitialResults.listFiles()) {
          LOG.debug("Cleaning {}", classFolder.getAbsolutePath());
-         cleanFolderAboveSize(classFolder, deleteFolderSize);
+         if (classFolder.isDirectory()) {
+            cleanFolderAboveSize(classFolder, deleteFolderSize);
+         }
       }
    }
 
@@ -219,28 +216,19 @@ public class DependencyManager extends KiekerResultManager {
     */
    public void updateDependenciesOnce(final ChangedEntity testClassName, final File parent, final ModuleClassMapping mapping) {
       LOG.debug("Parent: " + parent);
-      final File kiekerResultFolder = KiekerFolderUtil.findKiekerFolder(testClassName.getMethod(), parent);
+      TestCase testcase = new TestCase(testClassName);
+      final File moduleResultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
+      final File[] kiekerResultFolders = KiekerFolderUtil.getClazzMethodFolder(testcase, moduleResultsFolder);
 
-      if (kiekerResultFolder == null) {
+      if (kiekerResultFolders == null) {
          LOG.error("No kieker folder found: " + parent);
          return;
       }
 
-      final long size = FileUtils.sizeOfDirectory(kiekerResultFolder);
-      final long sizeInMB = size / (1024 * 1024);
+      final Map<ChangedEntity, Set<String>> allCalledClasses = getCalledClasses(mapping, kiekerResultFolders);
 
-      LOG.debug("Size: {} Folder: {}", sizeInMB, kiekerResultFolder);
-      if (sizeInMB > CalledMethodLoader.TRACE_MAX_SIZE_IN_MB) {
-         LOG.error("Trace too big!");
-         return;
-      }
-
-      final File kiekerOutputFile = new File(folders.getLogFolder(), "ausgabe_kieker.txt");
-
-      final Map<ChangedEntity, Set<String>> calledClasses = new CalledMethodLoader(kiekerResultFolder, mapping).getCalledMethods(kiekerOutputFile);
-
-      removeNotExistingClazzes(calledClasses);
-      for (final Iterator<ChangedEntity> iterator = calledClasses.keySet().iterator(); iterator.hasNext();) {
+      removeNotExistingClazzes(allCalledClasses);
+      for (final Iterator<ChangedEntity> iterator = allCalledClasses.keySet().iterator(); iterator.hasNext();) {
          final ChangedEntity clazz = iterator.next();
          if (clazz.getModule() == null) {
             throw new RuntimeException("Class " + clazz.getJavaClazzName() + " has no module!");
@@ -248,8 +236,35 @@ public class DependencyManager extends KiekerResultManager {
       }
 
       LOG.debug("Test: {} ", testClassName);
-      LOG.debug("Kieker: {} Dependencies: {}", kiekerResultFolder.getAbsolutePath(), calledClasses.size());
-      setDependencies(testClassName, calledClasses);
+      LOG.debug("Dependencies: {}", allCalledClasses.size());
+      setDependencies(testClassName, allCalledClasses);
+   }
+
+   private Map<ChangedEntity, Set<String>> getCalledClasses(final ModuleClassMapping mapping, final File[] kiekerResultFolders) {
+      final Map<ChangedEntity, Set<String>> allCalledClasses = new LinkedHashMap<ChangedEntity, Set<String>>();
+      for (File kiekerResultFolder : kiekerResultFolders) {
+         final long size = FileUtils.sizeOfDirectory(kiekerResultFolder);
+         final long sizeInMB = size / (1024 * 1024);
+
+         LOG.debug("Size: {} Folder: {}", sizeInMB, kiekerResultFolder);
+         if (sizeInMB > CalledMethodLoader.TRACE_MAX_SIZE_IN_MB) {
+            LOG.error("Trace too big!");
+         } else {
+            LOG.debug("Reading Kieker folder: {}", kiekerResultFolder.getAbsolutePath());
+            final File kiekerOutputFile = new File(folders.getLogFolder(), "ausgabe_kieker.txt");
+
+            final Map<ChangedEntity, Set<String>> calledClasses = new CalledMethodLoader(kiekerResultFolder, mapping).getCalledMethods(kiekerOutputFile);
+            for (Map.Entry<ChangedEntity, Set<String>> calledClass : calledClasses.entrySet()) {
+               if (!allCalledClasses.containsKey(calledClass.getKey())) {
+                  allCalledClasses.put(calledClass.getKey(), calledClass.getValue());
+               } else {
+                  Set<String> alreadyKnownCalledClasses = allCalledClasses.get(calledClass.getKey());
+                  alreadyKnownCalledClasses.addAll(calledClass.getValue());
+               }
+            }
+         }
+      }
+      return allCalledClasses;
    }
 
    private void removeNotExistingClazzes(final Map<ChangedEntity, Set<String>> calledClasses) {

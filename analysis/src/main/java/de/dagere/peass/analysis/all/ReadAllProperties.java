@@ -16,8 +16,8 @@ import de.dagere.peass.ReadProperties;
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
-import de.peran.FolderSearcher;
 
 /**
  * The goal was to derive patterns from simple properties. This did not work out, therefore this class will be removed in the future
@@ -67,7 +67,7 @@ public class ReadAllProperties {
       final File viewFolder = new File(folders.getAllViewFolder(), "views_" + project);
 
       final File executionFile = new File(folders.getDependencyFolder(), "execute_" + project + ".json");
-      final ExecutionData changedTests = FolderSearcher.MAPPER.readValue(executionFile, ExecutionData.class);
+      final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
 
       final File projectFolder = new File("../../projekte/" + project);
       if (!projectFolder.exists()) {

@@ -19,15 +19,16 @@ import de.dagere.peass.analysis.all.RepoFolders;
 import de.dagere.peass.analysis.helper.read.VersionData;
 import de.dagere.peass.confidence.KoPeMeDataHelper;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.jmh.ExternalJmhDataConverter;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.ProjectStatistics;
 import de.dagere.peass.measurement.analysis.Relation;
 import de.dagere.peass.measurement.analysis.statistics.DescribedChunk;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.statistics.ConfidenceIntervalInterpretion;
+import de.dagere.peass.utils.Constants;
 import de.dagere.peass.utils.RunCommandWriterRCA;
 import de.dagere.peass.utils.RunCommandWriterSlurmRCA;
-import de.peran.FolderSearcher;
 import de.precision.analysis.repetitions.bimodal.CompareData;
 
 /**
@@ -164,8 +165,8 @@ public class ChangeReader {
          final File resultfile = new File(statisticsFolder.getParentFile(), "changes_" + executorName + ".json");
          final File statisticFile = new File(statisticsFolder, executorName + ".json");
          try {
-            FolderSearcher.MAPPER.writeValue(resultfile, changes);
-            FolderSearcher.MAPPER.writeValue(statisticFile, info);
+            Constants.OBJECTMAPPER.writeValue(resultfile, changes);
+            Constants.OBJECTMAPPER.writeValue(statisticFile, info);
          } catch (final IOException e) {
             e.printStackTrace();
          }
@@ -215,7 +216,7 @@ public class ChangeReader {
       // if (! (statistic.getTvalue() == Double.NaN)){
       CompareData cd = new CompareData(describedChunk.getPrevious(), describedChunk.getCurrent());
       final Relation confidenceResult = ConfidenceIntervalInterpretion.compare(cd);
-      final TestCase testcase = new TestCase(data);
+      final TestCase testcase = new TestCase(data.getTestcases(), ExternalJmhDataConverter.paramsToString(describedChunk.getCurrent().get(0).getParams()));
       final double diff = describedChunk.getDiff();
       final boolean isBigEnoughDiff = Math.abs(diff) > minChange;
       allData.addStatistic(versions[1], testcase, fileName, statistic,

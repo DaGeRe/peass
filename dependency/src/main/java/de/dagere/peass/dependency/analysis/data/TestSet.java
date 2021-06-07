@@ -18,6 +18,7 @@ package de.dagere.peass.dependency.analysis.data;
 
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -163,7 +164,7 @@ public class TestSet {
 
    @JsonIgnore
    public Set<TestCase> getTests() {
-      final Set<TestCase> testcases = new HashSet<>();
+      final Set<TestCase> testcases = new LinkedHashSet<>();
       for (final Entry<ChangedEntity, Set<String>> classTests : getTestcases().entrySet()) {
          if (classTests.getValue().size() > 0) {
             for (final String method : classTests.getValue()) {

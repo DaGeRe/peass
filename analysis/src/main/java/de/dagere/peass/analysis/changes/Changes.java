@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
 /**
@@ -47,6 +46,7 @@ public class Changes implements Serializable {
       change.setChangePercent(percent);
       change.setVms(vms);
       change.setMethod(testcase.getMethod());
+      change.setParams(testcase.getParams());
       String clazz = testcase.getTestclazzWithModuleName();
       addChange(clazz, change);
       return change;

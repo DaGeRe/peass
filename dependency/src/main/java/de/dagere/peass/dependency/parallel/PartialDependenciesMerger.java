@@ -28,7 +28,7 @@ public class PartialDependenciesMerger {
    private PartialDependenciesMerger() {
 
    }
-   
+
    public static Dependencies mergeVersions(final File out, final File[] partFiles) throws IOException, JsonGenerationException, JsonMappingException {
       final List<Dependencies> deps = readDependencies(partFiles);
       Dependencies merged = mergeDependencies(deps);
@@ -82,7 +82,7 @@ public class PartialDependenciesMerger {
       }
       return merged;
    }
-   
+
    public static ExecutionData mergeExecutiondata(final List<ExecutionData> executionData) {
       ExecutionData merged = new ExecutionData();
       for (ExecutionData data : executionData) {
@@ -91,16 +91,38 @@ public class PartialDependenciesMerger {
       return merged;
    }
 
-   public static ExecutionData mergeExecutions(final File executionOut, final ResultsFolders[] outFiles) throws JsonParseException, JsonMappingException, IOException {
-      List<ExecutionData> executionData = new LinkedList<>();
+   public static ExecutionData mergeExecutions(final ResultsFolders mergedOut, final ResultsFolders[] outFiles) throws JsonParseException, JsonMappingException, IOException {
+
+      List<File> executionOutFiles = new LinkedList<>();
+      List<File> coverageSelectionOutFiles = new LinkedList<>();
       for (ResultsFolders resultFolder : outFiles) {
          if (resultFolder != null) {
-            ExecutionData currentData = Constants.OBJECTMAPPER.readValue(resultFolder.getExecutionFile(), ExecutionData.class);
-            executionData.add(currentData);
+            if (resultFolder.getExecutionFile().exists()) {
+               executionOutFiles.add(resultFolder.getExecutionFile());
+            }
+            if (resultFolder.getCoverageSelectionFile() != null && resultFolder.getCoverageSelectionFile().exists()) {
+               coverageSelectionOutFiles.add(resultFolder.getCoverageSelectionFile());
+            }
+            
          }
       }
+      ExecutionData mergedExecutions = mergeExecutionFiles(executionOutFiles);
+      Constants.OBJECTMAPPER.writeValue(mergedOut.getExecutionFile(), mergedExecutions);
+
+      if (coverageSelectionOutFiles.size() > 0) {
+         ExecutionData mergedCoverage = mergeExecutionFiles(coverageSelectionOutFiles);
+         Constants.OBJECTMAPPER.writeValue(mergedOut.getCoverageSelectionFile(), mergedCoverage);
+      }
+      return mergedExecutions;
+   }
+
+   private static ExecutionData mergeExecutionFiles(final List<File> executionOutFiles) throws IOException, JsonParseException, JsonMappingException {
+      List<ExecutionData> executionData = new LinkedList<>();
+      for (File file : executionOutFiles) {
+         ExecutionData currentData = Constants.OBJECTMAPPER.readValue(file, ExecutionData.class);
+         executionData.add(currentData);
+      }
       ExecutionData merged = mergeExecutiondata(executionData);
-      Constants.OBJECTMAPPER.writeValue(executionOut, merged);
       return merged;
    }
 }

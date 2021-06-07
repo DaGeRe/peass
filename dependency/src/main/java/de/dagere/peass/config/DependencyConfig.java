@@ -1,27 +1,41 @@
 package de.dagere.peass.config;
 
-public class DependencyConfig {
+import java.io.Serializable;
+
+public class DependencyConfig implements Serializable {
+   
+   private static final long serialVersionUID = -3734493960077455640L;
+   
    private final int threads;
    private final boolean doNotUpdateDependencies;
-   private final boolean isGenerateViews;
+   private final boolean generateViews;
+   private final boolean generateCoverageSelection;
 
    public DependencyConfig(final int threads, final boolean doNotUpdateDependencies) {
       this.threads = threads;
       this.doNotUpdateDependencies = doNotUpdateDependencies;
       if (doNotUpdateDependencies) {
-         isGenerateViews = false;
+         generateViews = false;
+         generateCoverageSelection = false;
       } else {
-         isGenerateViews = true;
+         generateViews = true;
+      // Coverage selection does not create high additional effort after view generation, so generate it by default if views are generated
+         generateCoverageSelection = true; 
       }
    }
 
-   public DependencyConfig(final int threads, final boolean doNotUpdateDependencies, final boolean isGenerateViews) {
+   public DependencyConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateViews, final boolean generateCoverageSelection) {
       this.threads = threads;
       this.doNotUpdateDependencies = doNotUpdateDependencies;
-      this.isGenerateViews = isGenerateViews;
-      if (doNotUpdateDependencies && isGenerateViews) {
+      this.generateViews = generateViews;
+      this.generateCoverageSelection = generateCoverageSelection;
+      if (doNotUpdateDependencies && generateViews) {
          throw new RuntimeException("isGenerateViews may only be true if doNotUpdateDependencies is false! "
                + "If doNotUpdateDependencies is set, no traces are generates; then it is not possible to generate views");
+      }
+      if (!generateViews && generateCoverageSelection) {
+         throw new RuntimeException("generateCoverageSelection may only be true if generateViews is true! "
+               + "If generateViews is disabled, no traces are generates; then it is not possible to select by code coverage");
       }
    }
 
@@ -34,7 +48,11 @@ public class DependencyConfig {
    }
 
    public boolean isGenerateViews() {
-      return isGenerateViews;
+      return generateViews;
+   }
+   
+   public boolean isGenerateCoverageSelection() {
+      return generateCoverageSelection;
    }
 
 }

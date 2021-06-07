@@ -1,6 +1,7 @@
 package de.dagere.peass.dependencytests.integrated;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -16,7 +17,7 @@ import com.github.javaparser.ParseException;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
@@ -35,12 +36,12 @@ public class TestGenerateDependencies {
    private static final Logger LOG = LogManager.getLogger(TestGenerateDependencies.class);
 
    @Test
-   public void testGenerateDependencies() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testGenerateDependencies() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       DependencyDetectorTestUtil.init(TraceGettingIT.BASIC);
 
       final FakeFileIterator iterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, Arrays.asList(TraceGettingIT.REPETITION));
       ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG, new PeASSFolders(TestConstants.CURRENT_FOLDER), resultsFolders, "", iterator, VersionKeeper.INSTANCE, new ExecutionConfig(5), new EnvironmentVariables());
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, "", iterator, VersionKeeper.INSTANCE, new ExecutionConfig(5), new EnvironmentVariables());
 
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);

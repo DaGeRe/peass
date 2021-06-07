@@ -7,7 +7,7 @@ import javax.xml.bind.JAXBException;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.dependency.traces.TemporaryProjectFolderUtil;
@@ -21,7 +21,7 @@ public class ParallelExecutionRunnable implements Runnable {
    private final int vmid;
    private final File logFolder;
    private final DependencyTester tester;
-   private final PeASSFolders temporaryFolders;
+   private final PeassFolders temporaryFolders;
    
    public ParallelExecutionRunnable(final ResultOrganizerParallel organizer, final String version, final TestCase testcase, final int vmid, final File logFolder, final DependencyTester tester) throws IOException, InterruptedException {
       this.organizer = organizer;
@@ -44,13 +44,13 @@ public class ParallelExecutionRunnable implements Runnable {
       }
    }
 
-   private PeASSFolders cloneProjectFolder() throws IOException, InterruptedException {
+   private PeassFolders cloneProjectFolder() throws IOException, InterruptedException {
       final File projectFolderTemp = new File(tester.getFolders().getTempProjectFolder(), "parallel_" + version);
-      final PeASSFolders temporaryFolders;
+      final PeassFolders temporaryFolders;
       if (!projectFolderTemp.exists()) {
          temporaryFolders = TemporaryProjectFolderUtil.cloneForcefully(tester.getFolders(), projectFolderTemp);
       } else {
-         temporaryFolders = new PeASSFolders(projectFolderTemp);
+         temporaryFolders = new PeassFolders(projectFolderTemp);
       }
       organizer.addVersionFolders(version, temporaryFolders);
       return temporaryFolders;

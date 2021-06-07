@@ -45,15 +45,10 @@ public class ExecutionData extends SelectedTests {
       return versions;
    }
    
-   /**
-    * Adds a version in order to mark that the version has been analyzed (even without any tests to execute)
-    * @param version
-    */
-   @JsonIgnore
-   public void addVersion(final String version, final String predecessor) {
-      TestSet testset = new TestSet();
-      testset.setPredecessor(predecessor);
-      versions.put(version, testset);
+   public void addEmptyVersion(final String version, final String predecessor) {
+      TestSet tests = new TestSet();
+      tests.setPredecessor(predecessor);
+      versions.put(version, tests);
    }
 
    @JsonIgnore
@@ -70,7 +65,8 @@ public class ExecutionData extends SelectedTests {
    public void addCall(final String version, final TestCase testcase) {
       TestSet executes = versions.get(version);
       if (executes == null) {
-         throw new RuntimeException("Version " + version + " was not existing; version is expected to exist");
+         executes = new TestSet();
+         versions.put(version, executes);
       }
       executes.addTest(testcase);
    }

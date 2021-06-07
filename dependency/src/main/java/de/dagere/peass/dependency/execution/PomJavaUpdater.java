@@ -53,9 +53,9 @@ public class PomJavaUpdater {
                String value = confProperty.getValue();
                if (value.contains(".")) {
                   final String versionPart = value.substring(value.indexOf(".") + 1);
-                  return Integer.parseInt(versionPart);
+                  return parseVersion(versionPart);
                } else {
-                  return Integer.parseInt(value);
+                  return parseVersion(value);
                }
             } else {
                return CURRENT_MAVEN_DEFAULT;
@@ -68,6 +68,14 @@ public class PomJavaUpdater {
          return CURRENT_MAVEN_DEFAULT;
       }
 
+   }
+
+   private static int parseVersion(final String versionPart) {
+      if (versionPart.matches("[0-9]*")) {
+         return Integer.parseInt(versionPart);
+      } else {
+         return CURRENT_MAVEN_DEFAULT;
+      }
    }
 
    private static void setCompiler(final Model model, final String version) {

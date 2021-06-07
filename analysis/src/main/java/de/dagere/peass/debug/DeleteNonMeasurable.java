@@ -19,7 +19,7 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.peran.FolderSearcher;
+import de.dagere.peass.utils.Constants;
 
 /**
  * There were two bugs in PeASS: - Executionfiles had to many entries (e.g. because javafiles were searched in the wrong place and then got sometimes missing) - The execution was
@@ -40,7 +40,7 @@ public class DeleteNonMeasurable {
       for (final String project : new String[] { "commons-compress", "commons-csv", "commons-dbcp", "commons-fileupload", "commons-jcs",
             "commons-imaging", "commons-io", "commons-numbers", "commons-pool", "commons-text" }) {
          final File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
-         final ExecutionData changedTests = FolderSearcher.MAPPER.readValue(executionFile, ExecutionData.class);
+         final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
 
          final File projectMeasurements = new File(measurementFolder, project);
          for (final File measurementFile : projectMeasurements.listFiles()) {

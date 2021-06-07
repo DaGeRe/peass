@@ -18,7 +18,7 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -43,11 +43,10 @@ public class DependencyDetectorIT {
 
    @Test
    public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
-      final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "normal_change");
 
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
-      final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
+      final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(DependencyTestConstants.NORMAL_CHANGE));
 
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
@@ -102,7 +101,7 @@ public class DependencyDetectorIT {
 
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG, new PeASSFolders(DependencyTestConstants.CURRENT), DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager, new ExecutionConfig(5), new EnvironmentVariables());
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(DependencyTestConstants.CURRENT), DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager, new ExecutionConfig(5), new EnvironmentVariables());
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 

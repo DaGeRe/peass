@@ -21,9 +21,6 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
-import de.dagere.peass.measurement.rca.CauseSearcherConfig;
-import de.dagere.peass.measurement.rca.CauseTester;
-import de.dagere.peass.measurement.rca.RCAStrategy;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.helper.TestConstants;
@@ -76,7 +73,7 @@ public class CauseSearcherMergeTest {
 
       final CauseTester measurer = Mockito.mock(CauseTester.class);
       final CauseSearcher searcher = new LevelCauseSearcher(treeReader, 
-            new CauseSearcherConfig(new TestCase("Test#test"), true, false, 0.1, false, true, RCAStrategy.COMPLETE),
+            new CauseSearcherConfig(new TestCase("Test#test"), true, false, 0.1, false, true, RCAStrategy.COMPLETE, 1),
             measurer, measurementConfig, new CauseSearchFolders(folder), new EnvironmentVariables());
 
       final Set<ChangedEntity> changes = searcher.search();

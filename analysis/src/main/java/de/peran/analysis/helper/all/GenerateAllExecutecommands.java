@@ -14,7 +14,6 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.utils.DivideVersions;
-import de.peran.FolderSearcher;
 
 public class GenerateAllExecutecommands {
    public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
@@ -25,7 +24,7 @@ public class GenerateAllExecutecommands {
             final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
             VersionComparator.setDependencies(dependencies);
             final File executeFile = new File(dependencyFolder, "execute_" + project + ".json");
-            final ExecutionData changedTests = FolderSearcher.MAPPER.readValue(executeFile, ExecutionData.class);
+            final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executeFile, ExecutionData.class);
             DivideVersions.generateExecuteCommands(dependencies, changedTests, "generated", System.out);
          } else {
             System.out.println("Not existing: " + dependencyFile.getAbsolutePath());

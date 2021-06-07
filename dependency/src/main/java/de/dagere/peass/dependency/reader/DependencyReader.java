@@ -3,12 +3,15 @@ package de.dagere.peass.dependency.reader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.javaparser.ParseException;
 
@@ -16,7 +19,7 @@ import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -26,7 +29,10 @@ import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.dependency.traces.DiffFileGenerator;
+import de.dagere.peass.dependency.traces.OneTraceGenerator;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
+import de.dagere.peass.dependency.traces.coverage.CoverageBasedSelector;
+import de.dagere.peass.dependency.traces.coverage.TraceCallSummary;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.VersionIterator;
@@ -46,9 +52,10 @@ public class DependencyReader {
    private final DependencyConfig dependencyConfig;
    protected final Dependencies dependencyResult = new Dependencies();
    private final ExecutionData executionResult = new ExecutionData();
+   private final ExecutionData coverageBasedSelection = new ExecutionData();
    protected final ResultsFolders resultsFolders;
    protected DependencyManager dependencyManager;
-   protected final PeASSFolders folders;
+   protected final PeassFolders folders;
    protected VersionIterator iterator;
    protected String lastRunningVersion;
    private final VersionKeeper skippedNoChange;
@@ -59,7 +66,7 @@ public class DependencyReader {
    private final DependencySizeRecorder sizeRecorder = new DependencySizeRecorder();
    private final TraceFileMapping mapping = new TraceFileMapping();
 
-   public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders,
+   public DependencyReader(final DependencyConfig dependencyConfig, final PeassFolders folders,
          final ResultsFolders resultsFolders, final String url, final VersionIterator iterator,
          final ChangeManager changeManager, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
@@ -84,7 +91,7 @@ public class DependencyReader {
     * @param url
     * @param iterator
     */
-   public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders, final ResultsFolders resultsFolders, final String url,
+   public DependencyReader(final DependencyConfig dependencyConfig, final PeassFolders folders, final ResultsFolders resultsFolders, final String url,
          final VersionIterator iterator,
          final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
@@ -129,6 +136,9 @@ public class DependencyReader {
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
       if (dependencyConfig.isGenerateViews()) {
          Constants.OBJECTMAPPER.writeValue(resultsFolders.getExecutionFile(), executionResult);
+         if (dependencyConfig.isGenerateCoverageSelection()) {
+            Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageSelectionFile(), coverageBasedSelection);
+         }
       }
 
       sizeRecorder.addVersionSize(dependencyManager.getDependencyMap().size(), tests);
@@ -151,8 +161,8 @@ public class DependencyReader {
     * @throws IOException
     * @throws XmlPullParserException
     * @throws InterruptedException
-    * @throws ViewNotFoundException 
-    * @throws ParseException 
+    * @throws ViewNotFoundException
+    * @throws ParseException
     */
    public int analyseVersion(final ChangeManager changeManager) throws IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final String version = iterator.getTag();
@@ -163,12 +173,7 @@ public class DependencyReader {
 
       dependencyManager.getExecutor().loadClasses();
 
-      final DependencyReadingInput input;
-      if (iterator.isPredecessor(lastRunningVersion)) {
-         input = new DependencyReadingInput(changeManager.getChanges(null), lastRunningVersion);
-      } else {
-         input = new DependencyReadingInput(changeManager.getChanges(lastRunningVersion), lastRunningVersion);
-      }
+      final DependencyReadingInput input = new DependencyReadingInput(changeManager.getChanges(lastRunningVersion), lastRunningVersion);
       changeManager.saveOldClasses();
       lastRunningVersion = iterator.getTag();
 
@@ -180,9 +185,17 @@ public class DependencyReader {
       if (input.getChanges().size() > 0) {
          return analyseChanges(version, input);
       } else {
-         skippedNoChange.addVersion(version, "No Change at all");
+         addEmptyVersionData(version);
          return 0;
       }
+   }
+
+   private void addEmptyVersionData(final String version) {
+      dependencyResult.getVersions().put(version, new Version());
+      if (dependencyConfig.isGenerateViews()) {
+         executionResult.addEmptyVersion(version, null);
+      }
+      skippedNoChange.addVersion(version, "No Change at all");
    }
 
    private int analyseChanges(final String version, final DependencyReadingInput input)
@@ -194,17 +207,15 @@ public class DependencyReader {
          traceChangeHandler.handleTraceAnalysisChanges(newVersionInfo);
 
          if (dependencyConfig.isGenerateViews()) {
-            executionResult.addVersion(version, newVersionInfo.getPredecessor());
-            
+            executionResult.addEmptyVersion(version, newVersionInfo.getPredecessor());
             TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, mapping);
             traceViewGenerator.generateViews(resultsFolders, newVersionInfo.getTests());
 
             DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getVersionDiffFolder(version));
-            for (TestCase testcase : newVersionInfo.getTests().getTests()) {
-               boolean somethingChanged = diffGenerator.generateDiffFiles(testcase, mapping);
-               if (somethingChanged) {
-                  executionResult.addCall(version, testcase);
-               }
+            diffGenerator.generateAllDiffs(version, newVersionInfo, diffGenerator, mapping, executionResult);
+
+            if (dependencyConfig.isGenerateCoverageSelection()) {
+               generateCoverageBasedSelection(version, newVersionInfo);
             }
          }
       } else {
@@ -214,6 +225,25 @@ public class DependencyReader {
 
       final int changedClazzCount = calculateChangedClassCount(newVersionInfo);
       return changedClazzCount;
+   }
+
+   private void generateCoverageBasedSelection(final String version, final Version newVersionInfo) throws IOException, JsonParseException, JsonMappingException {
+      List<TraceCallSummary> summaries = new LinkedList<>();
+      for (TestCase testcase : newVersionInfo.getTests().getTests()) {
+         List<File> traceFiles = mapping.getTestcaseMap(testcase);
+         if (traceFiles != null && traceFiles.size() > 1) {
+            File oldFile = new File(traceFiles.get(0).getAbsolutePath() + OneTraceGenerator.SUMMARY);
+            File newFile = new File(traceFiles.get(1).getAbsolutePath() + OneTraceGenerator.SUMMARY);
+            TraceCallSummary oldSummary = Constants.OBJECTMAPPER.readValue(oldFile, TraceCallSummary.class);
+            TraceCallSummary newSummary = Constants.OBJECTMAPPER.readValue(newFile, TraceCallSummary.class);
+            summaries.add(oldSummary);
+            summaries.add(newSummary);
+         }
+      }
+      List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newVersionInfo.getChangedClazzes().keySet());
+      for (TestCase testcase : selected) {
+         coverageBasedSelection.addCall(version, testcase);
+      }
    }
 
    private int calculateChangedClassCount(final Version newVersionInfo) {
@@ -259,7 +289,7 @@ public class DependencyReader {
       if (initialVersionReader.readInitialVersion()) {
          DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
          lastRunningVersion = iterator.getTag();
-         
+
          if (dependencyConfig.isGenerateViews()) {
             generateInitialViews();
          }
@@ -274,7 +304,7 @@ public class DependencyReader {
       TestSet initialTests = dependencyResult.getInitialversion().getInitialTests();
       TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), mapping);
       traceViewGenerator.generateViews(resultsFolders, initialTests);
-      
+
       executionResult.getVersions().put(iterator.getTag(), new TestSet());
    }
 
@@ -294,8 +324,21 @@ public class DependencyReader {
       return dependencyResult;
    }
 
+   public ExecutionData getExecutionResult() {
+      return executionResult;
+   }
+
+   public ExecutionData getCoverageBasedSelection() {
+      return coverageBasedSelection;
+   }
+
    public void setIterator(final VersionIterator reserveIterator) {
       this.iterator = reserveIterator;
    }
 
+   public void setExecutionData(final ExecutionData executions) {
+      executionResult.setVersions(executions.getVersions());
+
+      new OldTraceReader(mapping, dependencyResult, resultsFolders).addTraces();
+   }
 }

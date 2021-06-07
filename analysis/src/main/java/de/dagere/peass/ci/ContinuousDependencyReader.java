@@ -3,8 +3,10 @@ package de.dagere.peass.ci;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,10 +18,15 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -36,17 +43,49 @@ public class ContinuousDependencyReader {
 
    private final DependencyConfig dependencyConfig;
    private final ExecutionConfig executionConfig;
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final ResultsFolders resultsFolders;
    private final EnvironmentVariables env;
 
-   public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final PeASSFolders folders, final ResultsFolders resultsFolders,
+   public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final PeassFolders folders,
+         final ResultsFolders resultsFolders,
          final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
       this.executionConfig = executionConfig;
       this.folders = folders;
       this.resultsFolders = resultsFolders;
       this.env = env;
+   }
+
+   public Set<TestCase> getTests(final VersionIterator iterator, final String url, final String version, final MeasurementConfiguration measurementConfig) throws Exception {
+      final Dependencies dependencies = getDependencies(iterator, url);
+
+      final Set<TestCase> tests;
+      if (dependencies.getVersions().size() > 0) {
+         if (dependencyConfig.isGenerateViews()) {
+            if (dependencyConfig.isGenerateCoverageSelection()) {
+               LOG.info("Using coverage-based test selection");
+               ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getCoverageSelectionFile(), ExecutionData.class);
+               TestSet versionTestSet = executionData.getVersions().get(version);
+               tests = versionTestSet != null ? versionTestSet.getTests() : new HashSet<TestCase>();
+            } else {
+               LOG.info("Using dynamic test selection results");
+               ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+               TestSet versionTestSet = executionData.getVersions().get(version);
+               tests = versionTestSet.getTests();
+            }
+         } else {
+            Version versionDependencies = dependencies.getVersions().get(dependencies.getNewestVersion());
+            tests = versionDependencies.getTests().getTests();
+         }
+
+         // final Set<TestCase> tests = selectIncludedTests(dependencies);
+         NonIncludedTestRemover.removeNotIncluded(tests, measurementConfig.getExecutionConfig());
+      } else {
+         tests = new HashSet<>();
+         LOG.info("No test executed - version did not contain changed tests.");
+      }
+      return tests;
    }
 
    Dependencies getDependencies(final VersionIterator iterator, final String url)
@@ -56,16 +95,14 @@ public class ContinuousDependencyReader {
       final VersionKeeper noChanges = new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nonChanges_" + folders.getProjectName() + ".json"));
 
       if (!resultsFolders.getDependencyFile().exists()) {
+         LOG.debug("Fully loading dependencies");
          dependencies = fullyLoadDependencies(url, iterator, noChanges);
       } else {
+         LOG.debug("Partially loading dependencies");
          dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
          VersionComparator.setDependencies(dependencies);
 
-         if (dependencies.getVersions().size() > 0) {
-            partiallyLoadDependencies(dependencies);
-         } else {
-            dependencies = fullyLoadDependencies(url, iterator, noChanges);
-         }
+         partiallyLoadDependencies(dependencies);
       }
       VersionComparator.setDependencies(dependencies);
 
@@ -75,6 +112,7 @@ public class ContinuousDependencyReader {
    public VersionIterator getIterator(final String lastVersionName) {
       String versionName = GitUtils.getName(executionConfig.getVersion() != null ? executionConfig.getVersion() : "HEAD", folders.getProjectFolder());
       if (versionName.equals(lastVersionName)) {
+         LOG.info("Version {} is equal to newest version, not executing RTS", versionName);
          return null;
       }
       GitCommit currentCommit = new GitCommit(versionName, "", "", "");
@@ -100,7 +138,7 @@ public class ContinuousDependencyReader {
    private void executePartialRTS(final Dependencies dependencies, final VersionIterator newIterator) throws FileNotFoundException {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
          File logFile = new File(getDependencyreadingFolder(), newIterator.getTag() + "_" + newIterator.getPredecessor() + ".txt");
-         LOG.info("Executing regression test selection update (step 1) - Log goes to {}", logFile.getAbsolutePath());
+         LOG.info("Executing regression test selection update - Log goes to {}", logFile.getAbsolutePath());
          try (LogRedirector director = new LogRedirector(logFile)) {
             doPartialRCS(dependencies, newIterator);
          }
@@ -111,12 +149,21 @@ public class ContinuousDependencyReader {
    }
 
    private void doPartialRCS(final Dependencies dependencies, final VersionIterator newIterator) {
-      DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, dependencies.getUrl(), newIterator, 
+      DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, dependencies.getUrl(), newIterator,
             new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nochanges.json")), executionConfig, env);
       newIterator.goTo0thCommit();
 
       reader.readCompletedVersions(dependencies);
-      reader.readDependencies();
+
+      try {
+         ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+         reader.setExecutionData(executions);
+
+         reader.readDependencies();
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+
    }
 
    public File getDependencyreadingFolder() {

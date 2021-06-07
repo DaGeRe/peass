@@ -11,7 +11,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 
@@ -40,7 +40,7 @@ public class VCSTestUtils {
             return null;
          }
       }).when(GitUtils.class);
-      GitUtils.clone(Mockito.any(PeASSFolders.class), Mockito.any(File.class));
+      GitUtils.clone(Mockito.any(PeassFolders.class), Mockito.any(File.class));
    }
    
    /**
@@ -75,7 +75,7 @@ public class VCSTestUtils {
       GitUtils.goToTag(Mockito.anyString(), Mockito.any(File.class));
    }
 
-   public static void mockGoToTag(final PeASSFolders folders, final File statePredecessor, final File stateMainVersion) {
+   public static void mockGoToTag(final PeassFolders folders, final File statePredecessor, final File stateMainVersion) {
       PowerMockito.doAnswer(new Answer<Void>() {
 
          @Override

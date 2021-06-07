@@ -19,7 +19,7 @@ import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.analysis.properties.VersionChangeProperties;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.peran.FolderSearcher;
+import de.dagere.peass.utils.Constants;
 
 public class CreateClassificationData {
    
@@ -31,7 +31,7 @@ public class CreateClassificationData {
       for (final File candidate : folder.listFiles()) {
          if (!candidate.getName().endsWith(".swp") && candidate.getName().startsWith(project)) {
             try {
-               final Classification foundData = FolderSearcher.MAPPER.readValue(candidate, Classification.class);
+               final Classification foundData = Constants.OBJECTMAPPER.readValue(candidate, Classification.class);
                merged.mergeAll(foundData);
 
             } catch (final IOException e) {
@@ -51,7 +51,7 @@ public class CreateClassificationData {
       
       File propertyFile = folders.getProjectPropertyFile(project);
       if (propertyFile.exists()) {
-         final VersionChangeProperties properties = FolderSearcher.MAPPER.readValue(propertyFile, VersionChangeProperties.class);
+         final VersionChangeProperties properties = Constants.OBJECTMAPPER.readValue(propertyFile, VersionChangeProperties.class);
          createClassificationData(properties, goalFile, project);
       }else {
          File changeFile = new File(folders.getResultsFolder(), project + File.separator + project + ".json");
@@ -59,7 +59,7 @@ public class CreateClassificationData {
             changeFile = new File(folders.getResultsFolder(), project + ".json");
          }
          if (changeFile.exists()) {
-            final ProjectChanges changes = FolderSearcher.MAPPER.readValue(changeFile, ProjectChanges.class);
+            final ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changeFile, ProjectChanges.class);
             createClassificationData(changes, goalFile, project);
          }else {
             LOG.error("Can not write classification data, both change file and property file are not defined!");
@@ -77,7 +77,7 @@ public class CreateClassificationData {
    public static void createClassificationData(final VersionChangeProperties properties, final File goalFile, final String project)
          throws IOException, JsonParseException, JsonMappingException, JsonGenerationException {
       final Classification manualTemplate = readChangesFromProperties(properties);
-      FolderSearcher.MAPPER.writeValue(new File(goalFile.getParent(), "temp.json"), manualTemplate);
+      Constants.OBJECTMAPPER.writeValue(new File(goalFile.getParent(), "temp.json"), manualTemplate);
       mergeOldData(goalFile, project, manualTemplate);
    }
 
@@ -89,7 +89,7 @@ public class CreateClassificationData {
       final File lastOldFile = moveToUnnamed(goalFile);
       manualTemplate.merge(oldMergedData);
       
-      FolderSearcher.MAPPER.writeValue(goalFile, manualTemplate);
+      Constants.OBJECTMAPPER.writeValue(goalFile, manualTemplate);
       
       if (lastOldFile != null) {
          if (FileUtils.contentEquals(lastOldFile, goalFile)) {
@@ -107,7 +107,7 @@ public class CreateClassificationData {
          manualTemplate.addChange(version, testEntity, new HashSet<>(), direction);
       });
       
-      FolderSearcher.MAPPER.writeValue(new File(goalFile.getParent(), "temp.json"), manualTemplate);
+      Constants.OBJECTMAPPER.writeValue(new File(goalFile.getParent(), "temp.json"), manualTemplate);
       return manualTemplate;
    }
 

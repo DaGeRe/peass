@@ -58,7 +58,7 @@ public class DependencyDetectorJava11IT {
 
    private File buildSecondVersion() throws IOException {
       final File secondVersion = new File("target/dependency_change", "normal_change");
-      FileUtils.copyDirectory(new File(DependencyTestConstants.VERSIONS_FOLDER, "normal_change"), secondVersion);
+      FileUtils.copyDirectory(DependencyTestConstants.NORMAL_CHANGE, secondVersion);
       FileUtils.copyFile(new File(DependencyTestConstants.VERSIONS_FOLDER, "pom-11.xml"), new File(secondVersion, "pom.xml"));
       return secondVersion;
    }

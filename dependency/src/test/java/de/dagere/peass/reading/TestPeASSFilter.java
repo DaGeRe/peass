@@ -3,6 +3,7 @@ package de.dagere.peass.reading;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -15,7 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.KiekerResultManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -47,15 +48,15 @@ public class TestPeASSFilter {
    }
 
    @Test
-   public void testExecution() throws ViewNotFoundException, IOException, XmlPullParserException, InterruptedException {
-      final KiekerResultManager manager = new KiekerResultManager(new PeASSFolders(CURRENT), new ExecutionConfig(5), new EnvironmentVariables());
+   public void testExecution() throws ViewNotFoundException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+      final KiekerResultManager manager = new KiekerResultManager(new PeassFolders(CURRENT), new ExecutionConfig(5), new EnvironmentVariables());
       final TestSet ts = new TestSet();
       final TestCase testcase = new TestCase("defaultpackage.TestMe", "testMe", "");
       ts.addTest(testcase);
       manager.getExecutor().loadClasses();
       manager.executeKoPeMeKiekerRun(ts, "0");
       
-      final File kiekerFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT));
+      final File kiekerFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT))[0];
       LOG.debug("Searching: " + kiekerFolder);
       final ModuleClassMapping mapping = new ModuleClassMapping(manager.getExecutor());
       final List<TraceElement> referenceTrace = new CalledMethodLoader(kiekerFolder, mapping).getShortTrace("");
@@ -82,10 +83,10 @@ public class TestPeASSFilter {
    private List<TraceElement> regenerateTrace(final KiekerResultManager manager, final TestSet ts, final TestCase testcase, final ModuleClassMapping mapping, final int i)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, FileNotFoundException {
       cleanup();
-      new PeASSFolders(CURRENT);
+      new PeassFolders(CURRENT);
       manager.getExecutor().loadClasses();
       manager.executeKoPeMeKiekerRun(ts, ""+i);
-      final File kiekerFolderComparison = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT));
+      final File kiekerFolderComparison = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT))[0];
       LOG.debug("Searching: " + kiekerFolderComparison);
       final List<TraceElement> compareTrace = new CalledMethodLoader(kiekerFolderComparison, mapping).getShortTrace("");
       return compareTrace;
