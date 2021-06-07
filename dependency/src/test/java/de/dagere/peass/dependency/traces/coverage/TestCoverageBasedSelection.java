@@ -25,7 +25,6 @@ public class TestCoverageBasedSelection {
       List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
       
       Assert.assertThat(selected, IsEmptyCollection.empty());
-      
    }
    
    @Test
@@ -36,7 +35,6 @@ public class TestCoverageBasedSelection {
       List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
       
       Assert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
-      
    }
    
    @Test
@@ -58,6 +56,16 @@ public class TestCoverageBasedSelection {
       ChangedEntity entityWithIntParameter = new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method2");
       entityWithIntParameter.getParameters().add("int");
       changes.add(entityWithIntParameter);
+      List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
+      
+      Assert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
+   }
+   
+   @Test
+   public void testClassChangeSelection() {
+      List<TraceCallSummary> traces = getTraceSummaryList();
+      Set<ChangedEntity> changes = new HashSet<>();
+      changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", null));
       List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
       
       Assert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));

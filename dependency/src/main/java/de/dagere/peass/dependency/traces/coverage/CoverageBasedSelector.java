@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -13,9 +14,9 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class CoverageBasedSelector {
-   
+
    private static final Logger LOG = LogManager.getLogger(CoverageBasedSelector.class);
-   
+
    public static List<TestCase> selectBasedOnCoverage(final List<TraceCallSummary> summaries, final Set<ChangedEntity> changes) {
       List<TraceCallSummary> copiedSummaries = new LinkedList<>(summaries);
       Set<ChangedEntity> copiedChanges = new HashSet<>(changes);
@@ -32,7 +33,7 @@ public class CoverageBasedSelector {
             LOG.debug("Selected: {} with summary {}", selected.getTestcase(), selected);
             changed = removeUnneededChanges(copiedChanges, changed, selected);
          }
-         
+
       }
 
       return resultTests;
@@ -72,9 +73,29 @@ public class CoverageBasedSelector {
       for (ChangedEntity change : changes) {
          String parameters = change.getParametersPrintable().length() > 0 ? "(" + change.getParametersPrintable() + ")" : "";
          String changeSignature = change.toString() + parameters;
-         if (summary.getCallCounts().containsKey(changeSignature)) {
-            currentCallSum += summary.getCallCounts().get(changeSignature);
+         if (change.getMethod() != null) {
+            currentCallSum = addExactCallCount(summary, currentCallSum, changeSignature);
+         } else {
+            currentCallSum = addClassbasedCallCount(summary, currentCallSum, changeSignature);
          }
+      }
+      return currentCallSum;
+   }
+
+   private static int addClassbasedCallCount(final TraceCallSummary summary, int currentCallSum, final String changeSignature) {
+      for (Map.Entry<String, Integer> callCount : summary.getCallCounts().entrySet()) {
+         // The prefix needs to be used since otherwise inner classes are falsely selected (e.g. ChangedEntity de.Example would select de.Example$InnerClass#methodA)
+         String signaturePrefix = changeSignature + ChangedEntity.METHOD_SEPARATOR;
+         if (callCount.getKey().startsWith(signaturePrefix)) {
+            currentCallSum += callCount.getValue();
+         }
+      }
+      return currentCallSum;
+   }
+
+   private static int addExactCallCount(final TraceCallSummary summary, int currentCallSum, final String changeSignature) {
+      if (summary.getCallCounts().containsKey(changeSignature)) {
+         currentCallSum += summary.getCallCounts().get(changeSignature);
       }
       return currentCallSum;
    }
