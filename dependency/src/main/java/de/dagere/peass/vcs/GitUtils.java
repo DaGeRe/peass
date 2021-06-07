@@ -205,22 +205,25 @@ public final class GitUtils {
    private static List<String> getLinearCommitNames(final File folder) {
       try {
          Process readOldestCommitProcess = Runtime.getRuntime().exec("git log --reverse  --pretty=tformat:%H", new String[0], folder);
-         final BufferedReader readOldestCommitInput = new BufferedReader(new InputStreamReader(readOldestCommitProcess.getInputStream()));
-         String oldestCommit = readOldestCommitInput.readLine().split(" ")[0];
+         String oldestCommit;
+         try (final BufferedReader readOldestCommitInput = new BufferedReader(new InputStreamReader(readOldestCommitProcess.getInputStream()))){
+            oldestCommit = readOldestCommitInput.readLine().split(" ")[0];
+         }
 
          List<String> ouputCommitList = new LinkedList<>();
-         String lastChild = null;
 
          final Process readCommitProcess = Runtime.getRuntime().exec("git rev-list --ancestry-path --children " + oldestCommit + "..HEAD", new String[0], folder);
-         final BufferedReader readCommitInput = new BufferedReader(new InputStreamReader(readCommitProcess.getInputStream()));
-         String line;
+         try (final BufferedReader readCommitInput = new BufferedReader(new InputStreamReader(readCommitProcess.getInputStream()))){
+            String lastChild = null;
+            String line;
 
-         while ((line = readCommitInput.readLine()) != null) {
-            String[] ancestryHashes = line.split(" ");
-            Set<String> hashes = new HashSet<>(Arrays.asList(ancestryHashes));
-            if (lastChild == null || hashes.contains(lastChild)) {
-               ouputCommitList.add(0, ancestryHashes[0]);
-               lastChild = ancestryHashes[0];
+            while ((line = readCommitInput.readLine()) != null) {
+               String[] ancestryHashes = line.split(" ");
+               Set<String> hashes = new HashSet<>(Arrays.asList(ancestryHashes));
+               if (lastChild == null || hashes.contains(lastChild)) {
+                  ouputCommitList.add(0, ancestryHashes[0]);
+                  lastChild = ancestryHashes[0];
+               }
             }
          }
          ouputCommitList.add(0, oldestCommit);
@@ -234,21 +237,22 @@ public final class GitUtils {
       final List<GitCommit> commits = new LinkedList<>();
       for (String commit : commitNames) {
          final Process readCommitProcess = Runtime.getRuntime().exec("git log -n 1 " + commit, new String[0], folder);
-         final BufferedReader readCommitInput = new BufferedReader(new InputStreamReader(readCommitProcess.getInputStream()));
-         String line = null;
-         String author = null, date = null, message = "";
-         while ((line = readCommitInput.readLine()) != null) {
-            if (line.startsWith("Author:")) {
-               author = line.substring(8);
+         try (final BufferedReader readCommitInput = new BufferedReader(new InputStreamReader(readCommitProcess.getInputStream()))){
+            String line = null;
+            String author = null, date = null, message = "";
+            while ((line = readCommitInput.readLine()) != null) {
+               if (line.startsWith("Author:")) {
+                  author = line.substring(8);
+               }
+               if (line.startsWith("Date: ")) {
+                  date = line.substring(8);
+               } else if (author != null && date != null) {
+                  message += line + " ";
+               }
             }
-            if (line.startsWith("Date: ")) {
-               date = line.substring(8);
-            } else if (author != null && date != null) {
-               message += line + " ";
-            }
+            final GitCommit gc = new GitCommit(commit, author, date, message);
+            commits.add(gc);
          }
-         final GitCommit gc = new GitCommit(commit, author, date, message);
-         commits.add(gc);
       }
       return commits;
    }
@@ -256,14 +260,15 @@ public final class GitUtils {
    private static List<String> getCommitNames(final File folder, final boolean includeAllBranches) throws IOException {
       String command = includeAllBranches ? "git log --oneline --all" : "git log --oneline";
       final Process p = Runtime.getRuntime().exec(command, new String[0], folder);
-      final BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-      String line;
-      List<String> commitNames = new LinkedList<>();
-      while ((line = input.readLine()) != null) {
-         String commit = line.split(" ")[0];
-         commitNames.add(0, commit);
+      try (final BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()))){
+         String line;
+         List<String> commitNames = new LinkedList<>();
+         while ((line = input.readLine()) != null) {
+            String commit = line.split(" ")[0];
+            commitNames.add(0, commit);
+         }
+         return commitNames;
       }
-      return commitNames;
    }
 
    public static VersionDiff getChangedClasses(final File projectFolder, final List<File> modules, final String lastVersion) {
