@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.CommitUtil;
 import de.dagere.peass.config.DependencyReaderConfigMixin;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
@@ -140,7 +140,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       if (vcs.equals(VersionControlSystem.GIT)) {
          final VersionIterator iterator = createIterator(config, previousVersion);
          ExecutionConfig executionConfig = config.getExecutionConfig();
-         reader = new DependencyReader(config.getDependencyConfig(), new PeASSFolders(config.getProjectFolder()), 
+         reader = new DependencyReader(config.getDependencyConfig(), new PeassFolders(config.getProjectFolder()), 
                resultsFolders, dependencies.getUrl(), iterator, new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nochanges.json")), 
                executionConfig, new EnvironmentVariables());
          iterator.goTo0thCommit();

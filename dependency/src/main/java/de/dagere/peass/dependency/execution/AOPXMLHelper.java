@@ -6,7 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
@@ -36,7 +36,7 @@ public class AOPXMLHelper {
    public static final String AGGREGATED_WRITER = "de.dagere.kopeme.kieker.writer.AggregatedTreeWriter";
    public static final String CHANGEABLE_WRITER = "de.dagere.kopeme.kieker.writer.ChangeableFolderWriter";
 
-   public static void writeKiekerMonitoringProperties(final File goalFile, final TestTransformer transformer, final PeASSFolders folders) throws IOException {
+   public static void writeKiekerMonitoringProperties(final File goalFile, final TestTransformer transformer, final PeassFolders folders) throws IOException {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(goalFile))) {
          writer.write("kieker.monitoring.name=KIEKER-KoPeMe\n");
          if (transformer.getConfig().isUseCircularQueue()) {

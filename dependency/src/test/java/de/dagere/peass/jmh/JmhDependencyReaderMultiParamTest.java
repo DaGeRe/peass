@@ -28,7 +28,7 @@ import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -70,7 +70,7 @@ public class JmhDependencyReaderMultiParamTest {
       jmhConfig.setTestTransformer("de.dagere.peass.dependency.jmh.JmhTestTransformer");
       jmhConfig.setTestExecutor("de.dagere.peass.dependency.jmh.JmhTestExecutor");
       
-      DependencyReader reader = new DependencyReader(dependencyConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
+      DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
             "", iterator, new VersionKeeper(new File("/dev/null")), jmhConfig, new EnvironmentVariables());
       reader.readInitialVersion();
       

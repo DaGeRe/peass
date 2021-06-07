@@ -21,7 +21,7 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.analysis.MultipleVMTestUtil;
 
@@ -29,7 +29,7 @@ public class ResultOrganizer {
 
    private static final Logger LOG = LogManager.getLogger(ResultOrganizer.class);
 
-   protected final PeASSFolders folders;
+   protected final PeassFolders folders;
    private final String mainVersion;
    private final long currentChunkStart;
    private final boolean isUseKieker;
@@ -40,7 +40,7 @@ public class ResultOrganizer {
    private boolean success = true;
    private final int expectedIterations;
 
-   public ResultOrganizer(final PeASSFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll, final TestCase test,
+   public ResultOrganizer(final PeassFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll, final TestCase test,
          final int expectedIterations) {
       this.folders = folders;
       this.mainVersion = currentVersion;

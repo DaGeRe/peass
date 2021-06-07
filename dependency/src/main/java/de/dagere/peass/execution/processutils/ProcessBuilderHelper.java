@@ -9,7 +9,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.CommandConcatenator;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.utils.StreamGobbler;
@@ -19,9 +19,9 @@ public class ProcessBuilderHelper {
    private static final Logger LOG = LogManager.getLogger(ProcessBuilderHelper.class);
    
    private final EnvironmentVariables env;
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    
-   public ProcessBuilderHelper(final EnvironmentVariables env, final PeASSFolders folders) {
+   public ProcessBuilderHelper(final EnvironmentVariables env, final PeassFolders folders) {
       this.env = env;
       this.folders = folders;
    }

@@ -8,17 +8,17 @@ import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 
 public class MavenCleaner {
    
    private static final Logger LOG = LogManager.getLogger(MavenCleaner.class);
    
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final EnvironmentVariables env;
    
-   public MavenCleaner(final PeASSFolders folders, final EnvironmentVariables env) {
+   public MavenCleaner(final PeassFolders folders, final EnvironmentVariables env) {
       this.folders = folders;
       this.env = env;
    }

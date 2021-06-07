@@ -24,7 +24,7 @@ import com.github.javaparser.ParseException;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.KiekerResultManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -111,7 +111,7 @@ public class TraceGettingIT {
    private void executeTraceGetting(final File project, final String githash)
          throws IOException, ParseException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       DependencyDetectorTestUtil.init(project);
-      final KiekerResultManager tracereader = new KiekerResultManager(new PeASSFolders(TestConstants.CURRENT_FOLDER), new ExecutionConfig(5), new EnvironmentVariables());
+      final KiekerResultManager tracereader = new KiekerResultManager(new PeassFolders(TestConstants.CURRENT_FOLDER), new ExecutionConfig(5), new EnvironmentVariables());
       final TestSet testset = new TestSet();
       testset.addTest(new TestCase("viewtest.TestMe", "test", ""));
       tracereader.getExecutor().loadClasses();

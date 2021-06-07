@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.dependency.ClazzFileFinder;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -34,7 +34,7 @@ public abstract class TestExecutor {
 
    public static final String GENERATED_TEST_NAME = "GeneratedTest";
 
-   protected final PeASSFolders folders;
+   protected final PeassFolders folders;
    protected File lastTmpFile;
    protected int jdk_version = 8;
    protected final TestTransformer testTransformer;
@@ -45,7 +45,7 @@ public abstract class TestExecutor {
    protected boolean buildfileExists = false;
    protected final EnvironmentVariables env;
 
-   public TestExecutor(final PeASSFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
+   public TestExecutor(final PeassFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
       this.folders = folders;
       this.testTransformer = testTransformer;
       this.env = env;

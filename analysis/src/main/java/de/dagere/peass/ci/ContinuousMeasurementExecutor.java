@@ -12,7 +12,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.AdaptiveTester;
@@ -22,11 +22,11 @@ public class ContinuousMeasurementExecutor {
    private static final Logger LOG = LogManager.getLogger(ContinuousMeasurementExecutor.class);
 
    private final String version, versionOld;
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final MeasurementConfiguration measurementConfig;
    private final EnvironmentVariables env;
 
-   public ContinuousMeasurementExecutor(final String version, final String versionOld, final PeASSFolders folders, final MeasurementConfiguration measurementConfig,
+   public ContinuousMeasurementExecutor(final String version, final String versionOld, final PeassFolders folders, final MeasurementConfiguration measurementConfig,
          final EnvironmentVariables env) {
       this.version = version;
       this.versionOld = versionOld;

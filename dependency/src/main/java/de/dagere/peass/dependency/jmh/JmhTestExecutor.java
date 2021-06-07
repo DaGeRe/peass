@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.ArgLineBuilder;
 import de.dagere.peass.dependency.execution.CommandConcatenator;
@@ -30,7 +30,7 @@ public class JmhTestExecutor extends TestExecutor {
 
    private final JmhTestTransformer transformer;
 
-   public JmhTestExecutor(final PeASSFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
+   public JmhTestExecutor(final PeassFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
       super(folders, testTransformer, env);
       this.transformer = (JmhTestTransformer) testTransformer;
    }

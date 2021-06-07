@@ -24,7 +24,7 @@ import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.ExecutorCreator;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
@@ -46,7 +46,7 @@ public class JmhIterationTest {
       measurementConfig.setIterations(4);
       measurementConfig.setWarmup(2);
       JmhTestTransformer transformer = new JmhTestTransformer(TestConstants.CURRENT_FOLDER, measurementConfig);
-      PeASSFolders folders = new PeASSFolders(TestConstants.CURRENT_FOLDER);
+      PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, transformer, new EnvironmentVariables());
     
 //      File logFile = new File(folders.getLogFolder(), "test.txt");

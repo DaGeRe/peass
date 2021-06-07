@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
@@ -26,7 +26,7 @@ public class OneTraceGenerator {
 
    private static final Logger LOG = LogManager.getLogger(OneTraceGenerator.class);
 
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final TestCase testcase;
    private final TraceFileMapping traceFileMapping;
    private final String version;
@@ -34,7 +34,7 @@ public class OneTraceGenerator {
    private final List<File> classpathFolders;
    private final ModuleClassMapping moduleClassMapping;
 
-   public OneTraceGenerator(final ResultsFolders resultsFolders, final PeASSFolders folders, final TestCase testcase, final TraceFileMapping traceFileMapping, final String version,
+   public OneTraceGenerator(final ResultsFolders resultsFolders, final PeassFolders folders, final TestCase testcase, final TraceFileMapping traceFileMapping, final String version,
          final List<File> classpathFolders, final ModuleClassMapping mapping) {
       this.resultsFolders = resultsFolders;
       this.folders = folders;

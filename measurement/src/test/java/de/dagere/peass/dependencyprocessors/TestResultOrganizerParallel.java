@@ -15,14 +15,14 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.peass.TestUtil;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
 
 public class TestResultOrganizerParallel {
 
    private final static String PARALLEL_VERSION = "1";
    
-   private PeASSFolders folders;
+   private PeassFolders folders;
    private ResultOrganizerParallel organizer;
    private File methodFolder;
 
@@ -30,7 +30,7 @@ public class TestResultOrganizerParallel {
    public void setUp() {
       TestUtil.deleteOldFolders();
 
-      folders = new PeASSFolders(new File("target/current"));
+      folders = new PeassFolders(new File("target/current"));
 
    }
 
@@ -38,7 +38,7 @@ public class TestResultOrganizerParallel {
    public void testParallelSaving() throws JAXBException, IOException {
       organizer = new ResultOrganizerParallel(folders, TestResultOrganizer.VERSION_NAME, 1, false, false, TestResultOrganizer.searchedTest, 3);
 
-      PeASSFolders parallelProjectFolders = initFolders();
+      PeassFolders parallelProjectFolders = initFolders();
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, TestResultOrganizer.searchedTest);
 
@@ -51,7 +51,7 @@ public class TestResultOrganizerParallel {
    public void testKoPeMeFileSaving() throws JAXBException, IOException {
       organizer = new ResultOrganizerParallel(folders, TestResultOrganizer.VERSION_NAME, 1, false, false, TestResultOrganizer.searchedTest, TestResult.BOUNDARY_SAVE_FILE * 2);
 
-      PeASSFolders parallelProjectFolders = initFolders();
+      PeassFolders parallelProjectFolders = initFolders();
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, TestResult.BOUNDARY_SAVE_FILE * 2, TestResultOrganizer.searchedTest);
 
@@ -81,9 +81,9 @@ public class TestResultOrganizerParallel {
       return versionFolder;
    }
    
-   private PeASSFolders initFolders() {
+   private PeassFolders initFolders() {
       File parallelProjectFolder = new File(folders.getTempProjectFolder(), PARALLEL_VERSION);
-      PeASSFolders parallelProjectFolders = new PeASSFolders(parallelProjectFolder);
+      PeassFolders parallelProjectFolders = new PeassFolders(parallelProjectFolder);
       methodFolder = new File(parallelProjectFolders.getTempMeasurementFolder(), TestResultOrganizer.searchedTest.getClazz());
       methodFolder.mkdir();
       return parallelProjectFolders;

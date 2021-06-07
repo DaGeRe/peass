@@ -19,7 +19,7 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
@@ -34,7 +34,7 @@ public class VisualizeRegularMeasurement {
    }
 
    public void analyzeFile(final File peassFolder) throws JAXBException, JsonProcessingException, FileNotFoundException, IOException {
-      PeASSFolders folders = new PeASSFolders(peassFolder);
+      PeassFolders folders = new PeassFolders(peassFolder);
       for (File kopemeFile : folders.getFullMeasurementFolder().listFiles((FilenameFilter) new WildcardFileFilter("*xml"))) {
          Kopemedata data = XMLDataLoader.loadData(kopemeFile);
          for (TestcaseType test : data.getTestcases().getTestcase()) {

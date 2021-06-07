@@ -16,7 +16,7 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.ExecutorCreator;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
@@ -38,13 +38,13 @@ public class DependencyTester implements KiekerResultHandler {
 
    private static final Logger LOG = LogManager.getLogger(DependencyTester.class);
 
-   protected final PeASSFolders folders;
+   protected final PeassFolders folders;
    protected final MeasurementConfiguration configuration;
    protected final EnvironmentVariables env;
    private ResultOrganizer currentOrganizer;
    protected long currentChunkStart = 0;
 
-   public DependencyTester(final PeASSFolders folders, final MeasurementConfiguration measurementConfig, final EnvironmentVariables env) throws IOException {
+   public DependencyTester(final PeassFolders folders, final MeasurementConfiguration measurementConfig, final EnvironmentVariables env) throws IOException {
       this.folders = folders;
       this.configuration = measurementConfig;
       this.env = env;
@@ -208,7 +208,7 @@ public class DependencyTester implements KiekerResultHandler {
       runner.runOnce(testcase, version, vmid, logFolder);
    }
 
-   protected synchronized TestExecutor getExecutor(final PeASSFolders currentFolders, final String version) {
+   protected synchronized TestExecutor getExecutor(final PeassFolders currentFolders, final String version) {
       TestTransformer transformer = ExecutorCreator.createTestTransformer(currentFolders, configuration.getExecutionConfig(), configuration);
       final TestExecutor testExecutor = ExecutorCreator.createExecutor(currentFolders, transformer, env);
       return testExecutor;
@@ -237,7 +237,7 @@ public class DependencyTester implements KiekerResultHandler {
       return currentOrganizer;
    }
    
-   public PeASSFolders getFolders() {
+   public PeassFolders getFolders() {
       return folders;
    }
 }

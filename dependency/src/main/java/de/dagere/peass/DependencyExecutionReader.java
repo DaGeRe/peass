@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.config.DependencyReaderConfigMixin;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
@@ -75,7 +75,7 @@ public class DependencyExecutionReader implements Callable<Void>{
       final File out = mergedFolders.getDependencyFile();
       final Dependencies all = PartialDependenciesMerger.mergeVersions(out, outFiles);
 
-      final PeASSFolders folders = new PeASSFolders(config.getProjectFolder());
+      final PeassFolders folders = new PeassFolders(config.getProjectFolder());
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");
       folders.getTempProjectFolder().renameTo(dependencyTempFiles);
 

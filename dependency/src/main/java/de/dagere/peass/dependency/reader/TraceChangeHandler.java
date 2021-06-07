@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.DependencyManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
@@ -30,11 +30,11 @@ public class TraceChangeHandler {
    private static final Logger LOG = LogManager.getLogger(TraceChangeHandler.class);
 
    private final DependencyManager dependencyManager;
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final ExecutionConfig executionConfig;
    private final String version;
 
-   public TraceChangeHandler(final DependencyManager dependencyManager, final PeASSFolders folders, final ExecutionConfig executionConfig,
+   public TraceChangeHandler(final DependencyManager dependencyManager, final PeassFolders folders, final ExecutionConfig executionConfig,
          final String version) {
       this.dependencyManager = dependencyManager;
       this.folders = folders;

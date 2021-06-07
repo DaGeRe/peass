@@ -27,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.execution.maven.MavenCleaner;
 import de.dagere.peass.execution.maven.MavenRunningTester;
@@ -55,7 +55,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
 
    protected Charset lastEncoding = StandardCharsets.UTF_8;
 
-   public MavenTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
+   public MavenTestExecutor(final PeassFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
       super(folders, testTransformer, env);
    }
 

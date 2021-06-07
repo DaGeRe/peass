@@ -8,7 +8,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.KiekerResultManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -24,7 +24,7 @@ public class TreeReader extends KiekerResultManager {
    private boolean ignoreEOIs = true;
    private final MeasurementConfiguration config;
    
-   TreeReader(final PeASSFolders folders, final MeasurementConfiguration config, final EnvironmentVariables env) throws InterruptedException, IOException {
+   TreeReader(final PeassFolders folders, final MeasurementConfiguration config, final EnvironmentVariables env) throws InterruptedException, IOException {
       super(folders, config.getExecutionConfig(), env);
       this.config = config;
    }

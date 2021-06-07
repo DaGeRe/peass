@@ -19,7 +19,7 @@ import de.dagere.peass.vcs.VersionControlSystem;
  * @author reichelt
  *
  */
-public class PeASSFolders {
+public class PeassFolders {
    public static final String PEASS_POSTFIX = "_peass";
    
    protected final File projectFolder;
@@ -42,7 +42,7 @@ public class PeASSFolders {
       return peassFolder;
    }
    
-   public PeASSFolders(final File folder, final String name) {
+   public PeassFolders(final File folder, final String name) {
       this.projectName = name;
       if (!folder.getName().endsWith(PEASS_POSTFIX)) {
          projectFolder = folder;
@@ -58,7 +58,6 @@ public class PeASSFolders {
       }
 
       logFolder = new File(peassFolder, "logs");
-      logFolder.mkdir();
       oldSourceFolder = new File(peassFolder, "lastSources");
       fullResultFolder = new File(peassFolder, "measurementsFull");
       fullResultFolder.mkdir();
@@ -75,7 +74,7 @@ public class PeASSFolders {
       tempProjectFolder = new File(peassFolder, "projectTemp");
    }
 
-   public PeASSFolders(final File folder) {
+   public PeassFolders(final File folder) {
       this(folder, (folder != null ? folder.getName() : null));
    }
 
@@ -103,6 +102,9 @@ public class PeASSFolders {
    }
 
    public File getLogFolder() {
+      if (!logFolder.exists()) {
+         logFolder.mkdirs();
+      }
       return logFolder;
    }
    
@@ -205,9 +207,9 @@ public class PeASSFolders {
       return debugFolder;
    }
    
-   public PeASSFolders getTempFolder(final String name) throws IOException, InterruptedException {
+   public PeassFolders getTempFolder(final String name) throws IOException, InterruptedException {
       final File nowFolder = new File(getTempProjectFolder(), name);
-      PeASSFolders folders = TemporaryProjectFolderUtil.cloneForcefully(this, nowFolder);
+      PeassFolders folders = TemporaryProjectFolderUtil.cloneForcefully(this, nowFolder);
       return folders;
    }
 

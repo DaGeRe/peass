@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.testtransformation.JUnitTestShortener;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
@@ -19,7 +19,7 @@ public abstract class KoPeMeExecutor extends TestExecutor {
 
    protected final JUnitTestTransformer testTransformer;
 
-   public KoPeMeExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
+   public KoPeMeExecutor(final PeassFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
       super(folders, testTransformer, env);
       this.testTransformer = testTransformer;
    }

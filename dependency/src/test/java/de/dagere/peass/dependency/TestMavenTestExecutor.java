@@ -25,7 +25,7 @@ public class TestMavenTestExecutor {
       JUnitTestTransformer testTransformerMock = Mockito.mock(JUnitTestTransformer.class);
       Mockito.when(testTransformerMock.getConfig()).thenReturn(new MeasurementConfiguration(5));
       
-      PeASSFolders foldersMock = Mockito.mock(PeASSFolders.class);
+      PeassFolders foldersMock = Mockito.mock(PeassFolders.class);
       Mockito.when(foldersMock.getTempDir()).thenReturn(new File("/tmp/test2"));
       Mockito.when(foldersMock.getTempMeasurementFolder()).thenReturn(new File("/tmp/test2"));
       

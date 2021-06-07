@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.ExecutorCreator;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -43,7 +43,7 @@ public class ContinuousExecutor {
 
    private final File originalProjectFolder;
    private final File localFolder;
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final ResultsFolders resultsFolders;
 
    private final EnvironmentVariables env;
@@ -62,7 +62,7 @@ public class ContinuousExecutor {
       getGitRepo(projectFolder, measurementConfig, projectFolderLocal);
       resultsFolders = new ResultsFolders(localFolder, projectFolder.getName());
 
-      folders = new PeASSFolders(projectFolderLocal);
+      folders = new PeassFolders(projectFolderLocal);
 
       IteratorBuilder iteratorBuiler = new IteratorBuilder(measurementConfig, folders.getProjectFolder());
       iterator = iteratorBuiler.getIterator();
@@ -123,7 +123,7 @@ public class ContinuousExecutor {
       return version;
    }
 
-   public PeASSFolders getFolders() {
+   public PeassFolders getFolders() {
       return folders;
    }
 

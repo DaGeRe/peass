@@ -32,7 +32,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.persistence.Dependencies;
@@ -98,7 +98,7 @@ public final class GitUtils {
       return isDifferent;
    }
 
-   public static void clone(final PeASSFolders folders, final File projectFolderTemp) throws InterruptedException, IOException {
+   public static void clone(final PeassFolders folders, final File projectFolderTemp) throws InterruptedException, IOException {
       // TODO Branches klonen
       final File projectFolder = folders.getProjectFolder();
       clone(projectFolderTemp, projectFolder);

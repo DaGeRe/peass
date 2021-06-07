@@ -18,7 +18,7 @@ import de.dagere.peass.TestConstants;
 import de.dagere.peass.ci.helper.GitProjectBuilder;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -60,7 +60,7 @@ public class TestContinuousDependencyReader {
       executionConfig.setVersion(iterator.getTag());
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new PeassFolders(TestConstants.CURRENT_FOLDER),
             resultsFolders, new EnvironmentVariables());
       Dependencies dependencies = reader.getDependencies(iterator, "");
 
@@ -87,7 +87,7 @@ public class TestContinuousDependencyReader {
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
       final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig,
-            new PeASSFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
+            new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
       Dependencies dependencies = spiedReader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
@@ -111,7 +111,7 @@ public class TestContinuousDependencyReader {
       executionConfig.setVersion(newVersion);
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER),
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new PeassFolders(TestConstants.CURRENT_FOLDER),
             resultsFolders, new EnvironmentVariables());
       Set<TestCase> tests = reader.getTests(iterator, "", newVersion, new MeasurementConfiguration(1));
 

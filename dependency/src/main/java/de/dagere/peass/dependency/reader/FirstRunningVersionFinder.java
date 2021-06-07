@@ -5,7 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.testtransformation.TestTransformer;
@@ -15,13 +15,13 @@ public class FirstRunningVersionFinder {
    
    private static final Logger LOG = LogManager.getLogger(FirstRunningVersionFinder.class);
 
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final VersionKeeper nonRunning;
    private final VersionIterator iterator;
    private final ExecutionConfig executionConfig;
    private final EnvironmentVariables env;
 
-   public FirstRunningVersionFinder(final PeASSFolders folders, final VersionKeeper nonRunning, final VersionIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+   public FirstRunningVersionFinder(final PeassFolders folders, final VersionKeeper nonRunning, final VersionIterator iterator, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.folders = folders;
       this.nonRunning = nonRunning;
       this.iterator = iterator;

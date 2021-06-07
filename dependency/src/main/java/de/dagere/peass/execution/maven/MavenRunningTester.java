@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.CommandConcatenator;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.MavenPomUtil;
@@ -19,13 +19,13 @@ public class MavenRunningTester {
    
    private static final Logger LOG = LogManager.getLogger(MavenRunningTester.class);
    
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final EnvironmentVariables env;
    private final MeasurementConfiguration measurementConfig;
    private final ProjectModules modules;
    private boolean buildfileExists;
    
-   public MavenRunningTester(final PeASSFolders folders, final EnvironmentVariables env, final MeasurementConfiguration measurementConfig, final ProjectModules modules) {
+   public MavenRunningTester(final PeassFolders folders, final EnvironmentVariables env, final MeasurementConfiguration measurementConfig, final ProjectModules modules) {
       this.folders = folders;
       this.env = env;
       this.measurementConfig = measurementConfig;

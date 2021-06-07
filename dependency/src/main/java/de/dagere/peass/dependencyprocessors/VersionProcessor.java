@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.ExecutionConfigMixin;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -41,7 +41,7 @@ public abstract class VersionProcessor implements Callable<Void> {
    @Option(names = { "-folder", "--folder" }, description = "Folder of the project that should be analyzed", required = true)
    protected File projectFolder;
 
-   protected PeASSFolders folders;
+   protected PeassFolders folders;
    protected VersionControlSystem vcs;
    protected Dependencies dependencies;
    protected ExecutionData executionData;
@@ -60,7 +60,7 @@ public abstract class VersionProcessor implements Callable<Void> {
    protected File executionfile;
 
    public VersionProcessor(final File projectFolder, final Dependencies dependencies) {
-      this.folders = new PeASSFolders(projectFolder);
+      this.folders = new PeassFolders(projectFolder);
       this.dependencies = dependencies;
       startversion = null;
       endversion = null;
@@ -134,7 +134,7 @@ public abstract class VersionProcessor implements Callable<Void> {
          throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");
       }
 
-      folders = new PeASSFolders(projectFolder);
+      folders = new PeassFolders(projectFolder);
       if (!projectFolder.exists()) {
          GitUtils.downloadProject(dependencies.getUrl(), projectFolder);
       }

@@ -23,7 +23,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.ExecutorCreator;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.AdaptiveTester;
@@ -153,7 +153,7 @@ public class AdaptiveTesterTest {
    }
 
    private AdaptiveTester prepareTester() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      final PeASSFolders folders = Mockito.mock(PeASSFolders.class);
+      final PeassFolders folders = Mockito.mock(PeassFolders.class);
       Mockito.when(folders.getProjectFolder()).thenReturn(folder.newFolder("test"));
       Mockito.when(folders.getLogFolder(Mockito.anyString(), Mockito.any(TestCase.class))).thenReturn(folder.newFile("log"));
 

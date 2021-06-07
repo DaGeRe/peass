@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.KiekerResultManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class KiekerFolderUtil {
@@ -69,7 +69,7 @@ public class KiekerFolderUtil {
       return methodResult;
    }
 
-   public static File getModuleResultFolder(final PeASSFolders folders, final TestCase testcase) {
+   public static File getModuleResultFolder(final PeassFolders folders, final TestCase testcase) {
       File moduleFolder;
       if (testcase.getModule() != null) {
          File rawModuleFolder = new File(folders.getProjectFolder(), testcase.getModule());

@@ -16,7 +16,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.CauseSearchFolders;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
@@ -85,7 +85,7 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   protected synchronized TestExecutor getExecutor(final PeASSFolders temporaryFolders, final String version) {
+   protected synchronized TestExecutor getExecutor(final PeassFolders temporaryFolders, final String version) {
       final TestExecutor testExecutor = super.getExecutor(temporaryFolders, version);
       TestTransformer testTransformer = testExecutor.getTestTransformer();
       testTransformer.setAggregatedWriter(causeConfig.isUseAggregation());

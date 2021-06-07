@@ -79,11 +79,11 @@ public class DependencyManager extends KiekerResultManager {
     * @throws InstantiationException
     * @throws ClassNotFoundException
     */
-   public DependencyManager(final PeASSFolders folders, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+   public DependencyManager(final PeassFolders folders, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       super(folders, executionConfig, env);
    }
 
-   public DependencyManager(final TestExecutor executor, final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
+   public DependencyManager(final TestExecutor executor, final PeassFolders folders, final JUnitTestTransformer testTransformer) {
       super(executor, folders, testTransformer);
    }
 

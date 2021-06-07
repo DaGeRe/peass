@@ -23,7 +23,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.CauseSearchFolders;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
@@ -57,7 +57,7 @@ public class CauseSearcherCompleteIT {
          e.printStackTrace();
       }
       
-      final PeASSFolders folders = new PeASSFolders(CURRENT);
+      final PeassFolders folders = new PeassFolders(CURRENT);
       final File projectFolderTemp = new File(folders.getTempProjectFolder(), "000001");
       
       VCSTestUtils.mockGetVCS();

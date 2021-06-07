@@ -4,17 +4,17 @@ import java.io.File;
 import java.io.FileFilter;
 
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 
 public class JmhResultMover {
 
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final MeasurementConfiguration measurementConfig;
    private final File[] sourceResultFolders;
 
-   public JmhResultMover(final PeASSFolders folders, final MeasurementConfiguration measurementConfig) {
+   public JmhResultMover(final PeassFolders folders, final MeasurementConfiguration measurementConfig) {
       this.folders = folders;
       this.measurementConfig = measurementConfig;
       final File[] files = folders.getTempMeasurementFolder().listFiles(new FileFilter() {

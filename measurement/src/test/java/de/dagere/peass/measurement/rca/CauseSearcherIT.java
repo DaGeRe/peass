@@ -28,7 +28,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.CauseSearchFolders;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -67,7 +67,7 @@ public class CauseSearcherIT {
          e.printStackTrace();
       }
       
-      final PeASSFolders folders = new PeASSFolders(DependencyTestConstants.CURRENT);
+      final PeassFolders folders = new PeassFolders(DependencyTestConstants.CURRENT);
       final File projectFolderTemp = new File(folders.getTempProjectFolder(), "000001");
       
       VCSTestUtils.mockGetVCS();
@@ -87,10 +87,10 @@ public class CauseSearcherIT {
             return null;
          }
       }).when(GitUtils.class);
-      GitUtils.clone(Mockito.any(PeASSFolders.class), Mockito.any(File.class));
+      GitUtils.clone(Mockito.any(PeassFolders.class), Mockito.any(File.class));
    }
 
-   private void mockGoToTag(final PeASSFolders folders, final File projectFolderTemp) {
+   private void mockGoToTag(final PeassFolders folders, final File projectFolderTemp) {
       PowerMockito.doAnswer(new Answer<Void>() {
 
          @Override

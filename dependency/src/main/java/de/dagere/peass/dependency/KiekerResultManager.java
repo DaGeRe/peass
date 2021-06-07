@@ -51,10 +51,10 @@ public class KiekerResultManager {
    private static final Logger LOG = LogManager.getLogger(KiekerResultManager.class);
 
    protected final TestExecutor executor;
-   protected final PeASSFolders folders;
+   protected final PeassFolders folders;
    protected final TestTransformer testTransformer;
 
-   public KiekerResultManager(final PeASSFolders folders, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+   public KiekerResultManager(final PeassFolders folders, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.folders = folders;
       MeasurementConfiguration fakeConfig = new MeasurementConfiguration(1, executionConfig);
       fakeConfig.setIterations(1);
@@ -69,7 +69,7 @@ public class KiekerResultManager {
       executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
    }
 
-   public KiekerResultManager(final TestExecutor executor, final PeASSFolders folders, final JUnitTestTransformer testTransformer) {
+   public KiekerResultManager(final TestExecutor executor, final PeassFolders folders, final JUnitTestTransformer testTransformer) {
       this.executor = executor;
       this.folders = folders;
       this.testTransformer = testTransformer;
@@ -168,7 +168,7 @@ public class KiekerResultManager {
       return getXMLFileFolder(folders, moduleFolder);
    }
 
-   public static File getXMLFileFolder(final PeASSFolders folders, final File moduleFolder) {
+   public static File getXMLFileFolder(final PeassFolders folders, final File moduleFolder) {
       File xmlFileFolder = null;
       final BuildtoolProjectNameReader buildtoolProjectNameReader = new BuildtoolProjectNameReader();
       if (buildtoolProjectNameReader.searchBuildfile(moduleFolder, 1)) {

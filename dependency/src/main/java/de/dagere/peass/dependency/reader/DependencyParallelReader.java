@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.parallel.OneReader;
@@ -30,7 +30,7 @@ public class DependencyParallelReader {
    private final VersionKeeper nonRunning;
    private final VersionKeeper nonChanges;
    private final List<GitCommit> commits;
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final int sizePerThread;
    private final ResultsFolders[] outFolders;
    private final File tempResultFolder;
@@ -44,7 +44,7 @@ public class DependencyParallelReader {
       this.dependencyConfig = dependencyConfig;
       this.executionConfig = executionConfig;
       LOG.debug(url);
-      folders = new PeASSFolders(projectFolder);
+      folders = new PeassFolders(projectFolder);
       this.commits = commits;
       this.project = project;
       this.env = env;
@@ -87,7 +87,7 @@ public class DependencyParallelReader {
       for (int outfileIndex = 0; outfileIndex < outFolders.length; outfileIndex++) {
          final int readableIndex = outfileIndex + 1;
          outFolders[outfileIndex] = new ResultsFolders(new File(tempResultFolder, "temp_" + project + "_" + readableIndex), project);
-         PeASSFolders foldersTemp = folders.getTempFolder("" + readableIndex);
+         PeassFolders foldersTemp = folders.getTempFolder("" + readableIndex);
          final ResultsFolders currentOutFile = outFolders[outfileIndex];
          startPartProcess(currentOutFile, service, outfileIndex, foldersTemp);
       }
@@ -103,7 +103,7 @@ public class DependencyParallelReader {
       }
    }
 
-   public void startPartProcess(final ResultsFolders currentOutFolders, final ExecutorService service, final int outfileIndex, final PeASSFolders foldersTemp)
+   public void startPartProcess(final ResultsFolders currentOutFolders, final ExecutorService service, final int outfileIndex, final PeassFolders foldersTemp)
          throws InterruptedException {
       final int min = outfileIndex * sizePerThread;
       final int max = Math.min((outfileIndex + 1) * sizePerThread + 1, commits.size());
@@ -117,7 +117,7 @@ public class DependencyParallelReader {
       }
    }
 
-   void processCommits(final ResultsFolders currentOutFolders, final ExecutorService service, final PeASSFolders foldersTemp, final List<GitCommit> currentCommits,
+   void processCommits(final ResultsFolders currentOutFolders, final ExecutorService service, final PeassFolders foldersTemp, final List<GitCommit> currentCommits,
          final List<GitCommit> reserveCommits, final GitCommit minimumCommit) throws InterruptedException {
       LOG.debug("Start: {} End: {}", currentCommits.get(0), currentCommits.get(currentCommits.size() - 1));
       LOG.debug(currentCommits);

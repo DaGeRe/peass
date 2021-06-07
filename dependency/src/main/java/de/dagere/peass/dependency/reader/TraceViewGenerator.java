@@ -12,7 +12,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.dependency.DependencyManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -29,11 +29,11 @@ public class TraceViewGenerator {
    private static final Logger LOG = LogManager.getLogger(TraceViewGenerator.class);
 
    private final DependencyManager dependencyManager;
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final String version;
    private final TraceFileMapping traceFileMapping;
 
-   public TraceViewGenerator(final DependencyManager dependencyManager, final PeASSFolders folders, final String version, final TraceFileMapping mapping) {
+   public TraceViewGenerator(final DependencyManager dependencyManager, final PeassFolders folders, final String version, final TraceFileMapping mapping) {
       this.dependencyManager = dependencyManager;
       this.folders = folders;
       this.version = version;

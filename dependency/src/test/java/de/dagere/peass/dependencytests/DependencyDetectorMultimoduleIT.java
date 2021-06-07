@@ -21,7 +21,7 @@ import com.github.javaparser.ParseException;
 import co.unruly.matchers.StreamMatchers;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
@@ -71,7 +71,7 @@ public class DependencyDetectorMultimoduleIT {
       ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
       
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeASSFolders(DependencyTestConstants.CURRENT), 
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(DependencyTestConstants.CURRENT), 
             DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager, new ExecutionConfig(5), new EnvironmentVariables());
 
       final boolean success = reader.readInitialVersion();
@@ -103,7 +103,7 @@ public class DependencyDetectorMultimoduleIT {
 
       ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeASSFolders(DependencyTestConstants.CURRENT), DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager, new ExecutionConfig(5), new EnvironmentVariables());
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(DependencyTestConstants.CURRENT), DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager, new ExecutionConfig(5), new EnvironmentVariables());
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 

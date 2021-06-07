@@ -38,10 +38,10 @@ public class ChangeManager {
 
    private static final Logger LOG = LogManager.getLogger(ChangeManager.class);
 
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final VersionIterator iterator;
 
-   public ChangeManager(final PeASSFolders folders, final VersionIterator iterator) {
+   public ChangeManager(final PeassFolders folders, final VersionIterator iterator) {
       this.folders = folders;
       this.iterator = iterator;
    }

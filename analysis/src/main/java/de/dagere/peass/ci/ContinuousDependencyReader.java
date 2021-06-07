@@ -19,7 +19,7 @@ import com.github.javaparser.ParseException;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -43,11 +43,12 @@ public class ContinuousDependencyReader {
 
    private final DependencyConfig dependencyConfig;
    private final ExecutionConfig executionConfig;
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final ResultsFolders resultsFolders;
    private final EnvironmentVariables env;
 
-   public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final PeASSFolders folders, final ResultsFolders resultsFolders,
+   public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final PeassFolders folders,
+         final ResultsFolders resultsFolders,
          final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
       this.executionConfig = executionConfig;
@@ -55,16 +56,24 @@ public class ContinuousDependencyReader {
       this.resultsFolders = resultsFolders;
       this.env = env;
    }
-   
-   public Set<TestCase> getTests(final VersionIterator iterator, final String url, final String version, final MeasurementConfiguration measurementConfig) throws Exception{
+
+   public Set<TestCase> getTests(final VersionIterator iterator, final String url, final String version, final MeasurementConfiguration measurementConfig) throws Exception {
       final Dependencies dependencies = getDependencies(iterator, url);
-      
+
       final Set<TestCase> tests;
       if (dependencies.getVersions().size() > 0) {
          if (dependencyConfig.isGenerateViews()) {
-            ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
-            TestSet versionTestSet = executionData.getVersions().get(version);
-            tests = versionTestSet.getTests();
+            if (dependencyConfig.isGenerateCoverageSelection()) {
+               LOG.info("Using coverage-based test selection");
+               ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getCoverageSelectionFile(), ExecutionData.class);
+               TestSet versionTestSet = executionData.getVersions().get(version);
+               tests = versionTestSet != null ? versionTestSet.getTests() : new HashSet<TestCase>();
+            } else {
+               LOG.info("Using dynamic test selection results");
+               ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+               TestSet versionTestSet = executionData.getVersions().get(version);
+               tests = versionTestSet.getTests();
+            }
          } else {
             Version versionDependencies = dependencies.getVersions().get(dependencies.getNewestVersion());
             tests = versionDependencies.getTests().getTests();
@@ -140,22 +149,21 @@ public class ContinuousDependencyReader {
    }
 
    private void doPartialRCS(final Dependencies dependencies, final VersionIterator newIterator) {
-      DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, dependencies.getUrl(), newIterator, 
+      DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, dependencies.getUrl(), newIterator,
             new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nochanges.json")), executionConfig, env);
       newIterator.goTo0thCommit();
 
       reader.readCompletedVersions(dependencies);
-      
+
       try {
          ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
          reader.setExecutionData(executions);
-         
+
          reader.readDependencies();
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
-      
-      
+
    }
 
    public File getDependencyreadingFolder() {

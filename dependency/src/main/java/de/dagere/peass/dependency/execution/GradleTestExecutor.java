@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.gradle.FindDependencyVisitor;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
@@ -21,7 +21,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
 
    private static final Logger LOG = LogManager.getLogger(GradleTestExecutor.class);
 
-   public GradleTestExecutor(final PeASSFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
+   public GradleTestExecutor(final PeassFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
       super(folders, testTransformer, env);
    }
 

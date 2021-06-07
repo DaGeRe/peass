@@ -12,7 +12,7 @@ import java.util.Set;
 import com.github.javaparser.ast.CompilationUnit;
 
 import de.dagere.peass.dependency.ClazzFileFinder;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.changesreading.FileComparisonUtil;
@@ -23,7 +23,7 @@ import difflib.Patch;
 
 public class PropertyChangeGuesser {
 
-   public Set<String> getGuesses(final PeASSFolders folders, final Entry<ChangedEntity, ClazzChangeData> changedEntity) throws FileNotFoundException {
+   public Set<String> getGuesses(final PeassFolders folders, final Entry<ChangedEntity, ClazzChangeData> changedEntity) throws FileNotFoundException {
       final Set<String> guessedTypes = new HashSet<>();
       final File file = ClazzFileFinder.getSourceFile(folders.getProjectFolder(), changedEntity.getKey());
       final File fileOld = ClazzFileFinder.getSourceFile(folders.getOldSources(), changedEntity.getKey());

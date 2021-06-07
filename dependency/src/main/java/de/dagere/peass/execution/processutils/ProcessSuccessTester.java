@@ -11,18 +11,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 
 public class ProcessSuccessTester {
    
    private static final Logger LOG = LogManager.getLogger(ProcessSuccessTester.class);
    
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final MeasurementConfiguration measurementConfig;
    private final EnvironmentVariables env;
    
-   public ProcessSuccessTester(final PeASSFolders folders, final MeasurementConfiguration measurementConfig, final EnvironmentVariables env) {
+   public ProcessSuccessTester(final PeassFolders folders, final MeasurementConfiguration measurementConfig, final EnvironmentVariables env) {
       this.folders = folders;
       this.measurementConfig = measurementConfig;
       this.env = env;

@@ -13,7 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
@@ -27,11 +27,11 @@ public class KiekerEnvironmentPreparer {
    "target/test-classes/META-INF" };
    
    private final Set<String> includedMethodPattern;
-   private final PeASSFolders folders;
+   private final PeassFolders folders;
    private final TestTransformer testTransformer;
    private List<File> modules;
 
-   public KiekerEnvironmentPreparer(final Set<String> includedMethodPattern, final PeASSFolders folders, final TestTransformer testTransformer, final List<File> modules) {
+   public KiekerEnvironmentPreparer(final Set<String> includedMethodPattern, final PeassFolders folders, final TestTransformer testTransformer, final List<File> modules) {
       this.includedMethodPattern = includedMethodPattern;
       this.folders = folders;
       this.testTransformer = testTransformer;

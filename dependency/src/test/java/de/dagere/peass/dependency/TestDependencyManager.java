@@ -22,7 +22,7 @@ public class TestDependencyManager {
    
    @Test
    public void testBigFolderDeletion() throws IOException, InterruptedException, XmlPullParserException {
-      final PeASSFolders folders = new PeASSFolders(TestConstants.CURRENT_FOLDER);
+      final PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
 
       final TestExecutor testExecutorMock = Mockito.mock(TestExecutor.class);
 
@@ -41,7 +41,7 @@ public class TestDependencyManager {
       Assert.assertFalse(testFolder.exists());
    }
 
-   private void prepareMock(final PeASSFolders folders, final TestExecutor testExecutorMock, final File testFolder, final File rubishFile) {
+   private void prepareMock(final PeassFolders folders, final TestExecutor testExecutorMock, final File testFolder, final File rubishFile) {
       try {
          Mockito.when(testExecutorMock.getModules()).thenReturn(Mockito.mock(ProjectModules.class));
       } catch (IOException | XmlPullParserException  e) {

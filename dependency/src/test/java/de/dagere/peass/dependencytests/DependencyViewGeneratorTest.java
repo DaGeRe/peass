@@ -24,7 +24,7 @@ import com.github.javaparser.ParseException;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -55,7 +55,7 @@ public class DependencyViewGeneratorTest {
 
       FakeFileIterator iteratorspied = mockIterator();
 
-      DependencyReader reader = new DependencyReader(dependencyConfig, new PeASSFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
+      DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
             "", iteratorspied, new VersionKeeper(new File("/dev/null")), new ExecutionConfig(), new EnvironmentVariables());
       reader.readInitialVersion();
       reader.readDependencies();

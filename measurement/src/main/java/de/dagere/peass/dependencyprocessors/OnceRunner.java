@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
@@ -22,7 +22,7 @@ public class OnceRunner {
 
    private static final Logger LOG = LogManager.getLogger(OnceRunner.class);
 
-   protected final PeASSFolders folders;
+   protected final PeassFolders folders;
    private final VersionControlSystem vcs;
    protected final TestTransformer testTransformer;
    protected final TestExecutor testExecutor;
@@ -30,7 +30,7 @@ public class OnceRunner {
    protected final ResultOrganizer currentOrganizer;
    private final KiekerResultHandler resultHandler;
 
-   public OnceRunner(final PeASSFolders folders, final TestExecutor testExecutor, final ResultOrganizer currentOrganizer, final KiekerResultHandler resultHandler) {
+   public OnceRunner(final PeassFolders folders, final TestExecutor testExecutor, final ResultOrganizer currentOrganizer, final KiekerResultHandler resultHandler) {
       this.folders = folders;
       this.vcs = folders.getVCS();
       this.testTransformer = testExecutor.getTestTransformer();

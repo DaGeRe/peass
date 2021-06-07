@@ -19,7 +19,7 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.peass.dependency.CauseSearchFolders;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
@@ -40,7 +40,7 @@ public class KoPeMeTreeConverter {
       readStatistics(folders, version, testcase);
    }
 
-   public KoPeMeTreeConverter(final PeASSFolders folders, final String version, final TestCase testcase) throws JAXBException {
+   public KoPeMeTreeConverter(final PeassFolders folders, final String version, final TestCase testcase) throws JAXBException {
       File versionFolder = new File(folders.getDetailResultFolder(), testcase.getClazz() + File.separator + version);
       if (versionFolder.exists()) {
          node = new GraphNode("overall", "public overall.overall()", "public overall.overall()");

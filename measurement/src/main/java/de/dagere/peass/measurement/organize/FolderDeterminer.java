@@ -5,16 +5,16 @@ import java.io.File;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class FolderDeterminer {
    
    private static final Logger LOG = LogManager.getLogger(FolderDeterminer.class);
    
-   private PeASSFolders folders;
+   private PeassFolders folders;
    
-   public FolderDeterminer(final PeASSFolders folders) {
+   public FolderDeterminer(final PeassFolders folders) {
       this.folders = folders;
    }
 

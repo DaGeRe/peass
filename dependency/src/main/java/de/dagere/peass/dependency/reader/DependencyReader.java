@@ -19,7 +19,7 @@ import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
-import de.dagere.peass.dependency.PeASSFolders;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -55,7 +55,7 @@ public class DependencyReader {
    private final ExecutionData coverageBasedSelection = new ExecutionData();
    protected final ResultsFolders resultsFolders;
    protected DependencyManager dependencyManager;
-   protected final PeASSFolders folders;
+   protected final PeassFolders folders;
    protected VersionIterator iterator;
    protected String lastRunningVersion;
    private final VersionKeeper skippedNoChange;
@@ -66,7 +66,7 @@ public class DependencyReader {
    private final DependencySizeRecorder sizeRecorder = new DependencySizeRecorder();
    private final TraceFileMapping mapping = new TraceFileMapping();
 
-   public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders,
+   public DependencyReader(final DependencyConfig dependencyConfig, final PeassFolders folders,
          final ResultsFolders resultsFolders, final String url, final VersionIterator iterator,
          final ChangeManager changeManager, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
@@ -91,7 +91,7 @@ public class DependencyReader {
     * @param url
     * @param iterator
     */
-   public DependencyReader(final DependencyConfig dependencyConfig, final PeASSFolders folders, final ResultsFolders resultsFolders, final String url,
+   public DependencyReader(final DependencyConfig dependencyConfig, final PeassFolders folders, final ResultsFolders resultsFolders, final String url,
          final VersionIterator iterator,
          final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;

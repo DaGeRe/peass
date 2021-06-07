@@ -23,13 +23,13 @@ public class ExecutorCreator {
    
    private static final Logger LOG = LogManager.getLogger(ExecutorCreator.class);
 
-   public static boolean hasBuildfile(final PeASSFolders folders) {
+   public static boolean hasBuildfile(final PeassFolders folders) {
       final File pom = new File(folders.getProjectFolder(), "pom.xml");
       final File buildGradle = new File(folders.getProjectFolder(), "build.gradle");
       return pom.exists() || buildGradle.exists();
    }
 
-   public static TestExecutor createExecutor(final PeASSFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
+   public static TestExecutor createExecutor(final PeassFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
       final File pom = new File(folders.getProjectFolder(), "pom.xml");
       final File buildGradle = new File(folders.getProjectFolder(), "build.gradle");
       final String executorName = testTransformer.getConfig().getExecutionConfig().getTestExecutor();
@@ -45,7 +45,7 @@ public class ExecutorCreator {
       }
    }
    
-   public static TestTransformer createTestTransformer(final PeASSFolders folders, final ExecutionConfig executionConfig, final MeasurementConfiguration measurementConfig) {
+   public static TestTransformer createTestTransformer(final PeassFolders folders, final ExecutionConfig executionConfig, final MeasurementConfiguration measurementConfig) {
       try {
          Class<?> testTransformerClass = Class.forName(executionConfig.getTestTransformer());
          if (!Arrays.asList(testTransformerClass.getInterfaces()).contains(TestTransformer.class)) {
@@ -62,7 +62,7 @@ public class ExecutorCreator {
       
    }
    
-   public static TestTransformer createTestTransformer(final PeASSFolders folders, final ExecutionConfig executionConfig) {
+   public static TestTransformer createTestTransformer(final PeassFolders folders, final ExecutionConfig executionConfig) {
       try {
          Class<?> testTransformerClass = Class.forName(executionConfig.getTestTransformer());
          if (!Arrays.asList(testTransformerClass.getInterfaces()).contains(TestTransformer.class)) {
