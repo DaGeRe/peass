@@ -97,7 +97,7 @@ public class PartialDependenciesMerger {
       List<File> coverageSelectionOutFiles = new LinkedList<>();
       for (ResultsFolders resultFolder : outFiles) {
          if (resultFolder != null) {
-            if (resultFolder.getCoverageSelectionFile().exists()) {
+            if (resultFolder.getExecutionFile().exists()) {
                executionOutFiles.add(resultFolder.getExecutionFile());
             }
             if (resultFolder.getCoverageSelectionFile() != null && resultFolder.getCoverageSelectionFile().exists()) {
