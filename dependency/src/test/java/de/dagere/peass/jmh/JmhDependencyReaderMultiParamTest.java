@@ -14,11 +14,8 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -47,38 +44,38 @@ import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(GitUtils.class)
-@PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class JmhDependencyReaderMultiParamTest {
-   
+
    @Before
    public void clearCurrent() throws IOException {
       TestUtil.deleteContents(TestConstants.CURRENT_FOLDER.getParentFile());
    }
-   
+
    @Test
-   public void testVersionReading() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-      FakeGitUtil.prepareGitUtils();
-      FakeFileIterator iterator = mockIterator();
-      
-      ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
-      
-      DependencyConfig dependencyConfig = new DependencyConfig(1, false, true, false);
-      
-      ExecutionConfig jmhConfig = new ExecutionConfig();
-      jmhConfig.setTestTransformer("de.dagere.peass.dependency.jmh.JmhTestTransformer");
-      jmhConfig.setTestExecutor("de.dagere.peass.dependency.jmh.JmhTestExecutor");
-      
-      DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
-            "", iterator, new VersionKeeper(new File("/dev/null")), jmhConfig, new EnvironmentVariables());
-      reader.readInitialVersion();
-      
-      checkInitialVersion(resultsFolders);
-      
-      reader.readDependencies();
-      
-      checkChangedVersion(resultsFolders);
+   public void testVersionReading() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException,
+         InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+      try (MockedStatic<GitUtils> gitUtilsMock = Mockito.mockStatic(GitUtils.class)) {
+         FakeGitUtil.prepareGitUtils(gitUtilsMock);
+         FakeFileIterator iterator = mockIterator();
+
+         ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
+
+         DependencyConfig dependencyConfig = new DependencyConfig(1, false, true, false);
+
+         ExecutionConfig jmhConfig = new ExecutionConfig();
+         jmhConfig.setTestTransformer("de.dagere.peass.dependency.jmh.JmhTestTransformer");
+         jmhConfig.setTestExecutor("de.dagere.peass.dependency.jmh.JmhTestExecutor");
+
+         DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
+               "", iterator, new VersionKeeper(new File("/dev/null")), jmhConfig, new EnvironmentVariables());
+         reader.readInitialVersion();
+
+         checkInitialVersion(resultsFolders);
+
+         reader.readDependencies();
+
+         checkChangedVersion(resultsFolders);
+      }
    }
 
    private void checkChangedVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
@@ -94,7 +91,7 @@ public class JmhDependencyReaderMultiParamTest {
       Assert.assertThat(initialDependencies.keySet(), Matchers.hasSize(1));
       InitialDependency initial = initialDependencies.get(new ChangedEntity("de.dagere.peass.ExampleBenchmark", null, "testMethod"));
       Assert.assertThat(initial.getEntities(), Matchers.hasSize(4));
-      
+
       TestCase changedBenchmark = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
       File viewFolder = resultsFolders.getViewMethodDir("000001", changedBenchmark);
       File methodOrderFile = new File(viewFolder, "000001_method");
@@ -102,7 +99,7 @@ public class JmhDependencyReaderMultiParamTest {
       Assert.assertThat(allMethods, Matchers.containsString("de.dagere.peass.ExampleBenchmark#someCalledMethod"));
       Assert.assertThat(allMethods, Matchers.containsString("de.dagere.peass.ExampleBenchmark#otherCalledMethod"));
    }
-   
+
    private FakeFileIterator mockIterator() {
       List<File> versionList = Arrays.asList(JmhTestConstants.MULTIPARAM_VERSION, JmhTestConstants.MULTIPARAM_VERSION_CHANGE);
 
