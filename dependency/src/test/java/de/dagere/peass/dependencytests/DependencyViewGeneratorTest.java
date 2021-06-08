@@ -13,11 +13,8 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import com.github.javaparser.ParseException;
 
@@ -36,40 +33,40 @@ import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(GitUtils.class)
-@PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class DependencyViewGeneratorTest {
 
    private static final Logger LOG = LogManager.getLogger(TraceGettingIT.class);
 
    @Test
    public void testTwoVersions() throws IOException, InterruptedException, JAXBException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-      FakeGitUtil.prepareGitUtils();
+      try (MockedStatic<GitUtils> gitUtilsMock = Mockito.mockStatic(GitUtils.class)) {
+         FakeGitUtil.prepareGitUtils(gitUtilsMock);
 
-      DependencyDetectorTestUtil.init(TraceGettingIT.BASIC);
+         DependencyDetectorTestUtil.init(TraceGettingIT.BASIC);
 
-      ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
+         ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
 
-      DependencyConfig dependencyConfig = new DependencyConfig(1, false, true, false);
+         DependencyConfig dependencyConfig = new DependencyConfig(1, false, true, false);
 
-      FakeFileIterator iteratorspied = mockIterator();
+         FakeFileIterator iteratorspied = mockIterator();
 
-      DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
-            "", iteratorspied, new VersionKeeper(new File("/dev/null")), new ExecutionConfig(), new EnvironmentVariables());
-      reader.readInitialVersion();
-      reader.readDependencies();
+         DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
+               "", iteratorspied, new VersionKeeper(new File("/dev/null")), new ExecutionConfig(), new EnvironmentVariables());
+         reader.readInitialVersion();
+         reader.readDependencies();
 
-      File expectedDiff = new File(resultsFolders.getVersionDiffFolder("000002"), "TestMe#test.txt");
-      System.out.println(expectedDiff.getAbsolutePath());
-      Assert.assertTrue(expectedDiff.exists());
+         File expectedDiff = new File(resultsFolders.getVersionDiffFolder("000002"), "TestMe#test.txt");
+         System.out.println(expectedDiff.getAbsolutePath());
+         Assert.assertTrue(expectedDiff.exists());
 
-      // TODO Test, that instrumentation sources are not added to the view
+         // TODO Test, that instrumentation sources are not added to the view
 
-      final ExecutionData tests = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
-      //
-      Assert.assertEquals(2, tests.getVersions().size());
-      Assert.assertEquals(1, tests.getVersions().get("000002").getTests().size());
+         final ExecutionData tests = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+         //
+         Assert.assertEquals(2, tests.getVersions().size());
+         Assert.assertEquals(1, tests.getVersions().get("000002").getTests().size());
+      }
+      
    }
 
    private FakeFileIterator mockIterator() {
