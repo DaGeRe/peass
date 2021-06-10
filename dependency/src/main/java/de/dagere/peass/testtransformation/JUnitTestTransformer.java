@@ -350,7 +350,7 @@ public class JUnitTestTransformer implements TestTransformer {
                }
             }
          } else {
-            LOG.error("Clazz {} has no JUnit version", clazzFile);
+            LOG.warn("Clazz {} has no JUnit version", clazzFile);
          }
       } else {
          /**
