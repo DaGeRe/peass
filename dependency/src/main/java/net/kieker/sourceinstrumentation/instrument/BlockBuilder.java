@@ -30,7 +30,7 @@ public class BlockBuilder {
       this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
    }
 
-   public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final SamplingParameters parameters) {
+   public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final boolean mayNeedReturn, final SamplingParameters parameters) {
       LOG.trace("Statements: " + originalBlock.getStatements().size() + " " + parameters.getSignature());
       final BlockStmt replacedStatement = new BlockStmt();
       final ExplicitConstructorInvocationStmt constructorStatement = findConstructorInvocation(originalBlock);
@@ -39,7 +39,7 @@ public class BlockBuilder {
          originalBlock.getStatements().remove(constructorStatement);
       }
 
-      final BlockStmt regularChangedStatement = buildStatement(originalBlock, true, parameters);
+      final BlockStmt regularChangedStatement = buildStatement(originalBlock, mayNeedReturn, parameters);
       for (Statement st : regularChangedStatement.getStatements()) {
          replacedStatement.addAndGetStatement(st);
       }

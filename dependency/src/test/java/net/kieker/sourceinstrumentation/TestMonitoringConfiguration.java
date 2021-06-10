@@ -70,4 +70,27 @@ public class TestMonitoringConfiguration {
       MatcherAssert.assertThat(changedSource, Matchers.not(Matchers.containsString("isMonitoringEnabled")));
       MatcherAssert.assertThat(changedSource, Matchers.not(Matchers.containsString("return")));
    }
+   
+   @Test
+   public void testBothDeactivatedConstructor() throws IOException {
+      TestConstants.CURRENT_FOLDER.mkdirs();
+
+      File testFile = SourceInstrumentationTestUtil.copyResource("src/test/java/de/peass/MainTest.java", "/sourceInstrumentation/project_2/");
+
+      HashSet<String> includedPatterns = new HashSet<>();
+      includedPatterns.add("*");
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, includedPatterns, false, false, 1000);
+      
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
+      instrumenter.instrument(testFile);
+
+      TestSourceInstrumentation.testFileIsInstrumented(testFile, "public new de.peass.MainTest.<init>()", "OperationExecutionRecord");
+      String changedSource = FileUtils.readFileToString(testFile, StandardCharsets.UTF_8);
+      MatcherAssert.assertThat(changedSource, Matchers.not(Matchers.containsString("isProbeActivated")));
+      MatcherAssert.assertThat(changedSource, Matchers.not(Matchers.containsString("isMonitoringEnabled")));
+      
+      System.out.println(changedSource);
+      
+      MatcherAssert.assertThat(changedSource, Matchers.not(Matchers.containsString("return")));
+   }
 }

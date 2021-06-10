@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.TestConstants;
@@ -46,11 +46,11 @@ public class TestInterfaceInstrumentation {
       
       System.out.println(changedSource);
 
-      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("import kieker.monitoring.core.controller.MonitoringController;")));
-      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("import kieker.monitoring.core.registry.ControlFlowRegistry;")));
-      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("import kieker.monitoring.core.registry.SessionRegistry;")));
+      MatcherAssert.assertThat(changedSource, Matchers.not(Matchers.containsString("import kieker.monitoring.core.controller.MonitoringController;")));
+      MatcherAssert.assertThat(changedSource, Matchers.not(Matchers.containsString("import kieker.monitoring.core.registry.ControlFlowRegistry;")));
+      MatcherAssert.assertThat(changedSource, Matchers.not(Matchers.containsString("import kieker.monitoring.core.registry.SessionRegistry;")));
 
-      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("signature = \"" + fqn)));
-      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("new " + recordName)));
+      MatcherAssert.assertThat(changedSource, Matchers.not(Matchers.containsString("signature = \"" + fqn)));
+      MatcherAssert.assertThat(changedSource, Matchers.not(Matchers.containsString("new " + recordName)));
    }
 }
