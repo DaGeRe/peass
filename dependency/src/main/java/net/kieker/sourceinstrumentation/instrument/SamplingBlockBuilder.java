@@ -12,7 +12,7 @@ public class SamplingBlockBuilder extends BlockBuilder {
    private final int count;
    
    public SamplingBlockBuilder(final AllowedKiekerRecord recordType, final int count) {
-      super(recordType, false);
+      super(recordType, false, false);
       this.count = count;
    }
 

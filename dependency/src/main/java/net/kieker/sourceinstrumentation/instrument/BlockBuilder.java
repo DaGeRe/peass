@@ -22,11 +22,12 @@ public class BlockBuilder {
    private static final Logger LOG = LogManager.getLogger(BlockBuilder.class);
 
    protected final AllowedKiekerRecord recordType;
-   private final boolean enableDeactivation;
+   private final boolean enableDeactivation, enableAdaptiveMonitoring;
 
-   public BlockBuilder(final AllowedKiekerRecord recordType, final boolean enableDeactivation) {
+   public BlockBuilder(final AllowedKiekerRecord recordType, final boolean enableDeactivation, final boolean enableAdaptiveMonitoring) {
       this.recordType = recordType;
       this.enableDeactivation = enableDeactivation;
+      this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
    }
 
    public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final SamplingParameters parameters) {
@@ -103,7 +104,7 @@ public class BlockBuilder {
          replacedStatement.addStatement(ifS);
       }
       replacedStatement.addAndGetStatement("final String " + InstrumentationConstants.PREFIX + "signature = \"" + signature + "\";");
-      if (enableDeactivation) {
+      if (enableAdaptiveMonitoring) {
          NameExpr name = new NameExpr(InstrumentationConstants.PREFIX + "signature");
          Expression expr = new MethodCallExpr("!MonitoringController.getInstance().isProbeActivated", name);
          IfStmt ifS = new IfStmt(expr, changed, null);

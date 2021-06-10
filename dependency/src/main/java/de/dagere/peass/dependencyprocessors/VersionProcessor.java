@@ -133,11 +133,11 @@ public abstract class VersionProcessor implements Callable<Void> {
       if (executionData == null && dependencies == null) {
          throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");
       }
-
-      folders = new PeassFolders(projectFolder);
+      
       if (!projectFolder.exists()) {
          GitUtils.downloadProject(dependencies.getUrl(), projectFolder);
       }
+      folders = new PeassFolders(projectFolder);
 
       if (startversion != null || endversion != null) {
          LOG.info("Version: " + startversion + " - " + endversion);

@@ -25,7 +25,7 @@ public class TestSourceInstrumentation {
 
       testFileIsInstrumented(testFile, "public void de.peass.C0_0.method0()", "OperationExecutionRecord");
    }
-
+   
    @Test
    public void testUtilClass() throws IOException {
       TestConstants.CURRENT_FOLDER.mkdirs();
