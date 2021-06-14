@@ -76,7 +76,7 @@ public class ArgLineBuilder {
          if (!entrySeparator.contains("\"")) {
             argline += " -Dkieker.monitoring.configuration" + valueSeparator + "\"" + modulePath.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties\"";
          } else {
-            argline += " -Dkieker.monitoring.configuration" + valueSeparator + "'" + modulePath.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties'";
+            argline += "-Dkieker.monitoring.configuration" + valueSeparator + "'" + modulePath.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties'";
          }
       } else {
          argline = "";
