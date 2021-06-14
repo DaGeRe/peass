@@ -233,7 +233,7 @@ public class JUnitTestTransformer implements TestTransformer {
     * @return
     */
    public int getVersion(final File clazzFile) {
-      LOG.debug("Loading: {} {}", clazzFile, junitVersions);
+      LOG.trace("Loading: {} {}", clazzFile, junitVersions);
       if (junitVersions.containsKey(clazzFile)) {
          return junitVersions.get(clazzFile);
       } else {

@@ -206,11 +206,12 @@ public class MavenPomUtil {
          final List<File> modules = new LinkedList<>();
          if (model.getModules() != null && model.getModules().size() > 0) {
             for (final String module : model.getModules()) {
-               final File moduleFile = new File(pom.getParentFile(), module);
-               List<File> subModules = getModuleFiles(new File(moduleFile, "pom.xml"));
+               final File moduleFolder = new File(pom.getParentFile(), module);
+               final File modulePom = new File(moduleFolder, "pom.xml");
+               List<File> subModules = getModuleFiles(modulePom);
                modules.addAll(subModules);
-               if (!subModules.contains(moduleFile)) {
-                  modules.add(moduleFile);
+               if (!subModules.contains(moduleFolder)) {
+                  modules.add(moduleFolder);
                }
             }
          } else {
