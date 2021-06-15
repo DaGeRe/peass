@@ -45,7 +45,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
             final File gradleFile = GradleParseHelper.findGradleFile(module);
             editOneBuildfile(gradleFile, modules);
          }
-      } catch (IOException | XmlPullParserException e) {
+      } catch (IOException e) {
          e.printStackTrace();
       }
    }
@@ -123,22 +123,18 @@ public class GradleTestExecutor extends KoPeMeExecutor {
       boolean isRunning = false;
       buildfileExists = wrapper.exists() && potentialBuildfile.exists();
       if (buildfileExists) {
-         try {
-            boolean isAndroid = false;
-            for (final File module : getModules().getModules()) {
-               final File buildfile = GradleParseHelper.findGradleFile(module);
-               final FindDependencyVisitor visitor = GradleParseUtil.setAndroidTools(buildfile);
-               if (visitor.isAndroid()) {
-                  isAndroid = true;
-                  if (!visitor.hasVersion()) {
-                     return false;
-                  }
+         boolean isAndroid = false;
+         for (final File module : getModules().getModules()) {
+            final File buildfile = GradleParseHelper.findGradleFile(module);
+            final FindDependencyVisitor visitor = GradleParseUtil.setAndroidTools(buildfile);
+            if (visitor.isAndroid()) {
+               isAndroid = true;
+               if (!visitor.hasVersion()) {
+                  return false;
                }
             }
-            this.isAndroid = isAndroid;
-         } catch (IOException | XmlPullParserException e) {
-            e.printStackTrace();
          }
+         this.isAndroid = isAndroid;
          final String[] vars = new String[] { "./gradlew", "--no-daemon", "assemble" };
          isRunning = new ProcessSuccessTester(folders, testTransformer.getConfig(), env).testRunningSuccess(version, vars);
       }
@@ -146,7 +142,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    }
 
    @Override
-   public ProjectModules getModules() throws IOException, XmlPullParserException {
+   public ProjectModules getModules() {
       return GradleParseUtil.getModules(folders.getProjectFolder());
    }
 

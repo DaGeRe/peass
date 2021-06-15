@@ -194,9 +194,13 @@ public class MavenPomUtil {
       return modules;
    }
 
-   public static ProjectModules getModules(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
-      final List<File> modules = getModuleFiles(pom);
-      return new ProjectModules(modules);
+   public static ProjectModules getModules(final File pom) {
+      try {
+         List<File> modules = getModuleFiles(pom);
+         return new ProjectModules(modules);
+      } catch (IOException | XmlPullParserException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    public static List<File> getModuleFiles(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {

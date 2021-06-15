@@ -22,8 +22,10 @@ import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -255,10 +257,11 @@ public class DependencyReader {
 
    private Version handleStaticAnalysisChanges(final String version, final DependencyReadingInput input) throws IOException, JsonGenerationException, JsonMappingException {
       final ChangeTestMapping changeTestMap = dependencyManager.getDependencyMap().getChangeTestMap(input.getChanges()); // tells which tests need to be run, and
-      // because of
+      // because of which change they need to be run
       LOG.debug("Change test mapping (without added tests): " + changeTestMap);
-      // which change they need to be run
 
+      handleAddedTests(input, changeTestMap);
+      
       if (DETAIL_DEBUG)
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changetest_" + version + ".json"), changeTestMap);
 
@@ -270,6 +273,21 @@ public class DependencyReader {
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "versioninfo_" + version + ".json"), newVersionInfo);
       }
       return newVersionInfo;
+   }
+
+   private void handleAddedTests(final DependencyReadingInput input, final ChangeTestMapping changeTestMap) {
+      dependencyManager.getTestTransformer().determineVersions(dependencyManager.getExecutor().getModules().getModules());
+      for (ClazzChangeData changedEntry : input.getChanges().values()) {
+         if (!changedEntry.isOnlyMethodChange()) {
+            for (ChangedEntity change : changedEntry.getChanges()) {
+               File moduleFolder = new File(folders.getProjectFolder(), change.getModule());
+               List<TestCase> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, change);
+               for (TestCase added : addedTests) {
+                  changeTestMap.addChangeEntry(change, added.toEntity());
+               }
+            }
+         }
+      }
    }
 
    public void documentFailure(final String version) {

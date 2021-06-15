@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -195,7 +196,9 @@ public class JUnitTestShortener implements AutoCloseable{
                // FileUtils.copyFile(shortened.getKey(), shortened.getValue());
                shortened.getValue().delete();
                LOG.debug("File to reset: {} Exists: {} Parent exists: {}", shortened.getValue(), shortened.getValue().exists(), shortened.getValue().getParentFile().exists());
-               Files.move(shortened.getKey().toPath(), shortened.getValue().toPath());
+               Path dest = shortened.getValue().toPath();
+               Path source = shortened.getKey().toPath();
+               Files.move(source, dest);
                final CompilationUnit unit = JavaParserProvider.parse(shortened.getValue());
                transformer.getLoadedFiles().put(shortened.getValue(), unit);
             } catch (final IOException e) {

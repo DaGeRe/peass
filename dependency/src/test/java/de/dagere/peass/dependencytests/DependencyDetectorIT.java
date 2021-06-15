@@ -54,6 +54,20 @@ public class DependencyDetectorIT {
 
       DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.NormalDependency#executeThing", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
    }
+   
+   @Test
+   public void testAddedTest() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+      final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "added_test");
+      final ChangeManager changeManager = DependencyDetectorTestUtil.changedTestClassChangeManager();
+
+      final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
+
+      final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
+
+      System.out.println(reader.getDependencies());
+
+      DependencyDetectorTestUtil.checkChange(reader, "defaultpackage.NormalDependency#executeThing", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1, "addedTest");
+   }
 
    @Test
    public void testTestChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
