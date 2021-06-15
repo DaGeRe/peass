@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.javaparser.ParseException;
 
+import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
@@ -283,7 +284,9 @@ public class DependencyReader {
                File moduleFolder = new File(folders.getProjectFolder(), change.getModule());
                List<TestCase> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, change);
                for (TestCase added : addedTests) {
-                  changeTestMap.addChangeEntry(change, added.toEntity());
+                  if (NonIncludedTestRemover.isTestIncluded(added, executionConfig.getIncludes())) {
+                     changeTestMap.addChangeEntry(change, added.toEntity());
+                  }
                }
             }
          }
