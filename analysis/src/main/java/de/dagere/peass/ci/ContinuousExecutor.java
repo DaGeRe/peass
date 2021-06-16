@@ -13,6 +13,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.ExecutorCreator;
@@ -22,6 +23,7 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
+import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.measurement.analysis.AnalyseFullData;
 import de.dagere.peass.measurement.analysis.ProjectStatistics;
 import de.dagere.peass.testtransformation.TestTransformer;
@@ -97,6 +99,17 @@ public class ContinuousExecutor {
    protected Set<TestCase> executeRegressionTestSelection(final String url) throws Exception {
       ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), folders, resultsFolders, env);
       final Set<TestCase> tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
+
+      ExecutionData executionData = new ExecutionData();
+      executionData.addEmptyVersion(version, versionOld);
+      executionData.addEmptyVersion(versionOld, versionOld + "~1");
+      for (TestCase test : tests) {
+         executionData.addCall(version, test);
+         executionData.addCall(versionOld, test);
+      }
+      final PropertyReader propertyReader = new PropertyReader(resultsFolders, folders.getProjectFolder(), executionData);
+      propertyReader.readAllTestsProperties();
+
       return tests;
    }
 
@@ -109,7 +122,7 @@ public class ContinuousExecutor {
 
    private void analyzeMeasurements(final File measurementFolder) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
       final File changefile = new File(localFolder, "changes.json");
-//      AnalyseOneTest.setResultFolder(new File(localFolder, version + "_graphs"));
+      // AnalyseOneTest.setResultFolder(new File(localFolder, version + "_graphs"));
       final ProjectStatistics statistics = new ProjectStatistics();
       TestTransformer testTransformer = ExecutorCreator.createTestTransformer(folders, measurementConfig.getExecutionConfig(), measurementConfig);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
