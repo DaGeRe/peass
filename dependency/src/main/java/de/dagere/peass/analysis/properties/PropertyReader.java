@@ -43,7 +43,7 @@ public class PropertyReader {
          Constants.OBJECTMAPPER.writeValue(resultsFolders.getPropertiesFile(), versionProperties);
       }
 
-      System.out.println("Analyzed: " + count);
+      LOG.info("Analyzed properties: " + count);
    }
 
    private void readVersion(final VersionChangeProperties versionProperties, final File methodFolder, final Map.Entry<String, TestSet> version) throws IOException {

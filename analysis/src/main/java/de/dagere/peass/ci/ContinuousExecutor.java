@@ -100,6 +100,12 @@ public class ContinuousExecutor {
       ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), folders, resultsFolders, env);
       final Set<TestCase> tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
 
+      readMethodSources(tests);
+
+      return tests;
+   }
+
+   private void readMethodSources(final Set<TestCase> tests) throws IOException {
       ExecutionData executionData = new ExecutionData();
       executionData.addEmptyVersion(version, versionOld);
       executionData.addEmptyVersion(versionOld, versionOld + "~1");
@@ -107,10 +113,9 @@ public class ContinuousExecutor {
          executionData.addCall(version, test);
          executionData.addCall(versionOld, test);
       }
+      LOG.info("Reading method sources for {} - {}", version, versionOld);
       final PropertyReader propertyReader = new PropertyReader(resultsFolders, folders.getProjectFolder(), executionData);
       propertyReader.readAllTestsProperties();
-
-      return tests;
    }
 
    protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
