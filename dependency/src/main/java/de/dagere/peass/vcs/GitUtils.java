@@ -116,13 +116,12 @@ public final class GitUtils {
     * @param folder Goal-folder for download
     */
    public static void downloadProject(final String url, final File folder) {
-      final String command = "git clone " + url + " " + folder.getAbsolutePath();
       try {
-         LOG.debug("Command: " + command);
-         final Process p = Runtime.getRuntime().exec(command);
+         ProcessBuilder pb = new ProcessBuilder("git", "clone", url, folder.getAbsolutePath());
+         LOG.debug("Command: " + pb.command());
+         final Process p = pb.start();
          StreamGobbler.showFullProcess(p);
       } catch (final IOException e) {
-         // TODO Auto-generated catch block
          e.printStackTrace();
       }
    }
@@ -198,16 +197,20 @@ public final class GitUtils {
 
    private static List<String> getLinearCommitNames(final File folder) {
       try {
-         Process readOldestCommitProcess = Runtime.getRuntime().exec("git log --reverse  --pretty=tformat:%H", new String[0], folder);
+         ProcessBuilder oldestCommitProcessbuilder = new ProcessBuilder("git", "log", "--reverse", "--pretty=tformat:%H");
+         oldestCommitProcessbuilder.directory(folder);
+         Process readOldestCommitProcess = oldestCommitProcessbuilder.start();
          String oldestCommit;
-         try (final BufferedReader readOldestCommitInput = new BufferedReader(new InputStreamReader(readOldestCommitProcess.getInputStream()))){
+         try (final BufferedReader readOldestCommitInput = new BufferedReader(new InputStreamReader(readOldestCommitProcess.getInputStream()))) {
             oldestCommit = readOldestCommitInput.readLine().split(" ")[0];
          }
 
          List<String> ouputCommitList = new LinkedList<>();
 
-         final Process readCommitProcess = Runtime.getRuntime().exec("git rev-list --ancestry-path --children " + oldestCommit + "..HEAD", new String[0], folder);
-         try (final BufferedReader readCommitInput = new BufferedReader(new InputStreamReader(readCommitProcess.getInputStream()))){
+         ProcessBuilder commitProcessbuilder = new ProcessBuilder("git", "rev-list", "--ancestry-path", "--children", oldestCommit + "..HEAD");
+         commitProcessbuilder.directory(folder);
+         final Process readCommitProcess = commitProcessbuilder.start();
+         try (final BufferedReader readCommitInput = new BufferedReader(new InputStreamReader(readCommitProcess.getInputStream()))) {
             String lastChild = null;
             String line;
 
@@ -230,8 +233,10 @@ public final class GitUtils {
    private static List<GitCommit> getCommitsMetadata(final File folder, final List<String> commitNames) throws IOException {
       final List<GitCommit> commits = new LinkedList<>();
       for (String commit : commitNames) {
-         final Process readCommitProcess = Runtime.getRuntime().exec("git log -n 1 " + commit, new String[0], folder);
-         try (final BufferedReader readCommitInput = new BufferedReader(new InputStreamReader(readCommitProcess.getInputStream()))){
+         ProcessBuilder readCommitProcessBuilder = new ProcessBuilder("git", "log", "-n", "1", commit);
+         readCommitProcessBuilder.directory(folder);
+         final Process readCommitProcess = readCommitProcessBuilder.start();
+         try (final BufferedReader readCommitInput = new BufferedReader(new InputStreamReader(readCommitProcess.getInputStream()))) {
             String line = null;
             String author = null, date = null, message = "";
             while ((line = readCommitInput.readLine()) != null) {
@@ -254,7 +259,7 @@ public final class GitUtils {
    private static List<String> getCommitNames(final File folder, final boolean includeAllBranches) throws IOException {
       String command = includeAllBranches ? "git log --oneline --all" : "git log --oneline";
       final Process p = Runtime.getRuntime().exec(command, new String[0], folder);
-      try (final BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()))){
+      try (final BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()))) {
          String line;
          List<String> commitNames = new LinkedList<>();
          while ((line = input.readLine()) != null) {

@@ -5,6 +5,7 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,7 +20,6 @@ import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.reader.DependencyReader;
-import de.dagere.peass.dependency.traces.DiffUtil;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
 import de.dagere.peass.vcs.GitUtils;
@@ -38,7 +38,6 @@ public class CoverageBasedSelectionIT {
    @Test
    public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       try (MockedStatic<GitUtils> staticMock = Mockito.mockStatic(GitUtils.class)) {
-         Mockito.when(DiffUtil.getDiff(Mockito.any(), Mockito.any())).thenCallRealMethod();
          final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
          final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(DependencyTestConstants.COVERAGE_NORMAL_CHANGE));
@@ -53,7 +52,7 @@ public class CoverageBasedSelectionIT {
          System.out.println(reader.getCoverageBasedSelection());
          
          TestSet tests = reader.getCoverageBasedSelection().getVersions().get(DependencyTestConstants.VERSION_1);
-         Assert.assertThat(tests.getTests(), IsIterableContaining.hasItem(new TestCase("defaultpackage.TestMe#testSecond")));
+         MatcherAssert.assertThat(tests.getTests(), IsIterableContaining.hasItem(new TestCase("defaultpackage.TestMe#testSecond")));
       }
    }
 

@@ -57,7 +57,6 @@ public class MultimodalUtil {
          final String call = "R -e \"" + command + "\"";
          System.out.println(call);
          final Process process =new ProcessBuilder("R", "-e", command).start();
-//         final Process process = Runtime.getRuntime().exec(call);
          final String result = StreamGobbler.getFullProcess(process, false);
          for (final String line : result.split("\n")) {
             if (line.startsWith("The P-Value is")) {

@@ -21,10 +21,16 @@ public class DiffUtil {
             traceFiles.get(1).getAbsolutePath() + appendix);
       final Process p2 = processBuilder2.start();
       final String result2 = StreamGobbler.getFullProcess(p2, false);
-
-      if (p2.exitValue() > 1) {
-         throw new RuntimeException("diff did not work correctly " + result2);
+      
+      try {
+         int exitCode = p2.waitFor();
+         if (exitCode > 1) {
+            throw new RuntimeException("diff did not work correctly " + result2);
+         }
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
       }
+      
 
       try (final FileWriter fw = new FileWriter(goalFile)) {
          fw.write(result2);
