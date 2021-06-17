@@ -92,12 +92,6 @@ public final class GitUtils {
       }
    }
 
-   public static String getDiff(final File file1, final File file2) throws IOException {
-      final Process checkDiff = Runtime.getRuntime().exec("diff --ignore-all-space " + file1.getAbsolutePath() + " " + file2.getAbsolutePath());
-      final String isDifferent = StreamGobbler.getFullProcess(checkDiff, false);
-      return isDifferent;
-   }
-
    public static void clone(final PeassFolders folders, final File projectFolderTemp) throws InterruptedException, IOException {
       // TODO Branches klonen
       final File projectFolder = folders.getProjectFolder();
