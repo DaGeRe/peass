@@ -145,21 +145,25 @@ public class MavenPomUtil {
 
       for (RequiredDependency dependency : RequiredDependency.getAll(junit3)) {
          if (dependency.getMavenDependency().getArtifactId().contains("slf4j-impl")) {
-            Dependency originalSlf4j = null;
-            for (Dependency original : dependencies) {
-               if (original.getArtifactId().contains("slf4j-impl")) {
-                  originalSlf4j = original;
-               }
-            }
-            if (originalSlf4j != null) {
-               originalSlf4j.setScope(null);
-            } else {
-               dependencies.add(dependency.getMavenDependency());
-            }
+            addLoggingImplementationDependency(dependencies, dependency);
          } else {
             dependencies.add(dependency.getMavenDependency());
          }
 
+      }
+   }
+
+   private static void addLoggingImplementationDependency(final List<Dependency> dependencies, RequiredDependency dependency) {
+      Dependency originalSlf4j = null;
+      for (Dependency original : dependencies) {
+         if (original.getArtifactId().contains("slf4j-impl")) {
+            originalSlf4j = original;
+         }
+      }
+      if (originalSlf4j != null) {
+         originalSlf4j.setScope(null);
+      } else {
+         dependencies.add(dependency.getMavenDependency());
       }
    }
 
