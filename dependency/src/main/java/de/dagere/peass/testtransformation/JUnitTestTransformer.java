@@ -531,6 +531,7 @@ public class JUnitTestTransformer implements TestTransformer {
       performanceTestAnnotation.setName("de.dagere.kopeme.annotations.PerformanceTest");
       performanceTestAnnotation.addPair("iterations", "" + config.getIterations());
       performanceTestAnnotation.addPair("warmup", "" + config.getWarmup());
+      performanceTestAnnotation.addPair("executeBeforeClassInMeasurement", "" + config.isExecuteBeforeClassInMeasurement());
       performanceTestAnnotation.addPair("logFullData", "" + true);
       performanceTestAnnotation.addPair("useKieker", "" + config.isUseKieker());
       performanceTestAnnotation.addPair("timeout", "" + config.getTimeout());
