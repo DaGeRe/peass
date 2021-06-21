@@ -57,23 +57,13 @@ public class ContinuousDependencyReader {
       this.env = env;
    }
 
-   public Set<TestCase> getTests(final VersionIterator iterator, final String url, final String version, final MeasurementConfiguration measurementConfig) throws Exception {
+   public Set<TestCase> getTests(final VersionIterator iterator, final String url, final String version, final MeasurementConfiguration measurementConfig) {
       final Dependencies dependencies = getDependencies(iterator, url);
 
       final Set<TestCase> tests;
       if (dependencies.getVersions().size() > 0) {
          if (dependencyConfig.isGenerateViews()) {
-            if (dependencyConfig.isGenerateCoverageSelection()) {
-               LOG.info("Using coverage-based test selection");
-               ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getCoverageSelectionFile(), ExecutionData.class);
-               TestSet versionTestSet = executionData.getVersions().get(version);
-               tests = versionTestSet != null ? versionTestSet.getTests() : new HashSet<TestCase>();
-            } else {
-               LOG.info("Using dynamic test selection results");
-               ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
-               TestSet versionTestSet = executionData.getVersions().get(version);
-               tests = versionTestSet.getTests();
-            }
+            tests = selectResults(version);
          } else {
             Version versionDependencies = dependencies.getVersions().get(dependencies.getNewestVersion());
             tests = versionDependencies.getTests().getTests();
@@ -88,25 +78,48 @@ public class ContinuousDependencyReader {
       return tests;
    }
 
-   Dependencies getDependencies(final VersionIterator iterator, final String url)
-         throws Exception {
-      Dependencies dependencies;
+   private Set<TestCase> selectResults(final String version) {
+      try {
+         final Set<TestCase> tests;
+         if (dependencyConfig.isGenerateCoverageSelection()) {
+            LOG.info("Using coverage-based test selection");
+            ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getCoverageSelectionFile(), ExecutionData.class);
+            TestSet versionTestSet = executionData.getVersions().get(version);
+            tests = versionTestSet != null ? versionTestSet.getTests() : new HashSet<TestCase>();
+         } else {
+            LOG.info("Using dynamic test selection results");
+            ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+            TestSet versionTestSet = executionData.getVersions().get(version);
+            tests = versionTestSet.getTests();
+         }
+         return tests;
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+   }
 
-      final VersionKeeper noChanges = new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nonChanges_" + folders.getProjectName() + ".json"));
+   Dependencies getDependencies(final VersionIterator iterator, final String url) {
+      try {
+         Dependencies dependencies;
 
-      if (!resultsFolders.getDependencyFile().exists()) {
-         LOG.debug("Fully loading dependencies");
-         dependencies = fullyLoadDependencies(url, iterator, noChanges);
-      } else {
-         LOG.debug("Partially loading dependencies");
-         dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
+         final VersionKeeper noChanges = new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nonChanges_" + folders.getProjectName() + ".json"));
+
+         if (!resultsFolders.getDependencyFile().exists()) {
+            LOG.debug("Fully loading dependencies");
+            dependencies = fullyLoadDependencies(url, iterator, noChanges);
+         } else {
+            LOG.debug("Partially loading dependencies");
+            dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
+            VersionComparator.setDependencies(dependencies);
+
+            partiallyLoadDependencies(dependencies);
+         }
          VersionComparator.setDependencies(dependencies);
 
-         partiallyLoadDependencies(dependencies);
+         return dependencies;
+      } catch (Exception e) {
+         throw new RuntimeException(e);
       }
-      VersionComparator.setDependencies(dependencies);
-
-      return dependencies;
    }
 
    public VersionIterator getIterator(final String lastVersionName) {
