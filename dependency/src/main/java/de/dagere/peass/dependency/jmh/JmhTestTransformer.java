@@ -175,4 +175,9 @@ public class JmhTestTransformer implements TestTransformer {
       this.ignoreEOIs = ignoreEOIs;
    }
 
+   @Override
+   public void determineVersions(final List<File> modules) {
+      // not required for JmhTestTransformer, since inheritance is not considered and therefore no re-reading of files is required (and therefore no cache)
+   }
+
 }

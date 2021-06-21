@@ -86,13 +86,15 @@ public class PartialDependenciesMerger {
    public static ExecutionData mergeExecutiondata(final List<ExecutionData> executionData) {
       ExecutionData merged = new ExecutionData();
       for (ExecutionData data : executionData) {
+         if (merged.getUrl() == null && data.getUrl() != null) {
+            merged.setUrl(data.getUrl());
+         }
          merged.getVersions().putAll(data.getVersions());
       }
       return merged;
    }
 
    public static ExecutionData mergeExecutions(final ResultsFolders mergedOut, final ResultsFolders[] outFiles) throws JsonParseException, JsonMappingException, IOException {
-
       List<File> executionOutFiles = new LinkedList<>();
       List<File> coverageSelectionOutFiles = new LinkedList<>();
       for (ResultsFolders resultFolder : outFiles) {

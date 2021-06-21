@@ -71,6 +71,15 @@ public class DependencyDetectorTestUtil {
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
       return changeManager;
    }
+   
+   public static ChangeManager changedTestClassChangeManager() {
+      final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
+      changes.put(new ChangedEntity("defaultpackage.TestMe", ""), new ClazzChangeData("defaultpackage.TestMe", false));
+
+      final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
+      Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
+      return changeManager;
+   }
 
    public static ChangeManager mockAddedChangeManager() {
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();

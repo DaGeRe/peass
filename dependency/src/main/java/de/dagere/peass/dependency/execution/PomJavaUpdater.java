@@ -24,9 +24,9 @@ public class PomJavaUpdater {
    public static void fixCompilerVersion(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
       int version = getCompilerVersion(pom);
       if (version < 8) {
-         final MavenXpp3Reader reader = new MavenXpp3Reader();
          final Model model;
          try (FileInputStream inputStream = new FileInputStream(pom)) {
+            final MavenXpp3Reader reader = new MavenXpp3Reader();
             model = reader.read(inputStream);
             setCompiler(model, MavenTestExecutor.DEFAULT_JAVA_VERSION);
          }

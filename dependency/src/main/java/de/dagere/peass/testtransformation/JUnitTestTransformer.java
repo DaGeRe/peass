@@ -128,6 +128,7 @@ public class JUnitTestTransformer implements TestTransformer {
 
    private Map<File, Integer> junitVersions;
 
+   @Override
    public void determineVersions(final List<File> modules) {
       determineVersionsForPaths(modules, "src/test/", "src/androidTest");
    }
@@ -233,7 +234,7 @@ public class JUnitTestTransformer implements TestTransformer {
     * @return
     */
    public int getVersion(final File clazzFile) {
-      LOG.debug("Loading: {} {}", clazzFile, junitVersions);
+      LOG.trace("Loading: {} {}", clazzFile, junitVersions);
       if (junitVersions.containsKey(clazzFile)) {
          return junitVersions.get(clazzFile);
       } else {
@@ -350,7 +351,7 @@ public class JUnitTestTransformer implements TestTransformer {
                }
             }
          } else {
-            LOG.error("Clazz {} has no JUnit version", clazzFile);
+            LOG.warn("Clazz {} has no JUnit version", clazzFile);
          }
       } else {
          /**
@@ -530,6 +531,7 @@ public class JUnitTestTransformer implements TestTransformer {
       performanceTestAnnotation.setName("de.dagere.kopeme.annotations.PerformanceTest");
       performanceTestAnnotation.addPair("iterations", "" + config.getIterations());
       performanceTestAnnotation.addPair("warmup", "" + config.getWarmup());
+      performanceTestAnnotation.addPair("executeBeforeClassInMeasurement", "" + config.isExecuteBeforeClassInMeasurement());
       performanceTestAnnotation.addPair("logFullData", "" + true);
       performanceTestAnnotation.addPair("useKieker", "" + config.isUseKieker());
       performanceTestAnnotation.addPair("timeout", "" + config.getTimeout());

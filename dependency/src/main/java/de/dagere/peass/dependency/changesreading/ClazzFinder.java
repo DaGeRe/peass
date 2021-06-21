@@ -32,11 +32,11 @@ public class ClazzFinder {
       return clazz;
    }
 
-   public static ClassOrInterfaceDeclaration findClazz(final ChangedEntity entity, final List<Node> nodes) {
-      ClassOrInterfaceDeclaration declaration = null;
+   public static TypeDeclaration<?> findClazz(final ChangedEntity entity, final List<Node> nodes) {
+      TypeDeclaration<?> declaration = null;
       for (final Node node : nodes) {
-         if (node instanceof ClassOrInterfaceDeclaration) {
-            final ClassOrInterfaceDeclaration temp = (ClassOrInterfaceDeclaration) node;
+         if (node instanceof TypeDeclaration<?>) {
+            final TypeDeclaration<?> temp = (TypeDeclaration<?>) node;
             final String nameAsString = temp.getNameAsString();
             if (nameAsString.equals(entity.getSimpleClazzName())) {
                declaration = (ClassOrInterfaceDeclaration) node;
@@ -55,25 +55,33 @@ public class ClazzFinder {
    public static List<String> getClazzes(final Node node, final String parent, final String clazzSeparator) {
       final List<String> clazzes = new LinkedList<>();
       if (node instanceof ClassOrInterfaceDeclaration) {
-         final ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) node;
-         final String clazzname = parent.length() > 0 ? parent + clazzSeparator + clazz.getName().getIdentifier() : clazz.getName().getIdentifier();
-         clazzes.add(clazzname);
-         for (final Node child : node.getChildNodes()) {
-            clazzes.addAll(getClazzes(child, clazzname, ChangedEntity.CLAZZ_SEPARATOR));
-         }
+         addClazzesOrInterfaces(node, parent, clazzSeparator, clazzes);
       } else if (node instanceof EnumDeclaration) {
-         final EnumDeclaration enumDecl = (EnumDeclaration) node;
-         final String enumName = parent.length() > 0 ? parent + clazzSeparator + enumDecl.getName().getIdentifier() : enumDecl.getName().getIdentifier();
-         clazzes.add(enumName);
-         for (final Node child : node.getChildNodes()) {
-            clazzes.addAll(getClazzes(child, enumName, ChangedEntity.CLAZZ_SEPARATOR));
-         }
+         addEnums(node, parent, clazzSeparator, clazzes);
       } else {
          for (final Node child : node.getChildNodes()) {
             clazzes.addAll(getClazzes(child, parent, ChangedEntity.CLAZZ_SEPARATOR));
          }
       }
       return clazzes;
+   }
+
+   private static void addEnums(final Node node, final String parent, final String clazzSeparator, final List<String> clazzes) {
+      final EnumDeclaration enumDecl = (EnumDeclaration) node;
+      final String enumName = parent.length() > 0 ? parent + clazzSeparator + enumDecl.getName().getIdentifier() : enumDecl.getName().getIdentifier();
+      clazzes.add(enumName);
+      for (final Node child : node.getChildNodes()) {
+         clazzes.addAll(getClazzes(child, enumName, ChangedEntity.CLAZZ_SEPARATOR));
+      }
+   }
+
+   private static void addClazzesOrInterfaces(final Node node, final String parent, final String clazzSeparator, final List<String> clazzes) {
+      final ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) node;
+      final String clazzname = parent.length() > 0 ? parent + clazzSeparator + clazz.getName().getIdentifier() : clazz.getName().getIdentifier();
+      clazzes.add(clazzname);
+      for (final Node child : node.getChildNodes()) {
+         clazzes.addAll(getClazzes(child, clazzname, ChangedEntity.CLAZZ_SEPARATOR));
+      }
    }
 
    public static List<String> getClazzes(final CompilationUnit cu) {

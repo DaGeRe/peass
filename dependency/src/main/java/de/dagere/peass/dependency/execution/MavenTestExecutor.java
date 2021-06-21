@@ -134,14 +134,10 @@ public class MavenTestExecutor extends KoPeMeExecutor {
 
    @Override
    public boolean isVersionRunning(final String version) {
-      try {
-         MavenRunningTester mavenRunningTester = new MavenRunningTester(folders, env, testTransformer.getConfig(), getModules());
-         boolean isRunning = mavenRunningTester.isVersionRunning(version);
-         buildfileExists = mavenRunningTester.isBuildfileExists();
-         return isRunning;
-      } catch (IOException | XmlPullParserException e) {
-         throw new RuntimeException(e);
-      }
+      MavenRunningTester mavenRunningTester = new MavenRunningTester(folders, env, testTransformer.getConfig(), getModules());
+      boolean isRunning = mavenRunningTester.isVersionRunning(version);
+      buildfileExists = mavenRunningTester.isBuildfileExists();
+      return isRunning;
    }
 
    public Charset getEncoding() {
@@ -149,11 +145,11 @@ public class MavenTestExecutor extends KoPeMeExecutor {
    }
 
    @Override
-   public ProjectModules getModules() throws IOException, XmlPullParserException {
+   public ProjectModules getModules() {
       File pomFile = new File(folders.getProjectFolder(), "pom.xml");
       return MavenPomUtil.getModules(pomFile);
    }
-   
+
    public static String[] addMavenPl(final ExecutionConfig config, final String[] original) {
       if (config.getPl() != null) {
          String[] projectListArray = new String[] { "-pl", config.getPl(), "-am" };
