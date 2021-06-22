@@ -113,6 +113,10 @@ public class DependencyReaderConfigMixin {
    }
    
    public DependencyConfig getDependencyConfig() {
+      if (doNotUpdateDependencies) {
+         doNotGenerateCoverageSelection = true;
+         doNotGenerateViews = true;
+      }
       return new DependencyConfig(threads, doNotUpdateDependencies, !doNotGenerateViews, !doNotGenerateCoverageSelection);
    }
    
