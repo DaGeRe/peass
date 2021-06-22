@@ -121,6 +121,7 @@ public class ContinuousExecutor {
    private void readMethodSources(final Set<TestCase> tests) {
       ExecutionData executionData = new ExecutionData();
       executionData.addEmptyVersion(version, versionOld);
+      executionData.addEmptyVersion(versionOld, null);
       for (TestCase test : tests) {
          executionData.addCall(version, test);
       }
