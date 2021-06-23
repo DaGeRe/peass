@@ -88,6 +88,7 @@ public class TestCase implements Comparable<TestCase> {
          // final int indexDot = testcase.lastIndexOf(".");
          // clazz = testcase.substring(0, indexDot);
          // method = testcase.substring(indexDot + 1);
+         params = null;
       } else {
          String start = testcase.substring(0, index);
          int moduleIndex = testcase.indexOf(ChangedEntity.MODULE_SEPARATOR);
@@ -98,9 +99,15 @@ public class TestCase implements Comparable<TestCase> {
             clazz = start.substring(moduleIndex + 1);
             module = start.substring(0, moduleIndex);
          }
-         method = testcase.substring(index + 1);
+
+         if (testcase.contains("(")) {
+            method = testcase.substring(index + 1, testcase.indexOf("("));
+            params = testcase.substring(testcase.indexOf("(") + 1, testcase.length() - 1);
+         } else {
+            method = testcase.substring(index + 1);
+            params = null;
+         }
       }
-      params = null;
    }
 
    public String getClazz() {
@@ -174,11 +181,16 @@ public class TestCase implements Comparable<TestCase> {
 
    @Override
    public String toString() {
+      String result;
       if (module != null && !"".equals(module)) {
-         return "TestCase [clazz=" + clazz + ", method=" + method + ", module=" + module + "]";
+         result = module + ChangedEntity.MODULE_SEPARATOR + clazz + ChangedEntity.METHOD_SEPARATOR + method;
       } else {
-         return "TestCase [clazz=" + clazz + ", method=" + method + "]";
+         result = clazz + ChangedEntity.METHOD_SEPARATOR + method;
       }
+      if (params != null) {
+         result += "(" + params + ")";
+      }
+      return result;
    }
 
    @JsonIgnore
