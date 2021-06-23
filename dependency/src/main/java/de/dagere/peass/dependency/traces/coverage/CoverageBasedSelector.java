@@ -27,6 +27,7 @@ public class CoverageBasedSelector {
          changed = false;
 
          TraceCallSummary selected = selectMaximumCalled(copiedChanges, copiedSummaries);
+         selected.setSelected(true);
 
          if (selected != null) {
             resultingInfo.getTestcases().put(selected.getTestcase(), selected);

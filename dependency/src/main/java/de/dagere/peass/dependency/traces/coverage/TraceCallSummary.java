@@ -15,8 +15,17 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
  */
 public class TraceCallSummary {
 
+   private boolean selected;
    private TestCase testcase;
    private Map<String, Integer> callCounts = new HashMap<>();
+   
+   public boolean isSelected() {
+      return selected;
+   }
+
+   public void setSelected(final boolean selected) {
+      this.selected = selected;
+   }
 
    public TestCase getTestcase() {
       return testcase;
