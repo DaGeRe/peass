@@ -155,7 +155,7 @@ public class Sequitur {
       final List<String> added = new LinkedList<>();
       for (final String element : elements) {
          if (element.contains("(")) {
-            final String parameters = element.substring(element.indexOf("(") + 2, element.length() - 2);
+            final String parameters = element.substring(element.indexOf("(") + 1, element.length() - 1);
             final String[] splitted = parameters.split(",");
             String withoutFQN = "(";
             for (final String parameter : splitted) {
