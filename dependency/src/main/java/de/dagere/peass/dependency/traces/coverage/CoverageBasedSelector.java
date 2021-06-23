@@ -11,24 +11,26 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class CoverageBasedSelector {
 
    private static final Logger LOG = LogManager.getLogger(CoverageBasedSelector.class);
 
-   public static List<TestCase> selectBasedOnCoverage(final List<TraceCallSummary> summaries, final Set<ChangedEntity> changes) {
+   public static CoverageSelectionVersion selectBasedOnCoverage(final List<TraceCallSummary> summaries, final Set<ChangedEntity> changes) {
       List<TraceCallSummary> copiedSummaries = new LinkedList<>(summaries);
       Set<ChangedEntity> copiedChanges = new HashSet<>(changes);
       boolean changed = true;
-      List<TestCase> resultTests = new LinkedList<>();
+      
+      CoverageSelectionVersion resultingInfo = new CoverageSelectionVersion();
+      
       while (copiedSummaries.size() > 0 && copiedChanges.size() > 0 && changed) {
          changed = false;
 
          TraceCallSummary selected = selectMaximumCalled(copiedChanges, copiedSummaries);
 
          if (selected != null) {
-            resultTests.add(selected.getTestcase());
+            resultingInfo.getTestcases().put(selected.getTestcase(), selected);
+            
             copiedSummaries.remove(selected);
             LOG.debug("Selected: {} with summary {}", selected.getTestcase(), selected);
             changed = removeUnneededChanges(copiedChanges, changed, selected);
@@ -36,7 +38,7 @@ public class CoverageBasedSelector {
 
       }
 
-      return resultTests;
+      return resultingInfo;
    }
 
    private static boolean removeUnneededChanges(final Set<ChangedEntity> changes, boolean changed, final TraceCallSummary selected) {

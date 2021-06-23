@@ -6,9 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsEmptyCollection;
 import org.hamcrest.core.IsIterableContaining;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -22,9 +22,9 @@ public class TestCoverageBasedSelection {
       List<TraceCallSummary> traces = new LinkedList<>();
       Set<ChangedEntity> changes = new HashSet<>();
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method1"));
-      List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
+      Set<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
       
-      Assert.assertThat(selected, IsEmptyCollection.empty());
+      MatcherAssert.assertThat(selected, IsEmptyCollection.empty());
    }
    
    @Test
@@ -32,9 +32,9 @@ public class TestCoverageBasedSelection {
       List<TraceCallSummary> traces = getTraceSummaryList();
       Set<ChangedEntity> changes = new HashSet<>();
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method1"));
-      List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
+      Set<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
       
-      Assert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
+      MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
    }
    
    @Test
@@ -43,10 +43,10 @@ public class TestCoverageBasedSelection {
       Set<ChangedEntity> changes = new HashSet<>();
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method1"));
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazzB", "", "method0"));
-      List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
+      Set<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
       
-      Assert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
-      Assert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzC#testC")));
+      MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
+      MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzC#testC")));
    }
    
    @Test
@@ -56,9 +56,9 @@ public class TestCoverageBasedSelection {
       ChangedEntity entityWithIntParameter = new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method2");
       entityWithIntParameter.getParameters().add("int");
       changes.add(entityWithIntParameter);
-      List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
+      Set<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
       
-      Assert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
+      MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
    }
    
    @Test
@@ -66,9 +66,9 @@ public class TestCoverageBasedSelection {
       List<TraceCallSummary> traces = getTraceSummaryList();
       Set<ChangedEntity> changes = new HashSet<>();
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", null));
-      List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
+      Set<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
       
-      Assert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
+      MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
    }
    
    private List<TraceCallSummary> getTraceSummaryList() {

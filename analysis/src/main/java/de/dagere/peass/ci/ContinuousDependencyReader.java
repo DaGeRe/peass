@@ -29,6 +29,7 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
+import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.utils.Constants;
@@ -172,6 +173,16 @@ public class ContinuousDependencyReader {
          ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
          reader.setExecutionData(executions);
 
+         if (resultsFolders.getCoverageSelectionFile().exists()) {
+            ExecutionData coverageExecutions = Constants.OBJECTMAPPER.readValue(resultsFolders.getCoverageSelectionFile(), ExecutionData.class);
+            reader.setCoverageExecutions(coverageExecutions);
+            
+            if (resultsFolders.getCoverageInfoFile().exists()) {
+               CoverageSelectionInfo coverageInfo = Constants.OBJECTMAPPER.readValue(resultsFolders.getCoverageInfoFile(), CoverageSelectionInfo.class);
+               reader.setCoverageInfo(coverageInfo);
+            }
+         }
+         
          reader.readDependencies();
       } catch (IOException e) {
          throw new RuntimeException(e);

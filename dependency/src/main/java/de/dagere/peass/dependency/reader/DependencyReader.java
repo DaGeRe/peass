@@ -35,6 +35,8 @@ import de.dagere.peass.dependency.traces.DiffFileGenerator;
 import de.dagere.peass.dependency.traces.OneTraceGenerator;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
 import de.dagere.peass.dependency.traces.coverage.CoverageBasedSelector;
+import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
+import de.dagere.peass.dependency.traces.coverage.CoverageSelectionVersion;
 import de.dagere.peass.dependency.traces.coverage.TraceCallSummary;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.utils.Constants;
@@ -56,6 +58,7 @@ public class DependencyReader {
    protected final Dependencies dependencyResult = new Dependencies();
    private final ExecutionData executionResult = new ExecutionData();
    private final ExecutionData coverageBasedSelection = new ExecutionData();
+   private final CoverageSelectionInfo coverageSelectionInfo = new CoverageSelectionInfo();
    protected final ResultsFolders resultsFolders;
    protected DependencyManager dependencyManager;
    protected final PeassFolders folders;
@@ -82,6 +85,7 @@ public class DependencyReader {
 
       dependencyResult.setUrl(url);
       executionResult.setUrl(url);
+      coverageBasedSelection.setUrl(url);
 
       this.changeManager = changeManager;
    }
@@ -141,6 +145,7 @@ public class DependencyReader {
          Constants.OBJECTMAPPER.writeValue(resultsFolders.getExecutionFile(), executionResult);
          if (dependencyConfig.isGenerateCoverageSelection()) {
             Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageSelectionFile(), coverageBasedSelection);
+            Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageInfoFile(), coverageSelectionInfo);
          }
       }
 
@@ -197,6 +202,7 @@ public class DependencyReader {
       dependencyResult.getVersions().put(version, new Version());
       if (dependencyConfig.isGenerateViews()) {
          executionResult.addEmptyVersion(version, null);
+         coverageBasedSelection.addEmptyVersion(version, null);
       }
       skippedNoChange.addVersion(version, "No Change at all");
    }
@@ -243,10 +249,11 @@ public class DependencyReader {
             summaries.add(newSummary);
          }
       }
-      List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newVersionInfo.getChangedClazzes().keySet());
-      for (TestCase testcase : selected) {
+      CoverageSelectionVersion selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newVersionInfo.getChangedClazzes().keySet());
+      for (TestCase testcase : selected.getTestcases().keySet()) {
          coverageBasedSelection.addCall(version, testcase);
       }
+      coverageSelectionInfo.getVersions().put(version, selected);
    }
 
    private int calculateChangedClassCount(final Version newVersionInfo) {
@@ -356,10 +363,20 @@ public class DependencyReader {
    public void setIterator(final VersionIterator reserveIterator) {
       this.iterator = reserveIterator;
    }
+   
+   public void setCoverageExecutions(final ExecutionData coverageExecutions) {
+      coverageBasedSelection.setUrl(coverageExecutions.getUrl());
+      coverageBasedSelection.setVersions(coverageExecutions.getVersions());
+   }
 
    public void setExecutionData(final ExecutionData executions) {
+      executionResult.setUrl(executions.getUrl());
       executionResult.setVersions(executions.getVersions());
 
       new OldTraceReader(mapping, dependencyResult, resultsFolders).addTraces();
+   }
+
+   public void setCoverageInfo(final CoverageSelectionInfo coverageInfo) {
+      coverageSelectionInfo.getVersions().putAll(coverageInfo.getVersions());
    }
 }

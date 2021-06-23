@@ -17,7 +17,7 @@ public class TraceCallSummary {
 
    private TestCase testcase;
    private Map<String, Integer> callCounts = new HashMap<>();
-   
+
    public TestCase getTestcase() {
       return testcase;
    }
@@ -34,6 +34,15 @@ public class TraceCallSummary {
       this.callCounts = callCounts;
    }
 
+   @JsonIgnore
+   private int getOverallScore() {
+      int score = 0;
+      for (int value : callCounts.values()) {
+         score += value;
+      }
+      return score;
+   }
+   
    @JsonIgnore
    public void addCall(final String method) {
       Integer callCount = callCounts.get(method);
