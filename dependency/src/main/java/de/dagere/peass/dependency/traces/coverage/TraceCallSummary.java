@@ -44,7 +44,7 @@ public class TraceCallSummary {
    }
 
    @JsonIgnore
-   private int getOverallScore() {
+   public int getOverallScore() {
       int score = 0;
       for (int value : callCounts.values()) {
          score += value;
