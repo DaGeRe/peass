@@ -116,6 +116,11 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    public void setMethod(final String method) {
       this.method = method;
    }
+   
+   @JsonIgnore
+   public String getParameterString() {
+      return getParameterString(parameters.toArray(new String[0]));
+   }
 
    @JsonInclude(Include.NON_EMPTY)
    public String getModule() {

@@ -155,13 +155,11 @@ public class TestDependencies {
          final ClazzChangeData changedEntry, final ChangedEntity change, final ChangedEntity changedClass) {
       if (!changedEntry.isOnlyMethodChange()) {
          changeTestMap.addChangeEntry(change, currentTestcase);
-      } else {
-         String method = change.getMethod();
+      } else { 
+         String method = change.getMethod() + change.getParameterString();
          final Map<ChangedEntity, Set<String>> calledMethods = currentTestDependencies.getCalledMethods();
          final Set<String> calledMethodsInChangeClass = calledMethods.get(changedClass);
-         final int parameterIndex = method.indexOf("("); // TODO Parameter korrekt prüfen
-         final String methodWithoutParameters = parameterIndex != -1 ? method.substring(0, parameterIndex) : method;
-         if (calledMethodsInChangeClass.contains(methodWithoutParameters)) {
+         if (calledMethodsInChangeClass.contains(method)) {
             final ChangedEntity classWithMethod = new ChangedEntity(changedClass.getClazz(), changedClass.getModule(), method);
             classWithMethod.getParameters().addAll(change.getParameters()); // TODO Probably, we can just use the original change here
             changeTestMap.addChangeEntry(classWithMethod, currentTestcase);
