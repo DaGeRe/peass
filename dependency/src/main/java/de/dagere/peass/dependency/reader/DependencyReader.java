@@ -247,8 +247,17 @@ public class DependencyReader {
             TraceCallSummary newSummary = Constants.OBJECTMAPPER.readValue(newFile, TraceCallSummary.class);
             summaries.add(oldSummary);
             summaries.add(newSummary);
+            LOG.info("Found traces for {}", testcase);
+         } else {
+            LOG.info("Trace files missing for {}", testcase);
          }
       }
+      
+      for (ChangedEntity change : newVersionInfo.getChangedClazzes().keySet()) {
+         LOG.info("Change: {}", change.toString());
+         LOG.info("Parameters: {}", change.getParametersPrintable());
+      }
+      
       CoverageSelectionVersion selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newVersionInfo.getChangedClazzes().keySet());
       for (TestCase testcase : selected.getTestcases().keySet()) {
          coverageBasedSelection.addCall(version, testcase);
@@ -269,7 +278,7 @@ public class DependencyReader {
       LOG.debug("Change test mapping (without added tests): " + changeTestMap);
 
       handleAddedTests(input, changeTestMap);
-      
+
       if (DETAIL_DEBUG)
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changetest_" + version + ".json"), changeTestMap);
 
@@ -363,7 +372,7 @@ public class DependencyReader {
    public void setIterator(final VersionIterator reserveIterator) {
       this.iterator = reserveIterator;
    }
-   
+
    public void setCoverageExecutions(final ExecutionData coverageExecutions) {
       coverageBasedSelection.setUrl(coverageExecutions.getUrl());
       coverageBasedSelection.setVersions(coverageExecutions.getVersions());

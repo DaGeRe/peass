@@ -132,7 +132,23 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       if (method != null && !"".equals(method)) {
          result += METHOD_SEPARATOR + method;
       }
+      if (parameters.size() > 0) {
+         result += getParameterString(parameters.toArray(new String[0]));
+      }
       return result;
+   }
+
+   public static String getParameterString(final String[] parameterTypes) {
+      if (parameterTypes.length > 0) {
+         String parameterString = "(";
+         for (String parameter : parameterTypes) {
+            parameterString += parameter + ",";
+         }
+         parameterString = parameterString.substring(0, parameterString.length() - 1) + ")";
+         return parameterString;
+      } else {
+         return "";
+      }
    }
 
    @Override
