@@ -78,8 +78,7 @@ public class CoverageBasedSelector {
       int currentCallSum = 0;
       LOG.debug("Changes: ", changes.size());
       for (ChangedEntity change : changes) {
-         String parameters = change.getParametersPrintable().length() > 0 ? "(" + change.getParametersPrintable() + ")" : "";
-         String changeSignature = change.toString() + parameters;
+         String changeSignature = change.toString();
          LOG.debug("Change signature: " + changeSignature);
          LOG.debug(summary.getCallCounts().keySet());
          if (change.getMethod() != null) {
