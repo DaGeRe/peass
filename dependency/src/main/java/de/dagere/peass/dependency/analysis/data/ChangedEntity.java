@@ -61,9 +61,11 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          javaClazzName = clazz.substring(0, clazz.lastIndexOf(ChangedEntity.METHOD_SEPARATOR));
          method = clazz.substring(clazz.lastIndexOf(ChangedEntity.METHOD_SEPARATOR) + 1);
       }
-      if (method != null && (method.contains("(") || method.contains(")"))) {
-         throw new RuntimeException("Method (" + method + ") should not included paranthesis, since it is only the method name without parameters");
-      }
+      if (method != null && (method.contains("(") && method.contains(")"))) {
+         String parameterString = method.substring(method.indexOf("(") + 1, method.length() - 1).replaceAll(" ", "");
+         createParameters(parameterString);
+         method = method.substring(0, method.indexOf("("));
+      } 
 
       LOG.trace(javaClazzName + " " + clazz);
       LOG.trace(javaClazzName);
@@ -72,10 +74,13 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    @JsonCreator
    public ChangedEntity(@JsonProperty("clazz") final String clazz, @JsonProperty("module") final String module, @JsonProperty("method") final String testMethodName) {
       this(clazz, module);
-      method = testMethodName;
 
-      if (method != null && (method.contains("(") || method.contains(")"))) {
-         throw new RuntimeException("Method should not included paranthesis, since it is only the method name without parameters");
+      if (testMethodName != null && (testMethodName.contains("(") && testMethodName.contains(")"))) {
+         String parameterString = testMethodName.substring(testMethodName.indexOf("(") + 1, testMethodName.length() - 1).replaceAll(" ", "");
+         createParameters(parameterString);
+         method = testMethodName.substring(0, testMethodName.indexOf("("));
+      } else {
+         method = testMethodName;
       }
    }
 
