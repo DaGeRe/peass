@@ -48,13 +48,13 @@ public class ParameterComparator {
          final Type type = parameter.getType();
          LOG.trace(type + " " + type.getClass());
          if (!parameter.isVarArgs()) {
-            if (!testParameter(traceParameterTypes, parameterIndex, type, false)) {
+            if (!checkParameter(traceParameterTypes, parameterIndex, type, false)) {
                return false;
             }
          } else {
             if (traceParameterTypes.length > parameterIndex) {
                for (int varArgIndex = parameterIndex; varArgIndex < traceParameterTypes.length; varArgIndex++) {
-                  if (!testParameter(traceParameterTypes, varArgIndex, type, true)) {
+                  if (!checkParameter(traceParameterTypes, varArgIndex, type, true)) {
                      return false;
                   }
                }
@@ -85,7 +85,7 @@ public class ParameterComparator {
       return traceParameterTypes;
    }
 
-   private boolean testParameter(final String traceParameterTypes[], final int parameterIndex, final Type type, final boolean varArgAllowed) {
+   private boolean checkParameter(final String traceParameterTypes[], final int parameterIndex, final Type type, final boolean varArgAllowed) {
       final String simpleTraceParameterType = MethodReader.getSimpleType(traceParameterTypes[parameterIndex]);
       final String typeString = type instanceof ClassOrInterfaceType ? ((ClassOrInterfaceType) type).getNameAsString() : type.toString();
       // ClassOrInterfaceType

@@ -74,6 +74,20 @@ public class MethodReader {
       return null;
    }
 
+   /**
+    * Takes a parameter type (e.g. my.packageDeclaration.MyClass<GenericStuff>) and returns the simple type (e.g. MyClass). Generics can not be considered
+    * since they are erased at runtime and therefore not present in traces. 
+    * 
+    * In general, it would be nice to use FQNs instead of simple types. This would require:
+    *    1. Parsing the CompilationUnit for a type declaration (which would mean that the FQN would be package + name by hierarchy in CompilationUnit).
+    *    2. Parsing the Imports (can be obtained from the CompilationUnit)
+    *    3. Parsing the Declarations in the Package (would require to parse all Files in the package-folder)
+    *    4. If none of this applies: package can assumed to be java.lang
+    *    
+    * Currently, this is not implemented. This results in equal simple class names (e.g. my.package1.MyClass and my.package2.MyClass) to be considered equal.
+    * @param traceParameterType
+    * @return
+    */
    public static String getSimpleType(final String traceParameterType) {
       LOG.debug("Getting simple type of {}", traceParameterType); //TODO delete
       final String result;

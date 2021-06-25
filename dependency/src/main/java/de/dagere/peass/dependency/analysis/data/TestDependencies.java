@@ -83,7 +83,7 @@ public class TestDependencies {
    public void addDependencies(final ChangedEntity testClassName, final Map<ChangedEntity, Set<String>> calledClasses) {
       final Map<ChangedEntity, Set<String>> testDependencies = getOrAddDependenciesForTest(testClassName);
       for (final Map.Entry<ChangedEntity, Set<String>> calledEntity : calledClasses.entrySet()) {
-         LOG.debug("adding: " + calledEntity.getKey() + " Module: " + calledEntity.getKey().getModule());
+         LOG.debug("Adding call: " + calledEntity.getKey());
          LOG.debug(testDependencies.keySet());
          final Set<String> oldSet = testDependencies.get(calledEntity.getKey());
          if (oldSet != null) {
@@ -161,7 +161,6 @@ public class TestDependencies {
          final Set<String> calledMethodsInChangeClass = calledMethods.get(changedClass);
          if (calledMethodsInChangeClass.contains(method)) {
             final ChangedEntity classWithMethod = new ChangedEntity(changedClass.getClazz(), changedClass.getModule(), method);
-            classWithMethod.getParameters().addAll(change.getParameters()); // TODO Probably, we can just use the original change here
             changeTestMap.addChangeEntry(classWithMethod, currentTestcase);
          }
       }

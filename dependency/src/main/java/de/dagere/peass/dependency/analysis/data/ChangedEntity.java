@@ -13,6 +13,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import de.dagere.peass.dependency.traces.MethodReader;
+
 //TODO What happens to changes, that do occur in classes which are only file-local? -> Should be separated by $
 public class ChangedEntity implements Comparable<ChangedEntity> {
 
@@ -43,7 +45,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    private final String module;
    private final String javaClazzName;
    private final List<String> parameters = new LinkedList<String>();
-
+   
    public ChangedEntity(@JsonProperty("clazz") final String clazz, @JsonProperty("module") final String module) {
       this.filename = clazz;
       this.module = module != null ? module : "";
@@ -81,6 +83,43 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          method = testMethodName.substring(0, testMethodName.indexOf("("));
       } else {
          method = testMethodName;
+      }
+   }
+
+   public ChangedEntity(final String fullName) {
+      if (fullName.contains(File.separator)) {
+         throw new RuntimeException("Testcase should be full qualified name, not path!");
+      }
+      filename = fullName;
+      final int index = fullName.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
+      if (index == -1) {
+         int moduleIndex = fullName.indexOf(ChangedEntity.MODULE_SEPARATOR);
+         if (moduleIndex == -1) {
+            javaClazzName = fullName;
+            module = "";
+         } else {
+            javaClazzName = fullName.substring(moduleIndex + 1);
+            module = fullName.substring(0, moduleIndex);
+         }
+         method = null;
+      } else {
+         String start = fullName.substring(0, index);
+         int moduleIndex = fullName.indexOf(ChangedEntity.MODULE_SEPARATOR);
+         if (moduleIndex == -1) {
+            javaClazzName = start;
+            module = "";
+         } else {
+            javaClazzName = start.substring(moduleIndex + 1);
+            module = start.substring(0, moduleIndex);
+         }
+
+         if (fullName.contains("(")) {
+            method = fullName.substring(index + 1, fullName.indexOf("("));
+            String paramString = fullName.substring(fullName.indexOf("(") + 1, fullName.length() - 1);
+            createParameters(paramString);
+         } else {
+            method = fullName.substring(index + 1);
+         }
       }
    }
 
@@ -152,7 +191,9 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       if (parameterTypes.length > 0) {
          String parameterString = "(";
          for (String parameter : parameterTypes) {
-            parameterString += parameter + ",";
+            //TODO Add parameter type parsing, so 
+            String simpleParameter = MethodReader.getSimpleType(parameter);
+            parameterString += simpleParameter + ",";
          }
          parameterString = parameterString.substring(0, parameterString.length() - 1) + ")";
          return parameterString;

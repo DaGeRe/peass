@@ -6,7 +6,7 @@ public class NormalDependency {
 	}
 	
 	public void innerMethod(Integer param){
-	
+		System.out.println("This is some added behaviour");
 	}
 
 	public void unusedMethod() {

@@ -105,7 +105,7 @@ public class DependencyDetectorTestUtil {
 
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator)
          throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
-      return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5), DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.NULL_RESULTS_FOLDERS);
+      return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5), DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.TARGET_RESULTS_FOLDERS);
    }
 
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config, final DependencyConfig dependencyConfig, final ResultsFolders resultsFolders) {

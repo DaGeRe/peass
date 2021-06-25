@@ -85,9 +85,6 @@ public class TestCase implements Comparable<TestCase> {
             module = testcase.substring(0, moduleIndex);
          }
          method = null;
-         // final int indexDot = testcase.lastIndexOf(".");
-         // clazz = testcase.substring(0, indexDot);
-         // method = testcase.substring(indexDot + 1);
          params = null;
       } else {
          String start = testcase.substring(0, index);
