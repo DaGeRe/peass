@@ -107,9 +107,9 @@ public class ChangeAdder {
             }
             String fqnType = FQNDeterminer.getParameterFQN(unit, type);
             if (parameter.isVarArgs()) {
-               parameters += type + "[]" + ",";
+               parameters += fqnType + "[]" + ",";
             } else {
-               parameters += type + ",";
+               parameters += fqnType + ",";
             }
 
          }

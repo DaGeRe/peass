@@ -24,6 +24,7 @@ import java.nio.file.Paths;
 import java.util.Map;
 import java.util.Set;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -118,8 +119,8 @@ public class TestClassComparison {
 
       System.out.println(changedMethods.getChangedMethods());
 
-      Assert.assertThat(changedMethods.getChangedMethods().values().iterator().next(), Matchers.hasItem("doNonStaticThing"));
-      Assert.assertThat(changedMethods.getChangedMethods().values().iterator().next(), Matchers.hasItem("<init>"));
+      MatcherAssert.assertThat(changedMethods.getChangedMethods().values().iterator().next(), Matchers.hasItem("doNonStaticThing"));
+      MatcherAssert.assertThat(changedMethods.getChangedMethods().values().iterator().next(), Matchers.hasItem("<init>"));
    }
 
    @Test
@@ -177,6 +178,19 @@ public class TestClassComparison {
 
       Assert.assertTrue(changedMethods.isChange());
    }
+   
+   @Test
+   public void testParameterizedChanged() throws ParseException, IOException {
+      final File file1 = new File(FOLDER, "Test13_Parameter.java");
+      final File file2 = new File(FOLDER, "Test13_Parameter_changed.java");
+
+      final ClazzChangeData changedMethods = new ClazzChangeData(new ChangedEntity("myPackage.Test", ""));
+      FileComparisonUtil.getChangedMethods(file1, file2, changedMethods);
+
+      Assert.assertTrue(changedMethods.isChange());
+      ChangedEntity change = changedMethods.getChanges().iterator().next();
+      Assert.assertEquals("myPackage.Test#doStaticThing(java.lang.String,java.lang.Object)", change.toString());
+   }
 
    @Test
    public void testChangeAndAddition1() throws ParseException, IOException {
@@ -189,7 +203,7 @@ public class TestClassComparison {
       Assert.assertTrue(changedMethods.isChange());
       Assert.assertFalse(changedMethods.isOnlyMethodChange());
       Map<String, Set<String>> changedMethods2 = changedMethods.getChangedMethods();
-      Assert.assertThat(changedMethods2.values().iterator().next(), Matchers.contains("<init>"));
+      MatcherAssert.assertThat(changedMethods2.values().iterator().next(), Matchers.contains("<init>"));
 
    }
 
@@ -204,7 +218,7 @@ public class TestClassComparison {
       Assert.assertTrue(changedMethods.isChange());
       Assert.assertFalse(changedMethods.isOnlyMethodChange());
       System.out.println(changedMethods.getChangedMethods());
-      Assert.assertThat(changedMethods.getChangedMethods().values().iterator().next(), Matchers.containsInAnyOrder("<init>", "doNonStaticThing"));
+      MatcherAssert.assertThat(changedMethods.getChangedMethods().values().iterator().next(), Matchers.containsInAnyOrder("<init>", "doNonStaticThing"));
    }
    
    @Test
@@ -216,7 +230,7 @@ public class TestClassComparison {
       FileComparisonUtil.getChangedMethods(file1, file2, changedMethods);
 
       Assert.assertTrue(changedMethods.isChange());
-      Assert.assertThat(changedMethods.getChanges(), Matchers.hasItem(new ChangedEntity(".Test", "")));
-      Assert.assertThat(changedMethods.getChanges(), Matchers.hasItem(new ChangedEntity(".Test$InnerTest", "")));
+      MatcherAssert.assertThat(changedMethods.getChanges(), Matchers.hasItem(new ChangedEntity(".Test", "")));
+      MatcherAssert.assertThat(changedMethods.getChanges(), Matchers.hasItem(new ChangedEntity(".Test$InnerTest", "")));
    }
 }

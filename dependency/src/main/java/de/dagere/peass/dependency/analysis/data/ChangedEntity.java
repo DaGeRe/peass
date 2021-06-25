@@ -189,8 +189,6 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       if (parameterTypes.length > 0) {
          String parameterString = "(";
          for (String parameter : parameterTypes) {
-            // TODO Add parameter type parsing, so
-            // String simpleParameter = MethodReader.getSimpleType(parameter);
             parameterString += parameter + ",";
          }
          parameterString = parameterString.substring(0, parameterString.length() - 1) + ")";
