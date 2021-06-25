@@ -13,8 +13,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import de.dagere.peass.dependency.traces.MethodReader;
-
 //TODO What happens to changes, that do occur in classes which are only file-local? -> Should be separated by $
 public class ChangedEntity implements Comparable<ChangedEntity> {
 
@@ -45,7 +43,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    private final String module;
    private final String javaClazzName;
    private final List<String> parameters = new LinkedList<String>();
-   
+
    public ChangedEntity(@JsonProperty("clazz") final String clazz, @JsonProperty("module") final String module) {
       this.filename = clazz;
       this.module = module != null ? module : "";
@@ -67,7 +65,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          String parameterString = method.substring(method.indexOf("(") + 1, method.length() - 1).replaceAll(" ", "");
          createParameters(parameterString);
          method = method.substring(0, method.indexOf("("));
-      } 
+      }
 
       LOG.trace(javaClazzName + " " + clazz);
       LOG.trace(javaClazzName);
@@ -155,7 +153,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    public void setMethod(final String method) {
       this.method = method;
    }
-   
+
    @JsonIgnore
    public String getParameterString() {
       return getParameterString(parameters.toArray(new String[0]));
@@ -191,9 +189,9 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       if (parameterTypes.length > 0) {
          String parameterString = "(";
          for (String parameter : parameterTypes) {
-            //TODO Add parameter type parsing, so 
-            String simpleParameter = MethodReader.getSimpleType(parameter);
-            parameterString += simpleParameter + ",";
+            // TODO Add parameter type parsing, so
+            // String simpleParameter = MethodReader.getSimpleType(parameter);
+            parameterString += parameter + ",";
          }
          parameterString = parameterString.substring(0, parameterString.length() - 1) + ")";
          return parameterString;
@@ -322,12 +320,12 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       } else {
          final String[] parameters = parameterString.split(",");
          for (final String parameter : parameters) {
-            int dotIndex = parameter.lastIndexOf('.');
-            if (dotIndex != -1) {
-               this.parameters.add(parameter.substring(dotIndex + 1));
-            } else {
-               this.parameters.add(parameter);
-            }
+            // int dotIndex = parameter.lastIndexOf('.');
+            // if (dotIndex != -1) {
+            // this.parameters.add(parameter.substring(dotIndex + 1));
+            // } else {
+            this.parameters.add(parameter);
+            // }
          }
       }
    }

@@ -77,7 +77,7 @@ public class TestPeASSFilter {
          
          Assert.assertEquals(referenceTrace.size(), compareTrace.size());
          System.out.println(compareTrace.get(3).toString());
-         Assert.assertEquals("defaultpackage.NormalDependency#innerMethod(int)", compareTrace.get(3).toString());
+         Assert.assertEquals("defaultpackage.NormalDependency#innerMethod(java.lang.Integer)", compareTrace.get(3).toString());
       }
 
    }

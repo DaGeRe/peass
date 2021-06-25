@@ -28,7 +28,7 @@ public class TestTestDependencies {
       
       testNonParameterChange(dependencies);
       
-      testParameterChange(dependencies);
+      testParameterChange(dependencies, "methodC(int)");
    }
    
    @Test
@@ -36,12 +36,12 @@ public class TestTestDependencies {
       TestDependencies dependencies = buildTestDependenciesFQN();
       
       Set<String> calledMethods = dependencies.getDependencyMap().get(testEntity).getCalledMethods().get(new ChangedEntity("package.ClazzB", "moduleA"));
-      MatcherAssert.assertThat(calledMethods, IsIterableContaining.hasItem("methodC(Integer)"));
+      MatcherAssert.assertThat(calledMethods, IsIterableContaining.hasItem("methodC(java.lang.Integer)"));
       MatcherAssert.assertThat(calledMethods, IsIterableContaining.hasItem("methodB"));
       
       testNonParameterChange(dependencies);
       
-      testParameterChange(dependencies);
+      testParameterChange(dependencies, "methodC(java.lang.Integer)");
    }
    
    private TestDependencies buildTestDependenciesFQN() {
@@ -53,7 +53,7 @@ public class TestTestDependencies {
       calledClasses.put(new ChangedEntity("package.ClazzA", "moduleA"), methods);
       Set<String> methodsB = new HashSet<>();
       methodsB.add("methodB");
-      methodsB.add("methodC(Integer)");
+      methodsB.add("methodC(java.lang.Integer)");
       calledClasses.put(new ChangedEntity("package.ClazzB", "moduleA"), methodsB);
       
       dependencies.addDependencies(testEntity, calledClasses);
@@ -69,17 +69,17 @@ public class TestTestDependencies {
       calledClasses.put(new ChangedEntity("package.ClazzA", "moduleA"), methods);
       Set<String> methodsB = new HashSet<>();
       methodsB.add("methodB");
-      methodsB.add("methodC(java.lang.Integer)");
+      methodsB.add("methodC(int)");
       calledClasses.put(new ChangedEntity("package.ClazzB", "moduleA"), methodsB);
       
       dependencies.addDependencies(testEntity, calledClasses);
       return dependencies;
    }
 
-   private void testParameterChange(final TestDependencies dependencies) {
+   private void testParameterChange(final TestDependencies dependencies, final String parameterizedMethod) {
       HashMap<ChangedEntity, ClazzChangeData> changeTestMap = new HashMap<ChangedEntity, ClazzChangeData>();
       ClazzChangeData classChangeData = new ClazzChangeData(new ChangedEntity("package.ClazzB", "moduleA"), true);
-      classChangeData.addChange("ClazzB", "methodC(Integer)");
+      classChangeData.addChange("ClazzB", parameterizedMethod);
       changeTestMap.put(new ChangedEntity("package.ClazzB", "moduleA"), classChangeData);
       ChangeTestMapping changes = dependencies.getChangeTestMap(changeTestMap);
       Assert.assertEquals(1, changes.getChanges().size());

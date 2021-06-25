@@ -25,19 +25,19 @@ public class ChangeAdder {
    
    private static final Logger LOG = LogManager.getLogger(ChangeAdder.class);
    
-   public static void addChange(ClazzChangeData changedata, final Node node, CompilationUnit cu) {
+   public static void addChange(final ClazzChangeData changedata, final Node node, final CompilationUnit unit) {
       if (node instanceof Statement || node instanceof Expression) {
-         handleStatement(changedata, node);
+         handleStatement(unit, changedata, node);
       } else if (node instanceof ClassOrInterfaceDeclaration) {
          handleClassChange(changedata, (ClassOrInterfaceDeclaration) node);
       } else if (node instanceof ImportDeclaration) {
-         handleImportChange(changedata, (ImportDeclaration) node, cu);
+         handleImportChange(changedata, (ImportDeclaration) node, unit);
       } else {
-         handleUnknownChange(changedata, cu);
+         handleUnknownChange(changedata, unit);
       }
    }
 
-   public static void handleClassChange(ClazzChangeData changedata, final ClassOrInterfaceDeclaration node) {
+   public static void handleClassChange(final ClazzChangeData changedata, final ClassOrInterfaceDeclaration node) {
       String clazz = ClazzFinder.getContainingClazz(node);
       if (!clazz.isEmpty()) {
          changedata.addClazzChange(clazz);
@@ -45,32 +45,32 @@ public class ChangeAdder {
       }
    }
    
-   public static void handleUnknownChange(ClazzChangeData changedata, final CompilationUnit cu) {
+   public static void handleUnknownChange(final ClazzChangeData changedata, final CompilationUnit cu) {
       List<ChangedEntity> entities = ClazzFinder.getClazzEntities(cu);
       for (ChangedEntity entity : entities) {
          changedata.addClazzChange(entity);
       }
    }
    
-   private static void handleImportChange(ClazzChangeData changedata, final ImportDeclaration node, CompilationUnit cu) {
+   private static void handleImportChange(final ClazzChangeData changedata, final ImportDeclaration node, final CompilationUnit cu) {
       List<ChangedEntity> entities = ClazzFinder.getClazzEntities(cu);
       
       changedata.addImportChange(node.getNameAsString(), entities);
    }
 
-   private static void handleStatement(final ClazzChangeData changedata, final Node statement) {
+   private static void handleStatement(final CompilationUnit unit, final ClazzChangeData changedata, final Node statement) {
       Node parent = statement.getParentNode().get();
       boolean finished = false;
       while (!finished && parent.getParentNode() != null && !(parent instanceof CompilationUnit)) {
          if (parent instanceof ConstructorDeclaration) {
             ConstructorDeclaration constructorDeclaration = (ConstructorDeclaration) parent;
-            final String parameters = getParameters(constructorDeclaration);
+            final String parameters = getParameters(unit, constructorDeclaration);
             String clazz = ClazzFinder.getContainingClazz(parent);
             changedata.addChange(clazz, "<init>" + parameters);
             finished = true;
          } else if (parent instanceof MethodDeclaration) {
             final MethodDeclaration methodDeclaration = (MethodDeclaration) parent;
-            final String parameters = getParameters(methodDeclaration);
+            final String parameters = getParameters(unit, methodDeclaration);
             String clazz = ClazzFinder.getContainingClazz(parent);
             changedata.addChange(clazz, methodDeclaration.getNameAsString() + parameters);
             finished = true;
@@ -93,7 +93,7 @@ public class ChangeAdder {
       }
    }
    
-   private static String getParameters(final CallableDeclaration<?> callable) {
+   private static String getParameters(final CompilationUnit unit, final CallableDeclaration<?> callable) {
       NodeList<Parameter> parameterDeclaration = callable.getParameters();
       String parameters;
       if (parameterDeclaration.size() > 0) {
@@ -105,6 +105,7 @@ public class ChangeAdder {
             } else {
                type = parameter.getTypeAsString();
             }
+            String fqnType = FQNDeterminer.getParameterFQN(unit, type);
             if (parameter.isVarArgs()) {
                parameters += type + "[]" + ",";
             } else {
@@ -118,4 +119,5 @@ public class ChangeAdder {
       }
       return parameters;
    }
+   
 }

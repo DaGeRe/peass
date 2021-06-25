@@ -44,11 +44,11 @@ public class DependencyDetectorParametersIT {
       System.out.println(reader.getDependencies());
       System.out.println(reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1));
 
-      DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.NormalDependency#innerMethod(Integer)", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
+      DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.NormalDependency#innerMethod(java.lang.Integer)", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
    }
 
    public static ChangeManager changeManagerWithParameter() {
-      final Map<ChangedEntity, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("", "defaultpackage.NormalDependency", "innerMethod(Integer)");
+      final Map<ChangedEntity, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("", "defaultpackage.NormalDependency", "innerMethod(java.lang.Integer)");
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
