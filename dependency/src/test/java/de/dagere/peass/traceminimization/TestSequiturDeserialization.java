@@ -19,6 +19,6 @@ public class TestSequiturDeserialization {
       List<String> methods = Sequitur.getExpandedTrace(exampleTraceFile);
       MatcherAssert.assertThat(methods, IsIterableContaining.hasItem("de.dagere.peass.ExampleTest#test"));
       MatcherAssert.assertThat(methods, IsIterableContaining.hasItem("de.dagere.peass.ExampleClazz#calleeMethod(int)"));
-      MatcherAssert.assertThat(methods, IsIterableContaining.hasItem("de.dagere.peass.ExampleClazz#calleeMethod(int,String)"));
+      MatcherAssert.assertThat(methods, IsIterableContaining.hasItem("de.dagere.peass.ExampleClazz#calleeMethod(int,java.lang.String)"));
    }
 }

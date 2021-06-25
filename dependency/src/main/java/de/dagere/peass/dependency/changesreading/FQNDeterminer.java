@@ -1,7 +1,9 @@
 package de.dagere.peass.dependency.changesreading;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +18,8 @@ public class FQNDeterminer {
 
    private static final Logger LOG = LogManager.getLogger(FQNDeterminer.class);
 
-   //TODO This are only the Java 8 classes; while it is not very likely that people heavily rely on things like System.Logger as method parameters, it would be better to include them here (but only for builds using Java 11)
+   // TODO This are only the Java 8 classes; while it is not very likely that people heavily rely on things like System.Logger as method parameters, it would be better to include
+   // them here (but only for builds using Java 11)
    private static final String[] JAVA_LANG_CLASSES = new String[] { "Appendable", "AutoCloseable", "CharSequence", "Cloneable", "Comparable<T>", "Iterable<T>", "Readable",
          "Runnable", "Thread.UncaughtExceptionHandler", "Boolean", "Byte", "Character", "Character.Subset", "Character.UnicodeBlock", "Class<T>", "ClassLoader", "ClassValue<T>",
          "Compiler", "Double", "Enum<E", "Float", "InheritableThreadLocal<T>", "Integer", "Long", "Math", "Number", "Object", "Package", "Process", "ProcessBuilder",
@@ -31,8 +34,16 @@ public class FQNDeterminer {
          "InternalError", "LinkageError", "NoClassDefFoundError", "NoSuchFieldError", "NoSuchMethodError", "OutOfMemoryError", "StackOverflowError", "ThreadDeath", "UnknownError",
          "UnsatisfiedLinkError", "UnsupportedClassVersionError", "VerifyError", "VirtualMachineError", "FunctionalInterface", "Deprecated", "Override", "SafeVarargs",
          "SuppressWarnings" };
+   private static final Set<String> JAVA_LANG_CLASSES_SET = new HashSet<>(Arrays.asList(JAVA_LANG_CLASSES));
+
+   private static final String[] PRIMITIVE_NAMES = new String[]{"boolean","byte","char","short","int","long","float","double"};
+   private static final Set<String> PRIMITIVE_NAMES_SET = new HashSet<>(Arrays.asList(PRIMITIVE_NAMES));
 
    public static String getParameterFQN(final CompilationUnit unit, final String typeName) {
+      if (PRIMITIVE_NAMES_SET.contains(typeName)) {
+         return typeName;
+      }
+      
       String localDeclaration = checkLocallyDeclaredType(unit, typeName);
       if (localDeclaration != null) {
          return localDeclaration;
@@ -43,7 +54,7 @@ public class FQNDeterminer {
          return importedType;
       }
 
-      if (Arrays.asList(JAVA_LANG_CLASSES).contains(typeName)) {
+      if (JAVA_LANG_CLASSES_SET.contains(typeName)) {
          return "java.lang." + typeName;
       } else {
          String packageName = unit.getPackageDeclaration().get().getNameAsString();

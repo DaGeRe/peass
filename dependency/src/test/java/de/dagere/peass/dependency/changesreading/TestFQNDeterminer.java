@@ -49,6 +49,17 @@ public class TestFQNDeterminer {
       String fqn2 = FQNDeterminer.getParameterFQN(unit, "CommandLine");
       Assert.assertEquals("picocli.CommandLine", fqn2);
    }
+   
+   @Test
+   public void testSimpleType() throws FileNotFoundException {
+      File file = new File("src/main/java/de/dagere/peass/DependencyExecutionReader.java");
+      CompilationUnit unit = JavaParserProvider.parse(file);
+      String fqn = FQNDeterminer.getParameterFQN(unit, "int");
+      Assert.assertEquals("int", fqn);
+
+      String fqn2 = FQNDeterminer.getParameterFQN(unit, "double");
+      Assert.assertEquals("double", fqn2);
+   }
 
    @Test
    public void testPackageClass() throws FileNotFoundException {
