@@ -20,6 +20,18 @@ public class TestTestDependencies {
    
    @Test
    public void testAdding() {
+      TestDependencies dependencies = buildTestDependencies();
+      
+      Set<String> calledMethods = dependencies.getDependencyMap().get(testEntity).getCalledMethods().get(new ChangedEntity("package.ClazzB", "moduleA"));
+      MatcherAssert.assertThat(calledMethods, IsIterableContaining.hasItem("methodC(int)"));
+      MatcherAssert.assertThat(calledMethods, IsIterableContaining.hasItem("methodB"));
+      
+      testNonParameterChange(dependencies);
+      
+      testParameterChange(dependencies);
+   }
+
+   private TestDependencies buildTestDependencies() {
       TestDependencies dependencies = new TestDependencies();
       
       HashMap<ChangedEntity, Set<String>> calledClasses = new HashMap<>();
@@ -32,14 +44,7 @@ public class TestTestDependencies {
       calledClasses.put(new ChangedEntity("package.ClazzB", "moduleA"), methodsB);
       
       dependencies.addDependencies(testEntity, calledClasses);
-      
-      Set<String> calledMethods = dependencies.getDependencyMap().get(testEntity).getCalledMethods().get(new ChangedEntity("package.ClazzB", "moduleA"));
-      MatcherAssert.assertThat(calledMethods, IsIterableContaining.hasItem("methodC(int)"));
-      MatcherAssert.assertThat(calledMethods, IsIterableContaining.hasItem("methodB"));
-      
-      testNonParameterChange(dependencies);
-      
-      testParameterChange(dependencies);
+      return dependencies;
    }
 
    private void testParameterChange(TestDependencies dependencies) {
