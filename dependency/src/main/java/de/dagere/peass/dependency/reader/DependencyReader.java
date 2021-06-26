@@ -252,15 +252,17 @@ public class DependencyReader {
             LOG.info("Trace files missing for {}", testcase);
          }
       }
-      
+
       for (ChangedEntity change : newVersionInfo.getChangedClazzes().keySet()) {
          LOG.info("Change: {}", change.toString());
          LOG.info("Parameters: {}", change.getParametersPrintable());
       }
-      
+
       CoverageSelectionVersion selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newVersionInfo.getChangedClazzes().keySet());
-      for (TestCase testcase : selected.getTestcases().keySet()) {
-         coverageBasedSelection.addCall(version, testcase);
+      for (TraceCallSummary traceCallSummary : selected.getTestcases().values()) {
+         if (traceCallSummary.isSelected()) {
+            coverageBasedSelection.addCall(version, traceCallSummary.getTestcase());
+         }
       }
       coverageSelectionInfo.getVersions().put(version, selected);
    }

@@ -15,6 +15,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
  */
 public class TraceCallSummary {
 
+   private int overallScore;
    private boolean selected;
    private TestCase testcase;
    private Map<String, Integer> callCounts = new HashMap<>();
@@ -43,13 +44,12 @@ public class TraceCallSummary {
       this.callCounts = callCounts;
    }
 
-   @JsonIgnore
+   public void setOverallScore(final int overallScore) {
+      this.overallScore = overallScore;
+   }
+   
    public int getOverallScore() {
-      int score = 0;
-      for (int value : callCounts.values()) {
-         score += value;
-      }
-      return score;
+      return overallScore;
    }
    
    @JsonIgnore

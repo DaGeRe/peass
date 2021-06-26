@@ -38,7 +38,6 @@ public class CoverageBasedSelector {
             LOG.debug("Selected: {} with summary {}", selected.getTestcase(), selected);
             changed = removeUnneededChanges(copiedChanges, changed, selected);
          }
-
       }
 
       return resultingInfo;
@@ -65,6 +64,7 @@ public class CoverageBasedSelector {
          if (currentCallSum > selectedCallSum) {
             selectedCallSum = currentCallSum;
             selected = current;
+            selected.setOverallScore(currentCallSum);
          }
       }
       if (selectedCallSum > 0) {
