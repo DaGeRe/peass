@@ -22,7 +22,6 @@ import de.dagere.peass.utils.Constants;
  *
  */
 public class JmhKoPeMeConverter {
-   private static final int SECONDS_TO_NANOSECONDS = 1000000000;
 
    private final MeasurementConfiguration measurementConfig;
 

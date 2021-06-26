@@ -21,7 +21,8 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.testtransformation.TestTransformer;
 
 /**
- * Base functionality for executing tests with KoPeMe. The executor automates changing the buildfile, changing the tests both with and without Kieker.
+ * Base functionality for executing performance tests, both instrumented and not instrumented. The executor automates changing the buildfile, changing the tests both with and
+ * without Kieker.
  * 
  * @author reichelt
  *
