@@ -9,6 +9,7 @@ import java.util.Set;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsEmptyCollection;
 import org.hamcrest.core.IsIterableContaining;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -43,10 +44,16 @@ public class TestCoverageBasedSelection {
       Set<ChangedEntity> changes = new HashSet<>();
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazz", "", "method1"));
       changes.add(new ChangedEntity("de.dagere.peass.ExampleClazzB", "", "method0"));
-      Set<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(traces, changes).getTestcases().keySet();
+      CoverageSelectionVersion selection = CoverageBasedSelector.selectBasedOnCoverage(traces, changes);
+      Set<TestCase> selected = selection.getTestcases().keySet();
       
       MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzA#testA")));
       MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzC#testC")));
+      
+      TraceCallSummary summaryA = selection.getTestcases().get(new TestCase("ClazzA#testA"));
+      TraceCallSummary summaryC = selection.getTestcases().get(new TestCase("ClazzC#testC"));
+      Assert.assertEquals(summaryA.getOverallScore(), 0); // TODO Check trace - is this realy intended?
+      Assert.assertEquals(summaryC.getOverallScore(), 10);
    }
    
    @Test

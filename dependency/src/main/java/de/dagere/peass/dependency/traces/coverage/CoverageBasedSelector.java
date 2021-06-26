@@ -22,7 +22,7 @@ public class CoverageBasedSelector {
       boolean changed = true;
 
       CoverageSelectionVersion resultingInfo = new CoverageSelectionVersion();
-
+      
       LOG.debug("Searching CBS");
       while (copiedSummaries.size() > 0 && copiedChanges.size() > 0 && changed) {
          changed = false;
@@ -35,12 +35,37 @@ public class CoverageBasedSelector {
             resultingInfo.getTestcases().put(selected.getTestcase(), selected);
 
             copiedSummaries.remove(selected);
+            for (Iterator<TraceCallSummary> iterator = copiedSummaries.iterator(); iterator.hasNext(); ) {
+               TraceCallSummary current = iterator.next();
+               if (current.getTestcase().equals(selected.getTestcase())) {
+                  iterator.remove();
+               }
+            }
+            
             LOG.debug("Selected: {} with summary {}", selected.getTestcase(), selected);
             changed = removeUnneededChanges(copiedChanges, changed, selected);
          }
       }
 
+      setRemainingCallSums(changes, copiedSummaries);
+      addNotSelectedSummaryInfos(copiedSummaries, resultingInfo);
+
       return resultingInfo;
+   }
+
+   private static void setRemainingCallSums(final Set<ChangedEntity> changes, final List<TraceCallSummary> copiedSummaries) {
+      for (TraceCallSummary summary : copiedSummaries) {
+         int callSum = getCallSum(changes, summary);
+         summary.setOverallScore(callSum);
+      }
+   }
+
+   private static void addNotSelectedSummaryInfos(final List<TraceCallSummary> copiedSummaries, final CoverageSelectionVersion resultingInfo) {
+      for (TraceCallSummary leftSummary : copiedSummaries) {
+         LOG.debug("Adding unselected left summary: {}", leftSummary.getTestcase(), leftSummary.getOverallScore());
+         leftSummary.setSelected(false);
+         resultingInfo.getTestcases().put(leftSummary.getTestcase(), leftSummary);
+      }
    }
 
    private static boolean removeUnneededChanges(final Set<ChangedEntity> changes, boolean changed, final TraceCallSummary selected) {
