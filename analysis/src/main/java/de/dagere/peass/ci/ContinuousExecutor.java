@@ -50,8 +50,6 @@ public class ContinuousExecutor {
 
    private final EnvironmentVariables env;
 
-   private Set<TestCase> tests;
-
    public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final DependencyConfig dependencyConfig, final EnvironmentVariables env)
          throws InterruptedException, IOException {
       this.originalProjectFolder = projectFolder;
@@ -88,25 +86,25 @@ public class ContinuousExecutor {
       }
    }
 
-   public void executeRTS() {
+   public Set<TestCase> executeRTS() {
       final String url = GitUtils.getURL(originalProjectFolder);
 
-      tests = executeRegressionTestSelection(url);
+      Set<TestCase> tests = executeRegressionTestSelection(url);
+      return tests;
    }
-
-   public void measure() {
+   
+   public void measure(final Set<TestCase> tests) {
       try {
          File measurementFolder = executeMeasurement(tests);
          analyzeMeasurements(measurementFolder);
       } catch (IOException | InterruptedException | JAXBException | XmlPullParserException e) {
          throw new RuntimeException(e);
       }
-
    }
 
    public void execute() throws Exception {
-      executeRTS();
-      measure();
+      Set<TestCase> tests = executeRTS();
+      measure(tests);
    }
 
    protected Set<TestCase> executeRegressionTestSelection(final String url) {

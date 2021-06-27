@@ -1,6 +1,7 @@
 package de.dagere.peass.dependency.analysis.data;
 
 import java.io.File;
+import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,7 +15,10 @@ import de.dagere.kopeme.generated.Kopemedata.Testcases;
  * @author reichelt
  *
  */
-public class TestCase implements Comparable<TestCase> {
+public class TestCase implements Comparable<TestCase>, Serializable {
+   
+   private static final long serialVersionUID = -522183920107191602L;
+   
    private final String module;
    private final String clazz;
    private final String method;
