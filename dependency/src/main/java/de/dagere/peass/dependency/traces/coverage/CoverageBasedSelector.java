@@ -101,6 +101,7 @@ public class CoverageBasedSelector {
    }
 
    private static int getCallSum(final Set<ChangedEntity> changes, final TraceCallSummary summary) {
+      summary.getSelectedChanges().clear();
       int currentCallSum = 0;
       LOG.debug("Changes: {} Test: {}", changes.size(), summary.getTestcase());
       LOG.debug("Trace Callcounts: {}", summary.getCallCounts().keySet());
@@ -125,6 +126,7 @@ public class CoverageBasedSelector {
          LOG.debug("Testing: " + signaturePrefix + " vs " + callCount.getKey());
          if (callCount.getKey().startsWith(signaturePrefix)) {
             currentCallSum += callCount.getValue();
+            summary.getSelectedChanges().add(callCount.getKey());
          }
       }
       return currentCallSum;
@@ -133,6 +135,7 @@ public class CoverageBasedSelector {
    private static int addExactCallCount(final TraceCallSummary summary, int currentCallSum, final String changeSignature) {
       if (summary.getCallCounts().containsKey(changeSignature)) {
          currentCallSum += summary.getCallCounts().get(changeSignature);
+         summary.getSelectedChanges().add(changeSignature);
       }
       return currentCallSum;
    }

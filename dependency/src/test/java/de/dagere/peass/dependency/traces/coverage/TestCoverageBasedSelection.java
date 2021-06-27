@@ -60,6 +60,10 @@ public class TestCoverageBasedSelection {
       Assert.assertEquals(summaryA.isSelected(), true); 
       Assert.assertEquals(summaryB.isSelected(), false); 
       Assert.assertEquals(summaryC.isSelected(), true);
+      
+      MatcherAssert.assertThat(summaryA.getSelectedChanges(), IsIterableContaining.hasItem("de.dagere.peass.ExampleClazz#method1"));
+      MatcherAssert.assertThat(summaryB.getSelectedChanges(), IsEmptyCollection.empty());
+      MatcherAssert.assertThat(summaryC.getSelectedChanges(), IsIterableContaining.hasItem("de.dagere.peass.ExampleClazzB#method0"));
    }
    
    @Test

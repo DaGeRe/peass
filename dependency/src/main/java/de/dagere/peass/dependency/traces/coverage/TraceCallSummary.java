@@ -1,7 +1,9 @@
 package de.dagere.peass.dependency.traces.coverage;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -19,7 +21,8 @@ public class TraceCallSummary {
    private boolean selected;
    private TestCase testcase;
    private Map<String, Integer> callCounts = new HashMap<>();
-   
+   private Set<String> selectedChanges = new HashSet<>();
+
    public boolean isSelected() {
       return selected;
    }
@@ -44,14 +47,22 @@ public class TraceCallSummary {
       this.callCounts = callCounts;
    }
 
+   public void setSelectedChanges(final Set<String> selectedChanges) {
+      this.selectedChanges = selectedChanges;
+   }
+
+   public Set<String> getSelectedChanges() {
+      return selectedChanges;
+   }
+
    public void setOverallScore(final int overallScore) {
       this.overallScore = overallScore;
    }
-   
+
    public int getOverallScore() {
       return overallScore;
    }
-   
+
    @JsonIgnore
    public void addCall(final String method) {
       Integer callCount = callCounts.get(method);
