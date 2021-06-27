@@ -51,9 +51,15 @@ public class TestCoverageBasedSelection {
       MatcherAssert.assertThat(selected, IsIterableContaining.hasItem(new TestCase("ClazzC#testC")));
       
       TraceCallSummary summaryA = selection.getTestcases().get(new TestCase("ClazzA#testA"));
+      TraceCallSummary summaryB = selection.getTestcases().get(new TestCase("ClazzB#testB"));
       TraceCallSummary summaryC = selection.getTestcases().get(new TestCase("ClazzC#testC"));
-      Assert.assertEquals(summaryA.getOverallScore(), 0); // TODO Check trace - is this realy intended?
+      Assert.assertEquals(summaryA.getOverallScore(), 3); 
+      Assert.assertEquals(summaryB.getOverallScore(), 0); 
       Assert.assertEquals(summaryC.getOverallScore(), 10);
+      
+      Assert.assertEquals(summaryA.isSelected(), true); 
+      Assert.assertEquals(summaryB.isSelected(), false); 
+      Assert.assertEquals(summaryC.isSelected(), true);
    }
    
    @Test

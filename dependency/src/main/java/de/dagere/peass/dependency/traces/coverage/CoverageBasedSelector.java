@@ -42,12 +42,12 @@ public class CoverageBasedSelector {
                }
             }
             
-            LOG.debug("Selected: {} with summary {}", selected.getTestcase(), selected);
+            LOG.debug("Selected: {} with score {}", selected.getTestcase(), selected.getOverallScore());
             changed = removeUnneededChanges(copiedChanges, changed, selected);
          }
       }
 
-      setRemainingCallSums(changes, copiedSummaries);
+      setRemainingCallSums(copiedChanges, copiedSummaries);
       addNotSelectedSummaryInfos(copiedSummaries, resultingInfo);
 
       return resultingInfo;
@@ -83,7 +83,8 @@ public class CoverageBasedSelector {
    private static TraceCallSummary selectMaximumCalled(final Set<ChangedEntity> changes, final List<TraceCallSummary> copiedSummaries) {
       TraceCallSummary selected = copiedSummaries.get(0);
       int selectedCallSum = getCallSum(changes, selected);
-      LOG.debug("Searching in {}", copiedSummaries.size());
+      selected.setOverallScore(selectedCallSum);
+      LOG.debug("Searching in {} summaries", copiedSummaries.size());
       for (TraceCallSummary current : copiedSummaries) {
          int currentCallSum = getCallSum(changes, current);
          if (currentCallSum > selectedCallSum) {
@@ -101,18 +102,18 @@ public class CoverageBasedSelector {
 
    private static int getCallSum(final Set<ChangedEntity> changes, final TraceCallSummary summary) {
       int currentCallSum = 0;
-      LOG.debug("Changes: ", changes.size());
+      LOG.debug("Changes: {} Test: {}", changes.size(), summary.getTestcase());
+      LOG.debug("Trace Callcounts: {}", summary.getCallCounts().keySet());
       for (ChangedEntity change : changes) {
          String changeSignature = change.toString();
          LOG.debug("Change signature: " + changeSignature);
-         LOG.debug(summary.getCallCounts().keySet());
          if (change.getMethod() != null) {
             currentCallSum = addExactCallCount(summary, currentCallSum, changeSignature);
          } else {
             currentCallSum = addClassbasedCallCount(summary, currentCallSum, changeSignature);
          }
-         LOG.debug("Sum: " + currentCallSum);
       }
+      LOG.debug("Sum: " + currentCallSum);
       return currentCallSum;
    }
 
