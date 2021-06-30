@@ -22,7 +22,7 @@ public class CoverageBasedSelector {
       boolean changed = true;
 
       CoverageSelectionVersion resultingInfo = new CoverageSelectionVersion();
-      
+
       LOG.debug("Searching CBS");
       while (copiedSummaries.size() > 0 && copiedChanges.size() > 0 && changed) {
          changed = false;
@@ -35,17 +35,18 @@ public class CoverageBasedSelector {
             resultingInfo.getTestcases().put(selected.getTestcase(), selected);
 
             copiedSummaries.remove(selected);
-            for (Iterator<TraceCallSummary> iterator = copiedSummaries.iterator(); iterator.hasNext(); ) {
+            for (Iterator<TraceCallSummary> iterator = copiedSummaries.iterator(); iterator.hasNext();) {
                TraceCallSummary current = iterator.next();
                if (current.getTestcase().equals(selected.getTestcase())) {
                   iterator.remove();
                }
             }
-            
+
             LOG.debug("Selected: {} with score {}", selected.getTestcase(), selected.getOverallScore());
             changed = removeUnneededChanges(copiedChanges, changed, selected);
          }
       }
+      LOG.debug("Remaining changes: {}", copiedChanges);
 
       setRemainingCallSums(copiedChanges, copiedSummaries);
       addNotSelectedSummaryInfos(copiedSummaries, resultingInfo);
@@ -72,10 +73,27 @@ public class CoverageBasedSelector {
       for (Iterator<ChangedEntity> changeIterator = changes.iterator(); changeIterator.hasNext();) {
          ChangedEntity change = changeIterator.next();
          String currentChangeSignature = change.toString();
-         if (selected.getCallCounts().containsKey(currentChangeSignature) && selected.getCallCounts().get(currentChangeSignature) > 0) {
-            changeIterator.remove();
-            changed = true;
+         if (change.getMethod() != null) {
+            if (selected.getCallCounts().containsKey(currentChangeSignature) && selected.getCallCounts().get(currentChangeSignature) > 0) {
+               changeIterator.remove();
+               changed = true;
+            }
+         } else {
+            boolean used = false;
+            for (Map.Entry<String, Integer> callCount : selected.getCallCounts().entrySet()) {
+               // The prefix needs to be used since otherwise inner classes are falsely selected (e.g. ChangedEntity de.Example would select de.Example$InnerClass#methodA)
+               String signaturePrefix = change.toString() + ChangedEntity.METHOD_SEPARATOR;
+               LOG.debug("Testing: " + signaturePrefix + " vs " + callCount.getKey());
+               if (callCount.getKey().startsWith(signaturePrefix)) {
+                  used = true;
+               }
+            }
+            if (used) {
+               changeIterator.remove();
+               changed = true;
+            }
          }
+
       }
       return changed;
    }

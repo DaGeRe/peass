@@ -49,6 +49,7 @@ public class TestTraceSummaryTransformer {
       for (int i = 0; i < 2; i++) {
          traceElements.add(new TraceElementContent("de.dagere.peass.ExampleClazzB", "method2", "", new String[] {"int"}, 0));
       }
+      traceElements.add(new TraceElementContent("de.dagere.peass.ExampleClazz", "method0", "", new String[0], 0));
       return traceElements;
    }
    
