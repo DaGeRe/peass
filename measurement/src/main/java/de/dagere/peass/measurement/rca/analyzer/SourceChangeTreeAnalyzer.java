@@ -24,6 +24,9 @@ public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
       // Only nodes with equal structure may have equal source
       List<CallTreeNode> includableNodes = new StructureChangeTreeAnalyzer(root, rootPredecessor).getMeasurementNodesPredecessor();
       this.config = config;
+      if (sourceFolder == null || !sourceFolder.isDirectory()) {
+         throw new RuntimeException("Source folder " + sourceFolder + " not found - source change analysis not possible!");
+      }
 
       Set<CallTreeNode> includeNodes = calculateIncludedNodes(sourceFolder, includableNodes);
       includedNodes.addAll(includeNodes);
