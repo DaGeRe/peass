@@ -70,6 +70,7 @@ public class CauseSearcherConfig implements Serializable {
       this(testCase, causeConfig.isUseAggregation(),
             causeConfig.isSplitAggregated(), causeConfig.getMinTime(), causeConfig.useCalibrationRun(), causeConfig.isIgnoreEOIs(),
             causeConfig.getRcaStrategy(), causeConfig.getLevels());
+      this.propertyFolder = causeConfig.getPropertyFolder();
    }
 
    public TestCase getTestCase() {
@@ -98,6 +99,10 @@ public class CauseSearcherConfig implements Serializable {
 
    public RCAStrategy getRcaStrategy() {
       return rcaStrategy;
+   }
+   
+   public void setPropertyFolder(final File propertyFolder) {
+      this.propertyFolder = propertyFolder;
    }
 
    public File getPropertyFolder() {
