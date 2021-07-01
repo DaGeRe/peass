@@ -91,11 +91,6 @@ public class TraceReadUtils {
          LOG.trace(child.getClass());
          if (child instanceof ClassOrInterfaceDeclaration) {
             final String ownName = ((ClassOrInterfaceDeclaration) child).getNameAsString();
-            // if (parent instanceof ClassOrInterfaceDeclaration) {
-            // foundDeclaredClasses.put(((ClassOrInterfaceDeclaration) parent).getNameAsString() + "$" + ownName, (ClassOrInterfaceDeclaration) child);
-            // } else {
-            // foundDeclaredClasses.put(ownName, (ClassOrInterfaceDeclaration) child);
-            // }
             if (alreadyReadPrefix.equals("")) {
                foundDeclaredClasses.put(ownName, (ClassOrInterfaceDeclaration) child);
                foundDeclaredClasses.putAll(getNamedClasses(child, ownName));
@@ -104,6 +99,15 @@ public class TraceReadUtils {
                foundDeclaredClasses.putAll(getNamedClasses(child, alreadyReadPrefix + "$" + ownName));
             }
 
+         } else if (child instanceof EnumDeclaration) {
+            final String ownName = ((EnumDeclaration) child).getNameAsString();
+            if (alreadyReadPrefix.equals("")) {
+               foundDeclaredClasses.put(ownName, (ClassOrInterfaceDeclaration) child);
+               foundDeclaredClasses.putAll(getNamedClasses(child, ownName));
+            } else {
+               foundDeclaredClasses.put(alreadyReadPrefix + "$" + ownName, (EnumDeclaration) child);
+               foundDeclaredClasses.putAll(getNamedClasses(child, alreadyReadPrefix + "$" + ownName));
+            }
          } else {
             foundDeclaredClasses.putAll(getNamedClasses(child, alreadyReadPrefix));
          }
@@ -164,8 +168,6 @@ public class TraceReadUtils {
       }
       return null;
    }
-
-   
 
    public static boolean traceElementsEquals(final TraceElement currentTraceElement, final TraceElement samePredecessorCandidate) {
       return samePredecessorCandidate.getClazz().equals(currentTraceElement.getClazz()) &&

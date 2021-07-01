@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -199,11 +200,6 @@ public class DependencyDetectorIT {
       System.out.println("Hash: " + key.hashCode());
       final TestSet testSet = changedClazzes.get(key);
       System.out.println("Testset: " + testSet);
-      Assert.assertThat(testSet.getTests(), Matchers.empty());
-   }
-
-   @Test
-   public void testPackageChange() {
-
+      MatcherAssert.assertThat(testSet.getTests(), Matchers.empty());
    }
 }

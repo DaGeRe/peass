@@ -144,30 +144,10 @@ public class Sequitur {
          String line;
          while ((line = br.readLine()) != null) {
             final List<String> elements = getCurrentValues(line, br).elements;
-            final List<String> added = expandTraceElements(elements);
-            trace1.addAll(added);
+            trace1.addAll(elements);
          }
       }
       return trace1;
-   }
-
-   public static List<String> expandTraceElements(final List<String> elements) {
-      final List<String> added = new LinkedList<>();
-      for (final String element : elements) {
-         if (element.contains("(")) {
-            final String parameters = element.substring(element.indexOf("(") + 2, element.length() - 2);
-            final String[] splitted = parameters.split(",");
-            String withoutFQN = "(";
-            for (final String parameter : splitted) {
-               withoutFQN += parameter.substring(parameter.lastIndexOf('.') + 1).trim() + ",";
-            }
-            withoutFQN = withoutFQN.substring(0, withoutFQN.length() - 1) + ")";
-            added.add(element.substring(0, element.indexOf("(")) + withoutFQN);
-         } else {
-            added.add(element);
-         }
-      }
-      return added;
    }
 
    static class Return {
@@ -208,7 +188,7 @@ public class Sequitur {
       }
       return current;
    }
-   
+
    public List<Content> getAddingElements() {
       return addingElements;
    }

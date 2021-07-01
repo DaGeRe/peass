@@ -25,7 +25,7 @@ public class PeassStage extends AbstractTraceProcessingStage<ExecutionTrace> {
 
    private static final Logger LOG = LogManager.getLogger(PeassStage.class);
 
-   private final Map<ChangedEntity, Set<String>> classes = new HashMap<>();
+   private final Map<ChangedEntity, Set<String>> calledMethods = new HashMap<>();
    private final ArrayList<TraceElement> calls = new ArrayList<>();
    private final String prefix;
    private final ModuleClassMapping mapping;
@@ -66,21 +66,25 @@ public class PeassStage extends AbstractTraceProcessingStage<ExecutionTrace> {
                final TraceElement traceelement = buildTraceElement(execution, fullClassname, methodname);
 
                calls.add(traceelement);
-               // final String clazzFilename = ClazzFinder.getClassFilename(projectFolder, fullClassname);
-               final String outerClazzName = ClazzFileFinder.getOuterClass(fullClassname);
-               final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
-               final ChangedEntity fullClassEntity = new ChangedEntity(fullClassname, moduleOfClass);
-               traceelement.setModule(moduleOfClass);
-               Set<String> currentMethodSet = classes.get(fullClassEntity);
-               if (currentMethodSet == null) {
-                  currentMethodSet = new HashSet<>();
-                  classes.put(fullClassEntity, currentMethodSet);
-               }
-               currentMethodSet.add(methodname);
+               String methodWithParameters = methodname + ChangedEntity.getParameterString(execution.getOperation().getSignature().getParamTypeList());
+               addCalledMethod(fullClassname, methodWithParameters, traceelement);
             }
          }
       }
       LOG.info("Finished");
+   }
+
+   private void addCalledMethod(final String fullClassname, final String methodname, final TraceElement traceelement) {
+      final String outerClazzName = ClazzFileFinder.getOuterClass(fullClassname);
+      final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
+      final ChangedEntity fullClassEntity = new ChangedEntity(fullClassname, moduleOfClass);
+      traceelement.setModule(moduleOfClass);
+      Set<String> currentMethodSet = calledMethods.get(fullClassEntity);
+      if (currentMethodSet == null) {
+         currentMethodSet = new HashSet<>();
+         calledMethods.put(fullClassEntity, currentMethodSet);
+      }
+      currentMethodSet.add(methodname);
    }
 
    private TraceElement buildTraceElement(final Execution execution, final String fullClassname, final String methodname) {
@@ -126,6 +130,6 @@ public class PeassStage extends AbstractTraceProcessingStage<ExecutionTrace> {
    }
 
    public Map<ChangedEntity, Set<String>> getCalledMethods() {
-      return classes;
+      return calledMethods;
    }
 }

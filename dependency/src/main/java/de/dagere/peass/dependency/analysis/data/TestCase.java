@@ -1,6 +1,7 @@
 package de.dagere.peass.dependency.analysis.data;
 
 import java.io.File;
+import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,7 +15,10 @@ import de.dagere.kopeme.generated.Kopemedata.Testcases;
  * @author reichelt
  *
  */
-public class TestCase implements Comparable<TestCase> {
+public class TestCase implements Comparable<TestCase>, Serializable {
+   
+   private static final long serialVersionUID = -522183920107191602L;
+   
    private final String module;
    private final String clazz;
    private final String method;
@@ -85,9 +89,7 @@ public class TestCase implements Comparable<TestCase> {
             module = testcase.substring(0, moduleIndex);
          }
          method = null;
-         // final int indexDot = testcase.lastIndexOf(".");
-         // clazz = testcase.substring(0, indexDot);
-         // method = testcase.substring(indexDot + 1);
+         params = null;
       } else {
          String start = testcase.substring(0, index);
          int moduleIndex = testcase.indexOf(ChangedEntity.MODULE_SEPARATOR);
@@ -98,9 +100,15 @@ public class TestCase implements Comparable<TestCase> {
             clazz = start.substring(moduleIndex + 1);
             module = start.substring(0, moduleIndex);
          }
-         method = testcase.substring(index + 1);
+
+         if (testcase.contains("(")) {
+            method = testcase.substring(index + 1, testcase.indexOf("("));
+            params = testcase.substring(testcase.indexOf("(") + 1, testcase.length() - 1);
+         } else {
+            method = testcase.substring(index + 1);
+            params = null;
+         }
       }
-      params = null;
    }
 
    public String getClazz() {
@@ -174,11 +182,16 @@ public class TestCase implements Comparable<TestCase> {
 
    @Override
    public String toString() {
+      String result;
       if (module != null && !"".equals(module)) {
-         return "TestCase [clazz=" + clazz + ", method=" + method + ", module=" + module + "]";
+         result = module + ChangedEntity.MODULE_SEPARATOR + clazz + ChangedEntity.METHOD_SEPARATOR + method;
       } else {
-         return "TestCase [clazz=" + clazz + ", method=" + method + "]";
+         result = clazz + ChangedEntity.METHOD_SEPARATOR + method;
       }
+      if (params != null) {
+         result += "(" + params + ")";
+      }
+      return result;
    }
 
    @JsonIgnore

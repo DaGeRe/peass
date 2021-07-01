@@ -103,7 +103,8 @@ public class InitialVersionReader {
                methods.add(callee.getMethod());
                calledClasses.put(new ChangedEntity(callee.getClazz(), callee.getModule()), methods);
                final ChangedEntity testClazz = testcase.getKey();
-               dependencyManager.addDependencies(new ChangedEntity(testClazz.getClazz(), testClazz.getModule(), testMethod), calledClasses);
+               ChangedEntity testClassName = new ChangedEntity(testClazz.getClazz(), testClazz.getModule(), testMethod);
+               dependencyManager.addDependencies(testClassName, calledClasses);
             }
          }
       }
@@ -112,16 +113,21 @@ public class InitialVersionReader {
    private void fillInitialTestDependencies() {
       for (final Entry<ChangedEntity, InitialDependency> dependency : dependencyResult.getInitialversion().getInitialDependencies().entrySet()) {
          for (final ChangedEntity dependentClass : dependency.getValue().getEntities()) {
-            final Map<ChangedEntity, Set<String>> dependents = dependencyMap.getOrAddDependenciesForTest(dependency.getKey());
-            final ChangedEntity dependencyEntity = new ChangedEntity(dependentClass.getClazz(), dependentClass.getModule());
-            Set<String> methods = dependents.get(dependencyEntity);
-            if (methods == null) {
-               methods = new HashSet<>();
-               dependents.put(dependencyEntity, methods);
-            }
-            methods.add(dependentClass.getMethod());
+            ChangedEntity testClassName = dependency.getKey();
+            addDependencies(testClassName, dependentClass);
          }
       }
+   }
+
+   private void addDependencies(final ChangedEntity testClassName , final ChangedEntity dependentClass) {
+      final Map<ChangedEntity, Set<String>> testDependencies = dependencyMap.getOrAddDependenciesForTest(testClassName);
+      final ChangedEntity dependencyEntity = new ChangedEntity(dependentClass.getClazz(), dependentClass.getModule());
+      Set<String> methods = testDependencies.get(dependencyEntity);
+      if (methods == null) {
+         methods = new HashSet<>();
+         testDependencies.put(dependencyEntity, methods);
+      }
+      methods.add(dependentClass.getMethod());
    }
    
    private void checkCorrectness() {

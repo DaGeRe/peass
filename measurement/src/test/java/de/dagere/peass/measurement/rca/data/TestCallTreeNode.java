@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.helper.TreeBuilderBig;
 
 public class TestCallTreeNode {
@@ -22,7 +21,7 @@ public class TestCallTreeNode {
       final CallTreeNode node = new CallTreeNode("moduleA" + ChangedEntity.MODULE_SEPARATOR + "de.mypackage.Test#callMethod", "public void "+ ChangedEntity.MODULE_SEPARATOR + "de.mypackage.Test.callMethod(int)", null, (MeasurementConfiguration) null);
       ChangedEntity entity = node.toEntity();
       Assert.assertEquals(new ChangedEntity("de.mypackage.Test", "moduleA", "callMethod"), entity);
-      Assert.assertEquals("moduleA" + ChangedEntity.MODULE_SEPARATOR + "de.mypackage.Test#callMethod", entity.toString());
+      Assert.assertEquals("moduleA" + ChangedEntity.MODULE_SEPARATOR + "de.mypackage.Test#callMethod(int)", entity.toString());
       Assert.assertEquals("int", entity.getParameterTypes()[0]);
    }
 

@@ -67,6 +67,32 @@ public class TestDependencies {
       }
       return tests.getCalledMethods();
    }
+   
+   public void setDependencies(final ChangedEntity testClassName, final Map<ChangedEntity, Set<String>> allCalledClasses) {
+      final Map<ChangedEntity, Set<String>> testDependencies = getOrAddDependenciesForTest(testClassName);
+      testDependencies.putAll(allCalledClasses);
+   }
+   
+   /**
+    * Since we have no information about complete dependencies when reading an old dependencyfile, just add dependencies
+    * 
+    * @param testClassName
+    * @param testMethodName
+    * @param calledClasses Map from name of the called class to the methods of the class that are called
+    */
+   public void addDependencies(final ChangedEntity testClassName, final Map<ChangedEntity, Set<String>> calledClasses) {
+      final Map<ChangedEntity, Set<String>> testDependencies = getOrAddDependenciesForTest(testClassName);
+      for (final Map.Entry<ChangedEntity, Set<String>> calledEntity : calledClasses.entrySet()) {
+         LOG.debug("Adding call: " + calledEntity.getKey());
+         LOG.debug(testDependencies.keySet());
+         final Set<String> oldSet = testDependencies.get(calledEntity.getKey());
+         if (oldSet != null) {
+            oldSet.addAll(calledEntity.getValue());
+         } else {
+            testDependencies.put(calledEntity.getKey(), calledEntity.getValue());
+         }
+      }
+   }
 
    public void removeTest(final ChangedEntity entity) {
       dependencyMap.remove(entity);
@@ -125,17 +151,15 @@ public class TestDependencies {
       return changeTestMap;
    }
 
-   public void addCall(final ChangeTestMapping changeTestMap, final ChangedEntity currentTestcase, final CalledMethods currentTestDependencies, final ClazzChangeData changedEntry,
-         final ChangedEntity change, final ChangedEntity changedClass) {
+   private void addCall(final ChangeTestMapping changeTestMap, final ChangedEntity currentTestcase, final CalledMethods currentTestDependencies,
+         final ClazzChangeData changedEntry, final ChangedEntity change, final ChangedEntity changedClass) {
       if (!changedEntry.isOnlyMethodChange()) {
          changeTestMap.addChangeEntry(change, currentTestcase);
-      } else {
-         String method = change.getMethod();
+      } else { 
+         String method = change.getMethod() + change.getParameterString();
          final Map<ChangedEntity, Set<String>> calledMethods = currentTestDependencies.getCalledMethods();
          final Set<String> calledMethodsInChangeClass = calledMethods.get(changedClass);
-         final int parameterIndex = method.indexOf("("); // TODO Parameter korrekt prüfen
-         final String methodWithoutParameters = parameterIndex != -1 ? method.substring(0, parameterIndex) : method;
-         if (calledMethodsInChangeClass.contains(methodWithoutParameters)) {
+         if (calledMethodsInChangeClass.contains(method)) {
             final ChangedEntity classWithMethod = new ChangedEntity(changedClass.getClazz(), changedClass.getModule(), method);
             changeTestMap.addChangeEntry(classWithMethod, currentTestcase);
          }

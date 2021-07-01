@@ -65,6 +65,9 @@ public class CauseSearcherComplete extends CauseSearcher {
       final List<CallTreeNode> predecessorNodeList = analyzer.getMeasurementNodesPredecessor();
       final List<CallTreeNode> includableNodes = getIncludableNodes(predecessorNodeList);
 
+      if (includableNodes.isEmpty()) {
+         throw new RuntimeException("Tried to analyze empty node list");
+      }
       measureDefinedTree(includableNodes);
 //      differingNodes.addAll(analyzer.getTreeStructureDiffering());
 

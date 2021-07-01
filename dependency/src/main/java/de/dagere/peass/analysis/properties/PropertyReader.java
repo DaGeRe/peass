@@ -20,30 +20,34 @@ import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 
 public class PropertyReader {
-   
+
    private static final Logger LOG = LogManager.getLogger(PropertyReader.class);
-   
+
    private final ResultsFolders resultsFolders;
    private final File projectFolder;
    private final ExecutionData changedTests;
    private int count = 0;
-   
+
    public PropertyReader(final ResultsFolders resultsFolders, final File projectFolder, final ExecutionData changedTests) {
       this.resultsFolders = resultsFolders;
       this.projectFolder = projectFolder;
       this.changedTests = changedTests;
    }
 
-   public void readAllTestsProperties() throws IOException {
-      final VersionChangeProperties versionProperties = new VersionChangeProperties();
-      final File methodFolder = new File(resultsFolders.getPropertiesFolder(), "methods");
-      methodFolder.mkdirs();
-      for (final Map.Entry<String, TestSet> version : changedTests.getVersions().entrySet()) {
-         readVersion(versionProperties, methodFolder, version);
-         Constants.OBJECTMAPPER.writeValue(resultsFolders.getPropertiesFile(), versionProperties);
-      }
+   public void readAllTestsProperties() {
+      try {
+         final VersionChangeProperties versionProperties = new VersionChangeProperties();
+         final File methodFolder = new File(resultsFolders.getPropertiesFolder(), "methods");
+         methodFolder.mkdirs();
+         for (final Map.Entry<String, TestSet> version : changedTests.getVersions().entrySet()) {
+            readVersion(versionProperties, methodFolder, version);
+            Constants.OBJECTMAPPER.writeValue(resultsFolders.getPropertiesFile(), versionProperties);
+         }
 
-      LOG.info("Analyzed properties: " + count);
+         LOG.info("Analyzed properties: " + count);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    private void readVersion(final VersionChangeProperties versionProperties, final File methodFolder, final Map.Entry<String, TestSet> version) throws IOException {
@@ -66,10 +70,10 @@ public class PropertyReader {
          final List<ChangeProperty> properties, final String testmethod) throws IOException {
       final Change testcaseChange = new Change();
       testcaseChange.setMethod(testmethod);
-      
+
       final ChangedEntity entity = new ChangedEntity(testclazz.getKey().getClazz(), testclazz.getKey().getModule());
-      final PropertyReadHelper reader = new PropertyReadHelper(version.getKey(), version.getValue().getPredecessor(), 
-            entity, testcaseChange, 
+      final PropertyReadHelper reader = new PropertyReadHelper(version.getKey(), version.getValue().getPredecessor(),
+            entity, testcaseChange,
             projectFolder,
             resultsFolders.getViewFolder(), methodSourceFolder, changedTests);
       final ChangeProperty currentProperty = reader.read();

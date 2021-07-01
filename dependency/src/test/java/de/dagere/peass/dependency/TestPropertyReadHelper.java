@@ -24,4 +24,14 @@ public class TestPropertyReadHelper {
       Assert.assertEquals("clazz", entity.getClazz());
       Assert.assertEquals("method", entity.getMethod());
    }
+   
+   @Test
+   public void testDetermineEntityParameters() {
+      ChangedEntity entity = PropertyReadHelper.determineEntity("clazz" + ChangedEntity.METHOD_SEPARATOR + "method(int,String)");
+      
+      Assert.assertEquals("", entity.getModule());
+      Assert.assertEquals("clazz", entity.getClazz());
+      Assert.assertEquals("method", entity.getMethod());
+      Assert.assertEquals("String", entity.getParameters().get(1));
+   }
 }

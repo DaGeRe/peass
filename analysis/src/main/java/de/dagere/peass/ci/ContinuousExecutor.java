@@ -86,17 +86,28 @@ public class ContinuousExecutor {
       }
    }
 
-   public void execute() throws Exception {
+   public Set<TestCase> executeRTS() {
       final String url = GitUtils.getURL(originalProjectFolder);
 
-      final Set<TestCase> tests = executeRegressionTestSelection(url);
-
-      final File measurementFolder = executeMeasurement(tests);
-
-      analyzeMeasurements(measurementFolder);
+      Set<TestCase> tests = executeRegressionTestSelection(url);
+      return tests;
+   }
+   
+   public void measure(final Set<TestCase> tests) {
+      try {
+         File measurementFolder = executeMeasurement(tests);
+         analyzeMeasurements(measurementFolder);
+      } catch (IOException | InterruptedException | JAXBException | XmlPullParserException e) {
+         throw new RuntimeException(e);
+      }
    }
 
-   protected Set<TestCase> executeRegressionTestSelection(final String url) throws Exception {
+   public void execute() throws Exception {
+      Set<TestCase> tests = executeRTS();
+      measure(tests);
+   }
+
+   protected Set<TestCase> executeRegressionTestSelection(final String url) {
       ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), folders, resultsFolders, env);
       final Set<TestCase> tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
 
@@ -105,9 +116,10 @@ public class ContinuousExecutor {
       return tests;
    }
 
-   private void readMethodSources(final Set<TestCase> tests) throws IOException {
+   private void readMethodSources(final Set<TestCase> tests) {
       ExecutionData executionData = new ExecutionData();
       executionData.addEmptyVersion(version, versionOld);
+      executionData.addEmptyVersion(versionOld, null);
       for (TestCase test : tests) {
          executionData.addCall(version, test);
       }
