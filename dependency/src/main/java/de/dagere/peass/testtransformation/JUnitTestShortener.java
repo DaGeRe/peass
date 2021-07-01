@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -22,6 +23,7 @@ import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 
@@ -83,11 +85,16 @@ public class JUnitTestShortener implements AutoCloseable{
          saveUnshortened(calleeClazzFile);
 
          final CompilationUnit calleeUnit = transformer.getLoadedFiles().get(calleeClazzFile);
-         final ClassOrInterfaceDeclaration clazz = ClazzFinder.findClazz(callee, calleeUnit.getChildNodes());
-         shortenParent(module, callee, calleeClazzFile, calleeUnit, clazz);
-         removeNonWanted(method, version, clazz);
+         final TypeDeclaration<?> clazz = ClazzFinder.findClazz(callee, calleeUnit.getChildNodes());
+      
+         // The clazz might be null, if it is
+         if (clazz != null && clazz instanceof ClassOrInterfaceDeclaration) {
+            shortenParent(module, callee, calleeClazzFile, calleeUnit, (ClassOrInterfaceDeclaration) clazz);
+            removeNonWanted(method, version, (ClassOrInterfaceDeclaration) clazz);
 
-         FileUtils.writeStringToFile(calleeClazzFile, calleeUnit.toString(), Charset.defaultCharset());
+            FileUtils.writeStringToFile(calleeClazzFile, calleeUnit.toString(), Charset.defaultCharset());
+         }
+         
       }
    }
 
@@ -189,7 +196,9 @@ public class JUnitTestShortener implements AutoCloseable{
                // FileUtils.copyFile(shortened.getKey(), shortened.getValue());
                shortened.getValue().delete();
                LOG.debug("File to reset: {} Exists: {} Parent exists: {}", shortened.getValue(), shortened.getValue().exists(), shortened.getValue().getParentFile().exists());
-               Files.move(shortened.getKey().toPath(), shortened.getValue().toPath());
+               Path dest = shortened.getValue().toPath();
+               Path source = shortened.getKey().toPath();
+               Files.move(source, dest);
                final CompilationUnit unit = JavaParserProvider.parse(shortened.getValue());
                transformer.getLoadedFiles().put(shortened.getValue(), unit);
             } catch (final IOException e) {

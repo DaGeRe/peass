@@ -110,7 +110,7 @@ public class GradleParseUtil {
       }
    }
 
-   public static ProjectModules getModules(final File projectFolder) throws FileNotFoundException, IOException {
+   public static ProjectModules getModules(final File projectFolder) {
       final File settingsFile = new File(projectFolder, "settings.gradle");
       final List<File> modules = new LinkedList<>();
       if (settingsFile.exists()) {
@@ -119,6 +119,8 @@ public class GradleParseUtil {
             while ((line = reader.readLine()) != null) {
                parseModuleLine(projectFolder, modules, line);
             }
+         } catch (IOException e) {
+            throw new RuntimeException(e);
          }
       } else {
          LOG.debug("settings-file {} not found", settingsFile);

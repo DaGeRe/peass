@@ -17,13 +17,12 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.PeassFolders;
-import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.testtransformation.TestTransformer;
 
 /**
- * Base functionality for executing tests with KoPeMe. The executor automates changing the buildfile, changing the tests both with and without Kieker.
+ * Base functionality for executing performance tests, both instrumented and not instrumented. The executor automates changing the buildfile, changing the tests both with and
+ * without Kieker.
  * 
  * @author reichelt
  *
@@ -63,26 +62,6 @@ public abstract class TestExecutor {
 
    public abstract void executeTest(final TestCase test, final File logFolder, long timeout);
 
-   protected int getTestCount() throws IOException, XmlPullParserException {
-      final List<TestCase> testcases = getTestCases();
-      return testcases.size();
-   }
-
-   protected List<TestCase> getTestCases() throws IOException, XmlPullParserException {
-      final List<TestCase> testcases = new LinkedList<>();
-      for (final File module : getModules().getModules()) {
-         for (final String testClazzFile : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
-            final String moduleName = ModuleClassMapping.getModuleName(folders.getProjectFolder(), module);
-            final ChangedEntity entity = new ChangedEntity(testClazzFile, moduleName);
-            final List<TestCase> testMethods = testTransformer.getTestMethodNames(module, entity);
-            for (final TestCase tc : testMethods) {
-               testcases.add(tc);
-            }
-         }
-      }
-      return testcases;
-   }
-
    protected File getCleanLogFile(final File logFolder, final TestCase test) {
       File clazzLogFolder = new File(logFolder, "log_" + test.getClazz());
       if (!clazzLogFolder.exists()) {
@@ -91,7 +70,7 @@ public abstract class TestExecutor {
       final File logFile = new File(clazzLogFolder, test.getMethod() + "_clean.txt");
       return logFile;
    }
-   
+
    protected File getMethodLogFile(final File logFolder, final TestCase test) {
       File clazzLogFolder = new File(logFolder, "log_" + test.getClazz());
       if (!clazzLogFolder.exists()) {
@@ -159,7 +138,7 @@ public abstract class TestExecutor {
       }
    }
 
-   public abstract ProjectModules getModules() throws IOException, XmlPullParserException;
+   public abstract ProjectModules getModules();
 
    public List<String> getExistingClasses() {
       return existingClasses;
@@ -169,13 +148,9 @@ public abstract class TestExecutor {
 
    public void loadClasses() {
       existingClasses = new LinkedList<>();
-      try {
-         for (final File module : getModules().getModules()) {
-            final List<String> currentClasses = ClazzFileFinder.getClasses(module);
-            existingClasses.addAll(currentClasses);
-         }
-      } catch (IOException | XmlPullParserException e) {
-         e.printStackTrace();
+      for (final File module : getModules().getModules()) {
+         final List<String> currentClasses = ClazzFileFinder.getClasses(module);
+         existingClasses.addAll(currentClasses);
       }
    }
 
@@ -190,7 +165,7 @@ public abstract class TestExecutor {
    public void setIncludedMethods(final Set<String> includedMethodPattern) {
       this.includedMethodPattern = includedMethodPattern;
    }
-   
+
    public TestTransformer getTestTransformer() {
       return testTransformer;
    }

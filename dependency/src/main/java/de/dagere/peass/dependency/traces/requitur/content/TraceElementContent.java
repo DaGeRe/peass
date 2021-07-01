@@ -86,14 +86,7 @@ public class TraceElementContent extends Content {
       result.append(method);
 
       if (parameterTypes.length != 0) {
-         result.append("(");
-         StringBuffer parameterString = new StringBuffer();
-         for (String parameterType : parameterTypes) {
-            parameterString.append(parameterType);
-            parameterString.append(",");
-         }
-         result.append(parameterString.substring(0, parameterString.length() - 1));
-         result.append(")");
+         result.append(ChangedEntity.getParameterString(parameterTypes));
       }
 
       return result.toString();
@@ -144,12 +137,4 @@ public class TraceElementContent extends Content {
       final String result = clazz.contains(".") ? clazz.substring(0, clazz.lastIndexOf('.')) : "";
       return result;
    }
-
-   // public String getSource() {
-   // return source;
-   // }
-   //
-   // public void setSource(final String source) {
-   // this.source = source;
-   // }
 }

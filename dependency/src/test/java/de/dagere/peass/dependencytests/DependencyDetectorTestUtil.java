@@ -71,6 +71,15 @@ public class DependencyDetectorTestUtil {
       Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
       return changeManager;
    }
+   
+   public static ChangeManager changedTestClassChangeManager() {
+      final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
+      changes.put(new ChangedEntity("defaultpackage.TestMe", ""), new ClazzChangeData("defaultpackage.TestMe", false));
+
+      final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
+      Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
+      return changeManager;
+   }
 
    public static ChangeManager mockAddedChangeManager() {
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
@@ -96,7 +105,7 @@ public class DependencyDetectorTestUtil {
 
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator)
          throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
-      return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5), DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.NULL_RESULTS_FOLDERS);
+      return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5), DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.TARGET_RESULTS_FOLDERS);
    }
 
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config, final DependencyConfig dependencyConfig, final ResultsFolders resultsFolders) {

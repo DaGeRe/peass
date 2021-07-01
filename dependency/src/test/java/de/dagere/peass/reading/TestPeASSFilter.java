@@ -32,7 +32,7 @@ public class TestPeASSFilter {
    
    private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT");
    private static final File CURRENT = new File(new File("target"), "current");
-   private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
+   private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "state_with_parameters");
 
    @BeforeEach
    public void initialize() throws IOException, InterruptedException {
@@ -50,11 +50,11 @@ public class TestPeASSFilter {
    @Test
    public void testExecution() throws ViewNotFoundException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       final KiekerResultManager manager = new KiekerResultManager(new PeassFolders(CURRENT), new ExecutionConfig(5), new EnvironmentVariables());
-      final TestSet ts = new TestSet();
+      final TestSet testset = new TestSet();
       final TestCase testcase = new TestCase("defaultpackage.TestMe", "testMe", "");
-      ts.addTest(testcase);
+      testset.addTest(testcase);
       manager.getExecutor().loadClasses();
-      manager.executeKoPeMeKiekerRun(ts, "0");
+      manager.executeKoPeMeKiekerRun(testset, "0");
       
       final File kiekerFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT))[0];
       LOG.debug("Searching: " + kiekerFolder);
@@ -62,7 +62,7 @@ public class TestPeASSFilter {
       final List<TraceElement> referenceTrace = new CalledMethodLoader(kiekerFolder, mapping).getShortTrace("");
 
       for (int i = 1; i <= 3; i++) {
-         final List<TraceElement> compareTrace = regenerateTrace(manager, ts, testcase, mapping, i);
+         final List<TraceElement> compareTrace = regenerateTrace(manager, testset, testcase, mapping, i);
          
          LOG.debug("Old");
          for (final TraceElement reference : referenceTrace){
@@ -76,6 +76,8 @@ public class TestPeASSFilter {
          }
          
          Assert.assertEquals(referenceTrace.size(), compareTrace.size());
+         System.out.println(compareTrace.get(3).toString());
+         Assert.assertEquals("defaultpackage.NormalDependency#innerMethod(java.lang.Integer)", compareTrace.get(3).toString());
       }
 
    }

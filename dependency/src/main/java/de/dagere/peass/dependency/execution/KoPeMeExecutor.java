@@ -1,12 +1,10 @@
 package de.dagere.peass.dependency.execution;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -14,7 +12,7 @@ import de.dagere.peass.testtransformation.JUnitTestShortener;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public abstract class KoPeMeExecutor extends TestExecutor {
-   
+
    private static final Logger LOG = LogManager.getLogger(KoPeMeExecutor.class);
 
    protected final JUnitTestTransformer testTransformer;
@@ -23,15 +21,11 @@ public abstract class KoPeMeExecutor extends TestExecutor {
       super(folders, testTransformer, env);
       this.testTransformer = testTransformer;
    }
-   
+
    public void transformTests() {
-      try {
-         final List<File> modules = getModules().getModules();
-         testTransformer.determineVersions(modules);
-         testTransformer.transformTests();
-      } catch (IOException | XmlPullParserException e) {
-         e.printStackTrace();
-      }
+      final List<File> modules = getModules().getModules();
+      testTransformer.determineVersions(modules);
+      testTransformer.transformTests();
    }
 
    protected String getTestGoal() {
@@ -45,7 +39,7 @@ public abstract class KoPeMeExecutor extends TestExecutor {
    }
 
    protected abstract void runTest(File moduleFolder, final File logFile, final String testname, final long timeout);
-   
+
    void runMethod(final File logFolder, final TestCase test, final File moduleFolder, final long timeout) {
       try (final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, moduleFolder, test.toEntity(), test.getMethod())) {
          LOG.info("Cleaning...");
@@ -58,7 +52,7 @@ public abstract class KoPeMeExecutor extends TestExecutor {
          e1.printStackTrace();
       }
    }
-   
+
    @Override
    public JUnitTestTransformer getTestTransformer() {
       return testTransformer;

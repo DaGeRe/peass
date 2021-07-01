@@ -225,7 +225,7 @@ public class DependencyManager extends KiekerResultManager {
          return;
       }
 
-      final Map<ChangedEntity, Set<String>> allCalledClasses = getCalledClasses(mapping, kiekerResultFolders);
+      final Map<ChangedEntity, Set<String>> allCalledClasses = getCalledMethods(mapping, kiekerResultFolders);
 
       removeNotExistingClazzes(allCalledClasses);
       for (final Iterator<ChangedEntity> iterator = allCalledClasses.keySet().iterator(); iterator.hasNext();) {
@@ -237,10 +237,10 @@ public class DependencyManager extends KiekerResultManager {
 
       LOG.debug("Test: {} ", testClassName);
       LOG.debug("Dependencies: {}", allCalledClasses.size());
-      setDependencies(testClassName, allCalledClasses);
+      dependencies.setDependencies(testClassName, allCalledClasses);
    }
 
-   private Map<ChangedEntity, Set<String>> getCalledClasses(final ModuleClassMapping mapping, final File[] kiekerResultFolders) {
+   private Map<ChangedEntity, Set<String>> getCalledMethods(final ModuleClassMapping mapping, final File[] kiekerResultFolders) {
       final Map<ChangedEntity, Set<String>> allCalledClasses = new LinkedHashMap<ChangedEntity, Set<String>>();
       for (File kiekerResultFolder : kiekerResultFolders) {
          final long size = FileUtils.sizeOfDirectory(kiekerResultFolder);
@@ -253,13 +253,13 @@ public class DependencyManager extends KiekerResultManager {
             LOG.debug("Reading Kieker folder: {}", kiekerResultFolder.getAbsolutePath());
             final File kiekerOutputFile = new File(folders.getLogFolder(), "ausgabe_kieker.txt");
 
-            final Map<ChangedEntity, Set<String>> calledClasses = new CalledMethodLoader(kiekerResultFolder, mapping).getCalledMethods(kiekerOutputFile);
-            for (Map.Entry<ChangedEntity, Set<String>> calledClass : calledClasses.entrySet()) {
-               if (!allCalledClasses.containsKey(calledClass.getKey())) {
-                  allCalledClasses.put(calledClass.getKey(), calledClass.getValue());
+            final Map<ChangedEntity, Set<String>> calledMethods = new CalledMethodLoader(kiekerResultFolder, mapping).getCalledMethods(kiekerOutputFile);
+            for (Map.Entry<ChangedEntity, Set<String>> calledMethod : calledMethods.entrySet()) {
+               if (!allCalledClasses.containsKey(calledMethod.getKey())) {
+                  allCalledClasses.put(calledMethod.getKey(), calledMethod.getValue());
                } else {
-                  Set<String> alreadyKnownCalledClasses = allCalledClasses.get(calledClass.getKey());
-                  alreadyKnownCalledClasses.addAll(calledClass.getValue());
+                  Set<String> alreadyKnownCalledClasses = allCalledClasses.get(calledMethod.getKey());
+                  alreadyKnownCalledClasses.addAll(calledMethod.getValue());
                }
             }
          }
@@ -282,32 +282,6 @@ public class DependencyManager extends KiekerResultManager {
             LOG.trace("Existing: " + outerClazzName);
          }
       }
-   }
-
-   /**
-    * Since we have no information about complete dependencies when reading an old dependencyfile, just add dependencies
-    * 
-    * @param testClassName
-    * @param testMethodName
-    * @param calledClasses Map from name of the called class to the methods of the class that are called
-    */
-   public void addDependencies(final ChangedEntity testClassName, final Map<ChangedEntity, Set<String>> calledClasses) {
-      final Map<ChangedEntity, Set<String>> testDependencies = dependencies.getOrAddDependenciesForTest(testClassName);
-      for (final Map.Entry<ChangedEntity, Set<String>> calledEntity : calledClasses.entrySet()) {
-         LOG.debug("adding: " + calledEntity.getKey() + " Module: " + calledEntity.getKey().getModule());
-         LOG.debug(testDependencies.keySet());
-         final Set<String> oldSet = testDependencies.get(calledEntity.getKey());
-         if (oldSet != null) {
-            oldSet.addAll(calledEntity.getValue());
-         } else {
-            testDependencies.put(calledEntity.getKey(), calledEntity.getValue());
-         }
-      }
-   }
-
-   private void setDependencies(final ChangedEntity testClassName, final Map<ChangedEntity, Set<String>> calledClasses) {
-      final Map<ChangedEntity, Set<String>> testDependencies = dependencies.getOrAddDependenciesForTest(testClassName);
-      testDependencies.putAll(calledClasses);
    }
 
    /**
@@ -438,5 +412,9 @@ public class DependencyManager extends KiekerResultManager {
             }
          }
       }
+   }
+
+   public void addDependencies(final ChangedEntity testClassName, final Map<ChangedEntity, Set<String>> calledClasses) {
+      dependencies.addDependencies(testClassName, calledClasses);
    }
 }

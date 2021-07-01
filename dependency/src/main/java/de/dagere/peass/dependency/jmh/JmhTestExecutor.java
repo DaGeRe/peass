@@ -111,18 +111,14 @@ public class JmhTestExecutor extends TestExecutor {
 
    @Override
    public boolean isVersionRunning(final String version) {
-      try {
-         MavenRunningTester mavenRunningTester = new MavenRunningTester(folders, env, testTransformer.getConfig(), getModules());
-         boolean isRunning = mavenRunningTester.isVersionRunning(version);
-         buildfileExists = mavenRunningTester.isBuildfileExists();
-         return isRunning;
-      } catch (IOException | XmlPullParserException e) {
-         throw new RuntimeException(e);
-      }
+      MavenRunningTester mavenRunningTester = new MavenRunningTester(folders, env, testTransformer.getConfig(), getModules());
+      boolean isRunning = mavenRunningTester.isVersionRunning(version);
+      buildfileExists = mavenRunningTester.isBuildfileExists();
+      return isRunning;
    }
 
    @Override
-   public ProjectModules getModules() throws IOException, XmlPullParserException {
+   public ProjectModules getModules() {
       File pomFile = new File(folders.getProjectFolder(), "pom.xml");
       return MavenPomUtil.getModules(pomFile);
    }

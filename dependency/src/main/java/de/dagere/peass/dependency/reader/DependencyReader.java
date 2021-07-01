@@ -15,6 +15,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.javaparser.ParseException;
 
+import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
@@ -22,8 +23,10 @@ import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
+import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -32,6 +35,8 @@ import de.dagere.peass.dependency.traces.DiffFileGenerator;
 import de.dagere.peass.dependency.traces.OneTraceGenerator;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
 import de.dagere.peass.dependency.traces.coverage.CoverageBasedSelector;
+import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
+import de.dagere.peass.dependency.traces.coverage.CoverageSelectionVersion;
 import de.dagere.peass.dependency.traces.coverage.TraceCallSummary;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.utils.Constants;
@@ -53,6 +58,7 @@ public class DependencyReader {
    protected final Dependencies dependencyResult = new Dependencies();
    private final ExecutionData executionResult = new ExecutionData();
    private final ExecutionData coverageBasedSelection = new ExecutionData();
+   private final CoverageSelectionInfo coverageSelectionInfo = new CoverageSelectionInfo();
    protected final ResultsFolders resultsFolders;
    protected DependencyManager dependencyManager;
    protected final PeassFolders folders;
@@ -79,6 +85,7 @@ public class DependencyReader {
 
       dependencyResult.setUrl(url);
       executionResult.setUrl(url);
+      coverageBasedSelection.setUrl(url);
 
       this.changeManager = changeManager;
    }
@@ -138,6 +145,7 @@ public class DependencyReader {
          Constants.OBJECTMAPPER.writeValue(resultsFolders.getExecutionFile(), executionResult);
          if (dependencyConfig.isGenerateCoverageSelection()) {
             Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageSelectionFile(), coverageBasedSelection);
+            Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageInfoFile(), coverageSelectionInfo);
          }
       }
 
@@ -194,6 +202,7 @@ public class DependencyReader {
       dependencyResult.getVersions().put(version, new Version());
       if (dependencyConfig.isGenerateViews()) {
          executionResult.addEmptyVersion(version, null);
+         coverageBasedSelection.addEmptyVersion(version, null);
       }
       skippedNoChange.addVersion(version, "No Change at all");
    }
@@ -238,12 +247,24 @@ public class DependencyReader {
             TraceCallSummary newSummary = Constants.OBJECTMAPPER.readValue(newFile, TraceCallSummary.class);
             summaries.add(oldSummary);
             summaries.add(newSummary);
+            LOG.info("Found traces for {}", testcase);
+         } else {
+            LOG.info("Trace files missing for {}", testcase);
          }
       }
-      List<TestCase> selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newVersionInfo.getChangedClazzes().keySet());
-      for (TestCase testcase : selected) {
-         coverageBasedSelection.addCall(version, testcase);
+
+      for (ChangedEntity change : newVersionInfo.getChangedClazzes().keySet()) {
+         LOG.info("Change: {}", change.toString());
+         LOG.info("Parameters: {}", change.getParametersPrintable());
       }
+
+      CoverageSelectionVersion selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newVersionInfo.getChangedClazzes().keySet());
+      for (TraceCallSummary traceCallSummary : selected.getTestcases().values()) {
+         if (traceCallSummary.isSelected()) {
+            coverageBasedSelection.addCall(version, traceCallSummary.getTestcase());
+         }
+      }
+      coverageSelectionInfo.getVersions().put(version, selected);
    }
 
    private int calculateChangedClassCount(final Version newVersionInfo) {
@@ -255,9 +276,10 @@ public class DependencyReader {
 
    private Version handleStaticAnalysisChanges(final String version, final DependencyReadingInput input) throws IOException, JsonGenerationException, JsonMappingException {
       final ChangeTestMapping changeTestMap = dependencyManager.getDependencyMap().getChangeTestMap(input.getChanges()); // tells which tests need to be run, and
-      // because of
+      // because of which change they need to be run
       LOG.debug("Change test mapping (without added tests): " + changeTestMap);
-      // which change they need to be run
+
+      handleAddedTests(input, changeTestMap);
 
       if (DETAIL_DEBUG)
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changetest_" + version + ".json"), changeTestMap);
@@ -270,6 +292,23 @@ public class DependencyReader {
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "versioninfo_" + version + ".json"), newVersionInfo);
       }
       return newVersionInfo;
+   }
+
+   private void handleAddedTests(final DependencyReadingInput input, final ChangeTestMapping changeTestMap) {
+      dependencyManager.getTestTransformer().determineVersions(dependencyManager.getExecutor().getModules().getModules());
+      for (ClazzChangeData changedEntry : input.getChanges().values()) {
+         if (!changedEntry.isOnlyMethodChange()) {
+            for (ChangedEntity change : changedEntry.getChanges()) {
+               File moduleFolder = new File(folders.getProjectFolder(), change.getModule());
+               List<TestCase> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, change);
+               for (TestCase added : addedTests) {
+                  if (NonIncludedTestRemover.isTestIncluded(added, executionConfig.getIncludes())) {
+                     changeTestMap.addChangeEntry(change, added.toEntity());
+                  }
+               }
+            }
+         }
+      }
    }
 
    public void documentFailure(final String version) {
@@ -336,9 +375,19 @@ public class DependencyReader {
       this.iterator = reserveIterator;
    }
 
+   public void setCoverageExecutions(final ExecutionData coverageExecutions) {
+      coverageBasedSelection.setUrl(coverageExecutions.getUrl());
+      coverageBasedSelection.setVersions(coverageExecutions.getVersions());
+   }
+
    public void setExecutionData(final ExecutionData executions) {
+      executionResult.setUrl(executions.getUrl());
       executionResult.setVersions(executions.getVersions());
 
       new OldTraceReader(mapping, dependencyResult, resultsFolders).addTraces();
+   }
+
+   public void setCoverageInfo(final CoverageSelectionInfo coverageInfo) {
+      coverageSelectionInfo.getVersions().putAll(coverageInfo.getVersions());
    }
 }

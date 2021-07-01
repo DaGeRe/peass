@@ -117,7 +117,7 @@ public class DependencyReaderUtil {
       for (ChangedEntity underminedChange : changedClassName.getChanges()) {
          boolean contained = false;
 
-         final ChangedEntity changedEntryFullName = new ChangedEntity(underminedChange.getJavaClazzName(), underminedChange.getModule(), underminedChange.getMethod());
+         final ChangedEntity changedEntryFullName = new ChangedEntity(underminedChange.toString());
          for (final Entry<ChangedEntity, TestSet> currentDependency : version.getChangedClazzes().entrySet()) {
             if (currentDependency.getKey().equals(changedEntryFullName)) {
                contained = true;

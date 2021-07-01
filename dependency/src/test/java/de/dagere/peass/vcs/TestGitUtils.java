@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -66,11 +67,11 @@ public class TestGitUtils {
       List<GitCommit> commitsMerged = GitUtils.getCommits(PROJECT_FOLDER, false, false, true);
       Assert.assertEquals(commitsMerged.size(), 7);
 
-      Assert.assertThat(commitsMerged.get(0).getComitter(), Matchers.equalTo("Anonym <anonym@generated.org>"));
+      MatcherAssert.assertThat(commitsMerged.get(0).getComitter(), Matchers.equalTo("Anonym <anonym@generated.org>"));
       Assert.assertNotNull(commitsMerged.get(0).getDate());
 
-      Assert.assertThat(commitsMerged.get(commitsMerged.size() - 1).getMessage(), Matchers.containsString("Version A2"));
-      Assert.assertThat(commitsMerged.get(0).getMessage(), Matchers.containsString("Dummy-version for avoiding branch clashes"));
+      MatcherAssert.assertThat(commitsMerged.get(commitsMerged.size() - 1).getMessage(), Matchers.containsString("Version A2"));
+      MatcherAssert.assertThat(commitsMerged.get(0).getMessage(), Matchers.containsString("Dummy-version for avoiding branch clashes"));
    }
 
    @Test

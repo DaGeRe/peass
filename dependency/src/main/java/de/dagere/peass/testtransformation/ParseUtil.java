@@ -26,7 +26,9 @@ public final class ParseUtil {
     * 
     * @param unit CompilationUnit, which is searched for a class declaration
     * @return Declration if found, else null
+    * @deprecated use TraceReadUtils.getNamedClasses instead
     */
+   @Deprecated
    public static ClassOrInterfaceDeclaration getClass(final CompilationUnit unit) {
       for (final Node node : unit.getChildNodes()) {
          if (node instanceof ClassOrInterfaceDeclaration) {

@@ -61,8 +61,10 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          javaClazzName = clazz.substring(0, clazz.lastIndexOf(ChangedEntity.METHOD_SEPARATOR));
          method = clazz.substring(clazz.lastIndexOf(ChangedEntity.METHOD_SEPARATOR) + 1);
       }
-      if (method != null && (method.contains("(") || method.contains(")"))) {
-         throw new RuntimeException("Method (" + method + ") should not included paranthesis, since it is only the method name without parameters");
+      if (method != null && (method.contains("(") && method.contains(")"))) {
+         String parameterString = method.substring(method.indexOf("(") + 1, method.length() - 1).replaceAll(" ", "");
+         createParameters(parameterString);
+         method = method.substring(0, method.indexOf("("));
       }
 
       LOG.trace(javaClazzName + " " + clazz);
@@ -72,10 +74,50 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    @JsonCreator
    public ChangedEntity(@JsonProperty("clazz") final String clazz, @JsonProperty("module") final String module, @JsonProperty("method") final String testMethodName) {
       this(clazz, module);
-      method = testMethodName;
 
-      if (method != null && (method.contains("(") || method.contains(")"))) {
-         throw new RuntimeException("Method should not included paranthesis, since it is only the method name without parameters");
+      if (testMethodName != null && (testMethodName.contains("(") && testMethodName.contains(")"))) {
+         String parameterString = testMethodName.substring(testMethodName.indexOf("(") + 1, testMethodName.length() - 1).replaceAll(" ", "");
+         createParameters(parameterString);
+         method = testMethodName.substring(0, testMethodName.indexOf("("));
+      } else {
+         method = testMethodName;
+      }
+   }
+
+   public ChangedEntity(final String fullName) {
+      if (fullName.contains(File.separator)) {
+         throw new RuntimeException("Testcase should be full qualified name, not path!");
+      }
+      filename = fullName;
+      final int index = fullName.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
+      if (index == -1) {
+         int moduleIndex = fullName.indexOf(ChangedEntity.MODULE_SEPARATOR);
+         if (moduleIndex == -1) {
+            javaClazzName = fullName;
+            module = "";
+         } else {
+            javaClazzName = fullName.substring(moduleIndex + 1);
+            module = fullName.substring(0, moduleIndex);
+         }
+         method = null;
+      } else {
+         String start = fullName.substring(0, index);
+         int moduleIndex = fullName.indexOf(ChangedEntity.MODULE_SEPARATOR);
+         if (moduleIndex == -1) {
+            javaClazzName = start;
+            module = "";
+         } else {
+            javaClazzName = start.substring(moduleIndex + 1);
+            module = start.substring(0, moduleIndex);
+         }
+
+         if (fullName.contains("(")) {
+            method = fullName.substring(index + 1, fullName.indexOf("("));
+            String paramString = fullName.substring(fullName.indexOf("(") + 1, fullName.length() - 1);
+            createParameters(paramString);
+         } else {
+            method = fullName.substring(index + 1);
+         }
       }
    }
 
@@ -112,6 +154,11 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       this.method = method;
    }
 
+   @JsonIgnore
+   public String getParameterString() {
+      return getParameterString(parameters.toArray(new String[0]));
+   }
+
    @JsonInclude(Include.NON_EMPTY)
    public String getModule() {
       return module;
@@ -132,7 +179,23 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       if (method != null && !"".equals(method)) {
          result += METHOD_SEPARATOR + method;
       }
+      if (parameters.size() > 0) {
+         result += getParameterString(parameters.toArray(new String[0]));
+      }
       return result;
+   }
+
+   public static String getParameterString(final String[] parameterTypes) {
+      if (parameterTypes.length > 0) {
+         String parameterString = "(";
+         for (String parameter : parameterTypes) {
+            parameterString += parameter + ",";
+         }
+         parameterString = parameterString.substring(0, parameterString.length() - 1) + ")";
+         return parameterString;
+      } else {
+         return "";
+      }
    }
 
    @Override
@@ -255,12 +318,12 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       } else {
          final String[] parameters = parameterString.split(",");
          for (final String parameter : parameters) {
-            int dotIndex = parameter.lastIndexOf('.');
-            if (dotIndex != -1) {
-               this.parameters.add(parameter.substring(dotIndex + 1));
-            } else {
-               this.parameters.add(parameter);
-            }
+            // int dotIndex = parameter.lastIndexOf('.');
+            // if (dotIndex != -1) {
+            // this.parameters.add(parameter.substring(dotIndex + 1));
+            // } else {
+            this.parameters.add(parameter);
+            // }
          }
       }
    }

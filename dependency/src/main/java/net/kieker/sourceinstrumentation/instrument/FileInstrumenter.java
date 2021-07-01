@@ -144,7 +144,8 @@ public class FileInstrumenter {
       if (oneMatches) {
          final SamplingParameters parameters = createParameters(signature);
 
-         final BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, parameters);
+         boolean configurationRequiresReturn = configuration.isEnableAdaptiveMonitoring() || configuration.isEnableDeactivation();
+         final BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, configurationRequiresReturn, parameters);
 
          constructor.setBody(replacedStatement);
          oneHasChanged = true;
@@ -170,7 +171,8 @@ public class FileInstrumenter {
          String signature = reader.getSignature(method);
          boolean oneMatches = checker.testSignatureMatch(signature);
          if (oneMatches) {
-            final boolean needsReturn = method.getType().toString().equals("void");
+            boolean configurationRequiresReturn = configuration.isEnableAdaptiveMonitoring() || configuration.isEnableDeactivation();
+            final boolean needsReturn = method.getType().toString().equals("void") && configurationRequiresReturn;
             final SamplingParameters parameters = createParameters(signature);
 
             final BlockStmt replacedStatement = blockBuilder.buildStatement(originalBlock, needsReturn, parameters);

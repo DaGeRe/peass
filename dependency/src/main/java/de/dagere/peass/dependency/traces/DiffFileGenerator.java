@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.Version;
-import de.dagere.peass.vcs.GitUtils;
 
 public class DiffFileGenerator {
 
@@ -52,7 +51,7 @@ public class DiffFileGenerator {
             if (traceFiles.size() > 1) {
                File oldFile = new File(traceFiles.get(0).getAbsolutePath() + OneTraceGenerator.NOCOMMENT);
                File newFile = new File(traceFiles.get(1).getAbsolutePath() + OneTraceGenerator.NOCOMMENT);
-               final String isDifferent = GitUtils.getDiff(oldFile, newFile);
+               final String isDifferent = DiffUtil.getDiff(oldFile, newFile);
                System.out.println(isDifferent);
                if (isDifferent.length() > 0) {
                   createAllDiffs(testcase, traceFiles);

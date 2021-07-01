@@ -8,6 +8,7 @@ import java.util.TreeMap;
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -53,6 +54,20 @@ public class DependencyDetectorIT {
       System.out.println(reader.getDependencies());
 
       DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.NormalDependency#executeThing", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
+   }
+   
+   @Test
+   public void testAddedTest() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+      final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "added_test");
+      final ChangeManager changeManager = DependencyDetectorTestUtil.changedTestClassChangeManager();
+
+      final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
+
+      final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
+
+      System.out.println(reader.getDependencies());
+
+      DependencyDetectorTestUtil.checkChange(reader, "defaultpackage.NormalDependency#executeThing", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1, "addedTest");
    }
 
    @Test
@@ -185,11 +200,6 @@ public class DependencyDetectorIT {
       System.out.println("Hash: " + key.hashCode());
       final TestSet testSet = changedClazzes.get(key);
       System.out.println("Testset: " + testSet);
-      Assert.assertThat(testSet.getTests(), Matchers.empty());
-   }
-
-   @Test
-   public void testPackageChange() {
-
+      MatcherAssert.assertThat(testSet.getTests(), Matchers.empty());
    }
 }

@@ -31,6 +31,8 @@ public interface TestTransformer {
 
    public TestSet buildTestMethodSet(final TestSet testsToUpdate, List<File> modules);
    
+   public void determineVersions(final List<File> modules);
+   
    public MeasurementConfiguration getConfig();
 
    public boolean isAggregatedWriter();

@@ -25,7 +25,7 @@ public class FakeGitUtil {
          }
       });
 
-      gitUtilsMock.when(() -> GitUtils.getDiff(Mockito.any(), Mockito.any())).thenCallRealMethod();
+//      gitUtilsMock.when(() -> DiffUtil.getDiff(Mockito.any(), Mockito.any())).thenCallRealMethod();
       // Mockito.doCallRealMethod().when(GitUtils.class).get;
       // GitUtils.getDiff(Mockito.any(), Mockito.any());
    }
