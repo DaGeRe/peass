@@ -21,7 +21,7 @@ public class CallTreeStatistics {
    /***
     * Adds *one* measurement to the current (last) VM of the node - suitable for measurements per iteration. If aggregated data are obtained, 
     * rather use addAggregatedMeasurement
-    * @param duration   duration of one iteration
+    * @param duration   duration of one iteration (usually in microseconds)
     */
    public void addMeasurement(final Long duration) {
       final CallTreeResult current = (CallTreeResult) results.get(results.size() - 1);
