@@ -313,11 +313,15 @@ function printTTvalue(averagesPredecessor, averagesCurrent) {
 	var x = [2, 4, 6, 2, 3, 7, 5, 1],
             y = [8, 10, 11, 14, 20, 18, 19, 9];
        var mannWhitneyP = mannwhitneyu.test(x, y, alternative = 'two-sided').p;
+       var diff = predecessorStat.mean()-currentStat.mean();
+       var relativeDifference = 2*diff / (predecessorStat.mean()-currentStat.mean());
        console.log(mannWhitneyP);
 	document.getElementById("tValueTable").innerHTML = "<h3>Properties without outlier removal</h3>"
 		+ "<table><tr><th>Property</th><th>Predecessor</th><th>Current</th></tr>"
 		+ "<tr><td>Mean</td><td>" + Math.round(predecessorStat.mean() * 1000) / 1000 + "</td><td>" + Math.round(currentStat.mean() * 1000) / 1000 + "</td></tr>"
+		+ "<tr><td>Difference</td><td colspan='2'>" + Math.round(diff * 1000) / 1000 + " (" + relativeDifference + "%)</td></tr>"
 		+ "<tr><td>Deviation</td><td>" + Math.round(predecessorStat.stdev() * 1000) / 1000 + "</td><td>" + Math.round(currentStat.stdev() * 1000) / 1000 + "</td></tr>"
+		+ "<tr><td>Rel. Deviation</td><td>" + Math.round(100*predecessorStat.stdev()/predecessorStat.mean() * 1000) / 1000 + " %</td><td>" + Math.round(100*currentStat.stdev()/currentStat.mean() * 1000) / 1000 + " %</td></tr>"
 		+ "<tr><td>VMs</td><td>" + averagesPredecessor.length +"</td><td>" + averagesCurrent.length + "</td></tr>"
 		+ "<tr><td>T-Score</td><td>" + Math.round(tscore*1000)/1000 + "</td></tr>"
 		+ "<tr><td>Change T-Test</td><td>" + (pval < error) + "</td></tr>"
