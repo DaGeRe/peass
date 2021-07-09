@@ -15,11 +15,11 @@ public class BimodalityTester {
 
    private final Relation relation;
 
-   public BimodalityTester(CompareData data) {
+   public BimodalityTester(final CompareData data) {
       this.data = data;
 
-      dataBefore = new IsBimodal(data.getBefore(), data.getAvgBefore(), data.getBeforeStat());
-      dataAfter = new IsBimodal(data.getAfter(), data.getAvgAfter(), data.getAfterStat());
+      dataBefore = new IsBimodal(data.getBefore(), data.getBeforeStat());
+      dataAfter = new IsBimodal(data.getAfter(), data.getAfterStat());
 
       isBimodal = dataBefore.isBimodal()
             && dataAfter.isBimodal();
@@ -51,7 +51,7 @@ public class BimodalityTester {
       return dataAfter;
    }
 
-   public boolean isTChange(double significance) {
+   public boolean isTChange(final double significance) {
       if (isBimodal) {
          final boolean firstChanged = new TTest().homoscedasticTTest(dataBefore.getStat1(), dataAfter.getStat1()) < significance;
          final boolean secondChanged = new TTest().homoscedasticTTest(dataBefore.getStat2(), dataAfter.getStat2()) < significance;
