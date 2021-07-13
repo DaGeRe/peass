@@ -43,6 +43,7 @@ public class ContinuousDependencyReader {
    private final PeassFolders folders;
    private final ResultsFolders resultsFolders;
    private final EnvironmentVariables env;
+   private String predecessor;
 
    public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final PeassFolders folders,
          final ResultsFolders resultsFolders,
@@ -127,11 +128,15 @@ public class ContinuousDependencyReader {
       }
       return DependencyIteratorBuilder.getIterator(executionConfig, lastVersionName, versionName, folders);
    }
+   
+   public String getPredecessor() {
+      return predecessor;
+   }
 
    private void partiallyLoadDependencies(final Dependencies dependencies) throws FileNotFoundException, Exception {
-      final String lastVersionName = dependencies.getNewestRunningVersion();
+      predecessor = dependencies.getNewestRunningVersion();
 
-      VersionIterator newIterator = getIterator(lastVersionName);
+      VersionIterator newIterator = getIterator(predecessor);
       if (newIterator != null) {
          executePartialRTS(dependencies, newIterator);
       }

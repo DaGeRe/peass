@@ -40,7 +40,7 @@ public class ContinuousExecutor {
    private final DependencyConfig dependencyConfig;
 
    private final String version;
-   private final String versionOld;
+   private String versionOld;
    private final VersionIteratorGit iterator;
 
    private final File originalProjectFolder;
@@ -110,7 +110,8 @@ public class ContinuousExecutor {
    protected Set<TestCase> executeRegressionTestSelection(final String url) {
       ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), folders, resultsFolders, env);
       final Set<TestCase> tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
-
+      versionOld = dependencyReader.getPredecessor();
+      
       readMethodSources(tests);
 
       return tests;
