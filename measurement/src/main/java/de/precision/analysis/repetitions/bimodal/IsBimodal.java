@@ -121,7 +121,7 @@ public class IsBimodal {
 
    private boolean testBimodal() {
       LOG.trace("Deviations: " + stat1.getVariance() + " " + stat2.getVariance() + " (" + (stat1.getVariance() + stat2.getVariance()) + ") vs " + originalVariance);
-      return stat1.getVariance() + stat2.getVariance() < originalVariance / 4 &&
+      return stat1.getVariance() + stat2.getVariance() < originalVariance / 2 &&
             stat1.getN() > 2 && stat2.getN() > 2;
    }
 
