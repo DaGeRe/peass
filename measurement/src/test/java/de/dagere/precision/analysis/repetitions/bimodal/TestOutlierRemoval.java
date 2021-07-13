@@ -53,6 +53,7 @@ public class TestOutlierRemoval {
       addValue(basicValues, 92);
       new OutlierRemoverBimodal(basicValues);
       Assert.assertEquals(200, basicValues.size()); 
+      
    }
    
    private void addValue(final List<Result> basicValues, final double value) {

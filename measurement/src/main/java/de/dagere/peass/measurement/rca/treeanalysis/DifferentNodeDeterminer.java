@@ -56,7 +56,7 @@ public abstract class DifferentNodeDeterminer {
 
    private CompareData removeOutliers(final CompareData cd) {
       final CompareData cleaned;
-      if (measurementConfig.getStatisticsConfig().getOutlierFactor() != 0) {
+      if (measurementConfig.getStatisticsConfig().getOutlierFactor() != 0 && cd.getAfter().length > 1 && cd.getBefore().length > 1) {
          cleaned = OutlierRemoverBimodal.removeOutliers(cd, OutlierRemover.Z_SCORE);
       } else {
          cleaned = cd;

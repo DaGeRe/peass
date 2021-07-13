@@ -89,7 +89,6 @@ public class IsBimodal {
 
    public IsBimodal(final double[] values, final SummaryStatistics originalStat) {
       Arrays.sort(values);
-
       Division optimalDivision = Division.getOptimalDivision(values, new Division(values, values.length / 2), values.length);
 
       this.avgValue = optimalDivision.getMean();
@@ -109,6 +108,7 @@ public class IsBimodal {
          originalStat.addValue(result.getValue());
       }
 
+      Arrays.sort(values);
       Division optimalDivision = Division.getOptimalDivision(values, new Division(values, values.length / 2), values.length);
 
       this.avgValue = optimalDivision.getMean();
@@ -121,7 +121,7 @@ public class IsBimodal {
 
    private boolean testBimodal() {
       LOG.trace("Deviations: " + stat1.getVariance() + " " + stat2.getVariance() + " (" + (stat1.getVariance() + stat2.getVariance()) + ") vs " + originalVariance);
-      return stat1.getVariance() + stat2.getVariance() < originalVariance / 2 &&
+      return stat1.getVariance() + stat2.getVariance() < originalVariance / 4 &&
             stat1.getN() > 2 && stat2.getN() > 2;
    }
 

@@ -34,22 +34,22 @@ public class OutlierRemoverBimodal {
       }
    }
 
-   private void removeFromRightDistribution(final List<Result> fastShortened, final IsBimodal isBimodal) {
+   private void removeFromRightDistribution(final List<Result> results, final IsBimodal isBimodal) {
       SummaryStatistics stat2 = isBimodal.getStat2();
-      for (Iterator<Result> iterator = fastShortened.iterator(); iterator.hasNext();) {
+      for (Iterator<Result> iterator = results.iterator(); iterator.hasNext();) {
          Result r = iterator.next();
-         if (r.getValue() > isBimodal.getAvgValue()) {
+         if (r.getValue() >= isBimodal.getAvgValue()) {
             double zscore = Math.abs(r.getValue() - stat2.getMean()) / stat2.getStandardDeviation();
             if (zscore > OutlierRemover.Z_SCORE) {
                iterator.remove();
-            }
+            } 
          }
       }
    }
 
-   private void removeFromLeftDistribution(final List<Result> fastShortened, final IsBimodal isBimodal) {
+   private void removeFromLeftDistribution(final List<Result> results, final IsBimodal isBimodal) {
       SummaryStatistics stat1 = isBimodal.getStat1();
-      for (Iterator<Result> iterator = fastShortened.iterator(); iterator.hasNext();) {
+      for (Iterator<Result> iterator = results.iterator(); iterator.hasNext();) {
          Result r = iterator.next();
          if (r.getValue() < isBimodal.getAvgValue()) {
             double zscore = Math.abs(r.getValue() - stat1.getMean()) / stat1.getStandardDeviation();
