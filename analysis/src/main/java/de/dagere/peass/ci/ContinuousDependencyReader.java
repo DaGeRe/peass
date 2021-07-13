@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -33,10 +31,8 @@ import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionIterator;
-import de.dagere.peass.vcs.VersionIteratorGit;
 
 public class ContinuousDependencyReader {
 
@@ -129,15 +125,7 @@ public class ContinuousDependencyReader {
          LOG.info("Version {} is equal to newest version, not executing RTS", versionName);
          return null;
       }
-      GitCommit currentCommit = new GitCommit(versionName, "", "", "");
-      GitCommit lastAnalyzedCommit = new GitCommit(executionConfig.getVersionOld() != null ? executionConfig.getVersionOld() : lastVersionName, "", "", "");
-
-      List<GitCommit> commits = new LinkedList<>();
-      commits.add(lastAnalyzedCommit);
-      commits.add(currentCommit);
-      LOG.info("Analyzing {} - {}", lastAnalyzedCommit, currentCommit);
-      VersionIteratorGit newIterator = new VersionIteratorGit(folders.getProjectFolder(), commits, lastAnalyzedCommit);
-      return newIterator;
+      return DependencyIteratorBuilder.getIterator(executionConfig, lastVersionName, versionName, folders);
    }
 
    private void partiallyLoadDependencies(final Dependencies dependencies) throws FileNotFoundException, Exception {
