@@ -129,7 +129,7 @@ public class ContinuousDependencyReader {
    }
 
    private void partiallyLoadDependencies(final Dependencies dependencies) throws FileNotFoundException, Exception {
-      final String lastVersionName = dependencies.getNewestVersion();
+      final String lastVersionName = dependencies.getNewestRunningVersion();
 
       VersionIterator newIterator = getIterator(lastVersionName);
       if (newIterator != null) {

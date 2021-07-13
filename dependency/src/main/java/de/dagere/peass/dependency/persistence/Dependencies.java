@@ -77,6 +77,31 @@ public class Dependencies extends SelectedTests {
       } else {
          return null;
       }
+   }
+   
+   @JsonIgnore
+   public String[] getRunningVersionNames() {
+      String[] versionNames = versions.entrySet().stream()
+         .filter((entry) -> entry.getValue().isRunning())
+         .map(entry -> entry.getKey())
+         .toArray(String[]::new);
+      
+      String[] withStartversion = new String[versionNames.length+1];
+      withStartversion[0] = initialversion.getVersion();
+      System.arraycopy(versionNames, 0, withStartversion, 1, versionNames.length);
+      return withStartversion;
+   }
+   
+   @JsonIgnore
+   public String getNewestRunningVersion() {
+      final String[] versions = getRunningVersionNames();
+      if (versions.length > 0) {
+         return versions[versions.length - 1];
+      } else if (initialversion != null) {
+         return initialversion.getVersion();
+      } else {
+         return null;
+      }
 
    }
 }
