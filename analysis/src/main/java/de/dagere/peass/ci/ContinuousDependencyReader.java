@@ -215,6 +215,7 @@ public class ContinuousDependencyReader {
          reader.readDependencies();
       }
       Dependencies dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
+      predecessor = dependencies.getVersions().get(dependencies.getNewestRunningVersion()).getPredecessor();
       return dependencies;
    }
 }
