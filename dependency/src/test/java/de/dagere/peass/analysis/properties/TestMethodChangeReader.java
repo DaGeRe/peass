@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,14 +61,14 @@ public class TestMethodChangeReader {
    private void checkConstructor(final File methodSourceFolder, final ChangedEntity constructorEntity) throws IOException {
       File expectedConstructorFile = MethodChangeReader.getMethodDiffFile(methodSourceFolder, VERSION, constructorEntity);
       String constructorContent = FileUtils.readFileToString(expectedConstructorFile, Charset.defaultCharset());
-      Assert.assertThat(constructorContent, Matchers.containsString("System.out"));
-      Assert.assertThat(constructorContent, Matchers.not(Matchers.containsString("System.err")));
+      MatcherAssert.assertThat(constructorContent, Matchers.containsString("System.out"));
+      MatcherAssert.assertThat(constructorContent, Matchers.not(Matchers.containsString("System.err")));
    }
 
    private void checkInitMethod(final File methodSourceFolder, final ChangedEntity initMethodEntity) throws IOException {
       File expectedInitFile = MethodChangeReader.getMethodDiffFile(methodSourceFolder, VERSION, initMethodEntity);
       String initContent = FileUtils.readFileToString(expectedInitFile, Charset.defaultCharset());
-      Assert.assertThat(initContent, Matchers.not(Matchers.containsString("System.out")));
-      Assert.assertThat(initContent, Matchers.containsString("System.err"));
+      MatcherAssert.assertThat(initContent, Matchers.not(Matchers.containsString("System.out")));
+      MatcherAssert.assertThat(initContent, Matchers.containsString("System.err"));
    }
 }
