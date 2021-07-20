@@ -110,6 +110,10 @@ public class PropertyReadHelper {
    }
 
    private String getShortPrevVersion() {
+      // This happens for the initial version
+      if (prevVersion == null){
+         return "";
+      }
       if (prevVersion.endsWith("~1")) {
          return prevVersion.substring(0, 6) + "~1";
       } else {
