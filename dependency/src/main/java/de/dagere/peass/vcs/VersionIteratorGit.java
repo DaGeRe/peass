@@ -32,7 +32,7 @@ import de.dagere.peass.dependency.analysis.data.VersionDiff;
  */
 public class VersionIteratorGit extends VersionIterator {
 
-   private static final Logger LOG = LogManager.getLogger(GitUtils.class);
+   private static final Logger LOG = LogManager.getLogger(VersionIteratorGit.class);
 
    private final List<GitCommit> entries;
    private final GitCommit previous;
