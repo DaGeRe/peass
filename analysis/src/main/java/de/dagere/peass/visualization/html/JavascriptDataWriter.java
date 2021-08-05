@@ -29,13 +29,13 @@ public class JavascriptDataWriter {
    public void writeJS(final CauseSearchData data, final File output, final String jsName, final GraphNode converted) throws IOException, JsonProcessingException {
       File outputJS = new File(output.getParentFile(), jsName);
       try (final BufferedWriter fileWriter = new BufferedWriter(new FileWriter(outputJS))) {
-         fileWriter.write("if (document.getElementById('testcaseDiv') != null) \n   document.getElementById('testcaseDiv').innerHTML=\"Version: <a href='"
+         fileWriter.write("if (document.getElementById('testcaseDiv') != null) { \n   document.getElementById('testcaseDiv').innerHTML=\"Version: <a href='"
                + "javascript:fallbackCopyTextToClipboard(\\\"-version " + data.getMeasurementConfig().getVersion() +
                " -test " + data.getTestcase() + "\\\")'>"
                + data.getMeasurementConfig().getVersion() + "</a><br>");
-         fileWriter.write("Test Case: " + data.getTestcase() + "<br>");
-         fileWriter.write("<a href='" + data.getTestcase().replace("#", "_") + "_dashboard.html?call=overall&ess=-1' target='parent'>Inspect Overall Measurement</a>");
-         fileWriter.write("\";\n");
+         fileWriter.write("Test Case: " + data.getTestcase() + "<br>\";\n");
+         writeDashboardLink(data, fileWriter);
+         fileWriter.write("}\n");
          
          fileWriter.write("\n");
          if (propertyFolder != null) {
@@ -51,6 +51,14 @@ public class JavascriptDataWriter {
          fileWriter.write(Constants.OBJECTMAPPER.writeValueAsString(converted));
          fileWriter.write("];\n");
       }
+   }
+
+   private void writeDashboardLink(final CauseSearchData data, final BufferedWriter fileWriter) throws IOException {
+      fileWriter.write("   if (jenkins) {\n      document.getElementById('testcaseDiv').innerHTML+=");
+      fileWriter.write("\"<a href='dashboard?call=overall&ess=-1' target='parent'>Inspect Overall Measurement</a>\";\n");
+      fileWriter.write("   } else {\n");
+      fileWriter.write("   document.getElementById('testcaseDiv').innerHTML+=\"<a href='" + data.getTestcase().replace("#", "_") + "_dashboard.html?call=overall&ess=-1' target='parent'>Inspect Overall Measurement</a>\";\n");
+      fileWriter.write("   }\n");
    }
 
    private void writeTreeDivSizes(final BufferedWriter fileWriter) throws IOException {

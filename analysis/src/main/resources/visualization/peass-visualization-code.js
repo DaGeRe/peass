@@ -263,7 +263,6 @@ function shownode(node) {
   	histogramm.innerHTML=node.kiekerPattern + node.otherKiekerPattern + inspectLink;
   }
   plotOverallHistogram("histogramm", node);
-  //document.getElementById("histogramm").innerHtml+="<br><a href='"+treeData[0].call+"_dashboard.html?ess="+1+"&test="+node.call+"'>Inspect Node</a>";
 }
 
 shownode(root);
