@@ -2,9 +2,7 @@ package de.dagere.peass.ci;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,11 +16,8 @@ import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.vcs.GitCommit;
-import de.dagere.peass.vcs.ProjectBuilderHelper;
 import net.lingala.zip4j.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
@@ -63,7 +58,7 @@ public class ContinuousExecutorIT {
       File changeFile = new File(fullPeassFolder, "changes.json");
       ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changeFile, ProjectChanges.class);
       
-      String changedTestClass = changes.getVersion("56aa442ef3b18c4dca3048ee98a66141c89d715f").getTestcaseChanges().keySet().iterator().next();
+      String changedTestClass = changes.getVersion("ff2ab99a0d24c90abe610fb318a17db6da473208").getTestcaseChanges().keySet().iterator().next();
       TestCase tc = new TestCase(changedTestClass);
       Assert.assertEquals("com.example.android_example.ExampleUnitTest", tc.getClazz());
    }
@@ -74,19 +69,5 @@ public class ContinuousExecutorIT {
       } catch (IOException e) {
          e.printStackTrace();
       }
-      VersionComparator.setVersions(Arrays.asList(new GitCommit[] {
-            new GitCommit("33ce17c04b5218c25c40137d4d09f40fbb3e4f0f", null, null, null),
-            new GitCommit("a23e385264c31def8dcda86c3cf64faa698c62d8", null, null, null)}));
    }
-
-   public void buildRepo() throws InterruptedException, IOException {
-      TestUtil.deleteContents(DependencyTestConstants.CURRENT);
-      ProjectBuilderHelper.init(DependencyTestConstants.CURRENT);
-      FileUtils.copyDirectory(DependencyTestConstants.BASIC_STATE, DependencyTestConstants.CURRENT);
-      ProjectBuilderHelper.commit(DependencyTestConstants.CURRENT, "Version 0");
-      FileUtils.copyDirectory(DependencyTestConstants.NORMAL_CHANGE, DependencyTestConstants.CURRENT);
-      ProjectBuilderHelper.commit(DependencyTestConstants.CURRENT, "Version 1");
-   }
-
-   
 }
