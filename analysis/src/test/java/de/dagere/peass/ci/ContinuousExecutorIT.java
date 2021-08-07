@@ -69,8 +69,11 @@ public class ContinuousExecutorIT {
    }
 
    private void initRepo() throws ZipException {
-      ZipFile file = new ZipFile(new File("src/test/resources/test-gradle-1.zip"));
-      file.extractAll(DependencyTestConstants.CURRENT.getAbsolutePath());
+      try (ZipFile file = new ZipFile(new File("src/test/resources/test-gradle-1.zip"))) {
+         file.extractAll(DependencyTestConstants.CURRENT.getAbsolutePath());
+      } catch (IOException e) {
+         e.printStackTrace();
+      }
       VersionComparator.setVersions(Arrays.asList(new GitCommit[] {
             new GitCommit("33ce17c04b5218c25c40137d4d09f40fbb3e4f0f", null, null, null),
             new GitCommit("a23e385264c31def8dcda86c3cf64faa698c62d8", null, null, null)}));
