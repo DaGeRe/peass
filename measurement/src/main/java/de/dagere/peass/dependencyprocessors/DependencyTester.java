@@ -99,7 +99,7 @@ public class DependencyTester implements KiekerResultHandler {
       if (result == null) {
          reducedIterations = configuration.getIterations() / 2;
          LOG.error("Measurement for {} is null", version);
-      } else if (result.getIterations() < configuration.getIterations()) {
+      } else if (result.getIterations() < configuration.getIterations() || Double.isNaN(result.getValue())) {
          LOG.error("Measurement executions: {}", result.getIterations());
          final int minOfExecuted = (int) result.getIterations() - 2;
          reducedIterations = Math.min(minOfExecuted, configuration.getIterations() / 2);
