@@ -59,13 +59,13 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       super(folders, testTransformer, env);
    }
 
-   public Process buildMavenProcess(final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
+   private Process buildMavenProcess(final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
       final String testGoal = getTestGoal();
       String mvnCall = env.fetchMavenCall();
       final String[] originals = new String[] { mvnCall,
             testGoal,
             "-fn",
-            "-Djava.io.tmpdir=" + folders.getTempDir().getAbsolutePath() };
+            ArgLineBuilder.TEMP_DIR + "=" + folders.getTempDir().getAbsolutePath() };
       String[] withMavendefaults = CommandConcatenator.concatenateCommandArrays(originals, CommandConcatenator.mavenCheckDeactivation);
       final String[] vars = CommandConcatenator.concatenateCommandArrays(withMavendefaults, commandLineAddition);
 
