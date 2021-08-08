@@ -163,6 +163,10 @@ public class ContinuousExecutor {
    public File getProjectFolder() {
       return folders.getProjectFolder();
    }
+   
+   public File getLocalFolder() {
+      return localFolder;
+   }
 
    public File getFullResultsVersion() {
       final File fullResultsVersion = new File(localFolder, version + "_" + versionOld);

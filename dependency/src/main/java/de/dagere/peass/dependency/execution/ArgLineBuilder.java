@@ -41,12 +41,6 @@ public class ArgLineBuilder {
       if (testTransformer.getConfig().isUseKieker()) {
          String writerConfig = "";
          String tempFolderPath = "'" + tempFolder.getAbsolutePath() + "'";
-         // if (testTransformer.isAggregatedWriter()) {
-         // final String bulkFolder = "-D" + AOPXMLHelper.AGGREGATED_WRITER + ".customStoragePath" + valueSeparator + tempFolderPath;
-         // writerConfig = bulkFolder;
-         // } else {
-         // writerConfig = "";
-         // }
 
          if (!testTransformer.getConfig().isEnableAdaptiveConfig()) {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {

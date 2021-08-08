@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
+import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.gradle.FindDependencyVisitor;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
@@ -79,9 +80,6 @@ public class GradleBuildfileEditor {
 
       addKiekerLine(tempFolder, visitor);
    }
-   
-   
-
 
    private void addDependencies(final FindDependencyVisitor visitor) {
       boolean isAddJunit3 = testTransformer.isJUnit3();
@@ -101,22 +99,30 @@ public class GradleBuildfileEditor {
    }
 
    public void addKiekerLine(final File tempFolder, final FindDependencyVisitor visitor) {
-      if (tempFolder != null) {
+      if (testTransformer.getConfig().isUseKieker()) {
          final String javaagentArgument = new ArgLineBuilder(testTransformer, buildfile.getParentFile()).buildArglineGradle(tempFolder);
-         if (visitor.getAndroidLine() != -1) {
-            if (visitor.getUnitTestsAll() != -1) {
-               visitor.addLine(visitor.getUnitTestsAll() - 1, javaagentArgument);
-            } else if (visitor.getTestOptionsAndroid() != -1) {
-               visitor.addLine(visitor.getTestOptionsAndroid() - 1, "unitTests.all{" + javaagentArgument + "}");
-            } else {
-               visitor.addLine(visitor.getAndroidLine() - 1, "testOptions{ unitTests.all{" + javaagentArgument + "} }");
-            }
+         addArgLine(visitor, javaagentArgument);
+      } else {
+         PeassFolders folders = new PeassFolders( testTransformer.getProjectFolder());
+         String argLine = "jvmArgs=[\"" + ArgLineBuilder.TEMP_DIR + "=" + folders.getTempDir().getAbsolutePath() + "\"]";
+         addArgLine(visitor, argLine);
+      }
+   }
+
+   private void addArgLine(final FindDependencyVisitor visitor, final String javaagentArgument) {
+      if (visitor.getAndroidLine() != -1) {
+         if (visitor.getUnitTestsAll() != -1) {
+            visitor.addLine(visitor.getUnitTestsAll() - 1, javaagentArgument);
+         } else if (visitor.getTestOptionsAndroid() != -1) {
+            visitor.addLine(visitor.getTestOptionsAndroid() - 1, "unitTests.all{" + javaagentArgument + "}");
          } else {
-            if (visitor.getTestLine() != -1) {
-               visitor.addLine(visitor.getTestLine() - 1, javaagentArgument);
-            } else {
-               visitor.getLines().add("test { " + javaagentArgument + "}");
-            }
+            visitor.addLine(visitor.getAndroidLine() - 1, "testOptions{ unitTests.all{" + javaagentArgument + "} }");
+         }
+      } else {
+         if (visitor.getTestLine() != -1) {
+            visitor.addLine(visitor.getTestLine() - 1, javaagentArgument);
+         } else {
+            visitor.getLines().add("test { " + javaagentArgument + "}");
          }
       }
    }
