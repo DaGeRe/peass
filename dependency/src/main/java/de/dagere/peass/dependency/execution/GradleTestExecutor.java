@@ -37,7 +37,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
 
    private void prepareBuildfile() {
       try {
-         lastTmpFile = Files.createTempDirectory("kiekerTemp").toFile();
+         lastTmpFile = Files.createTempDirectory(folders.getKiekerTempFolder().toPath(), "kiekerTemp").toFile();
          isAndroid = false;
          ProjectModules modules = getModules();
          LOG.debug("Preparing modules: {}", modules);
@@ -63,7 +63,10 @@ public class GradleTestExecutor extends KoPeMeExecutor {
       }
    }
 
-   protected Process buildProcess(final File folder, final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
+   /**
+    * Executes the Gradle process; since gradle is run inside the module folder, different parameters than for the maven execution are required
+    */
+   private Process buildGradleProcess(final File folder, final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
       final String testGoal = getTestGoal();
       String wrapper = new File(folders.getProjectFolder(), "gradlew").getAbsolutePath();
       final String[] originals = new String[] { wrapper,
@@ -109,7 +112,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    @Override
    protected void runTest(final File module, final File logFile, final String testname, final long timeout) {
       try {
-         final Process process = buildProcess(module, logFile, "--tests", testname);
+         final Process process = buildGradleProcess(module, logFile, "--tests", testname);
          execute(testname, timeout, process);
       } catch (final InterruptedException | IOException | XmlPullParserException e) {
          e.printStackTrace();
