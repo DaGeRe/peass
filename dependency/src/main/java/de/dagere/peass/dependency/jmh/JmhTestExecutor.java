@@ -49,11 +49,11 @@ public class JmhTestExecutor extends TestExecutor {
 
       ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
       Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, withPl);
-      execute("jmh-package", transformer.getConfig().getTimeoutInMinutes(), process);
+      execute("jmh-package", transformer.getConfig().getTimeoutInSeconds(), process);
    }
 
    @Override
-   public void executeTest(final TestCase test, final File logFolder, final long timeout) {
+   public void executeTest(final TestCase test, final File logFolder, final long timeoutInSeconds) {
       try {
          File jsonResultFile = new File(folders.getTempMeasurementFolder(), test.getMethod() + ".json");
          String[] mergedParameters = buildParameterString(test, jsonResultFile);
@@ -62,7 +62,7 @@ public class JmhTestExecutor extends TestExecutor {
          File logFile = getMethodLogFile(logFolder, test);
          Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, mergedParameters);
 
-         execute(test.getExecutable(), transformer.getConfig().getTimeoutInMinutes(), process);
+         execute(test.getExecutable(), transformer.getConfig().getTimeoutInSeconds(), process);
 
          new JmhResultMover(folders, transformer.getConfig()).moveToMethodFolder(test, jsonResultFile);
 

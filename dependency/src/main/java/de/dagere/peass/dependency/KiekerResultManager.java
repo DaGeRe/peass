@@ -122,7 +122,7 @@ public class KiekerResultManager {
       for (final Map.Entry<ChangedEntity, Set<String>> test : testsToUpdate.getTestcases().entrySet()) {
          for (final String method : test.getValue()) {
             final TestCase testcase = new TestCase(test.getKey().getJavaClazzName(), method, test.getKey().getModule());
-            executor.executeTest(testcase, logVersionFolder, testTransformer.getConfig().getTimeoutInMinutes());
+            executor.executeTest(testcase, logVersionFolder, testTransformer.getConfig().getTimeoutInSeconds());
          }
       }
       cleanAboveSize(logVersionFolder, 100, "txt");

@@ -24,7 +24,7 @@ public class ExecutionConfig implements Serializable {
    /**
     * Timeout in milliseconds, default 5 minutes
     */
-   private final int timeout;
+   private final long timeout;
    private String testGoal;
    private List<String> includes;
    private List<String> excludes;
@@ -47,7 +47,7 @@ public class ExecutionConfig implements Serializable {
       this.timeout = 5 * 60 * 1000;
    }
 
-   public ExecutionConfig(final int timeoutInMinutes) {
+   public ExecutionConfig(final long timeoutInMinutes) {
       if (timeoutInMinutes <= 0) {
          throw new RuntimeException("Illegal timeout: " + timeoutInMinutes);
       }
@@ -89,7 +89,7 @@ public class ExecutionConfig implements Serializable {
       }
    }
 
-   public int getTimeout() {
+   public long getTimeout() {
       return timeout;
    }
 
@@ -121,8 +121,8 @@ public class ExecutionConfig implements Serializable {
    }
 
    @JsonIgnore
-   public int getTimeoutInMinutes() {
-      return timeout / 60 / 1000;
+   public long getTimeoutInSeconds() {
+      return timeout / 1000;
    }
 
    public String getVersion() {

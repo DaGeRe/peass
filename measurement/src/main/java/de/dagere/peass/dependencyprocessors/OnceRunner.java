@@ -53,7 +53,7 @@ public class OnceRunner {
          testExecutor.loadClasses();
       }
       testExecutor.prepareKoPeMeExecution(new File(logFolder, "clean.txt"));
-      final long outerTimeout = 2 + (int) (this.testTransformer.getConfig().getTimeoutInMinutes() * 1.1);
+      final long outerTimeout = 2 + (int) (this.testTransformer.getConfig().getTimeoutInSeconds() * 1.1);
       testExecutor.executeTest(testcase, vmidFolder, outerTimeout);
 
       LOG.debug("Handling Kieker results");

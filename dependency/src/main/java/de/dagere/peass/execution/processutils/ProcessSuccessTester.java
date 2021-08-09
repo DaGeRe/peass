@@ -37,9 +37,9 @@ public class ProcessSuccessTester {
 
          ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
          Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, vars);
-         LOG.debug("Waiting for {} minutes", measurementConfig.getTimeoutInMinutes());
+         LOG.debug("Waiting for {} minutes", measurementConfig.getTimeoutInSeconds());
 
-         process.waitFor(measurementConfig.getTimeoutInMinutes(), TimeUnit.MINUTES);
+         process.waitFor(measurementConfig.getTimeoutInSeconds(), TimeUnit.SECONDS);
          if (process.isAlive()) {
             LOG.debug("Destroying process");
             process.destroyForcibly().waitFor();

@@ -137,7 +137,7 @@ public class MeasurementConfiguration implements Serializable {
     * @param other Configuration to copy
     */
    public MeasurementConfiguration(final MeasurementConfiguration other) {
-      executionConfig = new ExecutionConfig(other.getTimeoutInMinutes());
+      executionConfig = new ExecutionConfig(other.getTimeoutInSeconds()*60);
       executionConfig.setTestGoal(other.getTestGoal());
       executionConfig.setIncludes(other.getIncludes());
       executionConfig.setVersion(other.getExecutionConfig().getVersion());
@@ -228,13 +228,13 @@ public class MeasurementConfiguration implements Serializable {
       this.redirectToNull = redirectToNull;
    }
 
-   public int getTimeout() {
+   public long getTimeout() {
       return executionConfig.getTimeout();
    }
 
    @JsonIgnore
-   public int getTimeoutInMinutes() {
-      return executionConfig.getTimeoutInMinutes();
+   public long getTimeoutInSeconds() {
+      return executionConfig.getTimeoutInSeconds();
    }
 
    public int getVms() {

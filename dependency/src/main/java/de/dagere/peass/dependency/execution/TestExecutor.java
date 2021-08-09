@@ -89,13 +89,13 @@ public abstract class TestExecutor {
 
    private final List<String> aborted = new LinkedList<>();
 
-   protected void execute(final String testname, final long timeout, final Process process) throws InterruptedException, IOException {
-      if (timeout == -1) {
+   protected void execute(final String testname, final long timeoutInSeconds, final Process process) throws InterruptedException, IOException {
+      if (timeoutInSeconds == -1) {
          LOG.info("Executing without timeout!");
          process.waitFor();
-      } else if (timeout > 0) {
-         LOG.debug("Executing: {} Timeout: {}", testname, timeout);
-         process.waitFor(timeout, TimeUnit.MINUTES);
+      } else if (timeoutInSeconds > 0) {
+         LOG.debug("Executing: {} Timeout: {}", testname, timeoutInSeconds);
+         process.waitFor(timeoutInSeconds, TimeUnit.SECONDS);
          if (process.isAlive()) {
             LOG.debug("Killing: {}", testname);
             process.destroyForcibly().waitFor();
@@ -103,7 +103,7 @@ public abstract class TestExecutor {
             FileUtils.writeStringToFile(new File(folders.getFullMeasurementFolder(), "aborted.txt"), aborted.toString(), Charset.defaultCharset());
          }
       } else {
-         throw new RuntimeException("Illegal timeout: " + timeout);
+         throw new RuntimeException("Illegal timeout: " + timeoutInSeconds);
       }
    }
 

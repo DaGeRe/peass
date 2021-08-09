@@ -55,7 +55,7 @@ public class JmhIterationTestMultiParam {
       // File logFile = new File(folders.getLogFolder(), "test.txt");
       TestCase testcase = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
       executor.prepareKoPeMeExecution(new File(folders.getLogFolder(), "compile.txt"));
-      executor.executeTest(testcase, folders.getLogFolder(), 10);
+      executor.executeTest(testcase, folders.getLogFolder(), 100);
 
       File clazzFolder = folders.findTempClazzFolder(testcase).get(0);
 
