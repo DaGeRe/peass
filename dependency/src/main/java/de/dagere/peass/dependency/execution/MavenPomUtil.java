@@ -153,7 +153,7 @@ public class MavenPomUtil {
       }
    }
 
-   private static void addLoggingImplementationDependency(final List<Dependency> dependencies, RequiredDependency dependency) {
+   private static void addLoggingImplementationDependency(final List<Dependency> dependencies, final RequiredDependency dependency) {
       Dependency originalSlf4j = null;
       for (Dependency original : dependencies) {
          if (original.getArtifactId().contains("slf4j-impl")) {
@@ -271,7 +271,7 @@ public class MavenPomUtil {
       return surefire;
    }
 
-   public static void extendSurefire(final String additionalArgLine, final Model model, final boolean updateVersion, final long timeout) {
+   public static void extendSurefire(final String additionalArgLine, final Model model, final boolean updateVersion) {
       final Plugin plugin = MavenPomUtil.findPlugin(model, SUREFIRE_ARTIFACTID, ORG_APACHE_MAVEN_PLUGINS);
       if (plugin.getConfiguration() == null) {
          plugin.setConfiguration(new Xpp3Dom("configuration"));

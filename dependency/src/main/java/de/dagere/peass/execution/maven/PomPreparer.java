@@ -69,7 +69,7 @@ public class PomPreparer {
          }
          final String argline = new ArgLineBuilder(testTransformer, pomFile.getParentFile()).buildArgline(lastTmpFile);
 
-         MavenPomUtil.extendSurefire(argline, model, update, testTransformer.getConfig().getTimeoutInMinutes() * 2);
+         MavenPomUtil.extendSurefire(argline, model, update);
 
          // TODO Move back to extend dependencies, if stable Kieker version supports <init>
          if (model.getDependencies() == null) {
