@@ -145,7 +145,11 @@ public class ContinuousExecutor {
       ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), executor.getModules());
       final AnalyseFullData afd = new AnalyseFullData(changefile, statistics, mapping);
       afd.analyseFolder(measurementFolder);
-      Constants.OBJECTMAPPER.writeValue(new File(localFolder, "statistics.json"), statistics);
+      Constants.OBJECTMAPPER.writeValue(getStatisticsFile(), statistics);
+   }
+
+   public File getStatisticsFile() {
+      return new File(localFolder, "statistics.json");
    }
 
    public String getLatestVersion() {
@@ -167,6 +171,7 @@ public class ContinuousExecutor {
    public File getLocalFolder() {
       return localFolder;
    }
+   
 
    public File getFullResultsVersion() {
       final File fullResultsVersion = new File(localFolder, version + "_" + versionOld);
