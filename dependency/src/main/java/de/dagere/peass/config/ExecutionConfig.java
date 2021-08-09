@@ -46,6 +46,20 @@ public class ExecutionConfig implements Serializable {
       testGoal = null;
       this.timeout = 5 * 60 * 1000;
    }
+   
+   public ExecutionConfig(final ExecutionConfig other) {
+      this.timeout = other.timeout;
+      this.testGoal = other.testGoal;
+      this.includes = other.includes;
+      this.version = other.version;
+      this.versionOld = other.versionOld;
+      this.startversion = other.startversion;
+      this.endversion = other.endversion;
+      this.createDefaultConstructor = other.createDefaultConstructor;
+      this.redirectSubprocessOutputToFile = other.redirectSubprocessOutputToFile;
+      this.testTransformer = other.testTransformer;
+      this.testExecutor = other.testExecutor;
+   }
 
    public ExecutionConfig(final long timeoutInMinutes) {
       if (timeoutInMinutes <= 0) {
