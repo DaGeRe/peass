@@ -537,6 +537,7 @@ public class JUnitTestTransformer implements TestTransformer {
       performanceTestAnnotation.addPair("timeout", "" + config.getTimeout());
       performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
       performanceTestAnnotation.addPair("redirectToNull", "" + config.isRedirectToNull());
+      performanceTestAnnotation.addPair("showStart", "" + config.isShowStart());
       if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
          performanceTestAnnotation.addPair("dataCollectors", "\"ONLYTIME\"");
       } else if (datacollectorlist.equals(DataCollectorList.ONLYTIME_NOGC)) {

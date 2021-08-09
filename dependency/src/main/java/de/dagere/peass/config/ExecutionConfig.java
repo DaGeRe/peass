@@ -48,17 +48,17 @@ public class ExecutionConfig implements Serializable {
    }
    
    public ExecutionConfig(final ExecutionConfig other) {
-      this.timeout = other.timeout;
-      this.testGoal = other.testGoal;
-      this.includes = other.includes;
-      this.version = other.version;
-      this.versionOld = other.versionOld;
-      this.startversion = other.startversion;
-      this.endversion = other.endversion;
-      this.createDefaultConstructor = other.createDefaultConstructor;
-      this.redirectSubprocessOutputToFile = other.redirectSubprocessOutputToFile;
-      this.testTransformer = other.testTransformer;
-      this.testExecutor = other.testExecutor;
+      this.timeout = other.getTimeout();
+      this.testGoal = other.getTestGoal();
+      this.includes = other.getIncludes();
+      this.version = other.getVersion();
+      this.versionOld = other.getVersionOld();
+      this.startversion = other.getStartversion();
+      this.endversion = other.getEndversion();
+      this.createDefaultConstructor = other.isCreateDefaultConstructor();
+      this.redirectSubprocessOutputToFile = other.isRedirectSubprocessOutputToFile();
+      this.testTransformer = other.getTestTransformer();
+      this.testExecutor = other.getTestExecutor();
    }
 
    public ExecutionConfig(final long timeoutInMinutes) {

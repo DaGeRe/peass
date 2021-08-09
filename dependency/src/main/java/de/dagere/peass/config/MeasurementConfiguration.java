@@ -27,6 +27,7 @@ public class MeasurementConfiguration implements Serializable {
    private boolean removeSnapshots = false;
    private boolean useGC = true;
    private boolean executeBeforeClassInMeasurement = false;
+   private boolean showStart = false;
 
    // Kieker config
    private boolean useKieker = false;
@@ -163,6 +164,7 @@ public class MeasurementConfiguration implements Serializable {
       this.measurementStrategy = other.measurementStrategy;
       this.saveAll = other.saveAll;
       this.executeBeforeClassInMeasurement = other.executeBeforeClassInMeasurement;
+      this.showStart = other.showStart;
    }
    
    public StatisticsConfiguration getStatisticsConfig() {
@@ -407,6 +409,14 @@ public class MeasurementConfiguration implements Serializable {
 
    public boolean isRemoveSnapshots() {
       return removeSnapshots;
+   }
+   
+   public boolean isShowStart() {
+      return showStart;
+   }
+
+   public void setShowStart(final boolean showStart) {
+      this.showStart = showStart;
    }
 
    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
