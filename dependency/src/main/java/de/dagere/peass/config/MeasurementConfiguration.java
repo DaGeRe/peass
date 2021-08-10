@@ -292,6 +292,7 @@ public class MeasurementConfiguration implements Serializable {
     * and afterwards filter the measured values
     * @return All iterations that should be carried out
     */
+   @JsonIgnore
    public int getAllIterations() {
       return iterations + warmup;
    }

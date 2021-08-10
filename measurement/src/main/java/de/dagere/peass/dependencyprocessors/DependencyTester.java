@@ -178,7 +178,7 @@ public class DependencyTester implements KiekerResultHandler {
 
    private void runParallel(final File logFolder, final TestCase testcase, final int vmid, final String[] versions) throws InterruptedException, IOException {
       final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(), testcase,
-            configuration.getIterations());
+            configuration.getAllIterations());
       currentOrganizer = organizer;
       final Thread[] threads = new Thread[2];
       for (int i = 0; i < 2; i++) {
@@ -195,7 +195,7 @@ public class DependencyTester implements KiekerResultHandler {
    private void runSequential(final File logFolder, final TestCase testcase, final int vmid, final String versions[])
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(), 
-            testcase, configuration.getIterations());
+            testcase, configuration.getAllIterations());
       for (String version : versions) {
          runOnce(testcase, version, vmid, logFolder);
       }
