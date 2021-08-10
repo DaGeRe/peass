@@ -33,6 +33,10 @@ import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 
 public class JmhIterationTest {
    
+   private static final int VMS = 3;
+   private static final int WARMUP = 2;
+   private static final int ITERATIONS = 4;
+
    @Before
    public void clearCurrent() throws IOException {
       TestUtil.deleteContents(TestConstants.CURRENT_FOLDER.getParentFile());
@@ -42,9 +46,9 @@ public class JmhIterationTest {
    public void testVersionReading() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JAXBException {
       FileUtils.copyDirectory(JmhTestConstants.BASIC_VERSION, TestConstants.CURRENT_FOLDER);
       
-      MeasurementConfiguration measurementConfig = new MeasurementConfiguration(3);
-      measurementConfig.setIterations(4);
-      measurementConfig.setWarmup(2);
+      MeasurementConfiguration measurementConfig = new MeasurementConfiguration(VMS);
+      measurementConfig.setIterations(ITERATIONS);
+      measurementConfig.setWarmup(WARMUP);
       JmhTestTransformer transformer = new JmhTestTransformer(TestConstants.CURRENT_FOLDER, measurementConfig);
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, transformer, new EnvironmentVariables());
@@ -61,9 +65,9 @@ public class JmhIterationTest {
       Assert.assertEquals("de.dagere.peass.ExampleBenchmark", data.getTestcases().getClazz());
       Assert.assertEquals("testMethod", testcaseData.getName());
       
-      Assert.assertEquals(3, testcaseData.getDatacollector().get(0).getResult().size());
+      Assert.assertEquals(VMS, testcaseData.getDatacollector().get(0).getResult().size());
       List<Result> results = testcaseData.getDatacollector().get(0).getResult();
-      Assert.assertEquals(4, results.get(0).getFulldata().getValue().size());
+      Assert.assertEquals(ITERATIONS + WARMUP, results.get(0).getFulldata().getValue().size());
       
       for (Result result : results) {
          DescriptiveStatistics statistics = new DescriptiveStatistics();

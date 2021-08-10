@@ -310,9 +310,7 @@ function printTTvalue(averagesPredecessor, averagesCurrent) {
 	var tscore = get_t_score(averagesPredecessor, averagesCurrent);
 	var pval = jStat.ttest(tscore, averagesPredecessor.length + averagesCurrent.length);
 	var error = 0.01;
-	var x = [2, 4, 6, 2, 3, 7, 5, 1],
-            y = [8, 10, 11, 14, 20, 18, 19, 9];
-       var mannWhitneyP = mannwhitneyu.test(x, y, alternative = 'two-sided').p;
+       var mannWhitneyP = mannwhitneyu.test(averagesPredecessor, averagesCurrent, alternative = 'two-sided').p;
        var diff = predecessorStat.mean()-currentStat.mean();
        var relativeDifference = 2.0*diff / (predecessorStat.mean()+currentStat.mean());
        console.log(mannWhitneyP);
