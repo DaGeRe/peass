@@ -41,7 +41,11 @@ public class KoPeMeTreeConverter {
    }
 
    public KoPeMeTreeConverter(final PeassFolders folders, final String version, final TestCase testcase) throws JAXBException {
-      File versionFolder = new File(folders.getDetailResultFolder(), testcase.getClazz() + File.separator + version);
+      this(folders.getDetailResultFolder(), version, testcase);
+   }
+   
+   public KoPeMeTreeConverter(final File detailResultFolder, final String version, final TestCase testcase) throws JAXBException {
+      File versionFolder = new File(detailResultFolder, testcase.getClazz() + File.separator + version);
       if (versionFolder.exists()) {
          node = new GraphNode("overall", "public overall.overall()", "public overall.overall()");
          node.setVmValues(new MeasuredValues());
