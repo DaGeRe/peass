@@ -286,6 +286,15 @@ public class MeasurementConfiguration implements Serializable {
    public int getIterations() {
       return iterations;
    }
+   
+   /**
+    * Warmup could be considered by the measurement framework, however, this mostly leads to discarding the warmup values; therefore, we execute warmup + iterations
+    * and afterwards filter the measured values
+    * @return All iterations that should be carried out
+    */
+   public int getAllIterations() {
+      return iterations + warmup;
+   }
 
    public void setIterations(final int iterations) {
       this.iterations = iterations;

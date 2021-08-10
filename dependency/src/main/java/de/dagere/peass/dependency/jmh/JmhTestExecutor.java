@@ -98,9 +98,9 @@ public class JmhTestExecutor extends TestExecutor {
             "-f",
             Integer.toString(transformer.getConfig().getVms()),
             "-i",
-            Integer.toString(transformer.getConfig().getIterations()),
+            Integer.toString(transformer.getConfig().getAllIterations()),
             "-wi",
-            Integer.toString(transformer.getConfig().getWarmup()),
+            Integer.toString(0),
             "-rf",
             "json", // JSON format is needed, since VM-internal measurement values are required
             "-rff",

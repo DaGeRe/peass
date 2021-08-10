@@ -399,8 +399,8 @@ public class JUnitTestTransformer implements TestTransformer {
             clazz.addExtendedType("KoPeMeTestcase");
          }
 
-         addMethod(clazz, "getWarmup", "return " + config.getWarmup() + ";", PrimitiveType.intType());
-         addMethod(clazz, "getIterations", "return " + config.getIterations() + ";", PrimitiveType.intType());
+         addMethod(clazz, "getWarmup", "return " + 0 + ";", PrimitiveType.intType());
+         addMethod(clazz, "getIterations", "return " + config.getAllIterations() + ";", PrimitiveType.intType());
          addMethod(clazz, "logFullData", "return " + config.isLogFullData() + ";", PrimitiveType.booleanType());
          addMethod(clazz, "useKieker", "return " + config.isUseKieker() + ";", PrimitiveType.booleanType());
          addMethod(clazz, "getMaximalTime", "return " + config.getTimeout() + ";", PrimitiveType.longType());
@@ -529,8 +529,8 @@ public class JUnitTestTransformer implements TestTransformer {
 
       final NormalAnnotationExpr performanceTestAnnotation = new NormalAnnotationExpr();
       performanceTestAnnotation.setName("de.dagere.kopeme.annotations.PerformanceTest");
-      performanceTestAnnotation.addPair("iterations", "" + config.getIterations());
-      performanceTestAnnotation.addPair("warmup", "" + config.getWarmup());
+      performanceTestAnnotation.addPair("iterations", "" + config.getAllIterations());
+      performanceTestAnnotation.addPair("warmup", "" + 0);
       performanceTestAnnotation.addPair("executeBeforeClassInMeasurement", "" + config.isExecuteBeforeClassInMeasurement());
       performanceTestAnnotation.addPair("logFullData", "" + true);
       performanceTestAnnotation.addPair("useKieker", "" + config.isUseKieker());
