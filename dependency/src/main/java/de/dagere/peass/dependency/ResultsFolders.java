@@ -37,6 +37,14 @@ public class ResultsFolders {
       return new File(resultFolder, "coverageInfo_" + projectName + ".json");
    }
    
+   public File getStatisticsFile() {
+      return new File(resultFolder, "statistics.json");
+   }
+   
+   public File getChangeFile() {
+      return new File(resultFolder, "changes.json");
+   }
+   
    public File getViewFolder() {
       File viewFolder = new File(resultFolder, "views_" + projectName);
       viewFolder.mkdirs();

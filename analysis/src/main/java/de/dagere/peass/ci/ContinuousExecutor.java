@@ -137,19 +137,13 @@ public class ContinuousExecutor {
    }
 
    private void analyzeMeasurements(final File measurementFolder) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
-      final File changefile = new File(localFolder, "changes.json");
-      // AnalyseOneTest.setResultFolder(new File(localFolder, version + "_graphs"));
       final ProjectStatistics statistics = new ProjectStatistics();
       TestTransformer testTransformer = ExecutorCreator.createTestTransformer(folders, measurementConfig.getExecutionConfig(), measurementConfig);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
       ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), executor.getModules());
-      final AnalyseFullData afd = new AnalyseFullData(changefile, statistics, mapping);
+      final AnalyseFullData afd = new AnalyseFullData(resultsFolders.getChangeFile(), statistics, mapping);
       afd.analyseFolder(measurementFolder);
-      Constants.OBJECTMAPPER.writeValue(getStatisticsFile(), statistics);
-   }
-
-   public File getStatisticsFile() {
-      return new File(localFolder, "statistics.json");
+      Constants.OBJECTMAPPER.writeValue(resultsFolders.getStatisticsFile(), statistics);
    }
 
    public String getLatestVersion() {
