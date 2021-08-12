@@ -201,12 +201,15 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       } else {
          return clazz;
       }
-
    }
 
    @JsonIgnore
    public String getShortClazz() {
       return clazz.substring(clazz.lastIndexOf('.') + 1, clazz.length());
+   }
+   
+   public String getLinkUsable() {
+      return toString().replace("#", "_");
    }
 
    @Override
