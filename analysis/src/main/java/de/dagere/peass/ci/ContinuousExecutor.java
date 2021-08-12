@@ -130,7 +130,7 @@ public class ContinuousExecutor {
    }
 
    protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      final File fullResultsVersion = getFullResultsVersion();
+      final File fullResultsVersion = resultsFolders.getVersionFullResultsFolder(version, versionOld);
       final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(version, versionOld, folders, measurementConfig, env);
       final File measurementFolder = measurementExecutor.executeMeasurements(tests, fullResultsVersion);
       return measurementFolder;
@@ -164,11 +164,5 @@ public class ContinuousExecutor {
    
    public File getLocalFolder() {
       return localFolder;
-   }
-   
-
-   public File getFullResultsVersion() {
-      final File fullResultsVersion = new File(localFolder, version + "_" + versionOld);
-      return fullResultsVersion;
    }
 }

@@ -9,64 +9,69 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class ResultsFolders {
-   
+
    private static final Logger LOG = LogManager.getLogger(ResultsFolders.class);
-   
+
    private final File resultFolder;
    private final String projectName;
-   
+
    public ResultsFolders(final File resultFolder, final String projectName) {
       this.resultFolder = resultFolder;
       resultFolder.mkdirs();
       this.projectName = projectName;
    }
-   
+
    public File getDependencyFile() {
       return new File(resultFolder, "deps_" + projectName + ".json");
    }
-   
+
    public File getExecutionFile() {
       return new File(resultFolder, "execute_" + projectName + ".json");
    }
-   
+
    public File getCoverageSelectionFile() {
       return new File(resultFolder, "coverageSelection_" + projectName + ".json");
    }
-   
+
    public File getCoverageInfoFile() {
       return new File(resultFolder, "coverageInfo_" + projectName + ".json");
    }
-   
+
    public File getStatisticsFile() {
       return new File(resultFolder, "statistics.json");
    }
-   
+
    public File getChangeFile() {
       return new File(resultFolder, "changes.json");
    }
-   
+
+   public File getVersionFullResultsFolder(final String version, final String versionOld) {
+      final File fullResultsVersion = new File(resultFolder, version + "_" + versionOld);
+      return fullResultsVersion;
+   }
+
    public File getViewFolder() {
       File viewFolder = new File(resultFolder, "views_" + projectName);
       viewFolder.mkdirs();
       return viewFolder;
    }
-   
+
    public File getPropertiesFile() {
-      return new File(getPropertiesFolder(), "properties.json"); 
+      return new File(getPropertiesFolder(), "properties.json");
    }
-   
+
    public File getVersionDiffFolder(final String version) {
       File diffsFolder = new File(getVersionViewFolder(version), "diffs");
       diffsFolder.mkdirs();
       return diffsFolder;
    }
-   
+
    public File getVersionViewFolder(final String version) {
       File versionViewFolder = new File(getViewFolder(), "view_" + version);
       versionViewFolder.mkdirs();
       return versionViewFolder;
    }
-   
+
    public File getViewMethodDir(final String version, final TestCase testcase) {
       final File methodDir = new File(getClazzDir(version, testcase), testcase.getMethod());
       if (!methodDir.exists()) {
@@ -77,7 +82,7 @@ public class ResultsFolders {
       }
       return methodDir;
    }
-   
+
    private File getClazzDir(final String version, final TestCase testcase) {
       final File viewResultsFolder = new File(getViewFolder(), "view_" + version);
       if (!viewResultsFolder.exists()) {
@@ -91,7 +96,7 @@ public class ResultsFolders {
       }
       return clazzDir;
    }
-   
+
    public File getPropertiesFolder() {
       File propertyFolder = new File(resultFolder, "properties_" + projectName);
       propertyFolder.mkdirs();
