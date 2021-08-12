@@ -208,6 +208,7 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       return clazz.substring(clazz.lastIndexOf('.') + 1, clazz.length());
    }
    
+   @JsonIgnore
    public String getLinkUsable() {
       return toString().replace("#", "_");
    }
