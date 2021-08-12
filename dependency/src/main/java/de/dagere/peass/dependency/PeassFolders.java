@@ -21,7 +21,7 @@ import de.dagere.peass.vcs.VersionControlSystem;
  */
 public class PeassFolders {
    public static final String PEASS_POSTFIX = "_peass";
-   
+
    protected final File projectFolder;
    // private final File resultFolder;
    protected final File fullResultFolder;
@@ -36,12 +36,12 @@ public class PeassFolders {
 
    protected final File peassFolder;
    private final String projectName;
-   
+
    public static File getPeassFolder(final File projectFolder) {
       File peassFolder = new File(projectFolder, ".." + File.separator + projectFolder.getName() + PEASS_POSTFIX);
       return peassFolder;
    }
-   
+
    public PeassFolders(final File folder, final String name) {
       this.projectName = name;
       if (!folder.getName().endsWith(PEASS_POSTFIX)) {
@@ -88,7 +88,7 @@ public class PeassFolders {
       }
       return gradleHome;
    }
-   
+
    public File getPeassFolder() {
       return peassFolder;
    }
@@ -107,7 +107,21 @@ public class PeassFolders {
       }
       return logFolder;
    }
-   
+
+   public File getExistingLogFolder(final String version, final TestCase testcase) {
+      File testLogFolder = new File(logFolder, version + File.separator + testcase.getMethod());
+      if (testLogFolder.exists()) {
+         return testLogFolder;
+      } else {
+         testLogFolder = new File(logFolder, version + File.separator + testcase.getMethod() + "_new");
+         if (testLogFolder.exists()) {
+            return testLogFolder;
+         } else {
+            return null;
+         }
+      }
+   }
+
    public File getLogFolder(final String version, final TestCase testcase) {
       File testLogFolder = new File(logFolder, version + File.separator + testcase.getMethod());
       if (testLogFolder.exists()) {
@@ -131,9 +145,10 @@ public class PeassFolders {
    public File getTempMeasurementFolder() {
       return tempResultFolder;
    }
-   
+
    /**
     * Searches in subfolders for a clazz folder (necessary, since submodules may have arbitraty depth)
+    * 
     * @param baseFolder
     * @param folderFilter
     * @return
@@ -143,7 +158,7 @@ public class PeassFolders {
       FileFilter folderFilter = new WildcardFileFilter(expectedFolderName);
       return findTempClazzFolder(tempResultFolder, folderFilter);
    }
-   
+
    private List<File> findTempClazzFolder(final File baseFolder, final FileFilter folderFilter) {
       final List<File> files = new LinkedList<>();
       for (final File subfolder : baseFolder.listFiles()) {
@@ -167,7 +182,7 @@ public class PeassFolders {
       final File fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".xml");
       return fullResultFile;
    }
-   
+
    public File getFullResultFolder(final TestCase testcase, final String mainVersion, final String version) {
       final File destFolder = new File(getDetailResultFolder(), testcase.getClazz());
       System.out.println("Creating: " + destFolder + " " + mainVersion + " " + testcase.getClazz());
@@ -206,7 +221,7 @@ public class PeassFolders {
       }
       return debugFolder;
    }
-   
+
    public PeassFolders getTempFolder(final String name) throws IOException, InterruptedException {
       final File nowFolder = new File(getTempProjectFolder(), name);
       PeassFolders folders = TemporaryProjectFolderUtil.cloneForcefully(this, nowFolder);
