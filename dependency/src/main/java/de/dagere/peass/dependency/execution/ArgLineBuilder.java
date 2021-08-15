@@ -37,31 +37,30 @@ public class ArgLineBuilder {
    }
 
    private String buildGenericArgline(final File tempFolder, final String valueSeparator, final String entrySeparator, final String kiekerLine) {
-      String argline;
+      String argline = getTieredCompilationArglinePart(entrySeparator);
       if (testTransformer.getConfig().isUseKieker()) {
          String writerConfig = "";
          String tempFolderPath = "'" + tempFolder.getAbsolutePath() + "'";
-
          if (!testTransformer.getConfig().isEnableAdaptiveConfig()) {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-               argline = TEMP_DIR + valueSeparator + tempFolderPath;
+               argline += TEMP_DIR + valueSeparator + tempFolderPath;
                if (!writerConfig.equals("")) {
                   argline += entrySeparator + writerConfig;
                }
 
             } else {
-               argline = kiekerLine +
+               argline += kiekerLine +
                      entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath +
                      entrySeparator + writerConfig;
             }
          } else {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-               argline = TEMP_DIR + valueSeparator + tempFolderPath;
+               argline += TEMP_DIR + valueSeparator + tempFolderPath;
                if (!writerConfig.equals("")) {
                   argline += entrySeparator + writerConfig;
                }
             } else {
-               argline = kiekerLine + entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath;
+               argline += kiekerLine + entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath;
                if (!writerConfig.equals("")) {
                   argline += entrySeparator + writerConfig;
                }
@@ -72,6 +71,14 @@ public class ArgLineBuilder {
          } else {
             argline += "-Dkieker.monitoring.configuration" + valueSeparator + "'" + modulePath.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties'";
          }
+      } 
+      return argline;
+   }
+
+   private String getTieredCompilationArglinePart(final String entrySeparator) {
+      String argline;
+      if (testTransformer.getConfig().getExecutionConfig().isUseTieredCompilation()) {
+         argline = "-XX:-TieredCompilation" + entrySeparator;
       } else {
          argline = "";
       }

@@ -36,6 +36,9 @@ public class ExecutionConfigMixin {
    
    @Option(names = {"-workloadType", "--workloadType"}, description = "Which workload should be executed - by default JUNIT, can be changed to JMH")
    public WorkloadType workloadType = WorkloadType.JUNIT;
+   
+   @Option(names = { "-useTieredCompilation", "--useTieredCompilation" }, description = "Activate -XX:-TieredCompilation for all measured processes")
+   protected boolean useTieredCompilation = false;
 
    public int getTimeout() {
       return timeout;
@@ -115,5 +118,13 @@ public class ExecutionConfigMixin {
    
    public void setWorkloadType(final WorkloadType workloadType) {
       this.workloadType = workloadType;
+   }
+   
+   public boolean isUseTieredCompilation() {
+      return useTieredCompilation;
+   }
+
+   public void setUseTieredCompilation(final boolean useTieredCompilation) {
+      this.useTieredCompilation = useTieredCompilation;
    }
 }

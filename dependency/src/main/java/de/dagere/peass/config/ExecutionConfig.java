@@ -36,6 +36,7 @@ public class ExecutionConfig implements Serializable {
    private String pl;
    private boolean createDefaultConstructor = true;
    private boolean redirectSubprocessOutputToFile = true;
+   private boolean useTieredCompilation = false;
    
    private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
    private String testExecutor = "default";
@@ -59,6 +60,7 @@ public class ExecutionConfig implements Serializable {
       this.redirectSubprocessOutputToFile = other.isRedirectSubprocessOutputToFile();
       this.testTransformer = other.getTestTransformer();
       this.testExecutor = other.getTestExecutor();
+      this.useTieredCompilation = other.isUseTieredCompilation();
    }
 
    public ExecutionConfig(final long timeoutInMinutes) {
@@ -195,6 +197,14 @@ public class ExecutionConfig implements Serializable {
 
    public void setRedirectSubprocessOutputToFile(final boolean redirectSubprocessOutputToFile) {
       this.redirectSubprocessOutputToFile = redirectSubprocessOutputToFile;
+   }
+
+   public boolean isUseTieredCompilation() {
+      return useTieredCompilation;
+   }
+
+   public void setUseTieredCompilation(final boolean useTieredCompilation) {
+      this.useTieredCompilation = useTieredCompilation;
    }
 
    public String getTestTransformer() {
