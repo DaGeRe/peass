@@ -33,11 +33,6 @@ public class TreeReader extends KiekerResultManager {
       this.ignoreEOIs = ignoreEOIs;
    }
 
-   public void executeKoPeMeKiekerRun(final TestSet testsToUpdate, final String version) throws IOException, XmlPullParserException, InterruptedException {
-      executor.loadClasses();
-      super.executeKoPeMeKiekerRun(testsToUpdate, version, folders.getTreeLogFolder());
-   }
-
    public CallTreeNode getTree(final TestCase testcase, final String version)
          throws FileNotFoundException, IOException, XmlPullParserException, ViewNotFoundException, AnalysisConfigurationException, InterruptedException {
       executeMeasurements(testcase, version);
@@ -62,7 +57,8 @@ public class TreeReader extends KiekerResultManager {
    }
 
    private void executeMeasurements(final TestCase testcase, final String version) throws IOException, XmlPullParserException, InterruptedException {
-      executeKoPeMeKiekerRun(new TestSet(testcase), version);
+      executor.loadClasses();
+      executeKoPeMeKiekerRun(new TestSet(testcase), version, folders.getTreeLogFolder());
    }
 
 }

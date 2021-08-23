@@ -10,7 +10,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.TestExecutor;
-import de.dagere.peass.dependency.traces.TemporaryProjectFolderUtil;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
 
 public class ParallelExecutionRunnable implements Runnable {
@@ -45,13 +44,7 @@ public class ParallelExecutionRunnable implements Runnable {
    }
 
    private PeassFolders cloneProjectFolder() throws IOException, InterruptedException {
-      final File projectFolderTemp = new File(tester.getFolders().getTempProjectFolder(), "parallel_" + version);
-      final PeassFolders temporaryFolders;
-      if (!projectFolderTemp.exists()) {
-         temporaryFolders = TemporaryProjectFolderUtil.cloneForcefully(tester.getFolders(), projectFolderTemp);
-      } else {
-         temporaryFolders = new PeassFolders(projectFolderTemp);
-      }
+      PeassFolders temporaryFolders = tester.getFolders().getTempFolder("parallel_" + version);
       organizer.addVersionFolders(version, temporaryFolders);
       return temporaryFolders;
    }
