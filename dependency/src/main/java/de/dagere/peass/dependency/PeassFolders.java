@@ -26,7 +26,7 @@ public class PeassFolders {
    // private final File resultFolder;
    protected final File fullResultFolder;
    private final File tempResultFolder, tempProjectFolder, tempFolder, kiekerTemp;
-   private final File dependencyLogFolder, measureLogFolder, treeLogFolder, rcaLogFolder;
+   private final VMExecutionLogFolders logFolders;
    private final File oldSourceFolder;
    private final File measurementsFolder;
    private final File cleanFolder;
@@ -56,11 +56,8 @@ public class PeassFolders {
          vcs = null;
          peassFolder = folder;
       }
-
-      dependencyLogFolder = new File(peassFolder, "dependencyLogs");
-      measureLogFolder = new File(peassFolder, "measureLogs");
-      treeLogFolder = new File(peassFolder, "treeLogs");
-      rcaLogFolder = new File(peassFolder, "rcaLogs");
+      
+      logFolders = new VMExecutionLogFolders(peassFolder);
       
       oldSourceFolder = new File(peassFolder, "lastSources");
       fullResultFolder = new File(peassFolder, "measurementsFull");
@@ -106,31 +103,19 @@ public class PeassFolders {
    }
    
    public File getDependencyLogFolder() {
-      if (!dependencyLogFolder.exists()) {
-         dependencyLogFolder.mkdirs();
-      }
-      return dependencyLogFolder;
+      return logFolders.getDependencyLogFolder();
    }
    
    public File getMeasureLogFolder() {
-      if (!measureLogFolder.exists()) {
-         measureLogFolder.mkdirs();
-      }
-      return measureLogFolder;
+      return logFolders.getMeasureLogFolder();
    }
    
    public File getTreeLogFolder() {
-      if (!treeLogFolder.exists()) {
-         treeLogFolder.mkdirs();
-      }
-      return treeLogFolder;
+      return logFolders.getTreeLogFolder();
    }
    
    public File getRCALogFolder() {
-      if (!rcaLogFolder.exists()) {
-         rcaLogFolder.mkdirs();
-      }
-      return rcaLogFolder;
+      return logFolders.getRCALogFolder();
    }
 
    public File getExistingMeasureLogFolder(final String version, final TestCase testcase) {
@@ -151,6 +136,23 @@ public class PeassFolders {
       File testLogFolder = new File(getMeasureLogFolder(), version + File.separator + testcase.getMethod());
       if (testLogFolder.exists()) {
          testLogFolder = new File(getMeasureLogFolder(), version + File.separator + testcase.getMethod() + "_new");
+      }
+      testLogFolder.mkdirs();
+      return testLogFolder;
+   }
+   
+   public File getExistingRCALogFolder(final String version, final TestCase testcase, final int level) {
+      File testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getMethod() + File.separator + level);
+      if (!testLogFolder.exists()) {
+         testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getMethod() + File.separator + level + "_new");
+      }
+      return testLogFolder;
+   }
+   
+   public File getRCALogFolder(final String version, final TestCase testcase, final int level) {
+      File testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getMethod() + File.separator + level);
+      if (testLogFolder.exists()) {
+         testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getMethod() + File.separator + level + "_new");
       }
       testLogFolder.mkdirs();
       return testLogFolder;
@@ -249,7 +251,7 @@ public class PeassFolders {
 
    public PeassFolders getTempFolder(final String name) throws IOException, InterruptedException {
       final File nowFolder = new File(getTempProjectFolder(), name);
-      PeassFolders folders = TemporaryProjectFolderUtil.cloneForcefully(this, nowFolder);
+      PeassFolders folders = TemporaryProjectFolderUtil.cloneForcefully(this, nowFolder, logFolders);
       return folders;
    }
 

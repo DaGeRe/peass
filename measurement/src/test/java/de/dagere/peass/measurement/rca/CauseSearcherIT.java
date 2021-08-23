@@ -46,12 +46,14 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 @PrepareForTest({GitUtils.class, VersionControlSystem.class})
 @PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class CauseSearcherIT {
-   
+
    private static final Logger LOG = LogManager.getLogger(CauseSearcherIT.class);
    
-   public final static CauseSearcherConfig CAUSE_CONFIG_TESTME_COMPLETE = new CauseSearcherConfig(new TestCase("defaultpackage.TestMe", "testMe"), 
+   private static final TestCase TESTCASE = new TestCase("defaultpackage.TestMe", "testMe");
+   public final static CauseSearcherConfig CAUSE_CONFIG_TESTME_COMPLETE = new CauseSearcherConfig(TESTCASE, 
          false, false, 0.1,
          false, false, RCAStrategy.COMPLETE, 1);
+   private static final String VERSION = "000001";
    
    private static final File VERSIONS_FOLDER = new File("src/test/resources/rootCauseIT");
    private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
@@ -68,7 +70,7 @@ public class CauseSearcherIT {
       }
       
       final PeassFolders folders = new PeassFolders(DependencyTestConstants.CURRENT);
-      final File projectFolderTemp = new File(folders.getTempProjectFolder(), "000001");
+      final File projectFolderTemp = new File(folders.getTempProjectFolder(), VERSION);
       
       VCSTestUtils.mockGetVCS();
       
@@ -119,7 +121,7 @@ public class CauseSearcherIT {
 
    @Test
    public void testSlowerState() throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(5, "000001", "000001~1");
+      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(5, VERSION, "000001~1");
       measurementConfiguration.setUseKieker(true);
       final CauseSearcherConfig causeSearcherConfig = CAUSE_CONFIG_TESTME_COMPLETE;
       
@@ -132,6 +134,12 @@ public class CauseSearcherIT {
       final Set<ChangedEntity> changedEntities = searcher.search();
 
       checkChangelistContainsChild12(changedEntities);
+      
+      File expectedResultLogFolder = folders.getExistingRCALogFolder(VERSION, TESTCASE, 0);
+      File expectedResultLogFile = new File(expectedResultLogFolder, "vm_0_" + VERSION);
+      
+      Assert.assertTrue("File " + expectedResultLogFolder.getAbsolutePath() + " does not exist ", expectedResultLogFolder.exists());
+      Assert.assertTrue("File " + expectedResultLogFile.getAbsolutePath() + " does not exist ", expectedResultLogFile.exists());
    }
 
    /**

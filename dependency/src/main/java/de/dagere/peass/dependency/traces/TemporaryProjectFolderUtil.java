@@ -8,13 +8,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.PeassFolders;
+import de.dagere.peass.dependency.TempPeassFolders;
+import de.dagere.peass.dependency.VMExecutionLogFolders;
 import de.dagere.peass.vcs.GitUtils;
 
 public class TemporaryProjectFolderUtil {
 
    private static final Logger LOG = LogManager.getLogger(TemporaryProjectFolderUtil.class);
 
-   public static PeassFolders cloneForcefully(final PeassFolders originalFolders, final File dest) throws IOException, InterruptedException {
+   public static PeassFolders cloneForcefully(final PeassFolders originalFolders, final File dest, final VMExecutionLogFolders logFolders) throws IOException, InterruptedException {
       if (dest.exists()) {
          LOG.warn("Deleting existing folder {}", dest);
          FileUtils.deleteDirectory(dest);
@@ -24,7 +26,7 @@ public class TemporaryProjectFolderUtil {
          }
       }
       GitUtils.clone(originalFolders, dest);
-      final PeassFolders folders = new PeassFolders(dest, originalFolders.getProjectName());
+      final PeassFolders folders = new TempPeassFolders(dest, originalFolders.getProjectName(), logFolders);
       return folders;
    }
 }

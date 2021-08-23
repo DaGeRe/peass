@@ -16,7 +16,6 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.measurement.analysis.EarlyBreakDecider;
 import de.dagere.peass.measurement.analysis.ResultLoader;
-import de.dagere.peass.measurement.organize.FolderDeterminer;
 
 public class AdaptiveTester extends DependencyTester {
 
@@ -31,34 +30,36 @@ public class AdaptiveTester extends DependencyTester {
 
    @Override
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getVersionOld(), configuration.getVersion());
-
-      new FolderDeterminer(folders).testResultFolders(configuration.getVersion(), configuration.getVersionOld(), testcase);
+      initEvaluation(testcase);
 
       final File logFolder = folders.getMeasureLogFolder(configuration.getVersion(), testcase);
-
-      currentChunkStart = System.currentTimeMillis();
       
       try (ProgressWriter writer = new ProgressWriter(new File(folders.getFullMeasurementFolder(), "progress.txt"), configuration.getVms())){
-         for (finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
-            long comparisonStart = System.currentTimeMillis();
-            runOneComparison(logFolder, testcase, finishedVMs);
+         evaluateWithAdaption(testcase, logFolder, writer);
+      }
+   }
 
-            final boolean savelyDecidable = checkIsDecidable(testcase, finishedVMs);
+   protected void evaluateWithAdaption(final TestCase testcase, final File logFolder, final ProgressWriter writer)
+         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+      currentChunkStart = System.currentTimeMillis();
+      for (finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
+         long comparisonStart = System.currentTimeMillis();
+         runOneComparison(logFolder, testcase, finishedVMs);
 
-            if (savelyDecidable) {
-               LOG.debug("Savely decidable - finishing testing");
-               break;
-            }
+         final boolean savelyDecidable = checkIsDecidable(testcase, finishedVMs);
 
-            final boolean shouldBreak = updateExecutions(testcase, finishedVMs);
-            if (shouldBreak) {
-               LOG.debug("Too few executions possible - finishing testing.");
-               break;
-            }
-            long durationInSeconds = (System.currentTimeMillis() - comparisonStart)/1000;
-            writer.write(durationInSeconds, finishedVMs);
+         if (savelyDecidable) {
+            LOG.debug("Savely decidable - finishing testing");
+            break;
          }
+
+         final boolean shouldBreak = updateExecutions(testcase, finishedVMs);
+         if (shouldBreak) {
+            LOG.debug("Too few executions possible - finishing testing.");
+            break;
+         }
+         long durationInSeconds = (System.currentTimeMillis() - comparisonStart)/1000;
+         writer.write(durationInSeconds, finishedVMs);
       }
    }
 

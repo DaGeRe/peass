@@ -59,14 +59,25 @@ public class DependencyTester implements KiekerResultHandler {
     * @throws XmlPullParserException
     */
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      new FolderDeterminer(folders).testResultFolders(configuration.getVersion(), configuration.getVersionOld(), testcase);
-
-      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getVersionOld(), configuration.getVersion());
+      initEvaluation(testcase);
 
       final File logFolder = folders.getMeasureLogFolder(configuration.getVersion(), testcase);
+      try (ProgressWriter writer = new ProgressWriter(new File(folders.getFullMeasurementFolder(), "progress.txt"), configuration.getVms())) {
+         evaluateSimple(testcase, logFolder, writer);
+      }
+   }
 
+   protected void initEvaluation(final TestCase testcase) {
+      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getVersionOld(), configuration.getVersion());
+      new FolderDeterminer(folders).testResultFolders(configuration.getVersion(), configuration.getVersionOld(), testcase);
+   }
+
+   private void evaluateSimple(final TestCase testcase, final File logFolder, final ProgressWriter writer)
+         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       currentChunkStart = System.currentTimeMillis();
       for (int finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
+         long comparisonStart = System.currentTimeMillis();
+
          runOneComparison(logFolder, testcase, finishedVMs);
 
          final boolean shouldBreak = updateExecutions(testcase, finishedVMs);
@@ -74,6 +85,9 @@ public class DependencyTester implements KiekerResultHandler {
             LOG.debug("Too less executions possible - finishing testing.");
             break;
          }
+
+         long durationInSeconds = (System.currentTimeMillis() - comparisonStart) / 1000;
+         writer.write(durationInSeconds, finishedVMs);
       }
    }
 
@@ -177,7 +191,8 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    private void runParallel(final File logFolder, final TestCase testcase, final int vmid, final String[] versions) throws InterruptedException, IOException {
-      final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(), testcase,
+      final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(),
+            configuration.isSaveAll(), testcase,
             configuration.getAllIterations());
       currentOrganizer = organizer;
       final Thread[] threads = new Thread[2];
@@ -194,7 +209,7 @@ public class DependencyTester implements KiekerResultHandler {
 
    private void runSequential(final File logFolder, final TestCase testcase, final int vmid, final String versions[])
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(), 
+      currentOrganizer = new ResultOrganizer(folders, configuration.getVersion(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(),
             testcase, configuration.getAllIterations());
       for (String version : versions) {
          runOnce(testcase, version, vmid, logFolder);
@@ -236,7 +251,7 @@ public class DependencyTester implements KiekerResultHandler {
    public ResultOrganizer getCurrentOrganizer() {
       return currentOrganizer;
    }
-   
+
    public PeassFolders getFolders() {
       return folders;
    }

@@ -21,6 +21,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.dependencyprocessors.AdaptiveTester;
+import de.dagere.peass.dependencyprocessors.ProgressWriter;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.measurement.analysis.EarlyBreakDecider;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -81,7 +82,14 @@ public class CauseTester extends AdaptiveTester {
    @Override
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       LOG.debug("Adaptive execution: " + includedNodes);
-      super.evaluate(testcase);
+      
+      initEvaluation(testcase);
+
+      final File logFolder = folders.getRCALogFolder(configuration.getVersion(), testcase, levelId);
+      
+      try (ProgressWriter writer = new ProgressWriter(new File(folders.getFullMeasurementFolder(), "progress.txt"), configuration.getVms())){
+         evaluateWithAdaption(testcase, logFolder, writer);
+      }
    }
 
    @Override
