@@ -111,11 +111,12 @@ public class TraceGettingIT {
    private void executeTraceGetting(final File project, final String githash)
          throws IOException, ParseException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       DependencyDetectorTestUtil.init(project);
-      final KiekerResultManager tracereader = new KiekerResultManager(new PeassFolders(TestConstants.CURRENT_FOLDER), new ExecutionConfig(5), new EnvironmentVariables());
+      PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
+      final KiekerResultManager tracereader = new KiekerResultManager(folders, new ExecutionConfig(5), new EnvironmentVariables());
       final TestSet testset = new TestSet();
       testset.addTest(new TestCase("viewtest.TestMe", "test", ""));
       tracereader.getExecutor().loadClasses();
-      tracereader.executeKoPeMeKiekerRun(testset, "1");
+      tracereader.executeKoPeMeKiekerRun(testset, "1", folders.getDependencyLogFolder());
 
       LOG.debug("Trace-Analysis..");
 

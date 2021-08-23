@@ -55,8 +55,8 @@ public class JmhIterationTest {
     
 //      File logFile = new File(folders.getLogFolder(), "test.txt");
       TestCase testcase = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
-      executor.prepareKoPeMeExecution(new File(folders.getLogFolder(), "compile.txt"));
-      executor.executeTest(testcase, folders.getLogFolder(), 100);
+      executor.prepareKoPeMeExecution(new File(folders.getMeasureLogFolder(), "compile.txt"));
+      executor.executeTest(testcase, folders.getMeasureLogFolder(), 100);
       
       File clazzFolder = folders.findTempClazzFolder(testcase).get(0);
       Kopemedata data = XMLDataLoader.loadData(new File(clazzFolder, testcase.getMethod() + ".xml"));

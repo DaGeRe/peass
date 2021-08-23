@@ -60,7 +60,7 @@ public class ProcessSuccessTester {
    }
    
    public File getVersionFolder(final String version) {
-      final File versionFolder = new File(folders.getLogFolder(), version);
+      final File versionFolder = new File(folders.getDependencyLogFolder(), version);
       if (!versionFolder.exists()) {
          versionFolder.mkdir();
       }

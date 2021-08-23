@@ -26,7 +26,7 @@ public class PeassFolders {
    // private final File resultFolder;
    protected final File fullResultFolder;
    private final File tempResultFolder, tempProjectFolder, tempFolder, kiekerTemp;
-   private final File logFolder;
+   private final File dependencyLogFolder, measureLogFolder, treeLogFolder, rcaLogFolder;
    private final File oldSourceFolder;
    private final File measurementsFolder;
    private final File cleanFolder;
@@ -57,7 +57,11 @@ public class PeassFolders {
          peassFolder = folder;
       }
 
-      logFolder = new File(peassFolder, "logs");
+      dependencyLogFolder = new File(peassFolder, "dependencyLogs");
+      measureLogFolder = new File(peassFolder, "measureLogs");
+      treeLogFolder = new File(peassFolder, "treeLogs");
+      rcaLogFolder = new File(peassFolder, "rcaLogs");
+      
       oldSourceFolder = new File(peassFolder, "lastSources");
       fullResultFolder = new File(peassFolder, "measurementsFull");
       fullResultFolder.mkdir();
@@ -100,20 +104,41 @@ public class PeassFolders {
    public File getCleanFolder() {
       return cleanFolder;
    }
-
-   public File getLogFolder() {
-      if (!logFolder.exists()) {
-         logFolder.mkdirs();
+   
+   public File getDependencyLogFolder() {
+      if (!dependencyLogFolder.exists()) {
+         dependencyLogFolder.mkdirs();
       }
-      return logFolder;
+      return dependencyLogFolder;
+   }
+   
+   public File getMeasureLogFolder() {
+      if (!measureLogFolder.exists()) {
+         measureLogFolder.mkdirs();
+      }
+      return measureLogFolder;
+   }
+   
+   public File getTreeLogFolder() {
+      if (!treeLogFolder.exists()) {
+         treeLogFolder.mkdirs();
+      }
+      return treeLogFolder;
+   }
+   
+   public File getRCALogFolder() {
+      if (!rcaLogFolder.exists()) {
+         rcaLogFolder.mkdirs();
+      }
+      return rcaLogFolder;
    }
 
-   public File getExistingLogFolder(final String version, final TestCase testcase) {
-      File testLogFolder = new File(logFolder, version + File.separator + testcase.getMethod());
+   public File getExistingMeasureLogFolder(final String version, final TestCase testcase) {
+      File testLogFolder = new File(getMeasureLogFolder(), version + File.separator + testcase.getMethod());
       if (testLogFolder.exists()) {
          return testLogFolder;
       } else {
-         testLogFolder = new File(logFolder, version + File.separator + testcase.getMethod() + "_new");
+         testLogFolder = new File(getMeasureLogFolder(), version + File.separator + testcase.getMethod() + "_new");
          if (testLogFolder.exists()) {
             return testLogFolder;
          } else {
@@ -122,10 +147,10 @@ public class PeassFolders {
       }
    }
 
-   public File getLogFolder(final String version, final TestCase testcase) {
-      File testLogFolder = new File(logFolder, version + File.separator + testcase.getMethod());
+   public File getMeasureLogFolder(final String version, final TestCase testcase) {
+      File testLogFolder = new File(getMeasureLogFolder(), version + File.separator + testcase.getMethod());
       if (testLogFolder.exists()) {
-         testLogFolder = new File(logFolder, version + File.separator + testcase.getMethod() + "_new");
+         testLogFolder = new File(getMeasureLogFolder(), version + File.separator + testcase.getMethod() + "_new");
       }
       testLogFolder.mkdirs();
       return testLogFolder;

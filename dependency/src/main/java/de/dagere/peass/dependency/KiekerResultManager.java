@@ -85,7 +85,7 @@ public class KiekerResultManager {
 
       LOG.debug("Executing dependency update test, results folder: {}", folders.getTempMeasurementFolder());
       final TestSet tests = testTransformer.buildTestMethodSet(testsToUpdate, executor.getModules().getModules());
-      executeKoPeMeKiekerRun(tests, version);
+      executeKoPeMeKiekerRun(tests, version, folders.getDependencyLogFolder());
    }
 
    private void truncateKiekerResults() {
@@ -112,8 +112,8 @@ public class KiekerResultManager {
     * @throws XmlPullParserException
     * @throws InterruptedException
     */
-   public void executeKoPeMeKiekerRun(final TestSet testsToUpdate, final String version) throws IOException, XmlPullParserException, InterruptedException {
-      final File logVersionFolder = new File(folders.getLogFolder(), version);
+   public void executeKoPeMeKiekerRun(final TestSet testsToUpdate, final String version, final File logFolder) throws IOException, XmlPullParserException, InterruptedException {
+      final File logVersionFolder = new File(logFolder, version);
       if (!logVersionFolder.exists()) {
          logVersionFolder.mkdir();
       }

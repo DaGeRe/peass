@@ -78,7 +78,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
       ExecutionConfig executionConfig = new ExecutionConfig(executionMixin);
 
       KiekerResultManager resultsManager = new KiekerResultManager(folders, executionConfig, new EnvironmentVariables());
-      resultsManager.executeKoPeMeKiekerRun(tests, newestVersion);
+      resultsManager.executeKoPeMeKiekerRun(tests, newestVersion, folders.getDependencyLogFolder());
       return resultsManager;
    }
 

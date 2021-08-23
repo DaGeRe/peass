@@ -35,7 +35,7 @@ public class AdaptiveTester extends DependencyTester {
 
       new FolderDeterminer(folders).testResultFolders(configuration.getVersion(), configuration.getVersionOld(), testcase);
 
-      final File logFolder = folders.getLogFolder(configuration.getVersion(), testcase);
+      final File logFolder = folders.getMeasureLogFolder(configuration.getVersion(), testcase);
 
       currentChunkStart = System.currentTimeMillis();
       

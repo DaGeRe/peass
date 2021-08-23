@@ -63,7 +63,7 @@ public class DependencyTester implements KiekerResultHandler {
 
       LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getVersionOld(), configuration.getVersion());
 
-      final File logFolder = folders.getLogFolder(configuration.getVersion(), testcase);
+      final File logFolder = folders.getMeasureLogFolder(configuration.getVersion(), testcase);
 
       currentChunkStart = System.currentTimeMillis();
       for (int finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {

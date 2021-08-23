@@ -106,7 +106,7 @@ public class DependencyManager extends KiekerResultManager {
 
       final ModuleClassMapping mapping = new ModuleClassMapping(executor);
       executor.loadClasses();
-      final File logFile = new File(folders.getLogFolder(), version + File.separator + "init_log.txt");
+      final File logFile = new File(folders.getDependencyLogFolder(), version + File.separator + "init_log.txt");
       logFile.getParentFile().mkdirs();
 
       TestSet tests = findIncludedTests(mapping);
@@ -251,7 +251,7 @@ public class DependencyManager extends KiekerResultManager {
             LOG.error("Trace too big!");
          } else {
             LOG.debug("Reading Kieker folder: {}", kiekerResultFolder.getAbsolutePath());
-            final File kiekerOutputFile = new File(folders.getLogFolder(), "ausgabe_kieker.txt");
+            final File kiekerOutputFile = new File(folders.getDependencyLogFolder(), "output_kieker.txt");
 
             final Map<ChangedEntity, Set<String>> calledMethods = new CalledMethodLoader(kiekerResultFolder, mapping).getCalledMethods(kiekerOutputFile);
             for (Map.Entry<ChangedEntity, Set<String>> calledMethod : calledMethods.entrySet()) {

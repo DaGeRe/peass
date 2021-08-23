@@ -49,12 +49,13 @@ public class TestPeASSFilter {
 
    @Test
    public void testExecution() throws ViewNotFoundException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-      final KiekerResultManager manager = new KiekerResultManager(new PeassFolders(CURRENT), new ExecutionConfig(5), new EnvironmentVariables());
+      PeassFolders folders = new PeassFolders(CURRENT);
+      final KiekerResultManager manager = new KiekerResultManager(folders, new ExecutionConfig(5), new EnvironmentVariables());
       final TestSet testset = new TestSet();
       final TestCase testcase = new TestCase("defaultpackage.TestMe", "testMe", "");
       testset.addTest(testcase);
       manager.getExecutor().loadClasses();
-      manager.executeKoPeMeKiekerRun(testset, "0");
+      manager.executeKoPeMeKiekerRun(testset, "0", folders.getDependencyLogFolder());
       
       final File kiekerFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT))[0];
       LOG.debug("Searching: " + kiekerFolder);
@@ -85,9 +86,9 @@ public class TestPeASSFilter {
    private List<TraceElement> regenerateTrace(final KiekerResultManager manager, final TestSet ts, final TestCase testcase, final ModuleClassMapping mapping, final int i)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, FileNotFoundException {
       cleanup();
-      new PeassFolders(CURRENT);
+      PeassFolders peassFolders = new PeassFolders(CURRENT);
       manager.getExecutor().loadClasses();
-      manager.executeKoPeMeKiekerRun(ts, ""+i);
+      manager.executeKoPeMeKiekerRun(ts, ""+i, peassFolders.getDependencyLogFolder());
       final File kiekerFolderComparison = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT))[0];
       LOG.debug("Searching: " + kiekerFolderComparison);
       final List<TraceElement> compareTrace = new CalledMethodLoader(kiekerFolderComparison, mapping).getShortTrace("");

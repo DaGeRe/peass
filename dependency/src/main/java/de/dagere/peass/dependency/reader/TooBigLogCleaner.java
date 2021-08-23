@@ -19,17 +19,20 @@ public class TooBigLogCleaner {
          FileUtils.deleteDirectory(xmlFileFolder);
       }
    }
-   
+
    public static void cleanTooBigLogs(final PeassFolders folders, final String version) {
-      File logFolder = folders.getLogFolder();
-      File versionFolder = new File(logFolder, version);
-      if (versionFolder.exists()) {
-         for (File clazzFolder : versionFolder.listFiles()) {
-            if (clazzFolder.isDirectory()) {
-               for (File methodLog : clazzFolder.listFiles()) {
-                  long sizeInMb = (methodLog.length() / (1024 * 1024));
-                  if (sizeInMb > MAX_SIZE_IN_MB) {
-                     methodLog.delete();
+
+      File[] logFolders = new File[] { folders.getDependencyLogFolder(), folders.getMeasureLogFolder(), folders.getTreeLogFolder(), folders.getRCALogFolder() };
+      for (File logFolder : logFolders) {
+         File versionFolder = new File(logFolder, version);
+         if (versionFolder.exists()) {
+            for (File clazzFolder : versionFolder.listFiles()) {
+               if (clazzFolder.isDirectory()) {
+                  for (File methodLog : clazzFolder.listFiles()) {
+                     long sizeInMb = (methodLog.length() / (1024 * 1024));
+                     if (sizeInMb > MAX_SIZE_IN_MB) {
+                        methodLog.delete();
+                     }
                   }
                }
             }

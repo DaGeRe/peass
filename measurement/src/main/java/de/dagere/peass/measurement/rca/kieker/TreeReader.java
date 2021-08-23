@@ -33,10 +33,9 @@ public class TreeReader extends KiekerResultManager {
       this.ignoreEOIs = ignoreEOIs;
    }
 
-   @Override
    public void executeKoPeMeKiekerRun(final TestSet testsToUpdate, final String version) throws IOException, XmlPullParserException, InterruptedException {
       executor.loadClasses();
-      super.executeKoPeMeKiekerRun(testsToUpdate, version);
+      super.executeKoPeMeKiekerRun(testsToUpdate, version, folders.getTreeLogFolder());
    }
 
    public CallTreeNode getTree(final TestCase testcase, final String version)
