@@ -33,7 +33,7 @@ This executes two steps: The static test selection and the trace analysis. These
 
 ## Static Test Selection
 
-Static test selection determines whether a tests performance may have changed because a source that is called, a dependency, is changed. With a call to `de.peass.DependencyReadingStarter -folder $PROJECTFOLDER` the reading of dependencies is started for a checked-out-project. Therefore, all tests are converted to KoPeMe-tests using Kieker, because Kieker allows to generate traces and KoPeMe allows to save the relation between test-call and Kieker-Trace-Folder. Afterwards, they are executed for every version. By parsing the sources and the version-control-system-diffs, it is determined where changes have taken place. The generated dependencies are saved afterwards into results/ as JSON-file, the $DEPENDENCYFILE (which is named deps_$PROJECT.json).
+Static test selection determines whether a tests performance may have changed because a source that is called, a dependency, is changed. With a call to `de.peass.DependencyReadingStarter -folder $PROJECTFOLDER` the reading of dependencies is started for a checked-out-project. Therefore, all tests are converted to KoPeMe-tests with enabled Kieker (`useKieker=true`), because Kieker allows to generate traces and KoPeMe allows to save the relation between test-call and Kieker-Trace-Folder. Afterwards, they are executed for every version. By parsing the sources and the version-control-system-diffs, it is determined where changes have taken place. The generated dependencies are saved afterwards into results/ as JSON-file, the $DEPENDENCYFILE (which is named deps_$PROJECT.json).
 
 ## Trace Analysis
 

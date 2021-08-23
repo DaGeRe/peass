@@ -35,10 +35,9 @@ public class ContinuousMeasurementExecutor {
       this.env = env;
    }
 
-   public File executeMeasurements(final Set<TestCase> tests, final File fullResultsVersion) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   public File executeMeasurements(final Set<TestCase> tests, final File fullResultsVersion, final File logFile) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       if (!fullResultsVersion.exists()) {
          if (measurementConfig.getExecutionConfig().isRedirectSubprocessOutputToFile()) {
-            File logFile = new File(fullResultsVersion.getParentFile(), "measurement_" + version + "_" + versionOld + ".txt");
             LOG.info("Executing measurement - Log goes to {}", logFile.getAbsolutePath());
             try (LogRedirector director = new LogRedirector(logFile)) {
                doMeasurement(tests, fullResultsVersion);

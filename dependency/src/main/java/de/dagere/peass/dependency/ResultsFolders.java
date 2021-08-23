@@ -44,6 +44,24 @@ public class ResultsFolders {
    public File getChangeFile() {
       return new File(resultFolder, "changes.json");
    }
+   
+   public File getDependencyLogFile(final String version, final String versionOld) {
+      File folder = new File(resultFolder, "dependencyreading");
+      if (!folder.exists()) {
+         folder.mkdirs();
+      }
+      File logFile = new File(folder, version + "_" + versionOld + ".txt");
+      return logFile;
+   }
+   
+   public File getMeasurementLogFile(final String version, final String versionOld) {
+      File folder = new File(resultFolder, "measurements");
+      if (!folder.exists()) {
+         folder.mkdirs();
+      }
+      File logFile = new File(folder, version + "_" + versionOld + ".txt");
+      return logFile;
+   }
 
    public File getVersionFullResultsFolder(final String version, final String versionOld) {
       final File fullResultsVersion = new File(resultFolder, version + "_" + versionOld);

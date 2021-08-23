@@ -61,19 +61,17 @@ public class KiekerEnvironmentPreparer {
          if (config.isEnableAdaptiveConfig()) {
             writeConfig();
          }
-         generateKiekerMonitoringProperties();
       } else {
          if (config.isEnableAdaptiveConfig()) {
             prepareAdaptiveExecution();
          }
          if (AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION.equals(config.getRecord()) && config.isEnableAdaptiveConfig()) {
             generateAOPXML(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION);
-            generateKiekerMonitoringProperties();
          } else {
             generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION);
-            generateKiekerMonitoringProperties();
          }
       }
+      generateKiekerMonitoringProperties();
    }
 
    private void buildJettyExclusion(final HashSet<String> excludedPatterns) {
