@@ -46,7 +46,7 @@ public class ResultsFolders {
    }
    
    public File getDependencyLogFile(final String version, final String versionOld) {
-      File folder = new File(resultFolder, "dependencyreading");
+      File folder = new File(resultFolder, "rtsLogs");
       if (!folder.exists()) {
          folder.mkdirs();
       }
@@ -55,7 +55,16 @@ public class ResultsFolders {
    }
    
    public File getMeasurementLogFile(final String version, final String versionOld) {
-      File folder = new File(resultFolder, "measurements");
+      File folder = new File(resultFolder, "measurementLogs");
+      if (!folder.exists()) {
+         folder.mkdirs();
+      }
+      File logFile = new File(folder, version + "_" + versionOld + ".txt");
+      return logFile;
+   }
+   
+   public File getRCALogFile(final String version, final String versionOld) {
+      File folder = new File(resultFolder, "rcaLogs");
       if (!folder.exists()) {
          folder.mkdirs();
       }
