@@ -63,21 +63,26 @@ public abstract class TestExecutor {
    public abstract void executeTest(final TestCase test, final File logFolder, long timeout);
 
    protected File getCleanLogFile(final File logFolder, final TestCase test) {
-      File clazzLogFolder = new File(logFolder, "log_" + test.getClazz());
-      if (!clazzLogFolder.exists()) {
-         clazzLogFolder.mkdir();
+      File clazzLogFolder = getClazzLogFolder(logFolder, test);
+      final File logFile = new File(clazzLogFolder, "clean" + File.separator + test.getMethod() + ".txt");
+      if (!logFile.getParentFile().exists()) {
+         logFile.getParentFile().mkdir();
       }
-      final File logFile = new File(clazzLogFolder, test.getMethod() + "_clean.txt");
       return logFile;
    }
 
    protected File getMethodLogFile(final File logFolder, final TestCase test) {
+      File clazzLogFolder = getClazzLogFolder(logFolder, test);
+      final File logFile = new File(clazzLogFolder, test.getMethod() + ".txt");
+      return logFile;
+   }
+   
+   private File getClazzLogFolder(final File logFolder, final TestCase test) {
       File clazzLogFolder = new File(logFolder, "log_" + test.getClazz());
       if (!clazzLogFolder.exists()) {
          clazzLogFolder.mkdir();
       }
-      final File logFile = new File(clazzLogFolder, test.getMethod() + ".txt");
-      return logFile;
+      return clazzLogFolder;
    }
 
    protected void prepareKiekerSource() throws IOException, XmlPullParserException, InterruptedException {
