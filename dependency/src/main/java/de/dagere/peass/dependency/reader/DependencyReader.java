@@ -120,7 +120,6 @@ public class DependencyReader {
    public boolean readDependencies() {
       try {
          LOG.debug("Analysing {} entries", iterator.getRemainingSize());
-
          sizeRecorder.setPrunedSize(dependencyManager.getDependencyMap().size());
 
          changeManager.saveOldClasses();

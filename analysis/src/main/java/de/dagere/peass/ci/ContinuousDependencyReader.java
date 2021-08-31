@@ -31,7 +31,6 @@ import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionIterator;
 
 public class ContinuousDependencyReader {
@@ -120,15 +119,6 @@ public class ContinuousDependencyReader {
       }
    }
 
-   public VersionIterator getIterator(final String lastVersionName) {
-      String versionName = GitUtils.getName(executionConfig.getVersion() != null ? executionConfig.getVersion() : "HEAD", folders.getProjectFolder());
-      if (versionName.equals(lastVersionName)) {
-         LOG.info("Version {} is equal to newest version, not executing RTS", versionName);
-         return null;
-      }
-      return DependencyIteratorBuilder.getIterator(executionConfig, lastVersionName, versionName, folders);
-   }
-   
    public String getPredecessor() {
       return predecessor;
    }
@@ -136,7 +126,8 @@ public class ContinuousDependencyReader {
    private void partiallyLoadDependencies(final Dependencies dependencies) throws FileNotFoundException, Exception {
       predecessor = dependencies.getNewestRunningVersion();
 
-      VersionIterator newIterator = getIterator(predecessor);
+      
+      VersionIterator newIterator = DependencyIteratorBuilder.getIterator(executionConfig, predecessor, folders);
       if (newIterator != null) {
          executePartialRTS(dependencies, newIterator);
       }
