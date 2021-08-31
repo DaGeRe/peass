@@ -28,7 +28,8 @@ public class TestDependencyIteratorBuilder {
          config.setVersionOld(SIMPLE_PREDECESSOR);
          config.setVersion("HEAD");
 
-         VersionIteratorGit iterator = DependencyIteratorBuilder.getIterator(config, LAST_RUNNING_VERSION, new PeassFolders(TEMPORARY_FOLDER));
+         
+         VersionIteratorGit iterator = new DependencyIteratorBuilder(config, LAST_RUNNING_VERSION, new PeassFolders(TEMPORARY_FOLDER)).getIterator();
          Assert.assertEquals(2, iterator.getSize());
          Assert.assertEquals(VERSION_2, iterator.getTag());
          Assert.assertEquals(SIMPLE_PREDECESSOR, iterator.getPredecessor());
@@ -44,7 +45,7 @@ public class TestDependencyIteratorBuilder {
          config.setVersionOld(null);
          config.setVersion("HEAD");
 
-         VersionIteratorGit iterator = DependencyIteratorBuilder.getIterator(config, LAST_RUNNING_VERSION, new PeassFolders(TEMPORARY_FOLDER));
+         VersionIteratorGit iterator = new DependencyIteratorBuilder(config, LAST_RUNNING_VERSION, new PeassFolders(TEMPORARY_FOLDER)).getIterator();
          Assert.assertEquals(2, iterator.getSize());
          Assert.assertEquals(VERSION_2, iterator.getTag());
          Assert.assertEquals(LAST_RUNNING_VERSION, iterator.getPredecessor());
@@ -61,7 +62,7 @@ public class TestDependencyIteratorBuilder {
          config.setVersionOld(null);
          config.setVersion("HEAD");
 
-         VersionIteratorGit iterator = DependencyIteratorBuilder.getIterator(config, null, new PeassFolders(TEMPORARY_FOLDER));
+         VersionIteratorGit iterator = new DependencyIteratorBuilder(config, null, new PeassFolders(TEMPORARY_FOLDER)).getIterator();
          Assert.assertEquals(2, iterator.getSize());
          Assert.assertEquals(VERSION_2, iterator.getTag());
          Assert.assertEquals(SIMPLE_PREDECESSOR, iterator.getPredecessor());

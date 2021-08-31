@@ -73,6 +73,12 @@ public class ResultsFolders {
    }
 
    public File getVersionFullResultsFolder(final String version, final String versionOld) {
+      if (version == null ) {
+         throw new RuntimeException("Version must not be null!");
+      }
+      if (versionOld == null ) {
+         throw new RuntimeException("VersionOld must not be null!");
+      }
       final File fullResultsVersion = new File(resultFolder, version + "_" + versionOld);
       return fullResultsVersion;
    }

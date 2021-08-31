@@ -66,10 +66,9 @@ public class ContinuousExecutor {
 
       folders = new PeassFolders(projectFolderLocal);
 
-      IteratorBuilder iteratorBuiler = new IteratorBuilder(measurementConfig, folders.getProjectFolder());
+      DependencyIteratorBuilder iteratorBuiler = new DependencyIteratorBuilder(measurementConfig.getExecutionConfig(), null, folders);
       iterator = iteratorBuiler.getIterator();
       version = iteratorBuiler.getVersion();
-      versionOld = iteratorBuiler.getVersionOld();
    }
 
    private void getGitRepo(final File projectFolder, final MeasurementConfiguration measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {

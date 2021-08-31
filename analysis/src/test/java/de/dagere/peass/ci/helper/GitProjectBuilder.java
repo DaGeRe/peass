@@ -70,6 +70,8 @@ public class GitProjectBuilder {
       String headOutput = StreamGobbler.getFullProcess(headProcess, false).replaceAll("\n", "");
       tags.add(headOutput);
       
+      LOG.debug("HEAD version: {}", headOutput);
+      
       return headOutput;
    }
    

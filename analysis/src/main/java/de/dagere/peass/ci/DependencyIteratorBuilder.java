@@ -13,31 +13,32 @@ import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionIteratorGit;
 
 public class DependencyIteratorBuilder {
-   
-   private static final Logger LOG = LogManager.getLogger(ContinuousDependencyReader.class);
-   
-   public static VersionIteratorGit getIterator(final ExecutionConfig executionConfig, final String newestRunningVersionName, final PeassFolders folders) {
-      String versionName = GitUtils.getName(executionConfig.getVersion() != null ? executionConfig.getVersion() : "HEAD", folders.getProjectFolder());
-      if (versionName.equals(newestRunningVersionName)) {
-         LOG.info("Version {} is equal to newest version, not executing RTS", versionName);
-         return null;
-      }
-      
-      GitCommit currentCommit = new GitCommit(versionName, "", "", "");
-      GitCommit oldVersionCommit = getOldVersionCommit(executionConfig, newestRunningVersionName, folders);
 
-      if (oldVersionCommit.getTag().equals(currentCommit.getTag())) {
+   private static final Logger LOG = LogManager.getLogger(ContinuousDependencyReader.class);
+
+   private final String version, versionOld;
+   private final VersionIteratorGit iterator;
+
+   public DependencyIteratorBuilder(final ExecutionConfig executionConfig, final String newestRunningVersionName, final PeassFolders folders) {
+      version = GitUtils.getName(executionConfig.getVersion() != null ? executionConfig.getVersion() : "HEAD", folders.getProjectFolder());
+
+      GitCommit currentCommit = new GitCommit(version, "", "", "");
+      GitCommit oldVersionCommit = getOldVersionCommit(executionConfig, newestRunningVersionName, folders);
+      versionOld = oldVersionCommit.getTag();
+
+      if (version.equals(newestRunningVersionName)) {
+         LOG.info("Version {} is equal to newest version, not executing RTS", version);
+         iterator = null;
+      } else if (oldVersionCommit.getTag().equals(currentCommit.getTag())) {
          LOG.error("Version {} is equal to predecessing version {}, some error occured - not executing RTS", currentCommit.getTag(), oldVersionCommit.getTag());
-         return null;
+         iterator = null;
+      } else {
+         List<GitCommit> commits = new LinkedList<>();
+         commits.add(oldVersionCommit);
+         commits.add(currentCommit);
+         LOG.info("Analyzing {} - {}", oldVersionCommit, currentCommit);
+         iterator = new VersionIteratorGit(folders.getProjectFolder(), commits, oldVersionCommit);
       }
-      
-      List<GitCommit> commits = new LinkedList<>();
-      commits.add(oldVersionCommit);
-      commits.add(currentCommit);
-      LOG.info("Analyzing {} - {}", oldVersionCommit, currentCommit);
-      VersionIteratorGit newIterator = new VersionIteratorGit(folders.getProjectFolder(), commits, oldVersionCommit);
-      
-      return newIterator;
    }
 
    private static GitCommit getOldVersionCommit(final ExecutionConfig executionConfig, final String newestRunningVersionName, final PeassFolders folders) {
@@ -52,4 +53,17 @@ public class DependencyIteratorBuilder {
       GitCommit oldVersionCommit = new GitCommit(oldVersion, "", "", "");
       return oldVersionCommit;
    }
+
+   public String getVersion() {
+      return version;
+   }
+
+   public String getVersionOld() {
+      return versionOld;
+   }
+
+   public VersionIteratorGit getIterator() {
+      return iterator;
+   }
+
 }
