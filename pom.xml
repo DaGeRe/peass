@@ -71,7 +71,7 @@
 
 	<inceptionYear>2015</inceptionYear>
 	<properties>
-		<mockito.version>3.12.1</mockito.version>
+		<mockito.version>3.12.4</mockito.version>
 		<project.organization.name>DaGeRe</project.organization.name>
 		<license.licenseName>agpl_v3</license.licenseName>
 	</properties>
