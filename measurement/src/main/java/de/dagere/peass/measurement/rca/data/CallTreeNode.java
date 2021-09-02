@@ -104,7 +104,7 @@ public class CallTreeNode extends BasicNode {
          int remainingWarmup = config.getNodeWarmup();
          for (ListIterator<StatisticalSummary> it = statistic.listIterator(); it.hasNext();) {
             StatisticalSummary chunk = it.next();
-            long countOfExecutions = chunk.getN() * config.getRepetitions();
+            long countOfExecutions = chunk.getN();
             if (remainingWarmup > countOfExecutions) {
                remainingWarmup -= countOfExecutions;
                LOG.debug("Reducing warmup by {}, remaining warmup {}", countOfExecutions, remainingWarmup);

@@ -9,41 +9,52 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.measurement.rca.data.CallTreeNode;
 
 
 public class CallTreeNodeWarmupTest {
    
    @Test
    public void testWarmup() {
-      MeasurementConfiguration config = new MeasurementConfiguration(5, "1", "1");
-      config.setWarmup(25);
-      final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", 
-            "public void de.mypackage.Test.callMethod()", 
-            "public void de.mypackage.Test.callMethod()", 
-            config);
-      final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", 
-            "public void de.mypackage.Test.callMethod()", 
-            "public void de.mypackage.Test.callMethod()", 
-            config);
-      node.setOtherVersionNode(otherVersionNode);
-      
       List<StatisticalSummary> values = new LinkedList<>();
       values.add(new StatisticalSummaryValues(100, 10, 75, 100, 100, 75*100));
       values.add(new StatisticalSummaryValues(25, 5, 100, 25, 25, 100*25));
       
-      node.initVersions();
-      node.addAggregatedMeasurement("1", values);
-
-      node.createStatistics("1");
+      MeasurementConfiguration config = new MeasurementConfiguration(5, "1", "1");
+      config.setWarmup(25);
+      
+      final CallTreeNode node = initNode(values, config);
       Assert.assertEquals(50.0, node.getStatistics("1").getMean(), 0.01);
    }
    
    @Test
    public void testWarmupWithRepetitions() {
+      List<StatisticalSummary> values = new LinkedList<>();
+      values.add(new StatisticalSummaryValues(100, 10, 700, 100, 100, 70*100));
+      values.add(new StatisticalSummaryValues(25, 5, 1000, 25, 25, 100*25));
+      
       MeasurementConfiguration config = new MeasurementConfiguration(5, "1", "1");
       config.setWarmup(20);
       config.setRepetitions(10);
+      config.setIterations(150);
+      final CallTreeNode node = initNode(values, config);
+      Assert.assertEquals(50.0, node.getStatistics("1").getMean(), 0.01);
+   }
+   
+   @Test
+   public void testWarmupWithRepetitions2() {
+      List<StatisticalSummary> values = new LinkedList<>();
+      values.add(new StatisticalSummaryValues(100, 10, 100, 100, 100, 70*100));
+      values.add(new StatisticalSummaryValues(25, 5, 100, 25, 25, 100*25));
+      
+      MeasurementConfiguration config = new MeasurementConfiguration(5, "1", "1");
+      config.setWarmup(10);
+      config.setRepetitions(10);
+      config.setIterations(10);
+      final CallTreeNode node = initNode(values, config);
+      Assert.assertEquals(25.0, node.getStatistics("1").getMean(), 0.01);
+   }
+
+   private CallTreeNode initNode(final List<StatisticalSummary> values, final MeasurementConfiguration config) {
       final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", 
             "public void de.mypackage.Test.callMethod()", 
             "public void de.mypackage.Test.callMethod()", 
@@ -54,14 +65,10 @@ public class CallTreeNodeWarmupTest {
             config);
       node.setOtherVersionNode(otherVersionNode);
       
-      List<StatisticalSummary> values = new LinkedList<>();
-      values.add(new StatisticalSummaryValues(100, 10, 70, 100, 100, 70*100));
-      values.add(new StatisticalSummaryValues(25, 5, 100, 25, 25, 100*25));
-      
       node.initVersions();
       node.addAggregatedMeasurement("1", values);
 
       node.createStatistics("1");
-      Assert.assertEquals(50.0, node.getStatistics("1").getMean(), 0.01);
+      return node;
    }
 }
