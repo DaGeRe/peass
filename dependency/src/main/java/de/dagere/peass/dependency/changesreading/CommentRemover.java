@@ -1,6 +1,7 @@
 package de.dagere.peass.dependency.changesreading;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +23,10 @@ class CommentRemover{
 
    private void clearComments(final Node node) {
       clearOuterComment(node);
-      node.getOrphanComments().clear();
+      List<Comment> comments = new LinkedList<>(node.getAllContainedComments());
+      for (Comment comment : comments) {
+         node.removeOrphanComment(comment);
+      }
       final List<Node> childNodes = node.getChildNodes();
       LOG.trace("Type: {}", childNodes.getClass());
       clearInnerComments(childNodes);
