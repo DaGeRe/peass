@@ -17,6 +17,7 @@ public class TestArgLineBuilder {
       JUnitTestTransformer mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
       MeasurementConfiguration config = new MeasurementConfiguration(2);
       config.setUseKieker(true);
+      config.setUseSourceInstrumentation(false);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
 
       ArgLineBuilder builder = new ArgLineBuilder(mockedTransformer, new File("/tmp/asd"));
