@@ -29,21 +29,14 @@ public class MeasurementConfiguration implements Serializable {
    private boolean executeBeforeClassInMeasurement = false;
    private boolean showStart = false;
 
-   // Kieker config
-   private boolean useKieker = false;
-   private boolean useSourceInstrumentation = false;
-   private boolean useSelectiveInstrumentation = false;
-   private boolean useSampling = false;
-   private boolean useCircularQueue = false;
-   private boolean redirectToNull = true;
-   private boolean enableAdaptiveMonitoring = false;
+   @JsonIgnore
+   private KiekerConfiguration kiekerConfig;
    
    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
    private boolean saveAll = true;
    
-   private int kiekerAggregationInterval = 5000;
    private String javaVersion = System.getProperty("java.version");
-   private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
+   
    private MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
    
    private StatisticsConfiguration statisticsConfig = new StatisticsConfiguration();
@@ -151,17 +144,18 @@ public class MeasurementConfiguration implements Serializable {
       this.repetitions = other.repetitions;
       this.logFullData = other.logFullData;
       this.removeSnapshots = other.removeSnapshots;
-      this.useKieker = other.useKieker;
-      this.useSourceInstrumentation = other.useSourceInstrumentation;
-      this.useSelectiveInstrumentation = other.useSelectiveInstrumentation;
-      this.useSampling = other.useSampling;
-      this.useCircularQueue = other.useCircularQueue;
-      this.redirectToNull = other.redirectToNull;
-      this.enableAdaptiveMonitoring = other.enableAdaptiveMonitoring;
+      kiekerConfig = new KiekerConfiguration();
+      kiekerConfig.setUseKieker(other.isUseKieker());
+      kiekerConfig.setUseSourceInstrumentation(other.isUseSourceInstrumentation());
+      kiekerConfig.setUseSelectiveInstrumentation(other.isUseSelectiveInstrumentation());
+      kiekerConfig.setUseSampling(other.isUseSampling());
+      kiekerConfig.setUseCircularQueue(other.isUseCircularQueue());
+      kiekerConfig.setRedirectToNull(other.isRedirectToNull());
+      kiekerConfig.setEnableAdaptiveMonitoring(other.isEnableAdaptiveConfig());
+      kiekerConfig.setKiekerAggregationInterval(other.getKiekerAggregationInterval());
+      kiekerConfig.setRecord(other.getRecord());
       this.useGC = other.useGC;
-      this.kiekerAggregationInterval = other.kiekerAggregationInterval;
       this.javaVersion = other.javaVersion;
-      this.record = other.record;
       this.measurementStrategy = other.measurementStrategy;
       this.saveAll = other.saveAll;
       this.executeBeforeClassInMeasurement = other.executeBeforeClassInMeasurement;
@@ -214,11 +208,11 @@ public class MeasurementConfiguration implements Serializable {
    }
 
    public boolean isRedirectToNull() {
-      return redirectToNull;
+      return kiekerConfig.isRedirectToNull();
    }
 
    public void setRedirectToNull(final boolean redirectToNull) {
-      this.redirectToNull = redirectToNull;
+      kiekerConfig.setRedirectToNull(redirectToNull);
    }
 
    public long getTimeout() {
@@ -319,19 +313,19 @@ public class MeasurementConfiguration implements Serializable {
    }
 
    public boolean isUseKieker() {
-      return useKieker;
+      return kiekerConfig.isUseKieker();
    }
 
    public void setUseKieker(final boolean useKieker) {
-      this.useKieker = useKieker;
+      kiekerConfig.setUseKieker(useKieker);
    }
 
    public int getKiekerAggregationInterval() {
-      return kiekerAggregationInterval;
+      return kiekerConfig.getKiekerAggregationInterval();
    }
 
    public void setKiekerAggregationInterval(final int kiekerAggregationInterval) {
-      this.kiekerAggregationInterval = kiekerAggregationInterval;
+      kiekerConfig.setKiekerAggregationInterval(kiekerAggregationInterval);
    }
 
    public String getJavaVersion() {
@@ -343,55 +337,51 @@ public class MeasurementConfiguration implements Serializable {
    }
 
    public void setRecord(final AllowedKiekerRecord record) {
-      if (record == null) {
-         this.record = AllowedKiekerRecord.OPERATIONEXECUTION;
-      } else {
-         this.record = record;
-      }
+      kiekerConfig.setRecord(record);
    }
 
    public AllowedKiekerRecord getRecord() {
-      return record;
+      return kiekerConfig.getRecord();
    }
 
    public boolean isUseSourceInstrumentation() {
-      return useSourceInstrumentation;
+      return kiekerConfig.isUseSourceInstrumentation();
    }
 
    public void setUseSourceInstrumentation(final boolean useSourceInstrumentation) {
-      this.useSourceInstrumentation = useSourceInstrumentation;
+      kiekerConfig.setUseSourceInstrumentation(useSourceInstrumentation);
    }
 
    public boolean isUseCircularQueue() {
-      return useCircularQueue;
+      return kiekerConfig.isUseCircularQueue();
    }
 
    public void setUseCircularQueue(final boolean useCircularQueue) {
-      this.useCircularQueue = useCircularQueue;
+      kiekerConfig.setUseCircularQueue(useCircularQueue);
    }
 
    public boolean isUseSelectiveInstrumentation() {
-      return useSelectiveInstrumentation;
+      return kiekerConfig.isUseSelectiveInstrumentation();
    }
 
    public void setUseSelectiveInstrumentation(final boolean useSelectiveInstrumentation) {
-      this.useSelectiveInstrumentation = useSelectiveInstrumentation;
+      kiekerConfig.setUseSelectiveInstrumentation(useSelectiveInstrumentation);
    }
 
    public boolean isUseSampling() {
-      return useSampling;
+      return kiekerConfig.isUseSampling();
    }
 
    public void setUseSampling(final boolean useSampling) {
-      this.useSampling = useSampling;
+      kiekerConfig.setUseSampling(useSampling);
    }
 
    public boolean isEnableAdaptiveConfig() {
-      return enableAdaptiveMonitoring;
+      return kiekerConfig.isEnableAdaptiveMonitoring();
    }
 
    public void setEnableAdaptiveConfig(final boolean allowAdaptiveConfig) {
-      this.enableAdaptiveMonitoring = allowAdaptiveConfig;
+      kiekerConfig.setEnableAdaptiveMonitoring(allowAdaptiveConfig);
    }
 
    public MeasurementStrategy getMeasurementStrategy() {
