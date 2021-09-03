@@ -28,6 +28,7 @@ public class MeasurementConfiguration implements Serializable {
    private boolean useGC = true;
    private boolean executeBeforeClassInMeasurement = false;
    private boolean showStart = false;
+   private boolean redirectToNull = true;
 
    @JsonIgnore
    private final KiekerConfiguration kiekerConfig;
@@ -51,7 +52,7 @@ public class MeasurementConfiguration implements Serializable {
    public MeasurementConfiguration(final int vms, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig) {
       this.executionConfig = executionConfig;
       this.vms = vms;
-      this.kiekerConfig = kiekerConfig;
+      this.kiekerConfig = new KiekerConfiguration(kiekerConfig);
    }
 
    public MeasurementConfiguration(final int vms, final String version, final String versionOld) {
@@ -149,13 +150,13 @@ public class MeasurementConfiguration implements Serializable {
       this.repetitions = other.repetitions;
       this.logFullData = other.logFullData;
       this.removeSnapshots = other.removeSnapshots;
+      this.redirectToNull = other.redirectToNull;
       kiekerConfig = new KiekerConfiguration();
       kiekerConfig.setUseKieker(other.isUseKieker());
       kiekerConfig.setUseSourceInstrumentation(other.isUseSourceInstrumentation());
       kiekerConfig.setUseSelectiveInstrumentation(other.isUseSelectiveInstrumentation());
       kiekerConfig.setUseSampling(other.isUseSampling());
       kiekerConfig.setUseCircularQueue(other.isUseCircularQueue());
-      kiekerConfig.setRedirectToNull(other.isRedirectToNull());
       kiekerConfig.setEnableAdaptiveMonitoring(other.isEnableAdaptiveConfig());
       kiekerConfig.setKiekerAggregationInterval(other.getKiekerAggregationInterval());
       kiekerConfig.setRecord(other.getRecord());
@@ -213,11 +214,11 @@ public class MeasurementConfiguration implements Serializable {
    }
 
    public boolean isRedirectToNull() {
-      return kiekerConfig.isRedirectToNull();
+      return redirectToNull;
    }
 
    public void setRedirectToNull(final boolean redirectToNull) {
-      kiekerConfig.setRedirectToNull(redirectToNull);
+      this.redirectToNull = redirectToNull;
    }
 
    public long getTimeout() {

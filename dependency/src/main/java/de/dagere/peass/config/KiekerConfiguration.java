@@ -8,7 +8,6 @@ public class KiekerConfiguration {
    private boolean useSelectiveInstrumentation = true;
    private boolean useSampling = false;
    private boolean useCircularQueue = true;
-   private boolean redirectToNull = true;
    private boolean enableAdaptiveMonitoring = false;
    private int kiekerAggregationInterval = 5000;
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
@@ -18,6 +17,17 @@ public class KiekerConfiguration {
 
    public KiekerConfiguration(final boolean useKieker) {
       this.useKieker = useKieker;
+   }
+
+   public KiekerConfiguration(final KiekerConfiguration other) {
+      this.useKieker = other.useKieker;
+      this.useSourceInstrumentation = other.useSourceInstrumentation;
+      this.useSelectiveInstrumentation = other.useSelectiveInstrumentation;
+      this.useSampling = other.useSampling;
+      this.useCircularQueue = other.useCircularQueue;
+      this.enableAdaptiveMonitoring = other.enableAdaptiveMonitoring;
+      this.kiekerAggregationInterval = other.kiekerAggregationInterval;
+      this.record = other.record;
    }
 
    public boolean isUseKieker() {
@@ -58,14 +68,6 @@ public class KiekerConfiguration {
 
    public void setUseCircularQueue(final boolean useCircularQueue) {
       this.useCircularQueue = useCircularQueue;
-   }
-
-   public boolean isRedirectToNull() {
-      return redirectToNull;
-   }
-
-   public void setRedirectToNull(final boolean redirectToNull) {
-      this.redirectToNull = redirectToNull;
    }
 
    public boolean isEnableAdaptiveMonitoring() {
