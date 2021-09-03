@@ -24,15 +24,17 @@ public class KiekerEnvironmentPreparer {
    private static final Logger LOG = LogManager.getLogger(KiekerEnvironmentPreparer.class);
 
    private static final String[] metaInfFolders = new String[] { "src/main/resources/META-INF", "src/java/META-INF", "src/test/resources/META-INF", "src/test/META-INF",
-   "target/test-classes/META-INF" };
-   
+         "target/test-classes/META-INF" };
+
    private final Set<String> includedMethodPattern;
+   private final List<String> existingClasses;
    private final PeassFolders folders;
    private final TestTransformer testTransformer;
    private List<File> modules;
 
-   public KiekerEnvironmentPreparer(final Set<String> includedMethodPattern, final PeassFolders folders, final TestTransformer testTransformer, final List<File> modules) {
+   public KiekerEnvironmentPreparer(final Set<String> includedMethodPattern, final List<String> existingClasses, final PeassFolders folders, final TestTransformer testTransformer, final List<File> modules) {
       this.includedMethodPattern = includedMethodPattern;
+      this.existingClasses = existingClasses;
       this.folders = folders;
       this.testTransformer = testTransformer;
       this.modules = modules;
@@ -81,7 +83,7 @@ public class KiekerEnvironmentPreparer {
    private void buildJettyExclusion(final HashSet<String> excludedPatterns) {
       for (String notInstrumenting : new String[] { "org.eclipse.jetty.logging.JettyLevel", "org.eclipse.jetty.logging.JettyLoggerConfiguration",
             "org.eclipse.jetty.logging.JettyLoggingServiceProvider", "org.eclipse.jetty.logging.JettyLoggerFactory", "org.eclipse.jetty.logging.StdErrAppender",
-            "org.eclipse.jetty.logging.Timestamp","org.eclipse.jetty.logging.Timestamp$Tick",
+            "org.eclipse.jetty.logging.Timestamp", "org.eclipse.jetty.logging.Timestamp$Tick",
             "org.eclipse.jetty.logging.JettyLogger" }) {
          excludedPatterns.add("new " + notInstrumenting + ".<init>(..)");
          excludedPatterns.add("* " + notInstrumenting + ".*(..)"); // package visibility things from JettyLoggingServiceProvider with any return
@@ -138,17 +140,26 @@ public class KiekerEnvironmentPreparer {
                final File folder = new File(module, potentialReadFolder);
                folder.mkdirs();
                final File goalFile2 = new File(folder, "aop.xml");
-               final Set<String> clazzes = new HashSet<String>();
-               for (String method : includedMethodPattern) {
-                  final String methodBeforeParameters = method.substring(0, method.indexOf('('));
-                  final String clazz = methodBeforeParameters.substring(methodBeforeParameters.lastIndexOf(' ') + 1, methodBeforeParameters.lastIndexOf('.'));
-                  clazzes.add(clazz);
-               }
+               final Set<String> clazzes = getClazzSet();
                AOPXMLHelper.writeAOPXMLToFile(new LinkedList<String>(clazzes), goalFile2, aspect);
             }
          }
       } catch (IOException e) {
          e.printStackTrace();
       }
+   }
+
+   private Set<String> getClazzSet() {
+      final Set<String> clazzes = new HashSet<String>();
+      if (includedMethodPattern != null) {
+         for (String method : includedMethodPattern) {
+            final String methodBeforeParameters = method.substring(0, method.indexOf('('));
+            final String clazz = methodBeforeParameters.substring(methodBeforeParameters.lastIndexOf(' ') + 1, methodBeforeParameters.lastIndexOf('.'));
+            clazzes.add(clazz);
+         }
+      } else {
+         clazzes.addAll(existingClasses);
+      }
+      return clazzes;
    }
 }

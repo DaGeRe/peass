@@ -2,7 +2,9 @@ package de.dagere.peass.dependency.execution;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -38,18 +41,37 @@ public class TestKiekerEnvironmentPreparer {
       modules.add(DependencyTestConstants.CURRENT);
       KiekerConfiguration kiekerConfig = new KiekerConfiguration(true);
       kiekerConfig.setUseSourceInstrumentation(false);
-      KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPatterns, new PeassFolders(DependencyTestConstants.CURRENT),
+      KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPatterns, new LinkedList<>(), new PeassFolders(DependencyTestConstants.CURRENT),
             new JUnitTestTransformer(DependencyTestConstants.CURRENT, new ExecutionConfig(10), kiekerConfig), modules);
       
       kiekerEnvironmentPreparer.prepareKieker();
       
+      checkAopCorrectness();
+   }
+
+   private void checkAopCorrectness() throws IOException, FileNotFoundException {
       File aopXml = new File(DependencyTestConstants.CURRENT, "src/main/resources/META-INF/aop.xml");
       Assert.assertTrue(aopXml.exists());
       
       try (FileInputStream inputStream = new FileInputStream(aopXml)){
          String fileText = IOUtils.toString(inputStream, "UTF-8");
-         Assert.assertThat(fileText, Matchers.containsString("defaultpackage.NormalDependency"));
+         MatcherAssert.assertThat(fileText, Matchers.containsString("defaultpackage.NormalDependency"));
       }
+   }
+   
+   @Test
+   public void testFullAopXMLGeneration() throws IOException, InterruptedException {
+      List<File> modules = new LinkedList<File>();
+      modules.add(DependencyTestConstants.CURRENT);
+      
+      KiekerConfiguration kiekerConfig = new KiekerConfiguration(true);
+      kiekerConfig.setUseSourceInstrumentation(false);
+      KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(null, Arrays.asList("defaultpackage.NormalDependency"), new PeassFolders(DependencyTestConstants.CURRENT),
+            new JUnitTestTransformer(DependencyTestConstants.CURRENT, new ExecutionConfig(10), kiekerConfig), modules);
+      
+      kiekerEnvironmentPreparer.prepareKieker();
+      
+      checkAopCorrectness();
    }
 
 }
