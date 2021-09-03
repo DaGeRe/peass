@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.GradleTestExecutor;
@@ -62,14 +63,14 @@ public class ExecutorCreator {
       
    }
    
-   public static TestTransformer createTestTransformer(final PeassFolders folders, final ExecutionConfig executionConfig) {
+   public static TestTransformer createTestTransformer(final PeassFolders folders, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig) {
       try {
          Class<?> testTransformerClass = Class.forName(executionConfig.getTestTransformer());
          if (!Arrays.asList(testTransformerClass.getInterfaces()).contains(TestTransformer.class)) {
             throw new RuntimeException("TestTransformer needs to be implemented by " + executionConfig.getTestTransformer());
          }
-         Constructor<?> constructor = testTransformerClass.getConstructor(File.class, ExecutionConfig.class);
-         TestTransformer transformer = (TestTransformer) constructor.newInstance(folders.getProjectFolder(), executionConfig);
+         Constructor<?> constructor = testTransformerClass.getConstructor(File.class, ExecutionConfig.class, KiekerConfiguration.class);
+         TestTransformer transformer = (TestTransformer) constructor.newInstance(folders.getProjectFolder(), executionConfig, kiekerConfig);
          return transformer;
       } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
          LOG.debug("Initialization was not possible; this should be thrown uncatched");
