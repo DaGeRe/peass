@@ -30,7 +30,7 @@ public class MeasurementConfiguration implements Serializable {
    private boolean showStart = false;
 
    @JsonIgnore
-   private KiekerConfiguration kiekerConfig;
+   private final KiekerConfiguration kiekerConfig;
    
    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
    private boolean saveAll = true;
@@ -44,16 +44,19 @@ public class MeasurementConfiguration implements Serializable {
 
    public MeasurementConfiguration(final int vms) {
       executionConfig = new ExecutionConfig(20);
+      kiekerConfig = new KiekerConfiguration();
       this.vms = vms;
    }
 
-   public MeasurementConfiguration(final int vms, final ExecutionConfig executionConfig) {
+   public MeasurementConfiguration(final int vms, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig) {
       this.executionConfig = executionConfig;
       this.vms = vms;
+      this.kiekerConfig = kiekerConfig;
    }
 
    public MeasurementConfiguration(final int vms, final String version, final String versionOld) {
       executionConfig = new ExecutionConfig(20);
+      kiekerConfig = new KiekerConfiguration();
       this.vms = vms;
       executionConfig.setVersion(version);
       executionConfig.setVersionOld(versionOld);
@@ -64,6 +67,7 @@ public class MeasurementConfiguration implements Serializable {
          @JsonProperty("type1error") final double type1error,
          @JsonProperty("type2error") final double type2error) {
       executionConfig = new ExecutionConfig(timeout / (60 * 1000));
+      kiekerConfig = new KiekerConfiguration();
       this.vms = vms;
       statisticsConfig.setType1error(type1error);
       statisticsConfig.setType2error(type2error);
@@ -120,6 +124,7 @@ public class MeasurementConfiguration implements Serializable {
          @JsonProperty("version") final String version,
          @JsonProperty("versionOld") final String versionOld) {
       executionConfig = new ExecutionConfig(timeout / (60 * 1000));
+      kiekerConfig = new KiekerConfiguration();
       this.vms = vms;
       this.earlyStop = earlyStop;
       executionConfig.setVersion(version);
