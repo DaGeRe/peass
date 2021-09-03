@@ -20,9 +20,6 @@ import org.mockito.Mockito;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.PeassFolders;
-import de.dagere.peass.dependency.execution.EnvironmentVariables;
-import de.dagere.peass.dependency.execution.GradleParseUtil;
-import de.dagere.peass.dependency.execution.GradleTestExecutor;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestGradleParseUtil {
@@ -58,6 +55,7 @@ public class TestGradleParseUtil {
       JUnitTestTransformer transformerMock = Mockito.mock(JUnitTestTransformer.class);
       MeasurementConfiguration measurementConfig = new MeasurementConfiguration(2);
       measurementConfig.setUseKieker(true);
+      measurementConfig.setUseSourceInstrumentation(false);
       Mockito.when(transformerMock.getConfig()).thenReturn(measurementConfig);
       GradleTestExecutor gradleTestExecutor = new GradleTestExecutor(folders, transformerMock, new EnvironmentVariables());
       gradleTestExecutor.setIncludedMethods(new HashSet<String>());
