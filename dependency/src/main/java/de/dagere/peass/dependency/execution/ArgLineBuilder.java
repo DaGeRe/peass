@@ -39,7 +39,7 @@ public class ArgLineBuilder {
    private String buildGenericArgline(final File tempFolder, final String valueSeparator, final String entrySeparator, final String kiekerLine) {
       String argline = getTieredCompilationArglinePart(entrySeparator);
       if (testTransformer.getConfig().isUseKieker()) {
-         String tempFolderPath = "'" + tempFolder.getAbsolutePath() + "'";
+         final String tempFolderPath = "'" + tempFolder.getAbsolutePath() + "'";
          if (!testTransformer.getConfig().isEnableAdaptiveConfig()) {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
                argline += TEMP_DIR + valueSeparator + tempFolderPath;
@@ -58,7 +58,7 @@ public class ArgLineBuilder {
          if (!entrySeparator.contains("\"")) {
             argline += " -Dkieker.monitoring.configuration" + valueSeparator + "\"" + modulePath.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties\"";
          } else {
-            argline += "-Dkieker.monitoring.configuration" + valueSeparator + "'" + modulePath.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties'";
+            argline += entrySeparator + "-Dkieker.monitoring.configuration" + valueSeparator + "'" + modulePath.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties'";
          }
       } 
       return argline;
