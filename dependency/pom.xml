@@ -141,6 +141,15 @@
 			<version>0.14-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-params</artifactId>
+			<version>5.7.2</version>
+			<scope>test</scope>
+		</dependency>
+
+
 		<dependency>
 			<groupId>co.unruly</groupId>
 			<artifactId>java-8-matchers</artifactId>

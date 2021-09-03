@@ -39,31 +39,20 @@ public class ArgLineBuilder {
    private String buildGenericArgline(final File tempFolder, final String valueSeparator, final String entrySeparator, final String kiekerLine) {
       String argline = getTieredCompilationArglinePart(entrySeparator);
       if (testTransformer.getConfig().isUseKieker()) {
-         String writerConfig = "";
          String tempFolderPath = "'" + tempFolder.getAbsolutePath() + "'";
          if (!testTransformer.getConfig().isEnableAdaptiveConfig()) {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
                argline += TEMP_DIR + valueSeparator + tempFolderPath;
-               if (!writerConfig.equals("")) {
-                  argline += entrySeparator + writerConfig;
-               }
 
             } else {
                argline += kiekerLine +
-                     entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath +
-                     entrySeparator + writerConfig;
+                     entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath;
             }
          } else {
             if (testTransformer.getConfig().isUseSourceInstrumentation()) {
                argline += TEMP_DIR + valueSeparator + tempFolderPath;
-               if (!writerConfig.equals("")) {
-                  argline += entrySeparator + writerConfig;
-               }
             } else {
                argline += kiekerLine + entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath;
-               if (!writerConfig.equals("")) {
-                  argline += entrySeparator + writerConfig;
-               }
             }
          }
          if (!entrySeparator.contains("\"")) {

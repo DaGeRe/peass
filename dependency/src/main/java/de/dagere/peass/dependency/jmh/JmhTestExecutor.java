@@ -79,9 +79,11 @@ public class JmhTestExecutor extends TestExecutor {
 
          File lastTmpFile = folders.getTempMeasurementFolder();
          ArgLineBuilder builder = new ArgLineBuilder(transformer, moduleFolder);
-         String argLine = builder.buildArgline(lastTmpFile)
+         String originalArgLine = builder.buildArgline(lastTmpFile);
+         String argLine = originalArgLine
                .replace("'", "") // jmh does not accept ' surrounding the path
-               .replace("\"", "");
+               .replace("\"", "")
+               .replace("${user.home}", System.getProperty("user.home"));
          String[] splittedArgs = argLine.split(" ");
          basicParameters = CommandConcatenator.concatenateCommandArrays(new String[] { "java" }, splittedArgs);
 

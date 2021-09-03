@@ -6,12 +6,17 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -44,13 +49,27 @@ import de.dagere.peass.vcs.GitUtils;
 
 public class JmhDependencyReaderTest {
 
-   @Before
+   @BeforeEach
    public void clearCurrent() throws IOException {
       TestUtil.deleteContents(TestConstants.CURRENT_FOLDER.getParentFile());
    }
 
-   @Test
-   public void testVersionReading() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException,
+   static class KiekerConfigurationProvider implements ArgumentsProvider {
+      @Override
+      public Stream<? extends Arguments> provideArguments(final ExtensionContext context) {
+         KiekerConfiguration regularConfiguration = new KiekerConfiguration(true);
+         KiekerConfiguration aspectJConfiguration = new KiekerConfiguration(true);
+         aspectJConfiguration.setUseSourceInstrumentation(false);
+         return Stream.of(
+               Arguments.of(regularConfiguration),
+               Arguments.of(aspectJConfiguration));
+      }
+   }
+
+   @ParameterizedTest
+   @ArgumentsSource(KiekerConfigurationProvider.class)
+   public void testVersionReading(final KiekerConfiguration kiekerConfig)
+         throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException,
          InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       try (MockedStatic<GitUtils> gitUtilsMock = Mockito.mockStatic(GitUtils.class)) {
          FakeGitUtil.prepareGitUtils(gitUtilsMock);
@@ -65,7 +84,7 @@ public class JmhDependencyReaderTest {
          jmhConfig.setTestExecutor("de.dagere.peass.dependency.jmh.JmhTestExecutor");
 
          DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
-               "", iterator, new VersionKeeper(new File("/dev/null")), jmhConfig, new KiekerConfiguration(true), new EnvironmentVariables());
+               "", iterator, new VersionKeeper(new File("/dev/null")), jmhConfig, kiekerConfig, new EnvironmentVariables());
          reader.readInitialVersion();
 
          checkInitialVersion(resultsFolders);
@@ -79,15 +98,15 @@ public class JmhDependencyReaderTest {
    private void checkChangedVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
       ExecutionData data = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
       TestCase changedBenchmark = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
-      Assert.assertThat(data.getVersions().get("000002").getTests(), Matchers.contains(changedBenchmark));
+      MatcherAssert.assertThat(data.getVersions().get("000002").getTests(), Matchers.contains(changedBenchmark));
    }
 
    private void checkInitialVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
       Dependencies dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
       Map<ChangedEntity, InitialDependency> initialDependencies = dependencies.getInitialversion().getInitialDependencies();
-      Assert.assertThat(initialDependencies.keySet(), Matchers.hasSize(1));
+      MatcherAssert.assertThat(initialDependencies.keySet(), Matchers.hasSize(1));
       InitialDependency initial = initialDependencies.get(new ChangedEntity("de.dagere.peass.ExampleBenchmark", null, "testMethod"));
-      Assert.assertThat(initial.getEntities(), Matchers.hasSize(2));
+      MatcherAssert.assertThat(initial.getEntities(), Matchers.hasSize(2));
    }
 
    private FakeFileIterator mockIterator() {
