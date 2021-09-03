@@ -26,6 +26,9 @@ public class DependencyReadingParallelStarter implements Callable<Void> {
    
    @Mixin
    private DependencyReaderConfigMixin config;
+   
+   @Mixin
+   private KiekerConfigMixin kiekerConfigMixin;
 
    public static void main(final String[] args) {
       try {
@@ -42,7 +45,7 @@ public class DependencyReadingParallelStarter implements Callable<Void> {
       VersionComparator.setVersions(commits);
       
       final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), config.getProjectFolder().getName(), commits, 
-            config.getDependencyConfig(), config.getExecutionConfig(), new EnvironmentVariables());
+            config.getDependencyConfig(), config.getExecutionConfig(), kiekerConfigMixin.getKiekerConfig(), new EnvironmentVariables());
       final ResultsFolders[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);

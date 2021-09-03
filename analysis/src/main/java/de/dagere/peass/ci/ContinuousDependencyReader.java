@@ -16,6 +16,7 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
@@ -39,16 +40,17 @@ public class ContinuousDependencyReader {
 
    private final DependencyConfig dependencyConfig;
    private final ExecutionConfig executionConfig;
+   private final KiekerConfiguration kiekerConfig;
    private final PeassFolders folders;
    private final ResultsFolders resultsFolders;
    private final EnvironmentVariables env;
    private String predecessor;
 
-   public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final PeassFolders folders,
-         final ResultsFolders resultsFolders,
-         final EnvironmentVariables env) {
+   public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig, final PeassFolders folders,
+         final ResultsFolders resultsFolders, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
       this.executionConfig = executionConfig;
+      this.kiekerConfig = kiekerConfig;
       this.folders = folders;
       this.resultsFolders = resultsFolders;
       this.env = env;
@@ -148,7 +150,7 @@ public class ContinuousDependencyReader {
 
    private void doPartialRCS(final Dependencies dependencies, final VersionIterator newIterator) {
       DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, dependencies.getUrl(), newIterator,
-            new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nochanges.json")), executionConfig, env);
+            new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nochanges.json")), executionConfig, kiekerConfig, env);
       newIterator.goTo0thCommit();
 
       reader.readCompletedVersions(dependencies);
@@ -160,13 +162,13 @@ public class ContinuousDependencyReader {
          if (resultsFolders.getCoverageSelectionFile().exists()) {
             ExecutionData coverageExecutions = Constants.OBJECTMAPPER.readValue(resultsFolders.getCoverageSelectionFile(), ExecutionData.class);
             reader.setCoverageExecutions(coverageExecutions);
-            
+
             if (resultsFolders.getCoverageInfoFile().exists()) {
                CoverageSelectionInfo coverageInfo = Constants.OBJECTMAPPER.readValue(resultsFolders.getCoverageInfoFile(), CoverageSelectionInfo.class);
                reader.setCoverageInfo(coverageInfo);
             }
          }
-         
+
          reader.readDependencies();
       } catch (IOException e) {
          throw new RuntimeException(e);
@@ -190,7 +192,7 @@ public class ContinuousDependencyReader {
 
    private Dependencies doFullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
          throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException, ParseException, ViewNotFoundException {
-      final DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, url, iterator, nonChanges, executionConfig, env);
+      final DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, url, iterator, nonChanges, executionConfig, kiekerConfig, env);
       iterator.goToPreviousCommit();
       if (!reader.readInitialVersion()) {
          LOG.error("Analyzing first version was not possible");

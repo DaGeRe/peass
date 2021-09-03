@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.CommitUtil;
+import de.dagere.peass.KiekerConfigMixin;
 import de.dagere.peass.config.DependencyReaderConfigMixin;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeassFolders;
@@ -60,6 +61,9 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
 
    @Mixin
    private DependencyReaderConfigMixin config;
+   
+   @Mixin
+   private KiekerConfigMixin kiekerConfigMixin;
 
    @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Folder for dependencyfile")
    private File dependencyFile = null;
@@ -134,7 +138,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       return previousVersion;
    }
 
-   static DependencyReader createReader(final DependencyReaderConfigMixin config, final ResultsFolders resultsFolders, final Dependencies dependencies, final String previousVersion,
+   DependencyReader createReader(final DependencyReaderConfigMixin config, final ResultsFolders resultsFolders, final Dependencies dependencies, final String previousVersion,
          final int timeout, final VersionControlSystem vcs) {
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.GIT)) {
@@ -142,7 +146,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
          ExecutionConfig executionConfig = config.getExecutionConfig();
          reader = new DependencyReader(config.getDependencyConfig(), new PeassFolders(config.getProjectFolder()), 
                resultsFolders, dependencies.getUrl(), iterator, new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nochanges.json")), 
-               executionConfig, new EnvironmentVariables());
+               executionConfig, kiekerConfigMixin.getKiekerConfig(), new EnvironmentVariables());
          iterator.goTo0thCommit();
       } else if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");

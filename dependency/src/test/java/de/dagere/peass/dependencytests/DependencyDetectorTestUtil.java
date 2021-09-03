@@ -18,6 +18,7 @@ import com.github.javaparser.ParseException;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
@@ -111,7 +112,7 @@ public class DependencyDetectorTestUtil {
    public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config, final DependencyConfig dependencyConfig, final ResultsFolders resultsFolders) {
       try {
          final DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(DependencyTestConstants.CURRENT),
-               resultsFolders, null, fakeIterator, changeManager, config, new EnvironmentVariables());
+               resultsFolders, null, fakeIterator, changeManager, config, new KiekerConfiguration(true), new EnvironmentVariables());
          boolean success = reader.readInitialVersion();
          Assert.assertTrue(success);
          fakeIterator.goToNextCommit();

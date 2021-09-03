@@ -18,6 +18,7 @@ import org.mockito.Mockito;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -116,7 +117,7 @@ public class DependencyDetectorIT {
 
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(DependencyTestConstants.CURRENT), DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager, new ExecutionConfig(5), new EnvironmentVariables());
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(DependencyTestConstants.CURRENT), DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager, new ExecutionConfig(5), new KiekerConfiguration(true),new EnvironmentVariables());
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 

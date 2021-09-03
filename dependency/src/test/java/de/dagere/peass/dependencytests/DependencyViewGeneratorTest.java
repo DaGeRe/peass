@@ -21,6 +21,7 @@ import com.github.javaparser.ParseException;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
@@ -38,7 +39,8 @@ public class DependencyViewGeneratorTest {
    private static final Logger LOG = LogManager.getLogger(TraceGettingIT.class);
 
    @Test
-   public void testTwoVersions() throws IOException, InterruptedException, JAXBException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+   public void testTwoVersions() throws IOException, InterruptedException, JAXBException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException,
+         InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       try (MockedStatic<GitUtils> gitUtilsMock = Mockito.mockStatic(GitUtils.class)) {
          FakeGitUtil.prepareGitUtils(gitUtilsMock);
 
@@ -51,7 +53,7 @@ public class DependencyViewGeneratorTest {
          FakeFileIterator iteratorspied = mockIterator();
 
          DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
-               "", iteratorspied, new VersionKeeper(new File("/dev/null")), new ExecutionConfig(), new EnvironmentVariables());
+               "", iteratorspied, new VersionKeeper(new File("/dev/null")), new ExecutionConfig(), new KiekerConfiguration(true), new EnvironmentVariables());
          reader.readInitialVersion();
          reader.readDependencies();
 
@@ -66,7 +68,7 @@ public class DependencyViewGeneratorTest {
          Assert.assertEquals(2, tests.getVersions().size());
          Assert.assertEquals(1, tests.getVersions().get("000002").getTests().size());
       }
-      
+
    }
 
    private FakeFileIterator mockIterator() {

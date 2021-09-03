@@ -64,6 +64,7 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.parsing.JUnitParseUtil;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
@@ -111,12 +112,14 @@ public class JUnitTestTransformer implements TestTransformer {
     * @param projectFolder
     * @param timeout
     */
-   public JUnitTestTransformer(final File projectFolder, final ExecutionConfig executionConfig) {
+   public JUnitTestTransformer(final File projectFolder, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig) {
       this.projectFolder = projectFolder;
-      config = new MeasurementConfiguration(1, executionConfig);
+      if (!kiekerConfig.isUseKieker()) {
+         throw new RuntimeException("Kieker needs to be enabled for dependency reading!");
+      }
+      config = new MeasurementConfiguration(1, executionConfig, kiekerConfig);
       config.setIterations(1);
       config.setWarmup(0);
-      config.setUseKieker(true);
       datacollectorlist = DataCollectorList.ONLYTIME;
    }
 

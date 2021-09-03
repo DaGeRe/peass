@@ -11,6 +11,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
@@ -70,7 +71,7 @@ public class TestTreeFilter {
    }
 
    public CallTreeNode getTree() throws IOException, XmlPullParserException, InterruptedException, FileNotFoundException, ViewNotFoundException, AnalysisConfigurationException {
-      TreeReader executor = TreeReaderFactory.createTestTreeReader(projectFolder, new ExecutionConfig(15), new EnvironmentVariables());
+      TreeReader executor = TreeReaderFactory.createTestTreeReader(projectFolder, new ExecutionConfig(15), new KiekerConfiguration(true), new EnvironmentVariables());
       
       TestCase test = new TestCase("defaultpackage.TestMe", "testMe");
 //      executor.executeKoPeMeKiekerRun(new TestSet(test), "1");

@@ -4,14 +4,21 @@ import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class KiekerConfiguration {
    private boolean useKieker = false;
-   private boolean useSourceInstrumentation = false;
-   private boolean useSelectiveInstrumentation = false;
-   private boolean useSampling = false;
-   private boolean useCircularQueue = false;
+   private boolean useSourceInstrumentation = true;
+   private boolean useSelectiveInstrumentation = true;
+   private boolean useSampling = true;
+   private boolean useCircularQueue = true;
    private boolean redirectToNull = true;
    private boolean enableAdaptiveMonitoring = false;
    private int kiekerAggregationInterval = 5000;
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
+
+   public KiekerConfiguration() {
+   }
+
+   public KiekerConfiguration(final boolean useKieker) {
+      this.useKieker = useKieker;
+   }
 
    public boolean isUseKieker() {
       return useKieker;

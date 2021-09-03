@@ -39,6 +39,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.CalledMethods;
@@ -79,8 +80,8 @@ public class DependencyManager extends KiekerResultManager {
     * @throws InstantiationException
     * @throws ClassNotFoundException
     */
-   public DependencyManager(final PeassFolders folders, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
-      super(folders, executionConfig, env);
+   public DependencyManager(final PeassFolders folders, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig, final EnvironmentVariables env) {
+      super(folders, executionConfig, kiekerConfig, env);
    }
 
    public DependencyManager(final TestExecutor executor, final PeassFolders folders, final JUnitTestTransformer testTransformer) {

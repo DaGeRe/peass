@@ -18,6 +18,7 @@ import com.github.javaparser.ParseException;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.PeassFolders;
@@ -65,6 +66,8 @@ public class DependencyReader {
    protected VersionIterator iterator;
    protected String lastRunningVersion;
    private final VersionKeeper skippedNoChange;
+   
+   private final KiekerConfiguration kiekerConfig;
    private final ExecutionConfig executionConfig;
    private final EnvironmentVariables env;
 
@@ -74,13 +77,14 @@ public class DependencyReader {
 
    public DependencyReader(final DependencyConfig dependencyConfig, final PeassFolders folders,
          final ResultsFolders resultsFolders, final String url, final VersionIterator iterator,
-         final ChangeManager changeManager, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+         final ChangeManager changeManager, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
       this.resultsFolders = resultsFolders;
       this.iterator = iterator;
       this.folders = folders;
       this.skippedNoChange = new VersionKeeper(new File("/dev/null"));
       this.executionConfig = executionConfig;
+      this.kiekerConfig = kiekerConfig;
       this.env = env;
 
       dependencyResult.setUrl(url);
@@ -100,13 +104,14 @@ public class DependencyReader {
     */
    public DependencyReader(final DependencyConfig dependencyConfig, final PeassFolders folders, final ResultsFolders resultsFolders, final String url,
          final VersionIterator iterator,
-         final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final EnvironmentVariables env) {
+         final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
       this.resultsFolders = resultsFolders;
       this.iterator = iterator;
       this.folders = folders;
       this.skippedNoChange = skippedNoChange;
       this.executionConfig = executionConfig;
+      this.kiekerConfig = kiekerConfig;
       this.env = env;
 
       dependencyResult.setUrl(url);
@@ -322,7 +327,7 @@ public class DependencyReader {
    }
 
    public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
-      dependencyManager = new DependencyManager(folders, executionConfig, env);
+      dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       InitialVersionReader initialVersionReader = new InitialVersionReader(dependencyResult, dependencyManager, iterator);
       if (initialVersionReader.readInitialVersion()) {
          DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
@@ -347,7 +352,7 @@ public class DependencyReader {
    }
 
    public void readCompletedVersions(final Dependencies initialdependencies) {
-      dependencyManager = new DependencyManager(folders, executionConfig, env);
+      dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
 
       dependencyResult.setVersions(initialdependencies.getVersions());
       dependencyResult.setInitialversion(initialdependencies.getInitialversion());

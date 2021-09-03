@@ -15,6 +15,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.dependency.KiekerResultManager;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
@@ -50,7 +51,7 @@ public class TestPeASSFilter {
    @Test
    public void testExecution() throws ViewNotFoundException, IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       PeassFolders folders = new PeassFolders(CURRENT);
-      final KiekerResultManager manager = new KiekerResultManager(folders, new ExecutionConfig(5), new EnvironmentVariables());
+      final KiekerResultManager manager = new KiekerResultManager(folders, new ExecutionConfig(5), new KiekerConfiguration(true), new EnvironmentVariables());
       final TestSet testset = new TestSet();
       final TestCase testcase = new TestCase("defaultpackage.TestMe", "testMe", "");
       testset.addTest(testcase);

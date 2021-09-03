@@ -17,6 +17,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.ci.helper.GitProjectBuilder;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
@@ -60,13 +61,13 @@ public class TestContinuousDependencyReader {
       executionConfig.setVersion(iterator.getTag());
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new PeassFolders(TestConstants.CURRENT_FOLDER),
-            resultsFolders, new EnvironmentVariables());
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfiguration(true),
+            new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
       Dependencies dependencies = reader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
       checkVersion(dependencies, lastTag, 1);
-      
+
       ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
       Assert.assertEquals(2, executions.getVersions().size());
       System.out.println(executions.getVersions().keySet());
@@ -86,17 +87,17 @@ public class TestContinuousDependencyReader {
       executionConfig.setVersion(newVersion);
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
-      final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig,
+      final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfiguration(true), 
             new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
       Dependencies dependencies = spiedReader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
       checkVersion(dependencies, lastTag, 2);
-      
+
       ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
       Assert.assertEquals(3, executions.getVersions().size());
    }
-   
+
    @Order(3)
    @Test
    public void testEmptyVersion() throws Exception {
@@ -104,15 +105,15 @@ public class TestContinuousDependencyReader {
       GitUtils.goToTag(prevTag, TestConstants.CURRENT_FOLDER);
 
       String newVersion = builder.addVersion(new File("../dependency/src/test/resources/dependencyIT/only_comment_change"), "test 2");
-      
+
       VersionIteratorGit iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
 
       ExecutionConfig executionConfig = new ExecutionConfig();
       executionConfig.setVersion(newVersion);
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new PeassFolders(TestConstants.CURRENT_FOLDER),
-            resultsFolders, new EnvironmentVariables());
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfiguration(true),
+            new PeassFolders(TestConstants.CURRENT_FOLDER),            resultsFolders, new EnvironmentVariables());
       Set<TestCase> tests = reader.getTests(iterator, "", newVersion, new MeasurementConfiguration(1));
 
       Assert.assertEquals(tests.size(), 0);

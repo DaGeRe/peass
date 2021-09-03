@@ -1,5 +1,6 @@
 package de.dagere.peass;
 
+import de.dagere.peass.config.KiekerConfiguration;
 import picocli.CommandLine.Option;
 
 public class KiekerConfigMixin {
@@ -38,6 +39,15 @@ public class KiekerConfigMixin {
 
    public boolean isUseSampling() {
       return useSampling;
+   }
+
+   public KiekerConfiguration getKiekerConfig() {
+      KiekerConfiguration kiekerConfig = new KiekerConfiguration(true);
+      kiekerConfig.setUseCircularQueue(useCircularQueue);
+      kiekerConfig.setUseSelectiveInstrumentation(!notUseSelectiveInstrumentation);
+      kiekerConfig.setUseSampling(useSampling);
+      kiekerConfig.setUseSourceInstrumentation(!notUseSourceInstrumentation);
+      return kiekerConfig;
    }
    
    

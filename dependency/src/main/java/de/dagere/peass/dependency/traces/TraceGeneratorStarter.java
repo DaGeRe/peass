@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.dependency.KiekerResultManager;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
@@ -77,7 +78,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
    private KiekerResultManager runTests(final String newestVersion, final TestSet tests, final PeassFolders folders) throws IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       ExecutionConfig executionConfig = new ExecutionConfig(executionMixin);
 
-      KiekerResultManager resultsManager = new KiekerResultManager(folders, executionConfig, new EnvironmentVariables());
+      KiekerResultManager resultsManager = new KiekerResultManager(folders, executionConfig, new KiekerConfiguration(true), new EnvironmentVariables());
       resultsManager.executeKoPeMeKiekerRun(tests, newestVersion, folders.getDependencyLogFolder());
       return resultsManager;
    }

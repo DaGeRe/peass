@@ -23,6 +23,7 @@ import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -64,7 +65,7 @@ public class JmhDependencyReaderTest {
          jmhConfig.setTestExecutor("de.dagere.peass.dependency.jmh.JmhTestExecutor");
 
          DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
-               "", iterator, new VersionKeeper(new File("/dev/null")), jmhConfig, new EnvironmentVariables());
+               "", iterator, new VersionKeeper(new File("/dev/null")), jmhConfig, new KiekerConfiguration(true), new EnvironmentVariables());
          reader.readInitialVersion();
 
          checkInitialVersion(resultsFolders);

@@ -16,8 +16,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.dependency.PeassFolders;
-import de.dagere.peass.dependency.execution.KiekerEnvironmentPreparer;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
@@ -37,7 +37,7 @@ public class TestKiekerEnvironmentPreparer {
       List<File> modules = new LinkedList<File>();
       modules.add(DependencyTestConstants.CURRENT);
       KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPatterns, new PeassFolders(DependencyTestConstants.CURRENT),
-            new JUnitTestTransformer(DependencyTestConstants.CURRENT, new ExecutionConfig(10)), modules);
+            new JUnitTestTransformer(DependencyTestConstants.CURRENT, new ExecutionConfig(10), new KiekerConfiguration(true)), modules);
       
       kiekerEnvironmentPreparer.prepareKieker();
       

@@ -15,6 +15,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import de.dagere.kopeme.parsing.JUnitParseUtil;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
@@ -40,9 +41,9 @@ public class JmhTestTransformer implements TestTransformer {
       this.measurementConfig = measurementConfig;
    }
 
-   public JmhTestTransformer(final File projectFolder, final ExecutionConfig executionConfig) {
+   public JmhTestTransformer(final File projectFolder, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig) {
       this.projectFolder = projectFolder;
-      measurementConfig = new MeasurementConfiguration(1, executionConfig);
+      measurementConfig = new MeasurementConfiguration(1, executionConfig, kiekerConfig);
       measurementConfig.setIterations(1);
       measurementConfig.setWarmup(0);
       measurementConfig.setUseKieker(true);

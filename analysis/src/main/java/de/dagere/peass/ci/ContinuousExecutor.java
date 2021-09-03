@@ -108,7 +108,7 @@ public class ContinuousExecutor {
    }
 
    protected Set<TestCase> executeRegressionTestSelection(final String url) {
-      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), folders, resultsFolders, env);
+      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), measurementConfig.getKiekerConfig(), folders, resultsFolders, env);
       final Set<TestCase> tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
       versionOld = dependencyReader.getPredecessor();
       

@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.config.DependencyReaderConfigMixin;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -42,6 +43,9 @@ public class DependencyExecutionReader implements Callable<Void>{
 
    @Mixin
    private DependencyReaderConfigMixin config;
+   
+   @Mixin
+   private KiekerConfigMixin kiekerConfigMixin;
 
    public static void main(final String[] args) {
       try {
@@ -64,8 +68,11 @@ public class DependencyExecutionReader implements Callable<Void>{
    }
 
    public void readExecutions(final String project, final List<GitCommit> commits) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, JAXBException {
+      
+      KiekerConfiguration kiekerConfig = kiekerConfigMixin.getKiekerConfig();
+      
       final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, commits, 
-            config.getDependencyConfig(), config.getExecutionConfig(), new EnvironmentVariables());
+            config.getDependencyConfig(), config.getExecutionConfig(), kiekerConfig, new EnvironmentVariables());
       final ResultsFolders[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);
