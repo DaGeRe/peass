@@ -6,7 +6,7 @@ public class KiekerConfiguration {
    private boolean useKieker = false;
    private boolean useSourceInstrumentation = true;
    private boolean useSelectiveInstrumentation = true;
-   private boolean useSampling = true;
+   private boolean useSampling = false;
    private boolean useCircularQueue = true;
    private boolean redirectToNull = true;
    private boolean enableAdaptiveMonitoring = false;

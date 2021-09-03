@@ -36,8 +36,10 @@ public class TestKiekerEnvironmentPreparer {
       includedMethodPatterns.add("private int defaultpackage.NormalDependency.methodB()");
       List<File> modules = new LinkedList<File>();
       modules.add(DependencyTestConstants.CURRENT);
+      KiekerConfiguration kiekerConfig = new KiekerConfiguration(true);
+      kiekerConfig.setUseSourceInstrumentation(false);
       KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPatterns, new PeassFolders(DependencyTestConstants.CURRENT),
-            new JUnitTestTransformer(DependencyTestConstants.CURRENT, new ExecutionConfig(10), new KiekerConfiguration(true)), modules);
+            new JUnitTestTransformer(DependencyTestConstants.CURRENT, new ExecutionConfig(10), kiekerConfig), modules);
       
       kiekerEnvironmentPreparer.prepareKieker();
       
