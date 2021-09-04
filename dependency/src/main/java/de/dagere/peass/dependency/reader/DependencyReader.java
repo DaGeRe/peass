@@ -92,6 +92,10 @@ public class DependencyReader {
       coverageBasedSelection.setUrl(url);
 
       this.changeManager = changeManager;
+      
+      if (!kiekerConfig.isUseKieker()) {
+         throw new RuntimeException("Dependencies may only be read if Kieker is enabled!");
+      }
    }
 
    /**
@@ -117,6 +121,10 @@ public class DependencyReader {
       dependencyResult.setUrl(url);
 
       changeManager = new ChangeManager(folders, iterator);
+      
+      if (!kiekerConfig.isUseKieker()) {
+         throw new RuntimeException("Dependencies may only be read if Kieker is enabled!");
+      }
    }
 
    /**

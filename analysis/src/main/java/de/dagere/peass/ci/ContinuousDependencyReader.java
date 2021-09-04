@@ -50,7 +50,8 @@ public class ContinuousDependencyReader {
          final ResultsFolders resultsFolders, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
       this.executionConfig = executionConfig;
-      this.kiekerConfig = kiekerConfig;
+      this.kiekerConfig = new KiekerConfiguration(kiekerConfig);
+      this.kiekerConfig.setUseKieker(true);
       this.folders = folders;
       this.resultsFolders = resultsFolders;
       this.env = env;
