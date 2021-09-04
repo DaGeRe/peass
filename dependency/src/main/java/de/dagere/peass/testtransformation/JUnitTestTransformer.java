@@ -114,9 +114,6 @@ public class JUnitTestTransformer implements TestTransformer {
     */
    public JUnitTestTransformer(final File projectFolder, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig) {
       this.projectFolder = projectFolder;
-      if (!kiekerConfig.isUseKieker()) {
-         throw new RuntimeException("Kieker needs to be enabled for dependency reading!");
-      }
       config = new MeasurementConfiguration(1, executionConfig, kiekerConfig);
       config.setIterations(1);
       config.setWarmup(0);
