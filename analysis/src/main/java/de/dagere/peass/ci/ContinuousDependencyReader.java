@@ -33,6 +33,7 @@ import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.VersionIterator;
+import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class ContinuousDependencyReader {
 
@@ -52,6 +53,8 @@ public class ContinuousDependencyReader {
       this.executionConfig = executionConfig;
       this.kiekerConfig = new KiekerConfiguration(kiekerConfig);
       this.kiekerConfig.setUseKieker(true);
+      this.kiekerConfig.setRecord(AllowedKiekerRecord.OPERATIONEXECUTION);
+      this.kiekerConfig.setUseSampling(false);
       this.folders = folders;
       this.resultsFolders = resultsFolders;
       this.env = env;
