@@ -18,15 +18,17 @@ import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kiekerReading.KiekerDurationReader;
 import kieker.analysis.exception.AnalysisConfigurationException;
+import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class TreeReader extends KiekerResultManager {
 
    private boolean ignoreEOIs = true;
-   private final MeasurementConfiguration config;
    
    TreeReader(final PeassFolders folders, final MeasurementConfiguration config, final EnvironmentVariables env) throws InterruptedException, IOException {
       super(folders, config.getExecutionConfig(), config.getKiekerConfig(), env);
-      this.config = config;
+      fakeConfig.getKiekerConfig().setUseKieker(true);
+      fakeConfig.getKiekerConfig().setUseSampling(false);
+      fakeConfig.getKiekerConfig().setRecord(AllowedKiekerRecord.OPERATIONEXECUTION);
    }
 
    public void setIgnoreEOIs(final boolean ignoreEOIs) {
@@ -47,7 +49,7 @@ public class TreeReader extends KiekerResultManager {
    private CallTreeNode readTree(final TestCase testcase, final File kiekerTraceFolder) throws AnalysisConfigurationException, IOException, XmlPullParserException {
       final ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), executor.getModules());
       
-      TreeStage stage = KiekerDurationReader.executeDurationStage(kiekerTraceFolder, testcase, ignoreEOIs, config, mapping);
+      TreeStage stage = KiekerDurationReader.executeTreeStage(kiekerTraceFolder, testcase, ignoreEOIs, fakeConfig, mapping);
 
       CallTreeNode root = stage.getRoot();
       if (root == null) {

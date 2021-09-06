@@ -20,8 +20,10 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.TreeReader;
 import de.dagere.peass.measurement.rca.kieker.TreeReaderFactory;
 import kieker.analysis.exception.AnalysisConfigurationException;
+import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
-public class TestTreeFilter {
+public class TestTreeReaderWrongConfig {
+   
    private File tempDir;
    private File projectFolder;
    
@@ -69,7 +71,10 @@ public class TestTreeFilter {
    }
 
    public CallTreeNode getTree() throws IOException, XmlPullParserException, InterruptedException, FileNotFoundException, ViewNotFoundException, AnalysisConfigurationException {
-      TreeReader executor = TreeReaderFactory.createTestTreeReader(projectFolder, new ExecutionConfig(15), new KiekerConfiguration(true), new EnvironmentVariables());
+      KiekerConfiguration wrongKiekerConfig = new KiekerConfiguration(true);
+      wrongKiekerConfig.setUseSampling(true);
+      wrongKiekerConfig.setRecord(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION);
+      TreeReader executor = TreeReaderFactory.createTestTreeReader(projectFolder, new ExecutionConfig(15), wrongKiekerConfig, new EnvironmentVariables());
       
       TestCase test = new TestCase("defaultpackage.TestMe", "testMe");
 //      executor.executeKoPeMeKiekerRun(new TestSet(test), "1");

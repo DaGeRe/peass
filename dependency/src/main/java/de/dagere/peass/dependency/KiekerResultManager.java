@@ -54,10 +54,11 @@ public class KiekerResultManager {
    protected final TestExecutor executor;
    protected final PeassFolders folders;
    protected final TestTransformer testTransformer;
+   protected final MeasurementConfiguration fakeConfig;
 
    public KiekerResultManager(final PeassFolders folders, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig, final EnvironmentVariables env) {
       this.folders = folders;
-      MeasurementConfiguration fakeConfig = new MeasurementConfiguration(1, executionConfig, kiekerConfig);
+      fakeConfig = new MeasurementConfiguration(1, executionConfig, kiekerConfig);
       fakeConfig.setIterations(1);
       fakeConfig.setWarmup(0);
       fakeConfig.setTestGoal(executionConfig.getTestGoal());
@@ -74,6 +75,7 @@ public class KiekerResultManager {
       this.executor = executor;
       this.folders = folders;
       this.testTransformer = testTransformer;
+      fakeConfig = testTransformer.getConfig();
    }
 
    public TestTransformer getTestTransformer() {

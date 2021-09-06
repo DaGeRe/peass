@@ -20,7 +20,7 @@ public class KiekerDurationReader {
       execution.executeBlocking();
    }
    
-   public static TreeStage executeDurationStage(final File kiekerTraceFolder, final TestCase test, 
+   public static TreeStage executeTreeStage(final File kiekerTraceFolder, final TestCase test, 
          final boolean ignoreEOIs, final MeasurementConfiguration config, final ModuleClassMapping mapping) {
       KiekerReaderConfigurationDuration configuration = new KiekerReaderConfigurationDuration();
       TreeStage stage = configuration.readTree(kiekerTraceFolder,  test, ignoreEOIs,  config, mapping);
