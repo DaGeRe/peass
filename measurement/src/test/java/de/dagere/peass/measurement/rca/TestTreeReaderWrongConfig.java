@@ -12,6 +12,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfiguration;
+import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
@@ -74,7 +75,9 @@ public class TestTreeReaderWrongConfig {
       KiekerConfiguration wrongKiekerConfig = new KiekerConfiguration(true);
       wrongKiekerConfig.setUseSampling(true);
       wrongKiekerConfig.setRecord(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION);
-      TreeReader executor = TreeReaderFactory.createTestTreeReader(projectFolder, new ExecutionConfig(15), wrongKiekerConfig, new EnvironmentVariables());
+      
+      final MeasurementConfiguration config = new MeasurementConfiguration(1, new ExecutionConfig(15), wrongKiekerConfig);
+      TreeReader executor = TreeReaderFactory.createTestTreeReader(projectFolder, config, new EnvironmentVariables());
       
       TestCase test = new TestCase("defaultpackage.TestMe", "testMe");
 //      executor.executeKoPeMeKiekerRun(new TestSet(test), "1");

@@ -23,12 +23,14 @@ import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 public class TreeReader extends KiekerResultManager {
 
    private boolean ignoreEOIs = true;
+   private final MeasurementConfiguration realConfig;
    
    TreeReader(final PeassFolders folders, final MeasurementConfiguration config, final EnvironmentVariables env) throws InterruptedException, IOException {
       super(folders, config.getExecutionConfig(), config.getKiekerConfig(), env);
       fakeConfig.getKiekerConfig().setUseKieker(true);
       fakeConfig.getKiekerConfig().setUseSampling(false);
       fakeConfig.getKiekerConfig().setRecord(AllowedKiekerRecord.OPERATIONEXECUTION);
+      this.realConfig = config;
    }
 
    public void setIgnoreEOIs(final boolean ignoreEOIs) {
@@ -49,7 +51,7 @@ public class TreeReader extends KiekerResultManager {
    private CallTreeNode readTree(final TestCase testcase, final File kiekerTraceFolder) throws AnalysisConfigurationException, IOException, XmlPullParserException {
       final ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), executor.getModules());
       
-      TreeStage stage = KiekerDurationReader.executeTreeStage(kiekerTraceFolder, testcase, ignoreEOIs, fakeConfig, mapping);
+      TreeStage stage = KiekerDurationReader.executeTreeStage(kiekerTraceFolder, testcase, ignoreEOIs, realConfig, mapping);
 
       CallTreeNode root = stage.getRoot();
       if (root == null) {

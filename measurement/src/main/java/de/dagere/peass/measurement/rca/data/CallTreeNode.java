@@ -65,6 +65,10 @@ public class CallTreeNode extends BasicNode {
    public void setConfig(final MeasurementConfiguration config) {
       this.config = config;
    }
+   
+   public MeasurementConfiguration getConfig() {
+      return config;
+   }
 
    @Override
    public List<CallTreeNode> getChildren() {

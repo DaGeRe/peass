@@ -3,8 +3,6 @@ package de.dagere.peass.measurement.rca.kieker;
 import java.io.File;
 import java.io.IOException;
 
-import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -41,10 +39,9 @@ public class TreeReaderFactory {
     * @throws InterruptedException
     * @throws IOException
     */
-   public static TreeReader createTestTreeReader(final File projectFolder, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig,
+   public static TreeReader createTestTreeReader(final File projectFolder, final MeasurementConfiguration measurementConfig,
          final EnvironmentVariables env) throws InterruptedException, IOException {
-      final MeasurementConfiguration config = new MeasurementConfiguration(1, executionConfig, kiekerConfig);
-      TreeReader reader = new TreeReader(new PeassFolders(projectFolder), config, env);
+      TreeReader reader = new TreeReader(new PeassFolders(projectFolder), measurementConfig, env);
       return reader;
    }
 }
