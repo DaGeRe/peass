@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
+import de.dagere.peass.config.StatisticsConfiguration;
 import de.dagere.peass.measurement.analysis.statistics.OutlierRemoverVMResults;
 
 public class CallTreeStatistics {
@@ -40,9 +41,9 @@ public class CallTreeStatistics {
       results.add(new CallTreeResult(warmup));
    }
 
-   public void createStatistics() {
+   public void createStatistics(final StatisticsConfiguration config) {
       statistics.clear();
-      OutlierRemoverVMResults.getValuesWithoutOutliers(results, statistics);
+      OutlierRemoverVMResults.getValuesWithoutOutliers(results, statistics, config);
    }
    
    public List<OneVMResult> getResults() {

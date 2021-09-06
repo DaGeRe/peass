@@ -6,22 +6,28 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.config.StatisticsConfiguration;
 import de.dagere.peass.measurement.rca.data.OneVMResult;
 
 public class OutlierRemoverVMResults {
 
    private static final Logger LOG = LogManager.getLogger(OutlierRemoverVMResults.class);
 
-   public static void getValuesWithoutOutliers(final List<OneVMResult> results, final SummaryStatistics statistics) {
-      final SummaryStatistics fullStatistic = new SummaryStatistics();
-      addAll(results, fullStatistic);
+   public static void getValuesWithoutOutliers(final List<OneVMResult> results, final SummaryStatistics statistics, final StatisticsConfiguration config) {
+      if (config.getOutlierFactor() != 0) {
+         final SummaryStatistics fullStatistic = new SummaryStatistics();
+         addAll(results, fullStatistic);
 
-      double min = fullStatistic.getMean() - OutlierRemover.Z_SCORE * fullStatistic.getStandardDeviation();
-      double max = fullStatistic.getMean() + OutlierRemover.Z_SCORE * fullStatistic.getStandardDeviation();
+         double min = fullStatistic.getMean() - config.getOutlierFactor() * fullStatistic.getStandardDeviation();
+         double max = fullStatistic.getMean() + config.getOutlierFactor() * fullStatistic.getStandardDeviation();
 
-      LOG.debug("Removing outliers between {} and {} - Old vm count: {}", min, max, results.size());
-      addNonOutlier(results, statistics, min, max);
-      LOG.debug("Final VM count: {}", statistics.getN());
+         LOG.debug("Removing outliers between {} and {} - Old vm count: {}", min, max, results.size());
+         addNonOutlier(results, statistics, min, max);
+         LOG.debug("Final VM count: {}", statistics.getN());
+      } else {
+         addAll(results, statistics);
+      }
+
    }
 
    private static void addNonOutlier(final List<OneVMResult> results, final SummaryStatistics statistics, final double min, final double max) {

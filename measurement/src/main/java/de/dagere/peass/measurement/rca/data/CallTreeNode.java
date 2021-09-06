@@ -187,7 +187,7 @@ public class CallTreeNode extends BasicNode {
    public void createStatistics(final String version) {
       LOG.debug("Creating statistics: {} Call: {}", version, call);
       final CallTreeStatistics callTreeStatistics = data.get(version);
-      callTreeStatistics.createStatistics();
+      callTreeStatistics.createStatistics(config.getStatisticsConfig());
       LOG.debug("Mean: " + callTreeStatistics.getStatistics().getMean() + " " + callTreeStatistics.getStatistics().getStandardDeviation());
    }
 
