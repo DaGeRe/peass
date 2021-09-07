@@ -1,8 +1,13 @@
 package de.dagere.peass.config;
 
+import java.io.Serializable;
+
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
-public class KiekerConfiguration {
+public class KiekerConfiguration implements Serializable {
+   
+   private static final long serialVersionUID = 3129231099963995908L;
+
    private boolean useKieker = false;
    private boolean useSourceInstrumentation = true;
    private boolean useSelectiveInstrumentation = true;
