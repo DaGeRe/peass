@@ -3,6 +3,7 @@ package de.dagere.peass.dependencytests;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -40,7 +41,7 @@ public class DependencyDetectorIT {
 
       FileUtils.deleteDirectory(DependencyTestConstants.CURRENT);
       FileUtils.copyDirectory(DependencyTestConstants.BASIC_STATE, DependencyTestConstants.CURRENT);
-      
+
    }
 
    @Test
@@ -56,7 +57,26 @@ public class DependencyDetectorIT {
 
       DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.NormalDependency#executeThing", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
    }
-   
+
+   @Test
+   public void testNoChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+
+      final Map<ChangedEntity, ClazzChangeData> changes = new HashMap<>();
+      final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
+      Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
+
+      final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(DependencyTestConstants.BASIC_STATE));
+
+      final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
+
+      Dependencies dependencies = reader.getDependencies();
+      System.out.println(dependencies.getVersions());
+
+      Assert.assertTrue(dependencies.getVersions().get(dependencies.getNewestVersion()).isRunning());
+
+      // DependencyDetectorTestUtil.checkTestMeAlsoTestChange(reader, "defaultpackage.NormalDependency#executeThing", "defaultpackage.TestMe", DependencyTestConstants.VERSION_1);
+   }
+
    @Test
    public void testAddedTest() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "added_test");
@@ -117,7 +137,8 @@ public class DependencyDetectorIT {
 
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(DependencyTestConstants.CURRENT), DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager, new ExecutionConfig(5), new KiekerConfiguration(true),new EnvironmentVariables());
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(DependencyTestConstants.CURRENT),
+            DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager, new ExecutionConfig(5), new KiekerConfiguration(true), new EnvironmentVariables());
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 
@@ -143,8 +164,8 @@ public class DependencyDetectorIT {
     * @throws IOException
     * @throws InterruptedException
     * @throws XmlPullParserException
-    * @throws ViewNotFoundException 
-    * @throws ParseException 
+    * @throws ViewNotFoundException
+    * @throws ParseException
     */
    @Test
    public void testRemoval() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
@@ -175,7 +196,7 @@ public class DependencyDetectorIT {
       Assert.assertEquals("defaultpackage.TestMe", test.getClazz());
       Assert.assertEquals("testMe", test.getMethod());
    }
-   
+
    @Test
    public void testClassRemoval() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "removed_class");

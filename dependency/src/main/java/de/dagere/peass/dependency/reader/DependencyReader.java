@@ -205,13 +205,17 @@ public class DependencyReader {
       if (input.getChanges().size() > 0) {
          return analyseChanges(version, input);
       } else {
-         addEmptyVersionData(version);
+         addEmptyVersionData(version, input);
          return 0;
       }
    }
 
-   private void addEmptyVersionData(final String version) {
-      dependencyResult.getVersions().put(version, new Version());
+   private void addEmptyVersionData(final String version, final DependencyReadingInput input) {
+      Version emptyVersion = new Version();
+      emptyVersion.setJdk(dependencyManager.getExecutor().getJDKVersion());
+      emptyVersion.setRunning(true);
+      emptyVersion.setPredecessor(input.getPredecessor());
+      dependencyResult.getVersions().put(version, emptyVersion);
       if (dependencyConfig.isGenerateViews()) {
          executionResult.addEmptyVersion(version, null);
          coverageBasedSelection.addEmptyVersion(version, null);

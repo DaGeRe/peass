@@ -203,7 +203,8 @@ public class ContinuousDependencyReader {
          reader.readDependencies();
       }
       Dependencies dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
-      predecessor = dependencies.getVersions().get(dependencies.getNewestRunningVersion()).getPredecessor();
+      String newestRunningVersion = dependencies.getNewestRunningVersion();
+      predecessor = dependencies.getVersions().get(newestRunningVersion).getPredecessor();
       return dependencies;
    }
 }

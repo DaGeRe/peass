@@ -46,9 +46,11 @@ public class ProcessSuccessTester {
          }
          final int returncode = process.exitValue();
          if (returncode != 0) {
+            LOG.info("Success test run failed");
             isRunning = false;
             printFailureLogToCommandline(logFile);
          } else {
+            LOG.info("Test was successfull");
             isRunning = true;
          }
       } catch (final IOException e) {
