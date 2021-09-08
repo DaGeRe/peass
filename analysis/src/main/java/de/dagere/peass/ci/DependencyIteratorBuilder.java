@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.persistence.Dependencies;
-import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionIteratorGit;
@@ -44,8 +43,9 @@ public class DependencyIteratorBuilder {
          iterator = null;
          versionOld = dependencies.getNewestRunningVersion();
       } else {
-         Version newestVersionInfos = dependencies.getVersions().get(newestAnalyzedVersionName);
-         if (newestVersionInfos != null && !newestVersionInfos.isRunning()) {
+         if (dependencies != null && 
+               dependencies.getVersions().get(newestAnalyzedVersionName) != null && 
+               !dependencies.getVersions().get(newestAnalyzedVersionName).isRunning()) {
             versionOld = newestAnalyzedVersionName;
             iterator = null;
          } else {

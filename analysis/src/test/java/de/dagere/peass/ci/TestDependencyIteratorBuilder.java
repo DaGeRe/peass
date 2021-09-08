@@ -125,7 +125,7 @@ public class TestDependencyIteratorBuilder {
          config.setVersionOld(null);
          config.setVersion("HEAD");
 
-         VersionIteratorGit iterator = new DependencyIteratorBuilder(config, buildVersionDependencies(), new PeassFolders(TEMPORARY_FOLDER)).getIterator();
+         VersionIteratorGit iterator = new DependencyIteratorBuilder(config, null, new PeassFolders(TEMPORARY_FOLDER)).getIterator();
          Assert.assertEquals(2, iterator.getSize());
          Assert.assertEquals(VERSION_2, iterator.getTag());
          Assert.assertEquals(SIMPLE_PREDECESSOR, iterator.getPredecessor());
