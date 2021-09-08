@@ -59,6 +59,26 @@ public class TestDependencyIteratorBuilder {
    }
    
    @Test
+   public void testNightlyBuildWithoutRunningPrePredecessor() {
+      try (MockedStatic<GitUtils> gitUtil = Mockito.mockStatic(GitUtils.class)) {
+         gitUtil.when(() -> GitUtils.getName(Mockito.any(), Mockito.any())).thenReturn(VERSION_2);
+         
+         ExecutionConfig config = new ExecutionConfig();
+         config.setVersionOld(null);
+         config.setVersion("HEAD");
+
+         Dependencies dependencies = buildVersionDependencies(VERSION_2);
+         dependencies.getVersions().get(VERSION_2).setRunning(false);
+         
+         DependencyIteratorBuilder builder = new DependencyIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER));
+         VersionIteratorGit iterator = builder.getIterator();
+         Assert.assertNull(iterator);
+         Assert.assertEquals(VERSION_2, builder.getVersion());
+         Assert.assertNull(builder.getVersionOld());
+      }
+   }
+   
+   @Test
    public void testNightlyBuildWithPrePredecessor() {
       try (MockedStatic<GitUtils> gitUtil = Mockito.mockStatic(GitUtils.class)) {
          gitUtil.when(() -> GitUtils.getName(Mockito.any(), Mockito.any())).thenReturn(VERSION_2);

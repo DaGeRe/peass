@@ -54,8 +54,12 @@ public class DependencyIteratorBuilder {
 
    private String getPrePredecessor(final Dependencies versionNames) {
       String[] runningVersionNames = versionNames.getRunningVersionNames();
-      String prePredecessor = runningVersionNames[runningVersionNames.length - 2];
-      return prePredecessor;
+      if (runningVersionNames.length > 1) {
+         String prePredecessor = runningVersionNames[runningVersionNames.length - 2];
+         return prePredecessor;
+      } else {
+         return null;
+      }
    }
 
    private static GitCommit getOldVersionCommit(final ExecutionConfig executionConfig, final String newestRunningVersionName, final PeassFolders folders) {
