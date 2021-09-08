@@ -14,7 +14,7 @@ import de.dagere.peass.vcs.VersionIteratorGit;
 
 public class DependencyIteratorBuilder {
 
-   private static final Logger LOG = LogManager.getLogger(ContinuousDependencyReader.class);
+   private static final Logger LOG = LogManager.getLogger(DependencyIteratorBuilder.class);
 
    private final String version, versionOld;
    private final VersionIteratorGit iterator;
