@@ -130,13 +130,12 @@ public class ContinuousDependencyReader {
    }
 
    private void partiallyLoadDependencies(final Dependencies dependencies) throws FileNotFoundException, Exception {
-      predecessor = dependencies.getNewestRunningVersion();
-
-      DependencyIteratorBuilder iteratorBuilder = new DependencyIteratorBuilder(executionConfig, predecessor, folders);
+      DependencyIteratorBuilder iteratorBuilder = new DependencyIteratorBuilder(executionConfig, dependencies, folders);
       VersionIterator newIterator = iteratorBuilder.getIterator();
       if (newIterator != null) {
          executePartialRTS(dependencies, newIterator);
       }
+      predecessor = iteratorBuilder.getVersionOld();
    }
 
    private void executePartialRTS(final Dependencies dependencies, final VersionIterator newIterator) throws FileNotFoundException {

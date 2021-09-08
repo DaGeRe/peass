@@ -10,6 +10,8 @@ import java.util.List;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -26,6 +28,8 @@ import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.visualization.html.HTMLWriter;
 
 public class VisualizeRegularMeasurement {
+   
+   private static final Logger LOG = LogManager.getLogger(VisualizeRegularMeasurement.class);
 
    private final File resultFolder;
 
@@ -36,6 +40,7 @@ public class VisualizeRegularMeasurement {
    public void analyzeFile(final File peassFolder) throws JAXBException, JsonProcessingException, FileNotFoundException, IOException {
       PeassFolders folders = new PeassFolders(peassFolder);
       for (File kopemeFile : folders.getFullMeasurementFolder().listFiles((FilenameFilter) new WildcardFileFilter("*xml"))) {
+         LOG.debug("Visualizing: {}", kopemeFile);
          Kopemedata data = XMLDataLoader.loadData(kopemeFile);
          for (TestcaseType test : data.getTestcases().getTestcase()) {
             for (Chunk chunk : test.getDatacollector().get(0).getChunk()) {
