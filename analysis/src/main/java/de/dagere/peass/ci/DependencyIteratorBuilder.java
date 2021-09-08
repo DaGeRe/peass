@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionIteratorGit;
@@ -27,35 +28,42 @@ public class DependencyIteratorBuilder {
    private final String version, versionOld;
    private final VersionIteratorGit iterator;
 
-   public DependencyIteratorBuilder(final ExecutionConfig executionConfig, final Dependencies versionNames, final PeassFolders folders) {
+   public DependencyIteratorBuilder(final ExecutionConfig executionConfig, final Dependencies dependencies, final PeassFolders folders) {
       version = GitUtils.getName(executionConfig.getVersion() != null ? executionConfig.getVersion() : "HEAD", folders.getProjectFolder());
 
-      GitCommit currentCommit = new GitCommit(version, "", "", "");
-      String newestVersionName = versionNames != null ? versionNames.getNewestVersion() : null;
-      GitCommit oldVersionCommit = getOldVersionCommit(executionConfig, newestVersionName, folders);
+      String newestAnalyzedVersionName = dependencies != null ? dependencies.getNewestVersion() : null;
 
-      if (version.equals(newestVersionName)) {
+      GitCommit oldVersionCommit = getOldVersionCommit(executionConfig, newestAnalyzedVersionName, folders);
+
+      if (version.equals(newestAnalyzedVersionName)) {
          LOG.info("Version {} is equal to newest version, not executing RTS", version);
          iterator = null;
-         versionOld = getPrePredecessor(versionNames);
-      } else if (oldVersionCommit.getTag().equals(currentCommit.getTag())) {
-         LOG.error("Version {} is equal to predecessing version {}, some error occured - not executing RTS", currentCommit.getTag(), oldVersionCommit.getTag());
+         versionOld = getPrePredecessor(dependencies);
+      } else if (oldVersionCommit.getTag().equals(version)) {
+         LOG.error("Version {} is equal to predecessing version {}, some error occured - not executing RTS", version, oldVersionCommit.getTag());
          iterator = null;
-         versionOld = versionNames.getNewestRunningVersion();
+         versionOld = dependencies.getNewestRunningVersion();
       } else {
-         List<GitCommit> commits = new LinkedList<>();
-         commits.add(oldVersionCommit);
-         commits.add(currentCommit);
-         LOG.info("Analyzing {} - {}", oldVersionCommit, currentCommit);
-         iterator = new VersionIteratorGit(folders.getProjectFolder(), commits, oldVersionCommit);
-         versionOld = oldVersionCommit.getTag();
+         Version newestVersionInfos = dependencies.getVersions().get(newestAnalyzedVersionName);
+         if (newestVersionInfos != null && !newestVersionInfos.isRunning()) {
+            versionOld = newestAnalyzedVersionName;
+            iterator = null;
+         } else {
+            GitCommit currentCommit = new GitCommit(version, "", "", "");
+            List<GitCommit> commits = new LinkedList<>();
+            commits.add(oldVersionCommit);
+            commits.add(currentCommit);
+            LOG.info("Analyzing {} - {}", oldVersionCommit, currentCommit);
+            iterator = new VersionIteratorGit(folders.getProjectFolder(), commits, oldVersionCommit);
+            versionOld = oldVersionCommit.getTag();
+         }
       }
    }
 
-   private String getPrePredecessor(final Dependencies versionNames) {
-      String[] runningVersionNames = versionNames.getRunningVersionNames();
-      if (runningVersionNames.length > 1) {
-         String prePredecessor = runningVersionNames[runningVersionNames.length - 2];
+   private String getPrePredecessor(final Dependencies dependencies) {
+      String[] versionNames = dependencies.getVersionNames();
+      if (versionNames.length > 1) {
+         String prePredecessor = versionNames[versionNames.length - 2];
          return prePredecessor;
       } else {
          return null;
