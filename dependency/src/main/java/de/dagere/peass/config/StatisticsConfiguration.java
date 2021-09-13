@@ -5,7 +5,13 @@ import java.io.Serializable;
 public class StatisticsConfiguration implements Serializable {
    private static final long serialVersionUID = -6193031432004031500L;
 
+   /**
+    * Type 1 error is the false positive rate (=1-significance) for regular two-sided t-test
+    */
    private double type1error = 0.01;
+   /**
+    * Type 2 error is the false negative rate for agnostic t-test
+    */
    private double type2error = 0.01;
    private double outlierFactor = DEFAULT_OUTLIER_FACTOR;
    private ImplementedTests statisticTest = ImplementedTests.BIMODAL_T_TEST;

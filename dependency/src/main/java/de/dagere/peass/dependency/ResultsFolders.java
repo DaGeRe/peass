@@ -11,6 +11,8 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 public class ResultsFolders {
 
    private static final Logger LOG = LogManager.getLogger(ResultsFolders.class);
+   
+   public static final String MEASUREMENT_PREFIX = "measurement_";
 
    private final File resultFolder;
    private final String projectName;
@@ -45,17 +47,27 @@ public class ResultsFolders {
       return new File(resultFolder, "changes.json");
    }
    
-   public File getDependencyLogFile(final String version, final String versionOld) {
+   public File getRtsLogFolder() {
       File folder = new File(resultFolder, "rtsLogs");
+      return folder;
+   }
+   
+   public File getDependencyLogFile(final String version, final String versionOld) {
+      File folder = getRtsLogFolder();
       if (!folder.exists()) {
          folder.mkdirs();
       }
       File logFile = new File(folder, version + "_" + versionOld + ".txt");
       return logFile;
+   }
+   
+   public File getMeasurementLogFolder() {
+      File folder = new File(resultFolder, "measurementLogs");
+      return folder;
    }
    
    public File getMeasurementLogFile(final String version, final String versionOld) {
-      File folder = new File(resultFolder, "measurementLogs");
+      File folder = getMeasurementLogFolder();
       if (!folder.exists()) {
          folder.mkdirs();
       }
@@ -63,8 +75,13 @@ public class ResultsFolders {
       return logFile;
    }
    
-   public File getRCALogFile(final String version, final String versionOld) {
+   public File getRCALogFolder() {
       File folder = new File(resultFolder, "rcaLogs");
+      return folder;
+   }
+   
+   public File getRCALogFile(final String version, final String versionOld) {
+      File folder = getRCALogFolder();
       if (!folder.exists()) {
          folder.mkdirs();
       }
@@ -79,7 +96,7 @@ public class ResultsFolders {
       if (versionOld == null ) {
          throw new RuntimeException("VersionOld must not be null!");
       }
-      final File fullResultsVersion = new File(resultFolder, version + "_" + versionOld);
+      final File fullResultsVersion = new File(resultFolder, MEASUREMENT_PREFIX + version + "_" + versionOld);
       return fullResultsVersion;
    }
 
