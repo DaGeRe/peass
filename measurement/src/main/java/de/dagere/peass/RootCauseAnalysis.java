@@ -38,7 +38,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
    @Mixin
    private KiekerConfigMixin kiekerConfigMixin;
-   
+
    public static void main(final String[] args) throws JAXBException, IOException {
       final RootCauseAnalysis command = new RootCauseAnalysis();
       final CommandLine commandLine = new CommandLine(command);
@@ -68,7 +68,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       if (!found) {
          LOG.error("Test " + test + " is not contained in regression test selection result, therefore it is unlikely to have a performance change!");
       }
-      
+
       final String predecessor = versionInfo.getPredecessor();
 
       LOG.debug("Timeout in minutes: {}", executionMixin.getTimeout());
@@ -101,7 +101,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       if (kiekerConfigMixin.isNotUseSourceInstrumentation() && measurementConfiguration.getExecutionConfig().getTestTransformer().equals(WorkloadType.JMH.getTestTransformer())) {
          throw new RuntimeException("AspectJ instrumentation and jmh currently not implemented!");
       }
-      
+
       measurementConfiguration.setUseSampling(kiekerConfigMixin.isUseSampling());
       LOG.info("Use source instrumentation: {}", kiekerConfigMixin.isNotUseSourceInstrumentation());
       return measurementConfiguration;
@@ -121,6 +121,9 @@ public class RootCauseAnalysis extends DependencyTestStarter {
             tester = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, env);
             break;
          case UNTIL_SOURCE_CHANGE:
+            if (causeSearcherConfig.getPropertyFolder() == null) {
+               throw new RuntimeException("Property folder with correct source code needs to be defined if strategy is UNTIL_SOURCE_CHANGE!");
+            }
             TreeAnalyzerCreator creatorSource = new TreeAnalyzerCreator() {
 
                @Override
