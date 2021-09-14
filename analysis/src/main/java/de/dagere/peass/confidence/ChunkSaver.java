@@ -35,13 +35,13 @@ public class ChunkSaver {
 
    private static BufferedWriter writerConfident, writerUnconfident, writerMultipleMeasurements;
 
-   private final static File conficentChunks = new File("confident.txt");
+   private final static File confidentChunks = new File("confident.txt");
    private final static File unConficentChunks = new File("unconfident.txt");
    private final static File multipleMeasurements = new File("multipleMeasurements.txt");
 
    static {
-      if (conficentChunks.exists()) {
-         conficentChunks.delete();
+      if (confidentChunks.exists()) {
+         confidentChunks.delete();
       }
       if (unConficentChunks.exists()) {
          unConficentChunks.delete();
@@ -51,7 +51,7 @@ public class ChunkSaver {
       }
 
       try {
-         writerConfident = new BufferedWriter(new FileWriter(conficentChunks));
+         writerConfident = new BufferedWriter(new FileWriter(confidentChunks));
          writerUnconfident = new BufferedWriter(new FileWriter(unConficentChunks));
          writerMultipleMeasurements = new BufferedWriter(new FileWriter(multipleMeasurements));
       } catch (IOException e) {

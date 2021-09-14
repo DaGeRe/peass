@@ -182,9 +182,9 @@ public class MultipleVMTestUtil {
       }
       return desc1;
    }
-
-   public static long getMinIterationCount(final List<Result> results) {
-      long minIterationsTime = Long.MAX_VALUE;
+   
+   public static long getMinRepetitionCount(final List<Result> results) {
+      long minRepetitions = Long.MAX_VALUE;
       long minMultiplied = Long.MAX_VALUE;
       for (final Result result : results) {
          final long currentIterations = result.getIterations();
@@ -192,12 +192,29 @@ public class MultipleVMTestUtil {
          long multiplied = currentIterations * currentRepetitions;
          if (multiplied != 0) {
             if (multiplied < minMultiplied) {
-               minIterationsTime = currentIterations;
+               minRepetitions = currentRepetitions;
                minMultiplied = multiplied;
             }
          }
       }
-      return minIterationsTime;
+      return minRepetitions;
+   }
+
+   public static long getMinIterationCount(final List<Result> results) {
+      long minIterations = Long.MAX_VALUE;
+      long minMultiplied = Long.MAX_VALUE;
+      for (final Result result : results) {
+         final long currentIterations = result.getIterations();
+         final long currentRepetitions = result.getRepetitions();
+         long multiplied = currentIterations * currentRepetitions;
+         if (multiplied != 0) {
+            if (multiplied < minMultiplied) {
+               minIterations = currentIterations;
+               minMultiplied = multiplied;
+            }
+         }
+      }
+      return minIterations;
    }
 
    private static Result createResultFromStatistic(final String version, final SummaryStatistics st, final long repetitions) {
