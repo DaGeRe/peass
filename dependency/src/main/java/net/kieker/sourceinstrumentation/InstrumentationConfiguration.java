@@ -26,6 +26,8 @@ public class InstrumentationConfiguration {
       this.createDefaultConstructor = true;
       this.enableDeactivation = enableDecativation;
       this.samplingCount = samplingCount;
+      
+      check();
    }
 
    public InstrumentationConfiguration(final AllowedKiekerRecord usedRecord, final boolean sample, 
@@ -39,8 +41,10 @@ public class InstrumentationConfiguration {
       excludedPatterns = new HashSet<String>();
       this.enableDeactivation = enableDecativation;
       this.samplingCount = samplingCount;
+      
+      check();
    }
-   
+
    public InstrumentationConfiguration(final AllowedKiekerRecord usedRecord, final boolean sample, 
          final boolean createDefaultConstructor, final boolean enableAdaptiveMonitoring,
          final Set<String> includedPatterns, final Set<String> excludedPatterns, final boolean enableDecativation, final int samplingCount) {
@@ -52,6 +56,14 @@ public class InstrumentationConfiguration {
       this.excludedPatterns = excludedPatterns;
       this.enableDeactivation = enableDecativation;
       this.samplingCount = samplingCount;
+      
+      check();
+   }
+   
+   private void check() {
+      if (sample && usedRecord == AllowedKiekerRecord.OPERATIONEXECUTION) {
+         throw new RuntimeException("Sampling + OperationExecutionRecord does not make sense, since OperationExecutionRecord contains too complex metadata for sampling");
+      }
    }
 
    public AllowedKiekerRecord getUsedRecord() {

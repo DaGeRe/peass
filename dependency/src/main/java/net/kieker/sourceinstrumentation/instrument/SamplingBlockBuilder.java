@@ -19,7 +19,7 @@ public class SamplingBlockBuilder extends BlockBuilder {
    @Override
    public BlockStmt buildStatement(final BlockStmt originalBlock, final boolean addReturn, final SamplingParameters parameters) {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
-         throw new RuntimeException("Not implemented yet (does Sampling + OperationExecutionRecord make sense?)");
+         throw new RuntimeException("Not implemented yet (Sampling + OperationExecutionRecord does not make sense, since OperationExecutionRecord contains too complex metadata for sampling)");
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
          return buildSelectiveSamplingStatement(originalBlock, addReturn, parameters);
       } else {
@@ -30,7 +30,7 @@ public class SamplingBlockBuilder extends BlockBuilder {
    @Override
    public BlockStmt buildEmptyConstructor(final SamplingParameters parameters) {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
-         throw new RuntimeException("Not implemented yet (does Sampling + OperationExecutionRecord make sense?)");
+         throw new RuntimeException("Not implemented yet (Sampling + OperationExecutionRecord does not make sense, since OperationExecutionRecord contains too complex metadata for sampling)");
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
          return buildConstructorStatement(parameters);
       } else {
