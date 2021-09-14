@@ -226,8 +226,20 @@ public class PeassFolders {
    
    public File getResultFile(final TestCase testcase, final int vmid, final String version, final String mainVersion) {
       final File compareVersionFolder = getFullResultFolder(testcase, mainVersion, version);
-      final File destFile = new File(compareVersionFolder, testcase.getMethod() + "_" + vmid + "_" + version + ".xml");
+      String xmlFileName = getXMLFileName(testcase, version, vmid);
+      final File destFile = new File(compareVersionFolder, xmlFileName);
       return destFile;
+   }
+   
+   public static String getRelativeFullResultPath(final TestCase testcase, final String mainVersion, final String version, final int vmid) {
+      String filename = getXMLFileName(testcase, version, vmid);
+      String start = testcase.getClazz() + File.separator + mainVersion + File.separator + version + File.separator + filename;
+      return start;
+   }
+
+   private static String getXMLFileName(final TestCase testcase, final String version, final int vmid) {
+      String filename = testcase.getMethod() + "_" + vmid + "_" + version + ".xml";
+      return filename;
    }
 
    public File getTempProjectFolder() {
