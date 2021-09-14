@@ -223,6 +223,12 @@ public class PeassFolders {
       }
       return compareVersionFolder;
    }
+   
+   public File getResultFile(final TestCase testcase, final int vmid, final String version, final String mainVersion) {
+      final File compareVersionFolder = getFullResultFolder(testcase, mainVersion, version);
+      final File destFile = new File(compareVersionFolder, testcase.getMethod() + "_" + vmid + "_" + version + ".xml");
+      return destFile;
+   }
 
    public File getTempProjectFolder() {
       if (!tempProjectFolder.exists()) {

@@ -30,11 +30,11 @@ public class ResultOrganizer {
    private static final Logger LOG = LogManager.getLogger(ResultOrganizer.class);
 
    protected final PeassFolders folders;
+   // mainVersion equals current version
    private final String mainVersion;
    private final long currentChunkStart;
    private final boolean isUseKieker;
    private int thresholdForZippingInMB = 5;
-   private final FolderDeterminer determiner;
    private final boolean saveAll;
    protected final TestCase testcase;
    private boolean success = true;
@@ -49,8 +49,6 @@ public class ResultOrganizer {
       this.saveAll = saveAll;
       this.testcase = test;
       this.expectedIterations = expectedIterations;
-
-      determiner = new FolderDeterminer(folders);
    }
 
    //TODO the success test duplicatees saveResultFiles code and logic from DependencyTester.shouldReduce
@@ -153,7 +151,7 @@ public class ResultOrganizer {
 
       saveSummaryFile(version, testcaseList, oneResultFile);
 
-      final File destFile = determiner.getResultFile(testcase, vmid, version, mainVersion);
+      final File destFile = folders.getResultFile(testcase, vmid, version, mainVersion);
       destFile.getParentFile().mkdirs();
       LOG.info("Saving in: {}", destFile);
       if (!destFile.exists()) {
@@ -229,7 +227,7 @@ public class ResultOrganizer {
    }
 
    public File getResultFile(final TestCase testcase, final int vmid, final String version) {
-      return determiner.getResultFile(testcase, vmid, version, mainVersion);
+      return folders.getResultFile(testcase, vmid, version, mainVersion);
    }
 
    public boolean isSaveAll() {
