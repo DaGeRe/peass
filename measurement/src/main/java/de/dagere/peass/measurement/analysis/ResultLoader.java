@@ -51,7 +51,7 @@ public class ResultLoader {
    public void loadChunk(final Chunk realChunk) {
       LOG.debug("Chunk size: {}", realChunk.getResult().size());
       for (final Result result : realChunk.getResult()) {
-         if (result.getIterations() + result.getWarmup() == config.getIterations() &&
+         if (result.getIterations() + result.getWarmup() == config.getAllIterations() &&
                result.getRepetitions() == config.getRepetitions()) {
             if (result.getVersion().getGitversion().equals(config.getVersionOld())) {
                before.add(result.getValue());
