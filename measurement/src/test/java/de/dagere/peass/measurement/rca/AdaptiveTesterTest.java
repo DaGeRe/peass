@@ -155,6 +155,10 @@ public class AdaptiveTesterTest {
    private AdaptiveTester prepareTester() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final PeassFolders folders = Mockito.mock(PeassFolders.class);
       Mockito.when(folders.getProjectFolder()).thenReturn(folder.newFolder("test"));
+      Mockito.when(folders.getResultFile(Mockito.any(TestCase.class), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
+         .thenAnswer((index) -> {
+            return new File(folder.getRoot(), "log" + index);
+         });
       Mockito.when(folders.getMeasureLogFolder(Mockito.anyString(), Mockito.any(TestCase.class))).thenReturn(folder.newFile("log"));
 
       AdaptiveTester tester = new AdaptiveTester(folders, testGenerator.getConfig(), new EnvironmentVariables());
