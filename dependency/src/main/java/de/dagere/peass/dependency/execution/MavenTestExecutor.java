@@ -63,6 +63,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       final String testGoal = getTestGoal();
       String mvnCall = env.fetchMavenCall();
       final String[] originals = new String[] { mvnCall,
+            "--batch-mode",
             testGoal,
             "-fn",
             ArgLineBuilder.TEMP_DIR + "=" + folders.getTempDir().getAbsolutePath() };

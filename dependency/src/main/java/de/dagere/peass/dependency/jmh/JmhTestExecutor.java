@@ -41,6 +41,7 @@ public class JmhTestExecutor extends TestExecutor {
       new PomPreparer(testTransformer, getModules(), folders).preparePom();
 
       String[] basicParameters = new String[] { env.fetchMavenCall(),
+            "--batch-mode",
             "clean", "package",
             "-DskipTests",
             "-Dmaven.test.skip.exec" };

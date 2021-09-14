@@ -46,6 +46,7 @@ public class MavenRunningTester {
                String goal = getGoal();
                MavenPomUtil.cleanType(pomFile);
                String[] basicParameters = new String[] { env.fetchMavenCall(),
+                     "--batch-mode",
                      "clean", goal,
                      "-DskipTests",
                      "-Dmaven.test.skip.exec"};
