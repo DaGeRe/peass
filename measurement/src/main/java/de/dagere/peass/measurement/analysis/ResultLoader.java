@@ -78,4 +78,18 @@ public class ResultLoader {
    public double[] getValsAfter() {
       return ArrayUtils.toPrimitive(after.toArray(new Double[0]));
    }
+   
+   public static List<Result> removeResultsWithWrongConfiguration(final List<Result> results) {
+      List<Result> cleaned = new LinkedList<>();
+      long repetitions = MultipleVMTestUtil.getMinRepetitionCount(results);
+      long iterations = MultipleVMTestUtil.getMinIterationCount(results);
+      for (Result result : results) {
+         if (repetitions == result.getRepetitions() &&
+               iterations == result.getIterations()) {
+            cleaned.add(result);
+         }
+      }
+      
+      return cleaned;
+   }
 }

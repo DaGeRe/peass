@@ -9,8 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
-import de.dagere.peass.measurement.analysis.MultipleVMTestUtil;
-import de.dagere.peass.measurement.analysis.Relation;
 import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
 import de.dagere.peass.statistics.ConfidenceIntervalInterpretion;
 import de.dagere.peass.statistics.StatisticUtil;
@@ -34,8 +32,8 @@ public class TestStatistic {
    }
 
    public TestStatistic(final EvaluationPair data, final ProjectStatistics info) {
-      List<Result> previous = data.getPrevius();
-      List<Result> current = data.getCurrent();
+      List<Result> previous = ResultLoader.removeResultsWithWrongConfiguration(data.getPrevius());
+      List<Result> current = ResultLoader.removeResultsWithWrongConfiguration(data.getCurrent());
 
       checkData(data, previous, current);
 
@@ -57,9 +55,9 @@ public class TestStatistic {
 
       final double[] dataBefore = ArrayUtils.toPrimitive(previous_double.toArray(new Double[0]));
       final double[] dataAfter = ArrayUtils.toPrimitive(after_double.toArray(new Double[0]));
-      final DescriptiveStatistics ds = new DescriptiveStatistics(dataBefore);
-      final DescriptiveStatistics ds2 = new DescriptiveStatistics(dataAfter);
-      LOG.trace(ds.getMean() + " " + ds2.getMean() + " " + ds.getStandardDeviation() + " " + ds2.getStandardDeviation());
+      final DescriptiveStatistics dsBefore = new DescriptiveStatistics(dataBefore);
+      final DescriptiveStatistics dsAfter = new DescriptiveStatistics(dataAfter);
+      LOG.trace(dsBefore.getMean() + " " + dsAfter.getMean() + " " + dsBefore.getStandardDeviation() + " " + dsAfter.getStandardDeviation());
 
       tValue = TestUtils.t(dataBefore, dataAfter);
       change = TestUtils.tTest(dataBefore, dataAfter, CONFIDENCE);
