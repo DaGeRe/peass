@@ -15,12 +15,12 @@ import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.utils.StreamGobbler;
 
 public class ProcessBuilderHelper {
-   
+
    private static final Logger LOG = LogManager.getLogger(ProcessBuilderHelper.class);
-   
+
    private final EnvironmentVariables env;
    private final PeassFolders folders;
-   
+
    public ProcessBuilderHelper(final EnvironmentVariables env, final PeassFolders folders) {
       this.env = env;
       this.folders = folders;
@@ -44,13 +44,13 @@ public class ProcessBuilderHelper {
       printPIDInfo(logFile);
       return process;
    }
-   
+
    private void overwriteEnvVars(final ProcessBuilder pb) {
       LOG.debug("KOPEME_HOME={}", folders.getTempMeasurementFolder().getAbsolutePath());
       pb.environment().put("KOPEME_HOME", folders.getTempMeasurementFolder().getAbsolutePath());
-//      if (this instanceof GradleTestExecutor) {
-         pb.environment().put("GRADLE_HOME", folders.getGradleHome().getAbsolutePath());
-//      }
+      // if (this instanceof GradleTestExecutor) {
+      pb.environment().put("GRADLE_HOME", folders.getGradleHome().getAbsolutePath());
+      // }
       LOG.debug("LD_LIBRARY_PATH: {}", System.getenv().get("LD_LIBRARY_PATH"));
       for (final Map.Entry<String, String> env : System.getenv().entrySet()) {
          pb.environment().put(env.getKey(), env.getValue());
@@ -64,11 +64,16 @@ public class ProcessBuilderHelper {
 
    private void printPIDInfo(final File logFile) throws IOException {
       if (!System.getProperty("os.name").startsWith("Windows") && !System.getProperty("os.name").startsWith("Mac")) {
-         final int pid = Integer.parseInt(new File("/proc/self").getCanonicalFile().getName());
-         LOG.debug("Process started: {} Used PIDs: {} Log to: {}", pid, getProcessCount(), logFile);
+         String usedPidCountString = new File("/proc/self").getCanonicalFile().getName();
+         if (usedPidCountString.matches("[0-9]+")) {
+            final int pid = Integer.parseInt(usedPidCountString);
+            LOG.debug("Process started: {} Used PIDs: {} Log to: {}", pid, getProcessCount(), logFile);
+         } else {
+            LOG.debug("PID count could not be parsed: {} Operating System: {}", usedPidCountString, System.getProperty("os.name"));
+         }
       }
    }
-   
+
    public synchronized static int getProcessCount() {
       int count = -1;
       try {
