@@ -7,7 +7,6 @@ import java.util.Set;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -27,7 +26,7 @@ public class TestNonIncludedTestRemover {
 
       Assert.assertEquals(2, tests.size());
    }
-
+   
    @Test
    public void testWithTestSet() {
       TestSet tests = new TestSet();
@@ -40,5 +39,31 @@ public class TestNonIncludedTestRemover {
       NonIncludedTestRemover.removeNotIncluded(tests, new ExecutionConfig(Arrays.asList(new String[] { "TestA#method1", "TestC" }), "test"));
 
       Assert.assertEquals(2, tests.getTests().size());
+   }
+   
+   @Test
+   public void testWithModulesRegular() {
+      Set<TestCase> tests = new HashSet<TestCase>();
+      tests.add(new TestCase("TestA", "method1", "moduleA"));
+      tests.add(new TestCase("TestB", "method1", "moduleB"));
+      tests.add(new TestCase("TestC", "method1", "moduleC"));
+
+      NonIncludedTestRemover.removeNotIncluded(tests, new ExecutionConfig(Arrays.asList(new String[] { "moduleA§TestA#method1", "TestC" }), "test"));
+
+      System.out.println(tests);
+      Assert.assertEquals(1, tests.size());
+   }
+   
+   @Test
+   public void testWithModulesSameNameButDifferentModule() {
+      Set<TestCase> tests = new HashSet<TestCase>();
+      tests.add(new TestCase("TestA", "method1", "moduleA"));
+      tests.add(new TestCase("TestB", "method1", "moduleB"));
+      tests.add(new TestCase("TestA", "method1", "moduleC"));
+
+      NonIncludedTestRemover.removeNotIncluded(tests, new ExecutionConfig(Arrays.asList(new String[] { "moduleA§TestA#method1", "TestC" }), "test"));
+
+      System.out.println(tests);
+      Assert.assertEquals(1, tests.size());
    }
 }

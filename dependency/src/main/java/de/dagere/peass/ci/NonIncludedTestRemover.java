@@ -32,16 +32,16 @@ public class NonIncludedTestRemover {
 
    }
 
-   private static void removeTestsWithoutMethod(final ExecutionConfig executionConfig, Iterator<Map.Entry<ChangedEntity, Set<String>>> testcaseIterator,
-         Map.Entry<ChangedEntity, Set<String>> testcase) {
+   private static void removeTestsWithoutMethod(final ExecutionConfig executionConfig, final Iterator<Map.Entry<ChangedEntity, Set<String>>> testcaseIterator,
+         final Map.Entry<ChangedEntity, Set<String>> testcase) {
       TestCase test = new TestCase(testcase.getKey().getJavaClazzName());
       if (!isTestIncluded(test, executionConfig.getIncludes())) {
          testcaseIterator.remove();
       }
    }
 
-   private static void removeTestsWithMethod(final ExecutionConfig executionConfig, Iterator<Map.Entry<ChangedEntity, Set<String>>> testcaseIterator,
-         Map.Entry<ChangedEntity, Set<String>> testcase) {
+   private static void removeTestsWithMethod(final ExecutionConfig executionConfig, final Iterator<Map.Entry<ChangedEntity, Set<String>>> testcaseIterator,
+         final Map.Entry<ChangedEntity, Set<String>> testcase) {
       for (Iterator<String> methodIterator = testcase.getValue().iterator(); methodIterator.hasNext();) {
          String method = methodIterator.next();
          if (!isTestIncluded(new TestCase(testcase.getKey().getJavaClazzName(), method), executionConfig.getIncludes())) {
@@ -72,8 +72,16 @@ public class NonIncludedTestRemover {
       }
       boolean isIncluded = false;
       for (String include : includes) {
-         boolean match = FilenameUtils.wildcardMatch(test.getExecutable(), include);
-         LOG.info("Testing {} {} {}", test.getExecutable(), include, match);
+         boolean match;
+         if (include.contains(ChangedEntity.MODULE_SEPARATOR)) {
+            String mergedName = test.getModule() + ChangedEntity.MODULE_SEPARATOR + test.getExecutable();
+            match = FilenameUtils.wildcardMatch(mergedName, include);
+            LOG.info("Testing {} {} {}", mergedName, include, match);
+         } else {
+            match = FilenameUtils.wildcardMatch(test.getExecutable(), include);
+            LOG.info("Testing {} {} {}", test.getExecutable(), include, match);
+         }
+         
          if (match) {
             isIncluded = true;
             break;
