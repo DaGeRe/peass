@@ -13,8 +13,8 @@ public enum InstrumentationCodeBlocks {
          "      if (" + InstrumentationConstants.PREFIX + "traceId == -1) {\n" +
          "         " + InstrumentationConstants.PREFIX + "entrypoint = true;\n" +
          "         " + InstrumentationConstants.PREFIX + "traceId = " + InstrumentationConstants.PREFIX + "controlFlowRegistry.getAndStoreUniqueThreadLocalTraceId();\n" +
-         "         ControlFlowRegistry.INSTANCE.storeThreadLocalEOI(0);\n" +
-         "         ControlFlowRegistry.INSTANCE.storeThreadLocalESS(1); // next operation is ess + 1\n" +
+         "         " + InstrumentationConstants.PREFIX + "controlFlowRegistry.storeThreadLocalEOI(0);\n" +
+         "         " + InstrumentationConstants.PREFIX + "controlFlowRegistry.storeThreadLocalESS(1); // next operation is ess + 1\n" +
          "         " + InstrumentationConstants.PREFIX + "eoi = 0;\n" +
          "         " + InstrumentationConstants.PREFIX + "ess = 0;\n" +
          "      } else {\n" +
