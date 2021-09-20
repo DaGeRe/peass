@@ -57,7 +57,7 @@ public enum InstrumentationCodeBlocks {
                      + InstrumentationConstants.PREFIX + "signature, "
                      + InstrumentationConstants.PREFIX + "tin, "
                      + InstrumentationConstants.PREFIX + "tout))",
-               null), SAMPLING("      final long " + InstrumentationConstants.PREFIX + "tin = " + InstrumentationConstants.PREFIX + "controller.getTimeSource().getTime();", null,
+               null), SAMPLING("      final long " + InstrumentationConstants.PREFIX + "tin = " + InstrumentationConstants.PREFIX + "TIME_SOURCE.getTime();", null,
                      null);
 
    private final String before, after;

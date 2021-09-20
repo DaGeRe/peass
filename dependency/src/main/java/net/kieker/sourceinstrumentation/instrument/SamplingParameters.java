@@ -30,7 +30,7 @@ public class SamplingParameters {
 
    public String getFinalBlock(final String signature, final int count) {
       return "// measure after\n" +
-            "         final long " + InstrumentationConstants.PREFIX + "tout = " + InstrumentationConstants.PREFIX + "controller.getTimeSource().getTime();\n" +
+            "         final long " + InstrumentationConstants.PREFIX + "tout = " + InstrumentationConstants.PREFIX + "TIME_SOURCE.getTime();\n" +
             "        " + sumName + "+=" + InstrumentationConstants.PREFIX + "tout-" + InstrumentationConstants.PREFIX + "tin;\n" +
             "if (" + counterName + "++%" + count + "==0){\n" +
             "final String " + InstrumentationConstants.PREFIX + "signature = \"" + signature + "\";\n" +
