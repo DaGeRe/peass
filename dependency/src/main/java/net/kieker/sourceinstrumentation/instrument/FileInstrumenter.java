@@ -29,6 +29,7 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.testtransformation.ParseUtil;
+import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
 import net.kieker.sourceinstrumentation.InstrumentationConstants;
 
@@ -80,16 +81,30 @@ public class FileInstrumenter {
                clazz.addField("long", counterName, Keyword.PRIVATE, Keyword.STATIC);
             }
             addImports(unit);
-            clazz.addFieldWithInitializer("kieker.monitoring.core.controller.IMonitoringController", InstrumentationConstants.PREFIX + "controller", 
+            clazz.addFieldWithInitializer("kieker.monitoring.core.controller.IMonitoringController", InstrumentationConstants.PREFIX + "controller",
                   new MethodCallExpr("kieker.monitoring.core.controller.MonitoringController.getInstance"),
                   Keyword.PRIVATE, Keyword.STATIC, Keyword.FINAL);
-            
-            clazz.addFieldWithInitializer("kieker.monitoring.core.registry.ControlFlowRegistry", InstrumentationConstants.PREFIX + "controlFlowRegistry", 
-                  new FieldAccessExpr(new NameExpr("ControlFlowRegistry"), "INSTANCE"),
+
+            clazz.addFieldWithInitializer("kieker.monitoring.timer.ITimeSource", InstrumentationConstants.PREFIX + "TIME_SOURCE",
+                  new MethodCallExpr(InstrumentationConstants.PREFIX + "controller.getTimeSource"),
                   Keyword.PRIVATE, Keyword.STATIC, Keyword.FINAL);
-//            ControlFlowRegistry.INSTANCE
+
+            if (configuration.getUsedRecord() == AllowedKiekerRecord.OPERATIONEXECUTION) {
+               clazz.addFieldWithInitializer("String", InstrumentationConstants.PREFIX + "VM_NAME",
+                     new MethodCallExpr(InstrumentationConstants.PREFIX + "controller.getHostname"),
+                     Keyword.PRIVATE, Keyword.STATIC, Keyword.FINAL);
+
+               clazz.addFieldWithInitializer("kieker.monitoring.core.registry.SessionRegistry", InstrumentationConstants.PREFIX + "SESSION_REGISTRY",
+                     new FieldAccessExpr(new NameExpr("SessionRegistry"), "INSTANCE"),
+                     Keyword.PRIVATE, Keyword.STATIC, Keyword.FINAL);
+
+               clazz.addFieldWithInitializer("kieker.monitoring.core.registry.ControlFlowRegistry", InstrumentationConstants.PREFIX + "controlFlowRegistry",
+                     new FieldAccessExpr(new NameExpr("ControlFlowRegistry"), "INSTANCE"),
+                     Keyword.PRIVATE, Keyword.STATIC, Keyword.FINAL);
+            }
+
             Files.write(file.toPath(), unit.toString().getBytes(StandardCharsets.UTF_8));
-            
+
          }
       }
    }

@@ -5,12 +5,11 @@ import java.util.List;
 public enum InstrumentationCodeBlocks {
    OPERATIONEXECUTION("      // collect data\n" +
          "      final boolean " + InstrumentationConstants.PREFIX + "entrypoint;\n" +
-         "      final String " + InstrumentationConstants.PREFIX + "hostname = " + InstrumentationConstants.PREFIX + "controller.getHostname();\n" +
-         "      final String " + InstrumentationConstants.PREFIX + "sessionId = SessionRegistry.INSTANCE.recallThreadLocalSessionId();\n" +
+         "      final String " + InstrumentationConstants.PREFIX + "hostname = " + InstrumentationConstants.PREFIX + "VM_NAME;\n" +
+         "      final String " + InstrumentationConstants.PREFIX + "sessionId = " + InstrumentationConstants.PREFIX + "SESSION_REGISTRY.recallThreadLocalSessionId();\n" +
          "      final int " + InstrumentationConstants.PREFIX + "eoi; // this is executionOrderIndex-th execution in this trace\n" +
          "      final int " + InstrumentationConstants.PREFIX + "ess; // this is the height in the dynamic call tree of this execution\n" +
-         "      long " + InstrumentationConstants.PREFIX + "traceId = " + InstrumentationConstants.PREFIX
-         + "controlFlowRegistry.recallThreadLocalTraceId(); // traceId, -1 if entry point\n" +
+         "      long " + InstrumentationConstants.PREFIX + "traceId = " + InstrumentationConstants.PREFIX + "controlFlowRegistry.recallThreadLocalTraceId(); // traceId, -1 if entry point\n" +
          "      if (" + InstrumentationConstants.PREFIX + "traceId == -1) {\n" +
          "         " + InstrumentationConstants.PREFIX + "entrypoint = true;\n" +
          "         " + InstrumentationConstants.PREFIX + "traceId = " + InstrumentationConstants.PREFIX + "controlFlowRegistry.getAndStoreUniqueThreadLocalTraceId();\n" +
@@ -29,9 +28,9 @@ public enum InstrumentationCodeBlocks {
          "         }\n" +
          "      }\n" +
          "      // measure before\n" +
-         "      final long " + InstrumentationConstants.PREFIX + "tin = " + InstrumentationConstants.PREFIX + "controller.getTimeSource().getTime();\n",
+         "      final long " + InstrumentationConstants.PREFIX + "tin = " + InstrumentationConstants.PREFIX + "TIME_SOURCE.getTime();\n",
          "// measure after\n" +
-               "         final long " + InstrumentationConstants.PREFIX + "tout = " + InstrumentationConstants.PREFIX + "controller.getTimeSource().getTime();\n" +
+               "         final long " + InstrumentationConstants.PREFIX + "tout = " + InstrumentationConstants.PREFIX + "TIME_SOURCE.getTime();\n" +
                "         " + InstrumentationConstants.PREFIX + "controller.newMonitoringRecord(new OperationExecutionRecord("
                + InstrumentationConstants.PREFIX + "signature, "
                + InstrumentationConstants.PREFIX + "sessionId, "
@@ -51,9 +50,9 @@ public enum InstrumentationCodeBlocks {
                +
                "         }",
          null), REDUCED_OPERATIONEXECUTION(
-               "      final long " + InstrumentationConstants.PREFIX + "tin =" + InstrumentationConstants.PREFIX + "controller.getTimeSource().getTime();\n",
+               "      final long " + InstrumentationConstants.PREFIX + "tin =" + InstrumentationConstants.PREFIX + "TIME_SOURCE.getTime();\n",
                "// measure after\n"
-                     + "final long " + InstrumentationConstants.PREFIX + "tout = " + InstrumentationConstants.PREFIX + "controller.getTimeSource().getTime();\n"
+                     + "final long " + InstrumentationConstants.PREFIX + "tout = " + InstrumentationConstants.PREFIX + "TIME_SOURCE.getTime();\n"
                      + InstrumentationConstants.PREFIX + "controller.newMonitoringRecord(new ReducedOperationExecutionRecord("
                      + InstrumentationConstants.PREFIX + "signature, "
                      + InstrumentationConstants.PREFIX + "tin, "
