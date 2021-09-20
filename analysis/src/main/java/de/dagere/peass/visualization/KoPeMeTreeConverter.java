@@ -26,7 +26,7 @@ import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
 
 public class KoPeMeTreeConverter {
 
-   private static final int NANO_TO_MICRO = 1000;
+   public static final int NANO_TO_MICRO = 1000;
    private final GraphNode node;
    private int calls = 0, callsOld = 0;
    private final DescriptiveStatistics statisticsCurrent = new DescriptiveStatistics();
