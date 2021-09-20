@@ -97,16 +97,16 @@ public class BlockBuilder {
 
       boolean addReturn = needsReturn && !afterUnreachable;
       BlockStmt changed = addReturn ? originalBlock.addStatement("return;") : originalBlock;
-      
+
       if (enableDeactivation) {
-         Expression expr = new MethodCallExpr("!MonitoringController.getInstance().isMonitoringEnabled");
+         Expression expr = new MethodCallExpr("!" + InstrumentationConstants.PREFIX + "controller.isMonitoringEnabled");
          IfStmt ifS = new IfStmt(expr, changed, null);
          replacedStatement.addStatement(ifS);
       }
       replacedStatement.addAndGetStatement("final String " + InstrumentationConstants.PREFIX + "signature = \"" + signature + "\";");
       if (enableAdaptiveMonitoring) {
          NameExpr name = new NameExpr(InstrumentationConstants.PREFIX + "signature");
-         Expression expr = new MethodCallExpr("!MonitoringController.getInstance().isProbeActivated", name);
+         Expression expr = new MethodCallExpr("!" + InstrumentationConstants.PREFIX + "controller.isProbeActivated", name);
          IfStmt ifS = new IfStmt(expr, changed, null);
          replacedStatement.addStatement(ifS);
       }
