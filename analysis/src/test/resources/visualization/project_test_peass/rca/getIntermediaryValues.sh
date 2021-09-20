@@ -35,9 +35,9 @@ function writeValues {
 		rm $target
 	fi
 	
-	for file in $(ls $source/ | grep -v "testMe")
+	for file in $(ls $source/ | grep -v ".xml" | grep -v ".tmp")
 	do
-		cat $source/$file/testMe/kieker*/*csv | awk -F';' '{print $5}' | tail -n 3 | getSum >> $target
+		cat $source/$file/*/kieker*/*csv | awk -F';' '{print $5}' | tail -n 3 | getSum >> $target
 		current=$(cat $source/$file/*/kieker*/*csv | awk -F';' '{sum+=$7} END {print sum}')
 		if [ ! $before == $current ]
 		then
@@ -63,9 +63,11 @@ files=(level/*/*/*)
 if [ ${#files[@]} -gt 1 ]
 then
 	echo "This script provides an ad-hoc analysis to see the ordner of magnitude of measurement values; there is no outlier detection or warmup consideration, therefore these values are not final!"
-	echo "Current file: "${files[0]}/
-	cat ${files[0]}/testMe* | grep "<value>" | tr -d "<value/>" | sort > level/current.csv 
-	cat ${files[1]}/testMe* | grep "<value>" | tr -d "<value/>" | sort > level/predecessor.csv 
+	firstFolder=$(ls ${files[0]} | grep -v .xml | head -n 1)
+	methods=$(cat ${files[0]}/$firstFolder/*/kieker*/*.csv | awk -F';' '{print $1}' | uniq | sort | uniq)
+	echo "Current file: "${files[0]}/" Methods: $methods"
+	cat ${files[0]}/*xml | grep "<value>" | tr -d "<value/>" | sort > level/current.csv 
+	cat ${files[1]}/*xml | grep "<value>" | tr -d "<value/>" | sort > level/predecessor.csv 
 	
 	writeValues ${files[0]}/ level/temp1.csv
 	cat level/temp1.csv | sort -k 2 | awk '{print $2}' > level/current_vals.csv
@@ -78,6 +80,9 @@ then
 	
 	echo "Measured Kieker"
 	printValues level/predecessor_vals.csv level/current_vals.csv
+	
+	tail -n 1 ../measurementsFull/progress.txt
 else
 	echo "No measurement values yet"
 fi
+

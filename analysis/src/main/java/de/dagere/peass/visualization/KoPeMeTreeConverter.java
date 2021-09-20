@@ -24,6 +24,9 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
 
+/**
+ * Read the overall data of the specified testcase (i.e. the values from the KoPeMe outside-measurement, no the Kieker in-method-measurement)
+ */
 public class KoPeMeTreeConverter {
 
    public static final int NANO_TO_MICRO = 1000;
@@ -32,6 +35,7 @@ public class KoPeMeTreeConverter {
    private final DescriptiveStatistics statisticsCurrent = new DescriptiveStatistics();
    private final DescriptiveStatistics statisticsOld = new DescriptiveStatistics();
 
+   
    public KoPeMeTreeConverter(final CauseSearchFolders folders, final String version, final TestCase testcase) throws JAXBException {
       node = new GraphNode("overall", "public overall.overall()", "public overall.overall()");
       node.setVmValues(new MeasuredValues());
@@ -55,6 +59,8 @@ public class KoPeMeTreeConverter {
                readFile(version, testcase, measuredVersionFolder.getName(), xmlFolder);
             }
          }
+         final TestcaseStatistic overallStatistic = new TestcaseStatistic(statisticsOld, statisticsCurrent, callsOld, calls);
+         node.setStatistic(overallStatistic);
       } else {
          node = null;
       }
