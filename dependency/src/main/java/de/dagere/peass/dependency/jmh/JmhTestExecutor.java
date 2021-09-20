@@ -75,19 +75,7 @@ public class JmhTestExecutor extends TestExecutor {
    private String[] buildParameterString(final TestCase test, final File jsonResultFile) {
       String[] basicParameters;
       if (testTransformer.getConfig().isUseKieker()) {
-         File moduleFolder = new File(folders.getProjectFolder(), test.getModule());
-         folders.getTempMeasurementFolder().mkdirs();
-
-         File lastTmpFile = folders.getTempMeasurementFolder();
-         ArgLineBuilder builder = new ArgLineBuilder(transformer, moduleFolder);
-         String originalArgLine = builder.buildArgline(lastTmpFile);
-         String argLine = originalArgLine
-               .replace("'", "") // jmh does not accept ' surrounding the path
-               .replace("\"", "")
-               .replace("${user.home}", System.getProperty("user.home"));
-         String[] splittedArgs = argLine.split(" ");
-         basicParameters = CommandConcatenator.concatenateCommandArrays(new String[] { "java" }, splittedArgs);
-
+         basicParameters = buildKiekerParameters(test);
       } else {
          basicParameters = new String[] { "java" };
       }
@@ -110,6 +98,23 @@ public class JmhTestExecutor extends TestExecutor {
             jsonResultFile.getAbsolutePath() };
       String[] mergedParameters = CommandConcatenator.concatenateCommandArrays(basicParameters, jmhParameters);
       return mergedParameters;
+   }
+
+   private String[] buildKiekerParameters(final TestCase test) {
+      String[] basicParameters;
+      File moduleFolder = new File(folders.getProjectFolder(), test.getModule());
+      folders.getTempMeasurementFolder().mkdirs();
+
+      File lastTmpFile = folders.getTempMeasurementFolder();
+      ArgLineBuilder builder = new ArgLineBuilder(transformer, moduleFolder);
+      String originalArgLine = builder.buildArgline(lastTmpFile);
+      String argLine = originalArgLine
+            .replace("'", "") // jmh does not accept ' surrounding the path
+            .replace("\"", "")
+            .replace("${user.home}", System.getProperty("user.home"));
+      String[] splittedArgs = argLine.split(" ");
+      basicParameters = CommandConcatenator.concatenateCommandArrays(new String[] { "java" }, splittedArgs);
+      return basicParameters;
    }
 
    @Override
