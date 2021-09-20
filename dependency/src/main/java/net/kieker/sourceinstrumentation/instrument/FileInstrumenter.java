@@ -22,11 +22,15 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.expr.FieldAccessExpr;
+import com.github.javaparser.ast.expr.MethodCallExpr;
+import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.testtransformation.ParseUtil;
 import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
+import net.kieker.sourceinstrumentation.InstrumentationConstants;
 
 public class FileInstrumenter {
 
@@ -76,7 +80,16 @@ public class FileInstrumenter {
                clazz.addField("long", counterName, Keyword.PRIVATE, Keyword.STATIC);
             }
             addImports(unit);
+            clazz.addFieldWithInitializer("kieker.monitoring.core.controller.IMonitoringController", InstrumentationConstants.PREFIX + "controller", 
+                  new MethodCallExpr("kieker.monitoring.core.controller.MonitoringController.getInstance"),
+                  Keyword.PRIVATE, Keyword.STATIC, Keyword.FINAL);
+            
+            clazz.addFieldWithInitializer("kieker.monitoring.core.registry.ControlFlowRegistry", InstrumentationConstants.PREFIX + "controlFlowRegistry", 
+                  new FieldAccessExpr(new NameExpr("ControlFlowRegistry"), "INSTANCE"),
+                  Keyword.PRIVATE, Keyword.STATIC, Keyword.FINAL);
+//            ControlFlowRegistry.INSTANCE
             Files.write(file.toPath(), unit.toString().getBytes(StandardCharsets.UTF_8));
+            
          }
       }
    }

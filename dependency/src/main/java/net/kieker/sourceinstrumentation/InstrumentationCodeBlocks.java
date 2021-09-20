@@ -5,33 +5,33 @@ import java.util.List;
 public enum InstrumentationCodeBlocks {
    OPERATIONEXECUTION("      // collect data\n" +
          "      final boolean " + InstrumentationConstants.PREFIX + "entrypoint;\n" +
-         "      final String " + InstrumentationConstants.PREFIX + "hostname = MonitoringController.getInstance().getHostname();\n" +
+         "      final String " + InstrumentationConstants.PREFIX + "hostname = " + InstrumentationConstants.PREFIX + "controller.getHostname();\n" +
          "      final String " + InstrumentationConstants.PREFIX + "sessionId = SessionRegistry.INSTANCE.recallThreadLocalSessionId();\n" +
          "      final int " + InstrumentationConstants.PREFIX + "eoi; // this is executionOrderIndex-th execution in this trace\n" +
          "      final int " + InstrumentationConstants.PREFIX + "ess; // this is the height in the dynamic call tree of this execution\n" +
-         "      long " + InstrumentationConstants.PREFIX + "traceId = ControlFlowRegistry.INSTANCE.recallThreadLocalTraceId(); // traceId, -1 if entry point\n" +
+         "      long " + InstrumentationConstants.PREFIX + "traceId = " + InstrumentationConstants.PREFIX + "controlFlowRegistry.recallThreadLocalTraceId(); // traceId, -1 if entry point\n" +
          "      if (" + InstrumentationConstants.PREFIX + "traceId == -1) {\n" +
          "         " + InstrumentationConstants.PREFIX + "entrypoint = true;\n" +
-         "         " + InstrumentationConstants.PREFIX + "traceId = ControlFlowRegistry.INSTANCE.getAndStoreUniqueThreadLocalTraceId();\n" +
+         "         " + InstrumentationConstants.PREFIX + "traceId = " + InstrumentationConstants.PREFIX + "controlFlowRegistry.getAndStoreUniqueThreadLocalTraceId();\n" +
          "         ControlFlowRegistry.INSTANCE.storeThreadLocalEOI(0);\n" +
          "         ControlFlowRegistry.INSTANCE.storeThreadLocalESS(1); // next operation is ess + 1\n" +
          "         " + InstrumentationConstants.PREFIX + "eoi = 0;\n" +
          "         " + InstrumentationConstants.PREFIX + "ess = 0;\n" +
          "      } else {\n" +
          "         " + InstrumentationConstants.PREFIX + "entrypoint = false;\n" +
-         "         " + InstrumentationConstants.PREFIX + "eoi = ControlFlowRegistry.INSTANCE.incrementAndRecallThreadLocalEOI(); // ess > 1\n" +
-         "         " + InstrumentationConstants.PREFIX + "ess = ControlFlowRegistry.INSTANCE.recallAndIncrementThreadLocalESS(); // ess >= 0\n" +
+         "         " + InstrumentationConstants.PREFIX + "eoi = "+ InstrumentationConstants.PREFIX + "controlFlowRegistry.incrementAndRecallThreadLocalEOI(); // ess > 1\n" +
+         "         " + InstrumentationConstants.PREFIX + "ess = "+ InstrumentationConstants.PREFIX + "controlFlowRegistry.recallAndIncrementThreadLocalESS(); // ess >= 0\n" +
          "         if ((" + InstrumentationConstants.PREFIX + "eoi == -1) || (" + InstrumentationConstants.PREFIX + "ess == -1)) {\n" +
          "            System.err.println(\"eoi and/or ess have invalid values: eoi == {} ess == {}\"+ " + InstrumentationConstants.PREFIX + "eoi+ \"\" + "
          + InstrumentationConstants.PREFIX + "ess);\n" +
-         "            MonitoringController.getInstance().terminateMonitoring();\n" +
+         "            "+ InstrumentationConstants.PREFIX + "controller.terminateMonitoring();\n" +
          "         }\n" +
          "      }\n" +
          "      // measure before\n" +
-         "      final long " + InstrumentationConstants.PREFIX + "tin = MonitoringController.getInstance().getTimeSource().getTime();\n",
+         "      final long " + InstrumentationConstants.PREFIX + "tin = " + InstrumentationConstants.PREFIX + "controller.getTimeSource().getTime();\n",
          "// measure after\n" +
-               "         final long " + InstrumentationConstants.PREFIX + "tout = MonitoringController.getInstance().getTimeSource().getTime();\n" +
-               "         MonitoringController.getInstance().newMonitoringRecord(new OperationExecutionRecord("
+               "         final long " + InstrumentationConstants.PREFIX + "tout = " + InstrumentationConstants.PREFIX + "controller.getTimeSource().getTime();\n" +
+               "         " + InstrumentationConstants.PREFIX + "controller.newMonitoringRecord(new OperationExecutionRecord("
                + InstrumentationConstants.PREFIX + "signature, "
                + InstrumentationConstants.PREFIX + "sessionId, "
                + InstrumentationConstants.PREFIX + "traceId, "
@@ -42,11 +42,11 @@ public enum InstrumentationCodeBlocks {
                + InstrumentationConstants.PREFIX + "ess));\n" +
                "         // cleanup\n" +
                "         if (" + InstrumentationConstants.PREFIX + "entrypoint) {\n" +
-               "            ControlFlowRegistry.INSTANCE.unsetThreadLocalTraceId();\n" +
-               "            ControlFlowRegistry.INSTANCE.unsetThreadLocalEOI();\n" +
-               "            ControlFlowRegistry.INSTANCE.unsetThreadLocalESS();\n" +
+               "            "+ InstrumentationConstants.PREFIX + "controlFlowRegistry.unsetThreadLocalTraceId();\n" +
+               "            "+ InstrumentationConstants.PREFIX + "controlFlowRegistry.unsetThreadLocalEOI();\n" +
+               "            "+ InstrumentationConstants.PREFIX + "controlFlowRegistry.unsetThreadLocalESS();\n" +
                "         } else {\n" +
-               "            ControlFlowRegistry.INSTANCE.storeThreadLocalESS(" + InstrumentationConstants.PREFIX + "ess); // next operation is ess\n" +
+               "            "+ InstrumentationConstants.PREFIX + "controlFlowRegistry.storeThreadLocalESS(" + InstrumentationConstants.PREFIX + "ess); // next operation is ess\n" +
                "         }",
          null), REDUCED_OPERATIONEXECUTION("      final long " + InstrumentationConstants.PREFIX + "tin = MonitoringController.getInstance().getTimeSource().getTime();\n",
                "// measure after\n"
