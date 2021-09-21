@@ -145,7 +145,7 @@
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-params</artifactId>
-			<version>5.7.2</version>
+			<version>5.8.0</version>
 			<scope>test</scope>
 		</dependency>
 
@@ -178,7 +178,7 @@
 		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy-astbuilder</artifactId>
-			<version>3.0.8</version>
+			<version>3.0.9</version>
 		</dependency>
 	</dependencies>
 
