@@ -24,6 +24,7 @@ import de.dagere.peass.measurement.rca.searcher.CauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.CauseSearcherComplete;
 import de.dagere.peass.measurement.rca.searcher.LevelCauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.TreeAnalyzerCreator;
+import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -75,6 +76,11 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       final MeasurementConfiguration measurementConfiguration = getConfiguration(predecessor);
 
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, causeSearchConfigMixin);
+      
+      if (causeSearcherConfig.isUseAggregation() && measurementConfiguration.getRecord() == AllowedKiekerRecord.OPERATIONEXECUTION) {
+         throw new RuntimeException("Aggregation and OperationExecutionRecord can not be combined!");
+      }
+      
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders, new EnvironmentVariables());
 

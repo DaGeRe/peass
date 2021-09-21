@@ -38,10 +38,16 @@ public class KiekerConfigMixin {
    }
 
    public boolean isUseSampling() {
+      if (useSampling) {
+         throw new RuntimeException("Sampling not supported; only aggregated value usage!");
+      }
       return useSampling;
    }
 
    public KiekerConfiguration getKiekerConfig() {
+      if (useSampling) {
+         throw new RuntimeException("Sampling not supported; only aggregated value usage!");
+      }
       KiekerConfiguration kiekerConfig = new KiekerConfiguration(true);
       kiekerConfig.setUseCircularQueue(useCircularQueue);
       kiekerConfig.setUseSelectiveInstrumentation(!notUseSelectiveInstrumentation);
