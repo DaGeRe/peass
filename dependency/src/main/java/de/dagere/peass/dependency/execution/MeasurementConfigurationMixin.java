@@ -37,7 +37,7 @@ public class MeasurementConfigurationMixin {
    private boolean saveNothing = false;
    
    @Option(names = { "-record", "--record" }, description = "Kieker Record type to use for monitoring ")
-   protected AllowedKiekerRecord record;
+   protected AllowedKiekerRecord record = AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION;
 
    @Option(names = { "-measurementStrategy", "--measurementStrategy" }, description = "Measurement strategy (Default: SEQUENTIAL) ")
    protected MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;

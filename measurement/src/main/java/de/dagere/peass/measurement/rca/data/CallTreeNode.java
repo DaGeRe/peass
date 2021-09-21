@@ -87,7 +87,7 @@ public class CallTreeNode extends BasicNode {
 
    public void addMeasurement(final String version, final Long duration) {
       checkDataAddPossible(version);
-      LOG.debug("Adding measurement: {}", version);
+      LOG.trace("Adding measurement: {}", version);
       data.get(version).addMeasurement(duration);
    }
 
