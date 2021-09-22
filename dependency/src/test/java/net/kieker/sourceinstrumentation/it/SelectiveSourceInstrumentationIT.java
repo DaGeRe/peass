@@ -9,8 +9,8 @@ import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -46,7 +46,7 @@ public class SelectiveSourceInstrumentationIT {
       Set<String> excluded = new HashSet<>();
       excluded.add("public void de.peass.AddRandomNumbers.addSomething()");
       
-      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, true, false, includedPatterns, excluded, true, 1000);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, true, false, includedPatterns, excluded, true, 1000, false);
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 
@@ -62,10 +62,10 @@ public class SelectiveSourceInstrumentationIT {
       File resultFile = resultFolder.listFiles((FileFilter) new WildcardFileFilter("*.dat"))[0];
       
       String monitorLogs = FileUtils.readFileToString(resultFile, StandardCharsets.UTF_8);
-      Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.MainTest.testMe()"));
-      Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.C0_0.method0()"));
-      Assert.assertThat(monitorLogs, Matchers.containsString("new de.peass.C0_0.<init>()"));
-      Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.C1_0.method0()")));
-      Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.AddRandomNumbers.addSomething()")));
+      MatcherAssert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.MainTest.testMe()"));
+      MatcherAssert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.C0_0.method0()"));
+      MatcherAssert.assertThat(monitorLogs, Matchers.containsString("new de.peass.C0_0.<init>()"));
+      MatcherAssert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.C1_0.method0()")));
+      MatcherAssert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.AddRandomNumbers.addSomething()")));
    }
 }

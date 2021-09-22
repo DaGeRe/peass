@@ -23,7 +23,7 @@ public class TestMonitoringConfiguration {
 
       HashSet<String> includedPatterns = new HashSet<>();
       includedPatterns.add("*");
-      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, includedPatterns, false, true, 1000);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, includedPatterns, false, true, 1000, false);
       
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
       instrumenter.instrument(testFile);
@@ -41,7 +41,7 @@ public class TestMonitoringConfiguration {
 
       HashSet<String> includedPatterns = new HashSet<>();
       includedPatterns.add("*");
-      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, includedPatterns, true, false, 1000);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, includedPatterns, true, false, 1000, false);
       
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
       instrumenter.instrument(testFile);
@@ -59,7 +59,7 @@ public class TestMonitoringConfiguration {
 
       HashSet<String> includedPatterns = new HashSet<>();
       includedPatterns.add("*");
-      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, includedPatterns, false, false, 1000);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, includedPatterns, false, false, 1000, false);
       
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
       instrumenter.instrument(testFile);
@@ -79,7 +79,7 @@ public class TestMonitoringConfiguration {
 
       HashSet<String> includedPatterns = new HashSet<>();
       includedPatterns.add("*");
-      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, includedPatterns, false, false, 1000);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, includedPatterns, false, false, 1000, false);
       
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
       instrumenter.instrument(testFile);

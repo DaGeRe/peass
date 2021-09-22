@@ -13,6 +13,9 @@ public class SourceInstrumentationStarter implements Callable<Integer>{
    @Option(names = { "-folder", "--folder" }, description = "Folder where files should be instrumented", required = true)
    private File projectFolder;
    
+   @Option(names = { "-extractMethod", "--extractMethod" }, description = "Whether to extract the monitored method to a separate method")
+   private boolean extractMethod = false;
+   
    public static void main(final String[] args) {
       final CommandLine commandLine = new CommandLine(new SourceInstrumentationStarter());
       commandLine.execute(args);
@@ -22,7 +25,7 @@ public class SourceInstrumentationStarter implements Callable<Integer>{
    public Integer call() throws Exception {
       final HashSet<String> includedPatterns = new HashSet<>();
       includedPatterns.add("*");
-      final InstrumentationConfiguration configuration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, true, false, includedPatterns, true, 1000);
+      final InstrumentationConfiguration configuration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, true, false, includedPatterns, true, 1000, extractMethod);
       final InstrumentKiekerSource sourceInstrumenter = new InstrumentKiekerSource(configuration);
       sourceInstrumenter.instrumentProject(projectFolder);;
       return 0;

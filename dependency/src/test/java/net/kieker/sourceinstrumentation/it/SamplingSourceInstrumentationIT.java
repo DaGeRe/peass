@@ -58,7 +58,7 @@ public class SamplingSourceInstrumentationIT {
       includedPatterns.add("public * de.peass.C0_0$MyInnerClass.*(..)");
       includedPatterns.add("new de.peass.C0_0$MyInnerClass.<init>(..)");
       includedPatterns.add("public * de.peass.MainTest.*(..)");
-      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, includedPatterns, false, true, 1000);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, includedPatterns, false, true, 1000, false);
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
 
       extendMaven();

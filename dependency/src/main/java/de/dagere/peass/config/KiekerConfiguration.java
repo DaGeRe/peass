@@ -16,6 +16,7 @@ public class KiekerConfiguration implements Serializable {
    private boolean enableAdaptiveMonitoring = false;
    private int kiekerAggregationInterval = 5000;
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
+   private boolean extractMethod = false;
 
    public KiekerConfiguration() {
    }
@@ -94,7 +95,7 @@ public class KiekerConfiguration implements Serializable {
    public AllowedKiekerRecord getRecord() {
       return record;
    }
-
+   
    public void setRecord(final AllowedKiekerRecord record) {
       if (record == null) {
          this.record = AllowedKiekerRecord.OPERATIONEXECUTION;
@@ -102,4 +103,14 @@ public class KiekerConfiguration implements Serializable {
          this.record = record;
       }
    }
+
+   public boolean isExtractMethod() {
+      return extractMethod;
+   }
+
+   public void setExtractMethod(final boolean extractMethod) {
+      this.extractMethod = extractMethod;
+   }
+   
+   
 }

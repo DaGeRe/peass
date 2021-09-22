@@ -28,7 +28,7 @@ public class InstrumentKiekerSource {
    private final BlockBuilder blockBuilder;
 
    public InstrumentKiekerSource(final AllowedKiekerRecord usedRecord) {
-      configuration = new InstrumentationConfiguration(usedRecord, false, true, true, new HashSet<>(), false, 1000);
+      configuration = new InstrumentationConfiguration(usedRecord, false, true, true, new HashSet<>(), false, 1000, false);
       configuration.getIncludedPatterns().add("*");
       this.blockBuilder = configuration.isSample() ? new SamplingBlockBuilder(configuration.getUsedRecord(), configuration.getSamplingCount()) : new BlockBuilder(configuration.getUsedRecord(), configuration.isEnableDeactivation(), configuration.isEnableAdaptiveMonitoring());
    }
