@@ -21,6 +21,9 @@ public class KiekerConfigMixin {
          "--useSampling" }, description = "Use sampling (only record every nth invocation of method - may reduce measurement noise)")
    public boolean useSampling = false;
 
+   @Option(names = { "-useExtraction", "--useExtraction" }, description = "Extract methods when using source instrumentation")
+   public boolean useExtraction = false;
+
    public int getWriteInterval() {
       return writeInterval;
    }
@@ -43,6 +46,10 @@ public class KiekerConfigMixin {
       }
       return useSampling;
    }
+   
+   public boolean isUseExtraction() {
+      return useExtraction;
+   }
 
    public KiekerConfiguration getKiekerConfig() {
       if (useSampling) {
@@ -52,9 +59,9 @@ public class KiekerConfigMixin {
       kiekerConfig.setUseCircularQueue(useCircularQueue);
       kiekerConfig.setUseSelectiveInstrumentation(!notUseSelectiveInstrumentation);
       kiekerConfig.setUseSampling(useSampling);
+      kiekerConfig.setExtractMethod(useExtraction);
       kiekerConfig.setUseSourceInstrumentation(!notUseSourceInstrumentation);
       return kiekerConfig;
    }
-   
-   
+
 }

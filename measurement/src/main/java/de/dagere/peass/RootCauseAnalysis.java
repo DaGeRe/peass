@@ -109,6 +109,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       }
 
       measurementConfiguration.setUseSampling(kiekerConfigMixin.isUseSampling());
+      measurementConfiguration.getKiekerConfig().setExtractMethod(kiekerConfigMixin.isUseExtraction());
       LOG.info("Use source instrumentation: {}", kiekerConfigMixin.isNotUseSourceInstrumentation());
       return measurementConfiguration;
    }

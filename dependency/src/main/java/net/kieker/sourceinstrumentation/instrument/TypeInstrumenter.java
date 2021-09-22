@@ -13,11 +13,13 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.Modifier.Keyword;
 import com.github.javaparser.ast.Node;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
+import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
@@ -107,15 +109,17 @@ public class TypeInstrumenter {
                ClassOrInterfaceDeclaration declaringEntity = (ClassOrInterfaceDeclaration) clazz;
                if (!declaringEntity.isInterface() || method.getBody().isPresent()) {
                   if (configuration.isExtractMethod()) {
-                     String generatedName = InstrumentationConstants.PREFIX + method.getNameAsString();
-                     MethodDeclaration extracted = new MethodDeclaration();
-                     extracted.setName(generatedName);
-                     extracted.setType(method.getType());
-                     extracted.setBody(method.getBody().get());
-                     methodsToAdd.add(extracted);
+                     String generatedName = generateWorkloadMethod(methodsToAdd, method);
 
                      BlockStmt newBody = new BlockStmt();
-                     ExpressionStmt exprStatment = new ExpressionStmt(new MethodCallExpr("return " + generatedName));
+                     ExpressionStmt exprStatment;
+                     NodeList<Expression> parameterCallList = new NodeList<>();
+                     method.getParameters().stream().forEach(parameter -> parameterCallList.add(parameter.getNameAsExpression()));
+                     if (method.getType().toString().equals("void")) {
+                        exprStatment = new ExpressionStmt(new MethodCallExpr(generatedName, parameterCallList.toArray(new Expression[0])));
+                     } else {
+                        exprStatment = new ExpressionStmt(new MethodCallExpr("return " + generatedName, parameterCallList.toArray(new Expression[0])));
+                     }
                      newBody.addStatement(exprStatment);
                      method.setBody(newBody);
 
@@ -139,9 +143,28 @@ public class TypeInstrumenter {
       return oneHasChanged;
    }
 
+   private String generateWorkloadMethod(final List<MethodDeclaration> methodsToAdd, final MethodDeclaration method) {
+      String generatedName = InstrumentationConstants.PREFIX + method.getNameAsString();
+      MethodDeclaration extracted = new MethodDeclaration();
+      extracted.setName(generatedName);
+      extracted.setType(method.getType());
+      extracted.setBody(method.getBody().get());
+      extracted.getParameters().addAll(method.getParameters());
+      if (method.isStatic()) {
+         extracted.setStatic(true);
+      }
+
+      methodsToAdd.add(extracted);
+      return generatedName;
+   }
+
    private void addExtractedWorkloadMethods(final TypeDeclaration<?> clazz, final List<MethodDeclaration> methodsToAdd) {
       for (MethodDeclaration methodToAdd : methodsToAdd) {
          MethodDeclaration addedMethod = clazz.addMethod(methodToAdd.getNameAsString(), Modifier.Keyword.PRIVATE, Modifier.Keyword.FINAL);
+         if (methodToAdd.isStatic()) {
+            addedMethod.setStatic(true);
+         }
+         addedMethod.getParameters().addAll(methodToAdd.getParameters());
          addedMethod.setBody(methodToAdd.getBody().get());
          addedMethod.setType(methodToAdd.getType());
       }

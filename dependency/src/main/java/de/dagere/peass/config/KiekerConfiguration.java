@@ -34,6 +34,7 @@ public class KiekerConfiguration implements Serializable {
       this.enableAdaptiveMonitoring = other.enableAdaptiveMonitoring;
       this.kiekerAggregationInterval = other.kiekerAggregationInterval;
       this.record = other.record;
+      this.extractMethod = other.extractMethod;
    }
 
    public boolean isUseKieker() {
