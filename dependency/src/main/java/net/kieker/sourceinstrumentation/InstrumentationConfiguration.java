@@ -3,6 +3,11 @@ package net.kieker.sourceinstrumentation;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import net.kieker.sourceinstrumentation.instrument.BlockBuilder;
+import net.kieker.sourceinstrumentation.instrument.SamplingBlockBuilder;
+
 public class InstrumentationConfiguration {
    private final AllowedKiekerRecord usedRecord;
    private final boolean sample;
@@ -105,4 +110,18 @@ public class InstrumentationConfiguration {
       return enableDeactivation;
    }
 
+   public boolean isExtractMethod() {
+      return extractMethod;
+   }
+
+   @JsonIgnore
+   public BlockBuilder getBlockBuilder() {
+      BlockBuilder blockBuilder;
+      if (this.isSample()) {
+         blockBuilder = new SamplingBlockBuilder(this.getUsedRecord(), this.getSamplingCount());
+      } else {
+         blockBuilder = new BlockBuilder(this.getUsedRecord(), this.isEnableDeactivation(), this.isEnableAdaptiveMonitoring());
+      }
+      return blockBuilder;
+   }
 }

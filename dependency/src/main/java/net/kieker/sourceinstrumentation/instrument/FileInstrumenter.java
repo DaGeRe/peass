@@ -26,13 +26,11 @@ public class FileInstrumenter {
    private final File file;
 
    private final InstrumentationConfiguration configuration;
-   private final BlockBuilder blockBuilder;
 
-   public FileInstrumenter(final File file, final InstrumentationConfiguration configuration, final BlockBuilder blockBuilder) throws FileNotFoundException {
+   public FileInstrumenter(final File file, final InstrumentationConfiguration configuration) throws FileNotFoundException {
       this.unit = JavaParserProvider.parse(file);
       this.file = file;
       this.configuration = configuration;
-      this.blockBuilder = blockBuilder;
    }
 
    public void instrument() throws IOException {
@@ -50,7 +48,7 @@ public class FileInstrumenter {
 
 
    private boolean handleTypeDeclaration(final TypeDeclaration<?> clazz, final String packageName) throws IOException {
-      TypeInstrumenter instrumenter = new TypeInstrumenter(configuration, blockBuilder, unit);
+      TypeInstrumenter instrumenter = new TypeInstrumenter(configuration, unit);
       boolean hasChanged = instrumenter.handleTypeDeclaration(clazz, packageName);
       return hasChanged;
    }

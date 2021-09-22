@@ -25,17 +25,13 @@ public class InstrumentKiekerSource {
 
    private InstrumentationConfiguration configuration;
 
-   private final BlockBuilder blockBuilder;
-
    public InstrumentKiekerSource(final AllowedKiekerRecord usedRecord) {
       configuration = new InstrumentationConfiguration(usedRecord, false, true, true, new HashSet<>(), false, 1000, false);
       configuration.getIncludedPatterns().add("*");
-      this.blockBuilder = configuration.isSample() ? new SamplingBlockBuilder(configuration.getUsedRecord(), configuration.getSamplingCount()) : new BlockBuilder(configuration.getUsedRecord(), configuration.isEnableDeactivation(), configuration.isEnableAdaptiveMonitoring());
    }
 
    public InstrumentKiekerSource(final InstrumentationConfiguration configuration) {
       this.configuration = configuration;
-      this.blockBuilder = configuration.isSample() ? new SamplingBlockBuilder(configuration.getUsedRecord(), configuration.getSamplingCount()) : new BlockBuilder(configuration.getUsedRecord(), configuration.isEnableDeactivation(), configuration.isEnableAdaptiveMonitoring());
    }
 
    public void instrumentProject(final File projectFolder) throws IOException {
@@ -46,7 +42,7 @@ public class InstrumentKiekerSource {
    }
 
    public void instrument(final File file) throws IOException {
-      FileInstrumenter instrumenter = new FileInstrumenter(file, configuration, blockBuilder);
+      FileInstrumenter instrumenter = new FileInstrumenter(file, configuration);
       instrumenter.instrument();
    }
 

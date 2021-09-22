@@ -42,10 +42,10 @@ public class TypeInstrumenter {
 
    private boolean oneHasChanged = false;
 
-   public TypeInstrumenter(final InstrumentationConfiguration configuration, final BlockBuilder blockBuilder, final CompilationUnit unit) {
+   public TypeInstrumenter(final InstrumentationConfiguration configuration, final CompilationUnit unit) {
       this.configuration = configuration;
-      this.blockBuilder = blockBuilder;
-      this.checker = new SignatureMatchChecker(configuration.getIncludedPatterns(), configuration.getExcludedPatterns());;
+      this.blockBuilder = configuration.getBlockBuilder();
+      this.checker = new SignatureMatchChecker(configuration.getIncludedPatterns(), configuration.getExcludedPatterns());
       this.unit = unit;
    }
 

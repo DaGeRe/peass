@@ -15,13 +15,18 @@ public class TestBlockBuilder {
    
    @Test
    public void testRegularBuilding() {
-      BlockStmt block = new BlockStmt();
-      ExpressionStmt expr = new ExpressionStmt(new MethodCallExpr("System.out.println", new CharLiteralExpr("Hello World")));
-      block.addStatement(expr);
+      BlockStmt block = buildSimpleBlock();
       
       BlockBuilder builder = new BlockBuilder(AllowedKiekerRecord.OPERATIONEXECUTION, true, true);
       BlockStmt instrumented = builder.buildOperationExecutionStatement(block, "void MyClass.callHelloWorld", false);
       
       MatcherAssert.assertThat(instrumented.toString(), Matchers.containsString("long _kieker_sourceInstrumentation_tout = _kieker_sourceInstrumentation_TIME_SOURCE.getTime();"));
+   }
+
+   public static BlockStmt buildSimpleBlock() {
+      BlockStmt block = new BlockStmt();
+      ExpressionStmt expr = new ExpressionStmt(new MethodCallExpr("System.out.println", new CharLiteralExpr("Hello World")));
+      block.addStatement(expr);
+      return block;
    }
 }
