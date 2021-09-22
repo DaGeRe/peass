@@ -41,7 +41,7 @@ public class FileInstrumenter {
       final String packageName = packageDeclaration.isPresent() ? packageDeclaration.get().getNameAsString() + "." : "";
       boolean hasChanges = handleTypeDeclaration(clazz, packageName);
       TypeDeclaration<?> enumDecl = ParseUtil.getEnum(unit);
-      hasChanges &= handleTypeDeclaration(enumDecl, packageName);
+      hasChanges |= handleTypeDeclaration(enumDecl, packageName);
       if (hasChanges) {
          addImports(unit);
          Files.write(file.toPath(), unit.toString().getBytes(StandardCharsets.UTF_8));
