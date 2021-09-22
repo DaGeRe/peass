@@ -3,6 +3,7 @@ package net.kieker.sourceinstrumentation.instrument;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +22,7 @@ import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
+import com.github.javaparser.ast.stmt.ExpressionStmt;
 
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
@@ -95,13 +97,29 @@ public class TypeInstrumenter {
    }
 
    private boolean handleChildren(final TypeDeclaration<?> clazz, final String name) {
+      List<MethodDeclaration> methodsToAdd = new LinkedList<>();
       boolean constructorFound = false;
-      for (Node child : clazz.getChildNodes()) {
+      for (ListIterator<Node> childIterator = clazz.getChildNodes().listIterator(); childIterator.hasNext();) {
+         Node child = childIterator.next();
          if (child instanceof MethodDeclaration) {
             MethodDeclaration method = (MethodDeclaration) child;
             if (clazz instanceof ClassOrInterfaceDeclaration) {
                ClassOrInterfaceDeclaration declaringEntity = (ClassOrInterfaceDeclaration) clazz;
                if (!declaringEntity.isInterface() || method.getBody().isPresent()) {
+                  if (configuration.isExtractMethod()) {
+                     String generatedName = InstrumentationConstants.PREFIX + method.getNameAsString();
+                     MethodDeclaration extracted = new MethodDeclaration();
+                     extracted.setName(generatedName);
+                     extracted.setType(method.getType());
+                     extracted.setBody(method.getBody().get());
+                     methodsToAdd.add(extracted);
+
+                     BlockStmt newBody = new BlockStmt();
+                     ExpressionStmt exprStatment = new ExpressionStmt(new MethodCallExpr("return " + generatedName));
+                     newBody.addStatement(exprStatment);
+                     method.setBody(newBody);
+
+                  }
                   instrumentMethod(name, method);
                }
             } else {
@@ -116,6 +134,20 @@ public class TypeInstrumenter {
             handleChildren(innerClazz, name + "$" + innerName);
          }
       }
+      addExtractedWorkloadMethods(clazz, methodsToAdd);
+      handleDefaultConstructor(clazz, name, constructorFound);
+      return oneHasChanged;
+   }
+
+   private void addExtractedWorkloadMethods(final TypeDeclaration<?> clazz, final List<MethodDeclaration> methodsToAdd) {
+      for (MethodDeclaration methodToAdd : methodsToAdd) {
+         MethodDeclaration addedMethod = clazz.addMethod(methodToAdd.getNameAsString(), Modifier.Keyword.PRIVATE, Modifier.Keyword.FINAL);
+         addedMethod.setBody(methodToAdd.getBody().get());
+         addedMethod.setType(methodToAdd.getType());
+      }
+   }
+
+   private void handleDefaultConstructor(final TypeDeclaration<?> clazz, final String name, final boolean constructorFound) {
       if (!constructorFound && configuration.isCreateDefaultConstructor()) {
          if (clazz instanceof EnumDeclaration) {
             createDefaultConstructor(clazz, name, Modifier.Keyword.PRIVATE);
@@ -126,7 +158,6 @@ public class TypeInstrumenter {
             }
          }
       }
-      return oneHasChanged;
    }
 
    private void createDefaultConstructor(final TypeDeclaration<?> clazz, final String name, final Keyword visibility) {
