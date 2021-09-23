@@ -7,6 +7,8 @@ import de.dagere.peass.testtransformation.TestTransformer;
 public class ArgLineBuilder {
 
    public static final String TEMP_DIR = "-Djava.io.tmpdir";
+   private static final String KIEKER_CONFIGURATION = "-Dkieker.monitoring.configuration";
+   private static final String MONITORING_PROPERTIES_PATH = "/src/main/resources/META-INF/kieker.monitoring.properties";
 
    public static final String JAVA_AGENT = "-javaagent";
 
@@ -40,27 +42,19 @@ public class ArgLineBuilder {
       String argline = getTieredCompilationArglinePart(entrySeparator);
       if (testTransformer.getConfig().isUseKieker()) {
          final String tempFolderPath = "'" + tempFolder.getAbsolutePath() + "'";
-         if (!testTransformer.getConfig().isEnableAdaptiveConfig()) {
-            if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-               argline += TEMP_DIR + valueSeparator + tempFolderPath;
+         if (testTransformer.getConfig().isUseSourceInstrumentation()) {
+            argline += TEMP_DIR + valueSeparator + tempFolderPath;
 
-            } else {
-               argline += kiekerLine +
-                     entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath;
-            }
          } else {
-            if (testTransformer.getConfig().isUseSourceInstrumentation()) {
-               argline += TEMP_DIR + valueSeparator + tempFolderPath;
-            } else {
-               argline += kiekerLine + entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath;
-            }
+            argline += kiekerLine + entrySeparator + TEMP_DIR + valueSeparator + tempFolderPath;
          }
          if (!entrySeparator.contains("\"")) {
-            argline += " -Dkieker.monitoring.configuration" + valueSeparator + "\"" + modulePath.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties\"";
+            argline += " " + KIEKER_CONFIGURATION + valueSeparator + "\"" + modulePath.getAbsolutePath() + MONITORING_PROPERTIES_PATH + "\"";
          } else {
-            argline += entrySeparator + "-Dkieker.monitoring.configuration" + valueSeparator + "'" + modulePath.getAbsolutePath() + "/src/main/resources/META-INF/kieker.monitoring.properties'";
+            argline += entrySeparator + KIEKER_CONFIGURATION + valueSeparator + "'" + modulePath.getAbsolutePath()
+                  + MONITORING_PROPERTIES_PATH + "'";
          }
-      } 
+      }
       return argline;
    }
 
