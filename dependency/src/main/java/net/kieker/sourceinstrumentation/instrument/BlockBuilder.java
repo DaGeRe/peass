@@ -23,6 +23,7 @@ public class BlockBuilder {
 
    protected final AllowedKiekerRecord recordType;
    private final boolean enableDeactivation, enableAdaptiveMonitoring;
+   private boolean useStaticVariables = true;
 
    public BlockBuilder(final AllowedKiekerRecord recordType, final boolean enableDeactivation, final boolean enableAdaptiveMonitoring) {
       this.recordType = recordType;
@@ -98,15 +99,22 @@ public class BlockBuilder {
       boolean addReturn = needsReturn && !afterUnreachable;
       BlockStmt changed = addReturn ? originalBlock.addStatement("return;") : originalBlock;
 
+      final String controllerName;
+      if (useStaticVariables) {
+         controllerName = InstrumentationConstants.PREFIX + "controller";
+      } else {
+         controllerName = InstrumentationConstants.CONTROLLER_NAME;
+      }
+
       if (enableDeactivation) {
-         Expression expr = new MethodCallExpr("!" + InstrumentationConstants.PREFIX + "controller.isMonitoringEnabled");
+         Expression expr = new MethodCallExpr("!" + controllerName + ".isMonitoringEnabled");
          IfStmt ifS = new IfStmt(expr, changed, null);
          replacedStatement.addStatement(ifS);
       }
       replacedStatement.addAndGetStatement("final String " + InstrumentationConstants.PREFIX + "signature = \"" + signature + "\";");
       if (enableAdaptiveMonitoring) {
          NameExpr name = new NameExpr(InstrumentationConstants.PREFIX + "signature");
-         Expression expr = new MethodCallExpr("!" + InstrumentationConstants.PREFIX + "controller.isProbeActivated", name);
+         Expression expr = new MethodCallExpr("!" + controllerName + ".isProbeActivated", name);
          IfStmt ifS = new IfStmt(expr, changed, null);
          replacedStatement.addStatement(ifS);
       }
@@ -124,15 +132,50 @@ public class BlockBuilder {
       return replacedStatement;
    }
 
-   private void buildReducedOperationExecutionRecordDefaultConstructor(final String signature, final BlockStmt replacedStatement) {
+   public BlockStmt buildEmptyEnumConstructor(final SamplingParameters parameters) {
+      BlockStmt replacedStatement = new BlockStmt();
+
+      if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
+         useStaticVariables = false;
+         String before = replaceStaticVariables(InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore());
+         String after = replaceStaticVariables(InstrumentationCodeBlocks.OPERATIONEXECUTION.getAfter());
+         buildEmptyConstructor(parameters.getSignature(), replacedStatement, before, after);
+         useStaticVariables = true;
+      } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
+         useStaticVariables = false;
+         String before = replaceStaticVariables(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getBefore());
+         String after = replaceStaticVariables(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getAfter());
+         buildEmptyConstructor(parameters.getSignature(), replacedStatement, before, after);
+         useStaticVariables = true;
+      } else {
+         throw new RuntimeException();
+      }
+      return replacedStatement;
+   }
+
+   private String replaceStaticVariables(final String original) {
+      String before = original
+            .replaceAll(InstrumentationConstants.PREFIX + "VM_NAME", "kieker.monitoring.core.controller.MonitoringController.getInstance().getHostname()")
+            .replaceAll(InstrumentationConstants.PREFIX + "SESSION_REGISTRY", "SessionRegistry.INSTANCE")
+            .replaceAll(InstrumentationConstants.PREFIX + "controlFlowRegistry", "ControlFlowRegistry.INSTANCE")
+            .replaceAll(InstrumentationConstants.PREFIX + "controller", InstrumentationConstants.CONTROLLER_NAME)
+            .replaceAll(InstrumentationConstants.PREFIX + "TIME_SOURCE", "kieker.monitoring.core.controller.MonitoringController.getInstance().getTimeSource()");
+      return before;
+   }
+
+   private void buildEmptyConstructor(final String signature, final BlockStmt replacedStatement, final String before, final String after) {
       buildHeader(new BlockStmt(), signature, false, replacedStatement);
-      replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getBefore());
-      replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getAfter());
+      replacedStatement.addAndGetStatement(before);
+      replacedStatement.addAndGetStatement(after);
+   }
+
+   private void buildReducedOperationExecutionRecordDefaultConstructor(final String signature, final BlockStmt replacedStatement) {
+      buildEmptyConstructor(signature, replacedStatement,
+            InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getBefore(), InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getAfter());
    }
 
    private void buildOperationExecutionRecordDefaultConstructor(final String signature, final BlockStmt replacedStatement) {
-      buildHeader(new BlockStmt(), signature, false, replacedStatement);
-      replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore());
-      replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getAfter());
+      buildEmptyConstructor(signature, replacedStatement,
+            InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore(), InstrumentationCodeBlocks.OPERATIONEXECUTION.getAfter());
    }
 }

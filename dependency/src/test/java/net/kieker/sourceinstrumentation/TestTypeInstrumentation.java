@@ -1,5 +1,6 @@
 package net.kieker.sourceinstrumentation;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -12,16 +13,34 @@ import org.mockito.Mockito;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Modifier;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.ConstructorDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.Parameter;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ReturnStmt;
 import com.github.javaparser.ast.type.PrimitiveType;
 
+import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import net.kieker.sourceinstrumentation.instrument.TypeInstrumenter;
 
 public class TestTypeInstrumentation {
 
+   @Test
+   public void testEnumInstrumentation() throws IOException {
+      CompilationUnit unit = JavaParserProvider.parse(new File("src/test/resources/sourceInstrumentation/project_2_interface/src/main/java/de/peass/SomeEnum.java"));
+      EnumDeclaration declaration = unit.findAll(EnumDeclaration.class).get(0);
+      
+      InstrumentationConfiguration configuration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, null, true, true, 0, false);
+      TypeInstrumenter instrumenter = new TypeInstrumenter(configuration, unit);
+      instrumenter.handleTypeDeclaration(declaration, "de.dagere.test");
+      
+      ConstructorDeclaration defaultConstructor = declaration.findAll(ConstructorDeclaration.class).get(0);
+      
+      System.out.println(defaultConstructor);
+      MatcherAssert.assertThat(defaultConstructor.toString(), Matchers.not(Matchers.containsString("_kieker_sourceInstrumentation_controller.isProbeActivated")));
+   }
+   
    @Test
    public void testBasicInstrumentation() throws IOException {
       ClassOrInterfaceDeclaration clazz = buildClass();

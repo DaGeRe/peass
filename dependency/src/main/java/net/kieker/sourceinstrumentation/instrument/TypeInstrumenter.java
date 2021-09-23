@@ -20,13 +20,10 @@ import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.FieldAccessExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.expr.NameExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 
-import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
 import net.kieker.sourceinstrumentation.InstrumentationConstants;
 
@@ -67,35 +64,11 @@ public class TypeInstrumenter {
                clazz.addField("long", counterName, Keyword.PRIVATE, Keyword.STATIC);
             }
 
-            addKiekerFields(clazz);
+            new KiekerFieldAdder(configuration).addKiekerFields(clazz);
             return true;
          }
       }
       return false;
-   }
-
-   private void addKiekerFields(final TypeDeclaration<?> clazz) {
-      clazz.addFieldWithInitializer("kieker.monitoring.core.controller.IMonitoringController", InstrumentationConstants.PREFIX + "controller",
-            new MethodCallExpr("kieker.monitoring.core.controller.MonitoringController.getInstance"),
-            Keyword.PRIVATE, Keyword.STATIC, Keyword.FINAL);
-
-      clazz.addFieldWithInitializer("kieker.monitoring.timer.ITimeSource", InstrumentationConstants.PREFIX + "TIME_SOURCE",
-            new MethodCallExpr(InstrumentationConstants.PREFIX + "controller.getTimeSource"),
-            Keyword.PRIVATE, Keyword.STATIC, Keyword.FINAL);
-
-      if (configuration.getUsedRecord() == AllowedKiekerRecord.OPERATIONEXECUTION) {
-         clazz.addFieldWithInitializer("String", InstrumentationConstants.PREFIX + "VM_NAME",
-               new MethodCallExpr(InstrumentationConstants.PREFIX + "controller.getHostname"),
-               Keyword.PRIVATE, Keyword.STATIC, Keyword.FINAL);
-
-         clazz.addFieldWithInitializer("kieker.monitoring.core.registry.SessionRegistry", InstrumentationConstants.PREFIX + "SESSION_REGISTRY",
-               new FieldAccessExpr(new NameExpr("SessionRegistry"), "INSTANCE"),
-               Keyword.PRIVATE, Keyword.STATIC, Keyword.FINAL);
-
-         clazz.addFieldWithInitializer("kieker.monitoring.core.registry.ControlFlowRegistry", InstrumentationConstants.PREFIX + "controlFlowRegistry",
-               new FieldAccessExpr(new NameExpr("ControlFlowRegistry"), "INSTANCE"),
-               Keyword.PRIVATE, Keyword.STATIC, Keyword.FINAL);
-      }
    }
 
    private boolean handleChildren(final TypeDeclaration<?> clazz, final String name) {
@@ -173,13 +146,25 @@ public class TypeInstrumenter {
    private void handleDefaultConstructor(final TypeDeclaration<?> clazz, final String name, final boolean constructorFound) {
       if (!constructorFound && configuration.isCreateDefaultConstructor()) {
          if (clazz instanceof EnumDeclaration) {
-            createDefaultConstructor(clazz, name, Modifier.Keyword.PRIVATE);
+            createDefaultConstructorEnum((EnumDeclaration) clazz, name, Modifier.Keyword.PRIVATE);
          } else if (clazz instanceof ClassOrInterfaceDeclaration) {
             ClassOrInterfaceDeclaration clazzDecl = (ClassOrInterfaceDeclaration) clazz;
             if (!clazzDecl.isInterface()) {
                createDefaultConstructor(clazz, name, Modifier.Keyword.PUBLIC);
             }
          }
+      }
+   }
+
+   private void createDefaultConstructorEnum(final EnumDeclaration clazz, final String name, final Keyword visibility) {
+      SignatureReader reader = new SignatureReader(unit, name);
+      String signature = reader.getDefaultConstructor(clazz);
+      if (checker.testSignatureMatch(signature)) {
+         oneHasChanged = true;
+         final SamplingParameters parameters = createParameters(signature);
+         BlockStmt constructorBlock = blockBuilder.buildEmptyEnumConstructor(parameters);
+         ConstructorDeclaration constructor = clazz.addConstructor(visibility);
+         constructor.setBody(constructorBlock);
       }
    }
 
