@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,13 +36,13 @@ public class TestResultConversion {
       
       Set<File> resultFiles = convert(jmhFile);
       
-      Assert.assertThat(resultFiles, Matchers.hasSize(1));
+      MatcherAssert.assertThat(resultFiles, Matchers.hasSize(1));
       
       File resultFile = resultFiles.iterator().next();
       Kopemedata data = XMLDataLoader.loadData(resultFile);
       
       List<Result> results = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
-      Assert.assertThat(results, Matchers.hasSize(1));
+      MatcherAssert.assertThat(results, Matchers.hasSize(1));
       Result result = results.get(0);
       Assert.assertEquals(result.getValue(), 1101075.0, 0.01);
       Assert.assertEquals(result.getFulldata().getValue().get(0).getValue(), 1101075);
@@ -53,13 +54,13 @@ public class TestResultConversion {
       
       Set<File> resultFiles = convert(jmhFile);
       
-      Assert.assertThat(resultFiles, Matchers.hasSize(1));
+      MatcherAssert.assertThat(resultFiles, Matchers.hasSize(1));
       
       File resultFile = resultFiles.iterator().next();
       Kopemedata data = XMLDataLoader.loadData(resultFile);
       
       List<Result> results = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
-      Assert.assertThat(results, Matchers.hasSize(3));
+      MatcherAssert.assertThat(results, Matchers.hasSize(3));
       Result result = results.get(0);
       Assert.assertEquals(result.getValue(), 97.0, 0.01);
       Assert.assertEquals(result.getFulldata().getValue().get(0).getValue(), 96);
@@ -71,13 +72,13 @@ public class TestResultConversion {
       
       Set<File> resultFiles = convert(jmhFile);
       
-      Assert.assertThat(resultFiles, Matchers.hasSize(1));
+      MatcherAssert.assertThat(resultFiles, Matchers.hasSize(1));
       
       File resultFile = resultFiles.iterator().next();
       Kopemedata data = XMLDataLoader.loadData(resultFile);
       
       List<Result> results = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
-      Assert.assertThat(results, Matchers.hasSize(3));
+      MatcherAssert.assertThat(results, Matchers.hasSize(3));
       Result result = results.get(0);
       Assert.assertEquals(result.getParams().getParam().get(0).getKey(), "TEST_PARAM");
       Assert.assertEquals(result.getParams().getParam().get(0).getValue(), "val1");
