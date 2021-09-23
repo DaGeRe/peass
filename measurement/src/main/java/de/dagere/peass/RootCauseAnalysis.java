@@ -96,8 +96,10 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       measurementConfiguration.setKiekerAggregationInterval(kiekerConfigMixin.getWriteInterval());
       measurementConfiguration.setVersion(version);
       measurementConfiguration.setVersionOld(predecessor);
-      measurementConfiguration.setUseSourceInstrumentation(!kiekerConfigMixin.isNotUseSourceInstrumentation());
-      measurementConfiguration.setEnableAdaptiveConfig(!kiekerConfigMixin.isNotUseSourceInstrumentation());
+      boolean useSourceInstrumentation = !kiekerConfigMixin.isNotUseSourceInstrumentation();
+      measurementConfiguration.setUseSourceInstrumentation(useSourceInstrumentation);
+      measurementConfiguration.getKiekerConfig().setEnableAdaptiveMonitoring(!useSourceInstrumentation);
+      measurementConfiguration.getKiekerConfig().setAdaptiveInstrumentation(kiekerConfigMixin.isEnableAdaptiveInstrumentation());
       measurementConfiguration.setUseCircularQueue(kiekerConfigMixin.isUseCircularQueue());
       if (kiekerConfigMixin.isNotUseSourceInstrumentation() && kiekerConfigMixin.isNotUseSelectiveInstrumentation()) {
          measurementConfiguration.setUseSelectiveInstrumentation(false);

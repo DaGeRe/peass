@@ -14,6 +14,7 @@ public class KiekerConfiguration implements Serializable {
    private boolean useSampling = false;
    private boolean useCircularQueue = true;
    private boolean enableAdaptiveMonitoring = false;
+   private boolean adaptiveInstrumentation = false;
    private int kiekerAggregationInterval = 5000;
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
    private boolean extractMethod = false;
@@ -32,6 +33,7 @@ public class KiekerConfiguration implements Serializable {
       this.useSampling = other.useSampling;
       this.useCircularQueue = other.useCircularQueue;
       this.enableAdaptiveMonitoring = other.enableAdaptiveMonitoring;
+      this.adaptiveInstrumentation = other.adaptiveInstrumentation;
       this.kiekerAggregationInterval = other.kiekerAggregationInterval;
       this.record = other.record;
       this.extractMethod = other.extractMethod;
@@ -83,6 +85,14 @@ public class KiekerConfiguration implements Serializable {
 
    public void setEnableAdaptiveMonitoring(final boolean enableAdaptiveMonitoring) {
       this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
+   }
+   
+   public boolean isAdaptiveInstrumentation() {
+      return adaptiveInstrumentation;
+   }
+
+   public void setAdaptiveInstrumentation(final boolean adaptiveInstrumentation) {
+      this.adaptiveInstrumentation = adaptiveInstrumentation;
    }
 
    public int getKiekerAggregationInterval() {

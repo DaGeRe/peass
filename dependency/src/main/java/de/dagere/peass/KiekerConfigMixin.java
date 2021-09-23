@@ -23,6 +23,9 @@ public class KiekerConfigMixin {
 
    @Option(names = { "-useExtraction", "--useExtraction" }, description = "Extract methods when using source instrumentation")
    public boolean useExtraction = false;
+   
+   @Option(names = { "-enableAdaptiveInstrumentation", "--enableAdaptiveInstrumentation" }, description = "Enable adaptive instrumentation (for performance comparison to AspectJ)")
+   public boolean enableAdaptiveInstrumentation = false;
 
    public int getWriteInterval() {
       return writeInterval;
@@ -50,6 +53,10 @@ public class KiekerConfigMixin {
    public boolean isUseExtraction() {
       return useExtraction;
    }
+   
+   public boolean isEnableAdaptiveInstrumentation() {
+      return enableAdaptiveInstrumentation;
+   }
 
    public KiekerConfiguration getKiekerConfig() {
       if (useSampling) {
@@ -60,6 +67,7 @@ public class KiekerConfigMixin {
       kiekerConfig.setUseSelectiveInstrumentation(!notUseSelectiveInstrumentation);
       kiekerConfig.setUseSampling(useSampling);
       kiekerConfig.setExtractMethod(useExtraction);
+      kiekerConfig.setAdaptiveInstrumentation(enableAdaptiveInstrumentation);
       kiekerConfig.setUseSourceInstrumentation(!notUseSourceInstrumentation);
       return kiekerConfig;
    }

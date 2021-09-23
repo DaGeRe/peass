@@ -158,6 +158,7 @@ public class MeasurementConfiguration implements Serializable {
       kiekerConfig.setUseSampling(other.isUseSampling());
       kiekerConfig.setUseCircularQueue(other.isUseCircularQueue());
       kiekerConfig.setEnableAdaptiveMonitoring(other.isEnableAdaptiveConfig());
+      kiekerConfig.setAdaptiveInstrumentation(other.getKiekerConfig().isAdaptiveInstrumentation());
       kiekerConfig.setKiekerAggregationInterval(other.getKiekerAggregationInterval());
       kiekerConfig.setRecord(other.getRecord());
       this.useGC = other.useGC;
