@@ -85,7 +85,7 @@ public class BlockBuilder {
       BlockStmt replacedStatement = new BlockStmt();
 
       new HeaderBuilder(useStaticVariables, enableDeactivation, enableAdaptiveMonitoring).buildHeader(originalBlock, signature, mayNeedReturn, replacedStatement);
-      
+
       String before = getCorrectStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore());
       replacedStatement.addAndGetStatement(before);
       BlockStmt finallyBlock = new BlockStmt();
@@ -106,33 +106,20 @@ public class BlockBuilder {
       return before;
    }
 
-   public BlockStmt buildEmptyConstructor(final SamplingParameters parameters) {
+   public BlockStmt buildEmptyConstructor(final TypeDeclaration<?> type, final SamplingParameters parameters) {
       BlockStmt replacedStatement = new BlockStmt();
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
+         if (type.isEnumDeclaration()) {
+            useStaticVariables = false;
+         }
          buildOperationExecutionRecordDefaultConstructor(parameters.getSignature(), replacedStatement);
+         useStaticVariables = true;
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
+         if (type.isEnumDeclaration()) {
+            useStaticVariables = false;
+         }
          buildReducedOperationExecutionRecordDefaultConstructor(parameters.getSignature(), replacedStatement);
-      } else {
-         throw new RuntimeException();
-      }
-      return replacedStatement;
-   }
-
-   public BlockStmt buildEmptyEnumConstructor(final SamplingParameters parameters) {
-      BlockStmt replacedStatement = new BlockStmt();
-
-      if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
          useStaticVariables = false;
-         String before = replaceStaticVariables(InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore());
-         String after = replaceStaticVariables(InstrumentationCodeBlocks.OPERATIONEXECUTION.getAfter());
-         buildEmptyConstructor(parameters.getSignature(), replacedStatement, before, after);
-         useStaticVariables = true;
-      } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
-         useStaticVariables = false;
-         String before = replaceStaticVariables(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getBefore());
-         String after = replaceStaticVariables(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getAfter());
-         buildEmptyConstructor(parameters.getSignature(), replacedStatement, before, after);
-         useStaticVariables = true;
       } else {
          throw new RuntimeException();
       }
@@ -151,8 +138,14 @@ public class BlockBuilder {
 
    private void buildEmptyConstructor(final String signature, final BlockStmt replacedStatement, final String before, final String after) {
       new HeaderBuilder(useStaticVariables, enableDeactivation, enableAdaptiveMonitoring).buildHeader(new BlockStmt(), signature, false, replacedStatement);
-      replacedStatement.addAndGetStatement(before);
-      replacedStatement.addAndGetStatement(after);
+      if (useStaticVariables) {
+         replacedStatement.addAndGetStatement(before);
+         replacedStatement.addAndGetStatement(after);
+      } else {
+         replacedStatement.addAndGetStatement(replaceStaticVariables(before));
+         replacedStatement.addAndGetStatement(replaceStaticVariables(after));
+      }
+
    }
 
    private void buildReducedOperationExecutionRecordDefaultConstructor(final String signature, final BlockStmt replacedStatement) {

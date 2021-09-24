@@ -149,7 +149,7 @@ public class TypeInstrumenter {
    private void handleDefaultConstructor(final TypeDeclaration<?> clazz, final String name, final boolean constructorFound) {
       if (!constructorFound && configuration.isCreateDefaultConstructor()) {
          if (clazz instanceof EnumDeclaration) {
-            createDefaultConstructorEnum((EnumDeclaration) clazz, name, Modifier.Keyword.PRIVATE);
+            createDefaultConstructor(clazz, name, Modifier.Keyword.PRIVATE);
          } else if (clazz instanceof ClassOrInterfaceDeclaration) {
             ClassOrInterfaceDeclaration clazzDecl = (ClassOrInterfaceDeclaration) clazz;
             if (!clazzDecl.isInterface()) {
@@ -159,26 +159,14 @@ public class TypeInstrumenter {
       }
    }
 
-   private void createDefaultConstructorEnum(final EnumDeclaration clazz, final String name, final Keyword visibility) {
+   private void createDefaultConstructor(final TypeDeclaration<?> type, final String name, final Keyword visibility) {
       SignatureReader reader = new SignatureReader(unit, name);
-      String signature = reader.getDefaultConstructor(clazz);
+      String signature = reader.getDefaultConstructor(type);
       if (checker.testSignatureMatch(signature)) {
          oneHasChanged = true;
          final SamplingParameters parameters = createParameters(signature);
-         BlockStmt constructorBlock = blockBuilder.buildEmptyEnumConstructor(parameters);
-         ConstructorDeclaration constructor = clazz.addConstructor(visibility);
-         constructor.setBody(constructorBlock);
-      }
-   }
-
-   private void createDefaultConstructor(final TypeDeclaration<?> clazz, final String name, final Keyword visibility) {
-      SignatureReader reader = new SignatureReader(unit, name);
-      String signature = reader.getDefaultConstructor(clazz);
-      if (checker.testSignatureMatch(signature)) {
-         oneHasChanged = true;
-         final SamplingParameters parameters = createParameters(signature);
-         BlockStmt constructorBlock = blockBuilder.buildEmptyConstructor(parameters);
-         ConstructorDeclaration constructor = clazz.addConstructor(visibility);
+         BlockStmt constructorBlock = blockBuilder.buildEmptyConstructor(type, parameters);
+         ConstructorDeclaration constructor = type.addConstructor(visibility);
          constructor.setBody(constructorBlock);
       }
    }
