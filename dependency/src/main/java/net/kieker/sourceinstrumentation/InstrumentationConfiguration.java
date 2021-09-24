@@ -3,12 +3,21 @@ package net.kieker.sourceinstrumentation;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.kieker.sourceinstrumentation.instrument.BlockBuilder;
 import net.kieker.sourceinstrumentation.instrument.SamplingBlockBuilder;
 
 public class InstrumentationConfiguration {
+
+   private static final String JAVA_8_MESSAGE = "Since Java 8 is used, adaptive instrumentation and deactivation is disabled, since both may cause problems with constructor instrumentation. "
+         + "If you like to use this, please consider replacing the return in if (MonitoringController.getInstance().isEnabbled()) { ...; return ; } - calls by an else and check the performance implications.";
+
+   private static final Logger LOG = LogManager.getLogger(InstrumentationConfiguration.class);
+
    private final AllowedKiekerRecord usedRecord;
    private final boolean sample;
    private final int samplingCount;
@@ -28,9 +37,16 @@ public class InstrumentationConfiguration {
       this.sample = sample;
       this.includedPatterns = includedPatterns;
       excludedPatterns = new HashSet<String>();
-      this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
+      if (JavaVersionUtil.getSystemJavaVersion() == 8) {
+         LOG.info(JAVA_8_MESSAGE);
+         this.enableAdaptiveMonitoring = false;
+         this.enableDeactivation = false;
+      } else {
+         this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
+         this.enableDeactivation = enableDecativation;
+      }
+
       this.createDefaultConstructor = true;
-      this.enableDeactivation = enableDecativation;
       this.samplingCount = samplingCount;
       this.extractMethod = extractMethod;
 
@@ -43,10 +59,16 @@ public class InstrumentationConfiguration {
       this.usedRecord = usedRecord;
       this.sample = sample;
       this.createDefaultConstructor = createDefaultConstructor;
-      this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
+      if (JavaVersionUtil.getSystemJavaVersion() == 8) {
+         LOG.info(JAVA_8_MESSAGE);
+         this.enableAdaptiveMonitoring = false;
+         this.enableDeactivation = false;
+      } else {
+         this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
+         this.enableDeactivation = enableDecativation;
+      }
       this.includedPatterns = includedPatterns;
       excludedPatterns = new HashSet<String>();
-      this.enableDeactivation = enableDecativation;
       this.samplingCount = samplingCount;
       this.extractMethod = extractMethod;
 
@@ -59,10 +81,16 @@ public class InstrumentationConfiguration {
       this.usedRecord = usedRecord;
       this.sample = sample;
       this.createDefaultConstructor = createDefaultConstructor;
-      this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
+      if (JavaVersionUtil.getSystemJavaVersion() == 8) {
+         LOG.info(JAVA_8_MESSAGE);
+         this.enableAdaptiveMonitoring = false;
+         this.enableDeactivation = false;
+      } else {
+         this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
+         this.enableDeactivation = enableDecativation;
+      }
       this.includedPatterns = includedPatterns;
       this.excludedPatterns = excludedPatterns;
-      this.enableDeactivation = enableDecativation;
       this.samplingCount = samplingCount;
       this.extractMethod = extractMethod;
 
@@ -77,6 +105,8 @@ public class InstrumentationConfiguration {
          throw new RuntimeException("Disabling deactivation and extracting methods does not make sense, since it only slows down the process");
       }
    }
+
+   
 
    public AllowedKiekerRecord getUsedRecord() {
       return usedRecord;
