@@ -47,9 +47,9 @@ public class FileInstrumenter {
    }
 
 
-   private boolean handleTypeDeclaration(final TypeDeclaration<?> clazz, final String packageName) throws IOException {
-      TypeInstrumenter instrumenter = new TypeInstrumenter(configuration, unit);
-      boolean hasChanged = instrumenter.handleTypeDeclaration(clazz, packageName);
+   private boolean handleTypeDeclaration(final TypeDeclaration<?> type, final String packageName) throws IOException {
+      TypeInstrumenter instrumenter = new TypeInstrumenter(configuration, unit, type);
+      boolean hasChanged = instrumenter.handleTypeDeclaration(type, packageName);
       return hasChanged;
    }
 

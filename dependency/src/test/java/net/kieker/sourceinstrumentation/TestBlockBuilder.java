@@ -3,13 +3,16 @@ package net.kieker.sourceinstrumentation;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.expr.CharLiteralExpr;
 import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 
 import net.kieker.sourceinstrumentation.instrument.BlockBuilder;
+import net.kieker.sourceinstrumentation.instrument.codeblocks.CodeBlockTransformer;
 
 public class TestBlockBuilder {
    
@@ -18,9 +21,12 @@ public class TestBlockBuilder {
       BlockStmt block = buildSimpleBlock();
       
       BlockBuilder builder = new BlockBuilder(AllowedKiekerRecord.OPERATIONEXECUTION, true, true);
-      BlockStmt instrumented = builder.buildOperationExecutionStatement(block, "void MyClass.callHelloWorld", false);
+      ClassOrInterfaceDeclaration mockedDeclaration = Mockito.mock(ClassOrInterfaceDeclaration.class);
+      Mockito.when(mockedDeclaration.getNameAsString()).thenReturn("MyTest");
+      CodeBlockTransformer transformer = new CodeBlockTransformer(mockedDeclaration);
+      BlockStmt instrumented = builder.buildOperationExecutionStatement(block, "void MyClass.callHelloWorld", false, transformer);
       
-      MatcherAssert.assertThat(instrumented.toString(), Matchers.containsString("long _kieker_sourceInstrumentation_tout = _kieker_sourceInstrumentation_TIME_SOURCE.getTime();"));
+      MatcherAssert.assertThat(instrumented.toString(), Matchers.containsString("long _kieker_sourceInstrumentation_tout = MyTest._kieker_sourceInstrumentation_TIME_SOURCE.getTime();"));
    }
 
    public static BlockStmt buildSimpleBlock() {

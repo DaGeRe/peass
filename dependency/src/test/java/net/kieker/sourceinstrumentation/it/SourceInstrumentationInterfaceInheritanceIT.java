@@ -18,8 +18,11 @@ import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import net.kieker.sourceinstrumentation.SourceInstrumentationTestUtil;
 import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
-public class SourceInstrumentationInterfaceIT {
+public class SourceInstrumentationInterfaceInheritanceIT {
    
+   private static final String INTERFACE_INHERITANCE_FOLDER = "/sourceInstrumentation/project_2_interface_inheritance/";
+
+
    @BeforeEach
    public void before() throws IOException {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
@@ -28,10 +31,9 @@ public class SourceInstrumentationInterfaceIT {
 
    @Test
    public void testExecution() throws IOException {
-      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2_interface_inheritance/");
-      SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/SomeInterface.java", "/sourceInstrumentation/project_2_interface/");
-      SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/SomeEnum.java", "/sourceInstrumentation/project_2_interface/");
-      SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/SomeEnumWithConstructor.java", "/sourceInstrumentation/project_2_interface/");
+      SourceInstrumentationTestUtil.initSimpleProject(INTERFACE_INHERITANCE_FOLDER);
+      SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/SomeInterface.java", INTERFACE_INHERITANCE_FOLDER);
+      SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/SomeOtherInterface.java", INTERFACE_INHERITANCE_FOLDER);
 
       File tempFolder = new File(TestConstants.CURRENT_FOLDER, "results");
       tempFolder.mkdir();
@@ -51,6 +53,5 @@ public class SourceInstrumentationInterfaceIT {
       
       String monitorLogs = FileUtils.readFileToString(resultFile, StandardCharsets.UTF_8);
       MatcherAssert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.MainTest.testMe()"));
-      MatcherAssert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.AddRandomNumbers.addSomething();"));
    }
 }

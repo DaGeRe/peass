@@ -26,6 +26,7 @@ import com.github.javaparser.ast.stmt.ExpressionStmt;
 
 import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
 import net.kieker.sourceinstrumentation.InstrumentationConstants;
+import net.kieker.sourceinstrumentation.instrument.codeblocks.CodeBlockTransformer;
 
 public class TypeInstrumenter {
 
@@ -40,31 +41,38 @@ public class TypeInstrumenter {
    private final List<String> sumsToAdd = new LinkedList<>();
    private final SignatureMatchChecker checker;
    private final CompilationUnit unit;
+   private final TypeDeclaration<?> topLevelType;
+   private final CodeBlockTransformer transformer;
 
    private boolean oneHasChanged = false;
 
-   public TypeInstrumenter(final InstrumentationConfiguration configuration, final CompilationUnit unit) {
+   public TypeInstrumenter(final InstrumentationConfiguration configuration, final CompilationUnit unit, final TypeDeclaration<?> topLevelType) {
       this.configuration = configuration;
       this.blockBuilder = configuration.getBlockBuilder();
       this.checker = new SignatureMatchChecker(configuration.getIncludedPatterns(), configuration.getExcludedPatterns());
       this.unit = unit;
+      this.topLevelType = topLevelType;
+      transformer = new CodeBlockTransformer(topLevelType);
    }
 
-   public boolean handleTypeDeclaration(final TypeDeclaration<?> clazz, final String packageName) throws IOException {
-      if (clazz != null) {
-         final String name = packageName + clazz.getNameAsString();
+   public boolean handleTypeDeclaration(final TypeDeclaration<?> type, final String packageName) throws IOException {
+      if (type != null) {
+         final String name = packageName + type.getNameAsString();
 
-         boolean fileContainsChange = handleChildren(clazz, name);
+         boolean fileContainsChange = handleChildren(type, name);
 
          if (fileContainsChange) {
             for (String counterName : countersToAdd) {
-               clazz.addField("int", counterName, Keyword.PRIVATE, Keyword.STATIC);
+               type.addField("int", counterName, Keyword.PRIVATE, Keyword.STATIC);
             }
             for (String counterName : sumsToAdd) {
-               clazz.addField("long", counterName, Keyword.PRIVATE, Keyword.STATIC);
+               type.addField("long", counterName, Keyword.PRIVATE, Keyword.STATIC);
             }
 
-            new KiekerFieldAdder(configuration).addKiekerFields(clazz);
+            if (type == topLevelType) {
+               new KiekerFieldAdder(configuration).addKiekerFields(type);
+            }
+
             return true;
          }
       }
@@ -165,7 +173,7 @@ public class TypeInstrumenter {
       if (checker.testSignatureMatch(signature)) {
          oneHasChanged = true;
          final SamplingParameters parameters = createParameters(signature);
-         BlockStmt constructorBlock = blockBuilder.buildEmptyConstructor(type, parameters);
+         BlockStmt constructorBlock = blockBuilder.buildEmptyConstructor(type, parameters, transformer);
          ConstructorDeclaration constructor = type.addConstructor(visibility);
          constructor.setBody(constructorBlock);
       }
@@ -181,7 +189,7 @@ public class TypeInstrumenter {
          final SamplingParameters parameters = createParameters(signature);
 
          boolean configurationRequiresReturn = configuration.isEnableAdaptiveMonitoring() || configuration.isEnableDeactivation();
-         final BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, configurationRequiresReturn, parameters, type);
+         final BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, configurationRequiresReturn, parameters, type, transformer);
 
          constructor.setBody(replacedStatement);
          oneHasChanged = true;
@@ -201,7 +209,7 @@ public class TypeInstrumenter {
             final boolean needsReturn = method.getType().toString().equals("void") && configurationRequiresReturn;
             final SamplingParameters parameters = createParameters(signature);
 
-            final BlockStmt replacedStatement = blockBuilder.buildStatement(originalBlock, needsReturn, parameters);
+            final BlockStmt replacedStatement = blockBuilder.buildStatement(originalBlock, needsReturn, parameters, transformer);
 
             method.setBody(replacedStatement);
             oneHasChanged = true;

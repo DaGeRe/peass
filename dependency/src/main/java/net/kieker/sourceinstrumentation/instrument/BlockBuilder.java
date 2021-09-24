@@ -12,7 +12,7 @@ import com.github.javaparser.ast.stmt.TryStmt;
 
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import net.kieker.sourceinstrumentation.InstrumentationCodeBlocks;
-import net.kieker.sourceinstrumentation.InstrumentationConstants;
+import net.kieker.sourceinstrumentation.instrument.codeblocks.CodeBlockTransformer;
 
 public class BlockBuilder {
 
@@ -28,7 +28,8 @@ public class BlockBuilder {
       this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
    }
 
-   public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final boolean mayNeedReturn, final SamplingParameters parameters, final TypeDeclaration<?> type) {
+   public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final boolean mayNeedReturn, final SamplingParameters parameters, final TypeDeclaration<?> type,
+         final CodeBlockTransformer transformer) {
       if (type.isEnumDeclaration()) {
          useStaticVariables = false;
       }
@@ -40,7 +41,7 @@ public class BlockBuilder {
          originalBlock.getStatements().remove(constructorStatement);
       }
 
-      final BlockStmt regularChangedStatement = buildStatement(originalBlock, mayNeedReturn, parameters);
+      final BlockStmt regularChangedStatement = buildStatement(originalBlock, mayNeedReturn, parameters, transformer);
       for (Statement st : regularChangedStatement.getStatements()) {
          replacedStatement.addAndGetStatement(st);
       }
@@ -58,9 +59,9 @@ public class BlockBuilder {
       return constructorStatement;
    }
 
-   public BlockStmt buildStatement(final BlockStmt originalBlock, final boolean mayNeedReturn, final SamplingParameters parameters) {
+   public BlockStmt buildStatement(final BlockStmt originalBlock, final boolean mayNeedReturn, final SamplingParameters parameters, final CodeBlockTransformer transformer) {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
-         return buildOperationExecutionStatement(originalBlock, parameters.getSignature(), mayNeedReturn);
+         return buildOperationExecutionStatement(originalBlock, parameters.getSignature(), mayNeedReturn, transformer);
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
          return buildReducedOperationExecutionStatement(originalBlock, parameters.getSignature(), mayNeedReturn);
       } else {
@@ -81,44 +82,42 @@ public class BlockBuilder {
       return replacedStatement;
    }
 
-   public BlockStmt buildOperationExecutionStatement(final BlockStmt originalBlock, final String signature, final boolean mayNeedReturn) {
+   public BlockStmt buildOperationExecutionStatement(final BlockStmt originalBlock, final String signature, final boolean mayNeedReturn, final CodeBlockTransformer transformer) {
       BlockStmt replacedStatement = new BlockStmt();
 
       new HeaderBuilder(useStaticVariables, enableDeactivation, enableAdaptiveMonitoring).buildHeader(originalBlock, signature, mayNeedReturn, replacedStatement);
 
-      String before = getCorrectStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore());
+      String before = transformer.getTransformedBlock(InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore(), useStaticVariables);
       replacedStatement.addAndGetStatement(before);
       BlockStmt finallyBlock = new BlockStmt();
-      String after = getCorrectStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getAfter());
+      String after = transformer.getTransformedBlock(InstrumentationCodeBlocks.OPERATIONEXECUTION.getAfter(), useStaticVariables);
       finallyBlock.addAndGetStatement(after);
       TryStmt stmt = new TryStmt(originalBlock, new NodeList<>(), finallyBlock);
       replacedStatement.addAndGetStatement(stmt);
       return replacedStatement;
    }
 
-   private String getCorrectStatement(final String originalStatement) {
-      String before;
-      if (useStaticVariables) {
-         before = originalStatement;
-      } else {
-         before = replaceStaticVariables(originalStatement);
-      }
-      return before;
-   }
-
-   public BlockStmt buildEmptyConstructor(final TypeDeclaration<?> type, final SamplingParameters parameters) {
+   public BlockStmt buildEmptyConstructor(final TypeDeclaration<?> type, final SamplingParameters parameters, final CodeBlockTransformer transformer) {
       BlockStmt replacedStatement = new BlockStmt();
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
          if (type.isEnumDeclaration()) {
             useStaticVariables = false;
          }
-         buildOperationExecutionRecordDefaultConstructor(parameters.getSignature(), replacedStatement);
+         buildEmptyConstructor(parameters.getSignature(), 
+               replacedStatement,
+               InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore(), 
+               InstrumentationCodeBlocks.OPERATIONEXECUTION.getAfter(),
+               transformer);
          useStaticVariables = true;
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
          if (type.isEnumDeclaration()) {
             useStaticVariables = false;
          }
-         buildReducedOperationExecutionRecordDefaultConstructor(parameters.getSignature(), replacedStatement);
+         buildEmptyConstructor(parameters.getSignature(), 
+               replacedStatement,
+               InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getBefore(), 
+               InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getAfter(),
+               transformer);
          useStaticVariables = false;
       } else {
          throw new RuntimeException();
@@ -126,35 +125,10 @@ public class BlockBuilder {
       return replacedStatement;
    }
 
-   private String replaceStaticVariables(final String original) {
-      String before = original
-            .replaceAll(InstrumentationConstants.PREFIX + "VM_NAME", "kieker.monitoring.core.controller.MonitoringController.getInstance().getHostname()")
-            .replaceAll(InstrumentationConstants.PREFIX + "SESSION_REGISTRY", "SessionRegistry.INSTANCE")
-            .replaceAll(InstrumentationConstants.PREFIX + "controlFlowRegistry", "ControlFlowRegistry.INSTANCE")
-            .replaceAll(InstrumentationConstants.PREFIX + "controller", InstrumentationConstants.CONTROLLER_NAME)
-            .replaceAll(InstrumentationConstants.PREFIX + "TIME_SOURCE", "kieker.monitoring.core.controller.MonitoringController.getInstance().getTimeSource()");
-      return before;
-   }
-
-   private void buildEmptyConstructor(final String signature, final BlockStmt replacedStatement, final String before, final String after) {
+   private void buildEmptyConstructor(final String signature, final BlockStmt replacedStatement, final String before, final String after, final CodeBlockTransformer transformer) {
       new HeaderBuilder(useStaticVariables, enableDeactivation, enableAdaptiveMonitoring).buildHeader(new BlockStmt(), signature, false, replacedStatement);
-      if (useStaticVariables) {
-         replacedStatement.addAndGetStatement(before);
-         replacedStatement.addAndGetStatement(after);
-      } else {
-         replacedStatement.addAndGetStatement(replaceStaticVariables(before));
-         replacedStatement.addAndGetStatement(replaceStaticVariables(after));
-      }
-
+      replacedStatement.addAndGetStatement(transformer.getTransformedBlock(before, useStaticVariables));
+      replacedStatement.addAndGetStatement(transformer.getTransformedBlock(after, useStaticVariables));
    }
 
-   private void buildReducedOperationExecutionRecordDefaultConstructor(final String signature, final BlockStmt replacedStatement) {
-      buildEmptyConstructor(signature, replacedStatement,
-            InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getBefore(), InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getAfter());
-   }
-
-   private void buildOperationExecutionRecordDefaultConstructor(final String signature, final BlockStmt replacedStatement) {
-      buildEmptyConstructor(signature, replacedStatement,
-            InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore(), InstrumentationCodeBlocks.OPERATIONEXECUTION.getAfter());
-   }
 }

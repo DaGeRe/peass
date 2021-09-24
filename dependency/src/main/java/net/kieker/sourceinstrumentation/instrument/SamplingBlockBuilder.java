@@ -7,6 +7,7 @@ import com.github.javaparser.ast.stmt.TryStmt;
 
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import net.kieker.sourceinstrumentation.InstrumentationCodeBlocks;
+import net.kieker.sourceinstrumentation.instrument.codeblocks.CodeBlockTransformer;
 
 public class SamplingBlockBuilder extends BlockBuilder {
 
@@ -18,7 +19,7 @@ public class SamplingBlockBuilder extends BlockBuilder {
    }
 
    @Override
-   public BlockStmt buildStatement(final BlockStmt originalBlock, final boolean addReturn, final SamplingParameters parameters) {
+   public BlockStmt buildStatement(final BlockStmt originalBlock, final boolean addReturn, final SamplingParameters parameters, final CodeBlockTransformer transformer) {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
          throw new RuntimeException("Not implemented yet (Sampling + OperationExecutionRecord does not make sense, since OperationExecutionRecord contains too complex metadata for sampling)");
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
@@ -29,7 +30,7 @@ public class SamplingBlockBuilder extends BlockBuilder {
    }
    
    @Override
-   public BlockStmt buildEmptyConstructor(final TypeDeclaration<?> type, final SamplingParameters parameters) {
+   public BlockStmt buildEmptyConstructor(final TypeDeclaration<?> type, final SamplingParameters parameters, final CodeBlockTransformer transformer) {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
          throw new RuntimeException("Not implemented yet (Sampling + OperationExecutionRecord does not make sense, since OperationExecutionRecord contains too complex metadata for sampling)");
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {

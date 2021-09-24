@@ -36,7 +36,7 @@ public class TestTypeInstrumentation {
       EnumDeclaration declaration = unit.findAll(EnumDeclaration.class).get(0);
 
       InstrumentationConfiguration configuration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, null, true, true, 0, false);
-      TypeInstrumenter instrumenter = new TypeInstrumenter(configuration, unit);
+      TypeInstrumenter instrumenter = new TypeInstrumenter(configuration, unit, declaration);
       instrumenter.handleTypeDeclaration(declaration, "de.dagere.test");
 
       ConstructorDeclaration defaultConstructor = declaration.findAll(ConstructorDeclaration.class).get(0);
@@ -50,12 +50,12 @@ public class TestTypeInstrumentation {
       ClassOrInterfaceDeclaration clazz = buildClass();
 
       InstrumentationConfiguration configuration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, null, true, true, 0, false);
-      TypeInstrumenter instrumenter = new TypeInstrumenter(configuration, Mockito.mock(CompilationUnit.class));
+      TypeInstrumenter instrumenter = new TypeInstrumenter(configuration, Mockito.mock(CompilationUnit.class), clazz);
       boolean hasChange = instrumenter.handleTypeDeclaration(clazz, "de.dagere.test");
 
       Assert.assertTrue(hasChange);
 
-      MatcherAssert.assertThat(clazz.toString(), Matchers.containsString("long _kieker_sourceInstrumentation_tout = _kieker_sourceInstrumentation_TIME_SOURCE.getTime();"));
+      MatcherAssert.assertThat(clazz.toString(), Matchers.containsString("long _kieker_sourceInstrumentation_tout = MyClazz._kieker_sourceInstrumentation_TIME_SOURCE.getTime();"));
    }
 
    @Test
@@ -63,7 +63,7 @@ public class TestTypeInstrumentation {
       ClassOrInterfaceDeclaration clazz = buildClass();
 
       InstrumentationConfiguration configuration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, null, true, true, 0, true);
-      TypeInstrumenter instrumenter = new TypeInstrumenter(configuration, Mockito.mock(CompilationUnit.class));
+      TypeInstrumenter instrumenter = new TypeInstrumenter(configuration, Mockito.mock(CompilationUnit.class), clazz);
       boolean hasChange = instrumenter.handleTypeDeclaration(clazz, "de.dagere.test");
 
       Assert.assertTrue(hasChange);
