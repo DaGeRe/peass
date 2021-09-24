@@ -31,6 +31,7 @@ public class SourceInstrumentationInterfaceIT {
       SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2_interface/");
       SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/SomeInterface.java", "/sourceInstrumentation/project_2_interface/");
       SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/SomeEnum.java", "/sourceInstrumentation/project_2_interface/");
+      SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/SomeEnumWithConstructor.java", "/sourceInstrumentation/project_2_interface/");
 
       File tempFolder = new File(TestConstants.CURRENT_FOLDER, "results");
       tempFolder.mkdir();

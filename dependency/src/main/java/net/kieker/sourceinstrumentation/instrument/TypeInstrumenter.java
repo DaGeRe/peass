@@ -82,20 +82,7 @@ public class TypeInstrumenter {
                ClassOrInterfaceDeclaration declaringEntity = (ClassOrInterfaceDeclaration) clazz;
                if (!declaringEntity.isInterface() || method.getBody().isPresent()) {
                   if (configuration.isExtractMethod()) {
-                     String generatedName = generateWorkloadMethod(methodsToAdd, method);
-
-                     BlockStmt newBody = new BlockStmt();
-                     ExpressionStmt exprStatment;
-                     NodeList<Expression> parameterCallList = new NodeList<>();
-                     method.getParameters().stream().forEach(parameter -> parameterCallList.add(parameter.getNameAsExpression()));
-                     if (method.getType().toString().equals("void")) {
-                        exprStatment = new ExpressionStmt(new MethodCallExpr(generatedName, parameterCallList.toArray(new Expression[0])));
-                     } else {
-                        exprStatment = new ExpressionStmt(new MethodCallExpr("return " + generatedName, parameterCallList.toArray(new Expression[0])));
-                     }
-                     newBody.addStatement(exprStatment);
-                     method.setBody(newBody);
-
+                     extractMethod(methodsToAdd, method);
                   }
                   instrumentMethod(name, method);
                }
@@ -114,6 +101,22 @@ public class TypeInstrumenter {
       addExtractedWorkloadMethods(clazz, methodsToAdd);
       handleDefaultConstructor(clazz, name, constructorFound);
       return oneHasChanged;
+   }
+
+   private void extractMethod(final List<MethodDeclaration> methodsToAdd, final MethodDeclaration method) {
+      String generatedName = generateWorkloadMethod(methodsToAdd, method);
+
+      BlockStmt newBody = new BlockStmt();
+      ExpressionStmt exprStatment;
+      NodeList<Expression> parameterCallList = new NodeList<>();
+      method.getParameters().stream().forEach(parameter -> parameterCallList.add(parameter.getNameAsExpression()));
+      if (method.getType().toString().equals("void")) {
+         exprStatment = new ExpressionStmt(new MethodCallExpr(generatedName, parameterCallList.toArray(new Expression[0])));
+      } else {
+         exprStatment = new ExpressionStmt(new MethodCallExpr("return " + generatedName, parameterCallList.toArray(new Expression[0])));
+      }
+      newBody.addStatement(exprStatment);
+      method.setBody(newBody);
    }
 
    private String generateWorkloadMethod(final List<MethodDeclaration> methodsToAdd, final MethodDeclaration method) {
@@ -180,17 +183,17 @@ public class TypeInstrumenter {
       }
    }
 
-   private void instrumentConstructor(final TypeDeclaration<?> clazz, final String name, final Node child) {
+   private void instrumentConstructor(final TypeDeclaration<?> type, final String name, final Node child) {
       final ConstructorDeclaration constructor = (ConstructorDeclaration) child;
       final BlockStmt originalBlock = constructor.getBody();
       final SignatureReader reader = new SignatureReader(unit, name);
-      final String signature = reader.getSignature(clazz, constructor);
+      final String signature = reader.getSignature(type, constructor);
       final boolean oneMatches = checker.testSignatureMatch(signature);
       if (oneMatches) {
          final SamplingParameters parameters = createParameters(signature);
 
          boolean configurationRequiresReturn = configuration.isEnableAdaptiveMonitoring() || configuration.isEnableDeactivation();
-         final BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, configurationRequiresReturn, parameters);
+         final BlockStmt replacedStatement = blockBuilder.buildConstructorStatement(originalBlock, configurationRequiresReturn, parameters, type);
 
          constructor.setBody(replacedStatement);
          oneHasChanged = true;

@@ -4,12 +4,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.github.javaparser.ast.NodeList;
-import com.github.javaparser.ast.expr.Expression;
-import com.github.javaparser.ast.expr.MethodCallExpr;
-import com.github.javaparser.ast.expr.NameExpr;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExplicitConstructorInvocationStmt;
-import com.github.javaparser.ast.stmt.IfStmt;
 import com.github.javaparser.ast.stmt.Statement;
 import com.github.javaparser.ast.stmt.TryStmt;
 
@@ -31,7 +28,10 @@ public class BlockBuilder {
       this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
    }
 
-   public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final boolean mayNeedReturn, final SamplingParameters parameters) {
+   public BlockStmt buildConstructorStatement(final BlockStmt originalBlock, final boolean mayNeedReturn, final SamplingParameters parameters, final TypeDeclaration<?> type) {
+      if (type.isEnumDeclaration()) {
+         useStaticVariables = false;
+      }
       LOG.trace("Statements: " + originalBlock.getStatements().size() + " " + parameters.getSignature());
       final BlockStmt replacedStatement = new BlockStmt();
       final ExplicitConstructorInvocationStmt constructorStatement = findConstructorInvocation(originalBlock);
@@ -44,7 +44,7 @@ public class BlockBuilder {
       for (Statement st : regularChangedStatement.getStatements()) {
          replacedStatement.addAndGetStatement(st);
       }
-
+      useStaticVariables = true;
       return replacedStatement;
    }
 
@@ -71,7 +71,7 @@ public class BlockBuilder {
    public BlockStmt buildReducedOperationExecutionStatement(final BlockStmt originalBlock, final String signature, final boolean mayNeedReturn) {
       BlockStmt replacedStatement = new BlockStmt();
 
-      buildHeader(originalBlock, signature, mayNeedReturn, replacedStatement);
+      new HeaderBuilder(useStaticVariables, enableDeactivation, enableAdaptiveMonitoring).buildHeader(originalBlock, signature, mayNeedReturn, replacedStatement);
       replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getBefore());
 
       BlockStmt finallyBlock = new BlockStmt();
@@ -84,40 +84,26 @@ public class BlockBuilder {
    public BlockStmt buildOperationExecutionStatement(final BlockStmt originalBlock, final String signature, final boolean mayNeedReturn) {
       BlockStmt replacedStatement = new BlockStmt();
 
-      buildHeader(originalBlock, signature, mayNeedReturn, replacedStatement);
-      replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore());
+      new HeaderBuilder(useStaticVariables, enableDeactivation, enableAdaptiveMonitoring).buildHeader(originalBlock, signature, mayNeedReturn, replacedStatement);
+      
+      String before = getCorrectStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore());
+      replacedStatement.addAndGetStatement(before);
       BlockStmt finallyBlock = new BlockStmt();
-      finallyBlock.addAndGetStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getAfter());
+      String after = getCorrectStatement(InstrumentationCodeBlocks.OPERATIONEXECUTION.getAfter());
+      finallyBlock.addAndGetStatement(after);
       TryStmt stmt = new TryStmt(originalBlock, new NodeList<>(), finallyBlock);
       replacedStatement.addAndGetStatement(stmt);
       return replacedStatement;
    }
 
-   private void buildHeader(final BlockStmt originalBlock, final String signature, final boolean needsReturn, final BlockStmt replacedStatement) {
-      boolean afterUnreachable = ReachabilityDecider.isAfterUnreachable(originalBlock);
-
-      boolean addReturn = needsReturn && !afterUnreachable;
-      BlockStmt changed = addReturn ? originalBlock.addStatement("return;") : originalBlock;
-
-      final String controllerName;
+   private String getCorrectStatement(final String originalStatement) {
+      String before;
       if (useStaticVariables) {
-         controllerName = InstrumentationConstants.PREFIX + "controller";
+         before = originalStatement;
       } else {
-         controllerName = InstrumentationConstants.CONTROLLER_NAME;
+         before = replaceStaticVariables(originalStatement);
       }
-
-      if (enableDeactivation) {
-         Expression expr = new MethodCallExpr("!" + controllerName + ".isMonitoringEnabled");
-         IfStmt ifS = new IfStmt(expr, changed, null);
-         replacedStatement.addStatement(ifS);
-      }
-      replacedStatement.addAndGetStatement("final String " + InstrumentationConstants.PREFIX + "signature = \"" + signature + "\";");
-      if (enableAdaptiveMonitoring) {
-         NameExpr name = new NameExpr(InstrumentationConstants.PREFIX + "signature");
-         Expression expr = new MethodCallExpr("!" + controllerName + ".isProbeActivated", name);
-         IfStmt ifS = new IfStmt(expr, changed, null);
-         replacedStatement.addStatement(ifS);
-      }
+      return before;
    }
 
    public BlockStmt buildEmptyConstructor(final SamplingParameters parameters) {
@@ -164,7 +150,7 @@ public class BlockBuilder {
    }
 
    private void buildEmptyConstructor(final String signature, final BlockStmt replacedStatement, final String before, final String after) {
-      buildHeader(new BlockStmt(), signature, false, replacedStatement);
+      new HeaderBuilder(useStaticVariables, enableDeactivation, enableAdaptiveMonitoring).buildHeader(new BlockStmt(), signature, false, replacedStatement);
       replacedStatement.addAndGetStatement(before);
       replacedStatement.addAndGetStatement(after);
    }
