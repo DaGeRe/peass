@@ -1,6 +1,7 @@
 package net.kieker.sourceinstrumentation.instrument;
 
 import com.github.javaparser.ast.NodeList;
+import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.TryStmt;
 
@@ -28,7 +29,7 @@ public class SamplingBlockBuilder extends BlockBuilder {
    }
    
    @Override
-   public BlockStmt buildEmptyConstructor(final SamplingParameters parameters) {
+   public BlockStmt buildEmptyConstructor(final TypeDeclaration<?> type, final SamplingParameters parameters) {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
          throw new RuntimeException("Not implemented yet (Sampling + OperationExecutionRecord does not make sense, since OperationExecutionRecord contains too complex metadata for sampling)");
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
