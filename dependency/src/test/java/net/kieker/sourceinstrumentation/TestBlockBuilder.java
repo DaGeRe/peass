@@ -11,7 +11,7 @@ import com.github.javaparser.ast.expr.MethodCallExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.ExpressionStmt;
 
-import net.kieker.sourceinstrumentation.instrument.BlockBuilder;
+import net.kieker.sourceinstrumentation.instrument.codeblocks.BlockBuilder;
 import net.kieker.sourceinstrumentation.instrument.codeblocks.CodeBlockTransformer;
 
 public class TestBlockBuilder {

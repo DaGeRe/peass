@@ -26,6 +26,7 @@ import com.github.javaparser.ast.stmt.ExpressionStmt;
 
 import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
 import net.kieker.sourceinstrumentation.InstrumentationConstants;
+import net.kieker.sourceinstrumentation.instrument.codeblocks.BlockBuilder;
 import net.kieker.sourceinstrumentation.instrument.codeblocks.CodeBlockTransformer;
 
 public class TypeInstrumenter {

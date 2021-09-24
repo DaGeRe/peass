@@ -1,4 +1,4 @@
-package net.kieker.sourceinstrumentation.instrument;
+package net.kieker.sourceinstrumentation.instrument.codeblocks;
 
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.TypeDeclaration;
@@ -7,7 +7,7 @@ import com.github.javaparser.ast.stmt.TryStmt;
 
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import net.kieker.sourceinstrumentation.InstrumentationCodeBlocks;
-import net.kieker.sourceinstrumentation.instrument.codeblocks.CodeBlockTransformer;
+import net.kieker.sourceinstrumentation.instrument.SamplingParameters;
 
 public class SamplingBlockBuilder extends BlockBuilder {
 

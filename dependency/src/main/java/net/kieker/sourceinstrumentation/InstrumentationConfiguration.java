@@ -8,8 +8,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import net.kieker.sourceinstrumentation.instrument.BlockBuilder;
-import net.kieker.sourceinstrumentation.instrument.SamplingBlockBuilder;
+import net.kieker.sourceinstrumentation.instrument.codeblocks.BlockBuilder;
+import net.kieker.sourceinstrumentation.instrument.codeblocks.SamplingBlockBuilder;
 
 public class InstrumentationConfiguration {
 

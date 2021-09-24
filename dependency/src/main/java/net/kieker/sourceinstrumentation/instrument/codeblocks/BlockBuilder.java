@@ -1,4 +1,4 @@
-package net.kieker.sourceinstrumentation.instrument;
+package net.kieker.sourceinstrumentation.instrument.codeblocks;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +12,7 @@ import com.github.javaparser.ast.stmt.TryStmt;
 
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import net.kieker.sourceinstrumentation.InstrumentationCodeBlocks;
-import net.kieker.sourceinstrumentation.instrument.codeblocks.CodeBlockTransformer;
+import net.kieker.sourceinstrumentation.instrument.SamplingParameters;
 
 public class BlockBuilder {
 

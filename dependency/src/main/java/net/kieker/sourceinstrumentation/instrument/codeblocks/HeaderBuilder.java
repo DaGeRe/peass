@@ -1,4 +1,4 @@
-package net.kieker.sourceinstrumentation.instrument;
+package net.kieker.sourceinstrumentation.instrument.codeblocks;
 
 import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.MethodCallExpr;
@@ -7,7 +7,7 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.stmt.IfStmt;
 
 import net.kieker.sourceinstrumentation.InstrumentationConstants;
-import net.kieker.sourceinstrumentation.instrument.codeblocks.CodeBlockTransformer;
+import net.kieker.sourceinstrumentation.instrument.ReachabilityDecider;
 
 public class HeaderBuilder {
    
