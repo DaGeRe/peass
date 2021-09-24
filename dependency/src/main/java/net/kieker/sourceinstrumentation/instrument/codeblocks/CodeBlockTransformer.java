@@ -11,6 +11,16 @@ public class CodeBlockTransformer {
    public CodeBlockTransformer(final TypeDeclaration<?> topLevelType) {
       this.topLevelType = topLevelType;
    }
+   
+   public String getControllerName(final boolean useStaticVariables) {
+      final String controllerName;
+      if (useStaticVariables) {
+         controllerName = InstrumentationConstants.PREFIX + "controller";
+      } else {
+         controllerName = topLevelType.getNameAsString() + "." + InstrumentationConstants.CONTROLLER_NAME;
+      }
+      return controllerName;
+   }
 
    public String getTransformedBlock(final String originalBlock, final boolean useStaticVariables) {
       String transformedBlock;

@@ -63,16 +63,16 @@ public class BlockBuilder {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
          return buildOperationExecutionStatement(originalBlock, parameters.getSignature(), mayNeedReturn, transformer);
       } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
-         return buildReducedOperationExecutionStatement(originalBlock, parameters.getSignature(), mayNeedReturn);
+         return buildReducedOperationExecutionStatement(originalBlock, parameters.getSignature(), mayNeedReturn, transformer);
       } else {
          throw new RuntimeException();
       }
    }
 
-   public BlockStmt buildReducedOperationExecutionStatement(final BlockStmt originalBlock, final String signature, final boolean mayNeedReturn) {
+   public BlockStmt buildReducedOperationExecutionStatement(final BlockStmt originalBlock, final String signature, final boolean mayNeedReturn, final CodeBlockTransformer transformer) {
       BlockStmt replacedStatement = new BlockStmt();
 
-      new HeaderBuilder(useStaticVariables, enableDeactivation, enableAdaptiveMonitoring).buildHeader(originalBlock, signature, mayNeedReturn, replacedStatement);
+      new HeaderBuilder(useStaticVariables, enableDeactivation, enableAdaptiveMonitoring, transformer).buildHeader(originalBlock, signature, mayNeedReturn, replacedStatement);
       replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getBefore());
 
       BlockStmt finallyBlock = new BlockStmt();
@@ -85,7 +85,7 @@ public class BlockBuilder {
    public BlockStmt buildOperationExecutionStatement(final BlockStmt originalBlock, final String signature, final boolean mayNeedReturn, final CodeBlockTransformer transformer) {
       BlockStmt replacedStatement = new BlockStmt();
 
-      new HeaderBuilder(useStaticVariables, enableDeactivation, enableAdaptiveMonitoring).buildHeader(originalBlock, signature, mayNeedReturn, replacedStatement);
+      new HeaderBuilder(useStaticVariables, enableDeactivation, enableAdaptiveMonitoring, transformer).buildHeader(originalBlock, signature, mayNeedReturn, replacedStatement);
 
       String before = transformer.getTransformedBlock(InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore(), useStaticVariables);
       replacedStatement.addAndGetStatement(before);
@@ -126,7 +126,7 @@ public class BlockBuilder {
    }
 
    private void buildEmptyConstructor(final String signature, final BlockStmt replacedStatement, final String before, final String after, final CodeBlockTransformer transformer) {
-      new HeaderBuilder(useStaticVariables, enableDeactivation, enableAdaptiveMonitoring).buildHeader(new BlockStmt(), signature, false, replacedStatement);
+      new HeaderBuilder(useStaticVariables, enableDeactivation, enableAdaptiveMonitoring, transformer).buildHeader(new BlockStmt(), signature, false, replacedStatement);
       replacedStatement.addAndGetStatement(transformer.getTransformedBlock(before, useStaticVariables));
       replacedStatement.addAndGetStatement(transformer.getTransformedBlock(after, useStaticVariables));
    }
