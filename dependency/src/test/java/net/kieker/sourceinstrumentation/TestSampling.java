@@ -7,8 +7,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Test;
 
 import de.dagere.peass.TestConstants;
@@ -55,7 +55,7 @@ public class TestSampling {
             instrumentedMethod, "ReducedOperationExecutionRecord");
 
       String changedSource = FileUtils.readFileToString(instrumentedFile, StandardCharsets.UTF_8);
-      Assert.assertThat(changedSource, Matchers.containsString("if (" + InstrumentationConstants.PREFIX + counterName));
-      Assert.assertThat(changedSource, Matchers.containsString("private static int " + InstrumentationConstants.PREFIX + counterName));
+      MatcherAssert.assertThat(changedSource, Matchers.containsString("if (" + InstrumentationConstants.PREFIX + counterName));
+      MatcherAssert.assertThat(changedSource, Matchers.containsString("private static int " + InstrumentationConstants.PREFIX + counterName));
    }
 }

@@ -6,8 +6,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 
 import de.dagere.peass.TestConstants;
 
@@ -55,9 +55,9 @@ public class SourceInstrumentationTestUtil {
    public static void testFileIsNotInstrumented(final File testFile, final String fqn) throws IOException {
       String changedSource = FileUtils.readFileToString(testFile, StandardCharsets.UTF_8);
 
-      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("MonitoringController.getInstance().isMonitoringEnabled()")));
-      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString(fqn)));
-      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("new OperationExecutionRecord")));
-      Assert.assertThat(changedSource, Matchers.not(Matchers.containsString("kieker.monitoring.core.controller.MonitoringController")));
+      MatcherAssert.assertThat(changedSource, Matchers.not(Matchers.containsString("MonitoringController.getInstance().isMonitoringEnabled()")));
+      MatcherAssert.assertThat(changedSource, Matchers.not(Matchers.containsString(fqn)));
+      MatcherAssert.assertThat(changedSource, Matchers.not(Matchers.containsString("new OperationExecutionRecord")));
+      MatcherAssert.assertThat(changedSource, Matchers.not(Matchers.containsString("kieker.monitoring.core.controller.MonitoringController")));
    }
 }

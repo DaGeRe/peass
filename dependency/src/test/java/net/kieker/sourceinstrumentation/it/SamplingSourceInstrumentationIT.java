@@ -15,8 +15,8 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -77,12 +77,12 @@ public class SamplingSourceInstrumentationIT {
       File resultFile = resultFolder.listFiles((FileFilter) new WildcardFileFilter("*.dat"))[0];
 
       String monitorLogs = FileUtils.readFileToString(resultFile, StandardCharsets.UTF_8);
-      Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.MainTest.testMe()"));
-      Assert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.C0_0.method0()"));
-      Assert.assertThat(monitorLogs, Matchers.containsString("public new de.peass.C0_0.<init>()"));
-      Assert.assertThat(monitorLogs, Matchers.containsString("new de.peass.C0_0$MyInnerClass.<init>(int)"));
-      Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.C1_0.method0()")));
-      Assert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.AddRandomNumbers.addSomething()")));
+      MatcherAssert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.MainTest.testMe()"));
+      MatcherAssert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.C0_0.method0()"));
+      MatcherAssert.assertThat(monitorLogs, Matchers.containsString("public new de.peass.C0_0.<init>()"));
+      MatcherAssert.assertThat(monitorLogs, Matchers.containsString("new de.peass.C0_0$MyInnerClass.<init>(int)"));
+      MatcherAssert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.C1_0.method0()")));
+      MatcherAssert.assertThat(monitorLogs, Matchers.not(Matchers.containsString("public void de.peass.AddRandomNumbers.addSomething()")));
    }
 
    private void extendMaven() throws IOException, XmlPullParserException, FileNotFoundException {
