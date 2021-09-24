@@ -20,6 +20,9 @@ import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public class SourceInstrumentationInterfaceIT {
    
+   private static final String INTERFACE_FOLDER = "/sourceInstrumentation/project_2_interface/";
+
+
    @BeforeEach
    public void before() throws IOException {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
@@ -28,10 +31,10 @@ public class SourceInstrumentationInterfaceIT {
 
    @Test
    public void testExecution() throws IOException {
-      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2_interface_inheritance/");
-      SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/SomeInterface.java", "/sourceInstrumentation/project_2_interface/");
-      SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/SomeEnum.java", "/sourceInstrumentation/project_2_interface/");
-      SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/SomeEnumWithConstructor.java", "/sourceInstrumentation/project_2_interface/");
+      SourceInstrumentationTestUtil.initProject(INTERFACE_FOLDER);
+      SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/SomeInterface.java", INTERFACE_FOLDER);
+      SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/SomeEnum.java", INTERFACE_FOLDER);
+      SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/SomeEnumWithConstructor.java", INTERFACE_FOLDER);
 
       File tempFolder = new File(TestConstants.CURRENT_FOLDER, "results");
       tempFolder.mkdir();
