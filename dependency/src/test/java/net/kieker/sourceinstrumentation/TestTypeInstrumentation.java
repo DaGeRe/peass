@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -26,21 +28,23 @@ import net.kieker.sourceinstrumentation.instrument.TypeInstrumenter;
 
 public class TestTypeInstrumentation {
 
+   private static final Logger LOG = LogManager.getLogger(TestTypeInstrumentation.class);
+
    @Test
    public void testEnumInstrumentation() throws IOException {
       CompilationUnit unit = JavaParserProvider.parse(new File("src/test/resources/sourceInstrumentation/project_2_interface/src/main/java/de/peass/SomeEnum.java"));
       EnumDeclaration declaration = unit.findAll(EnumDeclaration.class).get(0);
-      
+
       InstrumentationConfiguration configuration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, null, true, true, 0, false);
       TypeInstrumenter instrumenter = new TypeInstrumenter(configuration, unit);
       instrumenter.handleTypeDeclaration(declaration, "de.dagere.test");
-      
+
       ConstructorDeclaration defaultConstructor = declaration.findAll(ConstructorDeclaration.class).get(0);
-      
+
       System.out.println(defaultConstructor);
       MatcherAssert.assertThat(defaultConstructor.toString(), Matchers.not(Matchers.containsString("_kieker_sourceInstrumentation_controller.isProbeActivated")));
    }
-   
+
    @Test
    public void testBasicInstrumentation() throws IOException {
       ClassOrInterfaceDeclaration clazz = buildClass();
@@ -64,20 +68,24 @@ public class TestTypeInstrumentation {
 
       Assert.assertTrue(hasChange);
 
-      List<MethodDeclaration> myMethod = clazz.getMethodsByName(InstrumentationConstants.PREFIX + "myMethod");
-      Assert.assertEquals(1, myMethod.size());
-      MatcherAssert.assertThat(myMethod.get(0).getModifiers(), Matchers.containsInAnyOrder(Modifier.privateModifier(), Modifier.finalModifier()));
-      MatcherAssert.assertThat(clazz.toString(), Matchers.containsString("private final int " + InstrumentationConstants.PREFIX + "myMethod()"));
+      if (configuration.isExtractMethod()) {
+         List<MethodDeclaration> myMethod = clazz.getMethodsByName(InstrumentationConstants.PREFIX + "myMethod");
+         Assert.assertEquals(1, myMethod.size());
+         MatcherAssert.assertThat(myMethod.get(0).getModifiers(), Matchers.containsInAnyOrder(Modifier.privateModifier(), Modifier.finalModifier()));
+         MatcherAssert.assertThat(clazz.toString(), Matchers.containsString("private final int " + InstrumentationConstants.PREFIX + "myMethod()"));
 
-      List<MethodDeclaration> myRegularMethod = clazz.getMethodsByName(InstrumentationConstants.PREFIX + "myRegularMethod");
-      Assert.assertEquals(1, myRegularMethod.size());
-      Assert.assertEquals(myRegularMethod.get(0).getDeclarationAsString(), "private final void " + InstrumentationConstants.PREFIX + "myRegularMethod(int someParameter)");
-      
-      List<MethodDeclaration> myRegularMethodInstrumented = clazz.getMethodsByName("myRegularMethod");
-      MatcherAssert.assertThat(myRegularMethodInstrumented.get(0).toString(), Matchers.containsString(InstrumentationConstants.PREFIX + "myRegularMethod(someParameter)"));
-      
-      MatcherAssert.assertThat(clazz.toString(), Matchers.containsString("private final static void " + InstrumentationConstants.PREFIX + "myStaticMethod()"));
-      System.out.println(clazz.toString());
+         List<MethodDeclaration> myRegularMethod = clazz.getMethodsByName(InstrumentationConstants.PREFIX + "myRegularMethod");
+         Assert.assertEquals(1, myRegularMethod.size());
+         Assert.assertEquals(myRegularMethod.get(0).getDeclarationAsString(), "private final void " + InstrumentationConstants.PREFIX + "myRegularMethod(int someParameter)");
+
+         List<MethodDeclaration> myRegularMethodInstrumented = clazz.getMethodsByName("myRegularMethod");
+         MatcherAssert.assertThat(myRegularMethodInstrumented.get(0).toString(), Matchers.containsString(InstrumentationConstants.PREFIX + "myRegularMethod(someParameter)"));
+
+         MatcherAssert.assertThat(clazz.toString(), Matchers.containsString("private final static void " + InstrumentationConstants.PREFIX + "myStaticMethod()"));
+         System.out.println(clazz.toString());
+      } else {
+         LOG.info("No method extraction was done since this may cause problems with Java 8. Use Java 11+ for source instrumentation.");
+      }
    }
 
    private ClassOrInterfaceDeclaration buildClass() {

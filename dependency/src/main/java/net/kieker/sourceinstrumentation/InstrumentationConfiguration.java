@@ -41,14 +41,15 @@ public class InstrumentationConfiguration {
          LOG.info(JAVA_8_MESSAGE);
          this.enableAdaptiveMonitoring = false;
          this.enableDeactivation = false;
+         this.extractMethod = false;
       } else {
          this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
          this.enableDeactivation = enableDecativation;
+         this.extractMethod = extractMethod;
       }
 
       this.createDefaultConstructor = true;
       this.samplingCount = samplingCount;
-      this.extractMethod = extractMethod;
 
       check();
    }
@@ -63,14 +64,15 @@ public class InstrumentationConfiguration {
          LOG.info(JAVA_8_MESSAGE);
          this.enableAdaptiveMonitoring = false;
          this.enableDeactivation = false;
+         this.extractMethod = false;
       } else {
          this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
          this.enableDeactivation = enableDecativation;
+         this.extractMethod = extractMethod;
       }
       this.includedPatterns = includedPatterns;
       excludedPatterns = new HashSet<String>();
       this.samplingCount = samplingCount;
-      this.extractMethod = extractMethod;
 
       check();
    }
@@ -85,14 +87,15 @@ public class InstrumentationConfiguration {
          LOG.info(JAVA_8_MESSAGE);
          this.enableAdaptiveMonitoring = false;
          this.enableDeactivation = false;
+         this.extractMethod = false;
       } else {
          this.enableAdaptiveMonitoring = enableAdaptiveMonitoring;
          this.enableDeactivation = enableDecativation;
+         this.extractMethod = extractMethod;
       }
       this.includedPatterns = includedPatterns;
       this.excludedPatterns = excludedPatterns;
       this.samplingCount = samplingCount;
-      this.extractMethod = extractMethod;
 
       check();
    }
