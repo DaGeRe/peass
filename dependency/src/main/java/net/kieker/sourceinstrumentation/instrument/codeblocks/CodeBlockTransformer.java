@@ -15,9 +15,9 @@ public class CodeBlockTransformer {
    public String getControllerName(final boolean useStaticVariables) {
       final String controllerName;
       if (useStaticVariables) {
-         controllerName = InstrumentationConstants.PREFIX + "controller";
+         controllerName = topLevelType.getNameAsString() + "." + InstrumentationConstants.PREFIX + "controller";
       } else {
-         controllerName = topLevelType.getNameAsString() + "." + InstrumentationConstants.CONTROLLER_NAME;
+         controllerName = InstrumentationConstants.CONTROLLER_NAME;
       }
       return controllerName;
    }
