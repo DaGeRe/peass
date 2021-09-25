@@ -114,7 +114,9 @@ public class ContinuousDependencyReader {
             dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
             VersionComparator.setDependencies(dependencies);
             
-            executePartialRTS(dependencies, iterator);
+            if (iterator != null) {
+               executePartialRTS(dependencies, iterator);
+            }
          }
          VersionComparator.setDependencies(dependencies);
 
