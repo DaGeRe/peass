@@ -76,9 +76,10 @@ public class SnapshotRemoveUtil {
                      !artifactId.equals("kopeme-junit3") &&
                      !artifactId.equals("kieker-monitoring")) {
                   String groupId = dep.getGroupId();
-                  if (groupId != null &&
-                        (!groupId.startsWith(selfGroupId) &&
-                              !selfGroupId.startsWith(groupId))) {
+                  System.out.println(groupId);
+                  System.out.println(selfGroupId);
+                  if (groupId != null && selfGroupId != null && 
+                        !groupId.startsWith(selfGroupId) && !selfGroupId.startsWith(groupId)) {
                      if (dep.getVersion().endsWith("-SNAPSHOT")) {
                         dep.setVersion(dep.getVersion().replaceAll("-SNAPSHOT", ""));
                      }
