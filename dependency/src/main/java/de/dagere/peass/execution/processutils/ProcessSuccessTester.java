@@ -32,8 +32,7 @@ public class ProcessSuccessTester {
       boolean isRunning = false;
       try {
          LOG.debug("Executing run success test {}", folders.getProjectFolder());
-         final File versionFolder = getVersionFolder(version);
-         final File logFile = new File(versionFolder, "testRunning.log");
+         final File logFile = folders.getDependencyLogSuccessRunFile(version);
 
          ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
          Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, vars);
@@ -59,14 +58,6 @@ public class ProcessSuccessTester {
          e.printStackTrace();
       }
       return isRunning;
-   }
-   
-   public File getVersionFolder(final String version) {
-      final File versionFolder = new File(folders.getDependencyLogFolder(), version);
-      if (!versionFolder.exists()) {
-         versionFolder.mkdir();
-      }
-      return versionFolder;
    }
    
    private void printFailureLogToCommandline(final File logFile) throws IOException, FileNotFoundException {

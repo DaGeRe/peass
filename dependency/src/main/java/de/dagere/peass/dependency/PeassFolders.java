@@ -106,6 +106,14 @@ public class PeassFolders {
       return logFolders.getDependencyLogFolder();
    }
    
+   public File getDependencyLogSuccessRunFile(final String version) {
+      final File versionFolder = new File(getDependencyLogFolder(), version);
+      if (!versionFolder.exists()) {
+         versionFolder.mkdir();
+      }
+      return new File("testRunning.log");
+   }
+   
    public File getMeasureLogFolder() {
       return logFolders.getMeasureLogFolder();
    }
