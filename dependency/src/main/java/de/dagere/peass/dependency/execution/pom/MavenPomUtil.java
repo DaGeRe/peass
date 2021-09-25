@@ -41,8 +41,6 @@ public class MavenPomUtil {
 
    private static final Logger LOG = LogManager.getLogger(MavenPomUtil.class);
 
-   
-
    public static void cleanType(final File pomFile) {
       try {
          final Model model;
@@ -77,6 +75,8 @@ public class MavenPomUtil {
       for (RequiredDependency dependency : RequiredDependency.getAll(junit3)) {
          if (dependency.getMavenDependency().getArtifactId().contains("slf4j-impl")) {
             addLoggingImplementationDependency(dependencies, dependency);
+         } else if (dependency.getMavenDependency().getArtifactId().contains("kopeme")) {
+            dependencies.add(0, dependency.getMavenDependency());
          } else {
             dependencies.add(dependency.getMavenDependency());
          }
