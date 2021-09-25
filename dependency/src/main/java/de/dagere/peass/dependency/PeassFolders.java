@@ -111,7 +111,7 @@ public class PeassFolders {
       if (!versionFolder.exists()) {
          versionFolder.mkdir();
       }
-      return new File("testRunning.log");
+      return new File(versionFolder, "testRunning.log");
    }
    
    public File getMeasureLogFolder() {
