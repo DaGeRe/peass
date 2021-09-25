@@ -24,7 +24,7 @@ import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
-import de.dagere.peass.dependency.execution.MavenPomUtil;
+import de.dagere.peass.dependency.execution.pom.MavenPomUtil;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.traces.requitur.Sequitur;
 import de.dagere.peass.vcs.GitCommit;

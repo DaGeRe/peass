@@ -10,9 +10,9 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.PeassFolders;
-import de.dagere.peass.dependency.execution.MavenPomUtil;
 import de.dagere.peass.dependency.execution.PomJavaUpdater;
 import de.dagere.peass.dependency.execution.ProjectModules;
+import de.dagere.peass.dependency.execution.pom.SnapshotRemoveUtil;
 
 public class MavenUpdater {
    
@@ -31,13 +31,13 @@ public class MavenUpdater {
    public void updateJava() throws FileNotFoundException, IOException, XmlPullParserException {
       final File pomFile = new File(folders.getProjectFolder(), "pom.xml");
       if (measurementConfig.isRemoveSnapshots()) {
-         MavenPomUtil.cleanSnapshotDependencies(pomFile);
+         SnapshotRemoveUtil.cleanSnapshotDependencies(pomFile);
       }
       PomJavaUpdater.fixCompilerVersion(pomFile);
       for (File module : modules.getModules()) {
          final File pomFileModule = new File(module, "pom.xml");
          if (measurementConfig.isRemoveSnapshots()) {
-            MavenPomUtil.cleanSnapshotDependencies(pomFileModule);
+            SnapshotRemoveUtil.cleanSnapshotDependencies(pomFileModule);
          }
          PomJavaUpdater.fixCompilerVersion(pomFileModule);
       }

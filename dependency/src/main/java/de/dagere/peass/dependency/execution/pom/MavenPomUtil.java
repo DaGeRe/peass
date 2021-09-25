@@ -1,4 +1,4 @@
-package de.dagere.peass.dependency.execution;
+package de.dagere.peass.dependency.execution.pom;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,6 +23,10 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
+import de.dagere.peass.dependency.execution.GradleParseUtil;
+import de.dagere.peass.dependency.execution.MavenTestExecutor;
+import de.dagere.peass.dependency.execution.ProjectModules;
+import de.dagere.peass.dependency.execution.RequiredDependency;
 import de.dagere.peass.utils.StreamGobbler;
 
 public class MavenPomUtil {
@@ -37,66 +41,7 @@ public class MavenPomUtil {
 
    private static final Logger LOG = LogManager.getLogger(MavenPomUtil.class);
 
-   /**
-    * Apache Commons projects which depend on each other sometimes use SNAPSHOT-dependencies to other projects; since they are not in maven central, this leads to fails. In order
-    * to avoid this issue, the -SNAPSHOT is cleared in the beginning. For old version, the release should have happened, therefore this works for most of the releases.
-    */
-   public static void cleanSnapshotDependencies(final File pomFile) {
-      try {
-         final Model model;
-         try (FileInputStream inputStream = new FileInputStream(pomFile)) {
-            final MavenXpp3Reader reader = new MavenXpp3Reader();
-            model = reader.read(inputStream);
-         }
-         Build build = model.getBuild();
-         if (build == null) {
-            build = new Build();
-            model.setBuild(build);
-         }
-
-         removeSnapshots(model);
-         final List<Plugin> plugins = build.getPlugins();
-         if (plugins != null) {
-            for (final Plugin plugin : plugins) {
-               handlePlugin(plugin);
-            }
-         }
-         if (build.getPluginManagement() != null) {
-            if (build.getPluginManagement().getPlugins() != null) {
-               for (final Plugin plugin : build.getPluginManagement().getPlugins()) {
-                  handlePlugin(plugin);
-               }
-            }
-         }
-         try (FileWriter fileWriter = new FileWriter(pomFile)) {
-            final MavenXpp3Writer writer = new MavenXpp3Writer();
-            writer.write(fileWriter, model);
-         }
-      } catch (IOException | XmlPullParserException e) {
-         e.printStackTrace();
-      }
-   }
-
-   private static void removeSnapshots(final Model model) {
-      final String selfGroupId = model.getGroupId();
-      final List<Dependency> dependencies = model.getDependencies();
-      if (dependencies != null) {
-         for (final Dependency dep : dependencies) {
-            if (dep.getVersion() != null) {
-               if (!dep.getArtifactId().equals("kopeme-junit") &&
-                     !dep.getArtifactId().equals("kopeme-junit3") &&
-                     !dep.getArtifactId().equals("kieker-monitoring") &&
-                     !dep.getGroupId().startsWith(selfGroupId) &&
-                     !selfGroupId.startsWith(dep.getGroupId())) {
-
-                  if (dep.getVersion().endsWith("-SNAPSHOT")) {
-                     dep.setVersion(dep.getVersion().replaceAll("-SNAPSHOT", ""));
-                  }
-               }
-            }
-         }
-      }
-   }
+   
 
    public static void cleanType(final File pomFile) {
       try {
@@ -114,20 +59,6 @@ public class MavenPomUtil {
          }
       } catch (IOException | XmlPullParserException e) {
          e.printStackTrace();
-      }
-   }
-
-   private static void handlePlugin(final Plugin plugin) {
-      if (plugin.getVersion() != null) {
-         if (plugin.getVersion().endsWith("-SNAPSHOT")) {
-            plugin.setVersion(plugin.getVersion().replaceAll("-SNAPSHOT", ""));
-         }
-      }
-      if (plugin.getArtifactId().equals("buildnumber-maven-plugin")) {
-         if (plugin.getConfiguration() != null) {
-            final Xpp3Dom conf = (Xpp3Dom) plugin.getConfiguration();
-            setConfNode(conf, "doUpdate", "false");
-         }
       }
    }
 
@@ -349,7 +280,7 @@ public class MavenPomUtil {
       return compilerArguments;
    }
 
-   protected static Xpp3Dom setConfNode(final Xpp3Dom conf, final String nodeName, final String value) {
+   public static Xpp3Dom setConfNode(final Xpp3Dom conf, final String nodeName, final String value) {
       Xpp3Dom confProperty = conf.getChild(nodeName);
       if (confProperty != null) {
          confProperty.setValue(value);

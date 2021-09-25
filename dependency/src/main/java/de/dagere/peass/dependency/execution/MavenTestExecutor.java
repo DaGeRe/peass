@@ -29,6 +29,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.execution.pom.MavenPomUtil;
+import de.dagere.peass.dependency.execution.pom.SnapshotRemoveUtil;
 import de.dagere.peass.execution.maven.MavenCleaner;
 import de.dagere.peass.execution.maven.MavenRunningTester;
 import de.dagere.peass.execution.maven.MavenUpdater;
@@ -98,14 +100,15 @@ public class MavenTestExecutor extends KoPeMeExecutor {
    private void updateJava() throws FileNotFoundException, IOException, XmlPullParserException {
       new MavenUpdater(folders, getModules(), testTransformer.getConfig()).updateJava();
       final File pomFile = new File(folders.getProjectFolder(), "pom.xml");
+      LOG.info("Remove snapshots: " + testTransformer.getConfig().isRemoveSnapshots());
       if (testTransformer.getConfig().isRemoveSnapshots()) {
-         MavenPomUtil.cleanSnapshotDependencies(pomFile);
+         SnapshotRemoveUtil.cleanSnapshotDependencies(pomFile);
       }
       PomJavaUpdater.fixCompilerVersion(pomFile);
       for (File module : getModules().getModules()) {
          final File pomFileModule = new File(module, "pom.xml");
          if (testTransformer.getConfig().isRemoveSnapshots()) {
-            MavenPomUtil.cleanSnapshotDependencies(pomFileModule);
+            SnapshotRemoveUtil.cleanSnapshotDependencies(pomFileModule);
          }
          PomJavaUpdater.fixCompilerVersion(pomFileModule);
       }

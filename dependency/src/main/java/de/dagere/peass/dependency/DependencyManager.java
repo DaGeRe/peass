@@ -49,8 +49,8 @@ import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
-import de.dagere.peass.dependency.execution.MavenPomUtil;
 import de.dagere.peass.dependency.execution.TestExecutor;
+import de.dagere.peass.dependency.execution.pom.MavenPomUtil;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 

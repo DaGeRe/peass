@@ -15,6 +15,8 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.peass.dependency.execution.pom.MavenPomUtil;
+
 public class PomJavaUpdater {
 
    private static final Logger LOG = LogManager.getLogger(PomJavaUpdater.class);

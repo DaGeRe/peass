@@ -14,8 +14,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.dependency.execution.MavenPomUtil;
 import de.dagere.peass.dependency.execution.PomJavaUpdater;
+import de.dagere.peass.dependency.execution.pom.MavenPomUtil;
 
 public class TestPomJavaUpdater {
 
