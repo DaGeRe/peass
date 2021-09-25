@@ -31,33 +31,44 @@ public class ProcessSuccessTester {
    public boolean testRunningSuccess(final String version, final String[] vars) {
       boolean isRunning = false;
       try {
-         LOG.debug("Executing run success test {}", folders.getProjectFolder());
-         final File logFile = folders.getDependencyLogSuccessRunFile(version);
-
-         ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
-         Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, vars);
-         LOG.debug("Waiting for {} minutes", measurementConfig.getTimeoutInSeconds());
-
-         process.waitFor(measurementConfig.getTimeoutInSeconds(), TimeUnit.SECONDS);
-         if (process.isAlive()) {
-            LOG.debug("Destroying process");
-            process.destroyForcibly().waitFor();
-         }
-         final int returncode = process.exitValue();
-         if (returncode != 0) {
-            LOG.info("Success test run failed");
-            isRunning = false;
-            printFailureLogToCommandline(logFile);
-         } else {
-            LOG.info("Test was successfull");
-            isRunning = true;
-         }
+         isRunning = testRunning(version, vars);
       } catch (final IOException e) {
          e.printStackTrace();
       } catch (final InterruptedException e) {
          e.printStackTrace();
       }
       return isRunning;
+   }
+
+   private boolean testRunning(final String version, final String[] vars) throws IOException, InterruptedException, FileNotFoundException {
+      boolean isRunning;
+      LOG.debug("Executing run success test {}", folders.getProjectFolder());
+      final File logFile = folders.getDependencyLogSuccessRunFile(version);
+
+      Process process = startProcess(vars, logFile);
+      if (process.isAlive()) {
+         LOG.debug("Destroying process");
+         process.destroyForcibly().waitFor();
+      }
+      final int returncode = process.exitValue();
+      if (returncode != 0) {
+         LOG.info("Success test run failed");
+         isRunning = false;
+         printFailureLogToCommandline(logFile);
+      } else {
+         LOG.info("Test was successfull");
+         isRunning = true;
+      }
+      return isRunning;
+   }
+
+   private Process startProcess(final String[] vars, final File logFile) throws IOException, InterruptedException {
+      ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
+      Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, vars);
+      LOG.debug("Waiting for {} minutes", measurementConfig.getTimeoutInSeconds());
+
+      process.waitFor(measurementConfig.getTimeoutInSeconds(), TimeUnit.SECONDS);
+      return process;
    }
    
    private void printFailureLogToCommandline(final File logFile) throws IOException, FileNotFoundException {

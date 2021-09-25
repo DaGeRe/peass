@@ -107,8 +107,6 @@ public class DependencyManager extends KiekerResultManager {
 
       final ModuleClassMapping mapping = new ModuleClassMapping(executor);
       executor.loadClasses();
-      final File logFile = new File(folders.getDependencyLogFolder(), version + File.separator + "init_log.txt");
-      logFile.getParentFile().mkdirs();
 
       TestSet tests = findIncludedTests(mapping);
       runTraceTests(tests, version);
