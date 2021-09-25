@@ -94,7 +94,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          final int methodIndex = fullName.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
          if (methodIndex == -1) {
             javaClazzName = fullName;
-            method = "";
+            method = null;
          } else {
             javaClazzName = fullName.substring(0, methodIndex);
             method = fullName.substring(methodIndex + 1);
@@ -113,7 +113,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          final int methodIndex = end.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
          if (methodIndex == -1) {
             javaClazzName = end;
-            method = "";
+            method = null;
          } else {
             javaClazzName = end.substring(0, methodIndex);
             method = end.substring(methodIndex + 1);
