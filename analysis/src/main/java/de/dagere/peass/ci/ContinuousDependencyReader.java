@@ -113,7 +113,7 @@ public class ContinuousDependencyReader {
             LOG.debug("Partially loading dependencies");
             dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
             VersionComparator.setDependencies(dependencies);
-
+            
             executePartialRTS(dependencies, iterator);
          }
          VersionComparator.setDependencies(dependencies);

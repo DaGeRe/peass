@@ -34,8 +34,8 @@ public class DependenciesOnlyStartversionIT {
 
    @BeforeEach
    public void cleanDependencies() throws Exception {
-      FileUtils.deleteDirectory(TestContinuousDependencyReader.resultsFolders.getDependencyFile().getParentFile());
-      Assert.assertFalse(TestContinuousDependencyReader.resultsFolders.getDependencyFile().exists());
+      FileUtils.deleteDirectory(ContinuousDependencyReaderIT.resultsFolders.getDependencyFile().getParentFile());
+      Assert.assertFalse(ContinuousDependencyReaderIT.resultsFolders.getDependencyFile().exists());
 
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
       builder = new GitProjectBuilder(TestConstants.CURRENT_FOLDER, new File("../dependency/src/test/resources/dependencyIT/basic_state"));
@@ -47,7 +47,7 @@ public class DependenciesOnlyStartversionIT {
       executionConfig.setVersion(iterator.getTag());
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, executionConfig, new KiekerConfiguration(true), new PeassFolders(TestConstants.CURRENT_FOLDER),
-            TestContinuousDependencyReader.resultsFolders, new EnvironmentVariables());
+            ContinuousDependencyReaderIT.resultsFolders, new EnvironmentVariables());
       dependencies = reader.getDependencies(iterator, "");
 
       Assert.assertEquals(0, dependencies.getVersions().size());
@@ -66,7 +66,7 @@ public class DependenciesOnlyStartversionIT {
       executionConfig.setVersion(iterator.getTag());
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, executionConfig, new KiekerConfiguration(true), new PeassFolders(TestConstants.CURRENT_FOLDER),
-            TestContinuousDependencyReader.resultsFolders, new EnvironmentVariables());
+            ContinuousDependencyReaderIT.resultsFolders, new EnvironmentVariables());
       dependencies = reader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
@@ -74,7 +74,7 @@ public class DependenciesOnlyStartversionIT {
    }
 
    private void checkVersion(final Dependencies dependencies, final String newestVersion, final int versions) {
-      Assert.assertTrue(TestContinuousDependencyReader.resultsFolders.getDependencyFile().exists());
+      Assert.assertTrue(ContinuousDependencyReaderIT.resultsFolders.getDependencyFile().exists());
       MatcherAssert.assertThat(dependencies.getVersions(), Matchers.aMapWithSize(versions));
 
       MatcherAssert.assertThat(dependencies.getVersions().get(newestVersion), Matchers.notNullValue());

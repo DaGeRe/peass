@@ -17,7 +17,7 @@ import de.dagere.peass.vcs.VersionIteratorGit;
  * Identifies the versions that should be analyzed, by: (1) Using the versions from ExecutionConfig, if both are given and != null (resolving HEAD and HEAD~1 to the real versions)
  * (2) Using the version from ExecutionConfig, if version is given and versionOld is null, and using the *newest runnable version* from Dependencies
  * 
- * In case (2), the iterator will only be set if analyzing is necessary, i.e. if the *newest version* and version differ.
+ * In case (2), the iterator will only be set if analyzing is necessary, i.e. if the *newest version* and version differ. Otherwise, it will be null.
  *
  */
 public class DependencyIteratorBuilder {
