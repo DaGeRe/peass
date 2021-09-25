@@ -63,6 +63,7 @@ public class ExecutionConfig implements Serializable {
       this.testTransformer = other.getTestTransformer();
       this.testExecutor = other.getTestExecutor();
       this.useTieredCompilation = other.isUseTieredCompilation();
+      this.pl = other.getPl();
    }
 
    public ExecutionConfig(final long timeoutInMinutes) {

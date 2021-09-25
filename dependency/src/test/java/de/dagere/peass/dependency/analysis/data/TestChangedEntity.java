@@ -8,6 +8,18 @@ import org.junit.jupiter.api.Test;
 public class TestChangedEntity {
    
    @Test
+   public void testAlltogether() {
+      ChangedEntity entity = new ChangedEntity("de.test.ClazzA#method(int)");
+      Assert.assertEquals("de.test.ClazzA", entity.getClazz());
+      Assert.assertEquals("method", entity.getMethod());
+      
+      ChangedEntity entityWithModule = new ChangedEntity("moduleA/submodul§de.test.ClazzA#method(int)");
+      Assert.assertEquals("moduleA/submodul", entityWithModule.getModule());
+      Assert.assertEquals("de.test.ClazzA", entityWithModule.getClazz());
+      Assert.assertEquals("method", entityWithModule.getMethod());
+   }
+   
+   @Test
    public void testParametersDirectlyClazz() {
       ChangedEntity entity = new ChangedEntity("de.ClassA#methodA(de.peass.Test,int,String)", "moduleA");
       System.out.println(entity.getParametersPrintable());

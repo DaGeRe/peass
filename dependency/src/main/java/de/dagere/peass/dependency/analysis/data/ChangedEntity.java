@@ -85,40 +85,49 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    }
 
    public ChangedEntity(final String fullName) {
-      if (fullName.contains(File.separator)) {
-         throw new RuntimeException("Testcase should be full qualified name, not path!");
+      int moduleIndex = fullName.indexOf(ChangedEntity.MODULE_SEPARATOR);
+      if (moduleIndex == -1) {
+         module = "";
+         if (fullName.contains(File.separator)) {
+            throw new RuntimeException("Testcase should be full qualified name, not path! " + fullName);
+         }
+         final int methodIndex = fullName.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
+         if (methodIndex == -1) {
+            javaClazzName = fullName;
+            method = "";
+         } else {
+            javaClazzName = fullName.substring(0, methodIndex);
+            method = fullName.substring(methodIndex + 1);
+
+            if (fullName.contains("(")) {
+               method = fullName.substring(methodIndex + 1, fullName.indexOf("("));
+               String paramString = fullName.substring(fullName.indexOf("(") + 1, fullName.length() - 1);
+               createParameters(paramString);
+            } else {
+               method = fullName.substring(methodIndex + 1);
+            }
+         }
+      } else {
+         module = fullName.substring(0, moduleIndex);
+         String end = fullName.substring(moduleIndex + 1);
+         final int methodIndex = end.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
+         if (methodIndex == -1) {
+            javaClazzName = end;
+            method = "";
+         } else {
+            javaClazzName = end.substring(0, methodIndex);
+            method = end.substring(methodIndex + 1);
+
+            if (end.contains("(")) {
+               method = end.substring(methodIndex + 1, end.indexOf("("));
+               String paramString = end.substring(end.indexOf("(") + 1, end.length() - 1);
+               createParameters(paramString);
+            } else {
+               method = end.substring(methodIndex + 1);
+            }
+         }
       }
       filename = fullName;
-      final int index = fullName.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
-      if (index == -1) {
-         int moduleIndex = fullName.indexOf(ChangedEntity.MODULE_SEPARATOR);
-         if (moduleIndex == -1) {
-            javaClazzName = fullName;
-            module = "";
-         } else {
-            javaClazzName = fullName.substring(moduleIndex + 1);
-            module = fullName.substring(0, moduleIndex);
-         }
-         method = null;
-      } else {
-         String start = fullName.substring(0, index);
-         int moduleIndex = fullName.indexOf(ChangedEntity.MODULE_SEPARATOR);
-         if (moduleIndex == -1) {
-            javaClazzName = start;
-            module = "";
-         } else {
-            javaClazzName = start.substring(moduleIndex + 1);
-            module = start.substring(0, moduleIndex);
-         }
-
-         if (fullName.contains("(")) {
-            method = fullName.substring(index + 1, fullName.indexOf("("));
-            String paramString = fullName.substring(fullName.indexOf("(") + 1, fullName.length() - 1);
-            createParameters(paramString);
-         } else {
-            method = fullName.substring(index + 1);
-         }
-      }
    }
 
    @JsonIgnore
