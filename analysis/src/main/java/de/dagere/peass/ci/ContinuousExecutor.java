@@ -23,6 +23,7 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
+import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.measurement.analysis.AnalyseFullData;
 import de.dagere.peass.measurement.analysis.ProjectStatistics;
@@ -67,7 +68,12 @@ public class ContinuousExecutor {
 
       folders = new PeassFolders(projectFolderLocal);
 
-      DependencyIteratorBuilder iteratorBuiler = new DependencyIteratorBuilder(measurementConfig.getExecutionConfig(), null, folders);
+      Dependencies dependencies = null;
+      if (resultsFolders.getDependencyFile().exists()) {
+         dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
+      }
+      
+      DependencyIteratorBuilder iteratorBuiler = new DependencyIteratorBuilder(measurementConfig.getExecutionConfig(), dependencies, folders);
       iterator = iteratorBuiler.getIterator();
       version = iteratorBuiler.getVersion();
       versionOld = iteratorBuiler.getVersionOld();
@@ -111,7 +117,6 @@ public class ContinuousExecutor {
    protected Set<TestCase> executeRegressionTestSelection(final String url) {
       ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), measurementConfig.getKiekerConfig(), folders, resultsFolders, env);
       final Set<TestCase> tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
-      versionOld = dependencyReader.getPredecessor();
       
       readMethodSources(tests);
 

@@ -45,7 +45,6 @@ public class ContinuousDependencyReader {
    private final PeassFolders folders;
    private final ResultsFolders resultsFolders;
    private final EnvironmentVariables env;
-   private String predecessor;
 
    public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig, final PeassFolders folders,
          final ResultsFolders resultsFolders, final EnvironmentVariables env) {
@@ -115,7 +114,7 @@ public class ContinuousDependencyReader {
             dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
             VersionComparator.setDependencies(dependencies);
 
-            partiallyLoadDependencies(dependencies);
+            executePartialRTS(dependencies, iterator);
          }
          VersionComparator.setDependencies(dependencies);
 
@@ -123,19 +122,6 @@ public class ContinuousDependencyReader {
       } catch (Exception e) {
          throw new RuntimeException(e);
       }
-   }
-
-   public String getPredecessor() {
-      return predecessor;
-   }
-
-   private void partiallyLoadDependencies(final Dependencies dependencies) throws FileNotFoundException, Exception {
-      DependencyIteratorBuilder iteratorBuilder = new DependencyIteratorBuilder(executionConfig, dependencies, folders);
-      VersionIterator newIterator = iteratorBuilder.getIterator();
-      if (newIterator != null) {
-         executePartialRTS(dependencies, newIterator);
-      }
-      predecessor = iteratorBuilder.getVersionOld();
    }
 
    private void executePartialRTS(final Dependencies dependencies, final VersionIterator newIterator) throws FileNotFoundException {
@@ -203,8 +189,6 @@ public class ContinuousDependencyReader {
          reader.readDependencies();
       }
       Dependencies dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
-      String newestRunningVersion = dependencies.getNewestRunningVersion();
-      predecessor = dependencies.getVersions().get(newestRunningVersion).getPredecessor();
       return dependencies;
    }
 }
