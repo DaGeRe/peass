@@ -100,14 +100,14 @@ public class MavenTestExecutor extends KoPeMeExecutor {
    private void updateJava() throws FileNotFoundException, IOException, XmlPullParserException {
       new MavenUpdater(folders, getModules(), testTransformer.getConfig()).updateJava();
       final File pomFile = new File(folders.getProjectFolder(), "pom.xml");
-      LOG.info("Remove snapshots: " + testTransformer.getConfig().isRemoveSnapshots());
-      if (testTransformer.getConfig().isRemoveSnapshots()) {
+      LOG.info("Remove snapshots: " + testTransformer.getConfig().getExecutionConfig().isRemoveSnapshots());
+      if (testTransformer.getConfig().getExecutionConfig().isRemoveSnapshots()) {
          SnapshotRemoveUtil.cleanSnapshotDependencies(pomFile);
       }
       PomJavaUpdater.fixCompilerVersion(pomFile);
       for (File module : getModules().getModules()) {
          final File pomFileModule = new File(module, "pom.xml");
-         if (testTransformer.getConfig().isRemoveSnapshots()) {
+         if (testTransformer.getConfig().getExecutionConfig().isRemoveSnapshots()) {
             SnapshotRemoveUtil.cleanSnapshotDependencies(pomFileModule);
          }
          PomJavaUpdater.fixCompilerVersion(pomFileModule);

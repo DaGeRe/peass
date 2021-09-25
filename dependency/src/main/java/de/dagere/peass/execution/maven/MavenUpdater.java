@@ -30,13 +30,13 @@ public class MavenUpdater {
 
    public void updateJava() throws FileNotFoundException, IOException, XmlPullParserException {
       final File pomFile = new File(folders.getProjectFolder(), "pom.xml");
-      if (measurementConfig.isRemoveSnapshots()) {
+      if (measurementConfig.getExecutionConfig().isRemoveSnapshots()) {
          SnapshotRemoveUtil.cleanSnapshotDependencies(pomFile);
       }
       PomJavaUpdater.fixCompilerVersion(pomFile);
       for (File module : modules.getModules()) {
          final File pomFileModule = new File(module, "pom.xml");
-         if (measurementConfig.isRemoveSnapshots()) {
+         if (measurementConfig.getExecutionConfig().isRemoveSnapshots()) {
             SnapshotRemoveUtil.cleanSnapshotDependencies(pomFileModule);
          }
          PomJavaUpdater.fixCompilerVersion(pomFileModule);

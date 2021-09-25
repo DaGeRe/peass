@@ -37,6 +37,7 @@ public class ExecutionConfig implements Serializable {
    private boolean createDefaultConstructor = true;
    private boolean redirectSubprocessOutputToFile = true;
    private boolean useTieredCompilation = false;
+   private boolean removeSnapshots = false;
    
    private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
    private String testExecutor = "default";
@@ -58,6 +59,7 @@ public class ExecutionConfig implements Serializable {
       this.endversion = other.getEndversion();
       this.createDefaultConstructor = other.isCreateDefaultConstructor();
       this.redirectSubprocessOutputToFile = other.isRedirectSubprocessOutputToFile();
+      this.removeSnapshots = other.removeSnapshots;
       this.testTransformer = other.getTestTransformer();
       this.testExecutor = other.getTestExecutor();
       this.useTieredCompilation = other.isUseTieredCompilation();
@@ -205,6 +207,14 @@ public class ExecutionConfig implements Serializable {
 
    public void setUseTieredCompilation(final boolean useTieredCompilation) {
       this.useTieredCompilation = useTieredCompilation;
+   }
+   
+   public void setRemoveSnapshots(final boolean removeSnapshots) {
+      this.removeSnapshots = removeSnapshots;
+   }
+
+   public boolean isRemoveSnapshots() {
+      return removeSnapshots;
    }
 
    public String getTestTransformer() {

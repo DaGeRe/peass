@@ -24,7 +24,6 @@ public class MeasurementConfiguration implements Serializable {
    private int iterations = 1;
    private int repetitions = 1;
    private boolean logFullData = true;
-   private boolean removeSnapshots = false;
    private boolean useGC = true;
    private boolean executeBeforeClassInMeasurement = false;
    private boolean showStart = false;
@@ -89,8 +88,8 @@ public class MeasurementConfiguration implements Serializable {
       statisticsConfig.setOutlierFactor(statisticMixin.getOutlierFactor());
 
       saveAll = !mixin.isSaveNothing();
-      removeSnapshots = mixin.isRemoveSnapshots();
       
+      executionConfig.setRemoveSnapshots(mixin.isRemoveSnapshots());
       executionConfig.setVersion(executionMixin.getVersion());
       executionConfig.setVersionOld(executionMixin.getVersionOld());
       executionConfig.setStartversion(executionMixin.getStartversion());
@@ -149,7 +148,7 @@ public class MeasurementConfiguration implements Serializable {
       this.iterations = other.iterations;
       this.repetitions = other.repetitions;
       this.logFullData = other.logFullData;
-      this.removeSnapshots = other.removeSnapshots;
+      
       this.redirectToNull = other.redirectToNull;
       kiekerConfig = new KiekerConfiguration();
       kiekerConfig.setUseKieker(other.isUseKieker());
@@ -411,14 +410,6 @@ public class MeasurementConfiguration implements Serializable {
       return warmup;
    }
 
-   public void setRemoveSnapshots(final boolean removeSnapshots) {
-      this.removeSnapshots = removeSnapshots;
-   }
-
-   public boolean isRemoveSnapshots() {
-      return removeSnapshots;
-   }
-   
    public boolean isShowStart() {
       return showStart;
    }
