@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.TestConstants;
 
-public class SourceInstrumentationConstructorProblemIT {
+public class SourceInstrumentationStaticInitializationIT {
    
    @BeforeEach
    public void before() throws IOException {
@@ -22,9 +22,12 @@ public class SourceInstrumentationConstructorProblemIT {
 
    @Test
    public void testExecution() throws IOException {
-      File resultFile = SimpleProjectUtil.obtainLogs("/sourceInstrumentation/example_constructorProblem/");
-
+      File resultFile = SimpleProjectUtil.obtainLogs("/sourceInstrumentation/example_staticInitialization/");
+      
       String monitorLogs = FileUtils.readFileToString(resultFile, StandardCharsets.UTF_8);
       MatcherAssert.assertThat(monitorLogs, Matchers.containsString("public void de.peass.MainTest.testMe()"));
    }
+
+
+   
 }

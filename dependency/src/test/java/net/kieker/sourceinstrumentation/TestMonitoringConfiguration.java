@@ -15,17 +15,17 @@ import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public class TestMonitoringConfiguration {
 
+   public static final InstrumentationConfiguration CONFIGURATION_EXAMPLE = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, new HashSet<>(), false, true, 1000, false);
+   
    @Test
    public void testAdaptiveMonitoringDeactivated() throws IOException {
       TestConstants.CURRENT_FOLDER.mkdirs();
 
       File testFile = SourceInstrumentationTestUtil.copyResource("src/main/java/de/peass/C0_0.java", "/sourceInstrumentation/project_2/");
 
-      HashSet<String> includedPatterns = new HashSet<>();
-      includedPatterns.add("*");
-      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.OPERATIONEXECUTION, false, includedPatterns, false, true, 1000, false);
+      CONFIGURATION_EXAMPLE.getIncludedPatterns().add("*");
       
-      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(CONFIGURATION_EXAMPLE);
       instrumenter.instrument(testFile);
 
       TestSourceInstrumentation.testFileIsInstrumented(testFile, "public void de.peass.C0_0.method0()", "OperationExecutionRecord");
