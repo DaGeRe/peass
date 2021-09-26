@@ -38,7 +38,7 @@ public class JmhTestExecutor extends TestExecutor {
 
    @Override
    public void prepareKoPeMeExecution(final File logFile) throws IOException, InterruptedException, XmlPullParserException {
-      
+
       prepareKiekerSource();
       new PomPreparer(testTransformer, getModules(), folders).preparePom();
 
@@ -97,11 +97,24 @@ public class JmhTestExecutor extends TestExecutor {
       }
       String jarPath = (test.getModule() == null || test.getModule().equals("")) ? "target/benchmarks.jar" : test.getModule() + File.separator + "target/benchmarks.jar";
       String executable = test.getMethod() != null ? test.getClazz() + "." + test.getMethod() : test.getClazz();
+      String benchmarkMode;
+      if (testTransformer.getConfig().getAllIterations() == 1) {
+         /**
+          * SingleShotTime is set if only one iteration is done, cause this normaly implicates this is a rts trace getting run
+          * 
+          * Dirty hack, since somebody might also realy want to execute one iteration for throughput
+          */
+         benchmarkMode = "SingleShotTime";
+      } else {
+         benchmarkMode = "Throughput";
+      }
+
       String[] jmhParameters = new String[] {
             "-jar",
             jarPath,
             executable,
-            "-bm", "Throughput",
+            "-bm",
+            benchmarkMode,
             "-f", "1",
             "-i",
             Integer.toString(transformer.getConfig().getAllIterations()),
