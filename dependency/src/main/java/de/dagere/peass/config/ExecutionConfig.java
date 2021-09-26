@@ -26,8 +26,8 @@ public class ExecutionConfig implements Serializable {
     */
    private final long timeout;
    private String testGoal;
-   private List<String> includes;
-   private List<String> excludes;
+   private List<String> includes = new LinkedList<>();
+   private List<String> excludes = new LinkedList<>();
 
    private String version = "HEAD";
    private String versionOld = "HEAD~1";
