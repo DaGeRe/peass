@@ -56,6 +56,13 @@ public class JmhTestExecutor extends TestExecutor {
 
    @Override
    public void executeTest(final TestCase test, final File logFolder, final long timeoutInSeconds) {
+      if (testTransformer.getConfig().getAllIterations() * testTransformer.getConfig().getRepetitions() > timeoutInSeconds) {
+         throw new RuntimeException("Your configured warmup+iterations " +
+               testTransformer.getConfig().getAllIterations() + " and duration"
+               + testTransformer.getConfig().getRepetitions() + " are expected to take longer than the given timeout " + timeoutInSeconds
+               + " Please be aware that the repetitions parameter in JMH is used as iteration duration!");
+      }
+
       try {
          File jsonResultFile = new File(folders.getTempMeasurementFolder(), test.getMethod() + ".json");
          String[] mergedParameters = buildParameterString(test, jsonResultFile);
@@ -89,13 +96,15 @@ public class JmhTestExecutor extends TestExecutor {
             "-jar",
             jarPath,
             executable,
-            "-bm", "SingleShotTime",
+            "-bm", "Throughput",
             "-f",
             Integer.toString(transformer.getConfig().getVms()),
             "-i",
             Integer.toString(transformer.getConfig().getAllIterations()),
             "-wi",
             Integer.toString(0),
+            "-r",
+            Integer.toString(testTransformer.getConfig().getRepetitions()),
             "-rf",
             "json", // JSON format is needed, since VM-internal measurement values are required
             "-rff",
