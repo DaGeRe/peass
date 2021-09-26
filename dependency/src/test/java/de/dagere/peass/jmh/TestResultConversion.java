@@ -49,6 +49,24 @@ public class TestResultConversion {
    }
    
    @Test
+   public void testThroughputConversion() throws JAXBException {
+      File jmhFile = new File(CONVERSION_FOLDER, "testMethod_throughput.json");
+      
+      Set<File> resultFiles = convert(jmhFile);
+      
+      MatcherAssert.assertThat(resultFiles, Matchers.hasSize(1));
+      
+      File resultFile = resultFiles.iterator().next();
+      Kopemedata data = XMLDataLoader.loadData(resultFile);
+      
+      List<Result> results = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
+      MatcherAssert.assertThat(results, Matchers.hasSize(5));
+      Result result = results.get(0);
+      Assert.assertEquals(result.getValue(), 1064297.5, 0.01);
+      Assert.assertEquals(result.getFulldata().getValue().get(0).getValue(), 1063790.0, 0.01);
+   }
+   
+   @Test
    public void testOriginalJmhConversion() throws JAXBException {
       File jmhFile = new File(CONVERSION_FOLDER, "example.json");
       
@@ -62,8 +80,8 @@ public class TestResultConversion {
       List<Result> results = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
       MatcherAssert.assertThat(results, Matchers.hasSize(3));
       Result result = results.get(0);
-      Assert.assertEquals(result.getValue(), 97.0, 0.01);
-      Assert.assertEquals(result.getFulldata().getValue().get(0).getValue(), 96);
+      Assert.assertEquals(result.getValue(), 1.0286803E7, 0.01);
+      Assert.assertEquals(result.getFulldata().getValue().get(0).getValue(), 10386085);
    }
    
    @Test

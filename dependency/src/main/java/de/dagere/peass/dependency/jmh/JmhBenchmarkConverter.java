@@ -25,21 +25,21 @@ import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class JmhBenchmarkConverter {
-   
+
    private static final int SECONDS_TO_NANOSECONDS = 1000000000;
-   
+
    private final File koPeMeFile;
    private final Kopemedata transformed;
    private final Datacollector timeCollector;
    private final MeasurementConfiguration measurementConfig;
-   
+
    public JmhBenchmarkConverter(final TestCase testcase, final File clazzResultFolder, final MeasurementConfiguration measurementConfig) throws JAXBException {
       this.measurementConfig = measurementConfig;
       File koPeMeFileTry = new File(clazzResultFolder, testcase.getMethod() + ".xml");
-      
+
       if (koPeMeFileTry.exists()) {
          Kopemedata transformedTry = XMLDataLoader.loadData(koPeMeFileTry);
-         if (transformedTry.getTestcases().getClazz().equals(testcase.getClazz()) && 
+         if (transformedTry.getTestcases().getClazz().equals(testcase.getClazz()) &&
                transformedTry.getTestcases().getTestcase().get(0).getName().equals(testcase.getMethod())) {
             transformed = transformedTry;
             koPeMeFile = koPeMeFileTry;
@@ -62,7 +62,7 @@ public class JmhBenchmarkConverter {
          testclazz.getDatacollector().add(timeCollector);
       }
    }
-   
+
    public void convertData(final ArrayNode rawData, final JsonNode benchmark, final String scoreUnit) {
       JsonNode params = benchmark.get("params");
       for (JsonNode vmExecution : rawData) {
@@ -73,7 +73,7 @@ public class JmhBenchmarkConverter {
          timeCollector.getResult().add(result);
       }
    }
-   
+
    private void setParamMap(final Result result, final JsonNode params) {
       result.setParams(new Params());
       for (Iterator<String> fieldIterator = params.fieldNames(); fieldIterator.hasNext();) {
@@ -85,7 +85,7 @@ public class JmhBenchmarkConverter {
          result.getParams().getParam().add(param);
       }
    }
-   
+
    private Result buildResult(final JsonNode vmExecution, final String scoreUnit) {
       Result result = new Result();
       Fulldata fulldata = buildFulldata(vmExecution, scoreUnit);
@@ -103,16 +103,19 @@ public class JmhBenchmarkConverter {
 
       return result;
    }
-   
+
    private Fulldata buildFulldata(final JsonNode vmExecution, final String scoreUnit) {
       Fulldata fulldata = new Fulldata();
       for (JsonNode iteration : vmExecution) {
          Value value = new Value();
          long iterationDuration;
-         if (!scoreUnit.equals("ops/s")) {
+         if (scoreUnit.equals("s/op")) {
             iterationDuration = (long) (iteration.asDouble() * SECONDS_TO_NANOSECONDS);
+         } else if (scoreUnit.equals("ops/s")) {
+            double valueInNanoseconds = (1 / iteration.asDouble()) * SECONDS_TO_NANOSECONDS;
+            iterationDuration = (long) valueInNanoseconds;
          } else {
-            iterationDuration = iteration.asLong();
+            throw new RuntimeException("Unexpected unit: " + scoreUnit);
          }
 
          value.setValue(iterationDuration);
@@ -120,11 +123,11 @@ public class JmhBenchmarkConverter {
       }
       return fulldata;
    }
-   
+
    public File getKoPeMeFile() {
       return koPeMeFile;
    }
-   
+
    public Kopemedata getTransformed() {
       return transformed;
    }
