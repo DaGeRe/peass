@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.ArgLineBuilder;
@@ -78,6 +79,9 @@ public class JmhTestExecutor extends TestExecutor {
          basicParameters = buildKiekerParameters(test);
       } else {
          basicParameters = new String[] { "java" };
+      }
+      if (testTransformer.getConfig().getMeasurementStrategy() == MeasurementStrategy.PARALLEL) {
+         basicParameters = CommandConcatenator.concatenateCommandArrays(basicParameters, new String[] { "-Djmh.ignoreLock=true" });
       }
       String jarPath = (test.getModule() == null || test.getModule().equals("")) ? "target/benchmarks.jar" : test.getModule() + File.separator + "target/benchmarks.jar";
       String executable = test.getMethod() != null ? test.getClazz() + "." + test.getMethod() : test.getClazz();

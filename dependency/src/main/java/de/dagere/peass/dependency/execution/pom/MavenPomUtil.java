@@ -209,7 +209,7 @@ public class MavenPomUtil {
       }
 
       if (updateVersion) {
-         LOG.debug("Surefire" + plugin.getClass() + " " + plugin.getConfiguration().getClass());
+         LOG.trace("Surefire {} {}", plugin.getClass(), plugin.getConfiguration().getClass());
          plugin.setVersion(MavenTestExecutor.SUREFIRE_VERSION);
       }
 
