@@ -38,8 +38,8 @@ public class JmhParallelExecutionTest {
       Thread[] threads = new Thread[2];
 
       MeasurementConfiguration measurementConfig = new MeasurementConfiguration(2);
-      measurementConfig.setIterations(100);
-      measurementConfig.setRepetitions(100);
+      measurementConfig.setIterations(10);
+      measurementConfig.setRepetitions(2);
       measurementConfig.setMeasurementStrategy(MeasurementStrategy.PARALLEL);
 
       prepareThreads(testFolders, executors, threads, measurementConfig);

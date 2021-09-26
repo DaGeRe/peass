@@ -38,6 +38,7 @@ public class JmhTestExecutor extends TestExecutor {
 
    @Override
    public void prepareKoPeMeExecution(final File logFile) throws IOException, InterruptedException, XmlPullParserException {
+      
       prepareKiekerSource();
       new PomPreparer(testTransformer, getModules(), folders).preparePom();
 
@@ -56,12 +57,7 @@ public class JmhTestExecutor extends TestExecutor {
 
    @Override
    public void executeTest(final TestCase test, final File logFolder, final long timeoutInSeconds) {
-      if (testTransformer.getConfig().getAllIterations() * testTransformer.getConfig().getRepetitions() > timeoutInSeconds) {
-         throw new RuntimeException("Your configured warmup+iterations " +
-               testTransformer.getConfig().getAllIterations() + " and duration"
-               + testTransformer.getConfig().getRepetitions() + " are expected to take longer than the given timeout " + timeoutInSeconds
-               + " Please be aware that the repetitions parameter in JMH is used as iteration duration!");
-      }
+      checkConfiguration(timeoutInSeconds);
 
       try {
          File jsonResultFile = new File(folders.getTempMeasurementFolder(), test.getMethod() + ".json");
@@ -77,6 +73,15 @@ public class JmhTestExecutor extends TestExecutor {
 
       } catch (InterruptedException | IOException e) {
          throw new RuntimeException(e);
+      }
+   }
+
+   private void checkConfiguration(final long timeoutInSeconds) {
+      if (testTransformer.getConfig().getAllIterations() * testTransformer.getConfig().getRepetitions() > timeoutInSeconds) {
+         throw new RuntimeException("Your configured warmup+iterations " +
+               testTransformer.getConfig().getAllIterations() + " and duration "
+               + testTransformer.getConfig().getRepetitions() + " are expected to take longer than the given timeout " + timeoutInSeconds + " seconds. "
+               + "Please be aware that the repetitions parameter in JMH is used as iteration duration!");
       }
    }
 
