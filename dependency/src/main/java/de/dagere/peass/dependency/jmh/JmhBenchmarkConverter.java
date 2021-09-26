@@ -97,8 +97,8 @@ public class JmhBenchmarkConverter {
       result.setDeviation(statistics.getStandardDeviation());
       result.setIterations(result.getFulldata().getValue().size());
 
-      // Assume that warmup and repetitions took place as defined, since they are not recorded by jmh
-      result.setWarmup(measurementConfig.getWarmup());
+      // Peass always executes the iterations "normally" and discards warmup afterwards
+      result.setWarmup(0);
       result.setRepetitions(measurementConfig.getRepetitions());
 
       return result;

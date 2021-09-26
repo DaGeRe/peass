@@ -49,6 +49,25 @@ public class TestResultConversion {
    }
    
    @Test
+   public void testIterations() throws JAXBException {
+      File jmhFile = new File(CONVERSION_FOLDER, "test.json");
+      
+      Set<File> resultFiles = convert(jmhFile);
+      
+      MatcherAssert.assertThat(resultFiles, Matchers.hasSize(1));
+      
+      File resultFile = resultFiles.iterator().next();
+      Kopemedata data = XMLDataLoader.loadData(resultFile);
+      
+      List<Result> results = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
+      MatcherAssert.assertThat(results, Matchers.hasSize(2));
+      Result result = results.get(0);
+      Assert.assertEquals(10, result.getIterations());
+      Assert.assertEquals(0, result.getWarmup());
+      System.out.println(result.getRepetitions());
+   }
+   
+   @Test
    public void testThroughputConversion() throws JAXBException {
       File jmhFile = new File(CONVERSION_FOLDER, "testMethod_throughput.json");
       
