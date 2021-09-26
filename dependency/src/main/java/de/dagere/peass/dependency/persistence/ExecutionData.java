@@ -107,8 +107,6 @@ public class ExecutionData extends SelectedTests {
    public int getAllExecutions() {
          int count2 = 0;
          for (final Entry<String, TestSet> entry : getVersions().entrySet()) {
-            System.out.println(entry.getKey());
-            System.out.println(entry.getValue());
             count2 += entry.getValue().getTests().size();
          }
          return count2;

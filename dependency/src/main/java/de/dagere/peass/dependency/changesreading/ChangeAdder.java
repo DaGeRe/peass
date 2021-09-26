@@ -82,7 +82,7 @@ public class ChangeAdder {
          }
          final Optional<Node> newParent = parent.getParentNode();
          if (!newParent.isPresent()) {
-            System.out.println("No Parent: " + newParent);
+            LOG.error("No Parent: " + newParent);
          }
          parent = newParent.get();
       }

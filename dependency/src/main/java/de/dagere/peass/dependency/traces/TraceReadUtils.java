@@ -70,7 +70,6 @@ public class TraceReadUtils {
    public static List<NodeList<BodyDeclaration<?>>> getAnonymusClasses(final Node parent) {
       final List<NodeList<BodyDeclaration<?>>> foundAnonymousClasses = new LinkedList<>();
       for (final Node child : parent.getChildNodes()) {
-         System.out.println(child.getClass());
          if (child instanceof ObjectCreationExpr) {
             final ObjectCreationExpr expr = (ObjectCreationExpr) child;
             if (expr.getAnonymousClassBody().isPresent()) {

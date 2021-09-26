@@ -136,7 +136,7 @@ public class JmhTestTransformer implements TestTransformer {
             List<ClassOrInterfaceDeclaration> clazzDeclarations = ClazzFinder.getClazzDeclarations(unit);
             for (ClassOrInterfaceDeclaration clazz : clazzDeclarations) {
                String parsedClassName = getFullName(clazz);
-               System.out.println(parsedClassName + " " + clazzname.getSimpleClazzName());
+               LOG.trace("Clazz: {} - {}", parsedClassName, clazzname.getSimpleClazzName());
                if (parsedClassName.equals(clazzname.getSimpleClazzName())) {
                   List<String> benchmarkMethods = JUnitParseUtil.getAnnotatedMethods(clazz, "org.openjdk.jmh.annotations.Benchmark", "Benchmark");
                   for (String benchmarkMethod : benchmarkMethods) {

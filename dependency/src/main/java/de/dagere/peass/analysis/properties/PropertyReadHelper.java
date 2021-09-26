@@ -340,7 +340,7 @@ public class PropertyReadHelper {
       if (traceCurrent.size() + traceOld.size() < 10000) {
          final Patch<String> patch = DiffUtils.diff(traceOld, traceCurrent);
 
-         System.out.println(patch);
+         LOG.debug(patch);
 
          int added = 0, removed = 0;
          for (final Delta<String> delta : patch.getDeltas()) {

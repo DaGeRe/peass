@@ -34,7 +34,7 @@ public class ExecutorCreator {
       final File pom = new File(folders.getProjectFolder(), "pom.xml");
       final File buildGradle = new File(folders.getProjectFolder(), "build.gradle");
       final String executorName = testTransformer.getConfig().getExecutionConfig().getTestExecutor();
-      System.out.println(executorName);
+      LOG.info(executorName);
       if (testTransformer != null && (!"default".equals(executorName) || testTransformer instanceof JmhTestTransformer)) {
          return new JmhTestExecutor(folders, testTransformer, env);
       } else if (buildGradle.exists()) {
