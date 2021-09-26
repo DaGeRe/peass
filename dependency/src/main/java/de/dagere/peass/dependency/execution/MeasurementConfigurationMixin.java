@@ -29,10 +29,6 @@ public class MeasurementConfigurationMixin {
    @Option(names = { "-earlyStop", "--earlyStop" }, description = "Whether to stop early (i.e. execute VMs until type 1 and type 2 error are met)")
    protected boolean earlyStop = false;
 
-   @Option(names = { "-removeSnapshots",
-         "--removeSnapshots" }, description = "Activates removing SNAPSHOTS (if older versions should be analysed, this should be activated; for performance measurement in CI, this should not be activated)")
-   protected boolean removeSnapshots = false;
-
    @Option(names = { "-saveKieker", "--saveKieker" }, description = "Save no kieker results in order to use less space - default false")
    private boolean saveNothing = false;
    
@@ -58,10 +54,6 @@ public class MeasurementConfigurationMixin {
       return saveNothing;
    }
    
-   public boolean isRemoveSnapshots() {
-      return removeSnapshots;
-   }
-
    public int getIterations() {
       return iterations;
    }

@@ -33,6 +33,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.execution.ExecutionConfigMixin;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.dependency.reader.DependencyReader;
@@ -64,6 +65,9 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
    
    @Mixin
    private KiekerConfigMixin kiekerConfigMixin;
+   
+   @Mixin
+   private ExecutionConfigMixin executionConfigMixin;
 
    @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Folder for dependencyfile")
    private File dependencyFile = null;
@@ -89,9 +93,9 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, Dependencies.class);
       VersionComparator.setVersions(GitUtils.getCommits(projectFolder, false));
 
-      String previousVersion = getPreviousVersion(config.getStartversion(), projectFolder, dependencies);
+      String previousVersion = getPreviousVersion(executionConfigMixin.getStartversion(), projectFolder, dependencies);
 
-      final int timeout = config.getTimeout();
+      final int timeout = executionConfigMixin.getTimeout();
 
       LOG.debug("Lese {}", projectFolder.getAbsolutePath());
       final VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(projectFolder);
@@ -143,7 +147,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.GIT)) {
          final VersionIterator iterator = createIterator(config, previousVersion);
-         ExecutionConfig executionConfig = config.getExecutionConfig();
+         ExecutionConfig executionConfig = new ExecutionConfig(executionConfigMixin);
          reader = new DependencyReader(config.getDependencyConfig(), new PeassFolders(config.getProjectFolder()), 
                resultsFolders, dependencies.getUrl(), iterator, new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nochanges.json")), 
                executionConfig, kiekerConfigMixin.getKiekerConfig(), new EnvironmentVariables());
@@ -156,8 +160,8 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       return reader;
    }
 
-   private static VersionIterator createIterator(final DependencyReaderConfigMixin config, final String previousVersion) {
-      final List<GitCommit> commits = CommitUtil.getGitCommits(config.getStartversion(), config.getEndversion(), config.getProjectFolder());
+   private VersionIterator createIterator(final DependencyReaderConfigMixin config, final String previousVersion) {
+      final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartversion(), executionConfigMixin.getEndversion(), config.getProjectFolder());
       commits.add(0, new GitCommit(previousVersion, "", "", ""));
       final GitCommit previous = new GitCommit(previousVersion, "", "", "");
       final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previous);

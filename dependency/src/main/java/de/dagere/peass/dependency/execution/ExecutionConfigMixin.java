@@ -33,12 +33,16 @@ public class ExecutionConfigMixin {
 
    @Option(names = { "-pl", "--pl" }, description = "Projectlist (-pl) argument for maven (e.g. :submodule) - only the submodule and its dependencies are analyzed (using -am)")
    protected String pl;
-   
-   @Option(names = {"-workloadType", "--workloadType"}, description = "Which workload should be executed - by default JUNIT, can be changed to JMH")
+
+   @Option(names = { "-workloadType", "--workloadType" }, description = "Which workload should be executed - by default JUNIT, can be changed to JMH")
    public WorkloadType workloadType = WorkloadType.JUNIT;
-   
+
    @Option(names = { "-useTieredCompilation", "--useTieredCompilation" }, description = "Activate -XX:-TieredCompilation for all measured processes")
    protected boolean useTieredCompilation = false;
+
+   @Option(names = { "-removeSnapshots",
+         "--removeSnapshots" }, description = "Activates removing SNAPSHOTS (if older versions should be analysed, this should be activated; for performance measurement in CI, this should not be activated)")
+   protected boolean removeSnapshots = false;
 
    public int getTimeout() {
       return timeout;
@@ -104,6 +108,14 @@ public class ExecutionConfigMixin {
       return pl;
    }
 
+   public boolean isRemoveSnapshots() {
+      return removeSnapshots;
+   }
+   
+   public void setRemoveSnapshots(final boolean removeSnapshots) {
+      this.removeSnapshots = removeSnapshots;
+   }
+   
    public String[] getExcludes() {
       return excludes;
    }
@@ -111,15 +123,15 @@ public class ExecutionConfigMixin {
    public void setExcludes(final String[] excludes) {
       this.excludes = excludes;
    }
-   
+
    public WorkloadType getWorkloadType() {
       return workloadType;
    }
-   
+
    public void setWorkloadType(final WorkloadType workloadType) {
       this.workloadType = workloadType;
    }
-   
+
    public boolean isUseTieredCompilation() {
       return useTieredCompilation;
    }

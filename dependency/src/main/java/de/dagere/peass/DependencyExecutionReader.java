@@ -15,10 +15,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.config.DependencyReaderConfigMixin;
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.execution.ExecutionConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -46,6 +48,9 @@ public class DependencyExecutionReader implements Callable<Void>{
    
    @Mixin
    private KiekerConfigMixin kiekerConfigMixin;
+   
+   @Mixin
+   private ExecutionConfigMixin executionConfigMixin;
 
    public static void main(final String[] args) {
       try {
@@ -60,7 +65,7 @@ public class DependencyExecutionReader implements Callable<Void>{
    public Void call() throws Exception {
       final String project = config.getProjectFolder().getName();
       
-      final List<GitCommit> commits = CommitUtil.getGitCommits(config.getStartversion(), config.getEndversion(), config.getProjectFolder());
+      final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartversion(), executionConfigMixin.getEndversion(), config.getProjectFolder());
       VersionComparator.setVersions(commits);
       
       readExecutions(project, commits);
@@ -68,11 +73,11 @@ public class DependencyExecutionReader implements Callable<Void>{
    }
 
    public void readExecutions(final String project, final List<GitCommit> commits) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, JAXBException {
-      
       KiekerConfiguration kiekerConfig = kiekerConfigMixin.getKiekerConfig();
+      ExecutionConfig executionConfig = new ExecutionConfig(executionConfigMixin);
       
       final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, commits, 
-            config.getDependencyConfig(), config.getExecutionConfig(), kiekerConfig, new EnvironmentVariables());
+            config.getDependencyConfig(), executionConfig, kiekerConfig, new EnvironmentVariables());
       final ResultsFolders[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);

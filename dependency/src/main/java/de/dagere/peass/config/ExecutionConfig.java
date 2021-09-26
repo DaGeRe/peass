@@ -106,6 +106,10 @@ public class ExecutionConfig implements Serializable {
       if (executionMixin.getPl() != null) {
          pl = executionMixin.getPl();
       }
+      setTestTransformer(executionMixin.getWorkloadType().getTestTransformer());
+      setTestExecutor(executionMixin.getWorkloadType().getTestExecutor());
+      useTieredCompilation = executionMixin.isUseTieredCompilation();
+      removeSnapshots = executionMixin.isRemoveSnapshots();
    }
 
    public long getTimeout() {

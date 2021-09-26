@@ -74,7 +74,13 @@ public class MeasurementConfiguration implements Serializable {
    }
 
    public MeasurementConfiguration(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin, final StatisticsConfigurationMixin statisticMixin) {
-      this(executionMixin.getTimeout() * 60 * 1000, mixin.getVms(), statisticMixin.getType1error(), statisticMixin.getType2error());
+      executionConfig = new ExecutionConfig(executionMixin);
+      kiekerConfig = new KiekerConfiguration();
+      this.vms = mixin.getVms();
+      statisticsConfig.setType1error(statisticMixin.getType1error());
+      statisticsConfig.setType2error(statisticMixin.getType2error());
+      statisticsConfig.setStatisticTest(statisticMixin.getStatisticTest());
+      statisticsConfig.setOutlierFactor(statisticMixin.getOutlierFactor());
       setEarlyStop(mixin.isEarlyStop());
       setUseKieker(mixin.isUseKieker());
       setIterations(mixin.getIterations());
@@ -84,37 +90,9 @@ public class MeasurementConfiguration implements Serializable {
       setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
       
-      statisticsConfig.setStatisticTest(statisticMixin.getStatisticTest());
-      statisticsConfig.setOutlierFactor(statisticMixin.getOutlierFactor());
+      
 
       saveAll = !mixin.isSaveNothing();
-      
-      executionConfig.setRemoveSnapshots(mixin.isRemoveSnapshots());
-      executionConfig.setVersion(executionMixin.getVersion());
-      executionConfig.setVersionOld(executionMixin.getVersionOld());
-      executionConfig.setStartversion(executionMixin.getStartversion());
-      executionConfig.setEndversion(executionMixin.getEndversion());
-      executionConfig.setTestTransformer(executionMixin.getWorkloadType().getTestTransformer());
-      executionConfig.setTestExecutor(executionMixin.getWorkloadType().getTestExecutor());
-      
-      executionConfig.setTestGoal(executionMixin.getTestGoal());
-      if (executionMixin.getIncludes() != null) {
-         for (String include : executionMixin.getIncludes()) {
-            executionConfig.getIncludes().add(include);
-         }
-      }
-      if (executionMixin.getExcludes() != null) {
-         for (String exclude : executionMixin.getExcludes()) {
-            executionConfig.getExcludes().add(exclude);
-         }
-         throw new RuntimeException("Not implemented yet");
-      }
-      if (executionMixin.getPl() != null) {
-         executionConfig.setPl(executionMixin.getPl());
-      }
-      executionConfig.setUseTieredCompilation(executionMixin.isUseTieredCompilation());
-      executionConfig.setTestTransformer(executionMixin.getWorkloadType().getTestTransformer());
-      executionConfig.setTestExecutor(executionMixin.getWorkloadType().getTestExecutor());
    }
 
    @JsonCreator

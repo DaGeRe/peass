@@ -9,6 +9,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import de.dagere.peass.CommitUtil;
 import de.dagere.peass.config.DependencyReaderConfigMixin;
+import de.dagere.peass.dependency.execution.ExecutionConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.vcs.GitCommit;
@@ -19,6 +20,9 @@ public class OnlyMerge implements Callable<Void>{
    
    @Mixin
    private DependencyReaderConfigMixin config;
+   
+   @Mixin
+   private ExecutionConfigMixin executionConfigMixin;
    
    public static void main(final String[] args) {
       try {
@@ -32,7 +36,7 @@ public class OnlyMerge implements Callable<Void>{
    @Override
    public Void call() throws Exception {
       final File projectFolder = config.getProjectFolder();
-      final List<GitCommit> commits = CommitUtil.getGitCommits(config.getStartversion(), config.getEndversion(), projectFolder);
+      final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartversion(), executionConfigMixin.getEndversion(), projectFolder);
       VersionComparator.setVersions(commits);
       
       final File[] files = config.getResultBaseFolder().listFiles((FilenameFilter) new WildcardFileFilter("deps*.json"));

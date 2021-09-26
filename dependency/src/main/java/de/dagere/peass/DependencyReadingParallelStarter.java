@@ -8,8 +8,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.DependencyReaderConfigMixin;
+import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.execution.ExecutionConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
@@ -29,6 +32,9 @@ public class DependencyReadingParallelStarter implements Callable<Void> {
    
    @Mixin
    private KiekerConfigMixin kiekerConfigMixin;
+   
+   @Mixin
+   private ExecutionConfigMixin executionConfigMixin;
 
    public static void main(final String[] args) {
       try {
@@ -41,11 +47,14 @@ public class DependencyReadingParallelStarter implements Callable<Void> {
    
    @Override
    public Void call() throws Exception {
-      final List<GitCommit> commits = CommitUtil.getGitCommits(config.getStartversion(), config.getEndversion(), config.getProjectFolder());
+      final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartversion(), executionConfigMixin.getEndversion(), config.getProjectFolder());
       VersionComparator.setVersions(commits);
       
+      KiekerConfiguration kiekerConfig = kiekerConfigMixin.getKiekerConfig();
+      ExecutionConfig executionConfig = new ExecutionConfig(executionConfigMixin);
+      
       final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), config.getProjectFolder().getName(), commits, 
-            config.getDependencyConfig(), config.getExecutionConfig(), kiekerConfigMixin.getKiekerConfig(), new EnvironmentVariables());
+            config.getDependencyConfig(), executionConfig, kiekerConfigMixin.getKiekerConfig(), new EnvironmentVariables());
       final ResultsFolders[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);
