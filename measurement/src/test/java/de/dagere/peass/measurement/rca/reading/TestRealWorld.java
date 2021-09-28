@@ -17,6 +17,7 @@ import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.rca.KiekerResultReader;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class TestRealWorld {
 
@@ -53,7 +54,7 @@ public class TestRealWorld {
 
    private void read(final File parentFolder, final String version, final Set<CallTreeNode> includedNodes) throws JsonParseException, JsonMappingException, IOException {
       final boolean isOtherVersionNode = !version.equals(version);
-      KiekerResultReader reader = new KiekerResultReader(true, includedNodes,
+      KiekerResultReader reader = new KiekerResultReader(true, AllowedKiekerRecord.OPERATIONEXECUTION, includedNodes,
             version, new TestCase("de.peass.MainTest#testMe"), isOtherVersionNode);
       File currentFolder = new File(parentFolder, version + "/0");
       for (File kiekerTraceContainingFolder : currentFolder.listFiles((FileFilter) new WildcardFileFilter("16*"))) {

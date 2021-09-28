@@ -29,7 +29,16 @@ public class KiekerPatternConverter {
       } else {
          return kiekerCall;
       }
+   }
 
+   public static String getCall(final String kiekerPattern) {
+      if (!kiekerPattern.contains("(") || !kiekerPattern.contains(")")) {
+         throw new RuntimeException(kiekerPattern + " is supposed to contain ( and )");
+      }
+      String beforeParameters = kiekerPattern.substring(0, kiekerPattern.indexOf('('));
+      String method = beforeParameters.substring(beforeParameters.lastIndexOf('.') + 1);
+      String clazz = beforeParameters.substring(beforeParameters.lastIndexOf(' ') + 1, beforeParameters.lastIndexOf('.'));
+      return clazz + "#" + method;
    }
 
    /**

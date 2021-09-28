@@ -27,12 +27,14 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
 import de.dagere.peass.measurement.rca.kiekerReading.KiekerDurationReader;
 import kieker.analysis.exception.AnalysisConfigurationException;
+import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class KiekerResultReader {
 
    private static final Logger LOG = LogManager.getLogger(KiekerResultReader.class);
 
    final boolean useAggregation;
+   private final AllowedKiekerRecord usedRecord;
    final Set<CallTreeNode> includedNodes;
    final String version;
    final TestCase testcase;
@@ -40,9 +42,10 @@ public class KiekerResultReader {
 
    boolean considerNodePosition = false;
 
-   public KiekerResultReader(final boolean useAggregation, final Set<CallTreeNode> includedNodes, final String version,
+   public KiekerResultReader(final boolean useAggregation, final AllowedKiekerRecord usedRecord, final Set<CallTreeNode> includedNodes, final String version,
          final TestCase testcase, final boolean otherVersion) {
       this.useAggregation = useAggregation;
+      this.usedRecord = usedRecord;
       this.includedNodes = includedNodes;
       this.version = version;
       this.testcase = testcase;
@@ -84,12 +87,12 @@ public class KiekerResultReader {
       final String nodeCall = KiekerPatternConverter.fixParameters(examinedNode.getKiekerPattern());
       final List<StatisticalSummary> values = new LinkedList<>();
       for (final Entry<AggregatedDataNode, AggregatedData> entry : fullDataMap.entrySet()) {
-       if (isSameNode(examinedNode, nodeCall, entry.getKey())) {
+         if (isSameNode(examinedNode, nodeCall, entry.getKey())) {
             for (final StatisticalSummary dataSlice : entry.getValue().getStatistic().values()) {
                values.add(dataSlice);
             }
             nodeFound = true;
-         } 
+         }
       }
 
       if (nodeFound) {
@@ -122,6 +125,10 @@ public class KiekerResultReader {
    }
 
    public void readNonAggregated(final File kiekerTraceFolder) throws AnalysisConfigurationException {
-      KiekerDurationReader.executeDurationStage(kiekerTraceFolder, includedNodes, version);
+      if (usedRecord == AllowedKiekerRecord.OPERATIONEXECUTION) {
+         KiekerDurationReader.executeDurationStage(kiekerTraceFolder, includedNodes, version);
+      } else if (usedRecord == AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION) {
+         KiekerDurationReader.executeReducedDurationStage(kiekerTraceFolder, includedNodes, version);
+      }
    }
 }

@@ -40,6 +40,11 @@ public class TestKiekerPatternConverter {
       KiekerPatternConverter.fixParameters("private boolean org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl.findNextItem()");
       KiekerPatternConverter.fixParameters("public int org.apache.commons.fileupload.MultipartStream$ItemInputStream.read(byte[], int, int)");
       KiekerPatternConverter.fixParameters("public void org.apache.commons.fileupload.MultipartStream$ItemInputStream.close()");
-
+   }
+   
+   @Test
+   public void testPatternToCall() {
+      String call = KiekerPatternConverter.getCall("public void de.dagere.peass.ClazzWithLongName.method(int,String,int[])");
+      Assert.assertEquals("de.dagere.peass.ClazzWithLongName#method", call);
    }
 }
