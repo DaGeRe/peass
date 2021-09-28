@@ -107,7 +107,7 @@ public class JUnitTestTransformer implements TestTransformer {
    }
 
    /**
-    * Creates a test transformer for usage in PRONTO
+    * Creates a test transformer for usage in RTS
     * 
     * @param projectFolder
     * @param timeout
@@ -117,6 +117,9 @@ public class JUnitTestTransformer implements TestTransformer {
       config = new MeasurementConfiguration(1, executionConfig, kiekerConfig);
       config.setIterations(1);
       config.setWarmup(0);
+      // For regression test selection, verbose debug output is helpful, and since it is only executed once, the performance loss is ok. 
+      config.setRedirectToNull(false);
+      config.setShowStart(true);
       datacollectorlist = DataCollectorList.ONLYTIME;
    }
 
