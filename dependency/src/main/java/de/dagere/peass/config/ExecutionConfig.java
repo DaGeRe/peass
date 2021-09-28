@@ -37,7 +37,9 @@ public class ExecutionConfig implements Serializable {
    private boolean createDefaultConstructor = true;
    private boolean redirectSubprocessOutputToFile = true;
    private boolean useTieredCompilation = false;
+   
    private boolean removeSnapshots = false;
+   private boolean excludeLog4j = false;
    
    private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
    private String testExecutor = "default";
@@ -220,6 +222,14 @@ public class ExecutionConfig implements Serializable {
 
    public boolean isRemoveSnapshots() {
       return removeSnapshots;
+   }
+
+   public boolean isExcludeLog4j() {
+      return excludeLog4j;
+   }
+
+   public void setExcludeLog4j(final boolean excludeLog4j) {
+      this.excludeLog4j = excludeLog4j;
    }
 
    public String getTestTransformer() {

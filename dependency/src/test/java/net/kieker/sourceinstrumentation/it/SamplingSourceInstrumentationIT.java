@@ -90,7 +90,7 @@ public class SamplingSourceInstrumentationIT {
       final File pomFile = new File(TestConstants.CURRENT_FOLDER, "pom.xml");
       try (FileInputStream inputStream = new FileInputStream(pomFile)) {
          final Model model = reader.read(inputStream);
-         MavenPomUtil.extendDependencies(model, false);
+         MavenPomUtil.extendDependencies(model, false, false);
 
          try (FileWriter fileWriter = new FileWriter(pomFile)) {
             final MavenXpp3Writer writer = new MavenXpp3Writer();

@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Exclusion;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -31,6 +32,8 @@ import de.dagere.peass.utils.StreamGobbler;
 
 public class MavenPomUtil {
 
+   public static final String LOG4J_GROUPID = "org.apache.logging.log4j";
+   public static final String LOG4J_ARTIFACTID = "log4j-slf4j-impl";
    public static final String KOPEME_VERSION = "0.14-SNAPSHOT";
    public static final String KIEKER_VERSION = "1.15-SNAPSHOT";
    public static final String ORG_APACHE_MAVEN_PLUGINS = "org.apache.maven.plugins";
@@ -60,13 +63,13 @@ public class MavenPomUtil {
       }
    }
 
-   public static void extendDependencies(final Model model, final boolean junit3) {
+   public static void extendDependencies(final Model model, final boolean junit3, final boolean excludeLog4j) {
       for (final Dependency dependency : model.getDependencies()) {
          if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
             dependency.setVersion("4.13.2");
          }
          if (dependency.getArtifactId().equals("junit-jupiter") && dependency.getGroupId().equals("org.junit.jupiter")) {
-            dependency.setVersion("5.7.0");
+            dependency.setVersion("5.8.0");
          }
       }
 
@@ -77,6 +80,12 @@ public class MavenPomUtil {
             addLoggingImplementationDependency(dependencies, dependency);
          } else if (dependency.getMavenDependency().getArtifactId().contains("kopeme")) {
             dependencies.add(0, dependency.getMavenDependency());
+            if (excludeLog4j) {
+               Exclusion exclusion = new Exclusion();
+               exclusion.setArtifactId(LOG4J_ARTIFACTID);
+               exclusion.setGroupId(LOG4J_GROUPID);
+               dependencies.get(0).addExclusion(exclusion);
+            }
          } else {
             dependencies.add(dependency.getMavenDependency());
          }
