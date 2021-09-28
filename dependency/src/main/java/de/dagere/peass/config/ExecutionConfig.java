@@ -62,6 +62,7 @@ public class ExecutionConfig implements Serializable {
       this.createDefaultConstructor = other.isCreateDefaultConstructor();
       this.redirectSubprocessOutputToFile = other.isRedirectSubprocessOutputToFile();
       this.removeSnapshots = other.removeSnapshots;
+      this.excludeLog4j = other.excludeLog4j;
       this.testTransformer = other.getTestTransformer();
       this.testExecutor = other.getTestExecutor();
       this.useTieredCompilation = other.isUseTieredCompilation();
