@@ -78,11 +78,32 @@ public class TestResultOrganizer {
       File fulldataFile = new File(getVersionMeasurementFolder(), fulldata.getFileName());
       Assert.assertTrue(fulldataFile.exists());
    }
+   
+   @Test
+   public void testKiekerSavingDeletion() throws JAXBException, IOException {
+      organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true, searchedTest, 1);
+      organizer.getCompressor().setThresholdForZippingInMB(1);
+      organizer.getCompressor().setThresholdForDeletingInMB(2);
+
+      DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, searchedTest);
+
+      writeKiekerFile(200000);
+
+      organizer.saveResultFiles(VERSION_NAME, 0);
+
+      testXMLFileExists();
+
+      File versionFolder = getVersionMeasurementFolder();
+      final File expectedKiekerTarFile = new File(versionFolder, KIEKER_TIMESTAMP + ".tar");
+      Assert.assertFalse(expectedKiekerTarFile.exists());
+      final File expectedKiekerFile = new File(versionFolder, KIEKER_TIMESTAMP);
+      Assert.assertFalse(expectedKiekerFile.exists());
+   }
 
    @Test
    public void testKiekerSavingTar() throws JAXBException, IOException {
       organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true, searchedTest, 1);
-      organizer.setThresholdForZippingInMB(1);
+      organizer.getCompressor().setThresholdForZippingInMB(1);
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, searchedTest);
 

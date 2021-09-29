@@ -34,13 +34,15 @@ public class ResultOrganizer {
    private final String mainVersion;
    private final long currentChunkStart;
    private final boolean isUseKieker;
-   private int thresholdForZippingInMB = 5;
+
    private final boolean saveAll;
    protected final TestCase testcase;
    private boolean success = true;
    private final int expectedIterations;
+   private final KiekerFileCompressor compressor = new KiekerFileCompressor();
 
-   public ResultOrganizer(final PeassFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll, final TestCase test,
+   public ResultOrganizer(final PeassFolders folders, final String currentVersion, final long currentChunkStart, final boolean isUseKieker, final boolean saveAll,
+         final TestCase test,
          final int expectedIterations) {
       this.folders = folders;
       this.mainVersion = currentVersion;
@@ -51,10 +53,11 @@ public class ResultOrganizer {
       this.expectedIterations = expectedIterations;
    }
 
-   //TODO the success test duplicatees saveResultFiles code and logic from DependencyTester.shouldReduce
+   // TODO the success test duplicatees saveResultFiles code and logic from DependencyTester.shouldReduce
    /**
-    * Tests whether there is a correct result file, i.e. a XML file in the correct position with the right amount of iterations (it may be less iterations if the test takes too long).
-    * This only works *before* the result has been moved, afterwards, the file will be gone and the measurement will be considered no success
+    * Tests whether there is a correct result file, i.e. a XML file in the correct position with the right amount of iterations (it may be less iterations if the test takes too
+    * long). This only works *before* the result has been moved, afterwards, the file will be gone and the measurement will be considered no success
+    * 
     * @return true of the measurement was correct
     */
    public boolean testSuccess(final String version) {
@@ -132,7 +135,7 @@ public class ResultOrganizer {
 
    public File getTempResultsFolder(final String version) {
       LOG.info("Searching method: {}", testcase);
-      final Collection<File> folderCandidates = folders.findTempClazzFolder(testcase); 
+      final Collection<File> folderCandidates = folders.findTempClazzFolder(testcase);
       if (folderCandidates.size() != 1) {
          LOG.error("Ordner {} ist {} mal vorhanden.", testcase.getClazz(), folderCandidates.size());
          return null;
@@ -187,45 +190,16 @@ public class ResultOrganizer {
          throw new RuntimeException("It is expected that after one execution exactly one Kieker folder exists, but was " + fileNameList);
       }
       if (saveAll) {
-         moveOrCompressFile(destFolder, kiekerFolders[0]);
+         compressor.moveOrCompressFile(destFolder, kiekerFolders[0]);
       } else {
          FileUtils.deleteDirectory(kiekerFolders[0]);
       }
    }
 
-   private void moveOrCompressFile(final File destFolder, final File kiekerFolder) throws IOException {
-      final long size = FileUtils.sizeOf(kiekerFolder);
-      final long sizeInMb = size / (1024 * 1024);
-      LOG.debug("Kieker folder size: {} MB ({})", sizeInMb, size);
-      if (sizeInMb > thresholdForZippingInMB) {
-         final File dest = new File(destFolder, kiekerFolder.getName() + ".tar");
-         final ProcessBuilder processBuilder = new ProcessBuilder("tar", "-czf", dest.getAbsolutePath(), kiekerFolder.getAbsolutePath());
-         processBuilder.environment().put("GZIP", "-9");
-         final Process process = processBuilder.start();
-         try {
-            process.waitFor();
-         } catch (final InterruptedException e) {
-            e.printStackTrace();
-         }
-         FileUtils.deleteDirectory(kiekerFolder);
-      } else {
-         final File dest = new File(destFolder, kiekerFolder.getName());
-         if (!kiekerFolder.renameTo(dest)) {
-            LOG.error("Renaming {} to {} failed",
-                  kiekerFolder.getAbsolutePath(),
-                  dest.getAbsolutePath());
-         }
-      }
+   public KiekerFileCompressor getCompressor() {
+      return compressor;
    }
-
-   public int getThresholdForZippingInMB() {
-      return thresholdForZippingInMB;
-   }
-
-   public void setThresholdForZippingInMB(final int thresholdForZippingInMB) {
-      this.thresholdForZippingInMB = thresholdForZippingInMB;
-   }
-
+   
    public File getResultFile(final TestCase testcase, final int vmid, final String version) {
       return folders.getResultFile(testcase, vmid, version, mainVersion);
    }
