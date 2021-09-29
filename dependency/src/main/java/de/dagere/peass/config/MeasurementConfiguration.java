@@ -89,8 +89,7 @@ public class MeasurementConfiguration implements Serializable {
       setUseGC(mixin.isUseGC());
       setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
-      
-      
+      setShowStart(mixin.isShowStart());
 
       saveAll = !mixin.isSaveNothing();
    }

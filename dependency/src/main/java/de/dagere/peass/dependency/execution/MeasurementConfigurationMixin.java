@@ -31,12 +31,16 @@ public class MeasurementConfigurationMixin {
 
    @Option(names = { "-saveKieker", "--saveKieker" }, description = "Save no kieker results in order to use less space - default false")
    private boolean saveNothing = false;
-   
+
    @Option(names = { "-record", "--record" }, description = "Kieker Record type to use for monitoring ")
    protected AllowedKiekerRecord record = AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION;
 
    @Option(names = { "-measurementStrategy", "--measurementStrategy" }, description = "Measurement strategy (Default: SEQUENTIAL) ")
    protected MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
+
+   @Option(names = { "-showStart",
+         "--showStart" }, description = "Activates showing of start of each iteration (for debug purposes primarily)")
+   protected boolean showStart = false;
 
    public int getVms() {
       return vms;
@@ -49,11 +53,11 @@ public class MeasurementConfigurationMixin {
    public int getWarmup() {
       return warmup;
    }
-   
+
    public boolean isSaveNothing() {
       return saveNothing;
    }
-   
+
    public int getIterations() {
       return iterations;
    }
@@ -96,6 +100,14 @@ public class MeasurementConfigurationMixin {
 
    public void setUseKieker(final boolean useKieker) {
       this.useKieker = useKieker;
+   }
+
+   public boolean isShowStart() {
+      return showStart;
+   }
+
+   public void setShowStart(final boolean showStart) {
+      this.showStart = showStart;
    }
 
    public void setUseGC(final boolean useGC) {

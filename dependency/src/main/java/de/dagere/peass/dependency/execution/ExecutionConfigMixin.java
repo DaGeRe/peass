@@ -111,11 +111,11 @@ public class ExecutionConfigMixin {
    public boolean isRemoveSnapshots() {
       return removeSnapshots;
    }
-   
+
    public void setRemoveSnapshots(final boolean removeSnapshots) {
       this.removeSnapshots = removeSnapshots;
    }
-   
+
    public String[] getExcludes() {
       return excludes;
    }
