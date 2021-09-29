@@ -62,7 +62,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    /**
     * Executes the Gradle process; since gradle is run inside the module folder, different parameters than for the maven execution are required
     */
-   private Process buildGradleProcess(final File folder, final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
+   private Process buildGradleProcess(final File moduleFolder, final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
       final String testGoal = getTestGoal();
       String wrapper = new File(folders.getProjectFolder(), "gradlew").getAbsolutePath();
       final String[] originals = new String[] { wrapper,
@@ -72,7 +72,8 @@ public class GradleTestExecutor extends KoPeMeExecutor {
 
       final String[] vars = CommandConcatenator.concatenateCommandArrays(originals, commandLineAddition);
       ProcessBuilderHelper processBuilderHelper = new ProcessBuilderHelper(env, folders);
-      return processBuilderHelper.buildFolderProcess(folder, logFile, vars);
+      LOG.debug("Executing gradle test in moduleFolder: {}", moduleFolder);
+      return processBuilderHelper.buildFolderProcess(moduleFolder, logFile, vars);
    }
 
    /**
@@ -106,9 +107,9 @@ public class GradleTestExecutor extends KoPeMeExecutor {
     * @param testname Name of the test that should be run
     */
    @Override
-   protected void runTest(final File module, final File logFile, final String testname, final long timeout) {
+   protected void runTest(final File moduleFolder, final File logFile, final String testname, final long timeout) {
       try {
-         final Process process = buildGradleProcess(module, logFile, "--tests", testname);
+         final Process process = buildGradleProcess(moduleFolder, logFile, "--tests", testname);
          execute(testname, timeout, process);
       } catch (final InterruptedException | IOException | XmlPullParserException e) {
          e.printStackTrace();
