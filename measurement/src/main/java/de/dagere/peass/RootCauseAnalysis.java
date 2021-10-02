@@ -76,11 +76,11 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       final MeasurementConfiguration measurementConfiguration = getConfiguration(predecessor);
 
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, causeSearchConfigMixin);
-      
+
       if (causeSearcherConfig.isUseAggregation() && measurementConfiguration.getRecord() == AllowedKiekerRecord.OPERATIONEXECUTION) {
          throw new RuntimeException("Aggregation and OperationExecutionRecord can not be combined!");
       }
-      
+
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders, new EnvironmentVariables());
 
@@ -111,6 +111,9 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       }
 
       measurementConfiguration.setUseSampling(kiekerConfigMixin.isUseSampling());
+      if (kiekerConfigMixin.isNotUseSourceInstrumentation() && kiekerConfigMixin.isUseExtraction()) {
+         throw new RuntimeException("Deactivated source instrumentation and usage of extraction is not possible!");
+      }
       measurementConfiguration.getKiekerConfig().setExtractMethod(kiekerConfigMixin.isUseExtraction());
       LOG.info("Use source instrumentation: {}", kiekerConfigMixin.isNotUseSourceInstrumentation());
       return measurementConfiguration;
