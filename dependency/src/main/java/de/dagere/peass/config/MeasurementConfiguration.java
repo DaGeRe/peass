@@ -28,6 +28,9 @@ public class MeasurementConfiguration implements Serializable {
    private boolean executeBeforeClassInMeasurement = false;
    private boolean showStart = false;
    private boolean redirectToNull = true;
+   
+   private boolean callSyncBetweenVMs = true;
+   private int waitTimeBetweenVMs = 1000; 
 
    @JsonIgnore
    private final KiekerConfiguration kiekerConfig;
@@ -373,6 +376,22 @@ public class MeasurementConfiguration implements Serializable {
 
    public void setMeasurementStrategy(final MeasurementStrategy measurementStrategy) {
       this.measurementStrategy = measurementStrategy;
+   }
+
+   public boolean isCallSyncBetweenVMs() {
+      return callSyncBetweenVMs;
+   }
+
+   public void setCallSyncBetweenVMs(final boolean callSyncBetweenVMs) {
+      this.callSyncBetweenVMs = callSyncBetweenVMs;
+   }
+
+   public int getWaitTimeBetweenVMs() {
+      return waitTimeBetweenVMs;
+   }
+
+   public void setWaitTimeBetweenVMs(final int waitTimeBetweenVMs) {
+      this.waitTimeBetweenVMs = waitTimeBetweenVMs;
    }
 
    /**

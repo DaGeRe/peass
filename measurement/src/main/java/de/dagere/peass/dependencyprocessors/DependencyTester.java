@@ -20,6 +20,7 @@ import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
+import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.measurement.analysis.Cleaner;
 import de.dagere.peass.measurement.analysis.DataReader;
 import de.dagere.peass.measurement.analysis.statistics.TestData;
@@ -88,7 +89,16 @@ public class DependencyTester implements KiekerResultHandler {
 
          long durationInSeconds = (System.currentTimeMillis() - comparisonStart) / 1000;
          writer.write(durationInSeconds, finishedVMs);
+         
+         betweenVMCooldown();
       }
+   }
+
+   protected void betweenVMCooldown() throws InterruptedException {
+      if (configuration.isCallSyncBetweenVMs()) {
+         ProcessBuilderHelper.syncToHdd();
+      }
+      Thread.sleep(configuration.getWaitTimeBetweenVMs());
    }
 
    boolean updateExecutions(final TestCase testcase, final int vmid) throws JAXBException {

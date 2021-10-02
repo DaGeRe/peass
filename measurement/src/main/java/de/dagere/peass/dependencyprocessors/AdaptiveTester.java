@@ -60,6 +60,8 @@ public class AdaptiveTester extends DependencyTester {
          }
          long durationInSeconds = (System.currentTimeMillis() - comparisonStart)/1000;
          writer.write(durationInSeconds, finishedVMs);
+         
+         betweenVMCooldown();
       }
    }
 

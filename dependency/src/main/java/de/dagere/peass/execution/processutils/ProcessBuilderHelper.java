@@ -63,7 +63,7 @@ public class ProcessBuilderHelper {
    }
 
    private void printPIDInfo(final File logFile) throws IOException {
-      if (!System.getProperty("os.name").startsWith("Windows") && !System.getProperty("os.name").startsWith("Mac")) {
+      if (isLinux()) {
          String usedPidCountString = new File("/proc/self").getCanonicalFile().getName();
          if (usedPidCountString.matches("[0-9]+")) {
             final int pid = Integer.parseInt(usedPidCountString);
@@ -72,6 +72,10 @@ public class ProcessBuilderHelper {
             LOG.debug("PID count could not be parsed: {} Operating System: {}", usedPidCountString, System.getProperty("os.name"));
          }
       }
+   }
+
+   private static boolean isLinux() {
+      return !System.getProperty("os.name").startsWith("Windows") && !System.getProperty("os.name").startsWith("Mac");
    }
 
    public synchronized static int getProcessCount() {
@@ -85,5 +89,20 @@ public class ProcessBuilderHelper {
          e.printStackTrace();
       }
       return count;
+   }
+   
+   /**
+    * If on linux, this calls the sync command, which should assure that pending hard disc writes are finished and the next test
+    * execution is done with clear write buffers (especially of Kieker)
+    */
+   public static void syncToHdd() {
+      if (isLinux()) {
+         try {
+            Process syncProcess = Runtime.getRuntime().exec("sync");
+            StreamGobbler.showFullProcess(syncProcess);
+         } catch (IOException e) {
+            e.printStackTrace();
+         }
+      }
    }
 }
