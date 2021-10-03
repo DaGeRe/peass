@@ -45,19 +45,4 @@ public class DurationStage extends AbstractTraceProcessingStage<Execution> {
          }
       }
    }
-
-   public static class DurationStageFactory {
-      private final Set<CallTreeNode> measuredNodes;
-      private final String version;
-
-      public DurationStageFactory(final Set<CallTreeNode> measuredNodes, final String version) {
-         this.measuredNodes = measuredNodes;
-         this.version = version;
-      }
-      
-      public DurationStage getStage(final SystemModelRepository systemModelRepository) {
-         return new DurationStage(systemModelRepository, measuredNodes, version);
-      }
-
-   }
 }
