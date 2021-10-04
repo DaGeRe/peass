@@ -35,7 +35,7 @@ public class SamplingParameters {
             "if (" + counterName + "++%" + count + "==0){\n" +
             "final String " + InstrumentationConstants.PREFIX + "signature = \"" + signature + "\";\n" +
             "final long " + InstrumentationConstants.PREFIX + "calculatedTout=" + InstrumentationConstants.PREFIX + "tin+" + sumName + ";\n"
-            + InstrumentationConstants.PREFIX + "controller.newMonitoringRecord(new ReducedOperationExecutionRecord(" + InstrumentationConstants.PREFIX + "signature, "
+            + InstrumentationConstants.PREFIX + "controller.newMonitoringRecord(new DurationRecord(" + InstrumentationConstants.PREFIX + "signature, "
             + InstrumentationConstants.PREFIX + "tin, " + InstrumentationConstants.PREFIX + "calculatedTout));\n"
             + sumName + "=0;}\n";
    }

@@ -22,7 +22,7 @@ public class SamplingBlockBuilder extends BlockBuilder {
    public BlockStmt buildStatement(final BlockStmt originalBlock, final boolean addReturn, final SamplingParameters parameters, final CodeBlockTransformer transformer) {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
          throw new RuntimeException("Not implemented yet (Sampling + OperationExecutionRecord does not make sense, since OperationExecutionRecord contains too complex metadata for sampling)");
-      } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
+      } else if (recordType.equals(AllowedKiekerRecord.DURATION)) {
          return buildSelectiveSamplingStatement(originalBlock, addReturn, parameters);
       } else {
          throw new RuntimeException();
@@ -33,7 +33,7 @@ public class SamplingBlockBuilder extends BlockBuilder {
    public BlockStmt buildEmptyConstructor(final TypeDeclaration<?> type, final SamplingParameters parameters, final CodeBlockTransformer transformer) {
       if (recordType.equals(AllowedKiekerRecord.OPERATIONEXECUTION)) {
          throw new RuntimeException("Not implemented yet (Sampling + OperationExecutionRecord does not make sense, since OperationExecutionRecord contains too complex metadata for sampling)");
-      } else if (recordType.equals(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION)) {
+      } else if (recordType.equals(AllowedKiekerRecord.DURATION)) {
          return buildConstructorStatement(parameters);
       } else {
          throw new RuntimeException();

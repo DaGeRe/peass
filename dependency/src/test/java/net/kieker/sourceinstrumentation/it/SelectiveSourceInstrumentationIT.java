@@ -46,7 +46,7 @@ public class SelectiveSourceInstrumentationIT {
       Set<String> excluded = new HashSet<>();
       excluded.add("public void de.peass.AddRandomNumbers.addSomething()");
       
-      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION, true, true, false, includedPatterns, excluded, true, 1000, false);
+      InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(AllowedKiekerRecord.DURATION, true, true, false, includedPatterns, excluded, true, 1000, false);
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(kiekerConfiguration);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 

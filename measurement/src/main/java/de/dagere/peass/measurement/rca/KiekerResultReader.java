@@ -127,7 +127,7 @@ public class KiekerResultReader {
    public void readNonAggregated(final File kiekerTraceFolder) throws AnalysisConfigurationException {
       if (usedRecord == AllowedKiekerRecord.OPERATIONEXECUTION) {
          KiekerDurationReader.executeDurationStage(kiekerTraceFolder, includedNodes, version);
-      } else if (usedRecord == AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION) {
+      } else if (usedRecord == AllowedKiekerRecord.DURATION) {
          KiekerDurationReader.executeReducedDurationStage(kiekerTraceFolder, includedNodes, version);
       }
    }

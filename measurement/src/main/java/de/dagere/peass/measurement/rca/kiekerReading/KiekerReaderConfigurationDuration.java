@@ -5,7 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import de.dagere.kopeme.kieker.record.ReducedOperationExecutionRecord;
+import de.dagere.kopeme.kieker.record.DurationRecord;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.KiekerReaderConfiguration;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
@@ -35,7 +35,7 @@ public class KiekerReaderConfigurationDuration extends KiekerReaderConfiguration
       final DurationFromRecordReadStage executionRecordTransformationStage = new DurationFromRecordReadStage(systemModelRepositoryNew, measuredNodes, version);
 
       final DynamicEventDispatcher dispatcher = new DynamicEventDispatcher(null, false, true, false);
-      final IEventMatcher<? extends ReducedOperationExecutionRecord> operationExecutionRecordMatcher = new ImplementsEventMatcher<>(ReducedOperationExecutionRecord.class, null);
+      final IEventMatcher<? extends DurationRecord> operationExecutionRecordMatcher = new ImplementsEventMatcher<>(DurationRecord.class, null);
       dispatcher.registerOutput(operationExecutionRecordMatcher);
 
       this.connectPorts(logReaderStage.getOutputPort(), dispatcher.getInputPort());

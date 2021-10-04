@@ -118,7 +118,7 @@ public class TestSourceInstrumentation {
    public void testDifferentSignatures() throws IOException {
       SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2_signatures/");
 
-      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION);
+      InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.DURATION);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 
       String changedSource = FileUtils.readFileToString(new File(TestConstants.CURRENT_FOLDER, "src/main/java/de/peass/C0_0.java"), StandardCharsets.UTF_8);

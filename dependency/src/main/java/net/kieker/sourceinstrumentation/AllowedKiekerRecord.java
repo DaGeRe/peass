@@ -3,8 +3,8 @@ package net.kieker.sourceinstrumentation;
 public enum AllowedKiekerRecord {
    OPERATIONEXECUTION("kieker.monitoring.probe.aspectj.operationExecution.OperationExecutionAspectFull", 
          "kieker.common.record.controlflow.OperationExecutionRecord"), 
-   REDUCED_OPERATIONEXECUTION("de.dagere.kopeme.kieker.probe.ReducedOperationExecutionAspectFull",
-         "de.dagere.kopeme.kieker.record.ReducedOperationExecutionRecord");
+   DURATION("de.dagere.kopeme.kieker.probe.DurationAspectFull",
+         "de.dagere.kopeme.kieker.record.DurationRecord");
    
    private String fullName;
    private String record;

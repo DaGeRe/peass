@@ -5,13 +5,13 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.kieker.record.ReducedOperationExecutionRecord;
+import de.dagere.kopeme.kieker.record.DurationRecord;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
 import kieker.analysis.trace.AbstractTraceAnalysisStage;
 import kieker.model.repository.SystemModelRepository;
 
-public class DurationFromRecordReadStage extends AbstractTraceAnalysisStage<ReducedOperationExecutionRecord> {
+public class DurationFromRecordReadStage extends AbstractTraceAnalysisStage<DurationRecord> {
 
    private static final Logger LOG = LogManager.getLogger(DurationStage.class);
 
@@ -32,7 +32,7 @@ public class DurationFromRecordReadStage extends AbstractTraceAnalysisStage<Redu
    }
 
    @Override
-   protected void execute(final ReducedOperationExecutionRecord execution) throws Exception {
+   protected void execute(final DurationRecord execution) throws Exception {
       for (final CallTreeNode node : measuredNodes) {
          String kiekerPattern = KiekerPatternConverter.addNewIfRequired( execution.getOperationSignature());
          

@@ -74,7 +74,7 @@ public class TestTreeReaderWrongConfig {
    public CallTreeNode getTree() throws IOException, XmlPullParserException, InterruptedException, FileNotFoundException, ViewNotFoundException, AnalysisConfigurationException {
       KiekerConfiguration wrongKiekerConfig = new KiekerConfiguration(true);
       wrongKiekerConfig.setUseSampling(true);
-      wrongKiekerConfig.setRecord(AllowedKiekerRecord.REDUCED_OPERATIONEXECUTION);
+      wrongKiekerConfig.setRecord(AllowedKiekerRecord.DURATION);
       
       final MeasurementConfiguration config = new MeasurementConfiguration(1, new ExecutionConfig(15), wrongKiekerConfig);
       TreeReader executor = TreeReaderFactory.createTestTreeReader(projectFolder, config, new EnvironmentVariables());
