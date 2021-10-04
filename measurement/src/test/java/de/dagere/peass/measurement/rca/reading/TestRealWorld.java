@@ -26,13 +26,13 @@ public class TestRealWorld {
    
    @Test
    public void callMe() throws JsonParseException, JsonMappingException, IOException {
-      final MeasurementConfiguration config = new MeasurementConfiguration(5);
+      final MeasurementConfiguration config = new MeasurementConfiguration(5, version, predecessor);
       CallTreeNode rootNode = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()",  config);
       CallTreeNode rootNode2 = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()",  config);
       rootNode.setOtherVersionNode(rootNode2);
       rootNode2.setOtherVersionNode(rootNode);
-      rootNode.setVersions(version, predecessor);
-      rootNode2.setVersions(version, predecessor);
+      rootNode.initVersions();
+      rootNode2.initVersions();
 
       Set<CallTreeNode> includedNodes = new HashSet<>();
       includedNodes.add(rootNode);
