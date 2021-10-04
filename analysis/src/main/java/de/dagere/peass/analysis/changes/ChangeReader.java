@@ -25,11 +25,11 @@ import de.dagere.peass.measurement.analysis.ProjectStatistics;
 import de.dagere.peass.measurement.analysis.Relation;
 import de.dagere.peass.measurement.analysis.statistics.DescribedChunk;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
 import de.dagere.peass.statistics.ConfidenceIntervalInterpretion;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.utils.RunCommandWriterRCA;
 import de.dagere.peass.utils.RunCommandWriterSlurmRCA;
-import de.precision.analysis.repetitions.bimodal.CompareData;
 
 /**
  * Reads changes of fulldata - data need to be cleaned!

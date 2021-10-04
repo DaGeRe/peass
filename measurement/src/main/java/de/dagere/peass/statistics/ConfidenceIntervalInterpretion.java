@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
 import de.dagere.peass.measurement.analysis.Relation;
-import de.precision.analysis.repetitions.bimodal.CompareData;
+import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
 
 public class ConfidenceIntervalInterpretion {
 

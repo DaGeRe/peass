@@ -1,4 +1,4 @@
-package de.precision.analysis.repetitions.bimodal;
+package de.dagere.peass.precision.analysis.repetitions.bimodal;
 
 import java.util.Arrays;
 import java.util.List;

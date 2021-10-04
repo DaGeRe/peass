@@ -12,7 +12,7 @@ public class KiekerFileCompressor {
    private static final Logger LOG = LogManager.getLogger(KiekerFileCompressor.class);
    
    private int thresholdForZippingInMB = 5;
-   private int thresholdForDeletingInMB = 10000;
+   private int thresholdForDeletingInMB = 1000;
    
    public void moveOrCompressFile(final File destFolder, final File kiekerFolder) throws IOException {
       final long size = FileUtils.sizeOf(kiekerFolder);

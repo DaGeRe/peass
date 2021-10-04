@@ -10,9 +10,9 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
 import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
+import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
 import de.dagere.peass.statistics.ConfidenceIntervalInterpretion;
 import de.dagere.peass.statistics.StatisticUtil;
-import de.precision.analysis.repetitions.bimodal.CompareData;
 
 public class TestStatistic {
    private static final Logger LOG = LogManager.getLogger(TestStatistic.class);

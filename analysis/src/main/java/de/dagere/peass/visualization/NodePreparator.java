@@ -19,9 +19,9 @@ import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
 import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
 import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil;
+import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
 import de.dagere.peass.statistics.StatisticUtil;
 import de.dagere.peass.visualization.GraphNode.State;
-import de.precision.analysis.repetitions.bimodal.CompareData;
 
 public class NodePreparator {
 

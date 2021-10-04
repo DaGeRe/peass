@@ -20,8 +20,8 @@ import de.dagere.peass.PeassGlobalInfos;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
 import de.dagere.peass.statistics.StatisticUtil;
-import de.precision.analysis.repetitions.bimodal.CompareData;
 
 /**
  * Saves the call tree structure and measurement data of the call tree

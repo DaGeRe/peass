@@ -13,9 +13,9 @@ import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.measurement.analysis.Relation;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
+import de.dagere.peass.precision.analysis.repetitions.bimodal.OutlierRemoverBimodal;
 import de.dagere.peass.statistics.StatisticUtil;
-import de.precision.analysis.repetitions.bimodal.CompareData;
-import de.precision.analysis.repetitions.bimodal.OutlierRemoverBimodal;
 
 public abstract class DifferentNodeDeterminer {
 

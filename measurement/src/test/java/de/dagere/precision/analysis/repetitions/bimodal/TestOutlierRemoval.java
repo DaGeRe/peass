@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.dagere.kopeme.generated.Result;
-import de.precision.analysis.repetitions.bimodal.OutlierRemoverBimodal;
+import de.dagere.peass.precision.analysis.repetitions.bimodal.OutlierRemoverBimodal;
 
 public class TestOutlierRemoval {
    

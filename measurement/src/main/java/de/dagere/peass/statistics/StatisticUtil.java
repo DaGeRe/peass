@@ -18,8 +18,8 @@ import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.measurement.analysis.Relation;
-import de.precision.analysis.repetitions.bimodal.BimodalityTester;
-import de.precision.analysis.repetitions.bimodal.CompareData;
+import de.dagere.peass.precision.analysis.repetitions.bimodal.BimodalityTester;
+import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
 
 public class StatisticUtil {
 

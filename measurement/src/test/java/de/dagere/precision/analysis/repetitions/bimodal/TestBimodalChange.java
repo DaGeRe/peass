@@ -5,8 +5,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.dagere.kopeme.generated.Result;
-import de.precision.analysis.repetitions.bimodal.BimodalityTester;
-import de.precision.analysis.repetitions.bimodal.CompareData;
+import de.dagere.peass.precision.analysis.repetitions.bimodal.BimodalityTester;
+import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
 
 public class TestBimodalChange {
    
