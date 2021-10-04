@@ -76,11 +76,11 @@ public class AdaptiveExecutorMoreParameterTest {
       LOG.debug("Executor: {}", executor);
       final Set<CallTreeNode> included = new HashSet<>();
       final String kiekerPattern = "public void defaultpackage.NormalDependency.child1(int[], double, java.lang.String)";
-      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1", kiekerPattern, kiekerPattern, new MeasurementConfiguration(5));
+      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1", kiekerPattern, kiekerPattern, new MeasurementConfiguration(5, "000001", "000001~1"));
       nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);
       executor.setIncludedMethods(included);
-      included.forEach(node -> node.setVersions("000001", "000001~1"));
+      included.forEach(node -> node.initVersions());
 
       executor.evaluate(TEST);
 
