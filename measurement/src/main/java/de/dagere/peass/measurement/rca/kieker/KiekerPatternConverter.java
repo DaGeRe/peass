@@ -40,7 +40,7 @@ public class KiekerPatternConverter {
       String clazz = beforeParameters.substring(beforeParameters.lastIndexOf(' ') + 1, beforeParameters.lastIndexOf('.'));
       return clazz + "#" + method;
    }
-   
+
    public static String addNewIfRequired(String kiekerPattern) {
       if (kiekerPattern.contains("<init>")) {
          int beforeReturnType = kiekerPattern.lastIndexOf(" ");
@@ -49,7 +49,10 @@ public class KiekerPatternConverter {
          } else {
             String modifiers = kiekerPattern.substring(0, beforeReturnType);
             String remainder = kiekerPattern.substring(beforeReturnType + 1);
-            kiekerPattern = modifiers + " new " + remainder;
+            String returnType = modifiers.lastIndexOf(" ") != -1 ? modifiers.substring(modifiers.lastIndexOf(" ") + 1) : modifiers;
+            if (!"new".equals(returnType)) {
+               kiekerPattern = modifiers + " new " + remainder;
+            }
          }
       }
       return kiekerPattern;

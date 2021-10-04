@@ -41,6 +41,16 @@ public class TestRegularReading {
       createAllStatistics();
       checkAllResults();
    }
+   
+   @Test
+   public void testDurationRecordSourceInstrumentationReading() {
+      File durationRecordFolder = new File(RESOURCE_FOLDER, "durationRecordSourceInstrumentation");
+
+      KiekerDurationReader.executeReducedDurationStage(durationRecordFolder, callTreeNodes, "1");
+      
+      createAllStatistics();
+      checkAllResults();
+   }
 
    private void checkAllResults() {
       for (CallTreeNode node : callTreeNodes) {
