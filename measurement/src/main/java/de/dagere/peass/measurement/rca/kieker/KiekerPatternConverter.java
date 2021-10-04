@@ -40,6 +40,20 @@ public class KiekerPatternConverter {
       String clazz = beforeParameters.substring(beforeParameters.lastIndexOf(' ') + 1, beforeParameters.lastIndexOf('.'));
       return clazz + "#" + method;
    }
+   
+   public static String addNewIfRequired(String kiekerPattern) {
+      if (kiekerPattern.contains("<init>")) {
+         int beforeReturnType = kiekerPattern.lastIndexOf(" ");
+         if (beforeReturnType == -1) {
+            kiekerPattern = "new " + kiekerPattern;
+         } else {
+            String modifiers = kiekerPattern.substring(0, beforeReturnType);
+            String remainder = kiekerPattern.substring(beforeReturnType + 1);
+            kiekerPattern = modifiers + " new " + remainder;
+         }
+      }
+      return kiekerPattern;
+   }
 
    /**
     * Expects a call in the form 'de.test.Class#method(int,String)'

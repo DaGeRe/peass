@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
 import kieker.analysis.trace.AbstractTraceProcessingStage;
 import kieker.model.repository.SystemModelRepository;
 import kieker.model.system.model.Execution;
@@ -28,17 +29,13 @@ public class DurationStage extends AbstractTraceProcessingStage<Execution> {
    @Override
    protected void execute(final Execution execution) throws Exception {
       LOG.trace("Trace: " + execution.getTraceId());
-
-      final String fullClassname = execution.getOperation().getComponentType().getFullQualifiedName().intern();
-      final String methodname = execution.getOperation().getSignature().getName().intern();
-      final String call = (fullClassname + "#" + methodname).intern();
-
-      addMeasurements(execution, call);
+      addMeasurements(execution);
    }
 
-   private void addMeasurements(final Execution execution, final String call) {
+   private void addMeasurements(final Execution execution) {
       for (final CallTreeNode node : measuredNodes) {
-         if (node.getCall().equals(call)) {
+         String kiekerPattern = KiekerPatternConverter.getKiekerPattern(execution.getOperation());
+         if (node.getKiekerPattern().equals(kiekerPattern)) {
             // Get duration in mikroseconds - Kieker produces nanoseconds
             final long duration = (execution.getTout() - execution.getTin()) / 1000;
             node.addMeasurement(version, duration);

@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.kieker.record.ReducedOperationExecutionRecord;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
 import kieker.analysis.trace.AbstractTraceAnalysisStage;
 import kieker.model.repository.SystemModelRepository;
 
@@ -33,7 +34,8 @@ public class DurationFromRecordReadStage extends AbstractTraceAnalysisStage<Redu
    @Override
    protected void execute(final ReducedOperationExecutionRecord execution) throws Exception {
       for (final CallTreeNode node : measuredNodes) {
-         String kiekerPattern = execution.getOperationSignature();
+         String kiekerPattern = KiekerPatternConverter.addNewIfRequired( execution.getOperationSignature());
+         
          if (node.getKiekerPattern().equals(kiekerPattern)) {
             // Get duration in mikroseconds - Kieker produces nanoseconds
             final long duration = (execution.getTout() - execution.getTin()) / 1000;
