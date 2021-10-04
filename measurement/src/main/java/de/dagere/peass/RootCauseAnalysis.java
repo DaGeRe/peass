@@ -16,6 +16,7 @@ import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.CauseSearcherConfigMixin;
 import de.dagere.peass.measurement.rca.CauseTester;
+import de.dagere.peass.measurement.rca.RCAStrategy;
 import de.dagere.peass.measurement.rca.analyzer.SourceChangeTreeAnalyzer;
 import de.dagere.peass.measurement.rca.analyzer.StructureChangeTreeAnalyzer;
 import de.dagere.peass.measurement.rca.analyzer.TreeAnalyzer;
@@ -98,7 +99,11 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       measurementConfiguration.setVersionOld(predecessor);
       boolean useSourceInstrumentation = !kiekerConfigMixin.isNotUseSourceInstrumentation();
       measurementConfiguration.setUseSourceInstrumentation(useSourceInstrumentation);
-      measurementConfiguration.getKiekerConfig().setEnableAdaptiveMonitoring(!useSourceInstrumentation);
+      if (causeSearchConfigMixin.getStrategy().equals(RCAStrategy.COMPLETE)) {
+         measurementConfiguration.getKiekerConfig().setEnableAdaptiveMonitoring(false);
+      } else {
+         measurementConfiguration.getKiekerConfig().setEnableAdaptiveMonitoring(!useSourceInstrumentation);
+      }
       measurementConfiguration.getKiekerConfig().setAdaptiveInstrumentation(kiekerConfigMixin.isEnableAdaptiveInstrumentation());
       measurementConfiguration.setUseCircularQueue(kiekerConfigMixin.isUseCircularQueue());
       if (kiekerConfigMixin.isNotUseSourceInstrumentation() && kiekerConfigMixin.isNotUseSelectiveInstrumentation()) {
