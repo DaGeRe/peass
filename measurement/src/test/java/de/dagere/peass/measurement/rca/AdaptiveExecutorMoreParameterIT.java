@@ -38,9 +38,9 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ GitUtils.class, VersionControlSystem.class })
 @PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
-public class AdaptiveExecutorMoreParameterTest {
+public class AdaptiveExecutorMoreParameterIT {
 
-   private static final Logger LOG = LogManager.getLogger(AdaptiveExecutorMoreParameterTest.class);
+   private static final Logger LOG = LogManager.getLogger(AdaptiveExecutorMoreParameterIT.class);
 
    private static final File SOURCE_DIR = new File("src/test/resources/rootCauseIT/basic_state_moreparameters/");
    private static final TestCase TEST = new TestCase("defaultpackage.TestMe", "testMe");
