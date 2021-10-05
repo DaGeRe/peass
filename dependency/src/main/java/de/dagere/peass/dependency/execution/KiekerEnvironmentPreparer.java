@@ -48,7 +48,7 @@ public class KiekerEnvironmentPreparer {
          if (config.isEnableAdaptiveConfig()) {
             prepareAdaptiveExecution();
          }
-         if (AllowedKiekerRecord.DURATION.equals(config.getRecord()) && config.isEnableAdaptiveConfig()) {
+         if (AllowedKiekerRecord.DURATION.equals(config.getRecord())) {
             generateAOPXML(AllowedKiekerRecord.DURATION);
          } else {
             generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION);

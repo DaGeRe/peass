@@ -13,7 +13,7 @@ import kieker.model.repository.SystemModelRepository;
 
 public class DurationFromRecordReadStage extends AbstractTraceAnalysisStage<DurationRecord> {
 
-   private static final Logger LOG = LogManager.getLogger(DurationStage.class);
+   private static final Logger LOG = LogManager.getLogger(DurationFromRecordReadStage.class);
 
    private final Set<CallTreeNode> measuredNodes;
    private final String version;
