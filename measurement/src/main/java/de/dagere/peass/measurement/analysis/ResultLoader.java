@@ -53,10 +53,10 @@ public class ResultLoader {
       for (final Result result : realChunk.getResult()) {
          if (result.getIterations() + result.getWarmup() == config.getAllIterations() &&
                result.getRepetitions() == config.getRepetitions()) {
-            if (result.getVersion().getGitversion().equals(config.getVersionOld())) {
+            if (result.getVersion().getGitversion().equals(config.getExecutionConfig().getVersionOld())) {
                before.add(result.getValue());
             }
-            if (result.getVersion().getGitversion().equals(config.getVersion())) {
+            if (result.getVersion().getGitversion().equals(config.getExecutionConfig().getVersion())) {
                after.add(result.getValue());
             }
          }

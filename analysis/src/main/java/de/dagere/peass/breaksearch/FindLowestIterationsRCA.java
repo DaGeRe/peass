@@ -166,21 +166,21 @@ class FullDataCallTreeNode extends CallTreeNode {
    }
 
    public TestcaseStatistic getMinTestcaseStatistic(final int iterations) {
-      final SummaryStatistics current = ((FullCallTreeStatistic) data.get(config.getVersion())).getMinStatistics(iterations);
-      final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(config.getVersionOld())).getMinStatistics(iterations);
-      return new TestcaseStatistic(previous, current, data.get(config.getVersionOld()).getCalls(), data.get(config.getVersion()).getCalls());
+      final SummaryStatistics current = ((FullCallTreeStatistic) data.get(config.getExecutionConfig().getVersion())).getMinStatistics(iterations);
+      final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(config.getExecutionConfig().getVersionOld())).getMinStatistics(iterations);
+      return new TestcaseStatistic(previous, current, data.get(config.getExecutionConfig().getVersionOld()).getCalls(), data.get(config.getExecutionConfig().getVersion()).getCalls());
    }
 
    public TestcaseStatistic getMedianTestcaseStatistic(final int iterations) {
-      final SummaryStatistics current = ((FullCallTreeStatistic) data.get(config.getVersion())).getMedianStatistics(iterations);
-      final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(config.getVersionOld())).getMedianStatistics(iterations);
-      return new TestcaseStatistic(previous, current, data.get(config.getVersionOld()).getCalls(), data.get(config.getVersion()).getCalls());
+      final SummaryStatistics current = ((FullCallTreeStatistic) data.get(config.getExecutionConfig().getVersion())).getMedianStatistics(iterations);
+      final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(config.getExecutionConfig().getVersionOld())).getMedianStatistics(iterations);
+      return new TestcaseStatistic(previous, current, data.get(config.getExecutionConfig().getVersionOld()).getCalls(), data.get(config.getExecutionConfig().getVersion()).getCalls());
    }
 
    public TestcaseStatistic getTestcaseStatistic(final int iterations) {
-      final SummaryStatistics current = ((FullCallTreeStatistic) data.get(config.getVersion())).getStatistics(iterations);
-      final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(config.getVersionOld())).getStatistics(iterations);
-      return new TestcaseStatistic(previous, current, data.get(config.getVersionOld()).getCalls(), data.get(config.getVersion()).getCalls());
+      final SummaryStatistics current = ((FullCallTreeStatistic) data.get(config.getExecutionConfig().getVersion())).getStatistics(iterations);
+      final SummaryStatistics previous = ((FullCallTreeStatistic) data.get(config.getExecutionConfig().getVersionOld())).getStatistics(iterations);
+      return new TestcaseStatistic(previous, current, data.get(config.getExecutionConfig().getVersionOld()).getCalls(), data.get(config.getExecutionConfig().getVersion()).getCalls());
    }
 
    public boolean hasData() {

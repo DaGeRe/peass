@@ -75,7 +75,7 @@ public class CauseTester extends AdaptiveTester {
    private Set<CallTreeNode> prepareNodes(final List<CallTreeNode> nodes) {
       final Set<CallTreeNode> includedNodes = new HashSet<CallTreeNode>();
       includedNodes.addAll(nodes);
-      nodes.forEach(node -> node.setVersions(configuration.getVersion(), configuration.getVersionOld()));
+      nodes.forEach(node -> node.setVersions(configuration.getExecutionConfig().getVersion(), configuration.getExecutionConfig().getVersionOld()));
       return includedNodes;
    }
 
@@ -85,7 +85,7 @@ public class CauseTester extends AdaptiveTester {
       
       initEvaluation(testcase);
 
-      final File logFolder = folders.getRCALogFolder(configuration.getVersion(), testcase, levelId);
+      final File logFolder = folders.getRCALogFolder(configuration.getExecutionConfig().getVersion(), testcase, levelId);
       
       try (ProgressWriter writer = new ProgressWriter(new File(folders.getFullMeasurementFolder(), "progress.txt"), configuration.getVms())){
          evaluateWithAdaption(testcase, logFolder, writer);
@@ -106,7 +106,7 @@ public class CauseTester extends AdaptiveTester {
 
    private void generatePatternSet(final String version) {
       includedPattern = new HashSet<>();
-      if (configuration.getVersionOld().equals(version)) {
+      if (configuration.getExecutionConfig().getVersionOld().equals(version)) {
          includedNodes.forEach(node -> {
             LOG.trace(node);
             if (!node.getKiekerPattern().equals("ADDED")) {
@@ -128,8 +128,8 @@ public class CauseTester extends AdaptiveTester {
    @Override
    public boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {
       try {
-         getDurationsVersion(configuration.getVersion());
-         getDurationsVersion(configuration.getVersionOld());
+         getDurationsVersion(configuration.getExecutionConfig().getVersion());
+         getDurationsVersion(configuration.getExecutionConfig().getVersionOld());
          boolean allDecidable = super.checkIsDecidable(testcase, vmid);
          LOG.debug("Super decidable: {}", allDecidable);
          for (final CallTreeNode includedNode : includedNodes) {
@@ -143,8 +143,8 @@ public class CauseTester extends AdaptiveTester {
    }
 
    private boolean checkLevelDecidable(final int vmid, final boolean allDecidable, final CallTreeNode includedNode) throws JAXBException {
-      final SummaryStatistics statisticsOld = includedNode.getStatistics(configuration.getVersionOld());
-      final SummaryStatistics statistics = includedNode.getStatistics(configuration.getVersion());
+      final SummaryStatistics statisticsOld = includedNode.getStatistics(configuration.getExecutionConfig().getVersionOld());
+      final SummaryStatistics statistics = includedNode.getStatistics(configuration.getExecutionConfig().getVersion());
       final EarlyBreakDecider decider = new EarlyBreakDecider(configuration, statisticsOld, statistics);
       final boolean nodeDecidable = decider.isBreakPossible(vmid);
       LOG.debug("{} decideable: {}", includedNode.getKiekerPattern(), allDecidable);
@@ -159,7 +159,7 @@ public class CauseTester extends AdaptiveTester {
          LOG.info("Did succeed in measurement - analyse values");
          
          final KiekerResultReader kiekerResultReader = new KiekerResultReader(causeConfig.isUseAggregation(), configuration.getRecord(), includedNodes, version, testcase,
-               version.equals(configuration.getVersion()));
+               version.equals(configuration.getExecutionConfig().getVersion()));
          kiekerResultReader.setConsiderNodePosition(!causeConfig.isUseAggregation());
          kiekerResultReader.readResults(versionResultFolder);
       } else {
@@ -174,13 +174,13 @@ public class CauseTester extends AdaptiveTester {
 
    public void getDurations(final int levelId)
          throws FileNotFoundException, IOException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
-      getDurationsVersion(configuration.getVersion());
-      getDurationsVersion(configuration.getVersionOld());
+      getDurationsVersion(configuration.getExecutionConfig().getVersion());
+      getDurationsVersion(configuration.getExecutionConfig().getVersionOld());
    }
 
    public void cleanup(final int levelId) {
-      organizeMeasurements(levelId, configuration.getVersion(), configuration.getVersion());
-      organizeMeasurements(levelId, configuration.getVersion(), configuration.getVersionOld());
+      organizeMeasurements(levelId, configuration.getExecutionConfig().getVersion(), configuration.getExecutionConfig().getVersion());
+      organizeMeasurements(levelId, configuration.getExecutionConfig().getVersion(), configuration.getExecutionConfig().getVersionOld());
    }
 
    private void organizeMeasurements(final int levelId, final String mainVersion, final String version) {
@@ -222,8 +222,8 @@ public class CauseTester extends AdaptiveTester {
    }
 
    public void setCurrentVersion(final String version) {
-      configuration.setVersion(version);
-      configuration.setVersionOld(version + "~1");
+      configuration.getExecutionConfig().setVersion(version);
+      configuration.getExecutionConfig().setVersionOld(version + "~1");
    }
 
 }

@@ -63,11 +63,11 @@ public class HTMLWriter {
    private File getOutputHTML(final CauseSearchData data) {
       final File output;
       final String testcase = data.getCauseConfig().getTestCase().getTestclazzWithModuleName() + ChangedEntity.METHOD_SEPARATOR + data.getCauseConfig().getTestCase().getMethod();
-      if (destFolder.getName().equals(data.getMeasurementConfig().getVersion())) {
+      if (destFolder.getName().equals(data.getMeasurementConfig().getExecutionConfig().getVersion())) {
          output = new File(destFolder, testcase.replace('#', '_') + ".html");
          copyResources(destFolder);
       } else {
-         File versionFolder = new File(destFolder, data.getMeasurementConfig().getVersion());
+         File versionFolder = new File(destFolder, data.getMeasurementConfig().getExecutionConfig().getVersion());
          copyResources(versionFolder);
          output = new File(versionFolder, testcase.replace('#', '_') + ".html");
       }

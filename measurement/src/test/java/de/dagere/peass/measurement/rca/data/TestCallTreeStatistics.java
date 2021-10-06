@@ -6,8 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import de.dagere.peass.measurement.rca.data.CauseSearchData;
 
 public class TestCallTreeStatistics {
    
@@ -15,8 +13,8 @@ public class TestCallTreeStatistics {
    
    @BeforeEach
    public void init() {
-      CONFIG.setVersionOld("B");
-      CONFIG.setVersion("A");
+      CONFIG.getExecutionConfig().setVersionOld("B");
+      CONFIG.getExecutionConfig().setVersion("A");
    }
    
    @Test

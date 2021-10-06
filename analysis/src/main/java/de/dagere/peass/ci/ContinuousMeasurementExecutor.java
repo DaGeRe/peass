@@ -80,8 +80,8 @@ public class ContinuousMeasurementExecutor {
    private MeasurementConfiguration createCopiedConfiguration() {
       MeasurementConfiguration copied = new MeasurementConfiguration(measurementConfig);
       copied.setUseKieker(false);
-      copied.setVersion(version);
-      copied.setVersionOld(versionOld);
+      copied.getExecutionConfig().setVersion(version);
+      copied.getExecutionConfig().setVersionOld(versionOld);
       return copied;
    }
 }

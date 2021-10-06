@@ -119,8 +119,8 @@ public class MeasurementConfiguration implements Serializable {
    public MeasurementConfiguration(final MeasurementConfiguration other) {
       executionConfig = new ExecutionConfig(other.getExecutionConfig());
       this.vms = other.vms;
-      statisticsConfig.setType1error(other.getType1error());
-      statisticsConfig.setType2error(other.getType2error());
+      statisticsConfig.setType1error(other.getStatisticsConfig().getType1error());
+      statisticsConfig.setType2error(other.getStatisticsConfig().getType2error());
       statisticsConfig.setOutlierFactor(other.getStatisticsConfig().getOutlierFactor());
       statisticsConfig.setStatisticTest(other.getStatisticsConfig().getStatisticTest());
       this.earlyStop = other.earlyStop;
@@ -201,10 +201,6 @@ public class MeasurementConfiguration implements Serializable {
       this.redirectToNull = redirectToNull;
    }
 
-   public long getTimeout() {
-      return executionConfig.getTimeout();
-   }
-
    @JsonIgnore
    public long getTimeoutInSeconds() {
       return executionConfig.getTimeoutInSeconds();
@@ -214,46 +210,12 @@ public class MeasurementConfiguration implements Serializable {
       return vms;
    }
 
-   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-   public double getType1error() {
-      return statisticsConfig.getType1error();
-   }
-
-   public void setType1error(final double type1error) {
-      statisticsConfig.setType1error(type1error);
-   }
-
-   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-   public double getType2error() {
-      return statisticsConfig.getType2error();
-   }
-
-   public void setType2error(final double type2error) {
-      statisticsConfig.setType2error(type2error);
-   }
-
    public boolean isEarlyStop() {
       return earlyStop;
    }
 
    public void setEarlyStop(final boolean earlyStop) {
       this.earlyStop = earlyStop;
-   }
-
-   public String getVersion() {
-      return executionConfig.getVersion();
-   }
-
-   public void setVersion(final String version) {
-      executionConfig.setVersion(version);
-   }
-
-   public String getVersionOld() {
-      return executionConfig.getVersionOld();
-   }
-
-   public void setVersionOld(final String versionOld) {
-      executionConfig.setVersionOld(versionOld);
    }
 
    public int getWarmup() {

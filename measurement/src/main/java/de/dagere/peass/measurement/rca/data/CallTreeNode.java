@@ -140,11 +140,11 @@ public class CallTreeNode extends BasicNode {
          if (otherVersionNode == null) {
             throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
          }
-         if (otherVersionNode.getCall().equals(CauseSearchData.ADDED) && version.equals(config.getVersion())) {
+         if (otherVersionNode.getCall().equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersion())) {
             throw new RuntimeException("Added methods may not contain data");
          }
       }
-      if (call.equals(CauseSearchData.ADDED) && version.equals(config.getVersionOld())) {
+      if (call.equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersionOld())) {
          throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
       }
 
@@ -220,10 +220,10 @@ public class CallTreeNode extends BasicNode {
 
    @JsonIgnore
    public TestcaseStatistic getTestcaseStatistic() {
-      LOG.debug("Creating statistics for {} {} Keys: {}", config.getVersion(), config.getVersionOld(), data.keySet());
-      final CallTreeStatistics currentVersionStatistics = data.get(config.getVersion());
+      LOG.debug("Creating statistics for {} {} Keys: {}", config.getExecutionConfig().getVersion(), config.getExecutionConfig().getVersionOld(), data.keySet());
+      final CallTreeStatistics currentVersionStatistics = data.get(config.getExecutionConfig().getVersion());
       final SummaryStatistics current = currentVersionStatistics.getStatistics();
-      final CallTreeStatistics previousVersionStatistics = data.get(config.getVersionOld());
+      final CallTreeStatistics previousVersionStatistics = data.get(config.getExecutionConfig().getVersionOld());
       final SummaryStatistics previous = previousVersionStatistics.getStatistics();
       try {
          final TestcaseStatistic testcaseStatistic = new TestcaseStatistic(previous, current,
@@ -238,9 +238,9 @@ public class CallTreeNode extends BasicNode {
 
    @JsonIgnore
    public TestcaseStatistic getPartialTestcaseStatistic() {
-      final CallTreeStatistics currentVersionStatistics = data.get(config.getVersion());
+      final CallTreeStatistics currentVersionStatistics = data.get(config.getExecutionConfig().getVersion());
       final SummaryStatistics current = currentVersionStatistics.getStatistics();
-      final CallTreeStatistics previousVersionStatistics = data.get(config.getVersionOld());
+      final CallTreeStatistics previousVersionStatistics = data.get(config.getExecutionConfig().getVersionOld());
       final SummaryStatistics previous = previousVersionStatistics.getStatistics();
 
       if (firstHasValues(current, previous)) {
@@ -272,18 +272,18 @@ public class CallTreeNode extends BasicNode {
    @JsonIgnore
    public void setVersions(final String version, final String predecessor) {
       LOG.debug("Set versions: {}", version, predecessor);
-      config.setVersion(version);
-      config.setVersionOld(predecessor);
+      config.getExecutionConfig().setVersion(version);
+      config.getExecutionConfig().setVersionOld(predecessor);
       resetStatistics();
       newVersion(version);
       newVersion(predecessor);
    }
 
    public void initVersions() {
-      LOG.debug("Init versions: {}", config.getVersion(), config.getVersionOld());
+      LOG.debug("Init versions: {}", config.getExecutionConfig().getVersion(), config.getExecutionConfig().getVersionOld());
       resetStatistics();
-      newVersion(config.getVersionOld());
-      newVersion(config.getVersion());
+      newVersion(config.getExecutionConfig().getVersionOld());
+      newVersion(config.getExecutionConfig().getVersion());
    }
 
    @JsonIgnore

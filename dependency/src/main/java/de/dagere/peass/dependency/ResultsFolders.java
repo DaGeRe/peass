@@ -155,6 +155,6 @@ public class ResultsFolders {
    }
 
    public File getVersionFullResultsFolder(final MeasurementConfiguration measurementConfig) {
-      return getVersionFullResultsFolder(measurementConfig.getVersion(), measurementConfig.getVersionOld());
+      return getVersionFullResultsFolder(measurementConfig.getExecutionConfig().getVersion(), measurementConfig.getExecutionConfig().getVersionOld());
    }
 }

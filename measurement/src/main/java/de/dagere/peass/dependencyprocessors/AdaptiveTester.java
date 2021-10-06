@@ -32,7 +32,7 @@ public class AdaptiveTester extends DependencyTester {
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       initEvaluation(testcase);
 
-      final File logFolder = folders.getMeasureLogFolder(configuration.getVersion(), testcase);
+      final File logFolder = folders.getMeasureLogFolder(configuration.getExecutionConfig().getVersion(), testcase);
       
       try (ProgressWriter writer = new ProgressWriter(new File(folders.getFullMeasurementFolder(), "progress.txt"), configuration.getVms())){
          evaluateWithAdaption(testcase, logFolder, writer);
@@ -80,8 +80,8 @@ public class AdaptiveTester extends DependencyTester {
          DescriptiveStatistics statisticsAfter = loader.getStatisticsAfter();
 
          final EarlyBreakDecider decider = new EarlyBreakDecider(configuration, statisticsAfter, statisticsBefore);
-         decider.setType1error(configuration.getType1error());
-         decider.setType2error(configuration.getType2error());
+         decider.setType1error(configuration.getStatisticsConfig().getType1error());
+         decider.setType2error(configuration.getStatisticsConfig().getType2error());
          savelyDecidable = decider.isBreakPossible(vmid);
       } else {
          savelyDecidable = false;

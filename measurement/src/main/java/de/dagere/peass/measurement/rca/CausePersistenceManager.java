@@ -29,7 +29,7 @@ public class CausePersistenceManager {
       this.dataDetails = finishedDataFull;
       this.folders = folders;
 
-      final File treeDataFolder = folders.getRcaTreeFolder(finishedData.getMeasurementConfig().getVersion(), finishedData.getCauseConfig().getTestCase());
+      final File treeDataFolder = folders.getRcaTreeFolder(finishedData.getMeasurementConfig().getExecutionConfig().getVersion(), finishedData.getCauseConfig().getTestCase());
       treeDataFile = new File(treeDataFolder, finishedData.getCauseConfig().getTestCase().getMethod() + ".json");
       if (treeDataFile.exists()) {
          throw new RuntimeException("Old tree data folder " + treeDataFile.getAbsolutePath() + " exists - please cleanup!");

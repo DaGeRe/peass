@@ -42,9 +42,9 @@ public class BothTreeReader {
       this.folders = folders;
       this.env = env;
       
-      File treeCacheFolder = folders.getTreeCacheFolder(config.getVersion(), causeSearchConfig.getTestCase());
-      potentialCacheFileOld = new File(treeCacheFolder, config.getVersionOld());
-      potentialCacheFile = new File(treeCacheFolder, config.getVersion());
+      File treeCacheFolder = folders.getTreeCacheFolder(config.getExecutionConfig().getVersion(), causeSearchConfig.getTestCase());
+      potentialCacheFileOld = new File(treeCacheFolder, config.getExecutionConfig().getVersionOld());
+      potentialCacheFile = new File(treeCacheFolder, config.getExecutionConfig().getVersion());
    }
    
    public void readCachedTrees() throws JsonParseException, JsonMappingException, IOException {
@@ -80,11 +80,11 @@ public class BothTreeReader {
    }
 
    private void determineTrees() throws InterruptedException, IOException, FileNotFoundException, XmlPullParserException, ViewNotFoundException, AnalysisConfigurationException {
-      final TreeReader resultsManager = TreeReaderFactory.createTreeReader(folders, config.getVersionOld(), config, causeSearchConfig.isIgnoreEOIs(), env);
-      rootPredecessor = resultsManager.getTree(causeSearchConfig.getTestCase(), config.getVersionOld());
+      final TreeReader resultsManager = TreeReaderFactory.createTreeReader(folders, config.getExecutionConfig().getVersionOld(), config, causeSearchConfig.isIgnoreEOIs(), env);
+      rootPredecessor = resultsManager.getTree(causeSearchConfig.getTestCase(), config.getExecutionConfig().getVersionOld());
 
-      final TreeReader resultsManagerPrevious = TreeReaderFactory.createTreeReader(folders, config.getVersion(), config, causeSearchConfig.isIgnoreEOIs(), env);
-      rootVersion = resultsManagerPrevious.getTree(causeSearchConfig.getTestCase(), config.getVersion());
+      final TreeReader resultsManagerPrevious = TreeReaderFactory.createTreeReader(folders, config.getExecutionConfig().getVersion(), config, causeSearchConfig.isIgnoreEOIs(), env);
+      rootVersion = resultsManagerPrevious.getTree(causeSearchConfig.getTestCase(), config.getExecutionConfig().getVersion());
       LOG.info("Traces equal: {}", TreeUtil.areTracesEqual(rootPredecessor, rootVersion));
    }
 

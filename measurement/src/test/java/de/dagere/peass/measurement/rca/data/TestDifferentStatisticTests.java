@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.ImplementedTests;
 import de.dagere.peass.measurement.analysis.Relation;
-import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
 import de.dagere.peass.statistics.StatisticUtil;
 
@@ -14,8 +13,8 @@ public class TestDifferentStatisticTests {
    
    @BeforeEach
    public void init() {
-      TestCallTreeStatistics.CONFIG.setVersionOld("B");
-      TestCallTreeStatistics.CONFIG.setVersion("A");
+      TestCallTreeStatistics.CONFIG.getExecutionConfig().setVersionOld("B");
+      TestCallTreeStatistics.CONFIG.getExecutionConfig().setVersion("A");
    }
    
    @Test

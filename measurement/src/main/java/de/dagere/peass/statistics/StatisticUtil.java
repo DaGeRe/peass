@@ -148,7 +148,7 @@ public class StatisticUtil {
     * @return
     */
    public static Relation agnosticTTest(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final MeasurementConfiguration measurementConfig) {
-      return agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getType1error(), measurementConfig.getType2error());
+      return agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getStatisticsConfig().getType1error(), measurementConfig.getStatisticsConfig().getType2error());
    }
 
    public static Relation isChange(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final MeasurementConfiguration measurementConfig) {
@@ -161,7 +161,7 @@ public class StatisticUtil {
          // final Relation result = (r1 == r2) ? r2 : Relation.UNKOWN;
          // return result;
       } else {
-         Relation r1 = agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getType1error() / 20, measurementConfig.getType2error() / 20);
+         Relation r1 = agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getStatisticsConfig().getType1error() / 20, measurementConfig.getStatisticsConfig().getType2error() / 20);
          final double tValue = getTValue(statisticsPrev, statisticsVersion, 0);
          if (Math.abs(tValue) < 10) {
             r1 = Relation.UNKOWN;
@@ -261,25 +261,25 @@ public class StatisticUtil {
       case AGNOSTIC_T_TEST:
          return agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), measurementConfig);
       case BIMODAL_T_TEST:
-         return bimodalTTest(cd, measurementConfig.getType1error());
+         return bimodalTTest(cd, measurementConfig.getStatisticsConfig().getType1error());
       case T_TEST:
-         return getTTestRelation(cd, measurementConfig.getType1error());
+         return getTTestRelation(cd, measurementConfig.getStatisticsConfig().getType1error());
       case MANN_WHITNEY_TEST:
-         return getMannWhitneyRelation(cd, measurementConfig.getType1error());
+         return getMannWhitneyRelation(cd, measurementConfig.getStatisticsConfig().getType1error());
       case CONFIDENCE_INTERVAL:
-         return ConfidenceIntervalInterpretion.compare(cd, measurementConfig.getType1error());
+         return ConfidenceIntervalInterpretion.compare(cd, measurementConfig.getStatisticsConfig().getType1error());
       case ANY:
          boolean isChange = agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), measurementConfig) != Relation.EQUAL
-         || bimodalTTest(cd, measurementConfig.getType1error()) != Relation.EQUAL
-         || getTTestRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL
-         || getMannWhitneyRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL
+         || bimodalTTest(cd, measurementConfig.getStatisticsConfig().getType1error()) != Relation.EQUAL
+         || getTTestRelation(cd, measurementConfig.getStatisticsConfig().getType1error()) != Relation.EQUAL
+         || getMannWhitneyRelation(cd, measurementConfig.getStatisticsConfig().getType1error()) != Relation.EQUAL
          || ConfidenceIntervalInterpretion.compare(cd) != Relation.EQUAL;
          LOG.info("Test results ");
          LOG.info("Agnostic t: {}", agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), measurementConfig) != Relation.EQUAL);
-         LOG.info("Bimodal T: {}", bimodalTTest(cd, measurementConfig.getType1error()) != Relation.EQUAL);
-         LOG.info("T Test: {}", getTTestRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL);
-         LOG.info("Mann-Whitney: {}", getMannWhitneyRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL);
-         LOG.info("Confidence interval: {}", ConfidenceIntervalInterpretion.compare(cd, measurementConfig.getType1error()) != Relation.EQUAL);
+         LOG.info("Bimodal T: {}", bimodalTTest(cd, measurementConfig.getStatisticsConfig().getType1error()) != Relation.EQUAL);
+         LOG.info("T Test: {}", getTTestRelation(cd, measurementConfig.getStatisticsConfig().getType1error()) != Relation.EQUAL);
+         LOG.info("Mann-Whitney: {}", getMannWhitneyRelation(cd, measurementConfig.getStatisticsConfig().getType1error()) != Relation.EQUAL);
+         LOG.info("Confidence interval: {}", ConfidenceIntervalInterpretion.compare(cd, measurementConfig.getStatisticsConfig().getType1error()) != Relation.EQUAL);
          LOG.info("isChange: {}", isChange);
          if (isChange) {
             return cd.getAvgBefore() < cd.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;
@@ -287,15 +287,15 @@ public class StatisticUtil {
             return Relation.EQUAL;
          }
       case ANY_NO_AGNOSTIC:
-         boolean isChangeNoAgnostic = bimodalTTest(cd, measurementConfig.getType1error()) != Relation.EQUAL
-         || getTTestRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL
-         || getMannWhitneyRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL
+         boolean isChangeNoAgnostic = bimodalTTest(cd, measurementConfig.getStatisticsConfig().getType1error()) != Relation.EQUAL
+         || getTTestRelation(cd, measurementConfig.getStatisticsConfig().getType1error()) != Relation.EQUAL
+         || getMannWhitneyRelation(cd, measurementConfig.getStatisticsConfig().getType1error()) != Relation.EQUAL
          || ConfidenceIntervalInterpretion.compare(cd) != Relation.EQUAL;
          LOG.info("Test results ");
-         LOG.info("Bimodal T: {}", bimodalTTest(cd, measurementConfig.getType1error()) != Relation.EQUAL);
-         LOG.info("T Test: {}", getTTestRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL);
-         LOG.info("Mann-Whitney: {}", getMannWhitneyRelation(cd, measurementConfig.getType1error()) != Relation.EQUAL);
-         LOG.info("Confidence interval: {}", ConfidenceIntervalInterpretion.compare(cd, measurementConfig.getType1error()) != Relation.EQUAL);
+         LOG.info("Bimodal T: {}", bimodalTTest(cd, measurementConfig.getStatisticsConfig().getType1error()) != Relation.EQUAL);
+         LOG.info("T Test: {}", getTTestRelation(cd, measurementConfig.getStatisticsConfig().getType1error()) != Relation.EQUAL);
+         LOG.info("Mann-Whitney: {}", getMannWhitneyRelation(cd, measurementConfig.getStatisticsConfig().getType1error()) != Relation.EQUAL);
+         LOG.info("Confidence interval: {}", ConfidenceIntervalInterpretion.compare(cd, measurementConfig.getStatisticsConfig().getType1error()) != Relation.EQUAL);
          LOG.info("isChange: {}", isChangeNoAgnostic);
          if (isChangeNoAgnostic) {
             return cd.getAvgBefore() < cd.getAvgAfter() ? Relation.LESS_THAN : Relation.GREATER_THAN;

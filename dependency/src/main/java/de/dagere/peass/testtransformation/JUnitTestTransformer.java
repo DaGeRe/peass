@@ -406,7 +406,7 @@ public class JUnitTestTransformer implements TestTransformer {
          addMethod(clazz, "getIterations", "return " + config.getAllIterations() + ";", PrimitiveType.intType());
          addMethod(clazz, "logFullData", "return " + config.isLogFullData() + ";", PrimitiveType.booleanType());
          addMethod(clazz, "useKieker", "return " + config.isUseKieker() + ";", PrimitiveType.booleanType());
-         addMethod(clazz, "getMaximalTime", "return " + config.getTimeout() + ";", PrimitiveType.longType());
+         addMethod(clazz, "getMaximalTime", "return " + config.getExecutionConfig().getTimeout() + ";", PrimitiveType.longType());
          addMethod(clazz, "getRepetitions", "return " + config.getRepetitions() + ";", PrimitiveType.intType());
          addMethod(clazz, "redirectToNull", "return " + config.isRedirectToNull() + ";", PrimitiveType.booleanType());
 
@@ -537,7 +537,7 @@ public class JUnitTestTransformer implements TestTransformer {
       performanceTestAnnotation.addPair("executeBeforeClassInMeasurement", "" + config.isExecuteBeforeClassInMeasurement());
       performanceTestAnnotation.addPair("logFullData", "" + true);
       performanceTestAnnotation.addPair("useKieker", "" + config.isUseKieker());
-      performanceTestAnnotation.addPair("timeout", "" + config.getTimeout());
+      performanceTestAnnotation.addPair("timeout", "" + config.getExecutionConfig().getTimeout());
       performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
       performanceTestAnnotation.addPair("redirectToNull", "" + config.isRedirectToNull());
       performanceTestAnnotation.addPair("showStart", "" + config.isShowStart());

@@ -16,8 +16,8 @@ import de.dagere.peass.utils.Constants;
 public class TreeAnalysis {
    public static final MeasurementConfiguration config = new MeasurementConfiguration(2);
    static {
-      config.setType1error(0.1);
-      config.setType2error(0.1);
+      config.getStatisticsConfig().setType1error(0.1);
+      config.getStatisticsConfig().setType2error(0.1);
    }
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
