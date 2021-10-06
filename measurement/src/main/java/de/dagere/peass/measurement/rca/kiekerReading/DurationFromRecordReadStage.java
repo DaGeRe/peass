@@ -1,5 +1,7 @@
 package de.dagere.peass.measurement.rca.kiekerReading;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -15,7 +17,7 @@ public class DurationFromRecordReadStage extends AbstractTraceAnalysisStage<Dura
 
    private static final Logger LOG = LogManager.getLogger(DurationFromRecordReadStage.class);
 
-   private final Set<CallTreeNode> measuredNodes;
+   private final Map<String, CallTreeNode> measuredNodes = new HashMap<>();
    private final String version;
 
    /**
@@ -25,7 +27,9 @@ public class DurationFromRecordReadStage extends AbstractTraceAnalysisStage<Dura
     */
    public DurationFromRecordReadStage(final SystemModelRepository systemModelRepository, final Set<CallTreeNode> measuredNodes, final String version) {
       super(systemModelRepository);
-      this.measuredNodes = measuredNodes;
+      for (CallTreeNode node : measuredNodes) {
+         this.measuredNodes.put(node.getKiekerPattern(), node);
+      }
       this.version = version;
 
       measuredNodes.forEach(node -> node.newVM(version));
@@ -33,14 +37,12 @@ public class DurationFromRecordReadStage extends AbstractTraceAnalysisStage<Dura
 
    @Override
    protected void execute(final DurationRecord execution) throws Exception {
-      for (final CallTreeNode node : measuredNodes) {
-         String kiekerPattern = KiekerPatternConverter.addNewIfRequired( execution.getOperationSignature());
-         
-         if (node.getKiekerPattern().equals(kiekerPattern)) {
-            // Get duration in mikroseconds - Kieker produces nanoseconds
-            final long duration = (execution.getTout() - execution.getTin()) / 1000;
-            node.addMeasurement(version, duration);
-         }
+      final String kiekerPattern = KiekerPatternConverter.addNewIfRequired(execution.getOperationSignature());
+      CallTreeNode node = measuredNodes.get(kiekerPattern);
+      if (node != null) {
+         // Get duration in mikroseconds - Kieker produces nanoseconds
+         final long duration = (execution.getTout() - execution.getTin()) / 1000;
+         node.addMeasurement(version, duration);
       }
    }
 }
