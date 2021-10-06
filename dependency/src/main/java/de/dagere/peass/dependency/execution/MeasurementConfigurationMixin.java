@@ -39,9 +39,9 @@ public class MeasurementConfigurationMixin {
    protected MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
 
    @Option(names = { "-dontRedirectToNull",
-   "--dontRedirectToNull" }, description = "Activates showing the standard output of the testcase (by default, it is redirected to null)")
-protected boolean dontRedirectToNull = false;
-   
+         "--dontRedirectToNull" }, description = "Activates showing the standard output of the testcase (by default, it is redirected to null)")
+   protected boolean dontRedirectToNull = false;
+
    @Option(names = { "-showStart",
          "--showStart" }, description = "Activates showing of start of each iteration (for debug purposes primarily)")
    protected boolean showStart = false;
@@ -105,7 +105,7 @@ protected boolean dontRedirectToNull = false;
    public void setUseKieker(final boolean useKieker) {
       this.useKieker = useKieker;
    }
-   
+
    public boolean isDontRedirectToNull() {
       return dontRedirectToNull;
    }

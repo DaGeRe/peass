@@ -10,7 +10,6 @@ import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
-import de.dagere.peass.visualization.NodePreparator;
 
 public class TestNodePreperatorColor {
    
@@ -20,7 +19,7 @@ public class TestNodePreperatorColor {
    
    @BeforeEach
    public void setUp() {
-      data.setConfig(new MeasurementConfiguration(100, 100, 0.1, 0.1));
+      data.setConfig(new MeasurementConfiguration(100, 100));
       data.setNodes(root);
    }
    

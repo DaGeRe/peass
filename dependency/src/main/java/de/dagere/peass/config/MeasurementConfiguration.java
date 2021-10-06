@@ -16,7 +16,7 @@ public class MeasurementConfiguration implements Serializable {
    
    private static final long serialVersionUID = -6936740902708676182L;
 
-   public static final MeasurementConfiguration DEFAULT = new MeasurementConfiguration(60 * 1000, 30, 0.01, 0.01);
+   public static final MeasurementConfiguration DEFAULT = new MeasurementConfiguration(60 * 1000, 30);
 
    private final int vms;
    private boolean earlyStop = true;
@@ -66,14 +66,10 @@ public class MeasurementConfiguration implements Serializable {
    }
 
    public MeasurementConfiguration(@JsonProperty("timeout") final int timeout,
-         @JsonProperty("vms") final int vms,
-         @JsonProperty("type1error") final double type1error,
-         @JsonProperty("type2error") final double type2error) {
+         @JsonProperty("vms") final int vms) {
       executionConfig = new ExecutionConfig(timeout / (60 * 1000));
       kiekerConfig = new KiekerConfiguration();
       this.vms = vms;
-      statisticsConfig.setType1error(type1error);
-      statisticsConfig.setType2error(type2error);
    }
 
    public MeasurementConfiguration(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin, final StatisticsConfigurationMixin statisticMixin) {
@@ -92,6 +88,7 @@ public class MeasurementConfiguration implements Serializable {
       setUseGC(mixin.isUseGC());
       setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
+      setRedirectToNull(!mixin.isDontRedirectToNull());
       setShowStart(mixin.isShowStart());
 
       saveAll = !mixin.isSaveNothing();
