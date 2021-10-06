@@ -19,7 +19,9 @@ public class TestNodePreperatorColor {
    
    @BeforeEach
    public void setUp() {
-      data.setConfig(new MeasurementConfiguration(100, 100));
+      MeasurementConfiguration config = new MeasurementConfiguration(100);
+      config.getExecutionConfig().setTimeout(100);
+      data.setConfig(config);
       data.setNodes(root);
    }
    

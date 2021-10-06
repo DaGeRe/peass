@@ -56,7 +56,7 @@ public class MeasurementConfiguration implements Serializable {
       this.vms = vms;
       this.kiekerConfig = new KiekerConfiguration(kiekerConfig);
    }
-
+   
    public MeasurementConfiguration(final int vms, final String version, final String versionOld) {
       executionConfig = new ExecutionConfig(20);
       kiekerConfig = new KiekerConfiguration();
@@ -91,6 +91,16 @@ public class MeasurementConfiguration implements Serializable {
    public MeasurementConfiguration(@JsonProperty("vms") final int vms,
          @JsonProperty("earlystop") final boolean earlyStop) {
       executionConfig = new ExecutionConfig();
+      kiekerConfig = new KiekerConfiguration();
+      this.vms = vms;
+      this.earlyStop = earlyStop;
+   }
+   
+   public MeasurementConfiguration(final int timeout, final int vms, final boolean earlyStop, final String version, final String versionOld) {
+      executionConfig = new ExecutionConfig();
+      executionConfig.setTimeout(timeout);
+      executionConfig.setVersion(version);
+      executionConfig.setVersionOld(versionOld);
       kiekerConfig = new KiekerConfiguration();
       this.vms = vms;
       this.earlyStop = earlyStop;
