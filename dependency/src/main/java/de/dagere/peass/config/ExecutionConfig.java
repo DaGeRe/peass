@@ -24,7 +24,7 @@ public class ExecutionConfig implements Serializable {
    /**
     * Timeout in milliseconds, default 5 minutes
     */
-   private final long timeout;
+   private long timeout = 5 * 60 * 1000;
    private String testGoal;
    private List<String> includes = new LinkedList<>();
    private List<String> excludes = new LinkedList<>();
@@ -48,7 +48,6 @@ public class ExecutionConfig implements Serializable {
       includes = new LinkedList<>();
       excludes = new LinkedList<>();
       testGoal = null;
-      this.timeout = 5 * 60 * 1000;
    }
    
    public ExecutionConfig(final ExecutionConfig other) {
@@ -113,6 +112,10 @@ public class ExecutionConfig implements Serializable {
       setTestExecutor(executionMixin.getWorkloadType().getTestExecutor());
       useTieredCompilation = executionMixin.isUseTieredCompilation();
       removeSnapshots = executionMixin.isRemoveSnapshots();
+   }
+   
+   public void setTimeout(final long timeout) {
+      this.timeout = timeout;
    }
 
    public long getTimeout() {

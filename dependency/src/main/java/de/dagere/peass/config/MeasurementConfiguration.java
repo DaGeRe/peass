@@ -13,10 +13,10 @@ import de.dagere.peass.dependency.execution.MeasurementConfigurationMixin;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class MeasurementConfiguration implements Serializable {
-   
+
    private static final long serialVersionUID = -6936740902708676182L;
 
-   public static final MeasurementConfiguration DEFAULT = new MeasurementConfiguration(60 * 1000, 30);
+   public static final MeasurementConfiguration DEFAULT = new MeasurementConfiguration(30);
 
    private final int vms;
    private boolean earlyStop = true;
@@ -28,20 +28,20 @@ public class MeasurementConfiguration implements Serializable {
    private boolean executeBeforeClassInMeasurement = false;
    private boolean showStart = false;
    private boolean redirectToNull = true;
-   
+
    private boolean callSyncBetweenVMs = true;
-   private int waitTimeBetweenVMs = 1000; 
+   private int waitTimeBetweenVMs = 1000;
 
    @JsonIgnore
    private final KiekerConfiguration kiekerConfig;
-   
+
    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
    private boolean saveAll = true;
-   
+
    private String javaVersion = System.getProperty("java.version");
-   
+
    private MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
-   
+
    private StatisticsConfiguration statisticsConfig = new StatisticsConfiguration();
    private final ExecutionConfig executionConfig;
 
@@ -63,13 +63,6 @@ public class MeasurementConfiguration implements Serializable {
       this.vms = vms;
       executionConfig.setVersion(version);
       executionConfig.setVersionOld(versionOld);
-   }
-
-   public MeasurementConfiguration(@JsonProperty("timeout") final int timeout,
-         @JsonProperty("vms") final int vms) {
-      executionConfig = new ExecutionConfig(timeout / (60 * 1000));
-      kiekerConfig = new KiekerConfiguration();
-      this.vms = vms;
    }
 
    public MeasurementConfiguration(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin, final StatisticsConfigurationMixin statisticMixin) {
@@ -95,17 +88,12 @@ public class MeasurementConfiguration implements Serializable {
    }
 
    @JsonCreator
-   public MeasurementConfiguration(@JsonProperty("timeout") final int timeout,
-         @JsonProperty("vms") final int vms,
-         @JsonProperty("earlystop") final boolean earlyStop,
-         @JsonProperty("version") final String version,
-         @JsonProperty("versionOld") final String versionOld) {
-      executionConfig = new ExecutionConfig(timeout / (60 * 1000));
+   public MeasurementConfiguration(@JsonProperty("vms") final int vms,
+         @JsonProperty("earlystop") final boolean earlyStop) {
+      executionConfig = new ExecutionConfig();
       kiekerConfig = new KiekerConfiguration();
       this.vms = vms;
       this.earlyStop = earlyStop;
-      executionConfig.setVersion(version);
-      executionConfig.setVersionOld(versionOld);
    }
 
    /**
@@ -125,7 +113,7 @@ public class MeasurementConfiguration implements Serializable {
       this.iterations = other.iterations;
       this.repetitions = other.repetitions;
       this.logFullData = other.logFullData;
-      
+
       this.redirectToNull = other.redirectToNull;
       kiekerConfig = new KiekerConfiguration();
       kiekerConfig.setUseKieker(other.isUseKieker());
@@ -144,11 +132,11 @@ public class MeasurementConfiguration implements Serializable {
       this.executeBeforeClassInMeasurement = other.executeBeforeClassInMeasurement;
       this.showStart = other.showStart;
    }
-   
+
    public StatisticsConfiguration getStatisticsConfig() {
       return statisticsConfig;
    }
-   
+
    public void setStatisticsConfig(final StatisticsConfiguration statisticsConfig) {
       this.statisticsConfig = statisticsConfig;
    }
@@ -156,11 +144,11 @@ public class MeasurementConfiguration implements Serializable {
    public void setSaveAll(final boolean saveAll) {
       this.saveAll = saveAll;
    }
-   
+
    public boolean isSaveAll() {
       return saveAll;
    }
-   
+
    public boolean isRedirectSubprocessOutputToFile() {
       return executionConfig.isRedirectSubprocessOutputToFile();
    }
@@ -172,11 +160,11 @@ public class MeasurementConfiguration implements Serializable {
    public void setExecuteBeforeClassInMeasurement(final boolean executeBeforeClassInMeasurement) {
       this.executeBeforeClassInMeasurement = executeBeforeClassInMeasurement;
    }
-   
+
    public boolean isExecuteBeforeClassInMeasurement() {
       return executeBeforeClassInMeasurement;
    }
-   
+
    /**
     * Whether to execute a GC before every iteration (bunch of repetitions)
     * 
@@ -226,10 +214,11 @@ public class MeasurementConfiguration implements Serializable {
    public int getIterations() {
       return iterations;
    }
-   
+
    /**
-    * Warmup could be considered by the measurement framework, however, this mostly leads to discarding the warmup values; therefore, we execute warmup + iterations
-    * and afterwards filter the measured values
+    * Warmup could be considered by the measurement framework, however, this mostly leads to discarding the warmup values; therefore, we execute warmup + iterations and afterwards
+    * filter the measured values
+    * 
     * @return All iterations that should be carried out
     */
    @JsonIgnore
@@ -377,7 +366,7 @@ public class MeasurementConfiguration implements Serializable {
    public String getTestGoal() {
       return executionConfig.getTestGoal();
    }
-   
+
    public void setTestGoal(final String testGoal) {
       executionConfig.setTestGoal(testGoal);
    }
