@@ -115,7 +115,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
          throw new RuntimeException("AspectJ instrumentation and jmh currently not implemented!");
       }
 
-      measurementConfiguration.getKiekerConfig().setUseAggregation(kiekerConfigMixin.isUseSampling());
+      measurementConfiguration.getKiekerConfig().setUseAggregation(kiekerConfigMixin.isUseAggregation());
       if (kiekerConfigMixin.isNotUseSourceInstrumentation() && kiekerConfigMixin.isUseExtraction()) {
          throw new RuntimeException("Deactivated source instrumentation and usage of extraction is not possible!");
       }

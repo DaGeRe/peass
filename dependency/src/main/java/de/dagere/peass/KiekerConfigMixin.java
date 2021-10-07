@@ -17,9 +17,9 @@ public class KiekerConfigMixin {
          "--notUseSelectiveInstrumentation" }, description = "Use selective instrumentation (only selected methods / classes are instrumented) - is activated by default is source instrumentation is activated")
    public boolean notUseSelectiveInstrumentation = false;
 
-   @Option(names = { "-useSampling",
-         "--useSampling" }, description = "Use sampling (only record every nth invocation of method - may reduce measurement noise)")
-   public boolean useSampling = false;
+   @Option(names = { "-useAggregation",
+         "--useAggregation" }, description = "Use aggregation (only record every nth invocation of method - may reduce measurement noise)")
+   public boolean useAggregation = false;
 
    @Option(names = { "-useExtraction", "--useExtraction" }, description = "Extract methods when using source instrumentation")
    public boolean useExtraction = false;
@@ -43,11 +43,8 @@ public class KiekerConfigMixin {
       return notUseSelectiveInstrumentation;
    }
 
-   public boolean isUseSampling() {
-      if (useSampling) {
-         throw new RuntimeException("Sampling not supported; only aggregated value usage!");
-      }
-      return useSampling;
+   public boolean isUseAggregation() {
+      return useAggregation;
    }
    
    public boolean isUseExtraction() {
@@ -59,13 +56,10 @@ public class KiekerConfigMixin {
    }
 
    public KiekerConfiguration getKiekerConfig() {
-      if (useSampling) {
-         throw new RuntimeException("Sampling not supported; only aggregated value usage!");
-      }
       KiekerConfiguration kiekerConfig = new KiekerConfiguration(true);
       kiekerConfig.setUseCircularQueue(useCircularQueue);
       kiekerConfig.setUseSelectiveInstrumentation(!notUseSelectiveInstrumentation);
-      kiekerConfig.setUseAggregation(useSampling);
+      kiekerConfig.setUseAggregation(useAggregation);
       kiekerConfig.setExtractMethod(useExtraction);
       kiekerConfig.setAdaptiveInstrumentation(enableAdaptiveInstrumentation);
       kiekerConfig.setUseSourceInstrumentation(!notUseSourceInstrumentation);
