@@ -225,7 +225,7 @@ public class TypeInstrumenter {
 
    private SamplingParameters createParameters(final String signature) {
       final SamplingParameters parameters = new SamplingParameters(signature, counterIndex);
-      if (configuration.isSample()) {
+      if (configuration.isAggregate()) {
          countersToAdd.add(parameters.getCounterName());
          sumsToAdd.add(parameters.getSumName());
          counterIndex++;

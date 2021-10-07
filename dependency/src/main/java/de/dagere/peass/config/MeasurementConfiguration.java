@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.dagere.peass.dependency.execution.ExecutionConfigMixin;
 import de.dagere.peass.dependency.execution.MeasurementConfigurationMixin;
-import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class MeasurementConfiguration implements Serializable {
 
@@ -79,7 +78,7 @@ public class MeasurementConfiguration implements Serializable {
       setWarmup(mixin.getWarmup());
       setRepetitions(mixin.getRepetitions());
       setUseGC(mixin.isUseGC());
-      setRecord(mixin.getRecord());
+      kiekerConfig.setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
       setRedirectToNull(!mixin.isDontRedirectToNull());
       setShowStart(mixin.isShowStart());
@@ -127,14 +126,14 @@ public class MeasurementConfiguration implements Serializable {
       this.redirectToNull = other.redirectToNull;
       kiekerConfig = new KiekerConfiguration();
       kiekerConfig.setUseKieker(other.isUseKieker());
-      kiekerConfig.setUseSourceInstrumentation(other.isUseSourceInstrumentation());
-      kiekerConfig.setUseSelectiveInstrumentation(other.isUseSelectiveInstrumentation());
-      kiekerConfig.setUseSampling(other.isUseSampling());
-      kiekerConfig.setUseCircularQueue(other.isUseCircularQueue());
-      kiekerConfig.setEnableAdaptiveMonitoring(other.isEnableAdaptiveConfig());
+      kiekerConfig.setUseSourceInstrumentation(other.getKiekerConfig().isUseSourceInstrumentation());
+      kiekerConfig.setUseSelectiveInstrumentation(other.getKiekerConfig().isUseSelectiveInstrumentation());
+      kiekerConfig.setUseAggregation(other.getKiekerConfig().isUseAggregation());
+      kiekerConfig.setUseCircularQueue(other.getKiekerConfig().isUseCircularQueue());
+      kiekerConfig.setEnableAdaptiveMonitoring(other.getKiekerConfig().isEnableAdaptiveMonitoring());
       kiekerConfig.setAdaptiveInstrumentation(other.getKiekerConfig().isAdaptiveInstrumentation());
       kiekerConfig.setKiekerAggregationInterval(other.getKiekerAggregationInterval());
-      kiekerConfig.setRecord(other.getRecord());
+      kiekerConfig.setRecord(other.getKiekerConfig().getRecord());
       this.useGC = other.useGC;
       this.javaVersion = other.javaVersion;
       this.measurementStrategy = other.measurementStrategy;
@@ -280,54 +279,6 @@ public class MeasurementConfiguration implements Serializable {
       this.javaVersion = javaVersion;
    }
 
-   public void setRecord(final AllowedKiekerRecord record) {
-      kiekerConfig.setRecord(record);
-   }
-
-   public AllowedKiekerRecord getRecord() {
-      return kiekerConfig.getRecord();
-   }
-
-   public boolean isUseSourceInstrumentation() {
-      return kiekerConfig.isUseSourceInstrumentation();
-   }
-
-   public void setUseSourceInstrumentation(final boolean useSourceInstrumentation) {
-      kiekerConfig.setUseSourceInstrumentation(useSourceInstrumentation);
-   }
-
-   public boolean isUseCircularQueue() {
-      return kiekerConfig.isUseCircularQueue();
-   }
-
-   public void setUseCircularQueue(final boolean useCircularQueue) {
-      kiekerConfig.setUseCircularQueue(useCircularQueue);
-   }
-
-   public boolean isUseSelectiveInstrumentation() {
-      return kiekerConfig.isUseSelectiveInstrumentation();
-   }
-
-   public void setUseSelectiveInstrumentation(final boolean useSelectiveInstrumentation) {
-      kiekerConfig.setUseSelectiveInstrumentation(useSelectiveInstrumentation);
-   }
-
-   public boolean isUseSampling() {
-      return kiekerConfig.isUseSampling();
-   }
-
-   public void setUseSampling(final boolean useSampling) {
-      kiekerConfig.setUseSampling(useSampling);
-   }
-
-   public boolean isEnableAdaptiveConfig() {
-      return kiekerConfig.isEnableAdaptiveMonitoring();
-   }
-
-   public void setEnableAdaptiveConfig(final boolean allowAdaptiveConfig) {
-      kiekerConfig.setEnableAdaptiveMonitoring(allowAdaptiveConfig);
-   }
-
    public MeasurementStrategy getMeasurementStrategy() {
       return measurementStrategy;
    }
@@ -359,7 +310,7 @@ public class MeasurementConfiguration implements Serializable {
     */
    @JsonIgnore
    public int getNodeWarmup() {
-      final int samplingfactor = this.isUseSampling() ? 1000 : 1;
+      final int samplingfactor = this.getKiekerConfig().isUseAggregation() ? 1000 : 1;
       final int warmup = this.getWarmup() * this.getRepetitions() / samplingfactor;
       return warmup;
    }

@@ -42,13 +42,13 @@ public class KiekerEnvironmentPreparer {
 
    public void prepareKieker() throws IOException, InterruptedException {
       final MeasurementConfiguration config = testTransformer.getConfig();
-      if (config.isUseSourceInstrumentation()) {
+      if (config.getKiekerConfig().isUseSourceInstrumentation()) {
          instrumentSources(config);
       } else {
-         if (config.isEnableAdaptiveConfig()) {
+         if (config.getKiekerConfig().isEnableAdaptiveMonitoring()) {
             prepareAdaptiveExecution();
          }
-         if (AllowedKiekerRecord.DURATION.equals(config.getRecord())) {
+         if (AllowedKiekerRecord.DURATION.equals(config.getKiekerConfig().getRecord())) {
             generateAOPXML(AllowedKiekerRecord.DURATION);
          } else {
             generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION);
@@ -64,19 +64,19 @@ public class KiekerEnvironmentPreparer {
 
       buildJettyExclusion(excludedPatterns);
 
-      if (!config.isUseSelectiveInstrumentation()) {
-         InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), false, config.getExecutionConfig().isCreateDefaultConstructor(),
+      if (!config.getKiekerConfig().isUseSelectiveInstrumentation()) {
+         InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getKiekerConfig().getRecord(), false, config.getExecutionConfig().isCreateDefaultConstructor(),
                config.getKiekerConfig().isAdaptiveInstrumentation(), includedMethodPattern, excludedPatterns, false, config.getRepetitions(), config.getKiekerConfig().isExtractMethod());
          instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
       } else {
-         InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getRecord(), config.isUseSampling(),
+         InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getKiekerConfig().getRecord(), config.getKiekerConfig().isUseAggregation(),
                config.getExecutionConfig().isCreateDefaultConstructor(),
                config.getKiekerConfig().isAdaptiveInstrumentation(), includedMethodPattern, excludedPatterns, true, config.getRepetitions(), 
                config.getKiekerConfig().isExtractMethod());
          instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
       }
       instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
-      if (config.isEnableAdaptiveConfig()) {
+      if (config.getKiekerConfig().isEnableAdaptiveMonitoring()) {
          writeConfig();
       }
    }

@@ -65,7 +65,7 @@ public class KiekerConfigMixin {
       KiekerConfiguration kiekerConfig = new KiekerConfiguration(true);
       kiekerConfig.setUseCircularQueue(useCircularQueue);
       kiekerConfig.setUseSelectiveInstrumentation(!notUseSelectiveInstrumentation);
-      kiekerConfig.setUseSampling(useSampling);
+      kiekerConfig.setUseAggregation(useSampling);
       kiekerConfig.setExtractMethod(useExtraction);
       kiekerConfig.setAdaptiveInstrumentation(enableAdaptiveInstrumentation);
       kiekerConfig.setUseSourceInstrumentation(!notUseSourceInstrumentation);

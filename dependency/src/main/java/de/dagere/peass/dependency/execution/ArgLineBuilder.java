@@ -43,7 +43,7 @@ public class ArgLineBuilder {
       String argline = getTieredCompilationArglinePart(entrySeparator);
       if (testTransformer.getConfig().isUseKieker()) {
          final String tempFolderPath = "'" + tempFolder.getAbsolutePath() + "'";
-         if (testTransformer.getConfig().isUseSourceInstrumentation()) {
+         if (testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation()) {
             argline += TEMP_DIR + valueSeparator + tempFolderPath;
 
          } else {

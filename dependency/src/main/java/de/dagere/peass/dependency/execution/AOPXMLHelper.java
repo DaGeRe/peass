@@ -39,7 +39,7 @@ public class AOPXMLHelper {
    public static void writeKiekerMonitoringProperties(final File goalFile, final TestTransformer transformer, final PeassFolders folders) throws IOException {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(goalFile))) {
          writer.write("kieker.monitoring.name=KIEKER-KoPeMe\n");
-         if (transformer.getConfig().isUseCircularQueue()) {
+         if (transformer.getConfig().getKiekerConfig().isUseCircularQueue()) {
             writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueFQN=de.dagere.kopeme.collections.SynchronizedCircularFifoQueue\n");
             writer.write("kieker.monitoring.core.controller.WriterController.QueuePutStrategy=kieker.monitoring.queue.putstrategy.YieldPutStrategy\n");
             writer.write("kieker.monitoring.core.controller.WriterController.QueueTakeStrategy=kieker.monitoring.queue.takestrategy.YieldTakeStrategy\n");
@@ -56,7 +56,7 @@ public class AOPXMLHelper {
          if (transformer.isIgnoreEOIs()) {
             writer.write(AGGREGATED_WRITER + ".ignoreEOIs=true\n");
          }
-         if (transformer.getConfig().isEnableAdaptiveConfig()) {
+         if (transformer.getConfig().getKiekerConfig().isEnableAdaptiveMonitoring()) {
             writer.write("kieker.monitoring.adaptiveMonitoring.enabled=true\n");
             writer.write("kieker.monitoring.adaptiveMonitoring.configFile=" + MavenTestExecutor.KIEKER_ADAPTIVE_FILENAME + "\n");
             writer.write("kieker.monitoring.adaptiveMonitoring.readInterval=15\n");

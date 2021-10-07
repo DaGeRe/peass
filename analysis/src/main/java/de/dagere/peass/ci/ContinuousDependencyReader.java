@@ -53,7 +53,7 @@ public class ContinuousDependencyReader {
       this.kiekerConfig = new KiekerConfiguration(kiekerConfig);
       this.kiekerConfig.setUseKieker(true);
       this.kiekerConfig.setRecord(AllowedKiekerRecord.OPERATIONEXECUTION);
-      this.kiekerConfig.setUseSampling(false);
+      this.kiekerConfig.setUseAggregation(false);
       this.folders = folders;
       this.resultsFolders = resultsFolders;
       this.env = env;

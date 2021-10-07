@@ -55,7 +55,7 @@ public class TestGradleParseUtil {
       JUnitTestTransformer transformerMock = Mockito.mock(JUnitTestTransformer.class);
       MeasurementConfiguration measurementConfig = new MeasurementConfiguration(2);
       measurementConfig.setUseKieker(true);
-      measurementConfig.setUseSourceInstrumentation(false);
+      measurementConfig.getKiekerConfig().setUseSourceInstrumentation(false);
       Mockito.when(transformerMock.getConfig()).thenReturn(measurementConfig);
       GradleTestExecutor gradleTestExecutor = new GradleTestExecutor(folders, transformerMock, new EnvironmentVariables());
       gradleTestExecutor.setIncludedMethods(new HashSet<String>());

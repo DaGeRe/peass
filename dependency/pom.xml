@@ -93,13 +93,12 @@
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
 			<artifactId>kieker</artifactId>
-			<version>1.15-SNAPSHOT</version>
-			<classifier>jar</classifier>
+			<version>${kieker.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
 			<artifactId>kieker</artifactId>
-			<version>1.15-SNAPSHOT</version>
+			<version>${kieker.version}</version>
 			<classifier>aspectj</classifier>
 		</dependency>
 		<dependency>

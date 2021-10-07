@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import net.kieker.sourceinstrumentation.instrument.codeblocks.BlockBuilder;
-import net.kieker.sourceinstrumentation.instrument.codeblocks.SamplingBlockBuilder;
+import net.kieker.sourceinstrumentation.instrument.codeblocks.AggregationBlockBuilder;
 
 public class InstrumentationConfiguration {
 
@@ -19,7 +19,7 @@ public class InstrumentationConfiguration {
    private static final Logger LOG = LogManager.getLogger(InstrumentationConfiguration.class);
 
    private final AllowedKiekerRecord usedRecord;
-   private final boolean sample;
+   private final boolean aggregate;
    private final int samplingCount;
    private final boolean enableDeactivation;
    private final boolean createDefaultConstructor;
@@ -31,10 +31,10 @@ public class InstrumentationConfiguration {
    /**
     * Simple constructor, setting default values for everything except usedRecord, sample and includedPatterns
     */
-   public InstrumentationConfiguration(final AllowedKiekerRecord usedRecord, final boolean sample,
+   public InstrumentationConfiguration(final AllowedKiekerRecord usedRecord, final boolean aggregate,
          final Set<String> includedPatterns, final boolean enableAdaptiveMonitoring, final boolean enableDecativation, final int samplingCount, final boolean extractMethod) {
       this.usedRecord = usedRecord;
-      this.sample = sample;
+      this.aggregate = aggregate;
       this.includedPatterns = includedPatterns;
       excludedPatterns = new HashSet<String>();
       if (JavaVersionUtil.getSystemJavaVersion() == 8) {
@@ -54,11 +54,11 @@ public class InstrumentationConfiguration {
       check();
    }
 
-   public InstrumentationConfiguration(final AllowedKiekerRecord usedRecord, final boolean sample,
+   public InstrumentationConfiguration(final AllowedKiekerRecord usedRecord, final boolean aggregate,
          final boolean createDefaultConstructor, final boolean enableAdaptiveMonitoring,
          final Set<String> includedPatterns, final boolean enableDecativation, final int samplingCount, final boolean extractMethod) {
       this.usedRecord = usedRecord;
-      this.sample = sample;
+      this.aggregate = aggregate;
       this.createDefaultConstructor = createDefaultConstructor;
       if (JavaVersionUtil.getSystemJavaVersion() == 8) {
          LOG.info(JAVA_8_MESSAGE);
@@ -81,7 +81,7 @@ public class InstrumentationConfiguration {
          final boolean createDefaultConstructor, final boolean enableAdaptiveMonitoring,
          final Set<String> includedPatterns, final Set<String> excludedPatterns, final boolean enableDecativation, final int samplingCount, final boolean extractMethod) {
       this.usedRecord = usedRecord;
-      this.sample = sample;
+      this.aggregate = sample;
       this.createDefaultConstructor = createDefaultConstructor;
       if (JavaVersionUtil.getSystemJavaVersion() == 8) {
          LOG.info(JAVA_8_MESSAGE);
@@ -101,7 +101,7 @@ public class InstrumentationConfiguration {
    }
 
    private void check() {
-      if (sample && usedRecord == AllowedKiekerRecord.OPERATIONEXECUTION) {
+      if (aggregate && usedRecord == AllowedKiekerRecord.OPERATIONEXECUTION) {
          throw new RuntimeException("Sampling + OperationExecutionRecord does not make sense, since OperationExecutionRecord contains too complex metadata for sampling");
       }
       if (!enableDeactivation && extractMethod) {
@@ -115,8 +115,8 @@ public class InstrumentationConfiguration {
       return usedRecord;
    }
 
-   public boolean isSample() {
-      return sample;
+   public boolean isAggregate() {
+      return aggregate;
    }
 
    public int getSamplingCount() {
@@ -150,8 +150,8 @@ public class InstrumentationConfiguration {
    @JsonIgnore
    public BlockBuilder getBlockBuilder() {
       BlockBuilder blockBuilder;
-      if (this.isSample()) {
-         blockBuilder = new SamplingBlockBuilder(this.getUsedRecord(), this.getSamplingCount());
+      if (this.isAggregate()) {
+         blockBuilder = new AggregationBlockBuilder(this.getUsedRecord(), this.getSamplingCount());
       } else {
          blockBuilder = new BlockBuilder(this.getUsedRecord(), this.isEnableDeactivation(), this.isEnableAdaptiveMonitoring());
       }

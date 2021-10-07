@@ -158,7 +158,7 @@ public class CauseTester extends AdaptiveTester {
       if (getCurrentOrganizer().testSuccess(version)) {
          LOG.info("Did succeed in measurement - analyse values");
          
-         final KiekerResultReader kiekerResultReader = new KiekerResultReader(causeConfig.isUseAggregation(), configuration.getRecord(), includedNodes, version, testcase,
+         final KiekerResultReader kiekerResultReader = new KiekerResultReader(causeConfig.isUseAggregation(), configuration.getKiekerConfig().getRecord(), includedNodes, version, testcase,
                version.equals(configuration.getExecutionConfig().getVersion()));
          kiekerResultReader.setConsiderNodePosition(!causeConfig.isUseAggregation());
          kiekerResultReader.readResults(versionResultFolder);

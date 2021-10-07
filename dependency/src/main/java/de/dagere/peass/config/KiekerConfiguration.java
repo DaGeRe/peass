@@ -11,7 +11,7 @@ public class KiekerConfiguration implements Serializable {
    private boolean useKieker = false;
    private boolean useSourceInstrumentation = true;
    private boolean useSelectiveInstrumentation = true;
-   private boolean useSampling = false;
+   private boolean useAggregation = false;
    private boolean useCircularQueue = true;
    private boolean enableAdaptiveMonitoring = false;
    private boolean adaptiveInstrumentation = false;
@@ -30,7 +30,7 @@ public class KiekerConfiguration implements Serializable {
       this.useKieker = other.useKieker;
       this.useSourceInstrumentation = other.useSourceInstrumentation;
       this.useSelectiveInstrumentation = other.useSelectiveInstrumentation;
-      this.useSampling = other.useSampling;
+      this.useAggregation = other.useAggregation;
       this.useCircularQueue = other.useCircularQueue;
       this.enableAdaptiveMonitoring = other.enableAdaptiveMonitoring;
       this.adaptiveInstrumentation = other.adaptiveInstrumentation;
@@ -63,12 +63,12 @@ public class KiekerConfiguration implements Serializable {
       this.useSelectiveInstrumentation = useSelectiveInstrumentation;
    }
 
-   public boolean isUseSampling() {
-      return useSampling;
+   public boolean isUseAggregation() {
+      return useAggregation;
    }
 
-   public void setUseSampling(final boolean useSampling) {
-      this.useSampling = useSampling;
+   public void setUseAggregation(final boolean useAggregation) {
+      this.useAggregation = useAggregation;
    }
 
    public boolean isUseCircularQueue() {
