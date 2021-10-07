@@ -72,7 +72,7 @@
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
 			<artifactId>kieker</artifactId>
-			<version>1.15-SNAPSHOT</version>
+			<version>${kieker.version}</version>
 			<classifier>aspectj</classifier>
 			<scope>runtime</scope>
 		</dependency>
