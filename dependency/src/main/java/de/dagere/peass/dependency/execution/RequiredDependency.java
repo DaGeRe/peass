@@ -31,7 +31,7 @@ public class RequiredDependency {
       }
       all.add(new RequiredDependency("de.dagere.kopeme", "kopeme-junit", MavenPomUtil.KOPEME_VERSION, "", null));
 
-      all.add(new RequiredDependency("net.kieker-monitoring", "kieker", MavenPomUtil.KIEKER_VERSION, "", "jar"));
+      all.add(new RequiredDependency("net.kieker-monitoring", "kieker", MavenPomUtil.KIEKER_VERSION, "", null));
       all.add(new RequiredDependency("net.kieker-monitoring", "kieker", MavenPomUtil.KIEKER_VERSION, "", "aspectj"));
 
       // all.add(new RequiredDependency("org.apache.logging.log4j", "log4j-slf4j-impl", "2.14.0", "", null));
