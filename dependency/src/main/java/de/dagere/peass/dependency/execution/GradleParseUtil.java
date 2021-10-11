@@ -73,7 +73,7 @@ public class GradleParseUtil {
       final int lineIndex = visitor.getBuildTools() - 1;
       final String versionLine = visitor.getLines().get(lineIndex).trim().replaceAll("'", "").replace("\"", "");
       final String versionString = versionLine.split(":")[1].trim();
-      if (AndroidVersionUtil.isLegelBuildTools(versionString)) {
+      if (AndroidVersionUtil.isLegalBuildTools(versionString)) {
          final String runningVersion = AndroidVersionUtil.getRunningVersion(versionString);
          if (runningVersion != null) {
             visitor.getLines().set(lineIndex, "'buildTools': '" + runningVersion + "'");

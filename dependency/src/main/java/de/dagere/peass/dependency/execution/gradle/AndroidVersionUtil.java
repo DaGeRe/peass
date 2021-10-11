@@ -51,7 +51,7 @@ public class AndroidVersionUtil {
       }
    }
 
-   public static boolean isLegelBuildTools(final String versionString) {
+   public static boolean isLegalBuildTools(final String versionString) {
       return !acceptedVersion.contains(versionString) &&
             !versionString.equals("rootProject.buildToolsVersion") &&
             !versionString.equals("rootProject.compileSdkVersion") &&
