@@ -2,7 +2,6 @@ package de.dagere.peass.dependency.execution;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -16,9 +15,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.groovy.ast.ASTNode;
-import org.codehaus.groovy.ast.builder.AstBuilder;
-import org.codehaus.plexus.util.IOUtil;
 
 import de.dagere.peass.dependency.execution.gradle.AndroidVersionUtil;
 import de.dagere.peass.dependency.execution.gradle.FindDependencyVisitor;
@@ -68,17 +64,9 @@ public class GradleParseUtil {
    }
 
    public static FindDependencyVisitor parseBuildfile(final File buildfile) throws IOException, FileNotFoundException {
+      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile);
+      return visitor;
 
-      try (FileInputStream inputStream = new FileInputStream(buildfile)) {
-         final AstBuilder builder = new AstBuilder();
-         final List<ASTNode> nodes = builder.buildFromString(IOUtil.toString(inputStream, "UTF-8"));
-
-         FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile);
-         for (final ASTNode node : nodes) {
-            node.visit(visitor);
-         }
-         return visitor;
-      }
    }
 
    public static void updateBuildTools(final FindDependencyVisitor visitor) {

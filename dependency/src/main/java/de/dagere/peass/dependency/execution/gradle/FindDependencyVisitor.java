@@ -1,6 +1,7 @@
 package de.dagere.peass.dependency.execution.gradle;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -8,7 +9,9 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.codehaus.groovy.ast.ASTNode;
 import org.codehaus.groovy.ast.CodeVisitorSupport;
+import org.codehaus.groovy.ast.builder.AstBuilder;
 import org.codehaus.groovy.ast.expr.ArgumentListExpression;
 import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.Expression;
@@ -16,6 +19,7 @@ import org.codehaus.groovy.ast.expr.MapEntryExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
+import org.codehaus.plexus.util.IOUtil;
 
 public class FindDependencyVisitor extends CodeVisitorSupport {
 
@@ -35,6 +39,15 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
 
    public FindDependencyVisitor(final File buildfile) throws IOException {
       gradleFileContents = Files.readAllLines(Paths.get(buildfile.toURI()));
+
+      try (FileInputStream inputStream = new FileInputStream(buildfile)) {
+         final AstBuilder builder = new AstBuilder();
+         final List<ASTNode> nodes = builder.buildFromString(IOUtil.toString(inputStream, "UTF-8"));
+
+         for (final ASTNode node : nodes) {
+            node.visit(this);
+         }
+      }
    }
 
    @Override
@@ -99,6 +112,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
    private boolean isJavaPlugin(final String text) {
       if (text.contains("plugin:java") ||
             text.contains("this.id(java)") ||
+            text.contains("his.id(java-library)") || 
             text.contains("plugin:com.android.library") ||
             text.contains("plugin:com.android.application") ||
             text.contains("com.android.application")) {
