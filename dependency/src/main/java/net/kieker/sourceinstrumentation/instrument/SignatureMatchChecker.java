@@ -26,36 +26,46 @@ public class SignatureMatchChecker {
       if (includes == null) {
          oneMatches = true;
       } else {
-         for (String pattern : includes) {
-            pattern = fixConstructorPattern(pattern);
-            try {
-               Pattern patternP = PatternParser.parseToPattern(pattern);
-               if (patternP.matcher(signature).matches()) {
-                  oneMatches = true;
-                  break;
-               }
-            } catch (InvalidPatternException e) {
-               LOG.error("Wrong pattern: {}", pattern);
-               throw new RuntimeException(e);
-            }
-         }
+         oneMatches = oneIncludeMatches(signature, oneMatches);
       }
       if (excludes != null) {
-         for (String pattern : excludes) {
-            pattern = fixConstructorPattern(pattern);
-            try {
-               Pattern patternP = PatternParser.parseToPattern(pattern);
-               if (patternP.matcher(signature).matches()) {
-                  oneMatches = false;
-                  break;
-               }
-            } catch (InvalidPatternException e) {
-               LOG.error("Wrong pattern: {}", pattern);
-               throw new RuntimeException(e);
-            }
-         }
+         oneMatches = oneExcludeMatches(signature, oneMatches);
       }
 
+      return oneMatches;
+   }
+
+   private boolean oneExcludeMatches(final String signature, boolean oneMatches) {
+      for (String pattern : excludes) {
+         pattern = fixConstructorPattern(pattern);
+         try {
+            Pattern patternP = PatternParser.parseToPattern(pattern);
+            if (patternP.matcher(signature).matches()) {
+               oneMatches = false;
+               break;
+            }
+         } catch (InvalidPatternException e) {
+            LOG.error("Wrong pattern: {}", pattern);
+            throw new RuntimeException(e);
+         }
+      }
+      return oneMatches;
+   }
+
+   private boolean oneIncludeMatches(final String signature, boolean oneMatches) {
+      for (String pattern : includes) {
+         pattern = fixConstructorPattern(pattern);
+         try {
+            Pattern patternP = PatternParser.parseToPattern(pattern);
+            if (patternP.matcher(signature).matches()) {
+               oneMatches = true;
+               break;
+            }
+         } catch (InvalidPatternException e) {
+            LOG.error("Wrong pattern: {}", pattern);
+            throw new RuntimeException(e);
+         }
+      }
       return oneMatches;
    }
 
