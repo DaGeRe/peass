@@ -186,10 +186,13 @@ public class DependencyReader {
     */
    public int analyseVersion(final ChangeManager changeManager) throws IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final String version = iterator.getTag();
-      if (!dependencyManager.getExecutor().isVersionRunning(iterator.getTag())) {
-         documentFailure(version);
-         return 0;
+      if (!dependencyConfig.isSkipProcessSuccessRuns()) {
+         if (!dependencyManager.getExecutor().isVersionRunning(iterator.getTag())) {
+            documentFailure(version);
+            return 0;
+         }
       }
+      
 
       dependencyManager.getExecutor().loadClasses();
 

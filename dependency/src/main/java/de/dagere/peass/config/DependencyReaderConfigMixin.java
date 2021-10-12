@@ -20,6 +20,9 @@ public class DependencyReaderConfigMixin {
    @Option(names = {"-doNotGenerateViews", "--doNotGenerateViews"}, description = "Disable generation of views. Is false by default, but will be activated automatically if --doNotUpdateDependencies is set.")
    public boolean doNotGenerateViews = false;
    
+   @Option(names = {"-skipProcessSuccessRuns", "--skipProcessSuccessRuns"}, description = "Skips the process success run. ")
+   public boolean skipProcessSuccessRuns = false;
+   
    @Option(names = {"-doNotGenerateCoverageSelection", "--doNotGenerateCoverageSelection"}, description = "Disables coverage selection. Is false by default, but will be activated automatically if --doNotGenerateCoverageSelection is set.")
    public boolean doNotGenerateCoverageSelection = false;
    
@@ -48,6 +51,6 @@ public class DependencyReaderConfigMixin {
          doNotGenerateCoverageSelection = true;
          doNotGenerateViews = true;
       }
-      return new DependencyConfig(threads, doNotUpdateDependencies, !doNotGenerateViews, !doNotGenerateCoverageSelection);
+      return new DependencyConfig(threads, doNotUpdateDependencies, !doNotGenerateViews, !doNotGenerateCoverageSelection, skipProcessSuccessRuns);
    }
 }

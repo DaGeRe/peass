@@ -10,6 +10,7 @@ public class DependencyConfig implements Serializable {
    private final boolean doNotUpdateDependencies;
    private final boolean generateViews;
    private final boolean generateCoverageSelection;
+   private final boolean skipProcessSuccessRuns;
 
    public DependencyConfig(final int threads, final boolean doNotUpdateDependencies) {
       this.threads = threads;
@@ -22,6 +23,7 @@ public class DependencyConfig implements Serializable {
       // Coverage selection does not create high additional effort after view generation, so generate it by default if views are generated
          generateCoverageSelection = true; 
       }
+      skipProcessSuccessRuns = false;
    }
 
    public DependencyConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateViews, final boolean generateCoverageSelection) {
@@ -29,6 +31,20 @@ public class DependencyConfig implements Serializable {
       this.doNotUpdateDependencies = doNotUpdateDependencies;
       this.generateViews = generateViews;
       this.generateCoverageSelection = generateCoverageSelection;
+      skipProcessSuccessRuns = false;
+      check();
+   }
+   
+   public DependencyConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateViews, final boolean generateCoverageSelection, final boolean skipProcessSuccessRuns) {
+      this.threads = threads;
+      this.doNotUpdateDependencies = doNotUpdateDependencies;
+      this.generateViews = generateViews;
+      this.generateCoverageSelection = generateCoverageSelection;
+      this.skipProcessSuccessRuns = skipProcessSuccessRuns;
+      check();
+   }
+
+   private void check() {
       if (doNotUpdateDependencies && generateViews) {
          throw new RuntimeException("isGenerateViews may only be true if doNotUpdateDependencies is false! "
                + "If doNotUpdateDependencies is set, no traces are generates; then it is not possible to generate views");
@@ -54,5 +70,8 @@ public class DependencyConfig implements Serializable {
    public boolean isGenerateCoverageSelection() {
       return generateCoverageSelection;
    }
-
+   
+   public boolean isSkipProcessSuccessRuns() {
+      return skipProcessSuccessRuns;
+   }
 }
