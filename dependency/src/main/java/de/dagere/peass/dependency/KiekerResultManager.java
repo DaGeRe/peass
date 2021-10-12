@@ -61,7 +61,6 @@ public class KiekerResultManager {
       fakeConfig = new MeasurementConfiguration(1, executionConfig, kiekerConfig);
       fakeConfig.setIterations(1);
       fakeConfig.setWarmup(0);
-      fakeConfig.setTestGoal(executionConfig.getTestGoal());
       // Structure discovery runs never need adaptive monitoring
       fakeConfig.getKiekerConfig().setEnableAdaptiveMonitoring(false);
 
