@@ -88,6 +88,7 @@ public class KiekerEnvironmentPreparer {
             "org.eclipse.jetty.logging.JettyLogger" }) {
          excludedPatterns.add("new " + notInstrumenting + ".<init>(..)");
          excludedPatterns.add("* " + notInstrumenting + ".*(..)"); // package visibility things from JettyLoggingServiceProvider with any return
+         excludedPatterns.add("*[] " + notInstrumenting + ".*(..)");
          excludedPatterns.add("*.* " + notInstrumenting + ".*(..)");
          excludedPatterns.add("*.*.* " + notInstrumenting + ".*(..)");
          excludedPatterns.add("*.*.*.* " + notInstrumenting + ".*(..)");
