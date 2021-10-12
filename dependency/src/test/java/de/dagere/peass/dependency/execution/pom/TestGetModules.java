@@ -4,7 +4,6 @@ import java.io.File;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.ExecutionConfig;
@@ -43,7 +42,6 @@ public class TestGetModules {
          ExecutionConfig config = new ExecutionConfig();
          config.setPl("inner-module-1");
          ProjectModules modules = MavenPomUtil.getModules(pomFile, config);
-         Assert.assertEquals(2, modules.getModules().size());
       });
    }
    
@@ -56,8 +54,6 @@ public class TestGetModules {
       Assert.assertEquals(2, modules.getModules().size());
    }
 
-   // Currently, reading dependencies of inner modules with pl does not fully work
-   @Disabled
    @Test
    public void testOtherPl2() {
       File pomFile = new File("src/test/resources/maven-multimodule-pl-example/basic_state/pom.xml");
@@ -67,7 +63,6 @@ public class TestGetModules {
       Assert.assertEquals(3, modules.getModules().size());
    }
    
-   @Disabled
    @Test
    public void testOtherPlUsing() {
       File pomFile = new File("src/test/resources/maven-multimodule-pl-example/basic_state/pom.xml");

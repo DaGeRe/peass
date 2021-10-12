@@ -1,11 +1,14 @@
 package de.dagere.peass.dependency.execution;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class ProjectModules {
    private final List<File> modules;
+   private final Map<File, String> artifactIds = new HashMap<>();
 
    public ProjectModules(final List<File> modules) {
       this.modules = modules;
@@ -18,6 +21,10 @@ public class ProjectModules {
 
    public List<File> getModules() {
       return modules;
+   }
+   
+   public Map<File, String> getArtifactIds() {
+      return artifactIds;
    }
 
    public List<File> getParents(final File moduleFile) {

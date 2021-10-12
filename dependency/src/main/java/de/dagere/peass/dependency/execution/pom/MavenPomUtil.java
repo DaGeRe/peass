@@ -145,21 +145,23 @@ public class MavenPomUtil {
 
    public static ProjectModules getModules(final File pom, final ExecutionConfig config) {
       try {
-         List<File> modules = getModuleFiles(pom);
+         ProjectModules modules = new ModuleReader().readModuleFiles(pom);
          if (config.getPl() != null && !"".equals(config.getPl())) {
             List<String> includedModuleNames = getIncludedModuleNames(pom, config);
 
-            for (Iterator<File> moduleIterator = modules.iterator(); moduleIterator.hasNext();) {
+            for (Iterator<File> moduleIterator = modules.getModules().iterator(); moduleIterator.hasNext();) {
                File listFile = moduleIterator.next();
                String fileModuleName = listFile.getName();
                System.out.println("Name: " + fileModuleName + " " + includedModuleNames);
-               if (!includedModuleNames.contains(fileModuleName)) {
+               String fileArtifactId = modules.getArtifactIds().get(listFile);
+               System.out.println("Artifactid: " + fileArtifactId);
+               if (!includedModuleNames.contains(fileModuleName) && !includedModuleNames.contains(fileArtifactId)) {
                   moduleIterator.remove();
                }
             }
          }
 
-         return new ProjectModules(modules);
+         return modules;
       } catch (IOException | XmlPullParserException e) {
          throw new RuntimeException(e);
       }
@@ -167,48 +169,29 @@ public class MavenPomUtil {
 
    private static List<String> getIncludedModuleNames(final File pom, final ExecutionConfig config) throws IOException {
       List<String> includedModuleNames = new LinkedList<>();
-      ProcessBuilder builder = new ProcessBuilder("mvn", "--batch-mode", "dependency:tree", "-pl", config.getPl(), "-am");
+      ProcessBuilder builder = new ProcessBuilder("mvn", "--batch-mode", "pre-clean", "-pl", config.getPl(), "-am");
       builder.directory(pom.getParentFile());
       Process process = builder.start();
       String output = StreamGobbler.getFullProcess(process, false);
       for (String line : output.split("\n")) {
-         int atIndex = line.indexOf('@');
-         System.out.println(line + " " + atIndex);
-         if (atIndex != -1) {
-            int expectedModuleNameStart = atIndex + 2;
-            int expectedModuleNameEnd = line.lastIndexOf(' ');
-            if (expectedModuleNameEnd < expectedModuleNameStart) {
+         int startIndex = line.indexOf("-<");
+         int endIndex = line.indexOf(">-");
+         System.out.println(line + " " + startIndex);
+         if (line.startsWith("[ERROR]")) {
+            throw new RuntimeException("Unexpected line when reading modules: " + line);
+         }
+         if (startIndex != -1) {
+            int expectedModuleNameStart = startIndex + 3;
+            int expectedModuleNameEnd = endIndex - 1;
+            if (expectedModuleNameEnd < expectedModuleNameStart || line.startsWith("[ERROR]")) {
                throw new RuntimeException("Unexpected line when reading modules: " + line);
             }
-            String moduleName = line.substring(expectedModuleNameStart, expectedModuleNameEnd);
+            String fullModuleName = line.substring(expectedModuleNameStart, expectedModuleNameEnd);
+            String moduleName = fullModuleName.split(":")[1];
             includedModuleNames.add(moduleName);
          }
       }
       return includedModuleNames;
-   }
-
-   public static List<File> getModuleFiles(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
-      final Model model;
-      try (FileInputStream inputStream = new FileInputStream(pom)) {
-         final MavenXpp3Reader reader = new MavenXpp3Reader();
-         model = reader.read(inputStream);
-      }
-      final List<File> modules = new LinkedList<>();
-      if (model.getModules() != null && model.getModules().size() > 0) {
-         for (final String module : model.getModules()) {
-            final File moduleFolder = new File(pom.getParentFile(), module);
-            final File modulePom = new File(moduleFolder, "pom.xml");
-            List<File> subModules = getModuleFiles(modulePom);
-            modules.addAll(subModules);
-            if (!subModules.contains(moduleFolder)) {
-               modules.add(moduleFolder);
-            }
-         }
-      } else {
-         modules.add(pom.getParentFile());
-      }
-      return modules;
-
    }
 
    public static Charset getEncoding(final Model model) {

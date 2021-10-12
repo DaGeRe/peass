@@ -31,7 +31,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>de.peass</groupId>
-			<artifactId>base-module</artifactId>
+			<artifactId>inner-module-test2</artifactId>
 			<version>0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
