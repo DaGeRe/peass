@@ -1,6 +1,7 @@
 package de.dagere.peass.config;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -155,6 +156,14 @@ public class MeasurementConfiguration implements Serializable {
 
    public boolean isSaveAll() {
       return saveAll;
+   }
+
+   public boolean isRedirectSubprocessOutputToFile() {
+      return executionConfig.isRedirectSubprocessOutputToFile();
+   }
+
+   public void setRedirectSubprocessOutputToFile(final boolean redirectSubprocesses) {
+      executionConfig.setRedirectSubprocessOutputToFile(redirectSubprocesses);
    }
 
    public void setExecuteBeforeClassInMeasurement(final boolean executeBeforeClassInMeasurement) {
@@ -312,6 +321,24 @@ public class MeasurementConfiguration implements Serializable {
 
    public void setShowStart(final boolean showStart) {
       this.showStart = showStart;
+   }
+
+   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+   public String getTestGoal() {
+      return executionConfig.getTestGoal();
+   }
+
+   public void setTestGoal(final String testGoal) {
+      executionConfig.setTestGoal(testGoal);
+   }
+
+   @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+   public List<String> getIncludes() {
+      return executionConfig.getIncludes();
+   }
+
+   public void setIncludes(final List<String> includes) {
+      executionConfig.setIncludes(includes);
    }
 
    public ExecutionConfig getExecutionConfig() {

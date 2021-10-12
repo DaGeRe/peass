@@ -18,6 +18,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.github.javaparser.ParseException;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
@@ -40,10 +41,12 @@ public class ChangeManager {
 
    private final PeassFolders folders;
    private final VersionIterator iterator;
+   private final ExecutionConfig config;
 
-   public ChangeManager(final PeassFolders folders, final VersionIterator iterator) {
+   public ChangeManager(final PeassFolders folders, final VersionIterator iterator, final ExecutionConfig config) {
       this.folders = folders;
       this.iterator = iterator;
+      this.config = config;
    }
 
    /**
@@ -55,7 +58,7 @@ public class ChangeManager {
     * @throws FileNotFoundException
     */
    private List<ChangedEntity> getChangedClasses(final String lastVersion) throws FileNotFoundException, IOException, XmlPullParserException {
-      List<File> moduleFiles = MavenPomUtil.getGenericModules(folders.getProjectFolder()).getModules();
+      List<File> moduleFiles = MavenPomUtil.getGenericModules(folders.getProjectFolder(), config).getModules();
       final VersionDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), moduleFiles, lastVersion);
       LOG.info("Changed classes: " + diff.getChangedClasses().size());
       return diff.getChangedClasses();
@@ -68,7 +71,7 @@ public class ChangeManager {
             FileUtils.deleteDirectory(folders.getOldSources());
          }
          folders.getOldSources().mkdir();
-         for (final File module : MavenPomUtil.getGenericModules(folders.getProjectFolder()).getModules()) {
+         for (final File module : MavenPomUtil.getGenericModules(folders.getProjectFolder(), config).getModules()) {
             saveModule(module);
          }
       } catch (final IOException | XmlPullParserException e) {

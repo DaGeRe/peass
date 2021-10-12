@@ -158,7 +158,7 @@ public class JmhTestExecutor extends TestExecutor {
    @Override
    public ProjectModules getModules() {
       File pomFile = new File(folders.getProjectFolder(), "pom.xml");
-      return MavenPomUtil.getModules(pomFile);
+      return MavenPomUtil.getModules(pomFile, transformer.getConfig().getExecutionConfig());
    }
 
    @Override

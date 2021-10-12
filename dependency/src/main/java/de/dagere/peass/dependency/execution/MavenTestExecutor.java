@@ -151,7 +151,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
    @Override
    public ProjectModules getModules() {
       File pomFile = new File(folders.getProjectFolder(), "pom.xml");
-      return MavenPomUtil.getModules(pomFile);
+      return MavenPomUtil.getModules(pomFile, testTransformer.getConfig().getExecutionConfig());
    }
 
    public static String[] addMavenPl(final ExecutionConfig config, final String[] original) {

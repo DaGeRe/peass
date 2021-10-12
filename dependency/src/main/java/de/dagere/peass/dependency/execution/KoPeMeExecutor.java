@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.testtransformation.JUnitTestShortener;
@@ -31,11 +30,10 @@ public abstract class KoPeMeExecutor extends TestExecutor {
 
    protected String getTestGoal() {
       String testGoal;
-      ExecutionConfig executionConfig = testTransformer.getConfig().getExecutionConfig();
       if (isAndroid) {
-         testGoal = executionConfig.getTestGoal() != null ? executionConfig.getTestGoal() : "testRelease";
+         testGoal = testTransformer.getConfig().getTestGoal() != null ? testTransformer.getConfig().getTestGoal() : "testRelease";
       } else {
-         testGoal = executionConfig.getTestGoal() != null ? executionConfig.getTestGoal() : "test";
+         testGoal = testTransformer.getConfig().getTestGoal() != null ? testTransformer.getConfig().getTestGoal() : "test";
       }
       return testGoal;
    }

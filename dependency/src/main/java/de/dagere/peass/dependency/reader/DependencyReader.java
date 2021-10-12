@@ -120,7 +120,7 @@ public class DependencyReader {
 
       dependencyResult.setUrl(url);
 
-      changeManager = new ChangeManager(folders, iterator);
+      changeManager = new ChangeManager(folders, iterator, executionConfig);
       
       if (!kiekerConfig.isUseKieker()) {
          throw new RuntimeException("Dependencies may only be read if Kieker is enabled!");

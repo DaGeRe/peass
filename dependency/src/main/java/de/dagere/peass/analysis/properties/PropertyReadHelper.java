@@ -19,6 +19,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.properties.ChangeProperty.TraceChange;
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -166,7 +167,7 @@ public class PropertyReadHelper {
       GitCommit firstCommit = new GitCommit(prevVersion, null, null, null);
       List<GitCommit> commits = Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), firstCommit });
       final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, commits, firstCommit);
-      final ChangeManager changeManager = new ChangeManager(folders, iterator);
+      final ChangeManager changeManager = new ChangeManager(folders, iterator, new ExecutionConfig());
       final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(prevVersion, version);
 
       final List<String> traceCurrent = Sequitur.getExpandedTrace(traceFileCurrent);
@@ -196,7 +197,8 @@ public class PropertyReadHelper {
 
    private void identifyAffectedClasses(final ChangeProperty property, final Set<String> calls) throws FileNotFoundException, IOException {
       try {
-         final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, MavenPomUtil.getGenericModules(projectFolder).getModules(), version);
+         List<File> modules = MavenPomUtil.getGenericModules(projectFolder, new ExecutionConfig()).getModules();
+         final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, modules, version);
          for (final Iterator<ChangedEntity> it = diff.getChangedClasses().iterator(); it.hasNext();) {
             final ChangedEntity entity = it.next();
             boolean called = false;

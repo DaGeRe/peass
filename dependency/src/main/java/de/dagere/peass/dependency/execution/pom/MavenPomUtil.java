@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -24,6 +25,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.execution.GradleParseUtil;
 import de.dagere.peass.dependency.execution.MavenTestExecutor;
 import de.dagere.peass.dependency.execution.ProjectModules;
@@ -141,13 +143,48 @@ public class MavenPomUtil {
       return modules;
    }
 
-   public static ProjectModules getModules(final File pom) {
+   public static ProjectModules getModules(final File pom, final ExecutionConfig config) {
       try {
          List<File> modules = getModuleFiles(pom);
+         if (config.getPl() != null && !"".equals(config.getPl())) {
+            List<String> includedModuleNames = getIncludedModuleNames(pom, config);
+
+            for (Iterator<File> moduleIterator = modules.iterator(); moduleIterator.hasNext();) {
+               File listFile = moduleIterator.next();
+               String fileModuleName = listFile.getName();
+               System.out.println("Name: " + fileModuleName + " " + includedModuleNames);
+               if (!includedModuleNames.contains(fileModuleName)) {
+                  moduleIterator.remove();
+               }
+            }
+         }
+
          return new ProjectModules(modules);
       } catch (IOException | XmlPullParserException e) {
          throw new RuntimeException(e);
       }
+   }
+
+   private static List<String> getIncludedModuleNames(final File pom, final ExecutionConfig config) throws IOException {
+      List<String> includedModuleNames = new LinkedList<>();
+      ProcessBuilder builder = new ProcessBuilder("mvn", "--batch-mode", "dependency:tree", "-pl", config.getPl(), "-am");
+      builder.directory(pom.getParentFile());
+      Process process = builder.start();
+      String output = StreamGobbler.getFullProcess(process, false);
+      for (String line : output.split("\n")) {
+         int atIndex = line.indexOf('@');
+         System.out.println(line + " " + atIndex);
+         if (atIndex != -1) {
+            int expectedModuleNameStart = atIndex + 2;
+            int expectedModuleNameEnd = line.lastIndexOf(' ');
+            if (expectedModuleNameEnd < expectedModuleNameStart) {
+               throw new RuntimeException("Unexpected line when reading modules: " + line);
+            }
+            String moduleName = line.substring(expectedModuleNameStart, expectedModuleNameEnd);
+            includedModuleNames.add(moduleName);
+         }
+      }
+      return includedModuleNames;
    }
 
    public static List<File> getModuleFiles(final File pom) throws FileNotFoundException, IOException, XmlPullParserException {
@@ -301,10 +338,10 @@ public class MavenPomUtil {
       return confProperty;
    }
 
-   public static ProjectModules getGenericModules(final File projectFolder) throws FileNotFoundException, IOException, XmlPullParserException {
+   public static ProjectModules getGenericModules(final File projectFolder, final ExecutionConfig config) throws FileNotFoundException, IOException, XmlPullParserException {
       final File pomXml = new File(projectFolder, "pom.xml");
       if (pomXml.exists()) {
-         return MavenPomUtil.getModules(pomXml);
+         return MavenPomUtil.getModules(pomXml, config);
       } else if (GradleParseHelper.searchGradleFiles(projectFolder).length != 0) {
          return GradleParseUtil.getModules(projectFolder);
       } else {
