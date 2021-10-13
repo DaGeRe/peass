@@ -51,6 +51,7 @@ public class Version {
       for (final TestSet current : changedClazzes.values()) {
          union.addTestSet(current);
       }
+      union.setPredecessor(predecessor);
       return union;
    }
 

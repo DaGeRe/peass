@@ -30,7 +30,9 @@ import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.analysis.properties.VersionChangeProperties;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.VersionSorter;
@@ -60,6 +62,12 @@ public class ReadProperties implements Callable<Void> {
    @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
    protected File executionFile;
 
+   @Option(names = { "-changefile", "--changefile" }, description = "Path to the changefile")
+   protected File changefile;
+   
+   @Option(names = { "-viewfolder", "--viewfolder" }, description = "Path to the viewfolder")
+   protected File viewfolder;
+
    @Option(names = { "-folder", "--folder" }, description = "Folder of the project that should be analyzed", required = true)
    protected File projectFolder;
 
@@ -88,17 +96,24 @@ public class ReadProperties implements Callable<Void> {
       if (!projectFolder.exists()) {
          GitUtils.downloadProject(VersionComparator.getDependencies().getUrl(), projectFolder);
       }
-
-      final ExecutionData changedTests = VersionSorter.executionData != null ? VersionSorter.executionData : folders.getExecutionData(projectName);
-      final File viewFolder = VersionSorter.executionData != null ? new File(executionFile.getParentFile(), "views_" + projectName) : folders.getViewFolder(projectName);
+      
+      System.out.println("Read all: " + ReadAllProperties.readAll);
       if (ReadAllProperties.readAll) {
+         final ExecutionData changedTests = VersionSorter.executionData != null ? VersionSorter.executionData : folders.getExecutionData(projectName);
          final File resultFile = new File("results" + File.separator + projectName + File.separator + "properties_alltests.json");
          out = resultFile;
          ResultsFolders resultsFolders = new ResultsFolders(out, projectName);
          final PropertyReader reader = new PropertyReader(resultsFolders, projectFolder, changedTests);
          reader.readAllTestsProperties();
       } else {
-         final File changefile = folders.getChangeFile(projectName);
+
+         final File changefile;
+         if (this.changefile != null) {
+            changefile = this.changefile;
+         } else {
+            changefile = folders.getChangeFile(projectName);
+         }
+
          // final File changefile = new File(commandLine.getOptionValue(OptionConstants.CHANGEFILE.getName()));
 
          if (out == null) {
@@ -113,12 +128,14 @@ public class ReadProperties implements Callable<Void> {
             System.exit(1);
          }
 
-         if (!viewFolder.exists()) {
-            LOG.error("ViewFolder {} needs to exist.", viewFolder);
+         if (!viewfolder.exists()) {
+            LOG.error("ViewFolder {} needs to exist.", viewfolder);
             System.exit(1);
          }
 
-         readChangeProperties(changefile, projectFolder, viewFolder, changedTests);
+         Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+         
+         readChangeProperties(changefile, projectFolder, viewfolder, new ExecutionData(dependencies));
       }
       return null;
    }
@@ -139,7 +156,8 @@ public class ReadProperties implements Callable<Void> {
             final TestSet tests = changedTests.getVersions().get(version);
             //
             final String predecessor = tests != null ? tests.getPredecessor() : version + "~1";
-            testcaseCount += detectVersionProperty(projectFolder, viewFolder, csvWriter, versionProperties, versionChanges, predecessor);
+            
+            testcaseCount += detectVersionProperty(projectFolder, viewFolder, csvWriter, versionProperties, versionChanges, predecessor, changedTests);
             if (tests == null) {
                LOG.error("Version not contained in runfile: " + version);
             }
@@ -152,7 +170,7 @@ public class ReadProperties implements Callable<Void> {
 
    private int detectVersionProperty(final File projectFolder, final File viewFolder, final BufferedWriter csvWriter,
          final VersionChangeProperties versionProperties,
-         final Entry<String, Changes> versionChanges, final String predecessor) throws IOException, JsonGenerationException, JsonMappingException {
+         final Entry<String, Changes> versionChanges, final String predecessor, final ExecutionData data) throws IOException, JsonGenerationException, JsonMappingException {
       final File methodFolder = new File(out.getParentFile(), "methods");
       methodFolder.mkdirs();
       final String version = versionChanges.getKey();
@@ -163,10 +181,16 @@ public class ReadProperties implements Callable<Void> {
       int count = 0;
       for (final Entry<String, List<Change>> changes : versionChanges.getValue().getTestcaseChanges().entrySet()) {
          final String testclazz = changes.getKey();
+         String module = null;
+         for (TestCase test : data.getVersions().get(versionChanges.getKey()).getTests()) {
+            if (test.getClazz().equals(testclazz)) {
+               module = test.getModule();
+            }
+         }
          final List<ChangeProperty> properties = new LinkedList<>();
          changeProperties.getProperties().put(testclazz, properties);
          for (final Change testcaseChange : changes.getValue()) {
-            final PropertyReadHelper reader = new PropertyReadHelper(version, predecessor, new ChangedEntity(testclazz, ""), testcaseChange, projectFolder, viewFolder,
+            final PropertyReadHelper reader = new PropertyReadHelper(version, predecessor, new ChangedEntity(testclazz, module), testcaseChange, projectFolder, viewFolder,
                   methodFolder, null);
             final ChangeProperty currentProperty = reader.read();
             // if (currentProperty != null) {

@@ -112,7 +112,7 @@ public class PropertyReadHelper {
 
    private String getShortPrevVersion() {
       // This happens for the initial version
-      if (prevVersion == null){
+      if (prevVersion == null) {
          return "";
       }
       if (prevVersion.endsWith("~1")) {
@@ -133,6 +133,8 @@ public class PropertyReadHelper {
       if (traceFileCurrent.exists() && traceFileOld.exists()) {
          analyzeTraceFiles(property, traceFileCurrent, traceFileOld);
       } else {
+         readExpandedFileTrace(folder);
+
          if (!traceFileCurrent.exists()) {
             LOG.error("Tracefile not found: {}", traceFileCurrent);
          } else {
@@ -141,6 +143,20 @@ public class PropertyReadHelper {
 
       }
 
+   }
+
+   private void readExpandedFileTrace(final File folder) throws IOException, FileNotFoundException {
+      File expandedFile = new File(folder, version.substring(0, 6) + "_method_expanded");
+      if (expandedFile.exists()) {
+         LOG.info("Reading method sources from expanded tracefile {}", expandedFile);
+         final List<String> traceCurrent = Sequitur.getExpandedTrace(expandedFile);
+         final PeassFolders folders = new PeassFolders(projectFolder);
+         
+         // Only to read old sources
+         getChanges(folders);
+         
+         readMethodSources(new ChangeProperty(), folders, new HashSet<>(traceCurrent));
+      }
    }
 
    private File searchOldTraceFile(final ChangeProperty property, File traceFileOld) {
@@ -164,11 +180,7 @@ public class PropertyReadHelper {
 
    private void analyzeTraceFiles(final ChangeProperty property, final File traceFileCurrent, final File traceFileOld) throws IOException, FileNotFoundException {
       final PeassFolders folders = new PeassFolders(projectFolder);
-      GitCommit firstCommit = new GitCommit(prevVersion, null, null, null);
-      List<GitCommit> commits = Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), firstCommit });
-      final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, commits, firstCommit);
-      final ChangeManager changeManager = new ChangeManager(folders, iterator, new ExecutionConfig());
-      final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(prevVersion, version);
+      final Map<ChangedEntity, ClazzChangeData> changes = getChanges(folders);
 
       final List<String> traceCurrent = Sequitur.getExpandedTrace(traceFileCurrent);
       final List<String> traceOld = Sequitur.getExpandedTrace(traceFileOld);
@@ -183,6 +195,15 @@ public class PropertyReadHelper {
       LOG.info("Calls: " + merged);
 
       getTestSourceAffection(property, merged, folders, changes);
+   }
+
+   private Map<ChangedEntity, ClazzChangeData> getChanges(final PeassFolders folders) {
+      GitCommit firstCommit = new GitCommit(prevVersion, null, null, null);
+      List<GitCommit> commits = Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), firstCommit });
+      final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, commits, firstCommit);
+      final ChangeManager changeManager = new ChangeManager(folders, iterator, new ExecutionConfig());
+      final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(prevVersion, version);
+      return changes;
    }
 
    private void readMethodSources(final ChangeProperty property, final PeassFolders folders, final Set<String> merged) throws FileNotFoundException, IOException {

@@ -33,7 +33,8 @@ public class ExecutionData extends SelectedTests {
    public ExecutionData(final Dependencies dependencies) {
       setUrl(dependencies.getUrl());
       for (Map.Entry<String, Version> version : dependencies.getVersions().entrySet()) {
-         versions.put(version.getKey(), version.getValue().getTests());
+         TestSet tests = version.getValue().getTests();
+         versions.put(version.getKey(), tests);
       }
    }
    
