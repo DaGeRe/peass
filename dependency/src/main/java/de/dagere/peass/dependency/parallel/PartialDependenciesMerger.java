@@ -70,15 +70,20 @@ public class PartialDependenciesMerger {
             return indexOf - indexOf2;
          }
       });
-      Dependencies merged = deps.get(0);
-      if (deps.size() > 1) {
-         for (int i = 1; i < deps.size(); i++) {
-            final Dependencies newMergeDependencies = deps.get(i);
-            LOG.debug("Merge: {} Vals: {}", i, newMergeDependencies.getVersionNames());
-            if (newMergeDependencies != null) {
-               merged = DependencyReaderUtil.mergeDependencies(merged, newMergeDependencies);
+      Dependencies merged;
+      if (deps.size() > 0) {
+         merged = deps.get(0);
+         if (deps.size() > 1) {
+            for (int i = 1; i < deps.size(); i++) {
+               final Dependencies newMergeDependencies = deps.get(i);
+               LOG.debug("Merge: {} Vals: {}", i, newMergeDependencies.getVersionNames());
+               if (newMergeDependencies != null) {
+                  merged = DependencyReaderUtil.mergeDependencies(merged, newMergeDependencies);
+               }
             }
          }
+      } else {
+         merged = new Dependencies();
       }
       return merged;
    }
@@ -105,7 +110,7 @@ public class PartialDependenciesMerger {
             if (resultFolder.getCoverageSelectionFile() != null && resultFolder.getCoverageSelectionFile().exists()) {
                coverageSelectionOutFiles.add(resultFolder.getCoverageSelectionFile());
             }
-            
+
          }
       }
       ExecutionData mergedExecutions = mergeExecutionFiles(executionOutFiles);

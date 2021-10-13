@@ -95,6 +95,12 @@ public class TestVersionSplitting {
          }
       }
    }
+   
+   @Test
+   public void testEmptyMerging() {
+      Dependencies merged = PartialDependenciesMerger.mergeDependencies(new LinkedList<>());
+      Assert.assertEquals(0, merged.getVersions().size());
+   }
 
    @Test
    public void testSplitting() throws IOException {
