@@ -10,7 +10,7 @@
     <dependency>
       <groupId>de.dagere.kopeme</groupId>
       <artifactId>kopeme-junit</artifactId>
-      <version>0.14-SNAPSHOT</version>
+      <version>0.15-SNAPSHOT</version>
       <scope></scope>
     </dependency>
     <dependency>
@@ -22,14 +22,14 @@
     <dependency>
       <groupId>net.kieker-monitoring</groupId>
       <artifactId>kieker</artifactId>
-      <version>1.15-SNAPSHOT</version>
+      <version>1.15</version>
       <classifier>jar</classifier>
       <scope></scope>
     </dependency>
     <dependency>
       <groupId>net.kieker-monitoring</groupId>
       <artifactId>kieker</artifactId>
-      <version>1.15-SNAPSHOT</version>
+      <version>1.15</version>
       <classifier>aspectj</classifier>
       <scope></scope>
     </dependency>
@@ -52,7 +52,7 @@
           <forkCount>1</forkCount>
           <reuseForks>false</reuseForks>
           <runOrder>alphabetical</runOrder>
-          <argLine>-javaagent:${user.home}/.m2/repository/net/kieker-monitoring/kieker/1.15-SNAPSHOT/kieker-1.15-SNAPSHOT-aspectj.jar -Dkieker.monitoring.configuration="src/main/resources/META-INF/kieker.monitoring.properties"</argLine>
+          <argLine>-javaagent:${user.home}/.m2/repository/net/kieker-monitoring/kieker/1.15-SNAPSHOT/kieker-1.15-aspectj.jar -Dkieker.monitoring.configuration="src/main/resources/META-INF/kieker.monitoring.properties"</argLine>
         </configuration>
       </plugin>
     </plugins>

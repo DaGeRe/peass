@@ -11,7 +11,7 @@
     <dependency>
       <groupId>de.dagere.kopeme</groupId>
       <artifactId>kopeme-junit</artifactId>
-      <version>0.14</version>
+      <version>0.15-SNAPSHOT</version>
     </dependency>
   </dependencies>
 </project>
