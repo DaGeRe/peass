@@ -24,14 +24,15 @@ public enum ModuleInfoEditor {
       CompilationUnit unit = JavaParserProvider.parse(moduleInfoFile);
       ModuleDeclaration module = unit.getModule().get();
 
-      addRequiresKieker(module);
+      addRequires(module, "kieker");
+      addRequires(module, "kopeme.core"); // only needed until Kieker contains the DurationRecord
 
       Files.write(moduleInfoFile.toPath(), unit.toString().getBytes(StandardCharsets.UTF_8));
    }
 
-   private static void addRequiresKieker(final ModuleDeclaration module) {
-      ModuleRequiresDirective kiekerRequirement = new ModuleRequiresDirective();
-      kiekerRequirement.setName("kieker");
-      module.getDirectives().add(kiekerRequirement);
+   private static void addRequires(final ModuleDeclaration module, final String name) {
+      ModuleRequiresDirective requirement = new ModuleRequiresDirective();
+      requirement.setName(name);
+      module.getDirectives().add(requirement);
    }
 }
