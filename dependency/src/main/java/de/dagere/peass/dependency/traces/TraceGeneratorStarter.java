@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.dependency.KiekerResultManager;
@@ -55,6 +56,8 @@ public class TraceGeneratorStarter implements Callable<Void> {
       commandLine.execute(args);
    }
 
+   private ModuleClassMapping mapping;
+
    @Override
    public Void call() throws Exception {
       Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
@@ -63,11 +66,16 @@ public class TraceGeneratorStarter implements Callable<Void> {
       Version version = dependencies.getVersions().get(newestVersion);
       TestSet tests = version.getTests();
 
+      ExecutionConfig executionConfig = new ExecutionConfig(executionMixin);
+      NonIncludedTestRemover.removeNotIncluded(tests, executionConfig);
+
       GitUtils.reset(projectFolder);
       PeassFolders folders = new PeassFolders(projectFolder);
-      
-      KiekerResultManager resultsManager = runTests(newestVersion, tests, folders);
 
+      KiekerResultManager resultsManager = runTests(newestVersion, tests, folders, executionConfig);
+
+      LOG.info("Analyzing tests: {}", tests.getTests());
+      mapping = new ModuleClassMapping(folders.getProjectFolder(), resultsManager.getExecutor().getModules());
       for (TestCase testcase : tests.getTests()) {
          writeTestcase(newestVersion, folders, resultsManager, testcase);
       }
@@ -75,9 +83,9 @@ public class TraceGeneratorStarter implements Callable<Void> {
       return null;
    }
 
-   private KiekerResultManager runTests(final String newestVersion, final TestSet tests, final PeassFolders folders) throws IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
-      ExecutionConfig executionConfig = new ExecutionConfig(executionMixin);
-
+   private KiekerResultManager runTests(final String newestVersion, final TestSet tests, final PeassFolders folders, final ExecutionConfig executionConfig)
+         throws IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException,
+         InvocationTargetException, NoSuchMethodException, SecurityException {
       KiekerResultManager resultsManager = new KiekerResultManager(folders, executionConfig, new KiekerConfiguration(true), new EnvironmentVariables());
       resultsManager.executeKoPeMeKiekerRun(tests, newestVersion, folders.getDependencyLogFolder());
       return resultsManager;
@@ -93,7 +101,6 @@ public class TraceGeneratorStarter implements Callable<Void> {
 
       if (sizeInMB < CalledMethodLoader.TRACE_MAX_SIZE_IN_MB) {
          LOG.debug("Writing " + testcase);
-         final ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), resultsManager.getExecutor().getModules());
          final List<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, mapping).getShortTrace("");
 
          writeTrace(newestVersion, testcase, shortTrace);
