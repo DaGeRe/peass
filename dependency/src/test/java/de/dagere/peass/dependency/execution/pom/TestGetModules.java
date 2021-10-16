@@ -54,8 +54,6 @@ public class TestGetModules {
       Assert.assertEquals(2, modules.getModules().size());
    }
 
-   // Currently, reading dependencies of inner modules with pl does not fully work
-//   @Disabled
    @Test
    public void testOtherPl2() {
       File pomFile = new File("src/test/resources/maven-multimodule-pl-example/basic_state/pom.xml");
@@ -65,7 +63,6 @@ public class TestGetModules {
       Assert.assertEquals(3, modules.getModules().size());
    }
    
-//   @Disabled
    @Test
    public void testOtherPlUsing() {
       File pomFile = new File("src/test/resources/maven-multimodule-pl-example/basic_state/pom.xml");
