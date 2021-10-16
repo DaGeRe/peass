@@ -9,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.peass.measurement.analysis.MultipleVMTestUtil;
 import de.dagere.peass.statistics.StatisticUtil;
 
 public class DescribedChunk {
@@ -21,14 +22,9 @@ public class DescribedChunk {
    private final List<Result> current = new LinkedList<>();
 
    public DescribedChunk(final Chunk chunk, final String versionPrevious, final String versionCurrent) {
-      long minRepetitions = Long.MAX_VALUE, minIterations = Long.MAX_VALUE;
+      long minRepetitions = MultipleVMTestUtil.getMinRepetitionCount(chunk.getResult());
+      long minIterations = MultipleVMTestUtil.getMinIterationCount(chunk.getResult());
       
-      for (final Result result : chunk.getResult()) {
-         if (!Double.isNaN(result.getValue())) {
-            minRepetitions = Math.min(minRepetitions, result.getRepetitions());
-            minIterations = Math.min(minIterations, result.getIterations());
-         }
-      }
       LOG.info("Repetitions: " + minRepetitions + " Iterations: " + minIterations);
       
       for (final Result result : chunk.getResult()) {
