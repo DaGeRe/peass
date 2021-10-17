@@ -63,7 +63,8 @@ public class TestDependencies {
          final ChangedEntity onlyClass = new ChangedEntity(test.getClazz(), test.getModule());
          final HashSet<String> calledMethods = new HashSet<>();
          tests.getCalledMethods().put(onlyClass, calledMethods);
-         calledMethods.add(test.getMethod());
+         String method = test.getMethod() + test.getParameterString();
+         calledMethods.add(method);
       }
       return tests.getCalledMethods();
    }

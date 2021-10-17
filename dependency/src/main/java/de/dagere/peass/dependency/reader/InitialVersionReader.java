@@ -127,7 +127,8 @@ public class InitialVersionReader {
          methods = new HashSet<>();
          testDependencies.put(dependencyEntity, methods);
       }
-      methods.add(dependentClass.getMethod());
+      String method = dependentClass.getMethod() + dependentClass.getParameterString();
+      methods.add(method);
    }
    
    private void checkCorrectness() {

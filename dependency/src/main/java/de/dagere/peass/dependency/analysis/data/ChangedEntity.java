@@ -283,14 +283,14 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    }
 
    public void createParameters(final String parameterString) {
-      LOG.debug("Creating parameters: {}", parameterString); // TODO trace
+      LOG.trace("Creating parameters: {}", parameterString); // TODO trace
       String cleanParameters = parameterString.replaceAll(" ", "").replaceAll("\\(", "").replaceAll("\\)", "");
       if (parameterString.contains("<")) {
          addParameterWithGenerics(cleanParameters);
       } else {
          addGenericFreePart(cleanParameters);
       }
-      LOG.debug("Parameters parsed: {}", parameters); // TODO trace
+      LOG.trace("Parameters parsed: {}", parameters); // TODO trace
    }
 
    private void addParameterWithGenerics(final String parameterString) {
