@@ -45,4 +45,15 @@ public class TestKoPeMeResultTransformation {
       Assert.assertEquals(0.003, convertedNode.getStatistic().getMeanCurrent(), DELTA);
       Assert.assertEquals(0.004, convertedNode.getStatistic().getMeanOld(), DELTA);
    }
+   
+   @Test
+   public void testWrongName() throws JAXBException {
+      final TestCase testcase = new TestCase("com.example.android_example.ExampleUnitTest", "test_TestMe");
+      PeassFolders folders = new PeassFolders(new File("src/test/resources/visualization/project_wrong"));
+      KoPeMeTreeConverter converter = new KoPeMeTreeConverter(folders.getDetailResultFolder(), "7675e29a368e5ac051e76c145e84c80af7ae1e88", testcase);
+      GraphNode convertedNode = converter.getData();
+
+      Assert.assertEquals(0.003, convertedNode.getStatistic().getMeanCurrent(), DELTA);
+      Assert.assertEquals(0.004, convertedNode.getStatistic().getMeanOld(), DELTA);
+   }
 }

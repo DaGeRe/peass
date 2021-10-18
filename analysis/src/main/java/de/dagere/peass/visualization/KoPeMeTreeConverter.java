@@ -12,6 +12,8 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
@@ -29,13 +31,14 @@ import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
  */
 public class KoPeMeTreeConverter {
 
+   private static final Logger LOG = LogManager.getLogger(KoPeMeTreeConverter.class);
+
    public static final int NANO_TO_MICRO = 1000;
    private final GraphNode node;
    private int calls = 0, callsOld = 0;
    private final DescriptiveStatistics statisticsCurrent = new DescriptiveStatistics();
    private final DescriptiveStatistics statisticsOld = new DescriptiveStatistics();
 
-   
    public KoPeMeTreeConverter(final CauseSearchFolders folders, final String version, final TestCase testcase) throws JAXBException {
       node = new GraphNode("overall", "public overall.overall()", "public overall.overall()");
       node.setVmValues(new MeasuredValues());
@@ -47,7 +50,7 @@ public class KoPeMeTreeConverter {
    public KoPeMeTreeConverter(final PeassFolders folders, final String version, final TestCase testcase) throws JAXBException {
       this(folders.getDetailResultFolder(), version, testcase);
    }
-   
+
    public KoPeMeTreeConverter(final File detailResultFolder, final String version, final TestCase testcase) throws JAXBException {
       File versionFolder = new File(detailResultFolder, testcase.getClazz() + File.separator + version);
       if (versionFolder.exists()) {
@@ -56,7 +59,7 @@ public class KoPeMeTreeConverter {
          node.setVmValuesPredecessor(new MeasuredValues());
          for (File measuredVersionFolder : versionFolder.listFiles()) {
             for (File xmlFolder : measuredVersionFolder.listFiles((FileFilter) new WildcardFileFilter(testcase.getMethod() + "*xml"))) {
-               
+
                readFile(version, testcase, measuredVersionFolder.getName(), xmlFolder);
             }
          }
@@ -85,16 +88,20 @@ public class KoPeMeTreeConverter {
    private void readFile(final String version, final TestCase testcase, final String currentVersion, final File kopemeFile)
          throws JAXBException {
       String stringIndex = kopemeFile.getName().substring(testcase.getMethod().length() + 1, kopemeFile.getName().lastIndexOf('_'));
-      int index = Integer.parseInt(stringIndex);
-      Kopemedata data = XMLDataLoader.loadData(kopemeFile);
-      final Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
-      if (datacollector.getChunk().size() > 0) {
-         for (Result result : datacollector.getChunk().get(0).getResult()) {
+      if (!stringIndex.matches("[0-9]+")) {
+         LOG.error("Could not read file: {}", kopemeFile);
+      } else {
+         int index = Integer.parseInt(stringIndex);
+         Kopemedata data = XMLDataLoader.loadData(kopemeFile);
+         final Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
+         if (datacollector.getChunk().size() > 0) {
+            for (Result result : datacollector.getChunk().get(0).getResult()) {
+               readResult(version, currentVersion, result, index);
+            }
+         }
+         for (Result result : datacollector.getResult()) {
             readResult(version, currentVersion, result, index);
          }
-      }
-      for (Result result : datacollector.getResult()) {
-         readResult(version, currentVersion, result, index);
       }
    }
 
