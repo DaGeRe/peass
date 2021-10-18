@@ -6,8 +6,8 @@
     <result cpu="model name : Intel(R) Core(TM) i7-6700 CPU @ 3.40GHz" memory="MemTotal: 16303044 kB" date="1609771914689">
      <value>30</value>
      <deviation>0.11665719638679317</deviation>
-     <warmupExecutions>10</warmupExecutions>
-     <executionTimes>10</executionTimes>
+     <warmup>10</warmup>
+     <iterations>10</iterations>
      <repetitions>10</repetitions>
      <min>659279.0</min>
      <max>1077870.0</max>
