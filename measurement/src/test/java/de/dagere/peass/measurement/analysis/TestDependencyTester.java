@@ -54,7 +54,7 @@ public class TestDependencyTester {
    }
 
    public static void checkResult(final PeassFolders folders) throws JAXBException {
-      final File expectedShortresultFile = new File(folders.getFullMeasurementFolder(), EXAMPLE_TESTCASE.getShortClazz() + "_" + EXAMPLE_TESTCASE.getMethod() + ".xml");
+      final File expectedShortresultFile = folders.getFullSummaryFile(EXAMPLE_TESTCASE);
       Assert.assertTrue(expectedShortresultFile.exists());
 
       final Kopemedata data = XMLDataLoader.loadData(expectedShortresultFile);

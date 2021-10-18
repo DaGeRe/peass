@@ -176,6 +176,10 @@ public class PeassFolders {
    public File getFullMeasurementFolder() {
       return fullResultFolder;
    }
+   
+   public File getProgressFile() {
+      return new File(fullResultFolder, "progress.txt");
+   }
 
    public File getTempMeasurementFolder() {
       return tempResultFolder;

@@ -63,7 +63,7 @@ public class DependencyTester implements KiekerResultHandler {
       initEvaluation(testcase);
 
       final File logFolder = folders.getMeasureLogFolder(configuration.getExecutionConfig().getVersion(), testcase);
-      try (ProgressWriter writer = new ProgressWriter(new File(folders.getFullMeasurementFolder(), "progress.txt"), configuration.getVms())) {
+      try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())) {
          evaluateSimple(testcase, logFolder, writer);
       }
    }

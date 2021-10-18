@@ -41,8 +41,9 @@ public class GradleBuildfileEditor {
             boolean isUseJava = isParentUseJava(buildfile, modules);
             if (isUseJava) {
                editGradlefileContents(tempFolder, visitor);
+            } else {
+               LOG.info("Parent buildfile did not contain java; not changing buildfile");
             }
-
          }
 
          LOG.debug("Writing changed buildfile: {}", buildfile.getAbsolutePath());

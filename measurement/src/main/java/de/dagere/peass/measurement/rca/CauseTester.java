@@ -87,7 +87,7 @@ public class CauseTester extends AdaptiveTester {
 
       final File logFolder = folders.getRCALogFolder(configuration.getExecutionConfig().getVersion(), testcase, levelId);
       
-      try (ProgressWriter writer = new ProgressWriter(new File(folders.getFullMeasurementFolder(), "progress.txt"), configuration.getVms())){
+      try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())){
          evaluateWithAdaption(testcase, logFolder, writer);
       }
    }
