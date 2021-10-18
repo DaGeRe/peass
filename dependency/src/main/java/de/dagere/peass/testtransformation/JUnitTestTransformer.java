@@ -146,7 +146,7 @@ public class JUnitTestTransformer implements TestTransformer {
             if (testFolder.exists()) {
                determineVersions(testFolder);
             } else {
-               LOG.debug("Test folder {} does not exist", testFolder.getAbsolutePath());
+               LOG.trace("Test folder {} does not exist", testFolder.getAbsolutePath());
             }
          }
       }
