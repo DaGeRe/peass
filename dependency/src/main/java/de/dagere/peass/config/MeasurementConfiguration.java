@@ -24,6 +24,7 @@ public class MeasurementConfiguration implements Serializable {
    private boolean logFullData = true;
    private boolean useGC = true;
    private boolean executeBeforeClassInMeasurement = false;
+   private boolean onlyMeasureWorkload = false;
    private boolean showStart = false;
    private boolean redirectToNull = true;
 
@@ -138,6 +139,7 @@ public class MeasurementConfiguration implements Serializable {
       this.measurementStrategy = other.measurementStrategy;
       this.saveAll = other.saveAll;
       this.executeBeforeClassInMeasurement = other.executeBeforeClassInMeasurement;
+      this.onlyMeasureWorkload = other.onlyMeasureWorkload;
       this.showStart = other.showStart;
    }
 
@@ -163,6 +165,14 @@ public class MeasurementConfiguration implements Serializable {
 
    public boolean isExecuteBeforeClassInMeasurement() {
       return executeBeforeClassInMeasurement;
+   }
+   
+   public void setOnlyMeasureWorkload(final boolean onlyMeasureWorkload) {
+      this.onlyMeasureWorkload = onlyMeasureWorkload;
+   }
+   
+   public boolean isOnlyMeasureWorkload() {
+      return onlyMeasureWorkload;
    }
 
    /**

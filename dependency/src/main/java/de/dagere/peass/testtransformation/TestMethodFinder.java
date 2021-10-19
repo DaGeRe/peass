@@ -29,6 +29,38 @@ public class TestMethodFinder {
       return testMethods;
    }
    
+   public static List<MethodDeclaration> findBeforeMethods(final ClassOrInterfaceDeclaration clazz){
+      String[] annotations = new String[] {"org.junit.Before", "Before", "org.junit.jupiter.api.BeforeEach", "BeforeEach"};
+      List<MethodDeclaration> beforeMethods = findAnnotation(clazz, annotations);
+      return beforeMethods;
+   }
+   
+   public static List<MethodDeclaration> findAfterMethods(final ClassOrInterfaceDeclaration clazz){
+      String[] annotations = new String[] {"org.junit.After", "After", "org.junit.jupiter.api.AfterEach", "AfterEach"};
+      List<MethodDeclaration> beforeMethods = findAnnotation(clazz, annotations);
+      return beforeMethods;
+   }
+
+   private static List<MethodDeclaration> findAnnotation(final ClassOrInterfaceDeclaration clazz, final String[] annotations) {
+      List<MethodDeclaration> annotatedMethods = new LinkedList<>();
+      for (final MethodDeclaration method : clazz.getMethods()) {
+         boolean beforeFound = false;
+         for (final AnnotationExpr annotation : method.getAnnotations()) {
+            final String currentName = annotation.getNameAsString();
+            for (String searchedAnnotation : annotations) {
+               if (currentName.equals(searchedAnnotation)) {
+                  beforeFound = true;
+               }
+            }
+         }
+         
+         if (beforeFound) {
+            annotatedMethods.add(method);
+         }
+      }
+      return annotatedMethods;
+   }
+   
    public static List<MethodDeclaration> findJUnit4TestMethods(final ClassOrInterfaceDeclaration clazz) {
       List<MethodDeclaration> testMethods = new LinkedList<>();
       for (final MethodDeclaration method : clazz.getMethods()) {

@@ -491,6 +491,11 @@ public class JUnitTestTransformer implements TestTransformer {
 
       List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit5TestMethods(clazz);
       prepareTestMethods(testMethods);
+      
+      if (config.isOnlyMeasureWorkload()) {
+         transformBefore(clazz);
+         transformAfter(clazz);
+      }
    }
 
    void editJUnit4(final CompilationUnit unit) {
@@ -509,6 +514,31 @@ public class JUnitTestTransformer implements TestTransformer {
 
       List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit4TestMethods(clazz);
       prepareTestMethods(testMethods);
+      
+      if (config.isOnlyMeasureWorkload()) {
+         transformBefore(clazz);
+         transformAfter(clazz);
+      }
+   }
+
+   private void transformBefore(final ClassOrInterfaceDeclaration clazz) {
+      List<MethodDeclaration> beforeMethods = TestMethodFinder.findBeforeMethods(clazz);
+      transformMethodAnnotations(beforeMethods, "de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement");
+   }
+   
+   private void transformAfter(final ClassOrInterfaceDeclaration clazz) {
+      List<MethodDeclaration> beforeMethods = TestMethodFinder.findAfterMethods(clazz);
+      transformMethodAnnotations(beforeMethods, "de.dagere.kopeme.junit.rule.annotations.AfterNoMeasurement");
+   }
+
+   private void transformMethodAnnotations(final List<MethodDeclaration> beforeMethods, final String name) {
+      for (MethodDeclaration method : beforeMethods) {
+         final NormalAnnotationExpr beforeNoMeasurementAnnotation = new NormalAnnotationExpr();
+         
+         beforeNoMeasurementAnnotation.setName(name);
+         method.setAnnotation(0, beforeNoMeasurementAnnotation);
+         
+      }
    }
 
    private void prepareTestMethods(final List<MethodDeclaration> testMethods) {
