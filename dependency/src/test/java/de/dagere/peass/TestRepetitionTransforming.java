@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.codehaus.plexus.util.FileUtils;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -61,8 +62,8 @@ public class TestRepetitionTransforming {
 
       Assert.assertEquals("KoPeMeTestcase", clazz.getExtendedTypes(0).getName().getIdentifier());
 
-      Assert.assertThat(clazz.getMethodsByName("getWarmup"), Matchers.hasSize(1));
-      Assert.assertThat(clazz.getMethodsByName("getIterations"), Matchers.hasSize(1));
+      MatcherAssert.assertThat(clazz.getMethodsByName("getWarmup"), Matchers.hasSize(1));
+      MatcherAssert.assertThat(clazz.getMethodsByName("getIterations"), Matchers.hasSize(1));
 
    }
 
@@ -82,16 +83,16 @@ public class TestRepetitionTransforming {
       Assert.assertNotNull(clazz);
 
       final List<MethodDeclaration> methodsByName = clazz.getMethodsByName("testMethod1");
-      Assert.assertThat(methodsByName, Matchers.hasSize(1));
+      MatcherAssert.assertThat(methodsByName, Matchers.hasSize(1));
 
       final MethodDeclaration testMethod = methodsByName.get(0);
 
       final AnnotationExpr performanceTestAnnotation = testMethod.getAnnotationByName("PerformanceTest").get();
       Assert.assertNotNull(performanceTestAnnotation);
 
-      Assert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("iterations"));
-      Assert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("repetitions"));
-      Assert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("warmup"));
+      MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("iterations"));
+      MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("repetitions"));
+      MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("warmup"));
 
       for (final Node n : performanceTestAnnotation.getChildNodes()) {
          System.out.println(n);
@@ -114,7 +115,7 @@ public class TestRepetitionTransforming {
       Assert.assertNotNull(clazz);
 
       final List<MethodDeclaration> methodsByName = clazz.getMethodsByName("testMethod1");
-      Assert.assertThat(methodsByName, Matchers.hasSize(1));
+      MatcherAssert.assertThat(methodsByName, Matchers.hasSize(1));
 
       final MethodDeclaration testMethod = methodsByName.get(0);
 
