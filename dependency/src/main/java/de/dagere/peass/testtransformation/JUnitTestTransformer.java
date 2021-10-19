@@ -152,6 +152,10 @@ public class JUnitTestTransformer implements TestTransformer {
       }
    }
    
+   public Map<File, Integer> getJunitVersions() {
+      return junitVersions;
+   }
+   
    @Override
    public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules) {
       determineVersions(modules.getModules());
@@ -218,8 +222,9 @@ public class JUnitTestTransformer implements TestTransformer {
       }
       LOG.trace("Searching: {}", projectFolder);
 
-      LOG.debug("JUnit Versions Determined");
+      LOG.debug("JUnit Versions Determined: {}", junitVersions.size());
       for (final Map.Entry<File, Integer> fileVersionEntry : junitVersions.entrySet()) {
+         LOG.debug("Editing test file: {} {}", fileVersionEntry.getKey(), fileVersionEntry.getValue()); // TODO change to trace
          if (fileVersionEntry.getValue() == 3) {
             editJUnit3(fileVersionEntry.getKey());
          } else if (fileVersionEntry.getValue() == 4 || fileVersionEntry.getValue() == 34) {
