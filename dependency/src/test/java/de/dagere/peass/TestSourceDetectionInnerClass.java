@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;

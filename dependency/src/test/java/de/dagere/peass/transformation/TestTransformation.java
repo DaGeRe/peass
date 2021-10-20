@@ -32,10 +32,9 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
@@ -56,8 +55,8 @@ import de.dagere.peass.testtransformation.JUnitTestTransformer;
  */
 public class TestTransformation {
 
-   @ClassRule
-   public static TemporaryFolder testFolder = new TemporaryFolder();
+   @TempDir
+   public static File testFolder;
 
    private static final URL SOURCE = Thread.currentThread().getContextClassLoader().getResource("transformation");
    private static File RESOURCE_FOLDER;
@@ -65,11 +64,11 @@ public class TestTransformation {
 
    private File testFile;
 
-   @BeforeClass
+   @BeforeAll
    public static void initFolder() throws URISyntaxException, IOException {
       RESOURCE_FOLDER = Paths.get(SOURCE.toURI()).toFile();
-      SOURCE_FOLDER = new File(testFolder.getRoot(), "src/test/java");
-      FileUtils.copyFile(new File(RESOURCE_FOLDER, "pom.xml"), new File(testFolder.getRoot(), "pom.xml"));
+      SOURCE_FOLDER = new File(testFolder, "src/test/java");
+      FileUtils.copyFile(new File(RESOURCE_FOLDER, "pom.xml"), new File(testFolder, "pom.xml"));
    }
 
    @Test
@@ -79,8 +78,8 @@ public class TestTransformation {
       testFile = new File(SOURCE_FOLDER, "TestMe1.java");
       FileUtils.copyFile(old, testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
-      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
       final CompilationUnit cu = JavaParserProvider.parse(testFile);
@@ -100,8 +99,8 @@ public class TestTransformation {
       testFile = new File(SOURCE_FOLDER, "TestMe6.java");
       FileUtils.copyFile(old, testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
-      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
       final CompilationUnit cu = JavaParserProvider.parse(testFile);
@@ -126,8 +125,8 @@ public class TestTransformation {
       final File goal = new File(SOURCE_FOLDER, "MySuper.java");
       FileUtils.copyFile(superClass, goal);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
-      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
       final CompilationUnit cu = JavaParserProvider.parse(testFile);
@@ -147,8 +146,8 @@ public class TestTransformation {
       testFile = new File(SOURCE_FOLDER, "TestMe2.java");
       FileUtils.copyFile(old2, testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
-      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
       final CompilationUnit cu = JavaParserProvider.parse(testFile);
@@ -179,8 +178,8 @@ public class TestTransformation {
       FileUtils.copyFile(old, testFile);
       System.out.println(testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
-      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
       Assert.assertFalse(FileUtils.contentEquals(old, testFile));
@@ -193,8 +192,8 @@ public class TestTransformation {
       FileUtils.copyFile(old, testFile);
       System.out.println(testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
-      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
       Assert.assertTrue(FileUtils.contentEquals(old, testFile));
@@ -207,8 +206,8 @@ public class TestTransformation {
       FileUtils.copyFile(old, testFile);
       System.out.println(testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
-      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
       Assert.assertFalse(FileUtils.contentEquals(old, testFile));

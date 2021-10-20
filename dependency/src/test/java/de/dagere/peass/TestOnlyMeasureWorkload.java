@@ -14,10 +14,9 @@ import org.codehaus.plexus.util.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -30,18 +29,18 @@ import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestOnlyMeasureWorkload {
 
-   @ClassRule
-   public static TemporaryFolder testFolder = new TemporaryFolder(new File("target"));
+   @TempDir
+   public static File testFolder;
 
    private static final URL SOURCE = Thread.currentThread().getContextClassLoader().getResource("transformation");
    private static File RESOURCE_FOLDER;
    private static File SOURCE_FOLDER;
 
-   @BeforeClass
+   @BeforeAll
    public static void initFolder() throws URISyntaxException, IOException {
       RESOURCE_FOLDER = Paths.get(SOURCE.toURI()).toFile();
-      SOURCE_FOLDER = new File(testFolder.getRoot(), "src" + File.separator + "test" + File.separator + "java");
-      FileUtils.copyFile(new File(RESOURCE_FOLDER, "pom.xml"), new File(testFolder.getRoot(), "pom.xml"));
+      SOURCE_FOLDER = new File(testFolder, "src" + File.separator + "test" + File.separator + "java");
+      FileUtils.copyFile(new File(RESOURCE_FOLDER, "pom.xml"), new File(testFolder, "pom.xml"));
    }
 
    @Test
@@ -84,8 +83,8 @@ public class TestOnlyMeasureWorkload {
       MeasurementConfiguration config = new MeasurementConfiguration(2);
       config.setOnlyMeasureWorkload(true);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), config);
-      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, config);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
       final CompilationUnit cu = JavaParserProvider.parse(testFile);

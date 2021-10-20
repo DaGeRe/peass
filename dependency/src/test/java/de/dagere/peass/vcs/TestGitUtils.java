@@ -9,8 +9,8 @@ import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
@@ -23,7 +23,7 @@ public class TestGitUtils {
 
    private static final File exampleTextFile = new File(PROJECT_FOLDER, "file.txt");
 
-   @Before
+   @BeforeEach
    public void prepareProject() throws InterruptedException, IOException {
       TestUtil.deleteContents(PROJECT_FOLDER);
       PROJECT_FOLDER.mkdirs();
@@ -84,7 +84,7 @@ public class TestGitUtils {
 
       // Current linearization produces 7, 8, 10 or 11 commits based on hashes; every of these linearizations is ok (it just should not be 13)
       List<GitCommit> commitsLinear = GitUtils.getCommits(PROJECT_FOLDER, false, true, false);
-      Assert.assertThat(commitsLinear.size(), Matchers.anyOf(Matchers.is(7), Matchers.is(8), Matchers.is(10), Matchers.is(11)));
+      MatcherAssert.assertThat(commitsLinear.size(), Matchers.anyOf(Matchers.is(7), Matchers.is(8), Matchers.is(10), Matchers.is(11)));
    }
 
    private void createMergeCommit(final File exampleTextFile, final int index) throws InterruptedException, IOException {

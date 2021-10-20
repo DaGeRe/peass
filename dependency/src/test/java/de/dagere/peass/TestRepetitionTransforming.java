@@ -12,10 +12,9 @@ import org.codehaus.plexus.util.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
@@ -31,18 +30,18 @@ import de.dagere.peass.testtransformation.ParseUtil;
 import de.dagere.peass.transformation.TestTransformation;
 
 public class TestRepetitionTransforming {
-   @ClassRule
-   public static TemporaryFolder testFolder = new TemporaryFolder(new File("target"));
+   @TempDir
+   public static File testFolder;
 
    private static final URL SOURCE = Thread.currentThread().getContextClassLoader().getResource("transformation");
    private static File RESOURCE_FOLDER;
    private static File SOURCE_FOLDER;
 
-   @BeforeClass
+   @BeforeAll
    public static void initFolder() throws URISyntaxException, IOException {
       RESOURCE_FOLDER = Paths.get(SOURCE.toURI()).toFile();
-      SOURCE_FOLDER = new File(testFolder.getRoot(), "src" + File.separator + "test" + File.separator + "java");
-      FileUtils.copyFile(new File(RESOURCE_FOLDER, "pom.xml"), new File(testFolder.getRoot(), "pom.xml"));
+      SOURCE_FOLDER = new File(testFolder, "src" + File.separator + "test" + File.separator + "java");
+      FileUtils.copyFile(new File(RESOURCE_FOLDER, "pom.xml"), new File(testFolder, "pom.xml"));
    }
 
    @Test
@@ -51,8 +50,8 @@ public class TestRepetitionTransforming {
       final File testFile = new File(SOURCE_FOLDER, "TestMe1.java");
       FileUtils.copyFile(old, testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
-      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
       final CompilationUnit cu = JavaParserProvider.parse(testFile);
@@ -73,8 +72,8 @@ public class TestRepetitionTransforming {
       final File testFile2 = new File(SOURCE_FOLDER, "TestMe2.java");
       FileUtils.copyFile(old2, testFile2);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
-      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
       final CompilationUnit cu = JavaParserProvider.parse(testFile2);
@@ -105,8 +104,8 @@ public class TestRepetitionTransforming {
       final File testFile2 = new File(SOURCE_FOLDER, "TestMe8.java");
       FileUtils.copyFile(old2, testFile2);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder.getRoot(), MeasurementConfiguration.DEFAULT);
-      tt.determineVersions(Arrays.asList(new File[] { testFolder.getRoot() }));
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
       final CompilationUnit cu = JavaParserProvider.parse(testFile2);
