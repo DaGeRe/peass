@@ -15,7 +15,7 @@ public class JavaVersionUtil {
          Process process = Runtime.getRuntime().exec("javac -version");
          String output = StreamGobbler.getFullProcess(process, false);
          if (output.startsWith("javac ")) {
-            String versionString = output.split(" ")[1];
+            String versionString = output.split(" ")[1].replaceAll("\n", "");
             return getJavaVersion(versionString);
          } else {
             LOG.error("javac -version returned unexpected output; javac should be installed for source instrumentation");
