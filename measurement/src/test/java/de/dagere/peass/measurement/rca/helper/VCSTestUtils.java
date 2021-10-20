@@ -6,6 +6,7 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -16,9 +17,34 @@ import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 
 public class VCSTestUtils {
-   
+
    private static final Logger LOG = LogManager.getLogger(VCSTestUtils.class);
-   
+
+   public static void mockGetVCS(final MockedStatic<VersionControlSystem> mockedVCS) {
+      mockedVCS.when(() -> VersionControlSystem.getVersionControlSystem(Mockito.any()))
+            .thenReturn(VersionControlSystem.GIT);
+   }
+
+   public static void mockGoToTagAny(final MockedStatic<GitUtils> mockedGitUtils, final File anyVersion) {
+      mockedGitUtils.when(() -> GitUtils.goToTag(Mockito.any(), Mockito.any()))
+            .thenAnswer(new Answer<Void>() {
+
+               @Override
+               public Void answer(final InvocationOnMock invocation) throws Throwable {
+                  final File destFile = (File) invocation.getArgument(1);
+                  LOG.debug("Loading version..");
+                  FileUtils.deleteDirectory(destFile);
+
+                  FileUtils.copyDirectory(anyVersion, destFile);
+                  return null;
+               }
+            });
+   }
+
+   /**
+    * Powermock should be replaced by mockito inline
+    */
+   @Deprecated
    public static void mockGetVCS() {
       PowerMockito.mockStatic(VersionControlSystem.class);
       PowerMockito.doAnswer(new Answer<VersionControlSystem>() {
@@ -30,7 +56,11 @@ public class VCSTestUtils {
       }).when(VersionControlSystem.class);
       VersionControlSystem.getVersionControlSystem(Mockito.any(File.class));
    }
-   
+
+   /**
+    * Powermock should be replaced by mockito inline
+    */
+   @Deprecated
    public static void mockClone(final File projectFolderTemp, final File clonedDir) throws InterruptedException, IOException {
       PowerMockito.doAnswer(new Answer<Void>() {
 
@@ -42,7 +72,7 @@ public class VCSTestUtils {
       }).when(GitUtils.class);
       GitUtils.clone(Mockito.any(PeassFolders.class), Mockito.any(File.class));
    }
-   
+
    /**
     * Does nothing instead of going to tag
     */
@@ -58,7 +88,7 @@ public class VCSTestUtils {
       }).when(GitUtils.class);
       GitUtils.goToTag(Mockito.anyString(), Mockito.any(File.class));
    }
-   
+
    public static void mockGoToTagAny(final File anyVersion) {
       PowerMockito.doAnswer(new Answer<Void>() {
 
@@ -67,7 +97,7 @@ public class VCSTestUtils {
             final File destFile = (File) invocation.getArgument(1);
             LOG.debug("Loading version..");
             FileUtils.deleteDirectory(destFile);
-            
+
             FileUtils.copyDirectory(anyVersion, destFile);
             return null;
          }

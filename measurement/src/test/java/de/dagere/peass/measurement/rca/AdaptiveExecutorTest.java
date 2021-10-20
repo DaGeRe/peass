@@ -15,18 +15,14 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
-import de.dagere.peass.measurement.rca.CauseTester;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.helper.OnFailureLogSafer;
 import de.dagere.peass.measurement.rca.helper.TestConstants;
@@ -35,9 +31,6 @@ import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ GitUtils.class, VersionControlSystem.class })
-@PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class AdaptiveExecutorTest {
 
    private static final Logger LOG = LogManager.getLogger(AdaptiveExecutorTest.class);
@@ -49,8 +42,8 @@ public class AdaptiveExecutorTest {
    private CauseTester executor;
 
    @Rule
-   public OnFailureLogSafer logSafer = new OnFailureLogSafer(TestConstants.CURRENT_FOLDER, 
-         new File(TestConstants.CURRENT_FOLDER.getParentFile(), TestConstants.CURRENT_FOLDER.getName()+"_peass"));
+   public OnFailureLogSafer logSafer = new OnFailureLogSafer(TestConstants.CURRENT_FOLDER,
+         new File(TestConstants.CURRENT_FOLDER.getParentFile(), TestConstants.CURRENT_FOLDER.getName() + "_peass"));
 
    @Before
    public void setUp() {
@@ -59,11 +52,6 @@ public class AdaptiveExecutorTest {
 
          FileUtil.copyDir(SOURCE_DIR, projectFolder);
 
-         VCSTestUtils.mockGetVCS();
-
-         PowerMockito.mockStatic(GitUtils.class);
-
-         VCSTestUtils.mockGoToTagAny(SOURCE_DIR);
          final MeasurementConfiguration config = new MeasurementConfiguration(2, "000001", "000001~1");
          config.setUseKieker(true);
          config.setIterations(2);
@@ -77,40 +65,52 @@ public class AdaptiveExecutorTest {
 
    @Test
    public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      final Set<CallTreeNode> included = new HashSet<>();
-      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1",
-            "public void defaultpackage.NormalDependency.child1()", "public void defaultpackage.NormalDependency.child1()", new MeasurementConfiguration(5));
-      nodeWithDuration.setOtherVersionNode(nodeWithDuration);
-      included.add(nodeWithDuration);
-      executor.setIncludedMethods(included);
-      included.forEach(node -> node.setVersions("000001", "000001~1"));
+      try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
+            MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
+         VCSTestUtils.mockGetVCS(mockedVCS);
+         VCSTestUtils.mockGoToTagAny(mockedGitUtils, SOURCE_DIR);
 
-      executor.evaluate(TEST);
+         final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1",
+               "public void defaultpackage.NormalDependency.child1()", "public void defaultpackage.NormalDependency.child1()", new MeasurementConfiguration(5));
+         
+         measureNode(nodeWithDuration);
 
-      executor.getDurations(0);
+         executor.getDurations(0);
 
-      Assert.assertEquals(2, nodeWithDuration.getStatistics("000001").getN());
-      Assert.assertEquals(2, nodeWithDuration.getStatistics("000001~1").getN());
-      Assert.assertEquals(8, nodeWithDuration.getCallCount("000001"));
-      Assert.assertEquals(8, nodeWithDuration.getCallCount("000001~1"));
+         Assert.assertEquals(2, nodeWithDuration.getStatistics("000001").getN());
+         Assert.assertEquals(2, nodeWithDuration.getStatistics("000001~1").getN());
+         Assert.assertEquals(8, nodeWithDuration.getCallCount("000001"));
+         Assert.assertEquals(8, nodeWithDuration.getCallCount("000001~1"));
+      }
    }
 
    @Test
    public void testConstructorExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+      try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
+            MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
+         VCSTestUtils.mockGetVCS(mockedVCS);
+         VCSTestUtils.mockGoToTagAny(mockedGitUtils, SOURCE_DIR);
+         
+         final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#<init>",
+               "public new defaultpackage.NormalDependency.<init>()", "public new defaultpackage.NormalDependency.<init>()", new MeasurementConfiguration(5));
+         
+         measureNode(nodeWithDuration);
+
+         executor.getDurations(1);
+
+         Assert.assertEquals(2, nodeWithDuration.getStatistics("000001").getN());
+         Assert.assertEquals(2, nodeWithDuration.getStatistics("000001~1").getN());
+      }
+   }
+   
+   private void measureNode(final CallTreeNode nodeWithDuration) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final Set<CallTreeNode> included = new HashSet<>();
-      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#<init>",
-            "public new defaultpackage.NormalDependency.<init>()", "public new defaultpackage.NormalDependency.<init>()", new MeasurementConfiguration(5));
       nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);
       executor.setIncludedMethods(included);
       included.forEach(node -> node.setVersions("000001", "000001~1"));
 
       executor.evaluate(TEST);
-
-      executor.getDurations(1);
-
-      Assert.assertEquals(2, nodeWithDuration.getStatistics("000001").getN());
-      Assert.assertEquals(2, nodeWithDuration.getStatistics("000001~1").getN());
    }
 
    public void testMultipleMethodExecution() {
