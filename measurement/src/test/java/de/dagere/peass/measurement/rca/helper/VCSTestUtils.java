@@ -41,6 +41,43 @@ public class VCSTestUtils {
             });
    }
 
+   public static void mockClone(final MockedStatic<GitUtils> mockedGitUtils, final File projectFolderTemp, final File clonedDir) throws InterruptedException, IOException {
+      mockedGitUtils.when(() -> GitUtils.clone(Mockito.any(PeassFolders.class), Mockito.any(File.class)))
+            .thenAnswer(new Answer<Void>() {
+
+               @Override
+               public Void answer(final InvocationOnMock invocation) throws Throwable {
+                  FileUtils.copyDirectory(clonedDir, projectFolderTemp);
+                  return null;
+               }
+            });
+   }
+   
+   public static void mockGoToTag(final MockedStatic<GitUtils> mockedGitUtils, final PeassFolders folders, final File statePredecessor, final File stateMainVersion) {
+      mockedGitUtils.when(() -> GitUtils.goToTag(Mockito.eq("000001~1"), Mockito.any(File.class))).thenAnswer(new Answer<Void>() {
+
+         @Override
+         public Void answer(final InvocationOnMock invocation) throws Throwable {
+            final File destFile = (File) invocation.getArgument(1);
+            LOG.debug("Loading faster..");
+            FileUtils.deleteDirectory(destFile);
+            FileUtils.copyDirectory(statePredecessor, destFile);
+            return null;
+         }
+      });
+      
+      mockedGitUtils.when(() -> GitUtils.goToTag(Mockito.eq("000001"), Mockito.any(File.class))).thenAnswer(new Answer<Void>() {
+
+         @Override
+         public Void answer(final InvocationOnMock invocation) throws Throwable {
+            final File destFile = (File) invocation.getArgument(1);
+            LOG.debug("Loading slower..");
+            FileUtils.copyDirectory(stateMainVersion, destFile);
+            return null;
+         }
+      });
+   }
+
    /**
     * Powermock should be replaced by mockito inline
     */
@@ -58,22 +95,6 @@ public class VCSTestUtils {
    }
 
    /**
-    * Powermock should be replaced by mockito inline
-    */
-   @Deprecated
-   public static void mockClone(final File projectFolderTemp, final File clonedDir) throws InterruptedException, IOException {
-      PowerMockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            FileUtils.copyDirectory(clonedDir, projectFolderTemp);
-            return null;
-         }
-      }).when(GitUtils.class);
-      GitUtils.clone(Mockito.any(PeassFolders.class), Mockito.any(File.class));
-   }
-
-   /**
     * Does nothing instead of going to tag
     */
    public static void mockGoToTagAny() {
@@ -87,48 +108,5 @@ public class VCSTestUtils {
          }
       }).when(GitUtils.class);
       GitUtils.goToTag(Mockito.anyString(), Mockito.any(File.class));
-   }
-
-   public static void mockGoToTagAny(final File anyVersion) {
-      PowerMockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            final File destFile = (File) invocation.getArgument(1);
-            LOG.debug("Loading version..");
-            FileUtils.deleteDirectory(destFile);
-
-            FileUtils.copyDirectory(anyVersion, destFile);
-            return null;
-         }
-      }).when(GitUtils.class);
-      GitUtils.goToTag(Mockito.anyString(), Mockito.any(File.class));
-   }
-
-   public static void mockGoToTag(final PeassFolders folders, final File statePredecessor, final File stateMainVersion) {
-      PowerMockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            final File destFile = (File) invocation.getArgument(1);
-            LOG.debug("Loading faster..");
-            FileUtils.deleteDirectory(destFile);
-            FileUtils.copyDirectory(statePredecessor, destFile);
-            return null;
-         }
-      }).when(GitUtils.class);
-      GitUtils.goToTag(Mockito.eq("000001~1"), Mockito.any(File.class));
-
-      PowerMockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            final File destFile = (File) invocation.getArgument(1);
-            LOG.debug("Loading slower..");
-            FileUtils.copyDirectory(stateMainVersion, destFile);
-            return null;
-         }
-      }).when(GitUtils.class);
-      GitUtils.goToTag(Mockito.eq("000001"), Mockito.any(File.class));
    }
 }
