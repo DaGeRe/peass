@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependency.execution.pom.MavenPomUtil;
 
@@ -16,14 +16,14 @@ public class TestMavenPomUtil {
    public void testGetProjectList() throws IOException {
       List<String> dependencyModuleDependents = MavenPomUtil.getDependentModules(new File(".."), "dependency");
       System.out.println(dependencyModuleDependents);
-      Assert.assertThat(dependencyModuleDependents, Matchers.contains("peass-parent", "dependency"));
+      MatcherAssert.assertThat(dependencyModuleDependents, Matchers.contains("peass-parent", "dependency"));
       
       List<String> measurementModuleDependents = MavenPomUtil.getDependentModules(new File(".."), "measurement");
       System.out.println(measurementModuleDependents);
-      Assert.assertThat(measurementModuleDependents, Matchers.contains("peass-parent", "dependency", "measurement"));
+      MatcherAssert.assertThat(measurementModuleDependents, Matchers.contains("peass-parent", "dependency", "measurement"));
       
       List<String> analysisModuleDependents = MavenPomUtil.getDependentModules(new File(".."), "analysis");
       System.out.println(analysisModuleDependents);
-      Assert.assertThat(analysisModuleDependents, Matchers.contains("peass-parent", "dependency", "measurement", "analysis"));
+      MatcherAssert.assertThat(analysisModuleDependents, Matchers.contains("peass-parent", "dependency", "measurement", "analysis"));
    }
 }

@@ -7,13 +7,11 @@ import java.nio.charset.Charset;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.dependency.execution.GradleBuildfileEditor;
-import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestBuildGradle {
@@ -22,7 +20,7 @@ public class TestBuildGradle {
 
    private JUnitTestTransformer mockedTransformer;
    
-   @Before
+   @BeforeEach
    public void setupTransformer() {
       mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
       MeasurementConfiguration config = new MeasurementConfiguration(2);

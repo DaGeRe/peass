@@ -8,8 +8,8 @@ import java.nio.charset.Charset;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 
@@ -38,7 +38,7 @@ public class TestMethodChangeLongMethodName {
       System.err.println("Other too long method");
    }
 
-   @Before
+   @BeforeEach
    public void before() {
       if (!methodSourceFolder.exists()) {
          methodSourceFolder.mkdirs();

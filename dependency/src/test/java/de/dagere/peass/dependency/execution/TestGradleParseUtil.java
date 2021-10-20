@@ -13,8 +13,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsIterableContaining;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import de.dagere.peass.TestConstants;
@@ -28,7 +27,7 @@ public class TestGradleParseUtil {
    public void testModuleGetting() throws FileNotFoundException, IOException {
       List<File> modules = GradleParseUtil.getModules(new File("src/test/resources/gradle-multimodule-example")).getModules();
 
-      Assert.assertThat(modules.size(), Matchers.is(3));
+      MatcherAssert.assertThat(modules.size(), Matchers.is(3));
    }
 
    @Test
@@ -43,7 +42,7 @@ public class TestGradleParseUtil {
       MatcherAssert.assertThat(moduleNameList, IsIterableContaining.hasItem("myModule4"));
       
 
-      Assert.assertThat(modules.size(), Matchers.is(5));
+      MatcherAssert.assertThat(modules.size(), Matchers.is(5));
    }
 
    @Test
@@ -70,16 +69,16 @@ public class TestGradleParseUtil {
    private void checkParentFile() throws IOException {
       File resultParentFile = new File(TestConstants.CURRENT_FOLDER, "build.gradle");
       String gradleParentContent = FileUtils.readFileToString(resultParentFile, Charset.defaultCharset());
-      Assert.assertThat(gradleParentContent, Matchers.containsString("kopeme"));
+      MatcherAssert.assertThat(gradleParentContent, Matchers.containsString("kopeme"));
       String afterTest = gradleParentContent.substring(gradleParentContent.indexOf("test {"));
 
-      Assert.assertThat(afterTest, Matchers.containsString("-javaagent"));
+      MatcherAssert.assertThat(afterTest, Matchers.containsString("-javaagent"));
       System.out.println(afterTest);
    }
 
    private void checkModuleFile() throws IOException {
       File resultFile = new File(TestConstants.CURRENT_FOLDER, "myModule1" + File.separator + "gradle-multimodule-example.gradle");
       String gradleResultFileContent = FileUtils.readFileToString(resultFile, Charset.defaultCharset());
-      Assert.assertThat(gradleResultFileContent, Matchers.containsString("kopeme"));
+      MatcherAssert.assertThat(gradleResultFileContent, Matchers.containsString("kopeme"));
    }
 }

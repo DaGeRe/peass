@@ -15,8 +15,8 @@ import org.apache.commons.io.IOUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfiguration;
@@ -26,7 +26,7 @@ import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestKiekerEnvironmentPreparer {
 
-   @Before
+   @BeforeEach
    public void init() throws IOException {
       FileUtils.deleteDirectory(DependencyTestConstants.CURRENT);
       FileUtils.copyDirectory(DependencyTestConstants.BASIC_STATE, DependencyTestConstants.CURRENT);
