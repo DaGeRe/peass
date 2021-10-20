@@ -18,9 +18,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -75,48 +72,8 @@ public class CauseSearcherIT {
       VCSTestUtils.mockGetVCS();
       
       PowerMockito.mockStatic(GitUtils.class);
-      mockClone(projectFolderTemp);
-      
-      mockGoToTag(folders, projectFolderTemp);
-   }
-
-   private void mockClone(final File projectFolderTemp) throws InterruptedException, IOException {
-      PowerMockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            FileUtils.copyDirectory(DependencyTestConstants.CURRENT, projectFolderTemp);
-            return null;
-         }
-      }).when(GitUtils.class);
-      GitUtils.clone(Mockito.any(PeassFolders.class), Mockito.any(File.class));
-   }
-
-   private void mockGoToTag(final PeassFolders folders, final File projectFolderTemp) {
-      PowerMockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            final File destFile = (File) invocation.getArgument(1);
-            LOG.debug("Loading faster..");
-            FileUtils.deleteDirectory(destFile);
-            FileUtils.copyDirectory(BASIC_STATE, destFile);
-            return null;
-         }
-      }).when(GitUtils.class);
-      GitUtils.goToTag(Mockito.eq("000001"), Mockito.any(File.class));
-
-      PowerMockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            final File destFile = (File) invocation.getArgument(1);
-            LOG.debug("Loading slower..");
-            FileUtils.copyDirectory(SLOW_STATE, destFile);
-            return null;
-         }
-      }).when(GitUtils.class);
-      GitUtils.goToTag(Mockito.eq("000001~1"), Mockito.any(File.class));
+      VCSTestUtils.mockClone(projectFolderTemp, DependencyTestConstants.CURRENT);
+      VCSTestUtils.mockGoToTag(folders, SLOW_STATE, BASIC_STATE);
    }
 
    @Test
