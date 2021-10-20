@@ -27,8 +27,8 @@ import java.util.Set;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import com.github.javaparser.ParseException;
 
@@ -46,7 +46,7 @@ public class TestClassComparison {
    private static final URL SOURCE = Thread.currentThread().getContextClassLoader().getResource("comparison");
    private static File FOLDER;
 
-   @BeforeClass
+   @BeforeAll
    public static void initFolder() throws URISyntaxException {
       FOLDER = Paths.get(SOURCE.toURI()).toFile();
    }

@@ -7,8 +7,8 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.javaparser.ParseException;
 
@@ -46,7 +46,7 @@ public class TestTraceMethodReader {
    private static final String LOG4J_API_JAR = LOG4J_FOLDER + File.separator + "log4j-api" + File.separator + "2.14.0" + File.separator + "log4j-api-2.14.0.jar";
 
 
-   @Before
+   @BeforeEach
    public void init() {
       tmpFolder.mkdirs();
       final File[] kiekerFoldersOld = tmpFolder.listFiles((FileFilter) new WildcardFileFilter("kieker*"));

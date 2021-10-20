@@ -28,6 +28,7 @@ import org.apache.commons.io.FileUtils;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Assert;
@@ -89,8 +90,8 @@ public class TestTransformation {
 
       Assert.assertEquals("KoPeMeTestcase", clazz.getExtendedTypes(0).getName().getIdentifier());
 
-      Assert.assertThat(clazz.getMethodsByName("getWarmup"), Matchers.hasSize(1));
-      Assert.assertThat(clazz.getMethodsByName("getIterations"), Matchers.hasSize(1));
+      MatcherAssert.assertThat(clazz.getMethodsByName("getWarmup"), Matchers.hasSize(1));
+      MatcherAssert.assertThat(clazz.getMethodsByName("getIterations"), Matchers.hasSize(1));
    }
 
    @Test
@@ -110,8 +111,8 @@ public class TestTransformation {
 
       Assert.assertEquals("KoPeMeTestcase", clazz.getExtendedTypes(0).getName().getIdentifier());
 
-      Assert.assertThat(clazz.getMethodsByName("getWarmupExecutions"), Matchers.hasSize(1));
-      Assert.assertThat(clazz.getMethodsByName("getExecutionTimes"), Matchers.hasSize(1));
+      MatcherAssert.assertThat(clazz.getMethodsByName("getWarmupExecutions"), Matchers.hasSize(1));
+      MatcherAssert.assertThat(clazz.getMethodsByName("getExecutionTimes"), Matchers.hasSize(1));
 
       Assert.assertTrue(FileUtils.contentEquals(old, testFile));
    }
@@ -136,8 +137,8 @@ public class TestTransformation {
 
       Assert.assertEquals("MySuper", clazz.getExtendedTypes(0).getName().getIdentifier());
 
-      Assert.assertThat(clazz.getMethodsByName("getWarmupExecutions"), Matchers.hasSize(1));
-      Assert.assertThat(clazz.getMethodsByName("getExecutionTimes"), Matchers.hasSize(1));
+      MatcherAssert.assertThat(clazz.getMethodsByName("getWarmupExecutions"), Matchers.hasSize(1));
+      MatcherAssert.assertThat(clazz.getMethodsByName("getExecutionTimes"), Matchers.hasSize(1));
    }
 
    @Test
@@ -156,15 +157,15 @@ public class TestTransformation {
       Assert.assertNotNull(clazz);
 
       final List<MethodDeclaration> methodsByName = clazz.getMethodsByName("testMethod1");
-      Assert.assertThat(methodsByName, Matchers.hasSize(1));
+      MatcherAssert.assertThat(methodsByName, Matchers.hasSize(1));
 
       final MethodDeclaration testMethod = methodsByName.get(0);
 
       final AnnotationExpr performanceTestAnnotation = testMethod.getAnnotationByName("PerformanceTest").get();
       Assert.assertNotNull(performanceTestAnnotation);
 
-      Assert.assertThat(performanceTestAnnotation.getChildNodes(), hasAnnotation("iterations"));
-      Assert.assertThat(performanceTestAnnotation.getChildNodes(), hasAnnotation("warmup"));
+      MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), hasAnnotation("iterations"));
+      MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), hasAnnotation("warmup"));
 
       for (final Node n : performanceTestAnnotation.getChildNodes()) {
          System.out.println(n);

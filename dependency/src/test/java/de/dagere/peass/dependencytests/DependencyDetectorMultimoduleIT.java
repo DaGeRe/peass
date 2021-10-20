@@ -9,11 +9,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.hamcrest.core.IsCollectionContaining;
+import org.hamcrest.core.IsIterableContaining;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import com.github.javaparser.ParseException;
@@ -42,7 +43,7 @@ public class DependencyDetectorMultimoduleIT {
 
    // private DependencyManager handler;
 
-   @Before
+   @BeforeEach
    public void initialize() throws IOException, InterruptedException {
       Assert.assertTrue(VERSIONS_FOLDER.exists());
 
@@ -82,7 +83,7 @@ public class DependencyDetectorMultimoduleIT {
       final InitialDependency dependency = reader.getDependencies().getInitialversion().getInitialDependencies()
             .get(new ChangedEntity("de.AnotherTest", "using-module", "testMeAlso"));
       LOG.debug(dependency.getEntities());
-      Assert.assertThat(dependency.getEntities(), IsCollectionContaining.hasItem(new ChangedEntity("de.dagere.base.BaseChangeable", "base-module", "doSomething")));
+      MatcherAssert.assertThat(dependency.getEntities(), IsIterableContaining.hasItem(new ChangedEntity("de.dagere.base.BaseChangeable", "base-module", "doSomething")));
 
       fakeIterator.goToNextCommit();
       reader.analyseVersion(changeManager);
@@ -118,7 +119,7 @@ public class DependencyDetectorMultimoduleIT {
 
       final TestSet foundDependency3 = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "base-module§de.dagere.base.NextBaseChangeable#doSomething",
             DependencyTestConstants.VERSION_1);
-      Assert.assertThat(foundDependency3.getTests().stream(), StreamMatchers.anyMatch(
+      MatcherAssert.assertThat(foundDependency3.getTests().stream(), StreamMatchers.anyMatch(
             Matchers.allOf(Matchers.hasProperty("clazz", Matchers.is("de.NextTest")),
                   Matchers.hasProperty("method", Matchers.isOneOf("nextTestMe", "nextTestMeAlso")))));
    }
@@ -127,15 +128,15 @@ public class DependencyDetectorMultimoduleIT {
 
       System.out.println(foundDependency.getTestcases());
 
-      Assert.assertThat(foundDependency.getTests().stream(), StreamMatchers.anyMatch(
+      MatcherAssert.assertThat(foundDependency.getTests().stream(), StreamMatchers.anyMatch(
             Matchers.allOf(Matchers.hasProperty("clazz", Matchers.is("de.dagere.base.BaseTest")),
                   Matchers.hasProperty("method", Matchers.isOneOf("testMe", "testMeAlso")))));
 
-      Assert.assertThat(foundDependency.getTests().stream(), StreamMatchers.anyMatch(
+      MatcherAssert.assertThat(foundDependency.getTests().stream(), StreamMatchers.anyMatch(
             Matchers.allOf(Matchers.hasProperty("clazz", Matchers.is("de.NextTest")),
                   Matchers.hasProperty("method", Matchers.is("nextTestMe")))));
 
-      Assert.assertThat(foundDependency.getTests().stream(), StreamMatchers.anyMatch(
+      MatcherAssert.assertThat(foundDependency.getTests().stream(), StreamMatchers.anyMatch(
             Matchers.allOf(Matchers.hasProperty("clazz", Matchers.is("de.AnotherTest")),
                   Matchers.hasProperty("method", Matchers.isOneOf("testMeAlso")))));
    }

@@ -7,10 +7,9 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -26,29 +25,29 @@ public class TestShortening {
 
    JUnitTestTransformer transformer;
 
-   @Rule
-   public TemporaryFolder folder = new TemporaryFolder();
-
-   @Before
+   @TempDir
+   public File folder;
+   
+   @BeforeEach
    public void initFile() throws IOException {
-      final File test = new File(folder.getRoot(), "src/test/java");
+      final File test = new File(folder, "src/test/java");
       test.mkdirs();
       final File testClazz = new File(test, "ExampleTest.java");
       FileUtils.copyFile(exampleTestFile, testClazz);
       final File subTestClazz = new File(test, "SubTest.java");
       FileUtils.copyFile(subTestFile, subTestClazz);
 
-      transformer = new JUnitTestTransformer(folder.getRoot(), new MeasurementConfiguration(5));
-      transformer.determineVersions(Arrays.asList(new File[] { folder.getRoot() }));
+      transformer = new JUnitTestTransformer(folder, new MeasurementConfiguration(5));
+      transformer.determineVersions(Arrays.asList(new File[] { folder }));
    }
 
    @Test
    public void testShortening() throws Exception {
-      final File test = new File(folder.getRoot(), "src/test/java");
+      final File test = new File(folder, "src/test/java");
       test.mkdirs();
       final File testClazz = new File(test, "ExampleTest.java");
 
-      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder.getRoot(), new ChangedEntity("ExampleTest", ""), "test1")) {
+      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new ChangedEntity("ExampleTest", ""), "test1")) {
          Assert.assertFalse(FileUtils.contentEquals(exampleTestFile, testClazz));
       }
 
@@ -57,12 +56,12 @@ public class TestShortening {
 
    @Test
    public void testSubclassShortening() throws Exception {
-      final File test = new File(folder.getRoot(), "src/test/java");
+      final File test = new File(folder, "src/test/java");
       test.mkdirs();
       final File testClazz = new File(test, "ExampleTest.java");
       final File subClazz = new File(test, "SubTest.java");
 
-      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder.getRoot(), new ChangedEntity("SubTest", ""), "test3")) {
+      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new ChangedEntity("SubTest", ""), "test3")) {
          Assert.assertFalse(FileUtils.contentEquals(exampleTestFile, testClazz));
          Assert.assertFalse(FileUtils.contentEquals(subTestFile, subClazz));
       }

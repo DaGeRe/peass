@@ -4,8 +4,8 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -18,7 +18,7 @@ import de.dagere.peass.vcs.GitCommit;
 
 public class TestChangedTraceTestSerialisation {
    
-   @Before
+   @BeforeEach
    public void initializeComparator() {
       VersionComparator.setVersions(Arrays.asList(new GitCommit("v1", "", "", ""), new GitCommit("v2", "", "", "")));
    }

@@ -5,9 +5,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 
 import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
 import de.dagere.peass.dependency.ResultsFolders;
@@ -16,12 +15,12 @@ import de.dagere.peass.dependency.traces.requitur.ReducedTraceElement;
 import de.dagere.peass.dependency.traces.requitur.content.StringContent;
 
 public class TraceWriterTest {
-   @Rule
-   public TemporaryFolder folder = new TemporaryFolder();
+   @TempDir
+   File tempDir;
 
    @Test
    public void testSimpleWriting() throws IOException {
-      ResultsFolders resultsFolders = new ResultsFolders(folder.getRoot(), "test");
+      ResultsFolders resultsFolders = new ResultsFolders(tempDir, "test");
       TraceWriter writer = new TraceWriter("000001", new TestCase("ClazzA", "methodA"), resultsFolders, new TraceFileMapping());
 
       TraceWithMethods exampleTrace = getTrace();
@@ -34,7 +33,7 @@ public class TraceWriterTest {
 
    @Test
    public void testModuleWriting() throws IOException {
-      ResultsFolders resultsFolders = new ResultsFolders(folder.getRoot(), "test");
+      ResultsFolders resultsFolders = new ResultsFolders(tempDir, "test");
       TraceWriter writer = new TraceWriter("000001", new TestCase("ClazzA", "methodA", "moduleA"), resultsFolders, new TraceFileMapping());
 
       TraceWithMethods exampleTrace = getTrace();
