@@ -16,11 +16,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.CauseSearchFolders;
@@ -35,9 +32,6 @@ import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ GitUtils.class, VersionControlSystem.class })
-@PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class AdaptiveExecutorMoreParameterIT {
 
    private static final Logger LOG = LogManager.getLogger(AdaptiveExecutorMoreParameterIT.class);
@@ -48,10 +42,10 @@ public class AdaptiveExecutorMoreParameterIT {
 
    private File projectFolder;
    private CauseTester executor;
-   
+
    @Rule
-   public OnFailureLogSafer logSafer = new OnFailureLogSafer(TestConstants.CURRENT_FOLDER, 
-         new File(TestConstants.CURRENT_FOLDER.getParentFile(), TestConstants.CURRENT_FOLDER.getName()+"_peass"));
+   public OnFailureLogSafer logSafer = new OnFailureLogSafer(TestConstants.CURRENT_FOLDER,
+         new File(TestConstants.CURRENT_FOLDER.getParentFile(), TestConstants.CURRENT_FOLDER.getName() + "_peass"));
 
    @Before
    public void setUp() {
@@ -59,13 +53,6 @@ public class AdaptiveExecutorMoreParameterIT {
          projectFolder = TestConstants.getCurrentFolder();
 
          FileUtil.copyDir(SOURCE_DIR, projectFolder);
-
-         VCSTestUtils.mockGetVCS();
-
-         PowerMockito.mockStatic(GitUtils.class);
-
-         VCSTestUtils.mockGoToTagAny(SOURCE_DIR);
-
       } catch (final IOException e) {
          e.printStackTrace();
       }
@@ -76,7 +63,8 @@ public class AdaptiveExecutorMoreParameterIT {
       LOG.debug("Executor: {}", executor);
       final Set<CallTreeNode> included = new HashSet<>();
       final String kiekerPattern = "public void defaultpackage.NormalDependency.child1(int[],double,java.lang.String)";
-      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1", kiekerPattern, kiekerPattern, new MeasurementConfiguration(5, "000001", "000001~1"));
+      final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1", kiekerPattern, kiekerPattern,
+            new MeasurementConfiguration(5, "000001", "000001~1"));
       nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);
       executor.setIncludedMethods(included);
@@ -92,16 +80,26 @@ public class AdaptiveExecutorMoreParameterIT {
 
    @Test
    public void testFullMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      CauseSearchFolders folders = new CauseSearchFolders(projectFolder);
-      executor = new CauseTester(folders, TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER, FULL_CASE_CONFIG, new EnvironmentVariables());
-      testSuccessfull();
+      try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
+            MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
+         VCSTestUtils.mockGetVCS(mockedVCS);
+         VCSTestUtils.mockGoToTagAny(mockedGitUtils, SOURCE_DIR);
+         CauseSearchFolders folders = new CauseSearchFolders(projectFolder);
+         executor = new CauseTester(folders, TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER, FULL_CASE_CONFIG, new EnvironmentVariables());
+         testSuccessfull();
+      }
    }
 
    @Test
    public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      CauseSearchFolders folders = new CauseSearchFolders(projectFolder);
-      executor = new CauseTester(folders, TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME, new EnvironmentVariables());
-      testSuccessfull();
+      try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
+            MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
+         VCSTestUtils.mockGetVCS(mockedVCS);
+         VCSTestUtils.mockGoToTagAny(mockedGitUtils, SOURCE_DIR);
+         CauseSearchFolders folders = new CauseSearchFolders(projectFolder);
+         executor = new CauseTester(folders, TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME, new EnvironmentVariables());
+         testSuccessfull();
+      }
    }
 
 }
