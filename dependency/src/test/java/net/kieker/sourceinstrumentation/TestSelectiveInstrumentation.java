@@ -5,7 +5,7 @@ import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.TestConstants;
 import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;

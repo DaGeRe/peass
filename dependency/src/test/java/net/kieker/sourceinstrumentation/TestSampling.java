@@ -9,7 +9,7 @@ import java.util.Set;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.TestConstants;
 import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;

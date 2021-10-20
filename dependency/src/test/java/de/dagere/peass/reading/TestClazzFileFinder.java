@@ -3,9 +3,9 @@ package de.dagere.peass.reading;
 import java.io.File;
 import java.util.List;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependency.ClazzFileFinder;
 
@@ -19,12 +19,12 @@ public class TestClazzFileFinder {
       
       System.out.println(clazzes);
       
-      Assert.assertThat(clazzes, Matchers.hasItem("de.TestMe1"));
-      Assert.assertThat(clazzes, Matchers.hasItem("de.TestMe2"));
-      Assert.assertThat(clazzes, Matchers.hasItem("de.Second"));
-      Assert.assertThat(clazzes, Matchers.hasItem("de.TestMe2$Inner"));
-      Assert.assertThat(clazzes, Matchers.hasItem("de.TestMe2$Inner$InnerInner"));
+      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.TestMe1"));
+      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.TestMe2"));
+      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.Second"));
+      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.TestMe2$Inner"));
+      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.TestMe2$Inner$InnerInner"));
       
-      Assert.assertThat(clazzes, Matchers.hasItem("de.TestMe2$InnerEnum"));
+      MatcherAssert.assertThat(clazzes, Matchers.hasItem("de.TestMe2$InnerEnum"));
    }
 }

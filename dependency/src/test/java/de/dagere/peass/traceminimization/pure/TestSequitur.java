@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependency.traces.requitur.Rule;
 import de.dagere.peass.dependency.traces.requitur.Sequitur;

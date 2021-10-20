@@ -8,7 +8,7 @@ import java.util.Iterator;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;

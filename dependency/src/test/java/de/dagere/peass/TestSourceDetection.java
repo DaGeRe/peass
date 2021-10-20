@@ -5,9 +5,10 @@ import java.io.FileNotFoundException;
 import java.util.List;
 import java.util.Map;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.NodeList;
@@ -28,9 +29,9 @@ public class TestSourceDetection {
 
       Assert.assertEquals(3, anonymous.size());
 
-      Assert.assertThat(anonymous.get(0).get(0).toString(), Matchers.containsString("Run R3"));
-      Assert.assertThat(anonymous.get(1).get(0).toString(), Matchers.containsString("Run R1"));
-      Assert.assertThat(anonymous.get(2).get(0).toString(), Matchers.containsString("Run R2"));
+      MatcherAssert.assertThat(anonymous.get(0).get(0).toString(), Matchers.containsString("Run R3"));
+      MatcherAssert.assertThat(anonymous.get(1).get(0).toString(), Matchers.containsString("Run R1"));
+      MatcherAssert.assertThat(anonymous.get(2).get(0).toString(), Matchers.containsString("Run R2"));
    }
 
    @Test
@@ -41,8 +42,8 @@ public class TestSourceDetection {
 
       Assert.assertEquals(3, named.size());
 
-      Assert.assertThat(named.get("Test2_Named$MyStuff").toString(), Matchers.containsString("stuff 1"));
-      Assert.assertThat(named.get("Test2_Named$MyStuff2").toString(), Matchers.containsString("stuff 2"));
+      MatcherAssert.assertThat(named.get("Test2_Named$MyStuff").toString(), Matchers.containsString("stuff 1"));
+      MatcherAssert.assertThat(named.get("Test2_Named$MyStuff2").toString(), Matchers.containsString("stuff 2"));
    }
 
    @Test
@@ -53,6 +54,6 @@ public class TestSourceDetection {
 
       Assert.assertEquals(4, named.size());
 
-      Assert.assertThat(named.get("DirectoryWalkerTestCase$TestFileFinder").toString(), Matchers.containsString("List results"));
+      MatcherAssert.assertThat(named.get("DirectoryWalkerTestCase$TestFileFinder").toString(), Matchers.containsString("List results"));
    }
 }

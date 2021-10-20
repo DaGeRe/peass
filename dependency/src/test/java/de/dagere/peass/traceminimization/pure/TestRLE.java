@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependency.traces.requitur.RunLengthEncodingSequitur;
 import de.dagere.peass.dependency.traces.requitur.Sequitur;

@@ -4,7 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.HashSet;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.kieker.sourceinstrumentation.instrument.SignatureMatchChecker;
 

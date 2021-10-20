@@ -10,7 +10,7 @@ import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;

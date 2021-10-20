@@ -13,8 +13,8 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.javaparser.ParseException;
 
@@ -35,7 +35,7 @@ import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 
 public class JmhIterationTestMultiParam {
 
-   @Before
+   @BeforeEach
    public void clearCurrent() throws IOException {
       TestUtil.deleteContents(TestConstants.CURRENT_FOLDER.getParentFile());
    }

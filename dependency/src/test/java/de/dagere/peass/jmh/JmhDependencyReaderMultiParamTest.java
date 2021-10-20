@@ -12,8 +12,8 @@ import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -47,7 +47,7 @@ import de.dagere.peass.vcs.GitUtils;
 
 public class JmhDependencyReaderMultiParamTest {
 
-   @Before
+   @BeforeEach
    public void clearCurrent() throws IOException {
       TestUtil.deleteContents(TestConstants.CURRENT_FOLDER.getParentFile());
    }

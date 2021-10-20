@@ -11,8 +11,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.github.javaparser.ParseException;
 
@@ -37,7 +37,7 @@ public class JmhIterationTest {
    private static final int WARMUP = 2;
    private static final int ITERATIONS = 4;
 
-   @Before
+   @BeforeEach
    public void clearCurrent() throws IOException {
       TestUtil.deleteContents(TestConstants.CURRENT_FOLDER.getParentFile());
    }

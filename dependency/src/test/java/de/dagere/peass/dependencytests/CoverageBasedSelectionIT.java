@@ -8,8 +8,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
@@ -27,7 +27,7 @@ import de.dagere.peass.vcs.VersionIterator;
 
 public class CoverageBasedSelectionIT {
 
-   @Before
+   @BeforeEach
    public void initialize() throws IOException, InterruptedException {
       Assert.assertTrue(DependencyTestConstants.COVERAGE_VERSIONS_FOLDER.exists());
 

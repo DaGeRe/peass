@@ -1,7 +1,7 @@
 package de.dagere.peass.traceminimization;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;

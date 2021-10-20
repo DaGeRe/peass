@@ -4,9 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Assert;
-import org.junit.Test;
-
-import de.dagere.peass.vcs.VersionControlSystem;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests whether the vcs is identified correctly - assumes that Peass still lies in a git repo and that this test still is in the dependency-module
@@ -36,9 +35,12 @@ public class TestFindVCS {
       Assert.assertEquals(new File("..").getCanonicalPath(), vcsFolder.getPath());
    }
 
-   @Test(expected = RuntimeException.class)
+   @Test
    public void testNoVCSFolder() {
-      File testFile = new File("../../");
-      VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(testFile);
+      RuntimeException thrown = Assertions.assertThrows(RuntimeException.class, () -> {
+         File testFile = new File("../../");
+         VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(testFile);
+      });
+      
    }
 }
