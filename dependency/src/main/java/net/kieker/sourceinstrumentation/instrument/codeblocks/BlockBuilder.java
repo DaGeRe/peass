@@ -20,7 +20,7 @@ public class BlockBuilder {
 
    protected final AllowedKiekerRecord recordType;
    private final boolean enableDeactivation, enableAdaptiveMonitoring;
-   private boolean useStaticVariables = true;
+   protected boolean useStaticVariables = true;
 
    public BlockBuilder(final AllowedKiekerRecord recordType, final boolean enableDeactivation, final boolean enableAdaptiveMonitoring) {
       this.recordType = recordType;
@@ -73,10 +73,18 @@ public class BlockBuilder {
       BlockStmt replacedStatement = new BlockStmt();
 
       new HeaderBuilder(useStaticVariables, enableDeactivation, enableAdaptiveMonitoring, transformer).buildHeader(originalBlock, signature, mayNeedReturn, replacedStatement);
-      replacedStatement.addAndGetStatement(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getBefore());
+      String before = InstrumentationCodeBlocks.DURATION_RECORD.getBefore();
+      if (!useStaticVariables) {
+         before = CodeBlockTransformer.replaceStaticVariables(before);
+      }
+      replacedStatement.addAndGetStatement(before);
 
       BlockStmt finallyBlock = new BlockStmt();
-      finallyBlock.addAndGetStatement(InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getAfter());
+      String finallyText = InstrumentationCodeBlocks.DURATION_RECORD.getAfter();
+      if (!useStaticVariables) {
+         finallyText = CodeBlockTransformer.replaceStaticVariables(finallyText);
+      }
+      finallyBlock.addAndGetStatement(finallyText);
       TryStmt stmt = new TryStmt(originalBlock, new NodeList<>(), finallyBlock);
       replacedStatement.addAndGetStatement(stmt);
       return replacedStatement;
@@ -103,9 +111,9 @@ public class BlockBuilder {
          if (type.isEnumDeclaration()) {
             useStaticVariables = false;
          }
-         buildEmptyConstructor(parameters.getSignature(), 
+         buildEmptyConstructor(parameters.getSignature(),
                replacedStatement,
-               InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore(), 
+               InstrumentationCodeBlocks.OPERATIONEXECUTION.getBefore(),
                InstrumentationCodeBlocks.OPERATIONEXECUTION.getAfter(),
                transformer);
          useStaticVariables = true;
@@ -113,10 +121,10 @@ public class BlockBuilder {
          if (type.isEnumDeclaration()) {
             useStaticVariables = false;
          }
-         buildEmptyConstructor(parameters.getSignature(), 
+         buildEmptyConstructor(parameters.getSignature(),
                replacedStatement,
-               InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getBefore(), 
-               InstrumentationCodeBlocks.REDUCED_OPERATIONEXECUTION.getAfter(),
+               InstrumentationCodeBlocks.DURATION_RECORD.getBefore(),
+               InstrumentationCodeBlocks.DURATION_RECORD.getAfter(),
                transformer);
          useStaticVariables = false;
       } else {

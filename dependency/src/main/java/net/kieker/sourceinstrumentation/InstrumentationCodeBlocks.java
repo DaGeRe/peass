@@ -49,7 +49,8 @@ public enum InstrumentationCodeBlocks {
                "            " + InstrumentationConstants.PREFIX + "controlFlowRegistry.storeThreadLocalESS(" + InstrumentationConstants.PREFIX + "ess); // next operation is ess\n"
                +
                "         }",
-         null), REDUCED_OPERATIONEXECUTION(
+         null), 
+   DURATION_RECORD(
                "      final long " + InstrumentationConstants.PREFIX + "tin =" + InstrumentationConstants.PREFIX + "TIME_SOURCE.getTime();\n",
                "// measure after\n"
                      + "final long " + InstrumentationConstants.PREFIX + "tout = " + InstrumentationConstants.PREFIX + "TIME_SOURCE.getTime();\n"
@@ -57,7 +58,8 @@ public enum InstrumentationCodeBlocks {
                      + InstrumentationConstants.PREFIX + "signature, "
                      + InstrumentationConstants.PREFIX + "tin, "
                      + InstrumentationConstants.PREFIX + "tout))",
-               null), SAMPLING("      final long " + InstrumentationConstants.PREFIX + "tin = " + InstrumentationConstants.PREFIX + "TIME_SOURCE.getTime();", null,
+               null), 
+   AGGREGATION("      final long " + InstrumentationConstants.PREFIX + "tin = " + InstrumentationConstants.PREFIX + "TIME_SOURCE.getTime();", null,
                      null);
 
    private final String before, after;

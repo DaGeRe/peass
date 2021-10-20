@@ -17,16 +17,23 @@ public class SourceInstrumentationTestUtil {
       TestConstants.CURRENT_FOLDER.mkdirs();
       
       for (String path : new String[] {"src/main/java/de/peass/C0_0.java", 
-            "src/test/java/de/peass/MainTest.java", 
-            "pom.xml"}) {
+            "src/test/java/de/peass/MainTest.java"}) {
          copyResource(path, sourcePath);
       }
+      copyGenericPom();
+      
       for (String path : new String[] {
             "src/main/java/de/peass/C1_0.java", 
             "src/main/java/de/peass/AddRandomNumbers.java"}) {
          File testFile = new File(TestConstants.CURRENT_FOLDER, path);
          testFile.delete();
       }
+   }
+
+   private static void copyGenericPom() throws IOException {
+      File source = new File("src/test/resources/sourceInstrumentation/generic_pom.xml");
+      File target = new File(TestConstants.CURRENT_FOLDER, "pom.xml");
+      FileUtils.copyFile(source, target);
    }
    
    public static void initProject(final String sourcePath) throws IOException {
@@ -35,10 +42,10 @@ public class SourceInstrumentationTestUtil {
       for (String path : new String[] {"src/main/java/de/peass/C0_0.java", 
             "src/main/java/de/peass/C1_0.java", 
             "src/main/java/de/peass/AddRandomNumbers.java", 
-            "src/test/java/de/peass/MainTest.java", 
-            "pom.xml"}) {
+            "src/test/java/de/peass/MainTest.java"}) {
          copyResource(path, sourcePath);
       }
+      copyGenericPom();
    }
    
    public static File copyResource(final String name, final String sourcePath) throws IOException {

@@ -32,7 +32,7 @@ public class CodeBlockTransformer {
       return transformedBlock;
    }
 
-   private String replaceStaticVariables(final String original) {
+   public static String replaceStaticVariables(final String original) {
       String before = original
             .replaceAll(InstrumentationConstants.PREFIX + "VM_NAME", "kieker.monitoring.core.controller.MonitoringController.getInstance().getHostname()")
             .replaceAll(InstrumentationConstants.PREFIX + "SESSION_REGISTRY", "SessionRegistry.INSTANCE")

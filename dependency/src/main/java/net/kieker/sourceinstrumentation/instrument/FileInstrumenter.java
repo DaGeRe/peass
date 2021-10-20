@@ -12,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.PackageDeclaration;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
@@ -34,12 +36,18 @@ public class FileInstrumenter {
    }
 
    public void instrument() throws IOException {
-      TypeDeclaration<?> clazz = ParseUtil.getClass(unit);
       Optional<PackageDeclaration> packageDeclaration = unit.getPackageDeclaration();
       final String packageName = packageDeclaration.isPresent() ? packageDeclaration.get().getNameAsString() + "." : "";
-      boolean hasChanges = handleTypeDeclaration(clazz, packageName);
-      TypeDeclaration<?> enumDecl = ParseUtil.getEnum(unit);
-      hasChanges |= handleTypeDeclaration(enumDecl, packageName);
+      boolean hasChanges = false;
+      
+      for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
+         hasChanges |= handleTypeDeclaration(clazz, packageName);
+      }
+      
+      for (EnumDeclaration enumDecl : ParseUtil.getEnums(unit)) {
+         hasChanges |= handleTypeDeclaration(enumDecl, packageName);
+      }
+      
       if (hasChanges) {
          addImports(unit);
          Files.write(file.toPath(), unit.toString().getBytes(StandardCharsets.UTF_8));
