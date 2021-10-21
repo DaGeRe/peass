@@ -11,7 +11,7 @@ import java.util.List;
 import org.codehaus.plexus.util.FileUtils;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -36,7 +36,7 @@ public class TestTimebasedTransforming {
 	private static File RESOURCE_FOLDER;
 	private static File SOURCE_FOLDER;
 
-	@BeforeClass
+	@BeforeAll
 	public static void initFolder() throws URISyntaxException, IOException {
 		RESOURCE_FOLDER = Paths.get(SOURCE.toURI()).toFile();
 		SOURCE_FOLDER = new File(testFolder, "src/test/java");

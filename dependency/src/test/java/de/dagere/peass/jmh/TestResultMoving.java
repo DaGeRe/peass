@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.TestConstants;
@@ -23,7 +23,7 @@ import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 
 public class TestResultMoving {
 
-   @Before
+   @BeforeEach
    public void clearCurrent() throws IOException {
       TestUtil.deleteContents(TestConstants.CURRENT_FOLDER.getParentFile());
 
