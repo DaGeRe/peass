@@ -29,34 +29,42 @@ public class ExecutorCreator {
    }
 
    public static TestExecutor createExecutor(final PeassFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
-      final File pom = new File(folders.getProjectFolder(), "pom.xml");
-      final File buildGradle = new File(folders.getProjectFolder(), "build.gradle");
       final String executorName = testTransformer.getConfig().getExecutionConfig().getTestExecutor();
       LOG.info(executorName);
       if (testTransformer != null && !executorName.equals("default")) {
-         try {
-            Class<?> executorClazz = Class.forName(executorName);
-            if (!executorClazz.getSuperclass().equals(TestExecutor.class)) {
-               throw new RuntimeException("Clazz " + executorName + " was given as executor, but no (direct) subclass of TestExecutor!");
-            }
-            Constructor<?> constructor = executorClazz.getConstructor(PeassFolders.class, TestTransformer.class, EnvironmentVariables.class);
-            TestExecutor transformer = (TestExecutor) constructor.newInstance(folders, testTransformer, env);
-            return transformer;
-
-         } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
-               | InvocationTargetException e) {
-            throw new RuntimeException("Executor creation did not work, executor name: " + executorName, e);
-         }
+         return createDefinedExecutor(folders, testTransformer, env, executorName);
       } else if (executorName.equals("default")) {
-         if (buildGradle.exists()) {
-            return new GradleTestExecutor(folders, (JUnitTestTransformer) testTransformer, env);
-         } else if (pom.exists()) {
-            return new MavenTestExecutor(folders, (JUnitTestTransformer) testTransformer, env);
-         } else {
-            throw new RuntimeException("No known buildfile (pom.xml  or build.gradle) in " + folders.getProjectFolder().getAbsolutePath() + " found; can not create test executor.");
-         }
+         return createDefaultExecutor(folders, testTransformer, env);
       } else {
          throw new RuntimeException("Executor creation did not work, executor name: " + executorName);
+      }
+   }
+
+   private static TestExecutor createDefinedExecutor(final PeassFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env, final String executorName) {
+      try {
+         Class<?> executorClazz = Class.forName(executorName);
+         if (!executorClazz.getSuperclass().equals(TestExecutor.class)) {
+            throw new RuntimeException("Clazz " + executorName + " was given as executor, but no (direct) subclass of TestExecutor!");
+         }
+         Constructor<?> constructor = executorClazz.getConstructor(PeassFolders.class, TestTransformer.class, EnvironmentVariables.class);
+         TestExecutor transformer = (TestExecutor) constructor.newInstance(folders, testTransformer, env);
+         return transformer;
+
+      } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
+            | InvocationTargetException e) {
+         throw new RuntimeException("Executor creation did not work, executor name: " + executorName, e);
+      }
+   }
+
+   private static TestExecutor createDefaultExecutor(final PeassFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
+      final File pom = new File(folders.getProjectFolder(), "pom.xml");
+      final File buildGradle = new File(folders.getProjectFolder(), "build.gradle");
+      if (buildGradle.exists()) {
+         return new GradleTestExecutor(folders, (JUnitTestTransformer) testTransformer, env);
+      } else if (pom.exists()) {
+         return new MavenTestExecutor(folders, (JUnitTestTransformer) testTransformer, env);
+      } else {
+         throw new RuntimeException("No known buildfile (pom.xml  or build.gradle) in " + folders.getProjectFolder().getAbsolutePath() + " found; can not create test executor.");
       }
    }
 

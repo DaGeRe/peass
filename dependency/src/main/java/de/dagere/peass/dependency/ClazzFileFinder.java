@@ -22,6 +22,7 @@ import de.dagere.peass.dependency.changesreading.ClazzFinder;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.dependency.traces.TraceReadUtils;
 import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;
+import de.dagere.peass.utils.ClassFolderUtil;
 
 /**
  * Searches for all classes in a maven project. Used for instrumeting them.
@@ -181,7 +182,7 @@ public class ClazzFileFinder {
       if (naturalCandidate.exists()) {
          potentialFile = naturalCandidate;
       }
-      for (final String potentialFolder : ChangedEntity.potentialClassFolders) {
+      for (final String potentialFolder : ClassFolderUtil.getPathes()) {
          final File candidate = new File(sourceParentFolder, potentialFolder + File.separator + clazzFileName);
          if (candidate.exists()) {
             potentialFile = candidate;

@@ -13,21 +13,21 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import de.dagere.peass.utils.ClassFolderUtil;
+
 //TODO What happens to changes, that do occur in classes which are only file-local? -> Should be separated by $
 public class ChangedEntity implements Comparable<ChangedEntity> {
-
-   public static final String[] potentialClassFolders = new String[] { "src/main/java/", "src/test/java/", "src/test/", "src/java/", "src/androidTest/java/" };
-
+   
    public static String replaceClazzFolderFromName(final String fileName) {
       boolean isInClassFolder = false;
-      for (final String clazzFolder : potentialClassFolders) {
+      for (final String clazzFolder : ClassFolderUtil.getPathes()) {
          if (fileName.contains(clazzFolder)) {
             isInClassFolder = true;
          }
       }
       if (isInClassFolder) {
          String tempClazzName = fileName.replace(".java", "");
-         for (final String clazzFolder : potentialClassFolders) {
+         for (final String clazzFolder : ClassFolderUtil.getPathes()) {
             tempClazzName = tempClazzName.replaceAll(clazzFolder, "");
          }
          return tempClazzName.replace(File.separatorChar, '.');
