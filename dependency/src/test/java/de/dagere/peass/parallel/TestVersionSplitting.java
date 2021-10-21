@@ -13,7 +13,6 @@ import java.util.Set;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -69,11 +68,6 @@ public class TestVersionSplitting {
             System.out.println("Reading: " + iterator.getTag());
          }
       }
-   }
-
-   @Before
-   public void init() {
-      DummyReader.nonRunning = new HashSet<>(Arrays.asList("4", "5"));
    }
 
    @Test

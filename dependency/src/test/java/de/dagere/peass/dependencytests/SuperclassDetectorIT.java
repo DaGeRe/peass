@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -41,7 +41,7 @@ public class SuperclassDetectorIT {
    private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT");
    private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "superclass_old");
 
-   @Before
+   @BeforeEach
    public void initialize() throws IOException, InterruptedException {
       Assert.assertTrue(VERSIONS_FOLDER.exists());
 

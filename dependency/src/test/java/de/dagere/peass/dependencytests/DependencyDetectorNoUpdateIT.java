@@ -9,7 +9,7 @@ import java.util.TreeMap;
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -25,7 +25,7 @@ import de.dagere.peass.vcs.VersionIterator;
 
 public class DependencyDetectorNoUpdateIT {
 
-   @Before
+   @BeforeEach
    public void initialize() throws IOException, InterruptedException {
       Assert.assertTrue(DependencyTestConstants.VERSIONS_FOLDER.exists());
 
