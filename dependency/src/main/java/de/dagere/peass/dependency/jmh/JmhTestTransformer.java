@@ -17,6 +17,7 @@ import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfiguration;
 import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -39,6 +40,9 @@ public class JmhTestTransformer implements TestTransformer {
    public JmhTestTransformer(final File projectFolder, final MeasurementConfiguration measurementConfig) {
       this.projectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
+      if (!measurementConfig.getExecutionConfig().getTestExecutor().equals(WorkloadType.JMH.getTestExecutor())) {
+         throw new RuntimeException("Test Executor needs to be " + WorkloadType.JMH.getTestExecutor());
+      }
    }
 
    public JmhTestTransformer(final File projectFolder, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig) {

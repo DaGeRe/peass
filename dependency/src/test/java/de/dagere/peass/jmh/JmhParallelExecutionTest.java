@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.config.MeasurementStrategy;
+import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -41,6 +42,7 @@ public class JmhParallelExecutionTest {
       measurementConfig.setIterations(10);
       measurementConfig.setRepetitions(2);
       measurementConfig.setMeasurementStrategy(MeasurementStrategy.PARALLEL);
+      measurementConfig.getExecutionConfig().setTestExecutor(WorkloadType.JMH.getTestExecutor());
 
       prepareThreads(testFolders, executors, threads, measurementConfig);
 
