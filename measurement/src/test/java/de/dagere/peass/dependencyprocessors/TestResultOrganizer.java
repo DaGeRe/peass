@@ -10,8 +10,8 @@ import javax.xml.bind.JAXBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
@@ -36,7 +36,7 @@ public class TestResultOrganizer {
    private ResultOrganizer organizer;
    private File methodFolder;
 
-   @Before
+   @BeforeEach
    public void setUp() {
       TestUtil.deleteOldFolders();
 

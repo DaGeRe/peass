@@ -7,7 +7,7 @@ import java.nio.file.Files;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependencyprocessors.ProgressWriter;
 

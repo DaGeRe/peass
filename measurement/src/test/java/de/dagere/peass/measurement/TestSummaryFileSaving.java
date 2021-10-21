@@ -6,8 +6,8 @@ import javax.xml.bind.JAXBException;
 
 import org.aspectj.util.FileUtil;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
@@ -23,7 +23,7 @@ public class TestSummaryFileSaving {
    private static final TestCase testcase = new TestCase("Test#test");
    private static final File oneResultFile = new File(testFolder, "test.xml");
    
-   @Before
+   @BeforeEach
    public void cleanup() {
       FileUtil.deleteContents(testFolder);
       if (!testFolder.exists()) {
