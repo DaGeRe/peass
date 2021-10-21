@@ -20,7 +20,7 @@ import de.dagere.peass.dependency.jmh.JmhTestTransformer;
 
 public class TestBenchmarkDetection {
 
-   private static final MeasurementConfiguration JMH_CONFIG = new MeasurementConfiguration(3);
+   static final MeasurementConfiguration JMH_CONFIG = new MeasurementConfiguration(3);
    static {
       JMH_CONFIG.getExecutionConfig().setTestExecutor(WorkloadType.JMH.getTestExecutor());
    }

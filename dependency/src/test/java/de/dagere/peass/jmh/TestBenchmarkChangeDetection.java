@@ -9,7 +9,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.config.MeasurementConfiguration;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.jmh.JmhTestTransformer;
@@ -17,7 +16,7 @@ import de.dagere.peass.dependency.jmh.JmhTestTransformer;
 public class TestBenchmarkChangeDetection {
    @Test
    public void testBenchmarkDetection() throws FileNotFoundException, IOException, XmlPullParserException {
-      JmhTestTransformer jmhTransformer = new JmhTestTransformer(JmhTestConstants.BASIC_VERSION, new MeasurementConfiguration(3));
+      JmhTestTransformer jmhTransformer = new JmhTestTransformer(JmhTestConstants.BASIC_VERSION, TestBenchmarkDetection.JMH_CONFIG);
       
       TestSet originalTests = new TestSet(new TestCase("de.dagere.peass.ExampleBenchmark", null, ""));
       
