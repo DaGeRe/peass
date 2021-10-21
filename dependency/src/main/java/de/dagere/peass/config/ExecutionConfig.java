@@ -37,10 +37,10 @@ public class ExecutionConfig implements Serializable {
    private boolean createDefaultConstructor = true;
    private boolean redirectSubprocessOutputToFile = true;
    private boolean useTieredCompilation = false;
-   
+
    private boolean removeSnapshots = false;
    private boolean excludeLog4j = false;
-   
+
    private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
    private String testExecutor = "default";
 
@@ -49,7 +49,7 @@ public class ExecutionConfig implements Serializable {
       excludes = new LinkedList<>();
       testGoal = null;
    }
-   
+
    public ExecutionConfig(final ExecutionConfig other) {
       this.timeout = other.getTimeout();
       this.testGoal = other.getTestGoal();
@@ -85,14 +85,14 @@ public class ExecutionConfig implements Serializable {
       this.testGoal = testGoal;
       this.timeout = 5 * 60 * 1000;
    }
-   
+
    public ExecutionConfig(final ExecutionConfigMixin executionMixin) {
       timeout = executionMixin.getTimeout() * 60 * 1000;
       version = executionMixin.getVersion();
       setVersionOld(executionMixin.getVersionOld());
       setStartversion(executionMixin.getStartversion());
       setEndversion(executionMixin.getEndversion());
-      
+
       setTestGoal(executionMixin.getTestGoal());
       if (executionMixin.getIncludes() != null) {
          for (String include : executionMixin.getIncludes()) {
@@ -108,12 +108,21 @@ public class ExecutionConfig implements Serializable {
       if (executionMixin.getPl() != null) {
          pl = executionMixin.getPl();
       }
-      setTestTransformer(executionMixin.getWorkloadType().getTestTransformer());
-      setTestExecutor(executionMixin.getWorkloadType().getTestExecutor());
+      boolean transformerSet = executionMixin.getTestTransformer() != null;
+      boolean executorSet = executionMixin.getTestExecutor() != null;
+      if (transformerSet && executorSet) {
+         setTestTransformer(executionMixin.getTestTransformer());
+         setTestExecutor(executionMixin.getTestExecutor());
+      } else if (transformerSet != executorSet) {
+         throw new RuntimeException("If the test transformer is set by CLI parameters, the test executor needs also be set!");
+      } else {
+         setTestTransformer(executionMixin.getWorkloadType().getTestTransformer());
+         setTestExecutor(executionMixin.getWorkloadType().getTestExecutor());
+      }
       useTieredCompilation = executionMixin.isUseTieredCompilation();
       removeSnapshots = executionMixin.isRemoveSnapshots();
    }
-   
+
    public void setTimeout(final long timeout) {
       this.timeout = timeout;
    }
@@ -139,12 +148,12 @@ public class ExecutionConfig implements Serializable {
    public void setIncludes(final List<String> includes) {
       this.includes = includes;
    }
-   
+
    @JsonInclude(Include.NON_NULL)
    public List<String> getExcludes() {
       return excludes;
    }
-   
+
    public void setExcludes(final List<String> excludes) {
       this.excludes = excludes;
    }
@@ -219,7 +228,7 @@ public class ExecutionConfig implements Serializable {
    public void setUseTieredCompilation(final boolean useTieredCompilation) {
       this.useTieredCompilation = useTieredCompilation;
    }
-   
+
    public void setRemoveSnapshots(final boolean removeSnapshots) {
       this.removeSnapshots = removeSnapshots;
    }

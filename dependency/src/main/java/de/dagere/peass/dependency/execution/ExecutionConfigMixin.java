@@ -36,6 +36,12 @@ public class ExecutionConfigMixin {
 
    @Option(names = { "-workloadType", "--workloadType" }, description = "Which workload should be executed - by default JUNIT, can be changed to JMH")
    public WorkloadType workloadType = WorkloadType.JUNIT;
+   
+   @Option(names = { "-testExecutor", "--testExecutor" }, description = "Set test executor (should be specified by plugin; not usable with pure Peass)")
+   public String testExecutor;
+   
+   @Option(names = { "-testTransformer", "--testTransformer" }, description = "Set test transformer (should be specified by plugin; not usable with pure Peass)")
+   public String testTransformer;
 
    @Option(names = { "-useTieredCompilation", "--useTieredCompilation" }, description = "Activate -XX:-TieredCompilation for all measured processes")
    protected boolean useTieredCompilation = false;
@@ -130,6 +136,22 @@ public class ExecutionConfigMixin {
 
    public void setWorkloadType(final WorkloadType workloadType) {
       this.workloadType = workloadType;
+   }
+
+   public String getTestExecutor() {
+      return testExecutor;
+   }
+
+   public void setTestExecutor(final String testExecutor) {
+      this.testExecutor = testExecutor;
+   }
+
+   public String getTestTransformer() {
+      return testTransformer;
+   }
+
+   public void setTestTransformer(final String testTransformer) {
+      this.testTransformer = testTransformer;
    }
 
    public boolean isUseTieredCompilation() {
