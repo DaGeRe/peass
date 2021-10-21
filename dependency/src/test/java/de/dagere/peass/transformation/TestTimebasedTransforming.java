@@ -12,9 +12,8 @@ import org.codehaus.plexus.util.FileUtils;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.ClassRule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
+import org.junit.jupiter.api.io.TempDir;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
@@ -29,8 +28,9 @@ import de.dagere.peass.testtransformation.ParseUtil;
 import de.dagere.peass.testtransformation.TimeBasedTestTransformer;
 
 public class TestTimebasedTransforming {
-	@ClassRule
-	public static TemporaryFolder testFolder = new TemporaryFolder();
+   
+   @TempDir
+	public static File testFolder;
 
 	private static final URL SOURCE = Thread.currentThread().getContextClassLoader().getResource("transformation");
 	private static File RESOURCE_FOLDER;
@@ -39,8 +39,8 @@ public class TestTimebasedTransforming {
 	@BeforeClass
 	public static void initFolder() throws URISyntaxException, IOException {
 		RESOURCE_FOLDER = Paths.get(SOURCE.toURI()).toFile();
-		SOURCE_FOLDER = new File(testFolder.getRoot(), "src/test/java");
-		FileUtils.copyFile(new File(RESOURCE_FOLDER, "pom.xml"), new File(testFolder.getRoot(), "pom.xml"));
+		SOURCE_FOLDER = new File(testFolder, "src/test/java");
+		FileUtils.copyFile(new File(RESOURCE_FOLDER, "pom.xml"), new File(testFolder, "pom.xml"));
 	}
 
 	@Test
@@ -49,8 +49,8 @@ public class TestTimebasedTransforming {
 		final File testFile = new File(SOURCE_FOLDER, "TestMe1.java");
 		FileUtils.copyFile(old, testFile);
 
-		final JUnitTestTransformer tt = new TimeBasedTestTransformer(testFolder.getRoot());
-		tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
+		final JUnitTestTransformer tt = new TimeBasedTestTransformer(testFolder);
+		tt.determineVersions(Arrays.asList(new File[] {testFolder}));
       tt.transformTests();
 
 		final CompilationUnit cu = JavaParserProvider.parse(testFile);
@@ -71,8 +71,8 @@ public class TestTimebasedTransforming {
 		final File testFile2 = new File(SOURCE_FOLDER, "TestMe2.java");
 		FileUtils.copyFile(old2, testFile2);
 
-		final JUnitTestTransformer tt = new TimeBasedTestTransformer(testFolder.getRoot());
-		tt.determineVersions(Arrays.asList(new File[] {testFolder.getRoot()}));
+		final JUnitTestTransformer tt = new TimeBasedTestTransformer(testFolder);
+		tt.determineVersions(Arrays.asList(new File[] {testFolder}));
       tt.transformTests();
 
 		final CompilationUnit cu = JavaParserProvider.parse(testFile2);

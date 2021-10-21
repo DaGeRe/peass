@@ -14,9 +14,7 @@ import java.util.Set;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.TemporaryFolder;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.ExecutionConfig;
@@ -38,8 +36,14 @@ import de.dagere.peass.vcs.VersionIterator;
 
 public class TestVersionSplitting {
 
-   @Rule
-   public TemporaryFolder testFolder = new TemporaryFolder(new File("target"));
+   /**
+    * The testFolder is required to be inside of Peass, so a .git folder can be found; therefore, it is created here
+    */
+   public File testFolder = new File("target/current");
+   {
+      testFolder.mkdirs();
+   }
+   
 
    static class DummyReader extends DependencyReader {
 
@@ -147,7 +151,7 @@ public class TestVersionSplitting {
    private void readDummyDependencies(final List<Dependencies> dependencies, final int i, final List<GitCommit> currentCommits, final List<GitCommit> reserveCommits,
          final GitCommit minimumCommit)
          throws IOException {
-      File dummyFolder = new File(testFolder.getRoot(), "part_" + i);
+      File dummyFolder = new File(testFolder, "part_" + i);
       dummyFolder.mkdir();
       File pom = new File(dummyFolder, "pom.xml");
       try (BufferedWriter newBufferedWriter = Files.newBufferedWriter(pom.toPath())) {
