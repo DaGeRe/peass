@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>measurement</artifactId>
@@ -46,16 +45,6 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.0.0-M5</version>
-				<configuration>
-				    <argLine>
-				        --illegal-access=permit
-				    </argLine>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-failsafe-plugin</artifactId>
 				<version>3.0.0-M3</version>
 				<executions>
@@ -72,8 +61,7 @@
 
 	<dependencies>
 
-		<!-- For execution, it is assumed that the kieker aspectJ-jar is in the 
-			local .m2 directory; no need for inclusion in jar, therefore scope runtime -->
+		<!-- For execution, it is assumed that the kieker aspectJ-jar is in the local .m2 directory; no need for inclusion in jar, therefore scope runtime -->
 		<dependency>
 			<groupId>net.kieker-monitoring</groupId>
 			<artifactId>kieker</artifactId>
@@ -93,8 +81,7 @@
 		</dependency>
 
 
-		<!-- Do not upgrade until whole project switches to Java 11, since jgrapht 
-			1.5 is only available for Java 11 -->
+		<!-- Do not upgrade until whole project switches to Java 11, since jgrapht 1.5 is only available for Java 11 -->
 		<dependency>
 			<groupId>org.jgrapht</groupId>
 			<artifactId>jgrapht-core</artifactId>
@@ -161,12 +148,47 @@
 
 	<profiles>
 		<profile>
+			<id>jdk8</id>
+			<activation>
+				<jdk>1.8</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>3.0.0-M5</version>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>jdk11andAbove</id>
+			<activation>
+				<jdk>(11</jdk>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-surefire-plugin</artifactId>
+						<version>3.0.0-M5</version>
+						<configuration>
+							<argLine>
+								--illegal-access=permit
+							</argLine>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+
+
+		<profile>
 			<id>buildFatJar</id>
 			<activation>
-				<!-- The shade plugin took ~ 21 s from 25 s of build, if a shaded jar 
-					is built for every module Therefore, shade is commented out currently; if 
-					a separate dependency-jar is needed, it could be re-enabled (or used by activating 
-					the profile) -->
+				<!-- The shade plugin took ~ 21 s from 25 s of build, if a shaded jar is built for every module Therefore, shade is commented out currently; if a separate dependency-jar 
+					is needed, it could be re-enabled (or used by activating the profile) -->
 			</activation>
 			<build>
 				<plugins>
@@ -194,8 +216,7 @@
 								</goals>
 								<configuration>
 									<transformers>
-										<transformer
-											implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+										<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 											<mainClass>de.peass.AdaptiveTestStarter</mainClass>
 										</transformer>
 									</transformers>
