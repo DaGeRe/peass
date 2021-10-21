@@ -19,7 +19,6 @@ public class SourceInstrumentationConstructorProblemIT {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
    }
 
-
    @Test
    public void testExecution() throws IOException {
       File resultFile = SimpleProjectUtil.obtainLogs("/sourceInstrumentation/example_constructorProblem/");

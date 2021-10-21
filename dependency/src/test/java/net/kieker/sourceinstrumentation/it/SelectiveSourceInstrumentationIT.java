@@ -23,19 +23,22 @@ import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public class SelectiveSourceInstrumentationIT {
    
+   private File tempFolder;
+   
    @BeforeEach
    public void before() throws IOException {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
+      
+      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2/");
+      
+      tempFolder = new File(TestConstants.CURRENT_FOLDER, "results");
+      if (! tempFolder.mkdir()) {
+         throw new RuntimeException("Can not create existing directory: " + tempFolder.getAbsolutePath());
+      }
    }
 
    @Test
    public void testExecution() throws IOException {
-      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2/");
-
-      File tempFolder = new File(TestConstants.CURRENT_FOLDER, "results");
-      tempFolder.mkdir();
-
-      
       Set<String> includedPatterns = new HashSet<>();
       includedPatterns.add("public void de.peass.MainTest.testMe()");
       includedPatterns.add("public void de.peass.C0_0.method0()");

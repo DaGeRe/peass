@@ -158,7 +158,7 @@ public class ClazzFileFinder {
 
    public static File getClazzFile(final File module, final ChangedEntity entity) {
       LOG.debug("Searching: {} in {}", entity, module.getAbsolutePath());
-      String clazzName = getOuterClass(entity.getClazz());
+      final String clazzName = getOuterClass(entity.getClazz());
       final String clazzFileName = clazzName.endsWith(".java") ? clazzName : clazzName.replace('.', File.separatorChar) + ".java";
       final File naturalCandidate = new File(module, clazzFileName);
       File potentialFile = findFile(module, clazzFileName, naturalCandidate);

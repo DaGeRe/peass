@@ -20,18 +20,22 @@ import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public class SourceInstrumentationUnreachableIT {
    
+   private File tempFolder;
+   
    @BeforeEach
    public void before() throws IOException {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
+      
+      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2_unreachable/");
+      
+      tempFolder = new File(TestConstants.CURRENT_FOLDER, "results");
+      if (! tempFolder.mkdir()) {
+         throw new RuntimeException("Can not create existing directory: " + tempFolder.getAbsolutePath());
+      }
    }
 
    @Test
    public void testExecution() throws IOException {
-      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2_unreachable/");
-
-      File tempFolder = new File(TestConstants.CURRENT_FOLDER, "results");
-      tempFolder.mkdir();
-
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
 

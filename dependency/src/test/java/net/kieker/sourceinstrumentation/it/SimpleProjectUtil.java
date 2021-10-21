@@ -17,7 +17,9 @@ public class SimpleProjectUtil {
       SourceInstrumentationTestUtil.initSimpleProject(projectFolder);
 
       File tempFolder = new File(TestConstants.CURRENT_FOLDER, "results");
-      tempFolder.mkdir();
+      if (!tempFolder.mkdir()) {
+         throw new RuntimeException("Could not create directory: " + tempFolder.getAbsolutePath());
+      }
 
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);

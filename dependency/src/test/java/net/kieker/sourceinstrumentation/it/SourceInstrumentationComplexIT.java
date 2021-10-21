@@ -24,9 +24,18 @@ import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public class SourceInstrumentationComplexIT {
 
+   private File tempFolder;
+
    @BeforeEach
    public void before() throws IOException {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
+
+      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2_complex/");
+
+      tempFolder = new File(TestConstants.CURRENT_FOLDER, "results");
+      if (!tempFolder.mkdir()) {
+         throw new RuntimeException("Can not create existing directory: " + tempFolder.getAbsolutePath());
+      }
    }
 
    public File writeAdaptiveInstrumentationInfo() throws IOException {
@@ -44,11 +53,7 @@ public class SourceInstrumentationComplexIT {
 
    @Test
    public void testExecution() throws IOException {
-      SourceInstrumentationTestUtil.initProject("/sourceInstrumentation/project_2_complex/");
       File adaptiveFile = writeAdaptiveInstrumentationInfo();
-
-      File tempFolder = new File(TestConstants.CURRENT_FOLDER, "results");
-      tempFolder.mkdir();
 
       InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(AllowedKiekerRecord.OPERATIONEXECUTION);
       instrumenter.instrumentProject(TestConstants.CURRENT_FOLDER);
