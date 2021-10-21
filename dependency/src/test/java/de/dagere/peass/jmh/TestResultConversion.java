@@ -9,7 +9,7 @@ import javax.xml.bind.JAXBException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
@@ -24,7 +24,7 @@ public class TestResultConversion {
    private static final File CONVERSION_FOLDER = new File(JmhTestConstants.JMH_EXAMPLE_FOLDER, "conversion");
    private static final File CONVERSION_TEMP_FOLDER = new File("target/jmh-it");
    
-   @Before
+   @BeforeEach
    public void cleanup() {
       CONVERSION_TEMP_FOLDER.mkdirs();
       TestUtil.deleteContents(CONVERSION_TEMP_FOLDER);
