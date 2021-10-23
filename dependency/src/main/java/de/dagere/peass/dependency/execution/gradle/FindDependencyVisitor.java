@@ -33,6 +33,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
    private int buildTools = -1;
    private int buildToolsVersion = -1;
    private boolean useJava = false;
+   private boolean useSpringBoot = false;
    private boolean hasVersion = true;
    private boolean subprojectJava = false;
    private List<String> gradleFileContents;
@@ -56,24 +57,10 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       if (call != null && call.getMethodAsString() != null) {
          // System.out.println(call.getMethodAsString());
          if (call.getMethodAsString().equals("plugins")) {
-            Expression expression = call.getArguments();
-            if (expression instanceof ArgumentListExpression) {
-               ArgumentListExpression list = (ArgumentListExpression) expression;
-               for (Expression pluginExpression : list.getExpressions()) {
-                  ClosureExpression closurePluginExpression = (ClosureExpression) pluginExpression;
-                  for (Statement statement : ((BlockStatement) closurePluginExpression.getCode()).getStatements()) {
-                     String text = statement.getText();
-                     if (isJavaPlugin(text)) {
-                        useJava = true;
-                     }
-                  }
-               }
-            }
+            parsePluginsSection(call);
          } else if (call.getMethodAsString().equals("apply")) {
             final String text = call.getArguments().getText();
-            if (isJavaPlugin(text)) {
-               useJava = true;
-            }
+            checkPluginName(text);
          } else if (call.getMethodAsString().equals("dependencies")) {
             // System.out.println(call);
             dependencyLine = call.getLastLineNumber();
@@ -88,25 +75,50 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
          } else if (call.getMethodAsString().equals("buildToolsVersion")) {
             buildToolsVersion = call.getLastLineNumber();
          } else if (call.getMethodAsString().equals("subprojects")) {
-            Expression expression = call.getArguments();
-            if (expression instanceof ArgumentListExpression) {
-               ArgumentListExpression list = (ArgumentListExpression) expression;
-               for (Expression pluginExpression : list.getExpressions()) {
-                  ClosureExpression closurePluginExpression = (ClosureExpression) pluginExpression;
-                  for (Statement statement : ((BlockStatement) closurePluginExpression.getCode()).getStatements()) {
-                     String text = statement.getText();
-                     if (isJavaPlugin(text)) {
-                        subprojectJava = true;
-                     }
-                  }
-               }
-            }
-
+            parseSubprojectsSection(call);
          }
       }
 
       // LOG.info("Android: " + androidLine);
       super.visitMethodCallExpression(call);
+   }
+
+   private void parseSubprojectsSection(final MethodCallExpression call) {
+      Expression expression = call.getArguments();
+      if (expression instanceof ArgumentListExpression) {
+         ArgumentListExpression list = (ArgumentListExpression) expression;
+         for (Expression pluginExpression : list.getExpressions()) {
+            ClosureExpression closurePluginExpression = (ClosureExpression) pluginExpression;
+            for (Statement statement : ((BlockStatement) closurePluginExpression.getCode()).getStatements()) {
+               String text = statement.getText();
+               if (isJavaPlugin(text)) {
+                  subprojectJava = true;
+               }
+            }
+         }
+      }
+   }
+
+   private void parsePluginsSection(final MethodCallExpression call) {
+      Expression expression = call.getArguments();
+      if (expression instanceof ArgumentListExpression) {
+         ArgumentListExpression list = (ArgumentListExpression) expression;
+         for (Expression pluginExpression : list.getExpressions()) {
+            ClosureExpression closurePluginExpression = (ClosureExpression) pluginExpression;
+            for (Statement statement : ((BlockStatement) closurePluginExpression.getCode()).getStatements()) {
+               String text = statement.getText();
+               checkPluginName(text);
+            }
+         }
+      }
+   }
+
+   private void checkPluginName(final String text) {
+      if (isJavaPlugin(text)) {
+         useJava = true;
+      } else if (text.contains("org.springframework.boot")) {
+         useSpringBoot = true;
+      }
    }
 
    private boolean isJavaPlugin(final String text) {
@@ -153,6 +165,10 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
 
    public boolean isUseJava() {
       return useJava;
+   }
+   
+   public boolean isUseSpringBoot() {
+      return useSpringBoot;
    }
 
    public boolean isHasVersion() {

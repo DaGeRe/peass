@@ -1,0 +1,25 @@
+plugins {
+    id 'java-library'
+    id 'java'
+    id 'org.springframework.boot' version '2.3.3.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+bootJar {
+	mainClassName='Dummy'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+}
+
+

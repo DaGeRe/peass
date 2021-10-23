@@ -129,7 +129,10 @@ public class GradleParseUtil {
                LOG.error(line + " not found! Was looking in " + module.getAbsolutePath());
             }
          }
-
       }
+   }
+
+   public static void addJUnitVersionSpringBoot(final FindDependencyVisitor visitor) {
+      visitor.getLines().add("ext['junit-jupiter.version']='5.8.1'");
    }
 }

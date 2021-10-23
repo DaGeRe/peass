@@ -76,6 +76,10 @@ public class GradleBuildfileEditor {
       if (visitor.getBuildToolsVersion() != -1) {
          GradleParseUtil.updateBuildToolsVersion(visitor);
       }
+      
+      if (visitor.isUseSpringBoot()) {
+         GradleParseUtil.addJUnitVersionSpringBoot(visitor);
+      }
 
       addDependencies(visitor);
 

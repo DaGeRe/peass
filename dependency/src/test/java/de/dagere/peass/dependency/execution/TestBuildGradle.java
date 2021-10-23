@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,6 +41,16 @@ public class TestBuildGradle {
 
       Assert.assertTrue(FileUtils.contentEquals(gradleFile, destFile));
    }
+   
+   @Test
+   public void testSprintBootUpdate() throws IOException {
+      final File gradleFile = new File("src/test/resources/gradle/build_boot_oldVersion.gradle");
+      
+      final String gradleFileContents = updateGradleFile(gradleFile);
+      
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("de.dagere.kopeme:kopeme-junit"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("ext['junit-jupiter.version']='5.8.1'"));
+   }
 
    @Test
    public void testBuildtoolUpdate() throws IOException {
@@ -57,20 +68,25 @@ public class TestBuildGradle {
    }
 
    public void testUpdate(final File gradleFile, final boolean buildtools) throws IOException {
+      final String gradleFileContents = updateGradleFile(gradleFile);
+
+      if (buildtools) {
+         MatcherAssert.assertThat(gradleFileContents, Matchers.anyOf(Matchers.containsString("'buildTools': '19.1.0'"),
+                     Matchers.containsString("buildToolsVersion 19.1.0")));
+      }
+      
+
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("de.dagere.kopeme:kopeme-junit"));
+   }
+   
+   private String updateGradleFile(final File gradleFile) throws IOException {
       final File destFile = new File(CURRENT, "build.gradle");
       FileUtils.copyFile(gradleFile, destFile);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(CURRENT));
       editor.addDependencies(new File("xyz"));
-
-      final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
-
-      if (buildtools) {
-         Assert.assertThat(gradleFileContents, Matchers.anyOf(Matchers.containsString("'buildTools': '19.1.0'"),
-                     Matchers.containsString("buildToolsVersion 19.1.0")));
-      }
       
-
-      Assert.assertThat(gradleFileContents, Matchers.containsString("de.dagere.kopeme:kopeme-junit"));
+      final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
+      return gradleFileContents;
    }
 }
