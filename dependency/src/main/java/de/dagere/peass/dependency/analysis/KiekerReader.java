@@ -4,11 +4,11 @@ import java.io.File;
 
 import teetime.framework.Execution;
 
-public class KiekerReaderNew {
+public class KiekerReader {
 
-   public static PeassStage getPeassStage(final File kiekerTraceFolder, final String prefix, final ModuleClassMapping mapping) {
+   public static CalledMethodStage getCalledMethodStage(final File kiekerTraceFolder, final String prefix, final ModuleClassMapping mapping) {
       KiekerReaderConfiguration configuration = new KiekerReaderConfiguration();
-      PeassStage peassStage = configuration.exampleReader(kiekerTraceFolder, prefix, mapping);
+      CalledMethodStage peassStage = configuration.exampleReader(kiekerTraceFolder, prefix, mapping);
       
       Execution execution = new Execution(configuration);
       execution.executeBlocking();

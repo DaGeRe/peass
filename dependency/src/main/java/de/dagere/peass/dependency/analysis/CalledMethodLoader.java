@@ -65,7 +65,7 @@ public class CalledMethodLoader {
       try (PrintStream kiekerOutStream = new PrintStream(kiekerOutputFile)) {
          System.setOut(kiekerOutStream);
          System.setErr(kiekerOutStream);
-         final PeassStage peassFilter = executePeassFilter(null);
+         final CalledMethodStage peassFilter = executePeassFilter(null);
          return peassFilter.getCalledMethods();
       } catch (IllegalStateException | AnalysisConfigurationException | FileNotFoundException e) {
          e.printStackTrace();
@@ -90,7 +90,7 @@ public class CalledMethodLoader {
 
          LOG.debug("Size: {} ({}) Folder: {}", sizeInMB, size, kiekerTraceFolder);
          if (sizeInMB < TRACE_MAX_SIZE_IN_MB) {
-            final PeassStage peassFilter = executePeassFilter(prefix);
+            final CalledMethodStage peassFilter = executePeassFilter(prefix);
             return peassFilter.getCalls();
          } else {
             LOG.error("Trace size: {} MB - skipping", sizeInMB);
@@ -102,8 +102,8 @@ public class CalledMethodLoader {
       }
    }
 
-   private PeassStage executePeassFilter(final String prefix) throws AnalysisConfigurationException {
-      PeassStage peassStage = KiekerReaderNew.getPeassStage(kiekerTraceFolder, prefix, mapping);
+   private CalledMethodStage executePeassFilter(final String prefix) throws AnalysisConfigurationException {
+      CalledMethodStage peassStage = KiekerReader.getCalledMethodStage(kiekerTraceFolder, prefix, mapping);
       return peassStage;
    }
 

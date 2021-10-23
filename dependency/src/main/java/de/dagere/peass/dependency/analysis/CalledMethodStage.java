@@ -21,9 +21,13 @@ import kieker.model.repository.SystemModelRepository;
 import kieker.model.system.model.Execution;
 import kieker.model.system.model.ExecutionTrace;
 
-public class PeassStage extends AbstractTraceProcessingStage<ExecutionTrace> {
+/**
+ * This stage reads the called methods from a Kieker trace
+ *
+ */
+public class CalledMethodStage extends AbstractTraceProcessingStage<ExecutionTrace> {
 
-   private static final Logger LOG = LogManager.getLogger(PeassStage.class);
+   private static final Logger LOG = LogManager.getLogger(CalledMethodStage.class);
 
    private final Map<ChangedEntity, Set<String>> calledMethods = new HashMap<>();
    private final ArrayList<TraceElement> calls = new ArrayList<>();
@@ -32,7 +36,7 @@ public class PeassStage extends AbstractTraceProcessingStage<ExecutionTrace> {
 
    private final static int CALLCOUNT = 10000000;
 
-   public PeassStage(final SystemModelRepository systemModelRepository, final String prefix, final ModuleClassMapping mapping) {
+   public CalledMethodStage(final SystemModelRepository systemModelRepository, final String prefix, final ModuleClassMapping mapping) {
       super(systemModelRepository);
       this.prefix = prefix;
       this.mapping = mapping;

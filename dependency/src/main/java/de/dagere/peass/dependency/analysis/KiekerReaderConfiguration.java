@@ -23,10 +23,10 @@ public class KiekerReaderConfiguration extends Configuration {
       super();
    }
 
-   public PeassStage exampleReader(final File kiekerTraceFolder, final String prefix, final ModuleClassMapping mapping) {
+   public CalledMethodStage exampleReader(final File kiekerTraceFolder, final String prefix, final ModuleClassMapping mapping) {
       TraceReconstructionStage traceReconstructionStage = prepareTillExecutionTrace(kiekerTraceFolder);
 
-      PeassStage myStage = new PeassStage(systemModelRepositoryNew, prefix, mapping);
+      CalledMethodStage myStage = new CalledMethodStage(systemModelRepositoryNew, prefix, mapping);
       this.connectPorts(traceReconstructionStage.getExecutionTraceOutputPort(), myStage.getInputPort());
 
       return myStage;
