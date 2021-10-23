@@ -20,9 +20,9 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.dagere.peass.dependency.CauseSearchFolders;
-import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.folders.CauseSearchFolders;
+import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
 

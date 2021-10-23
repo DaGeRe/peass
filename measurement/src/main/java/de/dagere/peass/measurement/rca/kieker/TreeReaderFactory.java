@@ -4,8 +4,8 @@ import java.io.File;
 import java.io.IOException;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.vcs.GitUtils;
 
 public class TreeReaderFactory {

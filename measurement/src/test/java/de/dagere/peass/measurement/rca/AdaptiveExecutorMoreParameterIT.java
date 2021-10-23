@@ -20,10 +20,10 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
+import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.helper.OnFailureLogSafer;
 import de.dagere.peass.measurement.rca.helper.TestConstants;

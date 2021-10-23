@@ -21,13 +21,14 @@ import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.properties.ChangeProperty.TraceChange;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ChangeManager;
-import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.EntityUtil;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.execution.pom.MavenPomUtil;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.traces.requitur.Sequitur;
+import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionIteratorGit;
@@ -209,7 +210,7 @@ public class PropertyReadHelper {
    private void readMethodSources(final ChangeProperty property, final PeassFolders folders, final Set<String> merged) throws FileNotFoundException, IOException {
       for (final String calledInOneMethod : merged) {
          LOG.debug("Loading: " + calledInOneMethod);
-         final ChangedEntity entity = determineEntity(calledInOneMethod);
+         final ChangedEntity entity = EntityUtil.determineEntity(calledInOneMethod);
          final MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, folders.getProjectFolder(), folders.getOldSources(), entity, version);
          reader.readMethodChangeData();
          getKeywordChanges(property, reader, entity);
@@ -220,23 +221,27 @@ public class PropertyReadHelper {
       try {
          List<File> modules = MavenPomUtil.getGenericModules(projectFolder, new ExecutionConfig()).getModules();
          final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, modules, version);
-         for (final Iterator<ChangedEntity> it = diff.getChangedClasses().iterator(); it.hasNext();) {
-            final ChangedEntity entity = it.next();
-            boolean called = false;
-            for (final String call : calls) {
-               if (call.startsWith(entity.getJavaClazzName())) {
-                  called = true;
-                  break;
-               }
-            }
-            if (!called)
-               it.remove();
-         }
+         removeUncalledClasses(calls, diff);
          property.setAffectedClasses(diff.getChangedClasses().size());
          final int changedLines = GitUtils.getChangedLines(projectFolder, version, diff.getChangedClasses());
          property.setAffectedLines(changedLines);
       } catch (final XmlPullParserException e) {
          e.printStackTrace();
+      }
+   }
+
+   private void removeUncalledClasses(final Set<String> calls, final VersionDiff diff) {
+      for (final Iterator<ChangedEntity> it = diff.getChangedClasses().iterator(); it.hasNext();) {
+         final ChangedEntity entity = it.next();
+         boolean called = false;
+         for (final String call : calls) {
+            if (call.startsWith(entity.getJavaClazzName())) {
+               called = true;
+               break;
+            }
+         }
+         if (!called)
+            it.remove();
       }
    }
 
@@ -262,32 +267,7 @@ public class PropertyReadHelper {
       }
    }
 
-   public static ChangedEntity determineEntity(final String clazzMethodName) {
-      final String module, clazz;
-      if (clazzMethodName.contains(ChangedEntity.MODULE_SEPARATOR)) {
-         module = clazzMethodName.substring(0, clazzMethodName.indexOf(ChangedEntity.MODULE_SEPARATOR));
-         clazz = clazzMethodName.substring(clazzMethodName.indexOf(ChangedEntity.MODULE_SEPARATOR) + 1, clazzMethodName.indexOf(ChangedEntity.METHOD_SEPARATOR));
-      } else {
-         module = "";
-         clazz = clazzMethodName.substring(0, clazzMethodName.indexOf(ChangedEntity.METHOD_SEPARATOR));
-      }
-
-      final int openingParenthesis = clazzMethodName.indexOf("(");
-      String method;
-      if (openingParenthesis != -1) {
-         method = clazzMethodName.substring(clazzMethodName.indexOf(ChangedEntity.METHOD_SEPARATOR) + 1, openingParenthesis);
-      } else {
-         method = clazzMethodName.substring(clazzMethodName.indexOf(ChangedEntity.METHOD_SEPARATOR) + 1);
-      }
-      System.out.println(clazzMethodName);
-
-      final ChangedEntity entity = new ChangedEntity(clazz, module, method);
-      if (openingParenthesis != -1) {
-         final String parameterString = clazzMethodName.substring(openingParenthesis + 1, clazzMethodName.length() - 1);
-         entity.createParameters(parameterString);
-      }
-      return entity;
-   }
+   
 
    public Set<String> getMergedCalls(final List<String> traceCurrent, final List<String> traceOld) {
       final Set<String> merged = new HashSet<>();

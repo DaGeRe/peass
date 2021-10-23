@@ -12,11 +12,12 @@ import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.properties.ChangeProperty;
 import de.dagere.peass.analysis.properties.PropertyReadHelper;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.EntityUtil;
 
 public class TestPropertyReadHelper {
    @Test
    public void testDetermineEntity() {
-      ChangedEntity entity = PropertyReadHelper.determineEntity("module" + ChangedEntity.MODULE_SEPARATOR + "clazz" + ChangedEntity.METHOD_SEPARATOR + "method");
+      ChangedEntity entity = EntityUtil.determineEntity("module" + ChangedEntity.MODULE_SEPARATOR + "clazz" + ChangedEntity.METHOD_SEPARATOR + "method");
       
       Assert.assertEquals("module", entity.getModule());
       Assert.assertEquals("clazz", entity.getClazz());
@@ -25,7 +26,7 @@ public class TestPropertyReadHelper {
    
    @Test
    public void testDetermineEntityModuleless() {
-      ChangedEntity entity = PropertyReadHelper.determineEntity("clazz" + ChangedEntity.METHOD_SEPARATOR + "method");
+      ChangedEntity entity = EntityUtil.determineEntity("clazz" + ChangedEntity.METHOD_SEPARATOR + "method");
       
       Assert.assertEquals("", entity.getModule());
       Assert.assertEquals("clazz", entity.getClazz());
@@ -34,7 +35,7 @@ public class TestPropertyReadHelper {
    
    @Test
    public void testDetermineEntityParameters() {
-      ChangedEntity entity = PropertyReadHelper.determineEntity("clazz" + ChangedEntity.METHOD_SEPARATOR + "method(int,String)");
+      ChangedEntity entity = EntityUtil.determineEntity("clazz" + ChangedEntity.METHOD_SEPARATOR + "method(int,String)");
       
       Assert.assertEquals("", entity.getModule());
       Assert.assertEquals("clazz", entity.getClazz());

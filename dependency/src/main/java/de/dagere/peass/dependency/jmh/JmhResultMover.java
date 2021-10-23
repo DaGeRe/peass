@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.FileFilter;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
+import de.dagere.peass.folders.PeassFolders;
 
 public class JmhResultMover {
 

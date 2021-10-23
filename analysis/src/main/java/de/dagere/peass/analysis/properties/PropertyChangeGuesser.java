@@ -12,11 +12,11 @@ import java.util.Set;
 import com.github.javaparser.ast.CompilationUnit;
 
 import de.dagere.peass.dependency.ClazzFileFinder;
-import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.changesreading.FileComparisonUtil;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
+import de.dagere.peass.folders.PeassFolders;
 import difflib.Delta;
 import difflib.DiffUtils;
 import difflib.Patch;

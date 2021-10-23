@@ -20,8 +20,8 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
-import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
+import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestKiekerEnvironmentPreparer {

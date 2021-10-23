@@ -14,8 +14,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.ReadProperties;
 import de.dagere.peass.analysis.properties.PropertyReader;
-import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 

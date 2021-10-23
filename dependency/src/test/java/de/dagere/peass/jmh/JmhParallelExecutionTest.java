@@ -13,11 +13,11 @@ import org.junit.jupiter.api.Test;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.config.WorkloadType;
-import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.jmh.JmhTestExecutor;
 import de.dagere.peass.dependency.jmh.JmhTestTransformer;
+import de.dagere.peass.folders.PeassFolders;
 
 public class JmhParallelExecutionTest {
 

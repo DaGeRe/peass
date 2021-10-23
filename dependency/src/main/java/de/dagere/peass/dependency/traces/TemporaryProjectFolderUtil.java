@@ -7,9 +7,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.dependency.PeassFolders;
-import de.dagere.peass.dependency.TempPeassFolders;
-import de.dagere.peass.dependency.VMExecutionLogFolders;
+import de.dagere.peass.folders.PeassFolders;
+import de.dagere.peass.folders.TempPeassFolders;
+import de.dagere.peass.folders.VMExecutionLogFolders;
 import de.dagere.peass.vcs.GitUtils;
 
 public class TemporaryProjectFolderUtil {

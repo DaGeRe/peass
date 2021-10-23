@@ -20,7 +20,6 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
-import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.parallel.OneReader;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
@@ -30,6 +29,7 @@ import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.dependencytests.helper.FakeVersionIterator;
+import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.VersionIterator;
 

@@ -9,10 +9,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
-import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.traces.requitur.ReducedTraceElement;
 import de.dagere.peass.dependency.traces.requitur.content.StringContent;
+import de.dagere.peass.folders.ResultsFolders;
 
 public class TraceWriterTest {
    @TempDir

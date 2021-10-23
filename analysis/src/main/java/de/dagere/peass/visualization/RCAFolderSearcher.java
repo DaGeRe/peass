@@ -10,7 +10,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.dependency.PeassFolders;
+import de.dagere.peass.folders.PeassFolders;
 
 public class RCAFolderSearcher {
 

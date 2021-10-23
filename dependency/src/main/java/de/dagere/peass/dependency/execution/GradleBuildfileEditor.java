@@ -11,8 +11,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
-import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.gradle.FindDependencyVisitor;
+import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class GradleBuildfileEditor {

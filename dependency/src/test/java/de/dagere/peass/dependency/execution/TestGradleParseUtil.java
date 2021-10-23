@@ -18,7 +18,7 @@ import org.mockito.Mockito;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.PeassFolders;
+import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestGradleParseUtil {

@@ -7,9 +7,9 @@ import javax.xml.bind.JAXBException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.dependency.CauseSearchFolders;
-import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.folders.CauseSearchFolders;
+import de.dagere.peass.folders.PeassFolders;
 
 public class TestKoPeMeResultTransformation {
    private static final double DELTA = 0.0001;

@@ -8,7 +8,7 @@ import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.dependency.KiekerResultManager;
-import de.dagere.peass.dependency.PeassFolders;
+import de.dagere.peass.folders.PeassFolders;
 
 public class TooBigLogCleaner {
    public static final int MAX_SIZE_IN_MB = 10;

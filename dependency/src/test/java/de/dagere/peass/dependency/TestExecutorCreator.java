@@ -19,6 +19,7 @@ import de.dagere.peass.dependency.execution.MavenTestExecutor;
 import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.dependency.jmh.JmhTestExecutor;
 import de.dagere.peass.dependency.jmh.JmhTestTransformer;
+import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.testtransformation.TestTransformer;
 

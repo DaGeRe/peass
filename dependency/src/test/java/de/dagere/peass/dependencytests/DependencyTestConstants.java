@@ -3,7 +3,7 @@ package de.dagere.peass.dependencytests;
 import java.io.File;
 
 import de.dagere.peass.config.DependencyConfig;
-import de.dagere.peass.dependency.ResultsFolders;
+import de.dagere.peass.folders.ResultsFolders;
 
 public class DependencyTestConstants {
 
