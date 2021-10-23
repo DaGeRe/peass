@@ -17,7 +17,6 @@
 package de.dagere.peass.dependency.analysis.data;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
