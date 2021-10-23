@@ -47,6 +47,12 @@
 		</pluginManagement>
 	</build>
 
+	<scm>
+		<connection>scm:git:ssh://github.com:DaGeRe/peass.git</connection>
+		<developerConnection>scm:git:git@github.com:DaGeRe/peass.git</developerConnection>
+		<url>https://git@github.com:DaGeRe/peass.git</url>
+	</scm>
+
 	<licenses>
 		<license>
 			<name>GNU Affero General Public License</name>
