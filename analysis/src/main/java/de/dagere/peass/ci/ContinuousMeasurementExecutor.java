@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -23,10 +23,10 @@ public class ContinuousMeasurementExecutor {
 
    private final String version, versionOld;
    private final PeassFolders folders;
-   private final MeasurementConfiguration measurementConfig;
+   private final MeasurementConfig measurementConfig;
    private final EnvironmentVariables env;
 
-   public ContinuousMeasurementExecutor(final String version, final String versionOld, final PeassFolders folders, final MeasurementConfiguration measurementConfig,
+   public ContinuousMeasurementExecutor(final String version, final String versionOld, final PeassFolders folders, final MeasurementConfig measurementConfig,
          final EnvironmentVariables env) {
       this.version = version;
       this.versionOld = versionOld;
@@ -54,7 +54,7 @@ public class ContinuousMeasurementExecutor {
    }
 
    private void doMeasurement(final Set<TestCase> tests, final File fullResultsVersion) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      MeasurementConfiguration copied = createCopiedConfiguration();
+      MeasurementConfig copied = createCopiedConfiguration();
       
       cleanTemporaryFolders();
 
@@ -77,8 +77,8 @@ public class ContinuousMeasurementExecutor {
       folders.getTempMeasurementFolder().mkdirs();
    }
 
-   private MeasurementConfiguration createCopiedConfiguration() {
-      MeasurementConfiguration copied = new MeasurementConfiguration(measurementConfig);
+   private MeasurementConfig createCopiedConfiguration() {
+      MeasurementConfig copied = new MeasurementConfig(measurementConfig);
       copied.setUseKieker(false);
       copied.getExecutionConfig().setVersion(version);
       copied.getExecutionConfig().setVersionOld(versionOld);

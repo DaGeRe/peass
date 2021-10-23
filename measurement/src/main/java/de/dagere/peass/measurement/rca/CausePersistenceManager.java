@@ -6,7 +6,7 @@ import java.io.IOException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
@@ -20,7 +20,7 @@ public class CausePersistenceManager {
    private final File treeDataFile;
    private final File treeDataFileDetails;
 
-   public CausePersistenceManager(final CauseSearcherConfig causeSearchConfig, final MeasurementConfiguration measurementConfig, final CauseSearchFolders folders) {
+   public CausePersistenceManager(final CauseSearcherConfig causeSearchConfig, final MeasurementConfig measurementConfig, final CauseSearchFolders folders) {
       this(new CauseSearchData(measurementConfig, causeSearchConfig), new CauseSearchData(measurementConfig, causeSearchConfig), folders);
    }
 

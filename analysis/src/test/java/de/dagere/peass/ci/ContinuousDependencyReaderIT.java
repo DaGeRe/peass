@@ -17,8 +17,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.ci.helper.GitProjectBuilder;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -61,7 +61,7 @@ public class ContinuousDependencyReaderIT {
       executionConfig.setVersion(iterator.getTag());
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfiguration(true),
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfig(true),
             new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
       Dependencies dependencies = reader.getDependencies(iterator, "");
 
@@ -88,7 +88,7 @@ public class ContinuousDependencyReaderIT {
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
       final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig,
-            new KiekerConfiguration(true),
+            new KiekerConfig(true),
             new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
       Dependencies dependencies = spiedReader.getDependencies(iterator, "");
 
@@ -113,9 +113,9 @@ public class ContinuousDependencyReaderIT {
       executionConfig.setVersion(newVersion);
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
 
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfiguration(true),
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfig(true),
             new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
-      Set<TestCase> tests = reader.getTests(iterator, "", newVersion, new MeasurementConfiguration(1));
+      Set<TestCase> tests = reader.getTests(iterator, "", newVersion, new MeasurementConfig(1));
 
       Assert.assertEquals(tests.size(), 0);
    }

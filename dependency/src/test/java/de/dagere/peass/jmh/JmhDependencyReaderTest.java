@@ -28,7 +28,7 @@ import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -57,8 +57,8 @@ public class JmhDependencyReaderTest {
    static class KiekerConfigurationProvider implements ArgumentsProvider {
       @Override
       public Stream<? extends Arguments> provideArguments(final ExtensionContext context) {
-         KiekerConfiguration regularConfiguration = new KiekerConfiguration(true);
-         KiekerConfiguration aspectJConfiguration = new KiekerConfiguration(true);
+         KiekerConfig regularConfiguration = new KiekerConfig(true);
+         KiekerConfig aspectJConfiguration = new KiekerConfig(true);
          aspectJConfiguration.setUseSourceInstrumentation(false);
          return Stream.of(
                Arguments.of(regularConfiguration),
@@ -68,7 +68,7 @@ public class JmhDependencyReaderTest {
 
    @ParameterizedTest
    @ArgumentsSource(KiekerConfigurationProvider.class)
-   public void testVersionReading(final KiekerConfiguration kiekerConfig)
+   public void testVersionReading(final KiekerConfig kiekerConfig)
          throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException,
          InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       try (MockedStatic<GitUtils> gitUtilsMock = Mockito.mockStatic(GitUtils.class)) {

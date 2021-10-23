@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.KiekerResultManager;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
@@ -23,9 +23,9 @@ import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 public class TreeReader extends KiekerResultManager {
 
    private boolean ignoreEOIs = true;
-   private final MeasurementConfiguration realConfig;
+   private final MeasurementConfig realConfig;
    
-   TreeReader(final PeassFolders folders, final MeasurementConfiguration config, final EnvironmentVariables env) throws InterruptedException, IOException {
+   TreeReader(final PeassFolders folders, final MeasurementConfig config, final EnvironmentVariables env) throws InterruptedException, IOException {
       super(folders, config.getExecutionConfig(), config.getKiekerConfig(), env);
       fakeConfig.getKiekerConfig().setUseKieker(true);
       fakeConfig.getKiekerConfig().setUseAggregation(false);

@@ -12,7 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -45,7 +45,7 @@ public class LevelCauseSearcher extends CauseSearcher {
       this.persistenceManager = persistenceManager;
    }
 
-   public LevelCauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer, final MeasurementConfiguration measurementConfig,
+   public LevelCauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer, final MeasurementConfig measurementConfig,
          final CauseSearchFolders folders, final EnvironmentVariables env) throws InterruptedException, IOException {
       super(reader, causeSearchConfig, measurer, measurementConfig, folders, env);
       persistenceManager = new CausePersistenceManager(causeSearchConfig, measurementConfig, folders);

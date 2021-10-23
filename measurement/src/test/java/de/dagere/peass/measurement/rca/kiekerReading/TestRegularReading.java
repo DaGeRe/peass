@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 
 public class TestRegularReading {
@@ -77,7 +77,7 @@ public class TestRegularReading {
             "public void de.dagere.peass.MainTest.testMe()" }) {
          int startIndex = kiekerPattern.lastIndexOf(" ") != -1 ? kiekerPattern.lastIndexOf(" ") : 0;
          String call = kiekerPattern.substring(startIndex, kiekerPattern.lastIndexOf("("));
-         CallTreeNode addedNode = new CallTreeNode(call, kiekerPattern, kiekerPattern, new MeasurementConfiguration(1, "1", "0"));
+         CallTreeNode addedNode = new CallTreeNode(call, kiekerPattern, kiekerPattern, new MeasurementConfig(1, "1", "0"));
          addedNode.setOtherVersionNode(addedNode);
          callTreeNodes.add(addedNode);
          addedNode.initVersions();

@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.config.DependencyConfig;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
@@ -43,7 +43,7 @@ public class ContinuousExecutorIT {
       initRepo();
       
       DependencyConfig dependencyConfig = new DependencyConfig(1, false);
-      MeasurementConfiguration measurementConfig = new MeasurementConfiguration(3);
+      MeasurementConfig measurementConfig = new MeasurementConfig(3);
       measurementConfig.setIterations(5);
       measurementConfig.setWarmup(5);
       measurementConfig.setRepetitions(2);

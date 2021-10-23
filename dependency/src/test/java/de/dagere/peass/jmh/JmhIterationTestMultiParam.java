@@ -24,7 +24,7 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -45,7 +45,7 @@ public class JmhIterationTestMultiParam {
          InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JAXBException {
       FileUtils.copyDirectory(JmhTestConstants.MULTIPARAM_VERSION, TestConstants.CURRENT_FOLDER);
 
-      MeasurementConfiguration measurementConfig = new MeasurementConfiguration(3);
+      MeasurementConfig measurementConfig = new MeasurementConfig(3);
       measurementConfig.setIterations(4);
       measurementConfig.setWarmup(2);
       JmhTestTransformer transformer = new JmhTestTransformer(TestConstants.CURRENT_FOLDER, measurementConfig);

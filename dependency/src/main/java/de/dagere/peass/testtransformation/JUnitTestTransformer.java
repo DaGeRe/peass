@@ -64,8 +64,8 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.parsing.JUnitParseUtil;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -85,7 +85,7 @@ public class JUnitTestTransformer implements TestTransformer {
    private static final Logger LOG = LogManager.getLogger(JUnitTestTransformer.class);
 
    protected DataCollectorList datacollectorlist;
-   protected final MeasurementConfiguration config;
+   protected final MeasurementConfig config;
    protected File projectFolder;
    protected boolean aggregatedWriter = false;
    protected boolean ignoreEOIs = false;
@@ -99,7 +99,7 @@ public class JUnitTestTransformer implements TestTransformer {
     * 
     * @param projectFolder Folder, where tests should be transformed
     */
-   public JUnitTestTransformer(final File projectFolder, final MeasurementConfiguration config) {
+   public JUnitTestTransformer(final File projectFolder, final MeasurementConfig config) {
       LOG.debug("Test transformer for {} created", projectFolder);
       this.projectFolder = projectFolder;
       this.config = config;
@@ -112,9 +112,9 @@ public class JUnitTestTransformer implements TestTransformer {
     * @param projectFolder
     * @param timeout
     */
-   public JUnitTestTransformer(final File projectFolder, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig) {
+   public JUnitTestTransformer(final File projectFolder, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig) {
       this.projectFolder = projectFolder;
-      config = new MeasurementConfiguration(1, executionConfig, kiekerConfig);
+      config = new MeasurementConfig(1, executionConfig, kiekerConfig);
       config.setIterations(1);
       config.setWarmup(0);
       // For regression test selection, verbose debug output is helpful, and since it is only executed once, the performance loss is ok. 
@@ -682,7 +682,7 @@ public class JUnitTestTransformer implements TestTransformer {
    }
 
    @Override
-   public MeasurementConfiguration getConfig() {
+   public MeasurementConfig getConfig() {
       return config;
    }
 }

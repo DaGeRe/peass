@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.testtransformation.JUnitTestShortener;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
@@ -37,7 +37,7 @@ public class TestShortening {
       final File subTestClazz = new File(test, "SubTest.java");
       FileUtils.copyFile(subTestFile, subTestClazz);
 
-      transformer = new JUnitTestTransformer(folder, new MeasurementConfiguration(5));
+      transformer = new JUnitTestTransformer(folder, new MeasurementConfig(5));
       transformer.determineVersions(Arrays.asList(new File[] { folder }));
    }
 

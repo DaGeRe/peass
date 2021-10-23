@@ -31,8 +31,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.BuildtoolProjectNameReader;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -54,11 +54,11 @@ public class KiekerResultManager {
    protected final TestExecutor executor;
    protected final PeassFolders folders;
    protected final TestTransformer testTransformer;
-   protected final MeasurementConfiguration fakeConfig;
+   protected final MeasurementConfig fakeConfig;
 
-   public KiekerResultManager(final PeassFolders folders, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig, final EnvironmentVariables env) {
+   public KiekerResultManager(final PeassFolders folders, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.folders = folders;
-      fakeConfig = new MeasurementConfiguration(1, executionConfig, kiekerConfig);
+      fakeConfig = new MeasurementConfig(1, executionConfig, kiekerConfig);
       fakeConfig.setIterations(1);
       fakeConfig.setWarmup(0);
       // Structure discovery runs never need adaptive monitoring

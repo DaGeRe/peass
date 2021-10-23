@@ -6,14 +6,14 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.config.StatisticsConfiguration;
+import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.measurement.rca.data.OneVMResult;
 
 public class OutlierRemoverVMResults {
 
    private static final Logger LOG = LogManager.getLogger(OutlierRemoverVMResults.class);
 
-   public static void getValuesWithoutOutliers(final List<OneVMResult> results, final SummaryStatistics statistics, final StatisticsConfiguration config) {
+   public static void getValuesWithoutOutliers(final List<OneVMResult> results, final SummaryStatistics statistics, final StatisticsConfig config) {
       if (config.getOutlierFactor() != 0 && results.size() > 1) {
          final SummaryStatistics fullStatistic = new SummaryStatistics();
          addAll(results, fullStatistic);

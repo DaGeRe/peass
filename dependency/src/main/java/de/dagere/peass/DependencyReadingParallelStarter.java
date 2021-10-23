@@ -7,16 +7,18 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.config.DependencyReaderConfigMixin;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
+import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.config.parameters.DependencyReaderConfigMixin;
+import de.dagere.peass.config.parameters.ExecutionConfigMixin;
+import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
-import de.dagere.peass.dependency.execution.ExecutionConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.vcs.CommitUtil;
 import de.dagere.peass.vcs.GitCommit;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -50,7 +52,7 @@ public class DependencyReadingParallelStarter implements Callable<Void> {
       final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartversion(), executionConfigMixin.getEndversion(), config.getProjectFolder());
       VersionComparator.setVersions(commits);
       
-      KiekerConfiguration kiekerConfig = kiekerConfigMixin.getKiekerConfig();
+      KiekerConfig kiekerConfig = kiekerConfigMixin.getKiekerConfig();
       ExecutionConfig executionConfig = new ExecutionConfig(executionConfigMixin);
       
       final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), config.getProjectFolder().getName(), commits, 

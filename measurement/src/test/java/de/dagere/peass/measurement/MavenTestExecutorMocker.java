@@ -14,7 +14,7 @@ import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -37,7 +37,7 @@ public class MavenTestExecutorMocker {
       ExecutorCreator.createExecutor(Mockito.any(PeassFolders.class), Mockito.any(JUnitTestTransformer.class), Mockito.any(EnvironmentVariables.class));
    }
 
-   public static void mockExecutor(final PeassFolders folders, final MeasurementConfiguration config) throws Exception {
+   public static void mockExecutor(final PeassFolders folders, final MeasurementConfig config) throws Exception {
       final TestExecutor mockedExecutor = Mockito.mock(TestExecutor.class);
 
       PowerMockito.mockStatic(ExecutorCreator.class);

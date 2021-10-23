@@ -17,7 +17,7 @@ import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -42,7 +42,7 @@ public class TestDependencyTester {
       VCSTestUtils.mockGetVCS();
       
       final PeassFolders folders = new PeassFolders(folder.getRoot());
-      final MeasurementConfiguration configuration = new MeasurementConfiguration(4, "2", "1");
+      final MeasurementConfig configuration = new MeasurementConfig(4, "2", "1");
 
       MavenTestExecutorMocker.mockExecutor(folders, configuration);
 

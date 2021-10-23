@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 
@@ -18,7 +18,7 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 public class AllDifferingDeterminer extends DifferentNodeDeterminer {
 
    public AllDifferingDeterminer(final List<CallTreeNode> needToMeasurePredecessor, final CauseSearcherConfig causeSearchConfig,
-         final MeasurementConfiguration measurementConfig) {
+         final MeasurementConfig measurementConfig) {
       super(causeSearchConfig, measurementConfig);
 //      this.needToMeasureCurrent = needToMeasureCurrent;
       this.measurePredecessor = needToMeasurePredecessor;

@@ -16,7 +16,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.analysis.Relation;
 import de.dagere.peass.precision.analysis.repetitions.bimodal.BimodalityTester;
 import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
@@ -147,11 +147,11 @@ public class StatisticUtil {
     * @param measurementConfig
     * @return
     */
-   public static Relation agnosticTTest(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final MeasurementConfiguration measurementConfig) {
+   public static Relation agnosticTTest(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final MeasurementConfig measurementConfig) {
       return agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig.getStatisticsConfig().getType1error(), measurementConfig.getStatisticsConfig().getType2error());
    }
 
-   public static Relation isChange(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final MeasurementConfiguration measurementConfig) {
+   public static Relation isChange(final StatisticalSummary statisticsPrev, final StatisticalSummary statisticsVersion, final MeasurementConfig measurementConfig) {
       final double maxVal = Math.max(statisticsPrev.getMean(), statisticsVersion.getMean());
       if (maxVal > 1) {
          return agnosticTTest(statisticsPrev, statisticsVersion, measurementConfig);
@@ -256,7 +256,7 @@ public class StatisticUtil {
       }
    }
 
-   public static Relation isDifferent(final CompareData cd, final MeasurementConfiguration measurementConfig) {
+   public static Relation isDifferent(final CompareData cd, final MeasurementConfig measurementConfig) {
       switch (measurementConfig.getStatisticsConfig().getStatisticTest()) {
       case AGNOSTIC_T_TEST:
          return agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), measurementConfig);

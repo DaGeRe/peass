@@ -10,7 +10,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -20,7 +20,7 @@ import de.dagere.peass.dependency.jmh.JmhTestTransformer;
 
 public class TestBenchmarkDetection {
 
-   static final MeasurementConfiguration JMH_CONFIG = new MeasurementConfiguration(3);
+   static final MeasurementConfig JMH_CONFIG = new MeasurementConfig(3);
    static {
       JMH_CONFIG.getExecutionConfig().setTestExecutor(WorkloadType.JMH.getTestExecutor());
    }

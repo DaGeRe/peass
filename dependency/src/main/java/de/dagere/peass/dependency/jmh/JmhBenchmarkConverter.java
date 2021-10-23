@@ -21,7 +21,7 @@ import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.generated.Result.Params.Param;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class JmhBenchmarkConverter {
@@ -31,9 +31,9 @@ public class JmhBenchmarkConverter {
    private final File koPeMeFile;
    private final Kopemedata transformed;
    private final Datacollector timeCollector;
-   private final MeasurementConfiguration measurementConfig;
+   private final MeasurementConfig measurementConfig;
 
-   public JmhBenchmarkConverter(final TestCase testcase, final File clazzResultFolder, final MeasurementConfiguration measurementConfig) throws JAXBException {
+   public JmhBenchmarkConverter(final TestCase testcase, final File clazzResultFolder, final MeasurementConfig measurementConfig) throws JAXBException {
       this.measurementConfig = measurementConfig;
       File koPeMeFileTry = new File(clazzResultFolder, testcase.getMethod() + ".xml");
 

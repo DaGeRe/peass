@@ -19,7 +19,7 @@ import de.dagere.kopeme.generated.Result.Params.Param;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.kopeme.generated.Versioninfo;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 
 public class ExternalJmhDataConverter {
 
@@ -71,7 +71,7 @@ public class ExternalJmhDataConverter {
    }
 
    private static Set<File> convertFileNoData(final File child) throws JAXBException {
-      JmhKoPeMeConverter converter = new JmhKoPeMeConverter(new MeasurementConfiguration(-1));
+      JmhKoPeMeConverter converter = new JmhKoPeMeConverter(new MeasurementConfig(-1));
       Set<File> resultFiles = converter.convertToXMLData(child, child.getParentFile());
 
       String currentVersion = child.getName().substring(0, child.getName().length() - ".json".length()); // Remove .json

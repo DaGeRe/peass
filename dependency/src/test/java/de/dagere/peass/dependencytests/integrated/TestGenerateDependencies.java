@@ -16,7 +16,7 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
@@ -42,7 +42,7 @@ public class TestGenerateDependencies {
 
       final FakeFileIterator iterator = new FakeFileIterator(TestConstants.CURRENT_FOLDER, Arrays.asList(TraceGettingIT.REPETITION));
       ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
-      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, "", iterator, VersionKeeper.INSTANCE, new ExecutionConfig(5), new KiekerConfiguration(true), new EnvironmentVariables());
+      final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, "", iterator, VersionKeeper.INSTANCE, new ExecutionConfig(5), new KiekerConfig(true), new EnvironmentVariables());
 
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);

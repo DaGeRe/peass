@@ -5,11 +5,11 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 
 public class TestCallTreeStatistics {
    
-   public static final MeasurementConfiguration CONFIG = new MeasurementConfiguration(10);
+   public static final MeasurementConfig CONFIG = new MeasurementConfig(10);
    
    @BeforeEach
    public void init() {

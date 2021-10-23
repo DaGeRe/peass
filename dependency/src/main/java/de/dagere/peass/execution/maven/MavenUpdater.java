@@ -8,7 +8,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.PomJavaUpdater;
 import de.dagere.peass.dependency.execution.ProjectModules;
@@ -20,9 +20,9 @@ public class MavenUpdater {
    
    private final PeassFolders folders;
    private final ProjectModules modules;
-   private final MeasurementConfiguration measurementConfig;
+   private final MeasurementConfig measurementConfig;
    
-   public MavenUpdater(final PeassFolders folders, final ProjectModules modules, final MeasurementConfiguration measurementConfig) {
+   public MavenUpdater(final PeassFolders folders, final ProjectModules modules, final MeasurementConfig measurementConfig) {
       this.folders = folders;
       this.modules = modules;
       this.measurementConfig = measurementConfig;

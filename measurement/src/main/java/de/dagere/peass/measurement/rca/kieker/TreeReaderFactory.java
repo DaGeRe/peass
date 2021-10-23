@@ -3,7 +3,7 @@ package de.dagere.peass.measurement.rca.kieker;
 import java.io.File;
 import java.io.IOException;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.vcs.GitUtils;
@@ -20,7 +20,7 @@ public class TreeReaderFactory {
     * @throws InterruptedException
     * @throws IOException
     */
-   public static TreeReader createTreeReader(final PeassFolders parentFolders, final String predecessor, final MeasurementConfiguration config, final boolean ignoreEOIs,
+   public static TreeReader createTreeReader(final PeassFolders parentFolders, final String predecessor, final MeasurementConfig config, final boolean ignoreEOIs,
          final EnvironmentVariables env) throws InterruptedException, IOException {
       PeassFolders treeReadingFolders = parentFolders.getTempFolder("tree_" + predecessor);
       GitUtils.goToTag(predecessor, treeReadingFolders.getProjectFolder());
@@ -39,7 +39,7 @@ public class TreeReaderFactory {
     * @throws InterruptedException
     * @throws IOException
     */
-   public static TreeReader createTestTreeReader(final File projectFolder, final MeasurementConfiguration measurementConfig,
+   public static TreeReader createTestTreeReader(final File projectFolder, final MeasurementConfig measurementConfig,
          final EnvironmentVariables env) throws InterruptedException, IOException {
       TreeReader reader = new TreeReader(new PeassFolders(projectFolder), measurementConfig, env);
       return reader;

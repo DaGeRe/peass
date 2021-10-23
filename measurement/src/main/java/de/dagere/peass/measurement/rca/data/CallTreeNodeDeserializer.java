@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 
 class CallTreeNodeDeserializer extends JsonDeserializer<CallTreeNode> {
 
@@ -19,7 +19,7 @@ class CallTreeNodeDeserializer extends JsonDeserializer<CallTreeNode> {
       final String kiekerPattern = !node.get("kiekerPattern").isNull() ? node.get("kiekerPattern").asText() : null;
       final String module = node.get("module") != null ? node.get("module").asText() : null;
       final JsonNode children = node.get("children");
-      final CallTreeNode root = new CallTreeNode(call, kiekerPattern, null, (MeasurementConfiguration) null);
+      final CallTreeNode root = new CallTreeNode(call, kiekerPattern, null, (MeasurementConfig) null);
       root.setModule(module);
       handleChild(children, root);
 

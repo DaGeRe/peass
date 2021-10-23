@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import de.dagere.peass.TestConstants;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
@@ -52,7 +52,7 @@ public class TestGradleParseUtil {
 
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
       JUnitTestTransformer transformerMock = Mockito.mock(JUnitTestTransformer.class);
-      MeasurementConfiguration measurementConfig = new MeasurementConfiguration(2);
+      MeasurementConfig measurementConfig = new MeasurementConfig(2);
       measurementConfig.setUseKieker(true);
       measurementConfig.getKiekerConfig().setUseSourceInstrumentation(false);
       Mockito.when(transformerMock.getConfig()).thenReturn(measurementConfig);

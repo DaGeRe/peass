@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
@@ -19,7 +19,7 @@ public class CauseSearchData {
 
    private static final Logger LOG = LogManager.getLogger(CauseSearchData.class);
 
-   private MeasurementConfiguration measurementConfig;
+   private MeasurementConfig measurementConfig;
    private CauseSearcherConfig causeConfig;
    private MeasuredNode nodes;
 
@@ -29,16 +29,16 @@ public class CauseSearchData {
 
    }
 
-   public CauseSearchData(final MeasurementConfiguration config, final CauseSearcherConfig causeConfig) {
+   public CauseSearchData(final MeasurementConfig config, final CauseSearcherConfig causeConfig) {
       this.measurementConfig = config;
       this.causeConfig = causeConfig;
    }
 
-   public MeasurementConfiguration getMeasurementConfig() {
+   public MeasurementConfig getMeasurementConfig() {
       return measurementConfig;
    }
 
-   public void setConfig(final MeasurementConfiguration config) {
+   public void setConfig(final MeasurementConfig config) {
       this.measurementConfig = config;
    }
 
@@ -54,7 +54,7 @@ public class CauseSearchData {
    private void buildCurrentMap(final MeasuredNode node, final CallTreeNode parentStructure) {
       final CallTreeNode nodeStructure = parentStructure != null ? 
             parentStructure.appendChild(node.getCall(), node.getKiekerPattern(), node.getOtherKiekerPattern())
-            : new CallTreeNode(node.getCall(), node.getKiekerPattern(), node.getOtherKiekerPattern(), (MeasurementConfiguration) null);
+            : new CallTreeNode(node.getCall(), node.getKiekerPattern(), node.getOtherKiekerPattern(), (MeasurementConfig) null);
       current.put(nodeStructure, node);
       for (final MeasuredNode child : node.getChilds()) {
          buildCurrentMap(child, nodeStructure);

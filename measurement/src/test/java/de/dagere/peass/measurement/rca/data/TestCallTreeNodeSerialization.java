@@ -5,7 +5,7 @@ import java.io.File;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.utils.Constants;
 
@@ -30,7 +30,7 @@ public class TestCallTreeNodeSerialization {
    }
 
    private CallTreeNode buildExampleTree() {
-      final CallTreeNode parent = new CallTreeNode("test()", "public void test()", null, new MeasurementConfiguration(5));
+      final CallTreeNode parent = new CallTreeNode("test()", "public void test()", null, new MeasurementConfig(5));
       final CallTreeNode child2 = parent.appendChild("child1()", "public void child1()", null);
       child2.appendChild("child3(int, String)", "public void child3(int, String)", null);
       parent.appendChild("child2()", "public void child2()", null);

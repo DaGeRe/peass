@@ -13,7 +13,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.rca.KiekerResultReader;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -39,7 +39,7 @@ public class TestCompleteReading {
       writer.onTerminating();
    }
 
-   private final CallTreeNode root = new CallTreeNode("parent()", "public void A.parent()", null, new MeasurementConfiguration(3));
+   private final CallTreeNode root = new CallTreeNode("parent()", "public void A.parent()", null, new MeasurementConfig(3));
 
    private Set<CallTreeNode> buildTree() {
       final Set<CallTreeNode> includedNodes = new HashSet<>();

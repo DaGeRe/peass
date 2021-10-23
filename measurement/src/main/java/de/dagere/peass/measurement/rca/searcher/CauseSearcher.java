@@ -15,7 +15,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -36,7 +36,7 @@ public abstract class CauseSearcher {
    // Basic config
    protected final CauseSearchFolders folders;
    protected final CauseSearcherConfig causeSearchConfig;
-   protected final MeasurementConfiguration measurementConfig;
+   protected final MeasurementConfig measurementConfig;
    protected final EnvironmentVariables env;
 
    // Classes doing the real work
@@ -47,7 +47,7 @@ public abstract class CauseSearcher {
    protected List<CallTreeNode> differingNodes = new LinkedList<>();
    protected CausePersistenceManager persistenceManager;
 
-   public CauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer, final MeasurementConfiguration measurementConfig,
+   public CauseSearcher(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer, final MeasurementConfig measurementConfig,
          final CauseSearchFolders folders, final EnvironmentVariables env) {
       this.reader = reader;
       this.measurer = measurer;

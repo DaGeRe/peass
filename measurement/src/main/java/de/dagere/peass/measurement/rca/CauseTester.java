@@ -14,7 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -45,7 +45,7 @@ public class CauseTester extends AdaptiveTester {
    private final CauseSearchFolders folders;
    private int levelId = 0;
 
-   public CauseTester(final CauseSearchFolders project, final MeasurementConfiguration measurementConfig, final CauseSearcherConfig causeConfig, final EnvironmentVariables env)
+   public CauseTester(final CauseSearchFolders project, final MeasurementConfig measurementConfig, final CauseSearcherConfig causeConfig, final EnvironmentVariables env)
          throws IOException {
       super(project, measurementConfig, env);
       this.testcase = causeConfig.getTestCase();
@@ -204,7 +204,7 @@ public class CauseTester extends AdaptiveTester {
       final String version = "4ed6e923cb2033272fcb993978d69e325990a5aa";
       final TestCase test = new TestCase("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");
 
-      final MeasurementConfiguration config = new MeasurementConfiguration(15 * 1000 * 60, 15, true, version, version + "~1");
+      final MeasurementConfig config = new MeasurementConfig(15 * 1000 * 60, 15, true, version, version + "~1");
       config.setUseKieker(true);
       final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, false, 0.01, false, false, RCAStrategy.COMPLETE, 1);
       final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), config, causeConfig, new EnvironmentVariables());

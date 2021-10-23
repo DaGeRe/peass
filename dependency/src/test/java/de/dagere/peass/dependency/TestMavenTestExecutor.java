@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
@@ -21,7 +21,7 @@ public class TestMavenTestExecutor {
    @Test
    public void testParameterConcatenation() throws IOException, XmlPullParserException, InterruptedException {
       JUnitTestTransformer testTransformerMock = Mockito.mock(JUnitTestTransformer.class);
-      Mockito.when(testTransformerMock.getConfig()).thenReturn(new MeasurementConfiguration(5));
+      Mockito.when(testTransformerMock.getConfig()).thenReturn(new MeasurementConfig(5));
       
       PeassFolders foldersMock = Mockito.mock(PeassFolders.class);
       File folder = new File("/tmp/test2");

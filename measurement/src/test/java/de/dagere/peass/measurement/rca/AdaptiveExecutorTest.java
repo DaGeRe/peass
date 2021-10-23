@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -52,7 +52,7 @@ public class AdaptiveExecutorTest {
 
          FileUtil.copyDir(SOURCE_DIR, projectFolder);
 
-         final MeasurementConfiguration config = new MeasurementConfiguration(2, "000001", "000001~1");
+         final MeasurementConfig config = new MeasurementConfig(2, "000001", "000001~1");
          config.setUseKieker(true);
          config.setIterations(2);
          config.setRepetitions(2);
@@ -71,7 +71,7 @@ public class AdaptiveExecutorTest {
          VCSTestUtils.mockGoToTagAny(mockedGitUtils, SOURCE_DIR);
 
          final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1",
-               "public void defaultpackage.NormalDependency.child1()", "public void defaultpackage.NormalDependency.child1()", new MeasurementConfiguration(5));
+               "public void defaultpackage.NormalDependency.child1()", "public void defaultpackage.NormalDependency.child1()", new MeasurementConfig(5));
          
          measureNode(nodeWithDuration);
 
@@ -92,7 +92,7 @@ public class AdaptiveExecutorTest {
          VCSTestUtils.mockGoToTagAny(mockedGitUtils, SOURCE_DIR);
          
          final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#<init>",
-               "public new defaultpackage.NormalDependency.<init>()", "public new defaultpackage.NormalDependency.<init>()", new MeasurementConfiguration(5));
+               "public new defaultpackage.NormalDependency.<init>()", "public new defaultpackage.NormalDependency.<init>()", new MeasurementConfig(5));
          
          measureNode(nodeWithDuration);
 

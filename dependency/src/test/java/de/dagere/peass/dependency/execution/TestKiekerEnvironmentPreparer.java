@@ -19,7 +19,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
@@ -39,7 +39,7 @@ public class TestKiekerEnvironmentPreparer {
       includedMethodPatterns.add("private int defaultpackage.NormalDependency.methodB()");
       List<File> modules = new LinkedList<File>();
       modules.add(DependencyTestConstants.CURRENT);
-      KiekerConfiguration kiekerConfig = new KiekerConfiguration(true);
+      KiekerConfig kiekerConfig = new KiekerConfig(true);
       kiekerConfig.setUseSourceInstrumentation(false);
       KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPatterns, new LinkedList<>(), new PeassFolders(DependencyTestConstants.CURRENT),
             new JUnitTestTransformer(DependencyTestConstants.CURRENT, new ExecutionConfig(10), kiekerConfig), modules);
@@ -64,7 +64,7 @@ public class TestKiekerEnvironmentPreparer {
       List<File> modules = new LinkedList<File>();
       modules.add(DependencyTestConstants.CURRENT);
       
-      KiekerConfiguration kiekerConfig = new KiekerConfiguration(true);
+      KiekerConfig kiekerConfig = new KiekerConfig(true);
       kiekerConfig.setUseSourceInstrumentation(false);
       KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(null, Arrays.asList("defaultpackage.NormalDependency"), new PeassFolders(DependencyTestConstants.CURRENT),
             new JUnitTestTransformer(DependencyTestConstants.CURRENT, new ExecutionConfig(10), kiekerConfig), modules);

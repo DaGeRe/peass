@@ -22,7 +22,7 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.PeassFolders;
@@ -47,7 +47,7 @@ public class JmhIterationTest {
    public void testVersionReading() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JAXBException {
       FileUtils.copyDirectory(JmhTestConstants.BASIC_VERSION, TestConstants.CURRENT_FOLDER);
       
-      MeasurementConfiguration measurementConfig = new MeasurementConfiguration(VMS);
+      MeasurementConfig measurementConfig = new MeasurementConfig(VMS);
       measurementConfig.setIterations(ITERATIONS);
       measurementConfig.setWarmup(WARMUP);
       measurementConfig.getExecutionConfig().setTestExecutor(WorkloadType.JMH.getTestExecutor());

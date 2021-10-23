@@ -3,7 +3,7 @@ package de.dagere.peass.measurement.rca.kiekerReading;
 import java.io.File;
 import java.util.Set;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -29,7 +29,7 @@ public class KiekerDurationReader {
    }
    
    public static TreeStage executeTreeStage(final File kiekerTraceFolder, final TestCase test, 
-         final boolean ignoreEOIs, final MeasurementConfiguration config, final ModuleClassMapping mapping) {
+         final boolean ignoreEOIs, final MeasurementConfig config, final ModuleClassMapping mapping) {
       KiekerReaderConfigurationDuration configuration = new KiekerReaderConfigurationDuration();
       TreeStage stage = configuration.readTree(kiekerTraceFolder,  test, ignoreEOIs,  config, mapping);
       

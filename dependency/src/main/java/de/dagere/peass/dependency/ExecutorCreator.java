@@ -9,8 +9,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.GradleTestExecutor;
 import de.dagere.peass.dependency.execution.MavenTestExecutor;
@@ -68,13 +68,13 @@ public class ExecutorCreator {
       }
    }
 
-   public static TestTransformer createTestTransformer(final PeassFolders folders, final ExecutionConfig executionConfig, final MeasurementConfiguration measurementConfig) {
+   public static TestTransformer createTestTransformer(final PeassFolders folders, final ExecutionConfig executionConfig, final MeasurementConfig measurementConfig) {
       try {
          Class<?> testTransformerClass = Class.forName(executionConfig.getTestTransformer());
          if (!Arrays.asList(testTransformerClass.getInterfaces()).contains(TestTransformer.class)) {
             throw new RuntimeException("TestTransformer needs to be implemented by " + executionConfig.getTestTransformer());
          }
-         Constructor<?> constructor = testTransformerClass.getConstructor(File.class, MeasurementConfiguration.class);
+         Constructor<?> constructor = testTransformerClass.getConstructor(File.class, MeasurementConfig.class);
          TestTransformer transformer = (TestTransformer) constructor.newInstance(folders.getProjectFolder(), measurementConfig);
          return transformer;
       } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
@@ -86,13 +86,13 @@ public class ExecutorCreator {
 
    }
 
-   public static TestTransformer createTestTransformer(final PeassFolders folders, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig) {
+   public static TestTransformer createTestTransformer(final PeassFolders folders, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig) {
       try {
          Class<?> testTransformerClass = Class.forName(executionConfig.getTestTransformer());
          if (!Arrays.asList(testTransformerClass.getInterfaces()).contains(TestTransformer.class)) {
             throw new RuntimeException("TestTransformer needs to be implemented by " + executionConfig.getTestTransformer());
          }
-         Constructor<?> constructor = testTransformerClass.getConstructor(File.class, ExecutionConfig.class, KiekerConfiguration.class);
+         Constructor<?> constructor = testTransformerClass.getConstructor(File.class, ExecutionConfig.class, KiekerConfig.class);
          TestTransformer transformer = (TestTransformer) constructor.newInstance(folders.getProjectFolder(), executionConfig, kiekerConfig);
          return transformer;
       } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException

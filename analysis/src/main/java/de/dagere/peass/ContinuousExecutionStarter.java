@@ -11,11 +11,11 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.ci.ContinuousExecutor;
 import de.dagere.peass.config.DependencyConfig;
-import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.config.StatisticsConfigurationMixin;
+import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.config.parameters.ExecutionConfigMixin;
+import de.dagere.peass.config.parameters.MeasurementConfigurationMixin;
+import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
-import de.dagere.peass.dependency.execution.ExecutionConfigMixin;
-import de.dagere.peass.dependency.execution.MeasurementConfigurationMixin;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -41,7 +41,7 @@ public class ContinuousExecutionStarter implements Callable<Void> {
    MeasurementConfigurationMixin measurementConfigMixin;
    
    @Mixin
-   private StatisticsConfigurationMixin statisticConfigMixin;
+   private StatisticsConfigMixin statisticConfigMixin;
 
    @Option(names = { "-threads", "--threads" }, description = "Count of threads")
    int threads = 100;
@@ -66,7 +66,7 @@ public class ContinuousExecutionStarter implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      final MeasurementConfiguration measurementConfig = new MeasurementConfiguration(measurementConfigMixin, executionMixin, statisticConfigMixin);
+      final MeasurementConfig measurementConfig = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin);
       DependencyConfig dependencyConfig = new DependencyConfig(threads, false, useViews, generateCoverageSelection);
       final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, dependencyConfig, new EnvironmentVariables(properties != null ? properties : ""));
       executor.execute();

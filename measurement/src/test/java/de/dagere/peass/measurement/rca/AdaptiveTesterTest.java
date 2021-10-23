@@ -21,7 +21,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.dagere.kopeme.generated.Result;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -54,10 +54,10 @@ public class AdaptiveTesterTest {
    @Test
    public void testIterationUpdate() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final int vms = 10;
-      final MeasurementConfiguration config = new MeasurementConfiguration(vms, "A", "B");
+      final MeasurementConfig config = new MeasurementConfig(vms, "A", "B");
       config.setIterations(1000);
 
-      MeasurementConfiguration config2 = Mockito.spy(config);
+      MeasurementConfig config2 = Mockito.spy(config);
       Mockito.when(testGenerator.getConfig()).thenReturn(config2);
 
       AdaptiveTester tester2 = prepareTester();
@@ -105,10 +105,10 @@ public class AdaptiveTesterTest {
       Mockito.when(loader.getStatisticsAfter()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
       Mockito.when(loader.getStatisticsBefore()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
       
-      final MeasurementConfiguration config = new MeasurementConfiguration(100, "A", "B");
+      final MeasurementConfig config = new MeasurementConfig(100, "A", "B");
       config.setIterations(1000);
 
-      MeasurementConfiguration config2 = Mockito.spy(config);
+      MeasurementConfig config2 = Mockito.spy(config);
       Mockito.when(testGenerator.getConfig()).thenReturn(config2);
 
       AdaptiveTester tester2 = prepareTester();
@@ -122,11 +122,11 @@ public class AdaptiveTesterTest {
    
    @Test
    public void testSkipEarlyDecision() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      final MeasurementConfiguration config = new MeasurementConfiguration(100, "A", "B");
+      final MeasurementConfig config = new MeasurementConfig(100, "A", "B");
       config.setIterations(1000);
       config.setEarlyStop(false);
 
-      MeasurementConfiguration config2 = Mockito.spy(config);
+      MeasurementConfig config2 = Mockito.spy(config);
       Mockito.when(testGenerator.getConfig()).thenReturn(config2);
 
       AdaptiveTester tester2 = prepareTester();

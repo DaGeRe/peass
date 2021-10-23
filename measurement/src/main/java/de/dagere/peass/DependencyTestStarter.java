@@ -12,13 +12,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.config.MeasurementConfiguration;
-import de.dagere.peass.config.StatisticsConfigurationMixin;
+import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.config.parameters.MeasurementConfigurationMixin;
+import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
-import de.dagere.peass.dependency.execution.MeasurementConfigurationMixin;
 import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.dependencyprocessors.DependencyTester;
 import de.dagere.peass.dependencyprocessors.PairProcessor;
@@ -41,7 +41,7 @@ public class DependencyTestStarter extends PairProcessor {
    MeasurementConfigurationMixin measurementConfigMixin;
    
    @Mixin
-   protected StatisticsConfigurationMixin statisticConfigMixin;
+   protected StatisticsConfigMixin statisticConfigMixin;
 
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
@@ -56,7 +56,7 @@ public class DependencyTestStarter extends PairProcessor {
    @Override
    public Void call() throws Exception {
       super.call();
-      final MeasurementConfiguration measurementConfiguration = createConfig();
+      final MeasurementConfig measurementConfiguration = createConfig();
       createTester(measurementConfiguration);
 
       if (testName != null) {
@@ -77,7 +77,7 @@ public class DependencyTestStarter extends PairProcessor {
       return null;
    }
 
-   private void createTester(final MeasurementConfiguration measurementConfiguration) throws IOException {
+   private void createTester(final MeasurementConfig measurementConfiguration) throws IOException {
       if (measurementConfigMixin.getDuration() != 0) {
          throw new RuntimeException("Time-based running currently not supported; eventually fix commented-out code to get it running again");
       } else {
@@ -85,8 +85,8 @@ public class DependencyTestStarter extends PairProcessor {
       }
    }
 
-   private MeasurementConfiguration createConfig() {
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(measurementConfigMixin, executionMixin, statisticConfigMixin);
+   private MeasurementConfig createConfig() {
+      final MeasurementConfig measurementConfiguration = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin);
       return measurementConfiguration;
    }
 

@@ -18,7 +18,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.traces.KiekerFolderUtil;
@@ -146,7 +146,7 @@ class FullDataCallTreeNode extends CallTreeNode {
    }
 
    public FullDataCallTreeNode(final CallTreeNode mirrorNode) {
-      super(mirrorNode.getCall(), mirrorNode.getKiekerPattern(), mirrorNode.getOtherKiekerPattern(), (MeasurementConfiguration) null);
+      super(mirrorNode.getCall(), mirrorNode.getKiekerPattern(), mirrorNode.getOtherKiekerPattern(), (MeasurementConfig) null);
       for (final CallTreeNode child : mirrorNode.getChildren()) {
          appendChild(child);
       }

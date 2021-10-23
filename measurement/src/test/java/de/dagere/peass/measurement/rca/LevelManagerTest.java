@@ -7,7 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.PersistedTestDataBuilder;
 import de.dagere.peass.measurement.rca.LevelManager;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -69,7 +69,7 @@ public class LevelManagerTest {
       final MeasuredNode rootMeasured = new MeasuredNode("Test#test", "public void Test.test()", null);
       data.setNodes(rootMeasured);
 
-      final CallTreeNode root = new CallTreeNode("Test#test", "public void Test.test()", "public void Test.test()", (MeasurementConfiguration) null);
+      final CallTreeNode root = new CallTreeNode("Test#test", "public void Test.test()", "public void Test.test()", (MeasurementConfig) null);
       CallTreeNode current = root;
       MeasuredNode measuredCurrent = rootMeasured;
       for (int i = 0; i < 20; i++) {

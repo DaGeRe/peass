@@ -9,12 +9,12 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.utils.Constants;
 
 public class TreeAnalysis {
-   public static final MeasurementConfiguration config = new MeasurementConfiguration(2);
+   public static final MeasurementConfig config = new MeasurementConfig(2);
    static {
       config.getStatisticsConfig().setType1error(0.1);
       config.getStatisticsConfig().setType2error(0.1);

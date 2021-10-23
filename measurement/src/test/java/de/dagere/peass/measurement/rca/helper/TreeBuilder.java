@@ -7,7 +7,7 @@ import java.util.List;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 
 public class TreeBuilder {
@@ -22,13 +22,13 @@ public class TreeBuilder {
    private boolean useFullLogAPI = true;
    private boolean addOutlier = false;
 
-   private final MeasurementConfiguration config;
+   private final MeasurementConfig config;
 
-   public TreeBuilder(final MeasurementConfiguration config) {
+   public TreeBuilder(final MeasurementConfig config) {
       this(config, true);
    }
 
-   public TreeBuilder(final MeasurementConfiguration config, final boolean useFullLogAPI) {
+   public TreeBuilder(final MeasurementConfig config, final boolean useFullLogAPI) {
       this.config = config;
       this.useFullLogAPI = useFullLogAPI;
 
@@ -46,7 +46,7 @@ public class TreeBuilder {
    }
 
    public TreeBuilder() {
-      this(new MeasurementConfiguration(3));
+      this(new MeasurementConfig(3));
       config.setIterations(3);
    }
 

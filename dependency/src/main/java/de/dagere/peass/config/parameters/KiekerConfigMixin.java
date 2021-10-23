@@ -1,6 +1,6 @@
-package de.dagere.peass;
+package de.dagere.peass.config.parameters;
 
-import de.dagere.peass.config.KiekerConfiguration;
+import de.dagere.peass.config.KiekerConfig;
 import picocli.CommandLine.Option;
 
 public class KiekerConfigMixin {
@@ -55,8 +55,8 @@ public class KiekerConfigMixin {
       return enableAdaptiveInstrumentation;
    }
 
-   public KiekerConfiguration getKiekerConfig() {
-      KiekerConfiguration kiekerConfig = new KiekerConfiguration(true);
+   public KiekerConfig getKiekerConfig() {
+      KiekerConfig kiekerConfig = new KiekerConfig(true);
       kiekerConfig.setUseCircularQueue(useCircularQueue);
       kiekerConfig.setUseSelectiveInstrumentation(!notUseSelectiveInstrumentation);
       kiekerConfig.setUseAggregation(useAggregation);

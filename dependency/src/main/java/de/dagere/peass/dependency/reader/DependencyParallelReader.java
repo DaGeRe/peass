@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -37,11 +37,11 @@ public class DependencyParallelReader {
    private final File tempResultFolder;
    private final String project;
    private final ExecutionConfig executionConfig;
-   private final KiekerConfiguration kiekerConfig;
+   private final KiekerConfig kiekerConfig;
    private final EnvironmentVariables env;
 
    public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<GitCommit> commits,
-         final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig, final EnvironmentVariables env) {
+         final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       url = GitUtils.getURL(projectFolder);
       this.dependencyConfig = dependencyConfig;
       this.executionConfig = executionConfig;

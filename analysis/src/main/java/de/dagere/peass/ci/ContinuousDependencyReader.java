@@ -16,8 +16,8 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -41,16 +41,16 @@ public class ContinuousDependencyReader {
 
    private final DependencyConfig dependencyConfig;
    private final ExecutionConfig executionConfig;
-   private final KiekerConfiguration kiekerConfig;
+   private final KiekerConfig kiekerConfig;
    private final PeassFolders folders;
    private final ResultsFolders resultsFolders;
    private final EnvironmentVariables env;
 
-   public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig, final PeassFolders folders,
+   public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final PeassFolders folders,
          final ResultsFolders resultsFolders, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
       this.executionConfig = executionConfig;
-      this.kiekerConfig = new KiekerConfiguration(kiekerConfig);
+      this.kiekerConfig = new KiekerConfig(kiekerConfig);
       this.kiekerConfig.setUseKieker(true);
       this.kiekerConfig.setRecord(AllowedKiekerRecord.OPERATIONEXECUTION);
       this.kiekerConfig.setUseAggregation(false);
@@ -59,7 +59,7 @@ public class ContinuousDependencyReader {
       this.env = env;
    }
 
-   public Set<TestCase> getTests(final VersionIterator iterator, final String url, final String version, final MeasurementConfiguration measurementConfig) {
+   public Set<TestCase> getTests(final VersionIterator iterator, final String url, final String version, final MeasurementConfig measurementConfig) {
       final Dependencies dependencies = getDependencies(iterator, url);
 
       final Set<TestCase> tests;

@@ -19,7 +19,7 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -64,7 +64,7 @@ public class AdaptiveExecutorMoreParameterIT {
       final Set<CallTreeNode> included = new HashSet<>();
       final String kiekerPattern = "public void defaultpackage.NormalDependency.child1(int[],double,java.lang.String)";
       final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1", kiekerPattern, kiekerPattern,
-            new MeasurementConfiguration(5, "000001", "000001~1"));
+            new MeasurementConfig(5, "000001", "000001~1"));
       nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);
       executor.setIncludedMethods(included);

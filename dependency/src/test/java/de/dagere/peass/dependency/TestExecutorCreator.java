@@ -11,7 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.GradleTestExecutor;
@@ -86,7 +86,7 @@ public class TestExecutorCreator {
 
    private TestExecutor createExecutor(final String executorName, final TestTransformer transformer) {
       PeassFolders folders = new PeassFolders(temporaryFolder);
-      MeasurementConfiguration config = new MeasurementConfiguration(2);
+      MeasurementConfig config = new MeasurementConfig(2);
       config.getExecutionConfig().setTestExecutor(executorName);
       Mockito.when(transformer.getConfig()).thenReturn(config);
 

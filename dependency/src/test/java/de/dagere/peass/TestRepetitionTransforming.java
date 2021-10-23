@@ -23,7 +23,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.testtransformation.ParseUtil;
@@ -50,7 +50,7 @@ public class TestRepetitionTransforming {
       final File testFile = new File(SOURCE_FOLDER, "TestMe1.java");
       FileUtils.copyFile(old, testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfig.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
@@ -72,7 +72,7 @@ public class TestRepetitionTransforming {
       final File testFile2 = new File(SOURCE_FOLDER, "TestMe2.java");
       FileUtils.copyFile(old2, testFile2);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfig.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
@@ -104,7 +104,7 @@ public class TestRepetitionTransforming {
       final File testFile2 = new File(SOURCE_FOLDER, "TestMe8.java");
       FileUtils.copyFile(old2, testFile2);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfig.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 

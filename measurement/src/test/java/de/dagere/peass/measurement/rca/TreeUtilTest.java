@@ -4,15 +4,15 @@ package de.dagere.peass.measurement.rca;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil;
 
 public class TreeUtilTest {
    
 
-   private final CallTreeNode parent1 = new CallTreeNode("Test1#test", "public void Test1.test()", null, (MeasurementConfiguration) null);
-   private final CallTreeNode parent2 = new CallTreeNode("Test1#test", "public void Test1.test()", null, (MeasurementConfiguration) null);
+   private final CallTreeNode parent1 = new CallTreeNode("Test1#test", "public void Test1.test()", null, (MeasurementConfig) null);
+   private final CallTreeNode parent2 = new CallTreeNode("Test1#test", "public void Test1.test()", null, (MeasurementConfig) null);
    
    @Test
    public void testAddedMapping()  {

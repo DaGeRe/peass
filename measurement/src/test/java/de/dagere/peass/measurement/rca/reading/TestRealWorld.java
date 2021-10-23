@@ -13,7 +13,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.rca.KiekerResultReader;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -26,7 +26,7 @@ public class TestRealWorld {
    
    @Test
    public void callMe() throws JsonParseException, JsonMappingException, IOException {
-      final MeasurementConfiguration config = new MeasurementConfiguration(5, version, predecessor);
+      final MeasurementConfig config = new MeasurementConfig(5, version, predecessor);
       CallTreeNode rootNode = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()",  config);
       CallTreeNode rootNode2 = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()",  config);
       rootNode.setOtherVersionNode(rootNode2);

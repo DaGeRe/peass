@@ -10,7 +10,7 @@ import org.hamcrest.io.FileMatchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.dependency.PeassFolders;
@@ -38,7 +38,7 @@ public class JmhParallelExecutionTest {
       JmhTestExecutor[] executors = new JmhTestExecutor[2];
       Thread[] threads = new Thread[2];
 
-      MeasurementConfiguration measurementConfig = new MeasurementConfiguration(2);
+      MeasurementConfig measurementConfig = new MeasurementConfig(2);
       measurementConfig.setIterations(10);
       measurementConfig.setRepetitions(2);
       measurementConfig.setMeasurementStrategy(MeasurementStrategy.PARALLEL);
@@ -68,7 +68,7 @@ public class JmhParallelExecutionTest {
       }
    }
 
-   private void prepareThreads(final File[] testFolders, final JmhTestExecutor[] executors, final Thread[] threads, final MeasurementConfiguration measurementConfig)
+   private void prepareThreads(final File[] testFolders, final JmhTestExecutor[] executors, final Thread[] threads, final MeasurementConfig measurementConfig)
          throws IOException, InterruptedException, XmlPullParserException {
       for (int i = 0; i < 2; i++) {
          testFolders[i] = new File(BASE_FOLDER, "jmh-" + i);

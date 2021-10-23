@@ -12,7 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestBuildGradle {
@@ -24,7 +24,7 @@ public class TestBuildGradle {
    @BeforeEach
    public void setupTransformer() {
       mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
-      MeasurementConfiguration config = new MeasurementConfiguration(2);
+      MeasurementConfig config = new MeasurementConfig(2);
       config.setUseKieker(true);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
    }

@@ -17,7 +17,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.dagere.peass.PeassGlobalInfos;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
@@ -43,14 +43,14 @@ public class CallTreeNode extends BasicNode {
    protected final Map<String, CallTreeStatistics> data = new HashMap<>();
 
    @JsonIgnore
-   protected MeasurementConfiguration config;
+   protected MeasurementConfig config;
 
    private CallTreeNode otherVersionNode;
 
    /**
     * Creates a root node
     */
-   public CallTreeNode(final String call, final String kiekerPattern, final String otherKiekerPattern, final MeasurementConfiguration config) {
+   public CallTreeNode(final String call, final String kiekerPattern, final String otherKiekerPattern, final MeasurementConfig config) {
       super(call, kiekerPattern, otherKiekerPattern);
       this.parent = null;
       this.config = config;
@@ -62,11 +62,11 @@ public class CallTreeNode extends BasicNode {
       this.config = parent.config;
    }
 
-   public void setConfig(final MeasurementConfiguration config) {
+   public void setConfig(final MeasurementConfig config) {
       this.config = config;
    }
    
-   public MeasurementConfiguration getConfig() {
+   public MeasurementConfig getConfig() {
       return config;
    }
 

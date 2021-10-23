@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
@@ -18,7 +18,7 @@ public class TestNodePreparatorTreeStructure {
    
    @BeforeEach
    public void init() {
-      csd.setConfig(new MeasurementConfiguration(15));
+      csd.setConfig(new MeasurementConfig(15));
       rootNode.setStatistic(new TestcaseStatistic(5.0, 6.0, 0.01, 0.01, 15, -3, true, 10, 10));
       csd.setNodes(rootNode);
    }

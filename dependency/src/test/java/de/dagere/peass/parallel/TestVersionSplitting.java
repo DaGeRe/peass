@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.PeassFolders;
@@ -47,12 +47,12 @@ public class TestVersionSplitting {
    static class DummyReader extends DependencyReader {
 
       public DummyReader(final File dummyFolder, final VersionIterator iterator, final ChangeManager manager) throws IOException {
-         super(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(dummyFolder), null, null, iterator, manager, new ExecutionConfig(1), new KiekerConfiguration(true), new EnvironmentVariables());
+         super(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(dummyFolder), null, null, iterator, manager, new ExecutionConfig(1), new KiekerConfig(true), new EnvironmentVariables());
       }
 
       @Override
       public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException {
-         dependencyManager = new DependencyManager(folders, new ExecutionConfig(60), new KiekerConfiguration(true), new EnvironmentVariables());
+         dependencyManager = new DependencyManager(folders, new ExecutionConfig(60), new KiekerConfig(true), new EnvironmentVariables());
          dependencyResult.setInitialversion(new InitialVersion());
          dependencyResult.getInitialversion().setVersion(iterator.getTag());
          return true;

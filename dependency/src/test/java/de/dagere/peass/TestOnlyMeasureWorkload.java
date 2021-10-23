@@ -23,7 +23,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
@@ -80,7 +80,7 @@ public class TestOnlyMeasureWorkload {
    }
 
    private CompilationUnit executeTransformation(final File testFile) throws FileNotFoundException {
-      MeasurementConfiguration config = new MeasurementConfiguration(2);
+      MeasurementConfig config = new MeasurementConfig(2);
       config.setOnlyMeasureWorkload(true);
 
       final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, config);

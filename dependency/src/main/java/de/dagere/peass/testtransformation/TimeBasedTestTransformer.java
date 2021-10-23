@@ -34,7 +34,7 @@ import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
 import com.github.javaparser.ast.type.PrimitiveType;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 
 
@@ -56,7 +56,7 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 	 * @param path Path where to transform the tests
 	 */
 	public TimeBasedTestTransformer(final File path) {
-		super(path, MeasurementConfiguration.DEFAULT);
+		super(path, MeasurementConfig.DEFAULT);
 	}
 
 	public int getDuration() {

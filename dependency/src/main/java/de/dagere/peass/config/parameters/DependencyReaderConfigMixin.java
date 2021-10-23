@@ -1,7 +1,8 @@
-package de.dagere.peass.config;
+package de.dagere.peass.config.parameters;
 
 import java.io.File;
 
+import de.dagere.peass.config.DependencyConfig;
 import picocli.CommandLine.Option;
 
 public class DependencyReaderConfigMixin {

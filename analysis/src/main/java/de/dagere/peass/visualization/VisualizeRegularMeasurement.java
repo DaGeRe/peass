@@ -20,7 +20,7 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
@@ -70,7 +70,7 @@ public class VisualizeRegularMeasurement {
    private CauseSearchData createEmptyData(final List<String> versions, final TestCase testcase) {
       CauseSearchData data2 = new CauseSearchData();
       data2.setCauseConfig(new CauseSearcherConfig(testcase, false, false, 1.0, false, false, null, 1));
-      data2.setConfig(new MeasurementConfiguration(2, versions.get(0), versions.get(1)));
+      data2.setConfig(new MeasurementConfig(2, versions.get(0), versions.get(1)));
       return data2;
    }
 

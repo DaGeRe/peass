@@ -5,7 +5,7 @@ import java.io.File;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
@@ -154,7 +154,7 @@ public class ResultsFolders {
       return propertyFolder;
    }
 
-   public File getVersionFullResultsFolder(final MeasurementConfiguration measurementConfig) {
+   public File getVersionFullResultsFolder(final MeasurementConfig measurementConfig) {
       return getVersionFullResultsFolder(measurementConfig.getExecutionConfig().getVersion(), measurementConfig.getExecutionConfig().getVersionOld());
    }
 }

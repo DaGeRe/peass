@@ -15,7 +15,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.ci.helper.GitProjectBuilder;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -46,7 +46,7 @@ public class DependenciesOnlyStartversionIT {
       ExecutionConfig executionConfig = new ExecutionConfig();
       executionConfig.setVersion(iterator.getTag());
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, executionConfig, new KiekerConfiguration(true), new PeassFolders(TestConstants.CURRENT_FOLDER),
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, executionConfig, new KiekerConfig(true), new PeassFolders(TestConstants.CURRENT_FOLDER),
             ContinuousDependencyReaderIT.resultsFolders, new EnvironmentVariables());
       dependencies = reader.getDependencies(iterator, "");
 
@@ -65,7 +65,7 @@ public class DependenciesOnlyStartversionIT {
       ExecutionConfig executionConfig = new ExecutionConfig();
       executionConfig.setVersion(iterator.getTag());
       executionConfig.setVersionOld(iterator.getPrevious().getTag());
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, executionConfig, new KiekerConfiguration(true), new PeassFolders(TestConstants.CURRENT_FOLDER),
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, executionConfig, new KiekerConfig(true), new PeassFolders(TestConstants.CURRENT_FOLDER),
             ContinuousDependencyReaderIT.resultsFolders, new EnvironmentVariables());
       dependencies = reader.getDependencies(iterator, "");
 

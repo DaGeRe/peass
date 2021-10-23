@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -41,7 +41,7 @@ public class LevelCauseSearcherTest {
    /**
     * Needs own measurement config for kieker activation
     */
-   private MeasurementConfiguration measurementConfig = new MeasurementConfiguration(2, TestConstants.V2, TestConstants.V1);
+   private MeasurementConfig measurementConfig = new MeasurementConfig(2, TestConstants.V2, TestConstants.V1);
    private final File folder = new File("target/test_peass/");
    {
       measurementConfig.setUseKieker(true);
@@ -135,7 +135,7 @@ public class LevelCauseSearcherTest {
    @Test
    public void testWarmup()
          throws InterruptedException, IOException, IllegalStateException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
-      measurementConfig = new MeasurementConfiguration(5, TestConstants.V2, TestConstants.V1);
+      measurementConfig = new MeasurementConfig(5, TestConstants.V2, TestConstants.V1);
       measurementConfig.setWarmup(500);
       measurementConfig.setIterations(5);
 
@@ -158,7 +158,7 @@ public class LevelCauseSearcherTest {
 
    @Test
    public void testOutlier() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      measurementConfig = new MeasurementConfiguration(30, TestConstants.V2, TestConstants.V1);
+      measurementConfig = new MeasurementConfig(30, TestConstants.V2, TestConstants.V1);
       measurementConfig.setWarmup(5);
       measurementConfig.setIterations(5);
       

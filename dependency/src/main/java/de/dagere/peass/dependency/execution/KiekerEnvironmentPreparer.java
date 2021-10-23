@@ -12,7 +12,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
@@ -41,7 +41,7 @@ public class KiekerEnvironmentPreparer {
    }
 
    public void prepareKieker() throws IOException, InterruptedException {
-      final MeasurementConfiguration config = testTransformer.getConfig();
+      final MeasurementConfig config = testTransformer.getConfig();
       if (config.getKiekerConfig().isUseSourceInstrumentation()) {
          instrumentSources(config);
       } else {
@@ -57,7 +57,7 @@ public class KiekerEnvironmentPreparer {
       generateKiekerMonitoringProperties();
    }
 
-   private void instrumentSources(final MeasurementConfiguration config) throws IOException {
+   private void instrumentSources(final MeasurementConfig config) throws IOException {
       final InstrumentKiekerSource instrumentKiekerSource;
       LOG.debug("Create default constructor: {}", config.getExecutionConfig().isCreateDefaultConstructor());
       final HashSet<String> excludedPatterns = new HashSet<>();

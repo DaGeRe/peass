@@ -16,7 +16,7 @@ import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.peass.TestUtil;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.jmh.JmhKoPeMeConverter;
 
 public class TestResultConversion {
@@ -122,7 +122,7 @@ public class TestResultConversion {
    }
    
    private Set<File> convert(final File jmhFile) {
-      JmhKoPeMeConverter converter = new JmhKoPeMeConverter(new MeasurementConfiguration(-1));
+      JmhKoPeMeConverter converter = new JmhKoPeMeConverter(new MeasurementConfig(-1));
       Set<File> resultFiles = converter.convertToXMLData(jmhFile, CONVERSION_TEMP_FOLDER);
       return resultFiles;
    }

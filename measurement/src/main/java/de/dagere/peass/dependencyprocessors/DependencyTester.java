@@ -13,7 +13,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.PeassFolders;
@@ -40,12 +40,12 @@ public class DependencyTester implements KiekerResultHandler {
    private static final Logger LOG = LogManager.getLogger(DependencyTester.class);
 
    protected final PeassFolders folders;
-   protected final MeasurementConfiguration configuration;
+   protected final MeasurementConfig configuration;
    protected final EnvironmentVariables env;
    private ResultOrganizer currentOrganizer;
    protected long currentChunkStart = 0;
 
-   public DependencyTester(final PeassFolders folders, final MeasurementConfiguration measurementConfig, final EnvironmentVariables env) throws IOException {
+   public DependencyTester(final PeassFolders folders, final MeasurementConfig measurementConfig, final EnvironmentVariables env) throws IOException {
       this.folders = folders;
       this.configuration = measurementConfig;
       this.env = env;

@@ -1,8 +1,9 @@
-package de.dagere.peass.config;
+package de.dagere.peass.config.parameters;
 
+import de.dagere.peass.config.ImplementedTests;
 import picocli.CommandLine.Option;
 
-public class StatisticsConfigurationMixin {
+public class StatisticsConfigMixin {
    @Option(names = { "-outlierFactor", "--outlierFactor" }, description = "Whether outliers should be removed with z-score higher than the given value")
    private double outlierFactor = 3.29;
 

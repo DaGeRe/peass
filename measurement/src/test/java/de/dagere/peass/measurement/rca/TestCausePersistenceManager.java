@@ -10,7 +10,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CausePersistenceManager;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
@@ -26,14 +26,14 @@ public class TestCausePersistenceManager {
       testConfig(folders, TestConstants.SIMPLE_MEASUREMENT_CONFIG);
 
       TestConstants.getCurrentFolder();
-      final MeasurementConfiguration config = new MeasurementConfiguration(3, "000001", "000001~1");
+      final MeasurementConfig config = new MeasurementConfig(3, "000001", "000001~1");
       config.setIterations(5);
       testConfig(folders, config);
    }
    
    @Test
    public void testDetailWriting() throws JsonGenerationException, JsonMappingException, JsonParseException, IOException {
-      final MeasurementConfiguration config = new MeasurementConfiguration(3, "000001", "000001~1");
+      final MeasurementConfig config = new MeasurementConfig(3, "000001", "000001~1");
       final CauseSearchFolders folders = new CauseSearchFolders(TestConstants.getCurrentFolder());
       
       writeData(folders, config, false);
@@ -47,7 +47,7 @@ public class TestCausePersistenceManager {
       Assert.assertEquals(3, data.getNodes().getValues().getValues().size());
    }
 
-   private void testConfig(final CauseSearchFolders folders, final MeasurementConfiguration config)
+   private void testConfig(final CauseSearchFolders folders, final MeasurementConfig config)
          throws IOException, JsonGenerationException, JsonMappingException, JsonParseException {
       writeData(folders, config, true);
 
@@ -61,7 +61,7 @@ public class TestCausePersistenceManager {
       Assert.assertEquals(config.getVms() * config.getIterations(), data.getNodes().getStatistic().getCallsOld());
    }
 
-   private void writeData(final CauseSearchFolders folders, final MeasurementConfiguration config, final boolean useFullLogAPI) throws IOException, JsonGenerationException, JsonMappingException {
+   private void writeData(final CauseSearchFolders folders, final MeasurementConfig config, final boolean useFullLogAPI) throws IOException, JsonGenerationException, JsonMappingException {
       final CausePersistenceManager manager = new CausePersistenceManager(TestConstants.SIMPLE_CAUSE_CONFIG, config, folders);
 
       final TreeBuilder builder = new TreeBuilder(config, useFullLogAPI);

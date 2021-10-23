@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
@@ -19,7 +19,7 @@ public class TestNodePreperatorColor {
    
    @BeforeEach
    public void setUp() {
-      MeasurementConfiguration config = new MeasurementConfiguration(100);
+      MeasurementConfig config = new MeasurementConfig(100);
       config.getExecutionConfig().setTimeout(100);
       data.setConfig(config);
       data.setNodes(root);

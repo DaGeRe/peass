@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.config.DependencyConfig;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.ResultsFolders;
@@ -37,7 +37,7 @@ public class ContinuousExecutor {
 
    private static final Logger LOG = LogManager.getLogger(ContinuousExecutor.class);
 
-   private final MeasurementConfiguration measurementConfig;
+   private final MeasurementConfig measurementConfig;
    private final DependencyConfig dependencyConfig;
 
    private final String version;
@@ -51,7 +51,7 @@ public class ContinuousExecutor {
 
    private final EnvironmentVariables env;
 
-   public ContinuousExecutor(final File projectFolder, final MeasurementConfiguration measurementConfig, final DependencyConfig dependencyConfig, final EnvironmentVariables env)
+   public ContinuousExecutor(final File projectFolder, final MeasurementConfig measurementConfig, final DependencyConfig dependencyConfig, final EnvironmentVariables env)
          throws InterruptedException, IOException {
       this.originalProjectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
@@ -79,7 +79,7 @@ public class ContinuousExecutor {
       versionOld = iteratorBuiler.getVersionOld();
    }
 
-   private void getGitRepo(final File projectFolder, final MeasurementConfiguration measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {
+   private void getGitRepo(final File projectFolder, final MeasurementConfig measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {
       if (!localFolder.exists() || !projectFolderLocal.exists()) {
          ContinuousFolderUtil.cloneProject(projectFolder, localFolder);
          if (!projectFolderLocal.exists()) {

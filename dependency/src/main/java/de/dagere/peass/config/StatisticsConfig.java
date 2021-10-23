@@ -2,7 +2,7 @@ package de.dagere.peass.config;
 
 import java.io.Serializable;
 
-public class StatisticsConfiguration implements Serializable {
+public class StatisticsConfig implements Serializable {
    private static final long serialVersionUID = -6193031432004031500L;
 
    /**

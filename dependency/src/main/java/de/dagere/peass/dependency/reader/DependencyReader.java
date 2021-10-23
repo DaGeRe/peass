@@ -18,7 +18,7 @@ import com.github.javaparser.ParseException;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.PeassFolders;
@@ -67,7 +67,7 @@ public class DependencyReader {
    protected String lastRunningVersion;
    private final VersionKeeper skippedNoChange;
    
-   private final KiekerConfiguration kiekerConfig;
+   private final KiekerConfig kiekerConfig;
    private final ExecutionConfig executionConfig;
    private final EnvironmentVariables env;
 
@@ -77,7 +77,7 @@ public class DependencyReader {
 
    public DependencyReader(final DependencyConfig dependencyConfig, final PeassFolders folders,
          final ResultsFolders resultsFolders, final String url, final VersionIterator iterator,
-         final ChangeManager changeManager, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig, final EnvironmentVariables env) {
+         final ChangeManager changeManager, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
       this.resultsFolders = resultsFolders;
       this.iterator = iterator;
@@ -108,7 +108,7 @@ public class DependencyReader {
     */
    public DependencyReader(final DependencyConfig dependencyConfig, final PeassFolders folders, final ResultsFolders resultsFolders, final String url,
          final VersionIterator iterator,
-         final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig, final EnvironmentVariables env) {
+         final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
       this.resultsFolders = resultsFolders;
       this.iterator = iterator;

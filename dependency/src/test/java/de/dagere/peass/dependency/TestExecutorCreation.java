@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.testtransformation.TestTransformer;
 
 public class TestExecutorCreation {
@@ -15,13 +15,13 @@ public class TestExecutorCreation {
    public void testMavenExecutorCreation() {
       ExecutionConfig config = new ExecutionConfig();
       
-      TestTransformer testTransformer = ExecutorCreator.createTestTransformer(Mockito.mock(PeassFolders.class), config, new KiekerConfiguration(true));
+      TestTransformer testTransformer = ExecutorCreator.createTestTransformer(Mockito.mock(PeassFolders.class), config, new KiekerConfig(true));
       Assert.assertNotNull(testTransformer);
    }
    
    @Test
    public void testMavenExecutorCreationWithMeasurementConfig() {
-      MeasurementConfiguration measurementConfig = new MeasurementConfiguration(2);
+      MeasurementConfig measurementConfig = new MeasurementConfig(2);
       TestTransformer testTransformer = ExecutorCreator.createTestTransformer(Mockito.mock(PeassFolders.class), measurementConfig.getExecutionConfig(), measurementConfig);
       Assert.assertNotNull(testTransformer);
    }

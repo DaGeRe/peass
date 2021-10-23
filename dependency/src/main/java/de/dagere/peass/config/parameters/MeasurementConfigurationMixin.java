@@ -1,4 +1,4 @@
-package de.dagere.peass.dependency.execution;
+package de.dagere.peass.config.parameters;
 
 import de.dagere.peass.config.MeasurementStrategy;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;

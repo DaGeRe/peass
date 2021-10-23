@@ -4,7 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -38,7 +38,7 @@ public class FirstRunningVersionFinder {
       goToCommit(iterator);
       boolean isVersionRunning = false;
       // The local test transformer enables testing whether a version runs without full configuration
-      TestTransformer transformer = ExecutorCreator.createTestTransformer(folders, executionConfig, new KiekerConfiguration(false));
+      TestTransformer transformer = ExecutorCreator.createTestTransformer(folders, executionConfig, new KiekerConfig(false));
       while (!isVersionRunning && iterator.hasNextCommit()) {
          if (ExecutorCreator.hasBuildfile(folders)) {
             isVersionRunning = tryCommit(iterator, transformer);

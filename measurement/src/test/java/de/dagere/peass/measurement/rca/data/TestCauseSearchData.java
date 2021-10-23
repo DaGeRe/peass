@@ -3,7 +3,7 @@ package de.dagere.peass.measurement.rca.data;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
@@ -20,7 +20,7 @@ public class TestCauseSearchData {
       
       csd.setNodes(aMeasured);
       
-      CallTreeNode aStructure = new CallTreeNode("A", "public void A.a()", null, new MeasurementConfiguration(-1));
+      CallTreeNode aStructure = new CallTreeNode("A", "public void A.a()", null, new MeasurementConfig(-1));
       CallTreeNode bStructure = aStructure.appendChild("B", "public void B.b()", null);
       CallTreeNode cStructure = buildAdditionalNode(bStructure);
       
@@ -32,7 +32,7 @@ public class TestCauseSearchData {
 
    private CallTreeNode buildAdditionalNode(final CallTreeNode bStructure) {
       CallTreeNode cStructure = bStructure.appendChild("C", "public void C.c()", null);
-      cStructure.setOtherVersionNode(new CallTreeNode("C", "public void C.c()", null, new MeasurementConfiguration(-1)));
+      cStructure.setOtherVersionNode(new CallTreeNode("C", "public void C.c()", null, new MeasurementConfig(-1)));
       cStructure.setVersions("1", "2");
       for (int i = 0; i < 3; i++) {
          cStructure.newVM("1");

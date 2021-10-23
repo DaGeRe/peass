@@ -13,8 +13,8 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.dependency.PeassFolders;
-import de.dagere.peass.dependency.execution.ExecutionConfigMixin;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialVersion;

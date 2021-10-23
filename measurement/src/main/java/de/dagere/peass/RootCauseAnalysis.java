@@ -7,8 +7,9 @@ import javax.xml.bind.JAXBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.WorkloadType;
+import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -74,7 +75,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       final String predecessor = versionInfo.getPredecessor();
 
       LOG.debug("Timeout in minutes: {}", executionMixin.getTimeout());
-      final MeasurementConfiguration measurementConfiguration = getConfiguration(predecessor);
+      final MeasurementConfig measurementConfiguration = getConfiguration(predecessor);
 
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, causeSearchConfigMixin);
 
@@ -91,8 +92,8 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       return null;
    }
 
-   private MeasurementConfiguration getConfiguration(final String predecessor) {
-      final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(measurementConfigMixin, executionMixin, statisticConfigMixin);
+   private MeasurementConfig getConfiguration(final String predecessor) {
+      final MeasurementConfig measurementConfiguration = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin);
       measurementConfiguration.setUseKieker(true);
       measurementConfiguration.setKiekerAggregationInterval(kiekerConfigMixin.getWriteInterval());
       measurementConfiguration.getExecutionConfig().setVersion(version);
@@ -124,7 +125,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       return measurementConfiguration;
    }
 
-   public static CauseSearcher getCauseSeacher(final MeasurementConfiguration measurementConfiguration,
+   public static CauseSearcher getCauseSeacher(final MeasurementConfig measurementConfiguration,
          final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader) throws IOException, InterruptedException {
       EnvironmentVariables env = reader.getEnv();
       final CauseSearcher tester;

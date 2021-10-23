@@ -7,7 +7,7 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestArgLineBuilder {
@@ -15,7 +15,7 @@ public class TestArgLineBuilder {
    @Test
    public void testKieker() {
       JUnitTestTransformer mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
-      MeasurementConfiguration config = new MeasurementConfiguration(2);
+      MeasurementConfig config = new MeasurementConfig(2);
       config.setUseKieker(true);
       config.getKiekerConfig().setUseSourceInstrumentation(false);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
@@ -33,7 +33,7 @@ public class TestArgLineBuilder {
    @Test
    public void testNoKieker() {
       JUnitTestTransformer mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
-      MeasurementConfiguration config = new MeasurementConfiguration(2);
+      MeasurementConfig config = new MeasurementConfig(2);
       config.setUseKieker(false);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
 
@@ -49,7 +49,7 @@ public class TestArgLineBuilder {
    @Test
    public void testAggregatedWriter() {
       JUnitTestTransformer mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
-      MeasurementConfiguration config = new MeasurementConfiguration(2);
+      MeasurementConfig config = new MeasurementConfig(2);
       config.setUseKieker(true);
       config.getKiekerConfig().setUseSourceInstrumentation(true);
       config.getKiekerConfig().setEnableAdaptiveMonitoring(true);

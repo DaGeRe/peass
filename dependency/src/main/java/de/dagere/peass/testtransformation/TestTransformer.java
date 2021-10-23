@@ -3,7 +3,7 @@ package de.dagere.peass.testtransformation;
 import java.io.File;
 import java.util.List;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -33,7 +33,7 @@ public interface TestTransformer {
    
    public void determineVersions(final List<File> modules);
    
-   public MeasurementConfiguration getConfig();
+   public MeasurementConfig getConfig();
 
    public boolean isAggregatedWriter();
 

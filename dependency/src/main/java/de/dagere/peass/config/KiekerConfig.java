@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
-public class KiekerConfiguration implements Serializable {
+public class KiekerConfig implements Serializable {
    
    private static final long serialVersionUID = 3129231099963995908L;
 
@@ -19,14 +19,14 @@ public class KiekerConfiguration implements Serializable {
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
    private boolean extractMethod = false;
 
-   public KiekerConfiguration() {
+   public KiekerConfig() {
    }
 
-   public KiekerConfiguration(final boolean useKieker) {
+   public KiekerConfig(final boolean useKieker) {
       this.useKieker = useKieker;
    }
 
-   public KiekerConfiguration(final KiekerConfiguration other) {
+   public KiekerConfig(final KiekerConfig other) {
       this.useKieker = other.useKieker;
       this.useSourceInstrumentation = other.useSourceInstrumentation;
       this.useSelectiveInstrumentation = other.useSelectiveInstrumentation;

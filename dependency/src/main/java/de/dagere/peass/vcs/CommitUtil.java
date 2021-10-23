@@ -1,13 +1,10 @@
-package de.dagere.peass;
+package de.dagere.peass.vcs;
 
 import java.io.File;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import de.dagere.peass.vcs.GitCommit;
-import de.dagere.peass.vcs.GitUtils;
 
 public class CommitUtil {
    

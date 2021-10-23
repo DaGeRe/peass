@@ -7,14 +7,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import de.dagere.peass.dependency.execution.ExecutionConfigMixin;
-import de.dagere.peass.dependency.execution.MeasurementConfigurationMixin;
+import de.dagere.peass.config.parameters.ExecutionConfigMixin;
+import de.dagere.peass.config.parameters.MeasurementConfigurationMixin;
+import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 
-public class MeasurementConfiguration implements Serializable {
+public class MeasurementConfig implements Serializable {
 
    private static final long serialVersionUID = -6936740902708676182L;
 
-   public static final MeasurementConfiguration DEFAULT = new MeasurementConfiguration(30);
+   public static final MeasurementConfig DEFAULT = new MeasurementConfig(30);
 
    private final int vms;
    private boolean earlyStop = true;
@@ -32,7 +33,7 @@ public class MeasurementConfiguration implements Serializable {
    private int waitTimeBetweenVMs = 1000;
 
    @JsonIgnore
-   private final KiekerConfiguration kiekerConfig;
+   private final KiekerConfig kiekerConfig;
 
    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
    private boolean saveAll = true;
@@ -41,32 +42,32 @@ public class MeasurementConfiguration implements Serializable {
 
    private MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
 
-   private StatisticsConfiguration statisticsConfig = new StatisticsConfiguration();
+   private StatisticsConfig statisticsConfig = new StatisticsConfig();
    private final ExecutionConfig executionConfig;
 
-   public MeasurementConfiguration(final int vms) {
+   public MeasurementConfig(final int vms) {
       executionConfig = new ExecutionConfig(20);
-      kiekerConfig = new KiekerConfiguration();
+      kiekerConfig = new KiekerConfig();
       this.vms = vms;
    }
 
-   public MeasurementConfiguration(final int vms, final ExecutionConfig executionConfig, final KiekerConfiguration kiekerConfig) {
+   public MeasurementConfig(final int vms, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig) {
       this.executionConfig = executionConfig;
       this.vms = vms;
-      this.kiekerConfig = new KiekerConfiguration(kiekerConfig);
+      this.kiekerConfig = new KiekerConfig(kiekerConfig);
    }
    
-   public MeasurementConfiguration(final int vms, final String version, final String versionOld) {
+   public MeasurementConfig(final int vms, final String version, final String versionOld) {
       executionConfig = new ExecutionConfig(20);
-      kiekerConfig = new KiekerConfiguration();
+      kiekerConfig = new KiekerConfig();
       this.vms = vms;
       executionConfig.setVersion(version);
       executionConfig.setVersionOld(versionOld);
    }
 
-   public MeasurementConfiguration(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin, final StatisticsConfigurationMixin statisticMixin) {
+   public MeasurementConfig(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin, final StatisticsConfigMixin statisticMixin) {
       executionConfig = new ExecutionConfig(executionMixin);
-      kiekerConfig = new KiekerConfiguration();
+      kiekerConfig = new KiekerConfig();
       this.vms = mixin.getVms();
       statisticsConfig.setType1error(statisticMixin.getType1error());
       statisticsConfig.setType2error(statisticMixin.getType2error());
@@ -87,20 +88,20 @@ public class MeasurementConfiguration implements Serializable {
    }
 
    @JsonCreator
-   public MeasurementConfiguration(@JsonProperty("vms") final int vms,
+   public MeasurementConfig(@JsonProperty("vms") final int vms,
          @JsonProperty("earlystop") final boolean earlyStop) {
       executionConfig = new ExecutionConfig();
-      kiekerConfig = new KiekerConfiguration();
+      kiekerConfig = new KiekerConfig();
       this.vms = vms;
       this.earlyStop = earlyStop;
    }
    
-   public MeasurementConfiguration(final int timeout, final int vms, final boolean earlyStop, final String version, final String versionOld) {
+   public MeasurementConfig(final int timeout, final int vms, final boolean earlyStop, final String version, final String versionOld) {
       executionConfig = new ExecutionConfig();
       executionConfig.setTimeout(timeout);
       executionConfig.setVersion(version);
       executionConfig.setVersionOld(versionOld);
-      kiekerConfig = new KiekerConfiguration();
+      kiekerConfig = new KiekerConfig();
       this.vms = vms;
       this.earlyStop = earlyStop;
    }
@@ -110,7 +111,7 @@ public class MeasurementConfiguration implements Serializable {
     * 
     * @param other Configuration to copy
     */
-   public MeasurementConfiguration(final MeasurementConfiguration other) {
+   public MeasurementConfig(final MeasurementConfig other) {
       executionConfig = new ExecutionConfig(other.getExecutionConfig());
       this.vms = other.vms;
       statisticsConfig.setType1error(other.getStatisticsConfig().getType1error());
@@ -124,7 +125,7 @@ public class MeasurementConfiguration implements Serializable {
       this.logFullData = other.logFullData;
 
       this.redirectToNull = other.redirectToNull;
-      kiekerConfig = new KiekerConfiguration();
+      kiekerConfig = new KiekerConfig();
       kiekerConfig.setUseKieker(other.isUseKieker());
       kiekerConfig.setUseSourceInstrumentation(other.getKiekerConfig().isUseSourceInstrumentation());
       kiekerConfig.setUseSelectiveInstrumentation(other.getKiekerConfig().isUseSelectiveInstrumentation());
@@ -143,11 +144,11 @@ public class MeasurementConfiguration implements Serializable {
       this.showStart = other.showStart;
    }
 
-   public StatisticsConfiguration getStatisticsConfig() {
+   public StatisticsConfig getStatisticsConfig() {
       return statisticsConfig;
    }
 
-   public void setStatisticsConfig(final StatisticsConfiguration statisticsConfig) {
+   public void setStatisticsConfig(final StatisticsConfig statisticsConfig) {
       this.statisticsConfig = statisticsConfig;
    }
 
@@ -329,7 +330,7 @@ public class MeasurementConfiguration implements Serializable {
    }
 
    @JsonIgnore
-   public KiekerConfiguration getKiekerConfig() {
+   public KiekerConfig getKiekerConfig() {
       return kiekerConfig;
    }
 }

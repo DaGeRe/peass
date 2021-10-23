@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.dagere.kopeme.kieker.record.DurationRecord;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.KiekerReaderConfiguration;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -42,7 +42,7 @@ public class KiekerReaderConfigurationDuration extends KiekerReaderConfiguration
       this.connectPorts(operationExecutionRecordMatcher.getOutputPort(), executionRecordTransformationStage.getInputPort());
    }
    
-   public TreeStage readTree(final File kiekerTraceFolder, final TestCase test, final boolean ignoreEOIs, final MeasurementConfiguration config, final ModuleClassMapping mapping) {
+   public TreeStage readTree(final File kiekerTraceFolder, final TestCase test, final boolean ignoreEOIs, final MeasurementConfig config, final ModuleClassMapping mapping) {
       TreeStage treeStage = new TreeStage(systemModelRepositoryNew, test, ignoreEOIs, config, mapping);
       
       TraceReconstructionStage executionStage = prepareTillExecutionTrace(kiekerTraceFolder);

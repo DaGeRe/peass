@@ -9,7 +9,7 @@ import org.apache.commons.math3.stat.inference.TestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.analysis.Relation;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -26,9 +26,9 @@ public abstract class DifferentNodeDeterminer {
    protected final List<CallTreeNode> levelDifferentPrecessor = new LinkedList<>();
 
    protected final CauseSearcherConfig causeSearchConfig;
-   protected final MeasurementConfiguration measurementConfig;
+   protected final MeasurementConfig measurementConfig;
 
-   public DifferentNodeDeterminer(final CauseSearcherConfig causeSearchConfig, final MeasurementConfiguration measurementConfig) {
+   public DifferentNodeDeterminer(final CauseSearcherConfig causeSearchConfig, final MeasurementConfig measurementConfig) {
       this.causeSearchConfig = causeSearchConfig;
       this.measurementConfig = measurementConfig;
    }

@@ -11,7 +11,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
@@ -29,14 +29,14 @@ public class BothTreeReader {
    private CallTreeNode rootVersion;
 
    private final CauseSearcherConfig causeSearchConfig;
-   private final MeasurementConfiguration config;
+   private final MeasurementConfig config;
    private final CauseSearchFolders folders;
    private final EnvironmentVariables env;
    
    final File potentialCacheFileOld;
    final File potentialCacheFile;
 
-   public BothTreeReader(final CauseSearcherConfig causeSearchConfig, final MeasurementConfiguration config, final CauseSearchFolders folders, final EnvironmentVariables env) {
+   public BothTreeReader(final CauseSearcherConfig causeSearchConfig, final MeasurementConfig config, final CauseSearchFolders folders, final EnvironmentVariables env) {
       this.causeSearchConfig = causeSearchConfig;
       this.config = config;
       this.folders = folders;

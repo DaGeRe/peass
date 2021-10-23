@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import org.apache.commons.io.FileUtils;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.RCAStrategy;
@@ -21,8 +21,8 @@ public class TestConstants {
    public final static CauseSearcherConfig SIMPLE_CAUSE_CONFIG_TESTME = new CauseSearcherConfig(new TestCase("defaultpackage.TestMe", "testMe"), 
          true, false, 0.1,
          false, true, RCAStrategy.COMPLETE, 1);
-   public final static MeasurementConfiguration SIMPLE_MEASUREMENT_CONFIG = new MeasurementConfiguration(2, V2, V1);
-   public final static MeasurementConfiguration SIMPLE_MEASUREMENT_CONFIG_KIEKER = new MeasurementConfiguration(2, V2, V1);
+   public final static MeasurementConfig SIMPLE_MEASUREMENT_CONFIG = new MeasurementConfig(2, V2, V1);
+   public final static MeasurementConfig SIMPLE_MEASUREMENT_CONFIG_KIEKER = new MeasurementConfig(2, V2, V1);
   
    static {
       SIMPLE_MEASUREMENT_CONFIG_KIEKER.setUseKieker(true);

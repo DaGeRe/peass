@@ -13,7 +13,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.config.DependencyReaderConfigMixin;
+import de.dagere.peass.config.parameters.DependencyReaderConfigMixin;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.statistics.DependencyStatisticAnalyzer;
 import de.dagere.peass.statistics.DependencyStatistics;

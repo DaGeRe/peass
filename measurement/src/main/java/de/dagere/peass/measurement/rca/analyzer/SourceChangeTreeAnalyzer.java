@@ -10,7 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.analysis.properties.MethodChangeReader;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 
 public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
@@ -18,9 +18,9 @@ public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
    private static final Logger LOG = LogManager.getLogger(SourceChangeTreeAnalyzer.class);
 
    private final List<CallTreeNode> includedNodes = new LinkedList<>();
-   private final MeasurementConfiguration config;
+   private final MeasurementConfig config;
 
-   public SourceChangeTreeAnalyzer(final CallTreeNode root, final CallTreeNode rootPredecessor, final File sourceFolder, final MeasurementConfiguration config) {
+   public SourceChangeTreeAnalyzer(final CallTreeNode root, final CallTreeNode rootPredecessor, final File sourceFolder, final MeasurementConfig config) {
       // Only nodes with equal structure may have equal source
       List<CallTreeNode> includableNodes = new StructureChangeTreeAnalyzer(root, rootPredecessor).getMeasurementNodesPredecessor();
       this.config = config;

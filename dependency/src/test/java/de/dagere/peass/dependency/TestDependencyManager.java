@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import de.dagere.peass.TestConstants;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
@@ -31,7 +31,7 @@ public class TestDependencyManager {
 
       prepareMock(folders, testExecutorMock, testFolder, rubishFile);
 
-      JUnitTestTransformer transformer = new JUnitTestTransformer(folders.getProjectFolder(), new MeasurementConfiguration(5));
+      JUnitTestTransformer transformer = new JUnitTestTransformer(folders.getProjectFolder(), new MeasurementConfig(5));
       DependencyManager manager = new DependencyManager(testExecutorMock, folders, transformer);
 
       manager.setDeleteFolderSize(1);

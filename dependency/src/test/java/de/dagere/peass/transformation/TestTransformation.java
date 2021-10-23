@@ -43,7 +43,7 @@ import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.MemberValuePair;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
@@ -78,7 +78,7 @@ public class TestTransformation {
       testFile = new File(SOURCE_FOLDER, "TestMe1.java");
       FileUtils.copyFile(old, testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfig.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
@@ -99,7 +99,7 @@ public class TestTransformation {
       testFile = new File(SOURCE_FOLDER, "TestMe6.java");
       FileUtils.copyFile(old, testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfig.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
@@ -125,7 +125,7 @@ public class TestTransformation {
       final File goal = new File(SOURCE_FOLDER, "MySuper.java");
       FileUtils.copyFile(superClass, goal);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfig.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
@@ -146,7 +146,7 @@ public class TestTransformation {
       testFile = new File(SOURCE_FOLDER, "TestMe2.java");
       FileUtils.copyFile(old2, testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfig.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
@@ -178,7 +178,7 @@ public class TestTransformation {
       FileUtils.copyFile(old, testFile);
       System.out.println(testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfig.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
@@ -192,7 +192,7 @@ public class TestTransformation {
       FileUtils.copyFile(old, testFile);
       System.out.println(testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfig.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 
@@ -206,7 +206,7 @@ public class TestTransformation {
       FileUtils.copyFile(old, testFile);
       System.out.println(testFile);
 
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfiguration.DEFAULT);
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfig.DEFAULT);
       tt.determineVersions(Arrays.asList(new File[] { testFolder }));
       tt.transformTests();
 

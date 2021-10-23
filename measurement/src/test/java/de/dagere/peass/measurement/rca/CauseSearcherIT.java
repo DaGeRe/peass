@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.CauseSearchFolders;
 import de.dagere.peass.dependency.PeassFolders;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -68,7 +68,7 @@ public class CauseSearcherIT {
             MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
          mockEnvironment(mockedVCS, mockedGitUtils);
          
-         final MeasurementConfiguration measurementConfiguration = new MeasurementConfiguration(5, VERSION, "000001~1");
+         final MeasurementConfig measurementConfiguration = new MeasurementConfig(5, VERSION, "000001~1");
          measurementConfiguration.setUseKieker(true);
          final CauseSearcherConfig causeSearcherConfig = CAUSE_CONFIG_TESTME_COMPLETE;
 

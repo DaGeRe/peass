@@ -8,7 +8,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.PeassFolders;
@@ -33,7 +33,7 @@ public class TestParallelMeasurement {
       VCSTestUtils.mockGoToTagAny();
       
       final PeassFolders folders = new PeassFolders(folder.getRoot());
-      final MeasurementConfiguration configuration = new MeasurementConfiguration(4, "2", "1");
+      final MeasurementConfig configuration = new MeasurementConfig(4, "2", "1");
       configuration.setMeasurementStrategy(MeasurementStrategy.PARALLEL);
 
       MavenTestExecutorMocker.mockExecutor(folders, configuration);

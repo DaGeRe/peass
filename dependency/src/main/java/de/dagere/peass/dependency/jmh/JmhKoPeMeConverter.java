@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.utils.Constants;
 
@@ -23,9 +23,9 @@ import de.dagere.peass.utils.Constants;
  */
 public class JmhKoPeMeConverter {
 
-   private final MeasurementConfiguration measurementConfig;
+   private final MeasurementConfig measurementConfig;
 
-   public JmhKoPeMeConverter(final MeasurementConfiguration measurementConfig) {
+   public JmhKoPeMeConverter(final MeasurementConfig measurementConfig) {
       this.measurementConfig = measurementConfig;
    }
 

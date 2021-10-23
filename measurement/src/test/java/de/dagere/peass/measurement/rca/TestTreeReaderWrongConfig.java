@@ -11,8 +11,8 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.KiekerConfiguration;
-import de.dagere.peass.config.MeasurementConfiguration;
+import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
@@ -72,11 +72,11 @@ public class TestTreeReaderWrongConfig {
    }
 
    public CallTreeNode getTree() throws IOException, XmlPullParserException, InterruptedException, FileNotFoundException, ViewNotFoundException, AnalysisConfigurationException {
-      KiekerConfiguration wrongKiekerConfig = new KiekerConfiguration(true);
+      KiekerConfig wrongKiekerConfig = new KiekerConfig(true);
       wrongKiekerConfig.setUseAggregation(true);
       wrongKiekerConfig.setRecord(AllowedKiekerRecord.DURATION);
       
-      final MeasurementConfiguration config = new MeasurementConfiguration(1, new ExecutionConfig(15), wrongKiekerConfig);
+      final MeasurementConfig config = new MeasurementConfig(1, new ExecutionConfig(15), wrongKiekerConfig);
       TreeReader executor = TreeReaderFactory.createTestTreeReader(projectFolder, config, new EnvironmentVariables());
       
       TestCase test = new TestCase("defaultpackage.TestMe", "testMe");
