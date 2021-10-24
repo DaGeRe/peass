@@ -9,6 +9,7 @@
 	<version>0.1-SNAPSHOT</version>
 	<name>PeASS - Parent</name>
 	<description>Tool for Analysing the Performance Changes in a Project</description>
+	<url>https://github.com/DaGeRe/peass/</url>
 
 	<modules>
 		<module>dependency</module>
@@ -17,15 +18,70 @@
 		<module>distribution</module>
 	</modules>
 
-	<developers>
-		<developer>
-			<id>DaGeRe</id>
-			<name>David Georg Reichelt</name>
-			<email>kopeme@dagere.de</email>
-		</developer>
-	</developers>
+	
 
 	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.6</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.1.1</version>
+				<configuration>
+					<doclint>none</doclint>
+					<quiet>true</quiet>
+					<nonavbar>true</nonavbar>
+					<notree>true</notree>
+					<nocomment>true</nocomment>
+					<nohelp>true</nohelp>
+				</configuration>
+				<executions>
+					<execution>
+						<id>attach-javadocs</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<id>attach-sources</id>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.sonatype.plugins</groupId>
+				<artifactId>nexus-staging-maven-plugin</artifactId>
+				<version>1.6.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<serverId>sonatype-nexus-staging</serverId>
+					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
+					<autoReleaseAfterClose>true</autoReleaseAfterClose>
+				</configuration>
+			</plugin>
+		</plugins>
 		<pluginManagement>
 			<plugins>
 				<plugin>
@@ -47,11 +103,12 @@
 		</pluginManagement>
 	</build>
 
-	<scm>
-		<connection>scm:git:ssh://github.com:DaGeRe/peass.git</connection>
-		<developerConnection>scm:git:git@github.com:DaGeRe/peass.git</developerConnection>
-		<url>https://git@github.com:DaGeRe/peass.git</url>
-	</scm>
+	<properties>
+		<mockito.version>3.12.4</mockito.version>
+		<kieker.version>1.15</kieker.version>
+		<project.organization.name>DaGeRe</project.organization.name>
+		<license.licenseName>agpl_v3</license.licenseName>
+	</properties>
 
 	<licenses>
 		<license>
@@ -60,6 +117,22 @@
 			<distribution>repo</distribution>
 		</license>
 	</licenses>
+
+	<developers>
+		<developer>
+			<id>DaGeRe</id>
+			<name>David Georg Reichelt</name>
+			<email>kopeme@dagere.de</email>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:ssh://github.com:DaGeRe/peass.git</connection>
+		<developerConnection>scm:git:git@github.com:DaGeRe/peass.git</developerConnection>
+		<url>https://git@github.com:DaGeRe/peass.git</url>
+	</scm>
+
+	
 	
 	<distributionManagement>
 		<snapshotRepository>
@@ -76,10 +149,4 @@
 
 
 	<inceptionYear>2015</inceptionYear>
-	<properties>
-		<mockito.version>3.12.4</mockito.version>
-		<kieker.version>1.15</kieker.version>
-		<project.organization.name>DaGeRe</project.organization.name>
-		<license.licenseName>agpl_v3</license.licenseName>
-	</properties>
 </project>
