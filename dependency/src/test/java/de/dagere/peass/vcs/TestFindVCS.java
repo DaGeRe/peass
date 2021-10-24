@@ -38,7 +38,7 @@ public class TestFindVCS {
    @Test
    public void testNoVCSFolder() {
       RuntimeException thrown = Assertions.assertThrows(RuntimeException.class, () -> {
-         File testFile = new File("../../");
+         File testFile = new File(System.getProperty("java.io.tmpdir"));
          VersionControlSystem vcs = VersionControlSystem.getVersionControlSystem(testFile);
       });
       
