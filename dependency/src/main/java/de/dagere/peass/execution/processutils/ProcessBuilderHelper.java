@@ -48,10 +48,11 @@ public class ProcessBuilderHelper {
    private void overwriteEnvVars(final ProcessBuilder pb) {
       LOG.debug("KOPEME_HOME={}", folders.getTempMeasurementFolder().getAbsolutePath());
       pb.environment().put("KOPEME_HOME", folders.getTempMeasurementFolder().getAbsolutePath());
-      // if (this instanceof GradleTestExecutor) {
       pb.environment().put("GRADLE_HOME", folders.getGradleHome().getAbsolutePath());
-      // }
-      LOG.debug("LD_LIBRARY_PATH: {}", System.getenv().get("LD_LIBRARY_PATH"));
+      String ldLibraryPath = System.getenv().get("LD_LIBRARY_PATH");
+      if (ldLibraryPath != null) {
+         LOG.debug("LD_LIBRARY_PATH: {}", ldLibraryPath);
+      }
       for (final Map.Entry<String, String> env : System.getenv().entrySet()) {
          pb.environment().put(env.getKey(), env.getValue());
       }
@@ -90,10 +91,10 @@ public class ProcessBuilderHelper {
       }
       return count;
    }
-   
+
    /**
-    * If on linux, this calls the sync command, which should assure that pending hard disc writes are finished and the next test
-    * execution is done with clear write buffers (especially of Kieker)
+    * If on linux, this calls the sync command, which should assure that pending hard disc writes are finished and the next test execution is done with clear write buffers
+    * (especially of Kieker)
     */
    public static void syncToHdd() {
       if (isLinux()) {
