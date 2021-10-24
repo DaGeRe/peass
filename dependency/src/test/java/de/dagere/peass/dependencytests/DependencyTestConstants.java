@@ -22,7 +22,7 @@ public class DependencyTestConstants {
    
    public static final File CURRENT = new File(new File("target"), "current");
    
-   public static final ResultsFolders NULL_RESULTS_FOLDERS = new ResultsFolders(new File("/dev/null"), "test");
+   public static final ResultsFolders NULL_RESULTS_FOLDERS = new ResultsFolders(new File("target/dummy"), "test");
    public static final ResultsFolders TARGET_RESULTS_FOLDERS = new ResultsFolders(new File("target/view_results"), "test");
    
    public static final File COVERAGE_VERSIONS_FOLDER = new File("../dependency/src/test/resources/coverageBasedSelection");

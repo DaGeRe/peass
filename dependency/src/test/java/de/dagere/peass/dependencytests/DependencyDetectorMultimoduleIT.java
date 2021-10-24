@@ -27,6 +27,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
@@ -49,23 +50,12 @@ public class DependencyDetectorMultimoduleIT {
 
       FileUtils.deleteDirectory(DependencyTestConstants.CURRENT);
       FileUtils.copyDirectory(BASIC_STATE, DependencyTestConstants.CURRENT);
-
-      // handler = new DependencyManager(CURRENT);
-      // final boolean success = handler.initialyGetTraces();
-      //
-      // Assert.assertTrue(success);
    }
 
-   // @org.junit.After
-   // public void cleanAfterwards() throws IOException {
-   // FileUtils.deleteDirectory(CURRENT);
-   // // be aware: maven does not compile if a .class-file is still in the resources, since it gets identified as test
-   // }
 
    @Test
    public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       final File secondVersion = new File(VERSIONS_FOLDER, "normal_change");
-
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
 
       final Map<ChangedEntity, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("base-module", "de.dagere.base.BaseChangeable", "doSomething");
@@ -79,49 +69,68 @@ public class DependencyDetectorMultimoduleIT {
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 
-      LOG.debug(reader.getDependencies().getInitialversion().getInitialDependencies());
-      final InitialDependency dependency = reader.getDependencies().getInitialversion().getInitialDependencies()
-            .get(new ChangedEntity("de.AnotherTest", "using-module", "testMeAlso"));
-      LOG.debug(dependency.getEntities());
-      MatcherAssert.assertThat(dependency.getEntities(), IsIterableContaining.hasItem(new ChangedEntity("de.dagere.base.BaseChangeable", "base-module", "doSomething")));
+      Dependencies dependencies = reader.getDependencies();
+      checkInitialVersion(dependencies);
 
       fakeIterator.goToNextCommit();
       reader.analyseVersion(changeManager);
 
-      final TestSet foundDependency = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "base-module§de.dagere.base.BaseChangeable#doSomething",
-            DependencyTestConstants.VERSION_1);
-      testBaseChangeEffect(foundDependency);
+      testFirstChange(dependencies);
    }
 
    @Test
    public void testTwoChanges()
          throws IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final File thirdVersion = new File(VERSIONS_FOLDER, "another_change");
-
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(thirdVersion));
 
-      final Map<ChangedEntity, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("base-module", "de.dagere.base.BaseChangeable", "doSomething");
-      DependencyDetectorTestUtil.addChange(changes, "base-module", "de.dagere.base.NextBaseChangeable", "doSomething");
-
-      ChangeManager changeManager = Mockito.mock(ChangeManager.class);
-      Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
+      ChangeManager changeManager = mockChangeManager();
+      
       final DependencyReader reader = new DependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, new PeassFolders(DependencyTestConstants.CURRENT),
             DependencyTestConstants.NULL_RESULTS_FOLDERS, null, fakeIterator, changeManager, new ExecutionConfig(5), new KiekerConfig(true), new EnvironmentVariables());
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 
+      Dependencies dependencies = reader.getDependencies();
+      checkInitialVersion(dependencies);
+      
       fakeIterator.goToNextCommit();
       reader.analyseVersion(changeManager);
 
-      final TestSet foundDependency2 = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "base-module§de.dagere.base.BaseChangeable#doSomething",
-            DependencyTestConstants.VERSION_1);
-      testBaseChangeEffect(foundDependency2);
+      testFirstChange(dependencies);
+      testSecondChange(dependencies);
+   }
 
-      final TestSet foundDependency3 = DependencyDetectorTestUtil.findDependency(reader.getDependencies(), "base-module§de.dagere.base.NextBaseChangeable#doSomething",
+
+   private ChangeManager mockChangeManager() {
+      final Map<ChangedEntity, ClazzChangeData> changes = DependencyDetectorTestUtil.buildChanges("base-module", "de.dagere.base.BaseChangeable", "doSomething");
+      DependencyDetectorTestUtil.addChange(changes, "base-module", "de.dagere.base.NextBaseChangeable", "doSomething");
+
+      ChangeManager changeManager = Mockito.mock(ChangeManager.class);
+      Mockito.when(changeManager.getChanges(Mockito.any())).thenReturn(changes);
+      return changeManager;
+   }
+   
+   private void checkInitialVersion(final Dependencies dependencies) {
+      LOG.debug(dependencies.getInitialversion().getInitialDependencies());
+      final InitialDependency dependency = dependencies.getInitialversion().getInitialDependencies()
+            .get(new ChangedEntity("de.AnotherTest", "using-module", "testMeAlso"));
+      LOG.debug(dependency.getEntities());
+      MatcherAssert.assertThat(dependency.getEntities(), IsIterableContaining.hasItem(new ChangedEntity("de.dagere.base.BaseChangeable", "base-module", "doSomething")));
+   }
+
+   private void testSecondChange(final Dependencies dependencies) {
+      final TestSet foundDependency3 = DependencyDetectorTestUtil.findDependency(dependencies, "base-module§de.dagere.base.NextBaseChangeable#doSomething",
             DependencyTestConstants.VERSION_1);
       MatcherAssert.assertThat(foundDependency3.getTests().stream(), StreamMatchers.anyMatch(
             Matchers.allOf(Matchers.hasProperty("clazz", Matchers.is("de.NextTest")),
                   Matchers.hasProperty("method", Matchers.isOneOf("nextTestMe", "nextTestMeAlso")))));
+   }
+
+   private void testFirstChange(final Dependencies dependencies) {
+      final TestSet foundDependency2 = DependencyDetectorTestUtil.findDependency(dependencies, "base-module§de.dagere.base.BaseChangeable#doSomething",
+            DependencyTestConstants.VERSION_1);
+      testBaseChangeEffect(foundDependency2);
    }
 
    private void testBaseChangeEffect(final TestSet foundDependency) {
