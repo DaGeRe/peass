@@ -36,7 +36,7 @@ import de.dagere.peass.vcs.VersionIterator;
 public class DependencyDetectorIT {
 
    @BeforeEach
-   public void initialize() throws IOException, InterruptedException {
+   public void initialize() throws Exception {
       Assert.assertTrue(DependencyTestConstants.VERSIONS_FOLDER.exists());
 
       FileUtils.deleteDirectory(DependencyTestConstants.CURRENT);
@@ -45,7 +45,7 @@ public class DependencyDetectorIT {
    }
 
    @Test
-   public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testNormalChange() throws Exception {
 
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
@@ -59,7 +59,7 @@ public class DependencyDetectorIT {
    }
 
    @Test
-   public void testNoChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testNoChange() throws Exception {
 
       final Map<ChangedEntity, ClazzChangeData> changes = new HashMap<>();
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
@@ -78,7 +78,7 @@ public class DependencyDetectorIT {
    }
 
    @Test
-   public void testAddedTest() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testAddedTest() throws Exception {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "added_test");
       final ChangeManager changeManager = DependencyDetectorTestUtil.changedTestClassChangeManager();
 
@@ -92,7 +92,7 @@ public class DependencyDetectorIT {
    }
 
    @Test
-   public void testTestChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testTestChange() throws Exception {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "changed_test");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
@@ -111,7 +111,7 @@ public class DependencyDetectorIT {
    }
 
    @Test
-   public void testAddedClass() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testAddedClass() throws Exception {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "added_class");
 
       final ChangeManager changeManager = DependencyDetectorTestUtil.mockAddedChangeManager();
@@ -126,7 +126,7 @@ public class DependencyDetectorIT {
    }
 
    @Test
-   public void testClassChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testClassChange() throws Exception {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "changed_class");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
@@ -168,7 +168,7 @@ public class DependencyDetectorIT {
     * @throws ParseException
     */
    @Test
-   public void testRemoval() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testMethodRemoval() throws Exception {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "removed_method");
       final File thirdVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "removed_method_change");
 
@@ -198,7 +198,7 @@ public class DependencyDetectorIT {
    }
 
    @Test
-   public void testClassRemoval() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
+   public void testClassRemoval() throws Exception {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "removed_class");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
