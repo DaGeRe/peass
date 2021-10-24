@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- This file is part of PerAn. PerAn is free software: you can redistribute 
-	it and/or modify it under the terms of the GNU General Public License as 
-	published by the Free Software Foundation, either version 3 of the License, 
-	or (at your option) any later version. PerAn is distributed in the hope that 
-	it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
-	of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General 
-	Public License for more details. You should have received a copy of the GNU 
-	General Public License along with PerAn. If not, see <http://www.gnu.org/licenses/>. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<!-- This file is part of PerAn. PerAn is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published 
+	by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. PerAn is distributed in the hope that it will be useful, 
+	but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
+	You should have received a copy of the GNU General Public License along with PerAn. If not, see <http://www.gnu.org/licenses/>. -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>dependency</artifactId>
@@ -102,13 +97,17 @@
 			<classifier>aspectj</classifier>
 		</dependency>
 		<dependency>
+			<groupId>de.dagere.kieker</groupId>
+			<artifactId>kieker-source-instrumentation</artifactId>
+			<version>1.15.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
 			<groupId>net.sourceforge.teetime</groupId>
 			<artifactId>teetime</artifactId>
 			<version>3.0</version>
 		</dependency>
 
-		<!-- Normally, we just use log4j2. Since kieker relies on slf4j, we need 
-			to add the bridge -->
+		<!-- Normally, we just use log4j2. Since kieker relies on slf4j, we need to add the bridge -->
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
@@ -126,9 +125,8 @@
 			<version>4.6.1</version>
 		</dependency>
 
-		<!-- Both are needed in your local maven repo, and both should be downloaded 
-			when building (but are only needed at runtime, if a project does not use 
-			snapshot repo) -->
+		<!-- Both are needed in your local maven repo, and both should be downloaded when building (but are only needed at runtime, if a project does not use snapshot 
+			repo) -->
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-junit</artifactId>
@@ -201,10 +199,8 @@
 		<profile>
 			<id>buildFatJar</id>
 			<activation>
-				<!-- The shade plugin took ~ 21 s from 25 s of build, if a shaded jar 
-					is built for every module Therfore, share is commented out currently; if 
-					a separate dependency-jar is needed, it could be re-enabled (or transfered 
-					to a profile) -->
+				<!-- The shade plugin took ~ 21 s from 25 s of build, if a shaded jar is built for every module Therfore, share is commented out currently; if a separate dependency-jar 
+					is needed, it could be re-enabled (or transfered to a profile) -->
 			</activation>
 			<build>
 				<plugins>
@@ -220,8 +216,7 @@
 								</goals>
 								<configuration>
 									<transformers>
-										<transformer
-											implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+										<transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
 											<mainClass>de.peass.DependencyExecutionReader</mainClass>
 										</transformer>
 									</transformers>
