@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import kieker.monitoring.writer.filesystem.aggregateddata.SummaryStatisticsDeserializer;
-import kieker.monitoring.writer.filesystem.aggregateddata.SummaryStatisticsSerializer;
+import de.dagere.peass.kieker.aggregateddata.SummaryStatisticsDeserializer;
+import de.dagere.peass.kieker.aggregateddata.SummaryStatisticsSerializer;
 
 public class Constants {
 

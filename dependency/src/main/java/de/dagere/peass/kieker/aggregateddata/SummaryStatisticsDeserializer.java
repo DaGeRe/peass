@@ -1,4 +1,4 @@
-package kieker.monitoring.writer.filesystem.aggregateddata;
+package de.dagere.peass.kieker.aggregateddata;
 
 import java.io.IOException;
 
