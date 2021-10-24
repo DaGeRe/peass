@@ -14,6 +14,7 @@ import org.hamcrest.Matchers;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -53,6 +54,8 @@ public class DependencyDetectorMultimoduleIT {
    }
 
 
+   // This test is disabled since it takes too long and nearly tests the same as testTwoChanges; however, since it enables easier debugging, it is left in the code
+   @Disabled
    @Test
    public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       final File secondVersion = new File(VERSIONS_FOLDER, "normal_change");
