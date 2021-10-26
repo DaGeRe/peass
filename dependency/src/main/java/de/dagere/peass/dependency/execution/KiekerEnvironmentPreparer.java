@@ -64,21 +64,36 @@ public class KiekerEnvironmentPreparer {
 
       buildJettyExclusion(excludedPatterns);
 
-      if (!config.getKiekerConfig().isUseSelectiveInstrumentation()) {
-         InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getKiekerConfig().getRecord(), false, config.getExecutionConfig().isCreateDefaultConstructor(),
-               config.getKiekerConfig().isAdaptiveInstrumentation(), includedMethodPattern, excludedPatterns, false, config.getRepetitions(), config.getKiekerConfig().isExtractMethod());
-         instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
-      } else {
-         InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(config.getKiekerConfig().getRecord(), config.getKiekerConfig().isUseAggregation(),
-               config.getExecutionConfig().isCreateDefaultConstructor(),
-               config.getKiekerConfig().isAdaptiveInstrumentation(), includedMethodPattern, excludedPatterns, true, config.getRepetitions(), 
-               config.getKiekerConfig().isExtractMethod());
-         instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
-      }
+      instrumentKiekerSource = buildInstrumenter(config, excludedPatterns);
       instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
       if (config.getKiekerConfig().isEnableAdaptiveMonitoring()) {
          writeConfig();
       }
+   }
+
+   private InstrumentKiekerSource buildInstrumenter(final MeasurementConfig config, final HashSet<String> excludedPatterns) {
+      final InstrumentKiekerSource instrumentKiekerSource;
+      
+      AllowedKiekerRecord record = config.getKiekerConfig().getRecord();
+      boolean createDefaultConstructor = config.getExecutionConfig().isCreateDefaultConstructor();
+      boolean adaptiveInstrumentation = config.getKiekerConfig().isAdaptiveInstrumentation();
+      int repetitions = config.getRepetitions();
+      boolean extractMethod = config.getKiekerConfig().isExtractMethod();
+      
+      if (!config.getKiekerConfig().isUseSelectiveInstrumentation()) {
+         InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(record, false,
+               createDefaultConstructor,
+               adaptiveInstrumentation, includedMethodPattern, excludedPatterns, false, repetitions, 
+               extractMethod);
+         instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
+      } else {
+         InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(record, config.getKiekerConfig().isUseAggregation(),
+               createDefaultConstructor,
+               adaptiveInstrumentation, includedMethodPattern, excludedPatterns, true, repetitions, 
+               extractMethod);
+         instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
+      }
+      return instrumentKiekerSource;
    }
 
    private void buildJettyExclusion(final HashSet<String> excludedPatterns) {
