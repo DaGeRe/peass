@@ -43,7 +43,7 @@ public class CauseSearchFolders extends PeassFolders {
          clearRcaFile.setExecutable(true);
 
          final URL valueReadingScript = CauseSearchFolders.class.getClassLoader().getResource("copy/getIntermediaryValues.sh");
-         final File valueReadingFile = new File(peassFolder, "rca" + File.separator +"getIntermediaryValues.sh");
+         final File valueReadingFile = new File(peassFolder, "rca" + File.separator + "getIntermediaryValues.sh");
          FileUtils.copyURLToFile(valueReadingScript, valueReadingFile);
          valueReadingFile.setExecutable(true);
       } catch (IOException e) {
@@ -77,16 +77,16 @@ public class CauseSearchFolders extends PeassFolders {
       final File treeDataFolder = new File(treeFolder, version + File.separator + testcase.getShortClazz());
       return treeDataFolder;
    }
-   
+
    public File getRcaTreeFile(final String version, final TestCase testcase) {
       final File treeDataFolder = getRcaTreeFolder(version, testcase);
-      File treeFile = new File(treeDataFolder, testcase.getMethod());
+      File treeFile = new File(treeDataFolder, testcase.getMethod() + ".json");
       return treeFile;
    }
-   
+
    public File getRcaTreeFileDetails(final String version, final TestCase testcase) {
       final File treeDataFolder = getRcaTreeFolder(version, testcase);
-      File treeFile = new File(treeDataFolder, "details" + File.separator + testcase.getMethod());
+      File treeFile = new File(treeDataFolder, "details" + File.separator + testcase.getMethod() + ".json");
       return treeFile;
    }
 
