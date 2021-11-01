@@ -49,7 +49,7 @@ public class AOPXMLHelper {
          }
          if (transformer.isAggregatedWriter()) {
             writer.write("kieker.monitoring.writer=" + AGGREGATED_WRITER + "\n");
-            writer.write(AggregatedTreeWriter.CONFIG_WRITE_INTERVAL + "=" + transformer.getConfig().getKiekerAggregationInterval() + "\n");
+            writer.write(AggregatedTreeWriter.CONFIG_WRITE_INTERVAL + "=" + transformer.getConfig().getKiekerConfig().getKiekerAggregationInterval() + "\n");
          } else {
             writer.write("kieker.monitoring.writer=" + CHANGEABLE_WRITER + "\n");
             writer.write(CHANGEABLE_WRITER + ".realwriter=FileWriter\n");

@@ -133,7 +133,7 @@ public class MeasurementConfig implements Serializable {
       kiekerConfig.setUseCircularQueue(other.getKiekerConfig().isUseCircularQueue());
       kiekerConfig.setEnableAdaptiveMonitoring(other.getKiekerConfig().isEnableAdaptiveMonitoring());
       kiekerConfig.setAdaptiveInstrumentation(other.getKiekerConfig().isAdaptiveInstrumentation());
-      kiekerConfig.setKiekerAggregationInterval(other.getKiekerAggregationInterval());
+      kiekerConfig.setKiekerAggregationInterval(other.getKiekerConfig().getKiekerAggregationInterval());
       kiekerConfig.setRecord(other.getKiekerConfig().getRecord());
       this.useGC = other.useGC;
       this.javaVersion = other.javaVersion;
@@ -263,14 +263,6 @@ public class MeasurementConfig implements Serializable {
 
    public void setUseKieker(final boolean useKieker) {
       kiekerConfig.setUseKieker(useKieker);
-   }
-
-   public int getKiekerAggregationInterval() {
-      return kiekerConfig.getKiekerAggregationInterval();
-   }
-
-   public void setKiekerAggregationInterval(final int kiekerAggregationInterval) {
-      kiekerConfig.setKiekerAggregationInterval(kiekerAggregationInterval);
    }
 
    public String getJavaVersion() {

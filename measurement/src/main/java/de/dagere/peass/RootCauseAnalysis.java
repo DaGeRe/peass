@@ -95,7 +95,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
    private MeasurementConfig getConfiguration(final String predecessor) {
       final MeasurementConfig measurementConfiguration = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin);
       measurementConfiguration.setUseKieker(true);
-      measurementConfiguration.setKiekerAggregationInterval(kiekerConfigMixin.getWriteInterval());
+      measurementConfiguration.getKiekerConfig().setKiekerAggregationInterval(kiekerConfigMixin.getWriteInterval());
       measurementConfiguration.getExecutionConfig().setVersion(version);
       measurementConfiguration.getExecutionConfig().setVersionOld(predecessor);
       boolean useSourceInstrumentation = !kiekerConfigMixin.isNotUseSourceInstrumentation();
