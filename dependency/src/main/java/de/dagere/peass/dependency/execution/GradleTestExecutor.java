@@ -62,13 +62,17 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    /**
     * Executes the Gradle process; since gradle is run inside the module folder, different parameters than for the maven execution are required
     */
-   private Process buildGradleProcess(final File moduleFolder, final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
+   private Process buildGradleProcess(final File moduleFolder, final File logFile, final String... commandLineAddition)
+         throws IOException, XmlPullParserException, InterruptedException {
       final String testGoal = getTestGoal();
       String wrapper = new File(folders.getProjectFolder(), "gradlew").getAbsolutePath();
-      final String[] originals = new String[] { wrapper,
+      String[] originals = new String[] { wrapper,
             "--init-script", new File(folders.getGradleHome(), "init.gradle").getAbsolutePath(),
             "--no-daemon",
             "cleanTest", testGoal };
+      if (!testTransformer.getConfig().isRedirectToNull()) {
+         originals = CommandConcatenator.concatenateCommandArrays(originals, new String[] { "--info" });
+      }
 
       final String[] vars = CommandConcatenator.concatenateCommandArrays(originals, commandLineAddition);
       ProcessBuilderHelper processBuilderHelper = new ProcessBuilderHelper(env, folders);
