@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
+import de.dagere.kopeme.kieker.writer.AggregatedTreeWriter;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
@@ -48,13 +49,13 @@ public class AOPXMLHelper {
          }
          if (transformer.isAggregatedWriter()) {
             writer.write("kieker.monitoring.writer=" + AGGREGATED_WRITER + "\n");
-            writer.write(AGGREGATED_WRITER + ".writeInterval=" + transformer.getConfig().getKiekerAggregationInterval() + "\n");
+            writer.write(AggregatedTreeWriter.CONFIG_WRITE_INTERVAL + "=" + transformer.getConfig().getKiekerAggregationInterval() + "\n");
          } else {
             writer.write("kieker.monitoring.writer=" + CHANGEABLE_WRITER + "\n");
             writer.write(CHANGEABLE_WRITER + ".realwriter=FileWriter\n");
          }
          if (transformer.isIgnoreEOIs()) {
-            writer.write(AGGREGATED_WRITER + ".ignoreEOIs=true\n");
+            writer.write(AggregatedTreeWriter.CONFIG_IGNORE_EOIS + "=true\n");
          }
          if (transformer.getConfig().getKiekerConfig().isEnableAdaptiveMonitoring()) {
             writer.write("kieker.monitoring.adaptiveMonitoring.enabled=true\n");
@@ -63,7 +64,7 @@ public class AOPXMLHelper {
          }
          if (transformer.isAggregatedWriter()) {
             String tempFolderPath = folders.getTempMeasurementFolder().getAbsolutePath();
-            writer.write(AOPXMLHelper.AGGREGATED_WRITER + ".customStoragePath=" + tempFolderPath + "\n");
+            writer.write(AggregatedTreeWriter.CONFIG_PATH + "=" + tempFolderPath + "\n");
          }
 
          final int queueSize = 10000000;
