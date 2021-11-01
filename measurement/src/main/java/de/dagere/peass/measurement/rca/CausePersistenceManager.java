@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
@@ -29,13 +30,15 @@ public class CausePersistenceManager {
       this.dataDetails = finishedDataFull;
       this.folders = folders;
 
-      final File treeDataFolder = folders.getRcaTreeFolder(finishedData.getMeasurementConfig().getExecutionConfig().getVersion(), finishedData.getCauseConfig().getTestCase());
-      treeDataFile = new File(treeDataFolder, finishedData.getCauseConfig().getTestCase().getMethod() + ".json");
+      String version = finishedData.getMeasurementConfig().getExecutionConfig().getVersion();
+      TestCase testCase = finishedData.getCauseConfig().getTestCase();
+      final File treeDataFolder = folders.getRcaTreeFolder(version, testCase);
+      treeDataFile = folders.getRcaTreeFile(version, testCase);
       if (treeDataFile.exists()) {
          throw new RuntimeException("Old tree data folder " + treeDataFile.getAbsolutePath() + " exists - please cleanup!");
       }
       treeDataFolder.mkdirs();
-      treeDataFileDetails = new File(treeDataFolder, "details" + File.separator + finishedData.getCauseConfig().getTestCase().getMethod() + ".json");
+      treeDataFileDetails = folders.getRcaTreeFileDetails(version, testCase);
       treeDataFileDetails.getParentFile().mkdirs();
    }
 

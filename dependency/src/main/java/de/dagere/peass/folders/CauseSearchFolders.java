@@ -77,6 +77,18 @@ public class CauseSearchFolders extends PeassFolders {
       final File treeDataFolder = new File(treeFolder, version + File.separator + testcase.getShortClazz());
       return treeDataFolder;
    }
+   
+   public File getRcaTreeFile(final String version, final TestCase testcase) {
+      final File treeDataFolder = getRcaTreeFolder(version, testcase);
+      File treeFile = new File(treeDataFolder, testcase.getMethod());
+      return treeFile;
+   }
+   
+   public File getRcaTreeFileDetails(final String version, final TestCase testcase) {
+      final File treeDataFolder = getRcaTreeFolder(version, testcase);
+      File treeFile = new File(treeDataFolder, "details" + File.separator + testcase.getMethod());
+      return treeFile;
+   }
 
    public File getTreeCacheFolder(final String version, final TestCase testcase) {
       final File folder = new File(treeCacheFolder, version + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
