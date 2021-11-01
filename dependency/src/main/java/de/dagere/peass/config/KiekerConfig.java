@@ -6,6 +6,8 @@ import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class KiekerConfig implements Serializable {
    
+   public static final int DEFAULT_WRITE_INTERVAL = 5000;
+   
    private static final long serialVersionUID = 3129231099963995908L;
 
    private boolean useKieker = false;
@@ -15,7 +17,7 @@ public class KiekerConfig implements Serializable {
    private boolean useCircularQueue = true;
    private boolean enableAdaptiveMonitoring = false;
    private boolean adaptiveInstrumentation = false;
-   private int kiekerAggregationInterval = 5000;
+   private int kiekerAggregationInterval = DEFAULT_WRITE_INTERVAL;
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
    private boolean extractMethod = false;
 
@@ -37,6 +39,15 @@ public class KiekerConfig implements Serializable {
       this.kiekerAggregationInterval = other.kiekerAggregationInterval;
       this.record = other.record;
       this.extractMethod = other.extractMethod;
+   }
+   
+   public void check() {
+      if (kiekerAggregationInterval != DEFAULT_WRITE_INTERVAL && !useAggregation) {
+         throw new RuntimeException("The write interval only works with aggregation, non-aggregated writing will write every record directly to hard disc");
+      }
+      if (!useSourceInstrumentation && extractMethod) {
+         throw new RuntimeException("Deactivated source instrumentation and usage of extraction is not possible!");
+      }
    }
 
    public boolean isUseKieker() {

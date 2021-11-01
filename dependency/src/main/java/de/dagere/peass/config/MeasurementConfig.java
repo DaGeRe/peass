@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
+import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.config.parameters.MeasurementConfigurationMixin;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 
@@ -65,9 +66,10 @@ public class MeasurementConfig implements Serializable {
       executionConfig.setVersionOld(versionOld);
    }
 
-   public MeasurementConfig(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin, final StatisticsConfigMixin statisticMixin) {
+   public MeasurementConfig(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin, 
+         final StatisticsConfigMixin statisticMixin, final KiekerConfigMixin kiekerConfigMixin) {
       executionConfig = new ExecutionConfig(executionMixin);
-      kiekerConfig = new KiekerConfig();
+      kiekerConfig = kiekerConfigMixin.getKiekerConfig();
       this.vms = mixin.getVms();
       statisticsConfig.setType1error(statisticMixin.getType1error());
       statisticsConfig.setType2error(statisticMixin.getType2error());

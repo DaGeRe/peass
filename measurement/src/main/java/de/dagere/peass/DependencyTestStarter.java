@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.config.parameters.MeasurementConfigurationMixin;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -86,7 +87,8 @@ public class DependencyTestStarter extends PairProcessor {
    }
 
    private MeasurementConfig createConfig() {
-      final MeasurementConfig measurementConfiguration = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin);
+      final MeasurementConfig measurementConfiguration = new MeasurementConfig(measurementConfigMixin, executionMixin, 
+            statisticConfigMixin, new KiekerConfigMixin());
       return measurementConfiguration;
    }
 

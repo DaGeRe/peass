@@ -4,8 +4,10 @@ import de.dagere.peass.config.KiekerConfig;
 import picocli.CommandLine.Option;
 
 public class KiekerConfigMixin {
+   
+   
    @Option(names = { "-writeInterval", "--writeInterval" }, description = "Interval for KoPeMe-aggregated-writing (in milliseconds)")
-   public int writeInterval = 5000;
+   public int writeInterval =KiekerConfig.DEFAULT_WRITE_INTERVAL;
 
    @Option(names = { "-notUseSourceInstrumentation", "--notUseSourceInstrumentation" }, description = "Not use source instrumentation (disabling enables AspectJ instrumentation)")
    public boolean notUseSourceInstrumentation = false;
@@ -63,6 +65,9 @@ public class KiekerConfigMixin {
       kiekerConfig.setExtractMethod(useExtraction);
       kiekerConfig.setAdaptiveInstrumentation(enableAdaptiveInstrumentation);
       kiekerConfig.setUseSourceInstrumentation(!notUseSourceInstrumentation);
+      
+      kiekerConfig.check();
+      
       return kiekerConfig;
    }
 

@@ -13,6 +13,7 @@ import de.dagere.peass.ci.ContinuousExecutor;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
+import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.config.parameters.MeasurementConfigurationMixin;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -66,7 +67,7 @@ public class ContinuousExecutionStarter implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      final MeasurementConfig measurementConfig = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin);
+      final MeasurementConfig measurementConfig = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin, new KiekerConfigMixin());
       DependencyConfig dependencyConfig = new DependencyConfig(threads, false, useViews, generateCoverageSelection);
       final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, dependencyConfig, new EnvironmentVariables(properties != null ? properties : ""));
       executor.execute();

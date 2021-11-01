@@ -93,20 +93,17 @@ public class RootCauseAnalysis extends DependencyTestStarter {
    }
 
    private MeasurementConfig getConfiguration(final String predecessor) {
-      final MeasurementConfig measurementConfiguration = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin);
+      final MeasurementConfig measurementConfiguration = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin, kiekerConfigMixin);
       measurementConfiguration.setUseKieker(true);
-      measurementConfiguration.getKiekerConfig().setKiekerAggregationInterval(kiekerConfigMixin.getWriteInterval());
       measurementConfiguration.getExecutionConfig().setVersion(version);
       measurementConfiguration.getExecutionConfig().setVersionOld(predecessor);
-      boolean useSourceInstrumentation = !kiekerConfigMixin.isNotUseSourceInstrumentation();
-      measurementConfiguration.getKiekerConfig().setUseSourceInstrumentation(useSourceInstrumentation);
+      
       if (causeSearchConfigMixin.getStrategy().equals(RCAStrategy.COMPLETE)) {
          measurementConfiguration.getKiekerConfig().setEnableAdaptiveMonitoring(false);
       } else {
+         boolean useSourceInstrumentation = measurementConfiguration.getKiekerConfig().isUseSourceInstrumentation();
          measurementConfiguration.getKiekerConfig().setEnableAdaptiveMonitoring(!useSourceInstrumentation);
       }
-      measurementConfiguration.getKiekerConfig().setAdaptiveInstrumentation(kiekerConfigMixin.isEnableAdaptiveInstrumentation());
-      measurementConfiguration.getKiekerConfig().setUseCircularQueue(kiekerConfigMixin.isUseCircularQueue());
       if (kiekerConfigMixin.isNotUseSourceInstrumentation() && kiekerConfigMixin.isNotUseSelectiveInstrumentation()) {
          measurementConfiguration.getKiekerConfig().setUseSelectiveInstrumentation(false);
       } else {
@@ -116,11 +113,6 @@ public class RootCauseAnalysis extends DependencyTestStarter {
          throw new RuntimeException("AspectJ instrumentation and jmh currently not implemented!");
       }
 
-      measurementConfiguration.getKiekerConfig().setUseAggregation(kiekerConfigMixin.isUseAggregation());
-      if (kiekerConfigMixin.isNotUseSourceInstrumentation() && kiekerConfigMixin.isUseExtraction()) {
-         throw new RuntimeException("Deactivated source instrumentation and usage of extraction is not possible!");
-      }
-      measurementConfiguration.getKiekerConfig().setExtractMethod(kiekerConfigMixin.isUseExtraction());
       LOG.info("Use source instrumentation: {}", kiekerConfigMixin.isNotUseSourceInstrumentation());
       return measurementConfiguration;
    }
