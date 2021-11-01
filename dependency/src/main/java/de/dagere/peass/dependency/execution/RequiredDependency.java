@@ -53,4 +53,24 @@ public class RequiredDependency {
       return dependency;
    }
 
+   public String getGroupId() {
+      return groupId;
+   }
+
+   public String getArtifactId() {
+      return artifactId;
+   }
+
+   public String getVersion() {
+      return version;
+   }
+
+   public String getScope() {
+      return scope;
+   }
+
+   public String getClassifier() {
+      return classifier;
+   }
+   
 }
