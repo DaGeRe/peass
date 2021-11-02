@@ -107,7 +107,7 @@ public class JUnitTestTransformer implements TestTransformer {
    }
 
    /**
-    * Creates a test transformer for usage in RTS
+    * Creates a test transformer for usage in RTS - only used for unit testing, since the generic constructor with File and MeasurementConfig should be used everywhere
     * 
     * @param projectFolder
     * @param timeout
@@ -117,7 +117,7 @@ public class JUnitTestTransformer implements TestTransformer {
       config = new MeasurementConfig(1, executionConfig, kiekerConfig);
       config.setIterations(1);
       config.setWarmup(0);
-      // For regression test selection, verbose debug output is helpful, and since it is only executed once, the performance loss is ok. 
+      // For regression test selection, verbose debug output is helpful, and since it is only executed once, the performance loss is ok.
       config.setRedirectToNull(false);
       config.setShowStart(true);
       datacollectorlist = DataCollectorList.ONLYTIME;
@@ -151,11 +151,11 @@ public class JUnitTestTransformer implements TestTransformer {
          }
       }
    }
-   
+
    public Map<File, Integer> getJunitVersions() {
       return junitVersions;
    }
-   
+
    @Override
    public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules) {
       determineVersions(modules.getModules());
@@ -167,7 +167,7 @@ public class JUnitTestTransformer implements TestTransformer {
       LOG.info("Included tests: {}", allTests.getTests().size());
       return allTests;
    }
-   
+
    private TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) {
       final TestSet moduleTests = new TestSet();
       for (final String clazz : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
@@ -190,7 +190,7 @@ public class JUnitTestTransformer implements TestTransformer {
    }
 
    @Override
-   public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules)  {
+   public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules) {
       final TestSet tests = new TestSet();
       determineVersions(modules);
       for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {
@@ -491,7 +491,7 @@ public class JUnitTestTransformer implements TestTransformer {
 
       List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit5TestMethods(clazz);
       prepareTestMethods(testMethods);
-      
+
       if (config.isOnlyMeasureWorkload()) {
          transformBefore(clazz);
          transformAfter(clazz);
@@ -514,7 +514,7 @@ public class JUnitTestTransformer implements TestTransformer {
 
       List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit4TestMethods(clazz);
       prepareTestMethods(testMethods);
-      
+
       if (config.isOnlyMeasureWorkload()) {
          transformBefore(clazz);
          transformAfter(clazz);
@@ -525,7 +525,7 @@ public class JUnitTestTransformer implements TestTransformer {
       List<MethodDeclaration> beforeMethods = TestMethodFinder.findBeforeMethods(clazz);
       transformMethodAnnotations(beforeMethods, "de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement");
    }
-   
+
    private void transformAfter(final ClassOrInterfaceDeclaration clazz) {
       List<MethodDeclaration> beforeMethods = TestMethodFinder.findAfterMethods(clazz);
       transformMethodAnnotations(beforeMethods, "de.dagere.kopeme.junit.rule.annotations.AfterNoMeasurement");
@@ -534,10 +534,10 @@ public class JUnitTestTransformer implements TestTransformer {
    private void transformMethodAnnotations(final List<MethodDeclaration> beforeMethods, final String name) {
       for (MethodDeclaration method : beforeMethods) {
          final NormalAnnotationExpr beforeNoMeasurementAnnotation = new NormalAnnotationExpr();
-         
+
          beforeNoMeasurementAnnotation.setName(name);
          method.setAnnotation(0, beforeNoMeasurementAnnotation);
-         
+
       }
    }
 

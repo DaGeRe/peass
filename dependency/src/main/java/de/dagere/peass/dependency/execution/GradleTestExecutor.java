@@ -70,6 +70,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
             "--init-script", new File(folders.getGradleHome(), "init.gradle").getAbsolutePath(),
             "--no-daemon",
             "cleanTest", testGoal };
+      LOG.debug("Redirecting to null: {}", testTransformer.getConfig().isRedirectToNull());
       if (!testTransformer.getConfig().isRedirectToNull()) {
          originals = CommandConcatenator.concatenateCommandArrays(originals, new String[] { "--info" });
       }
