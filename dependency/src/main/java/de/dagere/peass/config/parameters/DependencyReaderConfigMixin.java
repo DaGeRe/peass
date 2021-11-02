@@ -27,6 +27,9 @@ public class DependencyReaderConfigMixin {
    @Option(names = {"-doNotGenerateCoverageSelection", "--doNotGenerateCoverageSelection"}, description = "Disables coverage selection. Is false by default, but will be activated automatically if --doNotGenerateCoverageSelection is set.")
    public boolean doNotGenerateCoverageSelection = false;
    
+   @Option(names = {"-doNotGenerateProperties", "--doNotGenerateProperties"}, description = "Disables properties generation. By default, properties will be generated.")
+   public boolean doNotGenerateProperties = false;
+   
    public File getProjectFolder() {
       return projectFolder;
    }
@@ -45,6 +48,10 @@ public class DependencyReaderConfigMixin {
    
    public boolean isDoNotUpdateDependencies() {
       return doNotUpdateDependencies;
+   }
+   
+   public boolean isDoNotGenerateProperties() {
+      return doNotGenerateProperties;
    }
    
    public DependencyConfig getDependencyConfig() {
