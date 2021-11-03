@@ -7,10 +7,9 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Configuration properties of Peass-executions that are used in every circumstance, i.e. for regression test selection, measurement and root cause analysis
@@ -122,6 +121,7 @@ public class ExecutionConfig implements Serializable {
       }
       useTieredCompilation = executionMixin.isUseTieredCompilation();
       removeSnapshots = executionMixin.isRemoveSnapshots();
+      createDefaultConstructor = !executionMixin.isSkipDefaultConstructor();
    }
 
    public void setTimeout(final long timeout) {

@@ -41,7 +41,7 @@ public class ContinuousExecutor {
    private final DependencyConfig dependencyConfig;
 
    private final String version;
-   private String versionOld;
+   private final String versionOld;
    private final VersionIteratorGit iterator;
 
    private final File originalProjectFolder;

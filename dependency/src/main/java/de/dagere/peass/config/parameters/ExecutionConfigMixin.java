@@ -49,6 +49,10 @@ public class ExecutionConfigMixin {
    @Option(names = { "-removeSnapshots",
          "--removeSnapshots" }, description = "Activates removing SNAPSHOTS (if older versions should be analysed, this should be activated; for performance measurement in CI, this should not be activated)")
    protected boolean removeSnapshots = false;
+   
+   @Option(names = { "-skipDefaultConstructor",
+   "--skipDefaultConstructor" }, description = "Deactivates creation of the default constructor (required if Lombok is used)")
+protected boolean skipDefaultConstructor = false;
 
    public int getTimeout() {
       return timeout;
@@ -120,6 +124,14 @@ public class ExecutionConfigMixin {
 
    public void setRemoveSnapshots(final boolean removeSnapshots) {
       this.removeSnapshots = removeSnapshots;
+   }
+   
+   public boolean isSkipDefaultConstructor() {
+      return skipDefaultConstructor;
+   }
+   
+   public void setSkipDefaultConstructor(final boolean skipDefaultConstructor) {
+      this.skipDefaultConstructor = skipDefaultConstructor;
    }
 
    public String[] getExcludes() {
