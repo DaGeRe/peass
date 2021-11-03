@@ -33,7 +33,6 @@ public class MeasurementConfig implements Serializable {
    private boolean callSyncBetweenVMs = true;
    private int waitTimeBetweenVMs = 1000;
 
-   @JsonIgnore
    private final KiekerConfig kiekerConfig;
 
    @JsonInclude(JsonInclude.Include.NON_DEFAULT)
