@@ -305,8 +305,8 @@ public class MeasurementConfig implements Serializable {
     */
    @JsonIgnore
    public int getNodeWarmup() {
-      final int samplingfactor = this.getKiekerConfig().isUseAggregation() ? 1000 : 1;
-      final int warmup = this.getWarmup() * this.getRepetitions() / samplingfactor;
+      final int aggregationfactor = this.getKiekerConfig().isUseAggregation() ? this.getRepetitions() : 1;
+      final int warmup = this.getWarmup() * this.getRepetitions() / aggregationfactor;
       return warmup;
    }
 
