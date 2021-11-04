@@ -39,6 +39,7 @@ public class ExecutionConfig implements Serializable {
    private boolean useTieredCompilation = false;
 
    private boolean removeSnapshots = false;
+   private boolean useAlternativeBuildfile = false;
    private boolean excludeLog4j = false;
 
    private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
@@ -61,6 +62,7 @@ public class ExecutionConfig implements Serializable {
       this.createDefaultConstructor = other.isCreateDefaultConstructor();
       this.redirectSubprocessOutputToFile = other.isRedirectSubprocessOutputToFile();
       this.removeSnapshots = other.removeSnapshots;
+      this.useAlternativeBuildfile = other.useAlternativeBuildfile;
       this.excludeLog4j = other.excludeLog4j;
       this.testTransformer = other.getTestTransformer();
       this.testExecutor = other.getTestExecutor();
@@ -121,6 +123,7 @@ public class ExecutionConfig implements Serializable {
       }
       useTieredCompilation = executionMixin.isUseTieredCompilation();
       removeSnapshots = executionMixin.isRemoveSnapshots();
+      useAlternativeBuildfile = executionMixin.isUseAlternativeBuildfile();
       createDefaultConstructor = !executionMixin.isSkipDefaultConstructor();
    }
 
@@ -236,6 +239,14 @@ public class ExecutionConfig implements Serializable {
 
    public boolean isRemoveSnapshots() {
       return removeSnapshots;
+   }
+   
+   public boolean isUseAlternativeBuildfile() {
+      return useAlternativeBuildfile;
+   }
+
+   public void setUseAlternativeBuildfile(final boolean useAlternativeBuildfile) {
+      this.useAlternativeBuildfile = useAlternativeBuildfile;
    }
 
    public boolean isExcludeLog4j() {

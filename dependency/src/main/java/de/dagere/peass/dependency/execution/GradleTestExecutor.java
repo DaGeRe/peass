@@ -18,6 +18,8 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class GradleTestExecutor extends KoPeMeExecutor {
+   
+   public static final String ALTERNATIVE_FILENAME = "alternative_build.gradle";
 
    private static final Logger LOG = LogManager.getLogger(GradleTestExecutor.class);
 
@@ -43,10 +45,21 @@ public class GradleTestExecutor extends KoPeMeExecutor {
          LOG.debug("Preparing modules: {}", modules);
          for (final File module : modules.getModules()) {
             final File gradleFile = GradleParseHelper.findGradleFile(module);
+            if (testTransformer.getConfig().getExecutionConfig().isUseAlternativeBuildfile()) {
+               replaceBuildfile(gradleFile);
+            }
             editOneBuildfile(gradleFile, modules);
          }
       } catch (IOException e) {
          e.printStackTrace();
+      }
+   }
+
+   private void replaceBuildfile(final File gradleFile) throws IOException {
+      File potentialAlterantiveFile = new File(gradleFile.getParentFile(), ALTERNATIVE_FILENAME);
+      if (potentialAlterantiveFile.exists()) {
+         gradleFile.delete();
+         FileUtils.moveFile(potentialAlterantiveFile, gradleFile);
       }
    }
 

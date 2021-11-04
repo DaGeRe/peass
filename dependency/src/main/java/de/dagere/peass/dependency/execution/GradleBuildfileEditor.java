@@ -16,13 +16,13 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class GradleBuildfileEditor {
-   
+
    private static final Logger LOG = LogManager.getLogger(GradleBuildfileEditor.class);
-   
+
    private final JUnitTestTransformer testTransformer;
    private final File buildfile;
    private final ProjectModules modules;
-   
+
    public GradleBuildfileEditor(final JUnitTestTransformer testTransformer, final File buildfile, final ProjectModules modules) {
       this.testTransformer = testTransformer;
       this.buildfile = buildfile;
@@ -53,7 +53,7 @@ public class GradleBuildfileEditor {
       }
       return visitor;
    }
-   
+
    private static boolean isParentUseJava(final File buildfile, final ProjectModules modules) throws IOException, FileNotFoundException {
       List<File> parentProjects = modules.getParents(buildfile.getParentFile());
       boolean isUseJava = false;
@@ -67,7 +67,7 @@ public class GradleBuildfileEditor {
       }
       return isUseJava;
    }
-   
+
    private void editGradlefileContents(final File tempFolder, final FindDependencyVisitor visitor) {
       if (visitor.getBuildTools() != -1) {
          GradleParseUtil.updateBuildTools(visitor);
@@ -76,7 +76,7 @@ public class GradleBuildfileEditor {
       if (visitor.getBuildToolsVersion() != -1) {
          GradleParseUtil.updateBuildToolsVersion(visitor);
       }
-      
+
       if (visitor.isUseSpringBoot()) {
          GradleParseUtil.addJUnitVersionSpringBoot(visitor);
       }
@@ -108,7 +108,7 @@ public class GradleBuildfileEditor {
          final String javaagentArgument = new ArgLineBuilder(testTransformer, buildfile.getParentFile()).buildArglineGradle(tempFolder);
          addArgLine(visitor, javaagentArgument);
       } else {
-         PeassFolders folders = new PeassFolders( testTransformer.getProjectFolder());
+         PeassFolders folders = new PeassFolders(testTransformer.getProjectFolder());
          String argLine = "jvmArgs=[\"" + ArgLineBuilder.TEMP_DIR + "=" + folders.getTempDir().getAbsolutePath() + "\"]";
          addArgLine(visitor, argLine);
       }

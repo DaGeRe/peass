@@ -17,7 +17,7 @@ import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestBuildGradle {
 
-   private static final File CURRENT = new File(new File("target"), "current_gradle");
+   public static final File CURRENT = new File(new File("target"), "current_gradle");
 
    private JUnitTestTransformer mockedTransformer;
    

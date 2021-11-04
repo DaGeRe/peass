@@ -36,10 +36,10 @@ public class ExecutionConfigMixin {
 
    @Option(names = { "-workloadType", "--workloadType" }, description = "Which workload should be executed - by default JUNIT, can be changed to JMH")
    public WorkloadType workloadType = WorkloadType.JUNIT;
-   
+
    @Option(names = { "-testExecutor", "--testExecutor" }, description = "Set test executor (should be specified by plugin; not usable with pure Peass)")
    public String testExecutor;
-   
+
    @Option(names = { "-testTransformer", "--testTransformer" }, description = "Set test transformer (should be specified by plugin; not usable with pure Peass)")
    public String testTransformer;
 
@@ -49,10 +49,14 @@ public class ExecutionConfigMixin {
    @Option(names = { "-removeSnapshots",
          "--removeSnapshots" }, description = "Activates removing SNAPSHOTS (if older versions should be analysed, this should be activated; for performance measurement in CI, this should not be activated)")
    protected boolean removeSnapshots = false;
-   
+
    @Option(names = { "-skipDefaultConstructor",
-   "--skipDefaultConstructor" }, description = "Deactivates creation of the default constructor (required if Lombok is used)")
-protected boolean skipDefaultConstructor = false;
+         "--skipDefaultConstructor" }, description = "Deactivates creation of the default constructor (required if Lombok is used)")
+   protected boolean skipDefaultConstructor = false;
+
+   @Option(names = { "-useAlternativeBuildfile",
+         "--useAlternativeBuildfile" }, description = "Use alternative buildfile when existing (searches for alternative_build.gradle and replaces build.gradle with the file; required e.g. if the default build process contains certification)")
+   protected boolean useAlternativeBuildfile = false;
 
    public int getTimeout() {
       return timeout;
@@ -125,13 +129,21 @@ protected boolean skipDefaultConstructor = false;
    public void setRemoveSnapshots(final boolean removeSnapshots) {
       this.removeSnapshots = removeSnapshots;
    }
-   
+
    public boolean isSkipDefaultConstructor() {
       return skipDefaultConstructor;
    }
-   
+
    public void setSkipDefaultConstructor(final boolean skipDefaultConstructor) {
       this.skipDefaultConstructor = skipDefaultConstructor;
+   }
+
+   public boolean isUseAlternativeBuildfile() {
+      return useAlternativeBuildfile;
+   }
+
+   public void setUseAlternativeBuildfile(final boolean useAlternativeBuildfile) {
+      this.useAlternativeBuildfile = useAlternativeBuildfile;
    }
 
    public String[] getExcludes() {
