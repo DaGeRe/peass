@@ -93,10 +93,10 @@ public class ContinuousExecutor {
       }
    }
 
-   public Set<TestCase> executeRTS() {
+   public RTSResult executeRTS() {
       final String url = GitUtils.getURL(originalProjectFolder);
 
-      Set<TestCase> tests = executeRegressionTestSelection(url);
+      RTSResult tests = executeRegressionTestSelection(url);
       return tests;
    }
    
@@ -110,15 +110,15 @@ public class ContinuousExecutor {
    }
 
    public void execute() throws Exception {
-      Set<TestCase> tests = executeRTS();
+      Set<TestCase> tests = executeRTS().getTests();
       measure(tests);
    }
 
-   protected Set<TestCase> executeRegressionTestSelection(final String url) {
+   protected RTSResult executeRegressionTestSelection(final String url) {
       ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), measurementConfig.getKiekerConfig(), folders, resultsFolders, env);
-      final Set<TestCase> tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
+      final RTSResult tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
       
-      readMethodSources(tests);
+      readMethodSources(tests.getTests());
 
       return tests;
    }

@@ -115,7 +115,8 @@ public class ContinuousDependencyReaderIT {
 
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfig(true),
             new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
-      Set<TestCase> tests = reader.getTests(iterator, "", newVersion, new MeasurementConfig(1));
+      RTSResult result = reader.getTests(iterator, "", newVersion, new MeasurementConfig(1));
+      Set<TestCase> tests = result.getTests();
 
       Assert.assertEquals(tests.size(), 0);
    }

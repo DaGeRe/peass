@@ -59,25 +59,29 @@ public class ContinuousDependencyReader {
       this.env = env;
    }
 
-   public Set<TestCase> getTests(final VersionIterator iterator, final String url, final String version, final MeasurementConfig measurementConfig) {
+   public RTSResult getTests(final VersionIterator iterator, final String url, final String version, final MeasurementConfig measurementConfig) {
       final Dependencies dependencies = getDependencies(iterator, url);
 
+      RTSResult result;
       final Set<TestCase> tests;
       if (dependencies.getVersions().size() > 0) {
          if (dependencyConfig.isGenerateViews()) {
             tests = selectResults(version);
+            result = new RTSResult(tests, true);
          } else {
             Version versionDependencies = dependencies.getVersions().get(dependencies.getNewestVersion());
             tests = versionDependencies.getTests().getTests();
+            result = new RTSResult(tests, versionDependencies.isRunning());
          }
 
          // final Set<TestCase> tests = selectIncludedTests(dependencies);
          NonIncludedTestRemover.removeNotIncluded(tests, measurementConfig.getExecutionConfig());
       } else {
          tests = new HashSet<>();
+         result = new RTSResult(tests, true);
          LOG.info("No test executed - version did not contain changed tests.");
       }
-      return tests;
+      return result;
    }
 
    private Set<TestCase> selectResults(final String version) {

@@ -99,8 +99,9 @@ public class TestContinuousExecutor {
    private void mockRegressionTestSelection(final ContinuousExecutor spied) throws Exception {
       HashSet<TestCase> tests = new HashSet<TestCase>();
       tests.add(new TestCase("defaultpackage.TestMe#testMe"));
+      RTSResult mockedResult = new RTSResult(tests, true);
       Mockito.doReturn(tests).when(spied).executeRegressionTestSelection(Mockito.anyString());
-      Mockito.when(spied.executeRegressionTestSelection(Mockito.anyString())).thenReturn(tests);
+      Mockito.when(spied.executeRegressionTestSelection(Mockito.anyString())).thenReturn(mockedResult);
    }
 
 
