@@ -56,10 +56,11 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    }
 
    private void replaceBuildfile(final File gradleFile) throws IOException {
-      File potentialAlterantiveFile = new File(gradleFile.getParentFile(), ALTERNATIVE_FILENAME);
-      if (potentialAlterantiveFile.exists()) {
+      File potentialAlternativeFile = new File(gradleFile.getParentFile(), ALTERNATIVE_FILENAME);
+      if (potentialAlternativeFile.exists()) {
+         LOG.debug("Replacing {} by {}", gradleFile, potentialAlternativeFile);
          gradleFile.delete();
-         FileUtils.moveFile(potentialAlterantiveFile, gradleFile);
+         FileUtils.moveFile(potentialAlternativeFile, gradleFile);
       }
    }
 
