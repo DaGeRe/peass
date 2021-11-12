@@ -4,8 +4,6 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.cli.ParseException;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -27,7 +25,7 @@ import picocli.CommandLine.Command;
       " control system can operate locally).", name = "downloadDependencies")
 public class VersionRunStarter extends VersionProcessor {
 
-   public VersionRunStarter() throws ParseException, JAXBException, JsonParseException, JsonMappingException, IOException {
+   public VersionRunStarter() throws JAXBException, JsonParseException, JsonMappingException, IOException {
       super();
    }
 
@@ -44,7 +42,7 @@ public class VersionRunStarter extends VersionProcessor {
 
    }
 
-   public static void main(final String[] args) throws ParseException, JAXBException, JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
       VersionRunStarter command = new VersionRunStarter();
       CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);

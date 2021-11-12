@@ -23,9 +23,9 @@ import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.helper.read.FolderValues;
 import de.dagere.peass.analysis.helper.read.TestcaseData;
 import de.dagere.peass.analysis.helper.read.VersionData;
+import de.dagere.peass.breaksearch.DependencyLoader;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.measurement.analysis.Cleaner;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.utils.OptionConstants;
@@ -53,7 +53,7 @@ public class GetChangesBetweenSameMeasurements {
       final CommandLineParser parser = new DefaultParser();
       final CommandLine line = parser.parse(options, args);
 
-      Cleaner.loadDependencies(line);
+      DependencyLoader.loadDependencies(line);
       final String projectName = VersionComparator.getProjectName();
       AnalysisUtil.setProjectName(projectName);
 //      oldKnowledge = VersionKnowledge.getOldChanges();

@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.measurement.analysis.Cleaner;
 import de.dagere.peass.measurement.analysis.DataAnalyser;
 import de.dagere.peass.measurement.analysis.TestStatistic;
 import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
@@ -39,7 +38,7 @@ public class FindLowestVMCount extends DataAnalyser {
       final CommandLineParser parser = new DefaultParser();
       final CommandLine line = parser.parse(options, args);
 
-      Cleaner.loadDependencies(line);
+      DependencyLoader.loadDependencies(line);
 
       final FindLowestVMCount flv = new FindLowestVMCount();
       for (int i = 0; i < line.getOptionValues(FolderSearcher.DATA).length; i++) {

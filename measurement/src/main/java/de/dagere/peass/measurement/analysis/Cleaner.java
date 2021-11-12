@@ -1,19 +1,14 @@
 package de.dagere.peass.measurement.analysis;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.cli.CommandLine;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
@@ -22,13 +17,9 @@ import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.kopeme.generated.Versioninfo;
-import de.dagere.peass.dependency.persistence.Dependencies;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
 import de.dagere.peass.measurement.analysis.statistics.TestData;
 import de.dagere.peass.statistics.StatisticUtil;
-import de.dagere.peass.utils.Constants;
-import de.dagere.peass.utils.OptionConstants;
 
 /**
  * Cleans measurement data by reading all iteration-values of every VM, dividing them in the middle and saving the results in a clean-folder in single chunk-entries in a
@@ -153,16 +144,5 @@ public class Cleaner extends DataAnalyser  {
       result.setMax(null);
       result.setFulldata(new Fulldata());
       return result;
-   }
-
-   public static void loadDependencies(final CommandLine line) throws JsonParseException, JsonMappingException, IOException {
-      if (line.hasOption(OptionConstants.DEPENDENCYFILE.getName())) {
-         final File dependencyFile = new File(line.getOptionValue(OptionConstants.DEPENDENCYFILE.getName()));
-         final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-         VersionComparator.setDependencies(dependencies);
-      } else {
-         LOG.error("No dependencyfile information passed.");
-         throw new RuntimeException("No dependencyfile information passed.");
-      }
    }
 }
