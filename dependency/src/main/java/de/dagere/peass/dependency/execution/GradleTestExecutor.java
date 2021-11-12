@@ -19,8 +19,6 @@ import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class GradleTestExecutor extends KoPeMeExecutor {
    
-   public static final String ALTERNATIVE_FILENAME = "alternative_build.gradle";
-
    private static final Logger LOG = LogManager.getLogger(GradleTestExecutor.class);
 
    public GradleTestExecutor(final PeassFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
@@ -56,7 +54,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    }
 
    private void replaceBuildfile(final File gradleFile) throws IOException {
-      File potentialAlternativeFile = new File(gradleFile.getParentFile(), ALTERNATIVE_FILENAME);
+      File potentialAlternativeFile = new File(gradleFile.getParentFile(), GradleParseHelper.ALTERNATIVE_NAME);
       if (potentialAlternativeFile.exists()) {
          LOG.debug("Replacing {} by {}", gradleFile, potentialAlternativeFile);
          gradleFile.delete();

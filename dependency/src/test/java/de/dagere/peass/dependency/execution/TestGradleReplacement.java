@@ -33,7 +33,7 @@ public class TestGradleReplacement {
       FileUtils.copyDirectory(src, TestBuildGradle.CURRENT);
       List<File> modules = GradleParseUtil.getModules(TestBuildGradle.CURRENT).getModules();
       for (File module : modules) {
-         File alternativeGradle = new File(module, GradleTestExecutor.ALTERNATIVE_FILENAME);
+         File alternativeGradle = new File(module, GradleParseHelper.ALTERNATIVE_NAME);
          try (BufferedWriter writer = new BufferedWriter(new FileWriter(alternativeGradle))) {
             writer.write(ALTERNATIVE_FILE_CONTENT);
          }
