@@ -100,7 +100,7 @@ public class TestContinuousExecutor {
       HashSet<TestCase> tests = new HashSet<TestCase>();
       tests.add(new TestCase("defaultpackage.TestMe#testMe"));
       RTSResult mockedResult = new RTSResult(tests, true);
-      Mockito.doReturn(tests).when(spied).executeRegressionTestSelection(Mockito.anyString());
+      Mockito.doReturn(mockedResult).when(spied).executeRegressionTestSelection(Mockito.anyString());
       Mockito.when(spied.executeRegressionTestSelection(Mockito.anyString())).thenReturn(mockedResult);
    }
 
