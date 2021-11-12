@@ -26,7 +26,7 @@ import org.apache.commons.cli.Options;
  */
 public enum OptionConstants {
    // Generic
-	DEPENDENCYFILE("dependencyfile", "Dependencyfile specifying the tests which should be executed", false),
+	DEPENDENCYFILE("dependencyfile", "Dependencyfile specifying the tests which should be executed", false);
 
 	private final String name, description;
 	private final boolean required;
