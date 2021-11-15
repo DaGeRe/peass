@@ -65,13 +65,13 @@ public class ContinuousDependencyReader {
       RTSResult result;
       final Set<TestCase> tests;
       if (dependencies.getVersions().size() > 0) {
+         Version versionInfo = dependencies.getVersions().get(version);
          if (dependencyConfig.isGenerateViews()) {
             tests = selectResults(version);
-            result = new RTSResult(tests, true);
+            result = new RTSResult(tests, versionInfo.isRunning());
          } else {
-            Version versionDependencies = dependencies.getVersions().get(dependencies.getNewestVersion());
-            tests = versionDependencies.getTests().getTests();
-            result = new RTSResult(tests, versionDependencies.isRunning());
+            tests = versionInfo.getTests().getTests();
+            result = new RTSResult(tests, versionInfo.isRunning());
          }
 
          // final Set<TestCase> tests = selectIncludedTests(dependencies);
