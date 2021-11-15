@@ -23,4 +23,9 @@ public class RTSResult implements Serializable {
    public boolean isRunning() {
       return isRunning;
    }
+   
+   @Override
+   public String toString() {
+      return isRunning + " " + tests.toString();
+   }
 }
