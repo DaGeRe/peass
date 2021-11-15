@@ -97,8 +97,8 @@ public class CalledMethodStage extends AbstractTraceProcessingStage<ExecutionTra
          traceelement.setStatic(true);
       }
       final String[] paramTypeList = execution.getOperation().getSignature().getParamTypeList();
-      LOG.info("Parameters " + fullClassname + " " + methodname + " " + Arrays.toString(paramTypeList));
-      LOG.debug(paramTypeList.length); // TODO delete
+      LOG.trace("Parameters " + fullClassname + " " + methodname + " " + Arrays.toString(paramTypeList));
+      LOG.trace(paramTypeList.length); // TODO delete
       final String[] internParamTypeList = getInternTypeList(paramTypeList);
       traceelement.setParameterTypes(internParamTypeList);
       return traceelement;
