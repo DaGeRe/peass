@@ -54,7 +54,7 @@ public class NonIncludedTestRemover {
    }
 
    public static void removeNotIncluded(final Set<TestCase> tests, final ExecutionConfig executionConfig) {
-      if (executionConfig.getIncludes().size() > 0) {
+      if (executionConfig.getIncludes().size() > 0 || executionConfig.getExcludes().size() > 0) {
          for (Iterator<TestCase> it = tests.iterator(); it.hasNext();) {
             TestCase test = it.next();
             boolean isIncluded = isTestIncluded(test, executionConfig);

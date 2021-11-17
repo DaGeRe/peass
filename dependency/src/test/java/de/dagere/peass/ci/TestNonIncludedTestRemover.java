@@ -83,4 +83,21 @@ public class TestNonIncludedTestRemover {
 
       Assert.assertEquals(2, tests.size());
    }
+   
+   @Test
+   public void testWithSetOnlyExclude() {
+      Set<TestCase> tests = new HashSet<TestCase>();
+      tests.add(new TestCase("TestA", "method1"));
+      tests.add(new TestCase("TestA", "method2"));
+      tests.add(new TestCase("TestB", "method3"));
+      tests.add(new TestCase("TestC", null));
+      tests.add(new TestCase("TestD", null));
+
+      ExecutionConfig executionConfig = new ExecutionConfig(Arrays.asList(new String[] { }), "test");
+      executionConfig.setExcludes(Arrays.asList(new String[] { "TestA#*" }));
+
+      NonIncludedTestRemover.removeNotIncluded(tests, executionConfig);
+
+      Assert.assertEquals(3, tests.size());
+   }
 }
