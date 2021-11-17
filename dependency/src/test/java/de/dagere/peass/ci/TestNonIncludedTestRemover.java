@@ -26,7 +26,7 @@ public class TestNonIncludedTestRemover {
 
       Assert.assertEquals(2, tests.size());
    }
-   
+
    @Test
    public void testWithTestSet() {
       TestSet tests = new TestSet();
@@ -40,7 +40,7 @@ public class TestNonIncludedTestRemover {
 
       Assert.assertEquals(2, tests.getTests().size());
    }
-   
+
    @Test
    public void testWithModulesRegular() {
       Set<TestCase> tests = new HashSet<TestCase>();
@@ -53,7 +53,7 @@ public class TestNonIncludedTestRemover {
       System.out.println(tests);
       Assert.assertEquals(1, tests.size());
    }
-   
+
    @Test
    public void testWithModulesSameNameButDifferentModule() {
       Set<TestCase> tests = new HashSet<TestCase>();
@@ -65,5 +65,22 @@ public class TestNonIncludedTestRemover {
 
       System.out.println(tests);
       Assert.assertEquals(1, tests.size());
+   }
+
+   @Test
+   public void testWithSetExclude() {
+      Set<TestCase> tests = new HashSet<TestCase>();
+      tests.add(new TestCase("TestA", "method1"));
+      tests.add(new TestCase("TestA", "method2"));
+      tests.add(new TestCase("TestB", "method3"));
+      tests.add(new TestCase("TestC", null));
+      tests.add(new TestCase("TestD", null));
+
+      ExecutionConfig executionConfig = new ExecutionConfig(Arrays.asList(new String[] { "TestA#*", "TestC" }), "test");
+      executionConfig.setExcludes(Arrays.asList(new String[] { "TestA#method2" }));
+
+      NonIncludedTestRemover.removeNotIncluded(tests, executionConfig);
+
+      Assert.assertEquals(2, tests.size());
    }
 }

@@ -183,8 +183,7 @@ public class JUnitTestTransformer implements TestTransformer {
    }
 
    private void addTestIfIncluded(final TestSet moduleTests, final TestCase test) {
-      final List<String> includes = getConfig().getExecutionConfig().getIncludes();
-      if (NonIncludedTestRemover.isTestIncluded(test, includes)) {
+      if (NonIncludedTestRemover.isTestIncluded(test, getConfig().getExecutionConfig())) {
          moduleTests.addTest(test);
       }
    }

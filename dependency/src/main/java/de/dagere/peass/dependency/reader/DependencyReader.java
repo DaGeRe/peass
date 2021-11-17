@@ -321,7 +321,7 @@ public class DependencyReader {
                File moduleFolder = new File(folders.getProjectFolder(), change.getModule());
                List<TestCase> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, change);
                for (TestCase added : addedTests) {
-                  if (NonIncludedTestRemover.isTestIncluded(added, executionConfig.getIncludes())) {
+                  if (NonIncludedTestRemover.isTestIncluded(added, executionConfig)) {
                      changeTestMap.addChangeEntry(change, added.toEntity());
                   }
                }
