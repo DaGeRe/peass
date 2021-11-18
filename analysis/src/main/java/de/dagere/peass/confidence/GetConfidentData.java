@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,7 +25,7 @@ public class GetConfidentData extends TestCleaner {
 
    private static final Logger LOG = LogManager.getLogger(GetConfidentData.class);
 
-   public static void main(final String[] args) throws ParseException, JAXBException, IOException {
+   public static void main(final String[] args) throws  JAXBException, IOException {
       GetConfidentData command = new GetConfidentData();
       CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);

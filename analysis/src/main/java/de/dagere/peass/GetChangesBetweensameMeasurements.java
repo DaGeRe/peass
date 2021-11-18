@@ -8,73 +8,27 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
-
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.helper.read.FolderValues;
 import de.dagere.peass.analysis.helper.read.TestcaseData;
 import de.dagere.peass.analysis.helper.read.VersionData;
-import de.dagere.peass.breaksearch.DependencyLoader;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.utils.OptionConstants;
 import de.dagere.peass.utils.RunCommandWriter;
 import de.dagere.peass.utils.RunCommandWriterSlurm;
-import de.peran.FolderSearcher;
 import de.peran.analysis.helper.AnalysisUtil;
 import de.peran.analysis.helper.comparedata.BigDiffs;
 
-/**
- * Compares measurements of same versions and testcases in order to find out whether there results differ.
- * @author reichelt
- *
- */
-public class GetChangesBetweenSameMeasurements {
-
+public class GetChangesBetweensameMeasurements {
+   
    private PrintStream reexecuteWriter;
    private final VersionData allData;
-
-   public static void main(final String[] args) throws JAXBException, JsonGenerationException, JsonMappingException, IOException, ParseException {
-      final long start = System.currentTimeMillis();
-      final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE);
-      options.addOption(FolderSearcher.DATAOPTION);
-
-      final CommandLineParser parser = new DefaultParser();
-      final CommandLine line = parser.parse(options, args);
-
-      DependencyLoader.loadDependencies(line);
-      final String projectName = VersionComparator.getProjectName();
-      AnalysisUtil.setProjectName(projectName);
-//      oldKnowledge = VersionKnowledge.getOldChanges();
-      
-      
-      for (int i = 0; i < line.getOptionValues(FolderSearcher.DATA).length; i++) {
-         final String fileName = line.getOptionValues(FolderSearcher.DATA)[i];
-         final ChangeReader reader = new ChangeReader(new File("results"), projectName);
-         final File measurementFolder = new File(fileName);
-         reader.readFile(measurementFolder);
-         final GetChangesBetweenSameMeasurements comparator = new GetChangesBetweenSameMeasurements(reader.getAllData());
-         comparator.examineDiffs();
-      }
-      
-
-      
-      final long end = System.currentTimeMillis();
-      System.out.println("Duration: "+ (end - start / 10E6));
-   }
-
-   public GetChangesBetweenSameMeasurements(final VersionData allData) {
+   
+   public GetChangesBetweensameMeasurements(final VersionData allData) {
       this.allData = allData;
       try {
          File destination = new File(AnalysisUtil.getProjectResultFolder(), "reexecute.sh");
@@ -84,7 +38,7 @@ public class GetChangesBetweenSameMeasurements {
       }
    }
 
-   private void examineDiffs() throws IOException, JsonGenerationException, JsonMappingException {
+   public void examineDiffs() throws IOException, JsonGenerationException, JsonMappingException {
       int changes = 0;
       int instances = 0;
       final BigDiffs diffs = new BigDiffs();
@@ -148,5 +102,4 @@ public class GetChangesBetweenSameMeasurements {
          }
       }
    }
-
 }

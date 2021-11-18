@@ -6,48 +6,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.xml.bind.JAXBException;
-
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.measurement.analysis.DataAnalyser;
 import de.dagere.peass.measurement.analysis.TestStatistic;
 import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
 import de.dagere.peass.measurement.analysis.statistics.MeanCoVData;
 import de.dagere.peass.measurement.analysis.statistics.TestData;
-import de.dagere.peass.utils.OptionConstants;
-import de.peran.FolderSearcher;
 
-public class FindLowestVMCount extends DataAnalyser {
-
-   private static final Logger LOG = LogManager.getLogger(FindLowestVMCount.class);
-
-   public static void main(final String[] args) throws JAXBException, ParseException, InterruptedException, JsonParseException, JsonMappingException, IOException {
-      final Options options = OptionConstants.createOptions(OptionConstants.DEPENDENCYFILE);
-      options.addOption(FolderSearcher.DATAOPTION);
-
-      final CommandLineParser parser = new DefaultParser();
-      final CommandLine line = parser.parse(options, args);
-
-      DependencyLoader.loadDependencies(line);
-
-      final FindLowestVMCount flv = new FindLowestVMCount();
-      for (int i = 0; i < line.getOptionValues(FolderSearcher.DATA).length; i++) {
-         final File folder = new File(line.getOptionValues(FolderSearcher.DATA)[i]);
-         LOG.info("Searching in " + folder);
-         flv.processDataFolder(folder);
-      }
-   }
-
+public class FindLowestVMCounter extends DataAnalyser {
+   private static final Logger LOG = LogManager.getLogger(FindLowestVMCounter.class);
+   
    private BufferedWriter writer;
 
    @Override

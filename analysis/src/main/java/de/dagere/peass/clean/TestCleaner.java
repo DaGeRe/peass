@@ -10,7 +10,6 @@ import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,7 +39,7 @@ public class TestCleaner implements Callable<Void> {
 
    private static final Logger LOG = LogManager.getLogger(TestCleaner.class);
 
-   public static void main(final String[] args) throws ParseException, JAXBException, IOException {
+   public static void main(final String[] args) throws JAXBException, IOException {
       TestCleaner command = new TestCleaner();
       CommandLine commandLine = new CommandLine(command);
       System.exit(commandLine.execute(args));
