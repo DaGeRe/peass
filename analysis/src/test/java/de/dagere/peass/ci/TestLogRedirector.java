@@ -13,8 +13,6 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.dagere.peass.ci.LogRedirector;
-
 public class TestLogRedirector {
 
    private static final Logger LOG = LogManager.getLogger(TestLogRedirector.class);

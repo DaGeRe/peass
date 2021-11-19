@@ -98,8 +98,8 @@
 		</dependency>
 		<dependency>
 			<groupId>de.dagere.kieker</groupId>
-			<artifactId>kieker-source-instrumentation</artifactId>
-			<version>1.15.0</version>
+			<artifactId>kieker-source-instrumentation-library</artifactId>
+			<version>1.15.1</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sourceforge.teetime</groupId>
