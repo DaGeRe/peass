@@ -29,7 +29,6 @@ public class TestMavenTestExecutor {
       folder.mkdirs();
       Mockito.when(foldersMock.getTempDir()).thenReturn(folder);
       Mockito.when(foldersMock.getTempMeasurementFolder()).thenReturn(folder);
-      Mockito.when(foldersMock.getGradleHome()).thenReturn(folder);
       
       ProcessBuilderHelper helper = new ProcessBuilderHelper(new EnvironmentVariables("-Pvar1=1 -Pvar5=asd"), foldersMock);
 //      MavenTestExecutor executor = new MavenTestExecutor(foldersMock, 

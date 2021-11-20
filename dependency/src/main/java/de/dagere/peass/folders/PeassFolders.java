@@ -9,7 +9,6 @@ import java.util.List;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.execution.GradleParseUtil;
 import de.dagere.peass.dependency.traces.TemporaryProjectFolderUtil;
 import de.dagere.peass.vcs.VersionControlSystem;
 
@@ -31,7 +30,6 @@ public class PeassFolders {
    private final File measurementsFolder;
    private final File cleanFolder;
    private final File debugFolder;
-   private File gradleHome;
    private final VersionControlSystem vcs;
 
    protected final File peassFolder;
@@ -77,17 +75,6 @@ public class PeassFolders {
 
    public PeassFolders(final File folder) {
       this(folder, (folder != null ? folder.getName() : null));
-   }
-
-   public File getGradleHome() {
-      if (gradleHome == null) {
-         final File peassFolder = new File(projectFolder.getParentFile(), projectFolder.getName() + PEASS_POSTFIX);
-         gradleHome = new File(peassFolder, "gradleHome");
-         gradleHome.mkdir();
-         final File init = new File(gradleHome, "init.gradle");
-         GradleParseUtil.writeInitGradle(init);
-      }
-      return gradleHome;
    }
 
    public File getPeassFolder() {

@@ -18,11 +18,16 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class GradleTestExecutor extends KoPeMeExecutor {
-   
+
    private static final Logger LOG = LogManager.getLogger(GradleTestExecutor.class);
+
+   private final File gradleHome;
 
    public GradleTestExecutor(final PeassFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
       super(folders, testTransformer, env);
+      
+      this.gradleHome = getGradleHome();
+      env.getEnvironmentVariables().put("GRADLE_HOME", gradleHome.getAbsolutePath());
    }
 
    @Override
@@ -33,6 +38,17 @@ public class GradleTestExecutor extends KoPeMeExecutor {
 
       prepareBuildfile();
 
+   }
+
+   public File getGradleHome() {
+      File gradleHome;
+      File projectFolder = folders.getProjectFolder();
+      final File peassFolder = new File(projectFolder.getParentFile(), projectFolder.getName() + PeassFolders.PEASS_POSTFIX);
+      gradleHome = new File(peassFolder, "gradleHome");
+      gradleHome.mkdir();
+      final File init = new File(gradleHome, "init.gradle");
+      GradleParseUtil.writeInitGradle(init);
+      return gradleHome;
    }
 
    private void prepareBuildfile() {
@@ -79,7 +95,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
       final String testGoal = getTestGoal();
       String wrapper = new File(folders.getProjectFolder(), "gradlew").getAbsolutePath();
       String[] originals = new String[] { wrapper,
-            "--init-script", new File(folders.getGradleHome(), "init.gradle").getAbsolutePath(),
+            "--init-script", new File(gradleHome, "init.gradle").getAbsolutePath(),
             "--no-daemon",
             "cleanTest", testGoal };
       LOG.debug("Redirecting to null: {}", testTransformer.getConfig().isRedirectToNull());

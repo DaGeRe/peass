@@ -48,7 +48,6 @@ public class ProcessBuilderHelper {
    private void overwriteEnvVars(final ProcessBuilder pb) {
       LOG.debug("KOPEME_HOME={}", folders.getTempMeasurementFolder().getAbsolutePath());
       pb.environment().put("KOPEME_HOME", folders.getTempMeasurementFolder().getAbsolutePath());
-      pb.environment().put("GRADLE_HOME", folders.getGradleHome().getAbsolutePath());
       String ldLibraryPath = System.getenv().get("LD_LIBRARY_PATH");
       if (ldLibraryPath != null) {
          LOG.debug("LD_LIBRARY_PATH: {}", ldLibraryPath);
