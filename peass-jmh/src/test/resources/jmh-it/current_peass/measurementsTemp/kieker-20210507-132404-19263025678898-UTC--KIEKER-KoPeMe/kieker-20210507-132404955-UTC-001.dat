@@ -1,0 +1,3 @@
+$0;1620393844959916304;1.15-SNAPSHOT;KIEKER-KoPeMe;reichelt-desktop;1;false;0;NANOSECONDS;0
+$1;1620393844966497347;public new de.dagere.peass.ExampleBenchmark.<init>();<no-session-id>;6613676790281928705;1620393844966385119;1620393844966387309;reichelt-desktop;0;0
+$1;1620393844967750961;public void de.dagere.peass.ExampleBenchmark.testMethod();<no-session-id>;6613676790281928706;1620393844966684235;1620393844967746991;reichelt-desktop;0;0

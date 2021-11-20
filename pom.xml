@@ -23,6 +23,7 @@
 				<module>dependency</module>
 				<module>measurement</module>
 				<module>analysis</module>
+				<module>peass-jmh</module>
 				<module>distribution</module>
 			</modules>
 		</profile>
