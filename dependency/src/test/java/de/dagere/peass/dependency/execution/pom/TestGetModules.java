@@ -15,7 +15,7 @@ public class TestGetModules {
    public void testPeassItself() {
       File pomFile = new File("../pom.xml");
       ProjectModules modules = MavenPomUtil.getModules(pomFile, new ExecutionConfig());
-      Assert.assertEquals(4, modules.getModules().size());
+      Assert.assertEquals(3, modules.getModules().size());
    }
    
    @Test
