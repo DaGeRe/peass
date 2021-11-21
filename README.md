@@ -3,9 +3,17 @@ Peass
 
 Peass (from Performance analysis of software system versions) is a tool to analyse the evolution of performance during its versions. Peass currently supports two sources for performance measurement workloads: JMH Benchmarks and JUnit tests, which are transformed into performance tests. Since performance measurements need to be repeated often in order to produce statistically reliable results, they need much time. In order to reduce measurement time as far as possible, the regression test selection PRONTO (PeRfOrmance regressiON Test selectiOn) should be executed first. This is done in the `dependency`-module. Afterwards, the `measurement`-module supports execution of the measurements in the selected tests and versions. This measurements can be analyzed using the `analysis`-module later.
 
-All modules should be built with `mvn clean package` before execution. Peass relies on the measurement framework KoPeMe (https://github.com/DaGeRe/KoPeMe) - by default, Peass uses its SNAPSHOT versions, if you want to change anything to these SNAPSHOTs, please clone and install KoPeMe manually.
+# Building
+
+If you want to build only the libraries (default), run `mvn clean package`. Peass relies on the measurement framework KoPeMe (https://github.com/DaGeRe/KoPeMe). Often, Peass uses its SNAPSHOT versions, if you want to change anything to these SNAPSHOTs, please clone and install KoPeMe manually.
+
+The libraries are used by the [Peass-CI Jenkins Plugin](https://github.com/jenkinsci/peass-ci-plugin). 
+
+If you want to build run Peass via CLI, run `mvn clean package -P buildStarter`. 
 
 In order get help, you can also just run `./peass`. If you need tab-completion in bash, run `. peass_completion` after `mvn install` is finished.
+
+
 
 # Workload Sources
 
