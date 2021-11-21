@@ -18,12 +18,12 @@
 
 	<profiles>
 		<profile>
-			<id>buildDistribution</id>
+			<id>buildStarter</id>
 			<modules>
 				<module>dependency</module>
 				<module>measurement</module>
 				<module>analysis</module>
-				<module>distribution</module>
+				<module>starter</module>
 			</modules>
 		</profile>
 	</profiles>
