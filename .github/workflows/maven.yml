@@ -41,8 +41,10 @@ jobs:
         path: ~/.m2
         key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
         restore-keys: ${{ runner.os }}-m2
-    - name: Build with Maven
-      run: ./mvnw -B verify --file pom.xml && ls ~/.m2/repository/ && ls ~/.m2/repository/de/dagere/kopeme/kopeme-core
+    - name: Build Peass dependency, measurement and analysis
+      run: ./mvnw -B install --file pom.xml && ls ~/.m2/repository/ && ls ~/.m2/repository/de/dagere/kopeme/kopeme-core
+    - name: Build Peass-JMH
+      run: cd peass-jmh && ../mvnw -B install --file pom.xml && cd ..
     - name: Publish Test Report ${{ matrix.java }} OS ${{ matrix.os }}
       if: ${{ always() }}
       uses: scacap/action-surefire-report@v1

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,6 +53,6 @@ public class TestResultMoving {
             .filter(file -> file.getName().endsWith(".dat"))
             .collect(Collectors.toList());
       System.out.println(fileNames);
-      Assert.assertThat(fileNames.get(0).getName(), Matchers.startsWith("kieker-"));
+      MatcherAssert.assertThat(fileNames.get(0).getName(), Matchers.startsWith("kieker-"));
    }
 }

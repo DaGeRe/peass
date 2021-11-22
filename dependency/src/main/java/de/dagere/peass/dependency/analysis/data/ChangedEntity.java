@@ -13,6 +13,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import de.dagere.kopeme.generated.Result.Params;
+import de.dagere.kopeme.generated.Result.Params.Param;
 import de.dagere.peass.utils.ClassFolderUtil;
 
 //TODO What happens to changes, that do occur in classes which are only file-local? -> Should be separated by $
@@ -34,6 +36,16 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       } else {
          return null;
       }
+   }
+   
+   public static String paramsToString(final Params params) {
+      String result = "";
+      if (params != null) {
+         for (Param param : params.getParam()) {
+            result += param.getKey() + "-" + param.getValue() + " ";
+         }
+      }
+      return result;
    }
 
    private static final Logger LOG = LogManager.getLogger(ChangedEntity.class);

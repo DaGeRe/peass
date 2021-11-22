@@ -12,13 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.GradleTestExecutor;
 import de.dagere.peass.dependency.execution.MavenTestExecutor;
 import de.dagere.peass.dependency.execution.TestExecutor;
-import de.dagere.peass.dependency.jmh.JmhTestExecutor;
-import de.dagere.peass.dependency.jmh.JmhTestTransformer;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.testtransformation.TestTransformer;
@@ -53,16 +50,6 @@ public class TestExecutorCreator {
       TestExecutor executor = createExecutor("default", Mockito.mock(JUnitTestTransformer.class));
 
       MatcherAssert.assertThat(executor, IsInstanceOf.instanceOf(GradleTestExecutor.class));
-   }
-
-   @Test
-   public void testJmhExecutorCreation() throws IOException {
-      File pomFile = new File(temporaryFolder, "pom.xml");
-      FileUtils.touch(pomFile);
-
-      TestExecutor executor = createExecutor(WorkloadType.JMH.getTestExecutor(), Mockito.mock(JmhTestTransformer.class));
-
-      MatcherAssert.assertThat(executor, IsInstanceOf.instanceOf(JmhTestExecutor.class));
    }
 
    @Test
