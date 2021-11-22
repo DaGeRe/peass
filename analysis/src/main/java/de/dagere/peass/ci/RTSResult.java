@@ -10,6 +10,7 @@ public class RTSResult implements Serializable {
 
    private final Set<TestCase> tests;
    private final boolean isRunning;
+   private String versionOld;
 
    public RTSResult(final Set<TestCase> tests, final boolean isRunning) {
       this.tests = tests;
@@ -24,6 +25,14 @@ public class RTSResult implements Serializable {
       return isRunning;
    }
    
+   public String getVersionOld() {
+      return versionOld;
+   }
+
+   public void setVersionOld(final String versionOld) {
+      this.versionOld = versionOld;
+   }
+
    @Override
    public String toString() {
       return isRunning + " " + tests.toString();

@@ -13,7 +13,6 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
@@ -22,7 +21,6 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.dependency.persistence.Dependencies;
-import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.measurement.analysis.AnalyseFullData;
@@ -77,6 +75,7 @@ public class ContinuousExecutor {
       iterator = iteratorBuiler.getIterator();
       version = iteratorBuiler.getVersion();
       versionOld = iteratorBuiler.getVersionOld();
+      LOG.debug("Version: {} VersionOld: {}", version, versionOld);
    }
 
    private void getGitRepo(final File projectFolder, final MeasurementConfig measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {
@@ -117,25 +116,15 @@ public class ContinuousExecutor {
    protected RTSResult executeRegressionTestSelection(final String url) {
       ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), measurementConfig.getKiekerConfig(), folders, resultsFolders, env);
       final RTSResult tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
+      tests.setVersionOld(versionOld);
       
-      readMethodSources(tests.getTests());
+      SourceReader sourceReader = new SourceReader(measurementConfig.getExecutionConfig(), version, versionOld, resultsFolders, folders);
+      sourceReader.readMethodSources(tests.getTests());
 
       return tests;
    }
 
-   private void readMethodSources(final Set<TestCase> tests) {
-      ExecutionData executionData = new ExecutionData();
-      executionData.addEmptyVersion(version, versionOld);
-      if (versionOld != null) {
-         executionData.addEmptyVersion(versionOld, null);
-      }
-      for (TestCase test : tests) {
-         executionData.addCall(version, test);
-      }
-      LOG.info("Reading method sources for {} - {}", version, versionOld);
-      final PropertyReader propertyReader = new PropertyReader(resultsFolders, folders.getProjectFolder(), executionData);
-      propertyReader.readAllTestsProperties();
-   }
+   
 
    protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final File fullResultsVersion = resultsFolders.getVersionFullResultsFolder(version, versionOld);
@@ -164,6 +153,7 @@ public class ContinuousExecutor {
    }
 
    public String getVersionOld() {
+      LOG.debug("Version old: {}", versionOld);
       return versionOld;
    }
 

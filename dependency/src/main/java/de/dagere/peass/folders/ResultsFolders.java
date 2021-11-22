@@ -53,8 +53,22 @@ public class ResultsFolders {
       return folder;
    }
    
+   public File getSourceReadLogFolder() {
+      File folder = new File(resultFolder, "sourceReadLogs");
+      return folder;
+   }
+   
    public File getDependencyLogFile(final String version, final String versionOld) {
       File folder = getRtsLogFolder();
+      if (!folder.exists()) {
+         folder.mkdirs();
+      }
+      File logFile = new File(folder, version + "_" + versionOld + ".txt");
+      return logFile;
+   }
+   
+   public File getSourceReadLogFile(final String version, final String versionOld) {
+      File folder = getSourceReadLogFolder();
       if (!folder.exists()) {
          folder.mkdirs();
       }
