@@ -485,6 +485,8 @@ public class JUnitTestTransformer implements TestTransformer {
       if (config.isOnlyMeasureWorkload()) {
          BeforeAfterTransformer.transformBefore(clazz);
          BeforeAfterTransformer.transformAfter(clazz);
+      } else {
+         BeforeAfterTransformer.transformWithMeasurement(clazz);
       }
    }
 

@@ -30,13 +30,17 @@ public class TestMethodFinder {
    }
    
    public static List<MethodDeclaration> findBeforeMethods(final ClassOrInterfaceDeclaration clazz){
-      String[] annotations = new String[] {"org.junit.Before", "Before", "org.junit.jupiter.api.BeforeEach", "BeforeEach"};
+      String[] annotations = new String[] {"org.junit.Before", "Before", 
+            "org.junit.jupiter.api.BeforeEach", "BeforeEach",
+            "org.junit.jupiter.api.BeforeAll", "BeforeAll"};
       List<MethodDeclaration> beforeMethods = findAnnotation(clazz, annotations);
       return beforeMethods;
    }
    
    public static List<MethodDeclaration> findAfterMethods(final ClassOrInterfaceDeclaration clazz){
-      String[] annotations = new String[] {"org.junit.After", "After", "org.junit.jupiter.api.AfterEach", "AfterEach"};
+      String[] annotations = new String[] {"org.junit.After", "After", 
+            "org.junit.jupiter.api.AfterEach", "AfterEach",
+            "org.junit.jupiter.api.AfterAll", "AfterAll"};
       List<MethodDeclaration> beforeMethods = findAnnotation(clazz, annotations);
       return beforeMethods;
    }
