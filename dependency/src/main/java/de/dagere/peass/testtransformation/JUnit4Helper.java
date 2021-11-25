@@ -40,7 +40,7 @@ public class JUnit4Helper {
       JUnit4Helper.addKoPeMeRuleIfNecessary(clazz);
 
       List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit4TestMethods(clazz);
-      new TestMethodHelper(config, null).prepareTestMethods(testMethods);
+      new TestMethodHelper(config, datacollectorlist).prepareTestMethods(testMethods);
 
       if (config.isOnlyMeasureWorkload()) {
          BeforeAfterTransformer.transformBefore(clazz);
