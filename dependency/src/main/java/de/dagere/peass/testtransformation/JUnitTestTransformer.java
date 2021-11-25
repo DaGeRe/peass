@@ -34,26 +34,17 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.rules.TestRule;
 
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.Modifier;
-import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
-import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
-import com.github.javaparser.ast.body.VariableDeclarator;
-import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.ClassExpr;
-import com.github.javaparser.ast.expr.Expression;
 import com.github.javaparser.ast.expr.Name;
-import com.github.javaparser.ast.expr.NormalAnnotationExpr;
-import com.github.javaparser.ast.expr.ObjectCreationExpr;
 import com.github.javaparser.ast.expr.SingleMemberAnnotationExpr;
-import com.github.javaparser.ast.expr.ThisExpr;
 import com.github.javaparser.ast.stmt.BlockStmt;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.PrimitiveType;
@@ -455,7 +446,7 @@ public class JUnitTestTransformer implements TestTransformer {
       try {
          final CompilationUnit unit = loadedFiles.get(javaFile);
 
-         editJUnit4(unit);
+         JUnit4Helper.editJUnit4(unit, config, datacollectorlist);
 
          Files.write(javaFile.toPath(), unit.toString().getBytes(charset));
       } catch (final FileNotFoundException e) {
@@ -489,156 +480,12 @@ public class JUnitTestTransformer implements TestTransformer {
       clazz.addAnnotation(extendAnnotation);
 
       List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit5TestMethods(clazz);
-      prepareTestMethods(testMethods);
+      new TestMethodHelper(config, datacollectorlist).prepareTestMethods(testMethods);
 
       if (config.isOnlyMeasureWorkload()) {
-         transformBefore(clazz);
-         transformAfter(clazz);
+         BeforeAfterTransformer.transformBefore(clazz);
+         BeforeAfterTransformer.transformAfter(clazz);
       }
-   }
-
-   void editJUnit4(final CompilationUnit unit) {
-      unit.addImport("de.dagere.kopeme.annotations.Assertion");
-      unit.addImport("de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation");
-      unit.addImport("org.junit.rules.TestRule");
-      unit.addImport("org.junit.Rule");
-      unit.addImport("de.dagere.kopeme.junit.rule.KoPeMeRule");
-
-      final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
-
-      final boolean fieldFound = hasKoPeMeRule(clazz) || hasKoPeMeRunner(clazz);
-      if (!fieldFound) {
-         addRule(clazz);
-      }
-
-      List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit4TestMethods(clazz);
-      prepareTestMethods(testMethods);
-
-      if (config.isOnlyMeasureWorkload()) {
-         transformBefore(clazz);
-         transformAfter(clazz);
-      }
-   }
-
-   private void transformBefore(final ClassOrInterfaceDeclaration clazz) {
-      List<MethodDeclaration> beforeMethods = TestMethodFinder.findBeforeMethods(clazz);
-      transformMethodAnnotations(beforeMethods, "de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement");
-   }
-
-   private void transformAfter(final ClassOrInterfaceDeclaration clazz) {
-      List<MethodDeclaration> beforeMethods = TestMethodFinder.findAfterMethods(clazz);
-      transformMethodAnnotations(beforeMethods, "de.dagere.kopeme.junit.rule.annotations.AfterNoMeasurement");
-   }
-
-   private void transformMethodAnnotations(final List<MethodDeclaration> beforeMethods, final String name) {
-      for (MethodDeclaration method : beforeMethods) {
-         final NormalAnnotationExpr beforeNoMeasurementAnnotation = new NormalAnnotationExpr();
-
-         beforeNoMeasurementAnnotation.setName(name);
-         method.setAnnotation(0, beforeNoMeasurementAnnotation);
-
-      }
-   }
-
-   private void prepareTestMethods(final List<MethodDeclaration> testMethods) {
-      for (MethodDeclaration testMethod : testMethods) {
-         setPublic(testMethod);
-         addAnnotation(testMethod);
-      }
-   }
-
-   private void setPublic(final MethodDeclaration method) {
-      if (!method.isPublic()) {
-         method.setPublic(true);
-         method.setPrivate(false);
-         method.setProtected(false);
-         method.setDefault(false);
-      }
-   }
-
-   public void addAnnotation(final MethodDeclaration method) {
-      for (final AnnotationExpr annotation : method.getAnnotations()) {
-         if (annotation.getNameAsString().contains("PerformanceTest")) {
-            LOG.info("Found annotation " + annotation.getNameAsString() + " - do not add annotation");
-            return;
-         }
-      }
-
-      final NormalAnnotationExpr performanceTestAnnotation = new NormalAnnotationExpr();
-      performanceTestAnnotation.setName("de.dagere.kopeme.annotations.PerformanceTest");
-      performanceTestAnnotation.addPair("iterations", "" + config.getAllIterations());
-      performanceTestAnnotation.addPair("warmup", "" + 0);
-      performanceTestAnnotation.addPair("executeBeforeClassInMeasurement", "" + config.isExecuteBeforeClassInMeasurement());
-      performanceTestAnnotation.addPair("logFullData", "" + true);
-      performanceTestAnnotation.addPair("useKieker", "" + config.isUseKieker());
-      performanceTestAnnotation.addPair("timeout", "" + config.getExecutionConfig().getTimeout());
-      performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
-      performanceTestAnnotation.addPair("redirectToNull", "" + config.isRedirectToNull());
-      performanceTestAnnotation.addPair("showStart", "" + config.isShowStart());
-      if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
-         performanceTestAnnotation.addPair("dataCollectors", "\"ONLYTIME\"");
-      } else if (datacollectorlist.equals(DataCollectorList.ONLYTIME_NOGC)) {
-         performanceTestAnnotation.addPair("dataCollectors", "\"ONLYTIME_NOGC\"");
-      }
-      method.addAnnotation(performanceTestAnnotation);
-   }
-
-   private boolean hasKoPeMeRule(final ClassOrInterfaceDeclaration clazz) {
-      boolean fieldFound = false;
-      for (final FieldDeclaration field : clazz.getFields()) {
-         // System.out.println(field + " " + field.getClass());
-         boolean annotationFound = false;
-         for (final AnnotationExpr ano : field.getAnnotations()) {
-            // System.err.println(ano.getNameAsString());
-            if (ano.getNameAsString().equals("Rule")) {
-               annotationFound = true;
-            }
-         }
-         if (annotationFound) {
-            for (final Node node : field.getChildNodes()) {
-               if (node instanceof VariableDeclarator) {
-                  final VariableDeclarator potentialInitializer = (VariableDeclarator) node;
-                  if (potentialInitializer.getInitializer().isPresent() && potentialInitializer.getInitializer().get().isObjectCreationExpr()) {
-                     final Expression initializer = potentialInitializer.getInitializer().get();
-                     if (initializer instanceof ObjectCreationExpr) {
-                        final ObjectCreationExpr expression = (ObjectCreationExpr) initializer;
-                        // System.out.println(expression.getTypeAsString());
-                        if (expression.getTypeAsString().equals("KoPeMeRule")) {
-                           fieldFound = true;
-                        }
-                     }
-                  }
-               }
-            }
-         }
-      }
-      return fieldFound;
-   }
-
-   private boolean hasKoPeMeRunner(final ClassOrInterfaceDeclaration clazz) {
-      boolean kopemeTestrunner = false;
-      if (clazz.getAnnotations().size() > 0) {
-         for (final AnnotationExpr annotation : clazz.getAnnotations()) {
-            if (annotation.getNameAsString().contains("RunWith") && annotation instanceof SingleMemberAnnotationExpr) {
-               final SingleMemberAnnotationExpr singleMember = (SingleMemberAnnotationExpr) annotation;
-               final Expression expr = singleMember.getMemberValue();
-               if (expr.toString().equals("PerformanceTestRunnerJUnit.class")) {
-                  kopemeTestrunner = true;
-               }
-            }
-         }
-      }
-      return kopemeTestrunner;
-   }
-
-   private void addRule(final ClassOrInterfaceDeclaration clazz) {
-      final NodeList<Expression> arguments = new NodeList<>();
-      arguments.add(new ThisExpr());
-      final Expression initializer = new ObjectCreationExpr(null, new ClassOrInterfaceType("KoPeMeRule"), arguments);
-      final FieldDeclaration fieldDeclaration = clazz.addFieldWithInitializer(TestRule.class, "kopemeRule", initializer, Modifier.publicModifier().getKeyword());
-      final NormalAnnotationExpr annotation = new NormalAnnotationExpr();
-      annotation.setName("Rule");
-      fieldDeclaration.getAnnotations().add(annotation);
    }
 
    public File getProjectFolder() {
