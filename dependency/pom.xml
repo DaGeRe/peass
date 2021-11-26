@@ -126,7 +126,9 @@
 		</dependency>
 
 		<!-- Both are needed in your local maven repo, and both should be downloaded when building (but are only needed at runtime, if a project does not use snapshot 
-			repo) -->
+			repo)  
+			If you update the version, please do not forget to *update* also MavenPomUtil.KOPEME_VERSION. As a general convention, Snapshot-versions should only used in 
+			the develop branch; in the main branch, releases should be used -->
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-junit</artifactId>
