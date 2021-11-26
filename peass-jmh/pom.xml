@@ -74,27 +74,12 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- Both are needed in your local maven repo, and both should be downloaded when building (but are only needed at runtime, if a project does not use snapshot 
-			repo) -->
-		<dependency>
-			<groupId>de.dagere.kopeme</groupId>
-			<artifactId>kopeme-junit</artifactId>
-			<version>0.15.1</version>
-		</dependency>
-		<dependency>
-			<groupId>de.dagere.kopeme</groupId>
-			<artifactId>kopeme-junit3</artifactId>
-			<version>0.15.1</version>
-			<scope>test</scope>
-		</dependency>
-
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-params</artifactId>
 			<version>5.8.1</version>
 			<scope>test</scope>
 		</dependency>
-
 
 		<dependency>
 			<groupId>co.unruly</groupId>
@@ -113,18 +98,6 @@
 			<artifactId>mockito-inline</artifactId>
 			<version>4.0.0</version>
 			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.googlecode.java-diff-utils</groupId>
-			<artifactId>diffutils</artifactId>
-			<version>1.3.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.codehaus.groovy</groupId>
-			<artifactId>groovy-astbuilder</artifactId>
-			<version>3.0.9</version>
 		</dependency>
 	</dependencies>
 
