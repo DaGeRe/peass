@@ -32,7 +32,7 @@ public class SourceReader {
 
    public void readMethodSources(final Set<TestCase> tests) {
       if (config.isRedirectSubprocessOutputToFile()) {
-         File logFile = resultsFolders.getDependencyLogFile(version, versionOld);
+         File logFile = resultsFolders.getSourceReadLogFile(version, versionOld);
          LOG.info("Executing source reading - log goes to {}", logFile.getAbsolutePath());
 
          try (LogRedirector director = new LogRedirector(logFile)) {
