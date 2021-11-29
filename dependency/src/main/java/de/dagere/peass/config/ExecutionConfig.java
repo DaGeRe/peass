@@ -41,6 +41,11 @@ public class ExecutionConfig implements Serializable {
    private boolean removeSnapshots = false;
    private boolean useAlternativeBuildfile = false;
    private boolean excludeLog4j = false;
+   
+   private boolean executeBeforeClassInMeasurement = false;
+   private boolean onlyMeasureWorkload = false;
+   private boolean showStart = false;
+   private boolean redirectToNull = true;
 
    private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
    private String testExecutor = "default";
@@ -68,6 +73,11 @@ public class ExecutionConfig implements Serializable {
       this.testExecutor = other.getTestExecutor();
       this.useTieredCompilation = other.isUseTieredCompilation();
       this.pl = other.getPl();
+      
+      this.executeBeforeClassInMeasurement = other.executeBeforeClassInMeasurement;
+      this.onlyMeasureWorkload = other.onlyMeasureWorkload;
+      this.showStart = other.showStart;
+      this.redirectToNull = other.redirectToNull;
    }
 
    public ExecutionConfig(final long timeoutInMinutes) {
@@ -125,6 +135,7 @@ public class ExecutionConfig implements Serializable {
       removeSnapshots = executionMixin.isRemoveSnapshots();
       useAlternativeBuildfile = executionMixin.isUseAlternativeBuildfile();
       createDefaultConstructor = !executionMixin.isSkipDefaultConstructor();
+      executeBeforeClassInMeasurement = executionMixin.isExecuteBeforeClassInMeasurement();
    }
 
    public void setTimeout(final long timeout) {
@@ -255,6 +266,38 @@ public class ExecutionConfig implements Serializable {
 
    public void setExcludeLog4j(final boolean excludeLog4j) {
       this.excludeLog4j = excludeLog4j;
+   }
+
+   public boolean isExecuteBeforeClassInMeasurement() {
+      return executeBeforeClassInMeasurement;
+   }
+
+   public void setExecuteBeforeClassInMeasurement(final boolean executeBeforeClassInMeasurement) {
+      this.executeBeforeClassInMeasurement = executeBeforeClassInMeasurement;
+   }
+
+   public boolean isOnlyMeasureWorkload() {
+      return onlyMeasureWorkload;
+   }
+
+   public void setOnlyMeasureWorkload(final boolean onlyMeasureWorkload) {
+      this.onlyMeasureWorkload = onlyMeasureWorkload;
+   }
+
+   public boolean isShowStart() {
+      return showStart;
+   }
+
+   public void setShowStart(final boolean showStart) {
+      this.showStart = showStart;
+   }
+
+   public boolean isRedirectToNull() {
+      return redirectToNull;
+   }
+
+   public void setRedirectToNull(final boolean redirectToNull) {
+      this.redirectToNull = redirectToNull;
    }
 
    public String getTestTransformer() {

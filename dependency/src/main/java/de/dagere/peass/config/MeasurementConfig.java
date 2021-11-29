@@ -25,10 +25,6 @@ public class MeasurementConfig implements Serializable {
    private int repetitions = 1;
    private boolean logFullData = true;
    private boolean useGC = true;
-   private boolean executeBeforeClassInMeasurement = false;
-   private boolean onlyMeasureWorkload = false;
-   private boolean showStart = false;
-   private boolean redirectToNull = true;
 
    private boolean callSyncBetweenVMs = true;
    private int waitTimeBetweenVMs = 1000;
@@ -124,8 +120,6 @@ public class MeasurementConfig implements Serializable {
       this.iterations = other.iterations;
       this.repetitions = other.repetitions;
       this.logFullData = other.logFullData;
-
-      this.redirectToNull = other.redirectToNull;
       kiekerConfig = new KiekerConfig();
       kiekerConfig.setUseKieker(other.isUseKieker());
       kiekerConfig.setUseSourceInstrumentation(other.getKiekerConfig().isUseSourceInstrumentation());
@@ -140,9 +134,6 @@ public class MeasurementConfig implements Serializable {
       this.javaVersion = other.javaVersion;
       this.measurementStrategy = other.measurementStrategy;
       this.saveAll = other.saveAll;
-      this.executeBeforeClassInMeasurement = other.executeBeforeClassInMeasurement;
-      this.onlyMeasureWorkload = other.onlyMeasureWorkload;
-      this.showStart = other.showStart;
    }
 
    public StatisticsConfig getStatisticsConfig() {
@@ -162,19 +153,19 @@ public class MeasurementConfig implements Serializable {
    }
 
    public void setExecuteBeforeClassInMeasurement(final boolean executeBeforeClassInMeasurement) {
-      this.executeBeforeClassInMeasurement = executeBeforeClassInMeasurement;
+      executionConfig.setExecuteBeforeClassInMeasurement(executeBeforeClassInMeasurement);
    }
 
    public boolean isExecuteBeforeClassInMeasurement() {
-      return executeBeforeClassInMeasurement;
+      return executionConfig.isExecuteBeforeClassInMeasurement();
    }
    
    public void setOnlyMeasureWorkload(final boolean onlyMeasureWorkload) {
-      this.onlyMeasureWorkload = onlyMeasureWorkload;
+      executionConfig.setOnlyMeasureWorkload(onlyMeasureWorkload);
    }
    
    public boolean isOnlyMeasureWorkload() {
-      return onlyMeasureWorkload;
+      return executionConfig.isOnlyMeasureWorkload();
    }
 
    /**
@@ -191,11 +182,11 @@ public class MeasurementConfig implements Serializable {
    }
 
    public boolean isRedirectToNull() {
-      return redirectToNull;
+      return executionConfig.isRedirectToNull();
    }
 
    public void setRedirectToNull(final boolean redirectToNull) {
-      this.redirectToNull = redirectToNull;
+     executionConfig.setRedirectToNull(redirectToNull);
    }
 
    @JsonIgnore
@@ -311,11 +302,11 @@ public class MeasurementConfig implements Serializable {
    }
 
    public boolean isShowStart() {
-      return showStart;
+      return executionConfig.isShowStart();
    }
 
    public void setShowStart(final boolean showStart) {
-      this.showStart = showStart;
+      executionConfig.setShowStart(showStart);
    }
 
    public ExecutionConfig getExecutionConfig() {

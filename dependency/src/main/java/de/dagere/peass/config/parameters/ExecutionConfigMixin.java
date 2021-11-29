@@ -46,6 +46,9 @@ public class ExecutionConfigMixin {
    @Option(names = { "-useTieredCompilation", "--useTieredCompilation" }, description = "Activate -XX:-TieredCompilation for all measured processes")
    protected boolean useTieredCompilation = false;
 
+   @Option(names = { "-executeBeforeClassInMeasurement", "--executeBeforeClassInMeasurement" }, description = "Execute @BeforeClass / @BeforeAll in measurement loop")
+   protected boolean executeBeforeClassInMeasurement = false;
+   
    @Option(names = { "-removeSnapshots",
          "--removeSnapshots" }, description = "Activates removing SNAPSHOTS (if older versions should be analysed, this should be activated; for performance measurement in CI, this should not be activated)")
    protected boolean removeSnapshots = false;
@@ -185,4 +188,14 @@ public class ExecutionConfigMixin {
    public void setUseTieredCompilation(final boolean useTieredCompilation) {
       this.useTieredCompilation = useTieredCompilation;
    }
+
+   public boolean isExecuteBeforeClassInMeasurement() {
+      return executeBeforeClassInMeasurement;
+   }
+
+   public void setExecuteBeforeClassInMeasurement(final boolean executeBeforeClassInMeasurement) {
+      this.executeBeforeClassInMeasurement = executeBeforeClassInMeasurement;
+   }
+   
+   
 }
