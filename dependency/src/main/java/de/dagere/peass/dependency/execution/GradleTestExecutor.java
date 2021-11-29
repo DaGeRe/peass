@@ -25,7 +25,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
 
    public GradleTestExecutor(final PeassFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
       super(folders, testTransformer, env);
-      
+
       this.gradleHome = getGradleHome();
       env.getEnvironmentVariables().put("GRADLE_HOME", gradleHome.getAbsolutePath());
    }
@@ -57,11 +57,9 @@ public class GradleTestExecutor extends KoPeMeExecutor {
          isAndroid = false;
          ProjectModules modules = getModules();
          LOG.debug("Preparing modules: {}", modules);
+         replaceAllBuildfiles(modules);
          for (final File module : modules.getModules()) {
             final File gradleFile = GradleParseHelper.findGradleFile(module);
-            if (testTransformer.getConfig().getExecutionConfig().isUseAlternativeBuildfile()) {
-               replaceBuildfile(gradleFile);
-            }
             editOneBuildfile(gradleFile, modules);
          }
       } catch (IOException e) {
@@ -168,10 +166,28 @@ public class GradleTestExecutor extends KoPeMeExecutor {
             }
          }
          this.isAndroid = isAndroid;
+
+         ProjectModules modules = getModules();
+         replaceAllBuildfiles(modules);
+
          final String[] vars = new String[] { "./gradlew", "--no-daemon", "assemble" };
-         isRunning = new ProcessSuccessTester(folders, testTransformer.getConfig(), env).testRunningSuccess(version, vars);
+         ProcessSuccessTester processSuccessTester = new ProcessSuccessTester(folders, testTransformer.getConfig(), env);
+         isRunning = processSuccessTester.testRunningSuccess(version, vars);
       }
       return isRunning;
+   }
+
+   private void replaceAllBuildfiles(final ProjectModules modules) {
+      if (testTransformer.getConfig().getExecutionConfig().isUseAlternativeBuildfile()) {
+         for (final File module : modules.getModules()) {
+            final File gradleFile = GradleParseHelper.findGradleFile(module);
+            try {
+               replaceBuildfile(gradleFile);
+            } catch (IOException e) {
+               e.printStackTrace();
+            }
+         }
+      }
    }
 
    @Override
