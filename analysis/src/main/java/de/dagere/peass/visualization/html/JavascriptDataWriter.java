@@ -55,7 +55,9 @@ public class JavascriptDataWriter {
 
    private void writeDashboardLink(final CauseSearchData data, final BufferedWriter fileWriter) throws IOException {
       fileWriter.write("   if (jenkins) {\n      document.getElementById('testcaseDiv').innerHTML+=");
-      fileWriter.write("\"<a href='dashboard?call=overall&ess=-1' target='parent'>Inspect Overall Measurement</a>\";\n");
+      fileWriter.write("\"<p class='button-wrap'>"
+            + "<a role='button' href='dashboard?call=overall&ess=-1' target='parent'>Inspect Overall Measurement</a>"
+            + "</p>\";\n");
       fileWriter.write("   } else {\n");
       fileWriter.write("   document.getElementById('testcaseDiv').innerHTML+=\"<a href='" + data.getTestcase().replace("#", "_") + "_dashboard.html?call=overall&ess=-1' target='parent'>Inspect Overall Measurement</a>\";\n");
       fileWriter.write("   }\n");
