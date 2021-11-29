@@ -78,7 +78,7 @@ public class MeasurementConfig implements Serializable {
       setUseGC(mixin.isUseGC());
       kiekerConfig.setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
-      setRedirectToNull(!mixin.isDontRedirectToNull());
+      executionConfig.setRedirectToNull(!mixin.isDontRedirectToNull());
       setShowStart(mixin.isShowStart());
 
       saveAll = !mixin.isSaveNothing();
@@ -152,22 +152,6 @@ public class MeasurementConfig implements Serializable {
       return saveAll;
    }
 
-   public void setExecuteBeforeClassInMeasurement(final boolean executeBeforeClassInMeasurement) {
-      executionConfig.setExecuteBeforeClassInMeasurement(executeBeforeClassInMeasurement);
-   }
-
-   public boolean isExecuteBeforeClassInMeasurement() {
-      return executionConfig.isExecuteBeforeClassInMeasurement();
-   }
-   
-   public void setOnlyMeasureWorkload(final boolean onlyMeasureWorkload) {
-      executionConfig.setOnlyMeasureWorkload(onlyMeasureWorkload);
-   }
-   
-   public boolean isOnlyMeasureWorkload() {
-      return executionConfig.isOnlyMeasureWorkload();
-   }
-
    /**
     * Whether to execute a GC before every iteration (bunch of repetitions)
     * 
@@ -179,14 +163,6 @@ public class MeasurementConfig implements Serializable {
 
    public void setUseGC(final boolean useGC) {
       this.useGC = useGC;
-   }
-
-   public boolean isRedirectToNull() {
-      return executionConfig.isRedirectToNull();
-   }
-
-   public void setRedirectToNull(final boolean redirectToNull) {
-     executionConfig.setRedirectToNull(redirectToNull);
    }
 
    @JsonIgnore

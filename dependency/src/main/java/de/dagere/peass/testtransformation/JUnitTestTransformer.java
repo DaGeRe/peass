@@ -109,7 +109,7 @@ public class JUnitTestTransformer implements TestTransformer {
       config.setIterations(1);
       config.setWarmup(0);
       // For regression test selection, verbose debug output is helpful, and since it is only executed once, the performance loss is ok.
-      config.setRedirectToNull(false);
+      config.getExecutionConfig().setRedirectToNull(false);
       config.setShowStart(true);
       datacollectorlist = DataCollectorList.ONLYTIME;
    }
@@ -403,7 +403,7 @@ public class JUnitTestTransformer implements TestTransformer {
          addMethod(clazz, "useKieker", "return " + config.isUseKieker() + ";", PrimitiveType.booleanType());
          addMethod(clazz, "getMaximalTime", "return " + config.getExecutionConfig().getTimeout() + ";", PrimitiveType.longType());
          addMethod(clazz, "getRepetitions", "return " + config.getRepetitions() + ";", PrimitiveType.intType());
-         addMethod(clazz, "redirectToNull", "return " + config.isRedirectToNull() + ";", PrimitiveType.booleanType());
+         addMethod(clazz, "redirectToNull", "return " + config.getExecutionConfig().isRedirectToNull() + ";", PrimitiveType.booleanType());
 
          synchronized (javaParser) {
             final ClassOrInterfaceType type = javaParser.parseClassOrInterfaceType("DataCollectorList").getResult().get();
@@ -482,7 +482,7 @@ public class JUnitTestTransformer implements TestTransformer {
       List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit5TestMethods(clazz);
       new TestMethodHelper(config, datacollectorlist).prepareTestMethods(testMethods);
 
-      if (config.isOnlyMeasureWorkload()) {
+      if (config.getExecutionConfig().isOnlyMeasureWorkload()) {
          BeforeAfterTransformer.transformBefore(clazz);
          BeforeAfterTransformer.transformAfter(clazz);
       } else {

@@ -42,7 +42,7 @@ public class JUnit4Helper {
       List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit4TestMethods(clazz);
       new TestMethodHelper(config, datacollectorlist).prepareTestMethods(testMethods);
 
-      if (config.isOnlyMeasureWorkload()) {
+      if (config.getExecutionConfig().isOnlyMeasureWorkload()) {
          BeforeAfterTransformer.transformBefore(clazz);
          BeforeAfterTransformer.transformAfter(clazz);
       }

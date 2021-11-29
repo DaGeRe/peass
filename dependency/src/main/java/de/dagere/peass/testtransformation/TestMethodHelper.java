@@ -52,12 +52,12 @@ public class TestMethodHelper {
       performanceTestAnnotation.setName("de.dagere.kopeme.annotations.PerformanceTest");
       performanceTestAnnotation.addPair("iterations", "" + config.getAllIterations());
       performanceTestAnnotation.addPair("warmup", "" + 0);
-      performanceTestAnnotation.addPair("executeBeforeClassInMeasurement", "" + config.isExecuteBeforeClassInMeasurement());
+      performanceTestAnnotation.addPair("executeBeforeClassInMeasurement", "" + config.getExecutionConfig().isExecuteBeforeClassInMeasurement());
       performanceTestAnnotation.addPair("logFullData", "" + true);
       performanceTestAnnotation.addPair("useKieker", "" + config.isUseKieker());
       performanceTestAnnotation.addPair("timeout", "" + config.getExecutionConfig().getTimeout());
       performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
-      performanceTestAnnotation.addPair("redirectToNull", "" + config.isRedirectToNull());
+      performanceTestAnnotation.addPair("redirectToNull", "" + config.getExecutionConfig().isRedirectToNull());
       performanceTestAnnotation.addPair("showStart", "" + config.isShowStart());
       if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
          performanceTestAnnotation.addPair("dataCollectors", "\"ONLYTIME\"");

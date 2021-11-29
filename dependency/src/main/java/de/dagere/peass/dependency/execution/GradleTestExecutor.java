@@ -96,8 +96,8 @@ public class GradleTestExecutor extends KoPeMeExecutor {
             "--init-script", new File(gradleHome, "init.gradle").getAbsolutePath(),
             "--no-daemon",
             "cleanTest", testGoal };
-      LOG.debug("Redirecting to null: {}", testTransformer.getConfig().isRedirectToNull());
-      if (!testTransformer.getConfig().isRedirectToNull()) {
+      LOG.debug("Redirecting to null: {}", testTransformer.getConfig().getExecutionConfig().isRedirectToNull());
+      if (!testTransformer.getConfig().getExecutionConfig().isRedirectToNull()) {
          originals = CommandConcatenator.concatenateCommandArrays(originals, new String[] { "--info" });
       }
 

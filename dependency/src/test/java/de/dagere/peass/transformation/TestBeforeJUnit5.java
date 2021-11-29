@@ -75,7 +75,7 @@ public class TestBeforeJUnit5 {
    @Test
    public void testNoMeasurement() throws IOException {
       MeasurementConfig config = MeasurementConfig.DEFAULT;
-      config.setOnlyMeasureWorkload(true);
+      config.getExecutionConfig().setOnlyMeasureWorkload(true);
       
       final CompilationUnit cu = transform(config);
 
@@ -94,7 +94,7 @@ public class TestBeforeJUnit5 {
    @Test
    public void testWithMeasurement() throws IOException {
       MeasurementConfig config = MeasurementConfig.DEFAULT;
-      config.setOnlyMeasureWorkload(false);
+      config.getExecutionConfig().setOnlyMeasureWorkload(false);
       
       final CompilationUnit cu = transform(config);
 

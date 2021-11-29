@@ -64,7 +64,7 @@ public class KiekerResultManager {
       fakeConfig.setWarmup(0);
       // Structure discovery runs never need adaptive monitoring
       fakeConfig.getKiekerConfig().setEnableAdaptiveMonitoring(false);
-      fakeConfig.setRedirectToNull(false);
+      fakeConfig.getExecutionConfig().setRedirectToNull(false);
       fakeConfig.setShowStart(true);
       
       testTransformer = ExecutorCreator.createTestTransformer(folders, executionConfig, fakeConfig);

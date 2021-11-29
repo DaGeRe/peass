@@ -81,7 +81,7 @@ public class TestOnlyMeasureWorkload {
 
    private CompilationUnit executeTransformation(final File testFile) throws FileNotFoundException {
       MeasurementConfig config = new MeasurementConfig(2);
-      config.setOnlyMeasureWorkload(true);
+      config.getExecutionConfig().setOnlyMeasureWorkload(true);
 
       final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, config);
       tt.determineVersions(Arrays.asList(new File[] { testFolder }));
