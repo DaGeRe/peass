@@ -32,7 +32,7 @@ public class FindLowestVMCounter extends DataAnalyser {
          }
          for (final Map.Entry<String, EvaluationPair> entry : measurementEntry.getMeasurements().entrySet()) {
             final FileWriter tWriter = new FileWriter(new File(folder, entry.getKey().substring(0, 6) + "_" + measurementEntry.getTestClass() + "#" + measurementEntry.getTestMethod()+".csv"));
-            final TestStatistic benchmark = new TestStatistic(entry.getValue(), null);
+            final TestStatistic benchmark = new TestStatistic(entry.getValue());
             boolean alreadyEqual = false;
             TestStatistic minimalStatistic = null;
             int equal = 0;
@@ -41,7 +41,7 @@ public class FindLowestVMCounter extends DataAnalyser {
                final EvaluationPair shortenedPair = new EvaluationPair(entry.getKey(), entry.getValue().getPreviousVersion(), entry.getValue().getTestcase());
                shortenedPair.getCurrent().addAll(entry.getValue().getCurrent().subList(0, i));
                shortenedPair.getPrevius().addAll(entry.getValue().getPrevius().subList(0, i));
-               final TestStatistic statistic = new TestStatistic(shortenedPair, null);
+               final TestStatistic statistic = new TestStatistic(shortenedPair);
                tWriter.write(MeanCoVData.FORMAT.format(statistic.getTValue()) + ";" + getMeanDevString(statistic) + "\n");
                tWriter.flush();
                if (!alreadyEqual) {

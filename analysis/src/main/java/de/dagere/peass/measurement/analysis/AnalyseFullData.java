@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.kopeme.generated.Result;
 import de.dagere.peass.analysis.changes.ProjectChanges;
+import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.Dependencies;
@@ -46,15 +47,16 @@ public class AnalyseFullData extends DataAnalyser {
    public int testcases = 0;
 
    private final File changeFile;
-   private final ProjectChanges projectChanges = new ProjectChanges();
+   private final ProjectChanges projectChanges;
    private final ModuleClassMapping mapping;
 
    private final ProjectStatistics info;
 
-   public AnalyseFullData(final File changesFile, final ProjectStatistics info, final ModuleClassMapping mapping) {
+   public AnalyseFullData(final File changesFile, final ProjectStatistics info, final ModuleClassMapping mapping, final StatisticsConfig statisticConfig) {
       this.changeFile = changesFile;
       this.mapping = mapping;
       this.info = info;
+      projectChanges = new ProjectChanges(statisticConfig);
       LOG.info("Writing changes to: {}", changeFile.getAbsolutePath());
       try {
          Constants.OBJECTMAPPER.writeValue(changeFile, projectChanges);
@@ -73,7 +75,7 @@ public class AnalyseFullData extends DataAnalyser {
          final String version = versionEntry.getKey();
          LOG.debug("Analysing: {} ({}#{}) Complete: {}", version, measurementEntry.getTestClass(), measurementEntry.getTestMethod(), versionEntry.getValue().isComplete());
 
-         final TestStatistic teststatistic = new TestStatistic(versionEntry.getValue(), info);
+         final TestStatistic teststatistic = new TestStatistic(versionEntry.getValue(), info, projectChanges.getStatisticsConfig());
 
          if (Constants.DRAW_RESULTS) {
             drawPNGs(measurementEntry, versionEntry, version, teststatistic);

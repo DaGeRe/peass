@@ -9,6 +9,7 @@ import org.hamcrest.Matchers;
 import org.junit.Test;
 
 import de.dagere.peass.analysis.changes.ProjectChanges;
+import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -27,7 +28,7 @@ public class TestChangeReading {
       
       File baseFolder = new File("src/test/resources/dataReading/android-example-correct");
       ModuleClassMapping mapping = new ModuleClassMapping(baseFolder, new ProjectModules(new File(baseFolder, "app")));
-      AnalyseFullData afd = new AnalyseFullData(new File("target/test.json"), new ProjectStatistics(), mapping);
+      AnalyseFullData afd = new AnalyseFullData(new File("target/test.json"), new ProjectStatistics(), mapping, new StatisticsConfig());
       
       afd.analyseFolder(new File("src/test/resources/dataReading/measurementsFull/measurements/"));
       

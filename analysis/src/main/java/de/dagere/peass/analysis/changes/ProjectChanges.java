@@ -12,8 +12,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.changes.processors.ChangeProcessor;
+import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.Relation;
@@ -34,7 +34,23 @@ public class ProjectChanges implements Serializable {
    private int versionCount;
    private int changeCount;
    private int testcaseCount;
+   private StatisticsConfig statisticsConfig;
    private Map<String, Changes> versionChanges = VersionComparator.hasDependencies() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
+
+   public ProjectChanges() {
+   }
+
+   public ProjectChanges(final StatisticsConfig statisticsConfig) {
+      this.statisticsConfig = statisticsConfig;
+   }
+
+   public StatisticsConfig getStatisticsConfig() {
+      return statisticsConfig;
+   }
+
+   public void setStatisticsConfig(final StatisticsConfig statisticsConfig) {
+      this.statisticsConfig = statisticsConfig;
+   }
 
    public int getVersionCount() {
       return versionCount;

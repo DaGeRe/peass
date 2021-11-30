@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
+import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
 import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
 import de.dagere.peass.statistics.ConfidenceIntervalInterpretion;
@@ -16,8 +17,6 @@ import de.dagere.peass.statistics.StatisticUtil;
 
 public class TestStatistic {
    private static final Logger LOG = LogManager.getLogger(TestStatistic.class);
-
-   private static final double CONFIDENCE = 0.02;
 
    private final int diff;
    private final double tValue;
@@ -28,10 +27,10 @@ public class TestStatistic {
    private final DescriptiveStatistics statisticsCurrent;
 
    public TestStatistic(final EvaluationPair data) {
-      this(data, null);
+      this(data, null, 0.01);
    }
 
-   public TestStatistic(final EvaluationPair data, final ProjectStatistics info) {
+   public TestStatistic(final EvaluationPair data, final ProjectStatistics info, final double type1error) {
       List<Result> previous = ResultLoader.removeResultsWithWrongConfiguration(data.getPrevius());
       List<Result> current = ResultLoader.removeResultsWithWrongConfiguration(data.getCurrent());
 
@@ -60,7 +59,7 @@ public class TestStatistic {
       LOG.trace(dsBefore.getMean() + " " + dsAfter.getMean() + " " + dsBefore.getStandardDeviation() + " " + dsAfter.getStandardDeviation());
 
       tValue = TestUtils.t(dataBefore, dataAfter);
-      change = TestUtils.tTest(dataBefore, dataAfter, CONFIDENCE);
+      change = TestUtils.tTest(dataBefore, dataAfter, type1error);
 
       // Achtung, dupliziert!
       diff = (int) (((statisticsPrevious.getMean() - statisticsCurrent.getMean()) * 10000) / statisticsPrevious.getMean());
@@ -68,6 +67,10 @@ public class TestStatistic {
       LOG.trace("Means: {} {} Diff: {} % T-Value: {} Change: {}", statisticsPrevious.getMean(), statisticsCurrent.getMean(), ((double) diff) / 100, tValue, change);
 
       addToInfo(data, info, resultslength);
+   }
+   
+   public TestStatistic(final EvaluationPair data, final ProjectStatistics info, final StatisticsConfig config) {
+      this(data, info, config.getType1error());
    }
 
    private void addToInfo(final EvaluationPair data, final ProjectStatistics info, final int resultslength) {

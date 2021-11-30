@@ -124,8 +124,6 @@ public class ContinuousExecutor {
       return tests;
    }
 
-   
-
    protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final File fullResultsVersion = resultsFolders.getVersionFullResultsFolder(version, versionOld);
       File logFile = resultsFolders.getMeasurementLogFile(version, versionOld);
@@ -139,7 +137,7 @@ public class ContinuousExecutor {
       TestTransformer testTransformer = ExecutorCreator.createTestTransformer(folders, measurementConfig.getExecutionConfig(), measurementConfig);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
       ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), executor.getModules());
-      final AnalyseFullData afd = new AnalyseFullData(resultsFolders.getChangeFile(), statistics, mapping);
+      final AnalyseFullData afd = new AnalyseFullData(resultsFolders.getChangeFile(), statistics, mapping, measurementConfig.getStatisticsConfig());
       afd.analyseFolder(measurementFolder);
       Constants.OBJECTMAPPER.writeValue(resultsFolders.getStatisticsFile(), statistics);
    }
