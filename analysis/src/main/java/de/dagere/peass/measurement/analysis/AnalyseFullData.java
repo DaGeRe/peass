@@ -136,12 +136,17 @@ public class AnalyseFullData extends DataAnalyser {
          throw new RuntimeException("Can only be executed with measurements-folder! For searching folders, use FolderSearcher");
       }
       LOG.info("Draw results: " + Constants.DRAW_RESULTS);
-      final File dependencyFile = new File(args[1]);
-      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-      VersionComparator.setDependencies(dependencies);
-      throw new RuntimeException("adapt if needed");
-      // final AnalyseFullData analyseFullData = new AnalyseFullData(new ProjectStatistics());
-      // analyseFullData.analyseFolder(folder);
+      
+      VersionComparator.setDependencies(new Dependencies());
+//      final File dependencyFile = new File(args[1]);
+//      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+//      VersionComparator.setDependencies(dependencies);
+//      throw new RuntimeException("adapt if needed");
+      ProjectStatistics statistics = new ProjectStatistics();
+      final AnalyseFullData analyseFullData = new AnalyseFullData(new File("results/changes.json"), statistics, null, new StatisticsConfig());
+      analyseFullData.analyseFolder(folder);
+      
+      Constants.OBJECTMAPPER.writeValue(new File("results/statistics.json"), statistics);
 
    }
 

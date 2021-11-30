@@ -59,7 +59,7 @@ public class TestStatistic {
       LOG.trace(dsBefore.getMean() + " " + dsAfter.getMean() + " " + dsBefore.getStandardDeviation() + " " + dsAfter.getStandardDeviation());
 
       tValue = TestUtils.t(dataBefore, dataAfter);
-      change = TestUtils.tTest(dataBefore, dataAfter, type1error);
+      change = TestUtils.homoscedasticTTest(dataBefore, dataAfter, type1error);
 
       // Achtung, dupliziert!
       diff = (int) (((statisticsPrevious.getMean() - statisticsCurrent.getMean()) * 10000) / statisticsPrevious.getMean());
