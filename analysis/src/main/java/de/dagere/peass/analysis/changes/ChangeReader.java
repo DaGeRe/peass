@@ -18,6 +18,7 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.peass.analysis.all.RepoFolders;
 import de.dagere.peass.analysis.helper.read.VersionData;
 import de.dagere.peass.confidence.KoPeMeDataHelper;
+import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -113,7 +114,10 @@ public class ChangeReader {
    }
 
    public ProjectChanges readFile(final File measurementFolder) throws JAXBException {
-      final ProjectChanges changes = new ProjectChanges();
+      StatisticsConfig config = new StatisticsConfig();
+      config.setType1error(type1error);
+      config.setType2error(type2error);
+      final ProjectChanges changes = new ProjectChanges(config);
       final ProjectStatistics info = new ProjectStatistics();
       LOG.debug("Reading from " + measurementFolder.getAbsolutePath());
       readFile(measurementFolder, changes, info);
