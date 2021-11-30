@@ -8,10 +8,8 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
@@ -23,13 +21,10 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependencyprocessors.DependencyTester;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.measurement.MavenTestExecutorMocker;
 import de.dagere.peass.measurement.rca.helper.VCSTestUtils;
+import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ VersionControlSystem.class, ExecutorCreator.class })
-@PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class TestDependencyTester {
 
    public static final TestCase EXAMPLE_TESTCASE = new TestCase("de.peass.MyTest", "test");
@@ -39,18 +34,24 @@ public class TestDependencyTester {
 
    @Test
    public void testFiles() throws Exception {
-      VCSTestUtils.mockGetVCS();
       
-      final PeassFolders folders = new PeassFolders(folder.getRoot());
-      final MeasurementConfig configuration = new MeasurementConfig(4, "2", "1");
+      try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
+            MockedStatic<ExecutorCreator> mockedExecutor = Mockito.mockStatic(ExecutorCreator.class);
+            MockedStatic<GitUtils> utils = Mockito.mockStatic(GitUtils.class)) {
+         VCSTestUtils.mockGetVCS(mockedVCS);
+         
+         final PeassFolders folders = new PeassFolders(folder.getRoot());
+         final MeasurementConfig configuration = new MeasurementConfig(4, "2", "1");
+         
+         VCSTestUtils.mockExecutor(mockedExecutor, folders, configuration);;
 
-      MavenTestExecutorMocker.mockExecutor(folders, configuration);
+         final DependencyTester tester = new DependencyTester(folders, configuration, new EnvironmentVariables());
+         
+         tester.evaluate(EXAMPLE_TESTCASE);
 
-      final DependencyTester tester = new DependencyTester(folders, configuration, new EnvironmentVariables());
+         checkResult(folders);
+      }
       
-      tester.evaluate(EXAMPLE_TESTCASE);
-
-      checkResult(folders);
    }
 
    public static void checkResult(final PeassFolders folders) throws JAXBException {

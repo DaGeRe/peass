@@ -12,7 +12,12 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 
+import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.dependency.ExecutorCreator;
+import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
+import de.dagere.peass.measurement.MavenTestExecutorMocker;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 
@@ -77,6 +82,23 @@ public class VCSTestUtils {
          }
       });
    }
+   
+   public static void mockExecutor(final MockedStatic<ExecutorCreator> executor, final PeassFolders folders, final MeasurementConfig config) {
+      TestExecutor mocked = Mockito.mock(TestExecutor.class);
+      executor.when(() -> ExecutorCreator.createExecutor(Mockito.any(), Mockito.any(), Mockito.any()))
+      .then(new Answer<TestExecutor>() {
+
+         @Override
+         public TestExecutor answer(final InvocationOnMock invocation) throws Throwable {
+            PeassFolders folders = invocation.getArgument(0);
+            MavenTestExecutorMocker.writeValue(folders, 100);
+            return mocked;
+         }
+      });
+      
+      Mockito.when(mocked.getTestTransformer()).thenReturn(new JUnitTestTransformer(folders.getProjectFolder(), config));
+   }
+   
 
    /**
     * Powermock should be replaced by mockito inline
