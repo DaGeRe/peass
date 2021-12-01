@@ -43,7 +43,7 @@ public class ExecutorCreator {
    private static TestExecutor createDefinedExecutor(final PeassFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env, final String executorName) {
       try {
          Class<?> executorClazz = Class.forName(executorName);
-         if (!executorClazz.getSuperclass().equals(TestExecutor.class)) {
+         if (!isSubclass(executorClazz)) {
             throw new RuntimeException("Clazz " + executorName + " was given as executor, but no (direct) subclass of TestExecutor!");
          }
          Constructor<?> constructor = executorClazz.getConstructor(PeassFolders.class, TestTransformer.class, EnvironmentVariables.class);
@@ -54,6 +54,19 @@ public class ExecutorCreator {
             | InvocationTargetException e) {
          throw new RuntimeException("Executor creation did not work, executor name: " + executorName, e);
       }
+   }
+
+   private static boolean isSubclass(final Class<?> executorClazz) {
+      boolean isSubclass = false;
+      Class<?> superclass = executorClazz.getSuperclass();
+      while (!superclass.equals(Object.class)) {
+         if (superclass.equals(TestExecutor.class)) {
+            isSubclass = true;
+            break;
+         }
+         superclass = superclass.getSuperclass();
+      }
+      return isSubclass;
    }
 
    private static TestExecutor createDefaultExecutor(final PeassFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
