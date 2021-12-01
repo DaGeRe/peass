@@ -14,6 +14,7 @@ import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.testtransformation.TestTransformer;
 
 public class TestExecutorCreatorSubclasses {
@@ -27,6 +28,18 @@ public class TestExecutorCreatorSubclasses {
       
       TestExecutor executor = ExecutorCreator.createExecutor(null, transformer, new EnvironmentVariables());
       Assert.assertNotNull(executor);
+   }
+   
+   @Test
+   public void testJUnitTestTransformer() {
+      TestTransformer transformer = Mockito.mock(JUnitTestTransformer.class);
+      MeasurementConfig value = new MeasurementConfig(2);
+      value.getExecutionConfig().setTestExecutor("de.dagere.peass.dependency.JUnitTestTransformerSubclass");
+      Mockito.when(transformer.getConfig()).thenReturn(value);
+      
+      TestExecutor executor = ExecutorCreator.createExecutor(null, transformer, new EnvironmentVariables());
+      Assert.assertNotNull(executor);
+      
    }
 }
 
@@ -63,6 +76,12 @@ class DirectSubclass extends TestExecutor{
    protected void clean(final File logFile) throws IOException, InterruptedException {
    }
    
+}
+
+class JUnitTestTransformerSubclass extends DirectSubclass{
+   public JUnitTestTransformerSubclass(final PeassFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
+      super(folders, testTransformer, env);
+   }
 }
 
 class IndirectSubclass extends DirectSubclass{

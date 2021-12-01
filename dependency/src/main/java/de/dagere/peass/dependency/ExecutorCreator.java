@@ -43,31 +43,20 @@ public class ExecutorCreator {
    private static TestExecutor createDefinedExecutor(final PeassFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env, final String executorName) {
       try {
          Class<?> executorClazz = Class.forName(executorName);
-         if (!isSubclass(executorClazz)) {
+         if (!ConstructorFinder.isSubclass(executorClazz, TestExecutor.class)) {
             throw new RuntimeException("Clazz " + executorName + " was given as executor, but no (direct) subclass of TestExecutor!");
          }
-         Constructor<?> constructor = executorClazz.getConstructor(PeassFolders.class, TestTransformer.class, EnvironmentVariables.class);
+         Constructor<?> constructor = ConstructorFinder.findConstructor(executorClazz);
+         // Since static type checking is impossible here, this might throw exceptions if no matching instances are given
          TestExecutor transformer = (TestExecutor) constructor.newInstance(folders, testTransformer, env);
          return transformer;
-
-      } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
+      } catch (ClassNotFoundException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException
             | InvocationTargetException e) {
          throw new RuntimeException("Executor creation did not work, executor name: " + executorName, e);
       }
    }
 
-   private static boolean isSubclass(final Class<?> executorClazz) {
-      boolean isSubclass = false;
-      Class<?> superclass = executorClazz.getSuperclass();
-      while (!superclass.equals(Object.class)) {
-         if (superclass.equals(TestExecutor.class)) {
-            isSubclass = true;
-            break;
-         }
-         superclass = superclass.getSuperclass();
-      }
-      return isSubclass;
-   }
+   
 
    private static TestExecutor createDefaultExecutor(final PeassFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
       final File pom = new File(folders.getProjectFolder(), "pom.xml");
