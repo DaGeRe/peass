@@ -16,15 +16,15 @@ import de.dagere.peass.execution.processutils.ProcessSuccessTester;
 import de.dagere.peass.folders.PeassFolders;
 
 public class MavenRunningTester {
-   
+
    private static final Logger LOG = LogManager.getLogger(MavenRunningTester.class);
-   
+
    private final PeassFolders folders;
    private final EnvironmentVariables env;
    private final MeasurementConfig measurementConfig;
    private final ProjectModules modules;
    private boolean buildfileExists;
-   
+
    public MavenRunningTester(final PeassFolders folders, final EnvironmentVariables env, final MeasurementConfig measurementConfig, final ProjectModules modules) {
       this.folders = folders;
       this.env = env;
@@ -33,23 +33,21 @@ public class MavenRunningTester {
    }
 
    public boolean isVersionRunning(final String version) {
-      File pomFile = new File(folders.getProjectFolder(), "pom.xml");
-      final File potentialPom = pomFile;
+      File potentialPom = new File(folders.getProjectFolder(), "pom.xml");
       final File testFolder = new File(folders.getProjectFolder(), "src/test");
       boolean isRunning = false;
-      buildfileExists = potentialPom.exists();
       if (potentialPom.exists()) {
          try {
             final boolean multimodule = MavenPomUtil.isMultiModuleProject(potentialPom);
             if (multimodule || testFolder.exists()) {
                new MavenUpdater(folders, modules, measurementConfig).updateJava();
                String goal = getGoal();
-               MavenPomUtil.cleanType(pomFile);
+               MavenPomUtil.cleanType(potentialPom);
                String[] basicParameters = new String[] { env.fetchMavenCall(),
                      "--batch-mode",
                      "clean", goal,
                      "-DskipTests",
-                     "-Dmaven.test.skip.exec"};
+                     "-Dmaven.test.skip.exec" };
                String[] withMavendefaults = CommandConcatenator.concatenateCommandArrays(basicParameters, CommandConcatenator.mavenCheckDeactivation);
                if (measurementConfig.getExecutionConfig().getPl() != null) {
                   String[] projectListArray = new String[] { "-pl", measurementConfig.getExecutionConfig().getPl(), "-am" };
@@ -78,9 +76,4 @@ public class MavenRunningTester {
       }
       return goal;
    }
-   
-   public boolean isBuildfileExists() {
-      return buildfileExists;
-   }
-   
 }

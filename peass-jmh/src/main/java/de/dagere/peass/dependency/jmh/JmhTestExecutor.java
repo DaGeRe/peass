@@ -146,12 +146,18 @@ public class JmhTestExecutor extends TestExecutor {
       basicParameters = CommandConcatenator.concatenateCommandArrays(new String[] { "java" }, splittedArgs);
       return basicParameters;
    }
+   
+   @Override
+   public boolean doesBuildfileExist() {
+      File pomFile = new File(folders.getProjectFolder(), "pom.xml");
+      boolean buildfileExists = pomFile.exists();
+      return buildfileExists;
+   }
 
    @Override
    public boolean isVersionRunning(final String version) {
       MavenRunningTester mavenRunningTester = new MavenRunningTester(folders, env, testTransformer.getConfig(), getModules());
       boolean isRunning = mavenRunningTester.isVersionRunning(version);
-      buildfileExists = mavenRunningTester.isBuildfileExists();
       return isRunning;
    }
 

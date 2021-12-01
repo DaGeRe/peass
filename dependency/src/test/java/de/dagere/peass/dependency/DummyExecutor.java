@@ -49,4 +49,9 @@ public class DummyExecutor extends TestExecutor{
       
    }
 
+   @Override
+   public boolean doesBuildfileExist() {
+      return true;
+   }
+
 }

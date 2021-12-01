@@ -40,7 +40,7 @@ public class FirstRunningVersionFinder {
       // The local test transformer enables testing whether a version runs without full configuration
       TestTransformer transformer = ExecutorCreator.createTestTransformer(folders, executionConfig, new KiekerConfig(false));
       while (!isVersionRunning && iterator.hasNextCommit()) {
-         if (ExecutorCreator.hasBuildfile(folders)) {
+         if (ExecutorCreator.hasBuildfile(folders, transformer)) {
             isVersionRunning = tryCommit(iterator, transformer);
          } else {
             nonRunning.addVersion(iterator.getTag(), "Buildfile does not exist.");

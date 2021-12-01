@@ -146,14 +146,19 @@ public class GradleTestExecutor extends KoPeMeExecutor {
          e.printStackTrace();
       }
    }
+   
+   @Override
+   public boolean doesBuildfileExist() {
+      final File wrapper = new File(folders.getProjectFolder(), "gradlew");
+      final File potentialBuildfile = new File(folders.getProjectFolder(), "build.gradle");
+      boolean buildfileExists = wrapper.exists() && potentialBuildfile.exists();
+      return buildfileExists;
+   }
 
    @Override
    public boolean isVersionRunning(final String version) {
-      final File wrapper = new File(folders.getProjectFolder(), "gradlew");
-      final File potentialBuildfile = new File(folders.getProjectFolder(), "build.gradle");
       boolean isRunning = false;
-      buildfileExists = wrapper.exists() && potentialBuildfile.exists();
-      if (buildfileExists) {
+      if (doesBuildfileExist()) {
          boolean isAndroid = false;
          for (final File module : getModules().getModules()) {
             final File buildfile = GradleParseHelper.findGradleFile(module);

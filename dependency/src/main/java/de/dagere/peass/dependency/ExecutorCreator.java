@@ -23,10 +23,9 @@ public class ExecutorCreator {
 
    private static final Logger LOG = LogManager.getLogger(ExecutorCreator.class);
 
-   public static boolean hasBuildfile(final PeassFolders folders) {
-      final File pom = new File(folders.getProjectFolder(), "pom.xml");
-      final File buildGradle = new File(folders.getProjectFolder(), "build.gradle");
-      return pom.exists() || buildGradle.exists();
+   public static boolean hasBuildfile(final PeassFolders folders, final TestTransformer testTransformer) {
+      TestExecutor dummyExecutor = createExecutor(folders, testTransformer, new EnvironmentVariables());
+      return dummyExecutor.doesBuildfileExist();
    }
 
    public static TestExecutor createExecutor(final PeassFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {

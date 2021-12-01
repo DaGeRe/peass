@@ -41,7 +41,6 @@ public abstract class TestExecutor {
    protected Set<String> includedMethodPattern;
    protected boolean isAndroid;
 
-   protected boolean buildfileExists = false;
    protected final EnvironmentVariables env;
 
    public TestExecutor(final PeassFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
@@ -113,13 +112,11 @@ public abstract class TestExecutor {
    }
 
    /**
-    * Tells whether currently checkout out version has a buildfile - is only set correctly after isVersionRunning has been called for current version.
+    * Tells whether currently checkout out version has a buildfile
     * 
     * @return
     */
-   public boolean doesBuildfileExist() {
-      return buildfileExists;
-   }
+   public abstract boolean doesBuildfileExist();
 
    public abstract boolean isVersionRunning(String version);
 

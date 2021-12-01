@@ -27,6 +27,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.execution.TestExecutor;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.Version;
@@ -408,5 +409,9 @@ public class DependencyReader {
 
    public void setCoverageInfo(final CoverageSelectionInfo coverageInfo) {
       coverageSelectionInfo.getVersions().putAll(coverageInfo.getVersions());
+   }
+   
+   public TestExecutor getExecutor() {
+      return dependencyManager.getExecutor();
    }
 }
