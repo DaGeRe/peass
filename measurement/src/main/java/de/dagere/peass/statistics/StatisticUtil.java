@@ -60,13 +60,13 @@ public class StatisticUtil {
    }
 
    public static Relation agnosticTTest(final double tValue, final long degreesOfFreedom, final double type1error, final double type2error) {
-      final double criticalValueEqual = getCriticalValueType1(type1error, degreesOfFreedom);
-      final double criticalValueUnequal = getCriticalValueType2(type2error, degreesOfFreedom);
+      final double criticalValueEqual = getCriticalValueEqual(type2error, degreesOfFreedom);
+      final double criticalValueUnequal = getCriticalValueUnequal(type1error, degreesOfFreedom);
 
-      LOG.trace("Allowed errors: {} {}", type1error, type2error);
-      LOG.trace("Critical values: {} {}", criticalValueUnequal, criticalValueEqual);
+      LOG.debug("Allowed errors: {} {}", type1error, type2error);
+      LOG.debug("Critical values: {} {}", criticalValueUnequal, criticalValueEqual);
 
-      LOG.trace("T: {}", tValue);
+      LOG.debug("T: {}", tValue);
 
       if (Math.abs(tValue) > criticalValueUnequal) {
          return Relation.UNEQUAL;
@@ -76,14 +76,25 @@ public class StatisticUtil {
          return Relation.UNKOWN;
       }
    }
+   
+   /**
+    * Gets the critical t value for regular t-test based on the type-1-error (=probability of false positive). 
+    * 
+    * @param type1error The probability that a false positive is reported 
+    * @param degreesOfFreedom The degrees of freedom
+    * @return The critical t value, if the calculated t value is above the critical t-tvalue, it is considered to be a significant performance change
+    */
+   public static double getCriticalValueTTest(final double type1error, final long degreesOfFreedom) {
+      return getCriticalValueUnequal(type1error, degreesOfFreedom);
+   }
 
-   public static double getCriticalValueType2(final double type2error, final long degreesOfFreedom) {
+   public static double getCriticalValueUnequal(final double type2error, final long degreesOfFreedom) {
       final TDistribution tDistribution = new TDistribution(null, degreesOfFreedom);
       final double criticalValueUnequal = Math.abs(tDistribution.inverseCumulativeProbability(1. - 0.5 * type2error));
       return criticalValueUnequal;
    }
 
-   public static double getCriticalValueType1(final double type1error, final long degreesOfFreedom) {
+   public static double getCriticalValueEqual(final double type1error, final long degreesOfFreedom) {
       final TDistribution tDistribution = new TDistribution(null, degreesOfFreedom);
       final double criticalValueEqual = Math.abs(tDistribution.inverseCumulativeProbability(0.5 * (1 + type1error)));
       return criticalValueEqual;

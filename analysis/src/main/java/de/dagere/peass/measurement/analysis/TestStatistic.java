@@ -60,7 +60,7 @@ public class TestStatistic {
 
       tValue = TestUtils.t(dataBefore, dataAfter);
       change = TestUtils.homoscedasticTTest(dataBefore, dataAfter, type1error);
-
+      
       // Achtung, dupliziert!
       diff = (int) (((statisticsPrevious.getMean() - statisticsCurrent.getMean()) * 10000) / statisticsPrevious.getMean());
       // double anovaDeviation = ANOVATestWrapper.getANOVADeviation(prevResults, currentResults);
