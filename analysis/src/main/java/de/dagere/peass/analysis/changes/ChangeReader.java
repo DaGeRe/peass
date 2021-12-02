@@ -256,7 +256,7 @@ public class ChangeReader {
       if (tests != null) {
          TestSet testsOfThisVersion = tests.get(versions[1]);
          for (TestCase test : testsOfThisVersion.getTests()) {
-            if ((test.getParams() == paramString && test.getParams() == null) || test.getParams().equals(paramString)) {
+            if (paramsEqual(paramString, test)) {
                if (test.getClazz().equals(testcase.getClazz()) && test.getMethod().equals(testcase.getMethod())) {
                   testcase = test;
                }
@@ -264,6 +264,14 @@ public class ChangeReader {
          }
       }
       return testcase;
+   }
+
+   private boolean paramsEqual(final String paramString, final TestCase test) {
+      boolean bothNull = test.getParams() == paramString && test.getParams() == null;
+      boolean stringEmptyAndParamsNull = "".equals(paramString) && test.getParams() == null;
+      return bothNull 
+            || stringEmptyAndParamsNull 
+            || test.getParams().equals(paramString); // last should only be evaluated if both are not null
    }
 
    private void writeRunCommands(final String[] versions, final DescribedChunk describedChunk, final TestCase testcase) {
