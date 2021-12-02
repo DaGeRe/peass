@@ -18,7 +18,7 @@ public class TestBenchmarkChangeDetection {
    public void testBenchmarkDetection() throws FileNotFoundException, IOException, XmlPullParserException {
       JmhTestTransformer jmhTransformer = new JmhTestTransformer(JmhTestConstants.BASIC_VERSION, TestBenchmarkDetection.JMH_CONFIG);
       
-      TestSet originalTests = new TestSet(new TestCase("de.dagere.peass.ExampleBenchmark", null, ""));
+      TestSet originalTests = new TestSet(new TestCase("de.dagere.peass.ExampleBenchmark", (String) null, ""));
       
       TestSet changedTests = jmhTransformer.buildTestMethodSet(originalTests, Arrays.asList(new File[] {JmhTestConstants.BASIC_VERSION}));
       Assert.assertEquals(changedTests.getTests().size(), 1);

@@ -9,8 +9,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.analysis.changes.ChangeReader;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.VersionSorter;
+import de.dagere.peass.utils.Constants;
 import de.dagere.peass.utils.RunCommandWriterRCA;
 import de.dagere.peass.utils.RunCommandWriterSlurmRCA;
 import picocli.CommandLine;
@@ -52,7 +55,7 @@ public class GetChanges implements Callable<Void> {
    @Override
    public Void call() throws Exception {
       VersionSorter.getVersionOrder(dependencyFile, executionFile);
-
+      
       if (!out.exists()) {
          out.mkdirs();
       }
@@ -64,6 +67,16 @@ public class GetChanges implements Callable<Void> {
       LOG.info("Errors: 1: {} 2: {}", type1error, type2error);
 
       final ChangeReader reader = createReader(statisticFolder);
+      
+      if (dependencyFile != null) {
+         Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+         reader.setTests(dependencies.toExecutionData().getVersions());
+         
+      }
+      if (executionFile != null) {
+         ExecutionData executions = Constants.OBJECTMAPPER.readValue(dependencyFile, ExecutionData.class);
+         reader.setTests(executions.getVersions());
+      }
 
       for (final File dataFile : data) {
          reader.readFile(dataFile);

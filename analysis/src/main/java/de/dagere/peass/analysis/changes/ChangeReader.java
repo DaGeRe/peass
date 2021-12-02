@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
@@ -21,6 +22,7 @@ import de.dagere.peass.confidence.KoPeMeDataHelper;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.ProjectStatistics;
 import de.dagere.peass.measurement.analysis.Relation;
@@ -58,6 +60,8 @@ public class ChangeReader {
    private final RunCommandWriterRCA runCommandWriter;
    private final RunCommandWriterSlurmRCA runCommandWriterSlurm;
 
+   private Map<String, TestSet> tests;
+
    public ChangeReader(final RepoFolders resultsFolder, final String projectName) throws FileNotFoundException {
       statisticsFolder = resultsFolder.getProjectStatisticsFolder(projectName);
       if (VersionComparator.getDependencies().getUrl() != null && !VersionComparator.getDependencies().getUrl().isEmpty()) {
@@ -70,12 +74,16 @@ public class ChangeReader {
          runCommandWriterSlurm = null;
       }
    }
-   
+
    public ChangeReader(final File statisticsFolder, final RunCommandWriterRCA runCommandWriter, final RunCommandWriterSlurmRCA runCommandWriterSlurm) throws FileNotFoundException {
       this.statisticsFolder = statisticsFolder;
       this.runCommandWriter = runCommandWriter;
       this.runCommandWriterSlurm = runCommandWriterSlurm;
-      
+
+   }
+
+   public void setTests(final Map<String, TestSet> tests) {
+      this.tests = tests;
    }
 
    public ChangeReader(final File statisticsFolder, final String projectName) throws FileNotFoundException {
@@ -208,7 +216,8 @@ public class ChangeReader {
       if (describedChunk.getDescPrevious().getN() > 1 && describedChunk.getDescCurrent().getN() > 1) {
          getIsChange(fileName, data, changeKnowledge, info, versions, describedChunk);
       } else {
-         LOG.error("Too few measurements: {} - {} measurements, {} - {} measurements ", versions[0], describedChunk.getDescPrevious().getN(), versions[1], describedChunk.getDescCurrent().getN());
+         LOG.error("Too few measurements: {} - {} measurements, {} - {} measurements ", versions[0], describedChunk.getDescPrevious().getN(), versions[1],
+               describedChunk.getDescCurrent().getN());
       }
    }
 
@@ -220,7 +229,8 @@ public class ChangeReader {
       // if (! (statistic.getTvalue() == Double.NaN)){
       CompareData cd = new CompareData(describedChunk.getPrevious(), describedChunk.getCurrent());
       final Relation confidenceResult = ConfidenceIntervalInterpretion.compare(cd);
-      final TestCase testcase = new TestCase(data.getTestcases(), ChangedEntity.paramsToString(describedChunk.getCurrent().get(0).getParams()));
+      final TestCase testcase = getTestcase(data, versions, describedChunk);
+
       final double diff = describedChunk.getDiff();
       final boolean isBigEnoughDiff = Math.abs(diff) > minChange;
       allData.addStatistic(versions[1], testcase, fileName, statistic,
@@ -239,6 +249,23 @@ public class ChangeReader {
       info.addMeasurement(versions[1], testcase, statistic);
    }
 
+   private TestCase getTestcase(final Kopemedata data, final String[] versions, final DescribedChunk describedChunk) {
+      TestCase testcase;
+      String paramString = ChangedEntity.paramsToString(describedChunk.getCurrent().get(0).getParams());
+      testcase = new TestCase(data.getTestcases(), paramString);
+      if (tests != null) {
+         TestSet testsOfThisVersion = tests.get(versions[1]);
+         for (TestCase test : testsOfThisVersion.getTests()) {
+            if ((test.getParams() == paramString && test.getParams() == null) || test.getParams().equals(paramString)) {
+               if (test.getClazz().equals(testcase.getClazz()) && test.getMethod().equals(testcase.getMethod())) {
+                  testcase = test;
+               }
+            }
+         }
+      }
+      return testcase;
+   }
+
    private void writeRunCommands(final String[] versions, final DescribedChunk describedChunk, final TestCase testcase) {
       if (runCommandWriter != null) {
          final Result exampleResult = describedChunk.getCurrent().get(0);
@@ -249,7 +276,7 @@ public class ChangeReader {
          final int versionIndex = VersionComparator.getVersionIndex(versions[1]);
          runCommandWriter.createSingleMethodCommand(versionIndex, versions[1], testcase.getExecutable(),
                (int) exampleResult.getWarmup(), iterations, repetitions, vms);
-         
+
          runCommandWriterSlurm.createSingleMethodCommand(versionIndex, versions[1], testcase.getExecutable(),
                iterations, repetitions, vms);
       }

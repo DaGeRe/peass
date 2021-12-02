@@ -24,6 +24,13 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    private final String method;
    private final String params;
 
+   public TestCase(final String module, final Testcases data, final String params) {
+      clazz = data.getClazz();
+      method = data.getTestcase().get(0).getName();
+      this.params = params;
+      this.module = module;
+   }
+   
    public TestCase(final Testcases data, final String params) {
       clazz = data.getClazz();
       method = data.getTestcase().get(0).getName();
