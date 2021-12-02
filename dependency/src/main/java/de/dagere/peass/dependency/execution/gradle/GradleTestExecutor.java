@@ -1,4 +1,4 @@
-package de.dagere.peass.dependency.execution;
+package de.dagere.peass.dependency.execution.gradle;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +11,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.execution.gradle.FindDependencyVisitor;
+import de.dagere.peass.dependency.execution.CommandConcatenator;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.execution.KoPeMeExecutor;
+import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.execution.processutils.ProcessSuccessTester;
 import de.dagere.peass.folders.PeassFolders;

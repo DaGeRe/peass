@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.dagere.peass.dependency.execution;
+package de.dagere.peass.dependency.execution.pom;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,8 +28,11 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.execution.pom.MavenPomUtil;
-import de.dagere.peass.dependency.execution.pom.SnapshotRemoveUtil;
+import de.dagere.peass.dependency.execution.ArgLineBuilder;
+import de.dagere.peass.dependency.execution.CommandConcatenator;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.dependency.execution.KoPeMeExecutor;
+import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.execution.maven.MavenCleaner;
 import de.dagere.peass.execution.maven.MavenRunningTester;
 import de.dagere.peass.execution.maven.MavenUpdater;

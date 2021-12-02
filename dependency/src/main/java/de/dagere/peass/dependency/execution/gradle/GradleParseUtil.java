@@ -1,4 +1,4 @@
-package de.dagere.peass.dependency.execution;
+package de.dagere.peass.dependency.execution.gradle;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -16,8 +16,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.dependency.execution.gradle.AndroidVersionUtil;
-import de.dagere.peass.dependency.execution.gradle.FindDependencyVisitor;
+import de.dagere.peass.dependency.execution.ProjectModules;
 
 public class GradleParseUtil {
 

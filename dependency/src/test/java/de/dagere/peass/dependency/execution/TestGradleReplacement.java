@@ -17,6 +17,8 @@ import org.mockito.Mockito;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.dependency.execution.gradle.GradleParseUtil;
+import de.dagere.peass.dependency.execution.gradle.GradleTestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 

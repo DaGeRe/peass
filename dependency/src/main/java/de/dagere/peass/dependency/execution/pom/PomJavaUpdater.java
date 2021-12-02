@@ -1,4 +1,4 @@
-package de.dagere.peass.dependency.execution;
+package de.dagere.peass.dependency.execution.pom;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,8 +14,6 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import de.dagere.peass.dependency.execution.pom.MavenPomUtil;
 
 public class PomJavaUpdater {
 
