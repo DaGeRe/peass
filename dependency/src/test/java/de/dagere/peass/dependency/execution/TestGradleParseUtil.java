@@ -18,8 +18,8 @@ import org.mockito.Mockito;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.execution.gradle.GradleParseUtil;
 import de.dagere.peass.dependency.execution.gradle.GradleTestExecutor;
+import de.dagere.peass.dependency.execution.gradle.SettingsFileParser;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
@@ -27,14 +27,14 @@ public class TestGradleParseUtil {
 
    @Test
    public void testModuleGetting() throws FileNotFoundException, IOException {
-      List<File> modules = GradleParseUtil.getModules(new File("src/test/resources/gradle-multimodule-example")).getModules();
+      List<File> modules = SettingsFileParser.getModules(new File("src/test/resources/gradle-multimodule-example")).getModules();
 
       MatcherAssert.assertThat(modules.size(), Matchers.is(3));
    }
 
    @Test
    public void testModuleGettingSpaces() throws FileNotFoundException, IOException {
-      List<File> modules = GradleParseUtil.getModules(new File("src/test/resources/gradle-multimodule-example-spaces")).getModules();
+      List<File> modules = SettingsFileParser.getModules(new File("src/test/resources/gradle-multimodule-example-spaces")).getModules();
 
       List<String> moduleNameList = modules.stream().map(file -> file.getName()).collect(Collectors.toList());
       MatcherAssert.assertThat(moduleNameList, IsIterableContaining.hasItem("gradle-multimodule-example-spaces"));

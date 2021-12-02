@@ -17,8 +17,8 @@ import org.mockito.Mockito;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.execution.gradle.GradleParseUtil;
 import de.dagere.peass.dependency.execution.gradle.GradleTestExecutor;
+import de.dagere.peass.dependency.execution.gradle.SettingsFileParser;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
@@ -33,7 +33,7 @@ public class TestGradleReplacement {
       
       File src = new File("src/test/resources/gradle-multimodule-example");
       FileUtils.copyDirectory(src, TestBuildGradle.CURRENT);
-      List<File> modules = GradleParseUtil.getModules(TestBuildGradle.CURRENT).getModules();
+      List<File> modules = SettingsFileParser.getModules(TestBuildGradle.CURRENT).getModules();
       for (File module : modules) {
          File alternativeGradle = new File(module, GradleParseHelper.ALTERNATIVE_NAME);
          try (BufferedWriter writer = new BufferedWriter(new FileWriter(alternativeGradle))) {
@@ -47,7 +47,7 @@ public class TestGradleReplacement {
    public void testReplacement() throws IOException, XmlPullParserException, InterruptedException {
       prepareBuildfiles(true);
       
-      List<File> modules = GradleParseUtil.getModules(TestBuildGradle.CURRENT).getModules();
+      List<File> modules = SettingsFileParser.getModules(TestBuildGradle.CURRENT).getModules();
       for (File module : modules) {
          final File gradleFile = GradleParseHelper.findGradleFile(module);
          String fileContent = FileUtils.readFileToString(gradleFile, StandardCharsets.UTF_8);
@@ -59,7 +59,7 @@ public class TestGradleReplacement {
    public void testNoReplacement() throws IOException, XmlPullParserException, InterruptedException {
       prepareBuildfiles(false);
       
-      List<File> modules = GradleParseUtil.getModules(TestBuildGradle.CURRENT).getModules();
+      List<File> modules = SettingsFileParser.getModules(TestBuildGradle.CURRENT).getModules();
       for (File module : modules) {
          final File gradleFile = GradleParseHelper.findGradleFile(module);
          String fileContent = FileUtils.readFileToString(gradleFile, StandardCharsets.UTF_8);

@@ -1,0 +1,8 @@
+rootProject.name = 'demo-multimodule'
+
+include 'base'
+include 'using'
+
+rootProject.children.each { subproject ->
+    subproject.projectDir = file("my-"+subproject.name+"-module")
+}

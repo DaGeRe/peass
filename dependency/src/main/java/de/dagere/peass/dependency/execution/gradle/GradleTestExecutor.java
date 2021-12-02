@@ -200,7 +200,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
 
    @Override
    public ProjectModules getModules() {
-      return GradleParseUtil.getModules(folders.getProjectFolder());
+      return SettingsFileParser.getModules(folders.getProjectFolder());
    }
 
    @Override

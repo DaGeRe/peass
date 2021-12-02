@@ -1,22 +1,17 @@
 package de.dagere.peass.dependency.execution.gradle;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import de.dagere.peass.dependency.execution.ProjectModules;
 
 public class GradleParseUtil {
 
@@ -93,40 +88,6 @@ public class GradleParseUtil {
             visitor.getLines().set(lineIndex, "buildToolsVersion " + runningVersion);
          } else {
             visitor.setHasVersion(false);
-         }
-      }
-   }
-
-   public static ProjectModules getModules(final File projectFolder) {
-      final File settingsFile = new File(projectFolder, "settings.gradle");
-      final List<File> modules = new LinkedList<>();
-      if (settingsFile.exists()) {
-         try (BufferedReader reader = new BufferedReader(new FileReader(settingsFile))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-               parseModuleLine(projectFolder, modules, line);
-            }
-         } catch (IOException e) {
-            throw new RuntimeException(e);
-         }
-      } else {
-         LOG.debug("settings-file {} not found", settingsFile);
-      }
-      modules.add(projectFolder);
-      return new ProjectModules(modules);
-   }
-
-   private static void parseModuleLine(final File projectFolder, final List<File> modules, final String line) {
-      final String[] splitted = line.replaceAll("[ ,]+", " ").split(" ");
-      if (splitted[0].equals("include")) {
-         for (int candidateIndex = 1; candidateIndex < splitted.length; candidateIndex++) {
-            final String candidate = splitted[candidateIndex].substring(1, splitted[candidateIndex].length() - 1);
-            final File module = new File(projectFolder, candidate.replace(':', File.separatorChar));
-            if (module.exists()) {
-               modules.add(module);
-            } else {
-               LOG.error(line + " not found! Was looking in " + module.getAbsolutePath());
-            }
          }
       }
    }
