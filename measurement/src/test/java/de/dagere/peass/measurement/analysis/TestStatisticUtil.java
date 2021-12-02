@@ -5,7 +5,6 @@ import org.apache.commons.math3.stat.inference.TestUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.dagere.peass.measurement.analysis.Relation;
 import de.dagere.peass.statistics.StatisticUtil;
 
 public class TestStatisticUtil {
@@ -60,27 +59,16 @@ public class TestStatisticUtil {
       final DescriptiveStatistics statistics4 = new DescriptiveStatistics(vals4);
 
       Assert.assertEquals(Relation.UNKOWN, StatisticUtil.agnosticTTest(statistics1, statistics2, 0.05, 0.05));
-      Assert.assertEquals(Relation.UNEQUAL, StatisticUtil.agnosticTTest(statistics1, statistics2, 0.05, 0.25));
+      // Increased type-1-error should lead to unequal measurement (even if they are considered unequal with lower type-1-error)
+      // -> increasing the type-1-error leads to a false positive (since type-1-error-rate is false-positive rate)
+      Assert.assertEquals(Relation.UNEQUAL, StatisticUtil.agnosticTTest(statistics1, statistics2, 0.25, 0.05));
+      
+      
       Assert.assertEquals(Relation.UNEQUAL, StatisticUtil.agnosticTTest(statistics1, statistics3, 0.05, 0.05));
-      Assert.assertEquals(Relation.EQUAL, StatisticUtil.agnosticTTest(statistics1, statistics4, 0.40, 0.05));
+      
+      // High type-2-error should lead to equal measurement (false negative)
+      Assert.assertEquals(Relation.EQUAL, StatisticUtil.agnosticTTest(statistics1, statistics4, 0.05, 0.40));
       Assert.assertEquals(Relation.EQUAL, StatisticUtil.agnosticTTest(statistics1, statistics1, 0.05, 0.05));
-
-      // System.out.println(StatisticUtil.agnosticTTest(statistics1, statistics2, 0.05, 0.05));
-      // System.out.println(StatisticUtil.agnosticTTest(statistics1, statistics2, 0.05, 0.25));
-      // System.out.println(StatisticUtil.agnosticTTest(statistics1, statistics3, 0.05, 0.05));
-      // System.out.println(StatisticUtil.agnosticTTest(statistics1, statistics2, 0.45, 0.05));
-
-      // Assert.assertTrue(StatisticUtil.rejectAreDifferent(statistics1, statistics2, 0.01, 0.1));
-      // Assert.assertTrue(StatisticUtil.rejectAreDifferent(statistics1, statistics2, 0.001, 0.1));
-      // Assert.assertTrue(StatisticUtil.rejectAreDifferent(statistics1, statistics2, 0.001, 0.01));
-      // Only extreme values (extrem low significance, extrem low max_delta) let util reject hypothesis that neraly same values are equal
-      // Assert.assertFalse(StatisticUtil.areEqual(statistics1, statistics2, 0.15, 0.0001));
-
-      // Assert.assertFalse(StatisticUtil.areEqual(statistics1, statistics3, 0.01, 0.01));
-      // // Only extreme high max_delta (-> do not careareEqual about high difference) let util assume unequal values are equal
-      // Assert.assertTrue(StatisticUtil.areEqual(statistics1, statistics3, 0.01, 0.5));
-      // // .. or extreme expected significance
-      // Assert.assertTrue(StatisticUtil.areEqual(statistics1, statistics3, 0.001, 0.01));
    }
 
 }
