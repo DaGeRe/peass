@@ -11,11 +11,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
@@ -35,12 +38,10 @@ import de.dagere.peass.vcs.VersionIterator;
 
 public class TestVersionSplitting {
 
-   /**
-    * The testFolder is required to be inside of Peass, so a .git folder can be found; therefore, it is created here
-    */
-   public File testFolder = new File("target/current");
-   {
-      testFolder.mkdirs();
+   @BeforeEach
+   public void before() throws IOException {
+      FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
+      FileUtils.deleteDirectory(TestConstants.CURRENT_PEASS);
    }
    
 
@@ -145,7 +146,7 @@ public class TestVersionSplitting {
    private void readDummyDependencies(final List<Dependencies> dependencies, final int i, final List<GitCommit> currentCommits, final List<GitCommit> reserveCommits,
          final GitCommit minimumCommit)
          throws IOException {
-      File dummyFolder = new File(testFolder, "part_" + i);
+      File dummyFolder = new File(TestConstants.CURRENT_FOLDER, "part_" + i);
       dummyFolder.mkdir();
       File pom = new File(dummyFolder, "pom.xml");
       try (BufferedWriter newBufferedWriter = Files.newBufferedWriter(pom.toPath())) {

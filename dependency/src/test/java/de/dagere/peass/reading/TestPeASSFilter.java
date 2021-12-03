@@ -14,6 +14,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.KiekerResultManager;
@@ -42,8 +43,8 @@ public class TestPeASSFilter {
    }
 
    private void cleanup() throws IOException {
-      FileUtils.deleteDirectory(CURRENT);
-      FileUtils.deleteDirectory(new File(CURRENT.getParentFile(), CURRENT.getName() + "_peass"));
+      FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
+      FileUtils.deleteDirectory(TestConstants.CURRENT_PEASS);
       FileUtils.copyDirectory(BASIC_STATE, CURRENT);
       LOG.info("Created test folder {} Exists: {}", CURRENT.getAbsolutePath(), CURRENT.exists());
    }
