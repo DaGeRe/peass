@@ -1,9 +1,6 @@
 package de.dagere.peass.measurement.rca.helper;
 
 import java.io.File;
-import java.io.IOException;
-
-import org.apache.commons.io.FileUtils;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -29,15 +26,5 @@ public class TestConstants {
    }
    
    public static final File CURRENT_FOLDER = new File(new File("target"), "current");
-   
-   public static File getCurrentFolder() {
-      final File current = CURRENT_FOLDER;
-      try {
-         FileUtils.deleteDirectory(current);
-         FileUtils.deleteDirectory(new File(new File("target"), "current_peass"));
-      } catch (final IOException e) {
-         e.printStackTrace();
-      }
-      return current;
-   }
+   public static final File CURRENT_PEASS = new File("target/current_peass/");
 }

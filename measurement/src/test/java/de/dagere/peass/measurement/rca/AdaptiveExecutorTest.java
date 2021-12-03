@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
+import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
@@ -38,7 +39,7 @@ public class AdaptiveExecutorTest {
    private static final File SOURCE_DIR = new File("src/test/resources/rootCauseIT/basic_state/");
    private final TestCase TEST = new TestCase("defaultpackage.TestMe", "testMe");
 
-   private File projectFolder;
+   private File projectFolder = TestConstants.CURRENT_FOLDER;
    private CauseTester executor;
 
    @Rule
@@ -48,7 +49,8 @@ public class AdaptiveExecutorTest {
    @Before
    public void setUp() {
       try {
-         projectFolder = TestConstants.getCurrentFolder();
+         TestUtil.deleteContents(TestConstants.CURRENT_FOLDER);
+         TestUtil.deleteContents(TestConstants.CURRENT_PEASS);
 
          FileUtil.copyDir(SOURCE_DIR, projectFolder);
 

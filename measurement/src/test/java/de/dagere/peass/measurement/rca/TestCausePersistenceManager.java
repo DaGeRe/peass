@@ -4,28 +4,35 @@ import java.io.File;
 import java.io.IOException;
 
 import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.folders.CauseSearchFolders;
-import de.dagere.peass.measurement.rca.CausePersistenceManager;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.helper.TestConstants;
 import de.dagere.peass.measurement.rca.helper.TreeBuilder;
 import de.dagere.peass.utils.Constants;
 
 public class TestCausePersistenceManager {
+   
+   @BeforeEach
+   public void setUp() {
+      TestUtil.deleteContents(TestConstants.CURRENT_FOLDER);
+      TestUtil.deleteContents(TestConstants.CURRENT_PEASS);
+   }
+   
    @Test
    public void testCallTreeToMeasuredNode() throws Exception {
-      final CauseSearchFolders folders = new CauseSearchFolders(TestConstants.getCurrentFolder());
+      final CauseSearchFolders folders = new CauseSearchFolders(TestConstants.CURRENT_FOLDER);
 
       testConfig(folders, TestConstants.SIMPLE_MEASUREMENT_CONFIG);
 
-      TestConstants.getCurrentFolder();
       final MeasurementConfig config = new MeasurementConfig(3, "000001", "000001~1");
       config.setIterations(5);
       testConfig(folders, config);
@@ -34,7 +41,7 @@ public class TestCausePersistenceManager {
    @Test
    public void testDetailWriting() throws JsonGenerationException, JsonMappingException, JsonParseException, IOException {
       final MeasurementConfig config = new MeasurementConfig(3, "000001", "000001~1");
-      final CauseSearchFolders folders = new CauseSearchFolders(TestConstants.getCurrentFolder());
+      final CauseSearchFolders folders = new CauseSearchFolders(TestConstants.CURRENT_FOLDER);
       
       writeData(folders, config, false);
       final File expectedResultFile = new File(folders.getRcaTreeFolder(), "000001" + File.separator + 

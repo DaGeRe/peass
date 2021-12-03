@@ -6,12 +6,6 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 
 public class TestUtil {
-
-   public static final File CURRENT_PEASS = new File("target/current_peass/");
-
-   public static void deleteOldFolders() {
-      deleteContents(CURRENT_PEASS);
-   }
    
    public static void deleteContents(final File folder) {
       if (folder.exists()) {

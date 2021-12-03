@@ -17,6 +17,7 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
+import de.dagere.peass.measurement.rca.helper.TestConstants;
 
 public class TestResultOrganizerParallel {
 
@@ -28,7 +29,8 @@ public class TestResultOrganizerParallel {
 
    @BeforeEach
    public void setUp() {
-      TestUtil.deleteOldFolders();
+      TestUtil.deleteContents(TestConstants.CURRENT_FOLDER);
+      TestUtil.deleteContents(TestConstants.CURRENT_PEASS);
 
       folders = new PeassFolders(new File("target/current"));
 
