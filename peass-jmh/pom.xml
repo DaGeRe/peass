@@ -108,6 +108,13 @@
 			<email>kopeme@dagere.de</email>
 		</developer>
 	</developers>
+	
+	<scm>
+		<connection>scm:git:ssh://github.com:DaGeRe/peass.git</connection>
+		<developerConnection>scm:git:git@github.com:DaGeRe/peass.git</developerConnection>
+		<url>https://git@github.com:DaGeRe/peass.git</url>
+		<tag>HEAD</tag>
+	</scm>
 
 	<licenses>
 		<license>
