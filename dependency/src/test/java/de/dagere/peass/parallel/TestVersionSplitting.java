@@ -42,6 +42,7 @@ public class TestVersionSplitting {
    public void before() throws IOException {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
       FileUtils.deleteDirectory(TestConstants.CURRENT_PEASS);
+      TestConstants.CURRENT_FOLDER.mkdir();
    }
    
 
