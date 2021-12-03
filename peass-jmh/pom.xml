@@ -12,6 +12,7 @@
 	<version>0.1.0-SNAPSHOT</version>
 	<inceptionYear>2021</inceptionYear>
 	<url>https://github.com/DaGeRe/peass/</url>
+	<description>Enables the execution of JMH benchmarks with Peass regression test selection and root cause analysis</description>
 
 	<build>
 		<plugins>
