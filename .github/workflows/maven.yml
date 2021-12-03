@@ -9,7 +9,7 @@ jobs:
   build:
     strategy: 
         matrix:
-          os: [ubuntu-latest, macos-latest] # no windows since kieker currently does not support windows execution
+          os: [ubuntu-latest, macos-latest, windows] # no windows since kieker currently does not support windows execution
           java: [ 1.8, 11, 16 ]
         fail-fast: false
     runs-on: ${{ matrix.os }}

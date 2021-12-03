@@ -30,9 +30,12 @@ public class TestCausePersistenceManager {
    @Test
    public void testCallTreeToMeasuredNode() throws Exception {
       final CauseSearchFolders folders = new CauseSearchFolders(TestConstants.CURRENT_FOLDER);
-
       testConfig(folders, TestConstants.SIMPLE_MEASUREMENT_CONFIG);
+   }
 
+   @Test
+   public void testMoreVMConfig() throws Exception {
+      final CauseSearchFolders folders = new CauseSearchFolders(TestConstants.CURRENT_FOLDER);
       final MeasurementConfig config = new MeasurementConfig(3, "000001", "000001~1");
       config.setIterations(5);
       testConfig(folders, config);
