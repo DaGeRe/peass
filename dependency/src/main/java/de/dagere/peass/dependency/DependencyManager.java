@@ -195,21 +195,12 @@ public class DependencyManager extends KiekerResultManager {
             e.printStackTrace();
          }
       }
-      final boolean renameSuccess = folders.getTempMeasurementFolder().renameTo(movedInitialResults);
-      if (!renameSuccess) {
-         LOG.error("Could not move results");
-         LOG.error("Original file existing: {}", folders.getTempMeasurementFolder());
-         LOG.error("Original file existing: {}", folders.getTempMeasurementFolder().exists());
-         LOG.info("Parent folder existing: {}", movedInitialResults.getParentFile().exists());
-         try {
-            FileUtils.deleteDirectory(folders.getTempMeasurementFolder());
-            LOG.info("Full deletion succeeded");
-         } catch (IOException e) {
-            LOG.info("Full deletion did not succeed");
-            LOG.info("Error: " + e.getLocalizedMessage());
-            e.printStackTrace();
-         }
-         LOG.info("After try");
+      try {
+         FileUtils.moveDirectory(folders.getTempMeasurementFolder(), movedInitialResults);
+      } catch (IOException e) {
+         LOG.info("Moving did not succeed");
+         LOG.info("Error: " + e.getLocalizedMessage());
+         e.printStackTrace();
       }
       if (movedInitialResults.exists()) {
          for (File classFolder : movedInitialResults.listFiles()) {

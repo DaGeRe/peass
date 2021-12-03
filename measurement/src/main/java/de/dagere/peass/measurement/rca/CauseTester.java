@@ -9,6 +9,7 @@ import java.util.Set;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -178,21 +179,19 @@ public class CauseTester extends AdaptiveTester {
       getDurationsVersion(configuration.getExecutionConfig().getVersionOld());
    }
 
-   public void cleanup(final int levelId) {
+   public void cleanup(final int levelId) throws IOException {
       organizeMeasurements(levelId, configuration.getExecutionConfig().getVersion(), configuration.getExecutionConfig().getVersion());
       organizeMeasurements(levelId, configuration.getExecutionConfig().getVersion(), configuration.getExecutionConfig().getVersionOld());
    }
 
-   private void organizeMeasurements(final int levelId, final String mainVersion, final String version) {
+   private void organizeMeasurements(final int levelId, final String mainVersion, final String version) throws IOException {
       final File testcaseFolder = folders.getFullResultFolder(testcase, mainVersion, version);
       final File versionFolder = new File(folders.getArchiveResultFolder(mainVersion, testcase), version);
       if (!versionFolder.exists()) {
          versionFolder.mkdir();
       }
       final File adaptiveRunFolder = new File(versionFolder, "" + levelId);
-      if (!testcaseFolder.renameTo(adaptiveRunFolder)) {
-         LOG.error("Could not rename {}", testcaseFolder);
-      }
+      FileUtils.moveDirectory(testcaseFolder, adaptiveRunFolder);
    }
 
    private void getDurationsVersion(final String version) throws ViewNotFoundException, AnalysisConfigurationException {

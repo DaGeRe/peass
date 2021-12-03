@@ -26,6 +26,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.dependency.execution.RequiredDependency;
 import de.dagere.peass.dependency.execution.gradle.SettingsFileParser;
@@ -168,7 +169,9 @@ public class MavenPomUtil {
 
    private static List<String> getIncludedModuleNames(final File pom, final ExecutionConfig config) throws IOException {
       List<String> includedModuleNames = new LinkedList<>();
-      ProcessBuilder builder = new ProcessBuilder("mvn", "--batch-mode", "pre-clean", "-pl", config.getPl(), "-am");
+      ProcessBuilder builder = new ProcessBuilder(EnvironmentVariables.fetchMavenCallGeneric() , 
+            "--batch-mode", "pre-clean", 
+            "-pl", config.getPl(), "-am");
       builder.directory(pom.getParentFile());
       Process process = builder.start();
       String output = StreamGobbler.getFullProcess(process, false);

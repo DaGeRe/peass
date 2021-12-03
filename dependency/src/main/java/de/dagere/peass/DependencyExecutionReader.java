@@ -7,6 +7,7 @@ import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -91,7 +92,7 @@ public class DependencyExecutionReader implements Callable<Void>{
 
       final PeassFolders folders = new PeassFolders(config.getProjectFolder());
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");
-      folders.getTempProjectFolder().renameTo(dependencyTempFiles);
+      FileUtils.moveDirectory(folders.getTempProjectFolder(), dependencyTempFiles);
 
       ExecutionData executionData = PartialDependenciesMerger.mergeExecutions(mergedFolders, outFiles);
       
@@ -104,12 +105,12 @@ public class DependencyExecutionReader implements Callable<Void>{
       }
    }
 
-   private void mergeViews(final ResultsFolders[] outFiles, final ResultsFolders mergedFolders) {
+   private void mergeViews(final ResultsFolders[] outFiles, final ResultsFolders mergedFolders) throws IOException {
       for (ResultsFolders resultsFolders : outFiles) {
          for (File viewFolder : resultsFolders.getViewFolder().listFiles()) {
             File dest = new File(mergedFolders.getViewFolder(), viewFolder.getName());
             if (!dest.exists()) {
-               viewFolder.renameTo(dest);
+               FileUtils.moveDirectory(viewFolder, dest);
             }
          }
       }

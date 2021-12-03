@@ -39,4 +39,14 @@ public class EnvironmentVariables implements Serializable {
       }
       return mvnCall;
    }
+   
+   public static String fetchMavenCallGeneric() {
+      String mvnCall;
+      if (!System.getProperty("os.name").startsWith("Windows")) {
+         mvnCall = "mvn";
+      } else {
+         mvnCall = "mvn.cmd";
+      }
+      return mvnCall;
+   }
 }

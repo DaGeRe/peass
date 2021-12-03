@@ -26,11 +26,7 @@ public class KiekerFileCompressor {
          FileUtils.deleteDirectory(kiekerFolder);
       } else {
          final File dest = new File(destFolder, kiekerFolder.getName());
-         if (!kiekerFolder.renameTo(dest)) {
-            LOG.error("Renaming {} to {} failed",
-                  kiekerFolder.getAbsolutePath(),
-                  dest.getAbsolutePath());
-         }
+         FileUtils.moveDirectory(kiekerFolder, dest);
       }
    }
 
