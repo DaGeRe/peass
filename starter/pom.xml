@@ -111,7 +111,7 @@
 		<dependency>
 			<groupId>de.dagere.peass</groupId>
 			<artifactId>analysis</artifactId>
-			<version>0.1.1</version>
+			<version>0.1.2-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
