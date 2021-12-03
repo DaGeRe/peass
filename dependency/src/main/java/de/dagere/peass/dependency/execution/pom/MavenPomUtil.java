@@ -127,7 +127,8 @@ public class MavenPomUtil {
     * @throws IOException
     */
    public static List<String> getDependentModules(final File projectFolder, final String pl) throws IOException {
-      ProcessBuilder pb = new ProcessBuilder("mvn", "-B", "pre-clean", "-pl", pl, "-am");
+      ProcessBuilder pb = new ProcessBuilder(EnvironmentVariables.fetchMavenCallGeneric(), 
+            "-B", "pre-clean", "-pl", pl, "-am");
       pb.directory(projectFolder);
       String output = StreamGobbler.getFullProcess(pb.start(), false);
       List<String> modules = new LinkedList<>();
@@ -169,8 +170,8 @@ public class MavenPomUtil {
 
    private static List<String> getIncludedModuleNames(final File pom, final ExecutionConfig config) throws IOException {
       List<String> includedModuleNames = new LinkedList<>();
-      ProcessBuilder builder = new ProcessBuilder(EnvironmentVariables.fetchMavenCallGeneric() , 
-            "--batch-mode", "pre-clean", 
+      ProcessBuilder builder = new ProcessBuilder(EnvironmentVariables.fetchMavenCallGeneric(),
+            "--batch-mode", "pre-clean",
             "-pl", config.getPl(), "-am");
       builder.directory(pom.getParentFile());
       Process process = builder.start();
