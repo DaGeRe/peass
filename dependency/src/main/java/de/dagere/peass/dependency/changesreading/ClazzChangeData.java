@@ -122,14 +122,14 @@ public class ClazzChangeData {
    public Set<ChangedEntity> getUniqueChanges() {
       Set<ChangedEntity> entities = new HashSet<>();
       for (Map.Entry<String, Set<String>> change : changedMethods.entrySet()) {
-         String fullClassName = containingFile.getPackage() + "." + change.getKey();
+         String fullQualifiedClassname = getFQN(change.getKey());
          if (isOnlyMethodChange) {
             for (String method : change.getValue()) {
-               ChangedEntity entitity = new ChangedEntity(fullClassName, containingFile.getModule(), method);
+               ChangedEntity entitity = new ChangedEntity(fullQualifiedClassname, containingFile.getModule(), method);
                entities.add(entitity);
             }
          } else {
-            ChangedEntity entitity = new ChangedEntity(fullClassName, containingFile.getModule());
+            ChangedEntity entitity = new ChangedEntity(fullQualifiedClassname, containingFile.getModule());
             entities.add(entitity);
          }
       }
@@ -140,13 +140,7 @@ public class ClazzChangeData {
    public Set<ChangedEntity> getChanges() {
       Set<ChangedEntity> entities = new HashSet<>();
       for (Map.Entry<String, Set<String>> change : changedMethods.entrySet()) {
-         String fullQualifiedClassname;
-         System.out.println("Containing file: " + containingFile + " " + change.getKey());
-         if (!"".equals(containingFile.getPackage())) {
-            fullQualifiedClassname = containingFile.getPackage() + "." + change.getKey();
-         } else {
-            fullQualifiedClassname = change.getKey();
-         }
+         String fullQualifiedClassname = getFQN(change.getKey());
          if (change.getValue() != null) {
             for (String method : change.getValue()) {
                if (method.contains("(")) {
@@ -166,6 +160,17 @@ public class ClazzChangeData {
          }
       }
       return entities;
+   }
+
+   private String getFQN(final String className) {
+      String fullQualifiedClassname;
+      System.out.println("Containing file: " + containingFile + " " + className + " Package: " + containingFile.getPackage());
+      if (!"".equals(containingFile.getPackage())) {
+         fullQualifiedClassname = containingFile.getPackage() + "." + className;
+      } else {
+         fullQualifiedClassname = className;
+      }
+      return fullQualifiedClassname;
    }
 
    public Set<ChangedEntity> getImportChanges() {

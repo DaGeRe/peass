@@ -32,7 +32,11 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          for (final String clazzFolder : ClassFolderUtil.getPathes()) {
             tempClazzName = tempClazzName.replaceAll(clazzFolder, "");
          }
-         return tempClazzName.replace(File.separatorChar, '.');
+         String replaced = tempClazzName.replace(File.separatorChar, '.');
+         if (replaced.contains("/")) {
+            replaced = replaced.replace('/', '.'); // In case windows accidently used / as separator
+         }
+         return replaced;
       } else {
          return null;
       }
