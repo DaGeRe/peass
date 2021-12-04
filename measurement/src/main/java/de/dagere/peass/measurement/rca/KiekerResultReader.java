@@ -63,6 +63,7 @@ public class KiekerResultReader {
          final File[] kiekerResultFiles = versionResultFolder.listFiles(filter);
          for (final File kiekerResultFolder : kiekerResultFiles) {
             final File kiekerTraceFile = KiekerFolderUtil.getKiekerTraceFolder(kiekerResultFolder, testcase);
+            LOG.debug("Reading file: {}", kiekerTraceFile.getAbsolutePath());
             if (useAggregation) {
                readAggregatedData(kiekerTraceFile);
             } else {
