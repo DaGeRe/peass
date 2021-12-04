@@ -32,7 +32,7 @@ public class EnvironmentVariables implements Serializable {
       String mvnCall;
       if (environmentVariables.containsKey("MVN_CMD")) {
          mvnCall = environmentVariables.get("MVN_CMD");
-      } else if (!System.getProperty("os.name").startsWith("Windows")) {
+      } else if (!isWindows()) {
          mvnCall = "mvn";
       } else {
          mvnCall = "mvn.cmd";
@@ -42,11 +42,19 @@ public class EnvironmentVariables implements Serializable {
    
    public static String fetchMavenCallGeneric() {
       String mvnCall;
-      if (!System.getProperty("os.name").startsWith("Windows")) {
+      if (!isWindows()) {
          mvnCall = "mvn";
       } else {
          mvnCall = "mvn.cmd";
       }
       return mvnCall;
+   }
+
+   public static boolean isWindows() {
+      return System.getProperty("os.name").startsWith("Windows");
+   }
+   
+   public static boolean isLinux() {
+      return !System.getProperty("os.name").startsWith("Windows") && !System.getProperty("os.name").startsWith("Mac");
    }
 }
