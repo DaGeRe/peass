@@ -56,41 +56,41 @@ public class TestPeASSFilter {
       final TestSet testset = new TestSet();
       final TestCase testcase = new TestCase("defaultpackage.TestMe", "testMe", "");
       testset.addTest(testcase);
-      manager.getExecutor().loadClasses();
-      manager.executeKoPeMeKiekerRun(testset, "0", folders.getDependencyLogFolder());
       
-      final File kiekerFolder = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT))[0];
-      LOG.debug("Searching: " + kiekerFolder);
       final ModuleClassMapping mapping = new ModuleClassMapping(manager.getExecutor());
-      final List<TraceElement> referenceTrace = new CalledMethodLoader(kiekerFolder, mapping).getShortTrace("");
+      final List<TraceElement> referenceTrace = regenerateTrace(manager, testset, testcase, mapping, 0);
 
       for (int i = 1; i <= 3; i++) {
          final List<TraceElement> compareTrace = regenerateTrace(manager, testset, testcase, mapping, i);
          
-         LOG.debug("Old");
-         for (final TraceElement reference : referenceTrace){
-            LOG.debug(reference.getClazz() + " " + reference.getMethod());
-         }
-         
-         LOG.debug("New");
-         
-         for (final TraceElement reference : compareTrace){
-            LOG.debug(reference.getClazz() + " " + reference.getMethod());
-         }
-         
-         Assert.assertEquals(referenceTrace.size(), compareTrace.size());
-         System.out.println(compareTrace.get(3).toString());
-         Assert.assertEquals("defaultpackage.NormalDependency#innerMethod(java.lang.Integer)", compareTrace.get(3).toString());
+         checkRegeneratedTrace(referenceTrace, compareTrace);
       }
 
    }
 
-   private List<TraceElement> regenerateTrace(final KiekerResultManager manager, final TestSet ts, final TestCase testcase, final ModuleClassMapping mapping, final int i)
+   private void checkRegeneratedTrace(final List<TraceElement> referenceTrace, final List<TraceElement> compareTrace) {
+      LOG.debug("Old");
+      for (final TraceElement reference : referenceTrace){
+         LOG.debug(reference.getClazz() + " " + reference.getMethod());
+      }
+      
+      LOG.debug("New");
+      
+      for (final TraceElement reference : compareTrace){
+         LOG.debug(reference.getClazz() + " " + reference.getMethod());
+      }
+      
+      Assert.assertEquals(referenceTrace.size(), compareTrace.size());
+      System.out.println(compareTrace.get(3).toString());
+      Assert.assertEquals("defaultpackage.NormalDependency#innerMethod(java.lang.Integer)", compareTrace.get(3).toString());
+   }
+
+   private List<TraceElement> regenerateTrace(final KiekerResultManager manager, final TestSet testset, final TestCase testcase, final ModuleClassMapping mapping, final int i)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, FileNotFoundException {
       cleanup();
       PeassFolders peassFolders = new PeassFolders(CURRENT);
       manager.getExecutor().loadClasses();
-      manager.executeKoPeMeKiekerRun(ts, ""+i, peassFolders.getDependencyLogFolder());
+      manager.executeKoPeMeKiekerRun(testset, ""+i, peassFolders.getDependencyLogFolder());
       final File kiekerFolderComparison = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT))[0];
       LOG.debug("Searching: " + kiekerFolderComparison);
       final List<TraceElement> compareTrace = new CalledMethodLoader(kiekerFolderComparison, mapping).getShortTrace("");
