@@ -226,11 +226,11 @@ public class TestClassComparison {
       final File file1 = new File(FOLDER, "TestImport_New.java");
       final File file2 = new File(FOLDER, "TestImport_Old.java");
 
-      final ClazzChangeData changedMethods = new ClazzChangeData(new ChangedEntity("TestImport_new", ""));
+      final ClazzChangeData changedMethods = new ClazzChangeData(new ChangedEntity("de.TestImport_new", ""));
       FileComparisonUtil.getChangedMethods(file1, file2, changedMethods);
 
       Assert.assertTrue(changedMethods.isChange());
-      MatcherAssert.assertThat(changedMethods.getChanges(), Matchers.hasItem(new ChangedEntity(".Test", "")));
-      MatcherAssert.assertThat(changedMethods.getChanges(), Matchers.hasItem(new ChangedEntity(".Test$InnerTest", "")));
+      MatcherAssert.assertThat(changedMethods.getChanges(), Matchers.hasItem(new ChangedEntity("de.Test", "")));
+      MatcherAssert.assertThat(changedMethods.getChanges(), Matchers.hasItem(new ChangedEntity("de.Test$InnerTest", "")));
    }
 }

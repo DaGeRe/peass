@@ -30,7 +30,7 @@ public class TestShortening {
    
    @BeforeEach
    public void initFile() throws IOException {
-      final File test = new File(folder, "src/test/java");
+      final File test = new File(folder, "src/test/java/de");
       test.mkdirs();
       final File testClazz = new File(test, "ExampleTest.java");
       FileUtils.copyFile(exampleTestFile, testClazz);
@@ -43,11 +43,11 @@ public class TestShortening {
 
    @Test
    public void testShortening() throws Exception {
-      final File test = new File(folder, "src/test/java");
+      final File test = new File(folder, "src/test/java/de");
       test.mkdirs();
       final File testClazz = new File(test, "ExampleTest.java");
 
-      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new ChangedEntity("ExampleTest", ""), "test1")) {
+      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new ChangedEntity("de.ExampleTest", ""), "test1")) {
          Assert.assertFalse(FileUtils.contentEquals(exampleTestFile, testClazz));
       }
 
@@ -56,12 +56,12 @@ public class TestShortening {
 
    @Test
    public void testSubclassShortening() throws Exception {
-      final File test = new File(folder, "src/test/java");
+      final File test = new File(folder, "src/test/java/de");
       test.mkdirs();
       final File testClazz = new File(test, "ExampleTest.java");
       final File subClazz = new File(test, "SubTest.java");
 
-      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new ChangedEntity("SubTest", ""), "test3")) {
+      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new ChangedEntity("de.SubTest", ""), "test3")) {
          Assert.assertFalse(FileUtils.contentEquals(exampleTestFile, testClazz));
          Assert.assertFalse(FileUtils.contentEquals(subTestFile, subClazz));
       }
