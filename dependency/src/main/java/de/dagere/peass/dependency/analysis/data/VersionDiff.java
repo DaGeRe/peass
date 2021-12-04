@@ -77,6 +77,7 @@ public class VersionDiff {
                   final String modulePath = currentFileName.substring(0, indexOf - 1);
                   final File moduleFile = new File(projectFolder, modulePath);
                   if (modules.contains(moduleFile)) {
+                     LOG.debug("Create new changedentitty: " + classPath + " " + modulePath);
                      final ChangedEntity changedEntity = new ChangedEntity(classPath, modulePath);
                      if (!changedEntity.getJavaClazzName().contains(File.separator)) {
                         changedClasses.add(changedEntity);

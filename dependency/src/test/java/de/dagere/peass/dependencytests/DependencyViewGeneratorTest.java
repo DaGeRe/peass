@@ -46,7 +46,17 @@ public class DependencyViewGeneratorTest {
          DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders,
                "", iteratorspied, new VersionKeeper(new File("/dev/null")), new ExecutionConfig(), new KiekerConfig(true), new EnvironmentVariables());
          reader.readInitialVersion();
-         reader.readDependencies();
+         try {
+            reader.readDependencies();
+         } catch (Throwable t) {
+            System.out.println();
+            for (StackTraceElement te : t.getStackTrace()) {
+               System.out.println(te);
+            }
+            System.out.println();
+            throw t;
+         }
+         
 
          File expectedDiff = new File(resultsFolders.getVersionDiffFolder("000002"), "TestMe#test.txt");
          System.out.println(expectedDiff.getAbsolutePath());
