@@ -55,7 +55,7 @@ public class EnvironmentVariables implements Serializable {
       if (!isWindows()) {
          gradleCall = "gradlew";
       } else {
-         gradleCall = "gradlew.cmd";
+         gradleCall = "gradlew.bat";
       }
       return gradleCall;
    }
