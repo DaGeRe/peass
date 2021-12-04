@@ -78,6 +78,10 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          createParameters(parameterString);
          method = method.substring(0, method.indexOf("("));
       }
+      
+      if (javaClazzName.startsWith(".")) {
+         throw new RuntimeException("Java class names are not allowed to start with ., but was " + javaClazzName);
+      }
 
       LOG.trace(javaClazzName + " " + clazz);
       LOG.trace(javaClazzName);
@@ -140,6 +144,9 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          }
       }
       filename = fullName;
+      if (javaClazzName.startsWith(".")) {
+         throw new RuntimeException("Java class names are not allowed to start with ., but was " + javaClazzName);
+      }
    }
 
    @JsonIgnore
