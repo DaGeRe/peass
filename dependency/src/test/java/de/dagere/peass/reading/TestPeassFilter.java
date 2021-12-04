@@ -29,9 +29,9 @@ import de.dagere.peass.dependency.traces.KiekerFolderUtil;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.folders.PeassFolders;
 
-public class TestPeASSFilter {
+public class TestPeassFilter {
    
-   private static final Logger LOG = LogManager.getLogger(TestPeASSFilter.class);
+   private static final Logger LOG = LogManager.getLogger(TestPeassFilter.class);
    
    private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT");
    private static final File CURRENT = new File(new File("target"), "current");
