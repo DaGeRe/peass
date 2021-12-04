@@ -94,7 +94,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    private Process buildGradleProcess(final File moduleFolder, final File logFile, final String... commandLineAddition)
          throws IOException, XmlPullParserException, InterruptedException {
       final String testGoal = getTestGoal();
-      String wrapper = new File(folders.getProjectFolder(), "gradlew").getAbsolutePath();
+      String wrapper = new File(folders.getProjectFolder(), env.fetchGradleCall()).getAbsolutePath();
       String[] originals = new String[] { wrapper,
             "--init-script", new File(gradleHome, "init.gradle").getAbsolutePath(),
             "--no-daemon",
@@ -152,7 +152,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    
    @Override
    public boolean doesBuildfileExist() {
-      final File wrapper = new File(folders.getProjectFolder(), "gradlew");
+      final File wrapper = new File(folders.getProjectFolder(), env.fetchGradleCall());
       final File potentialBuildfile = new File(folders.getProjectFolder(), "build.gradle");
       boolean buildfileExists = wrapper.exists() && potentialBuildfile.exists();
       return buildfileExists;
@@ -178,7 +178,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
          ProjectModules modules = getModules();
          replaceAllBuildfiles(modules);
 
-         final String[] vars = new String[] { "./gradlew", "--no-daemon", "assemble" };
+         final String[] vars = new String[] { env.fetchGradleCall(), "--no-daemon", "assemble" };
          ProcessSuccessTester processSuccessTester = new ProcessSuccessTester(folders, testTransformer.getConfig(), env);
          isRunning = processSuccessTester.testRunningSuccess(version, vars);
       }

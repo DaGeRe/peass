@@ -39,7 +39,7 @@ public class EnvironmentVariables implements Serializable {
       }
       return mvnCall;
    }
-   
+
    public static String fetchMavenCallGeneric() {
       String mvnCall;
       if (!isWindows()) {
@@ -50,10 +50,20 @@ public class EnvironmentVariables implements Serializable {
       return mvnCall;
    }
 
+   public String fetchGradleCall() {
+      String gradleCall;
+      if (!isWindows()) {
+         gradleCall = "gradlew";
+      } else {
+         gradleCall = "gradlew.cmd";
+      }
+      return gradleCall;
+   }
+
    public static boolean isWindows() {
       return System.getProperty("os.name").startsWith("Windows");
    }
-   
+
    public static boolean isLinux() {
       return !System.getProperty("os.name").startsWith("Windows") && !System.getProperty("os.name").startsWith("Mac");
    }
