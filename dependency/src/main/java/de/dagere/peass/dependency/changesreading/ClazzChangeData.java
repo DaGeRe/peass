@@ -140,7 +140,13 @@ public class ClazzChangeData {
    public Set<ChangedEntity> getChanges() {
       Set<ChangedEntity> entities = new HashSet<>();
       for (Map.Entry<String, Set<String>> change : changedMethods.entrySet()) {
-         String fullQualifiedClassname = containingFile.getPackage() + "." + change.getKey();
+         String fullQualifiedClassname;
+         System.out.println("Containing file: " + containingFile + " " + change.getKey());
+         if (!"".equals(containingFile.getPackage())) {
+            fullQualifiedClassname = containingFile.getPackage() + "." + change.getKey();
+         } else {
+            fullQualifiedClassname = change.getKey();
+         }
          if (change.getValue() != null) {
             for (String method : change.getValue()) {
                if (method.contains("(")) {
