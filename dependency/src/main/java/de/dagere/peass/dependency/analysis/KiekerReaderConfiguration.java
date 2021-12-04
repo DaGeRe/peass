@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import de.dagere.peass.dependency.kiekerTemp.LogsReaderCompositeStage;
 import kieker.analysis.stage.DynamicEventDispatcher;
 import kieker.analysis.stage.IEventMatcher;
 import kieker.analysis.stage.ImplementsEventMatcher;
@@ -12,7 +13,6 @@ import kieker.analysis.trace.execution.ExecutionRecordTransformationStage;
 import kieker.analysis.trace.reconstruction.TraceReconstructionStage;
 import kieker.common.record.controlflow.OperationExecutionRecord;
 import kieker.model.repository.SystemModelRepository;
-import kieker.tools.source.LogsReaderCompositeStage;
 import teetime.framework.Configuration;
 
 public class KiekerReaderConfiguration extends Configuration {
