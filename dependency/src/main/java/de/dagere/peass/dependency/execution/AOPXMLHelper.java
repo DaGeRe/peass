@@ -65,6 +65,10 @@ public class AOPXMLHelper {
          }
          if (transformer.isAggregatedWriter()) {
             String tempFolderPath = folders.getTempMeasurementFolder().getAbsolutePath();
+            if (EnvironmentVariables.isWindows()) {
+               // To avoid problems with escape signs on windows, also use / on windows for the path
+               tempFolderPath = tempFolderPath.replace('\\', '/');
+            }
             writer.write(AggregatedTreeWriter.CONFIG_PATH + "=" + tempFolderPath + "\n");
          }
 
