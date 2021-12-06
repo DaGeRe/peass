@@ -12,6 +12,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,7 +86,7 @@ public class SuperclassDetectorIT {
    private void checkInitialDependencies(final DependencyReader reader) {
       List<ChangedEntity> initialDependencies = reader.getDependencies().getInitialversion().getInitialDependencies().values().iterator().next().getEntities();
       LOG.debug("Initial Dependencies: " + initialDependencies);
-      Assert.assertThat(initialDependencies, Matchers.hasSize(4));
+      MatcherAssert.assertThat(initialDependencies, Matchers.anyOf(Matchers.hasSize(4), Matchers.hasSize(5)));
    }
 
 }
