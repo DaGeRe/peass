@@ -51,9 +51,9 @@ public class DiffFileGenerator {
             if (traceFiles.size() > 1) {
                File oldFile = new File(traceFiles.get(0).getAbsolutePath() + OneTraceGenerator.NOCOMMENT);
                File newFile = new File(traceFiles.get(1).getAbsolutePath() + OneTraceGenerator.NOCOMMENT);
-               final String isDifferent = DiffUtil.getDiff(oldFile, newFile);
+               final boolean isDifferent = DiffUtil.isDifferentDiff(oldFile, newFile);
                System.out.println(isDifferent);
-               if (isDifferent.length() > 0) {
+               if (isDifferent) {
                   createAllDiffs(testcase, traceFiles);
                   return true;
                } else {

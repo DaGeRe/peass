@@ -8,6 +8,8 @@ import java.util.Arrays;
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.junit.Assert;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 public class TestDiffUtil {
@@ -33,11 +35,14 @@ public class TestDiffUtil {
       File file2 = new File("target/test2.txt");
       
       buildDifferentContents(file1, file2);
+
+      Assert.assertTrue(DiffUtil.isDifferentDiff(file1, file2));
       
       DiffUtil.generateDiffFile(DIFF_FILE, Arrays.asList(file1, file2), "");
       
       String diff = FileUtils.readFileToString(DIFF_FILE, StandardCharsets.UTF_8);
       MatcherAssert.assertThat(diff, Matchers.containsString("|"));
+      MatcherAssert.assertThat(diff, Matchers.not(Matchers.containsString("<span")));
    }
 
    @Test
@@ -60,9 +65,58 @@ public class TestDiffUtil {
       
       buildSameContents(file1, file2);
       
-      String hasDiff = DiffUtil.getDiff(file1, file2);
+      boolean hasDiff = DiffUtil.isDifferentDiff(file1, file2);
       
-      MatcherAssert.assertThat(hasDiff, Matchers.hasLength(0));
+      Assert.assertFalse(hasDiff);
+   }
+   
+   @Test
+   public void testContentWithSpace() throws IOException {
+      File file1 = new File("target/test file1.txt");
+      File file2 = new File("target/test file2.txt");
+      
+      buildSameContentsWithSpace(file1, file2);
+      
+      boolean hasDiff = DiffUtil.isDifferentDiff(file1, file2);
+      
+      Assert.assertFalse(hasDiff);
+   }
+   
+   @Disabled // Difflib current does not correctly show empty line diffs
+   @Test
+   public void testContentWithAddedLine() throws IOException {
+      File file1 = new File("target/test file1.txt");
+      File file2 = new File("target/test file2.txt");
+      
+      buildSameContentsWithAddedLine(file1, file2);
+      
+      boolean hasDiff = DiffUtil.isDifferentDiff(file1, file2);
+      Assert.assertTrue(hasDiff);
+
+      DiffUtil.generateDiffFile(DIFF_FILE, Arrays.asList(file1, file2), "");
+      
+      String diff = FileUtils.readFileToString(DIFF_FILE, StandardCharsets.UTF_8);
+      System.out.println(diff);
+      MatcherAssert.assertThat(diff, Matchers.containsString("|"));
+      MatcherAssert.assertThat(diff, Matchers.not(Matchers.containsString("<span")));
+   }
+   
+   @Test
+   public void testContentWithAddedLineWithContent() throws IOException {
+      File file1 = new File("target/test file1.txt");
+      File file2 = new File("target/test file2.txt");
+      
+      buildAddedLineContents(file1, file2);
+      
+      boolean hasDiff = DiffUtil.isDifferentDiff(file1, file2);
+      Assert.assertTrue(hasDiff);
+
+      DiffUtil.generateDiffFile(DIFF_FILE, Arrays.asList(file1, file2), "");
+      
+      String diff = FileUtils.readFileToString(DIFF_FILE, StandardCharsets.UTF_8);
+      System.out.println(diff);
+      MatcherAssert.assertThat(diff, Matchers.containsString("|"));
+      MatcherAssert.assertThat(diff, Matchers.not(Matchers.containsString("<span")));
    }
 
    private void buildDifferentContents(final File file1, final File file2) throws IOException {
@@ -70,8 +124,23 @@ public class TestDiffUtil {
       FileUtils.write(file2, "Line 1\nLine 3", StandardCharsets.UTF_8);
    }
    
+   private void buildAddedLineContents(final File file1, final File file2) throws IOException {
+      FileUtils.write(file1, "Line 1\nLine 3", StandardCharsets.UTF_8);
+      FileUtils.write(file2, "Line 1\nX\nLine 3", StandardCharsets.UTF_8);
+   }
+   
    private void buildSameContents(final File file1, final File file2) throws IOException {
       FileUtils.write(file1, "Line 1\nLine 2", StandardCharsets.UTF_8);
+      FileUtils.write(file2, "Line 1\nLine 2", StandardCharsets.UTF_8);
+   }
+   
+   private void buildSameContentsWithSpace(final File file1, final File file2) throws IOException {
+      FileUtils.write(file1, "Line 1\n   Line 2", StandardCharsets.UTF_8);
+      FileUtils.write(file2, "Line 1\nLine 2", StandardCharsets.UTF_8);
+   }
+   
+   private void buildSameContentsWithAddedLine(final File file1, final File file2) throws IOException {
+      FileUtils.write(file1, "Line 1\n\n   Line 2", StandardCharsets.UTF_8);
       FileUtils.write(file2, "Line 1\nLine 2", StandardCharsets.UTF_8);
    }
 }

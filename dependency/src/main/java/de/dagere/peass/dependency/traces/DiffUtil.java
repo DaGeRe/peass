@@ -3,9 +3,16 @@ package de.dagere.peass.dependency.traces;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import de.dagere.peass.utils.StreamGobbler;
+import org.apache.commons.io.FileUtils;
+
+import com.github.difflib.DiffUtils;
+import com.github.difflib.patch.Patch;
+import com.github.difflib.text.DiffRow;
+import com.github.difflib.text.DiffRowGenerator;
 
 public class DiffUtil {
 
@@ -15,35 +22,71 @@ public class DiffUtil {
     * @param traceFiles assumed order: old (0), new (1)
     */
    public static void generateDiffFile(final File goalFile, final List<File> traceFiles, final String appendix) throws IOException {
-      final ProcessBuilder processBuilder2 = new ProcessBuilder("diff",
-            "--minimal", "--ignore-all-space", "-y", "-W", "200",
-            traceFiles.get(0).getAbsolutePath() + appendix,
-            traceFiles.get(1).getAbsolutePath() + appendix);
-      final Process p2 = processBuilder2.start();
-      final String result2 = StreamGobbler.getFullProcess(p2, false);
-      
-      try {
-         int exitCode = p2.waitFor();
-         if (exitCode > 1) {
-            throw new RuntimeException("diff did not work correctly " + result2);
-         }
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
-      
+      File file1 = new File(traceFiles.get(0).getAbsolutePath() + appendix);
+      File file2 = new File(traceFiles.get(1).getAbsolutePath() + appendix);
+
+      List<String> file1text = FileUtils.readLines(file1, StandardCharsets.UTF_8)
+            .stream()
+            .map(line -> line.replaceAll(" ", ""))
+            .collect(Collectors.toList());
+      List<String> file2text = FileUtils.readLines(file2, StandardCharsets.UTF_8).stream()
+            .map(line -> line.replaceAll(" ", ""))
+            .collect(Collectors.toList());
+
+      DiffRowGenerator diffRowGenerator = DiffRowGenerator.create()
+            .build();
+
+      List<DiffRow> diffRows = diffRowGenerator.generateDiffRows(file1text, file2text);
 
       try (final FileWriter fw = new FileWriter(goalFile)) {
-         fw.write(result2);
+         StringBuilder resultBuilder = new StringBuilder();
+         for (DiffRow row : diffRows) {
+            int length = 200;
+
+            if (row.getOldLine().equals(row.getNewLine())) {
+               String oldLine = fillToLength(length, row.getOldLine());
+               String newLine = fillToLength(length, row.getNewLine());
+               resultBuilder.append(oldLine + "   " + newLine + "\n");
+            } else {
+               String oldLine = fillToLength(length, row.getOldLine());
+               String newLine = fillToLength(length, row.getNewLine());
+               resultBuilder.append(oldLine + " | " + newLine + "\n");
+            }
+
+         }
+         fw.write(resultBuilder.toString());
       }
    }
 
-   public static String getDiff(final File file1, final File file2) throws IOException {
-      final ProcessBuilder processBuilder2 = new ProcessBuilder("diff",
-            "--ignore-all-space",
-            file1.getAbsolutePath(),
-            file2.getAbsolutePath());
-      final Process checkDiff = processBuilder2.start();
-      final String isDifferent = StreamGobbler.getFullProcess(checkDiff, false);
-      return isDifferent;
+   private static String fillToLength(final int length, String oldLine) {
+      if (oldLine.length() < length) {
+         StringBuffer buffer = new StringBuffer();
+         int missingSpaces = length - oldLine.length();
+         for (int i = 0; i < missingSpaces; i++) {
+            buffer.append(' ');
+         }
+         oldLine = oldLine + buffer.toString();
+      } else {
+         oldLine = oldLine.substring(0, 200);
+      }
+      return oldLine;
+   }
+
+   public static boolean isDifferentDiff(final File file1, final File file2) throws IOException {
+      Patch<String> patch = getPatch(file1, file2);
+
+      return patch.getDeltas().size() > 0;
+   }
+
+   private static Patch<String> getPatch(final File file1, final File file2) throws IOException {
+      List<String> file1text = FileUtils.readLines(file1, StandardCharsets.UTF_8)
+            .stream()
+            .map(line -> line.replaceAll(" ", ""))
+            .collect(Collectors.toList());
+      List<String> file2text = FileUtils.readLines(file2, StandardCharsets.UTF_8).stream()
+            .map(line -> line.replaceAll(" ", ""))
+            .collect(Collectors.toList());
+      Patch<String> patch = DiffUtils.diff(file1text, file2text);
+      return patch;
    }
 }
