@@ -41,7 +41,9 @@ public enum ContinuousFolderUtil {
          LOG.info("Cloning using git clone");
          final ProcessBuilder builder = new ProcessBuilder("git", "clone", originalVcsFolder.getAbsolutePath());
          builder.directory(localFolder);
-         StreamGobbler.showFullProcess(builder.start());
+         Process process = builder.start();
+         StreamGobbler.showFullProcess(process);
+         LOG.debug("Exit code: {}", process.exitValue());
       } else {
          throw new RuntimeException("No git folder in " + cloneProjectFolder.getAbsolutePath() + " (or parent) present - "
                + "currently, only git projects are supported");
