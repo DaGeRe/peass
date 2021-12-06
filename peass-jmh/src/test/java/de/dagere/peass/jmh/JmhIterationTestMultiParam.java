@@ -37,7 +37,7 @@ public class JmhIterationTestMultiParam {
 
    @BeforeEach
    public void clearCurrent() throws IOException {
-      TestUtil.deleteContents(TestConstants.CURRENT_FOLDER.getParentFile());
+      TestUtil.deleteContents(TestConstants.CURRENT_FOLDER);
    }
 
    @Test

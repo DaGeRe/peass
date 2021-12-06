@@ -26,7 +26,7 @@ public class TestResultMoving {
 
    @BeforeEach
    public void clearCurrent() throws IOException {
-      TestUtil.deleteContents(TestConstants.CURRENT_FOLDER.getParentFile());
+      TestUtil.deleteContents(TestConstants.CURRENT_FOLDER);
 
       FileUtils.copyDirectory(JmhTestConstants.BASIC_VERSION, TestConstants.CURRENT_FOLDER);
 

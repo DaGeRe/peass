@@ -51,7 +51,7 @@ public class JmhDependencyReaderTest {
 
    @BeforeEach
    public void clearCurrent() throws IOException {
-      TestUtil.deleteContents(TestConstants.CURRENT_FOLDER.getParentFile());
+      TestUtil.deleteContents(TestConstants.CURRENT_FOLDER);
    }
 
    static class KiekerConfigurationProvider implements ArgumentsProvider {
