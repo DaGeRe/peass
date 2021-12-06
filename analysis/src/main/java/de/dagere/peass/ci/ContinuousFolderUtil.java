@@ -12,7 +12,7 @@ import de.dagere.peass.vcs.VersionControlSystem;
 public enum ContinuousFolderUtil {
    ;
 
-   private static final Logger LOG = LogManager.getLogger(ContinuousExecutor.class);
+   private static final Logger LOG = LogManager.getLogger(ContinuousFolderUtil.class);
 
    public static File getLocalFolder(final File projectFolder) {
       return new File(projectFolder, ".." + File.separator + projectFolder.getName() + "_fullPeass");
