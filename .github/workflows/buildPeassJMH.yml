@@ -56,7 +56,4 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: Unit Test Results (Java ${{ matrix.java }} OS ${{ matrix.os }})
-        path: |
-          dependency/target/surefire-reports/*
-          measurement/target/surefire-reports/*
-          analysis/target/surefire-reports/*
+        path: peass-jmh/target/surefire-reports/*
