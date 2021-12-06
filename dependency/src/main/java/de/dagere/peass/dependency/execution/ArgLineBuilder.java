@@ -7,8 +7,10 @@ import de.dagere.peass.testtransformation.TestTransformer;
 
 public class ArgLineBuilder {
 
-   public static final String TEMP_DIR = "-Djava.io.tmpdir";
-   private static final String KIEKER_CONFIGURATION = "-Dkieker.monitoring.configuration";
+   public static final String TEMP_DIR_PURE = "java.io.tmpdir";
+   public static final String TEMP_DIR = "-D" + TEMP_DIR_PURE;
+   private static final String KIEKER_CONFIGURATION_PURE = "kieker.monitoring.configuration";
+   private static final String KIEKER_CONFIGURATION = "-D" + KIEKER_CONFIGURATION_PURE;
    private static final String MONITORING_PROPERTIES_PATH = "/src/main/resources/META-INF/kieker.monitoring.properties";
 
    public static final String JAVA_AGENT = "-javaagent";
@@ -70,12 +72,17 @@ public class ArgLineBuilder {
    }
 
    public String buildArglineGradle(final File tempFolder) {
-      final String argline = buildGenericArgline(tempFolder, ":", "\",\"", KIEKER_ARG_LINE_GRADLE);
-      if (!argline.equals("")) {
-         String fullArgLine = "\"" + argline + "\"";
-         return "jvmArgs=[" + fullArgLine + "]";
+      // final String argline = buildGenericArgline(tempFolder, ":", "\",\"", KIEKER_ARG_LINE_GRADLE);
+      if (testTransformer.getConfig().isUseKieker()) {
+         String argLine = "  systemProperty \"" + TEMP_DIR_PURE + "\", \"" + tempFolder.getAbsolutePath() + "\"" + System.lineSeparator();
+         String configFilePath = modulePath.getAbsolutePath() + MONITORING_PROPERTIES_PATH;
+         argLine += "  systemProperty \"" + KIEKER_CONFIGURATION_PURE + "\", \"" + configFilePath + "\"" + System.lineSeparator();
+         if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation()) {
+            argLine += "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\"]" + System.lineSeparator();
+         }
+         return argLine;
       } else {
-         return argline;
+         return "";
       }
    }
 }

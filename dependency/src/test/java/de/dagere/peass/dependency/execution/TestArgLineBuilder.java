@@ -27,7 +27,7 @@ public class TestArgLineBuilder {
       
       String argLineGradle = builder.buildArglineGradle(new File("/tmp/asd"));
       MatcherAssert.assertThat(argLineGradle, Matchers.containsString("-javaagent"));
-      MatcherAssert.assertThat(argLineGradle, Matchers.containsString("\"-Dkieker.monitoring.configuration"));
+      MatcherAssert.assertThat(argLineGradle, Matchers.containsString("kieker.monitoring.configuration"));
    }
    
    @Test
