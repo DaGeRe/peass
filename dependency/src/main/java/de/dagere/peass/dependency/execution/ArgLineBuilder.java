@@ -74,8 +74,9 @@ public class ArgLineBuilder {
    public String buildArglineGradle(final File tempFolder) {
       // final String argline = buildGenericArgline(tempFolder, ":", "\",\"", KIEKER_ARG_LINE_GRADLE);
       if (testTransformer.getConfig().isUseKieker()) {
-         String argLine = "  systemProperty \"" + TEMP_DIR_PURE + "\", \"" + tempFolder.getAbsolutePath() + "\"" + System.lineSeparator();
-         String configFilePath = modulePath.getAbsolutePath() + MONITORING_PROPERTIES_PATH;
+         String tempPathNoEscapes = tempFolder.getAbsolutePath().replace('\\', '/');
+         String argLine = "  systemProperty \"" + TEMP_DIR_PURE + "\", \"" + tempPathNoEscapes + "\"" + System.lineSeparator();
+         String configFilePath = modulePath.getAbsolutePath().replace('\\', '/') + MONITORING_PROPERTIES_PATH;
          argLine += "  systemProperty \"" + KIEKER_CONFIGURATION_PURE + "\", \"" + configFilePath + "\"" + System.lineSeparator();
          if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation()) {
             argLine += "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\"]" + System.lineSeparator();
