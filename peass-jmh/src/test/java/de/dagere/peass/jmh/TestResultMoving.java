@@ -27,11 +27,12 @@ public class TestResultMoving {
    @BeforeEach
    public void clearCurrent() throws IOException {
       TestUtil.deleteContents(TestConstants.CURRENT_FOLDER);
+      TestUtil.deleteContents(TestConstants.CURRENT_PEASS);
 
       FileUtils.copyDirectory(JmhTestConstants.BASIC_VERSION, TestConstants.CURRENT_FOLDER);
 
       File currentPeassFolder = new File(JmhTestConstants.JMH_EXAMPLE_FOLDER, "current_peass");
-      FileUtils.copyDirectory(currentPeassFolder, new File(TestConstants.CURRENT_FOLDER.getParentFile(), "current_peass"));
+      FileUtils.copyDirectory(currentPeassFolder, TestConstants.CURRENT_PEASS);
    }
 
    @Test
