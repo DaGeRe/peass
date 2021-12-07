@@ -32,7 +32,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.ClazzFinder;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 
-public class JUnitTestShortener implements AutoCloseable{
+public class JUnitTestShortener implements AutoCloseable {
 
    private static final Logger LOG = LogManager.getLogger(JUnitTestShortener.class);
 
@@ -86,7 +86,7 @@ public class JUnitTestShortener implements AutoCloseable{
 
          final CompilationUnit calleeUnit = transformer.getLoadedFiles().get(calleeClazzFile);
          final TypeDeclaration<?> clazz = ClazzFinder.findClazz(callee, calleeUnit.getChildNodes());
-      
+
          // The clazz might be null, if it is
          if (clazz != null && clazz instanceof ClassOrInterfaceDeclaration) {
             shortenParent(module, callee, calleeClazzFile, calleeUnit, (ClassOrInterfaceDeclaration) clazz);
@@ -94,7 +94,7 @@ public class JUnitTestShortener implements AutoCloseable{
 
             FileUtils.writeStringToFile(calleeClazzFile, calleeUnit.toString(), Charset.defaultCharset());
          }
-         
+
       }
    }
 
@@ -141,7 +141,11 @@ public class JUnitTestShortener implements AutoCloseable{
          final String parentName = parent.getName().toString();
          String fqn = findFQN(calleeUnit, parentName);
          if (fqn == parentName) {
-            fqn = callee.getPackage() + "." + parentName;
+            if (callee.getPackage().equals("")) {
+               fqn = parentName;
+            } else {
+               fqn = callee.getPackage() + "." + parentName;
+            }
          }
          parentEntity = new ChangedEntity(fqn, callee.getModule());
       }
