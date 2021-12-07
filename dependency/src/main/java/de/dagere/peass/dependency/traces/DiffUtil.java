@@ -29,10 +29,10 @@ public class DiffUtil {
       
       List<String> file1text = FileUtils.readLines(file1, StandardCharsets.UTF_8)
             .stream()
-            .map(line -> line.replaceAll(" ", ""))
+            .map(line -> line.trim())
             .collect(Collectors.toList());
       List<String> file2text = FileUtils.readLines(file2, StandardCharsets.UTF_8).stream()
-            .map(line -> line.replaceAll(" ", ""))
+            .map(line -> line.trim())
             .collect(Collectors.toList());
 
       DiffRowGenerator diffRowGenerator = DiffRowGenerator.create()
@@ -81,10 +81,10 @@ public class DiffUtil {
    private static Patch<String> getPatch(final File file1, final File file2) throws IOException {
       List<String> file1text = FileUtils.readLines(file1, StandardCharsets.UTF_8)
             .stream()
-            .map(line -> line.replaceAll(" ", ""))
+            .map(line -> line.trim())
             .collect(Collectors.toList());
       List<String> file2text = FileUtils.readLines(file2, StandardCharsets.UTF_8).stream()
-            .map(line -> line.replaceAll(" ", ""))
+            .map(line -> line.trim())
             .collect(Collectors.toList());
       Patch<String> patch = DiffUtils.diff(file1text, file2text);
       return patch;
