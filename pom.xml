@@ -14,7 +14,7 @@
 		<module>measurement</module>
 		<module>analysis</module>
 	</modules>
-
+	
 	<profiles>
 		<profile>
 			<id>buildStarter</id>
@@ -24,6 +24,15 @@
 				<module>analysis</module>
 				<module>peass-jmh</module>
 				<module>starter</module>
+			</modules>
+		</profile>
+		<profile>
+			<id>allNoStarter</id>
+			<modules>
+				<module>dependency</module>
+				<module>measurement</module>
+				<module>analysis</module>
+				<module>peass-jmh</module>
 			</modules>
 		</profile>
 	</profiles>
