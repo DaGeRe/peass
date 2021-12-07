@@ -53,7 +53,7 @@ public class EnvironmentVariables implements Serializable {
    public String fetchGradleCall() {
       String gradleCall;
       if (!isWindows()) {
-         gradleCall = "gradlew";
+         gradleCall = "./gradlew";
       } else {
          gradleCall = "gradlew.bat";
       }
