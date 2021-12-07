@@ -25,6 +25,8 @@ public class DiffUtil {
       File file1 = new File(traceFiles.get(0).getAbsolutePath() + appendix);
       File file2 = new File(traceFiles.get(1).getAbsolutePath() + appendix);
 
+      int length = 100;
+      
       List<String> file1text = FileUtils.readLines(file1, StandardCharsets.UTF_8)
             .stream()
             .map(line -> line.replaceAll(" ", ""))
@@ -41,8 +43,6 @@ public class DiffUtil {
       try (final FileWriter fw = new FileWriter(goalFile)) {
          StringBuilder resultBuilder = new StringBuilder();
          for (DiffRow row : diffRows) {
-            int length = 200;
-
             if (row.getOldLine().equals(row.getNewLine())) {
                String oldLine = fillToLength(length, row.getOldLine());
                String newLine = fillToLength(length, row.getNewLine());
@@ -67,7 +67,7 @@ public class DiffUtil {
          }
          oldLine = oldLine + buffer.toString();
       } else {
-         oldLine = oldLine.substring(0, 200);
+         oldLine = oldLine.substring(0, length);
       }
       return oldLine;
    }
