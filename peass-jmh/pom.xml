@@ -8,7 +8,7 @@
 	<groupId>de.dagere.peass</groupId>
 	<artifactId>peass-jmh</artifactId>
 	<name>peass-jmh</name>
-	<version>0.1.2</version>
+	<version>0.1.3-SNAPSHOT</version>
 	<inceptionYear>2021</inceptionYear>
 	<url>https://github.com/DaGeRe/peass/</url>
 	<description>Enables the execution of JMH benchmarks with Peass regression test selection and root cause analysis</description>
@@ -90,12 +90,12 @@
 		<dependency>
 			<groupId>de.dagere.peass</groupId>
 			<artifactId>dependency</artifactId>
-			<version>0.1.4</version>
+			<version>0.1.5-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.dagere.peass</groupId>
 			<artifactId>dependency</artifactId>
-			<version>0.1.4</version>
+			<version>0.1.5-SNAPSHOT</version>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
@@ -139,7 +139,7 @@
 		<connection>scm:git:ssh://github.com:DaGeRe/peass.git</connection>
 		<developerConnection>scm:git:git@github.com:DaGeRe/peass.git</developerConnection>
 		<url>https://git@github.com:DaGeRe/peass.git</url>
-		<tag>peass-parent-0.1.4</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<licenses>
