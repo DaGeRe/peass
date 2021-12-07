@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>de.dagere.peass</groupId>
 		<artifactId>peass-parent</artifactId>
-		<version>0.1.4-SNAPSHOT</version>
+		<version>0.1.4</version>
 	</parent>
 
 	<build>
@@ -86,13 +86,13 @@
 		<dependency>
 			<groupId>de.dagere.peass</groupId>
 			<artifactId>dependency</artifactId>
-			<version>0.1.4-SNAPSHOT</version>
+			<version>0.1.4</version>
 		</dependency>
 
 		<dependency>
 			<groupId>de.dagere.peass</groupId>
 			<artifactId>dependency</artifactId>
-			<version>0.1.4-SNAPSHOT</version>
+			<version>0.1.4</version>
 			<classifier>tests</classifier>
 			<scope>test</scope>
 		</dependency>
