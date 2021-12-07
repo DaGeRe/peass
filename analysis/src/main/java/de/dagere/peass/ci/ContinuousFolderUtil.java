@@ -43,10 +43,18 @@ public enum ContinuousFolderUtil {
          builder.directory(localFolder);
          Process process = builder.start();
          StreamGobbler.showFullProcess(process);
+         assureProcessFinished(process);
          LOG.debug("Exit code: {}", process.exitValue());
       } else {
          throw new RuntimeException("No git folder in " + cloneProjectFolder.getAbsolutePath() + " (or parent) present - "
                + "currently, only git projects are supported");
+      }
+   }
+
+   private static void assureProcessFinished(Process process) throws InterruptedException {
+      while (process.isAlive()) {
+         LOG.debug("Process is still alive, while it should be finished");
+         Thread.sleep(10);
       }
    }
 
