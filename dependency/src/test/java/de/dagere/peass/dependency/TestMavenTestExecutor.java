@@ -11,8 +11,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
+import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 

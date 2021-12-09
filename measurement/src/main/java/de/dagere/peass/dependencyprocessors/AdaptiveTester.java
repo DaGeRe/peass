@@ -12,7 +12,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.analysis.EarlyBreakDecider;
 import de.dagere.peass.measurement.analysis.ResultLoader;

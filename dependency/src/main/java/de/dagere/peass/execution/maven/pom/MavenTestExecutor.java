@@ -28,16 +28,16 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.execution.ArgLineBuilder;
-import de.dagere.peass.dependency.execution.CommandConcatenator;
-import de.dagere.peass.dependency.execution.EnvironmentVariables;
-import de.dagere.peass.dependency.execution.KoPeMeExecutor;
-import de.dagere.peass.dependency.execution.ProjectModules;
+import de.dagere.peass.execution.kieker.ArgLineBuilder;
 import de.dagere.peass.execution.maven.MavenCleaner;
 import de.dagere.peass.execution.maven.MavenRunningTester;
 import de.dagere.peass.execution.maven.MavenUpdater;
 import de.dagere.peass.execution.maven.PomPreparer;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
+import de.dagere.peass.execution.utils.CommandConcatenator;
+import de.dagere.peass.execution.utils.EnvironmentVariables;
+import de.dagere.peass.execution.utils.KoPeMeExecutor;
+import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 

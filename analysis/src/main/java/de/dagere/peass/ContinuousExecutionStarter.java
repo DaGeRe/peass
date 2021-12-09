@@ -16,7 +16,7 @@ import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.config.parameters.MeasurementConfigurationMixin;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
-import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.execution.utils.EnvironmentVariables;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;

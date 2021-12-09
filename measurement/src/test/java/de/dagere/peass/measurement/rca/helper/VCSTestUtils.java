@@ -14,7 +14,7 @@ import org.powermock.api.mockito.PowerMockito;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
-import de.dagere.peass.dependency.execution.TestExecutor;
+import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.MavenTestExecutorMocker;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;

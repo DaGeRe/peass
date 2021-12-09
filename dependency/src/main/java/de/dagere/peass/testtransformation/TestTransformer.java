@@ -8,7 +8,7 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.execution.ProjectModules;
+import de.dagere.peass.execution.utils.ProjectModules;
 
 /**
  * Defines what should be done with tests; based on this class, extensions might define how to handle their tests.

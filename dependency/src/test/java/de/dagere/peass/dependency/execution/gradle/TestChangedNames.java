@@ -8,8 +8,8 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.TestConstants;
-import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.execution.gradle.SettingsFileParser;
+import de.dagere.peass.execution.utils.ProjectModules;
 
 public class TestChangedNames {
 

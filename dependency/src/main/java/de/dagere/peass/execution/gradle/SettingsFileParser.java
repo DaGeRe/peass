@@ -10,7 +10,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.dependency.execution.ProjectModules;
+import de.dagere.peass.execution.utils.ProjectModules;
 
 public class SettingsFileParser {
 

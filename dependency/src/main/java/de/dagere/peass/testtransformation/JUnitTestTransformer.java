@@ -63,7 +63,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
-import de.dagere.peass.dependency.execution.ProjectModules;
+import de.dagere.peass.execution.utils.ProjectModules;
 
 /**
  * Transforms JUnit-Tests to performance tests.

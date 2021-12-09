@@ -5,7 +5,7 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.List;
 
-import de.dagere.peass.dependency.execution.EnvironmentVariables;
+import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
 

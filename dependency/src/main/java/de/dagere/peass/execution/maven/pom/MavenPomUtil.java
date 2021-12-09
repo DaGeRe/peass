@@ -26,10 +26,10 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.execution.EnvironmentVariables;
-import de.dagere.peass.dependency.execution.ProjectModules;
-import de.dagere.peass.dependency.execution.RequiredDependency;
 import de.dagere.peass.execution.gradle.SettingsFileParser;
+import de.dagere.peass.execution.utils.EnvironmentVariables;
+import de.dagere.peass.execution.utils.ProjectModules;
+import de.dagere.peass.execution.utils.RequiredDependency;
 import de.dagere.peass.utils.StreamGobbler;
 
 public class MavenPomUtil {

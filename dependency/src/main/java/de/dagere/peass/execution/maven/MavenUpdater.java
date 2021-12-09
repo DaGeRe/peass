@@ -9,9 +9,9 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.execution.maven.pom.PomJavaUpdater;
 import de.dagere.peass.execution.maven.pom.SnapshotRemoveUtil;
+import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.folders.PeassFolders;
 
 public class MavenUpdater {

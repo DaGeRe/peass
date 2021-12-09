@@ -10,7 +10,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.dependency.execution.ProjectModules;
+import de.dagere.peass.execution.utils.ProjectModules;
 
 public class ModuleReader {
    private final ProjectModules modules = new ProjectModules(new LinkedList<>());

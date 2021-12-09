@@ -17,10 +17,10 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.peass.dependency.execution.ArgLineBuilder;
-import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.dependency.moduleinfo.ModuleInfoEditor;
+import de.dagere.peass.execution.kieker.ArgLineBuilder;
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
+import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
 

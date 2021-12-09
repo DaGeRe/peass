@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.execution.kieker.ArgLineBuilder;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestArgLineBuilder {

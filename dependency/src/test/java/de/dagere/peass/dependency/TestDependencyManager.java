@@ -12,8 +12,8 @@ import org.mockito.Mockito;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.execution.ProjectModules;
-import de.dagere.peass.dependency.execution.TestExecutor;
+import de.dagere.peass.execution.utils.ProjectModules;
+import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 

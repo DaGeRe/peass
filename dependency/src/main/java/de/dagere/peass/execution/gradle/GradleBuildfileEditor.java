@@ -11,9 +11,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
-import de.dagere.peass.dependency.execution.ArgLineBuilder;
-import de.dagere.peass.dependency.execution.ProjectModules;
-import de.dagere.peass.dependency.execution.RequiredDependency;
+import de.dagere.peass.execution.kieker.ArgLineBuilder;
+import de.dagere.peass.execution.utils.ProjectModules;
+import de.dagere.peass.execution.utils.RequiredDependency;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 

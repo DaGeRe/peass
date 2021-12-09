@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.execution.gradle.GradleBuildfileEditor;
+import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestBuildGradle {
