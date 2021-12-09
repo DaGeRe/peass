@@ -18,8 +18,8 @@ public class TestPackageFinder {
 		System.out.println(lowestPackage);
 		MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.DependencyReadingParallelStarter"));
 		MatcherAssert.assertThat(lowestPackage, Matchers.not(IsIterableContaining.hasItem("de.dagere.peass.DependencyReadingParallelStarter.DependencyReadingParallelStarter")));
-		MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.statistics.DependencyStatisticAnalyzer"));
-		MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.statistics.DependencyStatistics"));
+		MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.dependency.statistics.DependencyStatisticAnalyzer"));
+		MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.dependency.statistics.DependencyStatistics"));
 		MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.TestPackageFinder"));
 	}
 }
