@@ -35,7 +35,7 @@ import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.folders.ResultsFolders;
-import de.dagere.peass.measurement.analysis.VersionSorter;
+import de.dagere.peass.measurement.dataloading.VersionSorter;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 import picocli.CommandLine;

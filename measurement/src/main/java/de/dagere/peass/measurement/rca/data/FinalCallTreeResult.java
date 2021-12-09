@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 
-import de.dagere.peass.statistics.StatisticUtil;
+import de.dagere.peass.measurement.statistics.StatisticUtil;
 
 
 /**

@@ -9,7 +9,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.dependencyprocessors.ProgressWriter;
+import de.dagere.peass.measurement.dependencyprocessors.helper.ProgressWriter;
 
 public class TestProgressWriter {
    

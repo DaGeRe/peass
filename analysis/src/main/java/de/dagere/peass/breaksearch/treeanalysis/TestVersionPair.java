@@ -3,10 +3,10 @@ package de.dagere.peass.breaksearch.treeanalysis;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.dagere.peass.measurement.analysis.Relation;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
-import de.dagere.peass.statistics.StatisticUtil;
+import de.dagere.peass.measurement.statistics.Relation;
+import de.dagere.peass.measurement.statistics.StatisticUtil;
 
 class TestVersionPair {
    private List<CauseSearchData> datas = new LinkedList<>();

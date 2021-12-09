@@ -17,11 +17,11 @@ import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
-import de.dagere.peass.confidence.KoPeMeDataHelper;
-import de.dagere.peass.measurement.analysis.MeasurementFileFinder;
-import de.dagere.peass.measurement.analysis.Relation;
-import de.dagere.peass.measurement.analysis.statistics.DescribedChunk;
-import de.dagere.peass.statistics.StatisticUtil;
+import de.dagere.peass.measurement.dataloading.KoPeMeDataHelper;
+import de.dagere.peass.measurement.dataloading.MeasurementFileFinder;
+import de.dagere.peass.measurement.statistics.Relation;
+import de.dagere.peass.measurement.statistics.StatisticUtil;
+import de.dagere.peass.measurement.statistics.data.DescribedChunk;
 
 /**
  * Saves chunks from cleaned data. Assumes that one clean-folder contains only one chunk (else, only one chunk is saved to cleaned data).

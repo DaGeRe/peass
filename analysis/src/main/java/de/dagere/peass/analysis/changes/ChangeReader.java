@@ -18,21 +18,21 @@ import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.peass.analysis.all.RepoFolders;
 import de.dagere.peass.analysis.helper.read.VersionData;
-import de.dagere.peass.confidence.KoPeMeDataHelper;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.ProjectStatistics;
-import de.dagere.peass.measurement.analysis.Relation;
-import de.dagere.peass.measurement.analysis.statistics.DescribedChunk;
-import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
-import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
-import de.dagere.peass.statistics.ConfidenceIntervalInterpretion;
+import de.dagere.peass.measurement.dataloading.KoPeMeDataHelper;
+import de.dagere.peass.measurement.statistics.ConfidenceIntervalInterpretion;
+import de.dagere.peass.measurement.statistics.Relation;
+import de.dagere.peass.measurement.statistics.bimodal.CompareData;
+import de.dagere.peass.measurement.statistics.data.DescribedChunk;
+import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
+import de.dagere.peass.measurement.utils.RunCommandWriterRCA;
+import de.dagere.peass.measurement.utils.RunCommandWriterSlurmRCA;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.utils.RunCommandWriterRCA;
-import de.dagere.peass.utils.RunCommandWriterSlurmRCA;
 
 /**
  * Reads changes of fulldata - data need to be cleaned!

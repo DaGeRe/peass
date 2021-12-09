@@ -16,10 +16,10 @@ import de.dagere.peass.analysis.helper.read.TestcaseData;
 import de.dagere.peass.analysis.helper.read.VersionData;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
+import de.dagere.peass.measurement.utils.RunCommandWriter;
+import de.dagere.peass.measurement.utils.RunCommandWriterSlurm;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.utils.RunCommandWriter;
-import de.dagere.peass.utils.RunCommandWriterSlurm;
 import de.peran.analysis.helper.AnalysisUtil;
 import de.peran.analysis.helper.comparedata.BigDiffs;
 

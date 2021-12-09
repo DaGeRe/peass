@@ -11,11 +11,11 @@ import org.apache.commons.math3.stat.inference.TestUtils;
 
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.dagere.peass.measurement.analysis.DataAnalyser;
-import de.dagere.peass.measurement.analysis.DataReader;
 import de.dagere.peass.measurement.analysis.TestStatistic;
-import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
-import de.dagere.peass.measurement.analysis.statistics.TestData;
+import de.dagere.peass.measurement.dataloading.DataAnalyser;
+import de.dagere.peass.measurement.dataloading.DataReader;
+import de.dagere.peass.measurement.statistics.data.EvaluationPair;
+import de.dagere.peass.measurement.statistics.data.TestData;
 
 public class IsThereTimeReductionIterations extends DataAnalyser {
    final static int CHUNK_SIZE = 100;

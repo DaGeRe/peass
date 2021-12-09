@@ -23,7 +23,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.dagere.peass.utils.DivideVersions;
+import de.dagere.peass.measurement.utils.DivideVersions;
 
 public class MissingExecutionFinder {
 

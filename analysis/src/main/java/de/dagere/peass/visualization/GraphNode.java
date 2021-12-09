@@ -6,11 +6,11 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.measurement.rca.data.BasicNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
 import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
+import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 
 public class GraphNode extends BasicNode {
 

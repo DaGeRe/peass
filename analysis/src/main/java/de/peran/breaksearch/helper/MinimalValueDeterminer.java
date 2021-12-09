@@ -8,9 +8,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
-import de.dagere.peass.measurement.analysis.MultipleVMTestUtil;
-import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
-import de.dagere.peass.measurement.analysis.statistics.TestData;
+import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
+import de.dagere.peass.measurement.statistics.data.EvaluationPair;
+import de.dagere.peass.measurement.statistics.data.TestData;
 
 /**
  * Determines the minimal value of a parameter, which keeps the same result of statistical analysis, i.e.

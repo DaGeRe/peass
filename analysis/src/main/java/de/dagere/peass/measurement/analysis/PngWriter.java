@@ -8,10 +8,10 @@ import java.util.Map.Entry;
 import org.apache.commons.io.FileUtils;
 
 import de.dagere.kopeme.generated.Result;
-import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
 import de.dagere.peass.measurement.analysis.statistics.MeanCoVData;
 import de.dagere.peass.measurement.analysis.statistics.MeanHistogramData;
-import de.dagere.peass.measurement.analysis.statistics.TestData;
+import de.dagere.peass.measurement.statistics.data.EvaluationPair;
+import de.dagere.peass.measurement.statistics.data.TestData;
 import de.dagere.peass.utils.StreamGobbler;
 
 //TODO Extracted for readability, functionality not tested

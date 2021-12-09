@@ -3,7 +3,7 @@ package de.dagere.peass.analysis.helper.read;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 
 public class FolderValues {
    private Map<String, TestcaseStatistic> values = new LinkedHashMap<>();

@@ -10,12 +10,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.measurement.analysis.Relation;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
-import de.dagere.peass.precision.analysis.repetitions.bimodal.OutlierRemoverBimodal;
-import de.dagere.peass.statistics.StatisticUtil;
+import de.dagere.peass.measurement.statistics.Relation;
+import de.dagere.peass.measurement.statistics.StatisticUtil;
+import de.dagere.peass.measurement.statistics.bimodal.CompareData;
+import de.dagere.peass.measurement.statistics.bimodal.OutlierRemoverBimodal;
 
 public abstract class DifferentNodeDeterminer {
 

@@ -23,7 +23,7 @@ import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.measurement.analysis.MultipleVMTestUtil;
+import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
 
 public class ResultOrganizer {
 

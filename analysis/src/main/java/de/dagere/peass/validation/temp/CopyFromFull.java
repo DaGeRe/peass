@@ -20,7 +20,7 @@ import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.peass.analysis.all.RepoFolders;
 import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.dagere.peass.measurement.analysis.MeasurementFileFinder;
+import de.dagere.peass.measurement.dataloading.MeasurementFileFinder;
 import de.dagere.peass.utils.Constants;
 
 public class CopyFromFull {

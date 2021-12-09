@@ -12,8 +12,8 @@ import de.dagere.peass.analysis.all.RepoFolders;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.measurement.utils.DivideVersions;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.utils.DivideVersions;
 
 public class GenerateAllExecutecommands {
    public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {

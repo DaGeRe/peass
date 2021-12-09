@@ -23,8 +23,8 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
+import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 
 /**
  * Read the overall data of the specified testcase (i.e. the values from the KoPeMe outside-measurement, no the Kieker in-method-measurement)

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.measurement.analysis.Cleaner;
+import de.dagere.peass.measurement.cleaning.Cleaner;
 import de.dagere.peass.utils.Constants;
 
 public class CleanAll {

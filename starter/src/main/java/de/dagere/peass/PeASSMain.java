@@ -7,7 +7,7 @@ import de.dagere.peass.GetChanges;
 import de.dagere.peass.ReadProperties;
 import de.dagere.peass.clean.TestCleaner;
 import de.dagere.peass.reexecutions.FindMissingExecutions;
-import de.dagere.peass.utils.DivideVersions;
+import de.dagere.peass.measurement.utils.DivideVersions;
 import de.dagere.peass.visualization.VisualizeRCA;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;

@@ -4,7 +4,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 
 public class BigDiffs {
    Map<String, TestcaseDiff> diffs = new LinkedHashMap<>();

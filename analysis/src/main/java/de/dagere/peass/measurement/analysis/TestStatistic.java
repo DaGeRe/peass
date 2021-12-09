@@ -10,10 +10,13 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
 import de.dagere.peass.config.StatisticsConfig;
-import de.dagere.peass.measurement.analysis.statistics.EvaluationPair;
-import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
-import de.dagere.peass.statistics.ConfidenceIntervalInterpretion;
-import de.dagere.peass.statistics.StatisticUtil;
+import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
+import de.dagere.peass.measurement.dataloading.ResultLoader;
+import de.dagere.peass.measurement.statistics.ConfidenceIntervalInterpretion;
+import de.dagere.peass.measurement.statistics.Relation;
+import de.dagere.peass.measurement.statistics.StatisticUtil;
+import de.dagere.peass.measurement.statistics.bimodal.CompareData;
+import de.dagere.peass.measurement.statistics.data.EvaluationPair;
 
 public class TestStatistic {
    private static final Logger LOG = LogManager.getLogger(TestStatistic.class);

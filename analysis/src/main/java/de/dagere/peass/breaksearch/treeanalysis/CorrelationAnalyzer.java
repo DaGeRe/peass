@@ -4,9 +4,9 @@ import java.util.Iterator;
 
 import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
-import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
 import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil;
+import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 
 class CorrelationAnalyzer {
    private final MeasuredNode node1, node2;

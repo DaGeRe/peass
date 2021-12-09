@@ -21,7 +21,6 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
-import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.CauseTester;
 import de.dagere.peass.measurement.rca.CauseTesterMockUtil;
@@ -34,6 +33,7 @@ import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.searcher.CauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.LevelCauseSearcher;
 import de.dagere.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
+import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class LevelCauseSearcherTest {

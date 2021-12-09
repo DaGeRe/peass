@@ -15,7 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.measurement.analysis.Cleaner;
+import de.dagere.peass.measurement.cleaning.Cleaner;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 import picocli.CommandLine;

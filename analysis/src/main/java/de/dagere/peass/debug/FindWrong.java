@@ -13,9 +13,9 @@ import de.dagere.peass.analysis.groups.Classification;
 import de.dagere.peass.analysis.groups.TestcaseClass;
 import de.dagere.peass.analysis.groups.VersionClass;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.measurement.utils.RunCommandWriter;
+import de.dagere.peass.measurement.utils.RunCommandWriterSlurm;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.utils.RunCommandWriter;
-import de.dagere.peass.utils.RunCommandWriterSlurm;
 
 public class FindWrong {
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {

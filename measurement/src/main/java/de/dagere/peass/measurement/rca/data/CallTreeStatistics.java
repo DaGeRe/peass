@@ -7,7 +7,7 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import de.dagere.peass.config.StatisticsConfig;
-import de.dagere.peass.measurement.analysis.statistics.OutlierRemoverVMResults;
+import de.dagere.peass.measurement.statistics.data.OutlierRemoverVMResults;
 
 public class CallTreeStatistics {
    

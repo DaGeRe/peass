@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
+import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 
 public class ProjectStatistics {
 

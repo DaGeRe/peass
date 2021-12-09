@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import de.dagere.peass.statistics.StatisticUtil;
+import de.dagere.peass.measurement.statistics.StatisticUtil;
 
 public class MeasuredValues {
    

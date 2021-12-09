@@ -18,9 +18,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
-import de.dagere.peass.precision.analysis.repetitions.bimodal.CompareData;
-import de.dagere.peass.statistics.StatisticUtil;
+import de.dagere.peass.measurement.statistics.StatisticUtil;
+import de.dagere.peass.measurement.statistics.bimodal.CompareData;
+import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 
 /**
  * Saves the call tree structure and measurement data of the call tree

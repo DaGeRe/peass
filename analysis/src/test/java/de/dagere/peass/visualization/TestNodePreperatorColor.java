@@ -7,9 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
+import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 
 public class TestNodePreperatorColor {
    
