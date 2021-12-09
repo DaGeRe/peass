@@ -1,4 +1,4 @@
-package de.dagere.peass.kieker.aggregateddata;
+package de.dagere.peass.utils;
 
 import java.io.IOException;
 
@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
 public class SummaryStatisticsDeserializer extends StdDeserializer<StatisticalSummary> {
+
+   private static final long serialVersionUID = -11534717009382554L;
 
    public SummaryStatisticsDeserializer() {
       super(StatisticalSummary.class);

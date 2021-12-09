@@ -13,6 +13,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.execution.maven.pom.SnapshotRemoveUtil;
+
 
 public class TestSnapshotRemoveUtil {
    @Test

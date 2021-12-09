@@ -8,7 +8,8 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.dependency.execution.pom.MavenPomUtil;
+import de.dagere.peass.execution.maven.pom.MavenPomUtil;
+
 
 public class TestMavenPomUtil {
    

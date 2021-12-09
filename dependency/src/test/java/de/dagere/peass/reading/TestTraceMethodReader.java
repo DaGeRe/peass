@@ -14,10 +14,10 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.execution.pom.MavenPomUtil;
-import de.dagere.peass.dependency.execution.pom.MavenTestExecutor;
 import de.dagere.peass.dependency.traces.TraceMethodReader;
 import de.dagere.peass.dependency.traces.TraceWithMethods;
+import de.dagere.peass.execution.maven.pom.MavenPomUtil;
+import de.dagere.peass.execution.maven.pom.MavenTestExecutor;
 import de.dagere.peass.utils.StreamGobbler;
 
 /**

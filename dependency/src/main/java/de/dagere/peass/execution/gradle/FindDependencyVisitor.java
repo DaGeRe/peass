@@ -1,4 +1,4 @@
-package de.dagere.peass.dependency.execution.gradle;
+package de.dagere.peass.execution.gradle;
 
 import java.io.File;
 import java.io.FileInputStream;

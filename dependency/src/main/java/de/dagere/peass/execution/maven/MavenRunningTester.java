@@ -11,7 +11,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.execution.CommandConcatenator;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.ProjectModules;
-import de.dagere.peass.dependency.execution.pom.MavenPomUtil;
+import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.execution.processutils.ProcessSuccessTester;
 import de.dagere.peass.folders.PeassFolders;
 

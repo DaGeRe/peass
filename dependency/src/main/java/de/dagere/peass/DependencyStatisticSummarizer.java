@@ -15,8 +15,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.config.parameters.DependencyReaderConfigMixin;
 import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.dagere.peass.statistics.DependencyStatisticAnalyzer;
-import de.dagere.peass.statistics.DependencyStatistics;
+import de.dagere.peass.dependency.statistics.DependencyStatisticAnalyzer;
+import de.dagere.peass.dependency.statistics.DependencyStatistics;
 import de.dagere.peass.utils.Constants;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;

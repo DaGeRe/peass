@@ -5,7 +5,8 @@ import java.util.List;
 
 import org.apache.maven.model.Dependency;
 
-import de.dagere.peass.dependency.execution.pom.MavenPomUtil;
+import de.dagere.peass.execution.maven.pom.MavenPomUtil;
+
 
 public class RequiredDependency {
 

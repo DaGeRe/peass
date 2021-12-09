@@ -1,4 +1,4 @@
-package de.dagere.peass.dependency.execution.pom;
+package de.dagere.peass.execution.maven.pom;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
-package de.dagere.peass.dependency.execution.pom;
+package de.dagere.peass.execution.maven.pom;
 
 import java.io.File;
 import java.io.FileNotFoundException;

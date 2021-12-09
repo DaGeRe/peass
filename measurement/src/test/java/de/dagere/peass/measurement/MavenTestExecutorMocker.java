@@ -18,7 +18,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.TestExecutor;
-import de.dagere.peass.dependency.execution.pom.MavenTestExecutor;
+import de.dagere.peass.execution.maven.pom.MavenTestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 

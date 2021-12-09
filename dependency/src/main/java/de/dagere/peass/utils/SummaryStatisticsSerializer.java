@@ -1,4 +1,4 @@
-package de.dagere.peass.kieker.aggregateddata;
+package de.dagere.peass.utils;
 
 import java.io.IOException;
 

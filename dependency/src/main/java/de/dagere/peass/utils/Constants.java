@@ -10,9 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import de.dagere.peass.kieker.aggregateddata.SummaryStatisticsDeserializer;
-import de.dagere.peass.kieker.aggregateddata.SummaryStatisticsSerializer;
-
 public class Constants {
 
    public static final String PEASS_REPOS = "PEASS_REPOS";

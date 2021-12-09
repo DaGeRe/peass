@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.execution.ProjectModules;
+import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 
 public class TestGetModules {
    

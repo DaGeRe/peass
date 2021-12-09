@@ -1,4 +1,4 @@
-package de.dagere.peass.dependency.execution.gradle;
+package de.dagere.peass.execution.gradle;
 
 import java.io.BufferedReader;
 import java.io.File;

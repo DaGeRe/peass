@@ -1,4 +1,4 @@
-package de.dagere.peass.statistics;
+package de.dagere.peass.dependency.statistics;
 
 import java.io.File;
 import java.io.IOException;

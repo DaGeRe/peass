@@ -2,7 +2,7 @@ package de.dagere.peass.dependency.execution;
 
 import java.io.File;
 
-import de.dagere.peass.dependency.execution.pom.MavenPomUtil;
+import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.testtransformation.TestTransformer;
 
 public class ArgLineBuilder {

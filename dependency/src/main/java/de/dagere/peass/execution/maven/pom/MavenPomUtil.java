@@ -1,4 +1,4 @@
-package de.dagere.peass.dependency.execution.pom;
+package de.dagere.peass.execution.maven.pom;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +29,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.execution.EnvironmentVariables;
 import de.dagere.peass.dependency.execution.ProjectModules;
 import de.dagere.peass.dependency.execution.RequiredDependency;
-import de.dagere.peass.dependency.execution.gradle.SettingsFileParser;
+import de.dagere.peass.execution.gradle.SettingsFileParser;
 import de.dagere.peass.utils.StreamGobbler;
 
 public class MavenPomUtil {

@@ -7,6 +7,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.execution.gradle.FindDependencyVisitor;
+
 public class TestFindDependencyVisitor {
    
    private static final File GRADLE_FOLDER = new File("src/test/resources/gradle-buildfile-unittest");
