@@ -11,15 +11,15 @@ import org.junit.jupiter.api.Test;
 import de.dagere.peass.dependency.ClazzFileFinder;
 
 public class TestPackageFinder {
-	
-	@Test
-	public void testDependencyModule(){
-		final List<String> lowestPackage = ClazzFileFinder.getClasses(new File("."));
-		System.out.println(lowestPackage);
-		MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.DependencyReadingParallelStarter"));
-		MatcherAssert.assertThat(lowestPackage, Matchers.not(IsIterableContaining.hasItem("de.dagere.peass.DependencyReadingParallelStarter.DependencyReadingParallelStarter")));
-		MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.dependency.statistics.DependencyStatisticAnalyzer"));
-		MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.dependency.statistics.DependencyStatistics"));
-		MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.TestPackageFinder"));
-	}
+
+   @Test
+   public void testDependencyModule() {
+      final List<String> lowestPackage = ClazzFileFinder.getClasses(new File("."));
+      System.out.println(lowestPackage);
+      MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.DependencyReadingParallelStarter"));
+      MatcherAssert.assertThat(lowestPackage, Matchers.not(IsIterableContaining.hasItem("de.dagere.peass.DependencyReadingParallelStarter.DependencyReadingParallelStarter")));
+      MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.dependency.statistics.DependencyStatisticAnalyzer"));
+      MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.dependency.statistics.DependencyStatistics"));
+      MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.TestPackageFinder"));
+   }
 }
