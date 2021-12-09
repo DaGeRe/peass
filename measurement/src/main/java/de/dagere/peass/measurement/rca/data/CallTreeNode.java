@@ -16,7 +16,6 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-import de.dagere.peass.PeassGlobalInfos;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.analysis.statistics.TestcaseStatistic;
@@ -65,7 +64,7 @@ public class CallTreeNode extends BasicNode {
    public void setConfig(final MeasurementConfig config) {
       this.config = config;
    }
-   
+
    public MeasurementConfig getConfig() {
       return config;
    }
@@ -136,18 +135,15 @@ public class CallTreeNode extends BasicNode {
    }
 
    private void checkDataAddPossible(final String version) {
-      if (PeassGlobalInfos.isTwoVersionRun) {
-         if (otherVersionNode == null) {
-            throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
-         }
-         if (otherVersionNode.getCall().equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersion())) {
-            throw new RuntimeException("Added methods may not contain data");
-         }
+      if (otherVersionNode == null) {
+         throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
+      }
+      if (otherVersionNode.getCall().equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersion())) {
+         throw new RuntimeException("Added methods may not contain data");
       }
       if (call.equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersionOld())) {
          throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
       }
-
    }
 
    public boolean hasMeasurement(final String version) {
