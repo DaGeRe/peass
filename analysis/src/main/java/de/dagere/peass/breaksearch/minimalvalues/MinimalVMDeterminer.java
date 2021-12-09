@@ -1,4 +1,4 @@
-package de.peran.breaksearch.helper;
+package de.dagere.peass.breaksearch.minimalvalues;
 
 import java.io.BufferedWriter;
 import java.io.File;

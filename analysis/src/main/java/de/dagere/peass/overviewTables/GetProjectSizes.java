@@ -11,7 +11,6 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
-import de.peran.analysis.helper.all.CleanAll;
 
 /**
  * Creates tab:projektgroessen of PhD thesis.
@@ -19,6 +18,10 @@ import de.peran.analysis.helper.all.CleanAll;
  *
  */
 public class GetProjectSizes {
+   
+   public static final String[] allProjects = new String[] { "commons-compress", "commons-csv", "commons-dbcp", "commons-fileupload", "commons-imaging", "commons-io",
+                  "commons-numbers", "commons-text", "k-9", "commons-pool", "commons-jcs" };
+   
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       
       File dependencyFolder;
@@ -26,12 +29,12 @@ public class GetProjectSizes {
          final String repofolder = System.getenv(Constants.PEASS_REPOS);
          final File folder = new File(repofolder);
          dependencyFolder = new File(folder, "dependencies-final");
-      }else {
-         dependencyFolder = new File(CleanAll.defaultDependencyFolder);
+      } else {
+         throw new RuntimeException("Please define environment variable " + Constants.PEASS_REPOS);
       }
       
       System.out.println("Projekt & Versionen & Analysierbar & Geändert & Selektiert & Tests\\\\ \\hline");
-      for (final String project: CleanAll.allProjects) {
+      for (final String project: allProjects) {
          final File projectFolder = new File("../../projekte/" + project);
          final int commits = GitUtils.getCommits(projectFolder, true).size();
          

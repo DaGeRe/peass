@@ -16,13 +16,13 @@ import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.breaksearch.minimalvalues.MinimalVMDeterminer;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.dataloading.DataReader;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
 import de.dagere.peass.measurement.statistics.data.TestData;
 import de.dagere.peass.utils.Constants;
-import de.peran.breaksearch.helper.MinimalVMDeterminer;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 

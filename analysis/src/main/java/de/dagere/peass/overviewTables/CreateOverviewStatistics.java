@@ -21,7 +21,6 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
-import de.peran.analysis.helper.all.CleanAll;
 
 /**
  * Creates overview-table for ESEC-paper
@@ -52,8 +51,7 @@ public class CreateOverviewStatistics {
          repos = new File(repofolder);
          dependencyFolder = new File(repos, "dependencies-final");
       } else {
-         dependencyFolder = new File(CleanAll.defaultDependencyFolder);
-         repos = dependencyFolder.getParentFile();
+         throw new RuntimeException("Please define environment variable " + Constants.PEASS_REPOS);
       }
 
       final File propertyFolder = new File(repos, "properties/properties");
