@@ -20,15 +20,10 @@ public class LogRedirector implements AutoCloseable {
 
    private final LoggerContext loggerContext = (LoggerContext) LogManager.getContext(LogManager.class.getClassLoader(), false);
 
-   private final PrintStream oldOut;
-   private final PrintStream oldErr;
    private final OutputStreamAppender fa;
    private final Map<String, Appender> appenders = new HashMap<String, Appender>();
 
    public LogRedirector(final File file) throws FileNotFoundException {
-      oldOut = System.out;
-      oldErr = System.err;
-
       final PrintStream changedLog = new PrintStream(file);
       threadRedirectionStream.addRedirection(Thread.currentThread(), changedLog);
 
