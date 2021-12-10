@@ -88,6 +88,7 @@ public class TestMultithreadLogRedirection {
       outer.start();
       Thread.sleep(250);
       inner.start();
+      LOG.debug("This example output should not go into a file");
       
       outer.join();
       inner.join();
