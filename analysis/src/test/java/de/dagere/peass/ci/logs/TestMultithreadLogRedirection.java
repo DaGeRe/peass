@@ -33,9 +33,13 @@ public class TestMultithreadLogRedirection {
       
       System.out.println("This should go to regular console again");
 
-      List<String> outerFileContent = Files.readLines(LogRedirectionTestFiles.outerLogFile, StandardCharsets.UTF_8);
-      Assert.assertEquals(outerFileContent.get(0), "Outer first log");
-      Assert.assertEquals(outerFileContent.get(1), "Outer second over");
+      List<String> logFile2Content = Files.readLines(LogRedirectionTestFiles.logFile2, StandardCharsets.UTF_8);
+      Assert.assertEquals(logFile2Content.get(0), "Other first log");
+      Assert.assertEquals(logFile2Content.get(1), "Half second over");
+      
+      List<String> logFileContent = Files.readLines(LogRedirectionTestFiles.logFile, StandardCharsets.UTF_8);
+      Assert.assertEquals(logFileContent.get(0), "First log");
+      Assert.assertEquals(logFileContent.get(1), "Half second over first");
    }
 
    private void createMultithreadLogs() throws InterruptedException {
@@ -46,7 +50,7 @@ public class TestMultithreadLogRedirection {
             try (LogRedirector redirector = new LogRedirector(LogRedirectionTestFiles.logFile)) {
                System.out.println("First log");
                Thread.sleep(500);
-               System.out.println("One second over");
+               System.out.println("Half second over first");
             } catch (FileNotFoundException | InterruptedException e) {
                e.printStackTrace();
             }
@@ -58,10 +62,10 @@ public class TestMultithreadLogRedirection {
 
          @Override
          public void run() {
-            try (LogRedirector redirector = new LogRedirector(LogRedirectionTestFiles.outerLogFile)) {
-               System.out.println("Outer first log");
+            try (LogRedirector redirector = new LogRedirector(LogRedirectionTestFiles.logFile2)) {
+               System.out.println("Other first log");
                Thread.sleep(500);
-               System.out.println("Outer second over");
+               System.out.println("Half second over");
             } catch (FileNotFoundException | InterruptedException e) {
                e.printStackTrace();
             }

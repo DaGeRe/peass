@@ -50,7 +50,6 @@ public class RedirectionPrintStream extends PrintStream {
 
    @Override
    public void println(final String content) {
-      ORIGINAL_OUT.println("Writing " + Thread.currentThread() + " " + content);
       PrintStream printStream = printStreams.get(Thread.currentThread());
       if (printStream != null) {
          printStream.println(content);
