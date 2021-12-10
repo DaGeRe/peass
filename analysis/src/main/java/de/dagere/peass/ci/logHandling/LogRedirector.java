@@ -20,37 +20,30 @@ public class LogRedirector implements AutoCloseable {
 
    private final LoggerContext loggerContext = (LoggerContext) LogManager.getContext(LogManager.class.getClassLoader(), false);
 
-   private final OutputStreamAppender fa;
-   private final Map<String, Appender> appenders = new HashMap<String, Appender>();
+   private final OutputStreamAppender fileAppender;
+   private final Map<String, Appender> savedAppenders = new HashMap<String, Appender>();
 
    public LogRedirector(final File file) throws FileNotFoundException {
       final PrintStream changedLog = new PrintStream(file);
       threadRedirectionStream.addRedirection(Thread.currentThread(), changedLog);
 
-      fa = OutputStreamAppender.newBuilder()
+      fileAppender = OutputStreamAppender.newBuilder()
             .setName("logger-" + file.getName() + "-" + System.currentTimeMillis())
             .setTarget(threadRedirectionStream)
             .setLayout(PatternLayout.newBuilder().withPattern("%d{HH:mm:ss.SSS} [%t] %-5level %logger{36}:%L - %msg%n")
                   .build())
             .setConfiguration(loggerContext.getConfiguration()).build();
-      fa.start();
+      fileAppender.start();
 
       clearOldAppenders();
 
-      loggerContext.getConfiguration().addAppender(fa);
-      loggerContext.getRootLogger().addAppender(loggerContext.getConfiguration().getAppender(fa.getName()));
+      loggerContext.getConfiguration().addAppender(fileAppender);
+      loggerContext.getRootLogger().addAppender(loggerContext.getConfiguration().getAppender(fileAppender.getName()));
 
       loggerContext.updateLoggers();
 
       System.setOut(threadRedirectionStream);
       System.setErr(threadRedirectionStream);
-   }
-
-   private void clearOldAppenders() {
-      appenders.putAll(loggerContext.getRootLogger().getAppenders());
-      for (Appender appender : appenders.values()) {
-         loggerContext.getRootLogger().removeAppender(appender);
-      }
    }
 
    @Override
@@ -61,13 +54,24 @@ public class LogRedirector implements AutoCloseable {
          System.setErr(RedirectionPrintStream.ORIGINAL_ERR);
       }
 
-      fa.stop();
-      loggerContext.getConfiguration().getAppenders().remove(fa.getName());
-      loggerContext.getRootLogger().removeAppender(fa);
+      fileAppender.stop();
+      loggerContext.getConfiguration().getAppenders().remove(fileAppender.getName());
+      loggerContext.getRootLogger().removeAppender(fileAppender);
 
-      for (Appender appender : appenders.values()) {
+      addOldAppenders();
+      loggerContext.updateLoggers();
+   }
+
+   private void clearOldAppenders() {
+      savedAppenders.putAll(loggerContext.getRootLogger().getAppenders());
+      for (Appender appender : savedAppenders.values()) {
+         loggerContext.getRootLogger().removeAppender(appender);
+      }
+   }
+   
+   private void addOldAppenders() {
+      for (Appender appender : savedAppenders.values()) {
          loggerContext.getRootLogger().addAppender(appender);
       }
-      loggerContext.updateLoggers();
    }
 }
