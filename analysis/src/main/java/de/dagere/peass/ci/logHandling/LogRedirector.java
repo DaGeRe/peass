@@ -42,9 +42,8 @@ public class LogRedirector implements AutoCloseable {
 
    private final Map<String, Appender> savedAppenders = new HashMap<String, Appender>();
 
-   public LogRedirector(final File file) throws FileNotFoundException {
-      final PrintStream changedLog = new PrintStream(file);
-      threadRedirectionStream.addRedirection(Thread.currentThread(), changedLog);
+   public LogRedirector(final PrintStream redirectToStream) {
+      threadRedirectionStream.addRedirection(Thread.currentThread(), redirectToStream);
 
       if (!redirectionAppender.isStarted()) {
          useLog4jRedirection();
@@ -52,6 +51,10 @@ public class LogRedirector implements AutoCloseable {
 
       System.setOut(threadRedirectionStream);
       System.setErr(threadRedirectionStream);
+   }
+   
+   public LogRedirector(final File file) throws FileNotFoundException {
+      this(new PrintStream(file));
    }
 
    @Override
