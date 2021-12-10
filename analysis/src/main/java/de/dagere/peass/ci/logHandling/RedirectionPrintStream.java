@@ -8,7 +8,8 @@ import java.util.Stack;
 
 public class RedirectionPrintStream extends PrintStream {
 
-   private static final PrintStream originalOut = System.out;
+   public static final PrintStream ORIGINAL_OUT = System.out;
+   public static final PrintStream ORIGINAL_ERR = System.err;
 
    private static final Map<Thread, PrintStream> printStreams = new HashMap<>();
 
@@ -18,7 +19,7 @@ public class RedirectionPrintStream extends PrintStream {
       super(out);
    }
 
-   public void addRedirection(final Thread thread, final PrintStream stream) {
+   public synchronized void addRedirection(final Thread thread, final PrintStream stream) {
       PrintStream oldRedirection = printStreams.get(thread);
       if (oldRedirection != null) {
          Stack<PrintStream> overwriteList = overwrittenStreams.get(thread);
@@ -31,7 +32,7 @@ public class RedirectionPrintStream extends PrintStream {
       printStreams.put(thread, stream);
    }
 
-   public void removeRedirection(final Thread thread) {
+   public synchronized void removeRedirection(final Thread thread) {
       printStreams.remove(thread);
       if (overwrittenStreams.get(thread) != null) {
          Stack<PrintStream> overwriteList = overwrittenStreams.get(thread);
@@ -49,7 +50,7 @@ public class RedirectionPrintStream extends PrintStream {
 
    @Override
    public void println(final String content) {
-      originalOut.println("Writing " + Thread.currentThread() + " " + content);
+      ORIGINAL_OUT.println("Writing " + Thread.currentThread() + " " + content);
       PrintStream printStream = printStreams.get(Thread.currentThread());
       if (printStream != null) {
          printStream.println(content);

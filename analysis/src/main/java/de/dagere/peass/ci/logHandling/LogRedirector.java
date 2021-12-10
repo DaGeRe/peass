@@ -62,8 +62,8 @@ public class LogRedirector implements AutoCloseable {
    public void close() {
       threadRedirectionStream.removeRedirection(Thread.currentThread());
       if (threadRedirectionStream.redirectionCount() == 0) {
-         System.setOut(oldOut);
-         System.setErr(oldErr);
+         System.setOut(RedirectionPrintStream.ORIGINAL_OUT);
+         System.setErr(RedirectionPrintStream.ORIGINAL_ERR);
       }
 
       fa.stop();
