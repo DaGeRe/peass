@@ -4,7 +4,7 @@
 	<groupId>de.dagere.peass</groupId>
 	<artifactId>peass-parent</artifactId>
 	<packaging>pom</packaging>
-	<version>0.1.8</version>
+	<version>0.1.9-SNAPSHOT</version>
 	<name>PeASS - Parent</name>
 	<description>Tool for Analysing the Performance Changes in a Project</description>
 	<url>https://github.com/DaGeRe/peass/</url>
@@ -147,7 +147,7 @@
 		<connection>scm:git:ssh://github.com:DaGeRe/peass.git</connection>
 		<developerConnection>scm:git:git@github.com:DaGeRe/peass.git</developerConnection>
 		<url>https://git@github.com:DaGeRe/peass.git</url>
-		<tag>peass-parent-0.1.8</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 
