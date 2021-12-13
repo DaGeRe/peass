@@ -92,18 +92,29 @@ public class ContinuousDependencyReader {
          if (dependencyConfig.isGenerateCoverageSelection()) {
             LOG.info("Using coverage-based test selection");
             ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getCoverageSelectionFile(), ExecutionData.class);
-            TestSet versionTestSet = executionData.getVersions().get(version);
-            tests = versionTestSet != null ? versionTestSet.getTests() : new HashSet<TestCase>();
+            tests = fetchTestset(version, executionData);
          } else {
             LOG.info("Using dynamic test selection results");
             ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
-            TestSet versionTestSet = executionData.getVersions().get(version);
-            tests = versionTestSet.getTests();
+            tests = fetchTestset(version, executionData);
          }
          return tests;
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
+   }
+
+   /**
+    * Fetches the test set from the current version; it is required to allow null, in case a compile error occured
+    * @param version
+    * @param executionData
+    * @return
+    */
+   private Set<TestCase> fetchTestset(final String version, final ExecutionData executionData) {
+      final Set<TestCase> tests;
+      TestSet versionTestSet = executionData.getVersions().get(version);
+      tests = versionTestSet != null ? versionTestSet.getTests() : new HashSet<TestCase>();
+      return tests;
    }
 
    Dependencies getDependencies(final VersionIterator iterator, final String url) {
