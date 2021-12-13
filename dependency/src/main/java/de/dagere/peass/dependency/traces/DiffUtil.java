@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.github.difflib.DiffUtils;
 import com.github.difflib.patch.Patch;
@@ -15,6 +17,8 @@ import com.github.difflib.text.DiffRow;
 import com.github.difflib.text.DiffRowGenerator;
 
 public class DiffUtil {
+
+   private static final Logger LOG = LogManager.getLogger(DiffUtil.class);
 
    /**
     * Generates a diff file for two traces
@@ -25,21 +29,30 @@ public class DiffUtil {
       File file1 = new File(traceFiles.get(0).getAbsolutePath() + appendix);
       File file2 = new File(traceFiles.get(1).getAbsolutePath() + appendix);
 
-      int length = 100;
-      
-      List<String> file1text = FileUtils.readLines(file1, StandardCharsets.UTF_8)
-            .stream()
-            .map(line -> line.trim())
-            .collect(Collectors.toList());
-      List<String> file2text = FileUtils.readLines(file2, StandardCharsets.UTF_8).stream()
-            .map(line -> line.trim())
-            .collect(Collectors.toList());
+      if (file1.exists() && file2.exists()) {
+         int length = 100;
 
-      DiffRowGenerator diffRowGenerator = DiffRowGenerator.create()
-            .build();
+         final List<String> file1text = FileUtils.readLines(file1, StandardCharsets.UTF_8)
+               .stream()
+               .map(line -> line.trim())
+               .collect(Collectors.toList());
+         final List<String> file2text = FileUtils.readLines(file2, StandardCharsets.UTF_8).stream()
+               .map(line -> line.trim())
+               .collect(Collectors.toList());
 
-      List<DiffRow> diffRows = diffRowGenerator.generateDiffRows(file1text, file2text);
+         DiffRowGenerator diffRowGenerator = DiffRowGenerator.create()
+               .build();
 
+         final List<DiffRow> diffRows = diffRowGenerator.generateDiffRows(file1text, file2text);
+
+         writeDiff(goalFile, length, diffRows);
+      } else {
+         LOG.error("Not both log files {} ({}) {} ({}) existed. ", file1, file1.exists(), file2, file2.exists());
+      }
+
+   }
+
+   private static void writeDiff(final File goalFile, int length, final List<DiffRow> diffRows) throws IOException {
       try (final FileWriter fw = new FileWriter(goalFile)) {
          StringBuilder resultBuilder = new StringBuilder();
          for (DiffRow row : diffRows) {

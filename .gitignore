@@ -51,3 +51,4 @@ dependency/src/test/resources/jmh-it/multimodule/using-module/target/
 measurement/scripts/versions/dependencies/
 measurement/scripts/versions/laststart
 measurement/scripts/versions/sync2/
+results/
