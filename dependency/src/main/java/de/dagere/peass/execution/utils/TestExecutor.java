@@ -76,18 +76,29 @@ public abstract class TestExecutor {
       final File logFile = new File(clazzLogFolder, test.getMethod() + ".txt");
       return logFile;
    }
-   
+
    private File getClazzLogFolder(final File logFolder, final TestCase test) {
-      File clazzLogFolder = new File(logFolder, "log_" + test.getClazz());
+      File clazzLogFolder;
+      if (test.getModule() != null && !"".equals(test.getModule())) {
+         File moduleFolder = new File(logFolder, test.getModule());
+         if (!moduleFolder.exists()) {
+            moduleFolder.mkdir();
+         }
+         clazzLogFolder = new File(moduleFolder, "log_" + test.getClazz());
+      } else {
+         clazzLogFolder = new File(logFolder, "log_" + test.getClazz());
+      }
       if (!clazzLogFolder.exists()) {
          clazzLogFolder.mkdir();
       }
+
       return clazzLogFolder;
    }
 
    protected void prepareKiekerSource() throws IOException, XmlPullParserException, InterruptedException {
       if (testTransformer.getConfig().isUseKieker()) {
-         final KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPattern, existingClasses, folders, testTransformer, getModules().getModules());
+         final KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPattern, existingClasses, folders, testTransformer,
+               getModules().getModules());
          kiekerEnvironmentPreparer.prepareKieker();
       }
    }
