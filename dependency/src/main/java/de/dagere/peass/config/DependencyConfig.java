@@ -8,7 +8,7 @@ public class DependencyConfig implements Serializable {
    
    private final int threads;
    private final boolean doNotUpdateDependencies;
-   private final boolean generateViews;
+   private final boolean generateTraces;
    private final boolean generateCoverageSelection;
    private final boolean skipProcessSuccessRuns;
 
@@ -16,10 +16,10 @@ public class DependencyConfig implements Serializable {
       this.threads = threads;
       this.doNotUpdateDependencies = doNotUpdateDependencies;
       if (doNotUpdateDependencies) {
-         generateViews = false;
+         generateTraces = false;
          generateCoverageSelection = false;
       } else {
-         generateViews = true;
+         generateTraces = true;
       // Coverage selection does not create high additional effort after view generation, so generate it by default if views are generated
          generateCoverageSelection = true; 
       }
@@ -29,27 +29,27 @@ public class DependencyConfig implements Serializable {
    public DependencyConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateViews, final boolean generateCoverageSelection) {
       this.threads = threads;
       this.doNotUpdateDependencies = doNotUpdateDependencies;
-      this.generateViews = generateViews;
+      this.generateTraces = generateViews;
       this.generateCoverageSelection = generateCoverageSelection;
       skipProcessSuccessRuns = false;
       check();
    }
    
-   public DependencyConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateViews, final boolean generateCoverageSelection, final boolean skipProcessSuccessRuns) {
+   public DependencyConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateTraces, final boolean generateCoverageSelection, final boolean skipProcessSuccessRuns) {
       this.threads = threads;
       this.doNotUpdateDependencies = doNotUpdateDependencies;
-      this.generateViews = generateViews;
+      this.generateTraces = generateTraces;
       this.generateCoverageSelection = generateCoverageSelection;
       this.skipProcessSuccessRuns = skipProcessSuccessRuns;
       check();
    }
 
    private void check() {
-      if (doNotUpdateDependencies && generateViews) {
+      if (doNotUpdateDependencies && generateTraces) {
          throw new RuntimeException("isGenerateViews may only be true if doNotUpdateDependencies is false! "
                + "If doNotUpdateDependencies is set, no traces are generates; then it is not possible to generate views");
       }
-      if (!generateViews && generateCoverageSelection) {
+      if (!generateTraces && generateCoverageSelection) {
          throw new RuntimeException("generateCoverageSelection may only be true if generateViews is true! "
                + "If generateViews is disabled, no traces are generates; then it is not possible to select by code coverage");
       }
@@ -63,8 +63,8 @@ public class DependencyConfig implements Serializable {
       return doNotUpdateDependencies;
    }
 
-   public boolean isGenerateViews() {
-      return generateViews;
+   public boolean isGenerateTraces() {
+      return generateTraces;
    }
    
    public boolean isGenerateCoverageSelection() {

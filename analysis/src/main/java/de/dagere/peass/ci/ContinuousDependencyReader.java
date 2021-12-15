@@ -68,7 +68,7 @@ public class ContinuousDependencyReader {
       if (dependencies.getVersions().size() > 0) {
          Version versionInfo = dependencies.getVersions().get(version);
          LOG.debug("Versioninfo for version {}, running was: {}", version, versionInfo != null ? versionInfo.isRunning() : "null");
-         if (dependencyConfig.isGenerateViews()) {
+         if (dependencyConfig.isGenerateTraces()) {
             tests = selectResults(version);
             result = new RTSResult(tests, versionInfo.isRunning());
          } else {

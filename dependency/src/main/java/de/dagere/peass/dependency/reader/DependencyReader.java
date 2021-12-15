@@ -154,7 +154,7 @@ public class DependencyReader {
    public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final int tests = analyseVersion(changeManager);
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
-      if (dependencyConfig.isGenerateViews()) {
+      if (dependencyConfig.isGenerateTraces()) {
          Constants.OBJECTMAPPER.writeValue(resultsFolders.getExecutionFile(), executionResult);
          if (dependencyConfig.isGenerateCoverageSelection()) {
             Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageSelectionFile(), coverageBasedSelection);
@@ -220,7 +220,7 @@ public class DependencyReader {
       emptyVersion.setRunning(true);
       emptyVersion.setPredecessor(input.getPredecessor());
       dependencyResult.getVersions().put(version, emptyVersion);
-      if (dependencyConfig.isGenerateViews()) {
+      if (dependencyConfig.isGenerateTraces()) {
          executionResult.addEmptyVersion(version, null);
          coverageBasedSelection.addEmptyVersion(version, null);
       }
@@ -235,7 +235,7 @@ public class DependencyReader {
          TraceChangeHandler traceChangeHandler = new TraceChangeHandler(dependencyManager, folders, executionConfig, version);
          traceChangeHandler.handleTraceAnalysisChanges(newVersionInfo);
 
-         if (dependencyConfig.isGenerateViews()) {
+         if (dependencyConfig.isGenerateTraces()) {
             executionResult.addEmptyVersion(version, newVersionInfo.getPredecessor());
             TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, mapping);
             traceViewGenerator.generateViews(resultsFolders, newVersionInfo.getTests());
@@ -349,7 +349,7 @@ public class DependencyReader {
          DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
          lastRunningVersion = iterator.getTag();
 
-         if (dependencyConfig.isGenerateViews()) {
+         if (dependencyConfig.isGenerateTraces()) {
             generateInitialViews();
          }
          dependencyManager.cleanResultFolder();

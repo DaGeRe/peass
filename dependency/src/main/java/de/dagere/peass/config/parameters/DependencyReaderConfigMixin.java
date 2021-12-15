@@ -18,8 +18,8 @@ public class DependencyReaderConfigMixin {
    @Option(names = {"-doNotUpdateDependencies", "--doNotUpdateDependencies"}, description = "Disable updating of dependencies. This will make results for more than one version unusable, but increase dependency creation speed.")
    public boolean doNotUpdateDependencies = false;
    
-   @Option(names = {"-doNotGenerateViews", "--doNotGenerateViews"}, description = "Disable generation of views. Is false by default, but will be activated automatically if --doNotUpdateDependencies is set.")
-   public boolean doNotGenerateViews = false;
+   @Option(names = {"-doNotGenerateTraces", "--doNotGenerateTraces"}, description = "Disable generation of traces (and thereby trace-diffs). Is false by default, but will be activated automatically if --doNotUpdateDependencies is set.")
+   public boolean doNotGenerateTraces = false;
    
    @Option(names = {"-skipProcessSuccessRuns", "--skipProcessSuccessRuns"}, description = "Skips the process success run. ")
    public boolean skipProcessSuccessRuns = false;
@@ -57,8 +57,10 @@ public class DependencyReaderConfigMixin {
    public DependencyConfig getDependencyConfig() {
       if (doNotUpdateDependencies) {
          doNotGenerateCoverageSelection = true;
-         doNotGenerateViews = true;
+         doNotGenerateTraces = true;
       }
-      return new DependencyConfig(threads, doNotUpdateDependencies, !doNotGenerateViews, !doNotGenerateCoverageSelection, skipProcessSuccessRuns);
+      boolean generateTraces = !doNotGenerateTraces;
+      boolean generateCoverageSelection = !doNotGenerateCoverageSelection;
+      return new DependencyConfig(threads, doNotUpdateDependencies, generateTraces, generateCoverageSelection, skipProcessSuccessRuns);
    }
 }
