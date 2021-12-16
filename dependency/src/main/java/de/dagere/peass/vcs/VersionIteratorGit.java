@@ -59,8 +59,10 @@ public class VersionIteratorGit extends VersionIterator {
       int index = -1;
       if (previousCommit != null) {
          for (int i = 0; i < entries.size(); i++) {
-            if (entries.get(i).getTag().equals(previousCommit.getTag())) {
-               LOG.debug("{} equals {}, setting start index to {}", entries.get(i).getTag(), previousCommit.getTag(), i);
+            String testedTag = entries.get(i).getTag();
+            LOG.debug("Trying " + testedTag);
+            if (testedTag.equals(previousCommit.getTag())) {
+               LOG.debug("{} equals {}, setting start index to {}", testedTag, previousCommit.getTag(), i);
                index = i;
             }
          }

@@ -76,7 +76,10 @@ public class PropertyReader {
 
       final ChangedEntity entity = new ChangedEntity(testclazz.getKey().getClazz(), testclazz.getKey().getModule());
       // TODO eventually, we need to set change the version of the config here to  version.getKey(), version.getValue().getPredecessor(),
-      final PropertyReadHelper reader = new PropertyReadHelper(config,
+      ExecutionConfig copyConfig = new ExecutionConfig(config);
+      copyConfig.setVersion(version.getKey());
+      copyConfig.setVersionOld(version.getValue().getPredecessor());
+      final PropertyReadHelper reader = new PropertyReadHelper(copyConfig,
             entity, testcaseChange,
             projectFolder,
             resultsFolders.getViewFolder(), methodSourceFolder, changedTests);
