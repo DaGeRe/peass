@@ -8,13 +8,18 @@ import org.hamcrest.Matchers;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 
 public class TestPackageFinder {
 
    @Test
    public void testDependencyModule() {
-      final List<String> lowestPackage = ClazzFileFinder.getClasses(new File("."));
+      ExecutionConfig config = new ExecutionConfig();
+      config.getClazzFolders().add("src/main/java");
+      config.getClazzFolders().add("src/java");
+      
+      final List<String> lowestPackage = new ClazzFileFinder(config).getClasses(new File("."));
       System.out.println(lowestPackage);
       MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.DependencyReadingParallelStarter"));
       MatcherAssert.assertThat(lowestPackage, Matchers.not(IsIterableContaining.hasItem("de.dagere.peass.DependencyReadingParallelStarter.DependencyReadingParallelStarter")));

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -25,14 +26,15 @@ public class ModuleClassMapping {
 
    private final Map<String, String> mapping = new HashMap<>();
 
-   public ModuleClassMapping(final File baseFolder, final ProjectModules modules) {
+   public ModuleClassMapping(final File baseFolder, final ProjectModules modules, final ExecutionConfig config) {
       for (final File module : modules.getModules()) {
-         populateModule(baseFolder, module);
+         ClazzFileFinder finder = new ClazzFileFinder(config);
+         populateModule(baseFolder, module, finder);
       }
    }
    
-   private void populateModule(final File baseFolder, final File module) {
-      final List<String> classes = ClazzFileFinder.getClasses(module);
+   private void populateModule(final File baseFolder, final File module, final ClazzFileFinder finder) {
+      final List<String> classes = finder.getClasses(module);
       String moduleName;
       if (module.equals(baseFolder)) {
          moduleName = "";
@@ -46,7 +48,7 @@ public class ModuleClassMapping {
    }
 
    public ModuleClassMapping(final TestExecutor executor) throws IOException, XmlPullParserException {
-      this(executor.getProjectFolder(), executor.getModules());
+      this(executor.getProjectFolder(), executor.getModules(), executor.getTestTransformer().getConfig().getExecutionConfig());
    }
 
    public String getModuleOfClass(final String clazz) {

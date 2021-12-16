@@ -161,7 +161,8 @@ public class JUnitTestTransformer implements TestTransformer {
 
    private TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) {
       final TestSet moduleTests = new TestSet();
-      for (final String clazz : ClazzFileFinder.getTestClazzes(new File(module, "src"))) {
+      ClazzFileFinder finder = new ClazzFileFinder(config.getExecutionConfig());
+      for (final String clazz : finder.getTestClazzes(new File(module, "src"))) {
          final String currentModule = mapping.getModuleOfClass(clazz);
          final List<TestCase> testMethodNames = getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
          for (TestCase test : testMethodNames) {

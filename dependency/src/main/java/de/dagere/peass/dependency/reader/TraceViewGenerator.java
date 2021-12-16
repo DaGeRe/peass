@@ -11,6 +11,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.github.javaparser.ParseException;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -46,7 +47,8 @@ public class TraceViewGenerator {
       boolean allWorked = true;
       GitUtils.reset(folders.getProjectFolder());
       ProjectModules modules = dependencyManager.getExecutor().getModules();
-      ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), modules);
+      ExecutionConfig executionConfig = dependencyManager.getTestTransformer().getConfig().getExecutionConfig();
+      ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), modules, executionConfig);
       List<File> classpathFolders = getClasspathFolders(modules);
       for (TestCase testcase : examinedTests.getTests()) {
          final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(resultsFolders, folders, testcase, traceFileMapping, version, classpathFolders, mapping);

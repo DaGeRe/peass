@@ -15,6 +15,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.execution.kieker.KiekerEnvironmentPreparer;
@@ -163,7 +164,9 @@ public abstract class TestExecutor {
    public void loadClasses() {
       existingClasses = new LinkedList<>();
       for (final File module : getModules().getModules()) {
-         final List<String> currentClasses = ClazzFileFinder.getClasses(module);
+         ExecutionConfig executionConfig = testTransformer.getConfig().getExecutionConfig();
+         ClazzFileFinder finder = new ClazzFileFinder(executionConfig);
+         final List<String> currentClasses = finder.getClasses(module);
          existingClasses.addAll(currentClasses);
       }
    }

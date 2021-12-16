@@ -17,6 +17,7 @@ import com.github.javaparser.ParseProblemException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.ClazzFinder;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
@@ -40,33 +41,41 @@ public class ClazzFileFinder {
       return outerClazzName;
    }
 
+   private final ExecutionConfig executionConfig;
+   
+   public ClazzFileFinder(final ExecutionConfig executionConfig) {
+      this.executionConfig = executionConfig;
+   }
+
    /**
     * Returns a list of all classes of a maven project as Java FQN
     * 
     * @param projectFolder Folder where to search for classes
     * @return list of classes
     */
-   public static List<String> getClasses(final File projectFolder) {
+   public List<String> getClasses(final File projectFolder) {
+      File clazzpathFolder = getFirstExistingFolder(projectFolder, executionConfig.getClazzFolders());
+      
       final List<String> clazzes = new LinkedList<>();
-      final File src = new File(projectFolder, "src");
-      final File main = new File(src, "main");
-      final File mainJava = new File(src, "java");
-
-      if (mainJava.exists()) {
-         addClazzes(clazzes, mainJava);
-      }
-      if (main.exists()) {
-         final File java = new File(main, "java");
-         if (java.exists()) {
-            addClazzes(clazzes, java);
-         } else {
-            addClazzes(clazzes, main);
-         }
+      if (clazzpathFolder != null) {
+         addClazzes(clazzes, clazzpathFolder);
       }
 
-      final List<String> testClazzes = getTestClazzes(src);
+      final List<String> testClazzes = getTestClazzes(projectFolder);
       clazzes.addAll(testClazzes);
       return clazzes;
+   }
+
+   private File getFirstExistingFolder(final File projectFolder, final List<String> folders) {
+      File foundFolder = null;
+      for (String folderCandidate : folders) {
+         File candidate = new File(projectFolder, folderCandidate);
+         if (candidate.exists()) {
+            foundFolder = candidate;
+            break;
+         }
+      }
+      return foundFolder;
    }
 
    /**
@@ -75,27 +84,13 @@ public class ClazzFileFinder {
     * @param src
     * @return
     */
-   public static List<String> getTestClazzes(final File src) {
+   public List<String> getTestClazzes(final File projectFolder) {
       final List<String> clazzes = new LinkedList<>();
-      final File testFolder = getTestFolder(src);
+      final File testFolder = getFirstExistingFolder(projectFolder, executionConfig.getTestClazzFolders());
       if (testFolder != null && testFolder.exists()) {
          addClazzes(clazzes, testFolder);
       }
       return clazzes;
-   }
-
-   private static File getTestFolder(final File src) {
-      final File test = new File(src, "test");
-      if (test.exists()) {
-         final File java = new File(test, "java");
-         if (java.exists()) {
-            return java;
-         } else {
-            return test;
-         }
-      } else {
-         return null;
-      }
    }
 
    /**

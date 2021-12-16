@@ -136,7 +136,7 @@ public class ContinuousExecutor {
       final ProjectStatistics statistics = new ProjectStatistics();
       TestTransformer testTransformer = ExecutorCreator.createTestTransformer(folders, measurementConfig.getExecutionConfig(), measurementConfig);
       TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
-      ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), executor.getModules());
+      ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), executor.getModules(), measurementConfig.getExecutionConfig());
       final AnalyseFullData afd = new AnalyseFullData(resultsFolders.getChangeFile(), statistics, mapping, measurementConfig.getStatisticsConfig());
       afd.analyseFolder(measurementFolder);
       Constants.OBJECTMAPPER.writeValue(resultsFolders.getStatisticsFile(), statistics);

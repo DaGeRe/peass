@@ -7,6 +7,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 
 public class TestClazzFileFinder {
@@ -15,7 +16,11 @@ public class TestClazzFileFinder {
    
    @Test
    public void testClasses() {
-      List<String> clazzes = ClazzFileFinder.getClasses(SOURCE);
+      ExecutionConfig config = new ExecutionConfig();
+      config.getClazzFolders().add("src/main/java");
+      config.getClazzFolders().add("src/java");
+      
+      List<String> clazzes = new ClazzFileFinder(config).getClasses(SOURCE);
       
       System.out.println(clazzes);
       

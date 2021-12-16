@@ -49,6 +49,18 @@ public class ExecutionConfig implements Serializable {
 
    private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
    private String testExecutor = "default";
+   
+   private List<String> clazzFolders = new LinkedList<>(); 
+   {
+      clazzFolders.add("src/main/java");
+      clazzFolders.add("src/main");
+   }
+   private List<String> testClazzFolders = new LinkedList<>();
+   {
+      testClazzFolders.add("src/test/java");
+      testClazzFolders.add("src/test");
+      testClazzFolders.add("src/androidTest/java/");
+   }
 
    public ExecutionConfig() {
       includes = new LinkedList<>();
@@ -78,6 +90,9 @@ public class ExecutionConfig implements Serializable {
       this.onlyMeasureWorkload = other.onlyMeasureWorkload;
       this.showStart = other.showStart;
       this.redirectToNull = other.redirectToNull;
+      
+      this.clazzFolders = other.clazzFolders;
+      this.testClazzFolders = other.testClazzFolders;
    }
 
    public ExecutionConfig(final long timeoutInMinutes) {
@@ -314,5 +329,21 @@ public class ExecutionConfig implements Serializable {
 
    public void setTestExecutor(final String testExecutor) {
       this.testExecutor = testExecutor;
+   }
+
+   public List<String> getClazzFolders() {
+      return clazzFolders;
+   }
+
+   public void setClazzFolders(final List<String> clazzFolders) {
+      this.clazzFolders = clazzFolders;
+   }
+
+   public List<String> getTestClazzFolders() {
+      return testClazzFolders;
+   }
+
+   public void setTestClazzFolders(final List<String> testClazzFolders) {
+      this.testClazzFolders = testClazzFolders;
    }
 }

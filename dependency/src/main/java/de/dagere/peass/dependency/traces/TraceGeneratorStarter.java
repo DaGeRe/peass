@@ -75,7 +75,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
       KiekerResultManager resultsManager = runTests(newestVersion, tests, folders, executionConfig);
 
       LOG.info("Analyzing tests: {}", tests.getTests());
-      mapping = new ModuleClassMapping(folders.getProjectFolder(), resultsManager.getExecutor().getModules());
+      mapping = new ModuleClassMapping(folders.getProjectFolder(), resultsManager.getExecutor().getModules(), executionConfig);
       for (TestCase testcase : tests.getTests()) {
          writeTestcase(newestVersion, folders, resultsManager, testcase);
       }
