@@ -84,7 +84,7 @@ public class ClazzFileFinder {
       return clazzes;
    }
 
-   public static File getTestFolder(final File src) {
+   private static File getTestFolder(final File src) {
       final File test = new File(src, "test");
       if (test.exists()) {
          final File java = new File(test, "java");
@@ -104,7 +104,7 @@ public class ClazzFileFinder {
     * @param clazzes List where classes should be added
     * @param folder Main folder that should be searched
     */
-   public static void addClazzes(final List<String> clazzes, final File folder) {
+   private static void addClazzes(final List<String> clazzes, final File folder) {
       Collection<File> javaFiles = FileUtils.listFiles(folder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE);
       for (final File clazzFile : javaFiles) {
          final String clazz = getClazz(folder, clazzFile);
@@ -124,7 +124,7 @@ public class ClazzFileFinder {
       }
    }
 
-   public static String getClazz(final File folder, final File clazzFile) {
+   private static String getClazz(final File folder, final File clazzFile) {
       try {
          String path = clazzFile.getCanonicalPath();
          String projectFolderPrefix = folder.getCanonicalPath() + File.separator;
