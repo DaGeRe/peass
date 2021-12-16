@@ -53,7 +53,6 @@ import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 /**
  * Runs tests with kieker and reads the dependencies of tests for each version
@@ -85,8 +84,8 @@ public class DependencyManager extends KiekerResultManager {
       super(folders, executionConfig, kiekerConfig, env);
    }
 
-   public DependencyManager(final TestExecutor executor, final PeassFolders folders, final JUnitTestTransformer testTransformer) {
-      super(executor, folders, testTransformer);
+   public DependencyManager(final TestExecutor executor, final PeassFolders folders) {
+      super(executor, folders);
    }
 
    public TestDependencies getDependencyMap() {

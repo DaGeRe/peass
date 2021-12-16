@@ -39,7 +39,6 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.testtransformation.TestTransformer;
 
 /**
@@ -73,10 +72,10 @@ public class KiekerResultManager {
       executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
    }
 
-   public KiekerResultManager(final TestExecutor executor, final PeassFolders folders, final JUnitTestTransformer testTransformer) {
+   public KiekerResultManager(final TestExecutor executor, final PeassFolders folders) {
       this.executor = executor;
       this.folders = folders;
-      this.testTransformer = testTransformer;
+      this.testTransformer = executor.getTestTransformer();
       fakeConfig = testTransformer.getConfig();
    }
 

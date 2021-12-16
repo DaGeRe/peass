@@ -33,7 +33,9 @@ public class TestDependencyManager {
       prepareMock(folders, testExecutorMock, testFolder, rubishFile);
 
       JUnitTestTransformer transformer = new JUnitTestTransformer(folders.getProjectFolder(), new MeasurementConfig(5));
-      DependencyManager manager = new DependencyManager(testExecutorMock, folders, transformer);
+      Mockito.when(testExecutorMock.getTestTransformer()).thenReturn(transformer);
+      
+      DependencyManager manager = new DependencyManager(testExecutorMock, folders);
 
       manager.setDeleteFolderSize(1);
       manager.initialyGetTraces("1");
