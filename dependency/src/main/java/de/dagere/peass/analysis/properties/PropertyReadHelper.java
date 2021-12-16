@@ -54,7 +54,8 @@ public class PropertyReadHelper {
 
    private final ExecutionData changedTests;
    private final ChangedEntity testClazz;
-   private final String version, prevVersion;
+   private final ExecutionConfig config;
+   private final String version, versionOld;
    private final Change change;
    private final File projectFolder;
 
@@ -74,16 +75,20 @@ public class PropertyReadHelper {
       change.setMethod("testFILEUPLOAD135");
       final File projectFolder2 = new File("../../projekte/commons-fileupload");
       final File viewFolder2 = new File("/home/reichelt/daten3/diss/repos/preprocessing/4/commons-fileupload/views_commons-fileupload/");
-      final PropertyReadHelper propertyReadHelper = new PropertyReadHelper("96f8f56556a8592bfed25c82acedeffc4872ac1f",
-            "09d16c", ce, change, projectFolder2, viewFolder2,
+      ExecutionConfig demoConfig = new ExecutionConfig();
+      demoConfig.setVersion("96f8f56556a8592bfed25c82acedeffc4872ac1f");
+      demoConfig.setVersionOld("09d16c");
+      
+      final PropertyReadHelper propertyReadHelper = new PropertyReadHelper(demoConfig, ce, change, projectFolder2, viewFolder2,
             new File("/tmp/"), null);
       propertyReadHelper.read();
    }
 
-   public PropertyReadHelper(final String version, final String prevVersion, final ChangedEntity clazz,
+   public PropertyReadHelper(final ExecutionConfig config, final ChangedEntity clazz,
          final Change change, final File projectFolder, final File viewFolder, final File methodSourceFolder, final ExecutionData changedTests) {
-      this.version = version;
-      this.prevVersion = prevVersion;
+      this.version = config.getVersion();
+      this.versionOld = config.getVersionOld();
+      this.config = config;
       if (clazz.getMethod() != null) {
          throw new RuntimeException("Method must not be set!");
       }
@@ -113,13 +118,13 @@ public class PropertyReadHelper {
 
    private String getShortPrevVersion() {
       // This happens for the initial version
-      if (prevVersion == null) {
+      if (versionOld == null) {
          return "";
       }
-      if (prevVersion.endsWith("~1")) {
-         return prevVersion.substring(0, 6) + "~1";
+      if (versionOld.endsWith("~1")) {
+         return versionOld.substring(0, 6) + "~1";
       } else {
-         return prevVersion.substring(0, 6);
+         return versionOld.substring(0, 6);
       }
    }
 
@@ -162,7 +167,7 @@ public class PropertyReadHelper {
 
    private File searchOldTraceFile(final ChangeProperty property, File traceFileOld) {
       List<String> versions = new ArrayList<>(changedTests.getVersions().keySet());
-      int index = versions.indexOf(prevVersion);
+      int index = versions.indexOf(versionOld);
       if (index == -1) {
          index = versions.indexOf(version) - 1;
       }
@@ -199,11 +204,11 @@ public class PropertyReadHelper {
    }
 
    private Map<ChangedEntity, ClazzChangeData> getChanges(final PeassFolders folders) {
-      GitCommit firstCommit = new GitCommit(prevVersion, null, null, null);
+      GitCommit firstCommit = new GitCommit(versionOld, null, null, null);
       List<GitCommit> commits = Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), firstCommit });
       final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, commits, firstCommit);
       final ChangeManager changeManager = new ChangeManager(folders, iterator, new ExecutionConfig());
-      final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(prevVersion, version);
+      final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(versionOld, version);
       return changes;
    }
 
@@ -211,7 +216,7 @@ public class PropertyReadHelper {
       for (final String calledInOneMethod : merged) {
          LOG.debug("Loading: " + calledInOneMethod);
          final ChangedEntity entity = EntityUtil.determineEntity(calledInOneMethod);
-         final MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, folders.getProjectFolder(), folders.getOldSources(), entity, version);
+         final MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, folders.getProjectFolder(), folders.getOldSources(), entity, version, config);
          reader.readMethodChangeData();
          getKeywordChanges(property, reader, entity);
       }

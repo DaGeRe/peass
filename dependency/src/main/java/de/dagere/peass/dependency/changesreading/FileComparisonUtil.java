@@ -38,6 +38,7 @@ import com.github.javaparser.ast.comments.JavadocComment;
 import com.github.javaparser.ast.comments.LineComment;
 import com.github.javaparser.ast.stmt.BlockStmt;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.traces.TraceReadUtils;
@@ -160,8 +161,9 @@ public final class FileComparisonUtil {
       return result;
    }
 
-   public static String getMethodSource(final File projectFolder, final ChangedEntity entity, final String method) throws FileNotFoundException {
-      final File file = ClazzFileFinder.getSourceFile(projectFolder, entity);
+   public static String getMethodSource(final File projectFolder, final ChangedEntity entity, final String method, final ExecutionConfig config) throws FileNotFoundException {
+      ClazzFileFinder finder = new ClazzFileFinder(config);
+      final File file = finder.getSourceFile(projectFolder, entity);
       if (file != null) {
          LOG.debug("Found:  {} {}", file, file.exists());
          final CompilationUnit cu = JavaParserProvider.parse(file);
@@ -172,7 +174,7 @@ public final class FileComparisonUtil {
       }
    }
 
-   public static String getMethodSource(ChangedEntity entity, String method, CompilationUnit clazzUnit) {
+   public static String getMethodSource(final ChangedEntity entity, final String method, final CompilationUnit clazzUnit) {
       String[] parameters = entity.getParameters().toArray(new String[0]);
       TraceElementContent traceElement = new TraceElementContent(entity.getJavaClazzName(), 
             method, entity.getModule(), parameters, 0);
@@ -194,7 +196,7 @@ public final class FileComparisonUtil {
     * @throws ParseException If Class can't be parsed
     * @throws IOException If class can't be read
     */
-   public static void getChangedMethods(final File newFile, final File oldFile, ClazzChangeData changedata) throws ParseException, IOException {
+   public static void getChangedMethods(final File newFile, final File oldFile, final ClazzChangeData changedata) throws ParseException, IOException {
       try {
          final CompilationUnit newCu = JavaParserProvider.parse(newFile);
          final CompilationUnit oldCu = JavaParserProvider.parse(oldFile);

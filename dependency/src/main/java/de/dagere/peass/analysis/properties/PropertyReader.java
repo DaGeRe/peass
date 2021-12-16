@@ -12,6 +12,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.analysis.changes.Change;
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -27,11 +28,13 @@ public class PropertyReader {
    private final File projectFolder;
    private final ExecutionData changedTests;
    private int count = 0;
+   private final ExecutionConfig config;
 
-   public PropertyReader(final ResultsFolders resultsFolders, final File projectFolder, final ExecutionData changedTests) {
+   public PropertyReader(final ResultsFolders resultsFolders, final File projectFolder, final ExecutionData changedTests, final ExecutionConfig config) {
       this.resultsFolders = resultsFolders;
       this.projectFolder = projectFolder;
       this.changedTests = changedTests;
+      this.config = config;
    }
 
    public void readAllTestsProperties() {
@@ -72,7 +75,8 @@ public class PropertyReader {
       testcaseChange.setMethod(testmethod);
 
       final ChangedEntity entity = new ChangedEntity(testclazz.getKey().getClazz(), testclazz.getKey().getModule());
-      final PropertyReadHelper reader = new PropertyReadHelper(version.getKey(), version.getValue().getPredecessor(),
+      // TODO eventually, we need to set change the version of the config here to  version.getKey(), version.getValue().getPredecessor(),
+      final PropertyReadHelper reader = new PropertyReadHelper(config,
             entity, testcaseChange,
             projectFolder,
             resultsFolders.getViewFolder(), methodSourceFolder, changedTests);

@@ -11,6 +11,7 @@ import java.util.Set;
 
 import com.github.javaparser.ast.CompilationUnit;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
@@ -25,8 +26,11 @@ public class PropertyChangeGuesser {
 
    public Set<String> getGuesses(final PeassFolders folders, final Entry<ChangedEntity, ClazzChangeData> changedEntity) throws FileNotFoundException {
       final Set<String> guessedTypes = new HashSet<>();
-      final File file = ClazzFileFinder.getSourceFile(folders.getProjectFolder(), changedEntity.getKey());
-      final File fileOld = ClazzFileFinder.getSourceFile(folders.getOldSources(), changedEntity.getKey());
+      
+      //TODO Here, a real config should be passed; since this is rarely used, we go with the default folders
+      ClazzFileFinder finder = new ClazzFileFinder(new ExecutionConfig());
+      final File file = finder.getSourceFile(folders.getProjectFolder(), changedEntity.getKey());
+      final File fileOld = finder.getSourceFile(folders.getOldSources(), changedEntity.getKey());
 
       if (file != null && fileOld != null && file.exists() && fileOld.exists()) {
          final CompilationUnit clazzUnit = JavaParserProvider.parse(file);

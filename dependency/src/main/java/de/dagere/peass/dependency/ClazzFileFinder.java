@@ -23,7 +23,6 @@ import de.dagere.peass.dependency.changesreading.ClazzFinder;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.dependency.traces.TraceReadUtils;
 import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;
-import de.dagere.peass.utils.ClassFolderUtil;
 
 /**
  * Searches for all classes in a maven project. Used for instrumeting them.
@@ -151,7 +150,7 @@ public class ClazzFileFinder {
       return clazzFile;
    }
 
-   public static File getClazzFile(final File module, final ChangedEntity entity) {
+   public File getClazzFile(final File module, final ChangedEntity entity) {
       LOG.debug("Searching: {} in {}", entity, module.getAbsolutePath());
       final String clazzName = getOuterClass(entity.getClazz());
       final String clazzFileName = clazzName.endsWith(".java") ? clazzName : clazzName.replace('.', File.separatorChar) + ".java";
@@ -172,12 +171,13 @@ public class ClazzFileFinder {
       }
    }
 
-   private static File findFile(final File sourceParentFolder, final String clazzFileName, final File naturalCandidate) {
+   private File findFile(final File sourceParentFolder, final String clazzFileName, final File naturalCandidate) {
       File potentialFile = null;
       if (naturalCandidate.exists()) {
          potentialFile = naturalCandidate;
       }
-      for (final String potentialFolder : ClassFolderUtil.getPathes()) {
+      
+      for (final String potentialFolder : executionConfig.getAllClazzFolders()) {
          final File candidate = new File(sourceParentFolder, potentialFolder + File.separator + clazzFileName);
          if (candidate.exists()) {
             potentialFile = candidate;
@@ -186,7 +186,7 @@ public class ClazzFileFinder {
       return potentialFile;
    }
 
-   public static File getSourceFile(final File folder, final ChangedEntity clazz) {
+   public File getSourceFile(final File folder, final ChangedEntity clazz) {
       final ChangedEntity sourceContainingClazz = clazz.getSourceContainingClazz();
 
       File moduleFolder;

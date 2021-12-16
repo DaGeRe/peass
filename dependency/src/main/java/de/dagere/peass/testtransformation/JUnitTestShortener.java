@@ -56,7 +56,8 @@ public class JUnitTestShortener implements AutoCloseable {
       if (!lastShortenedMap.isEmpty()) {
          throw new RuntimeException("Only use TestShortener once!");
       }
-      final File calleeClazzFile = ClazzFileFinder.getClazzFile(module, callee);
+      ClazzFileFinder finder = new ClazzFileFinder(transformer.getConfig().getExecutionConfig());
+      final File calleeClazzFile = finder.getClazzFile(module, callee);
       if (calleeClazzFile != null) {
          try {
 
@@ -109,7 +110,8 @@ public class JUnitTestShortener implements AutoCloseable {
       LOG.debug("Shortening: {}", callee);
       if (clazz.getExtendedTypes().size() > 0) {
          final ChangedEntity parentEntity = getParentEntity(callee, calleeUnit, clazz);
-         final File parentClazzFile = ClazzFileFinder.getClazzFile(module, parentEntity);
+         ClazzFileFinder finder = new ClazzFileFinder(transformer.getConfig().getExecutionConfig());
+         final File parentClazzFile = finder.getClazzFile(module, parentEntity);
          if (parentClazzFile != null) {
             shortenTestClazz(parentEntity, parentClazzFile);
          }

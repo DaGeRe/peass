@@ -120,8 +120,8 @@ public class ChangeManager {
     * @throws FileNotFoundException
     */
    public Patch<String> getKeywordChanges(final ChangedEntity clazz) throws FileNotFoundException {
-      final String method = FileComparisonUtil.getMethodSource(folders.getProjectFolder(), clazz, clazz.getMethod());
-      final String methodOld = FileComparisonUtil.getMethodSource(folders.getOldSources(), clazz, clazz.getMethod());
+      final String method = FileComparisonUtil.getMethodSource(folders.getProjectFolder(), clazz, clazz.getMethod(), config);
+      final String methodOld = FileComparisonUtil.getMethodSource(folders.getOldSources(), clazz, clazz.getMethod(), config);
 
       final Patch<String> patch = DiffUtils.diff(Arrays.asList(method.split("\n")), Arrays.asList(methodOld.split("\n")));
       return patch;
@@ -158,8 +158,9 @@ public class ChangeManager {
       final ChangedEntity clazz = clazzIterator.next();
       final ClazzChangeData changeData = new ClazzChangeData(clazz);
       try {
-         final File newFile = ClazzFileFinder.getSourceFile(folders.getProjectFolder(), clazz);
-         final File oldFile = ClazzFileFinder.getSourceFile(folders.getOldSources(), clazz);
+         ClazzFileFinder finder = new ClazzFileFinder(config);
+         final File newFile = finder.getSourceFile(folders.getProjectFolder(), clazz);
+         final File oldFile = finder.getSourceFile(folders.getOldSources(), clazz);
          LOG.info("Vergleiche {}", newFile, oldFile);
          if (newFile != null && newFile.exists() && oldFile != null) {
             compareFiles(changedClassesMethods, clazzIterator, clazz, changeData, newFile, oldFile);
@@ -185,8 +186,9 @@ public class ChangeManager {
          final ClazzChangeData changeData, final File newFile, final File oldFile) throws ParseException, IOException {
       FileComparisonUtil.getChangedMethods(newFile, oldFile, changeData);
       boolean isImportChange = false;
+      ClazzFileFinder finder = new ClazzFileFinder(config);
       for (ChangedEntity entity : changeData.getImportChanges()) {
-         final File entityFile = ClazzFileFinder.getSourceFile(folders.getProjectFolder(), entity);
+         final File entityFile = finder.getSourceFile(folders.getProjectFolder(), entity);
          if (entityFile != null && entityFile.exists()) {
             isImportChange = true;
             changeData.setChange(true);

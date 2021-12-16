@@ -326,7 +326,8 @@ public class JUnitTestTransformer implements TestTransformer {
    @Override
    public List<TestCase> getTestMethodNames(final File module, final ChangedEntity clazzname) {
       final List<TestCase> methods = new LinkedList<>();
-      final File clazzFile = ClazzFileFinder.getClazzFile(module, clazzname);
+      ClazzFileFinder finder = new ClazzFileFinder(config.getExecutionConfig());
+      final File clazzFile = finder.getClazzFile(module, clazzname);
       final CompilationUnit unit = loadedFiles.get(clazzFile);
       if (unit != null) {
          final Integer junit = junitVersions.get(clazzFile);

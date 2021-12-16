@@ -11,12 +11,17 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 
 public class TestMethodChangeReader {
 
    public static final File methodSourceFolder = new File("target" + File.separator + "current_sources");
    public static final String VERSION = "000001";
+   public static final ExecutionConfig TEST_CONFIG = new ExecutionConfig();
+   static {
+      TEST_CONFIG.setVersion(VERSION);
+   }
 
    public TestMethodChangeReader() {
       System.out.println("Contains System.out");
@@ -45,7 +50,7 @@ public class TestMethodChangeReader {
    public static ChangedEntity writeInit(final File sourceFolder, final File methodSourceFolder) throws FileNotFoundException, IOException {
       ChangedEntity initMethodEntity = new ChangedEntity("de.dagere.peass.analysis.properties.TestMethodChangeReader", "", "init");
       MethodChangeReader reader2 = new MethodChangeReader(methodSourceFolder, sourceFolder,
-            new File("."), initMethodEntity, VERSION);
+            new File("."), initMethodEntity, VERSION, TEST_CONFIG);
       reader2.readMethodChangeData();
       return initMethodEntity;
    }
@@ -53,7 +58,7 @@ public class TestMethodChangeReader {
    public static ChangedEntity writeConstructor(final File sourceFolder, final File methodSourceFolder) throws FileNotFoundException, IOException {
       ChangedEntity constructorEntity = new ChangedEntity("de.dagere.peass.analysis.properties.TestMethodChangeReader", "", "<init>");
       MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, sourceFolder,
-            new File("."), constructorEntity, VERSION);
+            new File("."), constructorEntity, VERSION, TEST_CONFIG);
       reader.readMethodChangeData();
       return constructorEntity;
    }

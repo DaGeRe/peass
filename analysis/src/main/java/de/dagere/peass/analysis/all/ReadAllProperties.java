@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.ReadProperties;
 import de.dagere.peass.analysis.properties.PropertyReader;
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
@@ -88,7 +89,7 @@ public class ReadAllProperties {
          }
       } else {
          ResultsFolders resultsFolders = new ResultsFolders(folders.getPropertiesFolder().getParentFile(), project);
-         new PropertyReader(resultsFolders, projectFolder, changedTests).readAllTestsProperties();
+         new PropertyReader(resultsFolders, projectFolder, changedTests, new ExecutionConfig()).readAllTestsProperties();
       }
    }
 }

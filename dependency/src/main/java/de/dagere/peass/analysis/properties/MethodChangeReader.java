@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.FileComparisonUtil;
 import de.dagere.peass.dependency.traces.DiffUtil;
@@ -26,14 +27,15 @@ public class MethodChangeReader {
 
    private final String method, methodOld;
 
-   public MethodChangeReader(final File methodSourceFolder, final File sourceFolder, final File oldSourceFolder, final ChangedEntity clazz, final String version)
+   public MethodChangeReader(final File methodSourceFolder, final File sourceFolder, final File oldSourceFolder, final ChangedEntity clazz, 
+         final String version, final ExecutionConfig config)
          throws FileNotFoundException {
       this.methodSourceFolder = methodSourceFolder;
       this.clazz = clazz;
       this.version = version;
-
-      method = FileComparisonUtil.getMethodSource(sourceFolder, clazz, clazz.getMethod());
-      methodOld = FileComparisonUtil.getMethodSource(oldSourceFolder, clazz, clazz.getMethod());
+      
+      method = FileComparisonUtil.getMethodSource(sourceFolder, clazz, clazz.getMethod(), config);
+      methodOld = FileComparisonUtil.getMethodSource(oldSourceFolder, clazz, clazz.getMethod(), config);
    }
 
    public void readMethodChangeData() throws IOException {

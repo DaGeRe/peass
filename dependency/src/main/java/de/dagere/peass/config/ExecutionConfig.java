@@ -41,7 +41,7 @@ public class ExecutionConfig implements Serializable {
    private boolean removeSnapshots = false;
    private boolean useAlternativeBuildfile = false;
    private boolean excludeLog4j = false;
-   
+
    private boolean executeBeforeClassInMeasurement = false;
    private boolean onlyMeasureWorkload = false;
    private boolean showStart = false;
@@ -49,8 +49,8 @@ public class ExecutionConfig implements Serializable {
 
    private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
    private String testExecutor = "default";
-   
-   private List<String> clazzFolders = new LinkedList<>(); 
+
+   private List<String> clazzFolders = new LinkedList<>();
    {
       clazzFolders.add("src/main/java");
       clazzFolders.add("src/main");
@@ -85,12 +85,12 @@ public class ExecutionConfig implements Serializable {
       this.testExecutor = other.getTestExecutor();
       this.useTieredCompilation = other.isUseTieredCompilation();
       this.pl = other.getPl();
-      
+
       this.executeBeforeClassInMeasurement = other.executeBeforeClassInMeasurement;
       this.onlyMeasureWorkload = other.onlyMeasureWorkload;
       this.showStart = other.showStart;
       this.redirectToNull = other.redirectToNull;
-      
+
       this.clazzFolders = other.clazzFolders;
       this.testClazzFolders = other.testClazzFolders;
    }
@@ -266,7 +266,7 @@ public class ExecutionConfig implements Serializable {
    public boolean isRemoveSnapshots() {
       return removeSnapshots;
    }
-   
+
    public boolean isUseAlternativeBuildfile() {
       return useAlternativeBuildfile;
    }
@@ -345,5 +345,13 @@ public class ExecutionConfig implements Serializable {
 
    public void setTestClazzFolders(final List<String> testClazzFolders) {
       this.testClazzFolders = testClazzFolders;
+   }
+
+   @JsonIgnore
+   public List<String> getAllClazzFolders() {
+      List<String> allFolders = new LinkedList<>();
+      allFolders.addAll(clazzFolders);
+      allFolders.addAll(testClazzFolders);
+      return allFolders;
    }
 }

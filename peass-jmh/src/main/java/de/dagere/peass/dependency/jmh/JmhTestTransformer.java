@@ -132,7 +132,8 @@ public class JmhTestTransformer implements TestTransformer {
    @Override
    public List<TestCase> getTestMethodNames(final File module, final ChangedEntity clazzname) {
       final List<TestCase> methods = new LinkedList<>();
-      final File clazzFile = ClazzFileFinder.getClazzFile(module, clazzname);
+      ClazzFileFinder finder = new ClazzFileFinder(measurementConfig.getExecutionConfig());
+      final File clazzFile = finder.getClazzFile(module, clazzname);
       try {
          // File might be removed or moved
          if (clazzFile != null) {

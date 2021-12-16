@@ -11,12 +11,17 @@ import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 
 public class TestMethodChangeLongMethodName {
 
    public static final File methodSourceFolder = new File("target" + File.separator + "current_sources");
    public static final String VERSION = "000001";
+   public static final ExecutionConfig TEST_CONFIG = new ExecutionConfig();
+   static {
+      TEST_CONFIG.setVersion(VERSION);
+   }
 
    public void method(final int a) {
       System.out.println("Contains System.out");
@@ -62,7 +67,7 @@ public class TestMethodChangeLongMethodName {
       ChangedEntity smallMethodEntity = new ChangedEntity("de.dagere.peass.analysis.properties.TestMethodChangeLongMethodName", "", "method");
       smallMethodEntity.createParameters("int");
       MethodChangeReader reader2 = new MethodChangeReader(methodSourceFolder, sourceFolder,
-            new File("."), smallMethodEntity, VERSION);
+            new File("."), smallMethodEntity, VERSION, TEST_CONFIG);
       reader2.readMethodChangeData();
       return smallMethodEntity;
    }
@@ -72,7 +77,7 @@ public class TestMethodChangeLongMethodName {
       longMethodEntity.createParameters("java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,"
             + "java.lang.String,java.lang.String,java.lang.String,java.lang.String");
       MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, sourceFolder,
-            new File("."), longMethodEntity, VERSION);
+            new File("."), longMethodEntity, VERSION, TEST_CONFIG);
       reader.readMethodChangeData();
       return longMethodEntity;
    }
@@ -82,7 +87,7 @@ public class TestMethodChangeLongMethodName {
       longMethodEntity.createParameters("java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,"
             + "java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String");
       MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, sourceFolder,
-            new File("."), longMethodEntity, VERSION);
+            new File("."), longMethodEntity, VERSION, TEST_CONFIG);
       reader.readMethodChangeData();
       return longMethodEntity;
    }
@@ -93,7 +98,7 @@ public class TestMethodChangeLongMethodName {
             + "java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,"
             + "java.lang.String,java.lang.String,int");
       MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, sourceFolder,
-            new File("."), longMethodEntity, VERSION);
+            new File("."), longMethodEntity, VERSION, TEST_CONFIG);
       reader.readMethodChangeData();
       return longMethodEntity;
    }

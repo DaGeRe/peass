@@ -11,6 +11,7 @@ import org.mockito.Mockito;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.properties.ChangeProperty;
 import de.dagere.peass.analysis.properties.PropertyReadHelper;
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.EntityUtil;
 
@@ -47,7 +48,10 @@ public class TestPropertyReadHelper {
    public void testNullVersion() throws IOException {
       Change changeMock = Mockito.mock(Change.class);
       Mockito.when(changeMock.getMethod()).thenReturn("myTestMethod");
-      PropertyReadHelper helper = new PropertyReadHelper("000001", null, new ChangedEntity("Test"), changeMock, null, null, null, null);
+      ExecutionConfig config = new ExecutionConfig();
+      config.setVersion("000001");
+      
+      PropertyReadHelper helper = new PropertyReadHelper(config, new ChangedEntity("Test"), changeMock, null, null, null, null);
       ChangeProperty emptyProperty = helper.read();
       MatcherAssert.assertThat(emptyProperty, IsNull.notNullValue());
       Assert.assertEquals("myTestMethod", emptyProperty.getMethod());

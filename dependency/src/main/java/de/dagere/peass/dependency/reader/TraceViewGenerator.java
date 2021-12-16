@@ -22,7 +22,6 @@ import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
-import de.dagere.peass.utils.ClassFolderUtil;
 import de.dagere.peass.vcs.GitUtils;
 
 public class TraceViewGenerator {
@@ -59,11 +58,15 @@ public class TraceViewGenerator {
    }
 
    private List<File> getClasspathFolders(final ProjectModules modules) {
+      ExecutionConfig executionConfig = dependencyManager.getTestTransformer().getConfig().getExecutionConfig();
       final List<File> files = new LinkedList<>();
       for (int i = 0; i < modules.getModules().size(); i++) {
          final File module = modules.getModules().get(i);
-         for (String path : ClassFolderUtil.getPathes()) {
-            files.add(new File(module, path));
+         for (String clazzPath : executionConfig.getClazzFolders()) {
+            files.add(new File(module, clazzPath));
+         }
+         for (String testClazzPath : executionConfig.getTestClazzFolders()) {
+            files.add(new File(module, testClazzPath));
          }
       }
       return files;

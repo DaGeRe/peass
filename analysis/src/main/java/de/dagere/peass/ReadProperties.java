@@ -28,6 +28,7 @@ import de.dagere.peass.analysis.properties.ChangeProperty;
 import de.dagere.peass.analysis.properties.PropertyReadHelper;
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.analysis.properties.VersionChangeProperties;
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -103,7 +104,7 @@ public class ReadProperties implements Callable<Void> {
          final File resultFile = new File("results" + File.separator + projectName + File.separator + "properties_alltests.json");
          out = resultFile;
          ResultsFolders resultsFolders = new ResultsFolders(out, projectName);
-         final PropertyReader reader = new PropertyReader(resultsFolders, projectFolder, changedTests);
+         final PropertyReader reader = new PropertyReader(resultsFolders, projectFolder, changedTests, new ExecutionConfig());
          reader.readAllTestsProperties();
       } else {
 
@@ -190,7 +191,11 @@ public class ReadProperties implements Callable<Void> {
          final List<ChangeProperty> properties = new LinkedList<>();
          changeProperties.getProperties().put(testclazz, properties);
          for (final Change testcaseChange : changes.getValue()) {
-            final PropertyReadHelper reader = new PropertyReadHelper(version, predecessor, new ChangedEntity(testclazz, module), testcaseChange, projectFolder, viewFolder,
+            ExecutionConfig config = new ExecutionConfig();
+            config.setVersion(version);
+            config.setVersionOld(predecessor);
+            ChangedEntity entity = new ChangedEntity(testclazz, module);
+            final PropertyReadHelper reader = new PropertyReadHelper(config, entity, testcaseChange, projectFolder, viewFolder,
                   methodFolder, null);
             final ChangeProperty currentProperty = reader.read();
             // if (currentProperty != null) {

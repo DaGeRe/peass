@@ -57,7 +57,7 @@ public class SourceReader {
          executionData.addCall(version, test);
       }
       LOG.info("Reading method sources for {} - {}", version, versionOld);
-      final PropertyReader propertyReader = new PropertyReader(resultsFolders, folders.getProjectFolder(), executionData);
+      final PropertyReader propertyReader = new PropertyReader(resultsFolders, folders.getProjectFolder(), executionData, config);
       propertyReader.readAllTestsProperties();
    }
 }

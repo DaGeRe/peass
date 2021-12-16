@@ -100,7 +100,7 @@ public class DependencyExecutionReader implements Callable<Void>{
       
       if (!config.isDoNotGenerateProperties()) {
          ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), project);
-         final PropertyReader propertyReader = new PropertyReader(resultsFolders, config.getProjectFolder(), executionData);
+         final PropertyReader propertyReader = new PropertyReader(resultsFolders, config.getProjectFolder(), executionData, executionConfig);
          propertyReader.readAllTestsProperties();
       }
    }
