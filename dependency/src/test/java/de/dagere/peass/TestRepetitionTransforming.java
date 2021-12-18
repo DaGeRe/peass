@@ -99,6 +99,34 @@ public class TestRepetitionTransforming {
    }
 
    @Test
+   public void testKiekerWaitTime() throws IOException {
+      final File old2 = new File(RESOURCE_FOLDER, "TestMe2.java");
+      final File testFile2 = new File(SOURCE_FOLDER, "TestMe2.java");
+      FileUtils.copyFile(old2, testFile2);
+
+      MeasurementConfig config = new MeasurementConfig(5);
+      config.getExecutionConfig().setKiekerWaitTime(15);
+      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, config);
+      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
+      tt.transformTests();
+
+      final CompilationUnit cu = JavaParserProvider.parse(testFile2);
+
+      final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMe2").get();
+      Assert.assertNotNull(clazz);
+
+      final List<MethodDeclaration> methodsByName = clazz.getMethodsByName("testMethod1");
+      MatcherAssert.assertThat(methodsByName, Matchers.hasSize(1));
+
+      final MethodDeclaration testMethod = methodsByName.get(0);
+
+      final AnnotationExpr performanceTestAnnotation = testMethod.getAnnotationByName("PerformanceTest").get();
+      Assert.assertNotNull(performanceTestAnnotation);
+
+      MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("kiekerWaitTime"));
+   }
+
+   @Test
    public void testJUnit5ProtectedTransformation() throws IOException {
       final File old2 = new File(RESOURCE_FOLDER, "TestMe8.java");
       final File testFile2 = new File(SOURCE_FOLDER, "TestMe8.java");

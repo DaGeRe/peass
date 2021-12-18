@@ -35,6 +35,8 @@ public class ExecutionConfig implements Serializable {
    protected String endversion;
    private String pl;
    private boolean createDefaultConstructor = true;
+   private int kiekerWaitTime = 10;
+
    private boolean redirectSubprocessOutputToFile = true;
    private boolean useTieredCompilation = false;
 
@@ -77,6 +79,7 @@ public class ExecutionConfig implements Serializable {
       this.startversion = other.getStartversion();
       this.endversion = other.getEndversion();
       this.createDefaultConstructor = other.isCreateDefaultConstructor();
+      this.kiekerWaitTime = other.kiekerWaitTime;
       this.redirectSubprocessOutputToFile = other.isRedirectSubprocessOutputToFile();
       this.removeSnapshots = other.removeSnapshots;
       this.useAlternativeBuildfile = other.useAlternativeBuildfile;
@@ -233,6 +236,14 @@ public class ExecutionConfig implements Serializable {
 
    public void setCreateDefaultConstructor(final boolean createDefaultConstructor) {
       this.createDefaultConstructor = createDefaultConstructor;
+   }
+
+   public int getKiekerWaitTime() {
+      return kiekerWaitTime;
+   }
+
+   public void setKiekerWaitTime(final int kiekerWaitTime) {
+      this.kiekerWaitTime = kiekerWaitTime;
    }
 
    public String getPl() {

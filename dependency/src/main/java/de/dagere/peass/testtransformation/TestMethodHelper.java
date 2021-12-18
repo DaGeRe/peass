@@ -59,6 +59,9 @@ public class TestMethodHelper {
       performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
       performanceTestAnnotation.addPair("redirectToNull", "" + config.getExecutionConfig().isRedirectToNull());
       performanceTestAnnotation.addPair("showStart", "" + config.isShowStart());
+      if  (config.getExecutionConfig().getKiekerWaitTime() != 10) {
+         performanceTestAnnotation.addPair("kiekerWaitTime", "" + config.getExecutionConfig().getKiekerWaitTime());
+      }
       if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
          performanceTestAnnotation.addPair("dataCollectors", "\"ONLYTIME\"");
       } else if (datacollectorlist.equals(DataCollectorList.ONLYTIME_NOGC)) {
