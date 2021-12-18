@@ -154,6 +154,7 @@ public class ExecutionConfig implements Serializable {
       useAlternativeBuildfile = executionMixin.isUseAlternativeBuildfile();
       createDefaultConstructor = !executionMixin.isSkipDefaultConstructor();
       executeBeforeClassInMeasurement = executionMixin.isExecuteBeforeClassInMeasurement();
+      kiekerWaitTime = executionMixin.getKiekerWaitTime();
    }
 
    public void setTimeout(final long timeout) {

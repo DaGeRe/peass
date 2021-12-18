@@ -60,6 +60,9 @@ public class ExecutionConfigMixin {
    @Option(names = { "-useAlternativeBuildfile",
          "--useAlternativeBuildfile" }, description = "Use alternative buildfile when existing (searches for alternative_build.gradle and replaces build.gradle with the file; required e.g. if the default build process contains certification)")
    protected boolean useAlternativeBuildfile = false;
+   
+   @Option(names = { "-kiekerWaitTime", "--kiekerWaitTime" }, description = "Time that KoPeMe should wait until Kieker writing is finshed in seconds (default: 10)")
+   protected int kiekerWaitTime = 5;
 
    public int getTimeout() {
       return timeout;
@@ -197,5 +200,11 @@ public class ExecutionConfigMixin {
       this.executeBeforeClassInMeasurement = executeBeforeClassInMeasurement;
    }
    
+   public int getKiekerWaitTime() {
+      return kiekerWaitTime;
+   }
    
+   public void setKiekerWaitTime(final int kiekerWaitTime) {
+      this.kiekerWaitTime = kiekerWaitTime;
+   }
 }
