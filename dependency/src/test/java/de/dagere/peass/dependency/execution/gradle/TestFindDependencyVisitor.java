@@ -32,4 +32,14 @@ public class TestFindDependencyVisitor {
       FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile);
       Assert.assertTrue(visitor.isUseJava());
    }
+   
+   @Test
+   public void testImportGrgit() throws IOException {
+      File withApplyPlugins = new File(GRADLE_FOLDER, "build_grgit.gradle");
+      File buildfile = new File("target/build.gradle");
+      FileUtils.copyFile(withApplyPlugins, buildfile);
+      
+      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile);
+      Assert.assertTrue(visitor.isUseJava());
+   }
 }
