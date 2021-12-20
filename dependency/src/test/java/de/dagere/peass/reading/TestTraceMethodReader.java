@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import com.github.javaparser.ParseException;
 
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.traces.TraceMethodReader;
@@ -83,7 +84,7 @@ public class TestTraceMethodReader {
 
       final File traceFolder = kiekerFolders[0];
       //
-      final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING).getShortTrace(""),
+      final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING, new KiekerConfig()).getShortTrace(""),
             new File("src" + File.separator + "test" + File.separator + "java"));
       final TraceWithMethods trace = reader.getTraceWithMethods();
 
@@ -140,7 +141,7 @@ public class TestTraceMethodReader {
 
       final File traceFolder = kiekerFolders[0];
 
-      final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING).getShortTrace(""),
+      final TraceMethodReader reader = new TraceMethodReader(new CalledMethodLoader(traceFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING, new KiekerConfig()).getShortTrace(""),
             new File("src" + File.separator + "test" + File.separator + "java"));
       final TraceWithMethods trace = reader.getTraceWithMethods();
 

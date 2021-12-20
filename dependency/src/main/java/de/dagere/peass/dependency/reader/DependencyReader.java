@@ -237,7 +237,7 @@ public class DependencyReader {
 
          if (dependencyConfig.isGenerateTraces()) {
             executionResult.addEmptyVersion(version, newVersionInfo.getPredecessor());
-            TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, mapping);
+            TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, mapping, kiekerConfig);
             traceViewGenerator.generateViews(resultsFolders, newVersionInfo.getTests());
 
             DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getVersionDiffFolder(version));
@@ -361,7 +361,7 @@ public class DependencyReader {
 
    private void generateInitialViews() throws IOException, XmlPullParserException, ParseException, ViewNotFoundException, InterruptedException {
       TestSet initialTests = dependencyResult.getInitialversion().getInitialTests();
-      TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), mapping);
+      TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), mapping, kiekerConfig);
       traceViewGenerator.generateViews(resultsFolders, initialTests);
 
       executionResult.getVersions().put(iterator.getTag(), new TestSet());

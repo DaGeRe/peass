@@ -149,7 +149,7 @@ public class TraceGettingIT {
 
    public static void executeReading(final TestCase testcase, final File clazzDir, final Map<String, List<File>> traceFileMap, final String githash, final File kiekerResultFolder)
          throws ParseException, IOException {
-      final ArrayList<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING).getShortTrace("");
+      final ArrayList<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, ModuleClassMapping.SINGLE_MODULE_MAPPING, new KiekerConfig()).getShortTrace("");
       LOG.debug("Short Trace: {}", shortTrace.size());
       final TraceMethodReader traceMethodReader = new TraceMethodReader(shortTrace,
             new File(TestConstants.CURRENT_FOLDER, "src/main/java"), new File(TestConstants.CURRENT_FOLDER, "src/java"),

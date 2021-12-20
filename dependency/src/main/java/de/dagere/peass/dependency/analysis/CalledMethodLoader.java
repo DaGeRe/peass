@@ -28,6 +28,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import kieker.analysis.exception.AnalysisConfigurationException;
@@ -40,8 +41,6 @@ import kieker.analysis.exception.AnalysisConfigurationException;
  */
 public class CalledMethodLoader {
 
-   public static final int TRACE_MAX_SIZE_IN_MB = 10;
-
    private static final PrintStream realSystemOut = System.out;
    private static final PrintStream realSystemErr = System.err;
 
@@ -49,10 +48,12 @@ public class CalledMethodLoader {
 
    private final File kiekerTraceFolder;
    private final ModuleClassMapping mapping;
+   private final KiekerConfig kiekerConfig;
 
-   public CalledMethodLoader(final File kiekerTraceFolder, final ModuleClassMapping mapping) {
+   public CalledMethodLoader(final File kiekerTraceFolder, final ModuleClassMapping mapping, final KiekerConfig kiekerConfig) {
       this.kiekerTraceFolder = kiekerTraceFolder;
       this.mapping = mapping;
+      this.kiekerConfig = kiekerConfig;
    }
 
    /**
@@ -89,7 +90,7 @@ public class CalledMethodLoader {
          final long sizeInMB = size / (1024 * 1024);
 
          LOG.debug("Size: {} ({}) Folder: {}", sizeInMB, size, kiekerTraceFolder);
-         if (sizeInMB < TRACE_MAX_SIZE_IN_MB) {
+         if (sizeInMB < kiekerConfig.getTraceSizeInMb()) {
             final CalledMethodStage peassFilter = executePeassFilter(prefix);
             return peassFilter.getCalls();
          } else {
@@ -109,7 +110,7 @@ public class CalledMethodLoader {
 
    public static void main(final String[] args) {
       final File kiekerTraceFile = new File(args[0]);
-      final List<TraceElement> trace = new CalledMethodLoader(kiekerTraceFile, null).getShortTrace("");
+      final List<TraceElement> trace = new CalledMethodLoader(kiekerTraceFile, null, new KiekerConfig()).getShortTrace("");
 
       System.out.println("Trace-Size: " + trace.size());
 

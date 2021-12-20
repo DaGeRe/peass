@@ -95,7 +95,7 @@ public class TestPeassFilter {
       manager.executeKoPeMeKiekerRun(testset, ""+i, peassFolders.getDependencyLogFolder());
       final File kiekerFolderComparison = KiekerFolderUtil.getClazzMethodFolder(testcase, manager.getXMLFileFolder(CURRENT))[0];
       LOG.debug("Searching: " + kiekerFolderComparison);
-      final List<TraceElement> compareTrace = new CalledMethodLoader(kiekerFolderComparison, mapping).getShortTrace("");
+      final List<TraceElement> compareTrace = new CalledMethodLoader(kiekerFolderComparison, mapping, new KiekerConfig()).getShortTrace("");
       return compareTrace;
    }
 }

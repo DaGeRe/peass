@@ -16,6 +16,7 @@ import com.github.javaparser.ParseException;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.Node;
 
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
@@ -53,7 +54,7 @@ public class TraceMethodReader {
    }
 
    public TraceMethodReader(final File traceFolder, final ModuleClassMapping mapping, final File... clazzFolder) throws FileNotFoundException {
-      List<TraceElement> calls = new CalledMethodLoader(traceFolder, mapping).getShortTrace(null);
+      List<TraceElement> calls = new CalledMethodLoader(traceFolder, mapping, new KiekerConfig()).getShortTrace(null);
       this.clazzFolder = clazzFolder;
       trace = loadTrace(calls);
    }

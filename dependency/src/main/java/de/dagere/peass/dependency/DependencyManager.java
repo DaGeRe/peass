@@ -65,7 +65,7 @@ public class DependencyManager extends KiekerResultManager {
    private static final Logger LOG = LogManager.getLogger(DependencyManager.class);
 
    private final TestDependencies dependencies = new TestDependencies();
-   int deleteFolderSize = 100;
+   private int deleteFolderSize;
 
    /**
     * Creates a new ChangeTestClassesHandler for the given folder with the given groupId and projectId. The groupId and projectId are needed to determine where the results are
@@ -82,6 +82,7 @@ public class DependencyManager extends KiekerResultManager {
     */
    public DependencyManager(final PeassFolders folders, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       super(folders, executionConfig, kiekerConfig, env);
+      deleteFolderSize = kiekerConfig.getTraceSizeInMb() * 10;
    }
 
    public DependencyManager(final TestExecutor executor, final PeassFolders folders) {
@@ -253,13 +254,13 @@ public class DependencyManager extends KiekerResultManager {
          final long sizeInMB = size / (1024 * 1024);
 
          LOG.debug("Size: {} Folder: {}", sizeInMB, kiekerResultFolder);
-         if (sizeInMB > CalledMethodLoader.TRACE_MAX_SIZE_IN_MB) {
+         if (sizeInMB > fakeConfig.getKiekerConfig().getTraceSizeInMb()) {
             LOG.error("Trace too big!");
          } else {
             LOG.debug("Reading Kieker folder: {}", kiekerResultFolder.getAbsolutePath());
             final File kiekerOutputFile = new File(folders.getDependencyLogFolder(), "output_kieker.txt");
 
-            final Map<ChangedEntity, Set<String>> calledMethods = new CalledMethodLoader(kiekerResultFolder, mapping).getCalledMethods(kiekerOutputFile);
+            final Map<ChangedEntity, Set<String>> calledMethods = new CalledMethodLoader(kiekerResultFolder, mapping, fakeConfig.getKiekerConfig()).getCalledMethods(kiekerOutputFile);
             for (Map.Entry<ChangedEntity, Set<String>> calledMethod : calledMethods.entrySet()) {
                if (!allCalledClasses.containsKey(calledMethod.getKey())) {
                   allCalledClasses.put(calledMethod.getKey(), calledMethod.getValue());

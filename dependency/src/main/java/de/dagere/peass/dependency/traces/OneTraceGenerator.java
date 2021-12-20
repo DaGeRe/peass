@@ -10,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -33,9 +34,10 @@ public class OneTraceGenerator {
    private final ResultsFolders resultsFolders;
    private final List<File> classpathFolders;
    private final ModuleClassMapping moduleClassMapping;
+   private final KiekerConfig kiekerConfig;
 
    public OneTraceGenerator(final ResultsFolders resultsFolders, final PeassFolders folders, final TestCase testcase, final TraceFileMapping traceFileMapping, final String version,
-         final List<File> classpathFolders, final ModuleClassMapping mapping) {
+         final List<File> classpathFolders, final ModuleClassMapping mapping, final KiekerConfig kiekerConfig) {
       this.resultsFolders = resultsFolders;
       this.folders = folders;
       this.testcase = testcase;
@@ -43,6 +45,7 @@ public class OneTraceGenerator {
       this.version = version;
       this.classpathFolders = classpathFolders;
       this.moduleClassMapping = mapping;
+      this.kiekerConfig = kiekerConfig;
    }
 
    public boolean generateTrace(final String versionCurrent)
@@ -74,8 +77,9 @@ public class OneTraceGenerator {
          final long sizeInMB = size / (1024 * 1024);
          overallSizeInMb += sizeInMB;
          LOG.debug("Filesize: {} ({})", sizeInMB, size);
-         if (sizeInMB < CalledMethodLoader.TRACE_MAX_SIZE_IN_MB) {
-            final List<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, moduleClassMapping).getShortTrace("");
+         if (sizeInMB < kiekerConfig.getTraceSizeInMb()) {
+            CalledMethodLoader calledMethodLoader = new CalledMethodLoader(kiekerResultFolder, moduleClassMapping, kiekerConfig);
+            final List<TraceElement> shortTrace = calledMethodLoader.getShortTrace("");
             if (shortTrace != null) {
                LOG.debug("Short Trace: {} Folder: {} Project: {}", shortTrace.size(), kiekerResultFolder.getAbsolutePath(), folders.getProjectFolder());
                if (shortTrace.size() > 0) {

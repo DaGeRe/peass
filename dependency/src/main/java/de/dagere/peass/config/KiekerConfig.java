@@ -20,6 +20,7 @@ public class KiekerConfig implements Serializable {
    private int kiekerAggregationInterval = DEFAULT_WRITE_INTERVAL;
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
    private boolean extractMethod = false;
+   private int traceSizeInMb = 100;
 
    public KiekerConfig() {
    }
@@ -39,6 +40,7 @@ public class KiekerConfig implements Serializable {
       this.kiekerAggregationInterval = other.kiekerAggregationInterval;
       this.record = other.record;
       this.extractMethod = other.extractMethod;
+      this.traceSizeInMb = other.traceSizeInMb;
    }
    
    public void check() {
@@ -47,6 +49,9 @@ public class KiekerConfig implements Serializable {
       }
       if (!useSourceInstrumentation && extractMethod) {
          throw new RuntimeException("Deactivated source instrumentation and usage of extraction is not possible!");
+      }
+      if (traceSizeInMb < 1) {
+         throw new RuntimeException("Trace size in MB need to be at least 1, but was " + traceSizeInMb);
       }
    }
 
@@ -134,5 +139,11 @@ public class KiekerConfig implements Serializable {
       this.extractMethod = extractMethod;
    }
    
+   public int getTraceSizeInMb() {
+      return traceSizeInMb;
+   }
    
+   public void setTraceSizeInMb(final int traceSizeInMb) {
+      this.traceSizeInMb = traceSizeInMb;
+   }
 }

@@ -99,9 +99,9 @@ public class TraceGeneratorStarter implements Callable<Void> {
       final long size = FileUtils.sizeOfDirectory(kiekerResultFolder);
       final long sizeInMB = size / (1024 * 1024);
 
-      if (sizeInMB < CalledMethodLoader.TRACE_MAX_SIZE_IN_MB) {
+      if (sizeInMB < 100) {
          LOG.debug("Writing " + testcase);
-         final List<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, mapping).getShortTrace("");
+         final List<TraceElement> shortTrace = new CalledMethodLoader(kiekerResultFolder, mapping, new KiekerConfig()).getShortTrace("");
 
          writeTrace(newestVersion, testcase, shortTrace);
       } else {

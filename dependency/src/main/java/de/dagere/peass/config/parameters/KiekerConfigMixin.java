@@ -28,6 +28,9 @@ public class KiekerConfigMixin {
    
    @Option(names = { "-enableAdaptiveInstrumentation", "--enableAdaptiveInstrumentation" }, description = "Enable adaptive instrumentation (for performance comparison to AspectJ)")
    public boolean enableAdaptiveInstrumentation = false;
+  
+   @Option(names = { "-traceSizeInMb", "--traceSizeInMb" }, description = "Sets the maximum allowed trace size in Mb (bigger traces will be ignored by Peass)")
+   public long traceSizeInMb = 100;
 
    public int getWriteInterval() {
       return writeInterval;
@@ -55,6 +58,14 @@ public class KiekerConfigMixin {
    
    public boolean isEnableAdaptiveInstrumentation() {
       return enableAdaptiveInstrumentation;
+   }
+   
+   public long getTraceSizeInMb() {
+      return traceSizeInMb;
+   }
+   
+   public void setTraceSizeInMb(final long traceSizeInMb) {
+      this.traceSizeInMb = traceSizeInMb;
    }
 
    public KiekerConfig getKiekerConfig() {
