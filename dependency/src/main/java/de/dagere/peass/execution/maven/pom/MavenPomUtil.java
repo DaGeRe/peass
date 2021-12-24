@@ -71,7 +71,7 @@ public class MavenPomUtil {
             dependency.setVersion("4.13.2");
          }
          if (dependency.getArtifactId().equals("junit-jupiter") && dependency.getGroupId().equals("org.junit.jupiter")) {
-            dependency.setVersion("5.8.1");
+            dependency.setVersion("5.8.2");
          }
       }
 

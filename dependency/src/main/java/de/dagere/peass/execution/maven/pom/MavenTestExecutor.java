@@ -64,7 +64,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       super(folders, testTransformer, env);
    }
 
-   private Process buildMavenProcess(final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
+   protected Process buildMavenProcess(final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
       final String testGoal = getTestGoal();
       String mvnCall = env.fetchMavenCall();
       final String[] originals = new String[] { mvnCall,
