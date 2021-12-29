@@ -79,7 +79,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, causeSearchConfigMixin);
 
-      if (causeSearcherConfig.isUseAggregation() && measurementConfiguration.getKiekerConfig().getRecord() == AllowedKiekerRecord.OPERATIONEXECUTION) {
+      if (kiekerConfigMixin.isUseAggregation() && measurementConfiguration.getKiekerConfig().getRecord() == AllowedKiekerRecord.OPERATIONEXECUTION) {
          throw new RuntimeException("Aggregation and OperationExecutionRecord can not be combined!");
       }
 

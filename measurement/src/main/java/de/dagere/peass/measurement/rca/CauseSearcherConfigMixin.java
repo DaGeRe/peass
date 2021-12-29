@@ -9,9 +9,6 @@ public class CauseSearcherConfigMixin {
    @Option(names = { "-useCalibrationRun", "--useCalibrationRun" }, description = "Use the calibration run for complete measurements")
    private boolean useCalibrationRun = false;
 
-   @Option(names = { "-useNonAggregatedWriter",
-         "--useNonAggregatedWriter" }, description = "Whether to save non-aggregated JSON data for measurement results - if true, full kieker record data are stored")
-   private boolean useNonAggregatedWriter = false;
 
    @Option(names = { "-useEOIs",
          "--useEOIs" }, description = "Use EOIs - nodes will be considered different if their kieker pattern or ess differ (needs space and computation time for big trees)")
@@ -36,10 +33,6 @@ public class CauseSearcherConfigMixin {
 
    public boolean isUseCalibrationRun() {
       return useCalibrationRun;
-   }
-
-   public boolean isUseNonAggregatedWriter() {
-      return useNonAggregatedWriter;
    }
 
    public boolean isUseEOIs() {

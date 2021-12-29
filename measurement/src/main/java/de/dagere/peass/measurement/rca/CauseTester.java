@@ -98,7 +98,7 @@ public class CauseTester extends AdaptiveTester {
    protected synchronized TestExecutor getExecutor(final PeassFolders temporaryFolders, final String version) {
       final TestExecutor testExecutor = super.getExecutor(temporaryFolders, version);
       TestTransformer testTransformer = testExecutor.getTestTransformer();
-      testTransformer.setAggregatedWriter(causeConfig.isUseAggregation());
+      testTransformer.setAggregatedWriter(configuration.getKiekerConfig().isUseAggregation());
       testTransformer.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
       generatePatternSet(version);
       final HashSet<String> includedMethodPattern = new HashSet<>(includedPattern);
@@ -160,9 +160,9 @@ public class CauseTester extends AdaptiveTester {
       if (getCurrentOrganizer().testSuccess(version)) {
          LOG.info("Did succeed in measurement - analyse values");
          
-         final KiekerResultReader kiekerResultReader = new KiekerResultReader(causeConfig.isUseAggregation(), configuration.getKiekerConfig().getRecord(), includedNodes, version, testcase,
+         final KiekerResultReader kiekerResultReader = new KiekerResultReader(configuration.getKiekerConfig().isUseAggregation(), configuration.getKiekerConfig().getRecord(), includedNodes, version, testcase,
                version.equals(configuration.getExecutionConfig().getVersion()));
-         kiekerResultReader.setConsiderNodePosition(!causeConfig.isUseAggregation());
+         kiekerResultReader.setConsiderNodePosition(!configuration.getKiekerConfig().isUseAggregation());
          kiekerResultReader.readResults(versionResultFolder);
       } else {
          LOG.info("Did not success in measurement");
@@ -206,7 +206,7 @@ public class CauseTester extends AdaptiveTester {
 
       final MeasurementConfig config = new MeasurementConfig(15 * 1000 * 60, 15, true, version, version + "~1");
       config.setUseKieker(true);
-      final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, false, 0.01, false, false, RCAStrategy.COMPLETE, 1);
+      final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, 0.01, false, false, RCAStrategy.COMPLETE, 1);
       final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), config, causeConfig, new EnvironmentVariables());
 
       final CallTreeNode node = new CallTreeNode("FileUploadTestCase#parseUpload",

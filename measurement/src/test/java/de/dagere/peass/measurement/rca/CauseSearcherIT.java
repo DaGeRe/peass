@@ -42,7 +42,7 @@ public class CauseSearcherIT {
 
    private static final TestCase TESTCASE = new TestCase("defaultpackage.TestMe", "testMe");
    public final static CauseSearcherConfig CAUSE_CONFIG_TESTME_COMPLETE = new CauseSearcherConfig(TESTCASE,
-         false, false, 0.1,
+         false, 0.1,
          false, false, RCAStrategy.COMPLETE, 1);
    private static final String VERSION = "000001";
 
@@ -90,7 +90,7 @@ public class CauseSearcherIT {
       }
    }
 
-   private void mockEnvironment(MockedStatic<VersionControlSystem> mockedVCS, MockedStatic<GitUtils> mockedGitUtils) throws InterruptedException, IOException {
+   private void mockEnvironment(final MockedStatic<VersionControlSystem> mockedVCS, final MockedStatic<GitUtils> mockedGitUtils) throws InterruptedException, IOException {
       VCSTestUtils.mockGetVCS(mockedVCS);
       
       final PeassFolders peassFolders = new PeassFolders(DependencyTestConstants.CURRENT);

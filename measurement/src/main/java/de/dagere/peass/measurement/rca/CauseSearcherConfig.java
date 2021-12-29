@@ -18,7 +18,6 @@ public class CauseSearcherConfig implements Serializable {
 
    private final TestCase testCase;
    private final boolean ignoreEOIs;
-   private final boolean useAggregation;
    private final boolean splitAggregated;
    private final double minTime;
    private final boolean calibrationRun;
@@ -30,7 +29,6 @@ public class CauseSearcherConfig implements Serializable {
 
    @JsonCreator
    public CauseSearcherConfig(@JsonProperty("testcase") final TestCase testCase,
-         @JsonProperty("useAggregation") final boolean useAggregation,
          @JsonProperty("splitAggregated") final boolean splitAggregated,
          @JsonProperty("minTime") final double minTime,
          @JsonProperty("calibrationRun") final boolean calibrationRun,
@@ -38,7 +36,6 @@ public class CauseSearcherConfig implements Serializable {
          @JsonProperty("rcaStrategy") final RCAStrategy rcaStrategy,
          @JsonProperty("levels") final int levels) {
       this.testCase = testCase;
-      this.useAggregation = useAggregation;
       this.splitAggregated = splitAggregated;
       this.minTime = minTime;
       this.calibrationRun = calibrationRun;
@@ -46,9 +43,6 @@ public class CauseSearcherConfig implements Serializable {
       this.rcaStrategy = rcaStrategy;
       this.levels = levels;
       propertyFolder = null;
-      if (useAggregation && !ignoreEOIs) {
-         throw new RuntimeException("EOIs need always to be ignored if aggregation is enabled!");
-      }
       if (rcaStrategy != RCAStrategy.LEVELWISE && levels > 1) {
          throw new RuntimeException("If levels > 1, strategy must be LEVELWISE");
       }
@@ -60,14 +54,13 @@ public class CauseSearcherConfig implements Serializable {
    }
 
    public CauseSearcherConfig(final TestCase test, final CauseSearcherConfigMixin config) {
-      this(test, !config.isUseNonAggregatedWriter(),
-            !config.isNotSplitAggregated(), config.getMinTime(), config.isUseCalibrationRun(), !config.isUseEOIs(),
+      this(test, !config.isNotSplitAggregated(), config.getMinTime(), config.isUseCalibrationRun(), !config.isUseEOIs(),
             config.getStrategy(), config.getLevels());
       this.propertyFolder = config.getPropertyFolder();
    }
 
    public CauseSearcherConfig(final TestCase testCase, final CauseSearcherConfig causeConfig) {
-      this(testCase, causeConfig.isUseAggregation(),
+      this(testCase,
             causeConfig.isSplitAggregated(), causeConfig.getMinTime(), causeConfig.useCalibrationRun(), causeConfig.isIgnoreEOIs(),
             causeConfig.getRcaStrategy(), causeConfig.getLevels());
       this.propertyFolder = causeConfig.getPropertyFolder();
@@ -75,10 +68,6 @@ public class CauseSearcherConfig implements Serializable {
 
    public TestCase getTestCase() {
       return testCase;
-   }
-
-   public boolean isUseAggregation() {
-      return useAggregation;
    }
 
    public boolean isSplitAggregated() {
