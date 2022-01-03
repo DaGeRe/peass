@@ -121,7 +121,7 @@
 	</build>
 
 	<properties>
-		<mockito.version>3.12.4</mockito.version>
+		<mockito.version>4.2.0</mockito.version>
 		<kieker.version>1.15</kieker.version>
 		<project.organization.name>DaGeRe</project.organization.name>
 		<license.licenseName>agpl_v3</license.licenseName>
