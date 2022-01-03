@@ -36,7 +36,7 @@ public class JavascriptDataWriter {
          fileWriter.write("Test Case: " + data.getTestcase() + "<br>\";\n");
          writeDashboardLink(data, fileWriter);
          fileWriter.write("}\n");
-         
+
          fileWriter.write("\n");
          if (propertyFolder != null) {
             final File methodSourceFolder = new File(propertyFolder, "methods");
@@ -59,7 +59,8 @@ public class JavascriptDataWriter {
             + "<a role='button' href='dashboard?call=overall&ess=-1' target='parent'>Inspect Overall Measurement</a>"
             + "</p>\";\n");
       fileWriter.write("   } else {\n");
-      fileWriter.write("   document.getElementById('testcaseDiv').innerHTML+=\"<a href='" + data.getTestcase().replace("#", "_") + "_dashboard.html?call=overall&ess=-1' target='parent'>Inspect Overall Measurement</a>\";\n");
+      fileWriter.write("   document.getElementById('testcaseDiv').innerHTML+=\"<a href='" + data.getTestcase().replace("#", "_")
+            + "_dashboard.html?call=overall&ess=-1' target='parent'>Inspect Overall Measurement</a>\";\n");
       fileWriter.write("   }\n");
    }
 
@@ -67,8 +68,8 @@ public class JavascriptDataWriter {
       final int nodeHeight = getHeight(root);
       final int nodeDepth = getDepth(root);
 
-      final int width = 500 * nodeDepth;
-      final int height = 35 * nodeHeight;
+      final int width = 500 * (nodeDepth + 1);
+      final int height = 35 * (nodeHeight + 1);
       final int left = 10 * root.getName().length();
       fileWriter.write("// ************** Generate the tree diagram   *****************\n" +
             "var margin = {top: 20, right: 120, bottom: 20, left: " + left + "},\n" +
