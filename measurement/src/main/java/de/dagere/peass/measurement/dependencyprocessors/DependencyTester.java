@@ -70,7 +70,8 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    protected void initEvaluation(final TestCase testcase) {
-      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getExecutionConfig().getVersionOld(), configuration.getExecutionConfig().getVersion());
+      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getExecutionConfig().getVersionOld(),
+            configuration.getExecutionConfig().getVersion());
       new FolderDeterminer(folders).testResultFolders(configuration.getExecutionConfig().getVersion(), configuration.getExecutionConfig().getVersionOld(), testcase);
    }
 
@@ -90,7 +91,7 @@ public class DependencyTester implements KiekerResultHandler {
 
          long durationInSeconds = (System.currentTimeMillis() - comparisonStart) / 1000;
          writer.write(durationInSeconds, finishedVMs);
-         
+
          betweenVMCooldown();
       }
    }
@@ -196,21 +197,30 @@ public class DependencyTester implements KiekerResultHandler {
 
    private String[] getVersions() {
       String versions[] = new String[2];
-      versions[0] = configuration.getExecutionConfig().getVersionOld().equals("HEAD~1") ? configuration.getExecutionConfig().getVersion() + "~1" : configuration.getExecutionConfig().getVersionOld();
+      versions[0] = configuration.getExecutionConfig().getVersionOld().equals("HEAD~1") ? configuration.getExecutionConfig().getVersion() + "~1"
+            : configuration.getExecutionConfig().getVersionOld();
       versions[1] = configuration.getExecutionConfig().getVersion();
       return versions;
    }
 
    private void runParallel(final File logFolder, final TestCase testcase, final int vmid, final String[] versions) throws InterruptedException, IOException {
-      final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getExecutionConfig().getVersion(), currentChunkStart, configuration.isUseKieker(),
+      final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getExecutionConfig().getVersion(), currentChunkStart,
+            configuration.isUseKieker(),
             configuration.isSaveAll(), testcase,
             configuration.getAllIterations());
       currentOrganizer = organizer;
-      final Thread[] threads = new Thread[2];
+      final ParallelExecutionRunnable[] runnables = new ParallelExecutionRunnable[2];
       for (int i = 0; i < 2; i++) {
          final String version = versions[i];
-         final ParallelExecutionRunnable executionRunnable = new ParallelExecutionRunnable(organizer, version, testcase, vmid, logFolder, this);
-         threads[i] = new Thread(executionRunnable);
+         runnables[i] = new ParallelExecutionRunnable(organizer, version, testcase, vmid, logFolder, this);
+      }
+      runParallel(runnables);
+   }
+
+   public void runParallel(final ParallelExecutionRunnable[] runnables) throws InterruptedException {
+      Thread[] threads = new Thread[2];
+      for (int i = 0; i < 2; i++) {
+         threads[i] = new Thread(runnables[i]);
          threads[i].start();
       }
       for (int i = 0; i < 2; i++) {

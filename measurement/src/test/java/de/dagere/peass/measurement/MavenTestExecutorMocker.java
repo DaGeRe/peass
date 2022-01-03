@@ -4,10 +4,10 @@ import java.io.File;
 
 import javax.xml.bind.JAXBException;
 
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 
 import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
@@ -21,20 +21,19 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class MavenTestExecutorMocker {
-   public static void mockExecutor(final PeassFolders folders, final MeasurementConfig config) throws Exception {
+   public static void mockExecutor(final MockedStatic<ExecutorCreator> creatorMock, final PeassFolders folders, final MeasurementConfig config) throws Exception {
       final TestExecutor mockedExecutor = Mockito.mock(TestExecutor.class);
 
-      PowerMockito.mockStatic(ExecutorCreator.class);
-      PowerMockito.when(ExecutorCreator.createExecutor(Mockito.any(), Mockito.any(), Mockito.any()))
-            .then(new Answer<TestExecutor>() {
+      creatorMock.when(() -> ExecutorCreator.createExecutor(Mockito.any(), Mockito.any(), Mockito.any()))
+      .then(new Answer<TestExecutor>() {
 
-               @Override
-               public TestExecutor answer(final InvocationOnMock invocation) throws Throwable {
-                  PeassFolders folders = invocation.getArgument(0);
-                  writeValue(folders, 100);
-                  return mockedExecutor;
-               }
-            });
+         @Override
+         public TestExecutor answer(final InvocationOnMock invocation) throws Throwable {
+            PeassFolders folders = invocation.getArgument(0);
+            writeValue(folders, 100);
+            return mockedExecutor;
+         }
+      });
 
       Mockito.when(mockedExecutor.getTestTransformer()).thenReturn(new JUnitTestTransformer(folders.getProjectFolder(), config));
    }

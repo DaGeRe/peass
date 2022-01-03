@@ -10,7 +10,6 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.powermock.api.mockito.PowerMockito;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
@@ -111,39 +110,5 @@ public class VCSTestUtils {
             return mocked;
          }
       });
-   }
-   
-
-   /**
-    * Powermock should be replaced by mockito inline
-    */
-   @Deprecated
-   public static void mockGetVCS() {
-      PowerMockito.mockStatic(VersionControlSystem.class);
-      PowerMockito.doAnswer(new Answer<VersionControlSystem>() {
-
-         @Override
-         public VersionControlSystem answer(final InvocationOnMock invocation) throws Throwable {
-            return VersionControlSystem.GIT;
-         }
-      }).when(VersionControlSystem.class);
-      VersionControlSystem.getVersionControlSystem(Mockito.any(File.class));
-   }
-
-   /**
-    * Does nothing instead of going to tag
-    */
-   @Deprecated
-   public static void mockGoToTagAny() {
-      PowerMockito.mockStatic(GitUtils.class);
-      PowerMockito.doAnswer(new Answer<Void>() {
-
-         @Override
-         public Void answer(final InvocationOnMock invocation) throws Throwable {
-            LOG.debug("Loading version without doing anything");
-            return null;
-         }
-      }).when(GitUtils.class);
-      GitUtils.goToTag(Mockito.anyString(), Mockito.any(File.class));
    }
 }
