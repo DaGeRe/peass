@@ -14,7 +14,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
-import org.powermock.api.mockito.PowerMockito;
 
 import de.dagere.kopeme.generated.Result;
 import de.dagere.peass.config.MeasurementConfig;
@@ -73,27 +72,10 @@ public class AdaptiveTesterTest {
 
    }
 
-   @Test
-   public void testMe() throws Exception {
-      ResultLoader loader = Mockito.mock(ResultLoader.class);
-
-      PowerMockito.whenNew(ResultLoader.class).withAnyArguments().thenReturn(loader);
-      Mockito.when(loader.getStatisticsAfter()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
-      Mockito.when(loader.getStatisticsBefore()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
-
-      ResultLoader newLoader = new ResultLoader(null, null, null, 15);
-      Assert.assertNotNull(newLoader.getStatisticsAfter());
-      System.out.println(newLoader.getStatisticsAfter());
-
-      ResultLoader newLoader2 = new ResultLoader(null, null, null, 15);
-      System.out.println(newLoader2.getStatisticsAfter());
-   }
-
    @Ignore
    @Test
    public void testEarlyDecision() throws Exception {
       ResultLoader loader = Mockito.mock(ResultLoader.class);
-      PowerMockito.whenNew(ResultLoader.class).withAnyArguments().thenReturn(loader);
       Mockito.when(loader.getStatisticsAfter()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
       Mockito.when(loader.getStatisticsBefore()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
 
