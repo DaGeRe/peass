@@ -8,17 +8,13 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PowerMockIgnore;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import de.dagere.kopeme.generated.Result;
 import de.dagere.peass.config.MeasurementConfig;
@@ -26,17 +22,12 @@ import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
-import de.dagere.peass.measurement.MavenTestExecutorMocker;
 import de.dagere.peass.measurement.dataloading.ResultLoader;
 import de.dagere.peass.measurement.dependencyprocessors.AdaptiveTester;
 import de.dagere.peass.measurement.rca.helper.VCSTestUtils;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
-import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({ GitUtils.class, VersionControlSystem.class, ExecutorCreator.class, ResultLoader.class })
-@PowerMockIgnore({ "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "javax.management.*", "org.w3c.dom.*" })
 public class AdaptiveTesterTest {
 
    private final TestCase testcase = new TestCase("Dummy#dummyTest");
@@ -45,40 +36,41 @@ public class AdaptiveTesterTest {
    @Rule
    public TemporaryFolder folder = new TemporaryFolder();
 
-   @Before
-   public void setup() {
-      VCSTestUtils.mockGetVCS();
-      MavenTestExecutorMocker.mockExecutor();
-   }
-
    @Test
    public void testIterationUpdate() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      final int vms = 10;
-      final MeasurementConfig config = new MeasurementConfig(vms, "A", "B");
-      config.setIterations(1000);
+      try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
+            MockedStatic<ExecutorCreator> mockedExecutor = Mockito.mockStatic(ExecutorCreator.class);) {
+         VCSTestUtils.mockGetVCS(mockedVCS);
+         VCSTestUtils.mockExecutor(mockedExecutor);
 
-      MeasurementConfig config2 = Mockito.spy(config);
-      Mockito.when(testGenerator.getConfig()).thenReturn(config2);
+         final int vms = 10;
+         final MeasurementConfig config = new MeasurementConfig(vms, "A", "B");
+         config.setIterations(1000);
 
-      AdaptiveTester tester2 = prepareTester();
-      Mockito.doReturn(false).when(tester2).checkIsDecidable(Mockito.eq(testcase), Mockito.anyInt());
+         MeasurementConfig config2 = Mockito.spy(config);
+         Mockito.when(testGenerator.getConfig()).thenReturn(config2);
 
-      for (int i = 0; i < vms; i++) {
-         final Result result1 = new Result();
-         result1.setValue(15);
-         result1.setIterations(40);
-         Mockito.doReturn(result1).when(tester2).getLastResult("A", testcase, i);
+         AdaptiveTester tester2 = prepareTester();
+         Mockito.doReturn(false).when(tester2).checkIsDecidable(Mockito.eq(testcase), Mockito.anyInt());
 
-         final Result result2 = new Result();
-         result2.setValue(17);
-         result2.setIterations(40);
-         Mockito.doReturn(result2).when(tester2).getLastResult("B", testcase, i);
+         for (int i = 0; i < vms; i++) {
+            final Result result1 = new Result();
+            result1.setValue(15);
+            result1.setIterations(40);
+            Mockito.doReturn(result1).when(tester2).getLastResult("A", testcase, i);
+
+            final Result result2 = new Result();
+            result2.setValue(17);
+            result2.setIterations(40);
+            Mockito.doReturn(result2).when(tester2).getLastResult("B", testcase, i);
+         }
+
+         tester2.evaluate(testcase);
+
+         Assert.assertEquals(vms, tester2.getFinishedVMs());
+         Mockito.verify(config2).setIterations(38);
       }
 
-      tester2.evaluate(testcase);
-
-      Assert.assertEquals(vms, tester2.getFinishedVMs());
-      Mockito.verify(config2).setIterations(38);
    }
 
    @Test
@@ -89,7 +81,7 @@ public class AdaptiveTesterTest {
       Mockito.when(loader.getStatisticsAfter()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
       Mockito.when(loader.getStatisticsBefore()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
 
-      ResultLoader newLoader = new ResultLoader(null, null, null,  15);
+      ResultLoader newLoader = new ResultLoader(null, null, null, 15);
       Assert.assertNotNull(newLoader.getStatisticsAfter());
       System.out.println(newLoader.getStatisticsAfter());
 
@@ -104,7 +96,7 @@ public class AdaptiveTesterTest {
       PowerMockito.whenNew(ResultLoader.class).withAnyArguments().thenReturn(loader);
       Mockito.when(loader.getStatisticsAfter()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
       Mockito.when(loader.getStatisticsBefore()).thenReturn(new DescriptiveStatistics(new double[] { 15, 15, 15, 15, 15 }));
-      
+
       final MeasurementConfig config = new MeasurementConfig(100, "A", "B");
       config.setIterations(1000);
 
@@ -119,7 +111,7 @@ public class AdaptiveTesterTest {
 
       Assert.assertEquals(31, tester2.getFinishedVMs());
    }
-   
+
    @Test
    public void testSkipEarlyDecision() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final MeasurementConfig config = new MeasurementConfig(100, "A", "B");
@@ -157,9 +149,9 @@ public class AdaptiveTesterTest {
       Mockito.when(folders.getProjectFolder()).thenReturn(folder.newFolder("test"));
       Mockito.when(folders.getProgressFile()).thenReturn(folder.newFile("progress"));
       Mockito.when(folders.getResultFile(Mockito.any(TestCase.class), Mockito.anyInt(), Mockito.anyString(), Mockito.anyString()))
-         .thenAnswer((index) -> {
-            return new File(folder.getRoot(), "log" + index);
-         });
+            .thenAnswer((index) -> {
+               return new File(folder.getRoot(), "log" + index);
+            });
       Mockito.when(folders.getMeasureLogFolder(Mockito.anyString(), Mockito.any(TestCase.class))).thenReturn(folder.newFile("log"));
 
       AdaptiveTester tester = new AdaptiveTester(folders, testGenerator.getConfig(), new EnvironmentVariables());
@@ -168,5 +160,4 @@ public class AdaptiveTesterTest {
       return tester2;
    }
 
-   
 }

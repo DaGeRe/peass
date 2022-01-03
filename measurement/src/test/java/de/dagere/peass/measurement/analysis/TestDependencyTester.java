@@ -43,7 +43,7 @@ public class TestDependencyTester {
          final PeassFolders folders = new PeassFolders(folder.getRoot());
          final MeasurementConfig configuration = new MeasurementConfig(4, "2", "1");
          
-         VCSTestUtils.mockExecutor(mockedExecutor, folders, configuration);;
+         VCSTestUtils.mockExecutor(mockedExecutor, folders, configuration);
 
          final DependencyTester tester = new DependencyTester(folders, configuration, new EnvironmentVariables());
          

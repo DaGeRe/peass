@@ -16,27 +16,11 @@ import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
-import de.dagere.peass.execution.maven.pom.MavenTestExecutor;
-import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class MavenTestExecutorMocker {
-   public static void mockExecutor() {
-      final MavenTestExecutor manager = Mockito.mock(MavenTestExecutor.class);
-
-      PowerMockito.mockStatic(ExecutorCreator.class);
-      PowerMockito.doAnswer(new Answer<MavenTestExecutor>() {
-
-         @Override
-         public MavenTestExecutor answer(final InvocationOnMock invocation) throws Throwable {
-            return manager;
-         }
-      }).when(ExecutorCreator.class);
-      ExecutorCreator.createExecutor(Mockito.any(PeassFolders.class), Mockito.any(JUnitTestTransformer.class), Mockito.any(EnvironmentVariables.class));
-   }
-
    public static void mockExecutor(final PeassFolders folders, final MeasurementConfig config) throws Exception {
       final TestExecutor mockedExecutor = Mockito.mock(TestExecutor.class);
 

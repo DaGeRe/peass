@@ -99,6 +99,20 @@ public class VCSTestUtils {
       Mockito.when(mocked.getTestTransformer()).thenReturn(new JUnitTestTransformer(folders.getProjectFolder(), config));
    }
    
+   public static void mockExecutor(final MockedStatic<ExecutorCreator> executor) {
+      TestExecutor mocked = Mockito.mock(TestExecutor.class);
+      executor.when(() -> ExecutorCreator.createExecutor(Mockito.any(), Mockito.any(), Mockito.any()))
+      .then(new Answer<TestExecutor>() {
+
+         @Override
+         public TestExecutor answer(final InvocationOnMock invocation) throws Throwable {
+            PeassFolders folders = invocation.getArgument(0);
+            MavenTestExecutorMocker.writeValue(folders, 100);
+            return mocked;
+         }
+      });
+   }
+   
 
    /**
     * Powermock should be replaced by mockito inline
@@ -119,6 +133,7 @@ public class VCSTestUtils {
    /**
     * Does nothing instead of going to tag
     */
+   @Deprecated
    public static void mockGoToTagAny() {
       PowerMockito.mockStatic(GitUtils.class);
       PowerMockito.doAnswer(new Answer<Void>() {
