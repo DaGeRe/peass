@@ -56,6 +56,12 @@ public class GradleParseUtil {
       }
       return visitor;
    }
+   
+   public static void removeExclusions(final FindDependencyVisitor visitor) {
+      for (Integer lineNumber : visitor.getExcludeLines()) {
+         visitor.clearLine(lineNumber);
+      }
+   }
 
    public static FindDependencyVisitor parseBuildfile(final File buildfile) throws IOException, FileNotFoundException {
       FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile);

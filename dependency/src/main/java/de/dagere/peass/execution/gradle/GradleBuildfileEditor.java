@@ -82,6 +82,8 @@ public class GradleBuildfileEditor {
       if (visitor.isUseSpringBoot()) {
          GradleParseUtil.addJUnitVersionSpringBoot(visitor);
       }
+      
+      GradleParseUtil.removeExclusions(visitor);
 
       addDependencies(visitor);
 

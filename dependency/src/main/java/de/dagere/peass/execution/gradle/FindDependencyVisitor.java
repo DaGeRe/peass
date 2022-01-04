@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,6 +21,8 @@ import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.MapEntryExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
+import org.codehaus.groovy.ast.expr.NamedArgumentListExpression;
+import org.codehaus.groovy.ast.expr.TupleExpression;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 
@@ -32,6 +37,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
    private int unitTestsAll = -1;
    private int buildTools = -1;
    private int buildToolsVersion = -1;
+   private List<Integer> excludeLines = new LinkedList<>();
    private boolean useJava = false;
    private boolean useSpringBoot = false;
    private boolean hasVersion = true;
@@ -80,10 +86,27 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
             buildToolsVersion = call.getLastLineNumber();
          } else if (call.getMethodAsString().equals("subprojects")) {
             parseSubprojectsSection(call);
+         } else if (call.getMethodAsString().equals("exclude")) {
+            TupleExpression tuple = (TupleExpression) call.getArguments();
+            Expression expression = tuple.getExpression(0);
+            NamedArgumentListExpression argumentListExpression = (NamedArgumentListExpression) expression;
+
+            Map<String, String> map = new HashMap<>();
+            for (MapEntryExpression innerMapEntryExpression : argumentListExpression.getMapEntryExpressions()) {
+               String key = innerMapEntryExpression.getKeyExpression().getText();
+               String value = innerMapEntryExpression.getValueExpression().getText();
+
+               map.put(key, value);
+            }
+            if ("junit".equals(map.get("group")) && "junit".equals(map.get("module"))) {
+               excludeLines.add(call.getLineNumber());
+            }
+            if ("org.junit.vintage".equals(map.get("group")) && "junit-vintage-engine".equals(map.get("module"))) {
+               excludeLines.add(call.getLineNumber());
+            }
          }
       }
 
-      // LOG.info("Android: " + androidLine);
       super.visitMethodCallExpression(call);
    }
 
@@ -207,6 +230,10 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       return gradleFileContents;
    }
 
+   public List<Integer> getExcludeLines() {
+      return excludeLines;
+   }
+
    public void addLine(final int lineIndex, final String textForAdding) {
       gradleFileContents.add(lineIndex, textForAdding);
       if (lineIndex < dependencyLine) {
@@ -230,6 +257,10 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       if (lineIndex < buildToolsVersion) {
          buildToolsVersion++;
       }
+   }
+
+   public void clearLine(final Integer lineNumber) {
+      gradleFileContents.set(lineNumber - 1, "");
    }
 
 }
