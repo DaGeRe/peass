@@ -65,6 +65,16 @@ public class TestBuildGradle {
       MatcherAssert.assertThat(gradleFileContents, Matchers.not(Matchers.containsString("exclude group: 'junit', module: 'junit'")));
       MatcherAssert.assertThat(gradleFileContents, Matchers.not(Matchers.containsString("exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'")));
    }
+   
+   @Test
+   public void testExclusionRemovalFromDependencies() throws IOException {
+      final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "build_with_exclusions2.gradle");
+
+      final String gradleFileContents = updateGradleFile(gradleFile);
+
+      MatcherAssert.assertThat(gradleFileContents, Matchers.not(Matchers.containsString("exclude group: 'junit', module: 'junit'")));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.not(Matchers.containsString("exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'")));
+   }
 
    @Test
    public void testBuildtoolUpdate() throws IOException {

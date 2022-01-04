@@ -89,20 +89,22 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
          } else if (call.getMethodAsString().equals("exclude")) {
             TupleExpression tuple = (TupleExpression) call.getArguments();
             Expression expression = tuple.getExpression(0);
-            NamedArgumentListExpression argumentListExpression = (NamedArgumentListExpression) expression;
+            if (expression instanceof NamedArgumentListExpression) {
+               NamedArgumentListExpression argumentListExpression = (NamedArgumentListExpression) expression;
 
-            Map<String, String> map = new HashMap<>();
-            for (MapEntryExpression innerMapEntryExpression : argumentListExpression.getMapEntryExpressions()) {
-               String key = innerMapEntryExpression.getKeyExpression().getText();
-               String value = innerMapEntryExpression.getValueExpression().getText();
+               Map<String, String> map = new HashMap<>();
+               for (MapEntryExpression innerMapEntryExpression : argumentListExpression.getMapEntryExpressions()) {
+                  String key = innerMapEntryExpression.getKeyExpression().getText();
+                  String value = innerMapEntryExpression.getValueExpression().getText();
 
-               map.put(key, value);
-            }
-            if ("junit".equals(map.get("group")) && "junit".equals(map.get("module"))) {
-               excludeLines.add(call.getLineNumber());
-            }
-            if ("org.junit.vintage".equals(map.get("group")) && "junit-vintage-engine".equals(map.get("module"))) {
-               excludeLines.add(call.getLineNumber());
+                  map.put(key, value);
+               }
+               if ("junit".equals(map.get("group")) && "junit".equals(map.get("module"))) {
+                  excludeLines.add(call.getLineNumber());
+               }
+               if ("org.junit.vintage".equals(map.get("group")) && "junit-vintage-engine".equals(map.get("module"))) {
+                  excludeLines.add(call.getLineNumber());
+               }
             }
          }
       }
