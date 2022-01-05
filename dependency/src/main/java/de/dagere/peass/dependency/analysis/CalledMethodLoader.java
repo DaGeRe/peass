@@ -41,9 +41,6 @@ import kieker.analysis.exception.AnalysisConfigurationException;
  */
 public class CalledMethodLoader {
 
-   private static final PrintStream realSystemOut = System.out;
-   private static final PrintStream realSystemErr = System.err;
-
    private static final Logger LOG = LogManager.getLogger(CalledMethodLoader.class);
 
    private final File kiekerTraceFolder;
@@ -63,6 +60,8 @@ public class CalledMethodLoader {
     * @return
     */
    public Map<ChangedEntity, Set<String>> getCalledMethods(final File kiekerOutputFile) {
+      PrintStream previousOut = System.out;
+      PrintStream previousErr = System.err;
       try (PrintStream kiekerOutStream = new PrintStream(kiekerOutputFile)) {
          System.setOut(kiekerOutStream);
          System.setErr(kiekerOutStream);
@@ -71,8 +70,8 @@ public class CalledMethodLoader {
       } catch (IllegalStateException | AnalysisConfigurationException | FileNotFoundException e) {
          e.printStackTrace();
       } finally {
-         System.setOut(realSystemOut);
-         System.setErr(realSystemErr);
+         System.setOut(previousOut);
+         System.setErr(previousErr);
       }
       return null;
    }
