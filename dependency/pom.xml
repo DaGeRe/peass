@@ -115,7 +115,7 @@
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j-impl</artifactId>
-			<version>2.17.0</version>
+			<version>2.17.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -135,12 +135,12 @@
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-junit</artifactId>
-			<version>0.16.0</version>
+			<version>0.16.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-junit3</artifactId>
-			<version>0.16.0</version>
+			<version>0.16.1-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 
