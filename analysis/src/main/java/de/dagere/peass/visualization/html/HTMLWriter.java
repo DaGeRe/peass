@@ -83,6 +83,8 @@ public class HTMLWriter {
          FileUtils.copyURLToFile(diffview, new File(folder, "diffview.js"));
          URL diffviewcss = RCAGenerator.class.getClassLoader().getResource("visualization/diffview.css");
          FileUtils.copyURLToFile(diffviewcss, new File(folder, "diffview.css"));
+         URL style = RCAGenerator.class.getClassLoader().getResource("visualization/style.css");
+         FileUtils.copyURLToFile(style, new File(folder, "style.css"));
          URL jsGraphSource = RCAGenerator.class.getClassLoader().getResource("visualization/jsGraphSource.js");
          FileUtils.copyURLToFile(jsGraphSource, new File(folder, "jsGraphSource.js"));
          URL dashboardStart = RCAGenerator.class.getClassLoader().getResource("visualization/peass-dashboard-start.js");
