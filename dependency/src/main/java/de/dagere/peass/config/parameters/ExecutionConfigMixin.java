@@ -64,10 +64,10 @@ public class ExecutionConfigMixin {
    @Option(names = { "-kiekerWaitTime", "--kiekerWaitTime" }, description = "Time that KoPeMe should wait until Kieker writing is finshed in seconds (default: 10)")
    protected int kiekerWaitTime = 5;
    
-   @Option(names = {"-classFolder"}, description = "Folder that contains java classes")
+   @Option(names = {"-classFolder", "--classFolder"}, description = "Folder that contains java classes")
    protected String clazzFolder;
 
-   @Option(names = {"-testClassFolder"}, description = "Folder that contains test classes")
+   @Option(names = {"-testClassFolder", "--testClassFolder"}, description = "Folder that contains test classes")
    protected String testClazzFolder;
 
    public int getTimeout() {
