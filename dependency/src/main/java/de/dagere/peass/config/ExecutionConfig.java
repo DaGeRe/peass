@@ -1,6 +1,7 @@
 package de.dagere.peass.config;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -155,6 +156,17 @@ public class ExecutionConfig implements Serializable {
       createDefaultConstructor = !executionMixin.isSkipDefaultConstructor();
       executeBeforeClassInMeasurement = executionMixin.isExecuteBeforeClassInMeasurement();
       kiekerWaitTime = executionMixin.getKiekerWaitTime();
+      
+      if (executionMixin.getClazzFolder() != null) {
+         List<String> clazzFolders = new ArrayList<>();
+         clazzFolders.add(executionMixin.getClazzFolder());
+         setClazzFolders(clazzFolders);
+      }
+      if (executionMixin.getTestClazzFolder() != null) {
+         List<String> testClazzFolders = new ArrayList<>();
+         testClazzFolders.add(executionMixin.getTestClazzFolder());
+         setTestClazzFolders(testClazzFolders);
+      }
    }
 
    public void setTimeout(final long timeout) {

@@ -63,6 +63,12 @@ public class ExecutionConfigMixin {
    
    @Option(names = { "-kiekerWaitTime", "--kiekerWaitTime" }, description = "Time that KoPeMe should wait until Kieker writing is finshed in seconds (default: 10)")
    protected int kiekerWaitTime = 5;
+   
+   @Option(names = {"-classFolder"}, description = "Folder that contains java classes")
+   protected String clazzFolder;
+
+   @Option(names = {"-testClassFolder"}, description = "Folder that contains test classes")
+   protected String testClazzFolder;
 
    public int getTimeout() {
       return timeout;
@@ -206,5 +212,21 @@ public class ExecutionConfigMixin {
    
    public void setKiekerWaitTime(final int kiekerWaitTime) {
       this.kiekerWaitTime = kiekerWaitTime;
+   }
+
+   public String getClazzFolder() {
+      return clazzFolder;
+   }
+
+   public void setClazzFolder(String clazzFolder) {
+      this.clazzFolder = clazzFolder;
+   }
+
+   public String getTestClazzFolder() {
+      return testClazzFolder;
+   }
+
+   public void setTestClazzFolder(String testClazzFolder) {
+      this.testClazzFolder = testClazzFolder;
    }
 }
