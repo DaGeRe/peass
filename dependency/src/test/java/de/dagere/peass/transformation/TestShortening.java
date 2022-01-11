@@ -70,9 +70,11 @@ public class TestShortening {
 
       try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new ChangedEntity("de.ExampleTestJUnit5", ""), "checkSomething")) {
          Assert.assertFalse(FileUtils.contentEquals(exampleTestFile5, testClazz));
-         String fileContent = IOUtils.toString(new FileInputStream(testClazz), StandardCharsets.UTF_8);
-         int matches = StringUtils.countMatches(fileContent, "@Test");
-         Assert.assertEquals(1, matches);
+         try (FileInputStream inputStream = new FileInputStream(testClazz)){
+            String fileContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            int matches = StringUtils.countMatches(fileContent, "@Test");
+            Assert.assertEquals(1, matches);
+         }
       }
 
       Assert.assertTrue(FileUtils.contentEquals(exampleTestFile5, testClazz));
