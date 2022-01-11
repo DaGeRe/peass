@@ -31,6 +31,9 @@ public class KiekerConfigMixin {
   
    @Option(names = { "-traceSizeInMb", "--traceSizeInMb" }, description = "Sets the maximum allowed trace size in Mb (bigger traces will be ignored by Peass)")
    public long traceSizeInMb = 100;
+   
+   @Option(names = { "-kiekerQueueSize", "--kiekerQueueSize" }, description = "Sets the maximum queue size in Kieker (space is reserverd, consider increasing if queue entries are swallowed)")
+   public long kiekerQueueSize = KiekerConfig.DEFAULT_KIEKER_QUEUE_SIZE;
 
    public int getWriteInterval() {
       return writeInterval;
@@ -76,6 +79,7 @@ public class KiekerConfigMixin {
       kiekerConfig.setExtractMethod(useExtraction);
       kiekerConfig.setAdaptiveInstrumentation(enableAdaptiveInstrumentation);
       kiekerConfig.setUseSourceInstrumentation(!notUseSourceInstrumentation);
+      kiekerConfig.setKiekerQueueSize(kiekerQueueSize);
       
       kiekerConfig.check();
       

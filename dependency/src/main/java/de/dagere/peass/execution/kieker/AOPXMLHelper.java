@@ -73,8 +73,7 @@ public class AOPXMLHelper {
             writer.write(AggregatedTreeWriter.CONFIG_PATH + "=" + tempFolderPath + "\n");
          }
 
-         final int queueSize = 10000000;
-         writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueSize=" + queueSize + "\n");
+         writer.write("kieker.monitoring.core.controller.WriterController.RecordQueueSize=" + transformer.getConfig().getKiekerConfig().getKiekerQueueSize() + "\n");
          writer.write(CHANGEABLE_WRITER + ".flush=false\n");
          if (!transformer.isAggregatedWriter()) {
             writer.write("kieker.monitoring.writer.filesystem.FileWriter.logStreamHandler=kieker.monitoring.writer.filesystem.BinaryLogStreamHandler\n");

@@ -7,6 +7,7 @@ import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 public class KiekerConfig implements Serializable {
    
    public static final int DEFAULT_WRITE_INTERVAL = 5000;
+   public static final int DEFAULT_KIEKER_QUEUE_SIZE = 10000000;
    
    private static final long serialVersionUID = 3129231099963995908L;
 
@@ -21,6 +22,7 @@ public class KiekerConfig implements Serializable {
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
    private boolean extractMethod = false;
    private int traceSizeInMb = 100;
+   private long kiekerQueueSize = DEFAULT_KIEKER_QUEUE_SIZE;
 
    public KiekerConfig() {
    }
@@ -145,5 +147,13 @@ public class KiekerConfig implements Serializable {
    
    public void setTraceSizeInMb(final int traceSizeInMb) {
       this.traceSizeInMb = traceSizeInMb;
+   }
+   
+   public long getKiekerQueueSize() {
+      return kiekerQueueSize;
+   }
+   
+   public void setKiekerQueueSize(final long kiekerQueueSize) {
+      this.kiekerQueueSize = kiekerQueueSize;
    }
 }
