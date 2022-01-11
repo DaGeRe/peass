@@ -203,14 +203,14 @@ public class JUnitTestShortener implements AutoCloseable {
       if (lastShortenedMap != null) {
          for (final Map.Entry<File, File> shortened : lastShortenedMap.entrySet()) {
             try {
-               // FileUtils.copyFile(shortened.getKey(), shortened.getValue());
-               shortened.getValue().delete();
-               LOG.debug("File to reset: {} Exists: {} Parent exists: {}", shortened.getValue(), shortened.getValue().exists(), shortened.getValue().getParentFile().exists());
-               Path dest = shortened.getValue().toPath();
+               final File destFile = shortened.getValue();
+               destFile.delete();
+               LOG.debug("File to reset: {} Exists: {} Parent exists: {}", destFile, destFile.exists(), destFile.getParentFile().exists());
+               Path dest = destFile.toPath();
                Path source = shortened.getKey().toPath();
                Files.move(source, dest);
-               final CompilationUnit unit = JavaParserProvider.parse(shortened.getValue());
-               transformer.getLoadedFiles().put(shortened.getValue(), unit);
+               final CompilationUnit unit = JavaParserProvider.parse(destFile);
+               transformer.getLoadedFiles().put(destFile, unit);
             } catch (final IOException e) {
                e.printStackTrace();
             }
