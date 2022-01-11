@@ -17,8 +17,6 @@
 package de.dagere.peass.dependency.analysis;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -59,20 +57,13 @@ public class CalledMethodLoader {
     * @param kiekerTraceFolder
     * @return
     */
-   public Map<ChangedEntity, Set<String>> getCalledMethods(final File kiekerOutputFile) {
-      PrintStream previousOut = System.out;
-      PrintStream previousErr = System.err;
-      try (PrintStream kiekerOutStream = new PrintStream(kiekerOutputFile)) {
-         System.setOut(kiekerOutStream);
-         System.setErr(kiekerOutStream);
+   public Map<ChangedEntity, Set<String>> getCalledMethods() {
+      try {
          final CalledMethodStage peassFilter = executePeassFilter(null);
          return peassFilter.getCalledMethods();
-      } catch (IllegalStateException | AnalysisConfigurationException | FileNotFoundException e) {
+      } catch (IllegalStateException | AnalysisConfigurationException e) {
          e.printStackTrace();
-      } finally {
-         System.setOut(previousOut);
-         System.setErr(previousErr);
-      }
+      } 
       return null;
    }
 

@@ -143,7 +143,7 @@ public class KiekerResultManager {
    protected void cleanAboveSize(final File folderToClean, final int sizeInMb, final String ending) {
       for (final File file : FileUtils.listFiles(folderToClean, new WildcardFileFilter("*." + ending), TrueFileFilter.INSTANCE)) {
          final long size = file.length() / (1024 * 1024);
-         LOG.debug("File: {} Size: {}", file, size);
+         LOG.debug("File: {} Size: {} MB", file, size);
          if (size > sizeInMb) {
             LOG.debug("Deleting file.");
             file.delete();
