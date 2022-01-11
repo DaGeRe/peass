@@ -160,7 +160,7 @@ public class JUnitTestShortener implements AutoCloseable {
          if (!methodDeclaration.getNameAsString().equals(method)
                && methodDeclaration.getModifiers().contains(Modifier.publicModifier()) &&
                methodDeclaration.getParameters().size() == 0) {
-            if (version != 4) {
+            if (version == 3) {
                if (methodDeclaration.getNameAsString().contains("test")) {
                   remove.add(methodDeclaration);
                }
@@ -176,12 +176,16 @@ public class JUnitTestShortener implements AutoCloseable {
 
    private void removeTestAnnotations(final MethodDeclaration methodDeclaration) {
       final Optional<AnnotationExpr> testAnnotation = methodDeclaration.getAnnotationByName("Test");
-      final Optional<AnnotationExpr> testAnnotation2 = methodDeclaration.getAnnotationByName("org.junit.Test");
+      final Optional<AnnotationExpr> testAnnotationFQNJUnit4 = methodDeclaration.getAnnotationByName("org.junit.Test");
+      final Optional<AnnotationExpr> testAnnotationFQNJunit5 = methodDeclaration.getAnnotationByName("org.junit.jupiter.api.Test");
       if (testAnnotation.isPresent()) {
          methodDeclaration.getAnnotations().remove(testAnnotation.get());
       }
-      if (testAnnotation2.isPresent()) {
-         methodDeclaration.getAnnotations().remove(testAnnotation2.get());
+      if (testAnnotationFQNJUnit4.isPresent()) {
+         methodDeclaration.getAnnotations().remove(testAnnotationFQNJUnit4.get());
+      }
+      if (testAnnotationFQNJunit5.isPresent()) {
+         methodDeclaration.getAnnotations().remove(testAnnotationFQNJunit5.get());
       }
    }
 

@@ -1,11 +1,15 @@
 package de.dagere.peass.transformation;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +24,8 @@ public class TestShortening {
 
    private URL url = Thread.currentThread().getContextClassLoader().getResource("shortening/ExampleTest.java");
    private File exampleTestFile = new File(url.getPath());
+   private URL url5 = Thread.currentThread().getContextClassLoader().getResource("shortening/ExampleTestJUnit5.java");
+   private File exampleTestFile5 = new File(url5.getPath());
    private URL subUrl = Thread.currentThread().getContextClassLoader().getResource("shortening/SubTest.java");
    private File subTestFile = new File(subUrl.getPath());
 
@@ -34,13 +40,15 @@ public class TestShortening {
       test.mkdirs();
       final File testClazz = new File(test, "ExampleTest.java");
       FileUtils.copyFile(exampleTestFile, testClazz);
+      final File testClazz5 = new File(test, "ExampleTestJUnit5.java");
+      FileUtils.copyFile(exampleTestFile5, testClazz5);
       final File subTestClazz = new File(test, "SubTest.java");
       FileUtils.copyFile(subTestFile, subTestClazz);
 
       transformer = new JUnitTestTransformer(folder, new MeasurementConfig(5));
       transformer.determineVersions(Arrays.asList(new File[] { folder }));
    }
-
+   
    @Test
    public void testShortening() throws Exception {
       final File test = new File(folder, "src/test/java/de");
@@ -52,6 +60,22 @@ public class TestShortening {
       }
 
       Assert.assertTrue(FileUtils.contentEquals(exampleTestFile, testClazz));
+   }
+   
+   @Test
+   public void testShorteningJUnit5() throws Exception {
+      final File test = new File(folder, "src/test/java/de");
+      test.mkdirs();
+      final File testClazz = new File(test, "ExampleTestJUnit5.java");
+
+      try (JUnitTestShortener shortener = new JUnitTestShortener(transformer, folder, new ChangedEntity("de.ExampleTestJUnit5", ""), "checkSomething")) {
+         Assert.assertFalse(FileUtils.contentEquals(exampleTestFile5, testClazz));
+         String fileContent = IOUtils.toString(new FileInputStream(testClazz), StandardCharsets.UTF_8);
+         int matches = StringUtils.countMatches(fileContent, "@Test");
+         Assert.assertEquals(1, matches);
+      }
+
+      Assert.assertTrue(FileUtils.contentEquals(exampleTestFile5, testClazz));
    }
 
    @Test
