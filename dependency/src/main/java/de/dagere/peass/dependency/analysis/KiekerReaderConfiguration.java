@@ -5,6 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.dagere.peass.dependency.kiekerTemp.LogsReaderCompositeStage;
 import kieker.analysis.stage.DynamicEventDispatcher;
 import kieker.analysis.stage.IEventMatcher;
@@ -16,6 +19,8 @@ import kieker.model.repository.SystemModelRepository;
 import teetime.framework.Configuration;
 
 public class KiekerReaderConfiguration extends Configuration {
+   
+   private static final Logger LOG = LogManager.getLogger(KiekerReaderConfiguration.class);
    
    protected SystemModelRepository systemModelRepositoryNew = new SystemModelRepository();
    
@@ -29,6 +34,7 @@ public class KiekerReaderConfiguration extends Configuration {
       CalledMethodStage myStage = new CalledMethodStage(systemModelRepositoryNew, prefix, mapping);
       this.connectPorts(traceReconstructionStage.getExecutionTraceOutputPort(), myStage.getInputPort());
 
+      LOG.debug("Reading from {}", kiekerTraceFolder);
       return myStage;
    }
 
