@@ -74,4 +74,18 @@ public class TestParameterComparator {
       boolean isEqual1 = new ParameterComparator(clazz).parametersEqual(traceElement, method);
       Assert.assertTrue(isEqual1);
    }
+   
+   @Test
+   public void testWrongConstructorComparison() {
+      String methodSource = "class Clazz{ class MyInner{ public MyInner(){ } } }";
+      CompilationUnit declaration = new JavaParser().parse(new ByteArrayInputStream(methodSource.getBytes())).getResult().get();
+
+      ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) declaration.getChildNodes().get(0);
+      ClassOrInterfaceDeclaration myInner = clazz.findAll(ClassOrInterfaceDeclaration.class).get(1);
+      CallableDeclaration<?> method = myInner.findAll(CallableDeclaration.class).get(0);
+
+      TraceElementContent traceElementConstructorWrong = new TraceElementContent("Clazz$MyInner", "<init>", new String[] { "Clazz", "int" }, 0);
+      boolean isEqualConstructorWrong = new ParameterComparator(clazz).parametersEqual(traceElementConstructorWrong, method);
+      Assert.assertFalse(isEqualConstructorWrong);
+   }
 }

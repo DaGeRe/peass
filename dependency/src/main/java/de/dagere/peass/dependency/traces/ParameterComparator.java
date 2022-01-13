@@ -36,6 +36,8 @@ public class ParameterComparator {
          traceParameterTypes = getCleanedTraceParameters(traceElement);
          if (traceParameterTypes.length == 0 && method.getParameters().size() == 0) {
             return true;
+         } else if (method.getParameters().size() == 0) {
+            return false;
          }
       } else {
          traceParameterTypes = traceElement.getParameterTypes();
