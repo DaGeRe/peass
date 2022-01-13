@@ -124,7 +124,8 @@ public class JUnitTestTransformer implements TestTransformer {
 
    @Override
    public void determineVersions(final List<File> modules) {
-      determineVersionsForPaths(modules, "src/test/", "src/androidTest");
+      String[] pathes = config.getExecutionConfig().getTestClazzFolders().toArray(new String[0]);
+      determineVersionsForPaths(modules, pathes);
    }
 
    public void determineVersionsForPaths(final List<File> modules, final String... testPaths) {
