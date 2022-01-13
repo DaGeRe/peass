@@ -29,7 +29,7 @@ public class ParameterComparator {
    public boolean parametersEqual(final TraceElementContent traceElement, final CallableDeclaration<?> method) {
       if (traceElement.getParameterTypes().length == 0 && method.getParameters().size() == 0) {
          return true;
-      } else if (method.getParameters().size() == 0) {
+      } else if (traceElement.getParameterTypes().length == 0 || method.getParameters().size() == 0) {
          return false;
       }
       int parameterIndex = 0;
