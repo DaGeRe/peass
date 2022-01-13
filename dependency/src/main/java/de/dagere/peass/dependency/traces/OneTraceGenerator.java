@@ -97,7 +97,7 @@ public class OneTraceGenerator {
                }
             }
          } else {
-            LOG.error("File size exceeds 2000 MB");
+            LOG.error("File size exceeds {} MB", kiekerConfig.getTraceSizeInMb());
          }
       }
       if (success) {
