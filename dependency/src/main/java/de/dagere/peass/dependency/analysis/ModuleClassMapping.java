@@ -3,6 +3,7 @@ package de.dagere.peass.dependency.analysis;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -68,5 +69,13 @@ public class ModuleClassMapping {
          moduleName = "";
       }
       return moduleName;
+   }
+
+   public List<String> getAllClasses() {
+      List<String> clazzes = new LinkedList<>();
+      for (String clazz : mapping.values()) {
+         clazzes.add(clazz);
+      }
+      return clazzes;
    }
 }

@@ -17,6 +17,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
+import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.execution.kieker.KiekerEnvironmentPreparer;
 import de.dagere.peass.folders.PeassFolders;
@@ -161,6 +162,12 @@ public abstract class TestExecutor {
 
    protected abstract void clean(final File logFile) throws IOException, InterruptedException;
 
+   public void fetchClasses(final ModuleClassMapping mapping) {
+      existingClasses = new LinkedList<>();
+      existingClasses.addAll(mapping.getAllClasses());
+      
+   }
+   
    public void loadClasses() {
       existingClasses = new LinkedList<>();
       for (final File module : getModules().getModules()) {
