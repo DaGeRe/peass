@@ -15,27 +15,35 @@ import com.github.javaparser.ast.type.TypeParameter;
 import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;
 
 public class ParameterComparator {
-   
+
    private static final Logger LOG = LogManager.getLogger(ParameterComparator.class);
-   
+
    private final ClassOrInterfaceDeclaration clazz;
-   
-   private boolean areEqual;
-   
+
    public ParameterComparator(final ClassOrInterfaceDeclaration clazz) {
       this.clazz = clazz;
    }
-   
+
    public boolean parametersEqual(final TraceElementContent traceElement, final CallableDeclaration<?> method) {
       if (traceElement.getParameterTypes().length == 0 && method.getParameters().size() == 0) {
          return true;
-      } else if (method.getParameters().size() == 0) {
+      } else if (method.getParameters().size() == 0 && !method.isConstructorDeclaration()) {
          return false;
       }
-      int parameterIndex = 0;
+
+      String[] traceParameterTypes;
+      if (method.isConstructorDeclaration()) {
+         traceParameterTypes = getCleanedTraceParameters(traceElement);
+         if (traceParameterTypes.length == 0 && method.getParameters().size() == 0) {
+            return true;
+         }
+      } else {
+         traceParameterTypes = traceElement.getParameterTypes();
+      }
+
       final List<Parameter> parameters = method.getParameters();
-      String[] traceParameterTypes = getCleanedTraceParameters(traceElement);
-      LOG.debug("Length: {} vs {}", traceParameterTypes.length, parameters.size()); //TODO delete
+      int parameterIndex = 0;
+      LOG.debug("Length: {} vs {}", traceParameterTypes.length, parameters.size()); // TODO delete
       if (traceParameterTypes.length != parameters.size() && !parameters.get(parameters.size() - 1).isVarArgs()) {
          return false;
       } else if (parameters.get(parameters.size() - 1).isVarArgs()) {
@@ -66,7 +74,7 @@ public class ParameterComparator {
 
       return true;
    }
-   
+
    private String[] getCleanedTraceParameters(final TraceElementContent te) {
       String[] traceParameterTypes;
       if (te.isInnerClassCall()) {
@@ -107,7 +115,7 @@ public class ParameterComparator {
          return false;
       }
    }
-   
+
    private boolean isTypeParameter(final String typeString) {
       boolean isTypeParameter = false;
       // It is too cumbersome to check whether a class really fits to the class hierarchy of a generic class;
