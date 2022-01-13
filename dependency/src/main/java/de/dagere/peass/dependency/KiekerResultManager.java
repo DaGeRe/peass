@@ -151,7 +151,7 @@ public class KiekerResultManager {
       }
    }
 
-   protected void cleanFolderAboveSize(final File folderToClean, final int sizeInMb) {
+   protected void cleanFolderAboveSize(final File folderToClean, final long sizeInMb) {
       for (final File file : folderToClean.listFiles()) {
          if (file.isDirectory()) {
             final long size = FileUtils.sizeOfDirectory(file) / (1024 * 1024);

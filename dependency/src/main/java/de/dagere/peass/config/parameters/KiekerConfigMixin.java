@@ -80,6 +80,7 @@ public class KiekerConfigMixin {
       kiekerConfig.setAdaptiveInstrumentation(enableAdaptiveInstrumentation);
       kiekerConfig.setUseSourceInstrumentation(!notUseSourceInstrumentation);
       kiekerConfig.setKiekerQueueSize(kiekerQueueSize);
+      kiekerConfig.setTraceSizeInMb(traceSizeInMb);
       
       kiekerConfig.check();
       

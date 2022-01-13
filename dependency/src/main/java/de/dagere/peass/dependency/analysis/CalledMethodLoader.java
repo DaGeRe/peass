@@ -100,7 +100,9 @@ public class CalledMethodLoader {
 
    public static void main(final String[] args) {
       final File kiekerTraceFile = new File(args[0]);
-      final List<TraceElement> trace = new CalledMethodLoader(kiekerTraceFile, null, new KiekerConfig()).getShortTrace("");
+      KiekerConfig kiekerConfig = new KiekerConfig();
+      kiekerConfig.setTraceSizeInMb(10000);
+      final List<TraceElement> trace = new CalledMethodLoader(kiekerTraceFile, null, kiekerConfig).getShortTrace("");
 
       System.out.println("Trace-Size: " + trace.size());
 

@@ -21,7 +21,7 @@ public class KiekerConfig implements Serializable {
    private int kiekerAggregationInterval = DEFAULT_WRITE_INTERVAL;
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
    private boolean extractMethod = false;
-   private int traceSizeInMb = 100;
+   private long traceSizeInMb = 100;
    private long kiekerQueueSize = DEFAULT_KIEKER_QUEUE_SIZE;
 
    public KiekerConfig() {
@@ -141,11 +141,11 @@ public class KiekerConfig implements Serializable {
       this.extractMethod = extractMethod;
    }
    
-   public int getTraceSizeInMb() {
+   public long getTraceSizeInMb() {
       return traceSizeInMb;
    }
    
-   public void setTraceSizeInMb(final int traceSizeInMb) {
+   public void setTraceSizeInMb(final long traceSizeInMb) {
       this.traceSizeInMb = traceSizeInMb;
    }
    

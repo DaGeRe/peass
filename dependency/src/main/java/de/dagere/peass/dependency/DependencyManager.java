@@ -65,7 +65,7 @@ public class DependencyManager extends KiekerResultManager {
    private static final Logger LOG = LogManager.getLogger(DependencyManager.class);
 
    private final TestDependencies dependencies = new TestDependencies();
-   private int deleteFolderSize;
+   private long deleteFolderSize;
 
    /**
     * Creates a new ChangeTestClassesHandler for the given folder with the given groupId and projectId. The groupId and projectId are needed to determine where the results are
@@ -91,10 +91,6 @@ public class DependencyManager extends KiekerResultManager {
 
    public TestDependencies getDependencyMap() {
       return dependencies;
-   }
-
-   public int getDeleteFolderSize() {
-      return deleteFolderSize;
    }
 
    public void setDeleteFolderSize(final int deleteFolderSize) {
