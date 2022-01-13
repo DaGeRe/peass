@@ -103,7 +103,7 @@ public class DependencyManager extends KiekerResultManager {
       }
 
       final ModuleClassMapping mapping = new ModuleClassMapping(executor);
-      executor.fetchClasses(mapping);
+      executor.loadClasses();
 
       TestSet tests = findIncludedTests(mapping);
       runTraceTests(tests, version);
