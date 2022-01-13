@@ -169,10 +169,11 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    public void postEvaluate() {
+      TestCase test = getCurrentOrganizer().getTest();
       final File cleanFolder = new File(folders.getCleanFolder(), configuration.getExecutionConfig().getVersion() + File.separator +
             configuration.getExecutionConfig().getVersionOld() + File.separator +
-            getCurrentOrganizer().getTest().getClazz() + File.separator +
-            getCurrentOrganizer().getTest().getMethod());
+            test.getClazz() + File.separator +
+            test.getMethod());
       final Cleaner cleaner = new Cleaner(cleanFolder);
       for (final File clazzFile : folders.getDetailResultFolder().listFiles()) {
          final Map<String, TestData> testdata = DataReader.readClassFolder(clazzFile);
