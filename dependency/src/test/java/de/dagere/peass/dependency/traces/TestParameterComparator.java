@@ -27,7 +27,7 @@ public class TestParameterComparator {
       boolean isEqualMethod = new ParameterComparator(clazz).parametersEqual(traceElementMethod, method);
       Assert.assertTrue(isEqualMethod);
    }
-   
+
    @Test
    public void testSimpleConstructor() {
       String methodSource = "class Clazz{ class MyInner{ public MyInner(){} } }";
@@ -74,7 +74,7 @@ public class TestParameterComparator {
       boolean isEqual1 = new ParameterComparator(clazz).parametersEqual(traceElement, method);
       Assert.assertTrue(isEqual1);
    }
-   
+
    @Test
    public void testWrongConstructorComparison() {
       String methodSource = "class Clazz{ class MyInner{ public MyInner(){ } } }";
@@ -87,5 +87,19 @@ public class TestParameterComparator {
       TraceElementContent traceElementConstructorWrong = new TraceElementContent("Clazz$MyInner", "<init>", new String[] { "Clazz", "int" }, 0);
       boolean isEqualConstructorWrong = new ParameterComparator(clazz).parametersEqual(traceElementConstructorWrong, method);
       Assert.assertFalse(isEqualConstructorWrong);
+   }
+
+   @Test
+   public void testWrongMethodComparison() {
+      String methodSource = "class Clazz{ class MyInner{ public void doStuff(){ } } }";
+      CompilationUnit declaration = new JavaParser().parse(new ByteArrayInputStream(methodSource.getBytes())).getResult().get();
+
+      ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) declaration.getChildNodes().get(0);
+      ClassOrInterfaceDeclaration myInner = clazz.findAll(ClassOrInterfaceDeclaration.class).get(1);
+      CallableDeclaration<?> method = myInner.findAll(CallableDeclaration.class).get(0);
+
+      TraceElementContent traceElementMethodWrong = new TraceElementContent("Clazz$MyInner", "doStuff", new String[] { "Clazz", "int" }, 0);
+      boolean isEqualMethodWrong = new ParameterComparator(clazz).parametersEqual(traceElementMethodWrong, method);
+      Assert.assertFalse(isEqualMethodWrong);
    }
 }
