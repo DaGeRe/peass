@@ -345,8 +345,8 @@ public class JUnitTestTransformer implements TestTransformer {
                   methods.add(test);
                }
             } else if (junit == 5) {
-               for (String junit4method : getAnnotatedMethods(clazz, 5)) {
-                  TestCase test = new TestCase(clazzname.getClazz(), junit4method, clazzname.getModule());
+               for (String junit5method : getAnnotatedMethods(clazz, 5)) {
+                  TestCase test = new TestCase(clazzname.getClazz(), junit5method, clazzname.getModule());
                   methods.add(test);
                }
             }
