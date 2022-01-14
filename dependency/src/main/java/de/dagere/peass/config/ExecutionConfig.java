@@ -20,6 +20,8 @@ import de.dagere.peass.config.parameters.ExecutionConfigMixin;
  */
 public class ExecutionConfig implements Serializable {
 
+   public static final String CLASSPATH_SEPARATOR = ":";
+   
    private static final long serialVersionUID = -6642358125854337047L;
 
    /**
@@ -158,15 +160,22 @@ public class ExecutionConfig implements Serializable {
       kiekerWaitTime = executionMixin.getKiekerWaitTime();
       
       if (executionMixin.getClazzFolder() != null) {
-         List<String> clazzFolders = new ArrayList<>();
-         clazzFolders.add(executionMixin.getClazzFolder());
+         List<String> clazzFolders = buildFolderList(executionMixin.getClazzFolder());
          setClazzFolders(clazzFolders);
       }
       if (executionMixin.getTestClazzFolder() != null) {
-         List<String> testClazzFolders = new ArrayList<>();
-         testClazzFolders.add(executionMixin.getTestClazzFolder());
+         List<String> testClazzFolders = buildFolderList(executionMixin.getTestClazzFolder());
          setTestClazzFolders(testClazzFolders);
       }
+   }
+
+   public static List<String> buildFolderList(final String folderList) {
+      List<String> clazzFolders = new ArrayList<>();
+      String[] classpathElements = folderList.trim().split(CLASSPATH_SEPARATOR);
+      for (String clazzFolder : classpathElements) {
+         clazzFolders.add(clazzFolder);
+      }
+      return clazzFolders;
    }
 
    public void setTimeout(final long timeout) {
