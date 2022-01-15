@@ -82,17 +82,24 @@ public class ChangeManager {
    }
 
    void saveModule(final File module) throws IOException {
-      final File srcDir = new File(module, "src");
+      for (String path : config.getAllClazzFolders()) {
+         savePath(module, path);
+      }
+   }
+
+   private void savePath(final File module, final String path) throws IOException {
+      final File srcDir = new File(module, path);
       
       // Only copy existing source directories, since multimodule modules may not contain a src directory
       if (srcDir.exists()) {
          File destModuleDir;
          if (!module.equals(folders.getProjectFolder())) {
             final String relative = folders.getProjectFolder().toURI().relativize(module.toURI()).getPath();
-            destModuleDir = new File(folders.getOldSources(), relative + File.separator + "src");
+            destModuleDir = new File(folders.getOldSources(), relative + File.separator + path);
          } else {
-            destModuleDir = new File(folders.getOldSources(), "src");
+            destModuleDir = new File(folders.getOldSources(), path);
          }
+         destModuleDir.getParentFile().mkdirs();
          LOG.debug("Copying from {} to {}", srcDir.getAbsolutePath(), destModuleDir.getAbsolutePath());
          FileUtils.copyDirectory(srcDir, destModuleDir, new FileFilter() {
             
@@ -102,7 +109,6 @@ public class ChangeManager {
             }
          });
       }
-       
    }
 
    public Map<ChangedEntity, ClazzChangeData> getChanges(final String version1, final String version2) {
