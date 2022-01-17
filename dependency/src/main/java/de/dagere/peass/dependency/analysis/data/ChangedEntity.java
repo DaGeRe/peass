@@ -20,6 +20,12 @@ import de.dagere.peass.utils.ClassFolderUtil;
 //TODO What happens to changes, that do occur in classes which are only file-local? -> Should be separated by $
 public class ChangedEntity implements Comparable<ChangedEntity> {
    
+   /**
+    * This can not be generically done; use VersionDiff.replaceClazzFolderName instead
+    * @param fileName
+    * @return
+    */
+   @Deprecated
    public static String replaceClazzFolderFromName(final String fileName) {
       boolean isInClassFolder = false;
       for (final String clazzFolder : ClassFolderUtil.getPathes()) {

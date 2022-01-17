@@ -91,7 +91,7 @@ public class VersionDiff {
    private void addChange(final String currentFileName, final String containedPath, final int indexOf) {
       if (indexOf != 0) {
          final String pathWithFolder = currentFileName.substring(indexOf);
-         final String classPath = pathWithFolder.replace(containedPath, "");
+         final String classPath = replaceClazzFolderFromName(pathWithFolder, containedPath);
          final String modulePath = currentFileName.substring(0, indexOf - 1);
          final File moduleFile = new File(projectFolder, modulePath);
          if (modules.contains(moduleFile)) {
@@ -108,7 +108,7 @@ public class VersionDiff {
          }
 
       } else {
-         final String classPath = currentFileName.replace(containedPath, "");
+         final String classPath = replaceClazzFolderFromName(currentFileName, containedPath);
          final ChangedEntity changedEntity = new ChangedEntity(classPath, "");
          if (!changedEntity.getJavaClazzName().contains(File.separator)) {
             changedClasses.add(changedEntity);
@@ -116,6 +116,19 @@ public class VersionDiff {
             LOG.error("Sourcefoldernot found: {}", currentFileName);
          }
       }
+   }
+
+   public static String replaceClazzFolderFromName(final String fileName, final String classFolderName) {
+      String tempClazzName = fileName.replace(".java", "");
+      tempClazzName = tempClazzName.replaceAll(classFolderName, "");
+      if (tempClazzName.startsWith(File.separator)) {
+         tempClazzName = tempClazzName.substring(1);
+      }
+      String replaced = tempClazzName.replace(File.separatorChar, '.');
+      if (replaced.contains("/")) {
+         replaced = replaced.replace('/', '.'); // In case windows accidently used / as separator
+      }
+      return replaced;
    }
 
    @Override
