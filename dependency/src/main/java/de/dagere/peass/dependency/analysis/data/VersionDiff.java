@@ -121,7 +121,7 @@ public class VersionDiff {
    public static String replaceClazzFolderFromName(final String fileName, final String classFolderName) {
       String tempClazzName = fileName.replace(".java", "");
       tempClazzName = tempClazzName.replaceAll(classFolderName, "");
-      if (tempClazzName.startsWith(File.separator)) {
+      if (tempClazzName.startsWith(File.separator) || tempClazzName.startsWith("/")) {
          tempClazzName = tempClazzName.substring(1);
       }
       String replaced = tempClazzName.replace(File.separatorChar, '.');
