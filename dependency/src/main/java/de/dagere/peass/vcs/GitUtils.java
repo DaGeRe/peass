@@ -32,6 +32,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.persistence.Dependencies;
@@ -270,7 +271,7 @@ public final class GitUtils {
       }
    }
 
-   public static VersionDiff getChangedClasses(final File projectFolder, final List<File> modules, final String lastVersion) {
+   public static VersionDiff getChangedClasses(final File projectFolder, final List<File> modules, final String lastVersion, final ExecutionConfig config) {
       try {
          final Process process;
          if (lastVersion != null) {
@@ -278,28 +279,28 @@ public final class GitUtils {
          } else {
             process = Runtime.getRuntime().exec("git diff --name-only HEAD^ HEAD", null, projectFolder);
          }
-         return getDiffFromProcess(process, modules, projectFolder);
+         return getDiffFromProcess(process, modules, projectFolder, config);
       } catch (final IOException e) {
          e.printStackTrace();
       }
       return null;
    }
 
-   public static VersionDiff getChangedFiles(final File projectFolder, final List<File> modules, final String version) {
+   public static VersionDiff getChangedFiles(final File projectFolder, final List<File> modules, final String version, final ExecutionConfig config) {
       try {
          final Process process = Runtime.getRuntime().exec("git diff --name-only " + version + ".." + version + "~1", new String[0], projectFolder);
-         return getDiffFromProcess(process, modules, projectFolder);
+         return getDiffFromProcess(process, modules, projectFolder, config);
       } catch (final IOException e) {
          e.printStackTrace();
       }
       return null;
    }
 
-   private static VersionDiff getDiffFromProcess(final Process p, final List<File> modules, final File projectFolder) {
+   private static VersionDiff getDiffFromProcess(final Process p, final List<File> modules, final File projectFolder, final ExecutionConfig config) {
       final VersionDiff diff = new VersionDiff(modules, projectFolder);
       final String output = StreamGobbler.getFullProcess(p, false);
       for (final String line : output.split("\n")) {
-         diff.addChange(line);
+         diff.addChange(line, config);
       }
       return diff;
    }

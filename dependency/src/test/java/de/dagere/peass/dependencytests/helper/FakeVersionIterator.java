@@ -3,6 +3,7 @@ package de.dagere.peass.dependencytests.helper;
 import java.io.File;
 import java.util.List;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.VersionIterator;
@@ -71,7 +72,7 @@ public class FakeVersionIterator extends VersionIterator {
    }
    
    @Override
-   public VersionDiff getChangedClasses(final File projectFolder2, final List<File> genericModules, final String lastVersion) {
+   public VersionDiff getChangedClasses(final File projectFolder2, final List<File> genericModules, final String lastVersion, final ExecutionConfig config) {
       throw new RuntimeException("Not implemented on purpose - this is only a testing mock with limited functionality.");
    }
 

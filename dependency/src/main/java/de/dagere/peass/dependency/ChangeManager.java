@@ -60,7 +60,7 @@ public class ChangeManager {
     */
    private List<ChangedEntity> getChangedClasses(final String lastVersion) throws FileNotFoundException, IOException, XmlPullParserException {
       List<File> moduleFiles = MavenPomUtil.getGenericModules(folders.getProjectFolder(), config).getModules();
-      final VersionDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), moduleFiles, lastVersion);
+      final VersionDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), moduleFiles, lastVersion, config);
       LOG.info("Changed classes: " + diff.getChangedClasses().size());
       return diff.getChangedClasses();
    }

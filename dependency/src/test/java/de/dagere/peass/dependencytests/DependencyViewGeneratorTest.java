@@ -79,11 +79,12 @@ public class DependencyViewGeneratorTest {
       fakeIterator.goToFirstCommit();
       FakeFileIterator iteratorspied = Mockito.spy(fakeIterator);
       VersionDiff fakedDiff = new VersionDiff(Arrays.asList(TestConstants.CURRENT_FOLDER), TestConstants.CURRENT_FOLDER);
-      fakedDiff.addChange("src/test/java/viewtest/TestMe.java");
+      ExecutionConfig defaultConfig = new ExecutionConfig();
+      fakedDiff.addChange("src/test/java/viewtest/TestMe.java", defaultConfig);
 
       Mockito.doReturn(fakedDiff)
             .when(iteratorspied)
-            .getChangedClasses(Mockito.any(), Mockito.any(), Mockito.any());
+            .getChangedClasses(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
       return iteratorspied;
    }
 }

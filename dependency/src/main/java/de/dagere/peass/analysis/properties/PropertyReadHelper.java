@@ -225,7 +225,7 @@ public class PropertyReadHelper {
    private void identifyAffectedClasses(final ChangeProperty property, final Set<String> calls) throws FileNotFoundException, IOException {
       try {
          List<File> modules = MavenPomUtil.getGenericModules(projectFolder, new ExecutionConfig()).getModules();
-         final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, modules, version);
+         final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, modules, version, config);
          removeUncalledClasses(calls, diff);
          property.setAffectedClasses(diff.getChangedClasses().size());
          final int changedLines = GitUtils.getChangedLines(projectFolder, version, diff.getChangedClasses());

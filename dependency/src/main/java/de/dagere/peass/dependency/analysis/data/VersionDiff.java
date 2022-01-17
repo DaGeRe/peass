@@ -23,6 +23,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.config.ExecutionConfig;
+
 /**
  * Holds data of the difference between two versions, i.e. which classes are changed and whether the pom has changed or not.
  * 
@@ -63,43 +65,55 @@ public class VersionDiff {
       return changedClasses;
    }
 
-   public void addChange(final String currentFileName) {
+   public void addChange(final String currentFileName, final ExecutionConfig config) {
       if (currentFileName.endsWith("pom.xml")) {
          setPomChanged(true);
       } else {
          if (currentFileName.endsWith(".java")) {
-            final int indexOf = currentFileName.indexOf("src");
-            if (indexOf == -1) {
-               LOG.error("Index von src nicht gefunden: " + currentFileName);
-            } else {
-               if (indexOf != 0) {
-                  final String classPath = currentFileName.substring(indexOf);
-                  final String modulePath = currentFileName.substring(0, indexOf - 1);
-                  final File moduleFile = new File(projectFolder, modulePath);
-                  if (modules.contains(moduleFile)) {
-                     LOG.debug("Create new changedentitty: " + classPath + " " + modulePath);
-                     final ChangedEntity changedEntity = new ChangedEntity(classPath, modulePath);
-                     if (!changedEntity.getJavaClazzName().contains(File.separator)) {
-                        changedClasses.add(changedEntity);
-                     } else {
-                        LOG.error("Sourcefoldernot found: {} Ignoring {}", modulePath, currentFileName);
-                     }
-                  } else {
-                     LOG.error("Unexpected Module: {} Ignoring {}", modulePath, currentFileName);
-                     LOG.info("Modules: {}", modules);
-                  }
-
-               } else {
-                  final ChangedEntity changedEntity = new ChangedEntity(currentFileName, "");
-                  if (!changedEntity.getJavaClazzName().contains(File.separator)) {
-                     changedClasses.add(changedEntity);
-                  } else {
-                     LOG.error("Sourcefoldernot found: {}", currentFileName);
-                  }
-//                  changedClasses.add(changedEntity);
+            String containedPath = null;
+            for (String path : config.getAllClazzFolders()) {
+               if (currentFileName.contains(path)) {
+                  containedPath = path;
+                  break;
                }
-
             }
+
+            final int indexOf = currentFileName.indexOf(containedPath);
+            if (indexOf == -1) {
+               LOG.error("Did not find any of the class pathes in the changed filename: {} classpathes: {} ", currentFileName, config.getAllClazzFolders());
+            } else {
+               addChange(currentFileName, containedPath, indexOf);
+            }
+         }
+      }
+   }
+
+   private void addChange(final String currentFileName, final String containedPath, final int indexOf) {
+      if (indexOf != 0) {
+         final String pathWithFolder = currentFileName.substring(indexOf);
+         final String classPath = pathWithFolder.replace(containedPath, "");
+         final String modulePath = currentFileName.substring(0, indexOf - 1);
+         final File moduleFile = new File(projectFolder, modulePath);
+         if (modules.contains(moduleFile)) {
+            LOG.debug("Create new changedentitty: " + classPath + " " + modulePath);
+            final ChangedEntity changedEntity = new ChangedEntity(classPath, modulePath);
+            if (!changedEntity.getJavaClazzName().contains(File.separator)) {
+               changedClasses.add(changedEntity);
+            } else {
+               LOG.error("Sourcefoldernot found: {} Ignoring {}", modulePath, currentFileName);
+            }
+         } else {
+            LOG.error("Unexpected Module: {} Ignoring {}", modulePath, currentFileName);
+            LOG.info("Modules: {}", modules);
+         }
+
+      } else {
+         final String classPath = currentFileName.replace(containedPath, "");
+         final ChangedEntity changedEntity = new ChangedEntity(classPath, "");
+         if (!changedEntity.getJavaClazzName().contains(File.separator)) {
+            changedClasses.add(changedEntity);
+         } else {
+            LOG.error("Sourcefoldernot found: {}", currentFileName);
          }
       }
    }

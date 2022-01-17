@@ -19,6 +19,7 @@ package de.dagere.peass.vcs;
 import java.io.File;
 import java.util.List;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 
 /**
@@ -89,7 +90,7 @@ public abstract class VersionIterator {
 
    public abstract boolean goToPreviousCommit();
 
-   public abstract VersionDiff getChangedClasses(File projectFolder2, List<File> genericModules, String lastVersion);
+   public abstract VersionDiff getChangedClasses(File projectFolder, List<File> genericModules, String lastVersion, ExecutionConfig config);
 
    
 
