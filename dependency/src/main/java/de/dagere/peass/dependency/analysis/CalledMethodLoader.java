@@ -30,6 +30,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.kieker.writer.onecall.OneCallReader;
 import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.EntityUtil;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
@@ -83,7 +84,11 @@ public class CalledMethodLoader {
       for (String calledMethod : calledMethods) {
          String methodNameWithoutModifiers = calledMethod.substring(calledMethod.lastIndexOf(' ')+1);
          ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator(methodNameWithoutModifiers);
-         ChangedEntity fullClassEntity = new ChangedEntity(entity.getClazz(), null);
+         
+         final String outerClazzName = ClazzFileFinder.getOuterClass(entity.getClazz());
+         final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
+         
+         ChangedEntity fullClassEntity = new ChangedEntity(entity.getClazz(), moduleOfClass);
          Set<String> currentMethodSet = calledMethodResult.get(fullClassEntity);
          if (currentMethodSet == null) {
             currentMethodSet = new HashSet<>();
