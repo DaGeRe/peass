@@ -62,6 +62,7 @@ public class CalledMethodLoader {
          final CalledMethodStage peassFilter = executePeassFilter(null);
          return peassFilter.getCalledMethods();
       } catch (IllegalStateException | AnalysisConfigurationException e) {
+         LOG.debug("Failed to load methods", e);
          e.printStackTrace();
       } 
       return null;

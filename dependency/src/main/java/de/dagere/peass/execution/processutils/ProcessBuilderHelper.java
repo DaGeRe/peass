@@ -93,12 +93,15 @@ public class ProcessBuilderHelper {
     */
    public static void syncToHdd() {
       if (EnvironmentVariables.isLinux()) {
+         LOG.info("Syncing to hdd");
          try {
             Process syncProcess = Runtime.getRuntime().exec("sync");
             StreamGobbler.showFullProcess(syncProcess);
          } catch (IOException e) {
             e.printStackTrace();
          }
+      } else {
+         LOG.info("No call to sync, since not on Linux");
       }
    }
 }
