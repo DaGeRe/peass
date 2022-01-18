@@ -88,6 +88,7 @@ public class CalledMethodLoader {
             return null;
          }
       } catch (IllegalStateException | AnalysisConfigurationException e) {
+         LOG.debug("Failed to load trace", e);
          e.printStackTrace();
          return null;
       }
