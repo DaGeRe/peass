@@ -35,10 +35,6 @@ public interface TestTransformer {
    
    public MeasurementConfig getConfig();
 
-   public boolean isAggregatedWriter();
-
-   public void setAggregatedWriter(boolean useAggregation);
-   
    public boolean isJUnit3();
 
    public void setIgnoreEOIs(boolean ignoreEOIs);

@@ -135,12 +135,12 @@
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-junit</artifactId>
-			<version>0.16.1</version>
+			<version>0.17.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>de.dagere.kopeme</groupId>
 			<artifactId>kopeme-junit3</artifactId>
-			<version>0.16.1</version>
+			<version>0.17.0-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
 

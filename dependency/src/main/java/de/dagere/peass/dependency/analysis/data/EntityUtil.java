@@ -27,4 +27,16 @@ public class EntityUtil {
       }
       return entity;
    }
+
+   public static ChangedEntity determineEntityWithDotSeparator(final String kiekerSignature) {
+      int parenthesisIndex = kiekerSignature.indexOf('(');
+      String parameterString = kiekerSignature.substring(parenthesisIndex + 1);
+      String withoutParameterString = kiekerSignature.substring(0, parenthesisIndex);
+      int dotIndex = withoutParameterString.lastIndexOf('.');
+      String clazz = withoutParameterString.substring(0, dotIndex);
+      String method = withoutParameterString.substring(dotIndex + 1);
+      ChangedEntity changedEntity = new ChangedEntity(clazz, null, method);
+      changedEntity.createParameters(parameterString);
+      return changedEntity;
+   }
 }

@@ -4,10 +4,9 @@ import de.dagere.peass.config.KiekerConfig;
 import picocli.CommandLine.Option;
 
 public class KiekerConfigMixin {
-   
-   
+
    @Option(names = { "-writeInterval", "--writeInterval" }, description = "Interval for KoPeMe-aggregated-writing (in milliseconds)")
-   public int writeInterval =KiekerConfig.DEFAULT_WRITE_INTERVAL;
+   public int writeInterval = KiekerConfig.DEFAULT_WRITE_INTERVAL;
 
    @Option(names = { "-notUseSourceInstrumentation", "--notUseSourceInstrumentation" }, description = "Not use source instrumentation (disabling enables AspectJ instrumentation)")
    public boolean notUseSourceInstrumentation = false;
@@ -25,15 +24,20 @@ public class KiekerConfigMixin {
 
    @Option(names = { "-useExtraction", "--useExtraction" }, description = "Extract methods when using source instrumentation")
    public boolean useExtraction = false;
-   
+
    @Option(names = { "-enableAdaptiveInstrumentation", "--enableAdaptiveInstrumentation" }, description = "Enable adaptive instrumentation (for performance comparison to AspectJ)")
    public boolean enableAdaptiveInstrumentation = false;
-  
+
    @Option(names = { "-traceSizeInMb", "--traceSizeInMb" }, description = "Sets the maximum allowed trace size in Mb (bigger traces will be ignored by Peass)")
    public long traceSizeInMb = 100;
-   
-   @Option(names = { "-kiekerQueueSize", "--kiekerQueueSize" }, description = "Sets the maximum queue size in Kieker (space is reserverd, consider increasing if queue entries are swallowed)")
+
+   @Option(names = { "-kiekerQueueSize",
+         "--kiekerQueueSize" }, description = "Sets the maximum queue size in Kieker (space is reserverd, consider increasing if queue entries are swallowed)")
    public long kiekerQueueSize = KiekerConfig.DEFAULT_KIEKER_QUEUE_SIZE;
+
+   @Option(names = { "-onlyOneCallRecording",
+         "--onlyOneCallRecording" }, description = "Only record calls once (ONLY allowed for regression test selection)")
+   public boolean onlyOneCallRecording = false;
 
    public int getWriteInterval() {
       return writeInterval;
@@ -54,19 +58,19 @@ public class KiekerConfigMixin {
    public boolean isUseAggregation() {
       return useAggregation;
    }
-   
+
    public boolean isUseExtraction() {
       return useExtraction;
    }
-   
+
    public boolean isEnableAdaptiveInstrumentation() {
       return enableAdaptiveInstrumentation;
    }
-   
+
    public long getTraceSizeInMb() {
       return traceSizeInMb;
    }
-   
+
    public void setTraceSizeInMb(final long traceSizeInMb) {
       this.traceSizeInMb = traceSizeInMb;
    }
@@ -81,9 +85,10 @@ public class KiekerConfigMixin {
       kiekerConfig.setUseSourceInstrumentation(!notUseSourceInstrumentation);
       kiekerConfig.setKiekerQueueSize(kiekerQueueSize);
       kiekerConfig.setTraceSizeInMb(traceSizeInMb);
-      
+      kiekerConfig.setOnlyOneCallRecording(onlyOneCallRecording);
+
       kiekerConfig.check();
-      
+
       return kiekerConfig;
    }
 

@@ -33,7 +33,8 @@ public class KiekerEnvironmentPreparer {
    private final TestTransformer testTransformer;
    private List<File> modules;
 
-   public KiekerEnvironmentPreparer(final Set<String> includedMethodPattern, final List<String> existingClasses, final PeassFolders folders, final TestTransformer testTransformer, final List<File> modules) {
+   public KiekerEnvironmentPreparer(final Set<String> includedMethodPattern, final List<String> existingClasses, final PeassFolders folders, final TestTransformer testTransformer,
+         final List<File> modules) {
       this.includedMethodPattern = includedMethodPattern;
       this.existingClasses = existingClasses;
       this.folders = folders;
@@ -49,10 +50,12 @@ public class KiekerEnvironmentPreparer {
          if (config.getKiekerConfig().isEnableAdaptiveMonitoring()) {
             prepareAdaptiveExecution();
          }
-         if (AllowedKiekerRecord.DURATION.equals(config.getKiekerConfig().getRecord())) {
-            generateAOPXML(AllowedKiekerRecord.DURATION);
+         if (config.getKiekerConfig().isOnlyOneCallRecording()) {
+            generateAOPXML("de.dagere.kopeme.kieker.probe.OneCallAspectFull");
+         } else if (AllowedKiekerRecord.DURATION.equals(config.getKiekerConfig().getRecord())) {
+            generateAOPXML(AllowedKiekerRecord.DURATION.getFullName());
          } else {
-            generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION);
+            generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION.getFullName());
          }
       }
       generateKiekerMonitoringProperties();
@@ -74,23 +77,23 @@ public class KiekerEnvironmentPreparer {
 
    private InstrumentKiekerSource buildInstrumenter(final MeasurementConfig config, final HashSet<String> excludedPatterns) {
       final InstrumentKiekerSource instrumentKiekerSource;
-      
+
       AllowedKiekerRecord record = config.getKiekerConfig().getRecord();
       boolean createDefaultConstructor = config.getExecutionConfig().isCreateDefaultConstructor();
       boolean adaptiveInstrumentation = config.getKiekerConfig().isAdaptiveInstrumentation();
       int repetitions = config.getRepetitions();
       boolean extractMethod = config.getKiekerConfig().isExtractMethod();
-      
+
       if (!config.getKiekerConfig().isUseSelectiveInstrumentation()) {
          InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(record, false,
                createDefaultConstructor,
-               adaptiveInstrumentation, includedMethodPattern, excludedPatterns, false, repetitions, 
+               adaptiveInstrumentation, includedMethodPattern, excludedPatterns, false, repetitions,
                extractMethod);
          instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
       } else {
          InstrumentationConfiguration kiekerConfiguration = new InstrumentationConfiguration(record, config.getKiekerConfig().isUseAggregation(),
                createDefaultConstructor,
-               adaptiveInstrumentation, includedMethodPattern, excludedPatterns, true, repetitions, 
+               adaptiveInstrumentation, includedMethodPattern, excludedPatterns, true, repetitions,
                extractMethod);
          instrumentKiekerSource = new InstrumentKiekerSource(kiekerConfiguration);
       }
@@ -151,7 +154,7 @@ public class KiekerEnvironmentPreparer {
       }
    }
 
-   private void generateAOPXML(final AllowedKiekerRecord aspect) {
+   private void generateAOPXML(final String aspectName) {
       try {
          for (final File module : modules) {
             for (final String potentialReadFolder : metaInfFolders) {
@@ -159,7 +162,7 @@ public class KiekerEnvironmentPreparer {
                folder.mkdirs();
                final File goalFile2 = new File(folder, "aop.xml");
                final Set<String> clazzes = getClazzSet();
-               AOPXMLHelper.writeAOPXMLToFile(new LinkedList<String>(clazzes), goalFile2, aspect);
+               AOPXMLHelper.writeAOPXMLToFile(new LinkedList<String>(clazzes), goalFile2, aspectName);
             }
          }
       } catch (IOException e) {

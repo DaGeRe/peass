@@ -19,7 +19,7 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.kopeme.generated.Versioninfo;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.ChangedEntityHelper;
 
 public class ExternalJmhDataConverter {
 
@@ -54,11 +54,11 @@ public class ExternalJmhDataConverter {
       Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
       for (Iterator<Chunk> iterator = datacollector.getChunk().iterator(); iterator.hasNext();) {
          Chunk currentChunk = iterator.next();
-         String paramString = ChangedEntity.paramsToString(currentChunk.getResult().get(0).getParams());
+         String paramString = ChangedEntityHelper.paramsToString(currentChunk.getResult().get(0).getParams());
          for (Iterator<Chunk> innerIterator = datacollector.getChunk().iterator(); innerIterator.hasNext();) {
             Chunk innerChunk = innerIterator.next();
             if (currentChunk != innerChunk) {
-               String innerParamString = ChangedEntity.paramsToString(innerChunk.getResult().get(0).getParams());
+               String innerParamString = ChangedEntityHelper.paramsToString(innerChunk.getResult().get(0).getParams());
                if (paramString.equals(innerParamString)) {
                   LOG.debug("Removing " + innerParamString);
                   iterator.remove();
@@ -89,7 +89,7 @@ public class ExternalJmhDataConverter {
          for (String params : allParams) {
             Chunk addedChunk = new Chunk();
             datacollector.getResult().forEach(result -> {
-               if (params != null && ChangedEntity.paramsToString(result.getParams()).equals(params)) {
+               if (params != null && ChangedEntityHelper.paramsToString(result.getParams()).equals(params)) {
                   addedChunk.getResult().add(result);
                   result.setVersion(new Versioninfo());
                   result.getVersion().setGitversion(currentVersion);
@@ -106,7 +106,7 @@ public class ExternalJmhDataConverter {
       Set<String> allParams = new LinkedHashSet<>();
       for (Result result : datacollector.getResult()) {
          Params params = result.getParams();
-         allParams.add(ChangedEntity.paramsToString(params));
+         allParams.add(ChangedEntityHelper.paramsToString(params));
       }
       LOG.info("Params: {}", allParams);
       return allParams;

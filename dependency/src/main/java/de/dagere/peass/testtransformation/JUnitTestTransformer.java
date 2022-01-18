@@ -78,7 +78,6 @@ public class JUnitTestTransformer implements TestTransformer {
    protected DataCollectorList datacollectorlist;
    protected final MeasurementConfig config;
    protected File projectFolder;
-   protected boolean aggregatedWriter = false;
    protected boolean ignoreEOIs = false;
    protected Charset charset = StandardCharsets.UTF_8;
    private Map<String, List<File>> extensions = null;
@@ -510,16 +509,6 @@ public class JUnitTestTransformer implements TestTransformer {
          }
       }
       return junit3;
-   }
-
-   @Override
-   public boolean isAggregatedWriter() {
-      return aggregatedWriter;
-   }
-
-   @Override
-   public void setAggregatedWriter(final boolean aggregatedWriter) {
-      this.aggregatedWriter = aggregatedWriter;
    }
 
    @Override

@@ -34,7 +34,6 @@ public class JmhTestTransformer implements TestTransformer {
 
    private final File projectFolder;
    private final MeasurementConfig measurementConfig;
-   private boolean isAggregatedWriter;
    private boolean ignoreEOIs;
 
    public JmhTestTransformer(final File projectFolder, final MeasurementConfig measurementConfig) {
@@ -107,16 +106,6 @@ public class JmhTestTransformer implements TestTransformer {
          }
       }
       return moduleTests;
-   }
-
-   @Override
-   public void setAggregatedWriter(final boolean isAggregatedWriter) {
-      this.isAggregatedWriter = isAggregatedWriter;
-   }
-
-   @Override
-   public boolean isAggregatedWriter() {
-      return isAggregatedWriter;
    }
 
    @Override

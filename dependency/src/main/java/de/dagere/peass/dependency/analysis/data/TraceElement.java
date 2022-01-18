@@ -104,7 +104,7 @@ public class TraceElement {
       result.append(ChangedEntity.METHOD_SEPARATOR);
       result.append(method);
       if (parameterTypes.length != 0) {
-         result.append(ChangedEntity.getParameterString(parameterTypes));
+         result.append(ChangedEntityHelper.getParameterString(parameterTypes));
       }
       return result.toString();
    }

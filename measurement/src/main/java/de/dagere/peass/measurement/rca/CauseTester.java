@@ -98,7 +98,6 @@ public class CauseTester extends AdaptiveTester {
    protected synchronized TestExecutor getExecutor(final PeassFolders temporaryFolders, final String version) {
       final TestExecutor testExecutor = super.getExecutor(temporaryFolders, version);
       TestTransformer testTransformer = testExecutor.getTestTransformer();
-      testTransformer.setAggregatedWriter(configuration.getKiekerConfig().isUseAggregation());
       testTransformer.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
       generatePatternSet(version);
       final HashSet<String> includedMethodPattern = new HashSet<>(includedPattern);

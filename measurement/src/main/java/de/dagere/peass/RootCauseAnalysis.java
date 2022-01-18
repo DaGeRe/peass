@@ -119,6 +119,10 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
    public static CauseSearcher getCauseSeacher(final MeasurementConfig measurementConfiguration,
          final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader) throws IOException, InterruptedException {
+      if (measurementConfiguration.getKiekerConfig().isOnlyOneCallRecording()) {
+         throw new RuntimeException("isOnlyOneCallRecording is not allowed to be set to true for RCA!");
+      }
+      
       EnvironmentVariables env = reader.getEnv();
       final CauseSearcher tester;
       final CauseTester measurer = new CauseTester(alternateFolders, measurementConfiguration, causeSearcherConfig, env);

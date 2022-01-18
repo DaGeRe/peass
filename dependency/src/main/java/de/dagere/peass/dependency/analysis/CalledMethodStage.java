@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.ChangedEntityHelper;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import kieker.analysis.trace.AbstractTraceProcessingStage;
 import kieker.model.repository.SystemModelRepository;
@@ -70,7 +71,7 @@ public class CalledMethodStage extends AbstractTraceProcessingStage<ExecutionTra
                final TraceElement traceelement = buildTraceElement(execution, fullClassname, methodname);
 
                calls.add(traceelement);
-               String methodWithParameters = methodname + ChangedEntity.getParameterString(execution.getOperation().getSignature().getParamTypeList());
+               String methodWithParameters = methodname + ChangedEntityHelper.getParameterString(execution.getOperation().getSignature().getParamTypeList());
                addCalledMethod(fullClassname, methodWithParameters, traceelement);
             }
          }

@@ -56,4 +56,13 @@ public class TestPropertyReadHelper {
       MatcherAssert.assertThat(emptyProperty, IsNull.notNullValue());
       Assert.assertEquals("myTestMethod", emptyProperty.getMethod());
    }
+   
+   @Test
+   public void testDetermineEntityWithDot() {
+      ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator("clazz.method(int,Object,long)");
+      
+      Assert.assertEquals("clazz", entity.getClazz());
+      Assert.assertEquals("method", entity.getMethod());
+      Assert.assertEquals("int_Object_long", entity.getParametersPrintable());
+   }
 }

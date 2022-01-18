@@ -20,6 +20,7 @@ public class KiekerConfig implements Serializable {
    private boolean adaptiveInstrumentation = false;
    private int kiekerAggregationInterval = DEFAULT_WRITE_INTERVAL;
    private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
+   private boolean onlyOneCallRecording = false;
    private boolean extractMethod = false;
    private long traceSizeInMb = 100;
    private long kiekerQueueSize = DEFAULT_KIEKER_QUEUE_SIZE;
@@ -41,6 +42,7 @@ public class KiekerConfig implements Serializable {
       this.adaptiveInstrumentation = other.adaptiveInstrumentation;
       this.kiekerAggregationInterval = other.kiekerAggregationInterval;
       this.record = other.record;
+      this.onlyOneCallRecording = other.onlyOneCallRecording;
       this.extractMethod = other.extractMethod;
       this.traceSizeInMb = other.traceSizeInMb;
    }
@@ -131,6 +133,14 @@ public class KiekerConfig implements Serializable {
       } else {
          this.record = record;
       }
+   }
+   
+   public boolean isOnlyOneCallRecording() {
+      return onlyOneCallRecording;
+   }
+   
+   public void setOnlyOneCallRecording(final boolean onlyOneCallRecording) {
+      this.onlyOneCallRecording = onlyOneCallRecording;
    }
 
    public boolean isExtractMethod() {

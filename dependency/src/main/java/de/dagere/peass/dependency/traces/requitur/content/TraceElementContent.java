@@ -3,6 +3,7 @@ package de.dagere.peass.dependency.traces.requitur.content;
 import java.util.Arrays;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.ChangedEntityHelper;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 
 public class TraceElementContent extends Content {
@@ -86,7 +87,7 @@ public class TraceElementContent extends Content {
       result.append(method);
 
       if (parameterTypes.length != 0) {
-         result.append(ChangedEntity.getParameterString(parameterTypes));
+         result.append(ChangedEntityHelper.getParameterString(parameterTypes));
       }
 
       return result.toString();

@@ -18,6 +18,8 @@ package de.dagere.peass.dependency.analysis;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,8 +28,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.kieker.writer.onecall.OneCallReader;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.EntityUtil;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
@@ -59,12 +63,29 @@ public class CalledMethodLoader {
     */
    public Map<ChangedEntity, Set<String>> getCalledMethods() {
       try {
-         final CalledMethodStage peassFilter = executePeassFilter(null);
-         return peassFilter.getCalledMethods();
+         if (kiekerConfig.isOnlyOneCallRecording()) {
+            Set<String> calledMethods = OneCallReader.getCalledMethods(kiekerTraceFolder);
+            Map<ChangedEntity, Set<String>> calledMethodResult = new HashMap<>();
+            for (String calledMethod : calledMethods) {
+               String methodNameWithoutModifiers = calledMethod.substring(calledMethod.lastIndexOf(' ')+1);
+               ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator(methodNameWithoutModifiers);
+               ChangedEntity fullClassEntity = new ChangedEntity(entity.getClazz(), null);
+               Set<String> currentMethodSet = calledMethodResult.get(fullClassEntity);
+               if (currentMethodSet == null) {
+                  currentMethodSet = new HashSet<>();
+                  calledMethodResult.put(fullClassEntity, currentMethodSet);
+               }
+               currentMethodSet.add(entity.getMethod() + entity.getParameterString());
+            } 
+            return calledMethodResult;
+         } else {
+            final CalledMethodStage peassFilter = executePeassFilter(null);
+            return peassFilter.getCalledMethods();
+         }
       } catch (IllegalStateException | AnalysisConfigurationException e) {
          LOG.debug("Failed to load methods", e);
          e.printStackTrace();
-      } 
+      }
       return null;
    }
 

@@ -13,8 +13,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import de.dagere.kopeme.generated.Result.Params;
-import de.dagere.kopeme.generated.Result.Params.Param;
 import de.dagere.peass.utils.ClassFolderUtil;
 
 //TODO What happens to changes, that do occur in classes which are only file-local? -> Should be separated by $
@@ -48,16 +46,6 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       }
    }
    
-   public static String paramsToString(final Params params) {
-      String result = "";
-      if (params != null) {
-         for (Param param : params.getParam()) {
-            result += param.getKey() + "-" + param.getValue() + " ";
-         }
-      }
-      return result;
-   }
-
    private static final Logger LOG = LogManager.getLogger(ChangedEntity.class);
 
    private final String filename;
@@ -194,7 +182,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
 
    @JsonIgnore
    public String getParameterString() {
-      return getParameterString(parameters.toArray(new String[0]));
+      return ChangedEntityHelper.getParameterString(parameters.toArray(new String[0]));
    }
 
    @JsonInclude(Include.NON_EMPTY)
@@ -218,22 +206,9 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          result += METHOD_SEPARATOR + method;
       }
       if (parameters.size() > 0) {
-         result += getParameterString(parameters.toArray(new String[0]));
+         result += ChangedEntityHelper.getParameterString(parameters.toArray(new String[0]));
       }
       return result;
-   }
-
-   public static String getParameterString(final String[] parameterTypes) {
-      if (parameterTypes.length > 0) {
-         String parameterString = "(";
-         for (String parameter : parameterTypes) {
-            parameterString += parameter + ",";
-         }
-         parameterString = parameterString.substring(0, parameterString.length() - 1) + ")";
-         return parameterString;
-      } else {
-         return "";
-      }
    }
 
    @Override
