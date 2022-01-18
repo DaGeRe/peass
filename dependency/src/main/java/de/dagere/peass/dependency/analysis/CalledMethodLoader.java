@@ -64,19 +64,7 @@ public class CalledMethodLoader {
    public Map<ChangedEntity, Set<String>> getCalledMethods() {
       try {
          if (kiekerConfig.isOnlyOneCallRecording()) {
-            Set<String> calledMethods = OneCallReader.getCalledMethods(kiekerTraceFolder);
-            Map<ChangedEntity, Set<String>> calledMethodResult = new HashMap<>();
-            for (String calledMethod : calledMethods) {
-               String methodNameWithoutModifiers = calledMethod.substring(calledMethod.lastIndexOf(' ')+1);
-               ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator(methodNameWithoutModifiers);
-               ChangedEntity fullClassEntity = new ChangedEntity(entity.getClazz(), null);
-               Set<String> currentMethodSet = calledMethodResult.get(fullClassEntity);
-               if (currentMethodSet == null) {
-                  currentMethodSet = new HashSet<>();
-                  calledMethodResult.put(fullClassEntity, currentMethodSet);
-               }
-               currentMethodSet.add(entity.getMethod() + entity.getParameterString());
-            } 
+            Map<ChangedEntity, Set<String>> calledMethodResult = loadMethods(); 
             return calledMethodResult;
          } else {
             final CalledMethodStage peassFilter = executePeassFilter(null);
@@ -87,6 +75,23 @@ public class CalledMethodLoader {
          e.printStackTrace();
       }
       return null;
+   }
+
+   private Map<ChangedEntity, Set<String>> loadMethods() {
+      Set<String> calledMethods = OneCallReader.getCalledMethods(kiekerTraceFolder);
+      Map<ChangedEntity, Set<String>> calledMethodResult = new HashMap<>();
+      for (String calledMethod : calledMethods) {
+         String methodNameWithoutModifiers = calledMethod.substring(calledMethod.lastIndexOf(' ')+1);
+         ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator(methodNameWithoutModifiers);
+         ChangedEntity fullClassEntity = new ChangedEntity(entity.getClazz(), null);
+         Set<String> currentMethodSet = calledMethodResult.get(fullClassEntity);
+         if (currentMethodSet == null) {
+            currentMethodSet = new HashSet<>();
+            calledMethodResult.put(fullClassEntity, currentMethodSet);
+         }
+         currentMethodSet.add(entity.getMethod() + entity.getParameterString());
+      }
+      return calledMethodResult;
    }
 
    /**
