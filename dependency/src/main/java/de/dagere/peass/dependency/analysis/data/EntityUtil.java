@@ -28,13 +28,17 @@ public class EntityUtil {
       return entity;
    }
 
-   public static ChangedEntity determineEntityWithDotSeparator(final String kiekerSignature) {
-      int parenthesisIndex = kiekerSignature.indexOf('(');
-      String parameterString = kiekerSignature.substring(parenthesisIndex + 1);
-      String withoutParameterString = kiekerSignature.substring(0, parenthesisIndex);
-      int dotIndex = withoutParameterString.lastIndexOf('.');
-      String clazz = withoutParameterString.substring(0, dotIndex);
-      String method = withoutParameterString.substring(dotIndex + 1);
+   public static ChangedEntity determineEntityWithDotSeparator(final String calledMethod) {
+      
+      int parenthesisIndex = calledMethod.indexOf('(');
+      String parameterString = calledMethod.substring(parenthesisIndex + 1);
+      String withoutParameterString = calledMethod.substring(0, parenthesisIndex);
+      
+      String nameWithoutModifiers = withoutParameterString.substring(withoutParameterString.lastIndexOf(' ') + 1);
+      
+      int dotIndex = nameWithoutModifiers.lastIndexOf('.');
+      String clazz = nameWithoutModifiers.substring(0, dotIndex);
+      String method = nameWithoutModifiers.substring(dotIndex + 1);
       ChangedEntity changedEntity = new ChangedEntity(clazz, null, method);
       changedEntity.createParameters(parameterString);
       return changedEntity;

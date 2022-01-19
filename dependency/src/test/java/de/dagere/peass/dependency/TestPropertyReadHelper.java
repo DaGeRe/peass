@@ -59,7 +59,7 @@ public class TestPropertyReadHelper {
    
    @Test
    public void testDetermineEntityWithDot() {
-      ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator("clazz.method(int,Object,long)");
+      ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator("public void clazz.method(int, Object, long)");
       
       Assert.assertEquals("clazz", entity.getClazz());
       Assert.assertEquals("method", entity.getMethod());

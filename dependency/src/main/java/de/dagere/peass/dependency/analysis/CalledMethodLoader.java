@@ -83,8 +83,7 @@ public class CalledMethodLoader {
       Map<ChangedEntity, Set<String>> calledMethodResult = new HashMap<>();
       for (String calledMethod : calledMethods) {
          LOG.debug("Adding called method: {}", calledMethod);
-         String methodNameWithoutModifiers = calledMethod.substring(calledMethod.lastIndexOf(' ') + 1);
-         ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator(methodNameWithoutModifiers);
+         ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator(calledMethod);
 
          final String outerClazzName = ClazzFileFinder.getOuterClass(entity.getClazz());
          final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
@@ -136,8 +135,7 @@ public class CalledMethodLoader {
       ArrayList<TraceElement> result = new ArrayList<>();
       Set<String> calledMethods = OneCallReader.getCalledMethods(kiekerTraceFolder);
       for (String calledMethod : calledMethods) {
-         String methodNameWithoutModifiers = calledMethod.substring(calledMethod.lastIndexOf(' ') + 1);
-         ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator(methodNameWithoutModifiers);
+         ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator(calledMethod);
          TraceElement traceelement = new TraceElement(entity.getClazz(), entity.getMethod(), 0);
          if (calledMethod.contains(" static ")) {
             traceelement.setStatic(true);
