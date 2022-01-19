@@ -45,7 +45,7 @@ public class ArgLineBuilder {
       String argline = getTieredCompilationArglinePart(entrySeparator);
       if (testTransformer.getConfig().isUseKieker()) {
          final String tempFolderPath = "'" + tempFolder.getAbsolutePath() + "'";
-         if (testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation()) {
+         if (testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() && !testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
             argline += TEMP_DIR + valueSeparator + tempFolderPath;
 
          } else {
@@ -78,7 +78,7 @@ public class ArgLineBuilder {
          String argLine = "  systemProperty \"" + TEMP_DIR_PURE + "\", \"" + tempPathNoEscapes + "\"" + System.lineSeparator();
          String configFilePath = modulePath.getAbsolutePath().replace('\\', '/') + MONITORING_PROPERTIES_PATH;
          argLine += "  systemProperty \"" + KIEKER_CONFIGURATION_PURE + "\", \"" + configFilePath + "\"" + System.lineSeparator();
-         if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation()) {
+         if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
             argLine += "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\"]" + System.lineSeparator();
          }
          return argLine;

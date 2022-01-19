@@ -12,6 +12,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.execution.maven.pom.MavenTestExecutor;
 import de.dagere.peass.folders.PeassFolders;
@@ -44,15 +45,16 @@ public class KiekerEnvironmentPreparer {
 
    public void prepareKieker() throws IOException, InterruptedException {
       final MeasurementConfig config = testTransformer.getConfig();
-      if (config.getKiekerConfig().isUseSourceInstrumentation()) {
+      KiekerConfig kiekerConfig = config.getKiekerConfig();
+      if (kiekerConfig.isUseSourceInstrumentation() && !kiekerConfig.isOnlyOneCallRecording()) {
          instrumentSources(config);
       } else {
-         if (config.getKiekerConfig().isEnableAdaptiveMonitoring()) {
+         if (kiekerConfig.isEnableAdaptiveMonitoring()) {
             prepareAdaptiveExecution();
          }
-         if (config.getKiekerConfig().isOnlyOneCallRecording()) {
+         if (kiekerConfig.isOnlyOneCallRecording()) {
             generateAOPXML("de.dagere.kopeme.kieker.probe.OneCallAspectFull");
-         } else if (AllowedKiekerRecord.DURATION.equals(config.getKiekerConfig().getRecord())) {
+         } else if (AllowedKiekerRecord.DURATION.equals(kiekerConfig.getRecord())) {
             generateAOPXML(AllowedKiekerRecord.DURATION.getFullName());
          } else {
             generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION.getFullName());
