@@ -82,6 +82,7 @@ public class CalledMethodLoader {
       Set<String> calledMethods = OneCallReader.getCalledMethods(kiekerTraceFolder);
       Map<ChangedEntity, Set<String>> calledMethodResult = new HashMap<>();
       for (String calledMethod : calledMethods) {
+         LOG.debug("Adding called method: {}", calledMethod);
          String methodNameWithoutModifiers = calledMethod.substring(calledMethod.lastIndexOf(' ') + 1);
          ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator(methodNameWithoutModifiers);
 
