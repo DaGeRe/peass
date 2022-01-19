@@ -65,7 +65,7 @@ public class CalledMethodLoader {
    public Map<ChangedEntity, Set<String>> getCalledMethods() {
       try {
          if (kiekerConfig.isOnlyOneCallRecording()) {
-            Map<ChangedEntity, Set<String>> calledMethodResult = loadMethods(); 
+            Map<ChangedEntity, Set<String>> calledMethodResult = loadMethods();
             return calledMethodResult;
          } else {
             final CalledMethodStage peassFilter = executePeassFilter(null);
@@ -82,12 +82,12 @@ public class CalledMethodLoader {
       Set<String> calledMethods = OneCallReader.getCalledMethods(kiekerTraceFolder);
       Map<ChangedEntity, Set<String>> calledMethodResult = new HashMap<>();
       for (String calledMethod : calledMethods) {
-         String methodNameWithoutModifiers = calledMethod.substring(calledMethod.lastIndexOf(' ')+1);
+         String methodNameWithoutModifiers = calledMethod.substring(calledMethod.lastIndexOf(' ') + 1);
          ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator(methodNameWithoutModifiers);
-         
+
          final String outerClazzName = ClazzFileFinder.getOuterClass(entity.getClazz());
          final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
-         
+
          ChangedEntity fullClassEntity = new ChangedEntity(entity.getClazz(), moduleOfClass);
          Set<String> currentMethodSet = calledMethodResult.get(fullClassEntity);
          if (currentMethodSet == null) {
@@ -113,8 +113,13 @@ public class CalledMethodLoader {
 
          LOG.debug("Size: {} ({}) Folder: {}", sizeInMB, size, kiekerTraceFolder);
          if (sizeInMB < kiekerConfig.getTraceSizeInMb()) {
-            final CalledMethodStage peassFilter = executePeassFilter(prefix);
-            return peassFilter.getCalls();
+            if (kiekerConfig.isOnlyOneCallRecording()) {
+               ArrayList<TraceElement> result = readOneCallTrace();
+               return result;
+            } else {
+               final CalledMethodStage peassFilter = executePeassFilter(prefix);
+               return peassFilter.getCalls();
+            }
          } else {
             LOG.error("Trace size: {} MB - skipping", sizeInMB);
             return null;
@@ -124,6 +129,22 @@ public class CalledMethodLoader {
          e.printStackTrace();
          return null;
       }
+   }
+
+   private ArrayList<TraceElement> readOneCallTrace() {
+      ArrayList<TraceElement> result = new ArrayList<>();
+      Set<String> calledMethods = OneCallReader.getCalledMethods(kiekerTraceFolder);
+      for (String calledMethod : calledMethods) {
+         String methodNameWithoutModifiers = calledMethod.substring(calledMethod.lastIndexOf(' ') + 1);
+         ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator(methodNameWithoutModifiers);
+         TraceElement traceelement = new TraceElement(entity.getClazz(), entity.getMethod(), 0);
+         if (calledMethod.contains(" static ")) {
+            traceelement.setStatic(true);
+         }
+         traceelement.setParameterTypes(entity.getParameterTypes());
+         result.add(traceelement);
+      }
+      return result;
    }
 
    private CalledMethodStage executePeassFilter(final String prefix) throws AnalysisConfigurationException {
