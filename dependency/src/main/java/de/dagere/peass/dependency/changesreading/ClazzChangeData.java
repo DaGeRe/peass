@@ -51,11 +51,18 @@ public class ClazzChangeData {
 
    public ClazzChangeData(final String clazz, final boolean isOnlyMethodChange) {
       this(new ChangedEntity(clazz, ""), isOnlyMethodChange);
+      if (clazz.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
+         throw new RuntimeException("Class " + clazz + " should not contain module separator; use ChangedEntity constructor instead!");
+      }
    }
 
    public ClazzChangeData(final String clazz, final String method) {
       addChange(clazz.substring(clazz.lastIndexOf('.') + 1), method);
       containingFile = new ChangedEntity(clazz, "");
+      
+      if (clazz.contains(ChangedEntity.CLAZZ_SEPARATOR)) {
+         throw new RuntimeException("Class " + clazz + " should not contain module separator; use ChangedEntity constructor instead!");
+      }
    }
 
    public boolean isChange() {

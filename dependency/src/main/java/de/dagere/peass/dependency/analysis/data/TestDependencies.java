@@ -154,8 +154,10 @@ public class TestDependencies {
 
    private void addCall(final ChangeTestMapping changeTestMap, final ChangedEntity currentTestcase, final CalledMethods currentTestDependencies,
          final ClazzChangeData changedEntry, final ChangedEntity change, final ChangedEntity changedClass) {
-      if (!changedEntry.isOnlyMethodChange()) {
+      boolean clazzLevelChange = !changedEntry.isOnlyMethodChange();
+      if (clazzLevelChange) {
          changeTestMap.addChangeEntry(change, currentTestcase);
+         changeTestMap.addChangeEntry(change.onlyClazz(), currentTestcase);
       } else { 
          String method = change.getMethod() + change.getParameterString();
          final Map<ChangedEntity, Set<String>> calledMethods = currentTestDependencies.getCalledMethods();
