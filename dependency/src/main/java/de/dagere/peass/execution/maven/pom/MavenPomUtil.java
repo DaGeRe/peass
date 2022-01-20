@@ -133,7 +133,7 @@ public class MavenPomUtil {
       String output = StreamGobbler.getFullProcess(pb.start(), false);
       List<String> modules = new LinkedList<>();
       for (String line : output.split("\n")) {
-         if (line.contains("-----------------<")) {
+         if (line.contains("---------------<")) {
             String[] parts = line.split(" ");
             String groupAnArtifactPart = parts[2];
             String artifact = groupAnArtifactPart.split(":")[1];
