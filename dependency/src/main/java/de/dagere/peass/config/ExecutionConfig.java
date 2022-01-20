@@ -167,6 +167,8 @@ public class ExecutionConfig implements Serializable {
          List<String> testClazzFolders = buildFolderList(executionMixin.getTestClazzFolder());
          setTestClazzFolders(testClazzFolders);
       }
+      
+      this.excludeLog4j = executionMixin.isExcludeLog4j();
    }
 
    public static List<String> buildFolderList(final String folderList) {

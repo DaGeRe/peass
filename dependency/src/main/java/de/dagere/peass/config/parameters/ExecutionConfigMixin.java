@@ -69,6 +69,9 @@ public class ExecutionConfigMixin {
 
    @Option(names = {"-testClassFolder", "--testClassFolder"}, description = "Folder that contains test classes")
    protected String testClazzFolder;
+   
+   @Option(names = {"-excludeLog4j", "--excludeLog4j"}, description = "Exclude log4j (required, if other logging implementation should be used)")
+   protected boolean excludeLog4j = false;
 
    public int getTimeout() {
       return timeout;
@@ -218,7 +221,7 @@ public class ExecutionConfigMixin {
       return clazzFolder;
    }
 
-   public void setClazzFolder(String clazzFolder) {
+   public void setClazzFolder(final String clazzFolder) {
       this.clazzFolder = clazzFolder;
    }
 
@@ -226,7 +229,15 @@ public class ExecutionConfigMixin {
       return testClazzFolder;
    }
 
-   public void setTestClazzFolder(String testClazzFolder) {
+   public void setTestClazzFolder(final String testClazzFolder) {
       this.testClazzFolder = testClazzFolder;
+   }
+   
+   public boolean isExcludeLog4j() {
+      return excludeLog4j;
+   }
+   
+   public void setExcludeLog4j(final boolean excludeLog4j) {
+      this.excludeLog4j = excludeLog4j;
    }
 }
