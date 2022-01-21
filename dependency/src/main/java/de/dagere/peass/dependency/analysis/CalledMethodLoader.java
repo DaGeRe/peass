@@ -136,7 +136,11 @@ public class CalledMethodLoader {
       Set<String> calledMethods = OneCallReader.getCalledMethods(kiekerTraceFolder);
       for (String calledMethod : calledMethods) {
          ChangedEntity entity = EntityUtil.determineEntityWithDotSeparator(calledMethod);
-         TraceElement traceelement = new TraceElement(entity.getClazz(), entity.getMethod(), 0);
+         
+         final String outerClazzName = ClazzFileFinder.getOuterClass(entity.getClazz());
+         final String moduleOfClass = mapping.getModuleOfClass(outerClazzName);
+         
+         TraceElement traceelement = new TraceElement(entity.getClazz(), entity.getMethod(), 0, moduleOfClass);
          if (calledMethod.contains(" static ")) {
             traceelement.setStatic(true);
          }
