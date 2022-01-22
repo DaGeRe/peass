@@ -207,7 +207,7 @@ public class PropertyReadHelper {
       GitCommit firstCommit = new GitCommit(versionOld, null, null, null);
       List<GitCommit> commits = Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), firstCommit });
       final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, commits, firstCommit);
-      final ChangeManager changeManager = new ChangeManager(folders, iterator, new ExecutionConfig());
+      final ChangeManager changeManager = new ChangeManager(folders, iterator, config);
       final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(versionOld, version);
       return changes;
    }
