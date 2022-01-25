@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.traces.TraceElementContent;
-import de.dagere.peass.dependency.traces.requitur.content.Content;
+import de.dagere.requitur.content.Content;
 
 public class TestTraceSummaryTransformer {
    

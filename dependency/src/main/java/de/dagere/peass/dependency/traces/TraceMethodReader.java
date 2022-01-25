@@ -23,11 +23,10 @@ import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import de.dagere.peass.dependency.changesreading.ClazzFinder;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
-import de.dagere.peass.dependency.traces.requitur.ReducedTraceElement;
-import de.dagere.peass.dependency.traces.requitur.RunLengthEncodingSequitur;
-import de.dagere.peass.dependency.traces.requitur.Sequitur;
-import de.dagere.peass.dependency.traces.requitur.TraceStateTester;
-import de.dagere.peass.dependency.traces.requitur.content.Content;
+import de.dagere.requitur.ContentTraceExpander;
+import de.dagere.requitur.ReducedTraceElement;
+import de.dagere.requitur.RunLengthEncodingSequitur;
+import de.dagere.requitur.content.Content;
 
 /**
  * Reads the traces of kieker results and combines them with source information read by javaparser.
@@ -45,7 +44,7 @@ public class TraceMethodReader {
 
    private final Map<File, CompilationUnit> loadedUnits = new HashMap<>();
    final TraceWithMethods trace;
-   final Sequitur seq = new Sequitur();
+   final PeassSequitur seq = new PeassSequitur();
 
    public TraceMethodReader(final List<TraceElement> calls, final File... clazzFolder) throws FileNotFoundException {
       this.clazzFolder = clazzFolder;
@@ -129,7 +128,7 @@ public class TraceMethodReader {
    }
 
    public List<Content> getExpandedTrace() {
-      return TraceStateTester.expandContentTrace(seq.getUncompressedTrace(), seq.getRules());
+      return ContentTraceExpander.expandContentTrace(seq.getUncompressedTrace(), seq.getRules());
    }
 
    public TraceWithMethods getTraceWithMethods() throws ParseException, IOException {

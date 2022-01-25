@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.traces.TraceElementContent;
-import de.dagere.peass.dependency.traces.requitur.content.Content;
+import de.dagere.requitur.content.Content;
 
 public class TraceSummaryTransformer {
    public static TraceCallSummary transform(final TestCase testcase, final List<Content> expandedTrace) {

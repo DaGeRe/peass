@@ -9,7 +9,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.dependency.traces.requitur.Sequitur;
+import de.dagere.requitur.Sequitur;
 
 public class TestSequiturDeserialization {
    
