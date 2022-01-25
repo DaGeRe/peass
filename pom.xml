@@ -1,170 +1,171 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<groupId>de.dagere.peass</groupId>
-	<artifactId>peass-parent</artifactId>
-	<packaging>pom</packaging>
-	<version>0.1.10-SNAPSHOT</version>
-	<name>PeASS - Parent</name>
-	<description>Tool for Analysing the Performance Changes in a Project</description>
-	<url>https://github.com/DaGeRe/peass/</url>
+  <groupId>de.dagere.peass</groupId>
+  <artifactId>peass-parent</artifactId>
+  <packaging>pom</packaging>
+  <version>0.1.10-SNAPSHOT</version>
+  <name>PeASS - Parent</name>
+  <description>Tool for Analysing the Performance Changes in a Project</description>
+  <url>https://github.com/DaGeRe/peass/</url>
 
-	<modules>
-		<module>dependency</module>
-		<module>measurement</module>
-		<module>analysis</module>
-	</modules>
-	
-	<profiles>
-		<profile>
-			<id>buildStarter</id>
-			<modules>
-				<module>dependency</module>
-				<module>measurement</module>
-				<module>analysis</module>
-				<module>peass-jmh</module>
-				<module>starter</module>
-			</modules>
-		</profile>
-		<profile>
-			<id>allNoStarter</id>
-			<modules>
-				<module>dependency</module>
-				<module>measurement</module>
-				<module>analysis</module>
-				<module>peass-jmh</module>
-			</modules>
-		</profile>
-	</profiles>
+  <modules>
+    <module>dependency</module>
+    <module>measurement</module>
+    <module>analysis</module>
+  </modules>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.6</version>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.1.1</version>
-				<configuration>
-					<doclint>none</doclint>
-					<quiet>true</quiet>
-					<nonavbar>true</nonavbar>
-					<notree>true</notree>
-					<nocomment>true</nocomment>
-					<nohelp>true</nohelp>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>3.2.0</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.sonatype.plugins</groupId>
-				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.7</version>
-				<extensions>true</extensions>
-				<configuration>
-					<serverId>sonatype-nexus-staging</serverId>
-					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>true</autoReleaseAfterClose>
-				</configuration>
-			</plugin>
-		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-pmd-plugin</artifactId>
-					<version>3.13.0</version>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-source-plugin</artifactId>
-					<version>3.2.0</version>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>exec-maven-plugin</artifactId>
-					<version>3.0.0</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-	</build>
+  <profiles>
+    <profile>
+      <id>buildStarter</id>
+      <modules>
+        <module>dependency</module>
+        <module>measurement</module>
+        <module>analysis</module>
+        <module>peass-jmh</module>
+        <module>starter</module>
+      </modules>
+    </profile>
+    <profile>
+      <id>allNoStarter</id>
+      <modules>
+        <module>dependency</module>
+        <module>measurement</module>
+        <module>analysis</module>
+        <module>peass-jmh</module>
+      </modules>
+    </profile>
+  </profiles>
 
-	<properties>
-		<mockito.version>4.2.0</mockito.version>
-		<kieker.version>1.15</kieker.version>
-		<project.organization.name>DaGeRe</project.organization.name>
-		<license.licenseName>agpl_v3</license.licenseName>
-	</properties>
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-gpg-plugin</artifactId>
+        <version>1.6</version>
+        <executions>
+          <execution>
+            <id>sign-artifacts</id>
+            <phase>deploy</phase>
+            <goals>
+              <goal>sign</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.1</version>
+        <configuration>
+          <doclint>none</doclint>
+          <quiet>true</quiet>
+          <nonavbar>true</nonavbar>
+          <notree>true</notree>
+          <nocomment>true</nocomment>
+          <nohelp>true</nohelp>
+        </configuration>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.sonatype.plugins</groupId>
+        <artifactId>nexus-staging-maven-plugin</artifactId>
+        <version>1.6.7</version>
+        <extensions>true</extensions>
+        <configuration>
+          <serverId>sonatype-nexus-staging</serverId>
+          <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+          <autoReleaseAfterClose>true</autoReleaseAfterClose>
+        </configuration>
+      </plugin>
+    </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-pmd-plugin</artifactId>
+          <version>3.13.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>3.2.0</version>
+        </plugin>
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 
-	<licenses>
-		<license>
-			<name>GNU Affero General Public License</name>
-			<url>https://www.gnu.org/licenses/agpl.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
+  <properties>
+    <mockito.version>4.3.1</mockito.version>
+    <kieker.version>1.15</kieker.version>
+    <kopeme.version>0.17.1</kopeme.version>
+    <project.organization.name>DaGeRe</project.organization.name>
+    <license.licenseName>agpl_v3</license.licenseName>
+  </properties>
 
-	<developers>
-		<developer>
-			<id>DaGeRe</id>
-			<name>David Georg Reichelt</name>
-			<email>kopeme@dagere.de</email>
-		</developer>
-	</developers>
+  <licenses>
+    <license>
+      <name>GNU Affero General Public License</name>
+      <url>https://www.gnu.org/licenses/agpl.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
 
-	<scm>
-		<connection>scm:git:ssh://github.com:DaGeRe/peass.git</connection>
-		<developerConnection>scm:git:git@github.com:DaGeRe/peass.git</developerConnection>
-		<url>https://git@github.com:DaGeRe/peass.git</url>
-		<tag>HEAD</tag>
-	</scm>
+  <developers>
+    <developer>
+      <id>DaGeRe</id>
+      <name>David Georg Reichelt</name>
+      <email>kopeme@dagere.de</email>
+    </developer>
+  </developers>
 
-
-
-	<distributionManagement>
-		<snapshotRepository>
-			<id>sonatype-nexus-snapshots</id>
-			<name>Sonatype Nexus snapshot repository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>sonatype-nexus-staging</id>
-			<name>Sonatype Nexus release repository</name>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
+  <scm>
+    <connection>scm:git:ssh://github.com:DaGeRe/peass.git</connection>
+    <developerConnection>scm:git:git@github.com:DaGeRe/peass.git</developerConnection>
+    <url>https://git@github.com:DaGeRe/peass.git</url>
+    <tag>HEAD</tag>
+  </scm>
 
 
-	<inceptionYear>2015</inceptionYear>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>sonatype-nexus-snapshots</id>
+      <name>Sonatype Nexus snapshot repository</name>
+      <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+    </snapshotRepository>
+    <repository>
+      <id>sonatype-nexus-staging</id>
+      <name>Sonatype Nexus release repository</name>
+      <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+    </repository>
+  </distributionManagement>
+
+
+  <inceptionYear>2015</inceptionYear>
 </project>

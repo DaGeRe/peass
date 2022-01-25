@@ -113,16 +113,18 @@
 			<version>1.6</version>
 			<scope>test</scope>
 		</dependency>
+    
+        <!-- Since peass-jmh is not part of the regular Peass build, it can not use the mockito-version from the properties -->
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>4.0.0</version>
+			<version>4.3.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-inline</artifactId>
-			<version>4.0.0</version>
+			<version>4.3.1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
