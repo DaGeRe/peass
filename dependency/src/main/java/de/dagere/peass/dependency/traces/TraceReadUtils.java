@@ -23,7 +23,6 @@ import com.github.javaparser.ast.body.TypeDeclaration;
 import com.github.javaparser.ast.expr.ObjectCreationExpr;
 
 import de.dagere.peass.dependency.analysis.data.TraceElement;
-import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;
 
 /**
  * Utility for parsing java source by javaparser

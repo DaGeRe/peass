@@ -10,8 +10,6 @@ import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 
-import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;
-
 public class TestParameterComparator {
 
    @Test

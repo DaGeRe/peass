@@ -12,8 +12,6 @@ import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.ast.type.TypeParameter;
 
-import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;
-
 public class ParameterComparator {
 
    private static final Logger LOG = LogManager.getLogger(ParameterComparator.class);

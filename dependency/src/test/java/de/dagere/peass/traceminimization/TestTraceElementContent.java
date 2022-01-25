@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependency.analysis.data.TraceElement;
-import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;
+import de.dagere.peass.dependency.traces.TraceElementContent;
 
 public class TestTraceElementContent {
 	

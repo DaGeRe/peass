@@ -14,9 +14,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TraceElement;
+import de.dagere.peass.dependency.traces.TraceElementContent;
 import de.dagere.peass.dependency.traces.requitur.content.Content;
 import de.dagere.peass.dependency.traces.requitur.content.StringContent;
-import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;
 
 public class Sequitur {
 

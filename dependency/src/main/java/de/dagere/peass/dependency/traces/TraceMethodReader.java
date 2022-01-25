@@ -28,7 +28,6 @@ import de.dagere.peass.dependency.traces.requitur.RunLengthEncodingSequitur;
 import de.dagere.peass.dependency.traces.requitur.Sequitur;
 import de.dagere.peass.dependency.traces.requitur.TraceStateTester;
 import de.dagere.peass.dependency.traces.requitur.content.Content;
-import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;
 
 /**
  * Reads the traces of kieker results and combines them with source information read by javaparser.

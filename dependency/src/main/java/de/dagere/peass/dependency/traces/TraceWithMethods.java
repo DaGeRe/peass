@@ -8,7 +8,6 @@ import java.util.Map;
 import de.dagere.peass.dependency.traces.requitur.ReducedTraceElement;
 import de.dagere.peass.dependency.traces.requitur.content.Content;
 import de.dagere.peass.dependency.traces.requitur.content.RuleContent;
-import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;
 
 /**
  * Represents a trace, i.e. a sorted list of all calls of a testcase, and the source code of the calls.

@@ -1,10 +1,11 @@
-package de.dagere.peass.dependency.traces.requitur.content;
+package de.dagere.peass.dependency.traces;
 
 import java.util.Arrays;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.ChangedEntityHelper;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
+import de.dagere.peass.dependency.traces.requitur.content.Content;
 
 public class TraceElementContent extends Content {
 

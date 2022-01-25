@@ -41,8 +41,8 @@ import com.github.javaparser.ast.stmt.BlockStmt;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.traces.TraceElementContent;
 import de.dagere.peass.dependency.traces.TraceReadUtils;
-import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;
 
 /**
  * Helps to compare whether two versions of a file may have changed performance (and whether this change is for the use of the whole file or only some methods).

@@ -12,8 +12,6 @@ import com.github.javaparser.ast.body.ConstructorDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.body.TypeDeclaration;
 
-import de.dagere.peass.dependency.traces.requitur.content.TraceElementContent;
-
 public class MethodReader {
 
    private static final Logger LOG = LogManager.getLogger(MethodReader.class);
