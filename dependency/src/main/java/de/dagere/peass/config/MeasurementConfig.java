@@ -120,16 +120,7 @@ public class MeasurementConfig implements Serializable {
       this.iterations = other.iterations;
       this.repetitions = other.repetitions;
       this.logFullData = other.logFullData;
-      kiekerConfig = new KiekerConfig();
-      kiekerConfig.setUseKieker(other.isUseKieker());
-      kiekerConfig.setUseSourceInstrumentation(other.getKiekerConfig().isUseSourceInstrumentation());
-      kiekerConfig.setUseSelectiveInstrumentation(other.getKiekerConfig().isUseSelectiveInstrumentation());
-      kiekerConfig.setUseAggregation(other.getKiekerConfig().isUseAggregation());
-      kiekerConfig.setUseCircularQueue(other.getKiekerConfig().isUseCircularQueue());
-      kiekerConfig.setEnableAdaptiveMonitoring(other.getKiekerConfig().isEnableAdaptiveMonitoring());
-      kiekerConfig.setAdaptiveInstrumentation(other.getKiekerConfig().isAdaptiveInstrumentation());
-      kiekerConfig.setKiekerAggregationInterval(other.getKiekerConfig().getKiekerAggregationInterval());
-      kiekerConfig.setRecord(other.getKiekerConfig().getRecord());
+      kiekerConfig = new KiekerConfig(other.getKiekerConfig());
       this.useGC = other.useGC;
       this.javaVersion = other.javaVersion;
       this.measurementStrategy = other.measurementStrategy;

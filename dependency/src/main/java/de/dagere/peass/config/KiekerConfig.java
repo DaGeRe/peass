@@ -45,6 +45,7 @@ public class KiekerConfig implements Serializable {
       this.onlyOneCallRecording = other.onlyOneCallRecording;
       this.extractMethod = other.extractMethod;
       this.traceSizeInMb = other.traceSizeInMb;
+      this.kiekerQueueSize = other.kiekerQueueSize;
    }
    
    public void check() {
