@@ -43,6 +43,7 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 import com.github.javaparser.ast.expr.MemberValuePair;
+import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
@@ -77,7 +78,7 @@ public class TestBeforeJUnit5 {
       MeasurementConfig config = MeasurementConfig.DEFAULT;
       config.getExecutionConfig().setOnlyMeasureWorkload(true);
       
-      final CompilationUnit cu = transform(config);
+      final CompilationUnit cu = transform(config, "TestMeBeforeAfter5All");
 
       final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMeBeforeAfter5").get();
       Assert.assertNotNull(clazz);
@@ -96,7 +97,7 @@ public class TestBeforeJUnit5 {
       MeasurementConfig config = MeasurementConfig.DEFAULT;
       config.getExecutionConfig().setOnlyMeasureWorkload(false);
       
-      final CompilationUnit cu = transform(config);
+      final CompilationUnit cu = transform(config, "TestMeBeforeAfter5All");
 
       final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMeBeforeAfter5").get();
       Assert.assertNotNull(clazz);
@@ -109,10 +110,44 @@ public class TestBeforeJUnit5 {
       MethodDeclaration afterMethod = clazz.getMethodsByName("simpleAfter").get(0);
       Assert.assertNotNull(afterMethod.getAnnotationByName("AfterWithMeasurement").get());
    }
+   
+   @Test
+   public void testWithMeasurementAll() throws IOException {
+      MeasurementConfig config = MeasurementConfig.DEFAULT;
+      config.getExecutionConfig().setOnlyMeasureWorkload(false);
+      config.getExecutionConfig().setExecuteBeforeClassInMeasurement(true);
+      
+      final CompilationUnit cu = transform(config, "TestMeBeforeAfter5WithAll");
 
-   private CompilationUnit transform(final MeasurementConfig config) throws IOException, FileNotFoundException {
-      final File old2 = new File(RESOURCE_FOLDER, "TestMeBeforeAfter5All.java");
-      testFile = new File(SOURCE_FOLDER, "TestMeBeforeAfter5All.java");
+      final ClassOrInterfaceDeclaration clazz = cu.getClassByName("TestMeBeforeAfter5WithAll").get();
+      Assert.assertNotNull(clazz);
+
+      checkMethod(clazz);
+      
+      MethodDeclaration beforeMethod = clazz.getMethodsByName("simpleBefore").get(0);
+      NormalAnnotationExpr beforeAnnotation = (NormalAnnotationExpr) beforeMethod.getAnnotationByName("BeforeWithMeasurement").get();
+      Assert.assertNotNull(beforeAnnotation);
+      Assert.assertEquals("1", beforeAnnotation.getPairs().get(0).getValue().toString());
+      
+      MethodDeclaration afterMethod = clazz.getMethodsByName("simpleAfter").get(0);
+      NormalAnnotationExpr afterAnnotation = (NormalAnnotationExpr) afterMethod.getAnnotationByName("AfterWithMeasurement").get();
+      Assert.assertNotNull(afterAnnotation);
+      Assert.assertEquals("1", afterAnnotation.getPairs().get(0).getValue().toString());
+      
+      MethodDeclaration beforeAllMethod = clazz.getMethodsByName("secondBefore").get(0);
+      NormalAnnotationExpr beforeAllAnnotation = (NormalAnnotationExpr) beforeAllMethod.getAnnotationByName("BeforeWithMeasurement").get();
+      Assert.assertNotNull(beforeAllAnnotation);
+      Assert.assertEquals("2", beforeAllAnnotation.getPairs().get(0).getValue().toString());
+      
+      MethodDeclaration afterAllMethod = clazz.getMethodsByName("secondAfter").get(0);
+      NormalAnnotationExpr afterAllAnnotation = (NormalAnnotationExpr) afterAllMethod.getAnnotationByName("AfterWithMeasurement").get();
+      Assert.assertNotNull(afterAllAnnotation);
+      Assert.assertEquals("2", afterAllAnnotation.getPairs().get(0).getValue().toString());
+   }
+
+   private CompilationUnit transform(final MeasurementConfig config, final String clazz) throws IOException, FileNotFoundException {
+      final File old2 = new File(RESOURCE_FOLDER, clazz + ".java");
+      testFile = new File(SOURCE_FOLDER, clazz + ".java");
       FileUtils.copyFile(old2, testFile);
 
       

@@ -28,19 +28,31 @@ public class TestMethodFinder {
       }
       return testMethods;
    }
-   
-   public static List<MethodDeclaration> findBeforeMethods(final ClassOrInterfaceDeclaration clazz){
-      String[] annotations = new String[] {"org.junit.Before", "Before", 
-            "org.junit.jupiter.api.BeforeEach", "BeforeEach",
-            "org.junit.jupiter.api.BeforeAll", "BeforeAll"};
+
+   public static List<MethodDeclaration> findBeforeEachMethods(final ClassOrInterfaceDeclaration clazz) {
+      String[] annotations = new String[] { "org.junit.Before", "Before",
+            "org.junit.jupiter.api.BeforeEach", "BeforeEach", };
       List<MethodDeclaration> beforeMethods = findAnnotation(clazz, annotations);
       return beforeMethods;
    }
-   
-   public static List<MethodDeclaration> findAfterMethods(final ClassOrInterfaceDeclaration clazz){
-      String[] annotations = new String[] {"org.junit.After", "After", 
-            "org.junit.jupiter.api.AfterEach", "AfterEach",
-            "org.junit.jupiter.api.AfterAll", "AfterAll"};
+
+   public static List<MethodDeclaration> findBeforeAllMethods(final ClassOrInterfaceDeclaration clazz) {
+      String[] annotations = new String[] { "org.junit.jupiter.api.BeforeClass", "BeforeClass",
+            "org.junit.jupiter.api.BeforeAll", "BeforeAll" };
+      List<MethodDeclaration> beforeMethods = findAnnotation(clazz, annotations);
+      return beforeMethods;
+   }
+
+   public static List<MethodDeclaration> findAfterEachMethods(final ClassOrInterfaceDeclaration clazz) {
+      String[] annotations = new String[] { "org.junit.After", "After",
+            "org.junit.jupiter.api.AfterEach", "AfterEach"};
+      List<MethodDeclaration> beforeMethods = findAnnotation(clazz, annotations);
+      return beforeMethods;
+   }
+
+   public static List<MethodDeclaration> findAfterAllMethods(final ClassOrInterfaceDeclaration clazz) {
+      String[] annotations = new String[] { "org.junit.jupiter.api.AfterAll", "AfterAll",
+            "org.junit.jupiter.api.AfterAll", "AfterAll" };
       List<MethodDeclaration> beforeMethods = findAnnotation(clazz, annotations);
       return beforeMethods;
    }
@@ -57,14 +69,14 @@ public class TestMethodFinder {
                }
             }
          }
-         
+
          if (beforeFound) {
             annotatedMethods.add(method);
          }
       }
       return annotatedMethods;
    }
-   
+
    public static List<MethodDeclaration> findJUnit4TestMethods(final ClassOrInterfaceDeclaration clazz) {
       List<MethodDeclaration> testMethods = new LinkedList<>();
       for (final MethodDeclaration method : clazz.getMethods()) {
@@ -79,7 +91,7 @@ public class TestMethodFinder {
                testFound = true;
             }
          }
-         
+
          if (testFound && !performanceTestFound) {
             testMethods.add(method);
          }
