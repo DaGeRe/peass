@@ -2,10 +2,15 @@ package de.dagere.peass.execution.kieker;
 
 import java.io.File;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.testtransformation.TestTransformer;
 
 public class ArgLineBuilder {
+   
+   private static final Logger LOG = LogManager.getLogger(ArgLineBuilder.class);
 
    public static final String TEMP_DIR_PURE = "java.io.tmpdir";
    public static final String TEMP_DIR = "-D" + TEMP_DIR_PURE;
@@ -36,11 +41,13 @@ public class ArgLineBuilder {
       this.modulePath = modulePath;
    }
 
-   public String buildArgline(final File tempFolder) {
-      final String argline = buildGenericArgline(tempFolder, "=", " ", KIEKER_ARG_LINE_MAVEN);
-      return argline;
+   public String buildArglineMaven(final File tempFolder) {
+      final String argLine = buildGenericArgline(tempFolder, "=", " ", KIEKER_ARG_LINE_MAVEN);
+      LOG.debug("Created gradle argLine: {}", argLine);
+      return argLine;
    }
 
+   // TODO Since Gradle requires different argument specification with systemProperty, this is not realy generic anymore - or maybe in the future again for sbt?
    private String buildGenericArgline(final File tempFolder, final String valueSeparator, final String entrySeparator, final String kiekerLine) {
       String argline = getTieredCompilationArglinePart(entrySeparator);
       if (testTransformer.getConfig().isUseKieker()) {
@@ -81,6 +88,9 @@ public class ArgLineBuilder {
          if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
             argLine += "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\"]" + System.lineSeparator();
          }
+         
+         LOG.debug("Created gradle argLine: {}", argLine);
+         
          return argLine;
       } else {
          return "";

@@ -137,7 +137,7 @@ public class JmhTestExecutor extends TestExecutor {
 
       File lastTmpFile = folders.getTempMeasurementFolder();
       ArgLineBuilder builder = new ArgLineBuilder(transformer, moduleFolder);
-      String originalArgLine = builder.buildArgline(lastTmpFile);
+      String originalArgLine = builder.buildArglineMaven(lastTmpFile);
       String argLine = originalArgLine
             .replace("'", "") // jmh does not accept ' surrounding the path
             .replace("\"", "")

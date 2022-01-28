@@ -23,7 +23,7 @@ public class TestArgLineBuilder {
 
       ArgLineBuilder builder = new ArgLineBuilder(mockedTransformer, new File("/tmp/asd"));
 
-      String argLineMaven = builder.buildArgline(new File("/tmp/asd"));
+      String argLineMaven = builder.buildArglineMaven(new File("/tmp/asd"));
       MatcherAssert.assertThat(argLineMaven, Matchers.containsString("-javaagent"));
       
       String argLineGradle = builder.buildArglineGradle(new File("/tmp/asd"));
@@ -40,7 +40,7 @@ public class TestArgLineBuilder {
 
       ArgLineBuilder builder = new ArgLineBuilder(mockedTransformer, new File("/tmp/asd"));
 
-      String argLineMaven = builder.buildArgline(new File("/tmp/asd"));
+      String argLineMaven = builder.buildArglineMaven(new File("/tmp/asd"));
       MatcherAssert.assertThat(argLineMaven, Matchers.not(Matchers.containsString("-javaagent")));
       
       String argLineGradle = builder.buildArglineGradle(new File("/tmp/asd"));
@@ -58,7 +58,7 @@ public class TestArgLineBuilder {
       
       ArgLineBuilder builder = new ArgLineBuilder(mockedTransformer, new File("/tmp/asd"));
       
-      String argLineMaven = builder.buildArgline(new File("/tmp/asd"));
+      String argLineMaven = builder.buildArglineMaven(new File("/tmp/asd"));
       System.out.println(argLineMaven);
       MatcherAssert.assertThat(argLineMaven, Matchers.not(Matchers.containsString("  ")));
    }

@@ -67,7 +67,7 @@ public class PomPreparer {
          if (model.getBuild() == null) {
             model.setBuild(new Build());
          }
-         final String argline = new ArgLineBuilder(testTransformer, pomFile.getParentFile()).buildArgline(lastTmpFile);
+         final String argline = new ArgLineBuilder(testTransformer, pomFile.getParentFile()).buildArglineMaven(lastTmpFile);
 
          MavenPomUtil.extendSurefire(argline, model, update);
 
