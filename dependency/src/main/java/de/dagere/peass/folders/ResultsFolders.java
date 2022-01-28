@@ -12,8 +12,9 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 public class ResultsFolders {
 
    private static final Logger LOG = LogManager.getLogger(ResultsFolders.class);
-   
+
    public static final String MEASUREMENT_PREFIX = "measurement_";
+   public static final String RCA_PREFIX = "rca_";
 
    private final File resultFolder;
    private final String projectName;
@@ -47,17 +48,17 @@ public class ResultsFolders {
    public File getChangeFile() {
       return new File(resultFolder, "changes.json");
    }
-   
+
    public File getRtsLogFolder() {
       File folder = new File(resultFolder, "rtsLogs");
       return folder;
    }
-   
+
    public File getSourceReadLogFolder() {
       File folder = new File(resultFolder, "sourceReadLogs");
       return folder;
    }
-   
+
    public File getDependencyLogFile(final String version, final String versionOld) {
       File folder = getRtsLogFolder();
       if (!folder.exists()) {
@@ -66,7 +67,7 @@ public class ResultsFolders {
       File logFile = new File(folder, version + "_" + versionOld + ".txt");
       return logFile;
    }
-   
+
    public File getSourceReadLogFile(final String version, final String versionOld) {
       File folder = getSourceReadLogFolder();
       if (!folder.exists()) {
@@ -75,12 +76,12 @@ public class ResultsFolders {
       File logFile = new File(folder, version + "_" + versionOld + ".txt");
       return logFile;
    }
-   
+
    public File getMeasurementLogFolder() {
       File folder = new File(resultFolder, "measurementLogs");
       return folder;
    }
-   
+
    public File getMeasurementLogFile(final String version, final String versionOld) {
       File folder = getMeasurementLogFolder();
       if (!folder.exists()) {
@@ -89,12 +90,12 @@ public class ResultsFolders {
       File logFile = new File(folder, version + "_" + versionOld + ".txt");
       return logFile;
    }
-   
+
    public File getRCALogFolder() {
       File folder = new File(resultFolder, "rcaLogs");
       return folder;
    }
-   
+
    public File getRCALogFile(final String version, final String versionOld) {
       File folder = getRCALogFolder();
       if (!folder.exists()) {
@@ -105,10 +106,10 @@ public class ResultsFolders {
    }
 
    public File getVersionFullResultsFolder(final String version, final String versionOld) {
-      if (version == null ) {
+      if (version == null) {
          throw new RuntimeException("Version must not be null!");
       }
-      if (versionOld == null ) {
+      if (versionOld == null) {
          throw new RuntimeException("VersionOld must not be null!");
       }
       final File fullResultsVersion = new File(resultFolder, MEASUREMENT_PREFIX + version + "_" + versionOld);
@@ -170,5 +171,20 @@ public class ResultsFolders {
 
    public File getVersionFullResultsFolder(final MeasurementConfig measurementConfig) {
       return getVersionFullResultsFolder(measurementConfig.getExecutionConfig().getVersion(), measurementConfig.getExecutionConfig().getVersionOld());
+   }
+
+   public File getRCAResultsVersion(final MeasurementConfig config) {
+      return getRCAResultsVersion(config.getExecutionConfig().getVersion(), config.getExecutionConfig().getVersionOld());
+   }
+
+   private File getRCAResultsVersion(final String version, final String versionOld) {
+      if (version == null) {
+         throw new RuntimeException("Version must not be null!");
+      }
+      if (versionOld == null) {
+         throw new RuntimeException("VersionOld must not be null!");
+      }
+      final File rcaResultsVersion = new File(resultFolder, RCA_PREFIX + version + "_" + versionOld);
+      return rcaResultsVersion;
    }
 }

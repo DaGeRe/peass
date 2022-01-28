@@ -14,10 +14,11 @@ public class CauseSearchFolders extends PeassFolders {
    private final File archivedFolder;
    private final File treeFolder;
    private final File treeCacheFolder;
+   private final File rcaFolder;
 
    public CauseSearchFolders(final File folder) {
       super(folder);
-      final File rcaFolder = new File(peassFolder, "rca");
+      rcaFolder = new File(peassFolder, "rca");
       levelFolder = new File(rcaFolder, "level");
       levelFolder.mkdir();
       archivedFolder = new File(rcaFolder, "archived");
@@ -71,6 +72,10 @@ public class CauseSearchFolders extends PeassFolders {
 
    public File getRcaTreeFolder() {
       return treeFolder;
+   }
+   
+   public File getRcaFolder() {
+      return rcaFolder;
    }
 
    public File getRcaTreeFolder(final String version, final TestCase testcase) {
