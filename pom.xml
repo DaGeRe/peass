@@ -124,7 +124,8 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.0.0-M5</version>
+          <!-- Need to use 3.0.0-M3 since 3.0.0-M5 fails on Java 11+ -->
+          <version>3.0.0-M3</version>
         </plugin>
       </plugins>
     </pluginManagement>
