@@ -14,7 +14,6 @@ public class ResultsFolders {
    private static final Logger LOG = LogManager.getLogger(ResultsFolders.class);
 
    public static final String MEASUREMENT_PREFIX = "measurement_";
-   public static final String RCA_PREFIX = "rca_";
 
    private final File resultFolder;
    private final String projectName;
@@ -173,21 +172,6 @@ public class ResultsFolders {
       return getVersionFullResultsFolder(measurementConfig.getExecutionConfig().getVersion(), measurementConfig.getExecutionConfig().getVersionOld());
    }
 
-   public File getRCAResultsVersion(final MeasurementConfig config) {
-      return getRCAResultsVersion(config.getExecutionConfig().getVersion(), config.getExecutionConfig().getVersionOld());
-   }
-
-   private File getRCAResultsVersion(final String version, final String versionOld) {
-      if (version == null) {
-         throw new RuntimeException("Version must not be null!");
-      }
-      if (versionOld == null) {
-         throw new RuntimeException("VersionOld must not be null!");
-      }
-      final File rcaResultsVersion = new File(resultFolder, RCA_PREFIX + version + "_" + versionOld);
-      return rcaResultsVersion;
-   }
-   
    /**
     * Returns the *regular* place of the project folder and its data folders. These is only where the folders
     * typically reside - the returned folder may, based on the type of run, not be in this place.
