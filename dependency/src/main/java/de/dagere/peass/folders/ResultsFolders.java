@@ -187,4 +187,13 @@ public class ResultsFolders {
       final File rcaResultsVersion = new File(resultFolder, RCA_PREFIX + version + "_" + versionOld);
       return rcaResultsVersion;
    }
+   
+   /**
+    * Returns the *regular* place of the project folder and its data folders. These is only where the folders
+    * typically reside - the returned folder may, based on the type of run, not be in this place.
+    * @return
+    */
+   public CauseSearchFolders getPeassFolders() {
+      return new CauseSearchFolders(new File(resultFolder, projectName));
+   }
 }
