@@ -173,11 +173,17 @@ public class ResultsFolders {
    }
 
    /**
-    * Returns the *regular* place of the project folder and its data folders. These is only where the folders
-    * typically reside - the returned folder may, based on the type of run, not be in this place.
+    * Returns the *regular* place of the project folder and its data folders. These is only where the folders typically reside - the returned folder may, based on the type of run,
+    * not be in this place.
+    * 
     * @return
     */
    public CauseSearchFolders getPeassFolders() {
-      return new CauseSearchFolders(new File(resultFolder, projectName));
+      File folder = new File(resultFolder, projectName);
+      if (folder.exists()) {
+         return new CauseSearchFolders(folder);
+      } else {
+         return null;
+      }
    }
 }
