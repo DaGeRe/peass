@@ -1,5 +1,7 @@
 package de.dagere.peass.config.parameters;
 
+import java.util.LinkedHashSet;
+
 import de.dagere.peass.config.KiekerConfig;
 import picocli.CommandLine.Option;
 
@@ -38,6 +40,9 @@ public class KiekerConfigMixin {
    @Option(names = { "-onlyOneCallRecording",
          "--onlyOneCallRecording" }, description = "Only record calls once (ONLY allowed for regression test selection)")
    public boolean onlyOneCallRecording = false;
+   
+   @Option(names = { "-excludeForTracing", "--excludeForTracing" }, description = "Methods that are excluded for tracing in RTS and RCA (default: empty, excludes no method)")
+   protected String[] excludeForTracing;
 
    public int getWriteInterval() {
       return writeInterval;
@@ -86,6 +91,11 @@ public class KiekerConfigMixin {
       kiekerConfig.setKiekerQueueSize(kiekerQueueSize);
       kiekerConfig.setTraceSizeInMb(traceSizeInMb);
       kiekerConfig.setOnlyOneCallRecording(onlyOneCallRecording);
+      LinkedHashSet<String> excludedForTracing = new LinkedHashSet<>();
+      for (String exclude : excludeForTracing) {
+         excludedForTracing.add(exclude);
+      }
+      kiekerConfig.setExcludeForTracing(excludedForTracing);
 
       kiekerConfig.check();
 

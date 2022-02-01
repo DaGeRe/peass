@@ -1,6 +1,7 @@
 package de.dagere.peass.config;
 
 import java.io.Serializable;
+import java.util.LinkedHashSet;
 
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
@@ -24,6 +25,9 @@ public class KiekerConfig implements Serializable {
    private boolean extractMethod = false;
    private long traceSizeInMb = 100;
    private long kiekerQueueSize = DEFAULT_KIEKER_QUEUE_SIZE;
+   
+   // We want a set that preserves insertion order, so we require a LinkedHashSet
+   private LinkedHashSet<String> excludeForTracing = new LinkedHashSet<>();
 
    public KiekerConfig() {
    }
@@ -46,6 +50,7 @@ public class KiekerConfig implements Serializable {
       this.extractMethod = other.extractMethod;
       this.traceSizeInMb = other.traceSizeInMb;
       this.kiekerQueueSize = other.kiekerQueueSize;
+      this.excludeForTracing = other.excludeForTracing;
    }
    
    public void check() {
@@ -166,5 +171,13 @@ public class KiekerConfig implements Serializable {
    
    public void setKiekerQueueSize(final long kiekerQueueSize) {
       this.kiekerQueueSize = kiekerQueueSize;
+   }
+
+   public LinkedHashSet<String> getExcludeForTracing() {
+      return excludeForTracing;
+   }
+
+   public void setExcludeForTracing(final LinkedHashSet<String> excludeForTracing) {
+      this.excludeForTracing = excludeForTracing;
    }
 }

@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -66,8 +67,8 @@ public class KiekerEnvironmentPreparer {
    private void instrumentSources(final MeasurementConfig config) throws IOException {
       final InstrumentKiekerSource instrumentKiekerSource;
       LOG.debug("Create default constructor: {}", config.getExecutionConfig().isCreateDefaultConstructor());
-      final HashSet<String> excludedPatterns = new HashSet<>();
-
+      final LinkedHashSet<String> excludedPatterns = config.getKiekerConfig().getExcludeForTracing();
+      
       buildJettyExclusion(excludedPatterns);
 
       instrumentKiekerSource = buildInstrumenter(config, excludedPatterns);
