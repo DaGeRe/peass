@@ -91,11 +91,13 @@ public class KiekerConfigMixin {
       kiekerConfig.setKiekerQueueSize(kiekerQueueSize);
       kiekerConfig.setTraceSizeInMb(traceSizeInMb);
       kiekerConfig.setOnlyOneCallRecording(onlyOneCallRecording);
-      LinkedHashSet<String> excludedForTracing = new LinkedHashSet<>();
-      for (String exclude : excludeForTracing) {
-         excludedForTracing.add(exclude);
+      if (excludeForTracing != null) {
+         LinkedHashSet<String> excludedForTracing = new LinkedHashSet<>();
+         for (String exclude : excludeForTracing) {
+            excludedForTracing.add(exclude);
+         }
+         kiekerConfig.setExcludeForTracing(excludedForTracing);
       }
-      kiekerConfig.setExcludeForTracing(excludedForTracing);
 
       kiekerConfig.check();
 
