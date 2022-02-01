@@ -136,7 +136,6 @@ public class ExecutionConfig implements Serializable {
          for (String exclude : executionMixin.getExcludes()) {
             excludes.add(exclude);
          }
-         throw new RuntimeException("Not implemented yet");
       }
       if (executionMixin.getPl() != null) {
          pl = executionMixin.getPl();
