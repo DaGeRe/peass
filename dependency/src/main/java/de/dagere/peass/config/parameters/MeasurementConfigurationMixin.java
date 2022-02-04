@@ -6,19 +6,19 @@ import picocli.CommandLine.Option;
 
 public class MeasurementConfigurationMixin {
    @Option(names = { "-vms", "--vms" }, description = "Number of VMs to start")
-   int vms = 100;
-
-   @Option(names = { "-duration", "--duration" }, description = "Which duration to use - if duration is specified, warmup and iterations are ignored")
-   int duration = 0;
-
-   @Option(names = { "-warmup", "--warmup" }, description = "Number of warmup iterations")
-   int warmup = 10;
+   int vms = 30;
 
    @Option(names = { "-iterations", "--iterations" }, description = "Number of iterations")
-   int iterations = 1000;
-
+   int iterations = 5;
+   
+   @Option(names = { "-warmup", "--warmup" }, description = "Number of warmup iterations")
+   int warmup = 5;
+   
    @Option(names = { "-repetitions", "--repetitions" }, description = "Last version that should be analysed")
-   int repetitions = 100;
+   int repetitions = 1000000;
+   
+   @Option(names = { "-duration", "--duration" }, description = "Which duration to use - if duration is specified, warmup and iterations are ignored")
+   int duration = 0;
 
    @Option(names = { "-useKieker", "--useKieker", "-usekieker", "--usekieker" }, description = "Whether Kieker should be used")
    boolean useKieker = false;
