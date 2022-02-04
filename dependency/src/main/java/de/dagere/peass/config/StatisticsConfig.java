@@ -18,6 +18,16 @@ public class StatisticsConfig implements Serializable {
    
    public static final double DEFAULT_OUTLIER_FACTOR = 3.29; // Does not remove 99% of all values in gaussian distribution
 
+   public StatisticsConfig() {
+   }
+   
+   public StatisticsConfig(final StatisticsConfig other) {
+      this.type1error = other.type1error;
+      this.type2error = other.type2error;
+      this.outlierFactor = other.outlierFactor;
+      this.statisticTest = other.statisticTest;
+   }
+
    public double getType1error() {
       return type1error;
    }

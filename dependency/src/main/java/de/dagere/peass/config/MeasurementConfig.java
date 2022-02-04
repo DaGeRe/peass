@@ -65,6 +65,7 @@ public class MeasurementConfig implements Serializable {
          final StatisticsConfigMixin statisticMixin, final KiekerConfigMixin kiekerConfigMixin) {
       executionConfig = executionMixin.getExecutionConfig();
       kiekerConfig = kiekerConfigMixin.getKiekerConfig();
+      kiekerConfig.setRecord(mixin.getRecord());
       statisticsConfig = statisticMixin.getStasticsConfig();
       this.vms = mixin.getVms();
       setEarlyStop(mixin.isEarlyStop());
@@ -73,7 +74,6 @@ public class MeasurementConfig implements Serializable {
       setWarmup(mixin.getWarmup());
       setRepetitions(mixin.getRepetitions());
       setUseGC(mixin.isUseGC());
-      kiekerConfig.setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
       setShowStart(mixin.isShowStart());
 
@@ -106,17 +106,14 @@ public class MeasurementConfig implements Serializable {
     */
    public MeasurementConfig(final MeasurementConfig other) {
       executionConfig = new ExecutionConfig(other.getExecutionConfig());
+      statisticsConfig = new StatisticsConfig(other.getStatisticsConfig());
+      kiekerConfig = new KiekerConfig(other.getKiekerConfig());
       this.vms = other.vms;
-      statisticsConfig.setType1error(other.getStatisticsConfig().getType1error());
-      statisticsConfig.setType2error(other.getStatisticsConfig().getType2error());
-      statisticsConfig.setOutlierFactor(other.getStatisticsConfig().getOutlierFactor());
-      statisticsConfig.setStatisticTest(other.getStatisticsConfig().getStatisticTest());
       this.earlyStop = other.earlyStop;
       this.warmup = other.warmup;
       this.iterations = other.iterations;
       this.repetitions = other.repetitions;
       this.logFullData = other.logFullData;
-      kiekerConfig = new KiekerConfig(other.getKiekerConfig());
       this.useGC = other.useGC;
       this.javaVersion = other.javaVersion;
       this.measurementStrategy = other.measurementStrategy;
