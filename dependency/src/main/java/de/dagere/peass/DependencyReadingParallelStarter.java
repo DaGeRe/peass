@@ -51,7 +51,7 @@ public class DependencyReadingParallelStarter implements Callable<Void> {
       final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartversion(), executionConfigMixin.getEndversion(), config.getProjectFolder());
       VersionComparator.setVersions(commits);
       
-      ExecutionConfig executionConfig = new ExecutionConfig(executionConfigMixin);
+      ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
       
       final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), config.getProjectFolder().getName(), commits, 
             config.getDependencyConfig(), executionConfig, kiekerConfigMixin.getKiekerConfig(), new EnvironmentVariables());

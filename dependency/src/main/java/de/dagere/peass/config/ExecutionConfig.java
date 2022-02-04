@@ -10,8 +10,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import de.dagere.peass.config.parameters.ExecutionConfigMixin;
-
 /**
  * Configuration properties of Peass-executions that are used in every circumstance, i.e. for regression test selection, measurement and root cause analysis
  * 
@@ -117,57 +115,6 @@ public class ExecutionConfig implements Serializable {
       excludes = new LinkedList<>();
       this.testGoal = testGoal;
       this.timeout = 5 * 60 * 1000;
-   }
-
-   public ExecutionConfig(final ExecutionConfigMixin executionMixin) {
-      timeout = executionMixin.getTimeout() * 60 * 1000;
-      version = executionMixin.getVersion();
-      setVersionOld(executionMixin.getVersionOld());
-      setStartversion(executionMixin.getStartversion());
-      setEndversion(executionMixin.getEndversion());
-
-      setTestGoal(executionMixin.getTestGoal());
-      if (executionMixin.getIncludes() != null) {
-         for (String include : executionMixin.getIncludes()) {
-            includes.add(include);
-         }
-      }
-      if (executionMixin.getExcludes() != null) {
-         for (String exclude : executionMixin.getExcludes()) {
-            excludes.add(exclude);
-         }
-      }
-      if (executionMixin.getPl() != null) {
-         pl = executionMixin.getPl();
-      }
-      boolean transformerSet = executionMixin.getTestTransformer() != null;
-      boolean executorSet = executionMixin.getTestExecutor() != null;
-      if (transformerSet && executorSet) {
-         setTestTransformer(executionMixin.getTestTransformer());
-         setTestExecutor(executionMixin.getTestExecutor());
-      } else if (transformerSet != executorSet) {
-         throw new RuntimeException("If the test transformer is set by CLI parameters, the test executor needs also be set!");
-      } else {
-         setTestTransformer(executionMixin.getWorkloadType().getTestTransformer());
-         setTestExecutor(executionMixin.getWorkloadType().getTestExecutor());
-      }
-      useTieredCompilation = executionMixin.isUseTieredCompilation();
-      removeSnapshots = executionMixin.isRemoveSnapshots();
-      useAlternativeBuildfile = executionMixin.isUseAlternativeBuildfile();
-      createDefaultConstructor = !executionMixin.isSkipDefaultConstructor();
-      executeBeforeClassInMeasurement = executionMixin.isExecuteBeforeClassInMeasurement();
-      kiekerWaitTime = executionMixin.getKiekerWaitTime();
-      
-      if (executionMixin.getClazzFolder() != null) {
-         List<String> clazzFolders = buildFolderList(executionMixin.getClazzFolder());
-         setClazzFolders(clazzFolders);
-      }
-      if (executionMixin.getTestClazzFolder() != null) {
-         List<String> testClazzFolders = buildFolderList(executionMixin.getTestClazzFolder());
-         setTestClazzFolders(testClazzFolders);
-      }
-      
-      this.excludeLog4j = executionMixin.isExcludeLog4j();
    }
 
    public static List<String> buildFolderList(final String folderList) {

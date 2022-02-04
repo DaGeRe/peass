@@ -63,13 +63,10 @@ public class MeasurementConfig implements Serializable {
 
    public MeasurementConfig(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin, 
          final StatisticsConfigMixin statisticMixin, final KiekerConfigMixin kiekerConfigMixin) {
-      executionConfig = new ExecutionConfig(executionMixin);
+      executionConfig = executionMixin.getExecutionConfig();
       kiekerConfig = kiekerConfigMixin.getKiekerConfig();
+      statisticsConfig = statisticMixin.getStasticsConfig();
       this.vms = mixin.getVms();
-      statisticsConfig.setType1error(statisticMixin.getType1error());
-      statisticsConfig.setType2error(statisticMixin.getType2error());
-      statisticsConfig.setStatisticTest(statisticMixin.getStatisticTest());
-      statisticsConfig.setOutlierFactor(statisticMixin.getOutlierFactor());
       setEarlyStop(mixin.isEarlyStop());
       setUseKieker(mixin.isUseKieker());
       setIterations(mixin.getIterations());

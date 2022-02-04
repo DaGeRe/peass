@@ -77,7 +77,7 @@ public class DependencyExecutionReader implements Callable<Void>{
 
    public void readExecutions(final String project, final List<GitCommit> commits) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, JAXBException {
       KiekerConfig kiekerConfig = kiekerConfigMixin.getKiekerConfig();
-      ExecutionConfig executionConfig = new ExecutionConfig(executionConfigMixin);
+      ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
       
       final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, commits, 
             config.getDependencyConfig(), executionConfig, kiekerConfig, new EnvironmentVariables());

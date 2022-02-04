@@ -1,6 +1,7 @@
 package de.dagere.peass.config.parameters;
 
 import de.dagere.peass.config.ImplementedTests;
+import de.dagere.peass.config.StatisticsConfig;
 import picocli.CommandLine.Option;
 
 public class StatisticsConfigMixin {
@@ -48,6 +49,15 @@ public class StatisticsConfigMixin {
 
    public void setStatisticTest(final ImplementedTests statisticTest) {
       this.statisticTest = statisticTest;
+   }
+   
+   public StatisticsConfig getStasticsConfig() {
+      StatisticsConfig config = new StatisticsConfig();
+      config.setType1error(getType1error());
+      config.setType2error(getType2error());
+      config.setStatisticTest(getStatisticTest());
+      config.setOutlierFactor(getOutlierFactor());
+      return config;
    }
    
    

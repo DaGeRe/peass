@@ -1,5 +1,8 @@
 package de.dagere.peass.config.parameters;
 
+import java.util.List;
+
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.WorkloadType;
 import picocli.CommandLine.Option;
 
@@ -239,5 +242,60 @@ public class ExecutionConfigMixin {
    
    public void setExcludeLog4j(final boolean excludeLog4j) {
       this.excludeLog4j = excludeLog4j;
+   }
+   
+   public ExecutionConfig getExecutionConfig() {
+      ExecutionConfig config = new ExecutionConfig(timeout);
+      
+      config.setVersion(version);
+      config.setVersionOld(versionOld);
+      config.setStartversion(getStartversion());
+      config.setEndversion(getEndversion());
+      config.setTestGoal(getTestGoal());
+      
+      if (getIncludes() != null) {
+         for (String include : getIncludes()) {
+            config.getIncludes().add(include);
+         }
+      }
+      if (getExcludes() != null) {
+         for (String exclude : getExcludes()) {
+            config.getExcludes().add(exclude);
+         }
+      }
+      if (getPl() != null) {
+         config.setPl(pl);
+      }
+      boolean transformerSet = getTestTransformer() != null;
+      boolean executorSet = getTestExecutor() != null;
+      if (transformerSet && executorSet) {
+         config.setTestTransformer(getTestTransformer());
+         config.setTestExecutor(getTestExecutor());
+      } else if (transformerSet != executorSet) {
+         throw new RuntimeException("If the test transformer is set by CLI parameters, the test executor needs also be set!");
+      } else {
+         config.setTestTransformer(getWorkloadType().getTestTransformer());
+         config.setTestExecutor(getWorkloadType().getTestExecutor());
+      }
+      config.setUseTieredCompilation(useTieredCompilation);
+      config.setRemoveSnapshots(removeSnapshots);
+      config.setUseAlternativeBuildfile(useAlternativeBuildfile);
+      config.setRemoveSnapshots(removeSnapshots);
+      config.setCreateDefaultConstructor(!skipDefaultConstructor);
+      config.setExecuteBeforeClassInMeasurement(executeBeforeClassInMeasurement);
+      config.setKiekerWaitTime(kiekerWaitTime);
+      
+      if (getClazzFolder() != null) {
+         List<String> clazzFolders = ExecutionConfig.buildFolderList(getClazzFolder());
+         config.setClazzFolders(clazzFolders);
+      }
+      if (getTestClazzFolder() != null) {
+         List<String> testClazzFolders = ExecutionConfig.buildFolderList(getTestClazzFolder());
+         config.setTestClazzFolders(testClazzFolders);
+      }
+      
+      config.setExcludeLog4j(excludeLog4j);
+      
+      return config;
    }
 }
