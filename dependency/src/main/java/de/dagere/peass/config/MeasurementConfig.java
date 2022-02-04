@@ -75,7 +75,6 @@ public class MeasurementConfig implements Serializable {
       setUseGC(mixin.isUseGC());
       kiekerConfig.setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
-      executionConfig.setRedirectToNull(!mixin.isDontRedirectToNull());
       setShowStart(mixin.isShowStart());
 
       saveAll = !mixin.isSaveNothing();

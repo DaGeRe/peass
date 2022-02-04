@@ -38,10 +38,6 @@ public class MeasurementConfigurationMixin {
    @Option(names = { "-measurementStrategy", "--measurementStrategy" }, description = "Measurement strategy (Default: SEQUENTIAL) ")
    protected MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
 
-   @Option(names = { "-dontRedirectToNull",
-         "--dontRedirectToNull" }, description = "Activates showing the standard output of the testcase (by default, it is redirected to null)")
-   protected boolean dontRedirectToNull = false;
-
    @Option(names = { "-showStart",
          "--showStart" }, description = "Activates showing of start of each iteration (for debug purposes primarily)")
    protected boolean showStart = false;
@@ -104,14 +100,6 @@ public class MeasurementConfigurationMixin {
 
    public void setUseKieker(final boolean useKieker) {
       this.useKieker = useKieker;
-   }
-
-   public boolean isDontRedirectToNull() {
-      return dontRedirectToNull;
-   }
-
-   public void setDontRedirectToNull(final boolean dontRedirectToNull) {
-      this.dontRedirectToNull = dontRedirectToNull;
    }
 
    public boolean isShowStart() {

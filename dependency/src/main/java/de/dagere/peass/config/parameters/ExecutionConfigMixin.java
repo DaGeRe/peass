@@ -51,7 +51,7 @@ public class ExecutionConfigMixin {
 
    @Option(names = { "-executeBeforeClassInMeasurement", "--executeBeforeClassInMeasurement" }, description = "Execute @BeforeClass / @BeforeAll in measurement loop")
    protected boolean executeBeforeClassInMeasurement = false;
-   
+
    @Option(names = { "-removeSnapshots",
          "--removeSnapshots" }, description = "Activates removing SNAPSHOTS (if older versions should be analysed, this should be activated; for performance measurement in CI, this should not be activated)")
    protected boolean removeSnapshots = false;
@@ -63,18 +63,22 @@ public class ExecutionConfigMixin {
    @Option(names = { "-useAlternativeBuildfile",
          "--useAlternativeBuildfile" }, description = "Use alternative buildfile when existing (searches for alternative_build.gradle and replaces build.gradle with the file; required e.g. if the default build process contains certification)")
    protected boolean useAlternativeBuildfile = false;
-   
+
    @Option(names = { "-kiekerWaitTime", "--kiekerWaitTime" }, description = "Time that KoPeMe should wait until Kieker writing is finshed in seconds (default: 10)")
    protected int kiekerWaitTime = 5;
-   
-   @Option(names = {"-classFolder", "--classFolder"}, description = "Folder that contains java classes")
+
+   @Option(names = { "-classFolder", "--classFolder" }, description = "Folder that contains java classes")
    protected String clazzFolder;
 
-   @Option(names = {"-testClassFolder", "--testClassFolder"}, description = "Folder that contains test classes")
+   @Option(names = { "-testClassFolder", "--testClassFolder" }, description = "Folder that contains test classes")
    protected String testClazzFolder;
-   
-   @Option(names = {"-excludeLog4j", "--excludeLog4j"}, description = "Exclude log4j (required, if other logging implementation should be used)")
+
+   @Option(names = { "-excludeLog4j", "--excludeLog4j" }, description = "Exclude log4j (required, if other logging implementation should be used)")
    protected boolean excludeLog4j = false;
+
+   @Option(names = { "-dontRedirectToNull",
+         "--dontRedirectToNull" }, description = "Activates showing the standard output of the testcase (by default, it is redirected to null)")
+   protected boolean dontRedirectToNull = false;
 
    public int getTimeout() {
       return timeout;
@@ -211,11 +215,11 @@ public class ExecutionConfigMixin {
    public void setExecuteBeforeClassInMeasurement(final boolean executeBeforeClassInMeasurement) {
       this.executeBeforeClassInMeasurement = executeBeforeClassInMeasurement;
    }
-   
+
    public int getKiekerWaitTime() {
       return kiekerWaitTime;
    }
-   
+
    public void setKiekerWaitTime(final int kiekerWaitTime) {
       this.kiekerWaitTime = kiekerWaitTime;
    }
@@ -235,24 +239,32 @@ public class ExecutionConfigMixin {
    public void setTestClazzFolder(final String testClazzFolder) {
       this.testClazzFolder = testClazzFolder;
    }
-   
+
    public boolean isExcludeLog4j() {
       return excludeLog4j;
    }
-   
+
    public void setExcludeLog4j(final boolean excludeLog4j) {
       this.excludeLog4j = excludeLog4j;
    }
-   
+
+   public boolean isDontRedirectToNull() {
+      return dontRedirectToNull;
+   }
+
+   public void setDontRedirectToNull(final boolean dontRedirectToNull) {
+      this.dontRedirectToNull = dontRedirectToNull;
+   }
+
    public ExecutionConfig getExecutionConfig() {
       ExecutionConfig config = new ExecutionConfig(timeout);
-      
+
       config.setVersion(version);
       config.setVersionOld(versionOld);
       config.setStartversion(getStartversion());
       config.setEndversion(getEndversion());
       config.setTestGoal(getTestGoal());
-      
+
       if (getIncludes() != null) {
          for (String include : getIncludes()) {
             config.getIncludes().add(include);
@@ -284,7 +296,7 @@ public class ExecutionConfigMixin {
       config.setCreateDefaultConstructor(!skipDefaultConstructor);
       config.setExecuteBeforeClassInMeasurement(executeBeforeClassInMeasurement);
       config.setKiekerWaitTime(kiekerWaitTime);
-      
+
       if (getClazzFolder() != null) {
          List<String> clazzFolders = ExecutionConfig.buildFolderList(getClazzFolder());
          config.setClazzFolders(clazzFolders);
@@ -293,9 +305,10 @@ public class ExecutionConfigMixin {
          List<String> testClazzFolders = ExecutionConfig.buildFolderList(getTestClazzFolder());
          config.setTestClazzFolders(testClazzFolders);
       }
-      
+
       config.setExcludeLog4j(excludeLog4j);
-      
+      config.setRedirectToNull(!dontRedirectToNull);
+
       return config;
    }
 }
