@@ -70,9 +70,10 @@ public class VersionDiff {
          setPomChanged(true);
       } else {
          if (currentFileName.endsWith(".java")) {
+            String fileNameWithoutExtension = currentFileName.replace(".java", "");
             String containedPath = null;
             for (String path : config.getAllClazzFolders()) {
-               if (currentFileName.contains(path)) {
+               if (fileNameWithoutExtension.contains(path)) {
                   containedPath = path;
                   break;
                }
