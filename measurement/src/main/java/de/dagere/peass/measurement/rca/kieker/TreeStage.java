@@ -53,7 +53,7 @@ public class TreeStage extends AbstractTraceProcessingStage<ExecutionTrace> {
          final String methodname = execution.getOperation().getSignature().getName().intern();
          final String call = fullClassname + "#" + methodname;
          final String kiekerPattern = KiekerPatternConverter.getKiekerPattern(execution.getOperation());
-         LOG.debug("{} {}", kiekerPattern, execution.getEss());
+         LOG.trace("{} {}", kiekerPattern, execution.getEss());
 
          // ignore synthetic java methods
          if (!methodname.equals("class$") && !methodname.startsWith("access$")) {
