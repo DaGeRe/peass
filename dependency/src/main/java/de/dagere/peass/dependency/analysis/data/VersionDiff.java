@@ -78,12 +78,17 @@ public class VersionDiff {
                }
             }
 
-            final int indexOf = currentFileName.indexOf(containedPath);
-            if (indexOf == -1) {
-               LOG.error("Did not find any of the class pathes in the changed filename: {} classpathes: {} ", currentFileName, config.getAllClazzFolders());
+            if (containedPath != null) {
+               final int indexOf = currentFileName.indexOf(containedPath);
+               if (indexOf == -1) {
+                  LOG.error("Did not find any of the class pathes in the changed filename: {} classpathes: {} ", currentFileName, config.getAllClazzFolders());
+               } else {
+                  addChange(currentFileName, containedPath, indexOf);
+               }
             } else {
-               addChange(currentFileName, containedPath, indexOf);
+               LOG.info("Did not find matching class folder for file {}", containedPath);
             }
+
          }
       }
    }
