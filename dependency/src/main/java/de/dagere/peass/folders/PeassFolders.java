@@ -19,6 +19,8 @@ import de.dagere.peass.vcs.VersionControlSystem;
  *
  */
 public class PeassFolders {
+   public static final String MEASUREMENTS = "measurements";
+
    public static final String PEASS_POSTFIX = "_peass";
 
    protected final File projectFolder;
@@ -65,7 +67,7 @@ public class PeassFolders {
       cleanFolder = new File(peassFolder, "clean");
       debugFolder = new File(peassFolder, "debug");
       // cleanFolder.mkdir();
-      measurementsFolder = new File(fullResultFolder, "measurements");
+      measurementsFolder = new File(fullResultFolder, MEASUREMENTS);
       measurementsFolder.mkdir();
       tempResultFolder = new File(peassFolder, "measurementsTemp");
       tempResultFolder.mkdir();
