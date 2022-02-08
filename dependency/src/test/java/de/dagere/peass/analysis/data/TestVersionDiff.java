@@ -22,6 +22,7 @@ public class TestVersionDiff {
    private static final String MAVEN_PATH_FILE = "src/main/java/de/dagere/peass/Example.java";
    private static final String JAVA_PATH_FILE = "java/de/dagere/peass/Example.java";
    private static final String NO_SOURCE_FOLDER = "noSourceFolder/de/dagere/peass/Example2.java";
+   private static final String TOMCAT_EXAMPLE = "test/de/dagere/peass/CoyoteAdapter.java";
    
    @TempDir
    private File tempDir;
@@ -54,6 +55,25 @@ public class TestVersionDiff {
       diff.addChange(NO_SOURCE_FOLDER, config);
       
       MatcherAssert.assertThat(diff.getChangedClasses(), IsIterableContaining.hasItem(new ChangedEntity("de.dagere.peass.Example")));
+      MatcherAssert.assertThat(diff.getChangedClasses(), Matchers.not(IsIterableContaining.hasItem(new ChangedEntity("de.dagere.peass.Example2"))));
+   }
+   
+   @Test
+   public void testTestContainigPath() throws IOException {
+      createFile(TOMCAT_EXAMPLE);
+      createFile(NO_SOURCE_FOLDER);
+      
+      VersionDiff diff = createVersionDiff();
+      
+      ExecutionConfig config = new ExecutionConfig();
+      config.getClazzFolders().clear();
+      config.getClazzFolders().add("java");
+      config.getTestClazzFolders().clear();
+      config.getTestClazzFolders().add("test");
+      diff.addChange(TOMCAT_EXAMPLE, config);
+      diff.addChange(NO_SOURCE_FOLDER, config);
+      
+      MatcherAssert.assertThat(diff.getChangedClasses(), IsIterableContaining.hasItem(new ChangedEntity("de.dagere.peass.CoyoteAdapter")));
       MatcherAssert.assertThat(diff.getChangedClasses(), Matchers.not(IsIterableContaining.hasItem(new ChangedEntity("de.dagere.peass.Example2"))));
    }
 
