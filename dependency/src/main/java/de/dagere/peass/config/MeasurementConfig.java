@@ -24,7 +24,7 @@ public class MeasurementConfig implements Serializable {
    private int iterations = 1;
    private int repetitions = 1;
    private boolean logFullData = true;
-   private boolean useGC = true;
+   private boolean useGC = false;
 
    private boolean callSyncBetweenVMs = true;
    private int waitTimeBetweenVMs = 1000;
