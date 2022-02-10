@@ -158,7 +158,8 @@ public class ResultOrganizer {
       destFile.getParentFile().mkdirs();
       LOG.info("Saving in: {}", destFile);
       if (!destFile.exists()) {
-         final Fulldata fulldata = oneResultData.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0).getFulldata();
+         Result result = oneResultData.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);
+         final Fulldata fulldata = result.getFulldata();
          if (fulldata.getFileName() != null) {
             saveFulldataFile(vmid, oneResultFile, destFile, fulldata);
          }
@@ -179,8 +180,8 @@ public class ResultOrganizer {
 
    public void saveSummaryFile(final String version, final List<TestcaseType> testcaseList, final File oneResultFile) throws JAXBException {
       final TestcaseType oneRundata = testcaseList.get(0);
-      final File fullResultFile = folders.getFullSummaryFile(testcase);
-      MultipleVMTestUtil.saveSummaryData(fullResultFile, oneResultFile, oneRundata, testcase, version, currentChunkStart);
+      final File summaryResultFile = folders.getSummaryFile(testcase);
+      MultipleVMTestUtil.saveSummaryData(summaryResultFile, oneResultFile, oneRundata, testcase, version, currentChunkStart);
    }
 
    private void saveKiekerFiles(final File folder, final File destFolder) throws IOException {

@@ -55,10 +55,10 @@ public class TestDependencyTester {
    }
 
    public static void checkResult(final PeassFolders folders) throws JAXBException {
-      final File expectedShortresultFile = folders.getFullSummaryFile(EXAMPLE_TESTCASE);
-      Assert.assertTrue(expectedShortresultFile.exists());
+      final File expectedSummaryResultFile = folders.getSummaryFile(EXAMPLE_TESTCASE);
+      Assert.assertTrue(expectedSummaryResultFile.exists());
 
-      final Kopemedata data = XMLDataLoader.loadData(expectedShortresultFile);
+      final Kopemedata data = XMLDataLoader.loadData(expectedSummaryResultFile);
       final Datacollector collector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
       final Chunk chunk = collector.getChunk().get(0);
       Assert.assertEquals(105, chunk.getResult().get(0).getValue(), 0.1);

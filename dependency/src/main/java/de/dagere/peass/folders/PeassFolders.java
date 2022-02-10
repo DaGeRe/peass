@@ -205,7 +205,7 @@ public class PeassFolders {
       return measurementsFolder;
    }
 
-   public File getFullSummaryFile(final TestCase testcase) {
+   public File getSummaryFile(final TestCase testcase) {
       final String shortClazzName = testcase.getShortClazz();
       final File fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".xml");
       return fullResultFile;

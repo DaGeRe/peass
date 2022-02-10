@@ -147,7 +147,7 @@ public class TestResultOrganizer {
    }
 
    private void testXMLFileExists() {
-      final File expectedFile = folders.getFullSummaryFile(searchedTest);
+      final File expectedFile = folders.getSummaryFile(searchedTest);
       Assert.assertTrue(expectedFile.exists());
    }
 

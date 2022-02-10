@@ -48,7 +48,7 @@ public class TestResultOrganizerParams {
       PeassFolders folders = Mockito.mock(PeassFolders.class);
       Mockito.when(folders.getDetailResultFolder()).thenReturn(TEMP_DETAIL_DIR);
       Mockito.when(folders.getFullMeasurementFolder()).thenReturn(TEMP_FULL_DIR);
-      Mockito.when(folders.getFullSummaryFile(testcase)).thenReturn(new File(TEMP_FULL_DIR, "result.xml"));
+      Mockito.when(folders.getSummaryFile(testcase)).thenReturn(new File(TEMP_FULL_DIR, "result.xml"));
       Mockito.when(folders.getResultFile(Mockito.any(), Mockito.anyInt(), Mockito.any(), Mockito.any())).thenAnswer(new Answer<File>() {
 
          @Override
