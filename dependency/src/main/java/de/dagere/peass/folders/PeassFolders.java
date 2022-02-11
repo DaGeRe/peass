@@ -56,9 +56,9 @@ public class PeassFolders {
          vcs = null;
          peassFolder = folder;
       }
-      
+
       logFolders = new VMExecutionLogFolders(peassFolder);
-      
+
       oldSourceFolder = new File(peassFolder, "lastSources");
       fullResultFolder = new File(peassFolder, "measurementsFull");
       fullResultFolder.mkdir();
@@ -90,11 +90,11 @@ public class PeassFolders {
    public File getCleanFolder() {
       return cleanFolder;
    }
-   
+
    public File getDependencyLogFolder() {
       return logFolders.getDependencyLogFolder();
    }
-   
+
    public File getDependencyLogSuccessRunFile(final String version) {
       final File versionFolder = new File(getDependencyLogFolder(), version);
       if (!versionFolder.exists()) {
@@ -102,15 +102,15 @@ public class PeassFolders {
       }
       return new File(versionFolder, "testRunning.log");
    }
-   
+
    public File getMeasureLogFolder() {
       return logFolders.getMeasureLogFolder();
    }
-   
+
    public File getTreeLogFolder() {
       return logFolders.getTreeLogFolder();
    }
-   
+
    public File getRCALogFolder() {
       return logFolders.getRCALogFolder();
    }
@@ -137,7 +137,7 @@ public class PeassFolders {
       testLogFolder.mkdirs();
       return testLogFolder;
    }
-   
+
    public File getExistingRCALogFolder(final String version, final TestCase testcase, final int level) {
       File testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getMethod() + File.separator + level);
       if (!testLogFolder.exists()) {
@@ -145,7 +145,7 @@ public class PeassFolders {
       }
       return testLogFolder;
    }
-   
+
    public File getRCALogFolder(final String version, final TestCase testcase, final int level) {
       File testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getMethod() + File.separator + level);
       if (testLogFolder.exists()) {
@@ -165,7 +165,7 @@ public class PeassFolders {
    public File getFullMeasurementFolder() {
       return fullResultFolder;
    }
-   
+
    public File getProgressFile() {
       return new File(fullResultFolder, "progress.txt");
    }
@@ -207,7 +207,12 @@ public class PeassFolders {
 
    public File getSummaryFile(final TestCase testcase) {
       final String shortClazzName = testcase.getShortClazz();
-      final File fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".xml");
+      final File fullResultFile;
+      if (testcase.getParams() != null) {
+         fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + "(" + testcase.getParams() + ").xml");
+      } else {
+         fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".xml");
+      }
       return fullResultFile;
    }
 
@@ -224,14 +229,14 @@ public class PeassFolders {
       }
       return compareVersionFolder;
    }
-   
+
    public File getResultFile(final TestCase testcase, final int vmid, final String version, final String mainVersion) {
       final File compareVersionFolder = getFullResultFolder(testcase, mainVersion, version);
       String xmlFileName = getXMLFileName(testcase, version, vmid);
       final File destFile = new File(compareVersionFolder, xmlFileName);
       return destFile;
    }
-   
+
    public static String getRelativeFullResultPath(final TestCase testcase, final String mainVersion, final String version, final int vmid) {
       String filename = getXMLFileName(testcase, version, vmid);
       String start = testcase.getClazz() + File.separator + mainVersion + File.separator + version + File.separator + filename;

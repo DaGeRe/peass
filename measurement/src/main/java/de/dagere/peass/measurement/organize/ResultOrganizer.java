@@ -21,6 +21,8 @@ import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType;
+import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.peass.dependency.analysis.data.ChangedEntityHelper;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
@@ -175,8 +177,16 @@ public class ResultOrganizer {
 
    public void saveSummaryFile(final String version, final List<TestcaseType> testcaseList, final File oneResultFile) throws JAXBException {
       final TestcaseType oneRundata = testcaseList.get(0);
-      final File summaryResultFile = folders.getSummaryFile(testcase);
-      MultipleVMTestUtil.saveSummaryData(summaryResultFile, oneResultFile, oneRundata, testcase, version, currentChunkStart);
+      
+      Datacollector timeDataCollector = MultipleVMTestUtil.getTimeDataCollector(oneRundata);
+      
+      for (Result result : timeDataCollector.getResult()) {
+         String paramString = ChangedEntityHelper.paramsToString(result.getParams());
+         TestCase concreteTestcase = new TestCase(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
+         
+         final File summaryResultFile = folders.getSummaryFile(concreteTestcase);
+         MultipleVMTestUtil.saveSummaryData(summaryResultFile, oneResultFile, result, concreteTestcase, version, currentChunkStart, timeDataCollector.getName());
+      }
    }
 
    private void saveKiekerFiles(final File folder, final File destFolder) throws IOException {

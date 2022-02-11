@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datacollection.TestResult;
+import de.dagere.kopeme.datacollection.TimeDataCollector;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.TestcaseType;
@@ -42,7 +43,7 @@ public class TestSummaryFileSaving {
       
       final File resultFile = new File(testFolder, "result.xml");
       
-      MultipleVMTestUtil.saveSummaryData(resultFile, oneResultFile, oneRunData, testcase, "1", 0);
+      MultipleVMTestUtil.saveSummaryData(resultFile, oneResultFile, oneRunData.getDatacollector().get(0).getResult().get(0), testcase, "1", 0, TimeDataCollector.class.getName());
       
       Assert.assertTrue(resultFile.exists());
    }
@@ -58,7 +59,7 @@ public class TestSummaryFileSaving {
       
       final File resultFile = new File(testFolder, "result.xml");
       
-      MultipleVMTestUtil.saveSummaryData(resultFile, oneResultFile, oneRunData, testcase, "1", 0);
+      MultipleVMTestUtil.saveSummaryData(resultFile, oneResultFile, oneRunData.getDatacollector().get(0).getResult().get(0), testcase, "1", 0, TimeDataCollector.class.getName());
       
       Assert.assertTrue(resultFile.exists());
    }

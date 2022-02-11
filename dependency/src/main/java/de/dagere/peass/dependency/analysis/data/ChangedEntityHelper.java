@@ -11,6 +11,7 @@ public class ChangedEntityHelper {
          for (Param param : params.getParam()) {
             result += param.getKey() + "-" + param.getValue() + " ";
          }
+         result = result.substring(0, result.length() - 1);
       }
       return result;
    }

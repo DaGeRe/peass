@@ -16,9 +16,9 @@ import de.dagere.kopeme.generated.Kopemedata.Testcases;
  *
  */
 public class TestCase implements Comparable<TestCase>, Serializable {
-   
+      
    private static final long serialVersionUID = -522183920107191602L;
-   
+
    private final String module;
    private final String clazz;
    private final String method;
