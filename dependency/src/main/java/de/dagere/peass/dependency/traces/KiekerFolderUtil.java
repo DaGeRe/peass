@@ -59,9 +59,10 @@ public class KiekerFolderUtil {
    }
 
    private static File getMethodFolder(final TestCase testcase, final File[] listFiles) {
-      File methodResult = new File(listFiles[0], testcase.getMethod());
+      String methodName = testcase.getParams() != null ? testcase.getMethod() + "(" + testcase.getParams() + ")" : testcase.getMethod();
+      File methodResult = new File(listFiles[0], methodName);
       for (final File test : listFiles) {
-         final File candidate = new File(test, testcase.getMethod());
+         final File candidate = new File(test, methodName);
          if (candidate.exists()) {
             methodResult = candidate;
          }

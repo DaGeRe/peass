@@ -185,6 +185,13 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       } else if (!method.equals(other.method)) {
          return false;
       }
+      if (params == null) {
+         if (other.getParams() != null) {
+            return false;
+         }
+      } else if (!params.equals(other.params)) {
+         return false;
+      }
       return true;
    }
 
