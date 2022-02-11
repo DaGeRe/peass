@@ -57,9 +57,9 @@ public class TestCase implements Comparable<TestCase>, Serializable {
 
    public TestCase(final String clazz, final String method, final String module) {
       this(clazz,
-            ((method.indexOf('(') != -1) ? method.substring(0, method.indexOf('(')) : method),
+            ((method != null && method.indexOf('(') != -1) ? method.substring(0, method.indexOf('(')) : method),
             module,
-            ((method.indexOf('(') != -1) ? method.substring(method.indexOf('(') + 1, method.length() - 1) : null));
+            ((method != null && method.indexOf('(') != -1) ? method.substring(method.indexOf('(') + 1, method.length() - 1) : null));
    }
 
    @JsonCreator
@@ -73,7 +73,7 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       if (clazz.contains(ChangedEntity.METHOD_SEPARATOR)) {
          throw new RuntimeException("Class and method should be separated: " + clazz);
       }
-      if (method.contains("(") || method.contains(")")) {
+      if (method != null && (method.contains("(") || method.contains(")"))) {
          throw new RuntimeException("Method must not contain paranthesis: " + method);
       }
       this.clazz = clazz;
