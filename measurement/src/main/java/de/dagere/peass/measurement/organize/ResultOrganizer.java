@@ -149,21 +149,34 @@ public class ResultOrganizer {
 
    private void saveResults(final String version, final int vmid, final File oneResultFile, final Kopemedata oneResultData, final List<TestcaseType> testcaseList)
          throws JAXBException, IOException {
-      saveSummaryFile(version, testcaseList, oneResultFile);
+      final TestcaseType oneRundata = testcaseList.get(0);
+      Datacollector timeDataCollector = MultipleVMTestUtil.getTimeDataCollector(oneRundata);
 
-      final File destFile = folders.getResultFile(testcase, vmid, version, mainVersion);
-      destFile.getParentFile().mkdirs();
-      LOG.info("Saving in: {}", destFile);
-      if (!destFile.exists()) {
-         Result result = oneResultData.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);
-         final Fulldata fulldata = result.getFulldata();
-         if (fulldata.getFileName() != null) {
-            saveFulldataFile(vmid, oneResultFile, destFile, fulldata);
+      saveSummaryFile(version, timeDataCollector, oneResultFile);
+
+      for (Result result : timeDataCollector.getResult()) {
+         String paramString = ChangedEntityHelper.paramsToString(result.getParams());
+         TestCase concreteTestcase = new TestCase(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
+
+         final File destFile = folders.getResultFile(concreteTestcase, vmid, version, mainVersion);
+         destFile.getParentFile().mkdirs();
+         LOG.info("Saving in: {}", destFile);
+         if (!destFile.exists()) {
+            final Fulldata fulldata = result.getFulldata();
+            if (fulldata.getFileName() != null) {
+               saveFulldataFile(vmid, oneResultFile, destFile, fulldata);
+            }
+            Kopemedata copiedData = XMLDataStorer.clone(oneResultData);
+            Datacollector copiedTimeDataCollector = MultipleVMTestUtil.getTimeDataCollector(copiedData);
+            copiedTimeDataCollector.getResult().clear();
+            copiedTimeDataCollector.getResult().add(result);
+
+            XMLDataStorer.storeData(destFile, copiedData);
+            oneResultFile.delete();
+
+         } else {
+            throw new RuntimeException("Moving failed: " + destFile + " already exist.");
          }
-         XMLDataStorer.storeData(destFile, oneResultData);
-         oneResultFile.delete();
-      } else {
-         throw new RuntimeException("Moving failed: " + destFile + " already exist.");
       }
    }
 
@@ -175,15 +188,11 @@ public class ResultOrganizer {
       fulldata.setFileName(destFileName);
    }
 
-   public void saveSummaryFile(final String version, final List<TestcaseType> testcaseList, final File oneResultFile) throws JAXBException {
-      final TestcaseType oneRundata = testcaseList.get(0);
-      
-      Datacollector timeDataCollector = MultipleVMTestUtil.getTimeDataCollector(oneRundata);
-      
+   public void saveSummaryFile(final String version, final Datacollector timeDataCollector, final File oneResultFile) throws JAXBException {
       for (Result result : timeDataCollector.getResult()) {
          String paramString = ChangedEntityHelper.paramsToString(result.getParams());
          TestCase concreteTestcase = new TestCase(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
-         
+
          final File summaryResultFile = folders.getSummaryFile(concreteTestcase);
          MultipleVMTestUtil.saveSummaryData(summaryResultFile, oneResultFile, result, concreteTestcase, version, currentChunkStart, timeDataCollector.getName());
       }

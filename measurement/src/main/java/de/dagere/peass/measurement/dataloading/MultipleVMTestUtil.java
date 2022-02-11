@@ -92,7 +92,6 @@ public class MultipleVMTestUtil {
       LOG.info("Writing to merged result file: {}", summaryResultFile);
       final Kopemedata summaryData = initKopemeData(summaryResultFile, testcase);
       Chunk summaryChunk = findChunk(currentChunkStart, summaryData, datacollectorName);
-
       
       if (oneResult.getFulldata().getFileName() != null) {
          SummaryStatistics st = getExternalFileStatistics(oneResultFile, datacollectorName, oneResult);

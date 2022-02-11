@@ -244,7 +244,12 @@ public class PeassFolders {
    }
 
    private static String getXMLFileName(final TestCase testcase, final String version, final int vmid) {
-      String filename = testcase.getMethod() + "_" + vmid + "_" + version + ".xml";
+      String filename;
+      if (testcase.getParams() != null) {
+         filename = testcase.getMethod() + "(" + testcase.getParams() + ")_" + vmid + "_" + version + ".xml";
+      } else {
+         filename = testcase.getMethod() + "_" + vmid + "_" + version + ".xml";
+      }
       return filename;
    }
 
