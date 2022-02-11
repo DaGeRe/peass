@@ -14,6 +14,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.data.CalledMethods;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.Dependencies;
@@ -55,8 +56,8 @@ public class InitialVersionReader {
       initialversion.setVersion(iterator.getTag());
       initialversion.setJdk(jdkversion);
       LOG.debug("Starting writing: {}", dependencyMap.getDependencyMap().size());
-      for (final Entry<ChangedEntity, CalledMethods> dependencyEntry : dependencyMap.getDependencyMap().entrySet()) {
-         final ChangedEntity testcase = dependencyEntry.getKey();
+      for (final Entry<TestCase, CalledMethods> dependencyEntry : dependencyMap.getDependencyMap().entrySet()) {
+         final TestCase testcase = dependencyEntry.getKey();
          for (final Map.Entry<ChangedEntity, Set<String>> calledClassEntry : dependencyEntry.getValue().getCalledMethods().entrySet()) {
             final ChangedEntity dependentclass = calledClassEntry.getKey();
             if (!dependentclass.getJavaClazzName().contains("junit") && !dependentclass.getJavaClazzName().contains("log4j")) {
@@ -96,30 +97,30 @@ public class InitialVersionReader {
    private void addVersionTestDependencies(final Version version) {
       for (final Entry<ChangedEntity, TestSet> dependency : version.getChangedClazzes().entrySet()) {
          final ChangedEntity callee = dependency.getKey();
-         for (final Entry<ChangedEntity, Set<String>> testcase : dependency.getValue().getTestcases().entrySet()) {
+         for (final Entry<TestCase, Set<String>> testcase : dependency.getValue().getTestcases().entrySet()) {
             for (final String testMethod : testcase.getValue()) {
                final Map<ChangedEntity, Set<String>> calledClasses = new HashMap<>();
                final Set<String> methods = new HashSet<>();
                methods.add(callee.getMethod());
                calledClasses.put(new ChangedEntity(callee.getClazz(), callee.getModule()), methods);
-               final ChangedEntity testClazz = testcase.getKey();
-               ChangedEntity testClassName = new ChangedEntity(testClazz.getClazz(), testClazz.getModule(), testMethod);
-               dependencyManager.addDependencies(testClassName, calledClasses);
+               final TestCase testClazz = testcase.getKey();
+               TestCase test = new TestCase(testClazz.getClazz(), testMethod, testClazz.getModule());
+               dependencyManager.addDependencies(test, calledClasses);
             }
          }
       }
    }
 
    private void fillInitialTestDependencies() {
-      for (final Entry<ChangedEntity, InitialDependency> dependency : dependencyResult.getInitialversion().getInitialDependencies().entrySet()) {
+      for (final Entry<TestCase, InitialDependency> dependency : dependencyResult.getInitialversion().getInitialDependencies().entrySet()) {
          for (final ChangedEntity dependentClass : dependency.getValue().getEntities()) {
-            ChangedEntity testClassName = dependency.getKey();
+            TestCase testClassName = dependency.getKey();
             addDependencies(testClassName, dependentClass);
          }
       }
    }
 
-   private void addDependencies(final ChangedEntity testClassName , final ChangedEntity dependentClass) {
+   private void addDependencies(final TestCase testClassName , final ChangedEntity dependentClass) {
       final Map<ChangedEntity, Set<String>> testDependencies = dependencyMap.getOrAddDependenciesForTest(testClassName);
       final ChangedEntity dependencyEntity = new ChangedEntity(dependentClass.getClazz(), dependentClass.getModule());
       Set<String> methods = testDependencies.get(dependencyEntity);
@@ -132,7 +133,7 @@ public class InitialVersionReader {
    }
    
    private void checkCorrectness() {
-      for (final Entry<ChangedEntity, CalledMethods> entry : dependencyMap.getDependencyMap().entrySet()) {
+      for (final Entry<TestCase, CalledMethods> entry : dependencyMap.getDependencyMap().entrySet()) {
          if (entry.getKey().getModule() == null) {
             throw new RuntimeException("Entry " + entry.getKey() + " has null module!");
          }

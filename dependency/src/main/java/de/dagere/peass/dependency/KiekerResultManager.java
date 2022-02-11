@@ -33,7 +33,6 @@ import de.dagere.kopeme.parsing.BuildtoolProjectNameReader;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -123,9 +122,9 @@ public class KiekerResultManager {
       }
 
       executor.prepareKoPeMeExecution(new File(logVersionFolder, "clean.txt"));
-      for (final Map.Entry<ChangedEntity, Set<String>> test : testsToUpdate.getTestcases().entrySet()) {
+      for (final Map.Entry<TestCase, Set<String>> test : testsToUpdate.getTestcases().entrySet()) {
          for (final String method : test.getValue()) {
-            final TestCase testcase = new TestCase(test.getKey().getJavaClazzName(), method, test.getKey().getModule());
+            final TestCase testcase = new TestCase(test.getKey().getClazz(), method, test.getKey().getModule());
             executor.executeTest(testcase, logVersionFolder, testTransformer.getConfig().getTimeoutInSeconds());
          }
       }

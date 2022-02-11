@@ -60,7 +60,7 @@ public class JmhTestTransformer implements TestTransformer {
    @Override
    public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules) {
       final TestSet tests = new TestSet();
-      for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {
+      for (final TestCase clazzname : testsToUpdate.getClasses()) {
          final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
          if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
             final File moduleFolder = new File(projectFolder, clazzname.getModule());
@@ -98,7 +98,7 @@ public class JmhTestTransformer implements TestTransformer {
       ClazzFileFinder finder = new ClazzFileFinder(measurementConfig.getExecutionConfig());
       for (final String clazz : finder.getClasses(module)) {
          String currentModule = ModuleClassMapping.getModuleName(projectFolder, module);
-         final List<TestCase> testMethodNames = getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
+         final List<TestCase> testMethodNames = getTestMethodNames(module, new TestCase(clazz, null, currentModule));
          for (TestCase test : testMethodNames) {
             if (includedModules == null || includedModules.contains(test.getModule())) {
                addTestIfIncluded(moduleTests, test);
@@ -119,7 +119,7 @@ public class JmhTestTransformer implements TestTransformer {
    }
 
    @Override
-   public List<TestCase> getTestMethodNames(final File module, final ChangedEntity clazzname) {
+   public List<TestCase> getTestMethodNames(final File module, final TestCase clazzname) {
       final List<TestCase> methods = new LinkedList<>();
       ClazzFileFinder finder = new ClazzFileFinder(measurementConfig.getExecutionConfig());
       final File clazzFile = finder.getClazzFile(module, clazzname);
@@ -131,8 +131,8 @@ public class JmhTestTransformer implements TestTransformer {
             List<ClassOrInterfaceDeclaration> clazzDeclarations = ClazzFinder.getClazzDeclarations(unit);
             for (ClassOrInterfaceDeclaration clazz : clazzDeclarations) {
                String parsedClassName = getFullName(clazz);
-               LOG.trace("Clazz: {} - {}", parsedClassName, clazzname.getSimpleClazzName());
-               if (parsedClassName.equals(clazzname.getSimpleClazzName())) {
+               LOG.trace("Clazz: {} - {}", parsedClassName, clazzname.getShortClazz());
+               if (parsedClassName.equals(clazzname.getShortClazz())) {
                   List<String> benchmarkMethods = JUnitParseUtil.getAnnotatedMethods(clazz, "org.openjdk.jmh.annotations.Benchmark", "Benchmark");
                   for (String benchmarkMethod : benchmarkMethods) {
                      TestCase foundBenchmark = new TestCase(clazzname.getClazz(), benchmarkMethod, clazzname.getModule());

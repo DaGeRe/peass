@@ -19,6 +19,7 @@ import com.github.javaparser.ast.Node;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.changesreading.ClazzFinder;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.dependency.traces.TraceElementContent;
@@ -150,6 +151,10 @@ public class ClazzFileFinder {
       return clazzFile;
    }
 
+   public File getClazzFile(final File module, final TestCase testcase) {
+      return getClazzFile(module, testcase.toEntity());
+   }
+   
    public File getClazzFile(final File module, final ChangedEntity entity) {
       LOG.debug("Searching: {} in {}", entity, module.getAbsolutePath());
       final String clazzName = getOuterClass(entity.getClazz());

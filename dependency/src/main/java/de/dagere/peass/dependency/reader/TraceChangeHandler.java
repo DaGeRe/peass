@@ -17,6 +17,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.Version;
@@ -68,7 +69,8 @@ public class TraceChangeHandler {
       for (final ChangedEntity testName : newVersionInfo.getChangedClazzes().keySet()) {
          if (testName.getJavaClazzName().toLowerCase().contains("test")) {
             ChangedEntity simplyClazz = testName.getSourceContainingClazz();
-            testsToRun.addTest(simplyClazz, null);
+            TestCase test = new TestCase(simplyClazz.getClazz(), testName.getModule());
+            testsToRun.addTest(test, null);
          }
       }
    }
@@ -84,7 +86,7 @@ public class TraceChangeHandler {
    private void handleDependencyChanges(final Version newVersionInfo, final TestSet testsToRun, final ModuleClassMapping mapping)
          throws IOException, XmlPullParserException, JsonGenerationException, JsonMappingException {
       final TestExistenceChanges testExistenceChanges = dependencyManager.updateDependencies(testsToRun, version, mapping);
-      final Map<ChangedEntity, Set<ChangedEntity>> newTestcases = testExistenceChanges.getAddedTests();
+      final Map<ChangedEntity, Set<TestCase>> newTestcases = testExistenceChanges.getAddedTests();
 
       if (DETAIL_DEBUG) {
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "add_" + version + ".json"), newTestcases);

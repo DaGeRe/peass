@@ -76,7 +76,7 @@ public class TestSet {
 
    @JsonInclude(JsonInclude.Include.NON_EMPTY)
    @JsonDeserialize(keyUsing = ChangedEntitityDeserializer.class, contentAs = TreeSet.class, as = TreeMap.class)
-   private final Map<ChangedEntity, Set<String>> testcases = new TreeMap<>();
+   private final Map<TestCase, Set<String>> testcases = new TreeMap<>();
    private String predecessor;
 
    public TestSet() {
@@ -98,7 +98,7 @@ public class TestSet {
 
    @JsonIgnore
    public void addTest(final TestCase classname) {
-      final ChangedEntity entity = new ChangedEntity(classname.getClazz(), classname.getModule());
+      final TestCase entity = new TestCase(classname.getClazz(), null, classname.getModule());
       addTest(entity, classname.getMethod());
    }
 
@@ -109,7 +109,7 @@ public class TestSet {
     * @param classname
     * @param methodname
     */
-   public void addTest(final ChangedEntity classname, final String methodname) {
+   public void addTest(final TestCase classname, final String methodname) {
       if (classname.getMethod() != null && classname.getMethod() != "") {
          throw new RuntimeException("A testset should only get Changed Entities with empty method, but was " + classname.getMethod());
       }
@@ -128,7 +128,7 @@ public class TestSet {
 
    @JsonIgnore
    public void addTestSet(final TestSet testSet) {
-      for (final Map.Entry<ChangedEntity, Set<String>> newTestEntry : testSet.entrySet()) {
+      for (final Map.Entry<TestCase, Set<String>> newTestEntry : testSet.entrySet()) {
          Set<String> methods = testcases.get(newTestEntry.getKey());
          if (methods == null) {
             methods = new TreeSet<>();
@@ -147,7 +147,7 @@ public class TestSet {
    }
 
    @JsonIgnore
-   public Set<Entry<ChangedEntity, Set<String>>> entrySet() {
+   public Set<Entry<TestCase, Set<String>>> entrySet() {
       return testcases.entrySet();
    }
 
@@ -157,14 +157,14 @@ public class TestSet {
    }
 
    @JsonIgnore
-   public Set<ChangedEntity> getClasses() {
+   public Set<TestCase> getClasses() {
       return testcases.keySet();
    }
 
    @JsonIgnore
    public Set<TestCase> getTests() {
       final Set<TestCase> testcases = new LinkedHashSet<>();
-      for (final Entry<ChangedEntity, Set<String>> classTests : getTestcases().entrySet()) {
+      for (final Entry<TestCase, Set<String>> classTests : getTestcases().entrySet()) {
          if (classTests.getValue().size() > 0) {
             for (final String method : classTests.getValue()) {
                final TestCase testcase = new TestCase(classTests.getKey().getClazz(), method, classTests.getKey().getModule());
@@ -177,11 +177,11 @@ public class TestSet {
       return testcases;
    }
 
-   public Map<ChangedEntity, Set<String>> getTestcases() {
+   public Map<TestCase, Set<String>> getTestcases() {
       return testcases;
    }
 
-   public void removeTest(final ChangedEntity testClassName) {
+   public void removeTest(final TestCase testClassName) {
       if (testClassName.getMethod() != null && testClassName.getMethod() != "") {
          throw new RuntimeException("Testset class removal should only be done with empty method of ChangedEntity!");
       }
@@ -189,7 +189,7 @@ public class TestSet {
    }
 
    @JsonIgnore
-   public void removeTest(final ChangedEntity testClassName, final String testMethodName) {
+   public void removeTest(final TestCase testClassName, final String testMethodName) {
       if (testClassName.getMethod() != null && testClassName.getMethod() != "") {
          throw new RuntimeException("Testset class removal should only be done with empty method of ChangedEntity!");
       }
@@ -197,8 +197,8 @@ public class TestSet {
       if (testMethods != null) {
          removeMethod(testClassName, testMethodName, testMethods);
       } else {
-         ChangedEntity other = null;
-         for (ChangedEntity entity : testcases.keySet()) {
+         TestCase other = null;
+         for (TestCase entity : testcases.keySet()) {
             if (entity.getClazz().equals(testClassName.getClazz())) {
                other = entity;
             }
@@ -213,7 +213,7 @@ public class TestSet {
       }
    }
 
-   private void removeMethod(final ChangedEntity testClassName, final String testMethodName, final Set<String> testMethods) {
+   private void removeMethod(final TestCase testClassName, final String testMethodName, final Set<String> testMethods) {
       LOG.debug("Removing: " + testClassName + "#" + testMethodName);
       if (!testMethods.remove(testMethodName)) {
          LOG.error("Problem: " + testMethodName + " can not be removed.");
@@ -230,7 +230,7 @@ public class TestSet {
    }
 
    @JsonIgnore
-   public Set<String> getMethods(final ChangedEntity clazz) {
+   public Set<String> getMethods(final TestCase clazz) {
       return testcases.get(clazz);
    }
 

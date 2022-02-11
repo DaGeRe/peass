@@ -5,7 +5,6 @@ import java.util.List;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.execution.utils.ProjectModules;
@@ -41,6 +40,6 @@ public interface TestTransformer {
    
    public boolean isIgnoreEOIs();
 
-   public List<TestCase> getTestMethodNames(File module, ChangedEntity entity);
+   public List<TestCase> getTestMethodNames(File module, TestCase entity);
    
 }

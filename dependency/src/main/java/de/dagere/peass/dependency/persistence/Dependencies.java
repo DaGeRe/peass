@@ -30,7 +30,7 @@ public class Dependencies extends SelectedTests {
          version2.getChangedClazzes().put(new ChangedEntity("unknown", ""), version.getValue());
          versions.put(version.getKey(), version2);
          for (TestCase test : version.getValue().getTests()) {
-            initialversion.addDependency(new ChangedEntity(test.getClazz(), "", test.getMethod()), new ChangedEntity(test.getClazz(), ""));
+            initialversion.addDependency(new TestCase(test.getClazz(), test.getMethod(), ""), new ChangedEntity(test.getClazz(), ""));
          }
       }
    }

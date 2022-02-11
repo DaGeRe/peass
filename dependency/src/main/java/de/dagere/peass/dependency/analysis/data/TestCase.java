@@ -22,6 +22,8 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    private final String module;
    private final String clazz;
    private final String method;
+   
+   // Saves parameters without paranthesis
    private final String params;
 
    public TestCase(final Testcases data, final String params) {
@@ -220,6 +222,20 @@ public class TestCase implements Comparable<TestCase>, Serializable {
 
    public ChangedEntity toEntity() {
       return new ChangedEntity(clazz, module, method);
+   }
+   
+   public TestCase copy() {
+      TestCase test = new TestCase(clazz, method, module, params);
+      return test;
+   }
+   
+   @JsonIgnore
+   public TestCase onlyClazz() {
+      return new TestCase(clazz, null, module);
+   }
+   
+   public ChangedEntity onlyClazzEntity() {
+      return new ChangedEntity(clazz, module);
    }
 
 }

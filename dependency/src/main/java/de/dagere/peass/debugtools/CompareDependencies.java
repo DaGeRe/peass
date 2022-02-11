@@ -13,6 +13,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.utils.Constants;
@@ -31,10 +32,10 @@ public class CompareDependencies {
 
 		int addedCount = 0, missingCount = 0;
 		
-		final List<ChangedEntity> notFoundNewDependencies = new LinkedList<>();
+		final List<TestCase> notFoundNewDependencies = new LinkedList<>();
 		notFoundNewDependencies.addAll(newDependencies.getInitialversion().getInitialDependencies().keySet());
-		for (final Entry<ChangedEntity, InitialDependency> initialDepOld : oldDependencies.getInitialversion().getInitialDependencies().entrySet()) {
-			for (final Entry<ChangedEntity, InitialDependency> initialDepNew : newDependencies.getInitialversion().getInitialDependencies().entrySet()) {
+		for (final Entry<TestCase, InitialDependency> initialDepOld : oldDependencies.getInitialversion().getInitialDependencies().entrySet()) {
+			for (final Entry<TestCase, InitialDependency> initialDepNew : newDependencies.getInitialversion().getInitialDependencies().entrySet()) {
 				if (initialDepNew.getKey().equals(initialDepOld.getKey())) {
 					final List<String> missing = getDifference(initialDepOld.getValue(), initialDepNew.getValue());
 
@@ -57,7 +58,7 @@ public class CompareDependencies {
 
 		System.out.println("Missing testcases: " + notFoundNewDependencies.size());
 
-		for (final ChangedEntity change : notFoundNewDependencies) {
+		for (final TestCase change : notFoundNewDependencies) {
 			System.out.println("Missing: " + change.toString());
 		}
 

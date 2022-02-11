@@ -85,8 +85,8 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
 
       final int startTestCound = dependencies.getInitialversion().getInitialDependencies().size();
       final List<TestCase> currentContainedTests = new LinkedList<>();
-      for (final ChangedEntity dependency : dependencies.getInitialversion().getInitialDependencies().keySet()) {
-         currentContainedTests.add(new TestCase(dependency));
+      for (final TestCase dependency : dependencies.getInitialversion().getInitialDependencies().keySet()) {
+         currentContainedTests.add(dependency);
       }
 
       LOG.trace("StartTest: {}", startTestCound);
@@ -101,7 +101,7 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
       for (final Entry<String, Version> version : versions.entrySet()) {
          final Set<TestCase> currentIterationTests = new HashSet<>();
          for (final Map.Entry<ChangedEntity, TestSet> dependency : version.getValue().getChangedClazzes().entrySet()) {
-            for (final Entry<ChangedEntity, Set<String>> testcase : dependency.getValue().getTestcases().entrySet()) {
+            for (final Entry<TestCase, Set<String>> testcase : dependency.getValue().getTestcases().entrySet()) {
                final String testclass = testcase.getKey().getClazz();
                for (final String method : testcase.getValue()) {
                   final TestCase testcase2 = new TestCase(testclass, method);

@@ -12,7 +12,6 @@ import javax.xml.bind.JAXBException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.Dependencies;
@@ -91,9 +90,9 @@ public class DivideVersions implements Callable<Void> {
          throws IOException {
       int i = 0;
       for (Map.Entry<String, TestSet> entry : changedTests.getVersions().entrySet()) {
-         for (final Map.Entry<ChangedEntity, Set<String>> testcase : entry.getValue().getTestcases().entrySet()) {
+         for (final Map.Entry<TestCase, Set<String>> testcase : entry.getValue().getTestcases().entrySet()) {
             for (final String method : testcase.getValue()) {
-               final String testcaseName = testcase.getKey().getJavaClazzName() + "#" + method;
+               final String testcaseName = testcase.getKey().getClazz() + "#" + method;
                writer.createSingleMethodCommand(i, entry.getKey(), testcaseName);
 
             }
@@ -112,9 +111,9 @@ public class DivideVersions implements Callable<Void> {
             final Set<TestCase> tests = dependencies.getVersions().get(endversion).getTests().getTests();
             writer.createFullVersionCommand(versionIndex, endversion, tests);
          } else if (changedTests != null && changedTests.getVersions().containsKey(endversion)) {
-            for (final Map.Entry<ChangedEntity, Set<String>> testcase : changedTests.getVersions().get(endversion).getTestcases().entrySet()) {
+            for (final Map.Entry<TestCase, Set<String>> testcase : changedTests.getVersions().get(endversion).getTestcases().entrySet()) {
                for (final String method : testcase.getValue()) {
-                  final String testcaseName = testcase.getKey().getJavaClazzName() + "#" + method;
+                  final String testcaseName = testcase.getKey().getClazz() + "#" + method;
                   writer.createSingleMethodCommand(versionIndex, endversion, testcaseName);
 
                }

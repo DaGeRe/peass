@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.InitialDependency;
@@ -28,9 +27,8 @@ public abstract class PairProcessor extends VersionProcessor{
 
 	@Override
 	public void processInitialVersion(final InitialVersion versioninfo) {
-		for (final Map.Entry<ChangedEntity, InitialDependency> initDependency : versioninfo.getInitialDependencies().entrySet()) {
-			final ChangedEntity test = initDependency.getKey();
-         final TestCase testcase = new TestCase(test.getClazz(), test.getMethod(), test.getModule());
+		for (final Map.Entry<TestCase, InitialDependency> initDependency : versioninfo.getInitialDependencies().entrySet()) {
+         final TestCase testcase = initDependency.getKey();
 			lastTestcaseCalls.put(testcase, versioninfo.getVersion());
 		}
 	}
