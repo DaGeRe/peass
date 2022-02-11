@@ -1,6 +1,7 @@
 package de.dagere.peass.traceminimization;
 
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -58,5 +59,25 @@ public class TestTestcaseSerialization {
       Assert.assertEquals("methodA2", deserializedTest.getMethod());
       Assert.assertEquals("moduleA", deserializedTest.getModule());
       Assert.assertNull(deserializedTest.getParams());
+   }
+   
+   @Test
+   public void testCreation() {
+      TestCase test = new TestCase("ClazzA", "methodA(A,B,C)", "moduleA");
+      Assert.assertEquals("ClazzA", test.getClazz());
+      Assert.assertEquals("methodA", test.getMethod());
+      Assert.assertEquals("moduleA", test.getModule());
+      Assert.assertEquals("A,B,C", test.getParams());
+   }
+   
+   @Test
+   public void testError() {
+      Assertions.assertThrows(RuntimeException.class, () ->{
+         TestCase test = new TestCase("ClazzA", "methodA(A,B,C)", "moduleA", null);
+      });
+      
+      Assertions.assertThrows(RuntimeException.class, () ->{
+         TestCase test = new TestCase("ClazzA#methodA", null, "moduleA", null);
+      });
    }
 }

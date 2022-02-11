@@ -16,13 +16,13 @@ import de.dagere.kopeme.generated.Kopemedata.Testcases;
  *
  */
 public class TestCase implements Comparable<TestCase>, Serializable {
-      
+
    private static final long serialVersionUID = -522183920107191602L;
 
    private final String module;
    private final String clazz;
    private final String method;
-   
+
    // Saves parameters without paranthesis
    private final String params;
 
@@ -56,7 +56,10 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    }
 
    public TestCase(final String clazz, final String method, final String module) {
-      this(clazz, method, module, null);
+      this(clazz,
+            ((method.indexOf('(') != -1) ? method.substring(0, method.indexOf('(')) : method),
+            module,
+            ((method.indexOf('(') != -1) ? method.substring(method.indexOf('(') + 1, method.length() - 1) : null));
    }
 
    @JsonCreator
@@ -69,6 +72,9 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       }
       if (clazz.contains(ChangedEntity.METHOD_SEPARATOR)) {
          throw new RuntimeException("Class and method should be separated: " + clazz);
+      }
+      if (method.contains("(") || method.contains(")")) {
+         throw new RuntimeException("Method must not contain paranthesis: " + method);
       }
       this.clazz = clazz;
       this.method = method;
@@ -212,7 +218,7 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    public String getShortClazz() {
       return clazz.substring(clazz.lastIndexOf('.') + 1, clazz.length());
    }
-   
+
    @JsonIgnore
    public String getLinkUsable() {
       return toString().replace("#", "_");
@@ -226,17 +232,17 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    public ChangedEntity toEntity() {
       return new ChangedEntity(clazz, module, method);
    }
-   
+
    public TestCase copy() {
       TestCase test = new TestCase(clazz, method, module, params);
       return test;
    }
-   
+
    @JsonIgnore
    public TestCase onlyClazz() {
       return new TestCase(clazz, null, module);
    }
-   
+
    public ChangedEntity onlyClazzEntity() {
       return new ChangedEntity(clazz, module);
    }
