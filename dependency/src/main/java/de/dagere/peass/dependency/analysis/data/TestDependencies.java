@@ -149,7 +149,7 @@ public class TestDependencies {
          }
       }
       for (final Map.Entry<ChangedEntity, Set<TestCase>> element : changeTestMap.getChanges().entrySet()) {
-         LOG.debug("Element: {} Dependencies: {} {}", element.getKey(), element.getValue().size(), element.getValue());
+         LOG.debug("Change: {} Calling: {} {}", element.getKey(), element.getValue().size(), element.getValue());
       }
 
       return changeTestMap;
