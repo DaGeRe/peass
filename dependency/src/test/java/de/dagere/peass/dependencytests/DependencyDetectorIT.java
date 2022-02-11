@@ -202,7 +202,7 @@ public class DependencyDetectorIT {
       final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "removed_class");
 
       final Map<ChangedEntity, ClazzChangeData> changes = new TreeMap<>();
-      final ChangedEntity changedEntity = new ChangedEntity("src/test/java/defaultpackage/TestMe.java", "");
+      final ChangedEntity changedEntity = new ChangedEntity("defaultpackage.TestMe", "");
       changes.put(changedEntity, new ClazzChangeData(changedEntity, false));
 
       final ChangeManager changeManager = Mockito.mock(ChangeManager.class);
