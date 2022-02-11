@@ -6,12 +6,15 @@ import de.dagere.kopeme.generated.Result.Params.Param;
 public class ChangedEntityHelper {
 
    public static String paramsToString(final Params params) {
-      String result = "";
+      String result;
       if (params != null) {
+         result = "";
          for (Param param : params.getParam()) {
             result += param.getKey() + "-" + param.getValue() + " ";
          }
          result = result.substring(0, result.length() - 1);
+      } else {
+         result = null;
       }
       return result;
    }
