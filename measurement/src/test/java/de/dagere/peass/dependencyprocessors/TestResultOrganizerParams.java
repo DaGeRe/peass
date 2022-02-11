@@ -71,8 +71,11 @@ public class TestResultOrganizerParams {
       
       File expectedFulldataFile = new File(TEMP_FULL_DIR, "calleeMethod(parameter-2)_0_d77cb2ff2a446c65f0a63fd0359f9ba4dbfdb9d9.xml");
       Kopemedata fulldata = XMLDataLoader.loadData(expectedFulldataFile);
-      
       Assert.assertEquals(1, fulldata.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().size());
+      
+      File expectedFulldataFile1 = new File(TEMP_FULL_DIR, "calleeMethod(parameter-1)_2_d77cb2ff2a446c65f0a63fd0359f9ba4dbfdb9d9.xml");
+      Kopemedata fulldata1 = XMLDataLoader.loadData(expectedFulldataFile1);
+      Assert.assertEquals(1, fulldata1.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().size());
    }
 
    private PeassFolders mockFolders(final TestCase testcase) {

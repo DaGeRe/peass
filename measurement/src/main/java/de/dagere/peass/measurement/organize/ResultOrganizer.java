@@ -15,6 +15,7 @@ import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.datastorage.XMLDataStorer;
 import de.dagere.kopeme.generated.Kopemedata;
@@ -22,7 +23,6 @@ import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.dagere.peass.dependency.analysis.data.ChangedEntityHelper;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
@@ -155,7 +155,7 @@ public class ResultOrganizer {
       saveSummaryFile(version, timeDataCollector, oneResultFile);
 
       for (Result result : timeDataCollector.getResult()) {
-         String paramString = ChangedEntityHelper.paramsToString(result.getParams());
+         String paramString = ParamNameHelper.paramsToString(result.getParams());
          TestCase concreteTestcase = new TestCase(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
 
          final File destFile = folders.getResultFile(concreteTestcase, vmid, version, mainVersion);
@@ -190,7 +190,7 @@ public class ResultOrganizer {
 
    public void saveSummaryFile(final String version, final Datacollector timeDataCollector, final File oneResultFile) throws JAXBException {
       for (Result result : timeDataCollector.getResult()) {
-         String paramString = ChangedEntityHelper.paramsToString(result.getParams());
+         String paramString = ParamNameHelper.paramsToString(result.getParams());
          TestCase concreteTestcase = new TestCase(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
 
          final File summaryResultFile = folders.getSummaryFile(concreteTestcase);

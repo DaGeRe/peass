@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
@@ -19,7 +20,6 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.peass.analysis.all.RepoFolders;
 import de.dagere.peass.analysis.helper.read.VersionData;
 import de.dagere.peass.config.StatisticsConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntityHelper;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -251,7 +251,7 @@ public class ChangeReader {
 
    private TestCase getTestcase(final Kopemedata data, final String[] versions, final DescribedChunk describedChunk) {
       TestCase testcase;
-      String paramString = ChangedEntityHelper.paramsToString(describedChunk.getCurrent().get(0).getParams());
+      String paramString = ParamNameHelper.paramsToString(describedChunk.getCurrent().get(0).getParams());
       testcase = new TestCase(data.getTestcases(), paramString);
       if (tests != null) {
          TestSet testsOfThisVersion = tests.get(versions[1]);
