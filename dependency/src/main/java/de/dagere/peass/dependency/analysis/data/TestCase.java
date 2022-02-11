@@ -126,6 +126,15 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    public String getMethod() {
       return method;
    }
+   
+   @JsonIgnore
+   public String getMethodWithParams() {
+      if (params == null) {
+         return method;
+      }else {
+         return method + "(" + params + ")";
+      }
+   }
 
    public String getModule() {
       return module;

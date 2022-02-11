@@ -99,7 +99,7 @@ public class TestSet {
    @JsonIgnore
    public void addTest(final TestCase classname) {
       final TestCase entity = new TestCase(classname.getClazz(), null, classname.getModule());
-      addTest(entity, classname.getMethod());
+      addTest(entity, classname.getMethodWithParams());
    }
 
    /**
