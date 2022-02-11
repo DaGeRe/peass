@@ -52,11 +52,11 @@ public class TestSet {
       }
 
       @Override
-      public ChangedEntity deserializeKey(final String key, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
+      public TestCase deserializeKey(final String key, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
          String value = key;
-         final ChangedEntity entity;
+         final TestCase entity;
 
-         String method = "";
+         String method = null;
          if (value.contains(ChangedEntity.METHOD_SEPARATOR)) {
             method = value.substring(value.indexOf(ChangedEntity.METHOD_SEPARATOR) + 1);
             value = value.substring(0, value.indexOf(ChangedEntity.METHOD_SEPARATOR));
@@ -65,9 +65,9 @@ public class TestSet {
          if (value.contains(ChangedEntity.MODULE_SEPARATOR)) {
             final String clazz = value.substring(value.indexOf(ChangedEntity.MODULE_SEPARATOR) + 1);
             final String module = value.substring(0, value.indexOf(ChangedEntity.MODULE_SEPARATOR));
-            entity = new ChangedEntity(clazz, module, method);
+            entity = new TestCase(clazz, method, module);
          } else {
-            entity = new ChangedEntity(value, "", method);
+            entity = new TestCase(value, method, "");
          }
 
          return entity;

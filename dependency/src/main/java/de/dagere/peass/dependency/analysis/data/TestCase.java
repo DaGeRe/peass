@@ -186,9 +186,12 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    public String toString() {
       String result;
       if (module != null && !"".equals(module)) {
-         result = module + ChangedEntity.MODULE_SEPARATOR + clazz + ChangedEntity.METHOD_SEPARATOR + method;
+         result = module + ChangedEntity.MODULE_SEPARATOR + clazz;
       } else {
-         result = clazz + ChangedEntity.METHOD_SEPARATOR + method;
+         result = clazz;
+      }
+      if (method != null) {
+         result += ChangedEntity.METHOD_SEPARATOR + method;
       }
       if (params != null) {
          result += "(" + params + ")";

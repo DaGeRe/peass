@@ -2,6 +2,8 @@ package de.dagere.peass.reading;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -58,6 +60,8 @@ public class TestChangedTraceTestSerialisation {
       final ExecutionData deserialize = mapper.readValue(json, ExecutionData.class);
       
       Assert.assertNotNull(deserialize);
-      Assert.assertEquals(tests.getVersions().get("v1").getTestcases(), deserialize.getVersions().get("v1").getTestcases());
+      Map<TestCase, Set<String>> regularV1 = tests.getVersions().get("v1").getTestcases();
+      Map<TestCase, Set<String>> deserializedV1 = deserialize.getVersions().get("v1").getTestcases();
+      Assert.assertEquals(regularV1, deserializedV1);
    }
 }
