@@ -93,7 +93,7 @@ public class MissingExecutionFinder {
    }
 
    private void removeSlurmExecutions(final File folder) throws JAXBException {
-      ChangeReader reader = new ChangeReader(folder.getName());
+      ChangeReader reader = new ChangeReader(folder.getName(), tests);
       reader.readFile(folder);
       for (Entry<String, TestcaseData> entry : reader.getAllData().getData().entrySet()) {
          String version = entry.getKey();

@@ -34,7 +34,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.measurement.dataloading.VersionSorter;
 import de.dagere.peass.utils.Constants;
@@ -92,10 +92,10 @@ public class ReadProperties implements Callable<Void> {
    public Void call() throws Exception {
       final RepoFolders folders = new RepoFolders();
       final String projectName = projectFolder.getName();
-      VersionSorter.getVersionOrder(dependencyFile, executionFile, folders.getDependencyFile(projectName));
+      SelectedTests selectedTests = VersionSorter.getSelectedTests(dependencyFile, executionFile, folders.getDependencyFile(projectName));
 
       if (!projectFolder.exists()) {
-         GitUtils.downloadProject(VersionComparator.getDependencies().getUrl(), projectFolder);
+         GitUtils.downloadProject(selectedTests.getUrl(), projectFolder);
       }
       
       System.out.println("Read all: " + ReadAllProperties.readAll);

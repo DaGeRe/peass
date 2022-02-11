@@ -80,24 +80,6 @@ public class VersionComparator implements Comparator<String> {
       return versions != null;
    }
 
-   public static String getUrl() {
-      return dependencies.getUrl();
-   }
-
-   public static String getProjectName() {
-      final String url = dependencies.getUrl();
-      if (url.length() > 0) {
-         final String projectName = url.substring(url.lastIndexOf('/') + 1, url.length() - 4);
-         return projectName;
-      } else {
-         return "noremote";
-      }
-   }
-
-   public static Dependencies getDependencies() {
-      return dependencies;
-   }
-
    public Map<String, String> sort(final Map<String, String> commits) {
       final List<Map.Entry<String, String>> entries = new ArrayList<>(commits.entrySet());
       Collections.sort(entries, new Comparator<Map.Entry<String, String>>() {

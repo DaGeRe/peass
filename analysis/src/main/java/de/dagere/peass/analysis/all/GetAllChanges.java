@@ -14,7 +14,6 @@ import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.analysis.properties.VersionChangeProperties;
 import de.dagere.peass.dependency.persistence.Dependencies;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.utils.Constants;
 
 public class GetAllChanges {
@@ -27,8 +26,7 @@ public class GetAllChanges {
          final File dependencyFile = new File(folders.getDependencyFolder(), "deps_" + project + ".json");
          if (dependencyFile.exists()) {
             final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-            VersionComparator.setDependencies(dependencies);
-            getChangesForProject(folders, project);
+            getChangesForProject(folders, project, dependencies);
             // ProjectChanges.reset();
          } else {
             System.out.println("Dependencyfile does not exist: " + dependencyFile);
@@ -36,18 +34,18 @@ public class GetAllChanges {
       }
    }
 
-   public static void getChangesForProject(final RepoFolders folders, final String project) throws JAXBException, FileNotFoundException {
+   public static void getChangesForProject(final RepoFolders folders, final String project, final Dependencies dependencies) throws JAXBException, FileNotFoundException {
       final File projectFolder = new File(folders.getCleanDataFolder(), project);
       if (projectFolder.exists()) {
          File cleanFolder = new File(projectFolder, "clean");
          if (!cleanFolder.exists()) {
             cleanFolder = projectFolder;
          }
-         getChangesForMeasurementfolder(folders, project, cleanFolder);
+         getChangesForMeasurementfolder(folders, project, cleanFolder, dependencies);
          File reexecuteFolder = new File(folders.getReexecuteFolder(), project);
          if (reexecuteFolder.exists()) {
             for (File iterationFolder : reexecuteFolder.listFiles()) {
-               getChangesForMeasurementfolder(folders, project, iterationFolder);
+               getChangesForMeasurementfolder(folders, project, iterationFolder, dependencies);
             }
          }
       } else {
@@ -55,8 +53,8 @@ public class GetAllChanges {
       }
    }
 
-   public static void getChangesForMeasurementfolder(final RepoFolders folders, final String project, final File cleanFolder) throws JAXBException, FileNotFoundException {
-      final ChangeReader reader = new ChangeReader(folders, project);
+   public static void getChangesForMeasurementfolder(final RepoFolders folders, final String project, final File cleanFolder, final Dependencies dependencies) throws JAXBException, FileNotFoundException {
+      final ChangeReader reader = new ChangeReader(folders, project, dependencies);
       reader.setType1error(0.02);
       reader.setType2error(0.02);
       final ProjectChanges changes = reader.readFile(cleanFolder);

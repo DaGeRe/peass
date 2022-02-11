@@ -22,6 +22,8 @@ import de.dagere.peass.analysis.helper.read.VersionData;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
+import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.analysis.ProjectStatistics;
 import de.dagere.peass.measurement.dataloading.KoPeMeDataHelper;
@@ -59,26 +61,29 @@ public class ChangeReader {
 
    private final RunCommandWriterRCA runCommandWriter;
    private final RunCommandWriterSlurmRCA runCommandWriterSlurm;
-
+   private final SelectedTests dependencies;
+   
    private Map<String, TestSet> tests;
 
-   public ChangeReader(final RepoFolders resultsFolder, final String projectName) throws FileNotFoundException {
+   public ChangeReader(final RepoFolders resultsFolder, final String projectName, final Dependencies dependencies) throws FileNotFoundException {
+      this.dependencies = dependencies;
       statisticsFolder = resultsFolder.getProjectStatisticsFolder(projectName);
-      if (VersionComparator.getDependencies().getUrl() != null && !VersionComparator.getDependencies().getUrl().isEmpty()) {
+      if (dependencies.getUrl() != null && !dependencies.getUrl().isEmpty()) {
          final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-rca-" + projectName + ".sh"));
-         runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", VersionComparator.getDependencies());
+         runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", dependencies);
          final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticsFolder, "run-rca-slurm-" + projectName + ".sh"));
-         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", VersionComparator.getDependencies());
+         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", dependencies);
       } else {
          runCommandWriter = null;
          runCommandWriterSlurm = null;
       }
    }
 
-   public ChangeReader(final File statisticsFolder, final RunCommandWriterRCA runCommandWriter, final RunCommandWriterSlurmRCA runCommandWriterSlurm) throws FileNotFoundException {
+   public ChangeReader(final File statisticsFolder, final RunCommandWriterRCA runCommandWriter, final RunCommandWriterSlurmRCA runCommandWriterSlurm, final SelectedTests selectedTests) throws FileNotFoundException {
       this.statisticsFolder = statisticsFolder;
       this.runCommandWriter = runCommandWriter;
       this.runCommandWriterSlurm = runCommandWriterSlurm;
+      this.dependencies = selectedTests;
 
    }
 
@@ -86,23 +91,11 @@ public class ChangeReader {
       this.tests = tests;
    }
 
-   public ChangeReader(final File statisticsFolder, final String projectName) throws FileNotFoundException {
-      this.statisticsFolder = statisticsFolder;
-      if (VersionComparator.getDependencies().getUrl() != null && !VersionComparator.getDependencies().getUrl().isEmpty()) {
-         final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-rca-" + projectName + ".sh"));
-         runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", VersionComparator.getDependencies());
-         final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticsFolder, "run-rca-slurm-" + projectName + ".sh"));
-         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", VersionComparator.getDependencies());
-      } else {
-         runCommandWriter = null;
-         runCommandWriterSlurm = null;
-      }
-   }
-
-   public ChangeReader(final String projectName) {
+   public ChangeReader(final String projectName, final SelectedTests dependencies) {
       this.statisticsFolder = null;
       runCommandWriter = null;
       runCommandWriterSlurm = null;
+      this.dependencies = dependencies;
    }
 
    public double getType1error() {
