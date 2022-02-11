@@ -145,13 +145,8 @@ public class ResultOrganizer {
       }
    }
 
-   private void saveResults(final String version, final int vmid, final File oneResultFile,
-         final Kopemedata oneResultData, final List<TestcaseType> testcaseList)
+   private void saveResults(final String version, final int vmid, final File oneResultFile, final Kopemedata oneResultData, final List<TestcaseType> testcaseList)
          throws JAXBException, IOException {
-      // Update testname, in case it has been set to
-      // testRepetition
-      testcaseList.get(0).setName(testcase.getMethod());
-
       saveSummaryFile(version, testcaseList, oneResultFile);
 
       final File destFile = folders.getResultFile(testcase, vmid, version, mainVersion);
@@ -200,7 +195,7 @@ public class ResultOrganizer {
    public KiekerFileCompressor getCompressor() {
       return compressor;
    }
-   
+
    public File getResultFile(final TestCase testcase, final int vmid, final String version) {
       return folders.getResultFile(testcase, vmid, version, mainVersion);
    }
