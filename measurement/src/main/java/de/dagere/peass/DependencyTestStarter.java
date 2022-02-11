@@ -209,7 +209,7 @@ public class DependencyTestStarter extends PairProcessor {
          if (calls != null) {
             for (final Map.Entry<TestCase, Set<String>> clazzCalls : calls.entrySet()) {
                final String changedClazz = clazzCalls.getKey().getClazz();
-               if (changedClazz.equals(testcase.getClazz()) && clazzCalls.getValue().contains(testcase.getMethod())) {
+               if (changedClazz.equals(testcase.getClazz()) && clazzCalls.getValue().contains(testcase.getMethodWithParams())) {
                   hasChanges = true;
                }
             }
