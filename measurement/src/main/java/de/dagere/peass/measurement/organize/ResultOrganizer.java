@@ -106,7 +106,7 @@ public class ResultOrganizer {
       synchronized (ResultOrganizer.class) {
          final File folder = getTempResultsFolder(version);
          if (folder != null) {
-            final String methodname = testcase.getMethod();
+            final String methodname = testcase.getMethodWithParams();
             final File oneResultFile = new File(folder, methodname + ".xml");
             if (!oneResultFile.exists()) {
                LOG.debug("File {} does not exist.", oneResultFile.getAbsolutePath());
