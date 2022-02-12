@@ -40,7 +40,7 @@ public abstract class KoPeMeExecutor extends TestExecutor {
       return testGoal;
    }
 
-   protected abstract void runTest(File moduleFolder, final File logFile, final String testname, final long timeout);
+   protected abstract void runTest(File moduleFolder, final File logFile, TestCase test, final String testname, final long timeout);
 
    protected void runMethod(final File logFolder, final TestCase test, final File moduleFolder, final long timeout) {
       try (final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, moduleFolder, test.toEntity(), test.getMethod())) {
@@ -49,7 +49,7 @@ public abstract class KoPeMeExecutor extends TestExecutor {
          clean(cleanFile);
 
          final File methodLogFile = getMethodLogFile(logFolder, test);
-         runTest(moduleFolder, methodLogFile, test.getClazz(), timeout);
+         runTest(moduleFolder, methodLogFile, test, test.getClazz(), timeout);
       } catch (Exception e1) {
          e1.printStackTrace();
       }
