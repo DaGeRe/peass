@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.junit.rule.KoPeMeRule;
 import de.dagere.kopeme.junit.rule.KoPeMeStandardRuleStatement;
 import de.dagere.peass.execution.utils.CommandConcatenator;
@@ -114,8 +115,8 @@ public class ProcessBuilderHelper {
 
    public void parseParams(String params) {
       if (params != null) {
-         if (params.matches(KoPeMeRule.JUNIT_PARAMETERIZED + "=[0-9]+")) {
-            String indexString = params.substring(params.indexOf("="));
+         if (params.matches(KoPeMeRule.JUNIT_PARAMETERIZED + ParamNameHelper.PARAM_VALUE_SEPARATOR + "[0-9]+")) {
+            String indexString = params.substring(params.indexOf(ParamNameHelper.PARAM_VALUE_SEPARATOR) + 1);
             chosenIndex = Integer.parseInt(indexString);
          }
       }
