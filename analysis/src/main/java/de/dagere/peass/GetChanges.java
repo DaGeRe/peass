@@ -74,7 +74,7 @@ public class GetChanges implements Callable<Void> {
          
       }
       if (executionFile != null) {
-         ExecutionData executions = Constants.OBJECTMAPPER.readValue(dependencyFile, ExecutionData.class);
+         ExecutionData executions = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
          reader.setTests(executions.getVersions());
       }
 

@@ -15,6 +15,7 @@ import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.peass.analysis.all.RepoFolders;
@@ -244,7 +245,8 @@ public class ChangeReader {
 
    private TestCase getTestcase(final Kopemedata data, final String[] versions, final DescribedChunk describedChunk) {
       TestCase testcase;
-      String paramString = ParamNameHelper.paramsToString(describedChunk.getCurrent().get(0).getParams());
+      Params params = describedChunk.getCurrent().get(0).getParams();
+      String paramString = ParamNameHelper.paramsToString(params);
       testcase = new TestCase(data.getTestcases(), paramString);
       if (tests != null) {
          TestSet testsOfThisVersion = tests.get(versions[1]);

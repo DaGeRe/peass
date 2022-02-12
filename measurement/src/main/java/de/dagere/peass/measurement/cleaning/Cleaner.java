@@ -68,7 +68,7 @@ public class Cleaner extends DataAnalyser  {
 
    public void cleanTestVersionPair(final Entry<String, EvaluationPair> entry) {
       final String clazz = entry.getValue().getTestcase().getClazz();
-      final String method = entry.getValue().getTestcase().getMethod();
+      final String method = entry.getValue().getTestcase().getMethodWithParams();
       if (entry.getValue().getPrevius().size() >= 2 && entry.getValue().getCurrent().size() >= 2) {
          final Chunk currentChunk = new Chunk();
          final long minExecutionCount = MultipleVMTestUtil.getMinIterationCount(entry.getValue().getPrevius());

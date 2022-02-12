@@ -203,6 +203,7 @@ public class StatisticUtil {
       resultShort.setIterations(end - start);
       resultShort.setWarmup(start);
       resultShort.setRepetitions(result.getRepetitions());
+      resultShort.setParams(result.getParams());
       return resultShort;
    }
 
