@@ -35,7 +35,7 @@ public class ProjectChanges implements Serializable {
    private int changeCount;
    private int testcaseCount;
    private StatisticsConfig statisticsConfig;
-   private Map<String, Changes> versionChanges = VersionComparator.hasDependencies() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
+   private Map<String, Changes> versionChanges = VersionComparator.hasVersions() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
 
    public ProjectChanges() {
    }

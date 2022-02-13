@@ -41,17 +41,11 @@ public class VersionComparator implements Comparator<String> {
    }
 
    private static List<String> versions;
-   private static Dependencies dependencies = null;
 
    public static void setDependencies(final Dependencies dependencies2) {
-      dependencies = dependencies2;
       versions = new LinkedList<>();
-      versions.add(dependencies.getInitialversion().getVersion());
-      dependencies.getVersions().keySet().stream().forEach(version -> versions.add(version));
-   }
-
-   public static boolean hasDependencies() {
-      return dependencies != null;
+      versions.add(dependencies2.getInitialversion().getVersion());
+      dependencies2.getVersions().keySet().stream().forEach(version -> versions.add(version));
    }
 
    public static void setVersions(final List<GitCommit> commits) {

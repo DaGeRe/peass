@@ -12,7 +12,7 @@ import de.dagere.peass.dependencyprocessors.VersionComparator;
 
 public class VersionChangeProperties {
 
-   private Map<String, ChangeProperties> versions = VersionComparator.hasDependencies() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
+   private Map<String, ChangeProperties> versions = VersionComparator.hasVersions() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
 
    public Map<String, ChangeProperties> getVersions() {
       return versions;

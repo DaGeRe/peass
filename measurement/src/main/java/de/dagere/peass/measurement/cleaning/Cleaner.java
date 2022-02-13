@@ -37,7 +37,7 @@ public class Cleaner extends DataAnalyser  {
 
    private static final Logger LOG = LogManager.getLogger(Cleaner.class);
 
-   private final File measurementsFull;
+   private final File cleanFolder;
    private int correct = 0;
    protected int read = 0;
 
@@ -49,12 +49,12 @@ public class Cleaner extends DataAnalyser  {
       return read;
    }
 
-   public Cleaner(final File measurementsFull) {
-      this.measurementsFull = measurementsFull;
-      if (measurementsFull.exists()) {
-         throw new RuntimeException("Clean already finished - delete " + measurementsFull.getAbsolutePath() + ", if you want to clean!");
+   public Cleaner(final File cleanFolder) {
+      this.cleanFolder = cleanFolder;
+      if (cleanFolder.exists()) {
+         throw new RuntimeException("Clean already finished - delete " + cleanFolder.getAbsolutePath() + ", if you want to clean!");
       } else {
-         measurementsFull.mkdirs();
+         cleanFolder.mkdirs();
       }
    }
 
@@ -85,7 +85,7 @@ public class Cleaner extends DataAnalyser  {
 
    private void handleChunk(final Entry<String, EvaluationPair> entry, final String clazz, final String method, final Chunk currentChunk) {
       try {
-         final MeasurementFileFinder finder = new MeasurementFileFinder(measurementsFull, clazz, method);
+         final MeasurementFileFinder finder = new MeasurementFileFinder(cleanFolder, clazz, method);
          final File measurementFile = finder.getMeasurementFile();
          final Kopemedata oneResultData = finder.getOneResultData();
          Datacollector datacollector = finder.getDataCollector();
