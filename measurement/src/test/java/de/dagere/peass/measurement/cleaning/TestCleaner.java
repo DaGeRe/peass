@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
+import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.vcs.GitCommit;
 
@@ -40,7 +41,9 @@ public class TestCleaner {
       MatcherAssert.assertThat(expectedCleanedFolder_1, FileMatchers.anExistingFile());
       
       Kopemedata data = XMLDataLoader.loadData(expectedCleanedFolder_1);
-      Assert.assertEquals(data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getChunk().get(0).getResult().size(), 10);
+      TestcaseType testcase1 = data.getTestcases().getTestcase().get(0);
+      Assert.assertEquals("test", testcase1.getName());
+      Assert.assertEquals(testcase1.getDatacollector().get(0).getChunk().get(0).getResult().size(), 10);
       
       File expectedCleanedFolder_2 = new File(goalFolder, "ExampleTest_test(JUNIT_PARAMETERIZED-1).xml");
       MatcherAssert.assertThat(expectedCleanedFolder_2, FileMatchers.anExistingFile());

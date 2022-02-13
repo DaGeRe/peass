@@ -69,8 +69,6 @@ public class Cleaner extends DataAnalyser  {
 
    public void cleanTestVersionPair(final Entry<String, EvaluationPair> entry) {
       TestCase testcase = entry.getValue().getTestcase();
-      final String clazz = testcase.getClazz();
-      final String method = testcase.getMethodWithParams();
       if (entry.getValue().getPrevius().size() >= 2 && entry.getValue().getCurrent().size() >= 2) {
          final Chunk currentChunk = new Chunk();
          final long minExecutionCount = MultipleVMTestUtil.getMinIterationCount(entry.getValue().getPrevius());
@@ -81,13 +79,13 @@ public class Cleaner extends DataAnalyser  {
          final List<Result> current = getChunk(entry.getValue().getVersion(), minExecutionCount, entry.getValue().getCurrent());
          currentChunk.getResult().addAll(current);
 
-         handleChunk(entry, clazz, method, currentChunk);
+         handleChunk(entry, testcase, currentChunk);
       }
    }
 
-   private void handleChunk(final Entry<String, EvaluationPair> entry, final String clazz, final String method, final Chunk currentChunk) {
+   private void handleChunk(final Entry<String, EvaluationPair> entry, TestCase testcase, final Chunk currentChunk) {
       try {
-         final MeasurementFileFinder finder = new MeasurementFileFinder(cleanFolder, clazz, method);
+         final MeasurementFileFinder finder = new MeasurementFileFinder(cleanFolder, testcase);
          final File measurementFile = finder.getMeasurementFile();
          final Kopemedata oneResultData = finder.getOneResultData();
          Datacollector datacollector = finder.getDataCollector();

@@ -9,6 +9,7 @@ import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class MeasurementFileFinder {
 
@@ -16,11 +17,13 @@ public class MeasurementFileFinder {
    private final Kopemedata oneResultData;
    private final Datacollector datacollector;
 
-   public MeasurementFileFinder(final File folder, final String clazz, final String method) throws JAXBException {
+   public MeasurementFileFinder(final File folder, TestCase testcase) throws JAXBException {
+      String clazz = testcase.getClazz();
+      String methodWithParams = testcase.getMethodWithParams();
       final String shortClazz = clazz.substring(clazz.lastIndexOf('.') + 1);
-      final File candidateFull = new File(folder, clazz + "_" + method + ".xml");
+      final File candidateFull = new File(folder, clazz + "_" + methodWithParams + ".xml");
       if (!candidateFull.exists()) {
-         final File candidateShort = new File(folder, shortClazz + "_" + method + ".xml");
+         final File candidateShort = new File(folder, shortClazz + "_" + methodWithParams + ".xml");
          final Kopemedata oneResultData2 = loadData(candidateShort);
          if (candidateShort.exists()) {
             final String otherFullClazz = oneResultData2.getTestcases().getClazz();
@@ -42,7 +45,7 @@ public class MeasurementFileFinder {
       oneResultData.getTestcases().setClazz(clazz);
       
       final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
-      datacollector = getDataCollector(method, testcaseList);
+      datacollector = getDataCollector(testcase.getMethod(), testcaseList);
    }
 
    public Kopemedata loadData(final File file) throws JAXBException {
