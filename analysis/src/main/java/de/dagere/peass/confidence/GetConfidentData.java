@@ -9,12 +9,12 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.clean.CleaningData;
-import de.dagere.peass.clean.TestCleaner;
+import de.dagere.peass.clean.MeasurementDataCleaner;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
-public class GetConfidentData extends TestCleaner {
+public class GetConfidentData extends MeasurementDataCleaner {
 
    @Option(names = { "-type1error", "--type1error" }, description = "Type 1 error of agnostic-t-test, i.e. probability of considering measurements equal when they are unequal")
    public double type1error = 0.01;
@@ -42,7 +42,7 @@ public class GetConfidentData extends TestCleaner {
 
          File projectOutFolder = new File(cleaner.getOut(), projectNameFolder.getName());
          projectOutFolder.mkdirs();
-         TestCleaner.getCommitOrder(dataFolder, projectNameFolder.getName());
+         MeasurementDataCleaner.getCommitOrder(dataFolder, projectNameFolder.getName());
 
          if (VersionComparator.hasVersions()) {
             for (File job : dataFolder.listFiles()) {
