@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.traces.TemporaryProjectFolderUtil;
@@ -19,6 +21,9 @@ import de.dagere.peass.vcs.VersionControlSystem;
  *
  */
 public class PeassFolders {
+   
+   private static final Logger LOG = LogManager.getLogger(PeassFolders.class);
+   
    public static final String MEASUREMENTS = "measurements";
 
    public static final String PEASS_POSTFIX = "_peass";
@@ -218,7 +223,7 @@ public class PeassFolders {
 
    public File getFullResultFolder(final TestCase testcase, final String mainVersion, final String version) {
       final File destFolder = new File(getDetailResultFolder(), testcase.getClazz());
-      System.out.println("Creating: " + destFolder + " " + mainVersion + " " + testcase.getClazz());
+      LOG.debug("Creating: " + destFolder + " " + mainVersion + " " + testcase.getClazz());
       final File currentVersionFolder = new File(destFolder, mainVersion);
       if (!currentVersionFolder.exists()) {
          currentVersionFolder.mkdir();

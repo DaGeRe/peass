@@ -65,7 +65,7 @@ public class ResultOrganizer {
    public boolean testSuccess(final String version) {
       final File folder = getTempResultsFolder(version);
       if (folder != null) {
-         final String methodname = testcase.getMethod();
+         final String methodname = testcase.getMethodWithParams();
          final File oneResultFile = new File(folder, methodname + ".xml");
          try {
             if (!oneResultFile.exists()) {
