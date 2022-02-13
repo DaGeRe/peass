@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.Result.Params;
+import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 
 /**
  * Represents a testcase with its class and its method. If no method is given, the whole class with all methods is represented.
@@ -31,7 +32,13 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    public TestCase(final Testcases data) {
       clazz = data.getClazz();
       method = data.getTestcase().get(0).getName();
-      Params paramObject = data.getTestcase().get(0).getDatacollector().get(0).getResult().get(0).getParams();
+      Datacollector datacollector = data.getTestcase().get(0).getDatacollector().get(0);
+      Params paramObject = null;
+      if (datacollector.getResult().size() > 0) {
+         paramObject = datacollector.getResult().get(0).getParams();
+      } else if (datacollector.getChunk().size() > 0) {
+         paramObject = datacollector.getChunk().get(0).getResult().get(0).getParams();
+      }
       String paramString = ParamNameHelper.paramsToString(paramObject);
       this.params = paramString;
       module = "";
@@ -130,12 +137,12 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    public String getMethod() {
       return method;
    }
-   
+
    @JsonIgnore
    public String getMethodWithParams() {
       if (params == null) {
          return method;
-      }else {
+      } else {
          return method + "(" + params + ")";
       }
    }
@@ -147,7 +154,7 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    public String getParams() {
       return params;
    }
-   
+
    @JsonIgnore
    public String getTestclazzWithModuleName() {
       String testcase;
