@@ -14,7 +14,6 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.statistics.data.TestData;
 
@@ -96,14 +95,12 @@ public final class DataReader {
       try {
          final Kopemedata resultData = new XMLDataLoader(measurementFile).getFullData();
          final String testclazz = resultData.getTestcases().getClazz();
-         TestcaseType testcaseType = resultData.getTestcases().getTestcase().get(0);
-         final String testmethod = testcaseType.getName();
-         TestData testData = currentMeasurement.get(testmethod);
+         TestCase testcase = new TestCase(resultData.getTestcases());
+         TestData testData = currentMeasurement.get(testcase.getMethodWithParams());
          if (testData == null) {
             final File originFile = measurementFile.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
-            TestCase testcase = new TestCase(resultData.getTestcases());
             testData = new TestData(testcase, originFile);
-            currentMeasurement.put(testmethod, testData);
+            currentMeasurement.put(testcase.getMethodWithParams(), testData);
          }
          
          String predecessor = null;
@@ -117,7 +114,7 @@ public final class DataReader {
          if (predecessor != null) {
             testData.addMeasurement(versionOfPair.getName(), versionCurrent.getName(), predecessor, resultData);
          }else {
-            LOG.error("No predecessor data for {} {} {} {}", versionCurrent.getName(), predecessor, testclazz, testmethod);
+            LOG.error("No predecessor data for {} {} {} {}", versionCurrent.getName(), predecessor, testclazz, testcase.getMethodWithParams());
          }
         
       } catch (final JAXBException e) {

@@ -42,7 +42,7 @@ public class TestCleaner {
       Kopemedata data = XMLDataLoader.loadData(expectedCleanedFolder_1);
       Assert.assertEquals(data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getChunk().get(0).getResult().size(), 10);
       
-//      File expectedCleanedFolder_2 = new File(goalFolder, "ExampleTest_test(JUNIT_PARAMETERIZED-1).xml");
-//      MatcherAssert.assertThat(expectedCleanedFolder_2, FileMatchers.anExistingFile());
+      File expectedCleanedFolder_2 = new File(goalFolder, "ExampleTest_test(JUNIT_PARAMETERIZED-1).xml");
+      MatcherAssert.assertThat(expectedCleanedFolder_2, FileMatchers.anExistingFile());
    }
 }

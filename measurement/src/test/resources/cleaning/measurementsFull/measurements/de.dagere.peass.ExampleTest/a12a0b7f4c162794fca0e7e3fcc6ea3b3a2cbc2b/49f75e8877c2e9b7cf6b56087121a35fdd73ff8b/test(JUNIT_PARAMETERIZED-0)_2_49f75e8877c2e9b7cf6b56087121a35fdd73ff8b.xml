@@ -3,14 +3,14 @@
  <testcases class="de.dagere.peass.ExampleTest">
   <testcase name="test">
    <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
-    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1644704149013">
-     <value>5385517.5</value>
-     <deviation>0.033870107846868266</deviation>
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1644748835656">
+     <value>5372541.6</value>
+     <deviation>0.028764138560392585</deviation>
      <warmup>0</warmup>
      <iterations>10</iterations>
      <repetitions>5</repetitions>
-     <min>5275053.0</min>
-     <max>5772020.0</max>
+     <min>5294758.0</min>
+     <max>5716533.0</max>
      <showStart>false</showStart>
      <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
      <redirectToTemp>false</redirectToTemp>
@@ -20,16 +20,16 @@
       <param key="JUNIT_PARAMETERIZED">0</param>
      </params>
      <fulldata>
-      <value start="1644704148827">5685081</value>
-      <value start="1644704148833">5294973</value>
-      <value start="1644704148839">5297013</value>
-      <value start="1644704148844">5772020</value>
-      <value start="1644704148850">5301073</value>
-      <value start="1644704148855">5275053</value>
-      <value start="1644704148860">5317413</value>
-      <value start="1644704148866">5313973</value>
-      <value start="1644704148871">5286263</value>
-      <value start="1644704148876">5312313</value>
+      <value start="1644748835493">5606445</value>
+      <value start="1644748835499">5298277</value>
+      <value start="1644748835504">5303717</value>
+      <value start="1644748835509">5716533</value>
+      <value start="1644748835515">5297677</value>
+      <value start="1644748835520">5301327</value>
+      <value start="1644748835526">5301848</value>
+      <value start="1644748835531">5308816</value>
+      <value start="1644748835536">5296018</value>
+      <value start="1644748835542">5294758</value>
      </fulldata>
     </result>
    </datacollector>
