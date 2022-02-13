@@ -7,7 +7,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
+import de.dagere.kopeme.generated.Result.Params;
 
 /**
  * Represents a testcase with its class and its method. If no method is given, the whole class with all methods is represented.
@@ -26,10 +28,12 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    // Saves parameters without paranthesis
    private final String params;
 
-   public TestCase(final Testcases data, final String params) {
+   public TestCase(final Testcases data) {
       clazz = data.getClazz();
       method = data.getTestcase().get(0).getName();
-      this.params = params;
+      Params paramObject = data.getTestcase().get(0).getDatacollector().get(0).getResult().get(0).getParams();
+      String paramString = ParamNameHelper.paramsToString(paramObject);
+      this.params = paramString;
       module = "";
    }
 

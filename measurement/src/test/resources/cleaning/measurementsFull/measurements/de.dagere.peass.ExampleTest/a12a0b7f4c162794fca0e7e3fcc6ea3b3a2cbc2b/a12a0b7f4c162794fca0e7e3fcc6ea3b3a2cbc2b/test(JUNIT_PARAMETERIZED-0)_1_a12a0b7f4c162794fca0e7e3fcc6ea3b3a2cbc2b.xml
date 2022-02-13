@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="de.dagere.peass.ExampleTest">
+  <testcase name="test">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1644704142339">
+     <value>5387926.699999999</value>
+     <deviation>0.03443003355121171</deviation>
+     <warmup>0</warmup>
+     <iterations>10</iterations>
+     <repetitions>5</repetitions>
+     <min>5255333.0</min>
+     <max>5783130.0</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>true</redirectToNull>
+     <javaVersion>11.0.13</javaVersion>
+     <params>
+      <param key="JUNIT_PARAMETERIZED">0</param>
+     </params>
+     <fulldata>
+      <value start="1644704142168">5687671</value>
+      <value start="1644704142174">5310123</value>
+      <value start="1644704142180">5333954</value>
+      <value start="1644704142185">5783130</value>
+      <value start="1644704142191">5308104</value>
+      <value start="1644704142196">5255333</value>
+      <value start="1644704142201">5299833</value>
+      <value start="1644704142207">5300193</value>
+      <value start="1644704142212">5302033</value>
+      <value start="1644704142217">5298893</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

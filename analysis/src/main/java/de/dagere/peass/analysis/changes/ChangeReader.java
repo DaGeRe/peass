@@ -11,11 +11,9 @@ import javax.xml.bind.JAXBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Params;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.peass.analysis.all.RepoFolders;
@@ -244,14 +242,11 @@ public class ChangeReader {
    }
 
    private TestCase getTestcase(final Kopemedata data, final String[] versions, final DescribedChunk describedChunk) {
-      TestCase testcase;
-      Params params = describedChunk.getCurrent().get(0).getParams();
-      String paramString = ParamNameHelper.paramsToString(params);
-      testcase = new TestCase(data.getTestcases(), paramString);
+      TestCase testcase = new TestCase(data.getTestcases());
       if (tests != null) {
          TestSet testsOfThisVersion = tests.get(versions[1]);
          for (TestCase test : testsOfThisVersion.getTests()) {
-            if (paramsEqual(paramString, test)) {
+            if (paramsEqual(testcase.getParams(), test)) {
                if (test.getClazz().equals(testcase.getClazz()) && test.getMethod().equals(testcase.getMethod())) {
                   testcase = test;
                }

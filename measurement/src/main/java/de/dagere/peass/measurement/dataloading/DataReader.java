@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datastorage.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
+import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.statistics.data.TestData;
 
@@ -95,11 +96,13 @@ public final class DataReader {
       try {
          final Kopemedata resultData = new XMLDataLoader(measurementFile).getFullData();
          final String testclazz = resultData.getTestcases().getClazz();
-         final String testmethod = resultData.getTestcases().getTestcase().get(0).getName();
+         TestcaseType testcaseType = resultData.getTestcases().getTestcase().get(0);
+         final String testmethod = testcaseType.getName();
          TestData testData = currentMeasurement.get(testmethod);
          if (testData == null) {
             final File originFile = measurementFile.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
-            testData = new TestData(new TestCase(testclazz, testmethod), originFile);
+            TestCase testcase = new TestCase(resultData.getTestcases());
+            testData = new TestData(testcase, originFile);
             currentMeasurement.put(testmethod, testData);
          }
          

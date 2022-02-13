@@ -17,6 +17,7 @@ import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.kopeme.generated.Versioninfo;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
 import de.dagere.peass.measurement.dataloading.MeasurementFileFinder;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
@@ -67,8 +68,9 @@ public class Cleaner extends DataAnalyser  {
    }
 
    public void cleanTestVersionPair(final Entry<String, EvaluationPair> entry) {
-      final String clazz = entry.getValue().getTestcase().getClazz();
-      final String method = entry.getValue().getTestcase().getMethodWithParams();
+      TestCase testcase = entry.getValue().getTestcase();
+      final String clazz = testcase.getClazz();
+      final String method = testcase.getMethodWithParams();
       if (entry.getValue().getPrevius().size() >= 2 && entry.getValue().getCurrent().size() >= 2) {
          final Chunk currentChunk = new Chunk();
          final long minExecutionCount = MultipleVMTestUtil.getMinIterationCount(entry.getValue().getPrevius());

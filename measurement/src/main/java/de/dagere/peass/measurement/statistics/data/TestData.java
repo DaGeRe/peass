@@ -44,7 +44,7 @@ public class TestData {
          LOG.debug("Version: {} Predecessor: {}", versionOfPair, predecessor);
          // TODO Workaround if data are incomplete, e.g. because of build error
          if (versionOfPair != null){
-            currentPair = new EvaluationPair(versionOfPair, predecessor, new TestCase(resultData.getTestcases(), null));
+            currentPair = new EvaluationPair(versionOfPair, predecessor, new TestCase(resultData.getTestcases()));
             data.put(versionOfPair, currentPair);
          }
       } 
