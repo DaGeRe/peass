@@ -33,7 +33,7 @@ import de.dagere.peass.config.ExecutionConfig;
  */
 public class VersionDiff {
 
-   private static final String JAVA_ENDING = ".java";
+   public static final String JAVA_ENDING = ".java";
 
    private static final Logger LOG = LogManager.getLogger(VersionDiff.class);
 

@@ -138,7 +138,7 @@ public class ResultsFolders {
    }
 
    public File getViewMethodDir(final String version, final TestCase testcase) {
-      final File methodDir = new File(getClazzDir(version, testcase), testcase.getMethod());
+      final File methodDir = new File(getClazzDir(version, testcase), testcase.getMethodWithParams());
       if (!methodDir.exists()) {
          boolean create = methodDir.mkdirs();
          LOG.debug("Created directory {} Success: {}", methodDir.getAbsolutePath(), create);

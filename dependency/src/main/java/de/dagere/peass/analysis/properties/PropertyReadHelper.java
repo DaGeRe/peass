@@ -228,7 +228,7 @@ public class PropertyReadHelper {
          final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, modules, version, config);
          removeUncalledClasses(calls, diff);
          property.setAffectedClasses(diff.getChangedClasses().size());
-         final int changedLines = GitUtils.getChangedLines(projectFolder, version, diff.getChangedClasses());
+         final int changedLines = GitUtils.getChangedLines(projectFolder, version, diff.getChangedClasses(), config);
          property.setAffectedLines(changedLines);
       } catch (final XmlPullParserException e) {
          e.printStackTrace();
