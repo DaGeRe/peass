@@ -25,10 +25,11 @@ public class Dependencies extends SelectedTests {
       String first = executiondata.getVersions().values().iterator().next().getPredecessor();
       initialversion.setVersion(first);
       for (Map.Entry<String, TestSet> version : executiondata.getVersions().entrySet()) {
-         Version version2 = new Version();
-         version2.setPredecessor(version.getValue().getPredecessor());
-         version2.getChangedClazzes().put(new ChangedEntity("unknown", ""), version.getValue());
-         versions.put(version.getKey(), version2);
+         Version versionDependencies = new Version();
+         versionDependencies.setPredecessor(version.getValue().getPredecessor());
+         versionDependencies.getChangedClazzes().put(new ChangedEntity("unknown", ""), version.getValue());
+         String versionHash = version.getKey();
+         versions.put(versionHash, versionDependencies);
          for (TestCase test : version.getValue().getTests()) {
             initialversion.addDependency(test, new ChangedEntity(test.getClazz(), ""));
          }

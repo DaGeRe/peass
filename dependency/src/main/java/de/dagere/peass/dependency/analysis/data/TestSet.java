@@ -16,7 +16,6 @@
  */
 package de.dagere.peass.dependency.analysis.data;
 
-import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +30,9 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.KeyDeserializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import de.dagere.peass.dependency.analysis.data.deserializer.TestcaseKeyDeserializer;
 
 /**
  * Represents a set of tests which are executed for one version by its class and its list of methods.
@@ -46,36 +44,10 @@ public class TestSet {
 
    private static final Logger LOG = LogManager.getLogger(TestSet.class);
 
-   public static class ChangedEntitityDeserializer extends KeyDeserializer {
-
-      public ChangedEntitityDeserializer() {
-      }
-
-      @Override
-      public TestCase deserializeKey(final String key, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
-         String value = key;
-         final TestCase entity;
-
-         String method = null;
-         if (value.contains(ChangedEntity.METHOD_SEPARATOR)) {
-            method = value.substring(value.indexOf(ChangedEntity.METHOD_SEPARATOR) + 1);
-            value = value.substring(0, value.indexOf(ChangedEntity.METHOD_SEPARATOR));
-         }
-
-         if (value.contains(ChangedEntity.MODULE_SEPARATOR)) {
-            final String clazz = value.substring(value.indexOf(ChangedEntity.MODULE_SEPARATOR) + 1);
-            final String module = value.substring(0, value.indexOf(ChangedEntity.MODULE_SEPARATOR));
-            entity = new TestCase(clazz, method, module);
-         } else {
-            entity = new TestCase(value, method, "");
-         }
-
-         return entity;
-      }
-   }
+   
 
    @JsonInclude(JsonInclude.Include.NON_EMPTY)
-   @JsonDeserialize(keyUsing = ChangedEntitityDeserializer.class, contentAs = TreeSet.class, as = TreeMap.class)
+   @JsonDeserialize(keyUsing = TestcaseKeyDeserializer.class, contentAs = TreeSet.class, as = TreeMap.class)
    private final Map<TestCase, Set<String>> testcases = new TreeMap<>();
    private String predecessor;
 

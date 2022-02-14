@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.data.TestSet.ChangedEntitityDeserializer;
+import de.dagere.peass.dependency.analysis.data.deserializer.ChangedEntityDeserializer;
 
 public class Version {
 
@@ -18,7 +18,7 @@ public class Version {
    private int jdk = 8;
    private String predecessor;
    
-   @JsonDeserialize(keyUsing = ChangedEntitityDeserializer.class)
+   @JsonDeserialize(keyUsing = ChangedEntityDeserializer.class)
    private Map<ChangedEntity, TestSet> changedClazzes = new TreeMap<>();
 
    public boolean isRunning() {

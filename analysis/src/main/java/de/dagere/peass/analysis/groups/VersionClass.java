@@ -8,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestSet.ChangedEntitityDeserializer;
+import de.dagere.peass.dependency.analysis.data.deserializer.ChangedEntityDeserializer;
 
 public class VersionClass {
    
-   @JsonDeserialize(keyUsing = ChangedEntitityDeserializer.class)
+   @JsonDeserialize(keyUsing = ChangedEntityDeserializer.class)
    private Map<ChangedEntity, TestcaseClass> testcases = new HashMap<>();
 
    public void setTestcases(final Map<ChangedEntity, TestcaseClass> testcases) {
