@@ -33,7 +33,7 @@ class CallCountStage extends AbstractTraceProcessingStage<Execution> {
       final String fullClassname = execution.getOperation().getComponentType().getFullQualifiedName().intern();
       final String methodname = execution.getOperation().getSignature().getName().intern();
       String methodWithParameters = methodname + ChangedEntityHelper.getParameterString(execution.getOperation().getSignature().getParamTypeList());
-      String signature = fullClassname + methodWithParameters;
+      String signature = fullClassname + "." + methodWithParameters;
 
       if (!signatureCounts.containsKey(signature)) {
          signatureCounts.put(signature, 0);
@@ -42,7 +42,6 @@ class CallCountStage extends AbstractTraceProcessingStage<Execution> {
       int oldCount = signatureCounts.get(signature);
       signatureCounts.put(signature, oldCount + 1);
    }
-
 }
 
 class CallCountConfiguration extends Configuration {
