@@ -29,9 +29,9 @@ public class MethodReader {
             final MethodDeclaration method = (MethodDeclaration) node;
             if (method.getNameAsString().equals(currentTraceElement.getMethod())) {
                //TODO LOG.trace
-               LOG.debug("Parameter: {} Trace-Parameter: {}", method.getParameters().size(), currentTraceElement.getParameterTypes().length);
-               LOG.debug(method.getParameters()); //TODO delete
-               LOG.debug(Arrays.toString(currentTraceElement.getParameterTypes()));
+               LOG.trace("Parameter: {} Trace-Parameter: {}", method.getParameters().size(), currentTraceElement.getParameterTypes().length);
+               LOG.trace(method.getParameters()); //TODO delete
+               LOG.trace(Arrays.toString(currentTraceElement.getParameterTypes()));
                if (new ParameterComparator(this.clazz).parametersEqual(currentTraceElement, method)) {
                   if (parent instanceof TypeDeclaration<?>) {
                      final TypeDeclaration<?> clazz = (TypeDeclaration<?>) parent;

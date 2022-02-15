@@ -11,19 +11,14 @@
 
   </Appenders>
   <Loggers>
-    <Logger name="de.peran.measurement.analysis.DataReader" level="info">
-      <AppenderRef ref="Console" />
-    </Logger>
-    <Logger name="de.peran.measurement.analysis.statistics.TestData" level="debug">
-      <AppenderRef ref="Console" />
-    </Logger>
     <Logger name="org.apache.logging.log4j2" level="info">
+      <AppenderRef ref="Console" />
+    </Logger>
+    <Logger name="de.dagere.requitur.Rule" level="info" additivity="false">
       <AppenderRef ref="Console" />
     </Logger>
     <Root level="debug">
       <AppenderRef ref="Console" />
     </Root>
   </Loggers>
-
-
 </Configuration>
