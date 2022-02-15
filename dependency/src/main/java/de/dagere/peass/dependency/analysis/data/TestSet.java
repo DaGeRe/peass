@@ -143,7 +143,7 @@ public class TestSet {
                testcases.add(testcase);
             }
          } else {
-            testcases.add(new TestCase(classTests.getKey().getClazz(), "", classTests.getKey().getModule()));
+            testcases.add(new TestCase(classTests.getKey().getClazz(), null, classTests.getKey().getModule()));
          }
       }
       return testcases;

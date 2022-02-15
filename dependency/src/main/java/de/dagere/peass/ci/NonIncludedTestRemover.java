@@ -66,6 +66,30 @@ public class NonIncludedTestRemover {
       }
    }
 
+   public static boolean isTestClassIncluded(final TestCase test, final ExecutionConfig config) {
+      List<String> includes = config.getIncludes();
+      boolean isIncluded;
+      if (includes.size() != 0) {
+         isIncluded = false;
+         for (String include : includes) {
+            boolean match;
+            if (include.contains("#")) {
+               String includeWithoutHash = include.substring(0, include.indexOf('#'));
+               match = testMatch(test, includeWithoutHash);
+            } else {
+               match = testMatch(test, include);
+            }
+            if (match) {
+               isIncluded = true;
+               break;
+            }
+         }
+      } else {
+         isIncluded = true;
+      }
+      return isIncluded;
+   }
+
    public static boolean isTestIncluded(final TestCase test, final ExecutionConfig config) {
       List<String> includes = config.getIncludes();
       List<String> excludes = config.getExcludes();

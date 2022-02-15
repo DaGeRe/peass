@@ -65,12 +65,12 @@ public class TraceChangeHandler {
       return testsToRun;
    }
 
-   public static void addAddedTests(final Version newVersionInfo, final TestSet testsToRun) {
+   public void addAddedTests(final Version newVersionInfo, final TestSet testsToRun) {
       for (final ChangedEntity testName : newVersionInfo.getChangedClazzes().keySet()) {
-         if (testName.getJavaClazzName().toLowerCase().contains("test")) {
-            ChangedEntity simplyClazz = testName.getSourceContainingClazz();
-            TestCase test = new TestCase(simplyClazz.getClazz(), null, testName.getModule());
-            testsToRun.addTest(test, null);
+         ChangedEntity simplyClazz = testName.getSourceContainingClazz();
+         TestCase potentialTest = new TestCase(simplyClazz.getClazz(), null, testName.getModule());
+         if (NonIncludedTestRemover.isTestClassIncluded(potentialTest, executionConfig)) {
+            testsToRun.addTest(potentialTest, null);
          }
       }
    }
