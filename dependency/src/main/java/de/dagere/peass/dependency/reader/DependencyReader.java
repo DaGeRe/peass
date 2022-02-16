@@ -120,6 +120,7 @@ public class DependencyReader {
       this.env = env;
 
       dependencyResult.setUrl(url);
+      executionResult.setUrl(url);
 
       changeManager = new ChangeManager(folders, iterator, executionConfig);
       
