@@ -3,6 +3,7 @@ package de.dagere.peass.measurement.utils;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -103,8 +104,10 @@ public class DivideVersions implements Callable<Void> {
 
    public static void generateExecuteCommands(final Dependencies dependencies, final ExecutionData changedTests, final String experimentId, final RunCommandWriter writer)
          throws IOException {
-      final String[] versions = dependencies.getVersionNames();
-      for (int versionIndex = 0; versionIndex < dependencies.getVersions().size(); versionIndex++) {
+      final String[] versionsWithDuplicate = dependencies.getVersionNames();
+      final String[] versions = Arrays.copyOfRange(versionsWithDuplicate, 1, versionsWithDuplicate.length);
+      
+      for (int versionIndex = 0; versionIndex < versions.length; versionIndex++) {
          final String endversion = versions[versionIndex];
          // System.out.println("-startversion " + startversion + " -endversion " + endversion);
          if (changedTests == null) {
