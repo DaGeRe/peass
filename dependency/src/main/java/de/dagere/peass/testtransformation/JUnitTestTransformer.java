@@ -284,6 +284,7 @@ public class JUnitTestTransformer implements TestTransformer {
    private final Map<Integer, String> junitTestAnnotations = new HashMap<>();
    {
       junitTestAnnotations.put(5, "org.junit.jupiter.api.Test");
+      junitTestAnnotations.put(5, "org.junit.jupiter.params.ParameterizedTest");
       junitTestAnnotations.put(4, "org.junit.Test");
    }
 
