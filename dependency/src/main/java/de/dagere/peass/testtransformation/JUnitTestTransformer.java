@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -282,19 +283,21 @@ public class JUnitTestTransformer implements TestTransformer {
       addJUnit3Test("TestCase", junitVersions);
    }
 
-   private final Map<Integer, String> junitTestAnnotations = new HashMap<>();
+   private final Map<Integer, List<String>> junitTestAnnotations = new HashMap<>();
    {
-      junitTestAnnotations.put(5, "org.junit.jupiter.api.Test");
-      junitTestAnnotations.put(4, "org.junit.Test");
+      junitTestAnnotations.put(5, Arrays.asList("org.junit.jupiter.api.Test", "org.junit.jupiter.params.ParameterizedTest"));
+      junitTestAnnotations.put(4, Arrays.asList("org.junit.Test"));
    }
 
    private boolean isJUnit(final CompilationUnit unit, final int version) {
-      final String importNameVersion = junitTestAnnotations.get(version);
+      final List<String> importNameVersions = junitTestAnnotations.get(version);
       boolean isJUnitVersion = false;
       for (final ImportDeclaration currentImport : unit.getImports()) {
          final Name importName = currentImport.getName();
-         if (importName.toString().equals(importNameVersion)) {
-            isJUnitVersion = true;
+         for (String importNameVersion : importNameVersions) {
+            if (importName.toString().equals(importNameVersion)) {
+               isJUnitVersion = true;
+            }
          }
       }
       return isJUnitVersion;
@@ -364,8 +367,12 @@ public class JUnitTestTransformer implements TestTransformer {
    }
 
    private List<String> getAnnotatedMethods(final ClassOrInterfaceDeclaration clazz, final int version) {
-      final String importNameVersion = junitTestAnnotations.get(version);
-      final List<String> methods = JUnitParseUtil.getAnnotatedMethods(clazz, importNameVersion, "Test");
+      final List<String> importNameVersions = junitTestAnnotations.get(version);
+      final List<String> methods = new LinkedList<>();
+      for (String importNameVersion : importNameVersions) {
+         String annotationName = importNameVersion.substring(importNameVersion.lastIndexOf('.'));
+         methods.addAll(JUnitParseUtil.getAnnotatedMethods(clazz, importNameVersion, annotationName));
+      }
       return methods;
    }
 
