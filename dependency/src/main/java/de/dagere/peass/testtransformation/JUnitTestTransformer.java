@@ -369,7 +369,7 @@ public class JUnitTestTransformer implements TestTransformer {
       final List<String> importNameVersions = junitTestAnnotations.get(version);
       final List<String> methods = new LinkedList<>();
       for (String importNameVersion : importNameVersions) {
-         String annotationName = importNameVersion.substring(importNameVersion.lastIndexOf('.'));
+         String annotationName = importNameVersion.substring(importNameVersion.lastIndexOf('.') + 1);
          methods.addAll(JUnitParseUtil.getAnnotatedMethods(clazz, importNameVersion, annotationName));
       }
       return methods;
