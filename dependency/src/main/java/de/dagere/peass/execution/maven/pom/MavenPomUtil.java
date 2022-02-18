@@ -36,7 +36,7 @@ public class MavenPomUtil {
 
    public static final String LOG4J_GROUPID = "org.apache.logging.log4j";
    public static final String LOG4J_ARTIFACTID = "log4j-slf4j-impl";
-   public static final String KOPEME_VERSION = "0.17.4";
+   public static final String KOPEME_VERSION = "0.17.5-SNAPSHOT";
    public static final String KIEKER_VERSION = "1.15";
    public static final String ORG_APACHE_MAVEN_PLUGINS = "org.apache.maven.plugins";
    public static final String SUREFIRE_ARTIFACTID = "maven-surefire-plugin";
