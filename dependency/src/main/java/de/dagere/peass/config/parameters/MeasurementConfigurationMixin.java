@@ -6,19 +6,19 @@ import picocli.CommandLine.Option;
 
 public class MeasurementConfigurationMixin {
    @Option(names = { "-vms", "--vms" }, description = "Number of VMs to start")
-   int vms = 100;
-
-   @Option(names = { "-duration", "--duration" }, description = "Which duration to use - if duration is specified, warmup and iterations are ignored")
-   int duration = 0;
-
-   @Option(names = { "-warmup", "--warmup" }, description = "Number of warmup iterations")
-   int warmup = 10;
+   int vms = 30;
 
    @Option(names = { "-iterations", "--iterations" }, description = "Number of iterations")
-   int iterations = 1000;
-
+   int iterations = 5;
+   
+   @Option(names = { "-warmup", "--warmup" }, description = "Number of warmup iterations")
+   int warmup = 5;
+   
    @Option(names = { "-repetitions", "--repetitions" }, description = "Last version that should be analysed")
-   int repetitions = 100;
+   int repetitions = 1000000;
+   
+   @Option(names = { "-duration", "--duration" }, description = "Which duration to use - if duration is specified, warmup and iterations are ignored")
+   int duration = 0;
 
    @Option(names = { "-useKieker", "--useKieker", "-usekieker", "--usekieker" }, description = "Whether Kieker should be used")
    boolean useKieker = false;
@@ -37,10 +37,6 @@ public class MeasurementConfigurationMixin {
 
    @Option(names = { "-measurementStrategy", "--measurementStrategy" }, description = "Measurement strategy (Default: SEQUENTIAL) ")
    protected MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
-
-   @Option(names = { "-dontRedirectToNull",
-         "--dontRedirectToNull" }, description = "Activates showing the standard output of the testcase (by default, it is redirected to null)")
-   protected boolean dontRedirectToNull = false;
 
    @Option(names = { "-showStart",
          "--showStart" }, description = "Activates showing of start of each iteration (for debug purposes primarily)")
@@ -104,14 +100,6 @@ public class MeasurementConfigurationMixin {
 
    public void setUseKieker(final boolean useKieker) {
       this.useKieker = useKieker;
-   }
-
-   public boolean isDontRedirectToNull() {
-      return dontRedirectToNull;
-   }
-
-   public void setDontRedirectToNull(final boolean dontRedirectToNull) {
-      this.dontRedirectToNull = dontRedirectToNull;
    }
 
    public boolean isShowStart() {

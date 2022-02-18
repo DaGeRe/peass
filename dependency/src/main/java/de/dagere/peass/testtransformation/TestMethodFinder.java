@@ -18,7 +18,8 @@ public class TestMethodFinder {
             if (currentName.equals("de.dagere.kopeme.annotations.PerformanceTest") || currentName.equals("PerformanceTest")) {
                performanceTestFound = true;
             }
-            if (currentName.equals("org.junit.Test") || currentName.equals("org.junit.jupiter.api.Test") || currentName.equals("Test")) {
+            if (currentName.equals("org.junit.Test") || currentName.equals("org.junit.jupiter.api.Test") || currentName.equals("Test")
+                  || currentName.equals("ParameterizedTest") || currentName.equals("org.junit.jupiter.params.ParameterizedTest")) {
                testFound = true;
             }
          }

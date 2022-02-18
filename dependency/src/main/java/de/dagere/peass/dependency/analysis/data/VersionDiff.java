@@ -33,6 +33,8 @@ import de.dagere.peass.config.ExecutionConfig;
  */
 public class VersionDiff {
 
+   public static final String JAVA_ENDING = ".java";
+
    private static final Logger LOG = LogManager.getLogger(VersionDiff.class);
 
    private boolean pomChanged;
@@ -69,21 +71,27 @@ public class VersionDiff {
       if (currentFileName.endsWith("pom.xml")) {
          setPomChanged(true);
       } else {
-         if (currentFileName.endsWith(".java")) {
+         if (currentFileName.endsWith(JAVA_ENDING)) {
+            String fileNameWithoutExtension = currentFileName.substring(0, currentFileName.length() - JAVA_ENDING.length());
             String containedPath = null;
             for (String path : config.getAllClazzFolders()) {
-               if (currentFileName.contains(path)) {
+               if (fileNameWithoutExtension.contains(path)) {
                   containedPath = path;
                   break;
                }
             }
 
-            final int indexOf = currentFileName.indexOf(containedPath);
-            if (indexOf == -1) {
-               LOG.error("Did not find any of the class pathes in the changed filename: {} classpathes: {} ", currentFileName, config.getAllClazzFolders());
+            if (containedPath != null) {
+               final int indexOf = currentFileName.indexOf(containedPath);
+               if (indexOf == -1) {
+                  LOG.error("Did not find any of the class pathes in the changed filename: {} classpathes: {} ", currentFileName, config.getAllClazzFolders());
+               } else {
+                  addChange(currentFileName, containedPath, indexOf);
+               }
             } else {
-               addChange(currentFileName, containedPath, indexOf);
+               LOG.info("Did not find matching class folder for file {}", containedPath);
             }
+
          }
       }
    }
@@ -119,7 +127,7 @@ public class VersionDiff {
    }
 
    public static String replaceClazzFolderFromName(final String fileName, final String classFolderName) {
-      String tempClazzName = fileName.replace(".java", "");
+      String tempClazzName = fileName.replace(JAVA_ENDING, "");
       tempClazzName = tempClazzName.replaceAll(classFolderName, "");
       if (tempClazzName.startsWith(File.separator) || tempClazzName.startsWith("/")) {
          tempClazzName = tempClazzName.substring(1);

@@ -198,7 +198,7 @@ public class CauseTester extends AdaptiveTester {
       includedNodes.forEach(node -> node.createStatistics(version));
    }
 
-   public static void main(final String[] args) throws IOException, XmlPullParserException, InterruptedException, JAXBException {
+   public static void main(final String[] args) throws IOException, XmlPullParserException, InterruptedException, JAXBException, ClassNotFoundException {
       final File projectFolder = new File("../../projekte/commons-fileupload");
       final String version = "4ed6e923cb2033272fcb993978d69e325990a5aa";
       final TestCase test = new TestCase("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");

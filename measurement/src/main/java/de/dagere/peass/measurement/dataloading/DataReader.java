@@ -95,12 +95,12 @@ public final class DataReader {
       try {
          final Kopemedata resultData = new XMLDataLoader(measurementFile).getFullData();
          final String testclazz = resultData.getTestcases().getClazz();
-         final String testmethod = resultData.getTestcases().getTestcase().get(0).getName();
-         TestData testData = currentMeasurement.get(testmethod);
+         TestCase testcase = new TestCase(resultData.getTestcases());
+         TestData testData = currentMeasurement.get(testcase.getMethodWithParams());
          if (testData == null) {
             final File originFile = measurementFile.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
-            testData = new TestData(new TestCase(testclazz, testmethod), originFile);
-            currentMeasurement.put(testmethod, testData);
+            testData = new TestData(testcase, originFile);
+            currentMeasurement.put(testcase.getMethodWithParams(), testData);
          }
          
          String predecessor = null;
@@ -114,7 +114,7 @@ public final class DataReader {
          if (predecessor != null) {
             testData.addMeasurement(versionOfPair.getName(), versionCurrent.getName(), predecessor, resultData);
          }else {
-            LOG.error("No predecessor data for {} {} {} {}", versionCurrent.getName(), predecessor, testclazz, testmethod);
+            LOG.error("No predecessor data for {} {} {} {}", versionCurrent.getName(), predecessor, testclazz, testcase.getMethodWithParams());
          }
         
       } catch (final JAXBException e) {

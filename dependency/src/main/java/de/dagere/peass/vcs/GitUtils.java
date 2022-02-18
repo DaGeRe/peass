@@ -305,7 +305,7 @@ public final class GitUtils {
       return diff;
    }
 
-   public static int getChangedLines(final File projectFolder, final String version, final List<ChangedEntity> entities) {
+   public static int getChangedLines(final File projectFolder, final String version, final List<ChangedEntity> entities, ExecutionConfig config) {
       try {
 
          final File folderTemp = new File(FilenameUtils.normalize(projectFolder.getAbsolutePath()));
@@ -325,7 +325,8 @@ public final class GitUtils {
             final String countString = number.split(" ")[1];
             if (!countString.equals("Bin")) {
                final int count = Integer.parseInt(countString);
-               final ChangedEntity changedEntity = new ChangedEntity(clazz, "");
+               String clazzName = getClazz(clazz, config);
+               final ChangedEntity changedEntity = new ChangedEntity(clazzName, "");
                if (entities.contains(changedEntity)) {
                   size += count;
                }
@@ -336,6 +337,27 @@ public final class GitUtils {
          e.printStackTrace();
       }
       return -1;
+   }
+   
+   public static String getClazz(String currentFileName, ExecutionConfig config) {
+      if (currentFileName.endsWith(VersionDiff.JAVA_ENDING)) {
+         String fileNameWithoutExtension = currentFileName.substring(0, currentFileName.length() - VersionDiff.JAVA_ENDING.length());
+         String containedPath = null;
+         for (String path : config.getAllClazzFolders()) {
+            if (fileNameWithoutExtension.contains(path)) {
+               containedPath = path;
+               break;
+            }
+         }
+
+         if (containedPath != null) {
+            final int indexOf = currentFileName.indexOf(containedPath);
+            final String pathWithFolder = currentFileName.substring(indexOf);
+            final String classPath = VersionDiff.replaceClazzFolderFromName(pathWithFolder, containedPath);
+            return classPath;
+         } 
+      }
+      return null;
    }
 
    public static void pull(final File projectFolder) {

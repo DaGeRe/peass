@@ -147,7 +147,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.GIT)) {
          final VersionIterator iterator = createIterator(config, previousVersion);
-         ExecutionConfig executionConfig = new ExecutionConfig(executionConfigMixin);
+         ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
          reader = new DependencyReader(config.getDependencyConfig(), new PeassFolders(config.getProjectFolder()), 
                resultsFolders, dependencies.getUrl(), iterator, new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nochanges.json")), 
                executionConfig, kiekerConfigMixin.getKiekerConfig(), new EnvironmentVariables());

@@ -86,17 +86,15 @@ public class MultipleVMTestUtil {
     * @param version
     * @throws JAXBException
     */
-   public static void saveSummaryData(final File summaryResultFile, final File oneResultFile, final TestcaseType oneRunData, final TestCase testcase, final String version,
-         final long currentChunkStart)
+   public static void saveSummaryData(final File summaryResultFile, final File oneResultFile, final Result oneResult, final TestCase testcase, final String version,
+         final long currentChunkStart, final String datacollectorName)
          throws JAXBException {
       LOG.info("Writing to merged result file: {}", summaryResultFile);
       final Kopemedata summaryData = initKopemeData(summaryResultFile, testcase);
-      Datacollector oneRunDatacollector = getTimeDataCollector(oneRunData);
-      Chunk summaryChunk = findChunk(currentChunkStart, summaryData, oneRunDatacollector);
-
-      final Result oneResult = oneRunDatacollector.getResult().get(0);
+      Chunk summaryChunk = findChunk(currentChunkStart, summaryData, datacollectorName);
+      
       if (oneResult.getFulldata().getFileName() != null) {
-         SummaryStatistics st = getExternalFileStatistics(oneResultFile, oneRunDatacollector, oneResult);
+         SummaryStatistics st = getExternalFileStatistics(oneResultFile, datacollectorName, oneResult);
          saveData(summaryResultFile, version, summaryData, summaryChunk, oneResult, st);
       } else {
          final Result cleaned;
@@ -120,18 +118,19 @@ public class MultipleVMTestUtil {
       final Result result = createResultFromStatistic(version, st, oneResult.getRepetitions());
       result.setDate(oneResult.getDate());
       result.setWarmup(oneResult.getWarmup());
+      result.setParams(oneResult.getParams());
 
       summaryChunk.getResult().add(result);
       XMLDataStorer.storeData(summaryResultFile, summaryData);
    }
 
-   private static SummaryStatistics getExternalFileStatistics(final File oneResultFile, final Datacollector oneRunDatacollector, final Result oneResult) {
+   private static SummaryStatistics getExternalFileStatistics(final File oneResultFile, final String dataCollectorName, final Result oneResult) {
       final File resultFile = new File(oneResultFile.getParentFile(), oneResult.getFulldata().getFileName());
       WrittenResultReader reader = new WrittenResultReader(resultFile);
       Set<String> keys = new HashSet<>();
-      keys.add(oneRunDatacollector.getName());
+      keys.add(dataCollectorName);
       reader.read(null, keys);
-      SummaryStatistics st = reader.getCollectorSummary(oneRunDatacollector.getName());
+      SummaryStatistics st = reader.getCollectorSummary(dataCollectorName);
       return st;
    }
 
@@ -146,11 +145,11 @@ public class MultipleVMTestUtil {
       return fullResultData;
    }
 
-   public static Chunk findChunk(final long currentChunkStart, final Kopemedata fullResultData, final Datacollector oneRunDatacollector) {
+   public static Chunk findChunk(final long currentChunkStart, final Kopemedata fullResultData, final String datacollectorName) {
       final List<Datacollector> fullResultFileDatacollectorList = fullResultData.getTestcases().getTestcase().get(0).getDatacollector();
       if (fullResultFileDatacollectorList.size() == 0) {
          fullResultFileDatacollectorList.add(new Datacollector());
-         fullResultFileDatacollectorList.get(0).setName(oneRunDatacollector.getName());
+         fullResultFileDatacollectorList.get(0).setName(datacollectorName);
       }
       final Datacollector fullFileDatacollector = fullResultFileDatacollectorList.get(0);
       Chunk realChunk = findChunk(currentChunkStart, fullFileDatacollector);

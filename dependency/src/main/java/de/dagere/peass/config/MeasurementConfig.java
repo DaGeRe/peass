@@ -24,7 +24,7 @@ public class MeasurementConfig implements Serializable {
    private int iterations = 1;
    private int repetitions = 1;
    private boolean logFullData = true;
-   private boolean useGC = true;
+   private boolean useGC = false;
 
    private boolean callSyncBetweenVMs = true;
    private int waitTimeBetweenVMs = 1000;
@@ -63,22 +63,18 @@ public class MeasurementConfig implements Serializable {
 
    public MeasurementConfig(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin, 
          final StatisticsConfigMixin statisticMixin, final KiekerConfigMixin kiekerConfigMixin) {
-      executionConfig = new ExecutionConfig(executionMixin);
+      executionConfig = executionMixin.getExecutionConfig();
       kiekerConfig = kiekerConfigMixin.getKiekerConfig();
+      kiekerConfig.setRecord(mixin.getRecord());
+      statisticsConfig = statisticMixin.getStasticsConfig();
       this.vms = mixin.getVms();
-      statisticsConfig.setType1error(statisticMixin.getType1error());
-      statisticsConfig.setType2error(statisticMixin.getType2error());
-      statisticsConfig.setStatisticTest(statisticMixin.getStatisticTest());
-      statisticsConfig.setOutlierFactor(statisticMixin.getOutlierFactor());
       setEarlyStop(mixin.isEarlyStop());
       setUseKieker(mixin.isUseKieker());
       setIterations(mixin.getIterations());
       setWarmup(mixin.getWarmup());
       setRepetitions(mixin.getRepetitions());
       setUseGC(mixin.isUseGC());
-      kiekerConfig.setRecord(mixin.getRecord());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
-      executionConfig.setRedirectToNull(!mixin.isDontRedirectToNull());
       setShowStart(mixin.isShowStart());
 
       saveAll = !mixin.isSaveNothing();
@@ -110,17 +106,14 @@ public class MeasurementConfig implements Serializable {
     */
    public MeasurementConfig(final MeasurementConfig other) {
       executionConfig = new ExecutionConfig(other.getExecutionConfig());
+      statisticsConfig = new StatisticsConfig(other.getStatisticsConfig());
+      kiekerConfig = new KiekerConfig(other.getKiekerConfig());
       this.vms = other.vms;
-      statisticsConfig.setType1error(other.getStatisticsConfig().getType1error());
-      statisticsConfig.setType2error(other.getStatisticsConfig().getType2error());
-      statisticsConfig.setOutlierFactor(other.getStatisticsConfig().getOutlierFactor());
-      statisticsConfig.setStatisticTest(other.getStatisticsConfig().getStatisticTest());
       this.earlyStop = other.earlyStop;
       this.warmup = other.warmup;
       this.iterations = other.iterations;
       this.repetitions = other.repetitions;
       this.logFullData = other.logFullData;
-      kiekerConfig = new KiekerConfig(other.getKiekerConfig());
       this.useGC = other.useGC;
       this.javaVersion = other.javaVersion;
       this.measurementStrategy = other.measurementStrategy;

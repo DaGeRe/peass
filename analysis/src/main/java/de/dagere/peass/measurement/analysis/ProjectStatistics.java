@@ -16,7 +16,7 @@ public class ProjectStatistics {
 
    private static final Logger LOG = LogManager.getLogger(ProjectStatistics.class);
 
-   public Map<String, Map<TestCase, TestcaseStatistic>> statistics = VersionComparator.hasDependencies() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
+   public Map<String, Map<TestCase, TestcaseStatistic>> statistics = VersionComparator.hasVersions() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
 
    public Map<String, Map<TestCase, TestcaseStatistic>> getStatistics() {
       return statistics;

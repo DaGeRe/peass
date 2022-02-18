@@ -11,12 +11,13 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 
 public class TestTestDependencies {
    
-   private static final ChangedEntity testEntity = new ChangedEntity("package.ClazzA", "moduleA", "testA");
+   private static final TestCase testEntity = new TestCase("package.ClazzA", "testA", "moduleA");
    
    @Test
    public void testBasicAdding() {

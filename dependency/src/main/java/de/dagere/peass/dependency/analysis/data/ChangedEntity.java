@@ -13,60 +13,26 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import de.dagere.peass.utils.ClassFolderUtil;
-
-//TODO What happens to changes, that do occur in classes which are only file-local? -> Should be separated by $
 public class ChangedEntity implements Comparable<ChangedEntity> {
-   
-   /**
-    * This can not be generically done; use VersionDiff.replaceClazzFolderName instead
-    * @param fileName
-    * @return
-    */
-   @Deprecated
-   public static String replaceClazzFolderFromName(final String fileName) {
-      boolean isInClassFolder = false;
-      for (final String clazzFolder : ClassFolderUtil.getPathes()) {
-         if (fileName.contains(clazzFolder)) {
-            isInClassFolder = true;
-         }
-      }
-      if (isInClassFolder) {
-         String tempClazzName = fileName.replace(".java", "");
-         for (final String clazzFolder : ClassFolderUtil.getPathes()) {
-            tempClazzName = tempClazzName.replaceAll(clazzFolder, "");
-         }
-         String replaced = tempClazzName.replace(File.separatorChar, '.');
-         if (replaced.contains("/")) {
-            replaced = replaced.replace('/', '.'); // In case windows accidently used / as separator
-         }
-         return replaced;
-      } else {
-         return null;
-      }
-   }
-   
+
    private static final Logger LOG = LogManager.getLogger(ChangedEntity.class);
 
-   private final String filename;
+   public static final String MODULE_SEPARATOR = "§";
+   public static final String METHOD_SEPARATOR = "#";
+   public static final String CLAZZ_SEPARATOR = "$";
+
    private String method;
    private final String module;
    private final String javaClazzName;
    private final List<String> parameters = new LinkedList<String>();
 
    public ChangedEntity(@JsonProperty("clazz") final String clazz, @JsonProperty("module") final String module) {
-      this.filename = clazz;
+      if (clazz.contains(File.separator)) {
+         throw new RuntimeException("Class should be full qualified name, not path! " + clazz);
+      }
       this.module = module != null ? module : "";
       if (!clazz.contains(METHOD_SEPARATOR)) {
-         final String editedName = replaceClazzFolderFromName(clazz);
-         if (editedName != null) {
-            javaClazzName = editedName;
-         } else {
-            if (clazz.contains(File.separator)) {
-               LOG.error("Classfolder not found: " + clazz + " Module: " + module);
-            }
-            javaClazzName = clazz;
-         }
+         javaClazzName = clazz;
       } else {
          javaClazzName = clazz.substring(0, clazz.lastIndexOf(ChangedEntity.METHOD_SEPARATOR));
          method = clazz.substring(clazz.lastIndexOf(ChangedEntity.METHOD_SEPARATOR) + 1);
@@ -76,13 +42,17 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
          createParameters(parameterString);
          method = method.substring(0, method.indexOf("("));
       }
-      
+
       if (javaClazzName.startsWith(".")) {
          throw new RuntimeException("Java class names are not allowed to start with ., but was " + javaClazzName);
       }
 
       LOG.trace(javaClazzName + " " + clazz);
       LOG.trace(javaClazzName);
+
+      if (javaClazzName.startsWith(".")) {
+         throw new RuntimeException("Java class names are not allowed to start with ., but was " + javaClazzName);
+      }
    }
 
    @JsonCreator
@@ -103,7 +73,7 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
       if (moduleIndex == -1) {
          module = "";
          if (fullName.contains(File.separator)) {
-            throw new RuntimeException("Testcase should be full qualified name, not path! " + fullName);
+            throw new RuntimeException("Class should be full qualified name, not path! " + fullName);
          }
          final int methodIndex = fullName.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
          if (methodIndex == -1) {
@@ -141,7 +111,6 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
             }
          }
       }
-      filename = fullName;
       if (javaClazzName.startsWith(".")) {
          throw new RuntimeException("Java class names are not allowed to start with ., but was " + javaClazzName);
       }
@@ -189,10 +158,6 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    public String getModule() {
       return module;
    }
-
-   public static final String MODULE_SEPARATOR = "§";
-   public static final String METHOD_SEPARATOR = "#";
-   public static final String CLAZZ_SEPARATOR = "$";
 
    @Override
    public String toString() {
@@ -253,14 +218,14 @@ public class ChangedEntity implements Comparable<ChangedEntity> {
    }
 
    public ChangedEntity copy() {
-      final ChangedEntity copy = new ChangedEntity(filename, module);
+      final ChangedEntity copy = new ChangedEntity(javaClazzName, module);
       copy.setMethod(this.method);
       return copy;
    }
 
    @JsonIgnore
    public ChangedEntity onlyClazz() {
-      return new ChangedEntity(filename, module);
+      return new ChangedEntity(javaClazzName, module);
    }
 
    @JsonIgnore

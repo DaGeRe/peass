@@ -19,13 +19,13 @@ public class ChangeTestMapping {
    
    private static final Logger LOG = LogManager.getLogger(ChangeTestMapping.class);
    
-	private final Map<ChangedEntity, Set<ChangedEntity>> changes = new TreeMap<>();
+	private final Map<ChangedEntity, Set<TestCase>> changes = new TreeMap<>();
 
-	public Map<ChangedEntity, Set<ChangedEntity>> getChanges() {
+	public Map<ChangedEntity, Set<TestCase>> getChanges() {
 		return changes;
 	}
 	
-	public Set<ChangedEntity> getTests(final ChangedEntity change){
+	public Set<TestCase> getTests(final ChangedEntity change){
 	   return changes.get(change);
 	}
 	
@@ -35,8 +35,8 @@ public class ChangeTestMapping {
 	}
 	
 	@JsonIgnore
-	public void addChangeEntry(final ChangedEntity changedFullname, final ChangedEntity currentTestcase) {
-      Set<ChangedEntity> changedClasses = changes.get(changedFullname);
+	public void addChangeEntry(final ChangedEntity changedFullname, final TestCase currentTestcase) {
+      Set<TestCase> changedClasses = changes.get(changedFullname);
       if (changedClasses == null) {
          changedClasses = new HashSet<>();
          changes.put(changedFullname, changedClasses);

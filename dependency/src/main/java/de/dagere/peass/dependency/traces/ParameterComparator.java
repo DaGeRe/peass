@@ -43,7 +43,7 @@ public class ParameterComparator {
 
       final List<Parameter> parameters = method.getParameters();
       int parameterIndex = 0;
-      LOG.debug("Length: {} vs {}", traceParameterTypes.length, parameters.size()); // TODO delete
+      LOG.trace("Length: {} vs {}", traceParameterTypes.length, parameters.size());
       if (traceParameterTypes.length != parameters.size() && !parameters.get(parameters.size() - 1).isVarArgs()) {
          return false;
       } else if (parameters.get(parameters.size() - 1).isVarArgs()) {

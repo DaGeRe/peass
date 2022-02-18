@@ -20,8 +20,8 @@ public class NonIncludedTestRemover {
 
    public static void removeNotIncluded(final TestSet tests, final ExecutionConfig executionConfig) {
       if (executionConfig.getIncludes().size() > 0) {
-         for (Iterator<Map.Entry<ChangedEntity, Set<String>>> testcaseIterator = tests.getTestcases().entrySet().iterator(); testcaseIterator.hasNext();) {
-            Map.Entry<ChangedEntity, Set<String>> testcase = testcaseIterator.next();
+         for (Iterator<Map.Entry<TestCase, Set<String>>> testcaseIterator = tests.getTestcases().entrySet().iterator(); testcaseIterator.hasNext();) {
+            Map.Entry<TestCase, Set<String>> testcase = testcaseIterator.next();
             if (!testcase.getValue().isEmpty()) {
                removeTestsWithMethod(executionConfig, testcaseIterator, testcase);
             } else {
@@ -32,19 +32,19 @@ public class NonIncludedTestRemover {
 
    }
 
-   private static void removeTestsWithoutMethod(final ExecutionConfig executionConfig, final Iterator<Map.Entry<ChangedEntity, Set<String>>> testcaseIterator,
-         final Map.Entry<ChangedEntity, Set<String>> testcase) {
-      TestCase test = new TestCase(testcase.getKey().getJavaClazzName());
+   private static void removeTestsWithoutMethod(final ExecutionConfig executionConfig, final Iterator<Map.Entry<TestCase, Set<String>>> testcaseIterator,
+         final Map.Entry<TestCase, Set<String>> testcase) {
+      TestCase test = new TestCase(testcase.getKey().getClazz());
       if (!isTestIncluded(test, executionConfig)) {
          testcaseIterator.remove();
       }
    }
 
-   private static void removeTestsWithMethod(final ExecutionConfig executionConfig, final Iterator<Map.Entry<ChangedEntity, Set<String>>> testcaseIterator,
-         final Map.Entry<ChangedEntity, Set<String>> testcase) {
+   private static void removeTestsWithMethod(final ExecutionConfig executionConfig, final Iterator<Map.Entry<TestCase, Set<String>>> testcaseIterator,
+         final Map.Entry<TestCase, Set<String>> testcase) {
       for (Iterator<String> methodIterator = testcase.getValue().iterator(); methodIterator.hasNext();) {
          String method = methodIterator.next();
-         if (!isTestIncluded(new TestCase(testcase.getKey().getJavaClazzName(), method), executionConfig)) {
+         if (!isTestIncluded(new TestCase(testcase.getKey().getClazz(), method), executionConfig)) {
             methodIterator.remove();
          }
       }
@@ -64,6 +64,30 @@ public class NonIncludedTestRemover {
             }
          }
       }
+   }
+
+   public static boolean isTestClassIncluded(final TestCase test, final ExecutionConfig config) {
+      List<String> includes = config.getIncludes();
+      boolean isIncluded;
+      if (includes.size() != 0) {
+         isIncluded = false;
+         for (String include : includes) {
+            boolean match;
+            if (include.contains("#")) {
+               String includeWithoutHash = include.substring(0, include.indexOf('#'));
+               match = testMatch(test, includeWithoutHash);
+            } else {
+               match = testMatch(test, include);
+            }
+            if (match) {
+               isIncluded = true;
+               break;
+            }
+         }
+      } else {
+         isIncluded = true;
+      }
+      return isIncluded;
    }
 
    public static boolean isTestIncluded(final TestCase test, final ExecutionConfig config) {

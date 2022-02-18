@@ -87,7 +87,7 @@ public class KoPeMeTreeConverter {
 
    private void readFile(final String version, final TestCase testcase, final String currentVersion, final File kopemeFile)
          throws JAXBException {
-      String stringIndex = kopemeFile.getName().substring(testcase.getMethod().length() + 1, kopemeFile.getName().lastIndexOf('_'));
+      String stringIndex = kopemeFile.getName().substring(testcase.getMethodWithParams().length() + 1, kopemeFile.getName().lastIndexOf('_'));
       if (!stringIndex.matches("[0-9]+")) {
          LOG.error("Could not read file: {}", kopemeFile);
       } else {

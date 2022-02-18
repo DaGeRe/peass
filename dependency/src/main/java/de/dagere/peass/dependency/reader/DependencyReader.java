@@ -120,6 +120,7 @@ public class DependencyReader {
       this.env = env;
 
       dependencyResult.setUrl(url);
+      executionResult.setUrl(url);
 
       changeManager = new ChangeManager(folders, iterator, executionConfig);
       
@@ -320,10 +321,11 @@ public class DependencyReader {
          if (!changedEntry.isOnlyMethodChange()) {
             for (ChangedEntity change : changedEntry.getChanges()) {
                File moduleFolder = new File(folders.getProjectFolder(), change.getModule());
-               List<TestCase> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, change);
+               TestCase potentialTest = new TestCase(change.getClazz(), change.getMethod(), change.getModule());
+               List<TestCase> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, potentialTest);
                for (TestCase added : addedTests) {
                   if (NonIncludedTestRemover.isTestIncluded(added, executionConfig)) {
-                     changeTestMap.addChangeEntry(change, added.toEntity());
+                     changeTestMap.addChangeEntry(change, added);
                   }
                }
             }

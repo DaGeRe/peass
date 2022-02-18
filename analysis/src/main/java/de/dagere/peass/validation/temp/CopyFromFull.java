@@ -19,6 +19,7 @@ import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.peass.analysis.all.RepoFolders;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.measurement.dataloading.MeasurementFileFinder;
 import de.dagere.peass.utils.Constants;
@@ -60,6 +61,7 @@ public class CopyFromFull {
       TestcaseType testcaseType = testcase.getTestcase().get(0);
       String clazz = testcase.getClazz();
       String method = testcaseType.getName();
+      TestCase testcase2 = new TestCase(testcase);
       List<Chunk> chunks = testcaseType.getDatacollector().get(0).getChunk();
       
       if (!goal.exists()) {
@@ -67,17 +69,17 @@ public class CopyFromFull {
       }
       
       for (Chunk chunk : chunks) {
-         checkChunkMerging(goal, tests, clazz, method, chunk);
+         checkChunkMerging(goal, tests, testcase2, chunk);
       }
    }
 
-   public static void checkChunkMerging(final File validationDataFolder, final ExecutionData tests, final String clazz, final String method, final Chunk chunk) throws JAXBException {
+   public static void checkChunkMerging(final File validationDataFolder, final ExecutionData tests, final TestCase testcase2, final Chunk chunk) throws JAXBException {
       String version = chunk.getResult().get(chunk.getResult().size() - 1).getVersion().getGitversion();
       if (tests.getVersions().containsKey(version)) {
          System.out.println(version);
 
          
-         MeasurementFileFinder finder = new MeasurementFileFinder(validationDataFolder, clazz, method);
+         MeasurementFileFinder finder = new MeasurementFileFinder(validationDataFolder, testcase2);
          boolean otherHasAlreadyData = checkEqualVersion(version, finder);
          if (!otherHasAlreadyData) {
             finder.getDataCollector().getChunk().add(chunk);

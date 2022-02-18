@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="de.dagere.peass.ExampleBenchmarkClazz">
+  <testcase name="calleeMethod">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result>
+     <value>1059051.6</value>
+     <deviation>448.580774344054</deviation>
+     <warmup>0</warmup>
+     <iterations>10</iterations>
+     <repetitions>5</repetitions>
+     <params>
+      <param key="parameter">1</param>
+     </params>
+     <fulldata>
+      <value>1059795</value>
+      <value>1058555</value>
+      <value>1059179</value>
+      <value>1058787</value>
+      <value>1059472</value>
+      <value>1058773</value>
+      <value>1059653</value>
+      <value>1058597</value>
+      <value>1058961</value>
+      <value>1058744</value>
+     </fulldata>
+    </result>
+    <result>
+     <value>2061346.1</value>
+     <deviation>987.4623424606012</deviation>
+     <warmup>0</warmup>
+     <iterations>10</iterations>
+     <repetitions>5</repetitions>
+     <params>
+      <param key="parameter">2</param>
+     </params>
+     <fulldata>
+      <value>2061175</value>
+      <value>2061198</value>
+      <value>2060869</value>
+      <value>2060318</value>
+      <value>2061072</value>
+      <value>2062003</value>
+      <value>2060876</value>
+      <value>2061301</value>
+      <value>2063873</value>
+      <value>2060776</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

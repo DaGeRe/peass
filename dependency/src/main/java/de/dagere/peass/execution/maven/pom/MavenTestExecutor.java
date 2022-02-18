@@ -64,7 +64,7 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       super(folders, testTransformer, env);
    }
 
-   protected Process buildMavenProcess(final File logFile, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
+   protected Process buildMavenProcess(final File logFile, TestCase test, final String... commandLineAddition) throws IOException, XmlPullParserException, InterruptedException {
       final String testGoal = getTestGoal();
       String mvnCall = env.fetchMavenCall();
       final String[] originals = new String[] { mvnCall,
@@ -75,9 +75,11 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       String[] withMavendefaults = CommandConcatenator.concatenateCommandArrays(originals, CommandConcatenator.mavenCheckDeactivation);
       final String[] vars = CommandConcatenator.concatenateCommandArrays(withMavendefaults, commandLineAddition);
 
-      ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
+      ProcessBuilderHelper processBuilderHelper = new ProcessBuilderHelper(env, folders);
+      processBuilderHelper.parseParams(test.getParams());
+      
       String[] withPl = addMavenPl(testTransformer.getConfig().getExecutionConfig(), vars);
-      Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, withPl);
+      Process process = processBuilderHelper.buildFolderProcess(folders.getProjectFolder(), logFile, withPl);
       return process;
    }
 
@@ -130,9 +132,9 @@ public class MavenTestExecutor extends KoPeMeExecutor {
     * @param testname Name of the test that should be run
     */
    @Override
-   protected void runTest(final File module, final File logFile, final String testname, final long timeout) {
+   protected void runTest(final File module, final File logFile, TestCase test, final String testname, final long timeout) {
       try {
-         final Process process = buildMavenProcess(logFile, "-Dtest=" + testname);
+         final Process process = buildMavenProcess(logFile, test, "-Dtest=" + testname);
          execute(testname, timeout, process);
       } catch (final InterruptedException | IOException | XmlPullParserException e) {
          e.printStackTrace();

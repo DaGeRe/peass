@@ -29,9 +29,9 @@ public class MethodReader {
             final MethodDeclaration method = (MethodDeclaration) node;
             if (method.getNameAsString().equals(currentTraceElement.getMethod())) {
                //TODO LOG.trace
-               LOG.debug("Parameter: {} Trace-Parameter: {}", method.getParameters().size(), currentTraceElement.getParameterTypes().length);
-               LOG.debug(method.getParameters()); //TODO delete
-               LOG.debug(Arrays.toString(currentTraceElement.getParameterTypes()));
+               LOG.trace("Parameter: {} Trace-Parameter: {}", method.getParameters().size(), currentTraceElement.getParameterTypes().length);
+               LOG.trace(method.getParameters()); //TODO delete
+               LOG.trace(Arrays.toString(currentTraceElement.getParameterTypes()));
                if (new ParameterComparator(this.clazz).parametersEqual(currentTraceElement, method)) {
                   if (parent instanceof TypeDeclaration<?>) {
                      final TypeDeclaration<?> clazz = (TypeDeclaration<?>) parent;
@@ -87,7 +87,7 @@ public class MethodReader {
     * @return
     */
    public static String getSimpleType(final String traceParameterType) {
-      LOG.debug("Getting simple type of {}", traceParameterType); //TODO delete
+      LOG.trace("Getting simple type of {}", traceParameterType); 
       final String result;
       if (traceParameterType.contains("<")) {
          String withoutGenerics = traceParameterType.substring(0, traceParameterType.indexOf("<"));
@@ -95,7 +95,7 @@ public class MethodReader {
       } else {
          result = traceParameterType.substring(traceParameterType.lastIndexOf('.') + 1);
       }
-      LOG.debug("Simple type: {}", result); //TODO delete
+      LOG.trace("Simple type: {}", result); 
       return result;
    }
 

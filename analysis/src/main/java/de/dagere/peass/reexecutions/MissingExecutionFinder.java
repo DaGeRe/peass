@@ -19,7 +19,6 @@ import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.helper.read.TestcaseData;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -94,7 +93,7 @@ public class MissingExecutionFinder {
    }
 
    private void removeSlurmExecutions(final File folder) throws JAXBException {
-      ChangeReader reader = new ChangeReader(folder.getName());
+      ChangeReader reader = new ChangeReader(folder.getName(), tests);
       reader.readFile(folder);
       for (Entry<String, TestcaseData> entry : reader.getAllData().getData().entrySet()) {
          String version = entry.getKey();
@@ -108,7 +107,7 @@ public class MissingExecutionFinder {
 
    public static void removeTestFromTestSet(final String clazz, final String testmethod, final TestSet versionsTests) {
       LOG.debug(versionsTests.classCount());
-      final ChangedEntity ce = new ChangedEntity(clazz, "");
+      final TestCase ce = new TestCase(clazz, "");
       versionsTests.removeTest(ce, testmethod);
       LOG.debug(versionsTests.classCount());
    }

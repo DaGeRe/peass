@@ -10,15 +10,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.analysis.data.TestSet.ChangedEntitityDeserializer;
+import de.dagere.peass.dependency.analysis.data.deserializer.TestcaseKeyDeserializer;
 
 public class InitialVersion {
    
    private String version;
    private int jdk = 8;
 
-   @JsonDeserialize(keyUsing = ChangedEntitityDeserializer.class)
-   private Map<ChangedEntity, InitialDependency> initialDependencies = new TreeMap<>();
+   @JsonDeserialize(keyUsing = TestcaseKeyDeserializer.class)
+   private Map<TestCase, InitialDependency> initialDependencies = new TreeMap<>();
 
    public String getVersion() {
       return version;
@@ -28,11 +28,11 @@ public class InitialVersion {
       this.version = version;
    }
 
-   public Map<ChangedEntity, InitialDependency> getInitialDependencies() {
+   public Map<TestCase, InitialDependency> getInitialDependencies() {
       return initialDependencies;
    }
 
-   public void setInitialDependencies(final Map<ChangedEntity, InitialDependency> initialDependencies) {
+   public void setInitialDependencies(final Map<TestCase, InitialDependency> initialDependencies) {
       this.initialDependencies = initialDependencies;
    }
 
@@ -44,7 +44,7 @@ public class InitialVersion {
       this.jdk = jdk;
    }
    
-   public void addDependency(final ChangedEntity testcase, final ChangedEntity callee) {
+   public void addDependency(final TestCase testcase, final ChangedEntity callee) {
       InitialDependency dependency = initialDependencies.get(testcase);  
       if (dependency == null) {
          dependency = new InitialDependency();  
@@ -54,16 +54,15 @@ public class InitialVersion {
    }
 
    @JsonIgnore
-   public void sort(final ChangedEntity key) {
+   public void sort(final TestCase key) {
       Collections.sort(initialDependencies.get(key).getEntities());
    }
    
    @JsonIgnore
    public TestSet getInitialTests() {
       TestSet initialTests = new TestSet();
-      for (ChangedEntity testEntity : initialDependencies.keySet()) {
-         TestCase initialTest = new TestCase(testEntity);
-         initialTests.addTest(initialTest);
+      for (TestCase testEntity : initialDependencies.keySet()) {
+         initialTests.addTest(testEntity);
       }
       return initialTests;
    }

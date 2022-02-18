@@ -29,7 +29,6 @@ import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.persistence.Dependencies;
@@ -103,9 +102,9 @@ public class JmhDependencyReaderTest {
 
    private void checkInitialVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
       Dependencies dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
-      Map<ChangedEntity, InitialDependency> initialDependencies = dependencies.getInitialversion().getInitialDependencies();
+      Map<TestCase, InitialDependency> initialDependencies = dependencies.getInitialversion().getInitialDependencies();
       MatcherAssert.assertThat(initialDependencies.keySet(), Matchers.hasSize(1));
-      InitialDependency initial = initialDependencies.get(new ChangedEntity("de.dagere.peass.ExampleBenchmark", null, "testMethod"));
+      InitialDependency initial = initialDependencies.get(new TestCase("de.dagere.peass.ExampleBenchmark", "testMethod", null));
       MatcherAssert.assertThat(initial.getEntities(), Matchers.hasSize(2));
    }
 

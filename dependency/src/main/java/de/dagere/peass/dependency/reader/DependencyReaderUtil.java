@@ -56,14 +56,14 @@ public class DependencyReaderUtil {
          for (final Entry<ChangedEntity, TestSet> dependency : newVersionInfo.getChangedClazzes().entrySet()) {
             final TestSet testSet = dependency.getValue();
             if (removedTest.getMethod().length() > 0) {
-               for (final Entry<ChangedEntity, Set<String>> testcase : testSet.getTestcases().entrySet()) {
-                  if (testcase.getKey().getJavaClazzName().equals(removedTest.getClazz())) {
+               for (final Entry<TestCase, Set<String>> testcase : testSet.getTestcases().entrySet()) {
+                  if (testcase.getKey().getClazz().equals(removedTest.getClazz())) {
                      testcase.getValue().remove(removedTest.getMethod());
                   }
                }
             } else {
-               ChangedEntity removeTestcase = null;
-               for (final Entry<ChangedEntity, Set<String>> testcase : testSet.getTestcases().entrySet()) {
+               TestCase removeTestcase = null;
+               for (final Entry<TestCase, Set<String>> testcase : testSet.getTestcases().entrySet()) {
                   if (testcase.getKey().getClazz().equals(removedTest.getClazz())) {
                      removeTestcase = testcase.getKey();
                   }
@@ -77,8 +77,8 @@ public class DependencyReaderUtil {
       }
    }
 
-   static void addNewTestcases(final Version newVersionInfo, final Map<ChangedEntity, Set<ChangedEntity>> newTestcases) {
-      for (final Map.Entry<ChangedEntity, Set<ChangedEntity>> newTestcase : newTestcases.entrySet()) {
+   static void addNewTestcases(final Version newVersionInfo, final Map<ChangedEntity, Set<TestCase>> newTestcases) {
+      for (final Map.Entry<ChangedEntity, Set<TestCase>> newTestcase : newTestcases.entrySet()) {
          final ChangedEntity changedClazz = newTestcase.getKey();
          TestSet testsetForChange = null;
          for (final Entry<ChangedEntity, TestSet> dependency : newVersionInfo.getChangedClazzes().entrySet()) {
@@ -91,7 +91,7 @@ public class DependencyReaderUtil {
             testsetForChange = new TestSet();
             newVersionInfo.getChangedClazzes().put(changedClazz, testsetForChange);
          }
-         for (final ChangedEntity testcase : newTestcase.getValue()) {
+         for (final TestCase testcase : newTestcase.getValue()) {
             testsetForChange.addTest(testcase.onlyClazz(), testcase.getMethod());
          }
       }
@@ -126,8 +126,8 @@ public class DependencyReaderUtil {
          if (!contained) {
             final TestSet tests = new TestSet();
             if (changeTestMap.getChanges().containsKey(underminedChange)) {
-               for (final ChangedEntity testClass : changeTestMap.getChanges().get(underminedChange)) {
-                  tests.addTest(testClass.onlyClazz(), testClass.getMethod());
+               for (final TestCase testClass : changeTestMap.getChanges().get(underminedChange)) {
+                  tests.addTest(testClass);
                }
             }
             version.getChangedClazzes().put(changedEntryFullName, tests);
@@ -139,11 +139,11 @@ public class DependencyReaderUtil {
       for (ChangedEntity underminedChange : changedClassName.getUniqueChanges()) {
          final TestSet tests = new TestSet();
          ChangedEntity realChange = underminedChange.onlyClazz();
-         Set<ChangedEntity> testEntities = changeTestMap.getTests(realChange);
+         Set<TestCase> testEntities = changeTestMap.getTests(realChange);
          if (testEntities != null) {
-            for (final ChangedEntity testcase : testEntities) {
+            for (final TestCase testcase : testEntities) {
                if (testcase.getMethod() != null) {
-                  tests.addTest(testcase.onlyClazz(), testcase.getMethod());
+                  tests.addTest(testcase);
                } else {
                   throw new RuntimeException("Testcase without method detected: " + testcase + " Dependency: " + tests);
                }

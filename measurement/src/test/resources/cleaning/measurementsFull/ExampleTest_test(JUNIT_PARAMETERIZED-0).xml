@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="de.dagere.peass.ExampleTest">
+  <testcase name="test">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <chunk chunkStartTime="1644748806291">
+     <result date="1644748811732">
+      <value>5367899.2</value>
+      <deviation>159221.5338778018</deviation>
+      <warmup>0</warmup>
+      <iterations>10</iterations>
+      <repetitions>5</repetitions>
+      <version>
+       <gitversion>49f75e8877c2e9b7cf6b56087121a35fdd73ff8b</gitversion>
+      </version>
+      <min>5280776.0</min>
+      <max>5729681.0</max>
+      <params>
+       <param key="JUNIT_PARAMETERIZED">0</param>
+      </params>
+     </result>
+     <result date="1644748817331">
+      <value>5388540.5</value>
+      <deviation>191297.06825670667</deviation>
+      <warmup>0</warmup>
+      <iterations>10</iterations>
+      <repetitions>5</repetitions>
+      <version>
+       <gitversion>a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b</gitversion>
+      </version>
+      <min>5252197.0</min>
+      <max>5767172.0</max>
+      <params>
+       <param key="JUNIT_PARAMETERIZED">0</param>
+      </params>
+     </result>
+     <result date="1644748823732">
+      <value>5370969.8</value>
+      <deviation>149226.94108325965</deviation>
+      <warmup>0</warmup>
+      <iterations>10</iterations>
+      <repetitions>5</repetitions>
+      <version>
+       <gitversion>49f75e8877c2e9b7cf6b56087121a35fdd73ff8b</gitversion>
+      </version>
+      <min>5284757.0</min>
+      <max>5686312.0</max>
+      <params>
+       <param key="JUNIT_PARAMETERIZED">0</param>
+      </params>
+     </result>
+     <result date="1644748829100">
+      <value>5377425.1</value>
+      <deviation>164546.4519975708</deviation>
+      <warmup>0</warmup>
+      <iterations>10</iterations>
+      <repetitions>5</repetitions>
+      <version>
+       <gitversion>a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b</gitversion>
+      </version>
+      <min>5295487.0</min>
+      <max>5760382.0</max>
+      <params>
+       <param key="JUNIT_PARAMETERIZED">0</param>
+      </params>
+     </result>
+     <result date="1644748835656">
+      <value>5372541.6</value>
+      <deviation>154536.53100387327</deviation>
+      <warmup>0</warmup>
+      <iterations>10</iterations>
+      <repetitions>5</repetitions>
+      <version>
+       <gitversion>49f75e8877c2e9b7cf6b56087121a35fdd73ff8b</gitversion>
+      </version>
+      <min>5294758.0</min>
+      <max>5716533.0</max>
+      <params>
+       <param key="JUNIT_PARAMETERIZED">0</param>
+      </params>
+     </result>
+     <result date="1644748841148">
+      <value>5386919.5</value>
+      <deviation>174634.12494332867</deviation>
+      <warmup>0</warmup>
+      <iterations>10</iterations>
+      <repetitions>5</repetitions>
+      <version>
+       <gitversion>a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b</gitversion>
+      </version>
+      <min>5297968.0</min>
+      <max>5780683.0</max>
+      <params>
+       <param key="JUNIT_PARAMETERIZED">0</param>
+      </params>
+     </result>
+     <result date="1644748847732">
+      <value>5374218.2</value>
+      <deviation>163787.72592922422</deviation>
+      <warmup>0</warmup>
+      <iterations>10</iterations>
+      <repetitions>5</repetitions>
+      <version>
+       <gitversion>49f75e8877c2e9b7cf6b56087121a35fdd73ff8b</gitversion>
+      </version>
+      <min>5265648.0</min>
+      <max>5741124.0</max>
+      <params>
+       <param key="JUNIT_PARAMETERIZED">0</param>
+      </params>
+     </result>
+     <result date="1644748853223">
+      <value>5391953.2</value>
+      <deviation>178343.8651798512</deviation>
+      <warmup>0</warmup>
+      <iterations>10</iterations>
+      <repetitions>5</repetitions>
+      <version>
+       <gitversion>a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b</gitversion>
+      </version>
+      <min>5303338.0</min>
+      <max>5805633.0</max>
+      <params>
+       <param key="JUNIT_PARAMETERIZED">0</param>
+      </params>
+     </result>
+     <result date="1644748859734">
+      <value>5362242.0</value>
+      <deviation>159211.16369428657</deviation>
+      <warmup>0</warmup>
+      <iterations>10</iterations>
+      <repetitions>5</repetitions>
+      <version>
+       <gitversion>49f75e8877c2e9b7cf6b56087121a35fdd73ff8b</gitversion>
+      </version>
+      <min>5280149.0</min>
+      <max>5724485.0</max>
+      <params>
+       <param key="JUNIT_PARAMETERIZED">0</param>
+      </params>
+     </result>
+     <result date="1644748865425">
+      <value>5369344.9</value>
+      <deviation>154438.7921795485</deviation>
+      <warmup>0</warmup>
+      <iterations>10</iterations>
+      <repetitions>5</repetitions>
+      <version>
+       <gitversion>a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b</gitversion>
+      </version>
+      <min>5269099.0</min>
+      <max>5685834.0</max>
+      <params>
+       <param key="JUNIT_PARAMETERIZED">0</param>
+      </params>
+     </result>
+    </chunk>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

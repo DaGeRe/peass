@@ -6,7 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class CleaningData {
-   private static final Logger LOG = LogManager.getLogger(TestCleaner.class);
+   private static final Logger LOG = LogManager.getLogger(MeasurementDataCleaner.class);
 
    private final File[] dataValue;
    private final File out;

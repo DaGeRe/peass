@@ -17,6 +17,7 @@ import de.dagere.kopeme.generated.Kopemedata.Testcases;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.dataloading.KoPeMeDataHelper;
 import de.dagere.peass.measurement.dataloading.MeasurementFileFinder;
 import de.dagere.peass.measurement.statistics.Relation;
@@ -66,9 +67,8 @@ public class ChunkSaver {
 
    final Kopemedata kopemeData;
    final Testcases testcases;
-   final String clazz;
+   final TestCase testcase;
    final TestcaseType testcaseType;
-   final String method;
 
    public ChunkSaver(final double type1error, final double type2error, final File measurementFile, final File projectOutFolder) throws JAXBException {
       super();
@@ -79,9 +79,8 @@ public class ChunkSaver {
 
       kopemeData = XMLDataLoader.loadData(measurementFile);
       testcases = kopemeData.getTestcases();
-      clazz = testcases.getClazz();
+      testcase = new TestCase(testcases);
       testcaseType = testcases.getTestcase().get(0);
-      method = testcaseType.getName();
    }
 
    public boolean checkChunk(final Chunk currentChunk) {
@@ -120,7 +119,7 @@ public class ChunkSaver {
    }
 
    private void saveChunk(final Chunk currentChunk) throws JAXBException {
-      final MeasurementFileFinder finder = new MeasurementFileFinder(projectOutFolder, clazz, method);
+      final MeasurementFileFinder finder = new MeasurementFileFinder(projectOutFolder, testcase);
       final File goal = finder.getMeasurementFile();
       final Kopemedata oneResultData = finder.getOneResultData();
       Datacollector datacollector = finder.getDataCollector();
@@ -137,9 +136,9 @@ public class ChunkSaver {
          String[] versions = KoPeMeDataHelper.getVersions(chunk);
          if (versions[1] != null) {
             if (versions[1].equals(currentVersions[0])) {
-               LOG.debug("Version {} already measured for {}#{}", versions[1], clazz, method);
+               LOG.debug("Version {} already measured for {}#{}", versions[1], testcase.getClazz(), testcase.getMethod());
                try {
-                  writerMultipleMeasurements.write(clazz + ";" + method + ";" + measurementFile);
+                  writerMultipleMeasurements.write(testcase.getClazz() + ";" + testcase.getMethod() + ";" + measurementFile);
                   writerMultipleMeasurements.flush();
                } catch (IOException e) {
                   e.printStackTrace();

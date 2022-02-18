@@ -23,7 +23,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(name = "clean", description = "Cleans the data for faster analysis and transfer", mixinStandardHelpOptions = true)
-public class TestCleaner implements Callable<Void> {
+public class MeasurementDataCleaner implements Callable<Void> {
    
    @Option(names = { "-url", "--url" }, description = "URL for analysis - is used for determining commit order")
    private String url;
@@ -37,10 +37,10 @@ public class TestCleaner implements Callable<Void> {
    @Option(names = { "-out", "--out" }, description = "Path for saving the cleaned data")
    protected File out;
 
-   private static final Logger LOG = LogManager.getLogger(TestCleaner.class);
+   private static final Logger LOG = LogManager.getLogger(MeasurementDataCleaner.class);
 
    public static void main(final String[] args) throws JAXBException, IOException {
-      TestCleaner command = new TestCleaner();
+      MeasurementDataCleaner command = new MeasurementDataCleaner();
       CommandLine commandLine = new CommandLine(command);
       System.exit(commandLine.execute(args));
    }

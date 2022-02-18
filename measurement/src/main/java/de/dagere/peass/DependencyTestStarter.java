@@ -16,7 +16,6 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.config.parameters.MeasurementConfigurationMixin;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.Version;
@@ -208,9 +207,9 @@ public class DependencyTestStarter extends PairProcessor {
          final TestSet calls = executionData.getVersions().get(version);
          boolean hasChanges = false;
          if (calls != null) {
-            for (final Map.Entry<ChangedEntity, Set<String>> clazzCalls : calls.entrySet()) {
-               final String changedClazz = clazzCalls.getKey().getJavaClazzName();
-               if (changedClazz.equals(testcase.getClazz()) && clazzCalls.getValue().contains(testcase.getMethod())) {
+            for (final Map.Entry<TestCase, Set<String>> clazzCalls : calls.entrySet()) {
+               final String changedClazz = clazzCalls.getKey().getClazz();
+               if (changedClazz.equals(testcase.getClazz()) && clazzCalls.getValue().contains(testcase.getMethodWithParams())) {
                   hasChanges = true;
                }
             }

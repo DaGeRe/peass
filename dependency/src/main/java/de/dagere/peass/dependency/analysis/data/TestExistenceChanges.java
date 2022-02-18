@@ -15,10 +15,10 @@ import java.util.TreeSet;
 public class TestExistenceChanges {
 	
 	//Map from dependency (fqn) -> testcase
-	private final Map<ChangedEntity, Set<ChangedEntity>> addedTests = new TreeMap<>();
+	private final Map<ChangedEntity, Set<TestCase>> addedTests = new TreeMap<>();
 	private final Set<TestCase> removedTests = new HashSet<>();
 
-	public Map<ChangedEntity, Set<ChangedEntity>> getAddedTests() {
+	public Map<ChangedEntity, Set<TestCase>> getAddedTests() {
 		return addedTests;
 	}
 
@@ -26,12 +26,12 @@ public class TestExistenceChanges {
 		return removedTests;
 	}
 
-	public void addRemovedTest(TestCase testcase) {
+	public void addRemovedTest(final TestCase testcase) {
 		removedTests.add(testcase);
 	}
 
-	public void addAddedTest(ChangedEntity changedEntity, ChangedEntity testcase) {
-		Set<ChangedEntity> testcaseSet = addedTests.get(changedEntity);
+	public void addAddedTest(final ChangedEntity changedEntity, final TestCase testcase) {
+		Set<TestCase> testcaseSet = addedTests.get(changedEntity);
 		if (testcaseSet == null) {
 			testcaseSet = new TreeSet<>();
 			addedTests.put(changedEntity, testcaseSet);

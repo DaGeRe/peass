@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.folders.ResultsFolders;
@@ -60,16 +61,16 @@ public class PropertyReader {
       changeProperties.setCommitText(GitUtils.getCommitText(projectFolder, version.getKey()));
       changeProperties.setCommitter(GitUtils.getCommitter(projectFolder, version.getKey()));
       versionProperties.getVersions().put(version.getKey(), changeProperties);
-      for (final Entry<ChangedEntity, Set<String>> testclazz : version.getValue().getTestcases().entrySet()) {
+      for (final Entry<TestCase, Set<String>> testclazz : version.getValue().getTestcases().entrySet()) {
          final List<ChangeProperty> properties = new LinkedList<>();
-         changeProperties.getProperties().put(testclazz.getKey().getJavaClazzName(), properties);
+         changeProperties.getProperties().put(testclazz.getKey().getClazz(), properties);
          for (final String testmethod : testclazz.getValue()) {
             readMethod(methodFolder, version, testclazz, properties, testmethod);
          }
       }
    }
 
-   private void readMethod(final File methodSourceFolder, final Map.Entry<String, TestSet> version, final Entry<ChangedEntity, Set<String>> testclazz,
+   private void readMethod(final File methodSourceFolder, final Map.Entry<String, TestSet> version, final Entry<TestCase, Set<String>> testclazz,
          final List<ChangeProperty> properties, final String testmethod) throws IOException {
       final Change testcaseChange = new Change();
       testcaseChange.setMethod(testmethod);

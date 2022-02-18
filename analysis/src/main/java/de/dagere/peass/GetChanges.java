@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.measurement.dataloading.VersionSorter;
 import de.dagere.peass.measurement.utils.RunCommandWriterRCA;
 import de.dagere.peass.measurement.utils.RunCommandWriterSlurmRCA;
@@ -54,7 +54,7 @@ public class GetChanges implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      VersionSorter.getVersionOrder(dependencyFile, executionFile);
+      SelectedTests selectedTests = VersionSorter.getSelectedTests(dependencyFile, executionFile);
       
       if (!out.exists()) {
          out.mkdirs();
@@ -66,7 +66,7 @@ public class GetChanges implements Callable<Void> {
 
       LOG.info("Errors: 1: {} 2: {}", type1error, type2error);
 
-      final ChangeReader reader = createReader(statisticFolder);
+      final ChangeReader reader = createReader(statisticFolder, selectedTests);
       
       if (dependencyFile != null) {
          Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
@@ -74,7 +74,7 @@ public class GetChanges implements Callable<Void> {
          
       }
       if (executionFile != null) {
-         ExecutionData executions = Constants.OBJECTMAPPER.readValue(dependencyFile, ExecutionData.class);
+         ExecutionData executions = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
          reader.setTests(executions.getVersions());
       }
 
@@ -84,19 +84,19 @@ public class GetChanges implements Callable<Void> {
       return null;
    }
 
-   private ChangeReader createReader(final File statisticFolder) throws FileNotFoundException {
+   private ChangeReader createReader(final File statisticFolder, final SelectedTests selectedTests) throws FileNotFoundException {
       RunCommandWriterRCA runCommandWriter = null;
       RunCommandWriterSlurmRCA runCommandWriterSlurm = null;
       if (VersionSorter.executionData != null) {
-         if (VersionComparator.getDependencies().getUrl() != null && !VersionComparator.getDependencies().getUrl().isEmpty()) {
-            final PrintStream runCommandPrinter = new PrintStream(new File(statisticFolder, "run-rca-" + VersionComparator.getProjectName() + ".sh"));
-            runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", VersionComparator.getDependencies());
-            final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticFolder, "run-rca-slurm-" + VersionComparator.getProjectName() + ".sh"));
-            runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", VersionComparator.getDependencies());
+         if (selectedTests.getUrl() != null && !selectedTests.getUrl().isEmpty()) {
+            final PrintStream runCommandPrinter = new PrintStream(new File(statisticFolder, "run-rca-" + selectedTests.getName() + ".sh"));
+            runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", selectedTests);
+            final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticFolder, "run-rca-slurm-" + selectedTests.getName() + ".sh"));
+            runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", selectedTests);
          }
       }
 
-      final ChangeReader reader = new ChangeReader(statisticFolder, runCommandWriter, runCommandWriterSlurm);
+      final ChangeReader reader = new ChangeReader(statisticFolder, runCommandWriter, runCommandWriterSlurm, selectedTests);
       reader.setType1error(type1error);
       reader.setType2error(type2error);
       return reader;

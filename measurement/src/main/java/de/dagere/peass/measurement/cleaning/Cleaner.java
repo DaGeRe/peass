@@ -17,6 +17,7 @@ import de.dagere.kopeme.generated.Result.Fulldata;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.kopeme.generated.Versioninfo;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
 import de.dagere.peass.measurement.dataloading.MeasurementFileFinder;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
@@ -37,7 +38,7 @@ public class Cleaner extends DataAnalyser  {
 
    private static final Logger LOG = LogManager.getLogger(Cleaner.class);
 
-   private final File measurementsFull;
+   private final File cleanFolder;
    private int correct = 0;
    protected int read = 0;
 
@@ -49,12 +50,12 @@ public class Cleaner extends DataAnalyser  {
       return read;
    }
 
-   public Cleaner(final File measurementsFull) {
-      this.measurementsFull = measurementsFull;
-      if (measurementsFull.exists()) {
-         throw new RuntimeException("Clean already finished - delete " + measurementsFull.getAbsolutePath() + ", if you want to clean!");
+   public Cleaner(final File cleanFolder) {
+      this.cleanFolder = cleanFolder;
+      if (cleanFolder.exists()) {
+         throw new RuntimeException("Clean already finished - delete " + cleanFolder.getAbsolutePath() + ", if you want to clean!");
       } else {
-         measurementsFull.mkdirs();
+         cleanFolder.mkdirs();
       }
    }
 
@@ -67,8 +68,7 @@ public class Cleaner extends DataAnalyser  {
    }
 
    public void cleanTestVersionPair(final Entry<String, EvaluationPair> entry) {
-      final String clazz = entry.getValue().getTestcase().getClazz();
-      final String method = entry.getValue().getTestcase().getMethod();
+      TestCase testcase = entry.getValue().getTestcase();
       if (entry.getValue().getPrevius().size() >= 2 && entry.getValue().getCurrent().size() >= 2) {
          final Chunk currentChunk = new Chunk();
          final long minExecutionCount = MultipleVMTestUtil.getMinIterationCount(entry.getValue().getPrevius());
@@ -79,13 +79,13 @@ public class Cleaner extends DataAnalyser  {
          final List<Result> current = getChunk(entry.getValue().getVersion(), minExecutionCount, entry.getValue().getCurrent());
          currentChunk.getResult().addAll(current);
 
-         handleChunk(entry, clazz, method, currentChunk);
+         handleChunk(entry, testcase, currentChunk);
       }
    }
 
-   private void handleChunk(final Entry<String, EvaluationPair> entry, final String clazz, final String method, final Chunk currentChunk) {
+   private void handleChunk(final Entry<String, EvaluationPair> entry, TestCase testcase, final Chunk currentChunk) {
       try {
-         final MeasurementFileFinder finder = new MeasurementFileFinder(measurementsFull, clazz, method);
+         final MeasurementFileFinder finder = new MeasurementFileFinder(cleanFolder, testcase);
          final File measurementFile = finder.getMeasurementFile();
          final Kopemedata oneResultData = finder.getOneResultData();
          Datacollector datacollector = finder.getDataCollector();

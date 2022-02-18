@@ -7,7 +7,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import de.dagere.kopeme.datastorage.ParamNameHelper;
 import de.dagere.kopeme.generated.Kopemedata.Testcases;
+import de.dagere.kopeme.generated.Result.Params;
+import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 
 /**
  * Represents a testcase with its class and its method. If no method is given, the whole class with all methods is represented.
@@ -16,25 +19,28 @@ import de.dagere.kopeme.generated.Kopemedata.Testcases;
  *
  */
 public class TestCase implements Comparable<TestCase>, Serializable {
-   
+
    private static final long serialVersionUID = -522183920107191602L;
-   
+
    private final String module;
    private final String clazz;
    private final String method;
+
+   // Saves parameters without paranthesis
    private final String params;
 
-   public TestCase(final String module, final Testcases data, final String params) {
+   public TestCase(final Testcases data) {
       clazz = data.getClazz();
       method = data.getTestcase().get(0).getName();
-      this.params = params;
-      this.module = module;
-   }
-   
-   public TestCase(final Testcases data, final String params) {
-      clazz = data.getClazz();
-      method = data.getTestcase().get(0).getName();
-      this.params = params;
+      Datacollector datacollector = data.getTestcase().get(0).getDatacollector().get(0);
+      Params paramObject = null;
+      if (datacollector.getResult().size() > 0) {
+         paramObject = datacollector.getResult().get(0).getParams();
+      } else if (datacollector.getChunk().size() > 0) {
+         paramObject = datacollector.getChunk().get(0).getResult().get(0).getParams();
+      }
+      String paramString = ParamNameHelper.paramsToString(paramObject);
+      this.params = paramString;
       module = "";
    }
 
@@ -61,7 +67,10 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    }
 
    public TestCase(final String clazz, final String method, final String module) {
-      this(clazz, method, module, null);
+      this(clazz,
+            ((method != null && method.indexOf('(') != -1) ? method.substring(0, method.indexOf('(')) : method),
+            module,
+            ((method != null && method.indexOf('(') != -1) ? method.substring(method.indexOf('(') + 1, method.length() - 1) : null));
    }
 
    @JsonCreator
@@ -74,6 +83,9 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       }
       if (clazz.contains(ChangedEntity.METHOD_SEPARATOR)) {
          throw new RuntimeException("Class and method should be separated: " + clazz);
+      }
+      if (method != null && (method.contains("(") || method.contains(")"))) {
+         throw new RuntimeException("Method must not contain paranthesis: " + method);
       }
       this.clazz = clazz;
       this.method = method;
@@ -124,6 +136,15 @@ public class TestCase implements Comparable<TestCase>, Serializable {
 
    public String getMethod() {
       return method;
+   }
+
+   @JsonIgnore
+   public String getMethodWithParams() {
+      if (params == null) {
+         return method;
+      } else {
+         return method + "(" + params + ")";
+      }
    }
 
    public String getModule() {
@@ -184,6 +205,13 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       } else if (!method.equals(other.method)) {
          return false;
       }
+      if (params == null) {
+         if (other.getParams() != null) {
+            return false;
+         }
+      } else if (!params.equals(other.params)) {
+         return false;
+      }
       return true;
    }
 
@@ -191,9 +219,12 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    public String toString() {
       String result;
       if (module != null && !"".equals(module)) {
-         result = module + ChangedEntity.MODULE_SEPARATOR + clazz + ChangedEntity.METHOD_SEPARATOR + method;
+         result = module + ChangedEntity.MODULE_SEPARATOR + clazz;
       } else {
-         result = clazz + ChangedEntity.METHOD_SEPARATOR + method;
+         result = clazz;
+      }
+      if (method != null) {
+         result += ChangedEntity.METHOD_SEPARATOR + method;
       }
       if (params != null) {
          result += "(" + params + ")";
@@ -214,7 +245,7 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    public String getShortClazz() {
       return clazz.substring(clazz.lastIndexOf('.') + 1, clazz.length());
    }
-   
+
    @JsonIgnore
    public String getLinkUsable() {
       return toString().replace("#", "_");
@@ -227,6 +258,20 @@ public class TestCase implements Comparable<TestCase>, Serializable {
 
    public ChangedEntity toEntity() {
       return new ChangedEntity(clazz, module, method);
+   }
+
+   public TestCase copy() {
+      TestCase test = new TestCase(clazz, method, module, params);
+      return test;
+   }
+
+   @JsonIgnore
+   public TestCase onlyClazz() {
+      return new TestCase(clazz, null, module);
+   }
+
+   public ChangedEntity onlyClazzEntity() {
+      return new ChangedEntity(clazz, module);
    }
 
 }

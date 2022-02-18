@@ -46,7 +46,7 @@ public class KiekerFolderUtil {
    }
 
    public static File getKiekerTraceFolder(final File kiekerResultFolder, final TestCase testcase) {
-      File methodResult = new File(kiekerResultFolder, testcase.getMethod());
+      File methodResult = new File(kiekerResultFolder, testcase.getMethodWithParams());
       if (methodResult.exists() && methodResult.isDirectory()) {
          if (methodResult.listFiles().length > 0) {
             return methodResult.listFiles()[0];
@@ -59,9 +59,10 @@ public class KiekerFolderUtil {
    }
 
    private static File getMethodFolder(final TestCase testcase, final File[] listFiles) {
-      File methodResult = new File(listFiles[0], testcase.getMethod());
+      String methodName = testcase.getMethodWithParams();
+      File methodResult = new File(listFiles[0], methodName);
       for (final File test : listFiles) {
-         final File candidate = new File(test, testcase.getMethod());
+         final File candidate = new File(test, methodName);
          if (candidate.exists()) {
             methodResult = candidate;
          }

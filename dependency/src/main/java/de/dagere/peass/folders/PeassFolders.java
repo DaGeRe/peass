@@ -7,6 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.traces.TemporaryProjectFolderUtil;
@@ -19,6 +21,11 @@ import de.dagere.peass.vcs.VersionControlSystem;
  *
  */
 public class PeassFolders {
+   
+   private static final Logger LOG = LogManager.getLogger(PeassFolders.class);
+   
+   public static final String MEASUREMENTS = "measurements";
+
    public static final String PEASS_POSTFIX = "_peass";
 
    protected final File projectFolder;
@@ -54,9 +61,9 @@ public class PeassFolders {
          vcs = null;
          peassFolder = folder;
       }
-      
+
       logFolders = new VMExecutionLogFolders(peassFolder);
-      
+
       oldSourceFolder = new File(peassFolder, "lastSources");
       fullResultFolder = new File(peassFolder, "measurementsFull");
       fullResultFolder.mkdir();
@@ -65,7 +72,7 @@ public class PeassFolders {
       cleanFolder = new File(peassFolder, "clean");
       debugFolder = new File(peassFolder, "debug");
       // cleanFolder.mkdir();
-      measurementsFolder = new File(fullResultFolder, "measurements");
+      measurementsFolder = new File(fullResultFolder, MEASUREMENTS);
       measurementsFolder.mkdir();
       tempResultFolder = new File(peassFolder, "measurementsTemp");
       tempResultFolder.mkdir();
@@ -88,11 +95,11 @@ public class PeassFolders {
    public File getCleanFolder() {
       return cleanFolder;
    }
-   
+
    public File getDependencyLogFolder() {
       return logFolders.getDependencyLogFolder();
    }
-   
+
    public File getDependencyLogSuccessRunFile(final String version) {
       final File versionFolder = new File(getDependencyLogFolder(), version);
       if (!versionFolder.exists()) {
@@ -100,15 +107,15 @@ public class PeassFolders {
       }
       return new File(versionFolder, "testRunning.log");
    }
-   
+
    public File getMeasureLogFolder() {
       return logFolders.getMeasureLogFolder();
    }
-   
+
    public File getTreeLogFolder() {
       return logFolders.getTreeLogFolder();
    }
-   
+
    public File getRCALogFolder() {
       return logFolders.getRCALogFolder();
    }
@@ -135,7 +142,7 @@ public class PeassFolders {
       testLogFolder.mkdirs();
       return testLogFolder;
    }
-   
+
    public File getExistingRCALogFolder(final String version, final TestCase testcase, final int level) {
       File testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getMethod() + File.separator + level);
       if (!testLogFolder.exists()) {
@@ -143,7 +150,7 @@ public class PeassFolders {
       }
       return testLogFolder;
    }
-   
+
    public File getRCALogFolder(final String version, final TestCase testcase, final int level) {
       File testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getMethod() + File.separator + level);
       if (testLogFolder.exists()) {
@@ -163,7 +170,7 @@ public class PeassFolders {
    public File getFullMeasurementFolder() {
       return fullResultFolder;
    }
-   
+
    public File getProgressFile() {
       return new File(fullResultFolder, "progress.txt");
    }
@@ -203,15 +210,20 @@ public class PeassFolders {
       return measurementsFolder;
    }
 
-   public File getFullSummaryFile(final TestCase testcase) {
+   public File getSummaryFile(final TestCase testcase) {
       final String shortClazzName = testcase.getShortClazz();
-      final File fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".xml");
+      final File fullResultFile;
+      if (testcase.getParams() != null) {
+         fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + "(" + testcase.getParams() + ").xml");
+      } else {
+         fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".xml");
+      }
       return fullResultFile;
    }
 
    public File getFullResultFolder(final TestCase testcase, final String mainVersion, final String version) {
       final File destFolder = new File(getDetailResultFolder(), testcase.getClazz());
-      System.out.println("Creating: " + destFolder + " " + mainVersion + " " + testcase.getClazz());
+      LOG.debug("Creating: " + destFolder + " " + mainVersion + " " + testcase.getClazz());
       final File currentVersionFolder = new File(destFolder, mainVersion);
       if (!currentVersionFolder.exists()) {
          currentVersionFolder.mkdir();
@@ -222,14 +234,14 @@ public class PeassFolders {
       }
       return compareVersionFolder;
    }
-   
+
    public File getResultFile(final TestCase testcase, final int vmid, final String version, final String mainVersion) {
       final File compareVersionFolder = getFullResultFolder(testcase, mainVersion, version);
       String xmlFileName = getXMLFileName(testcase, version, vmid);
       final File destFile = new File(compareVersionFolder, xmlFileName);
       return destFile;
    }
-   
+
    public static String getRelativeFullResultPath(final TestCase testcase, final String mainVersion, final String version, final int vmid) {
       String filename = getXMLFileName(testcase, version, vmid);
       String start = testcase.getClazz() + File.separator + mainVersion + File.separator + version + File.separator + filename;
@@ -237,7 +249,12 @@ public class PeassFolders {
    }
 
    private static String getXMLFileName(final TestCase testcase, final String version, final int vmid) {
-      String filename = testcase.getMethod() + "_" + vmid + "_" + version + ".xml";
+      String filename;
+      if (testcase.getParams() != null) {
+         filename = testcase.getMethod() + "(" + testcase.getParams() + ")_" + vmid + "_" + version + ".xml";
+      } else {
+         filename = testcase.getMethod() + "_" + vmid + "_" + version + ".xml";
+      }
       return filename;
    }
 

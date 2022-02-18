@@ -60,7 +60,6 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
@@ -165,7 +164,7 @@ public class JUnitTestTransformer implements TestTransformer {
       ClazzFileFinder finder = new ClazzFileFinder(config.getExecutionConfig());
       for (final String clazz : finder.getTestClazzes(module)) {
          final String currentModule = mapping.getModuleOfClass(clazz);
-         final List<TestCase> testMethodNames = getTestMethodNames(module, new ChangedEntity(clazz, currentModule));
+         final List<TestCase> testMethodNames = getTestMethodNames(module, new TestCase(clazz, null, currentModule));
          for (TestCase test : testMethodNames) {
             if (includedModules == null || includedModules.contains(test.getModule())) {
                addTestIfIncluded(moduleTests, test);
@@ -185,7 +184,7 @@ public class JUnitTestTransformer implements TestTransformer {
    public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules) {
       final TestSet tests = new TestSet();
       determineVersions(modules);
-      for (final ChangedEntity clazzname : testsToUpdate.getClasses()) {
+      for (final TestCase clazzname : testsToUpdate.getClasses()) {
          final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
          if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
             final File moduleFolder = new File(projectFolder, clazzname.getModule());
@@ -327,7 +326,7 @@ public class JUnitTestTransformer implements TestTransformer {
    }
 
    @Override
-   public List<TestCase> getTestMethodNames(final File module, final ChangedEntity clazzname) {
+   public List<TestCase> getTestMethodNames(final File module, final TestCase clazzname) {
       final List<TestCase> methods = new LinkedList<>();
       ClazzFileFinder finder = new ClazzFileFinder(config.getExecutionConfig());
       final File clazzFile = finder.getClazzFile(module, clazzname);

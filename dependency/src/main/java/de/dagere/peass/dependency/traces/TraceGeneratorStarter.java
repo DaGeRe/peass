@@ -66,7 +66,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
       Version version = dependencies.getVersions().get(newestVersion);
       TestSet tests = version.getTests();
 
-      ExecutionConfig executionConfig = new ExecutionConfig(executionMixin);
+      ExecutionConfig executionConfig = executionMixin.getExecutionConfig();
       NonIncludedTestRemover.removeNotIncluded(tests, executionConfig);
 
       GitUtils.reset(projectFolder);

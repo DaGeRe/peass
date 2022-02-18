@@ -10,8 +10,8 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -26,7 +26,6 @@ import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
@@ -83,22 +82,22 @@ public class JmhDependencyReaderMultiParamTest {
       ExecutionData data = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
       TestCase changedBenchmark = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
       TestSet versionTestSet = data.getVersions().get("000002");
-      Assert.assertThat(versionTestSet.getTests(), Matchers.contains(changedBenchmark));
+      MatcherAssert.assertThat(versionTestSet.getTests(), Matchers.contains(changedBenchmark));
    }
 
    private void checkInitialVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
       Dependencies dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
-      Map<ChangedEntity, InitialDependency> initialDependencies = dependencies.getInitialversion().getInitialDependencies();
-      Assert.assertThat(initialDependencies.keySet(), Matchers.hasSize(1));
-      InitialDependency initial = initialDependencies.get(new ChangedEntity("de.dagere.peass.ExampleBenchmark", null, "testMethod"));
-      Assert.assertThat(initial.getEntities(), Matchers.hasSize(4));
+      Map<TestCase, InitialDependency> initialDependencies = dependencies.getInitialversion().getInitialDependencies();
+      MatcherAssert.assertThat(initialDependencies.keySet(), Matchers.hasSize(1));
+      InitialDependency initial = initialDependencies.get(new TestCase("de.dagere.peass.ExampleBenchmark", "testMethod", null));
+      MatcherAssert.assertThat(initial.getEntities(), Matchers.hasSize(4));
 
       TestCase changedBenchmark = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
       File viewFolder = resultsFolders.getViewMethodDir("000001", changedBenchmark);
       File methodOrderFile = new File(viewFolder, "000001_method");
       String allMethods = FileUtils.readFileToString(methodOrderFile, StandardCharsets.UTF_8);
-      Assert.assertThat(allMethods, Matchers.containsString("de.dagere.peass.ExampleBenchmark#someCalledMethod"));
-      Assert.assertThat(allMethods, Matchers.containsString("de.dagere.peass.ExampleBenchmark#otherCalledMethod"));
+      MatcherAssert.assertThat(allMethods, Matchers.containsString("de.dagere.peass.ExampleBenchmark#someCalledMethod"));
+      MatcherAssert.assertThat(allMethods, Matchers.containsString("de.dagere.peass.ExampleBenchmark#otherCalledMethod"));
    }
 
    private FakeFileIterator mockIterator() {

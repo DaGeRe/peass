@@ -66,7 +66,7 @@ public abstract class TestExecutor {
 
    protected File getCleanLogFile(final File logFolder, final TestCase test) {
       File clazzLogFolder = getClazzLogFolder(logFolder, test);
-      final File logFile = new File(clazzLogFolder, "clean" + File.separator + test.getMethod() + ".txt");
+      final File logFile = new File(clazzLogFolder, "clean" + File.separator + test.getMethodWithParams() + ".txt");
       if (!logFile.getParentFile().exists()) {
          logFile.getParentFile().mkdir();
       }
@@ -75,7 +75,7 @@ public abstract class TestExecutor {
 
    protected File getMethodLogFile(final File logFolder, final TestCase test) {
       File clazzLogFolder = getClazzLogFolder(logFolder, test);
-      final File logFile = new File(clazzLogFolder, test.getMethod() + ".txt");
+      final File logFile = new File(clazzLogFolder, test.getMethodWithParams() + ".txt");
       return logFile;
    }
 
