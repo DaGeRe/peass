@@ -55,7 +55,7 @@ public class GetChanges implements Callable<Void> {
    @Override
    public Void call() throws Exception {
       SelectedTests selectedTests = VersionSorter.getSelectedTests(dependencyFile, executionFile);
-      
+
       if (!out.exists()) {
          out.mkdirs();
       }
@@ -67,11 +67,11 @@ public class GetChanges implements Callable<Void> {
       LOG.info("Errors: 1: {} 2: {}", type1error, type2error);
 
       final ChangeReader reader = createReader(statisticFolder, selectedTests);
-      
+
       if (dependencyFile != null) {
          Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
          reader.setTests(dependencies.toExecutionData().getVersions());
-         
+
       }
       if (executionFile != null) {
          ExecutionData executions = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
@@ -87,13 +87,11 @@ public class GetChanges implements Callable<Void> {
    private ChangeReader createReader(final File statisticFolder, final SelectedTests selectedTests) throws FileNotFoundException {
       RunCommandWriterRCA runCommandWriter = null;
       RunCommandWriterSlurmRCA runCommandWriterSlurm = null;
-      if (VersionSorter.executionData != null) {
-         if (selectedTests.getUrl() != null && !selectedTests.getUrl().isEmpty()) {
-            final PrintStream runCommandPrinter = new PrintStream(new File(statisticFolder, "run-rca-" + selectedTests.getName() + ".sh"));
-            runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", selectedTests);
-            final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticFolder, "run-rca-slurm-" + selectedTests.getName() + ".sh"));
-            runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", selectedTests);
-         }
+      if (selectedTests.getUrl() != null && !selectedTests.getUrl().isEmpty()) {
+         final PrintStream runCommandPrinter = new PrintStream(new File(statisticFolder, "run-rca-" + selectedTests.getName() + ".sh"));
+         runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", selectedTests);
+         final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticFolder, "run-rca-slurm-" + selectedTests.getName() + ".sh"));
+         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", selectedTests);
       }
 
       final ChangeReader reader = new ChangeReader(statisticFolder, runCommandWriter, runCommandWriterSlurm, selectedTests);
@@ -101,5 +99,5 @@ public class GetChanges implements Callable<Void> {
       reader.setType2error(type2error);
       return reader;
    }
-   
+
 }

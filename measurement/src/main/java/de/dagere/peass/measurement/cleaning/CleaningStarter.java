@@ -2,7 +2,6 @@ package de.dagere.peass.measurement.cleaning;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Comparator;
 import java.util.concurrent.Callable;
 
 import javax.xml.bind.JAXBException;
@@ -13,8 +12,6 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.measurement.dataloading.VersionSorter;
-import de.dagere.peass.measurement.statistics.data.TestData;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
@@ -38,10 +35,6 @@ public class CleaningStarter implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      VersionSorter.getVersionOrder(dependencyFile, executionFile);
-      if (VersionSorter.executionData == null) {
-         setDefaultComparator();
-      }
       for (int i = 0; i < data.length; i++) {
          final File folder = data[i];
          LOG.info("Searching in " + folder);
@@ -57,21 +50,5 @@ public class CleaningStarter implements Callable<Void> {
          LOG.info("Finish");
       }
       return null;
-   }
-
-   private void setDefaultComparator() {
-      TestData.comparator = new Comparator<String>() {
-
-         @Override
-         public int compare(final String o1, final String o2) {
-            if (o1.equals("d94f9060f6bedb1f4566974eadf1473f66b2c6f8")) {
-               return -1;
-            } else if (o2.equals("d94f9060f6bedb1f4566974eadf1473f66b2c6f8")) {
-               return 1;
-            } else {
-               return 0;
-            }
-         }
-      };
    }
 }

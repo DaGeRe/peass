@@ -100,7 +100,7 @@ public class ReadProperties implements Callable<Void> {
       
       System.out.println("Read all: " + ReadAllProperties.readAll);
       if (ReadAllProperties.readAll) {
-         final ExecutionData changedTests = VersionSorter.executionData != null ? VersionSorter.executionData : folders.getExecutionData(projectName);
+         final ExecutionData changedTests = executionFile != null ? Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class) : folders.getExecutionData(projectName);
          final File resultFile = new File("results" + File.separator + projectName + File.separator + "properties_alltests.json");
          out = resultFile;
          ResultsFolders resultsFolders = new ResultsFolders(out, projectName);
