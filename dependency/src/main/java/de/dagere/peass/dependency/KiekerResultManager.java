@@ -19,8 +19,6 @@ package de.dagere.peass.dependency;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -64,7 +62,7 @@ public class KiekerResultManager {
       fakeConfig.getKiekerConfig().setEnableAdaptiveMonitoring(false);
       fakeConfig.getExecutionConfig().setRedirectToNull(false);
       fakeConfig.setShowStart(true);
-      
+
       testTransformer = ExecutorCreator.createTestTransformer(folders, executionConfig, fakeConfig);
 
       // testTransformer = new JUnitTestTransformer(folders.getProjectFolder(), fakeConfig);
@@ -122,11 +120,8 @@ public class KiekerResultManager {
       }
 
       executor.prepareKoPeMeExecution(new File(logVersionFolder, "clean.txt"));
-      for (final Map.Entry<TestCase, Set<String>> test : testsToUpdate.getTestcases().entrySet()) {
-         for (final String method : test.getValue()) {
-            final TestCase testcase = new TestCase(test.getKey().getClazz(), method, test.getKey().getModule());
-            executor.executeTest(testcase, logVersionFolder, testTransformer.getConfig().getTimeoutInSeconds());
-         }
+      for (final TestCase testcase : testsToUpdate.getTests()) {
+         executor.executeTest(testcase, logVersionFolder, testTransformer.getConfig().getTimeoutInSeconds());
       }
       cleanAboveSize(logVersionFolder, 100, "txt");
 
