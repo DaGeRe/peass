@@ -1,4 +1,4 @@
-package de.dagere.peass.ci;
+package de.dagere.peass.analysis.measurement;
 
 import java.io.File;
 import java.util.Arrays;
@@ -7,11 +7,11 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.analysis.measurement.AnalyseFullData;
+import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.measurement.analysis.AnalyseFullData;
-import de.dagere.peass.measurement.analysis.ProjectStatistics;
 import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 import de.dagere.peass.vcs.GitCommit;
 

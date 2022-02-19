@@ -11,7 +11,7 @@ import org.apache.commons.math3.stat.inference.TestUtils;
 
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.dagere.peass.measurement.analysis.TestStatistic;
+import de.dagere.peass.analysis.measurement.TestStatistic;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
 import de.dagere.peass.measurement.dataloading.DataReader;
 import de.dagere.peass.measurement.statistics.data.EvaluationPair;

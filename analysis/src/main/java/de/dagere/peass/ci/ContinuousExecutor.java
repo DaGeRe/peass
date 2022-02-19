@@ -13,6 +13,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.analysis.measurement.AnalyseFullData;
+import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
@@ -23,8 +25,6 @@ import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
-import de.dagere.peass.measurement.analysis.AnalyseFullData;
-import de.dagere.peass.measurement.analysis.ProjectStatistics;
 import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;

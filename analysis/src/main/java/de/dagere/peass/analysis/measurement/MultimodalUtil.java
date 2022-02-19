@@ -1,4 +1,4 @@
-package de.dagere.peass.measurement.analysis;
+package de.dagere.peass.analysis.measurement;
 
 import java.io.IOException;
 import java.util.Arrays;

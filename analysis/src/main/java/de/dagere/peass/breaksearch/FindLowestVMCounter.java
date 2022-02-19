@@ -9,8 +9,8 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.measurement.analysis.TestStatistic;
-import de.dagere.peass.measurement.analysis.statistics.MeanCoVData;
+import de.dagere.peass.analysis.measurement.TestStatistic;
+import de.dagere.peass.analysis.measurement.statistics.MeanCoVData;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
 import de.dagere.peass.measurement.statistics.data.EvaluationPair;
 import de.dagere.peass.measurement.statistics.data.TestData;

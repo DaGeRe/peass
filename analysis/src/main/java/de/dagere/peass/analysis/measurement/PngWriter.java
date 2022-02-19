@@ -1,4 +1,4 @@
-package de.dagere.peass.measurement.analysis;
+package de.dagere.peass.analysis.measurement;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,8 +8,8 @@ import java.util.Map.Entry;
 import org.apache.commons.io.FileUtils;
 
 import de.dagere.kopeme.generated.Result;
-import de.dagere.peass.measurement.analysis.statistics.MeanCoVData;
-import de.dagere.peass.measurement.analysis.statistics.MeanHistogramData;
+import de.dagere.peass.analysis.measurement.statistics.MeanCoVData;
+import de.dagere.peass.analysis.measurement.statistics.MeanHistogramData;
 import de.dagere.peass.measurement.statistics.data.EvaluationPair;
 import de.dagere.peass.measurement.statistics.data.TestData;
 import de.dagere.peass.utils.StreamGobbler;
