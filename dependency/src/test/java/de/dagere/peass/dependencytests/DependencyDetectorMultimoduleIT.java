@@ -41,7 +41,7 @@ public class DependencyDetectorMultimoduleIT {
 
    private static final Logger LOG = LogManager.getLogger(DependencyDetectorMultimoduleIT.class);
 
-   private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT_multimodule");
+   private static final File VERSIONS_FOLDER = new File(DependencyTestConstants.VERSIONS_FOLDER, "multimodule");
    private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
 
    // private DependencyManager handler;

@@ -19,7 +19,7 @@ import de.dagere.peass.vcs.VersionIterator;
 
 public class DependencyDetectorITGradle {
 
-   private static final File VERSIONS_FOLDER = new File("src/test/resources/dependencyIT_gradle");
+   private static final File VERSIONS_FOLDER = new File(DependencyTestConstants.VERSIONS_FOLDER, "gradle");
    private static final File BASIC_STATE = new File(VERSIONS_FOLDER, "basic_state");
    private static final File BASIC_STATE_ANDROID = new File(VERSIONS_FOLDER, "basic_state_android");
    private static final File CHANGE = new File(VERSIONS_FOLDER, "normal_change");
