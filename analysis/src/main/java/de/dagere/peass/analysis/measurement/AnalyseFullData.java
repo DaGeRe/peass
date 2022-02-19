@@ -100,10 +100,10 @@ public class AnalyseFullData extends DataAnalyser {
          tRelation = Relation.GREATER_THAN;
       }
 
-      long repetitions = entry.getValue().getCurrent().get(0).getRepetitions();
+//      long repetitions = entry.getValue().getCurrent().get(0).getRepetitions();
 
       final double diffPercent = ((double) teststatistic.getDiff()) / 100;
-      final double mean = teststatistic.getPreviousStatistic().getMean() / repetitions;
+      final double mean = teststatistic.getPreviousStatistic().getMean();
 
       final TestCase currentTest = getCurrentTestcase(measurementEntry);
 

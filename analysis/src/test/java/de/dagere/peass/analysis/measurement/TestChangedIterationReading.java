@@ -17,7 +17,7 @@ import de.dagere.peass.vcs.GitCommit;
 
 public class TestChangedIterationReading {
 
-   private final static File DATA_FOLDER = new File(TestChangeReading.DATA_READING_FOLDER, "changedIterations");
+   private final static File DATA_FOLDER = new File(TestAnalyseFullData.DATA_READING_FOLDER, "changedIterations");
 
    @Test
    public void testChangedIterationReading() throws InterruptedException {

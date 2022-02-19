@@ -66,7 +66,8 @@ public class FindLowestPossibleIterations implements Callable<Void> {
 				System.exit(1);
 			}
 
-			final LinkedBlockingQueue<TestData> measurements = DataReader.startReadVersionDataMap(fullDataFolder);
+			final LinkedBlockingQueue<TestData> measurements = new LinkedBlockingQueue<>();
+			DataReader.startReadVersionDataMap(fullDataFolder, measurements);
 
 			TestData measurementEntry = measurements.take();
 

@@ -68,7 +68,7 @@ public class TestData {
 	}
 
 	public String getTestMethod() {
-		return testcase.getMethod();
+		return testcase.getMethodWithParams();
 	}
 	
 	public int getVersions(){

@@ -35,8 +35,7 @@ public final class DataReader {
 
    }
 
-   public static LinkedBlockingQueue<TestData> startReadVersionDataMap(final File fullDataFolder) {
-      final LinkedBlockingQueue<TestData> myQueue = new LinkedBlockingQueue<>();
+   public static Thread startReadVersionDataMap(final File fullDataFolder, LinkedBlockingQueue<TestData> myQueue) {
       final Thread readerThread = new Thread(new Runnable() {
 
          @Override
@@ -50,7 +49,7 @@ public final class DataReader {
       });
       readerThread.start();
 
-      return myQueue;
+      return readerThread;
    }
 
    private static void readDataToQueue(final File fullDataFolder, final LinkedBlockingQueue<TestData> measurements) {

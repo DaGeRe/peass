@@ -33,7 +33,8 @@ public class IsThereTimeReductionIterations extends DataAnalyser {
       for (File folder : data) {
          for (final File slaveFolder : folder.listFiles()) {
             final File fullDataFolder = new File(slaveFolder, "measurementsFull/measurements/");
-            final LinkedBlockingQueue<TestData> measurements = DataReader.startReadVersionDataMap(fullDataFolder);
+            final LinkedBlockingQueue<TestData> measurements = new LinkedBlockingQueue<>();
+            DataReader.startReadVersionDataMap(fullDataFolder, measurements);
 
             TestData measurementEntry = measurements.take();
             while (measurementEntry != DataReader.POISON_PILL) {

@@ -9,25 +9,49 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.measurement.statistics.data.TestData;
 
 public abstract class DataAnalyser {
+   
+   private boolean isFinished = false;
+   
    private static final Logger LOG = LogManager.getLogger(DataAnalyser.class);
 
    public void analyseFolder(final File measurementsFolder) throws InterruptedException {
       LOG.info("Loading: {}", measurementsFolder);
 
       if (!measurementsFolder.exists()) {
-         LOG.error("Ordner existiert nicht!");
+         LOG.error("Folder not existing: {}", measurementsFolder);
          System.exit(1);
       }
 
-      final LinkedBlockingQueue<TestData> measurements = DataReader.startReadVersionDataMap(measurementsFolder);
+      final LinkedBlockingQueue<TestData> measurements = new LinkedBlockingQueue<>();
+      final Thread readerThread = DataReader.startReadVersionDataMap(measurementsFolder, measurements);
 
-      TestData measurementEntry = measurements.take();
+      Thread processorThread = new Thread(new Runnable() {
+         
+         @Override
+         public void run() {
+            TestData measurementEntry;
+            try {
+               measurementEntry = measurements.take();
+               
+               while (measurementEntry != DataReader.POISON_PILL && !isFinished) {
+                  processTestdata(measurementEntry);
+                  measurementEntry = measurements.take();
+               }
+            } catch (InterruptedException e) {
+               e.printStackTrace();
+            }
+         }
+      });
+      processorThread.start();
+      readerThread.join();
+      
+      finishProcessingIfRunning(processorThread);
+   }
 
-      while (measurementEntry != DataReader.POISON_PILL) {
-         processTestdata(measurementEntry);
-         measurementEntry = measurements.take();
-      }
-      // LOG.info("Finished");
+   private void finishProcessingIfRunning(Thread processorThread) throws InterruptedException {
+      Thread.sleep(1000);
+      isFinished = true;
+//      processorThread.interrupt();
    }
 
    public abstract void processTestdata(TestData measurementEntry);
