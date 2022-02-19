@@ -84,6 +84,9 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       if (clazz.contains(ChangedEntity.METHOD_SEPARATOR)) {
          throw new RuntimeException("Class and method should be separated: " + clazz);
       }
+      if (clazz.contains(ChangedEntity.MODULE_SEPARATOR)) {
+         throw new RuntimeException("Class and module should be separated: " + clazz);
+      }
       if (method != null && (method.contains("(") || method.contains(")"))) {
          throw new RuntimeException("Method must not contain paranthesis: " + method);
       }
