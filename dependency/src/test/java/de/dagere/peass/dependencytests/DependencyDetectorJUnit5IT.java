@@ -21,22 +21,24 @@ import de.dagere.peass.vcs.VersionIterator;
 
 public class DependencyDetectorJUnit5IT {
 
+   public static final File CONTAINING_FOLDER = new File(DependencyTestConstants.VERSIONS_FOLDER, "JUnit5");
+   public static final File BASIC_STATE = new File(CONTAINING_FOLDER, "basic_state");
+   public static final File NORMAL_CHANGE = new File(CONTAINING_FOLDER, "normal_change");
+   
    @BeforeEach
    public void initialize() throws IOException, InterruptedException {
       Assert.assertTrue(DependencyTestConstants.VERSIONS_FOLDER.exists());
 
       FileUtils.deleteDirectory(DependencyTestConstants.CURRENT);
-      FileUtils.copyDirectory(DependencyTestConstants.BASIC_STATE, DependencyTestConstants.CURRENT);
+      FileUtils.copyDirectory(BASIC_STATE, DependencyTestConstants.CURRENT);
       
    }
 
    @Test
    public void testNormalChange() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
-      final File secondVersion = new File(DependencyTestConstants.VERSIONS_FOLDER, "normal_change");
-
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
-      final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(secondVersion));
+      final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(NORMAL_CHANGE));
 
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
