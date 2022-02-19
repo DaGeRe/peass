@@ -19,6 +19,7 @@ import de.dagere.peass.measurement.analysis.TestDependencyTester;
 import de.dagere.peass.measurement.dependencyprocessors.DependencyTester;
 import de.dagere.peass.measurement.dependencyprocessors.ParallelExecutionRunnable;
 import de.dagere.peass.measurement.rca.helper.VCSTestUtils;
+import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 
 public class TestParallelMeasurement {
@@ -29,8 +30,10 @@ public class TestParallelMeasurement {
    @Test
    public void testFiles() throws Exception {
       try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
-            MockedStatic<ExecutorCreator> mockedExecutor = Mockito.mockStatic(ExecutorCreator.class)) {
+            MockedStatic<ExecutorCreator> mockedExecutor = Mockito.mockStatic(ExecutorCreator.class);
+            MockedStatic<GitUtils> gitUtils = Mockito.mockStatic(GitUtils.class)) {
          VCSTestUtils.mockGetVCS(mockedVCS);
+         VCSTestUtils.mockGoToTagEmpty(gitUtils);
 
          final PeassFolders folders = new PeassFolders(folder.getRoot());
          final MeasurementConfig configuration = new MeasurementConfig(4, "2", "1");

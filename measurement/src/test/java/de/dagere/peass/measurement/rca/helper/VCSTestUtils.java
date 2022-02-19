@@ -28,6 +28,18 @@ public class VCSTestUtils {
       mockedVCS.when(() -> VersionControlSystem.getVersionControlSystem(Mockito.any()))
             .thenReturn(VersionControlSystem.GIT);
    }
+   
+   public static void mockGoToTagEmpty(final MockedStatic<GitUtils> mockedGitUtils) {
+      mockedGitUtils.when(() -> GitUtils.goToTag(Mockito.any(), Mockito.any()))
+            .thenAnswer(new Answer<Void>() {
+
+               @Override
+               public Void answer(final InvocationOnMock invocation) throws Throwable {
+                  LOG.debug("Loading version mock (doing nothing)");
+                  return null;
+               }
+            });
+   }
 
    public static void mockGoToTagAny(final MockedStatic<GitUtils> mockedGitUtils, final File anyVersion) {
       mockedGitUtils.when(() -> GitUtils.goToTag(Mockito.any(), Mockito.any()))
