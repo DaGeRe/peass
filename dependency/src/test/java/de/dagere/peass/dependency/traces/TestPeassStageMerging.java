@@ -1,4 +1,4 @@
-package de.dagere.peass.dependencies.traces;
+package de.dagere.peass.dependency.traces;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsArrayWithSize;
