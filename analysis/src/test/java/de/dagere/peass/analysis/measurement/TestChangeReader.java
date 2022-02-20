@@ -12,7 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.changes.ProjectChanges;
-import de.dagere.peass.dependency.persistence.SelectedTests;
+import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.utils.Constants;
 
 public class TestChangeReader {
@@ -21,7 +21,7 @@ public class TestChangeReader {
    
    @Test
    public void testBasicUsage() throws JAXBException, JsonProcessingException {
-      ChangeReader reader = new ChangeReader("android-example-correct", new SelectedTests());
+      ChangeReader reader = new ChangeReader("android-example-correct", new ExecutionData());
       ProjectChanges changes = reader.readFile(TestAnalyseFullData.REGULAR_DATA_FOLDER.getParentFile());
       
       System.out.println(Constants.OBJECTMAPPER.writeValueAsString(changes));
@@ -35,7 +35,7 @@ public class TestChangeReader {
    
    @Test
    public void testParameterizedUsage() throws JAXBException, JsonProcessingException {
-      ChangeReader reader = new ChangeReader("demo-parameterized", new SelectedTests());
+      ChangeReader reader = new ChangeReader("demo-parameterized", new ExecutionData());
       ProjectChanges changes = reader.readFile(TestAnalyseFullData.PARAM_DATA_FOLDER);
       
       System.out.println(Constants.OBJECTMAPPER.writeValueAsString(changes));

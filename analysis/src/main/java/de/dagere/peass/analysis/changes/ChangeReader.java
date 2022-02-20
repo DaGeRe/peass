@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.Arrays;
 import java.util.Map;
 
 import javax.xml.bind.JAXBException;
@@ -24,7 +25,6 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.SelectedTests;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.dataloading.KoPeMeDataHelper;
 import de.dagere.peass.measurement.statistics.ConfidenceIntervalInterpretion;
 import de.dagere.peass.measurement.statistics.Relation;
@@ -271,7 +271,8 @@ public class ChangeReader {
          final int repetitions = (int) exampleResult.getRepetitions();
          final int vms = describedChunk.getCurrent().size();
 
-         final int versionIndex = VersionComparator.getVersionIndex(versions[1]);
+         final int versionIndex = Arrays.binarySearch(dependencies.getVersionNames(), versions[1]);
+         
          runCommandWriter.createSingleMethodCommand(versionIndex, versions[1], testcase.getExecutable(),
                (int) exampleResult.getWarmup(), iterations, repetitions, vms);
 

@@ -2,7 +2,7 @@ package de.dagere.peass.dependency.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-public class SelectedTests {
+public abstract class SelectedTests {
    private String url;
    private boolean isAndroid = false;
 
@@ -34,4 +34,6 @@ public class SelectedTests {
       }
       return name;
    }
+   
+   public abstract String[] getVersionNames();
 }
