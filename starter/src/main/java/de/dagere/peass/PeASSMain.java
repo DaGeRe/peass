@@ -7,7 +7,7 @@ import de.dagere.peass.GetChanges;
 import de.dagere.peass.ReadProperties;
 import de.dagere.peass.clean.MeasurementDataCleaner;
 import de.dagere.peass.reexecutions.FindMissingExecutions;
-import de.dagere.peass.measurement.utils.DivideVersions;
+import de.dagere.peass.measurement.utils.CreateMeasurementExecutionScript;
 import de.dagere.peass.visualization.VisualizeRCA;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -19,7 +19,7 @@ import picocli.CommandLine.Command;
       MeasurementDataCleaner.class, 
       IsChange.class, 
       RootCauseAnalysis.class, 
-      DivideVersions.class, 
+      CreateMeasurementExecutionScript.class, 
       VisualizeRCA.class, 
       ContinuousExecutionStarter.class,
       FindMissingExecutions.class}, synopsisSubcommandLabel = "COMMAND")

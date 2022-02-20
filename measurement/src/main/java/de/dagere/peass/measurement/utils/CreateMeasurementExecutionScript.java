@@ -28,7 +28,7 @@ import picocli.CommandLine.Option;
  *
  */
 @Command(description = "Creates a script (bash or slurm) to run a set of tests", name = "createScript")
-public class DivideVersions implements Callable<Void> {
+public class CreateMeasurementExecutionScript implements Callable<Void> {
 
    @Option(names = { "-experimentId", "--experimentId" }, description = "Id of the experiment")
    protected String experimentId = "default";
@@ -46,7 +46,7 @@ public class DivideVersions implements Callable<Void> {
    private ExecutionData executionData;
    
    public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
-      final DivideVersions command = new DivideVersions();
+      final CreateMeasurementExecutionScript command = new CreateMeasurementExecutionScript();
       final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);
    }

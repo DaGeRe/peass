@@ -42,7 +42,7 @@ public class DivideAllVersions {
             final File executeCommandsFile = new File(resultFolder, "execute-" + project + ".sh");
             final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
             final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
-            DivideVersions.generateExecuteCommands(dependencies, changedTests, "validation", new PrintStream(new FileOutputStream(executeCommandsFile)));
+            CreateMeasurementExecutionScript.generateExecuteCommands(dependencies, changedTests, "validation", new PrintStream(new FileOutputStream(executeCommandsFile)));
          } else {
             LOG.error("File not existing: " + project + " " + Constants.defaultUrls.get(project) + " " + dependencyFile.getAbsolutePath());
          }

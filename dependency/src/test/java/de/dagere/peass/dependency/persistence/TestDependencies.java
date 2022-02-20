@@ -1,4 +1,4 @@
-package de.dagere.peass.dependency;
+package de.dagere.peass.dependency.persistence;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
