@@ -245,7 +245,8 @@ public class DependencyReader {
             diffGenerator.generateAllDiffs(version, newVersionInfo, diffGenerator, mapping, executionResult);
 
             if (dependencyConfig.isGenerateCoverageSelection()) {
-               generateCoverageBasedSelection(version, newVersionInfo);
+               TestSet dynamicallySelected = executionResult.getVersions().get(version);
+               generateCoverageBasedSelection(version, newVersionInfo, dynamicallySelected);
             }
          }
       } else {
@@ -257,9 +258,9 @@ public class DependencyReader {
       return changedClazzCount;
    }
 
-   private void generateCoverageBasedSelection(final String version, final Version newVersionInfo) throws IOException, JsonParseException, JsonMappingException {
+   private void generateCoverageBasedSelection(final String version, final Version newVersionInfo, TestSet dynamicallySelected) throws IOException, JsonParseException, JsonMappingException {
       List<TraceCallSummary> summaries = new LinkedList<>();
-      for (TestCase testcase : newVersionInfo.getTests().getTests()) {
+      for (TestCase testcase : dynamicallySelected.getTests()) {
          List<File> traceFiles = mapping.getTestcaseMap(testcase);
          if (traceFiles != null && traceFiles.size() > 1) {
             File oldFile = new File(traceFiles.get(0).getAbsolutePath() + OneTraceGenerator.SUMMARY);
