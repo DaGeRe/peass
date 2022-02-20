@@ -14,6 +14,7 @@ import org.apache.commons.io.FileUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.visualization.GraphNode;
 import de.dagere.peass.visualization.NodeDashboardWriter;
@@ -62,14 +63,15 @@ public class HTMLWriter {
 
    private File getOutputHTML(final CauseSearchData data) {
       final File output;
-      final String testcase = data.getCauseConfig().getTestCase().getTestclazzWithModuleName() + ChangedEntity.METHOD_SEPARATOR + data.getCauseConfig().getTestCase().getMethod();
+      TestCase testcaseObject = data.getCauseConfig().getTestCase();
+      final String testcaseName = testcaseObject.getTestclazzWithModuleName() + ChangedEntity.METHOD_SEPARATOR + testcaseObject.getMethodWithParams();
       if (destFolder.getName().equals(data.getMeasurementConfig().getExecutionConfig().getVersion())) {
-         output = new File(destFolder, testcase.replace('#', '_') + ".html");
+         output = new File(destFolder, testcaseName.replace('#', '_') + ".html");
          copyResources(destFolder);
       } else {
          File versionFolder = new File(destFolder, data.getMeasurementConfig().getExecutionConfig().getVersion());
          copyResources(versionFolder);
-         output = new File(versionFolder, testcase.replace('#', '_') + ".html");
+         output = new File(versionFolder, testcaseName.replace('#', '_') + ".html");
       }
       output.getParentFile().mkdirs();
       return output;

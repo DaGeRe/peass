@@ -41,4 +41,25 @@ public class TestHTMLWriter {
       File jsFile = new File(TestConstants.CURRENT_FOLDER, "1/Test_test.js");
       Assert.assertTrue(jsFile.exists());
    }
+   
+   @Test
+   public void testParameterizedWriting() throws JsonProcessingException, FileNotFoundException, IOException, JAXBException {
+      GraphNode rootNode = new GraphNode("Test#test", "public void Test.test(int)", "public void Test.test(int)");
+      rootNode.setName("Test#test");
+      GraphNode kopemeConvertedData = new GraphNode("Test#test", "public void Test.test(int)", "public void Test.test(int)");
+      CauseSearchData data = new CauseSearchData();
+      data.setCauseConfig(new CauseSearcherConfig(new TestCase("Test", "test", "", "int"), new CauseSearcherConfigMixin()));
+      data.setConfig(new MeasurementConfig(10));
+      data.getMeasurementConfig().getExecutionConfig().setVersion("1");
+      
+      HTMLWriter writer = new HTMLWriter(rootNode, data, TestConstants.CURRENT_FOLDER, null, kopemeConvertedData);
+      writer.writeHTML();
+      
+      File htmlFile = new File(TestConstants.CURRENT_FOLDER, "1/Test_test(int).html");
+      Assert.assertTrue(htmlFile.exists());
+      File dashboardFile = new File(TestConstants.CURRENT_FOLDER, "1/Test_test(int)_dashboard.html");
+      Assert.assertTrue(dashboardFile.exists());
+      File jsFile = new File(TestConstants.CURRENT_FOLDER, "1/Test_test(int).js");
+      Assert.assertTrue(jsFile.exists());
+   }
 }
