@@ -104,7 +104,7 @@ public class CreateMeasurementExecutionScript implements Callable<Void> {
    public static void generateExecuteCommands(final Dependencies dependencies, final ExecutionData changedTests, final String experimentId, final RunCommandWriter writer)
          throws IOException {
       final String[] versions = dependencies.getVersionNames();
-      for (int versionIndex = 0; versionIndex < dependencies.getVersions().size(); versionIndex++) {
+      for (int versionIndex = 0; versionIndex < versions.length; versionIndex++) {
          final String endversion = versions[versionIndex];
          // System.out.println("-startversion " + startversion + " -endversion " + endversion);
          if (changedTests == null) {
