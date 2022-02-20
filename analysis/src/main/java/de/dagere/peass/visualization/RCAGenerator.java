@@ -48,8 +48,8 @@ public class RCAGenerator {
       final NodePreparator preparator = new NodePreparator(rootPredecessor, rootVersion, data);
       preparator.prepare();
       final GraphNode rootNode = preparator.getRootNode();
-      KoPeMeTreeConverter converter = new KoPeMeTreeConverter(folders, data.getMeasurementConfig().getExecutionConfig().getVersion(), new TestCase(data.getTestcase()));
-      HTMLWriter writer = new HTMLWriter(rootNode, data, destFolder, propertyFolder, converter.getData());
+      KoPeMeTreeConverter kopemeTreeConverter = new KoPeMeTreeConverter(folders, data.getMeasurementConfig().getExecutionConfig().getVersion(), new TestCase(data.getTestcase()));
+      HTMLWriter writer = new HTMLWriter(rootNode, data, destFolder, propertyFolder, kopemeTreeConverter.getData());
       writer.writeHTML();;
 //      writeHTML(rootNode, data);
    }

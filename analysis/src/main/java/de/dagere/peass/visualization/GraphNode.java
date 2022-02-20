@@ -138,6 +138,10 @@ public class GraphNode extends BasicNode {
       this.color = color;
    }
 
+   /**
+    * The name is the short name for visualization
+    * @return
+    */
    public String getName() {
       return name;
    }

@@ -24,14 +24,14 @@ public class HTMLWriter {
    private final GraphNode root;
    private final CauseSearchData data;
    private final File destFolder, propertyFolder;
-   private final GraphNode converted;
+   private final GraphNode kopemeConvertedData;
 
-   public HTMLWriter(final GraphNode root, final CauseSearchData data, final File destFolder, final File propertyFolder, final GraphNode converted) {
+   public HTMLWriter(final GraphNode root, final CauseSearchData data, final File destFolder, final File propertyFolder, final GraphNode kopemeConvertedData) {
       this.root = root;
       this.data = data;
       this.destFolder = destFolder;
       this.propertyFolder = propertyFolder;
-      this.converted = converted;
+      this.kopemeConvertedData = kopemeConvertedData;
    }
 
    public void writeHTML() throws IOException, JsonProcessingException, FileNotFoundException, JAXBException {
@@ -44,7 +44,7 @@ public class HTMLWriter {
       writeOverviewHTML(output, jsName);
 
       final JavascriptDataWriter javascriptDataWriter = new JavascriptDataWriter(propertyFolder, root);
-      javascriptDataWriter.writeJS(data, output, jsName, converted);
+      javascriptDataWriter.writeJS(data, output, jsName, kopemeConvertedData);
    }
    
    private void writeOverviewHTML(final File output, final String jsName) throws IOException {
