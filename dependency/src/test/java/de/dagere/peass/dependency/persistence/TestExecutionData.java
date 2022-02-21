@@ -24,4 +24,16 @@ public class TestExecutionData {
       dependencies.getVersions().put("000005", new Version());
       return dependencies;
    }
+   
+   @Test
+   public void testDoubleConversion() {
+      Dependencies dependencies = buildExampleDependencies();
+      
+      ExecutionData data = new ExecutionData(dependencies);
+      
+      Dependencies doubleConverted = new Dependencies(data);
+      
+      Assert.assertEquals("000001", doubleConverted.getInitialversion().getVersion());
+      Assert.assertEquals(dependencies.getVersions().size(), doubleConverted.getVersions().size());
+   }
 }

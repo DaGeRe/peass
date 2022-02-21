@@ -22,16 +22,19 @@ public class Dependencies extends SelectedTests {
 
    public Dependencies(final ExecutionData executiondata) {
       setUrl(executiondata.getUrl());
-      String first = executiondata.getVersions().values().iterator().next().getPredecessor();
+      // ExecutionData contain an empty first analyzed version; therefore, the initialversion of the dependencies is this first version
+      String first = executiondata.getVersions().keySet().iterator().next();
       initialversion.setVersion(first);
       for (Map.Entry<String, TestSet> version : executiondata.getVersions().entrySet()) {
-         Version versionDependencies = new Version();
-         versionDependencies.setPredecessor(version.getValue().getPredecessor());
-         versionDependencies.getChangedClazzes().put(new ChangedEntity("unknown", ""), version.getValue());
-         String versionHash = version.getKey();
-         versions.put(versionHash, versionDependencies);
-         for (TestCase test : version.getValue().getTests()) {
-            initialversion.addDependency(test, new ChangedEntity(test.getClazz(), ""));
+         if (!version.getKey().equals(first)) {
+            Version versionDependencies = new Version();
+            versionDependencies.setPredecessor(version.getValue().getPredecessor());
+            versionDependencies.getChangedClazzes().put(new ChangedEntity("unknown", ""), version.getValue());
+            String versionHash = version.getKey();
+            versions.put(versionHash, versionDependencies);
+            for (TestCase test : version.getValue().getTests()) {
+               initialversion.addDependency(test, new ChangedEntity(test.getClazz(), ""));
+            }
          }
       }
    }
