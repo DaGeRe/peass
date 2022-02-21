@@ -228,15 +228,21 @@ function plotVMGraph(divName, node, ids, idsPredecessor, name) {
 	}
 
 	var layout = {
+		style: { height: "99%"},
 		title: { text: "VM-wise Iteration Durations " + name },
 		xaxis: { title: { text: "Iteration" } },
 		yaxis: {
 			title: { text: "Duration / &#x00B5;s" },
 			mode: "lines+markers"
-		}
+		},
+		height: 300
 	};
+	var config = {
+    responsive: true
+  };
 	var graphDiv = document.getElementById(divName);
-	Plotly.newPlot(graphDiv, data, layout);
+	graphDiv.innerHTML = '';
+	Plotly.newPlot(graphDiv, data, layout, config);
 	graphDiv.on('plotly_relayout', function (event) {
 		console.log(event);
 		xstart = event["xaxis.range[0]"];
@@ -259,7 +265,7 @@ function addOptionSelectbox(divName, id, values) {
 function visualizeGraph(divId, selectId) {
 	var ids = [];
 	var select = document.getElementById(selectId);
-	var selectedOptions = $('#' + selectId + ' :selected');
+	var selectedOptions = jq$('#' + selectId + ' :selected');
 	for (i = 0; i < selectedOptions.length; i++) {
 		var vmId = selectedOptions[i].value;
 		ids[i] = vmId;
@@ -274,7 +280,7 @@ function visualizeGraph(divId, selectId) {
 function getAverage(divId, vmValues, start, end) {
 	var averages = [];
 	var select = document.getElementById(divId);
-	var selectedOptions = $('#' + divId + ' :selected');
+	var selectedOptions = jq$('#' + divId + ' :selected');
 	for (i = 0; i < selectedOptions.length; i++) {
 		var selectedOption = selectedOptions[i];
 		var vmId = selectedOption.value;
@@ -310,12 +316,14 @@ function printTTvalue(averagesPredecessor, averagesCurrent) {
 	var tscore = get_t_score(averagesPredecessor, averagesCurrent);
 	var pval = jStat.ttest(tscore, averagesPredecessor.length + averagesCurrent.length);
 	var error = 0.01;
-       var mannWhitneyP = mannwhitneyu.test(averagesPredecessor, averagesCurrent, alternative = 'two-sided').p;
+	var x = [2, 4, 6, 2, 3, 7, 5, 1],
+            y = [8, 10, 11, 14, 20, 18, 19, 9];
+       var mannWhitneyP = mannwhitneyu.test(x, y, alternative = 'two-sided').p;
        var diff = predecessorStat.mean()-currentStat.mean();
        var relativeDifference = 2.0*diff / (predecessorStat.mean()+currentStat.mean());
        console.log(mannWhitneyP);
 	document.getElementById("tValueTable").innerHTML = "<b>Properties without outlier removal</b>"
-		+ "<table><tr><th>Property</th><th>Predecessor</th><th>Current</th></tr>"
+		+ "<table class='data-table properties-table'><tr><th>Property</th><th>Predecessor</th><th>Current</th></tr>"
 		+ "<tr><td>Mean</td><td>" + Math.round(predecessorStat.mean() * 1000) / 1000 + "</td><td>" + Math.round(currentStat.mean() * 1000) / 1000 + "</td></tr>"
 		+ "<tr><td>Difference</td><td colspan='2'>" + Math.round(diff * 1000) / 1000 + " (" + Math.round(100*relativeDifference*1000)/1000 + "%)</td></tr>"
 		+ "<tr><td>Deviation</td><td>" + Math.round(predecessorStat.stdev() * 1000) / 1000 + "</td><td>" + Math.round(currentStat.stdev() * 1000) / 1000 + "</td></tr>"
@@ -370,13 +378,17 @@ function visualizeHistogram() {
 	};
 	var data = [version, predecessor];
 	var layout = {
+	  layout: {autosize: false, height: "400px"},
 		barmode: "overlay",
 		title: { text: "Histogramm" },
 		xaxis: { title: { text: "Duration / &#x00B5;s" } },
 		yaxis: { title: { text: "Frequency" } }
 	};
+	var config = {
+    responsive: true
+  };
 	var selectedHistogram = document.getElementById("selectedHistogram");
-	Plotly.newPlot(selectedHistogram, data, layout);
+	Plotly.newPlot(selectedHistogram, data, layout, config);
 	selectedHistogram.on('plotly_relayout', function (event) {
 		console.log("Filtering histogram");
 		histStart = event["xaxis.range[0]"];
@@ -435,7 +447,7 @@ if (currentNode == null) {
 	currentNode = treeData[0];
 }
 
-document.getElementById("overallHistogram").innerHTML = "Current Node: " + currentNode.call
+document.getElementById("currentNode").innerHTML = "Current Node: " + currentNode.call
 
 plotOverallHistogram("overallHistogram", currentNode);
 
