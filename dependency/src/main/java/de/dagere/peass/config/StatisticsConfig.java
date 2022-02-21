@@ -2,19 +2,21 @@ package de.dagere.peass.config;
 
 import java.io.Serializable;
 
+import de.dagere.peass.config.parameters.StatisticsConfigMixin;
+
 public class StatisticsConfig implements Serializable {
    private static final long serialVersionUID = -6193031432004031500L;
 
    /**
     * Type 1 error is the false positive rate (=1-significance) for regular two-sided t-test
     */
-   private double type1error = 0.01;
+   private double type1error = StatisticsConfigMixin.PEASS_DEFAULT_TYPE_1_ERROR;
    /**
     * Type 2 error is the false negative rate for agnostic t-test
     */
-   private double type2error = 0.01;
+   private double type2error = StatisticsConfigMixin.PEASS_DEFAULT_TYPE_2_ERROR;
    private double outlierFactor = DEFAULT_OUTLIER_FACTOR;
-   private ImplementedTests statisticTest = ImplementedTests.BIMODAL_T_TEST;
+   private ImplementedTests statisticTest = ImplementedTests.T_TEST;
    
    public static final double DEFAULT_OUTLIER_FACTOR = 3.29; // Does not remove 99% of all values in gaussian distribution
 
