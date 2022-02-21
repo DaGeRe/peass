@@ -29,7 +29,7 @@ public class ChangedEntityDeserializer extends KeyDeserializer {
          final String module = value.substring(0, value.indexOf(ChangedEntity.MODULE_SEPARATOR));
          entity = new ChangedEntity(clazz, method, module);
       } else {
-         entity = new ChangedEntity(value, method, "");
+         entity = new ChangedEntity(value, "", method);
       }
 
       return entity;
