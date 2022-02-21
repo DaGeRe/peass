@@ -156,6 +156,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
             text.contains("this.id(java-library)") ||
             text.contains("plugin:com.android.library") ||
             text.contains("plugin:com.android.application") ||
+            text.contains("application") ||
             text.contains("com.android.application")) {
          return true;
       } else {

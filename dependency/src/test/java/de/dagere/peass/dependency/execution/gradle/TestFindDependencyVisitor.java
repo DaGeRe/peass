@@ -24,6 +24,16 @@ public class TestFindDependencyVisitor {
    }
    
    @Test
+   public void testApplication() throws IOException {
+      File withApplyPlugins = new File(GRADLE_FOLDER, "build-application.gradle");
+      File buildfile = new File("target/build.gradle");
+      FileUtils.copyFile(withApplyPlugins, buildfile);
+      
+      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile);
+      Assert.assertTrue(visitor.isUseJava());
+   }
+   
+   @Test
    public void testPluginsSection() throws IOException {
       File withApplyPlugins = new File(GRADLE_FOLDER, "with-plugins-section.gradle");
       File buildfile = new File("target/build.gradle");
