@@ -34,7 +34,7 @@ class Division {
       int checkedDelta = Math.abs(prevIndex - lastMiddleIndex) / 2;
 
       if (checkedDelta == 0) {
-         LOG.debug("Finally: " + lastDivision.divisionIndex + " " + lastDivision.divisionMeanvalue);
+         LOG.trace("Finally: " + lastDivision.divisionIndex + " " + lastDivision.divisionMeanvalue);
          return lastDivision;
       }
 
