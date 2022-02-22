@@ -49,6 +49,7 @@ public class ExecutionConfig implements Serializable {
    private boolean onlyMeasureWorkload = false;
    private boolean showStart = false;
    private boolean redirectToNull = true;
+   private boolean createDetailDebugFiles = true;
 
    private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
    private String testExecutor = "default";
@@ -326,6 +327,14 @@ public class ExecutionConfig implements Serializable {
 
    public void setTestClazzFolders(final List<String> testClazzFolders) {
       this.testClazzFolders = testClazzFolders;
+   }
+   
+   public void setCreateDetailDebugFiles(boolean createDetailDebugFiles) {
+      this.createDetailDebugFiles = createDetailDebugFiles;
+   }
+   
+   public boolean isCreateDetailDebugFiles() {
+      return createDetailDebugFiles;
    }
 
    @JsonIgnore

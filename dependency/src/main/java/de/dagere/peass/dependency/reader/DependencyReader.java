@@ -3,7 +3,6 @@ package de.dagere.peass.dependency.reader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,17 +12,12 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.javaparser.ParseException;
 
-import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
-import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
-import de.dagere.peass.dependency.analysis.data.ChangedEntity;
-import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.Version;
@@ -47,8 +41,6 @@ import de.dagere.peass.vcs.VersionIterator;
  */
 public class DependencyReader {
 
-   private static final boolean DETAIL_DEBUG = true;
-
    private static final Logger LOG = LogManager.getLogger(DependencyReader.class);
 
    private final DependencyConfig dependencyConfig;
@@ -57,13 +49,14 @@ public class DependencyReader {
    private final ExecutionData coverageBasedSelection = new ExecutionData();
    private final CoverageSelectionInfo coverageSelectionInfo = new CoverageSelectionInfo();
    private final CoverageSelectionExecutor coverageExecutor;
+   private final StaticChangeHandler staticChangeHandler;
    protected final ResultsFolders resultsFolders;
    protected DependencyManager dependencyManager;
    protected final PeassFolders folders;
    protected VersionIterator iterator;
    protected String lastRunningVersion;
    private final VersionKeeper skippedNoChange;
-   
+
    private final KiekerConfig kiekerConfig;
    private final ExecutionConfig executionConfig;
    private final EnvironmentVariables env;
@@ -86,9 +79,10 @@ public class DependencyReader {
 
       setURLs(url);
       coverageExecutor = new CoverageSelectionExecutor(mapping, coverageBasedSelection, coverageSelectionInfo);
+      staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
 
       this.changeManager = changeManager;
-      
+
       if (!kiekerConfig.isUseKieker()) {
          throw new RuntimeException("Dependencies may only be read if Kieker is enabled!");
       }
@@ -122,9 +116,10 @@ public class DependencyReader {
 
       setURLs(url);
       coverageExecutor = new CoverageSelectionExecutor(mapping, coverageBasedSelection, coverageSelectionInfo);
+      staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
 
       changeManager = new ChangeManager(folders, iterator, executionConfig);
-      
+
       if (!kiekerConfig.isUseKieker()) {
          throw new RuntimeException("Dependencies may only be read if Kieker is enabled!");
       }
@@ -195,7 +190,6 @@ public class DependencyReader {
             return 0;
          }
       }
-      
 
       dependencyManager.getExecutor().loadClasses();
 
@@ -203,7 +197,7 @@ public class DependencyReader {
       changeManager.saveOldClasses();
       lastRunningVersion = iterator.getTag();
 
-      if (DETAIL_DEBUG) {
+      if (executionConfig.isCreateDetailDebugFiles()) {
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "initialdependencies_" + version + ".json"), dependencyManager.getDependencyMap());
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changes_" + version + ".json"), input.getChanges());
       }
@@ -231,7 +225,7 @@ public class DependencyReader {
 
    private int analyseChanges(final String version, final DependencyReadingInput input)
          throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
-      final Version newVersionInfo = handleStaticAnalysisChanges(version, input);
+      final Version newVersionInfo = staticChangeHandler.handleStaticAnalysisChanges(version, input);
 
       if (!dependencyConfig.isDoNotUpdateDependencies()) {
          TraceChangeHandler traceChangeHandler = new TraceChangeHandler(dependencyManager, folders, executionConfig, version);
@@ -265,44 +259,6 @@ public class DependencyReader {
          return value.getTestcases().values().stream().mapToInt(list -> list.size()).sum();
       }).sum();
       return changedClazzCount;
-   }
-
-   private Version handleStaticAnalysisChanges(final String version, final DependencyReadingInput input) throws IOException, JsonGenerationException, JsonMappingException {
-      final ChangeTestMapping changeTestMap = dependencyManager.getDependencyMap().getChangeTestMap(input.getChanges()); // tells which tests need to be run, and
-      // because of which change they need to be run
-      LOG.debug("Change test mapping (without added tests): " + changeTestMap);
-
-      handleAddedTests(input, changeTestMap);
-
-      if (DETAIL_DEBUG)
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changetest_" + version + ".json"), changeTestMap);
-
-      final Version newVersionInfo = DependencyReaderUtil.createVersionFromChangeMap(input.getChanges(), changeTestMap);
-      newVersionInfo.setJdk(dependencyManager.getExecutor().getJDKVersion());
-      newVersionInfo.setPredecessor(input.getPredecessor());
-
-      if (DETAIL_DEBUG) {
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "versioninfo_" + version + ".json"), newVersionInfo);
-      }
-      return newVersionInfo;
-   }
-
-   private void handleAddedTests(final DependencyReadingInput input, final ChangeTestMapping changeTestMap) {
-      dependencyManager.getTestTransformer().determineVersions(dependencyManager.getExecutor().getModules().getModules());
-      for (ClazzChangeData changedEntry : input.getChanges().values()) {
-         if (!changedEntry.isOnlyMethodChange()) {
-            for (ChangedEntity change : changedEntry.getChanges()) {
-               File moduleFolder = new File(folders.getProjectFolder(), change.getModule());
-               TestCase potentialTest = new TestCase(change.getClazz(), change.getMethod(), change.getModule());
-               List<TestCase> addedTests = dependencyManager.getTestTransformer().getTestMethodNames(moduleFolder, potentialTest);
-               for (TestCase added : addedTests) {
-                  if (NonIncludedTestRemover.isTestIncluded(added, executionConfig)) {
-                     changeTestMap.addChangeEntry(change, added);
-                  }
-               }
-            }
-         }
-      }
    }
 
    public void documentFailure(final String version) {
@@ -386,7 +342,7 @@ public class DependencyReader {
    public void setCoverageInfo(final CoverageSelectionInfo coverageInfo) {
       coverageSelectionInfo.getVersions().putAll(coverageInfo.getVersions());
    }
-   
+
    public TestExecutor getExecutor() {
       return dependencyManager.getExecutor();
    }
