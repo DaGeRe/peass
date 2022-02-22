@@ -76,8 +76,12 @@ public class KiekerResultReader {
 
    public void readAggregatedData(final File kiekerTraceFolder) throws JsonParseException, JsonMappingException, IOException {
       final Map<AggregatedDataNode, AggregatedData> fullDataMap = AggregatedDataReader.getFullDataMap(kiekerTraceFolder);
-      for (final CallTreeNode node : includedNodes) {
-         readNode(fullDataMap, node);
+      if (fullDataMap.isEmpty()) {
+         LOG.warn("No data were measured - a measurement error occured");
+      } else {
+         for (final CallTreeNode node : includedNodes) {
+            readNode(fullDataMap, node);
+         }
       }
    }
 

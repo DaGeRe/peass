@@ -134,5 +134,8 @@ public class GradleBuildfileEditor {
             visitor.getLines().add("test { " + javaagentArgument + "}");
          }
       }
+      if (visitor.getIntegrationTestLine() != -1) {
+         visitor.addLine(visitor.getIntegrationTestLine() - 1, javaagentArgument);
+      }
    }
 }

@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.dependency.execution.gradle.TestFindDependencyVisitor;
 import de.dagere.peass.execution.gradle.GradleBuildfileEditor;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
@@ -37,8 +38,7 @@ public class TestBuildGradle {
    public void testNoUpdate() throws IOException {
       final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "differentPlugin.gradle");
 
-      final File destFile = new File(CURRENT, "build.gradle");
-      FileUtils.copyFile(gradleFile, destFile);
+      final File destFile = copyGradlefile(gradleFile);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(CURRENT));
       editor.addDependencies(new File("xyz"));
@@ -75,6 +75,20 @@ public class TestBuildGradle {
       MatcherAssert.assertThat(gradleFileContents, Matchers.not(Matchers.containsString("exclude group: 'junit', module: 'junit'")));
       MatcherAssert.assertThat(gradleFileContents, Matchers.not(Matchers.containsString("exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'")));
    }
+   
+   @Test
+   public void testIntegrationtest() throws IOException {
+      final File gradleFile = new File(TestFindDependencyVisitor.GRADLE_FOLDER, "build-integrationtest.gradle");
+
+      final String gradleFileContents = updateGradleFile(gradleFile);
+
+      String integrationTestStart = gradleFileContents.substring(gradleFileContents.indexOf("tasks.register('integrationTest'"));
+      String integrationTestTask = integrationTestStart.substring(0, integrationTestStart.indexOf('}'));
+      
+      System.out.println(integrationTestTask);
+      
+      MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("systemProperty \"kieker.monitoring.configuration\""));
+   }
 
    @Test
    public void testBuildtoolUpdate() throws IOException {
@@ -102,9 +116,14 @@ public class TestBuildGradle {
       MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("de.dagere.kopeme:kopeme-junit"));
    }
 
-   private String updateGradleFile(final File gradleFile) throws IOException {
+   private File copyGradlefile(final File gradleFile) throws IOException {
       final File destFile = new File(CURRENT, "build.gradle");
       FileUtils.copyFile(gradleFile, destFile);
+      return destFile;
+   }
+   
+   private String updateGradleFile(final File gradleFile) throws IOException {
+      final File destFile = copyGradlefile(gradleFile);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(CURRENT));
       editor.addDependencies(new File("xyz"));

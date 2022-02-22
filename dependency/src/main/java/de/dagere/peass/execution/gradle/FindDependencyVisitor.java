@@ -18,6 +18,7 @@ import org.codehaus.groovy.ast.CodeVisitorSupport;
 import org.codehaus.groovy.ast.builder.AstBuilder;
 import org.codehaus.groovy.ast.expr.ArgumentListExpression;
 import org.codehaus.groovy.ast.expr.ClosureExpression;
+import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.MapEntryExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
@@ -32,6 +33,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
 
    private int dependencyLine = -1;
    private int testLine = -1;
+   private int integrationTestLine = -1;
    private int androidLine = -1;
    private int testOptionsAndroid = -1;
    private int unitTestsAll = -1;
@@ -65,7 +67,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
    public void visitMethodCallExpression(final MethodCallExpression call) {
       LOG.trace("Call: {}", call.getMethodAsString());
       if (call != null && call.getMethodAsString() != null) {
-         // System.out.println(call.getMethodAsString());
+//          System.out.println(call.getMethodAsString());
          if (call.getMethodAsString().equals("plugins")) {
             parsePluginsSection(call);
          } else if (call.getMethodAsString().equals("apply")) {
@@ -86,6 +88,18 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
             buildToolsVersion = call.getLastLineNumber();
          } else if (call.getMethodAsString().equals("subprojects")) {
             parseSubprojectsSection(call);
+         } else if (call.getMethodAsString().equals("register")) {
+            System.out.println(call.getClass());
+            if (call.getArguments() instanceof ArgumentListExpression) {
+               ArgumentListExpression list = (ArgumentListExpression) call.getArguments();
+               Expression first = list.getExpression(0);
+               if (first instanceof ConstantExpression) {
+                  ConstantExpression expression = (ConstantExpression) first;
+                  if (expression.getValue().equals("integrationTest")) {
+                     integrationTestLine = call.getLastLineNumber();
+                  }
+               }
+            }
          } else if (call.getMethodAsString().equals("exclude")) {
             TupleExpression tuple = (TupleExpression) call.getArguments();
             Expression expression = tuple.getExpression(0);
@@ -191,6 +205,10 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
 
    public int getUnitTestsAll() {
       return unitTestsAll;
+   }
+   
+   public int getIntegrationTestLine() {
+      return integrationTestLine;
    }
 
    public boolean isUseJava() {
