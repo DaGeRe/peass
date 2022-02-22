@@ -3,7 +3,6 @@ package de.dagere.peass.dependency.reader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,7 +10,6 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.javaparser.ParseException;
 
@@ -30,12 +28,9 @@ import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.Version;
 import de.dagere.peass.dependency.traces.DiffFileGenerator;
-import de.dagere.peass.dependency.traces.OneTraceGenerator;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
-import de.dagere.peass.dependency.traces.coverage.CoverageBasedSelector;
+import de.dagere.peass.dependency.traces.coverage.CoverageSelectionExecutor;
 import de.dagere.peass.dependency.traces.coverage.CoverageSelectionInfo;
-import de.dagere.peass.dependency.traces.coverage.CoverageSelectionVersion;
-import de.dagere.peass.dependency.traces.coverage.TraceCallSummary;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -61,6 +56,7 @@ public class DependencyReader {
    private final ExecutionData executionResult = new ExecutionData();
    private final ExecutionData coverageBasedSelection = new ExecutionData();
    private final CoverageSelectionInfo coverageSelectionInfo = new CoverageSelectionInfo();
+   private final CoverageSelectionExecutor coverageExecutor;
    protected final ResultsFolders resultsFolders;
    protected DependencyManager dependencyManager;
    protected final PeassFolders folders;
@@ -89,6 +85,7 @@ public class DependencyReader {
       this.env = env;
 
       setURLs(url);
+      coverageExecutor = new CoverageSelectionExecutor(mapping, coverageBasedSelection, coverageSelectionInfo);
 
       this.changeManager = changeManager;
       
@@ -124,6 +121,7 @@ public class DependencyReader {
       this.env = env;
 
       setURLs(url);
+      coverageExecutor = new CoverageSelectionExecutor(mapping, coverageBasedSelection, coverageSelectionInfo);
 
       changeManager = new ChangeManager(folders, iterator, executionConfig);
       
@@ -250,7 +248,7 @@ public class DependencyReader {
 
             if (dependencyConfig.isGenerateCoverageSelection()) {
                TestSet dynamicallySelected = executionResult.getVersions().get(version);
-               generateCoverageBasedSelection(version, newVersionInfo, dynamicallySelected);
+               coverageExecutor.generateCoverageBasedSelection(version, newVersionInfo, dynamicallySelected);
             }
          }
       } else {
@@ -260,37 +258,6 @@ public class DependencyReader {
 
       final int changedClazzCount = calculateChangedClassCount(newVersionInfo);
       return changedClazzCount;
-   }
-
-   private void generateCoverageBasedSelection(final String version, final Version newVersionInfo, TestSet dynamicallySelected) throws IOException, JsonParseException, JsonMappingException {
-      List<TraceCallSummary> summaries = new LinkedList<>();
-      for (TestCase testcase : dynamicallySelected.getTests()) {
-         List<File> traceFiles = mapping.getTestcaseMap(testcase);
-         if (traceFiles != null && traceFiles.size() > 1) {
-            File oldFile = new File(traceFiles.get(0).getAbsolutePath() + OneTraceGenerator.SUMMARY);
-            File newFile = new File(traceFiles.get(1).getAbsolutePath() + OneTraceGenerator.SUMMARY);
-            TraceCallSummary oldSummary = Constants.OBJECTMAPPER.readValue(oldFile, TraceCallSummary.class);
-            TraceCallSummary newSummary = Constants.OBJECTMAPPER.readValue(newFile, TraceCallSummary.class);
-            summaries.add(oldSummary);
-            summaries.add(newSummary);
-            LOG.info("Found traces for {}", testcase);
-         } else {
-            LOG.info("Trace files missing for {}", testcase);
-         }
-      }
-
-      for (ChangedEntity change : newVersionInfo.getChangedClazzes().keySet()) {
-         LOG.info("Change: {}", change.toString());
-         LOG.info("Parameters: {}", change.getParametersPrintable());
-      }
-
-      CoverageSelectionVersion selected = CoverageBasedSelector.selectBasedOnCoverage(summaries, newVersionInfo.getChangedClazzes().keySet());
-      for (TraceCallSummary traceCallSummary : selected.getTestcases().values()) {
-         if (traceCallSummary.isSelected()) {
-            coverageBasedSelection.addCall(version, traceCallSummary.getTestcase());
-         }
-      }
-      coverageSelectionInfo.getVersions().put(version, selected);
    }
 
    private int calculateChangedClassCount(final Version newVersionInfo) {
