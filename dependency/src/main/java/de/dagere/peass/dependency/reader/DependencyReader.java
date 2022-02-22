@@ -88,15 +88,19 @@ public class DependencyReader {
       this.kiekerConfig = kiekerConfig;
       this.env = env;
 
-      dependencyResult.setUrl(url);
-      executionResult.setUrl(url);
-      coverageBasedSelection.setUrl(url);
+      setURLs(url);
 
       this.changeManager = changeManager;
       
       if (!kiekerConfig.isUseKieker()) {
          throw new RuntimeException("Dependencies may only be read if Kieker is enabled!");
       }
+   }
+
+   private void setURLs(final String url) {
+      dependencyResult.setUrl(url);
+      executionResult.setUrl(url);
+      coverageBasedSelection.setUrl(url);
    }
 
    /**
@@ -119,8 +123,7 @@ public class DependencyReader {
       this.kiekerConfig = kiekerConfig;
       this.env = env;
 
-      dependencyResult.setUrl(url);
-      executionResult.setUrl(url);
+      setURLs(url);
 
       changeManager = new ChangeManager(folders, iterator, executionConfig);
       
@@ -238,6 +241,7 @@ public class DependencyReader {
 
          if (dependencyConfig.isGenerateTraces()) {
             executionResult.addEmptyVersion(version, newVersionInfo.getPredecessor());
+            coverageBasedSelection.addEmptyVersion(version, newVersionInfo.getPredecessor());
             TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, mapping, kiekerConfig);
             traceViewGenerator.generateViews(resultsFolders, newVersionInfo.getTests());
 
@@ -338,6 +342,7 @@ public class DependencyReader {
       if (dependencyManager.getExecutor().isAndroid()) {
          dependencyResult.setAndroid(true);
          executionResult.setAndroid(true);
+         coverageBasedSelection.setAndroid(true);
       }
       LOG.error("Version not running");
       final Version newVersionInfo = new Version();
@@ -368,6 +373,7 @@ public class DependencyReader {
       traceViewGenerator.generateViews(resultsFolders, initialTests);
 
       executionResult.getVersions().put(iterator.getTag(), new TestSet());
+      coverageBasedSelection.getVersions().put(iterator.getTag(), new TestSet());
    }
 
    public void readCompletedVersions(final Dependencies initialdependencies) {
