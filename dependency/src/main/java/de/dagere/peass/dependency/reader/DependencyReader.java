@@ -49,7 +49,7 @@ public class DependencyReader {
    private final ExecutionData coverageBasedSelection = new ExecutionData();
    private final CoverageSelectionInfo coverageSelectionInfo = new CoverageSelectionInfo();
    private final CoverageSelectionExecutor coverageExecutor;
-   private final StaticChangeHandler staticChangeHandler;
+   private StaticChangeHandler staticChangeHandler;
    protected final ResultsFolders resultsFolders;
    protected DependencyManager dependencyManager;
    protected final PeassFolders folders;
@@ -79,7 +79,6 @@ public class DependencyReader {
 
       setURLs(url);
       coverageExecutor = new CoverageSelectionExecutor(mapping, coverageBasedSelection, coverageSelectionInfo);
-      staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
 
       this.changeManager = changeManager;
 
@@ -116,7 +115,6 @@ public class DependencyReader {
 
       setURLs(url);
       coverageExecutor = new CoverageSelectionExecutor(mapping, coverageBasedSelection, coverageSelectionInfo);
-      staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
 
       changeManager = new ChangeManager(folders, iterator, executionConfig);
 
@@ -275,6 +273,7 @@ public class DependencyReader {
 
    public boolean readInitialVersion() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException {
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
+      staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
       InitialVersionReader initialVersionReader = new InitialVersionReader(dependencyResult, dependencyManager, iterator);
       if (initialVersionReader.readInitialVersion()) {
          DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
@@ -301,7 +300,8 @@ public class DependencyReader {
 
    public void readCompletedVersions(final Dependencies initialdependencies) {
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
-
+      staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
+      
       dependencyResult.setVersions(initialdependencies.getVersions());
       dependencyResult.setInitialversion(initialdependencies.getInitialversion());
 
