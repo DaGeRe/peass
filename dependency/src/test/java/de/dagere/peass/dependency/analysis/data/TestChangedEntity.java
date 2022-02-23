@@ -89,5 +89,11 @@ public class TestChangedEntity {
       Assert.assertEquals("de.peass.ClassA", entity.getClazz());
       Assert.assertEquals("methodA", entity.getMethod());
       Assert.assertEquals("", entity.getModule());
+      
+      String entityStringWithModule = "moduleA§de.peass.ClassA#methodA";
+      ChangedEntity entityWithModule = new ChangedEntityDeserializer().deserializeKey(entityStringWithModule, null);
+      Assert.assertEquals("de.peass.ClassA", entityWithModule.getClazz());
+      Assert.assertEquals("methodA", entityWithModule.getMethod());
+      Assert.assertEquals("moduleA", entityWithModule.getModule());
    }
 }

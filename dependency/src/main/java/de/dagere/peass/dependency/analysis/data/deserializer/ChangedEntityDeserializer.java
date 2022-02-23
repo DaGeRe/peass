@@ -27,7 +27,7 @@ public class ChangedEntityDeserializer extends KeyDeserializer {
       if (value.contains(ChangedEntity.MODULE_SEPARATOR)) {
          final String clazz = value.substring(value.indexOf(ChangedEntity.MODULE_SEPARATOR) + 1);
          final String module = value.substring(0, value.indexOf(ChangedEntity.MODULE_SEPARATOR));
-         entity = new ChangedEntity(clazz, method, module);
+         entity = new ChangedEntity(clazz, module, method);
       } else {
          entity = new ChangedEntity(value, "", method);
       }
