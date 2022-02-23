@@ -67,7 +67,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
    public void visitMethodCallExpression(final MethodCallExpression call) {
       LOG.trace("Call: {}", call.getMethodAsString());
       if (call != null && call.getMethodAsString() != null) {
-//          System.out.println(call.getMethodAsString());
+         // System.out.println(call.getMethodAsString());
          if (call.getMethodAsString().equals("plugins")) {
             parsePluginsSection(call);
          } else if (call.getMethodAsString().equals("apply")) {
@@ -88,18 +88,11 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
             buildToolsVersion = call.getLastLineNumber();
          } else if (call.getMethodAsString().equals("subprojects")) {
             parseSubprojectsSection(call);
+         } else if (call.getMethodAsString().equals("task")) {
+            parseNewTask(call);
          } else if (call.getMethodAsString().equals("register")) {
-            System.out.println(call.getClass());
-            if (call.getArguments() instanceof ArgumentListExpression) {
-               ArgumentListExpression list = (ArgumentListExpression) call.getArguments();
-               Expression first = list.getExpression(0);
-               if (first instanceof ConstantExpression) {
-                  ConstantExpression expression = (ConstantExpression) first;
-                  if (expression.getValue().equals("integrationTest")) {
-                     integrationTestLine = call.getLastLineNumber();
-                  }
-               }
-            }
+            // System.out.println(call.getClass());
+            parseNewTask(call);
          } else if (call.getMethodAsString().equals("exclude")) {
             TupleExpression tuple = (TupleExpression) call.getArguments();
             Expression expression = tuple.getExpression(0);
@@ -124,6 +117,29 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       }
 
       super.visitMethodCallExpression(call);
+   }
+
+   private void parseNewTask(final MethodCallExpression call) {
+      if (call.getArguments() instanceof ArgumentListExpression) {
+         ArgumentListExpression list = (ArgumentListExpression) call.getArguments();
+         Expression first = list.getExpression(0);
+         if (first instanceof ConstantExpression) {
+            ConstantExpression expression = (ConstantExpression) first;
+            if (expression.getValue().equals("integrationTest")) {
+               integrationTestLine = call.getLastLineNumber();
+            }
+         }
+         if (first instanceof MethodCallExpression) {
+            MethodCallExpression methodCallExpression = (MethodCallExpression) first;
+            Expression method = methodCallExpression.getMethod();
+            if (method instanceof ConstantExpression) {
+               ConstantExpression expression = (ConstantExpression) method;
+               if (expression.getValue().equals("integrationTest")) {
+                  integrationTestLine = call.getLastLineNumber();
+               }
+            }
+         }
+      }
    }
 
    private void parseSubprojectsSection(final MethodCallExpression call) {
@@ -206,7 +222,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
    public int getUnitTestsAll() {
       return unitTestsAll;
    }
-   
+
    public int getIntegrationTestLine() {
       return integrationTestLine;
    }

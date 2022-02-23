@@ -82,7 +82,21 @@ public class TestBuildGradle {
 
       final String gradleFileContents = updateGradleFile(gradleFile);
 
-      String integrationTestStart = gradleFileContents.substring(gradleFileContents.indexOf("tasks.register('integrationTest'"));
+      String integrationTestStart = gradleFileContents.substring(gradleFileContents.indexOf("tasks.register('integrationTest', Test)"));
+      String integrationTestTask = integrationTestStart.substring(0, integrationTestStart.indexOf('}'));
+      
+      System.out.println(integrationTestTask);
+      
+      MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("systemProperty \"kieker.monitoring.configuration\""));
+   }
+   
+   @Test
+   public void testIntegrationtestVariant2() throws IOException {
+      final File gradleFile = new File(TestFindDependencyVisitor.GRADLE_FOLDER, "build-integrationtest2.gradle");
+
+      final String gradleFileContents = updateGradleFile(gradleFile);
+
+      String integrationTestStart = gradleFileContents.substring(gradleFileContents.indexOf("task integrationTest(type: Test)"));
       String integrationTestTask = integrationTestStart.substring(0, integrationTestStart.indexOf('}'));
       
       System.out.println(integrationTestTask);
