@@ -17,22 +17,22 @@ public class KiekerFolderUtil {
 
    public static File[] getClazzMethodFolder(final TestCase testcase, final File resultsFolder) {
       final File projectResultFolder = new File(resultsFolder, testcase.getClazz());
-      final File[] listFiles = projectResultFolder.listFiles(new FileFilter() {
+      final File[] kiekerTimestampFolders = projectResultFolder.listFiles(new FileFilter() {
          @Override
          public boolean accept(final File pathname) {
             return pathname.getName().matches("[0-9]*");
          }
       });
-      if (listFiles == null) {
+      if (kiekerTimestampFolders == null) {
          new ErrorLogWriter(testcase, resultsFolder).tryToWriteLastLog();
-         LOG.debug("Probably project not running - Result folder: " + Arrays.toString(listFiles) + " ("
-               + (listFiles != null ? listFiles.length : "null") + ") in " + projectResultFolder.getAbsolutePath() + " should exist!");
+         LOG.debug("Probably project not running - Result folder: " + Arrays.toString(kiekerTimestampFolders) + " ("
+               + (kiekerTimestampFolders != null ? kiekerTimestampFolders.length : "null") + ") in " + projectResultFolder.getAbsolutePath() + " should exist!");
          return null;
       }
 
-      File methodResult = getMethodFolder(testcase, listFiles);
+      File methodResult = getMethodFolder(testcase, kiekerTimestampFolders);
 
-      LOG.debug("Searching for: {}", methodResult);
+      LOG.debug("Searching in: {}", methodResult);
 
       if (methodResult.exists() && methodResult.isDirectory()) {
          if (methodResult.listFiles().length > 0) {
@@ -47,6 +47,7 @@ public class KiekerFolderUtil {
 
    public static File getKiekerTraceFolder(final File kiekerResultFolder, final TestCase testcase) {
       File methodResult = new File(kiekerResultFolder, testcase.getMethodWithParams());
+      LOG.debug("Searching in: {}", methodResult);
       if (methodResult.exists() && methodResult.isDirectory()) {
          if (methodResult.listFiles().length > 0) {
             return methodResult.listFiles()[0];
@@ -58,10 +59,10 @@ public class KiekerFolderUtil {
       }
    }
 
-   private static File getMethodFolder(final TestCase testcase, final File[] listFiles) {
+   private static File getMethodFolder(final TestCase testcase, final File[] kiekerTimestampFolders) {
       String methodName = testcase.getMethodWithParams();
-      File methodResult = new File(listFiles[0], methodName);
-      for (final File test : listFiles) {
+      File methodResult = new File(kiekerTimestampFolders[0], methodName);
+      for (final File test : kiekerTimestampFolders) {
          final File candidate = new File(test, methodName);
          if (candidate.exists()) {
             methodResult = candidate;
