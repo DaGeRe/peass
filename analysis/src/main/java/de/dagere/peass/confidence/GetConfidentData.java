@@ -16,10 +16,10 @@ import picocli.CommandLine.Option;
 
 public class GetConfidentData extends MeasurementDataCleaner {
 
-   @Option(names = { "-type1error", "--type1error" }, description = "Type 1 error of agnostic-t-test, i.e. probability of considering measurements equal when they are unequal")
+   @Option(names = { "-type1error", "--type1error" }, description = "Type 1 error of t-test/false positive rate, i.e. probability of considering measurements unequal when they are equal")
    public double type1error = 0.01;
    
-   @Option(names = { "-type2error", "--type2error" }, description = "Type 2 error of agnostic-t-test, i.e. probability of considering measurements unequal when they are equal")
+   @Option(names = { "-type2error", "--type2error" }, description = "Type 2 error of *agnostic* t-test/false negative rate, i.e. probability of considering measurements equal when they are unequal")
    private double type2error = 0.01;
 
 
