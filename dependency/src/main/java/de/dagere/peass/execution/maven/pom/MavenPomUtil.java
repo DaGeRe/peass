@@ -324,15 +324,4 @@ public class MavenPomUtil {
       return confProperty;
    }
 
-   public static ProjectModules getGenericModules(final File projectFolder, final ExecutionConfig config) throws FileNotFoundException, IOException, XmlPullParserException {
-      final File pomXml = new File(projectFolder, "pom.xml");
-      if (pomXml.exists()) {
-         return MavenPomUtil.getModules(pomXml, config);
-      } else if (GradleParseHelper.searchGradleFiles(projectFolder).length != 0) {
-         return SettingsFileParser.getModules(projectFolder);
-      } else {
-         return null;
-      }
-   }
-
 }
