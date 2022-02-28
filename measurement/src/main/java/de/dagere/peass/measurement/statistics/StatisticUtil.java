@@ -70,7 +70,20 @@ public class StatisticUtil {
          return Relation.UNKOWN;
       }
    }
-   
+
+   /**
+    * Gets the critical t value for regular t-test based on the type-1-error (=probability of false positive).
+    * 
+    * Required for peass-ci, please do not remove!
+    * 
+    * @param type1error The probability that a false positive is reported
+    * @param degreesOfFreedom The degrees of freedom
+    * @return The critical t value, if the calculated t value is above the critical t-tvalue, it is considered to be a significant performance change
+    */
+   public static double getCriticalValueTTest(final double type1error, final long degreesOfFreedom) {
+      return getCriticalValueUnequal(type1error, degreesOfFreedom);
+   }
+
    public static double getCriticalValueUnequal(final double type2error, final long degreesOfFreedom) {
       final TDistribution tDistribution = new TDistribution(null, degreesOfFreedom);
       final double criticalValueUnequal = Math.abs(tDistribution.inverseCumulativeProbability(1. - 0.5 * type2error));
@@ -211,7 +224,7 @@ public class StatisticUtil {
          return Relation.EQUAL;
       }
    }
-   
+
    public static Relation isDifferent(final List<Result> valuesPrev, final List<Result> valuesVersion, final StatisticsConfig statisticsConfig) {
       CompareData data = new CompareData(valuesPrev, valuesVersion);
       return isDifferent(data, statisticsConfig);
@@ -231,10 +244,10 @@ public class StatisticUtil {
          return ConfidenceIntervalInterpretion.compare(cd, statisticsConfig.getType1error());
       case ANY:
          boolean isChange = agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), statisticsConfig) != Relation.EQUAL
-         || bimodalTTest(cd, statisticsConfig.getType1error()) != Relation.EQUAL
-         || getTTestRelation(cd, statisticsConfig.getType1error()) != Relation.EQUAL
-         || getMannWhitneyRelation(cd, statisticsConfig.getType1error()) != Relation.EQUAL
-         || ConfidenceIntervalInterpretion.compare(cd) != Relation.EQUAL;
+               || bimodalTTest(cd, statisticsConfig.getType1error()) != Relation.EQUAL
+               || getTTestRelation(cd, statisticsConfig.getType1error()) != Relation.EQUAL
+               || getMannWhitneyRelation(cd, statisticsConfig.getType1error()) != Relation.EQUAL
+               || ConfidenceIntervalInterpretion.compare(cd) != Relation.EQUAL;
          LOG.info("Test results ");
          LOG.info("Agnostic t: {}", agnosticTTest(cd.getBeforeStat(), cd.getAfterStat(), statisticsConfig) != Relation.EQUAL);
          LOG.info("Bimodal T: {}", bimodalTTest(cd, statisticsConfig.getType1error()) != Relation.EQUAL);
@@ -249,9 +262,9 @@ public class StatisticUtil {
          }
       case ANY_NO_AGNOSTIC:
          boolean isChangeNoAgnostic = bimodalTTest(cd, statisticsConfig.getType1error()) != Relation.EQUAL
-         || getTTestRelation(cd, statisticsConfig.getType1error()) != Relation.EQUAL
-         || getMannWhitneyRelation(cd, statisticsConfig.getType1error()) != Relation.EQUAL
-         || ConfidenceIntervalInterpretion.compare(cd) != Relation.EQUAL;
+               || getTTestRelation(cd, statisticsConfig.getType1error()) != Relation.EQUAL
+               || getMannWhitneyRelation(cd, statisticsConfig.getType1error()) != Relation.EQUAL
+               || ConfidenceIntervalInterpretion.compare(cd) != Relation.EQUAL;
          LOG.info("Test results ");
          LOG.info("Bimodal T: {}", bimodalTTest(cd, statisticsConfig.getType1error()) != Relation.EQUAL);
          LOG.info("T Test: {}", getTTestRelation(cd, statisticsConfig.getType1error()) != Relation.EQUAL);
