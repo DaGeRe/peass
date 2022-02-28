@@ -228,7 +228,6 @@ public class NodePreparator {
       if (measuredNode.getStatistic().getMeanCurrent() > 0.001 && measuredNode.getStatistic().getMeanOld() > 0.001) {
          CompareData cd = new CompareData(measuredNode.getValuesPredecessor().getValuesArray(), measuredNode.getValues().getValuesArray());
          MeasurementConfig measurementConfig = new MeasurementConfig(-1);
-         measurementConfig.getStatisticsConfig().setStatisticTest(ImplementedTests.BIMODAL_T_TEST);
          boolean isChange = StatisticUtil.isDifferent(cd, measurementConfig) != Relation.EQUAL;
 //         final boolean isChange = StatisticUtil.isChange(statisticsOld, statisticsCurrent, data.getMeasurementConfig()) == Relation.UNEQUAL;
          if (isChange) {
