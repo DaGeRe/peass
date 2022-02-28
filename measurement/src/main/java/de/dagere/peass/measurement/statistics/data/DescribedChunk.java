@@ -9,12 +9,13 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
 
 public class DescribedChunk {
    private static final Logger LOG = LogManager.getLogger(DescribedChunk.class);
-   
+
    private final DescriptiveStatistics descPrev = new DescriptiveStatistics();
    private final DescriptiveStatistics descCurrent = new DescriptiveStatistics();
 
@@ -24,11 +25,11 @@ public class DescribedChunk {
    public DescribedChunk(final Chunk chunk, final String versionPrevious, final String versionCurrent) {
       long minRepetitions = MultipleVMTestUtil.getMinRepetitionCount(chunk.getResult());
       long minIterations = MultipleVMTestUtil.getMinIterationCount(chunk.getResult());
-      
+
       LOG.info("Repetitions: " + minRepetitions + " Iterations: " + minIterations);
-      
+
       for (final Result result : chunk.getResult()) {
-         if (!Double.isNaN(result.getValue()) && 
+         if (!Double.isNaN(result.getValue()) &&
                result.getIterations() == minIterations &&
                result.getRepetitions() == minRepetitions) {
             if (result.getVersion().getGitversion().equals(versionPrevious)) {
@@ -40,7 +41,7 @@ public class DescribedChunk {
                current.add(result);
             }
          }
-         
+
       }
       LOG.trace("Built values: {} {}", previous.size(), current.size());
    }
@@ -66,9 +67,8 @@ public class DescribedChunk {
       return current;
    }
 
-   public TestcaseStatistic getStatistic(final double type1error, final double type2error) {
-//      final boolean isChange = StatisticUtil.agnosticTTest(descPrev, descCurrent, type1error, type2error) == de.peass.measurement.analysis.Relation.UNEQUAL;
-      final boolean isChange = StatisticUtil.bimodalTTest(previous, current, type1error) != de.dagere.peass.measurement.statistics.Relation.EQUAL;
+   public TestcaseStatistic getStatistic(StatisticsConfig config) {
+      final boolean isChange = StatisticUtil.bimodalTTest(previous, current, config.getType1error()) != de.dagere.peass.measurement.statistics.Relation.EQUAL;
       TestcaseStatistic statistic = new TestcaseStatistic(descPrev, descCurrent, descPrev.getN(), descCurrent.getN());
       statistic.setChange(isChange);
       statistic.setIsBimodal(StatisticUtil.isBimodal(previous, current));

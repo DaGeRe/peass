@@ -11,7 +11,6 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.config.ImplementedTests;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
@@ -228,8 +227,7 @@ public class NodePreparator {
       if (measuredNode.getStatistic().getMeanCurrent() > 0.001 && measuredNode.getStatistic().getMeanOld() > 0.001) {
          CompareData cd = new CompareData(measuredNode.getValuesPredecessor().getValuesArray(), measuredNode.getValues().getValuesArray());
          MeasurementConfig measurementConfig = new MeasurementConfig(-1);
-         measurementConfig.getStatisticsConfig().setStatisticTest(ImplementedTests.BIMODAL_T_TEST);
-         boolean isChange = StatisticUtil.isDifferent(cd, measurementConfig) != Relation.EQUAL;
+         boolean isChange = StatisticUtil.isDifferent(cd, measurementConfig.getStatisticsConfig()) != Relation.EQUAL;
 //         final boolean isChange = StatisticUtil.isChange(statisticsOld, statisticsCurrent, data.getMeasurementConfig()) == Relation.UNEQUAL;
          if (isChange) {
             if (measuredNode.getStatistic().getTvalue() < 0) {

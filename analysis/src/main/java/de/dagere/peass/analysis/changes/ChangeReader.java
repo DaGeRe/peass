@@ -49,8 +49,7 @@ public class ChangeReader {
    private int measurements = 0;
    private int testcases = 0;
 
-   public double type1error = 0.01;
-   private double type2error = 0.01;
+   public StatisticsConfig config = new StatisticsConfig();
 
    private double minChange = 0;
 
@@ -97,26 +96,15 @@ public class ChangeReader {
       this.dependencies = dependencies;
    }
 
-   public double getType1error() {
-      return type1error;
+   public void setConfig(StatisticsConfig config) {
+      this.config = config;
    }
-
-   public void setType1error(final double type1error) {
-      this.type1error = type1error;
-   }
-
-   public double getType2error() {
-      return type2error;
-   }
-
-   public void setType2error(final double type2error) {
-      this.type2error = type2error;
+   
+   public StatisticsConfig getConfig() {
+      return config;
    }
 
    public ProjectChanges readFile(final File measurementFolder) throws JAXBException {
-      StatisticsConfig config = new StatisticsConfig();
-      config.setType1error(type1error);
-      config.setType2error(type2error);
       final ProjectChanges changes = new ProjectChanges(config);
       final ProjectStatistics info = new ProjectStatistics();
       LOG.debug("Reading from " + measurementFolder.getAbsolutePath());
@@ -216,7 +204,7 @@ public class ChangeReader {
    public void getIsChange(final String fileName, final Kopemedata data, final ProjectChanges changeKnowledge, final ProjectStatistics info,
          final String[] versions, final DescribedChunk describedChunk) {
       LOG.debug(data.getTestcases().getClazz());
-      final TestcaseStatistic statistic = describedChunk.getStatistic(type1error, type2error);
+      final TestcaseStatistic statistic = describedChunk.getStatistic(config);
       statistic.setPredecessor(versions[0]);
       // if (! (statistic.getTvalue() == Double.NaN)){
       CompareData cd = new CompareData(describedChunk.getPrevious(), describedChunk.getCurrent());

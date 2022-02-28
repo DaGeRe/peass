@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.analysis.changes.ChangeReader;
+import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.SelectedTests;
@@ -18,6 +19,7 @@ import de.dagere.peass.measurement.utils.RunCommandWriterSlurmRCA;
 import de.dagere.peass.utils.Constants;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 @Command(name = "getchanges", description = "Determines changes based on measurement values using agnostic t-test", mixinStandardHelpOptions = true)
@@ -37,11 +39,8 @@ public class GetChanges implements Callable<Void> {
    @Option(names = { "-out", "--out" }, description = "Path for saving the changefile")
    private File out = new File("results");
 
-   @Option(names = { "-type1error", "--type1error" }, description = "Type 1 error of t-test/false positive rate, i.e. probability of considering measurements unequal when they are equal")
-   public double type1error = 0.001;
-
-   @Option(names = { "-type2error", "--type2error" }, description = "Type 2 error of *agnostic* t-test/false negative rate, i.e. probability of considering measurements equal when they are unequal")
-   private double type2error = 0.001;
+   @Mixin
+   protected StatisticsConfigMixin statisticConfigMixin;
 
    public GetChanges() {
 
@@ -64,7 +63,7 @@ public class GetChanges implements Callable<Void> {
          statisticFolder.mkdir();
       }
 
-      LOG.info("Errors: 1: {} 2: {}", type1error, type2error);
+      LOG.info("Errors: 1: {} 2: {}", statisticConfigMixin.getType1error(), statisticConfigMixin.getType2error());
 
       final ChangeReader reader = createReader(statisticFolder, selectedTests);
 
@@ -95,8 +94,7 @@ public class GetChanges implements Callable<Void> {
       }
 
       final ChangeReader reader = new ChangeReader(statisticFolder, runCommandWriter, runCommandWriterSlurm, selectedTests);
-      reader.setType1error(type1error);
-      reader.setType2error(type2error);
+      reader.setConfig(statisticConfigMixin.getStasticsConfig());
       return reader;
    }
 

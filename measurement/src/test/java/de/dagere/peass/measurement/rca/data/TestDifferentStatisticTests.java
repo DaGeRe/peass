@@ -28,23 +28,23 @@ public class TestDifferentStatisticTests {
       CompareData cd = node.getComparableStatistics("A", "B");
       
       TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(ImplementedTests.AGNOSTIC_T_TEST);
-      Relation relationAgnostic = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG);
+      Relation relationAgnostic = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG.getStatisticsConfig());
       Assert.assertEquals(Relation.UNKOWN, relationAgnostic);
       
       TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(ImplementedTests.T_TEST);
-      Relation relationTTest = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG);
+      Relation relationTTest = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG.getStatisticsConfig());
       Assert.assertEquals(Relation.EQUAL, relationTTest);
       
       TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(ImplementedTests.BIMODAL_T_TEST);
-      Relation relation = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG);
+      Relation relation = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG.getStatisticsConfig());
       Assert.assertEquals(Relation.LESS_THAN, relation);
       
       TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(ImplementedTests.MANN_WHITNEY_TEST);
-      Relation relationMannWhitney = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG);
+      Relation relationMannWhitney = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG.getStatisticsConfig());
       Assert.assertEquals(Relation.LESS_THAN, relationMannWhitney);
       
       TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(ImplementedTests.CONFIDENCE_INTERVAL);
-      Relation relationConfidence = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG);
+      Relation relationConfidence = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG.getStatisticsConfig());
       Assert.assertEquals(Relation.EQUAL, relationConfidence);
    }
 
