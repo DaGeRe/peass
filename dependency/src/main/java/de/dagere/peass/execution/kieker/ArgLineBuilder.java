@@ -48,7 +48,7 @@ public class ArgLineBuilder {
    }
 
    // TODO Since Gradle requires different argument specification with systemProperty, this is not realy generic anymore - or maybe in the future again for sbt?
-   private String buildGenericArgline(final File tempFolder, final String valueSeparator, final String entrySeparator, final String kiekerLine) {
+   protected String buildGenericArgline(final File tempFolder, final String valueSeparator, final String entrySeparator, final String kiekerLine) {
       String argline = getTieredCompilationArglinePart(entrySeparator);
       if (testTransformer.getConfig().isUseKieker()) {
          final String tempFolderPath = "'" + tempFolder.getAbsolutePath() + "'";
