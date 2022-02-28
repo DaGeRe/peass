@@ -247,6 +247,11 @@ public class StatisticUtil {
       return shortenedValues;
    }
 
+   public static Relation tTest(final List<Result> valuesPrev, final List<Result> valuesVersion, final double type1error) {
+      CompareData data = new CompareData(valuesPrev, valuesVersion);
+      return getTTestRelation(data, type1error);
+   }
+
    public static Relation getTTestRelation(final CompareData cd, final double type1error) {
       final boolean tchange = new TTest().homoscedasticTTest(cd.getBefore(), cd.getAfter(), type1error);
       if (tchange) {
