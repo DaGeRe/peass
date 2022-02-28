@@ -33,7 +33,6 @@ public class KoPeMeTreeConverter {
 
    private static final Logger LOG = LogManager.getLogger(KoPeMeTreeConverter.class);
 
-   public static final int NANO_TO_MICRO = 1000;
    private final GraphNode node;
    private int calls = 0, callsOld = 0;
    private final DescriptiveStatistics statisticsCurrent = new DescriptiveStatistics();
@@ -107,13 +106,13 @@ public class KoPeMeTreeConverter {
 
    private void readResult(final String version, final String currentVersion, final Result result, final int index) {
       if (currentVersion.equals(version)) {
-         statisticsCurrent.addValue(result.getValue() / result.getRepetitions() / NANO_TO_MICRO);
+         statisticsCurrent.addValue(result.getValue() / result.getRepetitions());
          calls += result.getIterations();
 
          List<StatisticalSummary> course = getCourse(result);
          node.getVmValues().getValues().put(index, course);
       } else {
-         statisticsOld.addValue(result.getValue() / result.getRepetitions() / NANO_TO_MICRO);
+         statisticsOld.addValue(result.getValue() / result.getRepetitions());
          callsOld += result.getIterations();
 
          List<StatisticalSummary> course = getCourse(result);
@@ -124,7 +123,7 @@ public class KoPeMeTreeConverter {
    private List<StatisticalSummary> getCourse(final Result result) {
       List<StatisticalSummary> course = new LinkedList<>();
       for (Value value : result.getFulldata().getValue()) {
-         double mean = ((double) value.getValue()) / result.getRepetitions() / NANO_TO_MICRO; // Convert nanoseconds (from KoPeMe) to microseconds
+         double mean = ((double) value.getValue()) / result.getRepetitions();
          final StatisticalSummaryValues statistic = new StatisticalSummaryValues(mean, 0, result.getRepetitions(), mean, mean, mean * result.getRepetitions());
          course.add(statistic);
       }
