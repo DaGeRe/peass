@@ -29,11 +29,6 @@ public class StatisticUtil {
       return vals.getMean();
    }
 
-   public static Relation bimodalTTest(final List<Result> valuesPrev, final List<Result> valuesVersion, final double type1error) {
-      CompareData data = new CompareData(valuesPrev, valuesVersion);
-      return bimodalTTest(data, type1error);
-   }
-
    private static Relation bimodalTTest(final CompareData data, final double type1error) {
       final BimodalityTester tester = new BimodalityTester(data);
       if (tester.isTChange(type1error)) {
@@ -76,17 +71,6 @@ public class StatisticUtil {
       }
    }
    
-   /**
-    * Gets the critical t value for regular t-test based on the type-1-error (=probability of false positive). 
-    * 
-    * @param type1error The probability that a false positive is reported 
-    * @param degreesOfFreedom The degrees of freedom
-    * @return The critical t value, if the calculated t value is above the critical t-tvalue, it is considered to be a significant performance change
-    */
-   public static double getCriticalValueTTest(final double type1error, final long degreesOfFreedom) {
-      return getCriticalValueUnequal(type1error, degreesOfFreedom);
-   }
-
    public static double getCriticalValueUnequal(final double type2error, final long degreesOfFreedom) {
       final TDistribution tDistribution = new TDistribution(null, degreesOfFreedom);
       final double criticalValueUnequal = Math.abs(tDistribution.inverseCumulativeProbability(1. - 0.5 * type2error));
@@ -97,45 +81,6 @@ public class StatisticUtil {
       final TDistribution tDistribution = new TDistribution(null, degreesOfFreedom);
       final double criticalValueEqual = Math.abs(tDistribution.inverseCumulativeProbability(0.5 * (1 + type1error)));
       return criticalValueEqual;
-   }
-
-   /**
-    * Tested by testing whether it can be rejected that they are different - this does not work
-    */
-   public static boolean areEqual(final DescriptiveStatistics statisticsPrev, final DescriptiveStatistics statisticsVersion, final double significance, final double maxDelta) {
-      final double delta_mu = statisticsPrev.getMean() - statisticsVersion.getMean();
-
-      final TDistribution tDistribution = new TDistribution(null, statisticsPrev.getN() + statisticsVersion.getN() - 2);
-      final double criticalValue = Math.abs(tDistribution.inverseCumulativeProbability(significance));
-
-      LOG.debug("tcrit: " + criticalValue);
-
-      final double tValue0 = getTValue(statisticsPrev, statisticsVersion, delta_mu);
-      LOG.debug("Delta: " + delta_mu + " Max: " + maxDelta * statisticsPrev.getMean() + " T0: " + tValue0);
-      if (Math.abs(delta_mu) < maxDelta * statisticsPrev.getMean()) {
-         return true;
-      }
-      double tested_delta = delta_mu;
-      while (Math.abs(tested_delta) > maxDelta * statisticsPrev.getMean()) {
-         final double tValue = getTValue(statisticsPrev, statisticsVersion, tested_delta);
-         LOG.debug("Delta: " + tested_delta + " T:" + tValue + " Max: " + maxDelta * statisticsPrev.getMean());
-         if (Math.abs(tValue) > criticalValue) {
-            return false;
-         }
-
-         tested_delta = tested_delta / 2;
-      }
-
-      return true; // falsch -> Eigentlich unbekannt
-   }
-
-   public static boolean rejectAreEqual(final StatisticalSummary statisticsAfter, final StatisticalSummary statisticsBefore, final double significance) {
-      final TDistribution tDistribution = new TDistribution(null, statisticsAfter.getN() + statisticsBefore.getN() - 2);
-      final double criticalValue = Math.abs(tDistribution.inverseCumulativeProbability(significance));
-
-      final double tValue0 = getTValue(statisticsAfter, statisticsBefore, 0.0);
-
-      return Math.abs(tValue0) > criticalValue;
    }
 
    public static double getTValue(final StatisticalSummary statisticsAfter, final StatisticalSummary statisticsBefore, final double omega) {
@@ -265,6 +210,11 @@ public class StatisticUtil {
       } else {
          return Relation.EQUAL;
       }
+   }
+   
+   public static Relation isDifferent(final List<Result> valuesPrev, final List<Result> valuesVersion, final StatisticsConfig statisticsConfig) {
+      CompareData data = new CompareData(valuesPrev, valuesVersion);
+      return isDifferent(data, statisticsConfig);
    }
 
    public static Relation isDifferent(final CompareData cd, final StatisticsConfig statisticsConfig) {
