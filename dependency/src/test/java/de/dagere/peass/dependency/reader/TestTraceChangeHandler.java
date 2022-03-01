@@ -11,7 +11,7 @@ import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
 
 public class TestTraceChangeHandler {
@@ -20,7 +20,7 @@ public class TestTraceChangeHandler {
    public void testAdding() {
       ExecutionConfig emptyConfig = new ExecutionConfig();
 
-      Version versionInfo = new Version();
+      VersionStaticSelection versionInfo = new VersionStaticSelection();
       ChangedEntity onlyChange = new ChangedEntity("de.dagere.peass.TestA", "testModule", "testA");
       versionInfo.getChangedClazzes().put(onlyChange, new TestSet());
 
@@ -34,7 +34,7 @@ public class TestTraceChangeHandler {
       ExecutionConfig executionConfigWithBasicInclude = new ExecutionConfig();
       executionConfigWithBasicInclude.getIncludes().add("*Test*");
 
-      Version versionInfo = new Version();
+      VersionStaticSelection versionInfo = new VersionStaticSelection();
       ChangedEntity testA = new ChangedEntity("de.dagere.peass.TestA", "testModule", "testA");
       versionInfo.getChangedClazzes().put(testA, new TestSet());
       ChangedEntity myIntegrationTest = new ChangedEntity("de.dagere.peass.MyIntegrationT", "testModule", "testA");
@@ -51,7 +51,7 @@ public class TestTraceChangeHandler {
       ExecutionConfig executionConfigWithBasicInclude = new ExecutionConfig();
       executionConfigWithBasicInclude.getIncludes().add("*MySpecialTestcase#myMethod");
 
-      Version versionInfo = new Version();
+      VersionStaticSelection versionInfo = new VersionStaticSelection();
       ChangedEntity testA = new ChangedEntity("de.dagere.peass.TestA", "testModule", "testA");
       versionInfo.getChangedClazzes().put(testA, new TestSet());
       ChangedEntity myIntegrationTest = new ChangedEntity("de.dagere.peass.MySpecialTestcase", "testModule", "myMethod");
@@ -63,7 +63,7 @@ public class TestTraceChangeHandler {
       MatcherAssert.assertThat(test.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestCase("de.dagere.peass.TestA", null, "testModule"))));
    }
 
-   private TestSet getTestSet(ExecutionConfig executionConfigWithBasicInclude, Version versionInfo) {
+   private TestSet getTestSet(ExecutionConfig executionConfigWithBasicInclude, VersionStaticSelection versionInfo) {
       TestSet test = new TestSet();
 
       TraceChangeHandler handler = new TraceChangeHandler(Mockito.mock(DependencyManager.class), Mockito.mock(PeassFolders.class), executionConfigWithBasicInclude, "version1");

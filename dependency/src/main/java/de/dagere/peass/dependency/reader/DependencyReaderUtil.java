@@ -35,7 +35,7 @@ import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.Dependencies;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.utils.Constants;
 
@@ -49,7 +49,7 @@ public class DependencyReaderUtil {
 
    private static final Logger LOG = LogManager.getLogger(DependencyReaderUtil.class);
 
-   static void removeDeletedTestcases(final Version newVersionInfo, final TestExistenceChanges testExistenceChanges) {
+   static void removeDeletedTestcases(final VersionStaticSelection newVersionInfo, final TestExistenceChanges testExistenceChanges) {
       LOG.debug("Removed Tests: {}", testExistenceChanges.getRemovedTests());
       for (final TestCase removedTest : testExistenceChanges.getRemovedTests()) {
          LOG.debug("Remove: {}", removedTest);
@@ -77,7 +77,7 @@ public class DependencyReaderUtil {
       }
    }
 
-   static void addNewTestcases(final Version newVersionInfo, final Map<ChangedEntity, Set<TestCase>> newTestcases) {
+   static void addNewTestcases(final VersionStaticSelection newVersionInfo, final Map<ChangedEntity, Set<TestCase>> newTestcases) {
       for (final Map.Entry<ChangedEntity, Set<TestCase>> newTestcase : newTestcases.entrySet()) {
          final ChangedEntity changedClazz = newTestcase.getKey();
          TestSet testsetForChange = null;
@@ -97,8 +97,8 @@ public class DependencyReaderUtil {
       }
    }
 
-   static Version createVersionFromChangeMap(final Map<ChangedEntity, ClazzChangeData> changedClassNames, final ChangeTestMapping changeTestMap) {
-      final Version newVersionInfo = new Version();
+   static VersionStaticSelection createVersionFromChangeMap(final Map<ChangedEntity, ClazzChangeData> changedClassNames, final ChangeTestMapping changeTestMap) {
+      final VersionStaticSelection newVersionInfo = new VersionStaticSelection();
       newVersionInfo.setRunning(true);
       LOG.debug("Beginning to write");
       for (final Map.Entry<ChangedEntity, ClazzChangeData> changedClassName : changedClassNames.entrySet()) {
@@ -113,7 +113,7 @@ public class DependencyReaderUtil {
 
    }
 
-   private static void handleMethodChange(final ChangeTestMapping changeTestMap, final Version version, final ClazzChangeData changedClassName) {
+   private static void handleMethodChange(final ChangeTestMapping changeTestMap, final VersionStaticSelection version, final ClazzChangeData changedClassName) {
       for (ChangedEntity underminedChange : changedClassName.getChanges()) {
          boolean contained = false;
 
@@ -135,7 +135,7 @@ public class DependencyReaderUtil {
       }
    }
 
-   private static void handleWholeClassChange(final ChangeTestMapping changeTestMap, final Version version, final ClazzChangeData changedClassName) {
+   private static void handleWholeClassChange(final ChangeTestMapping changeTestMap, final VersionStaticSelection version, final ClazzChangeData changedClassName) {
       for (ChangedEntity underminedChange : changedClassName.getUniqueChanges()) {
          final TestSet tests = new TestSet();
          ChangedEntity realChange = underminedChange.onlyClazz();
@@ -204,7 +204,7 @@ public class DependencyReaderUtil {
          merged.getVersions().remove(version);
       }
       int add = 0;
-      for (final Map.Entry<String, Version> newerVersion : newer.getVersions().entrySet()) {
+      for (final Map.Entry<String, VersionStaticSelection> newerVersion : newer.getVersions().entrySet()) {
          LOG.debug("Add: {}", newerVersion.getKey());
          add++;
          merged.getVersions().put(newerVersion.getKey(), newerVersion.getValue());

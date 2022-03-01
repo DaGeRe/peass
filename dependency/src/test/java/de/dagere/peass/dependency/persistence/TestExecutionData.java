@@ -19,9 +19,9 @@ public class TestExecutionData {
 
       dependencies.setUrl("https://test");
       dependencies.getInitialversion().setVersion("000001");
-      dependencies.getVersions().put("000002", new Version());
-      dependencies.getVersions().put("000004", new Version());
-      dependencies.getVersions().put("000005", new Version());
+      dependencies.getVersions().put("000002", new VersionStaticSelection());
+      dependencies.getVersions().put("000004", new VersionStaticSelection());
+      dependencies.getVersions().put("000005", new VersionStaticSelection());
       return dependencies;
    }
    

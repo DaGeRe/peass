@@ -9,7 +9,7 @@ import org.mockito.Mockito;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.persistence.Dependencies;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionIteratorGit;
@@ -135,7 +135,7 @@ public class TestDependencyIteratorBuilder {
    private Dependencies buildVersionDependencies(final String... versionNames) {
       Dependencies dependencies = new Dependencies();
       for (String versionName : versionNames) {
-         Version version = new Version();
+         VersionStaticSelection version = new VersionStaticSelection();
          version.setRunning(true);
          dependencies.getVersions().put(versionName, version);
       }

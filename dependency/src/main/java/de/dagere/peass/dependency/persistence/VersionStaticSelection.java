@@ -12,7 +12,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.deserializer.ChangedEntityDeserializer;
 
-public class Version {
+public class VersionStaticSelection {
 
    private boolean running;
    private int jdk = 8;

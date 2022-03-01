@@ -25,7 +25,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.TraceElement;
 import de.dagere.peass.dependency.persistence.Dependencies;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -63,7 +63,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
       Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
       String newestVersion = dependencies.getNewestVersion();
 
-      Version version = dependencies.getVersions().get(newestVersion);
+      VersionStaticSelection version = dependencies.getVersions().get(newestVersion);
       TestSet tests = version.getTests();
 
       ExecutionConfig executionConfig = executionMixin.getExecutionConfig();

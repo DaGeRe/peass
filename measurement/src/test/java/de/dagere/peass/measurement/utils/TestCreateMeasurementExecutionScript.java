@@ -14,7 +14,7 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.TestExecutionData;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 
 public class TestCreateMeasurementExecutionScript {
    @Test
@@ -37,10 +37,10 @@ public class TestCreateMeasurementExecutionScript {
    private ExecutionData buildExecutionDataWithTests() {
       Dependencies dependencies = TestExecutionData.buildExampleDependencies();
 
-      Version version2 = dependencies.getVersions().get("000002");
+      VersionStaticSelection version2 = dependencies.getVersions().get("000002");
       version2.getChangedClazzes().put(new ChangedEntity("Test1#testMe"), new TestSet(new TestCase("Test1#testMe")));
       
-      Version version5 = dependencies.getVersions().get("000005");
+      VersionStaticSelection version5 = dependencies.getVersions().get("000005");
       version5.getChangedClazzes().put(new ChangedEntity("Test5#testMe"), new TestSet(new TestCase("Test5#testMe")));
 
       ExecutionData executiondata = new ExecutionData(dependencies);

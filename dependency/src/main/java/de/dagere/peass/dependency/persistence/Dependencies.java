@@ -14,7 +14,7 @@ public class Dependencies extends SelectedTests {
 
    private String testGoal;
    private InitialVersion initialversion = new InitialVersion();
-   private Map<String, Version> versions = new LinkedHashMap<>();
+   private Map<String, VersionStaticSelection> versions = new LinkedHashMap<>();
 
    public Dependencies() {
 
@@ -27,7 +27,7 @@ public class Dependencies extends SelectedTests {
       initialversion.setVersion(first);
       for (Map.Entry<String, TestSet> version : executiondata.getVersions().entrySet()) {
          if (!version.getKey().equals(first)) {
-            Version versionDependencies = new Version();
+            VersionStaticSelection versionDependencies = new VersionStaticSelection();
             versionDependencies.setPredecessor(version.getValue().getPredecessor());
             versionDependencies.getChangedClazzes().put(new ChangedEntity("unknown", ""), version.getValue());
             String versionHash = version.getKey();
@@ -55,11 +55,11 @@ public class Dependencies extends SelectedTests {
       this.initialversion = initialversion;
    }
 
-   public Map<String, Version> getVersions() {
+   public Map<String, VersionStaticSelection> getVersions() {
       return versions;
    }
 
-   public void setVersions(final Map<String, Version> versions) {
+   public void setVersions(final Map<String, VersionStaticSelection> versions) {
       this.versions = versions;
    }
 
@@ -113,7 +113,7 @@ public class Dependencies extends SelectedTests {
    @JsonIgnore
    public ExecutionData toExecutionData() {
       ExecutionData executionData = new ExecutionData();
-      for (Entry<String, Version> entry : versions.entrySet()) {
+      for (Entry<String, VersionStaticSelection> entry : versions.entrySet()) {
          TestSet tests = entry.getValue().getTests();
          executionData.getVersions().put(entry.getKey(), tests);
       }

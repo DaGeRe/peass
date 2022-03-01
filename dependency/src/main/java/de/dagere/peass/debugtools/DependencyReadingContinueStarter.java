@@ -31,7 +31,7 @@ import de.dagere.peass.config.parameters.DependencyReaderConfigMixin;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.dependency.persistence.Dependencies;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -171,9 +171,9 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
    /**
     * Removes every version from the map that is before the given startversion
     */
-   public static void truncateVersions(final String startversion, final Map<String, Version> versions) {
-      for (final java.util.Iterator<Entry<String, Version>> it = versions.entrySet().iterator(); it.hasNext();) {
-         final Entry<String, Version> version = it.next();
+   public static void truncateVersions(final String startversion, final Map<String, VersionStaticSelection> versions) {
+      for (final java.util.Iterator<Entry<String, VersionStaticSelection>> it = versions.entrySet().iterator(); it.hasNext();) {
+         final Entry<String, VersionStaticSelection> version = it.next();
          if (VersionComparator.isBefore(startversion, version.getKey()) || version.getKey().equals(startversion)) {
             LOG.trace("Remove: " + version.getKey() + " " + VersionComparator.isBefore(startversion, version.getKey()));
             it.remove();

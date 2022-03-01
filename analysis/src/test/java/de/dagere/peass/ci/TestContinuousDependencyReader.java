@@ -13,7 +13,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.InitialVersion;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
@@ -29,7 +29,7 @@ public class TestContinuousDependencyReader {
       
       Dependencies value = new Dependencies();
       value.setInitialversion(new InitialVersion());
-      value.getVersions().put("A", new Version());
+      value.getVersions().put("A", new VersionStaticSelection());
       Constants.OBJECTMAPPER.writeValue(resultsFolders.getDependencyFile(), value);
       
       ContinuousDependencyReader reader = new ContinuousDependencyReader(new DependencyConfig(1, false), new ExecutionConfig(), new KiekerConfig(),

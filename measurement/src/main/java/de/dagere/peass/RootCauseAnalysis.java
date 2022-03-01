@@ -11,7 +11,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
@@ -66,7 +66,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       }
 
       final TestCase test = new TestCase(testName);
-      final Version versionInfo = dependencies.getVersions().get(version);
+      final VersionStaticSelection versionInfo = dependencies.getVersions().get(version);
       boolean found = versionInfo.getTests().getTests().contains(test);
       if (!found) {
          LOG.error("Test " + test + " is not contained in regression test selection result, therefore it is unlikely to have a performance change!");

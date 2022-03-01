@@ -17,7 +17,7 @@ import de.dagere.peass.dependency.analysis.data.ChangeTestMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.utils.Constants;
 
@@ -35,7 +35,7 @@ public class StaticChangeHandler {
       this.dependencyManager = dependencyManager;
    }
 
-   public Version handleStaticAnalysisChanges(final String version, final DependencyReadingInput input) throws IOException, JsonGenerationException, JsonMappingException {
+   public VersionStaticSelection handleStaticAnalysisChanges(final String version, final DependencyReadingInput input) throws IOException, JsonGenerationException, JsonMappingException {
       final ChangeTestMapping changeTestMap = dependencyManager.getDependencyMap().getChangeTestMap(input.getChanges()); // tells which tests need to be run, and
       // because of which change they need to be run
       LOG.debug("Change test mapping (without added tests): " + changeTestMap);
@@ -45,7 +45,7 @@ public class StaticChangeHandler {
       if (executionConfig.isCreateDetailDebugFiles())
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changetest_" + version + ".json"), changeTestMap);
 
-      final Version newVersionInfo = DependencyReaderUtil.createVersionFromChangeMap(input.getChanges(), changeTestMap);
+      final VersionStaticSelection newVersionInfo = DependencyReaderUtil.createVersionFromChangeMap(input.getChanges(), changeTestMap);
       newVersionInfo.setJdk(dependencyManager.getExecutor().getJDKVersion());
       newVersionInfo.setPredecessor(input.getPredecessor());
 

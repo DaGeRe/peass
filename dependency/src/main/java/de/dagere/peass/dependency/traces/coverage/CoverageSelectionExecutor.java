@@ -17,7 +17,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.traces.OneTraceGenerator;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
 import de.dagere.peass.utils.Constants;
@@ -36,7 +36,7 @@ public class CoverageSelectionExecutor {
       this.coverageSelectionInfo = coverageSelectionInfo;
    }
 
-   public void generateCoverageBasedSelection(final String version, final Version newVersionInfo, TestSet dynamicallySelected)
+   public void generateCoverageBasedSelection(final String version, final VersionStaticSelection newVersionInfo, TestSet dynamicallySelected)
          throws IOException, JsonParseException, JsonMappingException {
       List<TraceCallSummary> summaries = getSummaries(dynamicallySelected);
 

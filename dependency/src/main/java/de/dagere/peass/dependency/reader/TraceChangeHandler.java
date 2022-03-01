@@ -20,7 +20,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.utils.Constants;
 
@@ -43,7 +43,7 @@ public class TraceChangeHandler {
       this.version = version;
    }
 
-   public void handleTraceAnalysisChanges(final Version newVersionInfo)
+   public void handleTraceAnalysisChanges(final VersionStaticSelection newVersionInfo)
          throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException {
       LOG.debug("Updating dependencies.. {}", version);
 
@@ -54,10 +54,10 @@ public class TraceChangeHandler {
       }
    }
 
-   private TestSet getTestsToRun(final Version newVersionInfo) throws IOException, JsonGenerationException, JsonMappingException {
-      final TestSet testsToRun = newVersionInfo.getTests() ; // contains only the tests that need to be run -> could be changeTestMap.values() und dann
+   private TestSet getTestsToRun(final VersionStaticSelection newVersionStaticSelection) throws IOException, JsonGenerationException, JsonMappingException {
+      final TestSet testsToRun = newVersionStaticSelection.getTests() ; // contains only the tests that need to be run -> could be changeTestMap.values() und dann
                                                                                       // umwandeln
-      addAddedTests(newVersionInfo, testsToRun);
+      addAddedTests(newVersionStaticSelection, testsToRun);
       
       Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + version + ".json"), testsToRun.entrySet());
 
@@ -65,7 +65,7 @@ public class TraceChangeHandler {
       return testsToRun;
    }
 
-   public void addAddedTests(final Version newVersionInfo, final TestSet testsToRun) {
+   public void addAddedTests(final VersionStaticSelection newVersionInfo, final TestSet testsToRun) {
       for (final ChangedEntity testName : newVersionInfo.getChangedClazzes().keySet()) {
          ChangedEntity simplyClazz = testName.getSourceContainingClazz();
          TestCase potentialTest = new TestCase(simplyClazz.getClazz(), null, testName.getModule());
@@ -75,7 +75,7 @@ public class TraceChangeHandler {
       }
    }
 
-   private void analyzeTests(final Version newVersionInfo, final TestSet testsToRun)
+   private void analyzeTests(final VersionStaticSelection newVersionInfo, final TestSet testsToRun)
          throws IOException, XmlPullParserException, InterruptedException, JsonGenerationException, JsonMappingException {
       final ModuleClassMapping mapping = new ModuleClassMapping(dependencyManager.getExecutor());
       dependencyManager.runTraceTests(testsToRun, version);
@@ -83,20 +83,20 @@ public class TraceChangeHandler {
       handleDependencyChanges(newVersionInfo, testsToRun, mapping);
    }
 
-   private void handleDependencyChanges(final Version newVersionInfo, final TestSet testsToRun, final ModuleClassMapping mapping)
+   private void handleDependencyChanges(final VersionStaticSelection newVersionStaticSelection, final TestSet testsToRun, final ModuleClassMapping mapping)
          throws IOException, XmlPullParserException, JsonGenerationException, JsonMappingException {
       final TestExistenceChanges testExistenceChanges = dependencyManager.updateDependencies(testsToRun, version, mapping);
-      final Map<ChangedEntity, Set<TestCase>> newTestcases = testExistenceChanges.getAddedTests();
+      final Map<ChangedEntity, Set<TestCase>> addedTestcases = testExistenceChanges.getAddedTests();
 
       if (DETAIL_DEBUG) {
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "add_" + version + ".json"), newTestcases);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "add_" + version + ".json"), addedTestcases);
          Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "remove_" + version + ".json"), testExistenceChanges.getRemovedTests());
       }
 
-      DependencyReaderUtil.removeDeletedTestcases(newVersionInfo, testExistenceChanges);
-      DependencyReaderUtil.addNewTestcases(newVersionInfo, newTestcases);
+      DependencyReaderUtil.removeDeletedTestcases(newVersionStaticSelection, testExistenceChanges);
+      DependencyReaderUtil.addNewTestcases(newVersionStaticSelection, addedTestcases);
 
       if (DETAIL_DEBUG)
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "final_" + version + ".json"), newVersionInfo);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "finalStaticSelection_" + version + ".json"), newVersionStaticSelection);
    }
 }

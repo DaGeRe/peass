@@ -20,7 +20,7 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.dependency.persistence.InitialVersion;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.vcs.VersionIterator;
 
@@ -80,7 +80,7 @@ public class InitialVersionReader {
       dependencyResult.setInitialversion(initialversion);
 
       if (dependencyResult.getVersions().size() > 0) {
-         for (final Map.Entry<String, Version> version : dependencyResult.getVersions().entrySet()) {
+         for (final Map.Entry<String, VersionStaticSelection> version : dependencyResult.getVersions().entrySet()) {
             String tag = version.getKey();
             String startTag = iterator.getTag();
             if (VersionComparator.isBefore(tag, startTag) || tag.equals(startTag)) {
@@ -94,7 +94,7 @@ public class InitialVersionReader {
       LOG.debug("Analyzing {} commits", iterator.getRemainingSize());
    }
 
-   private void addVersionTestDependencies(final Version version) {
+   private void addVersionTestDependencies(final VersionStaticSelection version) {
       for (final Entry<ChangedEntity, TestSet> dependency : version.getChangedClazzes().entrySet()) {
          final ChangedEntity callee = dependency.getKey();
          for (final Entry<TestCase, Set<String>> testcase : dependency.getValue().getTestcases().entrySet()) {

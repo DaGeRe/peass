@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.InitialVersion;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 
 public class TestDependencies {
    
@@ -15,9 +15,9 @@ public class TestDependencies {
       
       dependencies.setInitialversion(new InitialVersion());
       dependencies.getInitialversion().setVersion("0");
-      dependencies.getVersions().put("1", new Version());
-      dependencies.getVersions().put("2", new Version());
-      dependencies.getVersions().put("3", new Version());
+      dependencies.getVersions().put("1", new VersionStaticSelection());
+      dependencies.getVersions().put("2", new VersionStaticSelection());
+      dependencies.getVersions().put("3", new VersionStaticSelection());
       
       String[] versionNames = dependencies.getVersionNames();
       
@@ -48,13 +48,13 @@ public class TestDependencies {
       
       dependencies.setInitialversion(new InitialVersion());
       dependencies.getInitialversion().setVersion("0");
-      Version running1 = new Version();
+      VersionStaticSelection running1 = new VersionStaticSelection();
       running1.setRunning(true);
       dependencies.getVersions().put("1", running1);
-      Version nonRunning2 = new Version();
+      VersionStaticSelection nonRunning2 = new VersionStaticSelection();
       nonRunning2.setRunning(false);
       dependencies.getVersions().put("2", nonRunning2);
-      Version running3 = new Version();
+      VersionStaticSelection running3 = new VersionStaticSelection();
       running3.setRunning(true);
       dependencies.getVersions().put("3", running3);
       

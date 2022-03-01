@@ -19,7 +19,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
-import de.dagere.peass.dependency.persistence.Version;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
@@ -49,7 +49,7 @@ public class DependencyDetectorParameterizedIT {
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
       System.out.println(reader.getDependencies().getInitialversion().getInitialDependencies());
-      Version firstVersion = reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1);
+      VersionStaticSelection firstVersion = reader.getDependencies().getVersions().get(DependencyTestConstants.VERSION_1);
       System.out.println(firstVersion.getChangedClazzes());
 
       Assert.assertEquals(3, reader.getDependencies().getInitialversion().getInitialDependencies().size());
