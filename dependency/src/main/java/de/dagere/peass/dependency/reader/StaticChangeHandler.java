@@ -43,16 +43,16 @@ public class StaticChangeHandler {
       handleAddedTests(input, changeTestMap);
 
       if (executionConfig.isCreateDetailDebugFiles())
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changetest_" + version + ".json"), changeTestMap);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "changeTestMap_" + version + ".json"), changeTestMap);
 
-      final VersionStaticSelection newVersionInfo = DependencyReaderUtil.createVersionFromChangeMap(input.getChanges(), changeTestMap);
-      newVersionInfo.setJdk(dependencyManager.getExecutor().getJDKVersion());
-      newVersionInfo.setPredecessor(input.getPredecessor());
+      final VersionStaticSelection newVersionStaticSelection = DependencyReaderUtil.createVersionFromChangeMap(input.getChanges(), changeTestMap);
+      newVersionStaticSelection.setJdk(dependencyManager.getExecutor().getJDKVersion());
+      newVersionStaticSelection.setPredecessor(input.getPredecessor());
 
       if (executionConfig.isCreateDetailDebugFiles()) {
-         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "versioninfo_" + version + ".json"), newVersionInfo);
+         Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "versionStaticSelection_" + version + ".json"), newVersionStaticSelection);
       }
-      return newVersionInfo;
+      return newVersionStaticSelection;
    }
 
    private void handleAddedTests(final DependencyReadingInput input, final ChangeTestMapping changeTestMap) {
