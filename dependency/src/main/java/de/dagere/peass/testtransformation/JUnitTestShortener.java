@@ -168,12 +168,24 @@ public class JUnitTestShortener implements AutoCloseable {
                removeTestAnnotations(methodDeclaration);
             }
          }
+         removeParameterizedTestAnnotations(methodDeclaration);
       }
       for (final Node removeN : remove) {
          clazz.remove(removeN);
       }
    }
 
+   private void removeParameterizedTestAnnotations(final MethodDeclaration methodDeclaration) {
+      final Optional<AnnotationExpr> parameterizedTestAnnotation = methodDeclaration.getAnnotationByName("ParameterizedTest");
+      final Optional<AnnotationExpr> testAnnotationFQNJunit5Parameterized = methodDeclaration.getAnnotationByName("org.junit.jupiter.api.ParameterizedTest");
+      if (parameterizedTestAnnotation.isPresent()) {
+         methodDeclaration.getAnnotations().remove(parameterizedTestAnnotation.get());
+      }
+      if (testAnnotationFQNJunit5Parameterized.isPresent()) {
+         methodDeclaration.getAnnotations().remove(testAnnotationFQNJunit5Parameterized.get());
+      }
+   }
+   
    private void removeTestAnnotations(final MethodDeclaration methodDeclaration) {
       final Optional<AnnotationExpr> testAnnotation = methodDeclaration.getAnnotationByName("Test");
       final Optional<AnnotationExpr> testAnnotationFQNJUnit4 = methodDeclaration.getAnnotationByName("org.junit.Test");
