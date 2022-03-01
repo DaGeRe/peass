@@ -24,19 +24,22 @@ public class TestModuleFinderUtil {
 
     @Test
     public void testGetMavenModules() throws IOException, XmlPullParserException {
-        File projectFolder = new File("..");
+        FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
+        File projectFolder = new File(TestConstants.CURRENT_FOLDER, "maven-multimodule-pl-example");
+        FileUtils.copyDirectory(new File("src/test/resources/maven-multimodule-pl-example/basic_state/"), projectFolder);
 
         ProjectModules projectModules = getGenericModules(projectFolder);
         
-        Assertions.assertEquals(3, projectModules.getModules().size());
+        Assertions.assertEquals(4, projectModules.getModules().size());
     }
 
     @Test
     public void testGetGradleModules() throws IOException, XmlPullParserException {
         FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
-        FileUtils.copyDirectory(new File("src/test/resources/gradle-multimodule-subprojectexample/"), TestConstants.CURRENT_FOLDER);
+        File projectFolder = new File(TestConstants.CURRENT_FOLDER, "gradle-multimodule-subprojectexample");
+        FileUtils.copyDirectory(new File("src/test/resources/gradle-multimodule-subprojectexample/"), projectFolder);
 
-        ProjectModules projectModules = getGenericModules(TestConstants.CURRENT_FOLDER);
+        ProjectModules projectModules = getGenericModules(projectFolder);
 
         Assertions.assertEquals(3, projectModules.getModules().size());
     }
@@ -44,7 +47,10 @@ public class TestModuleFinderUtil {
     @Test
     public void testGetDummyModules() throws IOException, XmlPullParserException {
         FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
-        ProjectModules expectedProjectModules = new ProjectModules(TestConstants.CURRENT_FOLDER);
+        File projectFolder = new File(TestConstants.CURRENT_FOLDER, "dummy-project");
+        projectFolder.mkdir();
+        
+        ProjectModules expectedProjectModules = new ProjectModules(projectFolder);
         ProjectModules projectModules;
         
         try (MockedStatic<ExecutorCreator> executorCreatorMock = Mockito.mockStatic(ExecutorCreator.class, Mockito.CALLS_REAL_METHODS)) {
@@ -55,7 +61,7 @@ public class TestModuleFinderUtil {
                     .when(() -> ExecutorCreator.createExecutor(Mockito.any(PeassFolders.class), Mockito.any(JUnitTestTransformer.class), Mockito.any(EnvironmentVariables.class)))
                     .thenReturn(dummyExecutor);
 
-           projectModules = getGenericModules(TestConstants.CURRENT_FOLDER);
+           projectModules = getGenericModules(projectFolder);
         }
 
         Assertions.assertEquals(expectedProjectModules, projectModules);
