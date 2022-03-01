@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import de.dagere.peass.utils.ModuleFinderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -224,7 +225,7 @@ public class PropertyReadHelper {
 
    private void identifyAffectedClasses(final ChangeProperty property, final Set<String> calls) throws FileNotFoundException, IOException {
       try {
-         List<File> modules = MavenPomUtil.getGenericModules(projectFolder, config).getModules();
+         List<File> modules = ModuleFinderUtil.getGenericModules(projectFolder, config).getModules();
          final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, modules, version, config);
          removeUncalledClasses(calls, diff);
          property.setAffectedClasses(diff.getChangedClasses().size());
