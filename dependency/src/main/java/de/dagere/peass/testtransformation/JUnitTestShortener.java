@@ -157,18 +157,19 @@ public class JUnitTestShortener implements AutoCloseable {
    private void removeNonWanted(final String method, final int version, final ClassOrInterfaceDeclaration clazz) {
       final List<Node> remove = new LinkedList<>();
       for (final MethodDeclaration methodDeclaration : clazz.getMethods()) {
-         if (!methodDeclaration.getNameAsString().equals(method)
-               && methodDeclaration.getModifiers().contains(Modifier.publicModifier()) &&
-               methodDeclaration.getParameters().size() == 0) {
-            if (version == 3) {
-               if (methodDeclaration.getNameAsString().contains("test")) {
-                  remove.add(methodDeclaration);
+         if (!methodDeclaration.getNameAsString().equals(method)) {
+            if (methodDeclaration.getModifiers().contains(Modifier.publicModifier()) &&
+                  methodDeclaration.getParameters().size() == 0) {
+               if (version == 3) {
+                  if (methodDeclaration.getNameAsString().contains("test")) {
+                     remove.add(methodDeclaration);
+                  }
+               } else {
+                  removeTestAnnotations(methodDeclaration);
                }
-            } else {
-               removeTestAnnotations(methodDeclaration);
             }
+            removeParameterizedTestAnnotations(methodDeclaration);
          }
-         removeParameterizedTestAnnotations(methodDeclaration);
       }
       for (final Node removeN : remove) {
          clazz.remove(removeN);
@@ -185,7 +186,7 @@ public class JUnitTestShortener implements AutoCloseable {
          methodDeclaration.getAnnotations().remove(testAnnotationFQNJunit5Parameterized.get());
       }
    }
-   
+
    private void removeTestAnnotations(final MethodDeclaration methodDeclaration) {
       final Optional<AnnotationExpr> testAnnotation = methodDeclaration.getAnnotationByName("Test");
       final Optional<AnnotationExpr> testAnnotationFQNJUnit4 = methodDeclaration.getAnnotationByName("org.junit.Test");
