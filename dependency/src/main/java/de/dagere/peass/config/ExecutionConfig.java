@@ -29,6 +29,8 @@ public class ExecutionConfig implements Serializable {
    private String testGoal;
    private List<String> includes = new LinkedList<>();
    private List<String> excludes = new LinkedList<>();
+   
+   private List<String> forbiddenMethods = new LinkedList<>();
 
    private String version = "HEAD";
    private String versionOld = "HEAD~1";
@@ -160,6 +162,14 @@ public class ExecutionConfig implements Serializable {
 
    public void setExcludes(final List<String> excludes) {
       this.excludes = excludes;
+   }
+
+   public List<String> getForbiddenMethods() {
+      return forbiddenMethods;
+   }
+
+   public void setForbiddenMethods(List<String> forbiddenMethods) {
+      this.forbiddenMethods = forbiddenMethods;
    }
 
    @JsonIgnore
