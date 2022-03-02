@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
+import de.dagere.peass.statisticlogger.ExceededTraceLogger;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -98,6 +99,7 @@ public class OneTraceGenerator {
             }
          } else {
             LOG.error("File size exceeds {} MB", kiekerConfig.getTraceSizeInMb());
+            ExceededTraceLogger.logTestExceedingTraceSize(kiekerResultFolder, sizeInMB);
          }
       }
       if (success) {

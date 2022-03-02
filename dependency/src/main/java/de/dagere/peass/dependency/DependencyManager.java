@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import de.dagere.peass.statisticlogger.IncludedTestsLogger;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -177,6 +178,9 @@ public class DependencyManager extends KiekerResultManager {
          TestCase testcase = new TestCase(testClassName, testMethodName, moduleOfClass);
          updateDependenciesOnce(testcase, parent, mapping);
       }
+      
+      IncludedTestsLogger.logIncludedTests(dependencies.getDependencyMap());
+      
       LOG.debug("Result collection finished");
       return true;
    }

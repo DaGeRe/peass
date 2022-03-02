@@ -20,6 +20,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.statisticlogger.ForbiddenMethodsLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -74,6 +75,7 @@ public class TestDependencies {
       List<String> forbiddenMethods = executionConfig.getForbiddenMethods();
       for (String forbiddenMethod : forbiddenMethods) {
          if (traceContainsMethod(allCalledClasses, forbiddenMethod)) {
+            ForbiddenMethodsLogger.logTestContainingForbiddenMethod(testClassName);
             return;
          }
       }
