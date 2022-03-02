@@ -76,7 +76,7 @@ public class DiffFileGenerator {
 
    private void createAllDiffs(final TestCase testcase, final List<File> traceFiles) throws IOException {
       final String testcaseName = testcase.getShortClazz() + "#" + testcase.getMethod();
-      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + ".txt"), traceFiles, "");
+      //DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + ".txt"), traceFiles, "");
       DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD), traceFiles, OneTraceGenerator.METHOD);
       DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.NOCOMMENT), traceFiles,
             OneTraceGenerator.NOCOMMENT);
