@@ -51,7 +51,7 @@ public class TraceWriter {
          final String shortVersion) throws IOException {
       final File currentTraceFile = new File(methodDir, shortVersion);
       traceFileMapping.addTraceFile(testcase, currentTraceFile);
-      Files.write(currentTraceFile.toPath(), trace.getWholeTrace().getBytes());
+      //Files.write(currentTraceFile.toPath(), trace.getWholeTrace().getBytes());
       final File commentlessTraceFile = new File(methodDir, shortVersion + OneTraceGenerator.NOCOMMENT);
       Files.write(commentlessTraceFile.toPath(), trace.getCommentlessTrace().getBytes());
       final File methodTrace = new File(methodDir, shortVersion + OneTraceGenerator.METHOD);

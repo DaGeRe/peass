@@ -45,7 +45,7 @@ public class RunCommandWriter {
    }
 
    public void createSingleMethodCommand(final int versionIndex, final String endversion, final String testcaseName) {
-      goal.println("./peass measure "
+      /*goal.println("./peass measure "
             + "-test " + testcaseName + " "
             + "-warmup 0 "
             + "-iterations 10 "
@@ -59,7 +59,10 @@ public class RunCommandWriter {
             + "-folder ../projekte/" + name + "/ "
 //            + "-dependencyfile $PEASS_REPOS/dependencies-final/deps_" + name + ".json "
             + " &> measurement_" + endversion.substring(0, 6) + "_" + testcaseName
-            + ".txt");
+            + ".txt");*/
+      goal.println("./peasstomcat measureSingle "
+              + endversion + " "
+              + testcaseName);
    }
 
 }

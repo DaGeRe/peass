@@ -16,12 +16,11 @@
  */
 package de.dagere.peass.dependency.analysis.data;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
+import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.statisticlogger.ForbiddenMethodsLogger;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -72,7 +71,15 @@ public class TestDependencies {
       return tests.getCalledMethods();
    }
    
-   public void setDependencies(final TestCase testClassName, final Map<ChangedEntity, Set<String>> allCalledClasses) {
+   public void setDependencies(final TestCase testClassName, final Map<ChangedEntity, Set<String>> allCalledClasses, ExecutionConfig executionConfig) {
+      List<String> forbiddenMethods = executionConfig.getForbiddenMethods();
+      for (String forbiddenMethod : forbiddenMethods) {
+         if (traceContainsMethod(allCalledClasses, forbiddenMethod)) {
+            ForbiddenMethodsLogger.logTestContainingForbiddenMethod(testClassName);
+            return;
+         }
+      }
+      
       final Map<ChangedEntity, Set<String>> testDependencies = getOrAddDependenciesForTest(testClassName);
       testDependencies.putAll(allCalledClasses);
    }
@@ -170,5 +177,20 @@ public class TestDependencies {
             changeTestMap.addChangeEntry(classWithMethod, currentTestcase);
          }
       }
+   }
+   
+   private boolean traceContainsMethod(final Map<ChangedEntity, Set<String>> allCalledClasses, final String methodToFind) {
+      String[] classAndMethod = methodToFind.split("#");
+      
+      for (Entry<ChangedEntity, Set<String>> calledClass : allCalledClasses.entrySet()) {
+         if (calledClass.getKey().getClazz().equals(classAndMethod[0])) {
+            Set<String> calledMethods = calledClass.getValue();
+            if (calledMethods.contains(classAndMethod[1])) {
+               return true;
+            }
+         }
+      }
+      
+      return false;
    }
 }

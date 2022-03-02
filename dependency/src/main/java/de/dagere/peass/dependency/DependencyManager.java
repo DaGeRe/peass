@@ -30,6 +30,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import de.dagere.peass.statisticlogger.IncludedTestsLogger;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.TrueFileFilter;
@@ -177,6 +178,9 @@ public class DependencyManager extends KiekerResultManager {
          TestCase testcase = new TestCase(testClassName, testMethodName, moduleOfClass);
          updateDependenciesOnce(testcase, parent, mapping);
       }
+      
+      IncludedTestsLogger.logIncludedTests(dependencies.getDependencyMap());
+      
       LOG.debug("Result collection finished");
       return true;
    }
@@ -239,7 +243,7 @@ public class DependencyManager extends KiekerResultManager {
 
       LOG.debug("Test: {} ", testcase);
       LOG.debug("Dependencies: {}", allCalledClasses.size());
-      dependencies.setDependencies(testcase, allCalledClasses);
+      dependencies.setDependencies(testcase, allCalledClasses, testTransformer.getConfig().getExecutionConfig());
    }
 
    private Map<ChangedEntity, Set<String>> getCalledMethods(final ModuleClassMapping mapping, final File[] kiekerResultFolders) {
@@ -249,9 +253,9 @@ public class DependencyManager extends KiekerResultManager {
          final long sizeInMB = size / (1024 * 1024);
 
          LOG.debug("Size: {} Folder: {}", sizeInMB, kiekerResultFolder);
-         if (sizeInMB > fakeConfig.getKiekerConfig().getTraceSizeInMb()) {
+         /*if (sizeInMB > fakeConfig.getKiekerConfig().getTraceSizeInMb()) {
             LOG.error("Trace too big!");
-         } else {
+         } else {*/
             LOG.debug("Reading Kieker folder: {}", kiekerResultFolder.getAbsolutePath());
             CalledMethodLoader calledMethodLoader = new CalledMethodLoader(kiekerResultFolder, mapping, fakeConfig.getKiekerConfig());
             final Map<ChangedEntity, Set<String>> calledMethods = calledMethodLoader.getCalledMethods();
@@ -263,7 +267,7 @@ public class DependencyManager extends KiekerResultManager {
                   alreadyKnownCalledClasses.addAll(calledMethod.getValue());
                }
             }
-         }
+         //}
       }
       return allCalledClasses;
    }

@@ -132,7 +132,7 @@
 
   <properties>
     <mockito.version>4.3.1</mockito.version>
-    <kieker.version>1.15</kieker.version>
+    <kieker.version>1.16-SNAPSHOT</kieker.version>
     <kopeme.version>0.17.5</kopeme.version>
     <project.organization.name>DaGeRe</project.organization.name>
     <license.licenseName>agpl_v3</license.licenseName>

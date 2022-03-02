@@ -58,7 +58,7 @@ public class DependencyViewGeneratorTest {
          }
          
 
-         File expectedDiff = new File(resultsFolders.getVersionDiffFolder("000002"), "TestMe#test.txt");
+         File expectedDiff = new File(resultsFolders.getVersionDiffFolder("000002"), "TestMe#test_nocomment");
          System.out.println(expectedDiff.getAbsolutePath());
          Assert.assertTrue(expectedDiff.exists());
 

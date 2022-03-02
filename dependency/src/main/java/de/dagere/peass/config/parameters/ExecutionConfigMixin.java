@@ -80,6 +80,9 @@ public class ExecutionConfigMixin {
          "--dontRedirectToNull" }, description = "Activates showing the standard output of the testcase (by default, it is redirected to null)")
    protected boolean dontRedirectToNull = false;
 
+   @Option(names = { "-forbiddenMethods", "--forbiddenMethods" }, description = "Unit tests, that call one of the methods, are excluded")
+   protected String[] forbiddenMethods;
+
    public int getTimeout() {
       return timeout;
    }
@@ -256,6 +259,14 @@ public class ExecutionConfigMixin {
       this.dontRedirectToNull = dontRedirectToNull;
    }
 
+   public String[] getForbiddenMethods() {
+      return forbiddenMethods;
+   }
+
+   public void setForbiddenMethods(String[] forbiddenMethods) {
+      this.forbiddenMethods = forbiddenMethods;
+   }
+
    public ExecutionConfig getExecutionConfig() {
       ExecutionConfig config = new ExecutionConfig(timeout);
 
@@ -308,6 +319,12 @@ public class ExecutionConfigMixin {
 
       config.setExcludeLog4j(excludeLog4j);
       config.setRedirectToNull(!dontRedirectToNull);
+
+      if (getForbiddenMethods() != null) {
+         for (String forbiddenMethod : getForbiddenMethods()) {
+            config.getForbiddenMethods().add(forbiddenMethod);
+         }
+      }
 
       return config;
    }

@@ -138,8 +138,10 @@ public class ChangeReader {
 
    private void readCleanFolder(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File cleanFolder) throws JAXBException {
       LOG.info("Handling: {}", cleanFolder);
-      File versionFolder = cleanFolder.listFiles()[0].listFiles()[0];
-      File testcaseFolder = versionFolder.listFiles()[0].listFiles()[0];
+      File testcaseFolder = new File(cleanFolder, "b1ca09f34d0c22727bb5082053c7ae23c30ec8f2" + File.separator + "6cf20b4a83f1e5b2ae86525b6b96389e801776b2" +
+              File.separator + "org.apache.catalina.core.TestApplicationSessionCookieConfig" + File.separator +"testSetDomainInitPhase");
+      //File versionFolder = cleanFolder.listFiles()[0].listFiles()[0];
+      //File testcaseFolder = versionFolder.listFiles()[0].listFiles()[0];
       for (File childFile : testcaseFolder.listFiles()) {
          if (childFile.getName().endsWith(".xml")) {
             readFile(measurementFolder, changes, info, childFile);

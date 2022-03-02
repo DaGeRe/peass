@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.TreeMap;
 
+import de.dagere.peass.utils.ModuleFinderUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,7 +60,7 @@ public class ChangeManager {
     * @throws FileNotFoundException
     */
    private List<ChangedEntity> getChangedClasses(final String lastVersion) throws FileNotFoundException, IOException, XmlPullParserException {
-      List<File> moduleFiles = MavenPomUtil.getGenericModules(folders.getProjectFolder(), config).getModules();
+      List<File> moduleFiles = ModuleFinderUtil.getGenericModules(folders.getProjectFolder(), config).getModules();
       final VersionDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), moduleFiles, lastVersion, config);
       LOG.info("Changed classes: " + diff.getChangedClasses().size());
       return diff.getChangedClasses();
@@ -72,7 +73,7 @@ public class ChangeManager {
             FileUtils.deleteDirectory(folders.getOldSources());
          }
          folders.getOldSources().mkdir();
-         for (final File module : MavenPomUtil.getGenericModules(folders.getProjectFolder(), config).getModules()) {
+         for (final File module : ModuleFinderUtil.getGenericModules(folders.getProjectFolder(), config).getModules()) {
             saveModule(module);
          }
       } catch (final IOException | XmlPullParserException e) {
