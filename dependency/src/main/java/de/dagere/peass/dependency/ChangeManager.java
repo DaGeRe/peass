@@ -23,7 +23,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.changesreading.FileComparisonUtil;
-import de.dagere.peass.execution.maven.pom.MavenPomUtil;
+import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionIterator;
@@ -43,11 +43,13 @@ public class ChangeManager {
    private final PeassFolders folders;
    private final VersionIterator iterator;
    private final ExecutionConfig config;
+   private final TestExecutor testExecutor;
 
-   public ChangeManager(final PeassFolders folders, final VersionIterator iterator, final ExecutionConfig config) {
+   public ChangeManager(final PeassFolders folders, final VersionIterator iterator, final ExecutionConfig config, TestExecutor testExecutor) {
       this.folders = folders;
       this.iterator = iterator;
       this.config = config;
+      this.testExecutor = testExecutor;
    }
 
    /**
@@ -59,7 +61,7 @@ public class ChangeManager {
     * @throws FileNotFoundException
     */
    private List<ChangedEntity> getChangedClasses(final String lastVersion) throws FileNotFoundException, IOException, XmlPullParserException {
-      List<File> moduleFiles = MavenPomUtil.getGenericModules(folders.getProjectFolder(), config).getModules();
+      List<File> moduleFiles = testExecutor.getModules().getModules(); 
       final VersionDiff diff = iterator.getChangedClasses(folders.getProjectFolder(), moduleFiles, lastVersion, config);
       LOG.info("Changed classes: " + diff.getChangedClasses().size());
       return diff.getChangedClasses();
@@ -72,10 +74,10 @@ public class ChangeManager {
             FileUtils.deleteDirectory(folders.getOldSources());
          }
          folders.getOldSources().mkdir();
-         for (final File module : MavenPomUtil.getGenericModules(folders.getProjectFolder(), config).getModules()) {
+         for (final File module : testExecutor.getModules().getModules()) {
             saveModule(module);
          }
-      } catch (final IOException | XmlPullParserException e) {
+      } catch (final IOException e) {
          LOG.debug("Could not save (all) old files");
          e.printStackTrace();
       }

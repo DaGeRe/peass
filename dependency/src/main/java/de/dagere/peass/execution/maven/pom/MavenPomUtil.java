@@ -24,9 +24,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.execution.gradle.SettingsFileParser;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.execution.utils.RequiredDependency;
@@ -323,16 +321,4 @@ public class MavenPomUtil {
       }
       return confProperty;
    }
-
-   public static ProjectModules getGenericModules(final File projectFolder, final ExecutionConfig config) throws FileNotFoundException, IOException, XmlPullParserException {
-      final File pomXml = new File(projectFolder, "pom.xml");
-      if (pomXml.exists()) {
-         return MavenPomUtil.getModules(pomXml, config);
-      } else if (GradleParseHelper.searchGradleFiles(projectFolder).length != 0) {
-         return SettingsFileParser.getModules(projectFolder);
-      } else {
-         return null;
-      }
-   }
-
 }
