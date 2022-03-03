@@ -1,5 +1,6 @@
 package de.dagere.peass.dependency;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.hamcrest.MatcherAssert;
@@ -7,6 +8,8 @@ import org.hamcrest.core.IsNull;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+
+import com.google.common.io.Files;
 
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.properties.ChangeProperty;
@@ -51,7 +54,9 @@ public class TestPropertyReadHelper {
       ExecutionConfig config = new ExecutionConfig();
       config.setVersion("000001");
       
-      PropertyReadHelper helper = new PropertyReadHelper(config, new ChangedEntity("Test"), changeMock, null, null, null, null);
+      File projectFolder = new File("target/current");
+      Files.touch(new File(projectFolder, "pom.xml"));
+      PropertyReadHelper helper = new PropertyReadHelper(config, new ChangedEntity("Test"), changeMock, projectFolder, null, null, null);
       ChangeProperty emptyProperty = helper.read();
       MatcherAssert.assertThat(emptyProperty, IsNull.notNullValue());
       Assert.assertEquals("myTestMethod", emptyProperty.getMethod());

@@ -13,22 +13,24 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import de.dagere.peass.utils.ModuleFinderUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.properties.ChangeProperty.TraceChange;
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
+import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.EntityUtil;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.dagere.peass.execution.maven.pom.MavenPomUtil;
+import de.dagere.peass.execution.utils.EnvironmentVariables;
+import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
+import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionIteratorGit;
@@ -63,6 +65,10 @@ public class PropertyReadHelper {
    private final File viewFolder;
    private final File methodSourceFolder;
 
+   private final PeassFolders folders;
+   private final TestTransformer testTransformer;
+   private final TestExecutor testExecutor;
+
    /**
     * Just for local debugging purposes - no public use intended
     * 
@@ -79,7 +85,7 @@ public class PropertyReadHelper {
       ExecutionConfig demoConfig = new ExecutionConfig();
       demoConfig.setVersion("96f8f56556a8592bfed25c82acedeffc4872ac1f");
       demoConfig.setVersionOld("09d16c");
-      
+
       final PropertyReadHelper propertyReadHelper = new PropertyReadHelper(demoConfig, ce, change, projectFolder2, viewFolder2,
             new File("/tmp/"), null);
       propertyReadHelper.read();
@@ -99,6 +105,10 @@ public class PropertyReadHelper {
       this.viewFolder = viewFolder;
       this.methodSourceFolder = methodSourceFolder;
       this.changedTests = changedTests;
+
+      folders = new PeassFolders(projectFolder);
+      testTransformer = ExecutorCreator.createTestTransformer(folders, config, new KiekerConfig(true));
+      testExecutor = ExecutorCreator.createExecutor(folders, testTransformer, new EnvironmentVariables());
    }
 
    public ChangeProperty read() throws IOException {
@@ -158,10 +168,10 @@ public class PropertyReadHelper {
          LOG.info("Reading method sources from expanded tracefile {}", expandedFile);
          final List<String> traceCurrent = Sequitur.getExpandedTrace(expandedFile);
          final PeassFolders folders = new PeassFolders(projectFolder);
-         
+
          // Only to read old sources
          getChanges(folders);
-         
+
          readMethodSources(new ChangeProperty(), folders, new HashSet<>(traceCurrent));
       }
    }
@@ -208,7 +218,7 @@ public class PropertyReadHelper {
       GitCommit firstCommit = new GitCommit(versionOld, null, null, null);
       List<GitCommit> commits = Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), firstCommit });
       final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, commits, firstCommit);
-      final ChangeManager changeManager = new ChangeManager(folders, iterator, config);
+      final ChangeManager changeManager = new ChangeManager(folders, iterator, config, testExecutor);
       final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(versionOld, version);
       return changes;
    }
@@ -224,16 +234,12 @@ public class PropertyReadHelper {
    }
 
    private void identifyAffectedClasses(final ChangeProperty property, final Set<String> calls) throws FileNotFoundException, IOException {
-      try {
-         List<File> modules = ModuleFinderUtil.getGenericModules(projectFolder, config).getModules();
-         final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, modules, version, config);
-         removeUncalledClasses(calls, diff);
-         property.setAffectedClasses(diff.getChangedClasses().size());
-         final int changedLines = GitUtils.getChangedLines(projectFolder, version, diff.getChangedClasses(), config);
-         property.setAffectedLines(changedLines);
-      } catch (final XmlPullParserException e) {
-         e.printStackTrace();
-      }
+      List<File> modules = testExecutor.getModules().getModules();
+      final VersionDiff diff = GitUtils.getChangedFiles(projectFolder, modules, version, config);
+      removeUncalledClasses(calls, diff);
+      property.setAffectedClasses(diff.getChangedClasses().size());
+      final int changedLines = GitUtils.getChangedLines(projectFolder, version, diff.getChangedClasses(), config);
+      property.setAffectedLines(changedLines);
    }
 
    private void removeUncalledClasses(final Set<String> calls, final VersionDiff diff) {
@@ -272,8 +278,6 @@ public class PropertyReadHelper {
          property.getRemovedMap().put(vOld.getKey(), vOld.getValue());
       }
    }
-
-   
 
    public Set<String> getMergedCalls(final List<String> traceCurrent, final List<String> traceOld) {
       final Set<String> merged = new HashSet<>();
