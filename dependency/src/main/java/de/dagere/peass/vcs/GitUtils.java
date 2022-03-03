@@ -326,9 +326,11 @@ public final class GitUtils {
             if (!countString.equals("Bin")) {
                final int count = Integer.parseInt(countString);
                String clazzName = getClazz(clazz, config);
-               final ChangedEntity changedEntity = new ChangedEntity(clazzName, "");
-               if (entities.contains(changedEntity)) {
-                  size += count;
+               if (clazzName != null) {
+                  final ChangedEntity changedEntity = new ChangedEntity(clazzName, "");
+                  if (entities.contains(changedEntity)) {
+                     size += count;
+                  }
                }
             }
          }
