@@ -2,6 +2,7 @@ package de.dagere.peass.analysis.changes;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -46,6 +47,15 @@ public class Change implements Serializable {
    
    public void setParams(final String params) {
       this.params = params;
+   }
+   
+   @JsonIgnore
+   public String getMethodWithParams() {
+      if (params == null) {
+         return method;
+      } else {
+         return method + "(" + params + ")";
+      }
    }
 
    public String getDiff() {
