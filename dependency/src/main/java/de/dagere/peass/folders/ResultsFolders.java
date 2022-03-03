@@ -148,7 +148,7 @@ public class ResultsFolders {
       return methodDir;
    }
 
-   private File getClazzDir(final String version, final TestCase testcase) {
+   public File getClazzDir(final String version, final TestCase testcase) {
       final File viewResultsFolder = new File(getViewFolder(), "view_" + version);
       if (!viewResultsFolder.exists()) {
          viewResultsFolder.mkdir();
