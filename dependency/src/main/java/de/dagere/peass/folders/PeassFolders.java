@@ -31,11 +31,13 @@ public class PeassFolders {
    protected final File projectFolder;
    // private final File resultFolder;
    protected final File fullResultFolder;
+   
    private final File tempResultFolder, tempProjectFolder, tempFolder, kiekerTemp;
    private final VMExecutionLogFolders logFolders;
    private final File oldSourceFolder;
    private final File measurementsFolder;
    private final File cleanFolder;
+   protected final File cleanNativeFolder;
    private final File debugFolder;
    private final VersionControlSystem vcs;
 
@@ -70,6 +72,7 @@ public class PeassFolders {
       tempFolder = new File(peassFolder, "temp");
       tempFolder.mkdir();
       cleanFolder = new File(peassFolder, "clean");
+      cleanNativeFolder = new File(cleanFolder, "native");
       debugFolder = new File(peassFolder, "debug");
       // cleanFolder.mkdir();
       measurementsFolder = new File(fullResultFolder, MEASUREMENTS);
@@ -95,7 +98,15 @@ public class PeassFolders {
    public File getCleanFolder() {
       return cleanFolder;
    }
-
+   
+   /**
+    * If cleaning is done with an existing project, a new folder in the clean folder is created; if the cleaning is done directly by the measurement process, the native folder is used
+    * @return
+    */
+   public File getNativeCleanFolder() {
+      return cleanNativeFolder;
+   }
+   
    public File getDependencyLogFolder() {
       return logFolders.getDependencyLogFolder();
    }

@@ -52,11 +52,6 @@ public class Cleaner extends DataAnalyser  {
 
    public Cleaner(final File cleanFolder) {
       this.cleanFolder = cleanFolder;
-      if (cleanFolder.exists()) {
-         throw new RuntimeException("Clean already finished - delete " + cleanFolder.getAbsolutePath() + ", if you want to clean!");
-      } else {
-         cleanFolder.mkdirs();
-      }
    }
 
    @Override

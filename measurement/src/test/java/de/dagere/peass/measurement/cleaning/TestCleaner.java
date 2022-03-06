@@ -33,6 +33,7 @@ public class TestCleaner {
       if (goalFolder.exists()) {
          FileUtils.deleteDirectory(goalFolder);
       }
+      goalFolder.mkdirs();
       Cleaner cleaner = new Cleaner(goalFolder);
       
       cleaner.processDataFolder(measurementsFolder);
