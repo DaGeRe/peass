@@ -21,8 +21,9 @@ public class DiffFileGenerator {
    public DiffFileGenerator(final File diffFolder) {
       this.diffFolder = diffFolder;
    }
-   
-   public void generateAllDiffs(final String version, final VersionStaticSelection newVersionInfo, final DiffFileGenerator diffGenerator, final TraceFileMapping mapping, final ExecutionData executionResult) throws IOException {
+
+   public void generateAllDiffs(final String version, final VersionStaticSelection newVersionInfo, final DiffFileGenerator diffGenerator, final TraceFileMapping mapping,
+         final ExecutionData executionResult) throws IOException {
       for (TestCase testcase : newVersionInfo.getTests().getTests()) {
          boolean tracesChanged = tracesChanged(testcase, mapping);
          if (tracesChanged) {
@@ -70,12 +71,8 @@ public class DiffFileGenerator {
       final long size = FileUtils.sizeOfDirectory(diffFolder);
       final long sizeInMB = size / (1024 * 1024);
       LOG.debug("Filesize: {} ({})", sizeInMB, size);
-      if (sizeInMB < 2000) {
-         List<File> traceFiles = traceFileMap.getTestcaseMap(testcase);
-         createAllDiffs(testcase, traceFiles);
-      } else {
-         LOG.info("Diff folder too big: {}", sizeInMB);
-      }
+      List<File> traceFiles = traceFileMap.getTestcaseMap(testcase);
+      createAllDiffs(testcase, traceFiles);
    }
 
    private void createAllDiffs(final TestCase testcase, final List<File> traceFiles) throws IOException {
