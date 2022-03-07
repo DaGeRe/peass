@@ -150,7 +150,12 @@ public final class GitUtils {
          if (endversion != null && commit.getTag().startsWith(endversion)) {
             afterEnd = true;
             if (beforeStart == true) {
-               throw new RuntimeException("Startversion " + startversion + " before endversion " + endversion);
+               boolean startversionExists = commits.stream().anyMatch(potentialStart -> potentialStart.getTag().startsWith(startversion));
+               if (startversionExists) {
+                  throw new RuntimeException("Startversion " + startversion + " after endversion " + endversion);
+               } else {
+                  throw new RuntimeException("Startversion " + startversion + " not found at all, but endversion " + endversion + " found");
+               }
             }
          }
       }
@@ -340,7 +345,7 @@ public final class GitUtils {
       }
       return -1;
    }
-   
+
    public static String getClazz(String currentFileName, ExecutionConfig config) {
       if (currentFileName.endsWith(VersionDiff.JAVA_ENDING)) {
          String fileNameWithoutExtension = currentFileName.substring(0, currentFileName.length() - VersionDiff.JAVA_ENDING.length());
@@ -357,7 +362,7 @@ public final class GitUtils {
             final String pathWithFolder = currentFileName.substring(indexOf);
             final String classPath = VersionDiff.replaceClazzFolderFromName(pathWithFolder, containedPath);
             return classPath;
-         } 
+         }
       }
       return null;
    }

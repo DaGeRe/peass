@@ -3,6 +3,7 @@ package de.dagere.peass.vcs;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -95,5 +96,34 @@ public class TestGitUtils {
 
       ProjectBuilderHelper.checkout(PROJECT_FOLDER, PEASS_TEST_MAIN_BRANCH);
       ProjectBuilderHelper.mergeTheirs(PROJECT_FOLDER, FEATURE_A);
+   }
+
+   @Test
+   public void testFilterList() {
+      List<GitCommit> regularExample = buildExampleList();
+      GitUtils.filterList("000001", "000003", regularExample);
+      Assert.assertEquals(3, regularExample.size());
+      
+      RuntimeException thrown1 = Assert.assertThrows(RuntimeException.class, () -> {
+         List<GitCommit> secondExample = buildExampleList();
+         GitUtils.filterList("000005", "000003", secondExample);
+      });
+      Assert.assertEquals("Startversion 000005 after endversion 000003", thrown1.getMessage());
+      
+      RuntimeException thrown2 = Assert.assertThrows(RuntimeException.class, () -> {
+         List<GitCommit> secondExample = buildExampleList();
+         GitUtils.filterList("00000A", "000003", secondExample);
+      });
+      Assert.assertEquals("Startversion 00000A not found at all, but endversion 000003 found", thrown2.getMessage());
+   }
+
+   private List<GitCommit> buildExampleList() {
+      List<GitCommit> regularExample = new LinkedList<>();
+      regularExample.add(new GitCommit("000001", null, null, null));
+      regularExample.add(new GitCommit("000002", null, null, null));
+      regularExample.add(new GitCommit("000003", null, null, null));
+      regularExample.add(new GitCommit("000004", null, null, null));
+      regularExample.add(new GitCommit("000005", null, null, null));
+      return regularExample;
    }
 }
