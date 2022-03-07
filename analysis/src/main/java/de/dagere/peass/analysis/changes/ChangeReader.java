@@ -136,15 +136,13 @@ public class ChangeReader {
       }
    }
 
-   private void readCleanFolder(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File cleanFolder) throws JAXBException {
-      LOG.info("Handling: {}", cleanFolder);
-      File testcaseFolder = new File(cleanFolder, "b1ca09f34d0c22727bb5082053c7ae23c30ec8f2" + File.separator + "6cf20b4a83f1e5b2ae86525b6b96389e801776b2" +
-              File.separator + "org.apache.catalina.core.TestApplicationSessionCookieConfig" + File.separator +"testSetDomainInitPhase");
-      //File versionFolder = cleanFolder.listFiles()[0].listFiles()[0];
-      //File testcaseFolder = versionFolder.listFiles()[0].listFiles()[0];
-      for (File childFile : testcaseFolder.listFiles()) {
-         if (childFile.getName().endsWith(".xml")) {
-            readFile(measurementFolder, changes, info, childFile);
+   private void readCleanFolder(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File cleanParentFolder) throws JAXBException {
+      LOG.info("Handling: {}", cleanParentFolder);
+      for (File cleanedFolder : cleanParentFolder.listFiles()) {
+         for (File childFile : cleanedFolder.listFiles()) {
+            if (childFile.getName().endsWith(".xml")) {
+               readFile(measurementFolder, changes, info, childFile);
+            }
          }
       }
    }
@@ -251,7 +249,7 @@ public class ChangeReader {
       boolean stringEmptyAndParamsNull = "".equals(paramString) && test.getParams() == null;
       return bothNull 
             || stringEmptyAndParamsNull 
-            || test.getParams().equals(paramString); // last should only be evaluated if both are not null
+            || (test.getParams() != null && test.getParams().equals(paramString)); // last should only be evaluated if both are not null
    }
 
    private void writeRunCommands(final String[] versions, final DescribedChunk describedChunk, final TestCase testcase) {
