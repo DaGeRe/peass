@@ -22,7 +22,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
-@Command(name = "getchanges", description = "Determines changes based on measurement values using agnostic t-test", mixinStandardHelpOptions = true)
+@Command(name = "getchanges", description = "Determines changes based on measurement values using the specified statistical test", mixinStandardHelpOptions = true)
 public class GetChanges implements Callable<Void> {
 
    private static final Logger LOG = LogManager.getLogger(GetChanges.class);
