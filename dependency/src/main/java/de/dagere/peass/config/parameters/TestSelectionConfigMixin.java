@@ -2,10 +2,10 @@ package de.dagere.peass.config.parameters;
 
 import java.io.File;
 
-import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import picocli.CommandLine.Option;
 
-public class DependencyReaderConfigMixin {
+public class TestSelectionConfigMixin {
    @Option(names = { "-folder", "--folder" }, description = "Folder that should be analyzed", required = true)
    private File projectFolder;
 
@@ -54,13 +54,13 @@ public class DependencyReaderConfigMixin {
       return doNotGenerateProperties;
    }
    
-   public DependencyConfig getDependencyConfig() {
+   public TestSelectionConfig getDependencyConfig() {
       if (doNotUpdateDependencies) {
          doNotGenerateCoverageSelection = true;
          doNotGenerateTraces = true;
       }
       boolean generateTraces = !doNotGenerateTraces;
       boolean generateCoverageSelection = !doNotGenerateCoverageSelection;
-      return new DependencyConfig(threads, doNotUpdateDependencies, generateTraces, generateCoverageSelection, skipProcessSuccessRuns);
+      return new TestSelectionConfig(threads, doNotUpdateDependencies, generateTraces, generateCoverageSelection, skipProcessSuccessRuns);
    }
 }

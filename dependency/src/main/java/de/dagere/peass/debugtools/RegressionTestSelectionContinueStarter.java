@@ -27,7 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.config.parameters.DependencyReaderConfigMixin;
+import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -61,7 +61,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
    private static final Logger LOG = LogManager.getLogger(RegressionTestSelectionContinueStarter.class);
 
    @Mixin
-   private DependencyReaderConfigMixin config;
+   private TestSelectionConfigMixin config;
    
    @Mixin
    private KiekerConfigMixin kiekerConfigMixin;
@@ -142,7 +142,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
       return previousVersion;
    }
 
-   DependencyReader createReader(final DependencyReaderConfigMixin config, final ResultsFolders resultsFolders, final StaticTestSelection dependencies, final String previousVersion,
+   DependencyReader createReader(final TestSelectionConfigMixin config, final ResultsFolders resultsFolders, final StaticTestSelection dependencies, final String previousVersion,
          final int timeout, final VersionControlSystem vcs) {
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.GIT)) {
@@ -160,7 +160,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
       return reader;
    }
 
-   private VersionIterator createIterator(final DependencyReaderConfigMixin config, final String previousVersion) {
+   private VersionIterator createIterator(final TestSelectionConfigMixin config, final String previousVersion) {
       final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartversion(), executionConfigMixin.getEndversion(), config.getProjectFolder());
       commits.add(0, new GitCommit(previousVersion, "", "", ""));
       final GitCommit previous = new GitCommit(previousVersion, "", "", "");

@@ -13,7 +13,7 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.config.parameters.DependencyReaderConfigMixin;
+import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.statistics.DependencyStatisticAnalyzer;
 import de.dagere.peass.dependency.statistics.DependencyStatistics;
@@ -33,7 +33,7 @@ import picocli.CommandLine.Mixin;
 public class RegressionTestSelectionSummarizer implements Callable<Void> {
 
    @Mixin
-   private DependencyReaderConfigMixin config;
+   private TestSelectionConfigMixin config;
 
    public static void main(final String[] args) {
       try {

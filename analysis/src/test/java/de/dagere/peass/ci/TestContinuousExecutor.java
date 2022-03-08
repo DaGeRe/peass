@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.analysis.changes.ProjectChanges;
-import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -54,7 +54,7 @@ public class TestContinuousExecutor {
    public void testChangeIdentification() throws Exception {
       initRepo();
       
-      DependencyConfig dependencyConfig = new DependencyConfig(1, false);
+      TestSelectionConfig dependencyConfig = new TestSelectionConfig(1, false);
       MeasurementConfig measurementConfig = new MeasurementConfig(2);
       ContinuousExecutor executor = new ContinuousExecutor(DependencyTestConstants.CURRENT, measurementConfig, dependencyConfig, new EnvironmentVariables());
 

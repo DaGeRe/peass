@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.analysis.measurement.AnalyseFullData;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;
-import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
@@ -36,7 +36,7 @@ public class ContinuousExecutor {
    private static final Logger LOG = LogManager.getLogger(ContinuousExecutor.class);
 
    private final MeasurementConfig measurementConfig;
-   private final DependencyConfig dependencyConfig;
+   private final TestSelectionConfig dependencyConfig;
 
    private final String version;
    private final String versionOld;
@@ -49,7 +49,7 @@ public class ContinuousExecutor {
 
    private final EnvironmentVariables env;
 
-   public ContinuousExecutor(final File projectFolder, final MeasurementConfig measurementConfig, final DependencyConfig dependencyConfig, final EnvironmentVariables env)
+   public ContinuousExecutor(final File projectFolder, final MeasurementConfig measurementConfig, final TestSelectionConfig dependencyConfig, final EnvironmentVariables env)
          throws InterruptedException, IOException {
       this.originalProjectFolder = projectFolder;
       this.measurementConfig = measurementConfig;

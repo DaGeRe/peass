@@ -16,7 +16,7 @@ import org.mockito.Mockito;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.TestConstants;
-import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
@@ -109,7 +109,7 @@ public class DependencyDetectorTestUtil {
       return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5), DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.TARGET_RESULTS_FOLDERS);
    }
 
-   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config, final DependencyConfig dependencyConfig, final ResultsFolders resultsFolders) {
+   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config, final TestSelectionConfig dependencyConfig, final ResultsFolders resultsFolders) {
       try {
          final DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(DependencyTestConstants.CURRENT),
                resultsFolders, null, fakeIterator, changeManager, config, new KiekerConfig(true), new EnvironmentVariables());

@@ -23,7 +23,7 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
-import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -60,7 +60,7 @@ public class JmhDependencyReaderMultiParamTest {
 
          ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
 
-         DependencyConfig dependencyConfig = new DependencyConfig(1, false, true, false);
+         TestSelectionConfig dependencyConfig = new TestSelectionConfig(1, false, true, false);
 
          ExecutionConfig jmhConfig = new ExecutionConfig();
          jmhConfig.setTestTransformer("de.dagere.peass.dependency.jmh.JmhTestTransformer");

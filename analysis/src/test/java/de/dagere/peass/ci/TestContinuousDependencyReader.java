@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
@@ -32,7 +32,7 @@ public class TestContinuousDependencyReader {
       value.getVersions().put("A", new VersionStaticSelection());
       Constants.OBJECTMAPPER.writeValue(resultsFolders.getStaticTestSelectionFile(), value);
       
-      ContinuousDependencyReader reader = new ContinuousDependencyReader(new DependencyConfig(1, false), new ExecutionConfig(), new KiekerConfig(),
+      ContinuousDependencyReader reader = new ContinuousDependencyReader(new TestSelectionConfig(1, false), new ExecutionConfig(), new KiekerConfig(),
             new PeassFolders(new File("target/current")), resultsFolders, new EnvironmentVariables());
 
       reader.getDependencies(null, "git:dummyUrl");

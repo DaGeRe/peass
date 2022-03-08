@@ -129,7 +129,7 @@ public class TestDependencies {
     * Returns a list of all tests that changed based on given changed classes and the dependencies of the current version. So the result mapping is changedclass to a set of tests,
     * that could have been changed by this changed class.
     * 
-    * @param dependencies
+    * @param staticTestSelection
     * @param changes
     * @return Map from changed class to the influenced tests
     */

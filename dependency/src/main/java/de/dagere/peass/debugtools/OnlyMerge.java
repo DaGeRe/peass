@@ -7,7 +7,7 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
-import de.dagere.peass.config.parameters.DependencyReaderConfigMixin;
+import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -19,7 +19,7 @@ import picocli.CommandLine.Mixin;
 public class OnlyMerge implements Callable<Void>{
    
    @Mixin
-   private DependencyReaderConfigMixin config;
+   private TestSelectionConfigMixin config;
    
    @Mixin
    private ExecutionConfigMixin executionConfigMixin;

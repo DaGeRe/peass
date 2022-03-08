@@ -15,7 +15,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.ci.logHandling.LogRedirector;
-import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
@@ -40,14 +40,14 @@ public class ContinuousDependencyReader {
 
    private static final Logger LOG = LogManager.getLogger(ContinuousDependencyReader.class);
 
-   private final DependencyConfig dependencyConfig;
+   private final TestSelectionConfig dependencyConfig;
    private final ExecutionConfig executionConfig;
    private final KiekerConfig kiekerConfig;
    private final PeassFolders folders;
    private final ResultsFolders resultsFolders;
    private final EnvironmentVariables env;
 
-   public ContinuousDependencyReader(final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final PeassFolders folders,
+   public ContinuousDependencyReader(final TestSelectionConfig dependencyConfig, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final PeassFolders folders,
          final ResultsFolders resultsFolders, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
       this.executionConfig = executionConfig;

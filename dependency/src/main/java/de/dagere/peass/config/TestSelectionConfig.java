@@ -2,7 +2,7 @@ package de.dagere.peass.config;
 
 import java.io.Serializable;
 
-public class DependencyConfig implements Serializable {
+public class TestSelectionConfig implements Serializable {
    
    private static final long serialVersionUID = -3734493960077455640L;
    
@@ -12,7 +12,7 @@ public class DependencyConfig implements Serializable {
    private final boolean generateCoverageSelection;
    private final boolean skipProcessSuccessRuns;
 
-   public DependencyConfig(final int threads, final boolean doNotUpdateDependencies) {
+   public TestSelectionConfig(final int threads, final boolean doNotUpdateDependencies) {
       this.threads = threads;
       this.doNotUpdateDependencies = doNotUpdateDependencies;
       if (doNotUpdateDependencies) {
@@ -26,7 +26,7 @@ public class DependencyConfig implements Serializable {
       skipProcessSuccessRuns = false;
    }
 
-   public DependencyConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateViews, final boolean generateCoverageSelection) {
+   public TestSelectionConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateViews, final boolean generateCoverageSelection) {
       this.threads = threads;
       this.doNotUpdateDependencies = doNotUpdateDependencies;
       this.generateTraces = generateViews;
@@ -35,7 +35,7 @@ public class DependencyConfig implements Serializable {
       check();
    }
    
-   public DependencyConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateTraces, final boolean generateCoverageSelection, final boolean skipProcessSuccessRuns) {
+   public TestSelectionConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateTraces, final boolean generateCoverageSelection, final boolean skipProcessSuccessRuns) {
       this.threads = threads;
       this.doNotUpdateDependencies = doNotUpdateDependencies;
       this.generateTraces = generateTraces;

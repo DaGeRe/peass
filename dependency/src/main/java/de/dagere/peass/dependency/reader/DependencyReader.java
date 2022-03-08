@@ -12,7 +12,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.javaparser.ParseException;
 
-import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
@@ -43,7 +43,7 @@ public class DependencyReader {
 
    private static final Logger LOG = LogManager.getLogger(DependencyReader.class);
 
-   private final DependencyConfig dependencyConfig;
+   private final TestSelectionConfig dependencyConfig;
    protected final StaticTestSelection dependencyResult = new StaticTestSelection();
    private final ExecutionData executionResult = new ExecutionData();
    private final ExecutionData coverageBasedSelection = new ExecutionData();
@@ -68,7 +68,7 @@ public class DependencyReader {
    private final DependencySizeRecorder sizeRecorder = new DependencySizeRecorder();
    private final TraceFileMapping mapping = new TraceFileMapping();
 
-   public DependencyReader(final DependencyConfig dependencyConfig, final PeassFolders folders,
+   public DependencyReader(final TestSelectionConfig dependencyConfig, final PeassFolders folders,
          final ResultsFolders resultsFolders, final String url, final VersionIterator iterator,
          final ChangeManager changeManager, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
@@ -104,7 +104,7 @@ public class DependencyReader {
     * @param url
     * @param iterator
     */
-   public DependencyReader(final DependencyConfig dependencyConfig, final PeassFolders folders, final ResultsFolders resultsFolders, final String url,
+   public DependencyReader(final TestSelectionConfig dependencyConfig, final PeassFolders folders, final ResultsFolders resultsFolders, final String url,
          final VersionIterator iterator,
          final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;

@@ -66,9 +66,9 @@ public class DependencyTestStarter extends PairProcessor {
          test = null;
       }
 
-      versions.add(dependencies.getInitialversion().getVersion());
+      versions.add(staticTestSelection.getInitialversion().getVersion());
 
-      dependencies.getVersions().keySet().forEach(version -> versions.add(version));
+      staticTestSelection.getVersions().keySet().forEach(version -> versions.add(version));
 
       startindex = getStartVersionIndex();
       endindex = getEndVersion();
@@ -104,7 +104,7 @@ public class DependencyTestStarter extends PairProcessor {
             String potentialStart = "";
             if (executionData.getVersions().containsKey(startversion)) {
                for (final String executionVersion : executionData.getVersions().keySet()) {
-                  for (final String dependencyVersion : dependencies.getVersions().keySet()) {
+                  for (final String dependencyVersion : staticTestSelection.getVersions().keySet()) {
                      if (dependencyVersion.equals(executionVersion)) {
                         potentialStart = dependencyVersion;
                         break;
@@ -139,7 +139,7 @@ public class DependencyTestStarter extends PairProcessor {
             if (executionData.getVersions().containsKey(endversion)) {
                for (final String executionVersion : executionData.getVersions().keySet()) {
                   boolean next = false;
-                  for (final String dependencyVersion : dependencies.getVersions().keySet()) {
+                  for (final String dependencyVersion : staticTestSelection.getVersions().keySet()) {
                      if (next) {
                         potentialStart = dependencyVersion;
                         break;

@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
-import de.dagere.peass.config.parameters.DependencyReaderConfigMixin;
+import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
@@ -47,7 +47,7 @@ public class RegressionTestSelectionStarter implements Callable<Void>{
    private static final Logger LOG = LogManager.getLogger(RegressionTestSelectionStarter.class);
 
    @Mixin
-   private DependencyReaderConfigMixin config;
+   private TestSelectionConfigMixin config;
    
    @Mixin
    private KiekerConfigMixin kiekerConfigMixin;

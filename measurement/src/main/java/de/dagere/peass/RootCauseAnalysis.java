@@ -66,7 +66,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       }
 
       final TestCase test = new TestCase(testName);
-      final VersionStaticSelection versionInfo = dependencies.getVersions().get(version);
+      final VersionStaticSelection versionInfo = staticTestSelection.getVersions().get(version);
       boolean found = versionInfo.getTests().getTests().contains(test);
       if (!found) {
          LOG.error("Test " + test + " is not contained in regression test selection result, therefore it is unlikely to have a performance change!");
