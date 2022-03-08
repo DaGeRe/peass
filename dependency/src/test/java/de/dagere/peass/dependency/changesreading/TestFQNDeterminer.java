@@ -12,10 +12,10 @@ public class TestFQNDeterminer {
 
    @Test
    public void testTypeItself() throws FileNotFoundException {
-      File file = new File("src/main/java/de/dagere/peass/DependencyExecutionReader.java");
+      File file = new File("src/main/java/de/dagere/peass/RegressionTestSelectionStarter.java");
       CompilationUnit unit = JavaParserProvider.parse(file);
-      String fqn = FQNDeterminer.getParameterFQN(unit, "DependencyExecutionReader");
-      Assert.assertEquals("de.dagere.peass.DependencyExecutionReader", fqn);
+      String fqn = FQNDeterminer.getParameterFQN(unit, "RegressionTestSelectionStarter");
+      Assert.assertEquals("de.dagere.peass.RegressionTestSelectionStarter", fqn);
    }
 
    @Test
@@ -41,10 +41,10 @@ public class TestFQNDeterminer {
 
    @Test
    public void testImportedClass() throws FileNotFoundException {
-      File file = new File("src/main/java/de/dagere/peass/DependencyExecutionReader.java");
+      File file = new File("src/main/java/de/dagere/peass/RegressionTestSelectionStarter.java");
       CompilationUnit unit = JavaParserProvider.parse(file);
-      String fqn = FQNDeterminer.getParameterFQN(unit, "Dependencies");
-      Assert.assertEquals("de.dagere.peass.dependency.persistence.Dependencies", fqn);
+      String fqn = FQNDeterminer.getParameterFQN(unit, "StaticalTestSelection");
+      Assert.assertEquals("de.dagere.peass.dependency.persistence.StaticalTestSelection", fqn);
 
       String fqn2 = FQNDeterminer.getParameterFQN(unit, "CommandLine");
       Assert.assertEquals("picocli.CommandLine", fqn2);
@@ -52,7 +52,7 @@ public class TestFQNDeterminer {
    
    @Test
    public void testSimpleType() throws FileNotFoundException {
-      File file = new File("src/main/java/de/dagere/peass/DependencyExecutionReader.java");
+      File file = new File("src/main/java/de/dagere/peass/RegressionTestSelectionStarter.java");
       CompilationUnit unit = JavaParserProvider.parse(file);
       String fqn = FQNDeterminer.getParameterFQN(unit, "int");
       Assert.assertEquals("int", fqn);
@@ -63,15 +63,15 @@ public class TestFQNDeterminer {
 
    @Test
    public void testPackageClass() throws FileNotFoundException {
-      File file = new File("src/main/java/de/dagere/peass/DependencyExecutionReader.java");
+      File file = new File("src/main/java/de/dagere/peass/RegressionTestSelectionStarter.java");
       CompilationUnit unit = JavaParserProvider.parse(file);
-      String fqn = FQNDeterminer.getParameterFQN(unit, "DependencyReadingParallelStarter");
-      Assert.assertEquals("de.dagere.peass.DependencyReadingParallelStarter", fqn);
+      String fqn = FQNDeterminer.getParameterFQN(unit, "RegressionTestSelectionStarter");
+      Assert.assertEquals("de.dagere.peass.RegressionTestSelectionStarter", fqn);
    }
 
    @Test
    public void testJavaLangClass() throws FileNotFoundException {
-      File file = new File("src/main/java/de/dagere/peass/DependencyExecutionReader.java");
+      File file = new File("src/main/java/de/dagere/peass/RegressionTestSelectionStarter.java");
       CompilationUnit unit = JavaParserProvider.parse(file);
       String fqn = FQNDeterminer.getParameterFQN(unit, "Object");
       Assert.assertEquals("java.lang.Object", fqn);
