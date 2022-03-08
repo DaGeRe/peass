@@ -13,8 +13,9 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 
 public class DivideAllVersions {
@@ -35,7 +36,7 @@ public class DivideAllVersions {
 
       File dependencyFolder = new File(repos, "dependencies-final");
       for (String project : Constants.defaultUrls.keySet()) {
-         File dependencyFile = new File(dependencyFolder, "deps_" + project + ".json");
+         File dependencyFile = new File(dependencyFolder, ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
          File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
          if (dependencyFile.exists() && executionFile.exists()) {
             LOG.debug("Loading: " + project);

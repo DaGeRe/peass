@@ -113,7 +113,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
       if (this.dependencyFile != null) {
          dependencyFileIn = this.dependencyFile;
       } else {
-         dependencyFileIn = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + "_continue.json");
+         dependencyFileIn = new File(config.getResultBaseFolder(), ResultsFolders.STATIC_SELECTION_PREFIX + config.getProjectFolder().getName() + "_continue.json");
       }
       return dependencyFileIn;
    }

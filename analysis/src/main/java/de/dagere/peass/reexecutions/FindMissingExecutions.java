@@ -13,9 +13,10 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.analysis.all.RepoFolders;
-import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -41,7 +42,7 @@ public class FindMissingExecutions implements Callable<Void> {
    }
 
    private void findMissing(final String project, final File reexecuteFolder, final RepoFolders folders) throws IOException, JsonParseException, JsonMappingException, JAXBException {
-      final File dependencyfile = new File(folders.getDependencyFolder(), "deps_" + project + ".json");
+      final File dependencyfile = new File(folders.getDependencyFolder(), ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
       final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, StaticTestSelection.class);
       VersionComparator.setDependencies(dependencies);
 

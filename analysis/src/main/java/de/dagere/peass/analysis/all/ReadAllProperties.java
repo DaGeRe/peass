@@ -61,10 +61,6 @@ public class ReadAllProperties {
 
    static void getProperties(final RepoFolders folders, final String project)
          throws JAXBException, IOException, JsonParseException, JsonMappingException, JsonGenerationException {
-//      final File dependencyFile = new File(dependencyFolder, "deps_" + project + ".json");
-//      final Dependencies dependencies = DependencyStatisticAnalyzer.readVersions(dependencyFile);
-//      VersionComparator.setDependencies(dependencies);
-//      AnalysisUtil.setProjectName(resultsFolder, project);
       final File viewFolder = new File(folders.getAllViewFolder(), "views_" + project);
 
       final File executionFile = new File(folders.getDependencyFolder(), "execute_" + project + ".json");

@@ -17,6 +17,7 @@ import de.dagere.peass.config.parameters.DependencyReaderConfigMixin;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.statistics.DependencyStatisticAnalyzer;
 import de.dagere.peass.dependency.statistics.DependencyStatistics;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -56,8 +57,8 @@ public class RegressionTestSelectionSummarizer implements Callable<Void> {
 
    private void getSimpleTable(final File folder) throws IOException, JsonParseException, JsonMappingException, JAXBException {
       System.out.println("Project & Versions & Tests & SIC & TIC\\");
-      for (final File xmlFile : FileUtils.listFiles(folder, new WildcardFileFilter("deps_*.xml"), TrueFileFilter.INSTANCE)) {
-         final String projektName = xmlFile.getName().replace("deps_", "").replace(".xml", "");
+      for (final File xmlFile : FileUtils.listFiles(folder, new WildcardFileFilter(ResultsFolders.STATIC_SELECTION_PREFIX +"*.json"), TrueFileFilter.INSTANCE)) {
+         final String projektName = xmlFile.getName().replace(ResultsFolders.STATIC_SELECTION_PREFIX, "").replace(".xml", "");
          final File executeFile = new File(xmlFile.getParentFile(), "views_" + projektName + "/execute" + projektName + ".json");
 
          if (xmlFile.exists() && executeFile.exists()) {
@@ -76,8 +77,8 @@ public class RegressionTestSelectionSummarizer implements Callable<Void> {
 
    private void getExtendedTable(final File folder) throws IOException, JsonParseException, JsonMappingException, JAXBException {
       System.out.println("Project;Versions;Normal-Tests;SIC;TIC; Tests once changed; Tests multiple times changed");
-      for (final File xmlFile : FileUtils.listFiles(folder, new WildcardFileFilter("deps_*.xml"), TrueFileFilter.INSTANCE)) {
-         final String projektName = xmlFile.getName().replace("deps_", "").replace(".xml", "");
+      for (final File xmlFile : FileUtils.listFiles(folder, new WildcardFileFilter(ResultsFolders.STATIC_SELECTION_PREFIX +"*.json"), TrueFileFilter.INSTANCE)) {
+         final String projektName = xmlFile.getName().replace(ResultsFolders.STATIC_SELECTION_PREFIX, "").replace(".xml", "");
          final File executeFile = new File(xmlFile.getParentFile(), "views_" + projektName + "/execute" + projektName + ".json");
 
          if (xmlFile.exists() && executeFile.exists()) {

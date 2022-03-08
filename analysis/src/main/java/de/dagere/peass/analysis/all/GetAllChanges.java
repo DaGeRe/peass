@@ -14,6 +14,7 @@ import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.analysis.properties.VersionChangeProperties;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 
 public class GetAllChanges {
@@ -23,7 +24,7 @@ public class GetAllChanges {
       // for (final String project : new String[] { "commons-compress", "commons-csv", "commons-dbcp", "commons-fileupload", "commons-jcs",
       // "commons-imaging", "commons-io", "commons-numbers", "commons-pool", "commons-text" }) {
       for (final String project : new String[] { "commons-fileupload" }) {
-         final File dependencyFile = new File(folders.getDependencyFolder(), "deps_" + project + ".json");
+         final File dependencyFile = new File(folders.getDependencyFolder(), ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
          if (dependencyFile.exists()) {
             final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
             getChangesForProject(folders, project, dependencies);

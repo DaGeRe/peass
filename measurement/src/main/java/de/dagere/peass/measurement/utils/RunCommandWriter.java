@@ -57,7 +57,6 @@ public class RunCommandWriter {
             + "-version " + endversion + " "
             + "-executionfile $PEASS_REPOS/dependencies-final/execute_" + name + ".json "
             + "-folder ../projekte/" + name + "/ "
-//            + "-dependencyfile $PEASS_REPOS/dependencies-final/deps_" + name + ".json "
             + " &> measurement_" + endversion.substring(0, 6) + "_" + testcaseName
             + ".txt");
    }

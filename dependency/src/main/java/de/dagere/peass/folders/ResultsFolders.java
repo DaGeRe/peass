@@ -14,6 +14,7 @@ public class ResultsFolders {
    private static final Logger LOG = LogManager.getLogger(ResultsFolders.class);
 
    public static final String MEASUREMENT_PREFIX = "measurement_";
+   public static final String STATIC_SELECTION_PREFIX = "staticTestSelection_";
 
    private final File resultFolder;
    private final String projectName;
@@ -30,7 +31,7 @@ public class ResultsFolders {
       if (oldFileName.exists()) {
          return oldFileName;
       } else {
-         return new File(resultFolder, "staticTestSelection_" + projectName + ".json");
+         return new File(resultFolder, STATIC_SELECTION_PREFIX + projectName + ".json");
       }
 
    }
