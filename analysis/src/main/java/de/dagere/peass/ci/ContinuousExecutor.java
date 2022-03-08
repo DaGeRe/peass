@@ -20,7 +20,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.persistence.StaticalTestSelection;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
@@ -66,9 +66,9 @@ public class ContinuousExecutor {
 
       folders = new PeassFolders(projectFolderLocal);
 
-      StaticalTestSelection dependencies = null;
+      StaticTestSelection dependencies = null;
       if (resultsFolders.getDependencyFile().exists()) {
-         dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), StaticalTestSelection.class);
+         dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), StaticTestSelection.class);
       }
       
       DependencyIteratorBuilder iteratorBuiler = new DependencyIteratorBuilder(measurementConfig.getExecutionConfig(), dependencies, folders);

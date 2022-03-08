@@ -29,7 +29,7 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
-import de.dagere.peass.dependency.persistence.StaticalTestSelection;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.dependency.reader.DependencyReader;
@@ -86,7 +86,7 @@ public class JmhDependencyReaderMultiParamTest {
    }
 
    private void checkInitialVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
-      StaticalTestSelection dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), StaticalTestSelection.class);
+      StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), StaticTestSelection.class);
       Map<TestCase, InitialDependency> initialDependencies = dependencies.getInitialversion().getInitialDependencies();
       MatcherAssert.assertThat(initialDependencies.keySet(), Matchers.hasSize(1));
       InitialDependency initial = initialDependencies.get(new TestCase("de.dagere.peass.ExampleBenchmark", "testMethod", null));

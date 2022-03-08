@@ -14,7 +14,7 @@ import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.dependency.persistence.StaticalTestSelection;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.folders.PeassFolders;
@@ -69,14 +69,14 @@ public class CleaningStarter implements Callable<Void> {
    }
 
    private void getVersionOrder() throws IOException, StreamReadException, DatabindException {
-      StaticalTestSelection dependencies = null;
+      StaticTestSelection dependencies = null;
       if (dependencyFile != null) {
-         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticalTestSelection.class);
+         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
          VersionComparator.setDependencies(dependencies);
       }
       if (executionfile != null) {
          ExecutionData executionData = Constants.OBJECTMAPPER.readValue(executionfile, ExecutionData.class);
-         dependencies = new StaticalTestSelection(executionData);
+         dependencies = new StaticTestSelection(executionData);
          VersionComparator.setDependencies(dependencies);
       }
       if (dependencies == null) {

@@ -15,7 +15,7 @@ import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.changes.Changes;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;
-import de.dagere.peass.dependency.persistence.StaticalTestSelection;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.utils.Constants;
@@ -42,7 +42,7 @@ public class Validator {
       changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
 
       final File dependencyFile = new File(dependencyFolder, "deps_" + project + ".json");
-      final StaticalTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticalTestSelection.class);
+      final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
       firstVersion = dependencies.getVersionNames()[0];
 
       File changeFile = getChangefile(changeFolder, project);

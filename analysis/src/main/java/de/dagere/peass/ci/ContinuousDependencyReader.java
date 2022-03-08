@@ -21,7 +21,7 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.StaticalTestSelection;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
@@ -61,7 +61,7 @@ public class ContinuousDependencyReader {
    }
 
    public RTSResult getTests(final VersionIterator iterator, final String url, final String version, final MeasurementConfig measurementConfig) {
-      final StaticalTestSelection dependencies = getDependencies(iterator, url);
+      final StaticTestSelection dependencies = getDependencies(iterator, url);
 
       RTSResult result;
       final Set<TestCase> tests;
@@ -117,9 +117,9 @@ public class ContinuousDependencyReader {
       return tests;
    }
 
-   StaticalTestSelection getDependencies(final VersionIterator iterator, final String url) {
+   StaticTestSelection getDependencies(final VersionIterator iterator, final String url) {
       try {
-         StaticalTestSelection dependencies;
+         StaticTestSelection dependencies;
 
          final VersionKeeper noChanges = new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nonChanges_" + folders.getProjectName() + ".json"));
 
@@ -128,7 +128,7 @@ public class ContinuousDependencyReader {
             dependencies = fullyLoadDependencies(url, iterator, noChanges);
          } else {
             LOG.debug("Partially loading dependencies");
-            dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), StaticalTestSelection.class);
+            dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), StaticTestSelection.class);
             VersionComparator.setDependencies(dependencies);
             
             if (iterator != null) {
@@ -143,7 +143,7 @@ public class ContinuousDependencyReader {
       }
    }
 
-   private void executePartialRTS(final StaticalTestSelection dependencies, final VersionIterator newIterator) throws FileNotFoundException {
+   private void executePartialRTS(final StaticTestSelection dependencies, final VersionIterator newIterator) throws FileNotFoundException {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
          File logFile = resultsFolders.getDependencyLogFile(newIterator.getTag(), newIterator.getPredecessor());
          LOG.info("Executing regression test selection update - Log goes to {}", logFile.getAbsolutePath());
@@ -156,7 +156,7 @@ public class ContinuousDependencyReader {
 
    }
 
-   private void doPartialRCS(final StaticalTestSelection dependencies, final VersionIterator newIterator) {
+   private void doPartialRCS(final StaticTestSelection dependencies, final VersionIterator newIterator) {
       DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, dependencies.getUrl(), newIterator,
             new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nochanges.json")), executionConfig, kiekerConfig, env);
       newIterator.goTo0thCommit();
@@ -184,7 +184,7 @@ public class ContinuousDependencyReader {
 
    }
 
-   private StaticalTestSelection fullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
+   private StaticTestSelection fullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
          throws Exception {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
          File logFile = resultsFolders.getDependencyLogFile(iterator.getTag(), iterator.getPredecessor());
@@ -198,7 +198,7 @@ public class ContinuousDependencyReader {
       }
    }
 
-   private StaticalTestSelection doFullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
+   private StaticTestSelection doFullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
          throws IOException, InterruptedException, XmlPullParserException, JsonParseException, JsonMappingException, ParseException, ViewNotFoundException {
       final DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, url, iterator, nonChanges, executionConfig, kiekerConfig, env);
       iterator.goToPreviousCommit();
@@ -207,7 +207,7 @@ public class ContinuousDependencyReader {
       } else {
          reader.readDependencies();
       }
-      StaticalTestSelection dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), StaticalTestSelection.class);
+      StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), StaticTestSelection.class);
       return dependencies;
    }
 }

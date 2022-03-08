@@ -10,17 +10,17 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 
-public class StaticalTestSelection extends SelectedTests {
+public class StaticTestSelection extends SelectedTests {
 
    private String testGoal;
    private InitialVersion initialversion = new InitialVersion();
    private Map<String, VersionStaticSelection> versions = new LinkedHashMap<>();
 
-   public StaticalTestSelection() {
+   public StaticTestSelection() {
 
    }
 
-   public StaticalTestSelection(final ExecutionData executiondata) {
+   public StaticTestSelection(final ExecutionData executiondata) {
       setUrl(executiondata.getUrl());
       // ExecutionData contain an empty first analyzed version; therefore, the initialversion of the dependencies is this first version
       String first = executiondata.getVersions().keySet().iterator().next();

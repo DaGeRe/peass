@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.persistence.StaticalTestSelection;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.dependency.persistence.InitialVersion;
 
@@ -18,7 +18,7 @@ public abstract class PairProcessor extends VersionProcessor{
 
 	protected final Map<TestCase, String> lastTestcaseCalls = new HashMap<>();
 	
-	public PairProcessor(final File projectFolder, final StaticalTestSelection dependencies){
+	public PairProcessor(final File projectFolder, final StaticTestSelection dependencies){
       super(projectFolder, dependencies);
 	}
 	

@@ -10,7 +10,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.dependency.persistence.StaticalTestSelection;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.utils.Constants;
 
@@ -36,7 +36,7 @@ public class ReadWriteDependencies {
 
    public static void readWrite(final File input) throws IOException, JsonParseException, JsonMappingException, JsonGenerationException {
       if (input.getName().startsWith("dep")) {
-         final StaticalTestSelection deps = Constants.OBJECTMAPPER.readValue(input, StaticalTestSelection.class);
+         final StaticTestSelection deps = Constants.OBJECTMAPPER.readValue(input, StaticTestSelection.class);
          Constants.OBJECTMAPPER.writeValue(new File(input.getParentFile(), input.getName()), deps);
       } else if (input.getName().startsWith("exec")) {
          final ExecutionData deps = Constants.OBJECTMAPPER.readValue(input, ExecutionData.class);

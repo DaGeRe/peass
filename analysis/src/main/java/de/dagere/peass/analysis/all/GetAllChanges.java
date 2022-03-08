@@ -13,7 +13,7 @@ import de.dagere.peass.ReadProperties;
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.analysis.properties.VersionChangeProperties;
-import de.dagere.peass.dependency.persistence.StaticalTestSelection;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.utils.Constants;
 
 public class GetAllChanges {
@@ -25,7 +25,7 @@ public class GetAllChanges {
       for (final String project : new String[] { "commons-fileupload" }) {
          final File dependencyFile = new File(folders.getDependencyFolder(), "deps_" + project + ".json");
          if (dependencyFile.exists()) {
-            final StaticalTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticalTestSelection.class);
+            final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
             getChangesForProject(folders, project, dependencies);
             // ProjectChanges.reset();
          } else {
@@ -34,7 +34,7 @@ public class GetAllChanges {
       }
    }
 
-   public static void getChangesForProject(final RepoFolders folders, final String project, final StaticalTestSelection dependencies) throws JAXBException, FileNotFoundException {
+   public static void getChangesForProject(final RepoFolders folders, final String project, final StaticTestSelection dependencies) throws JAXBException, FileNotFoundException {
       final File projectFolder = new File(folders.getCleanDataFolder(), project);
       if (projectFolder.exists()) {
          File cleanFolder = new File(projectFolder, "clean");
@@ -53,7 +53,7 @@ public class GetAllChanges {
       }
    }
 
-   public static void getChangesForMeasurementfolder(final RepoFolders folders, final String project, final File cleanFolder, final StaticalTestSelection dependencies) throws JAXBException, FileNotFoundException {
+   public static void getChangesForMeasurementfolder(final RepoFolders folders, final String project, final File cleanFolder, final StaticTestSelection dependencies) throws JAXBException, FileNotFoundException {
       final ChangeReader reader = new ChangeReader(folders, project, dependencies);
       final ProjectChanges changes = reader.readFile(cleanFolder);
       if (changes != null) {

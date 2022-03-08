@@ -21,7 +21,7 @@ import de.dagere.peass.config.parameters.DependencyReaderConfigMixin;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
-import de.dagere.peass.dependency.persistence.StaticalTestSelection;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -88,7 +88,7 @@ public class RegressionTestSelectionStarter implements Callable<Void>{
       ResultsFolders mergedFolders = new ResultsFolders(config.getResultBaseFolder(), project);
       
       final File out = mergedFolders.getDependencyFile();
-      final StaticalTestSelection all = PartialDependenciesMerger.mergeVersions(out, outFiles);
+      final StaticTestSelection all = PartialDependenciesMerger.mergeVersions(out, outFiles);
 
       final PeassFolders folders = new PeassFolders(config.getProjectFolder());
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");

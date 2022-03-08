@@ -10,7 +10,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
-import de.dagere.peass.dependency.persistence.StaticalTestSelection;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.measurement.dataloading.VersionSorter;
@@ -68,7 +68,7 @@ public class GetChanges implements Callable<Void> {
       final ChangeReader reader = createReader(statisticFolder, selectedTests);
 
       if (dependencyFile != null) {
-         StaticalTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticalTestSelection.class);
+         StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
          reader.setTests(dependencies.toExecutionData().getVersions());
 
       }

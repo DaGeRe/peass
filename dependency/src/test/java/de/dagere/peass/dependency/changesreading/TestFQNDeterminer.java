@@ -43,8 +43,8 @@ public class TestFQNDeterminer {
    public void testImportedClass() throws FileNotFoundException {
       File file = new File("src/main/java/de/dagere/peass/RegressionTestSelectionStarter.java");
       CompilationUnit unit = JavaParserProvider.parse(file);
-      String fqn = FQNDeterminer.getParameterFQN(unit, "StaticalTestSelection");
-      Assert.assertEquals("de.dagere.peass.dependency.persistence.StaticalTestSelection", fqn);
+      String fqn = FQNDeterminer.getParameterFQN(unit, "StaticTestSelection");
+      Assert.assertEquals("de.dagere.peass.dependency.persistence.StaticTestSelection", fqn);
 
       String fqn2 = FQNDeterminer.getParameterFQN(unit, "CommandLine");
       Assert.assertEquals("picocli.CommandLine", fqn2);

@@ -30,7 +30,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.parameters.DependencyReaderConfigMixin;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
-import de.dagere.peass.dependency.persistence.StaticalTestSelection;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
@@ -90,7 +90,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
 
       final File dependencyFileIn = getDependencyInFile();
 
-      final StaticalTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, StaticalTestSelection.class);
+      final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, StaticTestSelection.class);
       VersionComparator.setVersions(GitUtils.getCommits(projectFolder, false));
 
       String previousVersion = getPreviousVersion(executionConfigMixin.getStartversion(), projectFolder, dependencies);
@@ -126,7 +126,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
     * @param dependencies
     * @return
     */
-   static String getPreviousVersion(final String startversion, final File projectFolder, final StaticalTestSelection dependencies) {
+   static String getPreviousVersion(final String startversion, final File projectFolder, final StaticTestSelection dependencies) {
       String previousVersion;
       if (startversion != null) {
          String[] versionNames = dependencies.getVersionNames();
@@ -142,7 +142,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
       return previousVersion;
    }
 
-   DependencyReader createReader(final DependencyReaderConfigMixin config, final ResultsFolders resultsFolders, final StaticalTestSelection dependencies, final String previousVersion,
+   DependencyReader createReader(final DependencyReaderConfigMixin config, final ResultsFolders resultsFolders, final StaticTestSelection dependencies, final String previousVersion,
          final int timeout, final VersionControlSystem vcs) {
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.GIT)) {
