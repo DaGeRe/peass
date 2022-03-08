@@ -19,6 +19,7 @@ import de.dagere.peass.analysis.all.RepoFolders;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
@@ -81,7 +82,7 @@ public class GetValidationExecutionFile {
    }
 
    public static File getValidationExecutionFile(final String project) {
-      File dest = new File("results", "reexecute-validation" + File.separator + "execute_" + project + "_validation.json");
+      File dest = new File("results", "reexecute-validation" + File.separator + ResultsFolders.TRACE_SELECTION_PREFIX + project + "_validation.json");
       dest.getParentFile().mkdirs();
       return dest;
    }

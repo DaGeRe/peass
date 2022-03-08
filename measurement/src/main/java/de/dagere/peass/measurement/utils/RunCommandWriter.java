@@ -5,6 +5,7 @@ import java.util.Set;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.SelectedTests;
+import de.dagere.peass.folders.ResultsFolders;
 
 public class RunCommandWriter {
    protected final PrintStream goal;
@@ -55,7 +56,7 @@ public class RunCommandWriter {
             + "-measurementStrategy PARALLEL "
 //            + "-useGC false "
             + "-version " + endversion + " "
-            + "-executionfile $PEASS_REPOS/dependencies-final/execute_" + name + ".json "
+            + "-executionfile $PEASS_REPOS/dependencies-final/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
             + "-folder ../projekte/" + name + "/ "
             + " &> measurement_" + endversion.substring(0, 6) + "_" + testcaseName
             + ".txt");

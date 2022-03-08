@@ -39,7 +39,7 @@ public class Validator {
    private final ProjectStatistics statistics;
 
    public Validator(final File dependencyFolder, final File changeFolder, final String project) throws JsonParseException, JsonMappingException, IOException {
-      final File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
+      final File executionFile = new File(dependencyFolder, ResultsFolders.TRACE_SELECTION_PREFIX + project + ".json");
       changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
 
       final File dependencyFile = new File(dependencyFolder, ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");

@@ -37,7 +37,7 @@ public class DivideAllVersions {
       File dependencyFolder = new File(repos, "dependencies-final");
       for (String project : Constants.defaultUrls.keySet()) {
          File dependencyFile = new File(dependencyFolder, ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
-         File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
+         File executionFile = new File(dependencyFolder, ResultsFolders.TRACE_SELECTION_PREFIX + project + ".json");
          if (dependencyFile.exists() && executionFile.exists()) {
             LOG.debug("Loading: " + project);
             final File executeCommandsFile = new File(resultFolder, "execute-" + project + ".sh");

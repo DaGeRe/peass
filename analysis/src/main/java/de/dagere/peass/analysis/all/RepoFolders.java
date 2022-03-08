@@ -97,7 +97,7 @@ public class RepoFolders {
    }
 
    public ExecutionData getExecutionData(final String project) throws JsonParseException, JsonMappingException, IOException {
-      final File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
+      final File executionFile = new File(dependencyFolder, ResultsFolders.TRACE_SELECTION_PREFIX + project + ".json");
       final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
       return changedTests;
    }

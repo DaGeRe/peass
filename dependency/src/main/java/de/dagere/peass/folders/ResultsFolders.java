@@ -15,6 +15,7 @@ public class ResultsFolders {
 
    public static final String MEASUREMENT_PREFIX = "measurement_";
    public static final String STATIC_SELECTION_PREFIX = "staticTestSelection_";
+   public static final String TRACE_SELECTION_PREFIX = "traceTestSelection_";
 
    private final File resultFolder;
    private final String projectName;
@@ -41,7 +42,7 @@ public class ResultsFolders {
       if (oldFileName.exists()) {
          return oldFileName;
       } else {
-         return new File(resultFolder, "traceTestSelection_" + projectName + ".json");
+         return new File(resultFolder, TRACE_SELECTION_PREFIX + projectName + ".json");
       }
    }
 

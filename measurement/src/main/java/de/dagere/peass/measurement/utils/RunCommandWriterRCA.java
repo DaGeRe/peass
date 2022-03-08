@@ -30,7 +30,7 @@ public class RunCommandWriterRCA extends RunCommandWriter {
             + "-type1error 0.2 "
             + "-type2error 0.1 "
             + "-version " + endversion + " "
-            + "-executionfile $PEASS_REPOS/dependencies-final/execute_" + name + ".json "
+            + "-executionfile $PEASS_REPOS/dependencies-final/" + ResultsFolders.TRACE_SELECTION_PREFIX + name + ".json "
             + "-folder ../projects/" + name + "/ "
             + "-dependencyfile $PEASS_REPOS/dependencies-final/" + ResultsFolders.STATIC_SELECTION_PREFIX + name + ".json &> measurement_" + endversion.substring(0, 6) + "_"
             + testcaseName
