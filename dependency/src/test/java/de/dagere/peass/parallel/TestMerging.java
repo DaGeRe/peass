@@ -6,7 +6,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticalTestSelection;
 import de.dagere.peass.dependency.persistence.InitialVersion;
 import de.dagere.peass.dependency.reader.DependencyReaderUtil;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -18,7 +18,7 @@ public class TestMerging {
       List<GitCommit> commits = ParallelTestUtil.getCommits();
 
       VersionComparator.setVersions(commits);
-      Dependencies deps1 = new Dependencies(), deps2 = new Dependencies();
+      StaticalTestSelection deps1 = new StaticalTestSelection(), deps2 = new StaticalTestSelection();
       deps1.setInitialversion(new InitialVersion());
       deps1.getInitialversion().setVersion("0");
       for (GitCommit commit : commits.subList(1, 6)) {
@@ -29,7 +29,7 @@ public class TestMerging {
       for (GitCommit commit : commits.subList(5, 10)) {
          deps2.getVersions().put(commit.getTag(), null);
       }
-      Dependencies merged = DependencyReaderUtil.mergeDependencies(deps1, deps2);
+      StaticalTestSelection merged = DependencyReaderUtil.mergeDependencies(deps1, deps2);
       Assert.assertEquals(9, merged.getVersions().size());
    }
 
@@ -38,7 +38,7 @@ public class TestMerging {
       List<GitCommit> commits = ParallelTestUtil.getCommits();
 
       VersionComparator.setVersions(commits);
-      Dependencies deps1 = new Dependencies(), deps2 = new Dependencies();
+      StaticalTestSelection deps1 = new StaticalTestSelection(), deps2 = new StaticalTestSelection();
       deps1.setInitialversion(new InitialVersion());
       deps1.getInitialversion().setVersion("0");
       for (GitCommit commit : commits.subList(1, 8)) {
@@ -49,7 +49,7 @@ public class TestMerging {
       for (GitCommit commit : commits.subList(8, 10)) {
          deps2.getVersions().put(commit.getTag(), null);
       }
-      Dependencies merged = DependencyReaderUtil.mergeDependencies(deps1, deps2);
+      StaticalTestSelection merged = DependencyReaderUtil.mergeDependencies(deps1, deps2);
       Assert.assertEquals(9, merged.getVersions().size());
    }
 
@@ -63,7 +63,7 @@ public class TestMerging {
       commits.add(new GitCommit("E", "", "", ""));
       commits.add(new GitCommit("F", "", "", ""));
       VersionComparator.setVersions(commits);
-      Dependencies deps1 = new Dependencies(), deps2 = new Dependencies();
+      StaticalTestSelection deps1 = new StaticalTestSelection(), deps2 = new StaticalTestSelection();
       deps1.setInitialversion(new InitialVersion());
       deps1.getInitialversion().setVersion("A");
       deps1.getVersions().put("C", null);
@@ -73,7 +73,7 @@ public class TestMerging {
       deps2.getInitialversion().setVersion("G");
       deps2.getVersions().put("E", null);
       deps2.getVersions().put("F", null);
-      Dependencies merged = DependencyReaderUtil.mergeDependencies(deps1, deps2);
+      StaticalTestSelection merged = DependencyReaderUtil.mergeDependencies(deps1, deps2);
       System.out.println(merged.getVersions().keySet());
       Assert.assertEquals(5, merged.getVersions().size());
    }

@@ -35,7 +35,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticalTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.utils.Constants;
@@ -78,7 +78,7 @@ public final class GitUtils {
          File dependencyfile = new File(dependencyFolder, "deps_" + project + ".json");
          LOG.debug("Searching: {}", dependencyfile);
          if (dependencyfile.exists()) {
-            final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, Dependencies.class);
+            final StaticalTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, StaticalTestSelection.class);
             VersionComparator.setDependencies(dependencies);
             repoFound = true;
          }

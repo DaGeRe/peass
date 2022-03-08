@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticalTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.utils.Constants;
 
@@ -40,7 +40,7 @@ public class DivideAllVersions {
          if (dependencyFile.exists() && executionFile.exists()) {
             LOG.debug("Loading: " + project);
             final File executeCommandsFile = new File(resultFolder, "execute-" + project + ".sh");
-            final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+            final StaticalTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticalTestSelection.class);
             final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
             CreateMeasurementExecutionScript.generateExecuteCommands(dependencies, changedTests, "validation", new PrintStream(new FileOutputStream(executeCommandsFile)));
          } else {

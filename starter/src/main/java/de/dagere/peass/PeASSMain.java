@@ -9,7 +9,7 @@ import de.dagere.peass.visualization.VisualizeRCA;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
-@Command(name = "peass", mixinStandardHelpOptions = true, subcommands = { DependencyExecutionReader.class, 
+@Command(name = "peass", mixinStandardHelpOptions = true, subcommands = { RegressionTestSelectionStarter.class, 
       DependencyTestStarter.class,
       GetChanges.class, 
       CleaningStarter.class, 

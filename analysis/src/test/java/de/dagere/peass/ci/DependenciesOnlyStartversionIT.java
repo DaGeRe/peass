@@ -19,7 +19,7 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticalTestSelection;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -30,7 +30,7 @@ public class DependenciesOnlyStartversionIT {
 
    private static GitProjectBuilder builder;
 
-   Dependencies dependencies;
+   StaticalTestSelection dependencies;
 
    @BeforeEach
    public void cleanDependencies() throws Exception {
@@ -73,7 +73,7 @@ public class DependenciesOnlyStartversionIT {
       checkVersion(dependencies, lastTag, 1);
    }
 
-   private void checkVersion(final Dependencies dependencies, final String newestVersion, final int versions) {
+   private void checkVersion(final StaticalTestSelection dependencies, final String newestVersion, final int versions) {
       Assert.assertTrue(ContinuousDependencyReaderIT.resultsFolders.getDependencyFile().exists());
       MatcherAssert.assertThat(dependencies.getVersions(), Matchers.aMapWithSize(versions));
 
@@ -82,7 +82,7 @@ public class DependenciesOnlyStartversionIT {
       Assert.assertEquals(new TestCase("defaultpackage.TestMe#testMe"), testSet.getTests().toArray()[0]);
    }
 
-   private TestSet getTestset(final Dependencies dependencies, final String newestVersion) {
+   private TestSet getTestset(final StaticalTestSelection dependencies, final String newestVersion) {
       final TestSet testSet = dependencies.getVersions().get(newestVersion)
             .getChangedClazzes()
             .get(new ChangedEntity("defaultpackage.NormalDependency", "", ""));

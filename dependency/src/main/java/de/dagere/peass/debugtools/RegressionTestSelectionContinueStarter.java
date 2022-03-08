@@ -30,7 +30,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.parameters.DependencyReaderConfigMixin;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticalTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
@@ -57,8 +57,8 @@ import picocli.CommandLine.Option;
  * @author reichelt
  *
  */
-public class DependencyReadingContinueStarter implements Callable<Void> {
-   private static final Logger LOG = LogManager.getLogger(DependencyReadingContinueStarter.class);
+public class RegressionTestSelectionContinueStarter implements Callable<Void> {
+   private static final Logger LOG = LogManager.getLogger(RegressionTestSelectionContinueStarter.class);
 
    @Mixin
    private DependencyReaderConfigMixin config;
@@ -74,7 +74,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
 
    public static void main(final String[] args) {
       try {
-         final CommandLine commandLine = new CommandLine(new DependencyReadingContinueStarter());
+         final CommandLine commandLine = new CommandLine(new RegressionTestSelectionContinueStarter());
          commandLine.execute(args);
       } catch (final Throwable t) {
          t.printStackTrace();
@@ -90,7 +90,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
 
       final File dependencyFileIn = getDependencyInFile();
 
-      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, Dependencies.class);
+      final StaticalTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, StaticalTestSelection.class);
       VersionComparator.setVersions(GitUtils.getCommits(projectFolder, false));
 
       String previousVersion = getPreviousVersion(executionConfigMixin.getStartversion(), projectFolder, dependencies);
@@ -126,7 +126,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
     * @param dependencies
     * @return
     */
-   static String getPreviousVersion(final String startversion, final File projectFolder, final Dependencies dependencies) {
+   static String getPreviousVersion(final String startversion, final File projectFolder, final StaticalTestSelection dependencies) {
       String previousVersion;
       if (startversion != null) {
          String[] versionNames = dependencies.getVersionNames();
@@ -142,7 +142,7 @@ public class DependencyReadingContinueStarter implements Callable<Void> {
       return previousVersion;
    }
 
-   DependencyReader createReader(final DependencyReaderConfigMixin config, final ResultsFolders resultsFolders, final Dependencies dependencies, final String previousVersion,
+   DependencyReader createReader(final DependencyReaderConfigMixin config, final ResultsFolders resultsFolders, final StaticalTestSelection dependencies, final String previousVersion,
          final int timeout, final VersionControlSystem vcs) {
       final DependencyReader reader;
       if (vcs.equals(VersionControlSystem.GIT)) {

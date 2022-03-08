@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticalTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.utils.Constants;
 import picocli.CommandLine;
@@ -42,7 +42,7 @@ public class CreateMeasurementExecutionScript implements Callable<Void> {
    @Option(names = { "-useSlurm", "--useSlurm" }, description = "Use slurm (if not specified, a bash script is created)")
    protected Boolean useSlurm = false;
 
-   private Dependencies dependencies;
+   private StaticalTestSelection dependencies;
    private ExecutionData executionData;
    
    public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
@@ -54,11 +54,11 @@ public class CreateMeasurementExecutionScript implements Callable<Void> {
    @Override
    public Void call() throws Exception {
       if (dependencyFile != null) {
-         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticalTestSelection.class);
       }
       if (executionfile != null) {
          executionData = Constants.OBJECTMAPPER.readValue(executionfile, ExecutionData.class);
-         dependencies = new Dependencies(executionData);
+         dependencies = new StaticalTestSelection(executionData);
       }
       if (executionData == null && dependencies == null) {
          throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");
@@ -78,7 +78,7 @@ public class CreateMeasurementExecutionScript implements Callable<Void> {
       return null;
    }
 
-   public static void generateExecuteCommands(final Dependencies dependencies, final ExecutionData changedTests, final String experimentId, final PrintStream goal) throws IOException {
+   public static void generateExecuteCommands(final StaticalTestSelection dependencies, final ExecutionData changedTests, final String experimentId, final PrintStream goal) throws IOException {
       generateExecuteCommands(dependencies, changedTests, experimentId, new RunCommandWriterSlurm(goal, experimentId, dependencies));
    }
 
@@ -101,7 +101,7 @@ public class CreateMeasurementExecutionScript implements Callable<Void> {
       }
    }
 
-   public static void generateExecuteCommands(final Dependencies dependencies, final ExecutionData changedTests, final String experimentId, final RunCommandWriter writer)
+   public static void generateExecuteCommands(final StaticalTestSelection dependencies, final ExecutionData changedTests, final String experimentId, final RunCommandWriter writer)
          throws IOException {
       final String[] versions = dependencies.getVersionNames();
       for (int versionIndex = 0; versionIndex < versions.length; versionIndex++) {

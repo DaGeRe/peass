@@ -23,7 +23,7 @@ import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticalTestSelection;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.measurement.dataloading.KoPeMeDataHelper;
 import de.dagere.peass.measurement.statistics.ConfidenceIntervalInterpretion;
@@ -63,7 +63,7 @@ public class ChangeReader {
    
    private Map<String, TestSet> tests;
 
-   public ChangeReader(final RepoFolders resultsFolder, final String projectName, final Dependencies dependencies) throws FileNotFoundException {
+   public ChangeReader(final RepoFolders resultsFolder, final String projectName, final StaticalTestSelection dependencies) throws FileNotFoundException {
       this.dependencies = dependencies;
       statisticsFolder = resultsFolder.getProjectStatisticsFolder(projectName);
       if (dependencies.getUrl() != null && !dependencies.getUrl().isEmpty()) {

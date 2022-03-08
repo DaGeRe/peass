@@ -14,7 +14,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticalTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialVersion;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
@@ -43,7 +43,7 @@ public abstract class VersionProcessor implements Callable<Void> {
 
    protected PeassFolders folders;
    protected VersionControlSystem vcs;
-   protected Dependencies dependencies;
+   protected StaticalTestSelection dependencies;
    protected ExecutionData executionData;
 
    protected String startversion;
@@ -59,7 +59,7 @@ public abstract class VersionProcessor implements Callable<Void> {
    @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
    protected File executionfile;
 
-   public VersionProcessor(final File projectFolder, final Dependencies dependencies) {
+   public VersionProcessor(final File projectFolder, final StaticalTestSelection dependencies) {
       this.folders = new PeassFolders(projectFolder);
       this.dependencies = dependencies;
       startversion = null;
@@ -122,13 +122,13 @@ public abstract class VersionProcessor implements Callable<Void> {
       }
       
       if (dependencyFile != null) {
-         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticalTestSelection.class);
          VersionComparator.setDependencies(dependencies);
          executionData = new ExecutionData(dependencies);
       }
       if (executionfile != null) {
          executionData = Constants.OBJECTMAPPER.readValue(executionfile, ExecutionData.class);
-         dependencies = new Dependencies(executionData);
+         dependencies = new StaticalTestSelection(executionData);
       }
       if (executionData == null && dependencies == null) {
          throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");

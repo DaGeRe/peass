@@ -13,7 +13,7 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticalTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependency.reader.DependencyReaderUtil;
@@ -29,15 +29,15 @@ public class PartialDependenciesMerger {
 
    }
 
-   public static Dependencies mergeVersions(final File out, final File[] partFiles) throws IOException, JsonGenerationException, JsonMappingException {
-      final List<Dependencies> deps = readDependencies(partFiles);
-      Dependencies merged = mergeDependencies(deps);
+   public static StaticalTestSelection mergeVersions(final File out, final File[] partFiles) throws IOException, JsonGenerationException, JsonMappingException {
+      final List<StaticalTestSelection> deps = readDependencies(partFiles);
+      StaticalTestSelection merged = mergeDependencies(deps);
 
       Constants.OBJECTMAPPER.writeValue(out, merged);
       return merged;
    }
 
-   public static Dependencies mergeVersions(final File out, final ResultsFolders[] partFolders) throws IOException, JsonGenerationException, JsonMappingException {
+   public static StaticalTestSelection mergeVersions(final File out, final ResultsFolders[] partFolders) throws IOException, JsonGenerationException, JsonMappingException {
       File[] partFiles = new File[partFolders.length];
       for (int i = 0; i < partFolders.length; i++) {
          partFiles[i] = partFolders[i].getDependencyFile();
@@ -45,12 +45,12 @@ public class PartialDependenciesMerger {
       return mergeVersions(out, partFiles);
    }
 
-   static List<Dependencies> readDependencies(final File[] partFiles) {
-      final List<Dependencies> deps = new LinkedList<>();
+   static List<StaticalTestSelection> readDependencies(final File[] partFiles) {
+      final List<StaticalTestSelection> deps = new LinkedList<>();
       for (int i = 0; i < partFiles.length; i++) {
          try {
             LOG.debug("Reading: {}", partFiles[i]);
-            final Dependencies currentDependencies = Constants.OBJECTMAPPER.readValue(partFiles[i], Dependencies.class);
+            final StaticalTestSelection currentDependencies = Constants.OBJECTMAPPER.readValue(partFiles[i], StaticalTestSelection.class);
             deps.add(currentDependencies);
             LOG.debug("Size: {}", deps.get(deps.size() - 1).getVersions().size());
          } catch (final IOException e) {
@@ -60,22 +60,22 @@ public class PartialDependenciesMerger {
       return deps;
    }
 
-   public static Dependencies mergeDependencies(final List<Dependencies> deps) {
+   public static StaticalTestSelection mergeDependencies(final List<StaticalTestSelection> deps) {
       LOG.debug("Sorting {} dependencies", deps.size());
-      deps.sort(new Comparator<Dependencies>() {
+      deps.sort(new Comparator<StaticalTestSelection>() {
          @Override
-         public int compare(final Dependencies o1, final Dependencies o2) {
+         public int compare(final StaticalTestSelection o1, final StaticalTestSelection o2) {
             final int indexOf = VersionComparator.getVersionIndex(o1.getInitialversion().getVersion());
             final int indexOf2 = VersionComparator.getVersionIndex(o2.getInitialversion().getVersion());
             return indexOf - indexOf2;
          }
       });
-      Dependencies merged;
+      StaticalTestSelection merged;
       if (deps.size() > 0) {
          merged = deps.get(0);
          if (deps.size() > 1) {
             for (int i = 1; i < deps.size(); i++) {
-               final Dependencies newMergeDependencies = deps.get(i);
+               final StaticalTestSelection newMergeDependencies = deps.get(i);
                LOG.debug("Merge: {} Vals: {}", i, newMergeDependencies.getVersionNames());
                if (newMergeDependencies != null) {
                   merged = DependencyReaderUtil.mergeDependencies(merged, newMergeDependencies);
@@ -83,7 +83,7 @@ public class PartialDependenciesMerger {
             }
          }
       } else {
-         merged = new Dependencies();
+         merged = new StaticalTestSelection();
       }
       return merged;
    }

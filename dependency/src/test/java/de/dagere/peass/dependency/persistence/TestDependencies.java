@@ -3,7 +3,7 @@ package de.dagere.peass.dependency.persistence;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticalTestSelection;
 import de.dagere.peass.dependency.persistence.InitialVersion;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 
@@ -11,7 +11,7 @@ public class TestDependencies {
    
    @Test
    public void testWithVersions() {
-      Dependencies dependencies = new Dependencies();
+      StaticalTestSelection dependencies = new StaticalTestSelection();
       
       dependencies.setInitialversion(new InitialVersion());
       dependencies.getInitialversion().setVersion("0");
@@ -31,7 +31,7 @@ public class TestDependencies {
    
    @Test
    public void testOnlyStartversion() {
-      Dependencies dependencies = new Dependencies();
+      StaticalTestSelection dependencies = new StaticalTestSelection();
       
       dependencies.setInitialversion(new InitialVersion());
       dependencies.getInitialversion().setVersion("0");
@@ -44,7 +44,7 @@ public class TestDependencies {
    
    @Test
    public void testRunningersions() {
-      Dependencies dependencies = new Dependencies();
+      StaticalTestSelection dependencies = new StaticalTestSelection();
       
       dependencies.setInitialversion(new InitialVersion());
       dependencies.getInitialversion().setVersion("0");

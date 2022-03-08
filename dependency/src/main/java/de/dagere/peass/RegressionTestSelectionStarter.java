@@ -21,7 +21,7 @@ import de.dagere.peass.config.parameters.DependencyReaderConfigMixin;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticalTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
@@ -42,9 +42,9 @@ import picocli.CommandLine.Mixin;
  *
  */
 @Command(description = "Executes the regression test selection. Creates the executionfile, which defines the tests-version-pairs that need to be executed in each version", name = "select")
-public class DependencyExecutionReader implements Callable<Void>{
+public class RegressionTestSelectionStarter implements Callable<Void>{
 
-   private static final Logger LOG = LogManager.getLogger(DependencyExecutionReader.class);
+   private static final Logger LOG = LogManager.getLogger(RegressionTestSelectionStarter.class);
 
    @Mixin
    private DependencyReaderConfigMixin config;
@@ -57,7 +57,7 @@ public class DependencyExecutionReader implements Callable<Void>{
 
    public static void main(final String[] args) {
       try {
-         final CommandLine commandLine = new CommandLine(new DependencyExecutionReader());
+         final CommandLine commandLine = new CommandLine(new RegressionTestSelectionStarter());
          commandLine.execute(args);
       } catch (final Throwable t) {
          t.printStackTrace();
@@ -88,7 +88,7 @@ public class DependencyExecutionReader implements Callable<Void>{
       ResultsFolders mergedFolders = new ResultsFolders(config.getResultBaseFolder(), project);
       
       final File out = mergedFolders.getDependencyFile();
-      final Dependencies all = PartialDependenciesMerger.mergeVersions(out, outFiles);
+      final StaticalTestSelection all = PartialDependenciesMerger.mergeVersions(out, outFiles);
 
       final PeassFolders folders = new PeassFolders(config.getProjectFolder());
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");

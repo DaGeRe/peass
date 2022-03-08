@@ -18,7 +18,7 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticalTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.traces.DiffFileGenerator;
@@ -44,7 +44,7 @@ public class DependencyReader {
    private static final Logger LOG = LogManager.getLogger(DependencyReader.class);
 
    private final DependencyConfig dependencyConfig;
-   protected final Dependencies dependencyResult = new Dependencies();
+   protected final StaticalTestSelection dependencyResult = new StaticalTestSelection();
    private final ExecutionData executionResult = new ExecutionData();
    private final ExecutionData coverageBasedSelection = new ExecutionData();
    private final CoverageSelectionInfo coverageSelectionInfo = new CoverageSelectionInfo();
@@ -300,7 +300,7 @@ public class DependencyReader {
       coverageBasedSelection.getVersions().put(iterator.getTag(), new TestSet());
    }
 
-   public void readCompletedVersions(final Dependencies initialdependencies) {
+   public void readCompletedVersions(final StaticalTestSelection initialdependencies) {
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
@@ -314,7 +314,7 @@ public class DependencyReader {
       lastRunningVersion = iterator.getTag();
    }
 
-   public Dependencies getDependencies() {
+   public StaticalTestSelection getDependencies() {
       return dependencyResult;
    }
 

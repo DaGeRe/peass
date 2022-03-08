@@ -12,7 +12,7 @@ import de.dagere.peass.config.parameters.DependencyReaderConfigMixin;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticalTestSelection;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -60,7 +60,7 @@ public class DependencyReadingParallelStarter implements Callable<Void> {
       LOG.debug("Files: {}", outFiles);
 
       final File out = new File(config.getResultBaseFolder(), "deps_" + config.getProjectFolder().getName() + ".json");
-      final Dependencies all = PartialDependenciesMerger.mergeVersions(out, outFiles);
+      final StaticalTestSelection all = PartialDependenciesMerger.mergeVersions(out, outFiles);
       return null;
    }
 
