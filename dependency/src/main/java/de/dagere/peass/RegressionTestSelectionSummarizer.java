@@ -28,15 +28,15 @@ import picocli.CommandLine.Mixin;
  * @author reichelt
  *
  */
-@Command(description = "Reads the statistics of dependency files", name = "readDependencyStatistics")
-public class DependencyStatisticSummarizer implements Callable<Void> {
+@Command(description = "Reads the statistics of static selection files", name = "readSelectionStatistics")
+public class RegressionTestSelectionSummarizer implements Callable<Void> {
 
    @Mixin
    private DependencyReaderConfigMixin config;
 
    public static void main(final String[] args) {
       try {
-         final CommandLine commandLine = new CommandLine(new DependencyStatisticSummarizer());
+         final CommandLine commandLine = new CommandLine(new RegressionTestSelectionSummarizer());
          commandLine.execute(args);
       } catch (final Throwable t) {
          t.printStackTrace();
