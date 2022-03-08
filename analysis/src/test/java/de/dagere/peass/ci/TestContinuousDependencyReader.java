@@ -30,7 +30,7 @@ public class TestContinuousDependencyReader {
       StaticTestSelection value = new StaticTestSelection();
       value.setInitialversion(new InitialVersion());
       value.getVersions().put("A", new VersionStaticSelection());
-      Constants.OBJECTMAPPER.writeValue(resultsFolders.getDependencyFile(), value);
+      Constants.OBJECTMAPPER.writeValue(resultsFolders.getStaticTestSelectionFile(), value);
       
       ContinuousDependencyReader reader = new ContinuousDependencyReader(new DependencyConfig(1, false), new ExecutionConfig(), new KiekerConfig(),
             new PeassFolders(new File("target/current")), resultsFolders, new EnvironmentVariables());

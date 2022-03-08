@@ -41,8 +41,8 @@ public class ContinuousDependencyReaderIT {
 
    @BeforeAll
    public static void cleanDependencies() throws IOException, InterruptedException {
-      FileUtils.deleteDirectory(resultsFolders.getDependencyFile().getParentFile());
-      Assert.assertFalse(resultsFolders.getDependencyFile().exists());
+      FileUtils.deleteDirectory(resultsFolders.getStaticTestSelectionFile().getParentFile());
+      Assert.assertFalse(resultsFolders.getStaticTestSelectionFile().exists());
 
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
       builder = new GitProjectBuilder(TestConstants.CURRENT_FOLDER, new File("../dependency/src/test/resources/dependencyIT/basic_state"));
@@ -68,7 +68,7 @@ public class ContinuousDependencyReaderIT {
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
       checkVersion(dependencies, lastTag, 1);
 
-      ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+      ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
       Assert.assertEquals(2, executions.getVersions().size());
       System.out.println(executions.getVersions().keySet());
    }
@@ -95,7 +95,7 @@ public class ContinuousDependencyReaderIT {
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
       checkVersion(dependencies, lastTag, 2);
 
-      ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+      ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
       Assert.assertEquals(3, executions.getVersions().size());
    }
 
@@ -122,7 +122,7 @@ public class ContinuousDependencyReaderIT {
    }
 
    public static void checkVersion(final StaticTestSelection dependencies, final String newestVersion, final int versions) {
-      Assert.assertTrue(resultsFolders.getDependencyFile().exists());
+      Assert.assertTrue(resultsFolders.getStaticTestSelectionFile().exists());
       MatcherAssert.assertThat(dependencies.getVersions(), Matchers.aMapWithSize(versions));
 
       MatcherAssert.assertThat(dependencies.getVersions().get(newestVersion), Matchers.notNullValue());

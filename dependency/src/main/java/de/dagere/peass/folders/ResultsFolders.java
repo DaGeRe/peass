@@ -24,12 +24,24 @@ public class ResultsFolders {
       this.projectName = projectName;
    }
 
-   public File getDependencyFile() {
-      return new File(resultFolder, "deps_" + projectName + ".json");
+   public File getStaticTestSelectionFile() {
+      //TODO Remove compatibility to old file names after next snapshot release
+      File oldFileName = new File(resultFolder, "deps_" + projectName + ".json");
+      if (oldFileName.exists()) {
+         return oldFileName;
+      } else {
+         return new File(resultFolder, "staticTestSelection_" + projectName + ".json");
+      }
+
    }
 
-   public File getExecutionFile() {
-      return new File(resultFolder, "execute_" + projectName + ".json");
+   public File getTraceTestSelectionFile() {
+      File oldFileName = new File(resultFolder, "execute_" + projectName + ".json");
+      if (oldFileName.exists()) {
+         return oldFileName;
+      } else {
+         return new File(resultFolder, "traceTestSelection_" + projectName + ".json");
+      }
    }
 
    public File getCoverageSelectionFile() {

@@ -149,7 +149,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
          final VersionIterator iterator = createIterator(config, previousVersion);
          ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
          reader = new DependencyReader(config.getDependencyConfig(), new PeassFolders(config.getProjectFolder()), 
-               resultsFolders, dependencies.getUrl(), iterator, new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nochanges.json")), 
+               resultsFolders, dependencies.getUrl(), iterator, new VersionKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nochanges.json")), 
                executionConfig, kiekerConfigMixin.getKiekerConfig(), new EnvironmentVariables());
          iterator.goTo0thCommit();
       } else if (vcs.equals(VersionControlSystem.SVN)) {

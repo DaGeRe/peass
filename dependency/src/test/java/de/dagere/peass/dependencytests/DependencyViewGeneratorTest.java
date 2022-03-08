@@ -64,7 +64,7 @@ public class DependencyViewGeneratorTest {
 
          // TODO Test, that instrumentation sources are not added to the view
 
-         final ExecutionData tests = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+         final ExecutionData tests = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
          //
          Assert.assertEquals(2, tests.getVersions().size());
          Assert.assertEquals(1, tests.getVersions().get("000002").getTests().size());

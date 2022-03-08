@@ -95,7 +95,7 @@ public class ContinuousDependencyReader {
             tests = fetchTestset(version, executionData);
          } else {
             LOG.info("Using dynamic test selection results");
-            ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+            ExecutionData executionData = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
             tests = fetchTestset(version, executionData);
          }
          return tests;
@@ -121,14 +121,14 @@ public class ContinuousDependencyReader {
       try {
          StaticTestSelection dependencies;
 
-         final VersionKeeper noChanges = new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nonChanges_" + folders.getProjectName() + ".json"));
+         final VersionKeeper noChanges = new VersionKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nonChanges_" + folders.getProjectName() + ".json"));
 
-         if (!resultsFolders.getDependencyFile().exists()) {
+         if (!resultsFolders.getStaticTestSelectionFile().exists()) {
             LOG.debug("Fully loading dependencies");
             dependencies = fullyLoadDependencies(url, iterator, noChanges);
          } else {
             LOG.debug("Partially loading dependencies");
-            dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), StaticTestSelection.class);
+            dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
             VersionComparator.setDependencies(dependencies);
             
             if (iterator != null) {
@@ -158,13 +158,13 @@ public class ContinuousDependencyReader {
 
    private void doPartialRCS(final StaticTestSelection dependencies, final VersionIterator newIterator) {
       DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, dependencies.getUrl(), newIterator,
-            new VersionKeeper(new File(resultsFolders.getDependencyFile().getParentFile(), "nochanges.json")), executionConfig, kiekerConfig, env);
+            new VersionKeeper(new File(resultsFolders.getStaticTestSelectionFile().getParentFile(), "nochanges.json")), executionConfig, kiekerConfig, env);
       newIterator.goTo0thCommit();
 
       reader.readCompletedVersions(dependencies);
 
       try {
-         ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+         ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
          reader.setExecutionData(executions);
 
          if (resultsFolders.getCoverageSelectionFile().exists()) {
@@ -207,7 +207,7 @@ public class ContinuousDependencyReader {
       } else {
          reader.readDependencies();
       }
-      StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), StaticTestSelection.class);
+      StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
       return dependencies;
    }
 }

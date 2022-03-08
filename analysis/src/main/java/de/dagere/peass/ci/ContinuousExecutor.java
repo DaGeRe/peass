@@ -67,8 +67,8 @@ public class ContinuousExecutor {
       folders = new PeassFolders(projectFolderLocal);
 
       StaticTestSelection dependencies = null;
-      if (resultsFolders.getDependencyFile().exists()) {
-         dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), StaticTestSelection.class);
+      if (resultsFolders.getStaticTestSelectionFile().exists()) {
+         dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
       }
       
       DependencyIteratorBuilder iteratorBuiler = new DependencyIteratorBuilder(measurementConfig.getExecutionConfig(), dependencies, folders);

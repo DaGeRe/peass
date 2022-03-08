@@ -95,13 +95,13 @@ public class JmhDependencyReaderTest {
    }
 
    private void checkChangedVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
-      ExecutionData data = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+      ExecutionData data = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
       TestCase changedBenchmark = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
       MatcherAssert.assertThat(data.getVersions().get("000002").getTests(), Matchers.contains(changedBenchmark));
    }
 
    private void checkInitialVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
-      StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), StaticTestSelection.class);
+      StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
       Map<TestCase, InitialDependency> initialDependencies = dependencies.getInitialversion().getInitialDependencies();
       MatcherAssert.assertThat(initialDependencies.keySet(), Matchers.hasSize(1));
       InitialDependency initial = initialDependencies.get(new TestCase("de.dagere.peass.ExampleBenchmark", "testMethod", null));

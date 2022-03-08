@@ -34,8 +34,8 @@ public class DependenciesOnlyStartversionIT {
 
    @BeforeEach
    public void cleanDependencies() throws Exception {
-      FileUtils.deleteDirectory(ContinuousDependencyReaderIT.resultsFolders.getDependencyFile().getParentFile());
-      Assert.assertFalse(ContinuousDependencyReaderIT.resultsFolders.getDependencyFile().exists());
+      FileUtils.deleteDirectory(ContinuousDependencyReaderIT.resultsFolders.getStaticTestSelectionFile().getParentFile());
+      Assert.assertFalse(ContinuousDependencyReaderIT.resultsFolders.getStaticTestSelectionFile().exists());
 
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
       builder = new GitProjectBuilder(TestConstants.CURRENT_FOLDER, new File("../dependency/src/test/resources/dependencyIT/basic_state"));
@@ -74,7 +74,7 @@ public class DependenciesOnlyStartversionIT {
    }
 
    private void checkVersion(final StaticTestSelection dependencies, final String newestVersion, final int versions) {
-      Assert.assertTrue(ContinuousDependencyReaderIT.resultsFolders.getDependencyFile().exists());
+      Assert.assertTrue(ContinuousDependencyReaderIT.resultsFolders.getStaticTestSelectionFile().exists());
       MatcherAssert.assertThat(dependencies.getVersions(), Matchers.aMapWithSize(versions));
 
       MatcherAssert.assertThat(dependencies.getVersions().get(newestVersion), Matchers.notNullValue());

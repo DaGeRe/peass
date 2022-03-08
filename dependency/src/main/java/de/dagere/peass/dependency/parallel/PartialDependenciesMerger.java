@@ -40,7 +40,7 @@ public class PartialDependenciesMerger {
    public static StaticTestSelection mergeVersions(final File out, final ResultsFolders[] partFolders) throws IOException, JsonGenerationException, JsonMappingException {
       File[] partFiles = new File[partFolders.length];
       for (int i = 0; i < partFolders.length; i++) {
-         partFiles[i] = partFolders[i].getDependencyFile();
+         partFiles[i] = partFolders[i].getStaticTestSelectionFile();
       }
       return mergeVersions(out, partFiles);
    }
@@ -104,8 +104,8 @@ public class PartialDependenciesMerger {
       List<File> coverageSelectionOutFiles = new LinkedList<>();
       for (ResultsFolders resultFolder : outFiles) {
          if (resultFolder != null) {
-            if (resultFolder.getExecutionFile().exists()) {
-               executionOutFiles.add(resultFolder.getExecutionFile());
+            if (resultFolder.getTraceTestSelectionFile().exists()) {
+               executionOutFiles.add(resultFolder.getTraceTestSelectionFile());
             }
             if (resultFolder.getCoverageSelectionFile() != null && resultFolder.getCoverageSelectionFile().exists()) {
                coverageSelectionOutFiles.add(resultFolder.getCoverageSelectionFile());
@@ -114,7 +114,7 @@ public class PartialDependenciesMerger {
          }
       }
       ExecutionData mergedExecutions = mergeExecutionFiles(executionOutFiles);
-      Constants.OBJECTMAPPER.writeValue(mergedOut.getExecutionFile(), mergedExecutions);
+      Constants.OBJECTMAPPER.writeValue(mergedOut.getTraceTestSelectionFile(), mergedExecutions);
 
       if (coverageSelectionOutFiles.size() > 0) {
          ExecutionData mergedCoverage = mergeExecutionFiles(coverageSelectionOutFiles);

@@ -149,9 +149,9 @@ public class DependencyReader {
 
    public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final int tests = analyseVersion(changeManager);
-      DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
+      DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
       if (dependencyConfig.isGenerateTraces()) {
-         Constants.OBJECTMAPPER.writeValue(resultsFolders.getExecutionFile(), executionResult);
+         Constants.OBJECTMAPPER.writeValue(resultsFolders.getTraceTestSelectionFile(), executionResult);
          if (dependencyConfig.isGenerateCoverageSelection()) {
             Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageSelectionFile(), coverageBasedSelection);
             Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageInfoFile(), coverageSelectionInfo);
@@ -278,7 +278,7 @@ public class DependencyReader {
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
       InitialVersionReader initialVersionReader = new InitialVersionReader(dependencyResult, dependencyManager, iterator);
       if (initialVersionReader.readInitialVersion()) {
-         DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
+         DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
          lastRunningVersion = iterator.getTag();
 
          if (dependencyConfig.isGenerateTraces()) {
@@ -310,7 +310,7 @@ public class DependencyReader {
 
       InitialVersionReader initialVersionReader = new InitialVersionReader(initialdependencies, dependencyManager, iterator);
       initialVersionReader.readCompletedVersions();
-      DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
+      DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
       lastRunningVersion = iterator.getTag();
    }
 

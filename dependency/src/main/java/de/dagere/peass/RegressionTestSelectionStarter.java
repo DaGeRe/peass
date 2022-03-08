@@ -87,7 +87,7 @@ public class RegressionTestSelectionStarter implements Callable<Void>{
 
       ResultsFolders mergedFolders = new ResultsFolders(config.getResultBaseFolder(), project);
       
-      final File out = mergedFolders.getDependencyFile();
+      final File out = mergedFolders.getStaticTestSelectionFile();
       final StaticTestSelection all = PartialDependenciesMerger.mergeVersions(out, outFiles);
 
       final PeassFolders folders = new PeassFolders(config.getProjectFolder());
