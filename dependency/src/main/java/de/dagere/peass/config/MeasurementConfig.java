@@ -118,6 +118,7 @@ public class MeasurementConfig implements Serializable {
       this.javaVersion = other.javaVersion;
       this.measurementStrategy = other.measurementStrategy;
       this.saveAll = other.saveAll;
+      this.waitTimeBetweenVMs = other.waitTimeBetweenVMs;
    }
 
    public StatisticsConfig getStatisticsConfig() {

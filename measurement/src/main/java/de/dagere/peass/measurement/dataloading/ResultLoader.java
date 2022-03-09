@@ -24,19 +24,15 @@ public class ResultLoader {
    private static final Logger LOG = LogManager.getLogger(ResultLoader.class);
 
    private final MeasurementConfig config;
-   final TestCase testcase;
-   final long currentChunkStart;
 
    private final List<Double> before = new LinkedList<>();
    private final List<Double> after = new LinkedList<>();
 
-   public ResultLoader(final MeasurementConfig config, final TestCase testcase, final long currentChunkStart) {
+   public ResultLoader(final MeasurementConfig config) {
       this.config = config;
-      this.testcase = testcase;
-      this.currentChunkStart = currentChunkStart;
    }
 
-   public void loadData(PeassFolders folders) throws JAXBException {
+   public void loadData(PeassFolders folders, final TestCase testcase, final long currentChunkStart) throws JAXBException {
       final File kopemeFile = folders.getSummaryFile(testcase);
       final XMLDataLoader loader = new XMLDataLoader(kopemeFile);
       if (loader.getFullData().getTestcases().getTestcase().size() > 0) {

@@ -50,17 +50,16 @@ public class ContinuousMeasurementExecutor {
       } else {
          LOG.info("Skipping measurement - result folder {} already existing", fullResultsVersion.getAbsolutePath());
       }
-      final File measurementFolder = new File(fullResultsVersion, "measurements");
+      final File measurementFolder = new File(fullResultsVersion, PeassFolders.MEASUREMENTS);
       return measurementFolder;
    }
 
    private void doMeasurement(final Set<TestCase> tests, final File fullResultsVersion) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      MeasurementConfig copied = createCopiedConfiguration();
-      
       cleanTemporaryFolders();
-
-      final AdaptiveTester tester = new AdaptiveTester(folders, copied, env);
+      
       for (final TestCase test : tests) {
+         MeasurementConfig copied = createCopiedConfiguration();
+         final AdaptiveTester tester = new AdaptiveTester(folders, copied, env);
          tester.evaluate(test);
       }
 

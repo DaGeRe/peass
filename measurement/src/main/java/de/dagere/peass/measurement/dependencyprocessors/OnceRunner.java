@@ -82,6 +82,10 @@ public class OnceRunner {
       System.gc();
       Thread.sleep(1);
    }
+   
+   public ResultOrganizer getCurrentOrganizer() {
+      return currentOrganizer;
+   }
 
    private void emptyFolder(final File tempDir) {
       for (final File createdTempFile : tempDir.listFiles()) {
