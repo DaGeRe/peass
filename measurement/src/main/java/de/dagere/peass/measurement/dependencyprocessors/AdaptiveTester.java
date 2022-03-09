@@ -74,8 +74,8 @@ public class AdaptiveTester extends DependencyTester {
    public boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {
       final boolean savelyDecidable;
       if (configuration.isEarlyStop()) {
-         final ResultLoader loader = new ResultLoader(configuration, folders.getFullMeasurementFolder(), testcase, currentChunkStart);
-         loader.loadData();
+         final ResultLoader loader = new ResultLoader(configuration, testcase, currentChunkStart);
+         loader.loadData(folders);
          LOG.debug(loader.getStatisticsAfter());
          DescriptiveStatistics statisticsBefore = loader.getStatisticsBefore();
          DescriptiveStatistics statisticsAfter = loader.getStatisticsAfter();
