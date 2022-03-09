@@ -22,15 +22,12 @@ public class ContinuousMeasurementExecutor {
 
    private static final Logger LOG = LogManager.getLogger(ContinuousMeasurementExecutor.class);
 
-   private final String version, versionOld;
    private final PeassFolders folders;
    private final MeasurementConfig measurementConfig;
    private final EnvironmentVariables env;
 
-   public ContinuousMeasurementExecutor(final String version, final String versionOld, final PeassFolders folders, final MeasurementConfig measurementConfig,
+   public ContinuousMeasurementExecutor(final PeassFolders folders, final MeasurementConfig measurementConfig,
          final EnvironmentVariables env) {
-      this.version = version;
-      this.versionOld = versionOld;
       this.folders = folders;
       this.measurementConfig = measurementConfig;
       this.env = env;
@@ -80,8 +77,6 @@ public class ContinuousMeasurementExecutor {
    private MeasurementConfig createCopiedConfiguration() {
       MeasurementConfig copied = new MeasurementConfig(measurementConfig);
       copied.setUseKieker(false);
-      copied.getExecutionConfig().setVersion(version);
-      copied.getExecutionConfig().setVersionOld(versionOld);
       return copied;
    }
 }

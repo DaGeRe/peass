@@ -63,7 +63,7 @@ public class TestContinuousMeasurementExecutor {
          final PeassFolders folders = new PeassFolders(new File(parentFile, "project"));
 
          MeasurementConfig measurementConfig = createMeasurementConfig();
-         ContinuousMeasurementExecutor cme = new ContinuousMeasurementExecutor("000001", "000000", folders, measurementConfig, new EnvironmentVariables());
+         ContinuousMeasurementExecutor cme = new ContinuousMeasurementExecutor(folders, measurementConfig, new EnvironmentVariables());
 
          Set<TestCase> tests = buildTestSet();
 
@@ -90,7 +90,7 @@ public class TestContinuousMeasurementExecutor {
          ExecutorCreator.createTestTransformer(Mockito.any(), Mockito.any(), capturedConfig.capture());
       }, Mockito.times(36));
       MeasurementConfig finalConfig = capturedConfig.getAllValues().get(0);
-      
+
       // This only checks that the iterations are correctly after the end; in theory, we could also check whether the reduction for TEST2 and TEST4 work correctly
       Assert.assertEquals(finalConfig.getIterations(), ITERATIONS);
 
@@ -103,6 +103,8 @@ public class TestContinuousMeasurementExecutor {
 
    private MeasurementConfig createMeasurementConfig() {
       MeasurementConfig measurementConfig = new MeasurementConfig(5);
+      measurementConfig.getExecutionConfig().setVersion("000001");
+      measurementConfig.getExecutionConfig().setVersionOld("000000");
       measurementConfig.setIterations(ITERATIONS);
       measurementConfig.setCallSyncBetweenVMs(false);
       measurementConfig.setWaitTimeBetweenVMs(0);

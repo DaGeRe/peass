@@ -15,8 +15,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.analysis.measurement.AnalyseFullData;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;
-import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -75,6 +75,8 @@ public class ContinuousExecutor {
       iterator = iteratorBuiler.getIterator();
       version = iteratorBuiler.getVersion();
       versionOld = iteratorBuiler.getVersionOld();
+      measurementConfig.getExecutionConfig().setVersion(version);
+      measurementConfig.getExecutionConfig().setVersionOld(versionOld);
       LOG.debug("Version: {} VersionOld: {}", version, versionOld);
    }
 
@@ -127,7 +129,7 @@ public class ContinuousExecutor {
    protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final File fullResultsVersion = resultsFolders.getVersionFullResultsFolder(version, versionOld);
       File logFile = resultsFolders.getMeasurementLogFile(version, versionOld);
-      final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(version, versionOld, folders, measurementConfig, env);
+      final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(folders, measurementConfig, env);
       final File measurementFolder = measurementExecutor.executeMeasurements(tests, fullResultsVersion, logFile);
       return measurementFolder;
    }
