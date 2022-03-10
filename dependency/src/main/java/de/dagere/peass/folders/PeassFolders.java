@@ -21,9 +21,9 @@ import de.dagere.peass.vcs.VersionControlSystem;
  *
  */
 public class PeassFolders {
-   
+
    private static final Logger LOG = LogManager.getLogger(PeassFolders.class);
-   
+
    public static final String MEASUREMENTS = "measurements";
 
    public static final String PEASS_POSTFIX = "_peass";
@@ -31,7 +31,7 @@ public class PeassFolders {
    protected final File projectFolder;
    // private final File resultFolder;
    protected final File fullResultFolder;
-   
+
    private final File tempResultFolder, tempProjectFolder, tempFolder, kiekerTemp;
    private final VMExecutionLogFolders logFolders;
    private final File oldSourceFolder;
@@ -98,15 +98,17 @@ public class PeassFolders {
    public File getCleanFolder() {
       return cleanFolder;
    }
-   
+
    /**
-    * If cleaning is done with an existing project, a new folder in the clean folder is created; if the cleaning is done directly by the measurement process, the native folder is used
+    * If cleaning is done with an existing project, a new folder in the clean folder is created; if the cleaning is done directly by the measurement process, the native folder is
+    * used
+    * 
     * @return
     */
    public File getNativeCleanFolder() {
       return cleanNativeFolder;
    }
-   
+
    public File getDependencyLogFolder() {
       return logFolders.getDependencyLogFolder();
    }
@@ -132,41 +134,27 @@ public class PeassFolders {
    }
 
    public File getExistingMeasureLogFolder(final String version, final TestCase testcase) {
-      File testLogFolder = new File(getMeasureLogFolder(), version + File.separator + testcase.getMethod());
+      File testLogFolder = new File(getMeasureLogFolder(), version + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
       if (testLogFolder.exists()) {
          return testLogFolder;
       } else {
-         testLogFolder = new File(getMeasureLogFolder(), version + File.separator + testcase.getMethod() + "_new");
-         if (testLogFolder.exists()) {
-            return testLogFolder;
-         } else {
-            return null;
-         }
+         return null;
       }
    }
 
    public File getMeasureLogFolder(final String version, final TestCase testcase) {
-      File testLogFolder = new File(getMeasureLogFolder(), version + File.separator + testcase.getMethod());
-      if (testLogFolder.exists()) {
-         testLogFolder = new File(getMeasureLogFolder(), version + File.separator + testcase.getMethod() + "_new");
-      }
+      File testLogFolder = new File(getMeasureLogFolder(), version + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
       testLogFolder.mkdirs();
       return testLogFolder;
    }
 
    public File getExistingRCALogFolder(final String version, final TestCase testcase, final int level) {
-      File testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getMethod() + File.separator + level);
-      if (!testLogFolder.exists()) {
-         testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getMethod() + File.separator + level + "_new");
-      }
+      File testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getClazz() + File.separator + testcase.getMethod() + File.separator + level);
       return testLogFolder;
    }
 
    public File getRCALogFolder(final String version, final TestCase testcase, final int level) {
-      File testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getMethod() + File.separator + level);
-      if (testLogFolder.exists()) {
-         testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getMethod() + File.separator + level + "_new");
-      }
+      File testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getClazz() + File.separator + testcase.getMethod() + File.separator + level);
       testLogFolder.mkdirs();
       return testLogFolder;
    }
