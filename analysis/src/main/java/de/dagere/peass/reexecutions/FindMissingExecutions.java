@@ -42,8 +42,8 @@ public class FindMissingExecutions implements Callable<Void> {
    }
 
    private void findMissing(final String project, final File reexecuteFolder, final RepoFolders folders) throws IOException, JsonParseException, JsonMappingException, JAXBException {
-      final File dependencyfile = new File(folders.getDependencyFolder(), ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
-      final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, StaticTestSelection.class);
+      final File staticSelectionFile = new File(folders.getDependencyFolder(), ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
+      final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
       VersionComparator.setDependencies(dependencies);
 
       final ExecutionData tests = folders.getExecutionData(project);

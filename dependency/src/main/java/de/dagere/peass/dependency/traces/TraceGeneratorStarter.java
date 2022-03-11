@@ -48,8 +48,8 @@ public class TraceGeneratorStarter implements Callable<Void> {
    @Option(names = { "-folder", "--folder" }, description = "Folder of the project that should be analyzed", required = true)
    protected File projectFolder;
 
-   @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Path to the dependencyfile")
-   protected File dependencyFile;
+   @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the staticSelectionFile")
+   protected File staticSelectionFile;
 
    public static void main(final String[] args) {
       final CommandLine commandLine = new CommandLine(new TraceGeneratorStarter());
@@ -60,10 +60,10 @@ public class TraceGeneratorStarter implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
-      String newestVersion = dependencies.getNewestVersion();
+      StaticTestSelection staticTestSelection = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
+      String newestVersion = staticTestSelection.getNewestVersion();
 
-      VersionStaticSelection version = dependencies.getVersions().get(newestVersion);
+      VersionStaticSelection version = staticTestSelection.getVersions().get(newestVersion);
       TestSet tests = version.getTests();
 
       ExecutionConfig executionConfig = executionMixin.getExecutionConfig();

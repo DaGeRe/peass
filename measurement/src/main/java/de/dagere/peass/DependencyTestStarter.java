@@ -98,7 +98,7 @@ public class DependencyTestStarter extends PairProcessor {
     */
    private int getStartVersionIndex() {
       int currentStartindex = startversion != null ? versions.indexOf(startversion) : 0;
-      // Only bugfix if dependencyfile and executefile do not fully match
+      // Only bugfix if static selection file and execution file do not fully match
       if (executionData != null) {
          if (startversion != null && currentStartindex == -1) {
             String potentialStart = "";
@@ -115,7 +115,7 @@ public class DependencyTestStarter extends PairProcessor {
                   }
                }
             }
-            LOG.debug("Version only in executefile, next version in dependencyfile: {}", potentialStart);
+            LOG.debug("Version only in executefile, next version in static selection file: {}", potentialStart);
             currentStartindex = versions.indexOf(potentialStart);
             if (currentStartindex == -1) {
                throw new RuntimeException("Did not find " + startversion + " in given PRONTO-files!");
@@ -132,7 +132,7 @@ public class DependencyTestStarter extends PairProcessor {
     */
    private int getEndVersion() {
       int currentEndindex = endversion != null ? versions.indexOf(endversion) : versions.size();
-      // Only bugfix if dependencyfile and executefile do not fully match
+      // Only bugfix if static selection file and execution file do not fully match
       if (executionData != null) {
          if (endversion != null && currentEndindex == -1) {
             String potentialStart = "";

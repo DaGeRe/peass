@@ -76,10 +76,10 @@ public final class GitUtils {
          File repoFolder = new File(repofolderName);
          File dependencyFolder = new File(repoFolder, "dependencies-final");
          String project = url.substring(url.lastIndexOf("/") + 1, url.lastIndexOf('.'));
-         File dependencyfile = new File(dependencyFolder, ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
-         LOG.debug("Searching: {}", dependencyfile);
-         if (dependencyfile.exists()) {
-            final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, StaticTestSelection.class);
+         File staticSelectionFile = new File(dependencyFolder, ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
+         LOG.debug("Searching: {}", staticSelectionFile);
+         if (staticSelectionFile.exists()) {
+            final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
             VersionComparator.setDependencies(dependencies);
             repoFound = true;
          }

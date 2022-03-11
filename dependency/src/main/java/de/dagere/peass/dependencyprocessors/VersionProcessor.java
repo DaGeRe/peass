@@ -26,7 +26,7 @@ import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 /**
- * Basic class for all classes that operate somehow on an folder and it's dependencyfile.
+ * Basic class for all classes that operate somehow on an folder and it's static selection file.
  * 
  * @author reichelt
  *

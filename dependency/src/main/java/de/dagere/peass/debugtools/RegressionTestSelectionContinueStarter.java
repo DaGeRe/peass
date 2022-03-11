@@ -52,7 +52,7 @@ import picocli.CommandLine.Option;
 /**
  * Creates dependency information and statics for a project by running all tests and identifying the dependencies with Kieker.
  * 
- * Starts with a given dependencyfile and continues its analysis.
+ * Starts with a given static selection file and continues its analysis.
  * 
  * @author reichelt
  *
@@ -69,8 +69,8 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
    @Mixin
    private ExecutionConfigMixin executionConfigMixin;
 
-   @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Folder for dependencyfile")
-   private File dependencyFile = null;
+   @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the staticSelectionFile")
+   private File staticSelectionFile;
 
    public static void main(final String[] args) {
       try {
@@ -110,8 +110,8 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
 
    private File getDependencyInFile() {
       final File dependencyFileIn;
-      if (this.dependencyFile != null) {
-         dependencyFileIn = this.dependencyFile;
+      if (this.staticSelectionFile != null) {
+         dependencyFileIn = this.staticSelectionFile;
       } else {
          dependencyFileIn = new File(config.getResultBaseFolder(), ResultsFolders.STATIC_SELECTION_PREFIX + config.getProjectFolder().getName() + "_continue.json");
       }

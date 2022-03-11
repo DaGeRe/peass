@@ -10,7 +10,7 @@ import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.dependency.persistence.InitialVersion;
 
 /**
- * Base for processing pair of potentially changed testcases, which are given by a dependencyfile.
+ * Base for processing pair of potentially changed testcases, which are given by a static selection file or execution file.
  * @author reichelt
  *
  */

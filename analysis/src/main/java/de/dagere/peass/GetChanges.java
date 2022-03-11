@@ -27,8 +27,8 @@ public class GetChanges implements Callable<Void> {
 
    private static final Logger LOG = LogManager.getLogger(GetChanges.class);
 
-   @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Path to the dependencyfile")
-   protected File dependencyFile;
+   @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the static selection file")
+   protected File staticSelectionFile;
 
    @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
    protected File executionFile;
@@ -53,7 +53,7 @@ public class GetChanges implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      SelectedTests selectedTests = VersionSorter.getSelectedTests(dependencyFile, executionFile);
+      SelectedTests selectedTests = VersionSorter.getSelectedTests(staticSelectionFile, executionFile);
 
       if (!out.exists()) {
          out.mkdirs();
@@ -67,8 +67,8 @@ public class GetChanges implements Callable<Void> {
 
       final ChangeReader reader = createReader(statisticFolder, selectedTests);
 
-      if (dependencyFile != null) {
-         StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
+      if (staticSelectionFile != null) {
+         StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
          reader.setTests(dependencies.toExecutionData().getVersions());
 
       }
