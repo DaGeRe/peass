@@ -53,10 +53,6 @@ public abstract class VersionProcessor implements Callable<Void> {
    @Option(names = { "-threads", "--threads" }, description = "Number of parallel threads for analysis")
    protected int threads = 1;
 
-   @Deprecated
-   @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Path to the dependencyfile (will be removed soon; use staticSelectionFile instead)")
-   protected File dependencyFile;
-   
    @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the staticSelectionFile")
    protected File staticSelectionFile;
 
@@ -125,11 +121,6 @@ public abstract class VersionProcessor implements Callable<Void> {
          version = executionMixin.getVersion();
       }
       
-      if (dependencyFile != null) {
-         staticTestSelection = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
-         VersionComparator.setDependencies(staticTestSelection);
-         executionData = new ExecutionData(staticTestSelection);
-      }
       if (staticSelectionFile != null) {
           staticTestSelection = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
           VersionComparator.setDependencies(staticTestSelection);
