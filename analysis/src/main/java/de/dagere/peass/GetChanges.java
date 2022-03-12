@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.measurement.dataloading.VersionSorter;
@@ -58,14 +59,11 @@ public class GetChanges implements Callable<Void> {
       if (!out.exists()) {
          out.mkdirs();
       }
-      final File statisticFolder = new File(out, "statistics");
-      if (!statisticFolder.exists()) {
-         statisticFolder.mkdir();
-      }
 
       LOG.info("Errors: 1: {} 2: {}", statisticConfigMixin.getType1error(), statisticConfigMixin.getType2error());
 
-      final ChangeReader reader = createReader(statisticFolder, selectedTests);
+      ResultsFolders folders = new ResultsFolders(out, "out");
+      final ChangeReader reader = createReader(folders, selectedTests);
 
       if (staticSelectionFile != null) {
          StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
@@ -83,17 +81,17 @@ public class GetChanges implements Callable<Void> {
       return null;
    }
 
-   private ChangeReader createReader(final File statisticFolder, final SelectedTests selectedTests) throws FileNotFoundException {
+   private ChangeReader createReader(final ResultsFolders resultsFolders, final SelectedTests selectedTests) throws FileNotFoundException {
       RunCommandWriterRCA runCommandWriter = null;
       RunCommandWriterSlurmRCA runCommandWriterSlurm = null;
       if (selectedTests.getUrl() != null && !selectedTests.getUrl().isEmpty()) {
-         final PrintStream runCommandPrinter = new PrintStream(new File(statisticFolder, "run-rca-" + selectedTests.getName() + ".sh"));
+         final PrintStream runCommandPrinter = new PrintStream(new File(resultsFolders.getStatisticsFile().getParentFile(), "run-rca-" + selectedTests.getName() + ".sh"));
          runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", selectedTests);
-         final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticFolder, "run-rca-slurm-" + selectedTests.getName() + ".sh"));
+         final PrintStream runCommandPrinterRCA = new PrintStream(new File(resultsFolders.getStatisticsFile().getParentFile(), "run-rca-slurm-" + selectedTests.getName() + ".sh"));
          runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", selectedTests);
       }
-
-      final ChangeReader reader = new ChangeReader(statisticFolder, runCommandWriter, runCommandWriterSlurm, selectedTests);
+     
+      final ChangeReader reader = new ChangeReader(resultsFolders, runCommandWriter, runCommandWriterSlurm, selectedTests);
       reader.setConfig(statisticConfigMixin.getStasticsConfig());
       return reader;
    }

@@ -24,6 +24,7 @@ import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.measurement.dataloading.KoPeMeDataHelper;
 import de.dagere.peass.measurement.statistics.ConfidenceIntervalInterpretion;
@@ -55,7 +56,7 @@ public class ChangeReader {
 
    private final VersionData allData = new VersionData();
    // private static VersionKnowledge oldKnowledge;
-   private final File statisticsFolder;
+   private final ResultsFolders resultsFolders;
 
    private final RunCommandWriterRCA runCommandWriter;
    private final RunCommandWriterSlurmRCA runCommandWriterSlurm;
@@ -63,9 +64,10 @@ public class ChangeReader {
    
    private Map<String, TestSet> tests;
 
-   public ChangeReader(final RepoFolders resultsFolder, final String projectName, final StaticTestSelection dependencies) throws FileNotFoundException {
+   public ChangeReader(final ResultsFolders resultsFolders, final String projectName, final StaticTestSelection dependencies) throws FileNotFoundException {
       this.dependencies = dependencies;
-      statisticsFolder = resultsFolder.getProjectStatisticsFolder(projectName);
+      this.resultsFolders = resultsFolders;
+      File statisticsFolder = resultsFolders.getStatisticsFile().getParentFile();
       if (dependencies.getUrl() != null && !dependencies.getUrl().isEmpty()) {
          final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-rca-" + projectName + ".sh"));
          runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", dependencies);
@@ -77,8 +79,8 @@ public class ChangeReader {
       }
    }
 
-   public ChangeReader(final File statisticsFolder, final RunCommandWriterRCA runCommandWriter, final RunCommandWriterSlurmRCA runCommandWriterSlurm, final SelectedTests selectedTests) throws FileNotFoundException {
-      this.statisticsFolder = statisticsFolder;
+   public ChangeReader(final ResultsFolders resultsFolders, final RunCommandWriterRCA runCommandWriter, final RunCommandWriterSlurmRCA runCommandWriterSlurm, final SelectedTests selectedTests) throws FileNotFoundException {
+      this.resultsFolders = resultsFolders;
       this.runCommandWriter = runCommandWriter;
       this.runCommandWriterSlurm = runCommandWriterSlurm;
       this.dependencies = selectedTests;
@@ -90,7 +92,7 @@ public class ChangeReader {
    }
 
    public ChangeReader(final String projectName, final SelectedTests dependencies) {
-      this.statisticsFolder = null;
+      this.resultsFolders = null;
       runCommandWriter = null;
       runCommandWriterSlurm = null;
       this.dependencies = dependencies;
@@ -148,14 +150,14 @@ public class ChangeReader {
    }
 
    private void writeResults(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info) {
-      if (statisticsFolder != null) {
+      if (resultsFolders != null) {
          final String measurementFolderName = measurementFolder.getName();
          String executorName = measurementFolderName.substring(measurementFolderName.lastIndexOf(File.separator) + 1);
          if (executorName.endsWith("_peass")) {
             executorName = executorName.substring(0, executorName.length() - "_peass".length());
          }
-         final File resultfile = new File(statisticsFolder.getParentFile(), "changes_" + executorName + ".json");
-         final File statisticFile = new File(statisticsFolder, executorName + ".json");
+         final File resultfile = resultsFolders.getChangeFile();
+         final File statisticFile = resultsFolders.getStatisticsFile();
          try {
             Constants.OBJECTMAPPER.writeValue(resultfile, changes);
             Constants.OBJECTMAPPER.writeValue(statisticFile, info);
