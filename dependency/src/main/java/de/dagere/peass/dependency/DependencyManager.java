@@ -21,15 +21,11 @@ import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.TreeSet;
 
+import de.dagere.peass.statisticlogger.ExceededTraceLogger;
+import de.dagere.peass.statisticlogger.ForbiddenMethodsLogger;
 import de.dagere.peass.statisticlogger.IncludedTestsLogger;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
@@ -243,7 +239,62 @@ public class DependencyManager extends KiekerResultManager {
 
       LOG.debug("Test: {} ", testcase);
       LOG.debug("Dependencies: {}", allCalledClasses.size());
-      dependencies.setDependencies(testcase, allCalledClasses, testTransformer.getConfig().getExecutionConfig());
+      
+      boolean testExcluded = false;
+      
+      if (forbiddenMethodCalled(allCalledClasses)) {
+         testExcluded = true;
+         ForbiddenMethodsLogger.logTestContainingForbiddenMethod(testcase);
+      }
+
+      long traceeSizeInMB = getTraceSize(kiekerResultFolders);
+      if (traceeSizeInMB > fakeConfig.getKiekerConfig().getTraceSizeInMb()) {
+         testExcluded = true;
+         ExceededTraceLogger.logTestExceedingTraceSize(testcase, traceeSizeInMB);
+      } 
+      
+      if (!testExcluded) {
+         dependencies.setDependencies(testcase, allCalledClasses);
+      }
+   }
+   
+   private boolean forbiddenMethodCalled(final Map<ChangedEntity, Set<String>> allCalledClasses) {
+      ExecutionConfig executionConfig = testTransformer.getConfig().getExecutionConfig();
+      List<String> forbiddenMethods = executionConfig.getForbiddenMethods();
+      
+      for (String forbiddenMethod : forbiddenMethods) {
+         if (traceContainsMethod(allCalledClasses, forbiddenMethod)) {
+            return true;
+         }
+      }
+      
+      return false;
+   }
+
+   private boolean traceContainsMethod(final Map<ChangedEntity, Set<String>> allCalledClasses, final String methodToFind) {
+      String[] classAndMethod = methodToFind.split("#");
+
+      for (Entry<ChangedEntity, Set<String>> calledClass : allCalledClasses.entrySet()) {
+         if (calledClass.getKey().getClazz().equals(classAndMethod[0])) {
+            Set<String> calledMethods = calledClass.getValue();
+            if (calledMethods.contains(classAndMethod[1])) {
+               return true;
+            }
+         }
+      }
+
+      return false;
+   }
+   
+   private long getTraceSize(final File[] kiekerResultFolders) {
+      long overallSizeInMB = 0;
+      for (File kiekerResultFolder : kiekerResultFolders) {
+         final long size = FileUtils.sizeOfDirectory(kiekerResultFolder);
+         final long sizeInMB = size / (1024 * 1024);
+         overallSizeInMB += sizeInMB;
+      }
+      
+      return overallSizeInMB;
    }
 
    private Map<ChangedEntity, Set<String>> getCalledMethods(final ModuleClassMapping mapping, final File[] kiekerResultFolders) {

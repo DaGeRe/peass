@@ -99,7 +99,6 @@ public class OneTraceGenerator {
             }
          } else {
             LOG.error("File size exceeds {} MB", kiekerConfig.getTraceSizeInMb());
-            ExceededTraceLogger.logTestExceedingTraceSize(kiekerResultFolder, sizeInMB);
          }
       }
       if (success) {
