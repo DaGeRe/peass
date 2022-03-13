@@ -13,6 +13,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.measurement.AnalyseFullData;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.config.MeasurementConfig;
@@ -134,14 +135,18 @@ public class ContinuousExecutor {
       return measurementFolder;
    }
 
-   private void analyzeMeasurements(final File measurementFolder) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
-      final ProjectStatistics statistics = new ProjectStatistics();
-      TestTransformer testTransformer = ExecutorCreator.createTestTransformer(folders, measurementConfig.getExecutionConfig(), measurementConfig);
-      TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
-      ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), executor.getModules(), measurementConfig.getExecutionConfig());
-      final AnalyseFullData afd = new AnalyseFullData(resultsFolders.getChangeFile(), statistics, mapping, measurementConfig.getStatisticsConfig());
-      afd.analyseFolder(measurementFolder);
-      Constants.OBJECTMAPPER.writeValue(resultsFolders.getStatisticsFile(), statistics);
+   private void analyzeMeasurements(final File measurementFolder) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, JAXBException {
+      StaticTestSelection selectedTests = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
+      ChangeReader changeReader = new ChangeReader(resultsFolders, selectedTests);
+      changeReader.readFile(measurementFolder.getParentFile());
+      
+//      final ProjectStatistics statistics = new ProjectStatistics();
+//      TestTransformer testTransformer = ExecutorCreator.createTestTransformer(folders, measurementConfig.getExecutionConfig(), measurementConfig);
+//      TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
+//      ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), executor.getModules(), measurementConfig.getExecutionConfig());
+//      final AnalyseFullData afd = new AnalyseFullData(resultsFolders.getChangeFile(), statistics, mapping, measurementConfig.getStatisticsConfig());
+//      afd.analyseFolder(measurementFolder);
+//      Constants.OBJECTMAPPER.writeValue(resultsFolders.getStatisticsFile(), statistics);
    }
 
    public String getLatestVersion() {

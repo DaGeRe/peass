@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testWithNullContentType">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647105407606">
+     <value>4044122.0000000005</value>
+     <deviation>0.8337800156934255</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>1204274.0</min>
+     <max>1.6731019E7</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647105407413">16731019</value>
+      <value start="1647105407430">6063287</value>
+      <value start="1647105407436">5291271</value>
+      <value start="1647105407441">5064393</value>
+      <value start="1647105407447">4924244</value>
+      <value start="1647105407452">4908123</value>
+      <value start="1647105407456">4617195</value>
+      <value start="1647105407461">4481995</value>
+      <value start="1647105407466">4465826</value>
+      <value start="1647105407470">4395046</value>
+      <value start="1647105407475">2995334</value>
+      <value start="1647105407478">2752214</value>
+      <value start="1647105407480">2552716</value>
+      <value start="1647105407483">2445667</value>
+      <value start="1647105407485">2095309</value>
+      <value start="1647105407487">1861909</value>
+      <value start="1647105407489">1406733</value>
+      <value start="1647105407491">1363272</value>
+      <value start="1647105407492">1204274</value>
+      <value start="1647105407493">1262613</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

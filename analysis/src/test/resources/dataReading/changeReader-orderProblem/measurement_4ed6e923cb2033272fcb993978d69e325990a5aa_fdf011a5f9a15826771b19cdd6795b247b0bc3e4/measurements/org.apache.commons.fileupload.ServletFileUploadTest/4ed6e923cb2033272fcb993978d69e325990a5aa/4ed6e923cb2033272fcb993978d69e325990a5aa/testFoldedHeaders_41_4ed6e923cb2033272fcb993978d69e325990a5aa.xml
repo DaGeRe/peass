@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testFoldedHeaders">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647102250080">
+     <value>5.5262121449999996E7</value>
+     <deviation>0.5009911641311516</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>2.2523387E7</min>
+     <max>1.20367051E8</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647102248575">120367051</value>
+      <value start="1647102248695">66967084</value>
+      <value start="1647102248762">59545199</value>
+      <value start="1647102248822">54853550</value>
+      <value start="1647102248877">35485048</value>
+      <value start="1647102248912">48828057</value>
+      <value start="1647102248961">51716684</value>
+      <value start="1647102249013">109524851</value>
+      <value start="1647102249123">67657992</value>
+      <value start="1647102249190">42469076</value>
+      <value start="1647102249233">101811556</value>
+      <value start="1647102249335">38599744</value>
+      <value start="1647102249373">22859575</value>
+      <value start="1647102249396">59516789</value>
+      <value start="1647102249456">23431023</value>
+      <value start="1647102249479">22523387</value>
+      <value start="1647102249502">60989941</value>
+      <value start="1647102249563">41608791</value>
+      <value start="1647102249604">32476042</value>
+      <value start="1647102249637">44010989</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

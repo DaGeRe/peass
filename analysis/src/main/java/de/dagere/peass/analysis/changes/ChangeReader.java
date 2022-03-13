@@ -60,19 +60,19 @@ public class ChangeReader {
 
    private final RunCommandWriterRCA runCommandWriter;
    private final RunCommandWriterSlurmRCA runCommandWriterSlurm;
-   private final SelectedTests dependencies;
+   private final SelectedTests selectedTests;
    
    private Map<String, TestSet> tests;
 
-   public ChangeReader(final ResultsFolders resultsFolders, final StaticTestSelection dependencies) throws FileNotFoundException {
-      this.dependencies = dependencies;
+   public ChangeReader(final ResultsFolders resultsFolders, final SelectedTests selectedTests) throws FileNotFoundException {
+      this.selectedTests = selectedTests;
       this.resultsFolders = resultsFolders;
       File statisticsFolder = resultsFolders.getStatisticsFile().getParentFile();
-      if (dependencies.getUrl() != null && !dependencies.getUrl().isEmpty()) {
+      if (selectedTests.getUrl() != null && !selectedTests.getUrl().isEmpty()) {
          final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-rca-" + resultsFolders.getProjectName() + ".sh"));
-         runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", dependencies);
+         runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", selectedTests);
          final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticsFolder, "run-rca-slurm-" + resultsFolders.getProjectName() + ".sh"));
-         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", dependencies);
+         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", selectedTests);
       } else {
          runCommandWriter = null;
          runCommandWriterSlurm = null;
@@ -83,7 +83,7 @@ public class ChangeReader {
       this.resultsFolders = resultsFolders;
       this.runCommandWriter = runCommandWriter;
       this.runCommandWriterSlurm = runCommandWriterSlurm;
-      this.dependencies = selectedTests;
+      this.selectedTests = selectedTests;
 
    }
 
@@ -95,7 +95,7 @@ public class ChangeReader {
       this.resultsFolders = null;
       runCommandWriter = null;
       runCommandWriterSlurm = null;
-      this.dependencies = dependencies;
+      this.selectedTests = dependencies;
    }
 
    public void setConfig(StatisticsConfig config) {
@@ -181,7 +181,7 @@ public class ChangeReader {
          final ProjectStatistics info) {
       for (final Chunk chunk : testcaseMethod.getDatacollector().get(0).getChunk()) {
          folderMeasurements++;
-         final String[] versions = KoPeMeDataHelper.getVersions(chunk);
+         final String[] versions = KoPeMeDataHelper.getVersions(chunk, selectedTests);
          LOG.debug(versions[1]);
          if (versions[1] != null) {
             readChunk(fileName, data, changeKnowledge, info, chunk, versions);
@@ -261,7 +261,7 @@ public class ChangeReader {
          final int repetitions = (int) exampleResult.getRepetitions();
          final int vms = describedChunk.getCurrent().size();
 
-         final int versionIndex = Arrays.binarySearch(dependencies.getVersionNames(), versions[1]);
+         final int versionIndex = Arrays.binarySearch(selectedTests.getVersionNames(), versions[1]);
          
          runCommandWriter.createSingleMethodCommand(versionIndex, versions[1], testcase.getExecutable(),
                (int) exampleResult.getWarmup(), iterations, repetitions, vms);
