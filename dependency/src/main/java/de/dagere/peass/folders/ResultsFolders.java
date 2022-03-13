@@ -200,4 +200,8 @@ public class ResultsFolders {
          return null;
       }
    }
+
+   public String getProjectName() {
+      return projectName;
+   }
 }

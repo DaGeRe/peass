@@ -56,7 +56,7 @@ public class GetAllChanges {
 
    public static void getChangesForMeasurementfolder(final RepoFolders folders, final String project, final File cleanFolder, final StaticTestSelection dependencies) throws JAXBException, FileNotFoundException {
       ResultsFolders resultsFolders = new ResultsFolders(folders.getProjectStatisticsFolder(project), project);
-      final ChangeReader reader = new ChangeReader(resultsFolders, project, dependencies);
+      final ChangeReader reader = new ChangeReader(resultsFolders, dependencies);
       final ProjectChanges changes = reader.readFile(cleanFolder);
       if (changes != null) {
          final File allPropertyFile = new File(folders.getPropertiesFolder(), project + File.separator + "properties_alltests.json");

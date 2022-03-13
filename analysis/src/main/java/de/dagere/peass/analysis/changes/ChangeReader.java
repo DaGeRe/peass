@@ -64,14 +64,14 @@ public class ChangeReader {
    
    private Map<String, TestSet> tests;
 
-   public ChangeReader(final ResultsFolders resultsFolders, final String projectName, final StaticTestSelection dependencies) throws FileNotFoundException {
+   public ChangeReader(final ResultsFolders resultsFolders, final StaticTestSelection dependencies) throws FileNotFoundException {
       this.dependencies = dependencies;
       this.resultsFolders = resultsFolders;
       File statisticsFolder = resultsFolders.getStatisticsFile().getParentFile();
       if (dependencies.getUrl() != null && !dependencies.getUrl().isEmpty()) {
-         final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-rca-" + projectName + ".sh"));
+         final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-rca-" + resultsFolders.getProjectName() + ".sh"));
          runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", dependencies);
-         final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticsFolder, "run-rca-slurm-" + projectName + ".sh"));
+         final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticsFolder, "run-rca-slurm-" + resultsFolders.getProjectName() + ".sh"));
          runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", dependencies);
       } else {
          runCommandWriter = null;
