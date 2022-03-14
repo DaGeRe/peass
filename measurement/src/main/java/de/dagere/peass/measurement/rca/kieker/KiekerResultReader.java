@@ -34,7 +34,7 @@ public class KiekerResultReader {
 
    final boolean useAggregation;
    private final AllowedKiekerRecord usedRecord;
-   final Set<CallTreeNode> includedNodes;
+   private final Set<CallTreeNode> includedNodes;
    final String version;
    final TestCase testcase;
    final boolean otherVersion;
@@ -112,9 +112,9 @@ public class KiekerResultReader {
       final String kiekerCall = KiekerPatternConverter.getKiekerPattern(measuredNode.getCall());
       LOG.trace("Node: {} Kieker: {} Equal: {}", nodeCall, kiekerCall, nodeCall.equals(kiekerCall));
       if (nodeCall.equals(kiekerCall)) {
-         LOG.trace("EOI: {} vs {}", node.getEoi(), measuredNode.getEoi());
+         LOG.trace("EOI: {} vs {}", node.getEoi(version), measuredNode.getEoi());
          if (considerNodePosition) {
-            final int eoi = node.getEoi();
+            final int eoi = node.getEoi(version);
             if (measuredNode.getEoi() == eoi) {
                return true;
             } else {

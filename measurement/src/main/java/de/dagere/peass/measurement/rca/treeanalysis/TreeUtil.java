@@ -91,7 +91,7 @@ public class TreeUtil {
    private static void addSurplus(final CallTreeNode otherParent, final List<CallTreeNode> partition) {
       for (final CallTreeNode unmatched : partition) {
          if (unmatched.getOtherVersionNode() == null) {
-            final CallTreeNode virtual_node = otherParent.appendChild(CauseSearchData.ADDED, CauseSearchData.ADDED, null);
+            final CallTreeNode virtual_node = otherParent.appendChild(CauseSearchData.ADDED, CauseSearchData.ADDED, unmatched.getKiekerPattern());
             unmatched.setOtherVersionNode(virtual_node);
             virtual_node.setOtherVersionNode(unmatched);
          }

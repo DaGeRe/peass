@@ -13,9 +13,9 @@ import de.dagere.peass.measurement.rca.kieker.KiekerPatternConverter;
 import kieker.analysis.trace.AbstractTraceAnalysisStage;
 import kieker.model.repository.SystemModelRepository;
 
-public class DurationFromRecordReadStage extends AbstractTraceAnalysisStage<DurationRecord> {
+public class DurationRCAStage extends AbstractTraceAnalysisStage<DurationRecord> {
 
-   private static final Logger LOG = LogManager.getLogger(DurationFromRecordReadStage.class);
+   private static final Logger LOG = LogManager.getLogger(DurationRCAStage.class);
 
    private final Map<String, CallTreeNode> measuredNodes = new HashMap<>();
    private final String version;
@@ -25,7 +25,7 @@ public class DurationFromRecordReadStage extends AbstractTraceAnalysisStage<Dura
     *
     * @param repository system model repository
     */
-   public DurationFromRecordReadStage(final SystemModelRepository systemModelRepository, final Set<CallTreeNode> measuredNodes, final String version) {
+   public DurationRCAStage(final SystemModelRepository systemModelRepository, final Set<CallTreeNode> measuredNodes, final String version) {
       super(systemModelRepository);
       for (CallTreeNode node : measuredNodes) {
          this.measuredNodes.put(node.getKiekerPattern(), node);

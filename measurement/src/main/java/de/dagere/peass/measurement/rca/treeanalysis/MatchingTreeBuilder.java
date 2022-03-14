@@ -13,6 +13,7 @@ import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleWeightedGraph;
 
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil.CallTreeNodeVertex;
 
 /**
@@ -90,7 +91,7 @@ public class MatchingTreeBuilder {
          final int commonPrefixShare = getPrefixShare(firstChild, secondChild);
          weight = 300 + commonPrefixShare;
       } else {
-         if (firstChild.getCall().equals("ADDED") || secondChild.getCall().equals("ADDED")) {
+         if (firstChild.getCall().equals(CauseSearchData.ADDED) || secondChild.getCall().equals(CauseSearchData.ADDED)) {
             weight = 1;
          } else {
             if (firstChild.getMethod().equals(secondChild.getMethod())) {
