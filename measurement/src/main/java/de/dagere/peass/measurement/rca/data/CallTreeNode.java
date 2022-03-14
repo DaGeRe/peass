@@ -139,10 +139,10 @@ public class CallTreeNode extends BasicNode {
          throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
       }
       if (otherVersionNode.getCall().equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersion())) {
-         throw new RuntimeException("Added methods may not contain data");
+         throw new RuntimeException("Added methods may not contain data, trying to add data for " + version + ", node: " + kiekerPattern);
       }
       if (call.equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersionOld())) {
-         throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
+         throw new RuntimeException("Added methods may not contain data, trying to add data for " + version + ", node: " + kiekerPattern);
       }
    }
 
