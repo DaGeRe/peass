@@ -2,6 +2,8 @@ package de.dagere.peass.measurement.rca.analyzer;
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.hamcrest.core.IsIterableContaining;
+import org.hamcrest.core.IsSame;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -12,14 +14,18 @@ public class TestCompleteTreeAnalyzer {
 
    @Test
    public void testEqualTree() {
-      final TreeBuilder predecessorBuilder = new TreeBuilder();
-      CallTreeNode root = predecessorBuilder.getRoot();
-      CallTreeNode rootPredecessor = predecessorBuilder.getRoot();
+      final TreeBuilder versionBuilder = new TreeBuilder();
+      CallTreeNode root = versionBuilder.getRoot();
+      CallTreeNode rootPredecessor = new TreeBuilder().getRoot();
 
       CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(root, rootPredecessor);
 
       MatcherAssert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.emptyCollectionOf(CallTreeNode.class));
-      MatcherAssert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(predecessorBuilder.getRoot(), predecessorBuilder.getA()));
+      MatcherAssert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(versionBuilder.getRoot(), versionBuilder.getA()));
+      
+      MatcherAssert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.not(
+            IsIterableContaining.hasItem(
+            IsSame.sameInstance(versionBuilder.getA()))));
    }
 
    @Test
