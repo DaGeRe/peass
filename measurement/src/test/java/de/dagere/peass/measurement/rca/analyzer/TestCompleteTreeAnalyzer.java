@@ -1,10 +1,9 @@
 package de.dagere.peass.measurement.rca.analyzer;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.helper.TreeBuilder;
 import de.dagere.peass.measurement.rca.helper.TreeBuilderBig;
@@ -19,8 +18,8 @@ public class TestCompleteTreeAnalyzer {
 
       CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(root, rootPredecessor);
 
-      Assert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.emptyCollectionOf(CallTreeNode.class));
-      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(predecessorBuilder.getRoot(), predecessorBuilder.getA()));
+      MatcherAssert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.emptyCollectionOf(CallTreeNode.class));
+      MatcherAssert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(predecessorBuilder.getRoot(), predecessorBuilder.getA()));
    }
 
    @Test
@@ -31,8 +30,8 @@ public class TestCompleteTreeAnalyzer {
 
       CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(root, rootPredecessor);
 
-      Assert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.hasItem(bigBuilder.getB2()));
-      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
+      MatcherAssert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.hasItem(bigBuilder.getB2()));
+      MatcherAssert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
    }
 
    @Test
@@ -43,7 +42,7 @@ public class TestCompleteTreeAnalyzer {
 
       CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(root, rootPredecessor);
 
-      Assert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.hasItem(bigBuilder.getB2()));
-      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
+      MatcherAssert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.hasItem(bigBuilder.getB2()));
+      MatcherAssert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
    }
 }
