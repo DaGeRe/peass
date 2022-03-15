@@ -94,7 +94,7 @@ If you use Peass for research, please cite `Reichelt, David Georg, Stefan Kühne
 
 # License
 
-Peass is **licensed** under the **[MIT License]** and **[AGPL License]**. This means you can use Peass under the conditions of one of this licenses, but future forks might choose to only continue using one of these licenses.
+Peass is **licensed** under the **[MIT License]** and **[AGPL License]**. This means you can use Peass under the conditions of one of these licenses, but future forks might choose to only continue using one of these licenses.
 
 [MIT License]: https://github.com/DaGeRe/peass/blob/main/LICSENSE.MIT
 [AGPL License]: https://github.com/DaGeRe/peass/blob/main/LICENSE.AGPL
