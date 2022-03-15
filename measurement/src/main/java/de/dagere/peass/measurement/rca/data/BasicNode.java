@@ -2,6 +2,8 @@ package de.dagere.peass.measurement.rca.data;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 
 /**
@@ -53,6 +55,7 @@ public abstract class BasicNode {
       }
    }
 
+   @JsonInclude(JsonInclude.Include.NON_NULL)
    public String getModule() {
       return module;
    }
