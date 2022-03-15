@@ -21,7 +21,7 @@ public class KiekerConfigMixin {
    public boolean notUseSelectiveInstrumentation = false;
 
    @Option(names = { "-useAggregation",
-         "--useAggregation" }, description = "Use aggregation (only record every nth invocation of method - may reduce measurement noise)")
+         "--useAggregation" }, description = "Use aggregation (aggregate the measured values immediately in the system under test, instead of summing them up after the execution)")
    public boolean useAggregation = false;
 
    @Option(names = { "-useExtraction", "--useExtraction" }, description = "Extract methods when using source instrumentation")
