@@ -4,6 +4,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsIterableContaining;
 import org.hamcrest.core.IsSame;
+import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -50,5 +51,7 @@ public class TestCompleteTreeAnalyzer {
 
       MatcherAssert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.hasItem(bigBuilder.getB2()));
       MatcherAssert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
+      
+      Assert.assertNotNull(bigBuilder.getB2().getOtherKiekerPattern());
    }
 }
