@@ -82,6 +82,10 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       if (kiekerConfigMixin.isUseAggregation() && measurementConfiguration.getKiekerConfig().getRecord() == AllowedKiekerRecord.OPERATIONEXECUTION) {
          throw new RuntimeException("Aggregation and OperationExecutionRecord can not be combined!");
       }
+      
+      if (!kiekerConfigMixin.isUseAggregation() && measurementConfiguration.getKiekerConfig().getRecord() == AllowedKiekerRecord.DURATION) {
+         throw new RuntimeException("Non-aggregation and duration record cannot be combined, since duration records make it impossible to detect place in call tree");
+      }
 
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders, new EnvironmentVariables());
