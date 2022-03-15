@@ -79,7 +79,7 @@ public class OperationExecutionRCAStage extends AbstractTraceProcessingStage<Exe
       CallTreeNode node = measuredNodes.get(lookupindex);
       if (node != null) {
          // Get duration in mikroseconds - Kieker produces nanoseconds
-         final long duration = (execution.getTout() - execution.getTin()) / 1000;
+         final long duration = (execution.getTout() - execution.getTin());
          node.addMeasurement(version, duration);
       } else {
          LOG.error("Did not find {} ESS: {} Eoi: {}", kiekerPattern, execution.getEss(), execution.getEoi());

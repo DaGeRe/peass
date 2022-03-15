@@ -41,7 +41,7 @@ public class DurationRCAStage extends AbstractTraceAnalysisStage<DurationRecord>
       CallTreeNode node = measuredNodes.get(kiekerPattern);
       if (node != null) {
          // Get duration in mikroseconds - Kieker produces nanoseconds
-         final long duration = (execution.getTout() - execution.getTin()) / 1000;
+         final long duration = (execution.getTout() - execution.getTin());
          node.addMeasurement(version, duration);
       }
    }
