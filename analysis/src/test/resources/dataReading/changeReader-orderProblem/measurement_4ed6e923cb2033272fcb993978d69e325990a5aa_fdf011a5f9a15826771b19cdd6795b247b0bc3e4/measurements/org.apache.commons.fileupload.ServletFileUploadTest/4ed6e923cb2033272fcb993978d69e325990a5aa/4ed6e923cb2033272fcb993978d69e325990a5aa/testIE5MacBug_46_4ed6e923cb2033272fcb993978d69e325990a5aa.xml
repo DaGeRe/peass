@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testIE5MacBug">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647103452204">
+     <value>4.432042575E7</value>
+     <deviation>0.5318518732866535</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>2.0624179E7</min>
+     <max>1.22624834E8</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647103450912">122624834</value>
+      <value start="1647103451035">59040875</value>
+      <value start="1647103451094">47108126</value>
+      <value start="1647103451141">31419851</value>
+      <value start="1647103451173">50499445</value>
+      <value start="1647103451223">55202637</value>
+      <value start="1647103451278">42426263</value>
+      <value start="1647103451321">58391356</value>
+      <value start="1647103451379">67856374</value>
+      <value start="1647103451447">39763452</value>
+      <value start="1647103451487">36027464</value>
+      <value start="1647103451523">40380129</value>
+      <value start="1647103451563">24222696</value>
+      <value start="1647103451588">24815203</value>
+      <value start="1647103451613">22376952</value>
+      <value start="1647103451635">51934639</value>
+      <value start="1647103451687">20624179</value>
+      <value start="1647103451708">21006587</value>
+      <value start="1647103451729">20726507</value>
+      <value start="1647103451749">49960946</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

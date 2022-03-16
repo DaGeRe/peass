@@ -11,13 +11,17 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 
 public class TreeBuilder {
+   
+   public static final String VERSION_OLD = "000001~1";
+   public static final String VERSION = "000001";
+   
    protected final CallTreeNode root, a, b, c, constructor;
 
    private CallTreeNode d;
    private CallTreeNode e;
 
-   protected String versionPredecessor = "000001~1";
-   protected String version = "000001";
+   protected String versionPredecessor = VERSION_OLD;
+   protected String version = VERSION;
 
    private boolean useFullLogAPI = true;
    private boolean addOutlier = false;
@@ -30,6 +34,9 @@ public class TreeBuilder {
 
    public TreeBuilder(final MeasurementConfig config, final boolean useFullLogAPI) {
       this.config = config;
+      config.getExecutionConfig().setVersionOld(VERSION_OLD);
+      config.getExecutionConfig().setVersion(VERSION);
+      
       this.useFullLogAPI = useFullLogAPI;
 
       root = new CallTreeNode("Test#test", "public void Test.test()", "public void Test.test()", config);

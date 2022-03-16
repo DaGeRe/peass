@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testIE5MacBug">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647103303128">
+     <value>4.91453071E7</value>
+     <deviation>0.5886464147538647</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>1.5189281E7</min>
+     <max>1.32676077E8</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647103301735">132676077</value>
+      <value start="1647103301867">57846636</value>
+      <value start="1647103301925">57627886</value>
+      <value start="1647103301983">32191727</value>
+      <value start="1647103302015">45291076</value>
+      <value start="1647103302060">50304878</value>
+      <value start="1647103302111">57292998</value>
+      <value start="1647103302168">96523351</value>
+      <value start="1647103302265">60644767</value>
+      <value start="1647103302325">42573024</value>
+      <value start="1647103302368">41241937</value>
+      <value start="1647103302409">66889007</value>
+      <value start="1647103302476">27914841</value>
+      <value start="1647103302504">30302403</value>
+      <value start="1647103302534">70755144</value>
+      <value start="1647103302605">16828237</value>
+      <value start="1647103302622">15214531</value>
+      <value start="1647103302637">15189281</value>
+      <value start="1647103302653">47844718</value>
+      <value start="1647103302700">17753623</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

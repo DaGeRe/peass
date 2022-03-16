@@ -138,7 +138,7 @@ public class MultipleVMTestUtil {
       final XMLDataLoader fullDataLoader = new XMLDataLoader(summaryResultFile);
       final Kopemedata fullResultData = fullDataLoader.getFullData();
       if (fullResultData.getTestcases().getTestcase().size() == 0) {
-         fullResultData.getTestcases().setClazz(testcase.getClazz());
+         fullResultData.getTestcases().setClazz(testcase.getClassWithModule());
          fullResultData.getTestcases().getTestcase().add(new TestcaseType());
          fullResultData.getTestcases().getTestcase().get(0).setName(testcase.getMethod());
       }

@@ -79,8 +79,12 @@ public class RootCauseAnalysis extends DependencyTestStarter {
 
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, causeSearchConfigMixin);
 
-      if (kiekerConfigMixin.isUseAggregation() && measurementConfiguration.getKiekerConfig().getRecord() == AllowedKiekerRecord.OPERATIONEXECUTION) {
+      if (!kiekerConfigMixin.isNotUseAggregation() && measurementConfiguration.getKiekerConfig().getRecord() == AllowedKiekerRecord.OPERATIONEXECUTION) {
          throw new RuntimeException("Aggregation and OperationExecutionRecord can not be combined!");
+      }
+
+      if (kiekerConfigMixin.isNotUseAggregation() && measurementConfiguration.getKiekerConfig().getRecord() == AllowedKiekerRecord.DURATION) {
+         throw new RuntimeException("Non-aggregation and duration record cannot be combined, since duration records make it impossible to detect place in call tree");
       }
 
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
@@ -97,7 +101,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       measurementConfiguration.setUseKieker(true);
       measurementConfiguration.getExecutionConfig().setVersion(version);
       measurementConfiguration.getExecutionConfig().setVersionOld(predecessor);
-      
+
       if (causeSearchConfigMixin.getStrategy().equals(RCAStrategy.COMPLETE)) {
          measurementConfiguration.getKiekerConfig().setEnableAdaptiveMonitoring(false);
       } else {
@@ -122,7 +126,7 @@ public class RootCauseAnalysis extends DependencyTestStarter {
       if (measurementConfiguration.getKiekerConfig().isOnlyOneCallRecording()) {
          throw new RuntimeException("isOnlyOneCallRecording is not allowed to be set to true for RCA!");
       }
-      
+
       EnvironmentVariables env = reader.getEnv();
       final CauseSearcher tester;
       final CauseTester measurer = new CauseTester(alternateFolders, measurementConfiguration, causeSearcherConfig, env);

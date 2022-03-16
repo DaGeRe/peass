@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testFILEUPLOAD62">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647098840320">
+     <value>4.3906703349999994E7</value>
+     <deviation>0.5053677280626171</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>1.8579806E7</min>
+     <max>1.20097438E8</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647098839038">120097438</value>
+      <value start="1647098839158">56955691</value>
+      <value start="1647098839215">42063755</value>
+      <value start="1647098839257">43727718</value>
+      <value start="1647098839301">49379792</value>
+      <value start="1647098839350">24427171</value>
+      <value start="1647098839375">35532658</value>
+      <value start="1647098839410">28329140</value>
+      <value start="1647098839439">39562529</value>
+      <value start="1647098839478">41857103</value>
+      <value start="1647098839520">41099813</value>
+      <value start="1647098839561">50995446</value>
+      <value start="1647098839612">46564975</value>
+      <value start="1647098839659">37123732</value>
+      <value start="1647098839696">50735086</value>
+      <value start="1647098839747">72432780</value>
+      <value start="1647098839819">33502322</value>
+      <value start="1647098839853">22792676</value>
+      <value start="1647098839876">22374436</value>
+      <value start="1647098839898">18579806</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

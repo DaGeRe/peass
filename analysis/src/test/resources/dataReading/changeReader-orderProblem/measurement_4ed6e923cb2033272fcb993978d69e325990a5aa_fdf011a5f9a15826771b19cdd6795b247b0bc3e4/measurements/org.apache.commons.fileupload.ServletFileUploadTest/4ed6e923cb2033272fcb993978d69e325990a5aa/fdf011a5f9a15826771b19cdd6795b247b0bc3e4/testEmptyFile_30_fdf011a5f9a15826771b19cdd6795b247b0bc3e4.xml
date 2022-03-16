@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testEmptyFile">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647097573717">
+     <value>2.13264795E7</value>
+     <deviation>0.711103768280909</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>9935796.0</min>
+     <max>7.9160166E7</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647097572910">79160166</value>
+      <value start="1647097572990">25390620</value>
+      <value start="1647097573015">22515271</value>
+      <value start="1647097573037">18487931</value>
+      <value start="1647097573056">20743354</value>
+      <value start="1647097573077">16662455</value>
+      <value start="1647097573093">15168226</value>
+      <value start="1647097573109">18753379</value>
+      <value start="1647097573127">11617693</value>
+      <value start="1647097573139">11571494</value>
+      <value start="1647097573151">12167529</value>
+      <value start="1647097573163">20199688</value>
+      <value start="1647097573183">21663308</value>
+      <value start="1647097573205">19357914</value>
+      <value start="1647097573224">18067744</value>
+      <value start="1647097573242">10955868</value>
+      <value start="1647097573253">37400330</value>
+      <value start="1647097573291">26414481</value>
+      <value start="1647097573317">10296343</value>
+      <value start="1647097573328">9935796</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

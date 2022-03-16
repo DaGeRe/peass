@@ -1,0 +1,2429 @@
+{
+  "url" : "/home/reichelt/daten4/diss/repos/tav-demo/commons-fileupload",
+  "testGoal" : null,
+  "initialversion" : {
+    "version" : "fdf011a5f9a15826771b19cdd6795b247b0bc3e4",
+    "jdk" : 8,
+    "initialDependencies" : {
+      "org.apache.commons.fileupload.ServletFileUploadTest#testEmptyFile" : {
+        "entities" : [ {
+          "clazz" : "org.apache.commons.fileupload.FileUpload",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileItemFactory" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUpload",
+          "method" : "getFileItemFactory",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getBoundary",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getFieldName",
+          "parameters" : [ "java.util.Map" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getFileName",
+          "parameters" : [ "java.util.Map" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getHeader",
+          "parameters" : [ "java.util.Map", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getItemIterator",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseEndOfLine",
+          "parameters" : [ "java.lang.String", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseHeaderLine",
+          "parameters" : [ "java.util.Map", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseHeaders",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseRequest",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileUploadBase", "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "findNextItem",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "hasNext",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "next",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl", "java.lang.String", "java.lang.String", "java.lang.String", "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "close",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getFieldName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "isFormField",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "openStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadTestCase",
+          "method" : "parseUpload",
+          "parameters" : [ "byte[]", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadTestCase",
+          "method" : "parseUpload",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "byte[]", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "int", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getCharacterEncoding",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getContentLength",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest$MyServletInputStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest$MyServletInputStream",
+          "method" : "read",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "byte[]", "int", "org.apache.commons.fileupload.MultipartStream$ProgressNotifier" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "byte[]", "org.apache.commons.fileupload.MultipartStream$ProgressNotifier" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "arrayequals",
+          "parameters" : [ "byte[]", "byte[]", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "discardBodyData",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "findByte",
+          "parameters" : [ "byte", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "findSeparator",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "newInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readBodyData",
+          "parameters" : [ "java.io.OutputStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readBoundary",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readByte",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readHeaders",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "setHeaderEncoding",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "skipPreamble",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.MultipartStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "available",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "close",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "findSeparator",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "isClosed",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "makeAvailable",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "read",
+          "parameters" : [ "byte[]", "int", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.ProgressListener", "long" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "noteBytesRead",
+          "parameters" : [ "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "noteItem",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "notifyListener",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "getToken",
+          "parameters" : [ "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "hasChar",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "isOneOf",
+          "parameters" : [ "char", "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "char[]", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "char[]", "int", "int", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "java.lang.String", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parseQuotedToken",
+          "parameters" : [ "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parseToken",
+          "parameters" : [ "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "setLowerCaseNames",
+          "parameters" : [ "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ServletFileUploadTest",
+          "method" : "testEmptyFile",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "<init>",
+          "parameters" : [ "java.lang.String", "java.lang.String", "boolean", "java.lang.String", "int", "java.io.File" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "finalize",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "get",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getCharSet",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getOutputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getString",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getTempFile",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getUniqueId",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "isFormField",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "isInMemory",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItemFactory",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItemFactory",
+          "method" : "createItem",
+          "parameters" : [ "java.lang.String", "java.lang.String", "boolean", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletFileUpload",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileItemFactory" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletFileUpload",
+          "method" : "parseRequest",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "<init>",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getCharacterEncoding",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getContentLength",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.util.Streams",
+          "method" : "copy",
+          "parameters" : [ "java.io.InputStream", "java.io.OutputStream", "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.util.Streams",
+          "method" : "copy",
+          "parameters" : [ "java.io.InputStream", "java.io.OutputStream", "boolean", "byte[]" ]
+        } ]
+      },
+      "org.apache.commons.fileupload.ServletFileUploadTest#testFILEUPLOAD62" : {
+        "entities" : [ {
+          "clazz" : "org.apache.commons.fileupload.FileUpload",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileItemFactory" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUpload",
+          "method" : "getFileItemFactory",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getBoundary",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getFieldName",
+          "parameters" : [ "java.util.Map" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getFileName",
+          "parameters" : [ "java.util.Map" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getHeader",
+          "parameters" : [ "java.util.Map", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getItemIterator",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseEndOfLine",
+          "parameters" : [ "java.lang.String", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseHeaderLine",
+          "parameters" : [ "java.util.Map", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseHeaders",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseRequest",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileUploadBase", "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "findNextItem",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "hasNext",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "next",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl", "java.lang.String", "java.lang.String", "java.lang.String", "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "close",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getFieldName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "isFormField",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "openStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadTestCase",
+          "method" : "parseUpload",
+          "parameters" : [ "byte[]", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "byte[]", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "int", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getCharacterEncoding",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getContentLength",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest$MyServletInputStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest$MyServletInputStream",
+          "method" : "read",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "byte[]", "int", "org.apache.commons.fileupload.MultipartStream$ProgressNotifier" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "byte[]", "org.apache.commons.fileupload.MultipartStream$ProgressNotifier" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "arrayequals",
+          "parameters" : [ "byte[]", "byte[]", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "discardBodyData",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "findByte",
+          "parameters" : [ "byte", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "findSeparator",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "newInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readBodyData",
+          "parameters" : [ "java.io.OutputStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readBoundary",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readByte",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readHeaders",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "setBoundary",
+          "parameters" : [ "byte[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "setHeaderEncoding",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "skipPreamble",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.MultipartStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "available",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "close",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "findSeparator",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "isClosed",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "makeAvailable",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "read",
+          "parameters" : [ "byte[]", "int", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.ProgressListener", "long" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "noteBytesRead",
+          "parameters" : [ "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "noteItem",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "notifyListener",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "getToken",
+          "parameters" : [ "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "hasChar",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "isOneOf",
+          "parameters" : [ "char", "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "char[]", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "char[]", "int", "int", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "java.lang.String", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parseQuotedToken",
+          "parameters" : [ "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parseToken",
+          "parameters" : [ "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "setLowerCaseNames",
+          "parameters" : [ "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ServletFileUploadTest",
+          "method" : "testFILEUPLOAD62",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "<init>",
+          "parameters" : [ "java.lang.String", "java.lang.String", "boolean", "java.lang.String", "int", "java.io.File" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "finalize",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "get",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getFieldName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getOutputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getTempFile",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getUniqueId",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "isInMemory",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItemFactory",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItemFactory",
+          "method" : "createItem",
+          "parameters" : [ "java.lang.String", "java.lang.String", "boolean", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletFileUpload",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileItemFactory" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletFileUpload",
+          "method" : "parseRequest",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "<init>",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getCharacterEncoding",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getContentLength",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.util.Streams",
+          "method" : "copy",
+          "parameters" : [ "java.io.InputStream", "java.io.OutputStream", "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.util.Streams",
+          "method" : "copy",
+          "parameters" : [ "java.io.InputStream", "java.io.OutputStream", "boolean", "byte[]" ]
+        } ]
+      },
+      "org.apache.commons.fileupload.ServletFileUploadTest#testFileUpload" : {
+        "entities" : [ {
+          "clazz" : "org.apache.commons.fileupload.FileUpload",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileItemFactory" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUpload",
+          "method" : "getFileItemFactory",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getBoundary",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getFieldName",
+          "parameters" : [ "java.util.Map" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getFileName",
+          "parameters" : [ "java.util.Map" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getHeader",
+          "parameters" : [ "java.util.Map", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getItemIterator",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseEndOfLine",
+          "parameters" : [ "java.lang.String", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseHeaderLine",
+          "parameters" : [ "java.util.Map", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseHeaders",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseRequest",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileUploadBase", "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "findNextItem",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "hasNext",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "next",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl", "java.lang.String", "java.lang.String", "java.lang.String", "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "close",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getFieldName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "isFormField",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "openStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadTestCase",
+          "method" : "parseUpload",
+          "parameters" : [ "byte[]", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadTestCase",
+          "method" : "parseUpload",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "byte[]", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "int", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getCharacterEncoding",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getContentLength",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest$MyServletInputStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest$MyServletInputStream",
+          "method" : "read",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "byte[]", "int", "org.apache.commons.fileupload.MultipartStream$ProgressNotifier" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "byte[]", "org.apache.commons.fileupload.MultipartStream$ProgressNotifier" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "arrayequals",
+          "parameters" : [ "byte[]", "byte[]", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "discardBodyData",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "findByte",
+          "parameters" : [ "byte", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "findSeparator",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "newInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readBodyData",
+          "parameters" : [ "java.io.OutputStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readBoundary",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readByte",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readHeaders",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "setHeaderEncoding",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "skipPreamble",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.MultipartStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "available",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "close",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "findSeparator",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "isClosed",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "makeAvailable",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "read",
+          "parameters" : [ "byte[]", "int", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.ProgressListener", "long" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "noteBytesRead",
+          "parameters" : [ "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "noteItem",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "notifyListener",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "getToken",
+          "parameters" : [ "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "hasChar",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "isOneOf",
+          "parameters" : [ "char", "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "char[]", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "char[]", "int", "int", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "java.lang.String", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parseQuotedToken",
+          "parameters" : [ "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parseToken",
+          "parameters" : [ "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "setLowerCaseNames",
+          "parameters" : [ "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ServletFileUploadTest",
+          "method" : "testFileUpload",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "<init>",
+          "parameters" : [ "java.lang.String", "java.lang.String", "boolean", "java.lang.String", "int", "java.io.File" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "finalize",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "get",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getCharSet",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getFieldName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getOutputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getString",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getTempFile",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getUniqueId",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "isFormField",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "isInMemory",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItemFactory",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItemFactory",
+          "method" : "createItem",
+          "parameters" : [ "java.lang.String", "java.lang.String", "boolean", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletFileUpload",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileItemFactory" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletFileUpload",
+          "method" : "parseRequest",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "<init>",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getCharacterEncoding",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getContentLength",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.util.Streams",
+          "method" : "copy",
+          "parameters" : [ "java.io.InputStream", "java.io.OutputStream", "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.util.Streams",
+          "method" : "copy",
+          "parameters" : [ "java.io.InputStream", "java.io.OutputStream", "boolean", "byte[]" ]
+        } ]
+      },
+      "org.apache.commons.fileupload.ServletFileUploadTest#testFilenameCaseSensitivity" : {
+        "entities" : [ {
+          "clazz" : "org.apache.commons.fileupload.FileUpload",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileItemFactory" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUpload",
+          "method" : "getFileItemFactory",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getBoundary",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getFieldName",
+          "parameters" : [ "java.util.Map" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getFileName",
+          "parameters" : [ "java.util.Map" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getHeader",
+          "parameters" : [ "java.util.Map", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getItemIterator",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseEndOfLine",
+          "parameters" : [ "java.lang.String", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseHeaderLine",
+          "parameters" : [ "java.util.Map", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseHeaders",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseRequest",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileUploadBase", "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "findNextItem",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "hasNext",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "next",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl", "java.lang.String", "java.lang.String", "java.lang.String", "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "close",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getFieldName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "isFormField",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "openStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadTestCase",
+          "method" : "parseUpload",
+          "parameters" : [ "byte[]", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadTestCase",
+          "method" : "parseUpload",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "byte[]", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "int", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getCharacterEncoding",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getContentLength",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest$MyServletInputStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest$MyServletInputStream",
+          "method" : "read",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "byte[]", "int", "org.apache.commons.fileupload.MultipartStream$ProgressNotifier" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "byte[]", "org.apache.commons.fileupload.MultipartStream$ProgressNotifier" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "arrayequals",
+          "parameters" : [ "byte[]", "byte[]", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "discardBodyData",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "findByte",
+          "parameters" : [ "byte", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "findSeparator",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "newInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readBodyData",
+          "parameters" : [ "java.io.OutputStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readBoundary",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readByte",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readHeaders",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "setHeaderEncoding",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "skipPreamble",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.MultipartStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "available",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "close",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "findSeparator",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "isClosed",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "makeAvailable",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "read",
+          "parameters" : [ "byte[]", "int", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.ProgressListener", "long" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "noteBytesRead",
+          "parameters" : [ "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "noteItem",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "notifyListener",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "getToken",
+          "parameters" : [ "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "hasChar",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "isOneOf",
+          "parameters" : [ "char", "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "char[]", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "char[]", "int", "int", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "java.lang.String", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parseQuotedToken",
+          "parameters" : [ "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parseToken",
+          "parameters" : [ "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "setLowerCaseNames",
+          "parameters" : [ "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ServletFileUploadTest",
+          "method" : "testFilenameCaseSensitivity",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "<init>",
+          "parameters" : [ "java.lang.String", "java.lang.String", "boolean", "java.lang.String", "int", "java.io.File" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "finalize",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getFieldName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getOutputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getTempFile",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getUniqueId",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItemFactory",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItemFactory",
+          "method" : "createItem",
+          "parameters" : [ "java.lang.String", "java.lang.String", "boolean", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletFileUpload",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileItemFactory" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletFileUpload",
+          "method" : "parseRequest",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "<init>",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getCharacterEncoding",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getContentLength",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.util.Streams",
+          "method" : "copy",
+          "parameters" : [ "java.io.InputStream", "java.io.OutputStream", "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.util.Streams",
+          "method" : "copy",
+          "parameters" : [ "java.io.InputStream", "java.io.OutputStream", "boolean", "byte[]" ]
+        } ]
+      },
+      "org.apache.commons.fileupload.ServletFileUploadTest#testFoldedHeaders" : {
+        "entities" : [ {
+          "clazz" : "org.apache.commons.fileupload.FileUpload",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileItemFactory" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUpload",
+          "method" : "getFileItemFactory",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getBoundary",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getFieldName",
+          "parameters" : [ "java.util.Map" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getFileName",
+          "parameters" : [ "java.util.Map" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getHeader",
+          "parameters" : [ "java.util.Map", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getItemIterator",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseEndOfLine",
+          "parameters" : [ "java.lang.String", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseHeaderLine",
+          "parameters" : [ "java.util.Map", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseHeaders",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseRequest",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileUploadBase", "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "findNextItem",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "hasNext",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "next",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl", "java.lang.String", "java.lang.String", "java.lang.String", "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "close",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getFieldName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "isFormField",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "openStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadTestCase",
+          "method" : "parseUpload",
+          "parameters" : [ "byte[]", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadTestCase",
+          "method" : "parseUpload",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "byte[]", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "int", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getCharacterEncoding",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getContentLength",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest$MyServletInputStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest$MyServletInputStream",
+          "method" : "read",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "byte[]", "int", "org.apache.commons.fileupload.MultipartStream$ProgressNotifier" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "byte[]", "org.apache.commons.fileupload.MultipartStream$ProgressNotifier" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "arrayequals",
+          "parameters" : [ "byte[]", "byte[]", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "discardBodyData",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "findByte",
+          "parameters" : [ "byte", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "findSeparator",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "newInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readBodyData",
+          "parameters" : [ "java.io.OutputStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readBoundary",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readByte",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readHeaders",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "setHeaderEncoding",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "skipPreamble",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.MultipartStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "available",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "close",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "findSeparator",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "isClosed",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "makeAvailable",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "read",
+          "parameters" : [ "byte[]", "int", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.ProgressListener", "long" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "noteBytesRead",
+          "parameters" : [ "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "noteItem",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "notifyListener",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "getToken",
+          "parameters" : [ "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "hasChar",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "isOneOf",
+          "parameters" : [ "char", "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "char[]", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "char[]", "int", "int", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "java.lang.String", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parseQuotedToken",
+          "parameters" : [ "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parseToken",
+          "parameters" : [ "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "setLowerCaseNames",
+          "parameters" : [ "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ServletFileUploadTest",
+          "method" : "testFoldedHeaders",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "<init>",
+          "parameters" : [ "java.lang.String", "java.lang.String", "boolean", "java.lang.String", "int", "java.io.File" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "finalize",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "get",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getCharSet",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getFieldName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getOutputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getString",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getTempFile",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getUniqueId",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "isFormField",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "isInMemory",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItemFactory",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItemFactory",
+          "method" : "createItem",
+          "parameters" : [ "java.lang.String", "java.lang.String", "boolean", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletFileUpload",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileItemFactory" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletFileUpload",
+          "method" : "parseRequest",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "<init>",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getCharacterEncoding",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getContentLength",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.util.Streams",
+          "method" : "copy",
+          "parameters" : [ "java.io.InputStream", "java.io.OutputStream", "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.util.Streams",
+          "method" : "copy",
+          "parameters" : [ "java.io.InputStream", "java.io.OutputStream", "boolean", "byte[]" ]
+        } ]
+      },
+      "org.apache.commons.fileupload.ServletFileUploadTest#testIE5MacBug" : {
+        "entities" : [ {
+          "clazz" : "org.apache.commons.fileupload.FileUpload",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileItemFactory" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUpload",
+          "method" : "getFileItemFactory",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getBoundary",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getFieldName",
+          "parameters" : [ "java.util.Map" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getFileName",
+          "parameters" : [ "java.util.Map" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getHeader",
+          "parameters" : [ "java.util.Map", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getItemIterator",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseEndOfLine",
+          "parameters" : [ "java.lang.String", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseHeaderLine",
+          "parameters" : [ "java.util.Map", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseHeaders",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseRequest",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileUploadBase", "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "findNextItem",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "hasNext",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "next",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl", "java.lang.String", "java.lang.String", "java.lang.String", "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "close",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getFieldName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "getName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "isFormField",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl",
+          "method" : "openStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadTestCase",
+          "method" : "parseUpload",
+          "parameters" : [ "byte[]", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadTestCase",
+          "method" : "parseUpload",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "byte[]", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "int", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getCharacterEncoding",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getContentLength",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest$MyServletInputStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest$MyServletInputStream",
+          "method" : "read",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "byte[]", "int", "org.apache.commons.fileupload.MultipartStream$ProgressNotifier" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "byte[]", "org.apache.commons.fileupload.MultipartStream$ProgressNotifier" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "arrayequals",
+          "parameters" : [ "byte[]", "byte[]", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "discardBodyData",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "findByte",
+          "parameters" : [ "byte", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "findSeparator",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "newInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readBodyData",
+          "parameters" : [ "java.io.OutputStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readBoundary",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readByte",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "readHeaders",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "setHeaderEncoding",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream",
+          "method" : "skipPreamble",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.MultipartStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "available",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "close",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "findSeparator",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "isClosed",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "makeAvailable",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ItemInputStream",
+          "method" : "read",
+          "parameters" : [ "byte[]", "int", "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.ProgressListener", "long" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "noteBytesRead",
+          "parameters" : [ "int" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "noteItem",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MultipartStream$ProgressNotifier",
+          "method" : "notifyListener",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "getToken",
+          "parameters" : [ "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "hasChar",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "isOneOf",
+          "parameters" : [ "char", "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "char[]", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "char[]", "int", "int", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "java.lang.String", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parseQuotedToken",
+          "parameters" : [ "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parseToken",
+          "parameters" : [ "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "setLowerCaseNames",
+          "parameters" : [ "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ServletFileUploadTest",
+          "method" : "testIE5MacBug",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "<init>",
+          "parameters" : [ "java.lang.String", "java.lang.String", "boolean", "java.lang.String", "int", "java.io.File" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "finalize",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "get",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getCharSet",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getFieldName",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getOutputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getString",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getTempFile",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "getUniqueId",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "isFormField",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItem",
+          "method" : "isInMemory",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItemFactory",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItemFactory",
+          "method" : "createItem",
+          "parameters" : [ "java.lang.String", "java.lang.String", "boolean", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletFileUpload",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileItemFactory" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletFileUpload",
+          "method" : "parseRequest",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "<init>",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getCharacterEncoding",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getContentLength",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.util.Streams",
+          "method" : "copy",
+          "parameters" : [ "java.io.InputStream", "java.io.OutputStream", "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.util.Streams",
+          "method" : "copy",
+          "parameters" : [ "java.io.InputStream", "java.io.OutputStream", "boolean", "byte[]" ]
+        } ]
+      },
+      "org.apache.commons.fileupload.ServletFileUploadTest#testWithInvalidRequest" : {
+        "entities" : [ {
+          "clazz" : "org.apache.commons.fileupload.DefaultFileItemFactory",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.DiskFileUpload",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getBoundary",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getItemIterator",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseRequest",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseRequest",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileUploadBase", "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadException",
+          "method" : "<init>",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadException",
+          "method" : "<init>",
+          "parameters" : [ "java.lang.String", "java.lang.Throwable" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.HttpServletRequestFactory",
+          "method" : "createInvalidHttpServletRequest",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "byte[]", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "int", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getCharacterEncoding",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getInputStream",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest$MyServletInputStream",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "getToken",
+          "parameters" : [ "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "hasChar",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "isOneOf",
+          "parameters" : [ "char", "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "char[]", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "char[]", "int", "int", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parse",
+          "parameters" : [ "java.lang.String", "char" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "parseToken",
+          "parameters" : [ "char[]" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ParameterParser",
+          "method" : "setLowerCaseNames",
+          "parameters" : [ "boolean" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ServletFileUploadTest",
+          "method" : "testWithInvalidRequest",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItemFactory",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "<init>",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getCharacterEncoding",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getInputStream",
+          "parameters" : [ ]
+        } ]
+      },
+      "org.apache.commons.fileupload.ServletFileUploadTest#testWithNullContentType" : {
+        "entities" : [ {
+          "clazz" : "org.apache.commons.fileupload.DefaultFileItemFactory",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.DiskFileUpload",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "getItemIterator",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseRequest",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase",
+          "method" : "parseRequest",
+          "parameters" : [ "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl",
+          "method" : "<init>",
+          "parameters" : [ "org.apache.commons.fileupload.FileUploadBase", "org.apache.commons.fileupload.RequestContext" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadBase$InvalidContentTypeException",
+          "method" : "<init>",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadException",
+          "method" : "<init>",
+          "parameters" : [ "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.FileUploadException",
+          "method" : "<init>",
+          "parameters" : [ "java.lang.String", "java.lang.Throwable" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.HttpServletRequestFactory",
+          "method" : "createHttpServletRequestWithNullContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "byte[]", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "<init>",
+          "parameters" : [ "java.io.InputStream", "int", "java.lang.String" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.MockHttpServletRequest",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.ServletFileUploadTest",
+          "method" : "testWithNullContentType",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.disk.DiskFileItemFactory",
+          "method" : "<init>",
+          "parameters" : [ ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "<init>",
+          "parameters" : [ "javax.servlet.http.HttpServletRequest" ]
+        }, {
+          "clazz" : "org.apache.commons.fileupload.servlet.ServletRequestContext",
+          "method" : "getContentType",
+          "parameters" : [ ]
+        } ]
+      }
+    }
+  },
+  "versions" : {
+    "4ed6e923cb2033272fcb993978d69e325990a5aa" : {
+      "running" : true,
+      "jdk" : 8,
+      "predecessor" : "fdf011a5f9a15826771b19cdd6795b247b0bc3e4",
+      "changedClazzes" : {
+        "org.apache.commons.fileupload.FileItemIterator" : { },
+        "org.apache.commons.fileupload.FileItemStream" : { },
+        "org.apache.commons.fileupload.FileItemStream$ItemSkippedException" : { },
+        "org.apache.commons.fileupload.FileUpload" : {
+          "testcases" : {
+            "org.apache.commons.fileupload.ServletFileUploadTest" : [ "testEmptyFile", "testFILEUPLOAD62", "testFileUpload", "testFilenameCaseSensitivity", "testFoldedHeaders", "testIE5MacBug" ]
+          }
+        },
+        "org.apache.commons.fileupload.FileUploadBase" : {
+          "testcases" : {
+            "org.apache.commons.fileupload.ServletFileUploadTest" : [ "testEmptyFile", "testFILEUPLOAD62", "testFileUpload", "testFilenameCaseSensitivity", "testFoldedHeaders", "testIE5MacBug", "testWithInvalidRequest", "testWithNullContentType" ]
+          }
+        },
+        "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl" : {
+          "testcases" : {
+            "org.apache.commons.fileupload.ServletFileUploadTest" : [ "testEmptyFile", "testFILEUPLOAD62", "testFileUpload", "testFilenameCaseSensitivity", "testFoldedHeaders", "testIE5MacBug", "testWithInvalidRequest", "testWithNullContentType" ]
+          }
+        },
+        "org.apache.commons.fileupload.FileUploadBase$FileItemIteratorImpl$FileItemStreamImpl" : {
+          "testcases" : {
+            "org.apache.commons.fileupload.ServletFileUploadTest" : [ "testEmptyFile", "testFILEUPLOAD62", "testFileUpload", "testFilenameCaseSensitivity", "testFoldedHeaders", "testIE5MacBug" ]
+          }
+        },
+        "org.apache.commons.fileupload.FileUploadBase$InvalidContentTypeException" : {
+          "testcases" : {
+            "org.apache.commons.fileupload.ServletFileUploadTest" : [ "testWithNullContentType" ]
+          }
+        },
+        "org.apache.commons.fileupload.MultipartStream" : {
+          "testcases" : {
+            "org.apache.commons.fileupload.ServletFileUploadTest" : [ "testEmptyFile", "testFILEUPLOAD62", "testFileUpload", "testFilenameCaseSensitivity", "testFoldedHeaders", "testIE5MacBug" ]
+          }
+        },
+        "org.apache.commons.fileupload.MultipartStream$IllegalBoundaryException" : { },
+        "org.apache.commons.fileupload.MultipartStream$ItemInputStream" : {
+          "testcases" : {
+            "org.apache.commons.fileupload.ServletFileUploadTest" : [ "testEmptyFile", "testFILEUPLOAD62", "testFileUpload", "testFilenameCaseSensitivity", "testFoldedHeaders", "testIE5MacBug" ]
+          }
+        },
+        "org.apache.commons.fileupload.MultipartStream$MalformedStreamException" : { },
+        "org.apache.commons.fileupload.MultipartStream$ProgressNotifier" : {
+          "testcases" : {
+            "org.apache.commons.fileupload.ServletFileUploadTest" : [ "testEmptyFile", "testFILEUPLOAD62", "testFileUpload", "testFilenameCaseSensitivity", "testFoldedHeaders", "testIE5MacBug" ]
+          }
+        },
+        "org.apache.commons.fileupload.disk.DiskFileItem" : {
+          "testcases" : {
+            "org.apache.commons.fileupload.ServletFileUploadTest" : [ "testEmptyFile", "testFILEUPLOAD62", "testFileUpload", "testFilenameCaseSensitivity", "testFoldedHeaders", "testIE5MacBug" ]
+          }
+        },
+        "org.apache.commons.fileupload.portlet.PortletFileUpload" : { },
+        "org.apache.commons.fileupload.util.Closeable" : { },
+        "org.apache.commons.fileupload.util.Streams" : {
+          "testcases" : {
+            "org.apache.commons.fileupload.ServletFileUploadTest" : [ "testEmptyFile", "testFILEUPLOAD62", "testFileUpload", "testFilenameCaseSensitivity", "testFoldedHeaders", "testIE5MacBug" ]
+          }
+        }
+      }
+    }
+  },
+  "android" : false
+}
