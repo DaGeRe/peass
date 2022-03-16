@@ -46,6 +46,12 @@ public class CallTreeNode extends BasicNode {
    @JsonIgnore
    protected MeasurementConfig config;
 
+   /*
+    * Levelwise measurement maps the nodes ad-hoc for each node, and complete maps the nodes at the beginning; therefore, levelwise currently requires having the otherVersionNode
+    * and the second tree structure available.
+    * 
+    * This should be refactored, so the trees are mapped in the beginning and afterwards only one tree structure is used.
+    */
    private CallTreeNode otherVersionNode;
 
    /**
@@ -365,7 +371,7 @@ public class CallTreeNode extends BasicNode {
       }
       return false;
    }
-   
+
    private int getAllChildCount(String version) {
       int childs = 0;
       for (CallTreeNode child : children) {
