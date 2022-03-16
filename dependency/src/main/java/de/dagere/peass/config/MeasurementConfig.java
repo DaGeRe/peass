@@ -274,7 +274,6 @@ public class MeasurementConfig implements Serializable {
       return executionConfig;
    }
 
-   @JsonIgnore
    public KiekerConfig getKiekerConfig() {
       return kiekerConfig;
    }
