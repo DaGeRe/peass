@@ -29,7 +29,6 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.KiekerResultReader;
 import de.dagere.peass.testtransformation.TestTransformer;
-import de.dagere.peass.utils.Constants;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**
@@ -121,8 +120,8 @@ public class CauseTester extends AdaptiveTester {
          LOG.debug("Searching other: " + version);
          includedNodes.forEach(node -> {
             LOG.trace(node);
-            if (!node.getOtherVersionNode().getKiekerPattern().equals(CauseSearchData.ADDED)) {
-               includedPattern.add(node.getOtherVersionNode().getKiekerPattern());
+            if (!node.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {
+               includedPattern.add(node.getOtherKiekerPattern());
             }
          });
       }

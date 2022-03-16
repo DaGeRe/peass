@@ -23,7 +23,6 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
 import de.dagere.peass.measurement.statistics.bimodal.CompareData;
 import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
-import kieker.common.record.controlflow.OperationExecutionRecord;
 
 /**
  * Saves the call tree structure and measurement data of the call tree
@@ -139,13 +138,13 @@ public class CallTreeNode extends BasicNode {
    }
 
    private void checkDataAddPossible(final String version) {
-      if (otherVersionNode == null) {
+      if (getOtherKiekerPattern() == null) {
          throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
       }
-      if (otherVersionNode.getCall().equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersion())) {
+      if (getOtherKiekerPattern().equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersion())) {
          LOG.error("Error occured in version {}", version);
          LOG.error("Node: {}", kiekerPattern);
-         LOG.error("Other version node: {}", otherVersionNode.getCall());
+         LOG.error("Other version node: {}", getOtherKiekerPattern());
          throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
       }
       if (call.equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersionOld())) {
@@ -205,7 +204,9 @@ public class CallTreeNode extends BasicNode {
 
    public ChangedEntity toEntity() {
       if (call.equals(CauseSearchData.ADDED)) {
-         return otherVersionNode.toEntity();
+         String otherKiekerPattern = getOtherKiekerPattern();
+         String otherCall = otherKiekerPattern.substring(otherKiekerPattern.lastIndexOf(' '), otherKiekerPattern.indexOf('('));
+         return new ChangedEntity(otherCall);
       } else {
          final int index = call.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
          String method = call.substring(index + 1);
@@ -234,7 +235,7 @@ public class CallTreeNode extends BasicNode {
          return testcaseStatistic;
       } catch (NumberIsTooSmallException t) {
          LOG.debug("Data: " + current.getN() + " " + previous.getN());
-         final String otherCall = otherVersionNode != null ? otherVersionNode.getCall() : "Not Existing";
+         final String otherCall = getOtherKiekerPattern() != null ? getOtherKiekerPattern() : "Not Existing";
          throw new RuntimeException("Could not read " + call + " Other Version: " + otherCall, t);
       }
    }

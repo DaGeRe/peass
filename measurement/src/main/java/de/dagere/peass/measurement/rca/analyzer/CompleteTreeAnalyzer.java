@@ -12,9 +12,8 @@ public class CompleteTreeAnalyzer implements TreeAnalyzer {
    private final List<CallTreeNode> allNodesPredecessor = new LinkedList<>();
 
    public CompleteTreeAnalyzer(final CallTreeNode root, final CallTreeNode rootPredecessor) {
-      root.setOtherVersionNode(rootPredecessor);
-      rootPredecessor.setOtherVersionNode(root);
-
+      root.setOtherKiekerPattern(rootPredecessor.getKiekerPattern());
+      
       allNodesPredecessor.add(rootPredecessor);
 
       mapAllNodes(root, rootPredecessor);
