@@ -85,8 +85,6 @@ public class LevelCauseSearcherTest {
             TestConstants.SIMPLE_CAUSE_CONFIG,
             measurementConfig);
 
-      root1.setOtherVersionNode(root2);
-      root2.setOtherVersionNode(root1);
       builderPredecessor.buildMeasurements(builderPredecessor.getRoot());
 
       lcs.calculateDiffering();

@@ -29,8 +29,6 @@ public class TestRealWorld {
       final MeasurementConfig config = new MeasurementConfig(5, version, predecessor);
       CallTreeNode rootNode = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()",  config);
       CallTreeNode rootNode2 = new CallTreeNode("de.peass.MainTest#testMe", "public void de.peass.MainTest.testMe()", "public void de.peass.MainTest.testMe()",  config);
-      rootNode.setOtherVersionNode(rootNode2);
-      rootNode2.setOtherVersionNode(rootNode);
       rootNode.initVersions();
       rootNode2.initVersions();
 

@@ -1,5 +1,6 @@
 package de.dagere.peass.measurement.rca.data;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.number.IsNaN;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +21,7 @@ public class TestCallTreeStatistics {
    @Test
    public void testStatistics() {
       final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()", CONFIG);
-      final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()", CONFIG);
-      node.setOtherVersionNode(otherVersionNode);
+      node.setOtherKiekerPattern("public void de.mypackage.Test.callMethod()");
 
       node.initVersions();
       for (int vm = 0; vm < CONFIG.getVms(); vm++) {
@@ -42,8 +42,7 @@ public class TestCallTreeStatistics {
    @Test
    public void testStatisticsADDED() {
       final CallTreeNode node = new CallTreeNode(CauseSearchData.ADDED, CauseSearchData.ADDED, "public void de.mypackage.Test.callMethod()", CONFIG);
-      final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", CauseSearchData.ADDED, CONFIG);
-      node.setOtherVersionNode(otherVersionNode);
+      node.setOtherKiekerPattern("public void de.mypackage.Test.callMethod()");
 
       node.initVersions();
       for (int vm = 0; vm < CONFIG.getVms(); vm++) {
@@ -53,7 +52,7 @@ public class TestCallTreeStatistics {
       node.createStatistics("B");
 
       Assert.assertEquals(15, node.getStatistics("A").getMean(), 0.01);
-      Assert.assertThat(node.getStatistics("B").getMean(), IsNaN.notANumber());
+      MatcherAssert.assertThat(node.getStatistics("B").getMean(), IsNaN.notANumber());
 
       Assert.assertEquals(10, node.getStatistics("A").getN());
       Assert.assertEquals(0, node.getStatistics("B").getN());
@@ -66,8 +65,7 @@ public class TestCallTreeStatistics {
    @Test
    public void testStatisticsADDEDNew() {
       final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", CauseSearchData.ADDED, CONFIG);
-      final CallTreeNode otherVersionNode = new CallTreeNode(CauseSearchData.ADDED, CauseSearchData.ADDED, "public void de.mypackage.Test.callMethod()", CONFIG);
-      node.setOtherVersionNode(otherVersionNode);
+      node.setOtherKiekerPattern(CauseSearchData.ADDED);
 
       node.initVersions();
       for (int vm = 0; vm < CONFIG.getVms(); vm++) {
@@ -77,7 +75,7 @@ public class TestCallTreeStatistics {
       node.createStatistics("B");
 
       Assert.assertEquals(15, node.getStatistics("B").getMean(), 0.01);
-      Assert.assertThat(node.getStatistics("A").getMean(), IsNaN.notANumber());
+      MatcherAssert.assertThat(node.getStatistics("A").getMean(), IsNaN.notANumber());
 
       Assert.assertEquals(10, node.getStatistics("B").getN());
       Assert.assertEquals(0, node.getStatistics("A").getN());

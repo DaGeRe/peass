@@ -51,7 +51,7 @@ public class TestCompleteReading {
 
       for (final CallTreeNode node : includedNodes) {
          node.setVersions("0", "1");
-         node.setOtherVersionNode(node);
+         node.setOtherKiekerPattern(node.getKiekerPattern());
       }
       return includedNodes;
    }

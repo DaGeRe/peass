@@ -24,8 +24,6 @@ public class TestLevelDifferentNodeDeterminer {
       final CallTreeNode rootPredecessor = predecessorBuilder.getRoot();
       final CallTreeNode root = new TreeBuilder().getRoot();
       
-      root.setOtherVersionNode(rootPredecessor);
-      rootPredecessor.setOtherVersionNode(root);
       predecessorBuilder.buildMeasurements(rootPredecessor);
 
       final LevelDifferentNodeDeterminer determiner = getDiff(rootPredecessor, root);
