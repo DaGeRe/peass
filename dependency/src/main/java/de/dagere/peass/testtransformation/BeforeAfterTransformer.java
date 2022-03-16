@@ -17,8 +17,14 @@ public class BeforeAfterTransformer {
    }
 
    public static void transformNoMeasurement(final ClassOrInterfaceDeclaration clazz) {
+      List<MethodDeclaration> beforeEachMethods = TestMethodFinder.findBeforeEachMethods(clazz);
+      transformMethodAnnotations(beforeEachMethods, "de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement", 1);
+      
       List<MethodDeclaration> beforeAllMethods = TestMethodFinder.findBeforeAllMethods(clazz);
       transformMethodAnnotations(beforeAllMethods, "de.dagere.kopeme.junit.rule.annotations.BeforeNoMeasurement", 2);
+      
+      List<MethodDeclaration> afterEachMethods = TestMethodFinder.findAfterEachMethods(clazz);
+      transformMethodAnnotations(afterEachMethods, "de.dagere.kopeme.junit.rule.annotations.AfterNoMeasurement", 1);
       
       List<MethodDeclaration> afterAllMethods = TestMethodFinder.findAfterAllMethods(clazz);
       transformMethodAnnotations(afterAllMethods, "de.dagere.kopeme.junit.rule.annotations.AfterNoMeasurement", 2);
