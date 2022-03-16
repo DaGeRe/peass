@@ -11,6 +11,10 @@ public class TestCauseSearchData {
    @Test
    public void testParent() throws Exception {
       CauseSearchData csd = new CauseSearchData();
+      MeasurementConfig config = new MeasurementConfig(-1);
+      config.getExecutionConfig().setVersion("2");
+      config.getExecutionConfig().setVersionOld("1");
+      csd.setConfig(config);
       
       MeasuredNode aMeasured = new MeasuredNode("A", "public void A.a()", null);
       MeasuredNode bMeasured = new MeasuredNode("B", "public void B.b()", null);
@@ -18,7 +22,7 @@ public class TestCauseSearchData {
       
       csd.setNodes(aMeasured);
       
-      CallTreeNode aStructure = new CallTreeNode("A", "public void A.a()", null, new MeasurementConfig(-1));
+      CallTreeNode aStructure = new CallTreeNode("A", "public void A.a()", null, config);
       CallTreeNode bStructure = aStructure.appendChild("B", "public void B.b()", null);
       CallTreeNode cStructure = buildAdditionalNode(bStructure);
       
@@ -30,9 +34,6 @@ public class TestCauseSearchData {
 
    private CallTreeNode buildAdditionalNode(final CallTreeNode bStructure) {
       CallTreeNode cStructure = bStructure.appendChild("C", "public void C.c()", null);
-      MeasurementConfig config = new MeasurementConfig(-1);
-      config.getExecutionConfig().setVersion("2");
-      config.getExecutionConfig().setVersionOld("1");
       cStructure.setOtherKiekerPattern("public void C.c()");
       cStructure.initVersions();
       for (int i = 0; i < 3; i++) {
