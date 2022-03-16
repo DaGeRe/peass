@@ -2,8 +2,11 @@ package de.dagere.peass.measurement.rca.treeanalysis;
 
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jgrapht.Graph;
@@ -53,50 +56,59 @@ public class TreeUtil {
       }
    }
 
-   public static int findChildMapping(final CallTreeNode firstNode, final CallTreeNode secondNode) {
-      final MatchingTreeBuilder builder = new MatchingTreeBuilder(firstNode, secondNode);
+   public static BidiMap<CallTreeNode, CallTreeNode> findChildMapping(final CallTreeNode currentNode, final CallTreeNode predecessorNode) {
+      final MatchingTreeBuilder builder = new MatchingTreeBuilder(currentNode, predecessorNode);
       final Graph<CallTreeNodeVertex, DefaultWeightedEdge> graph = builder.getGraph();
 
-      builder.buildEdges(firstNode, secondNode, graph);
+      builder.buildEdges(currentNode, predecessorNode, graph);
 
-      final Set<CallTreeNodeVertex> partition1 = builder.getPartition1();
-      final Set<CallTreeNodeVertex> partition2 = builder.getPartition2();
+      final Set<CallTreeNodeVertex> partitionCurrent = builder.getPartitionCurrent();
+      final Set<CallTreeNodeVertex> partitionPredecessor = builder.getPartitionPrecedessor();
 
-      final Matching<CallTreeNodeVertex, DefaultWeightedEdge> resultMatching = setOtherVersionNodes(graph, partition1, partition2);
-      if (partition1.size() > partition2.size()) {
-         addSurplus(secondNode, firstNode.getChildren());
+      final BidiMap<CallTreeNode, CallTreeNode> resultMatching = setOtherVersionNodes(graph, partitionCurrent, partitionPredecessor);
+      if (partitionCurrent.size() > partitionPredecessor.size()) {
+         addAdded(predecessorNode, currentNode.getChildren(), resultMatching);
       }
-      if (partition2.size() > partition1.size()) {
-         addSurplus(firstNode, secondNode.getChildren());
+      if (partitionPredecessor.size() > partitionCurrent.size()) {
+         addRemoved(currentNode, predecessorNode.getChildren(), resultMatching);
       }
 
-      return resultMatching.getEdges().size();
+      return resultMatching;
    }
 
-   private static Matching<CallTreeNodeVertex, DefaultWeightedEdge> setOtherVersionNodes(final Graph<CallTreeNodeVertex, DefaultWeightedEdge> graph,
-         final Set<CallTreeNodeVertex> partition1, final Set<CallTreeNodeVertex> partition2) {
-      final MaximumWeightBipartiteMatching<CallTreeNodeVertex, DefaultWeightedEdge> matching = new MaximumWeightBipartiteMatching<>(graph, partition1,
-            partition2);
+   private static BidiMap<CallTreeNode, CallTreeNode> setOtherVersionNodes(final Graph<CallTreeNodeVertex, DefaultWeightedEdge> graph,
+         final Set<CallTreeNodeVertex> partitionCurrent, final Set<CallTreeNodeVertex> partitionPredecessor) {
+      final MaximumWeightBipartiteMatching<CallTreeNodeVertex, DefaultWeightedEdge> matching = new MaximumWeightBipartiteMatching<>(graph, partitionCurrent,
+            partitionPredecessor);
       final Matching<CallTreeNodeVertex, DefaultWeightedEdge> resultMatching = matching.getMatching();
+      BidiMap<CallTreeNode, CallTreeNode> mapping = new DualHashBidiMap<>();
       for (final DefaultWeightedEdge edge : resultMatching) {
          final CallTreeNode source = graph.getEdgeSource(edge).getNode();
          final CallTreeNode target = graph.getEdgeTarget(edge).getNode();
-         source.setOtherVersionNode(target);
-         target.setOtherVersionNode(source);
+         mapping.put(source, target);
          source.setOtherKiekerPattern(target.getKiekerPattern());
          target.setOtherKiekerPattern(source.getKiekerPattern());
          
 //         LOG.info("Matched: {} - {}", source, target);
       }
-      return resultMatching;
+      return mapping;
    }
 
-   private static void addSurplus(final CallTreeNode otherParent, final List<CallTreeNode> partition) {
+   private static void addAdded(final CallTreeNode otherParent, final List<CallTreeNode> partition, Map<CallTreeNode, CallTreeNode> mapping) {
       for (final CallTreeNode unmatched : partition) {
-         if (unmatched.getOtherVersionNode() == null) {
+         if (unmatched.getOtherKiekerPattern() == null) {
             final CallTreeNode virtual_node = otherParent.appendChild(CauseSearchData.ADDED, CauseSearchData.ADDED, unmatched.getKiekerPattern());
-            unmatched.setOtherVersionNode(virtual_node);
-            virtual_node.setOtherVersionNode(unmatched);
+            mapping.put(virtual_node, unmatched);
+            unmatched.setOtherKiekerPattern(CauseSearchData.ADDED);
+         }
+      }
+   }
+   
+   private static void addRemoved(final CallTreeNode otherParent, final List<CallTreeNode> partition, Map<CallTreeNode, CallTreeNode> mapping) {
+      for (final CallTreeNode unmatched : partition) {
+         if (unmatched.getOtherKiekerPattern() == null) {
+            final CallTreeNode virtual_node = otherParent.appendChild(CauseSearchData.ADDED, CauseSearchData.ADDED, unmatched.getKiekerPattern());
+            mapping.put(unmatched, virtual_node);
             unmatched.setOtherKiekerPattern(CauseSearchData.ADDED);
          }
       }
@@ -111,8 +123,8 @@ public class TreeUtil {
          if (!firstChild.getKiekerPattern().equals(secondChild.getKiekerPattern())) {
             return false;
          } else {
-            firstChild.setOtherVersionNode(secondChild);
-            secondChild.setOtherVersionNode(firstChild);
+            firstChild.setOtherKiekerPattern(secondChild.getKiekerPattern());
+            secondChild.setOtherKiekerPattern(firstChild.getOtherKiekerPattern());
          }
       }
       return true;
@@ -127,8 +139,8 @@ public class TreeUtil {
          if (!firstChild.getKiekerPattern().equals(secondChild.getKiekerPattern())) {
             return false;
          } else {
-            // firstChild.setOtherVersionNode(secondChild);
-            // secondChild.setOtherVersionNode(firstChild);
+            firstChild.setOtherKiekerPattern(secondChild.getKiekerPattern());
+            secondChild.setOtherKiekerPattern(firstChild.getOtherKiekerPattern());
          }
       }
       return true;

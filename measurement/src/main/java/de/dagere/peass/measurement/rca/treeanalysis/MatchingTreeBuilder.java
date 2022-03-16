@@ -27,22 +27,21 @@ public class MatchingTreeBuilder {
 
    private static final Logger LOG = LogManager.getLogger(MatchingTreeBuilder.class);
 
-   final CallTreeNode firstNode;
-   final CallTreeNode secondNode;
-   final Set<CallTreeNodeVertex> partition1 = new HashSet<>();
-   final Set<CallTreeNodeVertex> partition2 = new HashSet<>();
+   final CallTreeNode currentNode;
+   final CallTreeNode predecessorNode;
+   final Set<CallTreeNodeVertex> partitionCurrent = new HashSet<>();
+   final Set<CallTreeNodeVertex> partitionPredecessor = new HashSet<>();
    final Graph<CallTreeNodeVertex, DefaultWeightedEdge> graph = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 
    final Map<Integer, CallTreeNodeVertex> vertices1 = new HashMap<>();
    final Map<Integer, CallTreeNodeVertex> vertices2 = new HashMap<>();
 
-   public MatchingTreeBuilder(final CallTreeNode firstNode, final CallTreeNode secondNode) {
-      super();
-      this.firstNode = firstNode;
-      this.secondNode = secondNode;
+   public MatchingTreeBuilder(final CallTreeNode currentNode, final CallTreeNode predecessorNode) {
+      this.currentNode = currentNode;
+      this.predecessorNode = predecessorNode;
 
-      buildVertices(firstNode, partition1, vertices1);
-      buildVertices(secondNode, partition2, vertices2);
+      buildVertices(currentNode, partitionCurrent, vertices1);
+      buildVertices(predecessorNode, partitionPredecessor, vertices2);
    }
 
    private void buildVertices(final CallTreeNode firstNode, final Set<CallTreeNodeVertex> partition, final Map<Integer, CallTreeNodeVertex> vertices) {
@@ -55,12 +54,12 @@ public class MatchingTreeBuilder {
       }
    }
 
-   public Set<CallTreeNodeVertex> getPartition1() {
-      return partition1;
+   public Set<CallTreeNodeVertex> getPartitionCurrent() {
+      return partitionCurrent;
    }
 
-   public Set<CallTreeNodeVertex> getPartition2() {
-      return partition2;
+   public Set<CallTreeNodeVertex> getPartitionPrecedessor() {
+      return partitionPredecessor;
    }
 
    public Graph<CallTreeNodeVertex, DefaultWeightedEdge> getGraph() {

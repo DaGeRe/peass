@@ -79,7 +79,7 @@ public abstract class DifferentNodeDeterminer {
    private void printComparisonInfos(final CallTreeNode currentPredecessorNode, final SummaryStatistics statisticsPredecessor, final SummaryStatistics statisticsVersion) {
       LOG.debug("Comparison {} - {}",
             currentPredecessorNode.getKiekerPattern(),
-            currentPredecessorNode.getOtherVersionNode() != null ? currentPredecessorNode.getOtherVersionNode().getKiekerPattern() : null);
+            currentPredecessorNode.getOtherKiekerPattern() != null ? currentPredecessorNode.getOtherKiekerPattern() : null);
       LOG.debug("Predecessor: {} {} Current: {} {} ",
             statisticsPredecessor.getMean(), statisticsPredecessor.getStandardDeviation(),
             statisticsVersion.getMean(), statisticsVersion.getStandardDeviation());

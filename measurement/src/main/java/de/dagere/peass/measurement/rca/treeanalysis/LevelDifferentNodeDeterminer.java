@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.bind.JAXBException;
 
@@ -46,8 +47,8 @@ public class LevelDifferentNodeDeterminer extends DifferentNodeDeterminer {
    private void findMeasurable(final CallTreeNode currentPredecessorNode, final CallTreeNode currentVersionNode) {
       if (currentPredecessorNode != null && currentVersionNode != null) {
          if (!TreeUtil.childrenEqual(currentPredecessorNode, currentVersionNode)) {
-            final int matched = TreeUtil.findChildMapping(currentPredecessorNode, currentVersionNode);
-            if (matched > 0) {
+            final Map<CallTreeNode, CallTreeNode> mapping = TreeUtil.findChildMapping(currentPredecessorNode, currentVersionNode);
+            if (mapping.size() > 0) {
                measurePredecessor.add(currentPredecessorNode);
 //                  needToMeasureCurrent.add(currentVersionNode);
             } else {
