@@ -1,10 +1,10 @@
 package de.dagere.peass.measurement.rca.analyzer;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.measurement.rca.analyzer.StructureChangeTreeAnalyzer;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.helper.TreeBuilder;
 import de.dagere.peass.measurement.rca.helper.TreeBuilderBig;
@@ -15,10 +15,18 @@ public class TestStructureChangeTreeAnalyzer {
       final TreeBuilder predecessorBuilder = new TreeBuilder();
       CallTreeNode root = predecessorBuilder.getRoot();
       CallTreeNode rootPredecessor = predecessorBuilder.getRoot();
+      
+      rootPredecessor.setOtherKiekerPattern(null);
+      rootPredecessor.getChildren().get(0).setOtherKiekerPattern(null);
+      rootPredecessor.getChildren().get(1).setOtherKiekerPattern(null);
 
       StructureChangeTreeAnalyzer analyzer = new StructureChangeTreeAnalyzer(root, rootPredecessor);
 
-      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(predecessorBuilder.getRoot(), predecessorBuilder.getA()));
+      Assert.assertEquals("public void Test.test()", rootPredecessor.getOtherKiekerPattern());
+      Assert.assertEquals("public void ClassA.methodA()", rootPredecessor.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertEquals("public void ClassC.methodC()", rootPredecessor.getChildren().get(1).getOtherKiekerPattern());
+      
+      MatcherAssert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(predecessorBuilder.getRoot(), predecessorBuilder.getA()));
    }
 
    @Test
@@ -29,7 +37,7 @@ public class TestStructureChangeTreeAnalyzer {
 
       StructureChangeTreeAnalyzer analyzer = new StructureChangeTreeAnalyzer(root, rootPredecessor);
 
-      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
-      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.not(Matchers.hasItems(bigBuilder.getB2())));
+      MatcherAssert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
+      MatcherAssert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.not(Matchers.hasItems(bigBuilder.getB2())));
    }
 }

@@ -19,6 +19,8 @@ public class StructureChangeTreeAnalyzer implements TreeAnalyzer {
    public StructureChangeTreeAnalyzer(final CallTreeNode root, final CallTreeNode rootPredecessor) {
       root.setOtherVersionNode(rootPredecessor);
       rootPredecessor.setOtherVersionNode(root);
+      
+      rootPredecessor.setOtherKiekerPattern(root.getKiekerPattern());
 
       if (root.getKiekerPattern().equals(rootPredecessor.getKiekerPattern())) {
          equalStructureNodes.add(rootPredecessor);
