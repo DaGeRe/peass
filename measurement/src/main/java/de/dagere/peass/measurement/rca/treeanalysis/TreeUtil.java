@@ -111,6 +111,8 @@ public class TreeUtil {
          if (!firstChild.getKiekerPattern().equals(secondChild.getKiekerPattern())) {
             return false;
          } else {
+            firstChild.setOtherKiekerPattern(secondChild.getKiekerPattern());
+            secondChild.setOtherKiekerPattern(firstChild.getOtherKiekerPattern());
             firstChild.setOtherVersionNode(secondChild);
             secondChild.setOtherVersionNode(firstChild);
          }
