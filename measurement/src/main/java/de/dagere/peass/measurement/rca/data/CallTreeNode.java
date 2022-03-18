@@ -94,7 +94,7 @@ public class CallTreeNode extends BasicNode {
 
    public void addMeasurement(final String version, final Long duration) {
       checkDataAddPossible(version);
-      LOG.debug("Adding measurement: {} Call: {}", version, call);
+      LOG.trace("Adding measurement: {} Call: {}", version, call);
       CallTreeStatistics callTreeStatistics = data.get(version);
       callTreeStatistics.addMeasurement(duration);
    }
@@ -174,7 +174,7 @@ public class CallTreeNode extends BasicNode {
    }
 
    private void newVersion(final String version) {
-      LOG.debug("Adding version: {}", version);
+      LOG.trace("Adding version: {}", version);
       CallTreeStatistics statistics = data.get(version);
       if (statistics == null) {
          statistics = new CallTreeStatistics(config.getNodeWarmup());

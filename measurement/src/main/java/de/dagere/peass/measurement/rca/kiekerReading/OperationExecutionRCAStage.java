@@ -59,7 +59,13 @@ public class OperationExecutionRCAStage extends AbstractTraceProcessingStage<Exe
       for (CallTreeNode node : measuredNodes) {
          int eoi = node.getEoi(version);
          int ess = node.getEss();
-         EOIESSIndex index = new EOIESSIndex(ess, eoi, node.getKiekerPattern());
+         String currentPattern;
+         if (node.getConfig().getExecutionConfig().getVersionOld().equals(version)) {
+            currentPattern = node.getKiekerPattern();
+         } else {
+            currentPattern = node.getOtherKiekerPattern();
+         }
+         EOIESSIndex index = new EOIESSIndex(ess, eoi, currentPattern);
          this.measuredNodes.put(index, node);
       }
       this.version = version;
@@ -82,7 +88,7 @@ public class OperationExecutionRCAStage extends AbstractTraceProcessingStage<Exe
          final long duration = (execution.getTout() - execution.getTin());
          node.addMeasurement(version, duration);
       } else {
-         LOG.error("Did not find {} ESS: {} Eoi: {}", kiekerPattern, execution.getEss(), execution.getEoi());
+         LOG.error("Did not find {} Eoi: {} ESS: {} ", kiekerPattern, execution.getEoi(), execution.getEss());
       }
    }
 }
