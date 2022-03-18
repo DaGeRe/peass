@@ -7,6 +7,8 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.AnnotationExpr;
 
+import de.dagere.kopeme.parsing.JUnitParseUtil;
+
 public class TestMethodFinder {
    public static List<MethodDeclaration> findJUnit5TestMethods(final ClassOrInterfaceDeclaration clazz) {
       List<MethodDeclaration> testMethods = new LinkedList<>();
@@ -23,7 +25,8 @@ public class TestMethodFinder {
                testFound = true;
             }
          }
-         if (testFound && !performanceTestFound) {
+         boolean testIsDeactivated = JUnitParseUtil.isDeactivated(method);
+         if (testFound && !performanceTestFound && !testIsDeactivated) {
             testMethods.add(method);
          }
       }
@@ -92,8 +95,10 @@ public class TestMethodFinder {
                testFound = true;
             }
          }
+         
+         boolean testIsDeactivated = JUnitParseUtil.isDeactivated(method);
 
-         if (testFound && !performanceTestFound) {
+         if (testFound && !performanceTestFound && !testIsDeactivated) {
             testMethods.add(method);
          }
       }
