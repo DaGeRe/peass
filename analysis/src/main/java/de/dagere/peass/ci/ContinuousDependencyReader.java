@@ -15,14 +15,14 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.ci.logHandling.LogRedirector;
-import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
@@ -203,7 +203,7 @@ public class ContinuousDependencyReader {
       final DependencyReader reader = new DependencyReader(dependencyConfig, folders, resultsFolders, url, iterator, nonChanges, executionConfig, kiekerConfig, env);
       iterator.goToPreviousCommit();
       if (!reader.readInitialVersion()) {
-         LOG.error("Analyzing first version was not possible");
+         LOG.error("Analyzing first version did not yield results");
       } else {
          reader.readDependencies();
       }
