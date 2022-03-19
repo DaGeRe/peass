@@ -66,7 +66,7 @@ public class CauseSearcherComplete extends CauseSearcher {
    
    private void checkConfiguration(final CauseSearcherConfig causeSearchConfig, final MeasurementConfig measurementConfig) {
       if (measurementConfig.getKiekerConfig().isUseAggregation() && !causeSearchConfig.isIgnoreEOIs()) {
-         throw new RuntimeException("Aggregation and ignoreEOIs cannot be combined; if aggretion is enabled, ignoreEOIs needs to be enabled.");
+         throw new RuntimeException("Aggregation and ignoreEOIs cannot be combined; if aggregation is enabled, ignoreEOIs needs to be enabled.");
       }
       if (!measurementConfig.getKiekerConfig().isUseAggregation() && causeSearchConfig.isIgnoreEOIs()) {
          throw new RuntimeException("No aggregation and ignoreEOIs can currently be not combined, since this would require mapping of the original measured tree data to the ignore-EOI tree. "
