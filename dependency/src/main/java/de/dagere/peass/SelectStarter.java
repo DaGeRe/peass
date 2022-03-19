@@ -42,9 +42,9 @@ import picocli.CommandLine.Mixin;
  *
  */
 @Command(description = "Executes the regression test selection. Creates the executionfile, which defines the tests-version-pairs that need to be executed in each version", name = "select")
-public class RegressionTestSelectionStarter implements Callable<Void>{
+public class SelectStarter implements Callable<Void>{
 
-   private static final Logger LOG = LogManager.getLogger(RegressionTestSelectionStarter.class);
+   private static final Logger LOG = LogManager.getLogger(SelectStarter.class);
 
    @Mixin
    private TestSelectionConfigMixin config;
@@ -57,7 +57,7 @@ public class RegressionTestSelectionStarter implements Callable<Void>{
 
    public static void main(final String[] args) {
       try {
-         final CommandLine commandLine = new CommandLine(new RegressionTestSelectionStarter());
+         final CommandLine commandLine = new CommandLine(new SelectStarter());
          commandLine.execute(args);
       } catch (final Throwable t) {
          t.printStackTrace();

@@ -32,9 +32,9 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
 
 @Command(description = "Searches for root cause of a performance change, i.e. method causing the performance change", name = "searchcause")
-public class RootCauseAnalysis extends DependencyTestStarter {
+public class SearchCauseStarter extends MeasureStarter {
 
-   private static final Logger LOG = LogManager.getLogger(RootCauseAnalysis.class);
+   private static final Logger LOG = LogManager.getLogger(SearchCauseStarter.class);
 
    @Mixin
    private CauseSearcherConfigMixin causeSearchConfigMixin;
@@ -43,12 +43,12 @@ public class RootCauseAnalysis extends DependencyTestStarter {
    private KiekerConfigMixin kiekerConfigMixin;
 
    public static void main(final String[] args) throws JAXBException, IOException {
-      final RootCauseAnalysis command = new RootCauseAnalysis();
+      final SearchCauseStarter command = new SearchCauseStarter();
       final CommandLine commandLine = new CommandLine(command);
       System.exit(commandLine.execute(args));
    }
 
-   public RootCauseAnalysis() throws JAXBException, IOException {
+   public SearchCauseStarter() throws JAXBException, IOException {
       super();
    }
 

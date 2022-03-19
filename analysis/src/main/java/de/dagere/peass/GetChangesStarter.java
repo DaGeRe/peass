@@ -24,9 +24,9 @@ import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 @Command(name = "getchanges", description = "Determines changes based on measurement values using the specified statistical test", mixinStandardHelpOptions = true)
-public class GetChanges implements Callable<Void> {
+public class GetChangesStarter implements Callable<Void> {
 
-   private static final Logger LOG = LogManager.getLogger(GetChanges.class);
+   private static final Logger LOG = LogManager.getLogger(GetChangesStarter.class);
 
    @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the static selection file")
    protected File staticSelectionFile;
@@ -43,12 +43,12 @@ public class GetChanges implements Callable<Void> {
    @Mixin
    protected StatisticsConfigMixin statisticConfigMixin;
 
-   public GetChanges() {
+   public GetChangesStarter() {
 
    }
 
    public static void main(final String[] args) {
-      final CommandLine commandLine = new CommandLine(new GetChanges());
+      final CommandLine commandLine = new CommandLine(new GetChangesStarter());
       System.exit(commandLine.execute(args));
    }
 

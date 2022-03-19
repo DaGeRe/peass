@@ -20,9 +20,9 @@ import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 @Command(description = "Tells whether a change happened in a data folder", name = "ischange")
-public class IsChange implements Callable<Integer> {
+public class IsChangeStarter implements Callable<Integer> {
 
-   private static final Logger LOG = LogManager.getLogger(IsChange.class);
+   private static final Logger LOG = LogManager.getLogger(IsChangeStarter.class);
 
    @Option(names = { "-data", "--data" }, description = "Path to datafolder")
    private File dataFolder;
@@ -31,7 +31,7 @@ public class IsChange implements Callable<Integer> {
    protected StatisticsConfigMixin statisticConfigMixin;
 
    public static void main(final String[] args) {
-      final IsChange command = new IsChange();
+      final IsChangeStarter command = new IsChangeStarter();
       final CommandLine commandLine = new CommandLine(command);
       System.exit(commandLine.execute(args));
    }

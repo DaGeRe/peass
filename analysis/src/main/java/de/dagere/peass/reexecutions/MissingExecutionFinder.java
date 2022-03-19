@@ -22,7 +22,7 @@ import de.dagere.peass.analysis.helper.read.TestcaseData;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.dagere.peass.measurement.utils.CreateMeasurementExecutionScript;
+import de.dagere.peass.measurement.utils.CreateScriptStarter;
 
 public class MissingExecutionFinder {
 
@@ -61,7 +61,7 @@ public class MissingExecutionFinder {
       System.out.println("Not executed: " + countNotExecuted + " All defined executions: " + countAll);
 
       final PrintStream outputStream = new PrintStream(new FileOutputStream(new File(reexecuteFolder, "reexecute-missing-" + project + ".sh")));
-      CreateMeasurementExecutionScript.generateExecuteCommands(tests, experimentId, outputStream);
+      CreateScriptStarter.generateExecuteCommands(tests, experimentId, outputStream);
       outputStream.flush();
       outputStream.close();
 

@@ -27,9 +27,9 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(description = "Visualizes the root-cause-analysis-tree as HTML page", name = "visualizerca")
-public class VisualizeRCA implements Callable<Void> {
+public class VisualizeRCAStarter implements Callable<Void> {
 
-   private static final Logger LOG = LogManager.getLogger(VisualizeRCA.class);
+   private static final Logger LOG = LogManager.getLogger(VisualizeRCAStarter.class);
 
    private static final ObjectMapper MAPPER = new ObjectMapper();
    static {
@@ -52,14 +52,14 @@ public class VisualizeRCA implements Callable<Void> {
    final String projectName = "commons-fileupload";
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
-      final CommandLine commandLine = new CommandLine(new VisualizeRCA());
+      final CommandLine commandLine = new CommandLine(new VisualizeRCAStarter());
       System.exit(commandLine.execute(args));
    }
 
-   public VisualizeRCA() {
+   public VisualizeRCAStarter() {
    }
 
-   public VisualizeRCA(final File[] data, final File resultFolder) {
+   public VisualizeRCAStarter(final File[] data, final File resultFolder) {
       this.data = data;
       this.resultFolder = resultFolder;
    }

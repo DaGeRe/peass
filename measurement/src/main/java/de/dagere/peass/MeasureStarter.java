@@ -35,7 +35,7 @@ import picocli.CommandLine.Option;
  *
  */
 @Command(description = "Measures the defined tests and versions until the number of VMs is reached", name = "measure")
-public class DependencyTestStarter extends PairProcessor {
+public class MeasureStarter extends PairProcessor {
 
    @Mixin
    MeasurementConfigurationMixin measurementConfigMixin;
@@ -46,7 +46,7 @@ public class DependencyTestStarter extends PairProcessor {
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
 
-   private static final Logger LOG = LogManager.getLogger(DependencyTestStarter.class);
+   private static final Logger LOG = LogManager.getLogger(MeasureStarter.class);
 
    protected DependencyTester tester;
    private final List<String> versions = new LinkedList<>();
@@ -234,7 +234,7 @@ public class DependencyTestStarter extends PairProcessor {
    }
 
    public static void main(final String[] args) throws JAXBException, IOException {
-      final DependencyTestStarter command = new DependencyTestStarter();
+      final MeasureStarter command = new MeasureStarter();
       final CommandLine commandLine = new CommandLine(command);
       System.exit(commandLine.execute(args));
    }

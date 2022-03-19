@@ -24,7 +24,7 @@ public class TestCreateMeasurementExecutionScript {
       final ByteArrayOutputStream baos = new ByteArrayOutputStream();
       try (PrintStream ps = new PrintStream(baos)) {
          RunCommandWriter writer = new RunCommandWriter(ps, "experiment-1", executiondata);
-         CreateMeasurementExecutionScript.generateExecuteCommands(executiondata, "experiment-1", writer);
+         CreateScriptStarter.generateExecuteCommands(executiondata, "experiment-1", writer);
       }
 
       String result = baos.toString();

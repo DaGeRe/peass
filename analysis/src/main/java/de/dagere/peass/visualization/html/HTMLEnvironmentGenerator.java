@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import de.dagere.peass.visualization.VisualizeRCA;
+import de.dagere.peass.visualization.VisualizeRCAStarter;
 
 public class HTMLEnvironmentGenerator {
 
@@ -17,7 +17,7 @@ public class HTMLEnvironmentGenerator {
    }
 
    public void writeHTML(final String name) throws IOException {
-      final InputStream htmlStream = VisualizeRCA.class.getClassLoader().getResourceAsStream(name);
+      final InputStream htmlStream = VisualizeRCAStarter.class.getClassLoader().getResourceAsStream(name);
       try (final BufferedReader reader = new BufferedReader(new InputStreamReader(htmlStream))) {
          String line;
          while ((line = reader.readLine()) != null) {

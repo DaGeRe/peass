@@ -24,9 +24,9 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(name = "clean", description = "Cleans the data for faster analysis and transfer", mixinStandardHelpOptions = true)
-public class CleaningStarter implements Callable<Void> {
+public class CleanStarter implements Callable<Void> {
 
-   private static final Logger LOG = LogManager.getLogger(CleaningStarter.class);
+   private static final Logger LOG = LogManager.getLogger(CleanStarter.class);
 
    @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Path to the dependencyfile")
    protected File dependencyFile;
@@ -38,7 +38,7 @@ public class CleaningStarter implements Callable<Void> {
    protected File data[];
 
    public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
-      final CommandLine commandLine = new CommandLine(new CleaningStarter());
+      final CommandLine commandLine = new CommandLine(new CleanStarter());
       System.exit(commandLine.execute(args));
    }
 
