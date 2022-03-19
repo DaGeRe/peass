@@ -275,20 +275,6 @@ public class CallTreeNode extends BasicNode {
       return (second == null || second.getN() == 0) && (first != null && first.getN() > 0);
    }
 
-   /**
-    * @deprecated use initVersions instead, and asure that the MeasurementConfig already has the correct versions
-    */
-   @Deprecated
-   @JsonIgnore
-   public void setVersions(final String version, final String predecessor) {
-      LOG.debug("Set versions: {}", version, predecessor);
-      config.getExecutionConfig().setVersion(version);
-      config.getExecutionConfig().setVersionOld(predecessor);
-      resetStatistics();
-      newVersion(version);
-      newVersion(predecessor);
-   }
-
    public void initVersions() {
       LOG.debug("Init versions: {}", config.getExecutionConfig().getVersion(), config.getExecutionConfig().getVersionOld());
       resetStatistics();

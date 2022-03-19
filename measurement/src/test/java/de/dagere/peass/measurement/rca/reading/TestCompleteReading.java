@@ -39,7 +39,7 @@ public class TestCompleteReading {
       writer.onTerminating();
    }
 
-   private final CallTreeNode root = new CallTreeNode("parent()", "public void A.parent()", null, new MeasurementConfig(3));
+   private final CallTreeNode root = new CallTreeNode("parent()", "public void A.parent()", null, new MeasurementConfig(3, "0", "1"));
 
    private Set<CallTreeNode> buildTree() {
       final Set<CallTreeNode> includedNodes = new HashSet<>();
@@ -50,7 +50,7 @@ public class TestCompleteReading {
       includedNodes.add(root);
 
       for (final CallTreeNode node : includedNodes) {
-         node.setVersions("0", "1");
+         node.initVersions();
          node.setOtherKiekerPattern(node.getKiekerPattern());
       }
       return includedNodes;

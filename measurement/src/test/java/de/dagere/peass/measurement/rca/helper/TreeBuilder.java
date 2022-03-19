@@ -111,7 +111,7 @@ public class TreeBuilder {
 
    protected void initVersions(final CallTreeNode[] nodes) {
       for (final CallTreeNode node : nodes) {
-         node.setVersions(version, versionPredecessor);
+         node.initVersions();
       }
    }
 

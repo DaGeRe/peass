@@ -270,7 +270,7 @@ public class FindLowestIterationsRCA {
    }
 
    private void readLevel(final File versionFolder, final String version, final File levelFolder) throws AnalysisConfigurationException {
-      nodesPredecessor.forEach(node -> node.setVersions(mainVersion, predecessor));
+      nodesPredecessor.forEach(node -> node.initVersions());
       final KiekerResultReader kiekerResultReader = new KiekerResultReader(false, AllowedKiekerRecord.OPERATIONEXECUTION, nodesPredecessor, version, testcase, version.equals(mainVersion));
       System.out.println("Reading: " + versionFolder.getName() + " from " + levelFolder + " Nodes: " + nodesPredecessor);
       for (final File kiekerResultFolder : levelFolder.listFiles((FilenameFilter) new RegexFileFilter("[0-9]*"))) {
