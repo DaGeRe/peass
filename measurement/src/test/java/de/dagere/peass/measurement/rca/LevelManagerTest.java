@@ -9,7 +9,6 @@ import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.PersistedTestDataBuilder;
-import de.dagere.peass.measurement.rca.LevelManager;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.helper.TreeBuilder;

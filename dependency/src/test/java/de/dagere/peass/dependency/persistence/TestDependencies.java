@@ -3,10 +3,6 @@ package de.dagere.peass.dependency.persistence;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.dependency.persistence.StaticTestSelection;
-import de.dagere.peass.dependency.persistence.InitialVersion;
-import de.dagere.peass.dependency.persistence.VersionStaticSelection;
-
 public class TestDependencies {
    
    @Test

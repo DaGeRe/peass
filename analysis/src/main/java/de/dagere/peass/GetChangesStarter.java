@@ -10,10 +10,10 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
-import de.dagere.peass.dependency.persistence.StaticTestSelection;
-import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.SelectedTests;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.measurement.dataloading.VersionSorter;
 import de.dagere.peass.measurement.utils.RunCommandWriterRCA;
 import de.dagere.peass.measurement.utils.RunCommandWriterSlurmRCA;

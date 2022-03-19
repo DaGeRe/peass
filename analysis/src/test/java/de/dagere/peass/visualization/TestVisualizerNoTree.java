@@ -9,8 +9,6 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.visualization.VisualizeRCAStarter;
-
 public class TestVisualizerNoTree {
    
    @Test

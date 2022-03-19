@@ -83,7 +83,7 @@ public class CallCountLoader {
       CallCountConfiguration configuration = new CallCountConfiguration();
       CallCountStage stage = configuration.prepareCallCount(loadedFile);
 
-      teetime.framework.Execution execution = new teetime.framework.Execution(configuration);
+      teetime.framework.Execution<?> execution = new teetime.framework.Execution(configuration);
       execution.executeBlocking();
 
       System.out.println("Signatures: " + stage.signatureCounts.size());

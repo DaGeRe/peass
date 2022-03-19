@@ -108,7 +108,7 @@ public class CauseSearcherIT {
     */
    private void checkChangelistContainsChild12(final Set<ChangedEntity> changedEntities) {
       LOG.debug(changedEntities);
-      Assert.assertThat(changedEntities.size(), Matchers.greaterThanOrEqualTo(1));
+      MatcherAssert.assertThat(changedEntities.size(), Matchers.greaterThanOrEqualTo(1));
       List<String> allChanged = changedEntities.stream().map(entity -> entity.toString()).collect(Collectors.toList());
       MatcherAssert.assertThat(allChanged, Matchers.hasItem("defaultpackage.NormalDependency#child12"));
    }
