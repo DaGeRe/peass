@@ -1,6 +1,5 @@
 package de.dagere.peass.measurement.dataloading;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -27,18 +26,11 @@ public class KoPeMeDataHelper {
    }
 
    public static final String[] getVersions(Chunk chunk, SelectedTests selectedTests) {
-      final String[] versions = new String[2];
-      final Iterator<Result> iterator = chunk.getResult().iterator();
-      versions[0] = iterator.next().getVersion().getGitversion();
-      if (iterator.hasNext()) {
-         while (iterator.hasNext()) {
-            final Result r = iterator.next();
-            if (!r.getVersion().getGitversion().equals(versions[0])) {
-               versions[1] = r.getVersion().getGitversion();
-               break;
-            }
-         }
-      }
+      final String[] versions = getVersions(chunk);
+      return filterVersions(selectedTests, versions);
+   }
+
+   private static String[] filterVersions(SelectedTests selectedTests, final String[] versions) {
       String[] versionNames = selectedTests.getVersionNames();
       List<String> versionOrderList = Arrays.asList(versionNames);
       int firstIndex = versionOrderList.indexOf(versions[0]);
