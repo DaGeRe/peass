@@ -65,7 +65,7 @@ public class CauseSearcherComplete extends CauseSearcher {
    }
    
    private void checkConfiguration(final CauseSearcherConfig causeSearchConfig, final MeasurementConfig measurementConfig) {
-      if (measurementConfig.getKiekerConfig().isUseAggregation() && causeSearchConfig.isIgnoreEOIs()) {
+      if (measurementConfig.getKiekerConfig().isUseAggregation() && !causeSearchConfig.isIgnoreEOIs()) {
          throw new RuntimeException("Aggregation and ignoreEOIs cannot be combined; if aggretion is enabled, ignoreEOIs needs to be enabled.");
       }
       if (!measurementConfig.getKiekerConfig().isUseAggregation() && causeSearchConfig.isIgnoreEOIs()) {
