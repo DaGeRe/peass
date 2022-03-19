@@ -20,7 +20,7 @@ public class KiekerConfig implements Serializable {
    private boolean enableAdaptiveMonitoring = false;
    private boolean adaptiveInstrumentation = false;
    private int kiekerAggregationInterval = DEFAULT_WRITE_INTERVAL;
-   private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
+   private AllowedKiekerRecord record = AllowedKiekerRecord.DURATION;
    private boolean onlyOneCallRecording = false;
    private boolean extractMethod = false;
    private long traceSizeInMb = 100;
