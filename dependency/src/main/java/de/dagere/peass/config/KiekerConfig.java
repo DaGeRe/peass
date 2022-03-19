@@ -15,7 +15,7 @@ public class KiekerConfig implements Serializable {
    private boolean useKieker = false;
    private boolean useSourceInstrumentation = true;
    private boolean useSelectiveInstrumentation = true;
-   private boolean useAggregation = false;
+   private boolean useAggregation = true;
    private boolean useCircularQueue = true;
    private boolean enableAdaptiveMonitoring = false;
    private boolean adaptiveInstrumentation = false;
