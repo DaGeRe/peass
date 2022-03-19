@@ -87,8 +87,8 @@ public class AdaptiveExecutorTest {
 
          Assert.assertEquals(2, nodeWithDuration.getStatistics(VERSION1).getN());
          Assert.assertEquals(2, nodeWithDuration.getStatistics(VERSION0).getN());
-         Assert.assertEquals(8, nodeWithDuration.getCallCount(VERSION1));
-         Assert.assertEquals(8, nodeWithDuration.getCallCount(VERSION0));
+         Assert.assertEquals(4, nodeWithDuration.getCallCount(VERSION1));
+         Assert.assertEquals(4, nodeWithDuration.getCallCount(VERSION0));
       }
    }
 
