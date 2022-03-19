@@ -9,8 +9,8 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -84,15 +84,15 @@ public class CauseSearcherCompleteTest {
       final Set<ChangedEntity> changes = getChanges(rootPredecessor, rootVersion);
 
       System.out.println(changes);
-      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassB#methodB", "")));
+      MatcherAssert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassB#methodB", "")));
 //      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassD#methodD", "")));
 //      Assert.assertThat(changes, Matchers.hasItem(new ChangedEntity("ClassE#methodE", "")));
 
       ArgumentCaptor<List<CallTreeNode>> includedNodes = ArgumentCaptor.forClass(List.class);
       Mockito.verify(measurer).measureVersion(includedNodes.capture());
 
-      Assert.assertThat(includedNodes.getValue(), Matchers.hasItem(builderPredecessor.getB()));
-      Assert.assertThat(includedNodes.getValue(), Matchers.hasItem(builderPredecessor.getC()));
+      MatcherAssert.assertThat(includedNodes.getValue(), Matchers.hasItem(builderPredecessor.getB()));
+      MatcherAssert.assertThat(includedNodes.getValue(), Matchers.hasItem(builderPredecessor.getC()));
    }
 
    private Set<ChangedEntity> getChanges(final CallTreeNode rootPredecessor, final CallTreeNode rootVersion)
