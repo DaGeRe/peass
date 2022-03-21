@@ -12,9 +12,11 @@ public class CompleteTreeAnalyzer implements TreeAnalyzer {
    private final List<CallTreeNode> allNodesPredecessor = new LinkedList<>();
 
    public CompleteTreeAnalyzer(final CallTreeNode root, final CallTreeNode rootPredecessor) {
-      root.setOtherVersionNode(rootPredecessor);
+      root.setOtherKiekerPattern(rootPredecessor.getKiekerPattern());
       rootPredecessor.setOtherVersionNode(root);
-
+      rootPredecessor.setOtherKiekerPattern(root.getKiekerPattern());
+      
+      
       allNodesPredecessor.add(rootPredecessor);
 
       mapAllNodes(root, rootPredecessor);
@@ -25,9 +27,10 @@ public class CompleteTreeAnalyzer implements TreeAnalyzer {
       findTreeStructureDiffering(current, currentPredecessor);
 
       for (CallTreeNode currentChild : current.getChildren()) {
-         mapAllNodes(currentChild, currentChild.getOtherVersionNode());
+         CallTreeNode predecessorChild = currentChild.getOtherVersionNode();
+         mapAllNodes(currentChild, predecessorChild);
 
-         allNodesPredecessor.add(currentChild.getOtherVersionNode());
+         allNodesPredecessor.add(predecessorChild);
       }
    }
 

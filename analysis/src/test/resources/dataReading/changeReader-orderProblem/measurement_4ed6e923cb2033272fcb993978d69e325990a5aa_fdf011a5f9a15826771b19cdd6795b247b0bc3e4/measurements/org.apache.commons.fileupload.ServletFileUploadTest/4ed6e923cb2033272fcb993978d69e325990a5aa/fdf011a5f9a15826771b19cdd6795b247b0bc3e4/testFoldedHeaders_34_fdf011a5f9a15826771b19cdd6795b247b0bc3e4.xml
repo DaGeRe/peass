@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testFoldedHeaders">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647102169700">
+     <value>5.0493447599999994E7</value>
+     <deviation>0.6405523414261138</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>2.3937671E7</min>
+     <max>1.78080822E8</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647102168308">178080822</value>
+      <value start="1647102168486">54954151</value>
+      <value start="1647102168541">58844134</value>
+      <value start="1647102168600">32465682</value>
+      <value start="1647102168633">74381883</value>
+      <value start="1647102168707">37958158</value>
+      <value start="1647102168745">57824388</value>
+      <value start="1647102168803">38808845</value>
+      <value start="1647102168842">55613798</value>
+      <value start="1647102168898">38438696</value>
+      <value start="1647102168936">38760694</value>
+      <value start="1647102168975">51106149</value>
+      <value start="1647102169026">39422791</value>
+      <value start="1647102169065">33151039</value>
+      <value start="1647102169099">51072019</value>
+      <value start="1647102169150">37777038</value>
+      <value start="1647102169188">33908137</value>
+      <value start="1647102169221">38705194</value>
+      <value start="1647102169260">23937671</value>
+      <value start="1647102169284">34657663</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

@@ -44,8 +44,10 @@ public class OutlierRemoverVMResults {
 
    private static void addAll(final List<OneVMResult> results, final SummaryStatistics statistics) {
       for (final OneVMResult result : results) {
-         final double average = result.getAverage();
-         statistics.addValue(average);
+         if (!Double.isNaN(result.getAverage())) {
+            final double average = result.getAverage();
+            statistics.addValue(average);
+         }
       }
    }
 }

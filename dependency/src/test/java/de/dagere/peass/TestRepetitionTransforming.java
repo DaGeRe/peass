@@ -184,7 +184,7 @@ public class TestRepetitionTransforming {
 
       final CompilationUnit unit = JavaParserProvider.parse(old2);
 
-      final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
+      final ClassOrInterfaceDeclaration clazz = ParseUtil.getClasses(unit).get(0);
 
       for (final MethodDeclaration method : clazz.getMethods()) {
          for (final Object o : method.getAnnotations()) {

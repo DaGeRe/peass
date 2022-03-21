@@ -7,8 +7,6 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.analysis.measurement.AnalyseFullData;
-import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.VersionComparator;

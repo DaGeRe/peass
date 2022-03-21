@@ -26,11 +26,11 @@ public class TreeUtilTest {
       
       TreeUtil.findChildMapping(parent1, parent2);
       
-      Assert.assertEquals(parent1.getChildren().get(0).getOtherVersionNode(), parent2.getChildren().get(0));
-      Assert.assertEquals(parent1.getChildren().get(1).getOtherVersionNode(), parent2.getChildren().get(1));
-      Assert.assertEquals(parent1.getChildren().get(2).getOtherVersionNode(), parent2.getChildren().get(2));
-      Assert.assertEquals(parent1.getChildren().get(3).getOtherVersionNode(), parent2.getChildren().get(3));
-      Assert.assertEquals(parent1.getChildren().get(4).getOtherVersionNode(), parent2.getChildren().get(4));
+      Assert.assertEquals(parent1.getChildren().get(0).getOtherKiekerPattern(), parent2.getChildren().get(0).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(1).getOtherKiekerPattern(), parent2.getChildren().get(1).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(2).getOtherKiekerPattern(), parent2.getChildren().get(2).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(3).getOtherKiekerPattern(), parent2.getChildren().get(3).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(4).getOtherKiekerPattern(), parent2.getChildren().get(4).getKiekerPattern());
    }
    
    @Test
@@ -43,9 +43,9 @@ public class TreeUtilTest {
       
       TreeUtil.findChildMapping(parent1, parent2);
       
-      Assert.assertEquals(parent1.getChildren().get(0).getOtherVersionNode(), parent2.getChildren().get(0));
-      Assert.assertEquals(parent1.getChildren().get(1).getOtherVersionNode(), parent2.getChildren().get(1));
-      Assert.assertEquals(parent1.getChildren().get(2).getOtherVersionNode(), parent2.getChildren().get(2));
+      Assert.assertEquals(parent1.getChildren().get(0).getOtherKiekerPattern(), parent2.getChildren().get(0).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(1).getOtherKiekerPattern(), parent2.getChildren().get(1).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(2).getOtherKiekerPattern(), parent2.getChildren().get(2).getKiekerPattern());
    }
    
    @Test
@@ -58,12 +58,12 @@ public class TreeUtilTest {
       
       TreeUtil.findChildMapping(parent1, parent2);
       
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertEquals(parent1.getChildren().get(0).getOtherVersionNode(), parent2.getChildren().get(0));
-      Assert.assertEquals(parent1.getChildren().get(1).getOtherVersionNode(), parent2.getChildren().get(1));
-      Assert.assertEquals(parent1.getChildren().get(2).getOtherVersionNode(), parent2.getChildren().get(2));
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(0).getOtherKiekerPattern(), parent2.getChildren().get(0).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(1).getOtherKiekerPattern(), parent2.getChildren().get(1).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(2).getOtherKiekerPattern(), parent2.getChildren().get(2).getKiekerPattern());
    }
    
    @Test
@@ -76,12 +76,12 @@ public class TreeUtilTest {
       
       TreeUtil.findChildMapping(parent1, parent2);
       
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertEquals(parent1.getChildren().get(0).getOtherVersionNode(), parent2.getChildren().get(0));
-      Assert.assertEquals(parent1.getChildren().get(1).getOtherVersionNode(), parent2.getChildren().get(1));
-      Assert.assertEquals(parent1.getChildren().get(2).getOtherVersionNode(), parent2.getChildren().get(2));
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(0).getOtherKiekerPattern(), parent2.getChildren().get(0).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(1).getOtherKiekerPattern(), parent2.getChildren().get(1).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(2).getOtherKiekerPattern(), parent2.getChildren().get(2).getKiekerPattern());
    }
    
    @Test
@@ -94,12 +94,12 @@ public class TreeUtilTest {
       
       TreeUtil.findChildMapping(parent1, parent2);
       
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertEquals(parent1.getChildren().get(0).getOtherVersionNode(), parent2.getChildren().get(0));
-      Assert.assertEquals(parent1.getChildren().get(1).getOtherVersionNode(), parent2.getChildren().get(2));
-      Assert.assertEquals(parent1.getChildren().get(2).getOtherVersionNode(), parent2.getChildren().get(1));
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(0).getOtherKiekerPattern(), parent2.getChildren().get(0).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(1).getOtherKiekerPattern(), parent2.getChildren().get(2).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(2).getOtherKiekerPattern(), parent2.getChildren().get(1).getKiekerPattern());
    }
    
    @Test
@@ -113,12 +113,12 @@ public class TreeUtilTest {
       
       TreeUtil.findChildMapping(parent1, parent2);
       
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertEquals(parent1.getChildren().get(0).getOtherVersionNode(), parent2.getChildren().get(0));
-      Assert.assertEquals(parent1.getChildren().get(1).getOtherVersionNode(), parent2.getChildren().get(1));
-      Assert.assertEquals(parent1.getChildren().get(2).getOtherVersionNode(), parent2.getChildren().get(2));
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(0).getOtherKiekerPattern(), parent2.getChildren().get(0).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(1).getOtherKiekerPattern(), parent2.getChildren().get(1).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(2).getOtherKiekerPattern(), parent2.getChildren().get(2).getKiekerPattern());
    }
    
    @Test
@@ -135,13 +135,13 @@ public class TreeUtilTest {
       
       TreeUtil.findChildMapping(parent1, parent2);
       
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertEquals(parent1.getChildren().get(0).getOtherVersionNode(), parent2.getChildren().get(0));
-      Assert.assertEquals(parent1.getChildren().get(1).getOtherVersionNode(), parent2.getChildren().get(1));
-      Assert.assertEquals(parent1.getChildren().get(2).getOtherVersionNode(), parent2.getChildren().get(3));
-      Assert.assertEquals(parent1.getChildren().get(3).getOtherVersionNode(), parent2.getChildren().get(2));
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(0).getOtherKiekerPattern(), parent2.getChildren().get(0).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(1).getOtherKiekerPattern(), parent2.getChildren().get(1).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(2).getOtherKiekerPattern(), parent2.getChildren().get(3).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(3).getOtherKiekerPattern(), parent2.getChildren().get(2).getKiekerPattern());
    }
    
    @Test
@@ -154,10 +154,10 @@ public class TreeUtilTest {
       
       TreeUtil.findChildMapping(parent1, parent2);
       
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertNotNull(parent1.getChildren().get(0).getOtherVersionNode());
-      Assert.assertEquals(parent1.getChildren().get(0).getOtherVersionNode(), parent2.getChildren().get(1));
-      Assert.assertEquals(parent1.getChildren().get(1).getOtherVersionNode(), parent2.getChildren().get(0));
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertNotNull(parent1.getChildren().get(0).getOtherKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(0).getOtherKiekerPattern(), parent2.getChildren().get(1).getKiekerPattern());
+      Assert.assertEquals(parent1.getChildren().get(1).getOtherKiekerPattern(), parent2.getChildren().get(0).getKiekerPattern());
    }
    
    private void createBasicTree() {

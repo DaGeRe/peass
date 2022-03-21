@@ -11,7 +11,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.vcs.GitCommit;
 
 /**
@@ -42,7 +42,7 @@ public class VersionComparator implements Comparator<String> {
 
    private static List<String> versions;
 
-   public static void setDependencies(final Dependencies dependencies2) {
+   public static void setDependencies(final StaticTestSelection dependencies2) {
       versions = new LinkedList<>();
       versions.add(dependencies2.getInitialversion().getVersion());
       dependencies2.getVersions().keySet().stream().forEach(version -> versions.add(version));

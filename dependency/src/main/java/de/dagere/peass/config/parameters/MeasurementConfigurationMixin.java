@@ -17,6 +17,9 @@ public class MeasurementConfigurationMixin {
    @Option(names = { "-repetitions", "--repetitions" }, description = "Last version that should be analysed")
    int repetitions = 1000000;
    
+   @Option(names = { "-processTimeout", "--processTimeout" }, description = "Timeout that the overall measurement process has - if one VM measurement takes so long that this timeout will be hit, the overall process is stopped (only recommended for calibration runs)")
+   protected int processTimeout = 5;
+   
    @Option(names = { "-duration", "--duration" }, description = "Which duration to use - if duration is specified, warmup and iterations are ignored")
    int duration = 0;
 

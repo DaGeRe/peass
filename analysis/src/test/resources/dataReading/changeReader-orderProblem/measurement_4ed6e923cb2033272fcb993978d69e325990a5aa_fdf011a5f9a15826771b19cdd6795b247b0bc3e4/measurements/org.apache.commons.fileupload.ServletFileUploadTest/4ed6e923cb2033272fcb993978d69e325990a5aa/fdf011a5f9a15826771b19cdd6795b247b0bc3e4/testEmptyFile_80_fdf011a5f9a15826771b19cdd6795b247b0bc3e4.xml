@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testEmptyFile">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647098136415">
+     <value>2.48188448E7</value>
+     <deviation>1.1723186994553052</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>7317948.0</min>
+     <max>1.41275112E8</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647098135526">141275112</value>
+      <value start="1647098135667">43407830</value>
+      <value start="1647098135711">39634667</value>
+      <value start="1647098135750">30777420</value>
+      <value start="1647098135781">25052101</value>
+      <value start="1647098135806">23428412</value>
+      <value start="1647098135830">19507381</value>
+      <value start="1647098135849">16127765</value>
+      <value start="1647098135865">12630750</value>
+      <value start="1647098135878">12617970</value>
+      <value start="1647098135891">10159128</value>
+      <value start="1647098135901">16176274</value>
+      <value start="1647098135917">13708212</value>
+      <value start="1647098135931">13393435</value>
+      <value start="1647098135945">19689999</value>
+      <value start="1647098135964">11564248</value>
+      <value start="1647098135976">19990597</value>
+      <value start="1647098135996">10943351</value>
+      <value start="1647098136007">7317948</value>
+      <value start="1647098136014">8974296</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

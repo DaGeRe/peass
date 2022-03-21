@@ -2,11 +2,9 @@ package de.dagere.peass.breaksearch;
 
 import java.io.File;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
@@ -30,7 +28,7 @@ public class IsThereTimeReductionVM {
    static int komisch = 0;
    static int vms = 0;
 
-   public static void main(String[] args) throws JAXBException {
+   public static void main(final String[] args) throws JAXBException {
       final File folder = new File(args[0]);
       if (new File(folder, "measurementsFull").exists()) {
          checkFolder(new File(folder, "measurementsFull"));
@@ -54,7 +52,6 @@ public class IsThereTimeReductionVM {
          if (xmlFile.getName().endsWith(".xml")) {
 
             final XMLDataLoader loader = new XMLDataLoader(xmlFile);
-            final Set<String> versions = new LinkedHashSet<>();
             
             for (Chunk chunk : loader.getFullData().getTestcases().getTestcase().get(0).getDatacollector().get(0).getChunk()) {
                final Map<String, List<Result>> data = new HashMap<>();
@@ -77,7 +74,7 @@ public class IsThereTimeReductionVM {
    }
 
 
-   private static void testSpeedup(final File xmlFile, final Map<String, List<Result>> data, String versionOld, final String version) {
+   private static void testSpeedup(final File xmlFile, final Map<String, List<Result>> data, final String versionOld, final String version) {
       count++;
       final int executionCount = data.get(version).size();
       if (executionCount > 3) {

@@ -76,23 +76,24 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 	 * 
 	 * @param javaFile File to edit
 	 */
-	protected void editJUnit3(final File javaFile) {
+	@Override
+   protected void editJUnit3(final File javaFile) {
 		try {
 			final CompilationUnit unit = JavaParserProvider.parse(javaFile);
 			unit.addImport("de.dagere.kopeme.junit3.TimeBasedTestcase");
 
-			final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
+			for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
+			   if (clazz.getExtendedTypes(0).getNameAsString().equals("TestCase")) {
+	            clazz.setExtendedTypes(new NodeList<>());
+	            clazz.addExtendedType("TimeBasedTestcase");
+	         }
 
-			if (clazz.getExtendedTypes(0).getNameAsString().equals("TestCase")) {
-				clazz.setExtendedTypes(new NodeList<>());
-				clazz.addExtendedType("TimeBasedTestcase");
+	         addMethod(clazz, "logFullData", "return " + config.isLogFullData() + ";", PrimitiveType.booleanType());
+	         addMethod(clazz, "useKieker", "return " + config.isUseKieker() + ";", PrimitiveType.booleanType());
+	         addMethod(clazz, "getDuration", "return " + duration + ";", PrimitiveType.longType());
+	         addMethod(clazz, "getMaximalTime", "return " + (duration * 2) + ";", PrimitiveType.longType());
+	         addMethod(clazz, "getRepetitions", "return " + config.getRepetitions() + ";", PrimitiveType.intType());
 			}
-
-			addMethod(clazz, "logFullData", "return " + config.isLogFullData() + ";", PrimitiveType.booleanType());
-			addMethod(clazz, "useKieker", "return " + config.isUseKieker() + ";", PrimitiveType.booleanType());
-			addMethod(clazz, "getDuration", "return " + duration + ";", PrimitiveType.longType());
-			addMethod(clazz, "getMaximalTime", "return " + (duration * 2) + ";", PrimitiveType.longType());
-			addMethod(clazz, "getRepetitions", "return " + config.getRepetitions() + ";", PrimitiveType.intType());
 
 			Files.write(javaFile.toPath(), unit.toString().getBytes(charset));
 		} catch (final FileNotFoundException e) {
@@ -108,7 +109,8 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 	 * 
 	 * @param javaFile File to edit
 	 */
-	protected void editJUnit4(final File javaFile) {
+	@Override
+   protected void editJUnit4(final File javaFile) {
 		try {
 			final CompilationUnit unit = JavaParserProvider.parse(javaFile);
 
@@ -118,35 +120,38 @@ public class TimeBasedTestTransformer extends JUnitTestTransformer {
 			unit.addImport("de.dagere.kopeme.junit.testrunner.time.TimeBasedTestRunner");
 			unit.addImport("org.junit.runner.RunWith");
 
-			final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
-			if (clazz.getAnnotations().size() > 0) {
-				boolean otherTestRunner = false;
-				for (final AnnotationExpr annotation : clazz.getAnnotations()) {
-					if (annotation.getNameAsString().contains("RunWith")) {
-						otherTestRunner = true;
-					}
-				}
-				if (otherTestRunner) {
-					return;
-				}
-			}
+			
+			for (final ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
+			   if (clazz.getAnnotations().size() > 0) {
+	            boolean otherTestRunner = false;
+	            for (final AnnotationExpr annotation : clazz.getAnnotations()) {
+	               if (annotation.getNameAsString().contains("RunWith")) {
+	                  otherTestRunner = true;
+	               }
+	            }
+	            if (otherTestRunner) {
+	               return;
+	            }
+	         }
 
-			for (final MethodDeclaration method : clazz.getMethods()) {
-				final NormalAnnotationExpr performanceTestAnnotation = new NormalAnnotationExpr();
-				performanceTestAnnotation.setName("PerformanceTest");
-				performanceTestAnnotation.addPair("duration", "" + duration);
-				performanceTestAnnotation.addPair("logFullData", "" + true);
-				performanceTestAnnotation.addPair("timeout", "" + duration * 2);
-				performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
-				method.addAnnotation(performanceTestAnnotation);
-			}
+	         for (final MethodDeclaration method : clazz.getMethods()) {
+	            final NormalAnnotationExpr performanceTestAnnotation = new NormalAnnotationExpr();
+	            performanceTestAnnotation.setName("PerformanceTest");
+	            performanceTestAnnotation.addPair("duration", "" + duration);
+	            performanceTestAnnotation.addPair("logFullData", "" + true);
+	            performanceTestAnnotation.addPair("timeout", "" + duration * 2);
+	            performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
+	            method.addAnnotation(performanceTestAnnotation);
+	         }
 
-			final SingleMemberAnnotationExpr annotation = new SingleMemberAnnotationExpr();
-			annotation.setName("RunWith");
-			final ClassExpr clazzExpression = new ClassExpr();
-			clazzExpression.setType("TimeBasedTestRunner");
-			annotation.setMemberValue(clazzExpression);
-			clazz.addAnnotation(annotation);
+	         final SingleMemberAnnotationExpr annotation = new SingleMemberAnnotationExpr();
+	         annotation.setName("RunWith");
+	         final ClassExpr clazzExpression = new ClassExpr();
+	         clazzExpression.setType("TimeBasedTestRunner");
+	         annotation.setMemberValue(clazzExpression);
+	         clazz.addAnnotation(annotation);
+			}
+			
 			Files.write(javaFile.toPath(), unit.toString().getBytes(charset));
 		} catch (final FileNotFoundException e) {
 			e.printStackTrace();

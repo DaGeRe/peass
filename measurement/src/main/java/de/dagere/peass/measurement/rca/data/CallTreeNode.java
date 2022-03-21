@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.math3.exception.NumberIsTooSmallException;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
@@ -16,6 +17,7 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
@@ -44,6 +46,12 @@ public class CallTreeNode extends BasicNode {
    @JsonIgnore
    protected MeasurementConfig config;
 
+   /*
+    * Levelwise measurement maps the nodes ad-hoc for each node, and complete maps the nodes at the beginning; therefore, levelwise currently requires having the otherVersionNode
+    * and the second tree structure available.
+    * 
+    * This should be refactored, so the trees are mapped in the beginning and afterwards only one tree structure is used.
+    */
    private CallTreeNode otherVersionNode;
 
    /**
@@ -86,8 +94,9 @@ public class CallTreeNode extends BasicNode {
 
    public void addMeasurement(final String version, final Long duration) {
       checkDataAddPossible(version);
-      LOG.trace("Adding measurement: {}", version);
-      data.get(version).addMeasurement(duration);
+      LOG.trace("Adding measurement: {} Call: {}", version, call);
+      CallTreeStatistics callTreeStatistics = data.get(version);
+      callTreeStatistics.addMeasurement(duration);
    }
 
    /**
@@ -135,11 +144,14 @@ public class CallTreeNode extends BasicNode {
    }
 
    private void checkDataAddPossible(final String version) {
-      if (otherVersionNode == null) {
+      if (getOtherKiekerPattern() == null) {
          throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
       }
-      if (otherVersionNode.getCall().equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersion())) {
-         throw new RuntimeException("Added methods may not contain data");
+      if (getOtherKiekerPattern().equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersion())) {
+         LOG.error("Error occured in version {}", version);
+         LOG.error("Node: {}", kiekerPattern);
+         LOG.error("Other version node: {}", getOtherKiekerPattern());
+         throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
       }
       if (call.equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersionOld())) {
          throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
@@ -162,7 +174,7 @@ public class CallTreeNode extends BasicNode {
    }
 
    private void newVersion(final String version) {
-      LOG.debug("Adding version: {}", version);
+      LOG.trace("Adding version: {}", version);
       CallTreeStatistics statistics = data.get(version);
       if (statistics == null) {
          statistics = new CallTreeStatistics(config.getNodeWarmup());
@@ -198,7 +210,9 @@ public class CallTreeNode extends BasicNode {
 
    public ChangedEntity toEntity() {
       if (call.equals(CauseSearchData.ADDED)) {
-         return otherVersionNode.toEntity();
+         String otherKiekerPattern = getOtherKiekerPattern();
+         String otherCall = otherKiekerPattern.substring(otherKiekerPattern.lastIndexOf(' '), otherKiekerPattern.indexOf('('));
+         return new ChangedEntity(otherCall);
       } else {
          final int index = call.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
          String method = call.substring(index + 1);
@@ -227,7 +241,7 @@ public class CallTreeNode extends BasicNode {
          return testcaseStatistic;
       } catch (NumberIsTooSmallException t) {
          LOG.debug("Data: " + current.getN() + " " + previous.getN());
-         final String otherCall = otherVersionNode != null ? otherVersionNode.getCall() : "Not Existing";
+         final String otherCall = getOtherKiekerPattern() != null ? getOtherKiekerPattern() : "Not Existing";
          throw new RuntimeException("Could not read " + call + " Other Version: " + otherCall, t);
       }
    }
@@ -259,20 +273,6 @@ public class CallTreeNode extends BasicNode {
 
    private boolean firstHasValues(final SummaryStatistics first, final SummaryStatistics second) {
       return (second == null || second.getN() == 0) && (first != null && first.getN() > 0);
-   }
-
-   /**
-    * @deprecated use initVersions instead, and asure that the MeasurementConfig already has the correct versions
-    */
-   @Deprecated
-   @JsonIgnore
-   public void setVersions(final String version, final String predecessor) {
-      LOG.debug("Set versions: {}", version, predecessor);
-      config.getExecutionConfig().setVersion(version);
-      config.getExecutionConfig().setVersionOld(predecessor);
-      resetStatistics();
-      newVersion(version);
-      newVersion(predecessor);
    }
 
    public void initVersions() {
@@ -322,15 +322,23 @@ public class CallTreeNode extends BasicNode {
    }
 
    @JsonIgnore
-   public int getEoi() {
+   public int getEoi(String version) {
+      if (isAdded(version)) {
+         return -1;
+      }
       int eoi;
       if (parent != null) {
-         int predecessorIndex = parent.getChildren().indexOf(this) - 1;
+         List<CallTreeNode> notAddedSiblingList = parent.getChildren()
+               .stream()
+               .filter(predecessor -> !predecessor.isAdded(version))
+               .collect(Collectors.toList());
+         int predecessorIndex = notAddedSiblingList
+               .indexOf(this) - 1;
          if (predecessorIndex >= 0) {
-            CallTreeNode predecessor = parent.getChildren().get(predecessorIndex);
-            eoi = predecessor.getEoi() + predecessor.getAllChildCount() + 1;
+            CallTreeNode predecessor = notAddedSiblingList.get(predecessorIndex);
+            eoi = predecessor.getEoi(version) + predecessor.getAllChildCount(version) + 1;
          } else {
-            eoi = parent.getEoi() + 1;
+            eoi = parent.getEoi(version) + 1;
          }
       } else {
          eoi = 0;
@@ -338,10 +346,26 @@ public class CallTreeNode extends BasicNode {
       return eoi;
    }
 
-   private int getAllChildCount() {
+   private boolean isAdded(String version) {
+      ExecutionConfig executionConfig = config.getExecutionConfig();
+      if (executionConfig.getVersionOld().equals(version) && call.equals(CauseSearchData.ADDED)) {
+         return true;
+      }
+      String otherKiekerPattern = getOtherKiekerPattern();
+      if (executionConfig.getVersion().equals(version) && CauseSearchData.ADDED.equals(otherKiekerPattern)) {
+         return true;
+      }
+      return false;
+   }
+
+   private int getAllChildCount(String version) {
       int childs = 0;
       for (CallTreeNode child : children) {
-         childs += child.getAllChildCount() + 1;
+         boolean currentVersionValidNode = !child.isAdded(version);
+         if (currentVersionValidNode) {
+            int usableChildCount = child.getAllChildCount(version);
+            childs += usableChildCount + 1;
+         }
       }
       return childs;
    }

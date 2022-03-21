@@ -12,13 +12,13 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.javaparser.ParseException;
 
-import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.traces.DiffFileGenerator;
@@ -43,8 +43,8 @@ public class DependencyReader {
 
    private static final Logger LOG = LogManager.getLogger(DependencyReader.class);
 
-   private final DependencyConfig dependencyConfig;
-   protected final Dependencies dependencyResult = new Dependencies();
+   private final TestSelectionConfig dependencyConfig;
+   protected final StaticTestSelection dependencyResult = new StaticTestSelection();
    private final ExecutionData executionResult = new ExecutionData();
    private final ExecutionData coverageBasedSelection = new ExecutionData();
    private final CoverageSelectionInfo coverageSelectionInfo = new CoverageSelectionInfo();
@@ -68,7 +68,7 @@ public class DependencyReader {
    private final DependencySizeRecorder sizeRecorder = new DependencySizeRecorder();
    private final TraceFileMapping mapping = new TraceFileMapping();
 
-   public DependencyReader(final DependencyConfig dependencyConfig, final PeassFolders folders,
+   public DependencyReader(final TestSelectionConfig dependencyConfig, final PeassFolders folders,
          final ResultsFolders resultsFolders, final String url, final VersionIterator iterator,
          final ChangeManager changeManager, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
@@ -104,7 +104,7 @@ public class DependencyReader {
     * @param url
     * @param iterator
     */
-   public DependencyReader(final DependencyConfig dependencyConfig, final PeassFolders folders, final ResultsFolders resultsFolders, final String url,
+   public DependencyReader(final TestSelectionConfig dependencyConfig, final PeassFolders folders, final ResultsFolders resultsFolders, final String url,
          final VersionIterator iterator,
          final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.dependencyConfig = dependencyConfig;
@@ -149,9 +149,9 @@ public class DependencyReader {
 
    public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final int tests = analyseVersion(changeManager);
-      DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
+      DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
       if (dependencyConfig.isGenerateTraces()) {
-         Constants.OBJECTMAPPER.writeValue(resultsFolders.getExecutionFile(), executionResult);
+         Constants.OBJECTMAPPER.writeValue(resultsFolders.getTraceTestSelectionFile(), executionResult);
          if (dependencyConfig.isGenerateCoverageSelection()) {
             Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageSelectionFile(), coverageBasedSelection);
             Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageInfoFile(), coverageSelectionInfo);
@@ -278,7 +278,7 @@ public class DependencyReader {
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
       InitialVersionReader initialVersionReader = new InitialVersionReader(dependencyResult, dependencyManager, iterator);
       if (initialVersionReader.readInitialVersion()) {
-         DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
+         DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
          lastRunningVersion = iterator.getTag();
 
          if (dependencyConfig.isGenerateTraces()) {
@@ -300,7 +300,7 @@ public class DependencyReader {
       coverageBasedSelection.getVersions().put(iterator.getTag(), new TestSet());
    }
 
-   public void readCompletedVersions(final Dependencies initialdependencies) {
+   public void readCompletedVersions(final StaticTestSelection initialdependencies) {
       dependencyManager = new DependencyManager(folders, executionConfig, kiekerConfig, env);
       changeManager = new ChangeManager(folders, iterator, executionConfig, dependencyManager.getExecutor());
       staticChangeHandler = new StaticChangeHandler(folders, executionConfig, dependencyManager);
@@ -310,11 +310,11 @@ public class DependencyReader {
 
       InitialVersionReader initialVersionReader = new InitialVersionReader(initialdependencies, dependencyManager, iterator);
       initialVersionReader.readCompletedVersions();
-      DependencyReaderUtil.write(dependencyResult, resultsFolders.getDependencyFile());
+      DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
       lastRunningVersion = iterator.getTag();
    }
 
-   public Dependencies getDependencies() {
+   public StaticTestSelection getDependencies() {
       return dependencyResult;
    }
 

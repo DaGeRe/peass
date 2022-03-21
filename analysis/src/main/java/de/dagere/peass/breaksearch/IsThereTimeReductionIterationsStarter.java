@@ -9,7 +9,7 @@ import javax.xml.bind.JAXBException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.utils.Constants;
 import picocli.CommandLine;
@@ -40,7 +40,7 @@ public class IsThereTimeReductionIterationsStarter implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+      final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
       VersionComparator.setDependencies(dependencies);
       
       final IsThereTimeReductionIterations isThereTimeReductionIterations = new IsThereTimeReductionIterations();

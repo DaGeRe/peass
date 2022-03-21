@@ -19,7 +19,7 @@ import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -30,12 +30,12 @@ public class DependenciesOnlyStartversionIT {
 
    private static GitProjectBuilder builder;
 
-   Dependencies dependencies;
+   StaticTestSelection dependencies;
 
    @BeforeEach
    public void cleanDependencies() throws Exception {
-      FileUtils.deleteDirectory(ContinuousDependencyReaderIT.resultsFolders.getDependencyFile().getParentFile());
-      Assert.assertFalse(ContinuousDependencyReaderIT.resultsFolders.getDependencyFile().exists());
+      FileUtils.deleteDirectory(ContinuousDependencyReaderIT.resultsFolders.getStaticTestSelectionFile().getParentFile());
+      Assert.assertFalse(ContinuousDependencyReaderIT.resultsFolders.getStaticTestSelectionFile().exists());
 
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
       builder = new GitProjectBuilder(TestConstants.CURRENT_FOLDER, new File("../dependency/src/test/resources/dependencyIT/basic_state"));
@@ -73,8 +73,8 @@ public class DependenciesOnlyStartversionIT {
       checkVersion(dependencies, lastTag, 1);
    }
 
-   private void checkVersion(final Dependencies dependencies, final String newestVersion, final int versions) {
-      Assert.assertTrue(ContinuousDependencyReaderIT.resultsFolders.getDependencyFile().exists());
+   private void checkVersion(final StaticTestSelection dependencies, final String newestVersion, final int versions) {
+      Assert.assertTrue(ContinuousDependencyReaderIT.resultsFolders.getStaticTestSelectionFile().exists());
       MatcherAssert.assertThat(dependencies.getVersions(), Matchers.aMapWithSize(versions));
 
       MatcherAssert.assertThat(dependencies.getVersions().get(newestVersion), Matchers.notNullValue());
@@ -82,7 +82,7 @@ public class DependenciesOnlyStartversionIT {
       Assert.assertEquals(new TestCase("defaultpackage.TestMe#testMe"), testSet.getTests().toArray()[0]);
    }
 
-   private TestSet getTestset(final Dependencies dependencies, final String newestVersion) {
+   private TestSet getTestset(final StaticTestSelection dependencies, final String newestVersion) {
       final TestSet testSet = dependencies.getVersions().get(newestVersion)
             .getChangedClazzes()
             .get(new ChangedEntity("defaultpackage.NormalDependency", "", ""));

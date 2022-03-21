@@ -67,9 +67,6 @@ public class OnceRunner {
 
    private File initVMFolder(final String version, final int vmid, final File logFolder) {
       File vmidFolder = new File(logFolder, "vm_" + vmid + "_" + version);
-      if (vmidFolder.exists()) {
-         vmidFolder = new File(logFolder, "vm_" + vmid + "_" + version + "_new");
-      }
       vmidFolder.mkdirs();
 
       LOG.info("Initial checkout finished, VM-Folder " + vmidFolder.getAbsolutePath() + " exists: " + vmidFolder.exists());
@@ -81,6 +78,10 @@ public class OnceRunner {
       emptyFolder(folders.getKiekerTempFolder());
       System.gc();
       Thread.sleep(1);
+   }
+   
+   public ResultOrganizer getCurrentOrganizer() {
+      return currentOrganizer;
    }
 
    private void emptyFolder(final File tempDir) {

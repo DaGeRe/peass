@@ -43,7 +43,7 @@ public class CauseSearcherIT {
    private static final TestCase TESTCASE = new TestCase("defaultpackage.TestMe", "testMe");
    public final static CauseSearcherConfig CAUSE_CONFIG_TESTME_COMPLETE = new CauseSearcherConfig(TESTCASE,
          false, 0.1,
-         false, false, RCAStrategy.COMPLETE, 1);
+         false, true, RCAStrategy.COMPLETE, 1);
    private static final String VERSION = "000001";
 
    private static final File VERSIONS_FOLDER = new File("src/test/resources/rootCauseIT");
@@ -70,6 +70,7 @@ public class CauseSearcherIT {
          
          final MeasurementConfig measurementConfiguration = new MeasurementConfig(5, VERSION, "000001~1");
          measurementConfiguration.setUseKieker(true);
+         measurementConfiguration.getKiekerConfig().setUseAggregation(true);
          final CauseSearcherConfig causeSearcherConfig = CAUSE_CONFIG_TESTME_COMPLETE;
 
          final CauseSearchFolders folders = new CauseSearchFolders(DependencyTestConstants.CURRENT);
@@ -107,7 +108,7 @@ public class CauseSearcherIT {
     */
    private void checkChangelistContainsChild12(final Set<ChangedEntity> changedEntities) {
       LOG.debug(changedEntities);
-      Assert.assertThat(changedEntities.size(), Matchers.greaterThanOrEqualTo(1));
+      MatcherAssert.assertThat(changedEntities.size(), Matchers.greaterThanOrEqualTo(1));
       List<String> allChanged = changedEntities.stream().map(entity -> entity.toString()).collect(Collectors.toList());
       MatcherAssert.assertThat(allChanged, Matchers.hasItem("defaultpackage.NormalDependency#child12"));
    }

@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.utils.Constants;
@@ -80,7 +80,7 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
 
    public static DependencyStatistics getChangeStatistics(final File dependenciesFile, final ExecutionData changedTests)
          throws JAXBException, JsonParseException, JsonMappingException, IOException {
-      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependenciesFile, Dependencies.class);
+      final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependenciesFile, StaticTestSelection.class);
       final Map<String, VersionStaticSelection> versions = dependencies.getVersions();
 
       final int startTestCound = dependencies.getInitialversion().getInitialDependencies().size();

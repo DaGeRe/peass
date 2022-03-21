@@ -103,7 +103,7 @@ public class ClazzFileFinder {
       Collection<File> javaFiles = FileUtils.listFiles(folder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE);
       for (final File clazzFile : javaFiles) {
          final String clazz = getClazz(folder, clazzFile);
-         final String packageName = clazz.lastIndexOf('.') != -1 ? clazz.substring(0, clazz.lastIndexOf('.')) : clazz;
+         final String packageName = clazz.lastIndexOf('.') != -1 ? clazz.substring(0, clazz.lastIndexOf('.')) : "";
 
          try {
             final CompilationUnit cu = JavaParserProvider.parse(clazzFile);

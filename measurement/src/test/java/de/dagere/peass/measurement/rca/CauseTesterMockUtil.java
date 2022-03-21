@@ -11,7 +11,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
-import de.dagere.peass.measurement.rca.CauseTester;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.helper.TreeBuilder;
 import kieker.analysis.exception.AnalysisConfigurationException;

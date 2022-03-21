@@ -9,7 +9,7 @@ import picocli.CommandLine.Option;
 public class ExecutionConfigMixin {
    @Option(names = { "-timeout", "--timeout" }, description = "Timeout in minutes for each VM start")
    protected int timeout = 5;
-
+   
    @Option(names = { "-includes", "--includes" }, description = "Testcases for inclusion (default: empty, includes all tests)")
    protected String[] includes;
 

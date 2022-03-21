@@ -34,6 +34,10 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class AdaptiveExecutorTest {
 
+   private static final String VERSION0 = "000001~1";
+
+   private static final String VERSION1 = "000001";
+
    private static final Logger LOG = LogManager.getLogger(AdaptiveExecutorTest.class);
 
    private static final File SOURCE_DIR = new File("src/test/resources/rootCauseIT/basic_state/");
@@ -41,6 +45,8 @@ public class AdaptiveExecutorTest {
 
    private File projectFolder = TestConstants.CURRENT_FOLDER;
    private CauseTester executor;
+   
+   private MeasurementConfig config;
 
    @Rule
    public OnFailureLogSafer logSafer = new OnFailureLogSafer(TestConstants.CURRENT_FOLDER,
@@ -54,7 +60,7 @@ public class AdaptiveExecutorTest {
 
          FileUtil.copyDir(SOURCE_DIR, projectFolder);
 
-         final MeasurementConfig config = new MeasurementConfig(2, "000001", "000001~1");
+         config = new MeasurementConfig(2, VERSION1, VERSION0);
          config.setUseKieker(true);
          config.setIterations(2);
          config.setRepetitions(2);
@@ -73,16 +79,16 @@ public class AdaptiveExecutorTest {
          VCSTestUtils.mockGoToTagAny(mockedGitUtils, SOURCE_DIR);
 
          final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#child1",
-               "public void defaultpackage.NormalDependency.child1()", "public void defaultpackage.NormalDependency.child1()", new MeasurementConfig(5));
+               "public void defaultpackage.NormalDependency.child1()", "public void defaultpackage.NormalDependency.child1()", config);
          
          measureNode(nodeWithDuration);
 
          executor.getDurations(0);
 
-         Assert.assertEquals(2, nodeWithDuration.getStatistics("000001").getN());
-         Assert.assertEquals(2, nodeWithDuration.getStatistics("000001~1").getN());
-         Assert.assertEquals(8, nodeWithDuration.getCallCount("000001"));
-         Assert.assertEquals(8, nodeWithDuration.getCallCount("000001~1"));
+         Assert.assertEquals(2, nodeWithDuration.getStatistics(VERSION1).getN());
+         Assert.assertEquals(2, nodeWithDuration.getStatistics(VERSION0).getN());
+         Assert.assertEquals(4, nodeWithDuration.getCallCount(VERSION1));
+         Assert.assertEquals(4, nodeWithDuration.getCallCount(VERSION0));
       }
    }
 
@@ -94,14 +100,14 @@ public class AdaptiveExecutorTest {
          VCSTestUtils.mockGoToTagAny(mockedGitUtils, SOURCE_DIR);
          
          final CallTreeNode nodeWithDuration = new CallTreeNode("defaultpackage.NormalDependency#<init>",
-               "public new defaultpackage.NormalDependency.<init>()", "public new defaultpackage.NormalDependency.<init>()", new MeasurementConfig(5));
+               "public new defaultpackage.NormalDependency.<init>()", "public new defaultpackage.NormalDependency.<init>()", config);
          
          measureNode(nodeWithDuration);
 
          executor.getDurations(1);
 
-         Assert.assertEquals(2, nodeWithDuration.getStatistics("000001").getN());
-         Assert.assertEquals(2, nodeWithDuration.getStatistics("000001~1").getN());
+         Assert.assertEquals(2, nodeWithDuration.getStatistics(VERSION1).getN());
+         Assert.assertEquals(2, nodeWithDuration.getStatistics(VERSION0).getN());
       }
    }
    
@@ -110,7 +116,7 @@ public class AdaptiveExecutorTest {
       nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);
       executor.setIncludedMethods(included);
-      included.forEach(node -> node.setVersions("000001", "000001~1"));
+      included.forEach(node -> node.initVersions());
 
       executor.evaluate(TEST);
    }

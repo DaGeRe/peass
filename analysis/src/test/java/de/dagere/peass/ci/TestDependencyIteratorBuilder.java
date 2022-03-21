@@ -8,7 +8,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.vcs.GitUtils;
@@ -30,7 +30,7 @@ public class TestDependencyIteratorBuilder {
          config.setVersionOld(SIMPLE_PREDECESSOR);
          config.setVersion("HEAD");
 
-         Dependencies dependencies = buildVersionDependencies(LAST_RUNNING_VERSION);
+         StaticTestSelection dependencies = buildVersionDependencies(LAST_RUNNING_VERSION);
          
          VersionIteratorGit iterator = new DependencyIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER)).getIterator();
          Assert.assertEquals(2, iterator.getSize());
@@ -48,7 +48,7 @@ public class TestDependencyIteratorBuilder {
          config.setVersionOld(null);
          config.setVersion("HEAD");
 
-         Dependencies dependencies = buildVersionDependencies();
+         StaticTestSelection dependencies = buildVersionDependencies();
          
          DependencyIteratorBuilder builder = new DependencyIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER));
          VersionIteratorGit iterator = builder.getIterator();
@@ -67,7 +67,7 @@ public class TestDependencyIteratorBuilder {
          config.setVersionOld(null);
          config.setVersion("HEAD");
 
-         Dependencies dependencies = buildVersionDependencies(SIMPLE_PREDECESSOR);
+         StaticTestSelection dependencies = buildVersionDependencies(SIMPLE_PREDECESSOR);
          dependencies.getVersions().get(SIMPLE_PREDECESSOR).setRunning(false);
          
          DependencyIteratorBuilder builder = new DependencyIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER));
@@ -87,7 +87,7 @@ public class TestDependencyIteratorBuilder {
          config.setVersionOld(null);
          config.setVersion("HEAD");
 
-         Dependencies dependencies = buildVersionDependencies(SIMPLE_PREDECESSOR, VERSION_2);
+         StaticTestSelection dependencies = buildVersionDependencies(SIMPLE_PREDECESSOR, VERSION_2);
          
          DependencyIteratorBuilder builder = new DependencyIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER));
          VersionIteratorGit iterator = builder.getIterator();
@@ -106,7 +106,7 @@ public class TestDependencyIteratorBuilder {
          config.setVersionOld(null);
          config.setVersion("HEAD");
          
-         Dependencies dependencies = buildVersionDependencies(LAST_RUNNING_VERSION);
+         StaticTestSelection dependencies = buildVersionDependencies(LAST_RUNNING_VERSION);
 
          VersionIteratorGit iterator = new DependencyIteratorBuilder(config, dependencies, new PeassFolders(TEMPORARY_FOLDER)).getIterator();
          Assert.assertEquals(2, iterator.getSize());
@@ -132,8 +132,8 @@ public class TestDependencyIteratorBuilder {
       }
    }
    
-   private Dependencies buildVersionDependencies(final String... versionNames) {
-      Dependencies dependencies = new Dependencies();
+   private StaticTestSelection buildVersionDependencies(final String... versionNames) {
+      StaticTestSelection dependencies = new StaticTestSelection();
       for (String versionName : versionNames) {
          VersionStaticSelection version = new VersionStaticSelection();
          version.setRunning(true);

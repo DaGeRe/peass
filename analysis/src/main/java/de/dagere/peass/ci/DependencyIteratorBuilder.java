@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
@@ -27,7 +27,7 @@ public class DependencyIteratorBuilder {
    private final String version, versionOld;
    private final VersionIteratorGit iterator;
 
-   public DependencyIteratorBuilder(final ExecutionConfig executionConfig, final Dependencies dependencies, final PeassFolders folders) {
+   public DependencyIteratorBuilder(final ExecutionConfig executionConfig, final StaticTestSelection dependencies, final PeassFolders folders) {
       version = GitUtils.getName(executionConfig.getVersion() != null ? executionConfig.getVersion() : "HEAD", folders.getProjectFolder());
 
       String newestAnalyzedVersionName = dependencies != null ? dependencies.getNewestVersion() : null;
@@ -60,7 +60,7 @@ public class DependencyIteratorBuilder {
       }
    }
 
-   private String getPrePredecessor(final Dependencies dependencies) {
+   private String getPrePredecessor(final StaticTestSelection dependencies) {
       String[] versionNames = dependencies.getVersionNames();
       if (versionNames.length > 1) {
          String prePredecessor = versionNames[versionNames.length - 2];

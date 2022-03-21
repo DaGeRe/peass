@@ -18,6 +18,7 @@ import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CausePersistenceManager;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.CauseTester;
+import de.dagere.peass.measurement.rca.RCAStrategy;
 import de.dagere.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
 import de.dagere.peass.measurement.rca.analyzer.TreeAnalyzer;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -42,6 +43,9 @@ public class CauseSearcherComplete extends CauseSearcher {
          final CauseSearchFolders folders, final EnvironmentVariables env) throws InterruptedException, IOException {
       super(reader, causeSearchConfig, measurer, measurementConfig, folders, env);
       persistenceManager = new CausePersistenceManager(causeSearchConfig, measurementConfig, folders);
+      
+      checkConfiguration(causeSearchConfig, measurementConfig);
+      
       creator = new TreeAnalyzerCreator() {
          @Override
          public TreeAnalyzer getAnalyzer(final BothTreeReader reader, final CauseSearcherConfig config) {
@@ -49,13 +53,28 @@ public class CauseSearcherComplete extends CauseSearcher {
          }
       };
    }
-   
+
    public CauseSearcherComplete(final BothTreeReader reader, final CauseSearcherConfig causeSearchConfig, final CauseTester measurer,
          final MeasurementConfig measurementConfig,
          final CauseSearchFolders folders, final TreeAnalyzerCreator creator, final EnvironmentVariables env) throws InterruptedException, IOException {
       super(reader, causeSearchConfig, measurer, measurementConfig, folders, env);
       persistenceManager = new CausePersistenceManager(causeSearchConfig, measurementConfig, folders);
       this.creator = creator;
+      
+      checkConfiguration(causeSearchConfig, measurementConfig);
+   }
+   
+   private void checkConfiguration(final CauseSearcherConfig causeSearchConfig, final MeasurementConfig measurementConfig) {
+      if (measurementConfig.getKiekerConfig().isUseAggregation() && !causeSearchConfig.isIgnoreEOIs()) {
+         throw new RuntimeException("Aggregation and ignoreEOIs cannot be combined; if aggregation is enabled, ignoreEOIs needs to be enabled.");
+      }
+      if (!measurementConfig.getKiekerConfig().isUseAggregation() && causeSearchConfig.isIgnoreEOIs()) {
+         throw new RuntimeException("No aggregation and ignoreEOIs can currently be not combined, since this would require mapping of the original measured tree data to the ignore-EOI tree. "
+               + "Currently, only aggregation + ignoreEOI both activated or both deactivated is possible. In the future, no aggregation and ignoreEOIs might become possible.");
+      }
+      if (causeSearchConfig.getRcaStrategy().equals(RCAStrategy.UNTIL_SOURCE_CHANGE) && !causeSearchConfig.isIgnoreEOIs()) {
+         throw new RuntimeException("RCA strategy UNTIL_SOURCE_CHANGE and ignoreEOIs can currently not be combined, since partial instrumented exection requires EOI mapping to the original tree.");
+      }
    }
 
    @Override

@@ -13,19 +13,14 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
-import de.dagere.peass.analysis.measurement.AnalyseFullData;
-import de.dagere.peass.analysis.measurement.ProjectStatistics;
-import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.ExecutorCreator;
-import de.dagere.peass.dependency.analysis.ModuleClassMapping;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
-import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
-import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
@@ -36,7 +31,7 @@ public class ContinuousExecutor {
    private static final Logger LOG = LogManager.getLogger(ContinuousExecutor.class);
 
    private final MeasurementConfig measurementConfig;
-   private final DependencyConfig dependencyConfig;
+   private final TestSelectionConfig dependencyConfig;
 
    private final String version;
    private final String versionOld;
@@ -49,7 +44,7 @@ public class ContinuousExecutor {
 
    private final EnvironmentVariables env;
 
-   public ContinuousExecutor(final File projectFolder, final MeasurementConfig measurementConfig, final DependencyConfig dependencyConfig, final EnvironmentVariables env)
+   public ContinuousExecutor(final File projectFolder, final MeasurementConfig measurementConfig, final TestSelectionConfig dependencyConfig, final EnvironmentVariables env)
          throws InterruptedException, IOException {
       this.originalProjectFolder = projectFolder;
       this.measurementConfig = measurementConfig;
@@ -66,15 +61,17 @@ public class ContinuousExecutor {
 
       folders = new PeassFolders(projectFolderLocal);
 
-      Dependencies dependencies = null;
-      if (resultsFolders.getDependencyFile().exists()) {
-         dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
+      StaticTestSelection dependencies = null;
+      if (resultsFolders.getStaticTestSelectionFile().exists()) {
+         dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
       }
-      
+
       DependencyIteratorBuilder iteratorBuiler = new DependencyIteratorBuilder(measurementConfig.getExecutionConfig(), dependencies, folders);
       iterator = iteratorBuiler.getIterator();
       version = iteratorBuiler.getVersion();
       versionOld = iteratorBuiler.getVersionOld();
+      measurementConfig.getExecutionConfig().setVersion(version);
+      measurementConfig.getExecutionConfig().setVersionOld(versionOld);
       LOG.debug("Version: {} VersionOld: {}", version, versionOld);
    }
 
@@ -98,7 +95,7 @@ public class ContinuousExecutor {
       RTSResult tests = executeRegressionTestSelection(url);
       return tests;
    }
-   
+
    public void measure(final Set<TestCase> tests) {
       try {
          File measurementFolder = executeMeasurement(tests);
@@ -114,10 +111,11 @@ public class ContinuousExecutor {
    }
 
    protected RTSResult executeRegressionTestSelection(final String url) {
-      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), measurementConfig.getKiekerConfig(), folders, resultsFolders, env);
+      ContinuousDependencyReader dependencyReader = new ContinuousDependencyReader(dependencyConfig, measurementConfig.getExecutionConfig(), measurementConfig.getKiekerConfig(),
+            folders, resultsFolders, env);
       final RTSResult tests = dependencyReader.getTests(iterator, url, version, measurementConfig);
       tests.setVersionOld(versionOld);
-      
+
       SourceReader sourceReader = new SourceReader(measurementConfig.getExecutionConfig(), version, versionOld, resultsFolders, folders);
       sourceReader.readMethodSources(tests.getTests());
 
@@ -127,19 +125,24 @@ public class ContinuousExecutor {
    protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       final File fullResultsVersion = resultsFolders.getVersionFullResultsFolder(version, versionOld);
       File logFile = resultsFolders.getMeasurementLogFile(version, versionOld);
-      final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(version, versionOld, folders, measurementConfig, env);
+      final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(folders, measurementConfig, env);
       final File measurementFolder = measurementExecutor.executeMeasurements(tests, fullResultsVersion, logFile);
       return measurementFolder;
    }
 
-   private void analyzeMeasurements(final File measurementFolder) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
-      final ProjectStatistics statistics = new ProjectStatistics();
-      TestTransformer testTransformer = ExecutorCreator.createTestTransformer(folders, measurementConfig.getExecutionConfig(), measurementConfig);
-      TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
-      ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), executor.getModules(), measurementConfig.getExecutionConfig());
-      final AnalyseFullData afd = new AnalyseFullData(resultsFolders.getChangeFile(), statistics, mapping, measurementConfig.getStatisticsConfig());
-      afd.analyseFolder(measurementFolder);
-      Constants.OBJECTMAPPER.writeValue(resultsFolders.getStatisticsFile(), statistics);
+   private void analyzeMeasurements(final File measurementFolder)
+         throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, JAXBException {
+      StaticTestSelection selectedTests = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
+      ChangeReader changeReader = new ChangeReader(resultsFolders, selectedTests);
+      changeReader.readFile(measurementFolder.getParentFile());
+
+      // final ProjectStatistics statistics = new ProjectStatistics();
+      // TestTransformer testTransformer = ExecutorCreator.createTestTransformer(folders, measurementConfig.getExecutionConfig(), measurementConfig);
+      // TestExecutor executor = ExecutorCreator.createExecutor(folders, testTransformer, env);
+      // ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), executor.getModules(), measurementConfig.getExecutionConfig());
+      // final AnalyseFullData afd = new AnalyseFullData(resultsFolders.getChangeFile(), statistics, mapping, measurementConfig.getStatisticsConfig());
+      // afd.analyseFolder(measurementFolder);
+      // Constants.OBJECTMAPPER.writeValue(resultsFolders.getStatisticsFile(), statistics);
    }
 
    public String getLatestVersion() {
@@ -158,7 +161,7 @@ public class ContinuousExecutor {
    public File getProjectFolder() {
       return folders.getProjectFolder();
    }
-   
+
    public File getLocalFolder() {
       return localFolder;
    }

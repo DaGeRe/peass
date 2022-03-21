@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testFilenameCaseSensitivity">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647100799599">
+     <value>2.2738386199999996E7</value>
+     <deviation>0.5929103328102311</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>1.1759315E7</min>
+     <max>6.8352836E7</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647100798761">68352836</value>
+      <value start="1647100798830">21624185</value>
+      <value start="1647100798851">32966081</value>
+      <value start="1647100798884">24594068</value>
+      <value start="1647100798909">23014662</value>
+      <value start="1647100798932">22009403</value>
+      <value start="1647100798954">21809645</value>
+      <value start="1647100798976">29319639</value>
+      <value start="1647100799005">13657411</value>
+      <value start="1647100799019">12986173</value>
+      <value start="1647100799032">12702903</value>
+      <value start="1647100799045">23084052</value>
+      <value start="1647100799068">34634366</value>
+      <value start="1647100799103">16771795</value>
+      <value start="1647100799119">11887985</value>
+      <value start="1647100799131">12275224</value>
+      <value start="1647100799144">36754183</value>
+      <value start="1647100799180">11896165</value>
+      <value start="1647100799192">11759315</value>
+      <value start="1647100799204">12667633</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

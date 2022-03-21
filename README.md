@@ -91,3 +91,10 @@ The creation of this project was funded by a PhD scholarship of Hanns-Seidel-Sti
 # Citation
 
 If you use Peass for research, please cite `Reichelt, David Georg, Stefan Kühne, and Wilhelm Hasselbring. "Peass: a tool for identifying performance changes at code level." 2019 34th IEEE/ACM International Conference on Automated Software Engineering (ASE). IEEE, 2019.`
+
+# License
+
+Peass is **licensed** under the **[MIT License]** and **[AGPL License]**. This means you can use Peass under the conditions of one of these licenses, but future forks might choose to only continue using one of these licenses.
+
+[MIT License]: https://github.com/DaGeRe/peass/blob/main/LICSENSE.MIT
+[AGPL License]: https://github.com/DaGeRe/peass/blob/main/LICENSE.AGPL

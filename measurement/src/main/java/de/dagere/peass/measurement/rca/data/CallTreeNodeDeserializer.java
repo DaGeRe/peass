@@ -17,7 +17,8 @@ class CallTreeNodeDeserializer extends JsonDeserializer<CallTreeNode> {
       final JsonNode node = p.getCodec().readTree(p);
       final String call = node.get("call").asText();
       final String kiekerPattern = !node.get("kiekerPattern").isNull() ? node.get("kiekerPattern").asText() : null;
-      final String module = node.get("module") != null ? node.get("module").asText() : null;
+      JsonNode moduleNode = node.get("module");
+      final String module = (moduleNode != null && !moduleNode.isNull()) ? moduleNode.asText() : null;
       final JsonNode children = node.get("children");
       final CallTreeNode root = new CallTreeNode(call, kiekerPattern, null, (MeasurementConfig) null);
       root.setModule(module);
@@ -30,7 +31,8 @@ class CallTreeNodeDeserializer extends JsonDeserializer<CallTreeNode> {
       for (final JsonNode child : children) {
          final String call = child.get("call").asText();
          final String kiekerPattern = child.get("kiekerPattern").asText();
-         final String module = child.get("module") != null ? child.get("module").asText() : null;
+         JsonNode moduleNode = child.get("module");
+         final String module = (moduleNode != null && !moduleNode.isNull()) ? moduleNode.asText() : null;
          final CallTreeNode created = parent.appendChild(call, kiekerPattern, null);
          created.setModule(module);
          handleChild(child.get("children"), created);

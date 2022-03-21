@@ -3,8 +3,6 @@ package de.dagere.peass.dependency.traces;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.dependency.traces.MethodReader;
-
 public class TestMethodReader {
    
    @Test

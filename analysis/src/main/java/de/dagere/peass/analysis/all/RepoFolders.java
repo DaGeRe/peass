@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 
 public class RepoFolders {
@@ -92,11 +93,11 @@ public class RepoFolders {
    }
 
    public File getDependencyFile(final String project) {
-      return new File(dependencyFolder, "deps_" + project + ".json");
+      return new File(dependencyFolder, ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
    }
 
    public ExecutionData getExecutionData(final String project) throws JsonParseException, JsonMappingException, IOException {
-      final File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
+      final File executionFile = new File(dependencyFolder, ResultsFolders.TRACE_SELECTION_PREFIX + project + ".json");
       final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
       return changedTests;
    }

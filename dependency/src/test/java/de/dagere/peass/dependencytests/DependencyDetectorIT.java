@@ -25,7 +25,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
@@ -69,7 +69,7 @@ public class DependencyDetectorIT {
 
       final DependencyReader reader = DependencyDetectorTestUtil.readTwoVersions(changeManager, fakeIterator);
 
-      Dependencies dependencies = reader.getDependencies();
+      StaticTestSelection dependencies = reader.getDependencies();
       System.out.println(dependencies.getVersions());
 
       Assert.assertTrue(dependencies.getVersions().get(dependencies.getNewestVersion()).isRunning());
@@ -142,7 +142,7 @@ public class DependencyDetectorIT {
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 
-      final Dependencies dependencies = reader.getDependencies();
+      final StaticTestSelection dependencies = reader.getDependencies();
       System.out.println(dependencies);
 
       fakeIterator.goToNextCommit();

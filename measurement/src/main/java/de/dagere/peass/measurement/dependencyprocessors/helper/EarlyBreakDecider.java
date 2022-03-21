@@ -17,8 +17,8 @@ public class EarlyBreakDecider {
    private final StatisticalSummary statisticsBefore;
    private final StatisticalSummary statisticsAfter;
 
-   private double type1error = 0.01;
-   private double type2error = 0.01;
+   private final double type1error;
+   private final double type2error;
 
    public EarlyBreakDecider(final MeasurementConfig config, final StatisticalSummary statisticsBefore, final StatisticalSummary statisticsAfter) throws JAXBException {
       this.type1error = config.getStatisticsConfig().getType1error();
@@ -54,20 +54,5 @@ public class EarlyBreakDecider {
       return savelyDecidable;
    }
 
-   public double getType1error() {
-      return type1error;
-   }
-
-   public void setType1error(final double type1error) {
-      this.type1error = type1error;
-   }
-
-   public double getType2error() {
-      return type2error;
-   }
-
-   public void setType2error(final double type2error) {
-      this.type2error = type2error;
-   }
 
 }

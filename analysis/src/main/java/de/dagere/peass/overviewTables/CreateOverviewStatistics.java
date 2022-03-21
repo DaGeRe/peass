@@ -19,6 +19,7 @@ import de.dagere.peass.analysis.properties.PropertyProcessor;
 import de.dagere.peass.analysis.properties.VersionChangeProperties;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 
@@ -71,7 +72,7 @@ public class CreateOverviewStatistics {
          final int versions = GitUtils.getVersions(new File(projectsFolder, project));
          System.out.print(versions + " & ");
          stats[0].addValue(versions);
-         final File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
+         final File executionFile = new File(dependencyFolder, ResultsFolders.TRACE_SELECTION_PREFIX + project + ".json");
          if (executionFile.exists()) {
             final ExecutionData changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
             System.out.print(changedTests.getVersions().size() + " & ");

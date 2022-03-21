@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.parallel.OneReader;
@@ -26,7 +26,7 @@ import de.dagere.peass.vcs.VersionIteratorGit;
 public class DependencyParallelReader {
    private static final Logger LOG = LogManager.getLogger(DependencyParallelReader.class);
 
-   private final DependencyConfig dependencyConfig;
+   private final TestSelectionConfig dependencyConfig;
    private final String url;
    private final VersionKeeper nonRunning;
    private final VersionKeeper nonChanges;
@@ -41,7 +41,7 @@ public class DependencyParallelReader {
    private final EnvironmentVariables env;
 
    public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<GitCommit> commits,
-         final DependencyConfig dependencyConfig, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
+         final TestSelectionConfig dependencyConfig, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       url = GitUtils.getURL(projectFolder);
       this.dependencyConfig = dependencyConfig;
       this.executionConfig = executionConfig;

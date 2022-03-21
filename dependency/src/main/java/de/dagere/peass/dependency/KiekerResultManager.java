@@ -37,6 +37,7 @@ import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
+import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 /**
  * Handles the running of tests
@@ -60,7 +61,9 @@ public class KiekerResultManager {
       fakeConfig.setWarmup(0);
       // Structure discovery runs never need adaptive monitoring
       fakeConfig.getKiekerConfig().setEnableAdaptiveMonitoring(false);
+      fakeConfig.getKiekerConfig().setUseAggregation(false);
       fakeConfig.getExecutionConfig().setRedirectToNull(false);
+      fakeConfig.getKiekerConfig().setRecord(AllowedKiekerRecord.OPERATIONEXECUTION);
       fakeConfig.setShowStart(true);
 
       testTransformer = ExecutorCreator.createTestTransformer(folders, executionConfig, fakeConfig);

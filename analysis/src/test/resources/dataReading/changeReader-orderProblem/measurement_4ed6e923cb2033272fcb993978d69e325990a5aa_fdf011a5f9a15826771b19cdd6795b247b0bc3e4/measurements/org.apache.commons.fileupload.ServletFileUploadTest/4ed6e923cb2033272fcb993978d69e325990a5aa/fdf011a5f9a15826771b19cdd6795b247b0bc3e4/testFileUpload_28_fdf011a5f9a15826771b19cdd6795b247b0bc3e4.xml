@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testFileUpload">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647099863613">
+     <value>5.380395825E7</value>
+     <deviation>0.5730337987151434</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>1.9192421E7</min>
+     <max>1.63446347E8</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647099862143">163446347</value>
+      <value start="1647099862306">48285235</value>
+      <value start="1647099862355">54345420</value>
+      <value start="1647099862409">28788243</value>
+      <value start="1647099862438">53396844</value>
+      <value start="1647099862491">26026334</value>
+      <value start="1647099862517">59958366</value>
+      <value start="1647099862577">62088048</value>
+      <value start="1647099862639">61213512</value>
+      <value start="1647099862701">52804476</value>
+      <value start="1647099862753">59793847</value>
+      <value start="1647099862813">37517758</value>
+      <value start="1647099862851">67757625</value>
+      <value start="1647099862919">25763996</value>
+      <value start="1647099862944">44957278</value>
+      <value start="1647099862989">30706726</value>
+      <value start="1647099863020">19192421</value>
+      <value start="1647099863039">65801613</value>
+      <value start="1647099863105">81522509</value>
+      <value start="1647099863187">32712567</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

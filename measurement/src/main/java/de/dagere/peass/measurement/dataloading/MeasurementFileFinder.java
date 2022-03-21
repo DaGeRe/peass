@@ -66,7 +66,7 @@ public class MeasurementFileFinder {
       return datacollector;
    }
    
-   private static Datacollector getDataCollector(final String method, final List<TestcaseType> testcaseList) {
+   public static Datacollector getDataCollector(final String method, final List<TestcaseType> testcaseList) {
       Datacollector datacollector = null;
       for (final TestcaseType testcase : testcaseList) {
          if (testcase.getName().equals(method)) {

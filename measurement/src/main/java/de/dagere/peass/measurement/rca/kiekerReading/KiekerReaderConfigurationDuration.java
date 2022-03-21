@@ -21,7 +21,7 @@ import kieker.tools.source.LogsReaderCompositeStage;
 
 public class KiekerReaderConfigurationDuration extends KiekerReaderConfiguration {
    public void readDurations(final File kiekerTraceFolder, final Set<CallTreeNode> measuredNodes, final String version) {
-      DurationStage stage = new DurationStage(systemModelRepositoryNew, measuredNodes, version);
+      OperationExecutionRCAStage stage = new OperationExecutionRCAStage(systemModelRepositoryNew, measuredNodes, version);
       
       ExecutionRecordTransformationStage executionStage = prepareTillExecutions(kiekerTraceFolder);
       this.connectPorts(executionStage.getOutputPort(), stage.getInputPort());
@@ -32,7 +32,7 @@ public class KiekerReaderConfigurationDuration extends KiekerReaderConfiguration
       inputDirs.add(kiekerTraceFolder);
       LogsReaderCompositeStage logReaderStage = new LogsReaderCompositeStage(inputDirs, true, 4096);
 
-      final DurationFromRecordReadStage executionRecordTransformationStage = new DurationFromRecordReadStage(systemModelRepositoryNew, measuredNodes, version);
+      final DurationRCAStage executionRecordTransformationStage = new DurationRCAStage(systemModelRepositoryNew, measuredNodes, version);
 
       final DynamicEventDispatcher dispatcher = new DynamicEventDispatcher(null, false, true, false);
       final IEventMatcher<? extends DurationRecord> operationExecutionRecordMatcher = new ImplementsEventMatcher<>(DurationRecord.class, null);

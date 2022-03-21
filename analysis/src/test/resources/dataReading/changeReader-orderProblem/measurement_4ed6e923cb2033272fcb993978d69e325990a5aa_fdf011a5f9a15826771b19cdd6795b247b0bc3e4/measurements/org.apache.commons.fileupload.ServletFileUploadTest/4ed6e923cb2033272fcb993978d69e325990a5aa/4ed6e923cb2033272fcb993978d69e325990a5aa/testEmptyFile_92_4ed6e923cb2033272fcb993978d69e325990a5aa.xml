@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testEmptyFile">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647098270670">
+     <value>2.831390965E7</value>
+     <deviation>0.6508076007783312</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>1.1402559E7</min>
+     <max>9.7956425E7</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647098269737">97956425</value>
+      <value start="1647098269835">38982403</value>
+      <value start="1647098269874">26167414</value>
+      <value start="1647098269900">24082849</value>
+      <value start="1647098269924">23636252</value>
+      <value start="1647098269948">22160793</value>
+      <value start="1647098269970">29578821</value>
+      <value start="1647098270000">39180942</value>
+      <value start="1647098270039">31172569</value>
+      <value start="1647098270070">25572788</value>
+      <value start="1647098270096">30975790</value>
+      <value start="1647098270127">23299045</value>
+      <value start="1647098270150">24477656</value>
+      <value start="1647098270174">11402559</value>
+      <value start="1647098270186">11538418</value>
+      <value start="1647098270197">29165923</value>
+      <value start="1647098270227">11683957</value>
+      <value start="1647098270238">14325589</value>
+      <value start="1647098270253">16339665</value>
+      <value start="1647098270269">34578335</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

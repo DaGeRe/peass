@@ -21,9 +21,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.analysis.changes.ProjectChanges;
-import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -35,6 +37,7 @@ import net.lingala.zip4j.exception.ZipException;
 
 public class TestContinuousExecutor {
 
+   private static final String NEWER_VERSION = "a23e385264c31def8dcda86c3cf64faa698c62d8";
    private static final File fullPeassFolder = new File(DependencyTestConstants.CURRENT.getParentFile(), DependencyTestConstants.CURRENT.getName() + "_fullPeass");
 
    @Before
@@ -54,7 +57,7 @@ public class TestContinuousExecutor {
    public void testChangeIdentification() throws Exception {
       initRepo();
       
-      DependencyConfig dependencyConfig = new DependencyConfig(1, false);
+      TestSelectionConfig dependencyConfig = new TestSelectionConfig(1, false);
       MeasurementConfig measurementConfig = new MeasurementConfig(2);
       ContinuousExecutor executor = new ContinuousExecutor(DependencyTestConstants.CURRENT, measurementConfig, dependencyConfig, new EnvironmentVariables());
 
@@ -72,7 +75,7 @@ public class TestContinuousExecutor {
       File changeFile = new File(fullPeassFolder, "changes.json");
       ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changeFile, ProjectChanges.class);
       
-      String changedTestClass = changes.getVersion("a23e385264c31def8dcda86c3cf64faa698c62d8").getTestcaseChanges().keySet().iterator().next();
+      String changedTestClass = changes.getVersion(NEWER_VERSION).getTestcaseChanges().keySet().iterator().next();
       TestCase tc = new TestCase(changedTestClass);
       Assert.assertEquals("de.test.CalleeTest", tc.getClazz());
    }
@@ -100,8 +103,21 @@ public class TestContinuousExecutor {
       HashSet<TestCase> tests = new HashSet<TestCase>();
       tests.add(new TestCase("defaultpackage.TestMe#testMe"));
       RTSResult mockedResult = new RTSResult(tests, true);
-      Mockito.doReturn(mockedResult).when(spied).executeRegressionTestSelection(Mockito.anyString());
-      Mockito.when(spied.executeRegressionTestSelection(Mockito.anyString())).thenReturn(mockedResult);
+      Mockito.doAnswer(new Answer<RTSResult>() {
+
+         @Override
+         public RTSResult answer(InvocationOnMock invocation) throws Throwable {
+            File staticTestSelectionFile = new File(fullPeassFolder, "staticTestSelection_current.json");
+            StaticTestSelection staticSelection = new StaticTestSelection();
+            staticSelection.getInitialversion().setVersion("33ce17c04b5218c25c40137d4d09f40fbb3e4f0f");
+            staticSelection.getVersions().put(NEWER_VERSION, new VersionStaticSelection());
+            Constants.OBJECTMAPPER.writeValue(staticTestSelectionFile, staticSelection);
+            return mockedResult;
+         }
+      }).when(spied).executeRegressionTestSelection(Mockito.anyString());
+      
+//      Mockito.doReturn(mockedResult).when(spied).executeRegressionTestSelection(Mockito.anyString());
+//      Mockito.when(spied.executeRegressionTestSelection(Mockito.anyString())).thenReturn(mockedResult);
    }
 
 
@@ -110,7 +126,7 @@ public class TestContinuousExecutor {
       file.extractAll(DependencyTestConstants.CURRENT.getAbsolutePath());
       VersionComparator.setVersions(Arrays.asList(new GitCommit[] {
             new GitCommit("33ce17c04b5218c25c40137d4d09f40fbb3e4f0f", null, null, null),
-            new GitCommit("a23e385264c31def8dcda86c3cf64faa698c62d8", null, null, null)}));
+            new GitCommit(NEWER_VERSION, null, null, null)}));
    }
 
    public void buildRepo() throws InterruptedException, IOException {

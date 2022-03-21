@@ -15,9 +15,10 @@ import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.changes.Changes;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;
-import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.validation.data.ProjectValidation;
 import de.dagere.peass.validation.data.Validation;
@@ -38,11 +39,11 @@ public class Validator {
    private final ProjectStatistics statistics;
 
    public Validator(final File dependencyFolder, final File changeFolder, final String project) throws JsonParseException, JsonMappingException, IOException {
-      final File executionFile = new File(dependencyFolder, "execute_" + project + ".json");
+      final File executionFile = new File(dependencyFolder, ResultsFolders.TRACE_SELECTION_PREFIX + project + ".json");
       changedTests = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
 
-      final File dependencyFile = new File(dependencyFolder, "deps_" + project + ".json");
-      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+      final File dependencyFile = new File(dependencyFolder, ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
+      final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
       firstVersion = dependencies.getVersionNames()[0];
 
       File changeFile = getChangefile(changeFolder, project);

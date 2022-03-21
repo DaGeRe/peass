@@ -14,9 +14,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
-import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialVersion;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.utils.Constants;
@@ -26,7 +26,7 @@ import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 /**
- * Basic class for all classes that operate somehow on an folder and it's dependencyfile.
+ * Basic class for all classes that operate somehow on an folder and it's static selection file.
  * 
  * @author reichelt
  *
@@ -43,7 +43,7 @@ public abstract class VersionProcessor implements Callable<Void> {
 
    protected PeassFolders folders;
    protected VersionControlSystem vcs;
-   protected Dependencies dependencies;
+   protected StaticTestSelection staticTestSelection;
    protected ExecutionData executionData;
 
    protected String startversion;
@@ -53,15 +53,15 @@ public abstract class VersionProcessor implements Callable<Void> {
    @Option(names = { "-threads", "--threads" }, description = "Number of parallel threads for analysis")
    protected int threads = 1;
 
-   @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Path to the dependencyfile")
-   protected File dependencyFile;
+   @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the staticSelectionFile")
+   protected File staticSelectionFile;
 
-   @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
+   @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile (may be trace based selection or coverage selection file)")
    protected File executionfile;
 
-   public VersionProcessor(final File projectFolder, final Dependencies dependencies) {
+   public VersionProcessor(final File projectFolder, final StaticTestSelection dependencies) {
       this.folders = new PeassFolders(projectFolder);
-      this.dependencies = dependencies;
+      this.staticTestSelection = dependencies;
       startversion = null;
       endversion = null;
       threads = 1;
@@ -85,12 +85,12 @@ public abstract class VersionProcessor implements Callable<Void> {
 
    public void processCommandline() throws JAXBException {
       LOG.debug("Processing initial");
-      processInitialVersion(dependencies.getInitialversion());
+      processInitialVersion(staticTestSelection.getInitialversion());
 
       if (threads != 1) {
          throw new RuntimeException("Parallel processing is not possible or implemented; do not set threads!");
       } else {
-         for (final Map.Entry<String, VersionStaticSelection> version : dependencies.getVersions().entrySet()) {
+         for (final Map.Entry<String, VersionStaticSelection> version : staticTestSelection.getVersions().entrySet()) {
             LOG.debug("Processing {}", version.getKey());
             processVersion(version.getKey(), version.getValue());
          }
@@ -121,21 +121,21 @@ public abstract class VersionProcessor implements Callable<Void> {
          version = executionMixin.getVersion();
       }
       
-      if (dependencyFile != null) {
-         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-         VersionComparator.setDependencies(dependencies);
-         executionData = new ExecutionData(dependencies);
-      }
+      if (staticSelectionFile != null) {
+          staticTestSelection = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
+          VersionComparator.setDependencies(staticTestSelection);
+          executionData = new ExecutionData(staticTestSelection);
+       }
       if (executionfile != null) {
          executionData = Constants.OBJECTMAPPER.readValue(executionfile, ExecutionData.class);
-         dependencies = new Dependencies(executionData);
+         staticTestSelection = new StaticTestSelection(executionData);
       }
-      if (executionData == null && dependencies == null) {
+      if (executionData == null && staticTestSelection == null) {
          throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");
       }
       
       if (!projectFolder.exists()) {
-         GitUtils.downloadProject(dependencies.getUrl(), projectFolder);
+         GitUtils.downloadProject(staticTestSelection.getUrl(), projectFolder);
       }
       folders = new PeassFolders(projectFolder);
 
@@ -156,7 +156,7 @@ public abstract class VersionProcessor implements Callable<Void> {
          LOG.info("Version: " + startversion + " - " + endversion);
       }
 
-      VersionComparator.setDependencies(dependencies);
+      VersionComparator.setDependencies(staticTestSelection);
       vcs = VersionControlSystem.getVersionControlSystem(folders.getProjectFolder());
    }
 }

@@ -21,8 +21,8 @@ public class TestPackageFinder {
       
       final List<String> lowestPackage = new ClazzFileFinder(config).getClasses(new File("."));
       System.out.println(lowestPackage);
-      MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.DependencyReadingParallelStarter"));
-      MatcherAssert.assertThat(lowestPackage, Matchers.not(IsIterableContaining.hasItem("de.dagere.peass.DependencyReadingParallelStarter.DependencyReadingParallelStarter")));
+      MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.SelectStarter"));
+      MatcherAssert.assertThat(lowestPackage, Matchers.not(IsIterableContaining.hasItem("de.dagere.peass.SelectStarter.SelectStarter")));
       MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.dependency.statistics.DependencyStatisticAnalyzer"));
       MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.dependency.statistics.DependencyStatistics"));
       MatcherAssert.assertThat(lowestPackage, IsIterableContaining.hasItem("de.dagere.peass.TestPackageFinder"));

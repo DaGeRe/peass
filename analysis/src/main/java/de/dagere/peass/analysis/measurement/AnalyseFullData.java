@@ -18,7 +18,7 @@ import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
 import de.dagere.peass.measurement.statistics.Relation;
@@ -139,7 +139,7 @@ public class AnalyseFullData extends DataAnalyser {
       }
       LOG.info("Draw results: " + Constants.DRAW_RESULTS);
       
-      VersionComparator.setDependencies(new Dependencies());
+      VersionComparator.setDependencies(new StaticTestSelection());
 //      final File dependencyFile = new File(args[1]);
 //      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
 //      VersionComparator.setDependencies(dependencies);

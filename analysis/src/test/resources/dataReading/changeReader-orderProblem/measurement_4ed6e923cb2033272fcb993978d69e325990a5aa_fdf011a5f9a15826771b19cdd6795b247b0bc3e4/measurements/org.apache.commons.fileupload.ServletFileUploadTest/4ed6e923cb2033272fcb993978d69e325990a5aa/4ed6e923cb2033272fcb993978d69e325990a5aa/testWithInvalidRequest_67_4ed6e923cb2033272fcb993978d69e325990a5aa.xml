@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testWithInvalidRequest">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647104744629">
+     <value>4917403.5</value>
+     <deviation>0.761374830820732</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>2360920.0</min>
+     <max>1.8580711E7</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647104744391">18580711</value>
+      <value start="1647104744409">9440129</value>
+      <value start="1647104744419">6765291</value>
+      <value start="1647104744426">5107088</value>
+      <value start="1647104744431">3387356</value>
+      <value start="1647104744434">4561740</value>
+      <value start="1647104744439">4450451</value>
+      <value start="1647104744443">4068773</value>
+      <value start="1647104744447">4575250</value>
+      <value start="1647104744452">3967783</value>
+      <value start="1647104744456">6553392</value>
+      <value start="1647104744462">2773618</value>
+      <value start="1647104744465">2444149</value>
+      <value start="1647104744468">2456370</value>
+      <value start="1647104744470">2381720</value>
+      <value start="1647104744473">2425040</value>
+      <value start="1647104744475">2451470</value>
+      <value start="1647104744477">2984187</value>
+      <value start="1647104744480">6612632</value>
+      <value start="1647104744487">2360920</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

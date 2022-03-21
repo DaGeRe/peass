@@ -20,8 +20,6 @@ public class TestDifferentStatisticTests {
    @Test
    public void testBimodalExample() {
       final CallTreeNode node = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()", TestCallTreeStatistics.CONFIG);
-      final CallTreeNode otherVersionNode = new CallTreeNode("de.mypackage.Test#callMethod", "public void de.mypackage.Test.callMethod()", "public void de.mypackage.Test.callMethod()", TestCallTreeStatistics.CONFIG);
-      node.setOtherVersionNode(otherVersionNode);
       
       buildBimodalMeasurementValues(node);
       

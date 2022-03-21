@@ -17,29 +17,23 @@ import de.dagere.kopeme.generated.TestcaseType.Datacollector;
 import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.folders.PeassFolders;
 
 public class ResultLoader {
 
    private static final Logger LOG = LogManager.getLogger(ResultLoader.class);
 
    private final MeasurementConfig config;
-   final File measurementFolder;
-   final TestCase testcase;
-   final long currentChunkStart;
 
    private final List<Double> before = new LinkedList<>();
    private final List<Double> after = new LinkedList<>();
 
-   public ResultLoader(final MeasurementConfig config, final File measurementFolder, final TestCase testcase,
-         final long currentChunkStart) {
+   public ResultLoader(final MeasurementConfig config) {
       this.config = config;
-      this.measurementFolder = measurementFolder;
-      this.testcase = testcase;
-      this.currentChunkStart = currentChunkStart;
    }
 
-   public void loadData() throws JAXBException {
-      final File kopemeFile = new File(measurementFolder, testcase.getShortClazz() + "_" + testcase.getMethod() + ".xml");
+   public void loadData(PeassFolders folders, final TestCase testcase, final long currentChunkStart) throws JAXBException {
+      final File kopemeFile = folders.getSummaryFile(testcase);
       final XMLDataLoader loader = new XMLDataLoader(kopemeFile);
       if (loader.getFullData().getTestcases().getTestcase().size() > 0) {
          final Datacollector dataCollector = loader.getFullData().getTestcases().getTestcase().get(0).getDatacollector().get(0);
@@ -78,7 +72,7 @@ public class ResultLoader {
    public double[] getValsAfter() {
       return ArrayUtils.toPrimitive(after.toArray(new Double[0]));
    }
-   
+
    public static List<Result> removeResultsWithWrongConfiguration(final List<Result> results) {
       List<Result> cleaned = new LinkedList<>();
       long repetitions = MultipleVMTestUtil.getMinRepetitionCount(results);
@@ -89,7 +83,7 @@ public class ResultLoader {
             cleaned.add(result);
          }
       }
-      
+
       return cleaned;
    }
 }

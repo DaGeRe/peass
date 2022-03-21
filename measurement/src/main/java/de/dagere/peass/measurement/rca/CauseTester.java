@@ -26,6 +26,7 @@ import de.dagere.peass.measurement.dependencyprocessors.AdaptiveTester;
 import de.dagere.peass.measurement.dependencyprocessors.helper.EarlyBreakDecider;
 import de.dagere.peass.measurement.dependencyprocessors.helper.ProgressWriter;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
+import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.KiekerResultReader;
 import de.dagere.peass.testtransformation.TestTransformer;
 import kieker.analysis.exception.AnalysisConfigurationException;
@@ -77,7 +78,7 @@ public class CauseTester extends AdaptiveTester {
    private Set<CallTreeNode> prepareNodes(final List<CallTreeNode> nodes) {
       final Set<CallTreeNode> includedNodes = new HashSet<CallTreeNode>();
       includedNodes.addAll(nodes);
-      nodes.forEach(node -> node.setVersions(configuration.getExecutionConfig().getVersion(), configuration.getExecutionConfig().getVersionOld()));
+      nodes.forEach(node -> node.initVersions());
       return includedNodes;
    }
 
@@ -110,7 +111,7 @@ public class CauseTester extends AdaptiveTester {
       if (configuration.getExecutionConfig().getVersionOld().equals(version)) {
          includedNodes.forEach(node -> {
             LOG.trace(node);
-            if (!node.getKiekerPattern().equals("ADDED")) {
+            if (!node.getKiekerPattern().equals(CauseSearchData.ADDED)) {
                includedPattern.add(node.getKiekerPattern());
             }
 
@@ -119,8 +120,8 @@ public class CauseTester extends AdaptiveTester {
          LOG.debug("Searching other: " + version);
          includedNodes.forEach(node -> {
             LOG.trace(node);
-            if (!node.getOtherVersionNode().getKiekerPattern().equals("ADDED")) {
-               includedPattern.add(node.getOtherVersionNode().getKiekerPattern());
+            if (!node.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {
+               includedPattern.add(node.getOtherKiekerPattern());
             }
          });
       }
@@ -159,9 +160,11 @@ public class CauseTester extends AdaptiveTester {
       if (getCurrentOrganizer().testSuccess(version)) {
          LOG.info("Did succeed in measurement - analyse values");
          
+         boolean isOtherVersion = version.equals(configuration.getExecutionConfig().getVersion());
          final KiekerResultReader kiekerResultReader = new KiekerResultReader(configuration.getKiekerConfig().isUseAggregation(), configuration.getKiekerConfig().getRecord(), includedNodes, version, testcase,
-               version.equals(configuration.getExecutionConfig().getVersion()));
+               isOtherVersion);
          kiekerResultReader.setConsiderNodePosition(!configuration.getKiekerConfig().isUseAggregation());
+         
          kiekerResultReader.readResults(versionResultFolder);
       } else {
          LOG.info("Did not success in measurement");

@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.breaksearch.minimalvalues.MinimalVMDeterminer;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.dataloading.DataReader;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
@@ -46,7 +46,7 @@ public class FindLowestPossibleIterations implements Callable<Void> {
 
    @Override
    public Void call() throws InterruptedException, StreamReadException, DatabindException, IOException {
-      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+      final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
       VersionComparator.setDependencies(dependencies);
       
 //      for (File folder : data) {

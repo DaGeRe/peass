@@ -2,6 +2,7 @@ package de.dagere.peass.measurement.rca;
 
 import java.util.LinkedList;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -9,7 +10,6 @@ import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.PersistedTestDataBuilder;
-import de.dagere.peass.measurement.rca.LevelManager;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.helper.TreeBuilder;
@@ -41,9 +41,9 @@ public class LevelManagerTest {
 
    private void testMeasureListCorrectness(final LinkedList<CallTreeNode> currentVersionNodeList, final TreeBuilder builder) {
       Assert.assertEquals(3, currentVersionNodeList.size());
-      Assert.assertThat(currentVersionNodeList, Matchers.hasItem(builder.getA()));
-      Assert.assertThat(currentVersionNodeList, Matchers.hasItem(builder.getC()));
-      Assert.assertThat(currentVersionNodeList, Matchers.hasItem(builder.getConstructor()));
+      MatcherAssert.assertThat(currentVersionNodeList, Matchers.hasItem(builder.getA()));
+      MatcherAssert.assertThat(currentVersionNodeList, Matchers.hasItem(builder.getC()));
+      MatcherAssert.assertThat(currentVersionNodeList, Matchers.hasItem(builder.getConstructor()));
    }
 
    @Test
@@ -121,6 +121,6 @@ public class LevelManagerTest {
       data.addDiff(builder1.getA());
       data.addDiff(builder1.getC());
       
-      Assert.assertThat(data.getNodes().getChildren(), Matchers.hasSize(2));
+      MatcherAssert.assertThat(data.getNodes().getChildren(), Matchers.hasSize(2));
    }
 }
