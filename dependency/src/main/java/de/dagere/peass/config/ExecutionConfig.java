@@ -53,6 +53,8 @@ public class ExecutionConfig implements Serializable {
 
    private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
    private String testExecutor = "default";
+   
+   private String properties;
 
    private List<String> clazzFolders = new LinkedList<>();
    {
@@ -329,7 +331,7 @@ public class ExecutionConfig implements Serializable {
       this.testClazzFolders = testClazzFolders;
    }
    
-   public void setCreateDetailDebugFiles(boolean createDetailDebugFiles) {
+   public void setCreateDetailDebugFiles(final boolean createDetailDebugFiles) {
       this.createDetailDebugFiles = createDetailDebugFiles;
    }
    
@@ -337,6 +339,14 @@ public class ExecutionConfig implements Serializable {
       return createDetailDebugFiles;
    }
 
+   public String getProperties() {
+      return properties;
+   }
+   
+   public void setProperties(final String properties) {
+      this.properties = properties;
+   }
+   
    @JsonIgnore
    public List<String> getAllClazzFolders() {
       List<String> allFolders = new LinkedList<>();

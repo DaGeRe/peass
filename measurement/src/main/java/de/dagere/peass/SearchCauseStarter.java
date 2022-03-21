@@ -88,7 +88,7 @@ public class SearchCauseStarter extends MeasureStarter {
       }
 
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
-      final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders, new EnvironmentVariables());
+      final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders, new EnvironmentVariables(measurementConfiguration.getExecutionConfig().getProperties()));
 
       final CauseSearcher tester = getCauseSeacher(measurementConfiguration, causeSearcherConfig, alternateFolders, reader);
       tester.search();
