@@ -18,14 +18,14 @@ public class TemporaryProjectFolderUtil {
 
    public static PeassFolders cloneForcefully(final PeassFolders originalFolders, final File dest, final VMExecutionLogFolders logFolders) throws IOException, InterruptedException {
       if (dest.exists()) {
-         LOG.warn("Deleting existing folder {}", dest);
-         FileUtils.deleteDirectory(dest);
          File peassFolder = new File(dest.getParentFile(), dest.getName() + PeassFolders.PEASS_POSTFIX);
          if (peassFolder.exists()) {
+            LOG.warn("Deleting existing folder {}", peassFolder);
             FileUtils.deleteDirectory(peassFolder);
          }
+      } else {
+         GitUtils.clone(originalFolders, dest);
       }
-      GitUtils.clone(originalFolders, dest);
       final PeassFolders folders = new TempPeassFolders(dest, originalFolders.getProjectName(), logFolders);
       return folders;
    }
