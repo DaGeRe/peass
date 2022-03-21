@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.utils.Constants;
 /**
@@ -27,8 +27,8 @@ public class CompareDependencies {
 		final File oldDependenciesFile = new File(args[0]);
 		final File newDependenciesFile = new File(args[1]);
 
-      final Dependencies oldDependencies = Constants.OBJECTMAPPER.readValue(oldDependenciesFile, Dependencies.class) ;
-		final Dependencies newDependencies = Constants.OBJECTMAPPER.readValue(newDependenciesFile, Dependencies.class);
+      final StaticTestSelection oldDependencies = Constants.OBJECTMAPPER.readValue(oldDependenciesFile, StaticTestSelection.class) ;
+		final StaticTestSelection newDependencies = Constants.OBJECTMAPPER.readValue(newDependenciesFile, StaticTestSelection.class);
 
 		int addedCount = 0, missingCount = 0;
 		

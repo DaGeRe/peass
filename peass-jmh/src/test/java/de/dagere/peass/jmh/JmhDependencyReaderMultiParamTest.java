@@ -23,13 +23,13 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
-import de.dagere.peass.config.DependencyConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.dependency.reader.DependencyReader;
@@ -60,7 +60,7 @@ public class JmhDependencyReaderMultiParamTest {
 
          ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
 
-         DependencyConfig dependencyConfig = new DependencyConfig(1, false, true, false);
+         TestSelectionConfig dependencyConfig = new TestSelectionConfig(1, false, true, false);
 
          ExecutionConfig jmhConfig = new ExecutionConfig();
          jmhConfig.setTestTransformer("de.dagere.peass.dependency.jmh.JmhTestTransformer");
@@ -79,14 +79,14 @@ public class JmhDependencyReaderMultiParamTest {
    }
 
    private void checkChangedVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
-      ExecutionData data = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+      ExecutionData data = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
       TestCase changedBenchmark = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
       TestSet versionTestSet = data.getVersions().get("000002");
       MatcherAssert.assertThat(versionTestSet.getTests(), Matchers.contains(changedBenchmark));
    }
 
    private void checkInitialVersion(final ResultsFolders resultsFolders) throws IOException, JsonParseException, JsonMappingException {
-      Dependencies dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getDependencyFile(), Dependencies.class);
+      StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
       Map<TestCase, InitialDependency> initialDependencies = dependencies.getInitialversion().getInitialDependencies();
       MatcherAssert.assertThat(initialDependencies.keySet(), Matchers.hasSize(1));
       InitialDependency initial = initialDependencies.get(new TestCase("de.dagere.peass.ExampleBenchmark", "testMethod", null));

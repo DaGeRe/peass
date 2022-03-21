@@ -16,15 +16,15 @@ import org.mockito.Mockito;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.TestConstants;
-import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
@@ -37,7 +37,7 @@ public class DependencyDetectorTestUtil {
 
    private static final Logger LOG = LogManager.getLogger(DependencyDetectorTestUtil.class);
 
-   public static TestSet findDependency(final Dependencies dependencies, final String changedClass, final String version) {
+   public static TestSet findDependency(final StaticTestSelection dependencies, final String changedClass, final String version) {
       final VersionStaticSelection versionDependencies = dependencies.getVersions().get(version);
       System.out.println(dependencies.getVersions().keySet());
       Assert.assertNotNull("Searching for " + changedClass + " in " + version, versionDependencies);
@@ -109,7 +109,7 @@ public class DependencyDetectorTestUtil {
       return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5), DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.TARGET_RESULTS_FOLDERS);
    }
 
-   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config, final DependencyConfig dependencyConfig, final ResultsFolders resultsFolders) {
+   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config, final TestSelectionConfig dependencyConfig, final ResultsFolders resultsFolders) {
       try {
          final DependencyReader reader = new DependencyReader(dependencyConfig, new PeassFolders(DependencyTestConstants.CURRENT),
                resultsFolders, null, fakeIterator, changeManager, config, new KiekerConfig(true), new EnvironmentVariables());

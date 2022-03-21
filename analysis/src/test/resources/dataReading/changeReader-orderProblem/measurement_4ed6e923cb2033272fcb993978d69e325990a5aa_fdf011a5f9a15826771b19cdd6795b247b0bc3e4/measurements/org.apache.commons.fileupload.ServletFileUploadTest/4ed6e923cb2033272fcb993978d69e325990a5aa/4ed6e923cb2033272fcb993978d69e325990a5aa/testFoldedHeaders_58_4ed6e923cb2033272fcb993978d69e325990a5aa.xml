@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testFoldedHeaders">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647102444713">
+     <value>5.217085615E7</value>
+     <deviation>0.5845768619248114</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>1.8473665E7</min>
+     <max>1.4100714E8</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647102443292">141007140</value>
+      <value start="1647102443433">65331919</value>
+      <value start="1647102443498">60515402</value>
+      <value start="1647102443559">33468386</value>
+      <value start="1647102443592">60235022</value>
+      <value start="1647102443653">55360625</value>
+      <value start="1647102443708">33970453</value>
+      <value start="1647102443742">98827995</value>
+      <value start="1647102443841">49488633</value>
+      <value start="1647102443891">39723216</value>
+      <value start="1647102443930">44819673</value>
+      <value start="1647102443975">86533702</value>
+      <value start="1647102444062">63820505</value>
+      <value start="1647102444126">20901534</value>
+      <value start="1647102444146">21523741</value>
+      <value start="1647102444168">46770925</value>
+      <value start="1647102444215">18473665</value>
+      <value start="1647102444233">20931784</value>
+      <value start="1647102444254">21386691</value>
+      <value start="1647102444276">60326112</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

@@ -15,12 +15,12 @@ public class KiekerConfig implements Serializable {
    private boolean useKieker = false;
    private boolean useSourceInstrumentation = true;
    private boolean useSelectiveInstrumentation = true;
-   private boolean useAggregation = false;
+   private boolean useAggregation = true;
    private boolean useCircularQueue = true;
    private boolean enableAdaptiveMonitoring = false;
    private boolean adaptiveInstrumentation = false;
    private int kiekerAggregationInterval = DEFAULT_WRITE_INTERVAL;
-   private AllowedKiekerRecord record = AllowedKiekerRecord.OPERATIONEXECUTION;
+   private AllowedKiekerRecord record = AllowedKiekerRecord.DURATION;
    private boolean onlyOneCallRecording = false;
    private boolean extractMethod = false;
    private long traceSizeInMb = 100;

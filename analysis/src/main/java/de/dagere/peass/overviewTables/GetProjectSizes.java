@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.VersionKeeper;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 
@@ -38,7 +39,7 @@ public class GetProjectSizes {
          final File projectFolder = new File("../../projekte/" + project);
          final int commits = GitUtils.getCommits(projectFolder, true).size();
          
-         final File executionFile = new File(dependencyFolder, "execute_" + project+".json");
+         final File executionFile = new File(dependencyFolder, ResultsFolders.TRACE_SELECTION_PREFIX + project+".json");
          
          int analyzable = 0;
          

@@ -30,7 +30,13 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    private final String params;
 
    public TestCase(final Testcases data) {
-      clazz = data.getClazz();
+      if (data.getClazz().contains(ChangedEntity.MODULE_SEPARATOR)) {
+         module = data.getClazz().substring(0, data.getClazz().indexOf(ChangedEntity.MODULE_SEPARATOR));
+         this.clazz = data.getClazz().substring(data.getClazz().indexOf(ChangedEntity.MODULE_SEPARATOR) + 1, data.getClazz().length());
+      } else {
+         clazz = data.getClazz();
+         module = "";
+      }
       method = data.getTestcase().get(0).getName();
       Datacollector datacollector = data.getTestcase().get(0).getDatacollector().get(0);
       Params paramObject = null;
@@ -41,7 +47,7 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       }
       String paramString = ParamNameHelper.paramsToString(paramObject);
       this.params = paramString;
-      module = "";
+
    }
 
    public TestCase(final String clazz, final String method) {
@@ -135,6 +141,15 @@ public class TestCase implements Comparable<TestCase>, Serializable {
 
    public String getClazz() {
       return clazz;
+   }
+
+   @JsonIgnore
+   public String getClassWithModule() {
+      if (module != null && !"".equals(module)) {
+         return module + ChangedEntity.MODULE_SEPARATOR + clazz;
+      } else {
+         return clazz;
+      }
    }
 
    public String getMethod() {

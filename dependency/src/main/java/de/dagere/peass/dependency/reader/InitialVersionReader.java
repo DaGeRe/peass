@@ -17,7 +17,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.dependency.persistence.InitialVersion;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
@@ -28,13 +28,13 @@ public class InitialVersionReader {
    
    private static final Logger LOG = LogManager.getLogger(InitialVersionReader.class);
    
-   protected final Dependencies dependencyResult;
+   protected final StaticTestSelection dependencyResult;
    protected DependencyManager dependencyManager;
    protected VersionIterator iterator;
    protected TestDependencies dependencyMap;
    
    
-   public InitialVersionReader(final Dependencies dependencyResult, final DependencyManager dependencyManager, final VersionIterator iterator) {
+   public InitialVersionReader(final StaticTestSelection dependencyResult, final DependencyManager dependencyManager, final VersionIterator iterator) {
       this.dependencyResult = dependencyResult;
       this.dependencyManager = dependencyManager;
       this.iterator = iterator;

@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
@@ -20,10 +20,10 @@ public class OldTraceReader {
    private static final Logger LOG = LogManager.getLogger(OldTraceReader.class);
    
    private final TraceFileMapping traceFileMapping;
-   private final Dependencies dependencyResult;
+   private final StaticTestSelection dependencyResult;
    private final ResultsFolders resultsFolders;
    
-   public OldTraceReader(final TraceFileMapping traceFileMapping, final Dependencies dependencyResult, final ResultsFolders resultsFolders) {
+   public OldTraceReader(final TraceFileMapping traceFileMapping, final StaticTestSelection dependencyResult, final ResultsFolders resultsFolders) {
       this.traceFileMapping = traceFileMapping;
       this.dependencyResult = dependencyResult;
       this.resultsFolders = resultsFolders;

@@ -3,6 +3,7 @@ package de.dagere.peass;
 import java.io.File;
 import java.io.IOException;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -89,7 +90,7 @@ public class TestSourceDetectionInnerClass {
       System.out.println(methodRun);
 
       Assert.assertNotNull(methodRun);
-      Assert.assertThat(methodRun.toString(), Matchers.containsString("Run R3"));
+      MatcherAssert.assertThat(methodRun.toString(), Matchers.containsString("Run R3"));
 
       final TraceElementContent traceElementRun2 = new TraceElementContent("Test1_Anonym$2", "run", new String[0], 1);
       final Node methodRun2 = TraceReadUtils.getMethod(traceElementRun2, cu);
@@ -97,7 +98,7 @@ public class TestSourceDetectionInnerClass {
       System.out.println(methodRun2);
 
       Assert.assertNotNull(methodRun2);
-      Assert.assertThat(methodRun2.toString(), Matchers.containsString("Run R1"));
+      MatcherAssert.assertThat(methodRun2.toString(), Matchers.containsString("Run R1"));
 
       final TraceElementContent traceElementRun3 = new TraceElementContent("Test1_Anonym$3", "run", new String[0], 1);
       final Node methodRun3 = TraceReadUtils.getMethod(traceElementRun3, cu);
@@ -105,7 +106,7 @@ public class TestSourceDetectionInnerClass {
       System.out.println(methodRun3);
 
       Assert.assertNotNull(methodRun3);
-      Assert.assertThat(methodRun3.toString(), Matchers.containsString("Run R2"));
+      MatcherAssert.assertThat(methodRun3.toString(), Matchers.containsString("Run R2"));
    }
 
    @Test
@@ -119,7 +120,7 @@ public class TestSourceDetectionInnerClass {
       System.out.println(methodRun);
 
       Assert.assertNotNull(methodRun);
-      Assert.assertThat(methodRun.toString(), Matchers.containsString("stuff 1"));
+      MatcherAssert.assertThat(methodRun.toString(), Matchers.containsString("stuff 1"));
 
       final TraceElementContent currentTraceElement2 = new TraceElementContent("Test2_Named$MyStuff2", "doMyStuff2", new String[0], 1);
       final Node methodRun2 = TraceReadUtils.getMethod(currentTraceElement2, cu);
@@ -127,6 +128,6 @@ public class TestSourceDetectionInnerClass {
       System.out.println(methodRun2);
 
       Assert.assertNotNull(methodRun2);
-      Assert.assertThat(methodRun2.toString(), Matchers.containsString("stuff 2"));
+      MatcherAssert.assertThat(methodRun2.toString(), Matchers.containsString("stuff 2"));
    }
 }

@@ -11,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.TestExecutionData;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 
@@ -24,7 +24,7 @@ public class TestCreateMeasurementExecutionScript {
       final ByteArrayOutputStream baos = new ByteArrayOutputStream();
       try (PrintStream ps = new PrintStream(baos)) {
          RunCommandWriter writer = new RunCommandWriter(ps, "experiment-1", executiondata);
-         CreateMeasurementExecutionScript.generateExecuteCommands(executiondata, "experiment-1", writer);
+         CreateScriptStarter.generateExecuteCommands(executiondata, "experiment-1", writer);
       }
 
       String result = baos.toString();
@@ -35,7 +35,7 @@ public class TestCreateMeasurementExecutionScript {
    }
 
    private ExecutionData buildExecutionDataWithTests() {
-      Dependencies dependencies = TestExecutionData.buildExampleDependencies();
+      StaticTestSelection dependencies = TestExecutionData.buildExampleDependencies();
 
       VersionStaticSelection version2 = dependencies.getVersions().get("000002");
       version2.getChangedClazzes().put(new ChangedEntity("Test1#testMe"), new TestSet(new TestCase("Test1#testMe")));

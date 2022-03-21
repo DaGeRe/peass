@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.measurement.rca.helper.TreeBuilder;
 import de.dagere.peass.measurement.rca.helper.TreeBuilderBig;
 
 public class TestCallTreeNode {
@@ -38,11 +39,11 @@ public class TestCallTreeNode {
    public void testEOI() {
       TreeBuilderBig builder = new TreeBuilderBig(false);
 
-      Assert.assertEquals(0, builder.getRoot().getEoi());
-      Assert.assertEquals(1, builder.getA().getEoi());
-      Assert.assertEquals(2, builder.getB().getEoi());
-      Assert.assertEquals(3, builder.getC().getEoi());
-      Assert.assertEquals(4, builder.getB2().getEoi());
+      Assert.assertEquals(0, builder.getRoot().getEoi(TreeBuilder.VERSION_OLD));
+      Assert.assertEquals(1, builder.getA().getEoi(TreeBuilder.VERSION_OLD));
+      Assert.assertEquals(2, builder.getB().getEoi(TreeBuilder.VERSION_OLD));
+      Assert.assertEquals(3, builder.getC().getEoi(TreeBuilder.VERSION_OLD));
+      Assert.assertEquals(4, builder.getB2().getEoi(TreeBuilder.VERSION_OLD));
    }
 
    @Test

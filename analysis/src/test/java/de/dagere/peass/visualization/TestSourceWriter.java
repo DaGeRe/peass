@@ -6,8 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -46,8 +46,8 @@ public class TestSourceWriter {
    private void validateInitSource(final ArgumentCaptor<String> argument) {
       String writtenJavascript = StringUtils.join(argument.getAllValues());
       System.out.println(writtenJavascript);
-      Assert.assertThat(writtenJavascript, Matchers.not(Matchers.containsString("System.out")));
-      Assert.assertThat(writtenJavascript, Matchers.containsString("System.err"));
+      MatcherAssert.assertThat(writtenJavascript, Matchers.not(Matchers.containsString("System.out")));
+      MatcherAssert.assertThat(writtenJavascript, Matchers.containsString("System.err"));
    }
    
    @Test
@@ -70,7 +70,7 @@ public class TestSourceWriter {
    private void validateConstructorSource(final ArgumentCaptor<String> argument) {
       String writtenJavascript = StringUtils.join(argument.getAllValues());
       System.out.println(writtenJavascript);
-      Assert.assertThat(writtenJavascript, Matchers.containsString("System.out"));
-      Assert.assertThat(writtenJavascript, Matchers.not(Matchers.containsString("System.err")));
+      MatcherAssert.assertThat(writtenJavascript, Matchers.containsString("System.out"));
+      MatcherAssert.assertThat(writtenJavascript, Matchers.not(Matchers.containsString("System.err")));
    }
 }

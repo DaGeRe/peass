@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.codehaus.plexus.util.FileUtils;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeAll;
@@ -60,9 +61,9 @@ public class TestTimebasedTransforming {
 
 		Assert.assertEquals("TimeBasedTestcase", clazz.getExtendedTypes(0).getName().getIdentifier());
 
-		Assert.assertThat(clazz.getMethodsByName("getWarmupExecutions"), Matchers.hasSize(0));
-		Assert.assertThat(clazz.getMethodsByName("getExecutionTimes"), Matchers.hasSize(0));
-		Assert.assertThat(clazz.getMethodsByName("getDuration"), Matchers.hasSize(1));
+		MatcherAssert.assertThat(clazz.getMethodsByName("getWarmupExecutions"), Matchers.hasSize(0));
+		MatcherAssert.assertThat(clazz.getMethodsByName("getExecutionTimes"), Matchers.hasSize(0));
+		MatcherAssert.assertThat(clazz.getMethodsByName("getDuration"), Matchers.hasSize(1));
 	}
 
 	@Test
@@ -85,16 +86,16 @@ public class TestTimebasedTransforming {
 		Assert.assertEquals("@RunWith(TimeBasedTestRunner.class)", annotation.toString());
 
 		final List<MethodDeclaration> methodsByName = clazz.getMethodsByName("testMethod1");
-		Assert.assertThat(methodsByName, Matchers.hasSize(1));
+		MatcherAssert.assertThat(methodsByName, Matchers.hasSize(1));
 
 		final MethodDeclaration testMethod = methodsByName.get(0);
 
 		final AnnotationExpr performanceTestAnnotation = testMethod.getAnnotationByName("PerformanceTest").get();
 		Assert.assertNotNull(performanceTestAnnotation);
 
-		Assert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("duration"));
-		Assert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("repetitions"));
-		Assert.assertThat(performanceTestAnnotation.getChildNodes(), Matchers.not(TestTransformation.hasAnnotation("warmupExecutions")));
+		MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("duration"));
+		MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), TestTransformation.hasAnnotation("repetitions"));
+		MatcherAssert.assertThat(performanceTestAnnotation.getChildNodes(), Matchers.not(TestTransformation.hasAnnotation("warmupExecutions")));
 
 		for (final Node n : performanceTestAnnotation.getChildNodes()) {
 			System.out.println(n);
@@ -107,7 +108,7 @@ public class TestTimebasedTransforming {
 
 		final CompilationUnit unit = JavaParserProvider.parse(old2);
 
-		final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
+		final ClassOrInterfaceDeclaration clazz = ParseUtil.getClasses(unit).get(0);
 
 		for (final MethodDeclaration method : clazz.getMethods()) {
 			for (final Object o : method.getAnnotations()) {

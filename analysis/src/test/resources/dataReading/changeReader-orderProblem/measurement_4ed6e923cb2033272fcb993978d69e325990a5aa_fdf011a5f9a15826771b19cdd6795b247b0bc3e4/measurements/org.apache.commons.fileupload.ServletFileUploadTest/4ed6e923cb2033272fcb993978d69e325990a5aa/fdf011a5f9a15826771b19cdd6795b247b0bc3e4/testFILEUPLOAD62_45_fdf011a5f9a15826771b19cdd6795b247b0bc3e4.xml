@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testFILEUPLOAD62">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647098887146">
+     <value>4.5804616800000004E7</value>
+     <deviation>0.5204369712724859</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>1.626981E7</min>
+     <max>1.24605519E8</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647098885844">124605519</value>
+      <value start="1647098885969">50752252</value>
+      <value start="1647098886019">52955156</value>
+      <value start="1647098886072">27092600</value>
+      <value start="1647098886099">33136360</value>
+      <value start="1647098886133">48223878</value>
+      <value start="1647098886181">38967640</value>
+      <value start="1647098886220">48081938</value>
+      <value start="1647098886268">56732382</value>
+      <value start="1647098886325">62674754</value>
+      <value start="1647098886387">45729983</value>
+      <value start="1647098886433">28366721</value>
+      <value start="1647098886462">59508798</value>
+      <value start="1647098886521">29618534</value>
+      <value start="1647098886551">21344389</value>
+      <value start="1647098886572">63867486</value>
+      <value start="1647098886636">22747601</value>
+      <value start="1647098886659">16269810</value>
+      <value start="1647098886675">27910300</value>
+      <value start="1647098886703">57506235</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

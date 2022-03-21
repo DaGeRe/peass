@@ -93,11 +93,11 @@ public class CauseSearchData {
 
    private void setStatistic(final CallTreeNode rawDataNode, final MeasuredNode serializeNode) {
       if (!rawDataNode.getCall().equals(ADDED) &&
-            !rawDataNode.getOtherVersionNode().getCall().equals(ADDED)) {
-         LOG.debug("Setting statistic: " + rawDataNode.getCall() + " " + rawDataNode.getOtherVersionNode().getCall());
+            !rawDataNode.getOtherKiekerPattern().equals(ADDED)) {
+         LOG.debug("Setting statistic: " + rawDataNode.getCall() + " " + rawDataNode.getOtherKiekerPattern());
          serializeNode.setStatistic(rawDataNode.getTestcaseStatistic());
       } else {
-         LOG.debug(rawDataNode.getCall() + " " + rawDataNode.getOtherVersionNode().getCall());
+         LOG.debug(rawDataNode.getCall() + " " + rawDataNode.getOtherKiekerPattern());
          serializeNode.setStatistic(rawDataNode.getPartialTestcaseStatistic());
       }
    }
@@ -105,7 +105,7 @@ public class CauseSearchData {
    private MeasuredNode buildSerializedNode(final CallTreeNode rawDataNode) {
       final MeasuredNode serializeNode = new MeasuredNode(rawDataNode.getCall(), rawDataNode.getKiekerPattern(), null);
       serializeNode.setModule(rawDataNode.getModule());
-      serializeNode.setOtherKiekerPattern(rawDataNode.getOtherVersionNode() != null ? rawDataNode.getOtherVersionNode().getKiekerPattern() : "UNKNOWN");
+      serializeNode.setOtherKiekerPattern(rawDataNode.getOtherKiekerPattern() != null ? rawDataNode.getOtherKiekerPattern() : "UNKNOWN");
       return serializeNode;
    }
 

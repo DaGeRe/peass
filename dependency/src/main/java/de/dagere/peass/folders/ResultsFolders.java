@@ -14,6 +14,8 @@ public class ResultsFolders {
    private static final Logger LOG = LogManager.getLogger(ResultsFolders.class);
 
    public static final String MEASUREMENT_PREFIX = "measurement_";
+   public static final String STATIC_SELECTION_PREFIX = "staticTestSelection_";
+   public static final String TRACE_SELECTION_PREFIX = "traceTestSelection_";
 
    private final File resultFolder;
    private final String projectName;
@@ -24,12 +26,24 @@ public class ResultsFolders {
       this.projectName = projectName;
    }
 
-   public File getDependencyFile() {
-      return new File(resultFolder, "deps_" + projectName + ".json");
+   public File getStaticTestSelectionFile() {
+      //TODO Remove compatibility to old file names after next snapshot release
+      File oldFileName = new File(resultFolder, "deps_" + projectName + ".json");
+      if (oldFileName.exists()) {
+         return oldFileName;
+      } else {
+         return new File(resultFolder, STATIC_SELECTION_PREFIX + projectName + ".json");
+      }
+
    }
 
-   public File getExecutionFile() {
-      return new File(resultFolder, "execute_" + projectName + ".json");
+   public File getTraceTestSelectionFile() {
+      File oldFileName = new File(resultFolder, "execute_" + projectName + ".json");
+      if (oldFileName.exists()) {
+         return oldFileName;
+      } else {
+         return new File(resultFolder, TRACE_SELECTION_PREFIX + projectName + ".json");
+      }
    }
 
    public File getCoverageSelectionFile() {
@@ -185,5 +199,9 @@ public class ResultsFolders {
       } else {
          return null;
       }
+   }
+
+   public String getProjectName() {
+      return projectName;
    }
 }

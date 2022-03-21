@@ -22,8 +22,8 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -41,8 +41,8 @@ public class ContinuousDependencyReaderIT {
 
    @BeforeAll
    public static void cleanDependencies() throws IOException, InterruptedException {
-      FileUtils.deleteDirectory(resultsFolders.getDependencyFile().getParentFile());
-      Assert.assertFalse(resultsFolders.getDependencyFile().exists());
+      FileUtils.deleteDirectory(resultsFolders.getStaticTestSelectionFile().getParentFile());
+      Assert.assertFalse(resultsFolders.getStaticTestSelectionFile().exists());
 
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
       builder = new GitProjectBuilder(TestConstants.CURRENT_FOLDER, new File("../dependency/src/test/resources/dependencyIT/basic_state"));
@@ -63,12 +63,12 @@ public class ContinuousDependencyReaderIT {
 
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfig(true),
             new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
-      Dependencies dependencies = reader.getDependencies(iterator, "");
+      StaticTestSelection dependencies = reader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
       checkVersion(dependencies, lastTag, 1);
 
-      ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+      ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
       Assert.assertEquals(2, executions.getVersions().size());
       System.out.println(executions.getVersions().keySet());
    }
@@ -90,12 +90,12 @@ public class ContinuousDependencyReaderIT {
       final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig,
             new KiekerConfig(true),
             new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
-      Dependencies dependencies = spiedReader.getDependencies(iterator, "");
+      StaticTestSelection dependencies = spiedReader.getDependencies(iterator, "");
 
       final String lastTag = builder.getTags().get(builder.getTags().size() - 1);
       checkVersion(dependencies, lastTag, 2);
 
-      ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getExecutionFile(), ExecutionData.class);
+      ExecutionData executions = Constants.OBJECTMAPPER.readValue(resultsFolders.getTraceTestSelectionFile(), ExecutionData.class);
       Assert.assertEquals(3, executions.getVersions().size());
    }
 
@@ -121,8 +121,8 @@ public class ContinuousDependencyReaderIT {
       Assert.assertEquals(tests.size(), 0);
    }
 
-   public static void checkVersion(final Dependencies dependencies, final String newestVersion, final int versions) {
-      Assert.assertTrue(resultsFolders.getDependencyFile().exists());
+   public static void checkVersion(final StaticTestSelection dependencies, final String newestVersion, final int versions) {
+      Assert.assertTrue(resultsFolders.getStaticTestSelectionFile().exists());
       MatcherAssert.assertThat(dependencies.getVersions(), Matchers.aMapWithSize(versions));
 
       MatcherAssert.assertThat(dependencies.getVersions().get(newestVersion), Matchers.notNullValue());
@@ -130,7 +130,7 @@ public class ContinuousDependencyReaderIT {
       Assert.assertEquals(new TestCase("defaultpackage.TestMe#testMe"), testSet.getTests().toArray()[0]);
    }
 
-   private static TestSet getTestset(final Dependencies dependencies, final String newestVersion) {
+   private static TestSet getTestset(final StaticTestSelection dependencies, final String newestVersion) {
       final TestSet testSet = dependencies.getVersions().get(newestVersion)
             .getChangedClazzes()
             .get(new ChangedEntity("defaultpackage.NormalDependency", "", ""));

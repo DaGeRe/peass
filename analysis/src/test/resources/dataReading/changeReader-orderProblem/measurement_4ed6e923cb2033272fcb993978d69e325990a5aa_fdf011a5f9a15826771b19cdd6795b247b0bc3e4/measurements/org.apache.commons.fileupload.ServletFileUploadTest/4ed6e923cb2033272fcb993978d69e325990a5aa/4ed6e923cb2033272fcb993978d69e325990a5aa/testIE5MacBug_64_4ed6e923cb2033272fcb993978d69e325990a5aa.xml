@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testIE5MacBug">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647103658602">
+     <value>5.45920117E7</value>
+     <deviation>0.58391668053657</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>1.7683003E7</min>
+     <max>1.72135192E8</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647103657058">172135192</value>
+      <value start="1647103657230">57058365</value>
+      <value start="1647103657287">56380528</value>
+      <value start="1647103657344">33357875</value>
+      <value start="1647103657377">64080699</value>
+      <value start="1647103657441">45878847</value>
+      <value start="1647103657487">28420182</value>
+      <value start="1647103657515">54309887</value>
+      <value start="1647103657570">44229724</value>
+      <value start="1647103657614">45687749</value>
+      <value start="1647103657660">54271097</value>
+      <value start="1647103657714">76025003</value>
+      <value start="1647103657790">55168203</value>
+      <value start="1647103657845">31620011</value>
+      <value start="1647103657877">17683003</value>
+      <value start="1647103657895">22723804</value>
+      <value start="1647103657917">77220300</value>
+      <value start="1647103657995">47331912</value>
+      <value start="1647103658042">48554067</value>
+      <value start="1647103658091">59703786</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

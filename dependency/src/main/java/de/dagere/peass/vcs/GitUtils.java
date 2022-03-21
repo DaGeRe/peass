@@ -35,9 +35,10 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.folders.PeassFolders;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.utils.StreamGobbler;
 
@@ -75,10 +76,10 @@ public final class GitUtils {
          File repoFolder = new File(repofolderName);
          File dependencyFolder = new File(repoFolder, "dependencies-final");
          String project = url.substring(url.lastIndexOf("/") + 1, url.lastIndexOf('.'));
-         File dependencyfile = new File(dependencyFolder, "deps_" + project + ".json");
-         LOG.debug("Searching: {}", dependencyfile);
-         if (dependencyfile.exists()) {
-            final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyfile, Dependencies.class);
+         File staticSelectionFile = new File(dependencyFolder, ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
+         LOG.debug("Searching: {}", staticSelectionFile);
+         if (staticSelectionFile.exists()) {
+            final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
             VersionComparator.setDependencies(dependencies);
             repoFound = true;
          }

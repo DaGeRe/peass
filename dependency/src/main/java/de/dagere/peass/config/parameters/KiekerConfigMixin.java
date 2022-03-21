@@ -20,9 +20,10 @@ public class KiekerConfigMixin {
          "--notUseSelectiveInstrumentation" }, description = "Use selective instrumentation (only selected methods / classes are instrumented) - is activated by default is source instrumentation is activated")
    public boolean notUseSelectiveInstrumentation = false;
 
-   @Option(names = { "-useAggregation",
-         "--useAggregation" }, description = "Use aggregation (only record every nth invocation of method - may reduce measurement noise)")
-   public boolean useAggregation = false;
+   @Option(names = { "-notUseAggregation",
+         "--notUseAggregation" }, description = "Not use aggregation (aggregate the measured values immediately in the system under test, "
+               + "instead of summing them up after the execution). Is automatically disabled for regression test selection.")
+   public boolean notUseAggregation = false;
 
    @Option(names = { "-useExtraction", "--useExtraction" }, description = "Extract methods when using source instrumentation")
    public boolean useExtraction = false;
@@ -59,9 +60,9 @@ public class KiekerConfigMixin {
    public boolean isNotUseSelectiveInstrumentation() {
       return notUseSelectiveInstrumentation;
    }
-
-   public boolean isUseAggregation() {
-      return useAggregation;
+   
+   public boolean isNotUseAggregation() {
+      return notUseAggregation;
    }
 
    public boolean isUseExtraction() {
@@ -84,7 +85,7 @@ public class KiekerConfigMixin {
       KiekerConfig kiekerConfig = new KiekerConfig(true);
       kiekerConfig.setUseCircularQueue(useCircularQueue);
       kiekerConfig.setUseSelectiveInstrumentation(!notUseSelectiveInstrumentation);
-      kiekerConfig.setUseAggregation(useAggregation);
+      kiekerConfig.setUseAggregation(!notUseAggregation);
       kiekerConfig.setExtractMethod(useExtraction);
       kiekerConfig.setAdaptiveInstrumentation(enableAdaptiveInstrumentation);
       kiekerConfig.setUseSourceInstrumentation(!notUseSourceInstrumentation);

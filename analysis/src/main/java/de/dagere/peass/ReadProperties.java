@@ -32,9 +32,9 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.SelectedTests;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.measurement.dataloading.VersionSorter;
 import de.dagere.peass.utils.Constants;
@@ -57,8 +57,8 @@ public class ReadProperties implements Callable<Void> {
 
    private static final Logger LOG = LogManager.getLogger(ReadProperties.class);
 
-   @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Path to the dependencyfile")
-   protected File dependencyFile;
+   @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the static selection file")
+   protected File staticSelectionFile;
 
    @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
    protected File executionFile;
@@ -92,7 +92,7 @@ public class ReadProperties implements Callable<Void> {
    public Void call() throws Exception {
       final RepoFolders folders = new RepoFolders();
       final String projectName = projectFolder.getName();
-      SelectedTests selectedTests = VersionSorter.getSelectedTests(dependencyFile, executionFile, folders.getDependencyFile(projectName));
+      SelectedTests selectedTests = VersionSorter.getSelectedTests(staticSelectionFile, executionFile, folders.getDependencyFile(projectName));
 
       if (!projectFolder.exists()) {
          GitUtils.downloadProject(selectedTests.getUrl(), projectFolder);
@@ -134,7 +134,7 @@ public class ReadProperties implements Callable<Void> {
             System.exit(1);
          }
 
-         Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
+         StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
          
          readChangeProperties(changefile, projectFolder, viewfolder, new ExecutionData(dependencies));
       }

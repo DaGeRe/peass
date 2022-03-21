@@ -35,7 +35,7 @@ public class JUnit4Helper {
       unit.addImport("org.junit.Rule");
       unit.addImport("de.dagere.kopeme.junit.rule.KoPeMeRule");
 
-      final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
+      final ClassOrInterfaceDeclaration clazz = ParseUtil.getClasses(unit).get(0);
 
       JUnit4Helper.addKoPeMeRuleIfNecessary(clazz);
 
@@ -43,8 +43,7 @@ public class JUnit4Helper {
       new TestMethodHelper(config, datacollectorlist).prepareTestMethods(testMethods);
 
       if (config.getExecutionConfig().isOnlyMeasureWorkload()) {
-         BeforeAfterTransformer.transformBefore(clazz);
-         BeforeAfterTransformer.transformAfter(clazz);
+         BeforeAfterTransformer.transformNoMeasurement(clazz);
       }
    }
    

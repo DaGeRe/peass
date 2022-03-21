@@ -16,6 +16,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.analysis.all.RepoFolders;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.measurement.utils.RunCommandWriter;
 import de.dagere.peass.measurement.utils.RunCommandWriterRCA;
 import de.dagere.peass.utils.Constants;
@@ -40,7 +41,7 @@ public class FindChangeExecutions {
 //            "commons-imaging", "commons-io", "commons-numbers", "commons-pool", "commons-text" }) {
     for (final String project : new String[] { "commons-fileupload" }) {
          final File projectChangeFile = new File(folders.getResultsFolder(), project + File.separator + project + ".json");
-         final File dependencyFile = new File(folders.getDependencyFolder(), "execute_" + project + ".json");
+         final File dependencyFile = new File(folders.getDependencyFolder(), ResultsFolders.TRACE_SELECTION_PREFIX + project + ".json");
          if (projectChangeFile.exists() && dependencyFile.exists()) {
             findProjectExecutions(reexecuteFolder, project, projectChangeFile, dependencyFile);
          }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testEmptyFile">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647097505659">
+     <value>2.17641115E7</value>
+     <deviation>0.7418967550705291</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>9974004.0</min>
+     <max>7.6162613E7</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647097504862">76162613</value>
+      <value start="1647097504938">35216873</value>
+      <value start="1647097504973">22211601</value>
+      <value start="1647097504996">22609229</value>
+      <value start="1647097505018">21531596</value>
+      <value start="1647097505040">19960899</value>
+      <value start="1647097505060">19620801</value>
+      <value start="1647097505080">49484326</value>
+      <value start="1647097505129">11570902</value>
+      <value start="1647097505141">11758631</value>
+      <value start="1647097505152">13176070</value>
+      <value start="1647097505166">28019827</value>
+      <value start="1647097505194">12373877</value>
+      <value start="1647097505206">12008858</value>
+      <value start="1647097505218">11372844</value>
+      <value start="1647097505230">16493155</value>
+      <value start="1647097505246">21039921</value>
+      <value start="1647097505267">10215902</value>
+      <value start="1647097505277">9974004</value>
+      <value start="1647097505287">10480301</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>

@@ -11,9 +11,9 @@ import org.junit.jupiter.api.Test;
 
 import com.github.javaparser.ParseException;
 
-import de.dagere.peass.config.DependencyConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
@@ -53,7 +53,7 @@ public class DependencyDetectorOneCallWriterIT {
       return readTwoVersions(changeManager, fakeIterator, new ExecutionConfig(5), DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, DependencyTestConstants.TARGET_RESULTS_FOLDERS);
    }
 
-   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config, final DependencyConfig dependencyConfig, final ResultsFolders resultsFolders) {
+   public static DependencyReader readTwoVersions(final ChangeManager changeManager, final VersionIterator fakeIterator, final ExecutionConfig config, final TestSelectionConfig dependencyConfig, final ResultsFolders resultsFolders) {
       try {
          KiekerConfig kiekerConfig = new KiekerConfig(true);
          kiekerConfig.setOnlyOneCallRecording(true);

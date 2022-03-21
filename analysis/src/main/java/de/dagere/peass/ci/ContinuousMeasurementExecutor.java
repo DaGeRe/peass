@@ -22,15 +22,12 @@ public class ContinuousMeasurementExecutor {
 
    private static final Logger LOG = LogManager.getLogger(ContinuousMeasurementExecutor.class);
 
-   private final String version, versionOld;
    private final PeassFolders folders;
    private final MeasurementConfig measurementConfig;
    private final EnvironmentVariables env;
 
-   public ContinuousMeasurementExecutor(final String version, final String versionOld, final PeassFolders folders, final MeasurementConfig measurementConfig,
+   public ContinuousMeasurementExecutor(final PeassFolders folders, final MeasurementConfig measurementConfig,
          final EnvironmentVariables env) {
-      this.version = version;
-      this.versionOld = versionOld;
       this.folders = folders;
       this.measurementConfig = measurementConfig;
       this.env = env;
@@ -50,17 +47,16 @@ public class ContinuousMeasurementExecutor {
       } else {
          LOG.info("Skipping measurement - result folder {} already existing", fullResultsVersion.getAbsolutePath());
       }
-      final File measurementFolder = new File(fullResultsVersion, "measurements");
+      final File measurementFolder = new File(fullResultsVersion, PeassFolders.MEASUREMENTS);
       return measurementFolder;
    }
 
    private void doMeasurement(final Set<TestCase> tests, final File fullResultsVersion) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      MeasurementConfig copied = createCopiedConfiguration();
-      
       cleanTemporaryFolders();
-
-      final AdaptiveTester tester = new AdaptiveTester(folders, copied, env);
+      
       for (final TestCase test : tests) {
+         MeasurementConfig copied = createCopiedConfiguration();
+         final AdaptiveTester tester = new AdaptiveTester(folders, copied, env);
          tester.evaluate(test);
       }
 
@@ -81,8 +77,6 @@ public class ContinuousMeasurementExecutor {
    private MeasurementConfig createCopiedConfiguration() {
       MeasurementConfig copied = new MeasurementConfig(measurementConfig);
       copied.setUseKieker(false);
-      copied.getExecutionConfig().setVersion(version);
-      copied.getExecutionConfig().setVersionOld(versionOld);
       return copied;
    }
 }

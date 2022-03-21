@@ -11,6 +11,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsIterableContaining;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -76,7 +77,7 @@ public class JmhIterationTestMultiParam {
                   .map(param -> param.getKey() + "-" + param.getValue())
                   .collect(Collectors.joining(" ")))
             .collect(Collectors.toList());
-      Assert.assertThat(params, IsIterableContaining.hasItems("parameter-val1", "parameter-val2"));
+      MatcherAssert.assertThat(params, IsIterableContaining.hasItems("parameter-val1", "parameter-val2"));
 
       for (Result result : results) {
          DescriptiveStatistics statistics = new DescriptiveStatistics();

@@ -34,7 +34,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
-import de.dagere.peass.dependency.persistence.Dependencies;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.utils.Constants;
@@ -156,7 +156,7 @@ public class DependencyReaderUtil {
       }
    }
 
-   public static void write(final Dependencies deps, final File file) {
+   public static void write(final StaticTestSelection deps, final File file) {
       LOG.debug("Writing to: {}", file);
       try {
          Constants.OBJECTMAPPER.writeValue(file, deps);
@@ -165,9 +165,9 @@ public class DependencyReaderUtil {
       }
    }
 
-   public static Dependencies mergeDependencies(final Dependencies deps1, final Dependencies deps2) {
-      final Dependencies merged;
-      final Dependencies newer;
+   public static StaticTestSelection mergeDependencies(final StaticTestSelection deps1, final StaticTestSelection deps2) {
+      final StaticTestSelection merged;
+      final StaticTestSelection newer;
       if (VersionComparator.isBefore(deps1.getInitialversion().getVersion(), deps2.getInitialversion().getVersion())) {
          merged = deps1;
          newer = deps2;

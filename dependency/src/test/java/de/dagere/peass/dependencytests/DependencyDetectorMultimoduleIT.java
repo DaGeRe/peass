@@ -28,8 +28,8 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
-import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.InitialDependency;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.helper.FakeFileIterator;
@@ -73,7 +73,7 @@ public class DependencyDetectorMultimoduleIT {
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 
-      Dependencies dependencies = reader.getDependencies();
+      StaticTestSelection dependencies = reader.getDependencies();
       checkInitialVersion(dependencies);
 
       fakeIterator.goToNextCommit();
@@ -95,7 +95,7 @@ public class DependencyDetectorMultimoduleIT {
       final boolean success = reader.readInitialVersion();
       Assert.assertTrue(success);
 
-      Dependencies dependencies = reader.getDependencies();
+      StaticTestSelection dependencies = reader.getDependencies();
       checkInitialVersion(dependencies);
       
       fakeIterator.goToNextCommit();
@@ -115,7 +115,7 @@ public class DependencyDetectorMultimoduleIT {
       return changeManager;
    }
    
-   private void checkInitialVersion(final Dependencies dependencies) {
+   private void checkInitialVersion(final StaticTestSelection dependencies) {
       LOG.debug(dependencies.getInitialversion().getInitialDependencies());
       final InitialDependency dependency = dependencies.getInitialversion().getInitialDependencies()
             .get(new TestCase("de.AnotherTest", "testMeAlso", "using-module"));
@@ -123,7 +123,7 @@ public class DependencyDetectorMultimoduleIT {
       MatcherAssert.assertThat(dependency.getEntities(), IsIterableContaining.hasItem(new ChangedEntity("de.dagere.base.BaseChangeable", "base-module", "doSomething")));
    }
 
-   private void testSecondChange(final Dependencies dependencies) {
+   private void testSecondChange(final StaticTestSelection dependencies) {
       final TestSet foundDependency3 = DependencyDetectorTestUtil.findDependency(dependencies, "base-module§de.dagere.base.NextBaseChangeable#doSomething",
             DependencyTestConstants.VERSION_1);
       MatcherAssert.assertThat(foundDependency3.getTests().stream(), StreamMatchers.anyMatch(
@@ -131,7 +131,7 @@ public class DependencyDetectorMultimoduleIT {
                   Matchers.hasProperty("method", Matchers.isOneOf("nextTestMe", "nextTestMeAlso")))));
    }
 
-   private void testFirstChange(final Dependencies dependencies) {
+   private void testFirstChange(final StaticTestSelection dependencies) {
       final TestSet foundDependency2 = DependencyDetectorTestUtil.findDependency(dependencies, "base-module§de.dagere.base.BaseChangeable#doSomething",
             DependencyTestConstants.VERSION_1);
       testBaseChangeEffect(foundDependency2);

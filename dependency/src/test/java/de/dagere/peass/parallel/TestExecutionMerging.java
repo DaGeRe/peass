@@ -40,7 +40,7 @@ public class TestExecutionMerging {
          ExecutionData ex1 = createExecutionData(i);
          Constants.OBJECTMAPPER.writeValue(new File("target/execute-" + i + ".json"), ex1);
          folders[i] = Mockito.mock(ResultsFolders.class);
-         Mockito.when(folders[i].getExecutionFile()).thenReturn(new File("target/execute-" + i + ".json"));
+         Mockito.when(folders[i].getTraceTestSelectionFile()).thenReturn(new File("target/execute-" + i + ".json"));
       }
       
       ResultsFolders out = new ResultsFolders(new File("target"), "mytest");

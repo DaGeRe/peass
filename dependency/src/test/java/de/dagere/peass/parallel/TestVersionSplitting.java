@@ -25,8 +25,8 @@ import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.parallel.OneReader;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
-import de.dagere.peass.dependency.persistence.Dependencies;
 import de.dagere.peass.dependency.persistence.InitialVersion;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
@@ -82,13 +82,13 @@ public class TestVersionSplitting {
          for (int j = i + 1; j < 10; j++) {
             DummyReader.nonRunning = new HashSet<>(Arrays.asList(String.valueOf(i), String.valueOf(j)));
 
-            List<Dependencies> dependencies = new LinkedList<>();
+            List<StaticTestSelection> dependencies = new LinkedList<>();
             for (int chunk = 0; chunk < count; chunk++) {
                final int max = Math.min((chunk + 1) * size + 3, commits.size());// Assuming one in three commits should contain a source-change
                readUntilMax(commits, dependencies, chunk, chunk * size, max);
             }
 
-            Dependencies merged = PartialDependenciesMerger.mergeDependencies(dependencies);
+            StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies);
 
             System.out.println(merged.getVersions().keySet() + " " + merged.getVersions().size());
             Assert.assertEquals("Error in " + DummyReader.nonRunning, 7, merged.getVersions().size());
@@ -98,7 +98,7 @@ public class TestVersionSplitting {
    
    @Test
    public void testEmptyMerging() {
-      Dependencies merged = PartialDependenciesMerger.mergeDependencies(new LinkedList<>());
+      StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(new LinkedList<>());
       Assert.assertEquals(0, merged.getVersions().size());
    }
 
@@ -109,13 +109,13 @@ public class TestVersionSplitting {
       int count = 3;
       int size = commits.size() > 2 * count ? commits.size() / count : 2;
 
-      List<Dependencies> dependencies = new LinkedList<>();
+      List<StaticTestSelection> dependencies = new LinkedList<>();
       for (int chunk = 0; chunk < count; chunk++) {
          final int max = Math.min((chunk + 1) * size + 3, commits.size());// Assuming one in three commits should contain a source-change
          readUntilMax(commits, dependencies, chunk, chunk * size, max);
       }
 
-      Dependencies merged = PartialDependenciesMerger.mergeDependencies(dependencies);
+      StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies);
 
       System.out.println(merged.getVersions().keySet());
       Assert.assertEquals(7, merged.getVersions().size());
@@ -125,18 +125,18 @@ public class TestVersionSplitting {
    public void testSplittingStrangeDistribution() throws IOException {
       List<GitCommit> commits = ParallelTestUtil.getCommits();
 
-      List<Dependencies> dependencies = new LinkedList<>();
+      List<StaticTestSelection> dependencies = new LinkedList<>();
       readUntilMax(commits, dependencies, 0, 0, 6);
       readUntilMax(commits, dependencies, 1, 6, 8);
       readUntilMax(commits, dependencies, 2, 7, 10);
 
-      Dependencies merged = PartialDependenciesMerger.mergeDependencies(dependencies);
+      StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies);
 
       System.out.println(merged.getVersions().keySet());
       Assert.assertEquals(7, merged.getVersions().size());
    }
 
-   private void readUntilMax(final List<GitCommit> commits, final List<Dependencies> dependencies, final int i, final int min, final int max) throws IOException {
+   private void readUntilMax(final List<GitCommit> commits, final List<StaticTestSelection> dependencies, final int i, final int min, final int max) throws IOException {
       final List<GitCommit> currentCommits = commits.subList(min, max);
       final List<GitCommit> reserveCommits = commits.subList(max - 1, commits.size());
       final GitCommit minimumCommit = commits.get(Math.min(max, commits.size() - 1));
@@ -144,7 +144,7 @@ public class TestVersionSplitting {
       readDummyDependencies(dependencies, i, currentCommits, reserveCommits, minimumCommit);
    }
 
-   private void readDummyDependencies(final List<Dependencies> dependencies, final int i, final List<GitCommit> currentCommits, final List<GitCommit> reserveCommits,
+   private void readDummyDependencies(final List<StaticTestSelection> dependencies, final int i, final List<GitCommit> currentCommits, final List<GitCommit> reserveCommits,
          final GitCommit minimumCommit)
          throws IOException {
       File dummyFolder = new File(TestConstants.CURRENT_FOLDER, "part_" + i);

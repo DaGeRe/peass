@@ -1,10 +1,12 @@
 package de.dagere.peass.measurement.rca.analyzer;
 
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
+import org.hamcrest.core.IsIterableContaining;
+import org.hamcrest.core.IsSame;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.measurement.rca.analyzer.CompleteTreeAnalyzer;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.helper.TreeBuilder;
 import de.dagere.peass.measurement.rca.helper.TreeBuilderBig;
@@ -13,14 +15,18 @@ public class TestCompleteTreeAnalyzer {
 
    @Test
    public void testEqualTree() {
-      final TreeBuilder predecessorBuilder = new TreeBuilder();
-      CallTreeNode root = predecessorBuilder.getRoot();
-      CallTreeNode rootPredecessor = predecessorBuilder.getRoot();
+      final TreeBuilder versionBuilder = new TreeBuilder();
+      CallTreeNode root = versionBuilder.getRoot();
+      CallTreeNode rootPredecessor = new TreeBuilder().getRoot();
 
       CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(root, rootPredecessor);
 
-      Assert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.emptyCollectionOf(CallTreeNode.class));
-      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(predecessorBuilder.getRoot(), predecessorBuilder.getA()));
+      MatcherAssert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.emptyCollectionOf(CallTreeNode.class));
+      MatcherAssert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(versionBuilder.getRoot(), versionBuilder.getA()));
+      
+      MatcherAssert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.not(
+            IsIterableContaining.hasItem(
+            IsSame.sameInstance(versionBuilder.getA()))));
    }
 
    @Test
@@ -31,8 +37,8 @@ public class TestCompleteTreeAnalyzer {
 
       CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(root, rootPredecessor);
 
-      Assert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.hasItem(bigBuilder.getB2()));
-      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
+      MatcherAssert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.hasItem(bigBuilder.getB2()));
+      MatcherAssert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
    }
 
    @Test
@@ -43,7 +49,9 @@ public class TestCompleteTreeAnalyzer {
 
       CompleteTreeAnalyzer analyzer = new CompleteTreeAnalyzer(root, rootPredecessor);
 
-      Assert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.hasItem(bigBuilder.getB2()));
-      Assert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
+      MatcherAssert.assertThat(analyzer.getTreeStructureDiffering(), Matchers.hasItem(bigBuilder.getB2()));
+      MatcherAssert.assertThat(analyzer.getMeasurementNodesPredecessor(), Matchers.hasItems(bigBuilder.getRoot(), bigBuilder.getA()));
+      
+      Assert.assertNotNull(bigBuilder.getB2().getOtherKiekerPattern());
    }
 }

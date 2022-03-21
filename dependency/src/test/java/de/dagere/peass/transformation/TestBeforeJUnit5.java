@@ -125,14 +125,14 @@ public class TestBeforeJUnit5 {
       checkMethod(clazz);
       
       MethodDeclaration beforeMethod = clazz.getMethodsByName("simpleBefore").get(0);
-      NormalAnnotationExpr beforeAnnotation = (NormalAnnotationExpr) beforeMethod.getAnnotationByName("BeforeWithMeasurement").get();
+      AnnotationExpr beforeAnnotation = beforeMethod.getAnnotationByName("BeforeEach").get();
       Assert.assertNotNull(beforeAnnotation);
-      Assert.assertEquals("1", beforeAnnotation.getPairs().get(0).getValue().toString());
+//      Assert.assertEquals("1", beforeAnnotation.getPairs().get(0).getValue().toString());
       
       MethodDeclaration afterMethod = clazz.getMethodsByName("simpleAfter").get(0);
-      NormalAnnotationExpr afterAnnotation = (NormalAnnotationExpr) afterMethod.getAnnotationByName("AfterWithMeasurement").get();
+      AnnotationExpr afterAnnotation = afterMethod.getAnnotationByName("AfterEach").get();
       Assert.assertNotNull(afterAnnotation);
-      Assert.assertEquals("1", afterAnnotation.getPairs().get(0).getValue().toString());
+//      Assert.assertEquals("1", afterAnnotation.getPairs().get(0).getValue().toString());
       
       MethodDeclaration beforeAllMethod = clazz.getMethodsByName("secondBefore").get(0);
       NormalAnnotationExpr beforeAllAnnotation = (NormalAnnotationExpr) beforeAllMethod.getAnnotationByName("BeforeWithMeasurement").get();

@@ -78,7 +78,6 @@ public class TestRegularReading {
          int startIndex = kiekerPattern.lastIndexOf(" ") != -1 ? kiekerPattern.lastIndexOf(" ") : 0;
          String call = kiekerPattern.substring(startIndex, kiekerPattern.lastIndexOf("("));
          CallTreeNode addedNode = new CallTreeNode(call, kiekerPattern, kiekerPattern, new MeasurementConfig(1, "1", "0"));
-         addedNode.setOtherVersionNode(addedNode);
          callTreeNodes.add(addedNode);
          addedNode.initVersions();
       }

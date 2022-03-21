@@ -29,7 +29,7 @@ public class ExecutionData extends SelectedTests {
    public ExecutionData() {
    }
    
-   public ExecutionData(final Dependencies dependencies) {
+   public ExecutionData(final StaticTestSelection dependencies) {
       setUrl(dependencies.getUrl());
       versions.put(dependencies.getInitialversion().getVersion(), new TestSet());
       for (Map.Entry<String, VersionStaticSelection> version : dependencies.getVersions().entrySet()) {

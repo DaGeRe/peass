@@ -124,10 +124,10 @@ public class NonIncludedTestRemover {
       if (pattern.contains(ChangedEntity.MODULE_SEPARATOR)) {
          String mergedName = test.getModule() + ChangedEntity.MODULE_SEPARATOR + test.getExecutable();
          match = FilenameUtils.wildcardMatch(mergedName, pattern);
-         LOG.info("Testing {} {} {}", mergedName, pattern, match);
+         LOG.trace("Testing {} {} {}", mergedName, pattern, match);
       } else {
          match = FilenameUtils.wildcardMatch(test.getExecutable(), pattern);
-         LOG.info("Testing {} {} {}", test.getExecutable(), pattern, match);
+         LOG.trace("Testing {} {} {}", test.getExecutable(), pattern, match);
       }
       return match;
    }

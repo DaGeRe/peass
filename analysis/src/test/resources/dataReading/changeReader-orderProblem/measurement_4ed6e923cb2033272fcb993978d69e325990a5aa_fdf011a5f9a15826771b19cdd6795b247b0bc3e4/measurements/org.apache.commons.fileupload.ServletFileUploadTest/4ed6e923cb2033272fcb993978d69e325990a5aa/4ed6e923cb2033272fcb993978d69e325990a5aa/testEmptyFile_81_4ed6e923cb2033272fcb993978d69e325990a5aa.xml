@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<kopemedata>
+ <testcases class="org.apache.commons.fileupload.ServletFileUploadTest">
+  <testcase name="testEmptyFile">
+   <datacollector name="de.dagere.kopeme.datacollection.TimeDataCollectorNoGC">
+    <result cpu="model name : AMD Ryzen 3 3100 4-Core Processor" memory="MemTotal: 32868076 kB" date="1647098147554">
+     <value>2.517852875E7</value>
+     <deviation>0.819785508877348</deviation>
+     <warmup>0</warmup>
+     <iterations>20</iterations>
+     <repetitions>1000</repetitions>
+     <min>9915839.0</min>
+     <max>1.05682316E8</max>
+     <showStart>false</showStart>
+     <executeBeforeClassInMeasurement>false</executeBeforeClassInMeasurement>
+     <redirectToTemp>false</redirectToTemp>
+     <redirectToNull>false</redirectToNull>
+     <javaVersion>11.0.14</javaVersion>
+     <fulldata>
+      <value start="1647098146662">105682316</value>
+      <value start="1647098146768">37730141</value>
+      <value start="1647098146806">29928377</value>
+      <value start="1647098146836">25488768</value>
+      <value start="1647098146861">23142345</value>
+      <value start="1647098146884">19539510</value>
+      <value start="1647098146904">21618406</value>
+      <value start="1647098146925">35164729</value>
+      <value start="1647098146961">15769187</value>
+      <value start="1647098146976">13438664</value>
+      <value start="1647098146990">12885098</value>
+      <value start="1647098147003">20663192</value>
+      <value start="1647098147024">21349458</value>
+      <value start="1647098147045">9915839</value>
+      <value start="1647098147055">15550759</value>
+      <value start="1647098147070">21695935</value>
+      <value start="1647098147092">34189916</value>
+      <value start="1647098147126">17615084</value>
+      <value start="1647098147144">10598054</value>
+      <value start="1647098147155">11604797</value>
+     </fulldata>
+    </result>
+   </datacollector>
+  </testcase>
+ </testcases>
+</kopemedata>
