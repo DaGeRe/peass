@@ -321,6 +321,10 @@ public class ExecutionConfigMixin {
       config.setExcludeLog4j(excludeLog4j);
       config.setRedirectToNull(!dontRedirectToNull);
 
+      if (config.isExecuteBeforeClassInMeasurement() && config.isOnlyMeasureWorkload()) {
+         throw new RuntimeException("executeBeforeClassInMeasurement may only be activated if onlyMeasureWorkload is deactivated!");
+      }
+      
       return config;
    }
 }

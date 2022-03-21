@@ -6,7 +6,19 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.expr.NormalAnnotationExpr;
 
+import de.dagere.peass.config.ExecutionConfig;
+
 public class BeforeAfterTransformer {
+   
+   public static void transformBeforeAfter(final ClassOrInterfaceDeclaration clazz, final ExecutionConfig config) {
+      if (config.isOnlyMeasureWorkload()) {
+         BeforeAfterTransformer.transformNoMeasurement(clazz);
+      } else {
+         if (config.isExecuteBeforeClassInMeasurement()) {
+            BeforeAfterTransformer.transformWithMeasurement(clazz);
+         }
+      }
+   }
 
    public static void transformWithMeasurement(final ClassOrInterfaceDeclaration clazz) {
       List<MethodDeclaration> beforeAllMethods = TestMethodFinder.findBeforeAllMethods(clazz);
