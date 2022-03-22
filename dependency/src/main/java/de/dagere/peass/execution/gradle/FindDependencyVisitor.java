@@ -164,7 +164,8 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
          ArgumentListExpression list = (ArgumentListExpression) expression;
          for (Expression pluginExpression : list.getExpressions()) {
             ClosureExpression closurePluginExpression = (ClosureExpression) pluginExpression;
-            for (Statement statement : ((BlockStatement) closurePluginExpression.getCode()).getStatements()) {
+            BlockStatement blockStatement = (BlockStatement) closurePluginExpression.getCode();
+            for (Statement statement : blockStatement.getStatements()) {
                String text = statement.getText();
                checkPluginName(text);
             }
@@ -184,6 +185,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       if (text.contains("plugin:java") ||
             text.contains("this.id(java)") ||
             text.contains("this.id(java-library)") ||
+            text.contains("ConstantExpression[java-library]") || 
             text.contains("plugin:com.android.library") ||
             text.contains("plugin:com.android.application") ||
             text.contains("application") ||
