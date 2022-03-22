@@ -85,10 +85,10 @@ public class TestBeforeJUnit5 {
 
       checkMethod(clazz);
       
-      MethodDeclaration beforeMethod = clazz.getMethodsByName("simpleBefore").get(0);
+      MethodDeclaration beforeMethod = clazz.getMethodsByName("allBefore").get(0);
       Assert.assertNotNull(beforeMethod.getAnnotationByName("BeforeNoMeasurement").get());
       
-      MethodDeclaration afterMethod = clazz.getMethodsByName("simpleAfter").get(0);
+      MethodDeclaration afterMethod = clazz.getMethodsByName("allAfter").get(0);
       Assert.assertNotNull(afterMethod.getAnnotationByName("AfterNoMeasurement").get());
    }
    
@@ -96,6 +96,7 @@ public class TestBeforeJUnit5 {
    public void testWithMeasurement() throws IOException {
       MeasurementConfig config = MeasurementConfig.DEFAULT;
       config.getExecutionConfig().setOnlyMeasureWorkload(false);
+      config.getExecutionConfig().setExecuteBeforeClassInMeasurement(true);
       
       final CompilationUnit cu = transform(config, "TestMeBeforeAfter5All");
 
@@ -104,10 +105,10 @@ public class TestBeforeJUnit5 {
 
       checkMethod(clazz);
       
-      MethodDeclaration beforeMethod = clazz.getMethodsByName("simpleBefore").get(0);
+      MethodDeclaration beforeMethod = clazz.getMethodsByName("allBefore").get(0);
       Assert.assertNotNull(beforeMethod.getAnnotationByName("BeforeWithMeasurement").get());
       
-      MethodDeclaration afterMethod = clazz.getMethodsByName("simpleAfter").get(0);
+      MethodDeclaration afterMethod = clazz.getMethodsByName("allAfter").get(0);
       Assert.assertNotNull(afterMethod.getAnnotationByName("AfterWithMeasurement").get());
    }
    

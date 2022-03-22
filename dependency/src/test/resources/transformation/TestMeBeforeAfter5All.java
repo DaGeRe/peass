@@ -21,11 +21,11 @@ import org.junit.jupiter.api.Test;
 public class TestMeBeforeAfter5 {
 
    @BeforeAll
-   public void simpleBefore() {
+   public void allBefore() {
    }
    
    @AfterAll
-   public void simpleAfter() {
+   public void allAfter() {
    }
 
    @Test
