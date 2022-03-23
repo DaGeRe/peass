@@ -7,9 +7,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBException;
@@ -94,7 +94,7 @@ public final class MeasurementAnalysationUtil {
 	public static final double MIN_NORMED_DISTANCE = 0.5;
 	public static final double MIN_ABSOLUTE_PERCENTAGE_DISTANCE = 0.2;
 
-	private static final Random RANDOM = new Random();
+	private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
 	public static Map<File, Kopemedata> getData(final File file) throws JAXBException {
 		final Map<File, Kopemedata> data = new HashMap<>();
