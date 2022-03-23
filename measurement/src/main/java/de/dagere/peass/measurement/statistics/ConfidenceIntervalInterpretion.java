@@ -79,7 +79,6 @@ public class ConfidenceIntervalInterpretion {
       
       double[] values = threadLocalValues.get();
       if (values == null) {
-         
          values = new double[BOOTSTRAP_SIZE];
          threadLocalValues.set(values);
       }
