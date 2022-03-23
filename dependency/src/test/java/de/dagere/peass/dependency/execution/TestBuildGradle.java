@@ -112,6 +112,23 @@ public class TestBuildGradle {
       final File gradleFile2 = new File(GRADLE_BUILDFILE_FOLDER, "v2.gradle");
       testUpdate(gradleFile2, true);
    }
+   
+   @Test
+   public void testSlf4jExclusion() throws IOException {
+      final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "build.gradle");
+      
+      final File destFile = copyGradlefile(gradleFile);
+      mockedTransformer.getConfig().getExecutionConfig().setExcludeLog4j(true);
+      
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(CURRENT));
+      editor.addDependencies(new File("xyz"));
+
+      final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
+      
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("de.dagere.kopeme:kopeme-junit"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("exclude group: 'org.apache.logging.log4j', module: 'log4j-slf4j-impl'"));
+
+   }
 
    @Test
    public void testAndroidLib() throws IOException {

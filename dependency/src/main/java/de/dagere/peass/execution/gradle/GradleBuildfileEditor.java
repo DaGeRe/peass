@@ -12,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.execution.kieker.ArgLineBuilder;
+import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.execution.utils.RequiredDependency;
 import de.dagere.peass.folders.PeassFolders;
@@ -82,7 +83,7 @@ public class GradleBuildfileEditor {
       if (visitor.isUseSpringBoot()) {
          GradleParseUtil.addJUnitVersionSpringBoot(visitor);
       }
-      
+
       GradleParseUtil.removeExclusions(visitor);
 
       addDependencies(visitor);
@@ -92,9 +93,16 @@ public class GradleBuildfileEditor {
 
    private void addDependencies(final FindDependencyVisitor visitor) {
       boolean isAddJunit3 = testTransformer.isJUnit3();
+      boolean isExcludeLog4j = testTransformer.getConfig().getExecutionConfig().isExcludeLog4j();
       if (visitor.getDependencyLine() != -1) {
          for (RequiredDependency dependency : RequiredDependency.getAll(isAddJunit3)) {
-            final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
+            final String dependencyGradle;
+            if (isExcludeLog4j && dependency.getMavenDependency().getArtifactId().contains("kopeme")) {
+               String excludeString = "{ exclude group: '" + MavenPomUtil.LOG4J_GROUPID + "', module: '" + MavenPomUtil.LOG4J_ARTIFACTID + "' }";
+               dependencyGradle = "implementation (" + dependency.getGradleDependency() + ") " + excludeString;
+            } else {
+               dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
+            }
             visitor.addLine(visitor.getDependencyLine() - 1, dependencyGradle);
          }
       } else {

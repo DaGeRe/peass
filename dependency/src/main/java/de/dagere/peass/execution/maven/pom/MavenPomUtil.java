@@ -64,14 +64,7 @@ public class MavenPomUtil {
    }
 
    public static void extendDependencies(final Model model, final boolean junit3, final boolean excludeLog4j) {
-      for (final Dependency dependency : model.getDependencies()) {
-         if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
-            dependency.setVersion("4.13.2");
-         }
-         if (dependency.getArtifactId().equals("junit-jupiter") && dependency.getGroupId().equals("org.junit.jupiter")) {
-            dependency.setVersion("5.8.2");
-         }
-      }
+      updateJUnit(model);
 
       final List<Dependency> dependencies = model.getDependencies();
 
@@ -90,6 +83,17 @@ public class MavenPomUtil {
             dependencies.add(dependency.getMavenDependency());
          }
 
+      }
+   }
+
+   private static void updateJUnit(final Model model) {
+      for (final Dependency dependency : model.getDependencies()) {
+         if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
+            dependency.setVersion("4.13.2");
+         }
+         if (dependency.getArtifactId().equals("junit-jupiter") && dependency.getGroupId().equals("org.junit.jupiter")) {
+            dependency.setVersion("5.8.2");
+         }
       }
    }
 
