@@ -9,7 +9,6 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -64,10 +63,11 @@ public class TestBuildGradleExclusions {
 
       MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'de.dagere.kopeme:kopeme-junit"));
       MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("') { exclude group: 'org.apache.logging.log4j', module: 'log4j-slf4j-impl' }"));
-      Assert.assertTrue(dependencyString.indexOf("{ exclude group: 'org.apache.logging.log4j', module: 'log4j-slf4j-impl' }") > dependencyString.indexOf("        }"));
+      String excludeString = "{ exclude group: 'org.apache.logging.log4j', module: 'log4j-slf4j-impl' }";
+      String closingParanthesisConstraints = "        }";
+      Assert.assertTrue(dependencyString.indexOf(excludeString) > dependencyString.indexOf(closingParanthesisConstraints));
    }
 
-   @Disabled
    @Test
    public void testLog4jToSlf4jExclusion() throws IOException {
       final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "buildConstraints.gradle");
@@ -81,6 +81,11 @@ public class TestBuildGradleExclusions {
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
 
       MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'de.dagere.kopeme:kopeme-junit"));
+      
+      String configurationsString = gradleFileContents.substring(gradleFileContents.indexOf("configuration"), gradleFileContents.indexOf("configurations") + 100);
+      
+      System.out.println(configurationsString);
+      
       MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("exclude group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j'"));
    }
 

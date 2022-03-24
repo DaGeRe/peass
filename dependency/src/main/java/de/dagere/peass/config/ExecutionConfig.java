@@ -274,9 +274,6 @@ public class ExecutionConfig implements Serializable {
    }
 
    public void setExcludeLog4jToSlf4jImpl(final boolean excludeLog4jToSlf4jImpl) {
-      if (excludeLog4jToSlf4jImpl) {
-         throw new RuntimeException("Not implemented yet");
-      }
       this.excludeLog4jToSlf4jImpl = excludeLog4jToSlf4jImpl;
    }
 

@@ -19,6 +19,13 @@ subprojects {
     test {
         useJUnitPlatform()
     }
-
+    
+    configurations {
+        all {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
 }
-

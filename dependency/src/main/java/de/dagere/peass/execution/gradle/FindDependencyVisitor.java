@@ -40,6 +40,9 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
    private int unitTestsAll = -1;
    private int buildTools = -1;
    private int buildToolsVersion = -1;
+   private int allConfigurationsLine = -1;
+   private MethodCallExpression configurations = null;
+
    private List<Integer> excludeLines = new LinkedList<>();
    private boolean useJava = false;
    private boolean useSpringBoot = false;
@@ -53,7 +56,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       try (Stream<String> lines = Files.lines(buildfile.toPath())) {
          final AstBuilder builder = new AstBuilder();
 
-         String content = lines.filter(line -> !line.trim().startsWith("import ") || (offset++) == -1) 
+         String content = lines.filter(line -> !line.trim().startsWith("import ") || (offset++) == -1)
                .collect(Collectors.joining("\n"));
 
          final List<ASTNode> nodes = builder.buildFromString(content);
@@ -95,29 +98,39 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
             // System.out.println(call.getClass());
             parseNewTask(call);
          } else if (call.getMethodAsString().equals("exclude")) {
-            TupleExpression tuple = (TupleExpression) call.getArguments();
-            Expression expression = tuple.getExpression(0);
-            if (expression instanceof NamedArgumentListExpression) {
-               NamedArgumentListExpression argumentListExpression = (NamedArgumentListExpression) expression;
-
-               Map<String, String> map = new HashMap<>();
-               for (MapEntryExpression innerMapEntryExpression : argumentListExpression.getMapEntryExpressions()) {
-                  String key = innerMapEntryExpression.getKeyExpression().getText();
-                  String value = innerMapEntryExpression.getValueExpression().getText();
-
-                  map.put(key, value);
-               }
-               if ("junit".equals(map.get("group")) && "junit".equals(map.get("module"))) {
-                  excludeLines.add(call.getLineNumber());
-               }
-               if ("org.junit.vintage".equals(map.get("group")) && "junit-vintage-engine".equals(map.get("module"))) {
-                  excludeLines.add(call.getLineNumber());
-               }
+            parseExcludes(call);
+         } else if (call.getMethodAsString().equals("configurations")) {
+            configurations = call;
+         } else if (call.getMethodAsString().equals("all")) {
+            if (call.getLineNumber() >= configurations.getLineNumber() && call.getLineNumber() <= configurations.getLastLineNumber()) {
+               allConfigurationsLine = call.getLineNumber();
             }
          }
       }
 
       super.visitMethodCallExpression(call);
+   }
+
+   private void parseExcludes(final MethodCallExpression call) {
+      TupleExpression tuple = (TupleExpression) call.getArguments();
+      Expression expression = tuple.getExpression(0);
+      if (expression instanceof NamedArgumentListExpression) {
+         NamedArgumentListExpression argumentListExpression = (NamedArgumentListExpression) expression;
+
+         Map<String, String> map = new HashMap<>();
+         for (MapEntryExpression innerMapEntryExpression : argumentListExpression.getMapEntryExpressions()) {
+            String key = innerMapEntryExpression.getKeyExpression().getText();
+            String value = innerMapEntryExpression.getValueExpression().getText();
+
+            map.put(key, value);
+         }
+         if ("junit".equals(map.get("group")) && "junit".equals(map.get("module"))) {
+            excludeLines.add(call.getLineNumber() + offset);
+         }
+         if ("org.junit.vintage".equals(map.get("group")) && "junit-vintage-engine".equals(map.get("module"))) {
+            excludeLines.add(call.getLineNumber() + offset);
+         }
+      }
    }
 
    private void parseNewTask(final MethodCallExpression call) {
@@ -127,7 +140,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
          if (first instanceof ConstantExpression) {
             ConstantExpression expression = (ConstantExpression) first;
             if (expression.getValue().equals("integrationTest")) {
-               integrationTestLine = call.getLastLineNumber();
+               integrationTestLine = call.getLastLineNumber() + offset;
             }
          }
          if (first instanceof MethodCallExpression) {
@@ -136,7 +149,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
             if (method instanceof ConstantExpression) {
                ConstantExpression expression = (ConstantExpression) method;
                if (expression.getValue().equals("integrationTest")) {
-                  integrationTestLine = call.getLastLineNumber();
+                  integrationTestLine = call.getLastLineNumber() + offset;
                }
             }
          }
@@ -186,7 +199,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       if (text.contains("plugin:java") ||
             text.contains("this.id(java)") ||
             text.contains("this.id(java-library)") ||
-            text.contains("ConstantExpression[java-library]") || 
+            text.contains("ConstantExpression[java-library]") ||
             text.contains("plugin:com.android.library") ||
             text.contains("plugin:com.android.application") ||
             text.contains("application") ||
@@ -274,6 +287,10 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       return excludeLines;
    }
 
+   public int getAllConfigurationsLine() {
+      return allConfigurationsLine;
+   }
+
    public void addLine(final int lineIndex, final String textForAdding) {
       gradleFileContents.add(lineIndex, textForAdding);
       if (lineIndex < dependencyLine) {
@@ -297,6 +314,16 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       if (lineIndex < buildToolsVersion) {
          buildToolsVersion++;
       }
+      if (lineIndex < allConfigurationsLine) {
+         allConfigurationsLine++;
+      }
+      List<Integer> newExcludeLines = new LinkedList<>();
+      for (Integer excludeLine : excludeLines) {
+         if (lineIndex < excludeLine) {
+            newExcludeLines.add(excludeLine + 1);
+         }
+      }
+      excludeLines = newExcludeLines;
    }
 
    public void clearLine(final Integer lineNumber) {
