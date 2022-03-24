@@ -102,8 +102,10 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
          } else if (call.getMethodAsString().equals("configurations")) {
             configurations = call;
          } else if (call.getMethodAsString().equals("all")) {
-            if (call.getLineNumber() >= configurations.getLineNumber() && call.getLineNumber() <= configurations.getLastLineNumber()) {
-               allConfigurationsLine = call.getLineNumber();
+            if (configurations != null) {
+               if (call.getLineNumber() >= configurations.getLineNumber() && call.getLineNumber() <= configurations.getLastLineNumber()) {
+                  allConfigurationsLine = call.getLineNumber();
+               }
             }
          }
       }
