@@ -295,28 +295,28 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
 
    public void addLine(final int lineIndex, final String textForAdding) {
       gradleFileContents.add(lineIndex, textForAdding);
-      if (lineIndex < dependencyLine) {
+      if (lineIndex < dependencyLine && dependencyLine != -1) {
          dependencyLine++;
       }
-      if (lineIndex < testLine) {
+      if (lineIndex < testLine && testLine != -1) {
          testLine++;
       }
-      if (lineIndex < androidLine) {
+      if (lineIndex < androidLine && androidLine != -1) {
          androidLine++;
       }
-      if (lineIndex < testOptionsAndroid) {
+      if (lineIndex < testOptionsAndroid && testOptionsAndroid != -1) {
          testOptionsAndroid++;
       }
-      if (lineIndex < unitTestsAll) {
+      if (lineIndex < unitTestsAll && unitTestsAll != -1) {
          unitTestsAll++;
       }
-      if (lineIndex < buildTools) {
+      if (lineIndex < buildTools && buildTools != -1) {
          buildTools++;
       }
-      if (lineIndex < buildToolsVersion) {
+      if (lineIndex < buildToolsVersion && buildToolsVersion != -1) {
          buildToolsVersion++;
       }
-      if (lineIndex < allConfigurationsLine) {
+      if (lineIndex < allConfigurationsLine && allConfigurationsLine != -1) {
          allConfigurationsLine++;
       }
       List<Integer> newExcludeLines = new LinkedList<>();
