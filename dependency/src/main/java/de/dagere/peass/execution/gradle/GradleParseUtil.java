@@ -13,6 +13,8 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.execution.maven.pom.MavenPomUtil;
+
 public class GradleParseUtil {
 
    private static final Logger LOG = LogManager.getLogger(GradleParseUtil.class);
@@ -99,6 +101,6 @@ public class GradleParseUtil {
    }
 
    public static void addJUnitVersionSpringBoot(final FindDependencyVisitor visitor) {
-      visitor.getLines().add("ext['junit-jupiter.version']='5.8.1'");
+      visitor.getLines().add("ext['junit-jupiter.version']='" + MavenPomUtil.JUPITER_VERSION + "'");
    }
 }
