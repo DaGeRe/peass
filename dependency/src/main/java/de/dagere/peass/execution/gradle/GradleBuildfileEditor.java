@@ -114,7 +114,7 @@ public class GradleBuildfileEditor {
          visitor.getLines().add("}");
       }
 
-      if (testTransformer.getConfig().getExecutionConfig().isExcludeLog4jToSlf4jImpl()) {
+      if (testTransformer.getConfig().getExecutionConfig().isExcludeLog4jToSlf4j()) {
          String excludeString = "exclude group: '" + MavenPomUtil.LOG4J_GROUPID + "', module: '" + MavenPomUtil.LOG4J_TO_SLF4J_ARTIFACTID + "'";
          visitor.addLine(visitor.getAllConfigurationsLine() + 1, excludeString);
       }

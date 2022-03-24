@@ -44,7 +44,7 @@ public class ExecutionConfig implements Serializable {
    private boolean removeSnapshots = false;
    private boolean useAlternativeBuildfile = false;
    private boolean excludeLog4jSlf4jImpl = false;
-   private boolean excludeLog4jToSlf4jImpl = false;
+   private boolean excludeLog4jToSlf4j = false;
 
    private boolean executeBeforeClassInMeasurement = false;
    private boolean onlyMeasureWorkload = false;
@@ -89,7 +89,7 @@ public class ExecutionConfig implements Serializable {
       this.removeSnapshots = other.removeSnapshots;
       this.useAlternativeBuildfile = other.useAlternativeBuildfile;
       this.excludeLog4jSlf4jImpl = other.excludeLog4jSlf4jImpl;
-      this.excludeLog4jToSlf4jImpl = other.excludeLog4jToSlf4jImpl;
+      this.excludeLog4jToSlf4j = other.excludeLog4jToSlf4j;
       this.testTransformer = other.getTestTransformer();
       this.testExecutor = other.getTestExecutor();
       this.useTieredCompilation = other.isUseTieredCompilation();
@@ -269,12 +269,12 @@ public class ExecutionConfig implements Serializable {
       this.excludeLog4jSlf4jImpl = excludeLog4j;
    }
 
-   public boolean isExcludeLog4jToSlf4jImpl() {
-      return excludeLog4jToSlf4jImpl;
+   public boolean isExcludeLog4jToSlf4j() {
+      return excludeLog4jToSlf4j;
    }
 
-   public void setExcludeLog4jToSlf4jImpl(final boolean excludeLog4jToSlf4jImpl) {
-      this.excludeLog4jToSlf4jImpl = excludeLog4jToSlf4jImpl;
+   public void setExcludeLog4jToSlf4j(final boolean excludeLog4jToSlf4j) {
+      this.excludeLog4jToSlf4j = excludeLog4jToSlf4j;
    }
 
    public boolean isExecuteBeforeClassInMeasurement() {
