@@ -31,6 +31,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
 
    private static final Logger LOG = LogManager.getLogger(FindDependencyVisitor.class);
 
+   private int offset = 0;
    private int dependencyLine = -1;
    private int testLine = -1;
    private int integrationTestLine = -1;
@@ -52,7 +53,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       try (Stream<String> lines = Files.lines(buildfile.toPath())) {
          final AstBuilder builder = new AstBuilder();
 
-         String content = lines.filter(line -> !line.trim().startsWith("import "))
+         String content = lines.filter(line -> !line.trim().startsWith("import ") || (offset++) == -1) 
                .collect(Collectors.joining("\n"));
 
          final List<ASTNode> nodes = builder.buildFromString(content);
@@ -75,17 +76,17 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
             checkPluginName(text);
          } else if (call.getMethodAsString().equals("dependencies")) {
             // System.out.println(call);
-            dependencyLine = call.getLastLineNumber();
+            dependencyLine = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("test")) {
-            testLine = call.getLastLineNumber();
+            testLine = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("android")) {
-            androidLine = call.getLastLineNumber();
+            androidLine = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("testOptions")) {
-            testOptionsAndroid = call.getLastLineNumber();
+            testOptionsAndroid = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("unitTests.all")) {
-            unitTestsAll = call.getLastLineNumber();
+            unitTestsAll = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("buildToolsVersion")) {
-            buildToolsVersion = call.getLastLineNumber();
+            buildToolsVersion = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("subprojects")) {
             parseSubprojectsSection(call);
          } else if (call.getMethodAsString().equals("task")) {

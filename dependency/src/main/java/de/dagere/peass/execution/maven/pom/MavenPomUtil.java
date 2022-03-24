@@ -33,7 +33,8 @@ import de.dagere.peass.utils.StreamGobbler;
 public class MavenPomUtil {
 
    public static final String LOG4J_GROUPID = "org.apache.logging.log4j";
-   public static final String LOG4J_ARTIFACTID = "log4j-slf4j-impl";
+   public static final String LOG4J_SLF4J_IMPL_ARTIFACTID = "log4j-slf4j-impl";
+   public static final String LOG4J_TO_SLF4J_ARTIFACTID = "log4j-to-slf4j";
    public static final String KOPEME_VERSION = "0.18.1";
    public static final String KIEKER_VERSION = "1.15.1";
    public static final String ORG_APACHE_MAVEN_PLUGINS = "org.apache.maven.plugins";
@@ -77,7 +78,7 @@ public class MavenPomUtil {
             dependencies.add(0, dependency.getMavenDependency());
             if (excludeLog4j) {
                Exclusion exclusion = new Exclusion();
-               exclusion.setArtifactId(LOG4J_ARTIFACTID);
+               exclusion.setArtifactId(LOG4J_SLF4J_IMPL_ARTIFACTID);
                exclusion.setGroupId(LOG4J_GROUPID);
                dependencies.get(0).addExclusion(exclusion);
             }

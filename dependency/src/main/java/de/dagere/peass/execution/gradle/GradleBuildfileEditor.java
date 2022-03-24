@@ -98,7 +98,7 @@ public class GradleBuildfileEditor {
          for (RequiredDependency dependency : RequiredDependency.getAll(isAddJunit3)) {
             final String dependencyGradle;
             if (isExcludeLog4j && dependency.getMavenDependency().getArtifactId().contains("kopeme")) {
-               String excludeString = "{ exclude group: '" + MavenPomUtil.LOG4J_GROUPID + "', module: '" + MavenPomUtil.LOG4J_ARTIFACTID + "' }";
+               String excludeString = "{ exclude group: '" + MavenPomUtil.LOG4J_GROUPID + "', module: '" + MavenPomUtil.LOG4J_SLF4J_IMPL_ARTIFACTID + "' }";
                dependencyGradle = "implementation ('" + dependency.getGradleDependency() + "') " + excludeString;
             } else {
                dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
@@ -112,6 +112,10 @@ public class GradleBuildfileEditor {
             visitor.getLines().add(dependencyGradle);
          }
          visitor.getLines().add("}");
+      }
+
+      if (testTransformer.getConfig().getExecutionConfig().isExcludeLog4jToSlf4jImpl()) {
+         
       }
    }
 
