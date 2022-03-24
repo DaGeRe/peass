@@ -53,7 +53,7 @@ public class TestBuildGradle {
       final String gradleFileContents = updateGradleFile(gradleFile);
 
       MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("de.dagere.kopeme:kopeme-junit"));
-      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("ext['junit-jupiter.version']='5.8.1'"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("ext['junit-jupiter.version']='5.8.2'"));
    }
 
    @Test
