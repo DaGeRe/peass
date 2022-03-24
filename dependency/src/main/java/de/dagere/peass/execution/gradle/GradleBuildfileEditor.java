@@ -99,7 +99,7 @@ public class GradleBuildfileEditor {
             final String dependencyGradle;
             if (isExcludeLog4j && dependency.getMavenDependency().getArtifactId().contains("kopeme")) {
                String excludeString = "{ exclude group: '" + MavenPomUtil.LOG4J_GROUPID + "', module: '" + MavenPomUtil.LOG4J_ARTIFACTID + "' }";
-               dependencyGradle = "implementation (" + dependency.getGradleDependency() + ") " + excludeString;
+               dependencyGradle = "implementation ('" + dependency.getGradleDependency() + "') " + excludeString;
             } else {
                dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
             }

@@ -125,7 +125,7 @@ public class TestBuildGradle {
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
       
-      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("de.dagere.kopeme:kopeme-junit"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'de.dagere.kopeme:kopeme-junit"));
       MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("exclude group: 'org.apache.logging.log4j', module: 'log4j-slf4j-impl'"));
 
    }
