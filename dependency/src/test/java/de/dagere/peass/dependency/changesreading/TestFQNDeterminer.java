@@ -79,4 +79,12 @@ public class TestFQNDeterminer {
       String fqn2 = FQNDeterminer.getParameterFQN(unit, "String");
       Assert.assertEquals("java.lang.String", fqn2);
    }
+
+   @Test
+   public void testJavaLangGenericClass() throws FileNotFoundException {
+      File file = new File("src/main/java/de/dagere/peass/SelectStarter.java");
+      CompilationUnit unit = JavaParserProvider.parse(file);
+      String fqn = FQNDeterminer.getParameterFQN(unit, "Class");
+      Assert.assertEquals("java.lang.Class", fqn);
+   }
 }
