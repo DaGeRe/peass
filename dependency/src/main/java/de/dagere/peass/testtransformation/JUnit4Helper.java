@@ -26,35 +26,32 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.peass.config.MeasurementConfig;
 
 public class JUnit4Helper {
-   
+
    private static final Logger LOG = LogManager.getLogger(JUnit4Helper.class);
-   
+
    public static void editJUnit4(final CompilationUnit unit, final MeasurementConfig config, final DataCollectorList datacollectorlist) {
       unit.addImport("de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation");
       unit.addImport("org.junit.rules.TestRule");
       unit.addImport("org.junit.Rule");
       unit.addImport("de.dagere.kopeme.junit.rule.KoPeMeRule");
 
-      final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
+      final ClassOrInterfaceDeclaration clazz = ParseUtil.getClasses(unit).get(0);
 
       JUnit4Helper.addKoPeMeRuleIfNecessary(clazz);
 
       List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit4TestMethods(clazz);
       new TestMethodHelper(config, datacollectorlist).prepareTestMethods(testMethods);
 
-      if (config.getExecutionConfig().isOnlyMeasureWorkload()) {
-         BeforeAfterTransformer.transformBefore(clazz);
-         BeforeAfterTransformer.transformAfter(clazz);
-      }
+      BeforeAfterTransformer.transformBeforeAfter(clazz, config.getExecutionConfig());
    }
-   
+
    public static void addKoPeMeRuleIfNecessary(final ClassOrInterfaceDeclaration clazz) {
       final boolean fieldFound = JUnit4Helper.hasKoPeMeRule(clazz) || hasKoPeMeRunner(clazz);
       if (!fieldFound) {
          addRule(clazz);
       }
    }
-   
+
    public static boolean hasKoPeMeRule(final ClassOrInterfaceDeclaration clazz) {
       boolean fieldFound = false;
       for (final FieldDeclaration field : clazz.getFields()) {
@@ -86,7 +83,7 @@ public class JUnit4Helper {
       }
       return fieldFound;
    }
-   
+
    public static boolean hasKoPeMeRunner(final ClassOrInterfaceDeclaration clazz) {
       boolean kopemeTestrunner = false;
       if (clazz.getAnnotations().size() > 0) {
@@ -102,7 +99,7 @@ public class JUnit4Helper {
       }
       return kopemeTestrunner;
    }
-   
+
    public static void addRule(final ClassOrInterfaceDeclaration clazz) {
       final NodeList<Expression> arguments = new NodeList<>();
       arguments.add(new ThisExpr());

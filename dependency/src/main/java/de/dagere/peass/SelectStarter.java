@@ -17,12 +17,12 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.analysis.properties.PropertyReader;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
-import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
+import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
-import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -42,9 +42,9 @@ import picocli.CommandLine.Mixin;
  *
  */
 @Command(description = "Executes the regression test selection. Creates the executionfile, which defines the tests-version-pairs that need to be executed in each version", name = "select")
-public class RegressionTestSelectionStarter implements Callable<Void>{
+public class SelectStarter implements Callable<Void>{
 
-   private static final Logger LOG = LogManager.getLogger(RegressionTestSelectionStarter.class);
+   private static final Logger LOG = LogManager.getLogger(SelectStarter.class);
 
    @Mixin
    private TestSelectionConfigMixin config;
@@ -57,7 +57,7 @@ public class RegressionTestSelectionStarter implements Callable<Void>{
 
    public static void main(final String[] args) {
       try {
-         final CommandLine commandLine = new CommandLine(new RegressionTestSelectionStarter());
+         final CommandLine commandLine = new CommandLine(new SelectStarter());
          commandLine.execute(args);
       } catch (final Throwable t) {
          t.printStackTrace();
@@ -80,7 +80,7 @@ public class RegressionTestSelectionStarter implements Callable<Void>{
       ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
       
       final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, commits, 
-            config.getDependencyConfig(), executionConfig, kiekerConfig, new EnvironmentVariables());
+            config.getDependencyConfig(), executionConfig, kiekerConfig, new EnvironmentVariables(executionConfig.getProperties()));
       final ResultsFolders[] outFiles = reader.readDependencies();
 
       LOG.debug("Files: {}", outFiles);

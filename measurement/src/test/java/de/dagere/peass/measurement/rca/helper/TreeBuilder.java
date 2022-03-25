@@ -44,12 +44,6 @@ public class TreeBuilder {
       b = a.appendChild("ClassB#methodB", "public void ClassB.methodB()", "public void ClassB.methodB()");
       c = root.appendChild("ClassC#methodC", "public void ClassC.methodC()", "public void ClassC.methodC()");
       constructor = root.appendChild("ClassA#<init>", "new public void ClassA.<init>()", "new public void ClassA.<init>()");
-
-      root.setOtherVersionNode(new CallTreeNode("Test#test", "public void Test.test()", "public void Test.test()", config));
-      a.setOtherVersionNode(new CallTreeNode("ClassA#methodA", "public void ClassA.methodA()", "public void ClassA.methodA()", config));
-      b.setOtherVersionNode(new CallTreeNode("ClassA#methodB", "public void ClassA.methodB()", "public void ClassA.methodB()", config));
-      c.setOtherVersionNode(new CallTreeNode("ClassA#methodC", "public void ClassA.methodC()", "public void ClassA.methodB()", config));
-      constructor.setOtherVersionNode(new CallTreeNode("ClassA#<init>", "new public void ClassA.<init>()", "new public void ClassA.<init>()", config));
    }
 
    public TreeBuilder() {
@@ -65,13 +59,6 @@ public class TreeBuilder {
       d = c.appendChild("ClassD#methodD", "public void ClassD.methodD()", "public void ClassD.methodD()");
       e = c.appendChild("ClassE#methodE", "public void ClassE.methodE()", "public void ClassE.methodE()");
    }
-
-   // public void buildMeasurements() {
-   // final CallTreeNode[] nodes = new CallTreeNode[] { root, a, b, c, constructor };
-   // initVersions(nodes);
-   // buildBasicChunks(nodes);
-   // buildStatistics(nodes);
-   // }
 
    public void buildMeasurements(final CallTreeNode... nodes) {
       initVersions(nodes);
@@ -124,7 +111,7 @@ public class TreeBuilder {
 
    protected void initVersions(final CallTreeNode[] nodes) {
       for (final CallTreeNode node : nodes) {
-         node.setVersions(version, versionPredecessor);
+         node.initVersions();
       }
    }
 

@@ -259,27 +259,30 @@ public class JUnitTestTransformer implements TestTransformer {
                junitVersions.put(canonicalJavaFile, 5);
                // editJUnit4(javaFile);
             }
-            final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
-            if (clazz != null) { // for @interface cases
-               // We only need to consider classes with one extends, since classes can not have multiple extends and we search for classes that may extend TestCase (indirectly)
-               LOG.trace("Transforming: {}", clazz.getNameAsString());
-               if (clazz.getExtendedTypes().size() == 1) {
-                  final ClassOrInterfaceType extend = clazz.getExtendedTypes(0);
-                  final String extensionName = extend.getNameAsString().intern();
-                  List<File> extensionsOfBase = extensions.get(extensionName);
-                  if (extensionsOfBase == null) {
-                     extensionsOfBase = new LinkedList<>();
-                     extensions.put(extensionName, extensionsOfBase);
-                  }
-                  extensionsOfBase.add(canonicalJavaFile);
-               }
-            }
+            parseExtensions(canonicalJavaFile, unit);
          } catch (final IOException e) {
             throw new RuntimeException(e);
          }
       }
 
       addJUnit3Test("TestCase", junitVersions);
+   }
+
+   private void parseExtensions(final File canonicalJavaFile, final CompilationUnit unit) {
+      for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
+         LOG.trace("Transforming: {}", clazz.getNameAsString());
+         // We only need to consider classes with one extends, since classes can not have multiple extends and we search for classes that may extend TestCase (indirectly)
+         if (clazz.getExtendedTypes().size() == 1) {
+            final ClassOrInterfaceType extend = clazz.getExtendedTypes(0);
+            final String extensionName = extend.getNameAsString().intern();
+            List<File> extensionsOfBase = extensions.get(extensionName);
+            if (extensionsOfBase == null) {
+               extensionsOfBase = new LinkedList<>();
+               extensions.put(extensionName, extensionsOfBase);
+            }
+            extensionsOfBase.add(canonicalJavaFile);
+         }
+      }
    }
 
    private final Map<Integer, List<String>> junitTestAnnotations = new HashMap<>();
@@ -334,23 +337,8 @@ public class JUnitTestTransformer implements TestTransformer {
       if (unit != null) {
          final Integer junit = junitVersions.get(clazzFile);
          if (junit != null) {
-            final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
-            if (junit == 3) {
-               for (final MethodDeclaration method : clazz.getMethods()) {
-                  if (method.getNameAsString().toLowerCase().contains("test")) {
-                     methods.add(new TestCase(clazzname.getClazz(), method.getNameAsString(), clazzname.getModule()));
-                  }
-               }
-            } else if (junit == 4) {
-               for (String junit4method : getAnnotatedMethods(clazz, 4)) {
-                  TestCase test = new TestCase(clazzname.getClazz(), junit4method, clazzname.getModule());
-                  methods.add(test);
-               }
-            } else if (junit == 5) {
-               for (String junit5method : getAnnotatedMethods(clazz, 5)) {
-                  TestCase test = new TestCase(clazzname.getClazz(), junit5method, clazzname.getModule());
-                  methods.add(test);
-               }
+            for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
+               addTestMethodNames(clazzname, methods, junit, clazz);
             }
          } else {
             LOG.warn("Clazz {} has no JUnit version", clazzFile);
@@ -363,6 +351,26 @@ public class JUnitTestTransformer implements TestTransformer {
       }
 
       return methods;
+   }
+
+   private void addTestMethodNames(final TestCase clazzname, final List<TestCase> methods, final Integer junit, final ClassOrInterfaceDeclaration clazz) {
+      if (junit == 3) {
+         for (final MethodDeclaration method : clazz.getMethods()) {
+            if (method.getNameAsString().toLowerCase().contains("test")) {
+               methods.add(new TestCase(clazzname.getClazz(), method.getNameAsString(), clazzname.getModule()));
+            }
+         }
+      } else if (junit == 4) {
+         for (String junit4method : getAnnotatedMethods(clazz, 4)) {
+            TestCase test = new TestCase(clazzname.getClazz(), junit4method, clazzname.getModule());
+            methods.add(test);
+         }
+      } else if (junit == 5) {
+         for (String junit5method : getAnnotatedMethods(clazz, 5)) {
+            TestCase test = new TestCase(clazzname.getClazz(), junit5method, clazzname.getModule());
+            methods.add(test);
+         }
+      }
    }
 
    private List<String> getAnnotatedMethods(final ClassOrInterfaceDeclaration clazz, final int version) {
@@ -397,28 +405,28 @@ public class JUnitTestTransformer implements TestTransformer {
       unit.addImport("de.dagere.kopeme.junit3.KoPeMeTestcase");
       unit.addImport("de.dagere.kopeme.datacollection.DataCollectorList");
 
-      final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
+      for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
+         if (!clazz.getExtendedTypes(0).getNameAsString().equals("KoPeMeTestcase")) {
+            if (clazz.getExtendedTypes(0).getNameAsString().equals("TestCase")) {
+               clazz.setExtendedTypes(new NodeList<>());
+               clazz.addExtendedType("KoPeMeTestcase");
+            }
 
-      if (!clazz.getExtendedTypes(0).getNameAsString().equals("KoPeMeTestcase")) {
-         if (clazz.getExtendedTypes(0).getNameAsString().equals("TestCase")) {
-            clazz.setExtendedTypes(new NodeList<>());
-            clazz.addExtendedType("KoPeMeTestcase");
-         }
+            addMethod(clazz, "getWarmup", "return " + 0 + ";", PrimitiveType.intType());
+            addMethod(clazz, "getIterations", "return " + config.getAllIterations() + ";", PrimitiveType.intType());
+            addMethod(clazz, "logFullData", "return " + config.isLogFullData() + ";", PrimitiveType.booleanType());
+            addMethod(clazz, "useKieker", "return " + config.isUseKieker() + ";", PrimitiveType.booleanType());
+            addMethod(clazz, "getMaximalTime", "return " + config.getExecutionConfig().getTimeout() + ";", PrimitiveType.longType());
+            addMethod(clazz, "getRepetitions", "return " + config.getRepetitions() + ";", PrimitiveType.intType());
+            addMethod(clazz, "redirectToNull", "return " + config.getExecutionConfig().isRedirectToNull() + ";", PrimitiveType.booleanType());
 
-         addMethod(clazz, "getWarmup", "return " + 0 + ";", PrimitiveType.intType());
-         addMethod(clazz, "getIterations", "return " + config.getAllIterations() + ";", PrimitiveType.intType());
-         addMethod(clazz, "logFullData", "return " + config.isLogFullData() + ";", PrimitiveType.booleanType());
-         addMethod(clazz, "useKieker", "return " + config.isUseKieker() + ";", PrimitiveType.booleanType());
-         addMethod(clazz, "getMaximalTime", "return " + config.getExecutionConfig().getTimeout() + ";", PrimitiveType.longType());
-         addMethod(clazz, "getRepetitions", "return " + config.getRepetitions() + ";", PrimitiveType.intType());
-         addMethod(clazz, "redirectToNull", "return " + config.getExecutionConfig().isRedirectToNull() + ";", PrimitiveType.booleanType());
-
-         synchronized (javaParser) {
-            final ClassOrInterfaceType type = javaParser.parseClassOrInterfaceType("DataCollectorList").getResult().get();
-            if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
-               addMethod(clazz, "getDataCollectors", "return DataCollectorList.ONLYTIME;", type);
-            } else if (datacollectorlist.equals(DataCollectorList.ONLYTIME_NOGC)) {
-               addMethod(clazz, "getDataCollectors", "return DataCollectorList.ONLYTIME_NOGC;", type);
+            synchronized (javaParser) {
+               final ClassOrInterfaceType type = javaParser.parseClassOrInterfaceType("DataCollectorList").getResult().get();
+               if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
+                  addMethod(clazz, "getDataCollectors", "return DataCollectorList.ONLYTIME;", type);
+               } else if (datacollectorlist.equals(DataCollectorList.ONLYTIME_NOGC)) {
+                  addMethod(clazz, "getDataCollectors", "return DataCollectorList.ONLYTIME_NOGC;", type);
+               }
             }
          }
       }
@@ -482,19 +490,14 @@ public class JUnitTestTransformer implements TestTransformer {
       unit.addImport("org.junit.jupiter.api.extension.ExtendWith");
       unit.addImport("de.dagere.kopeme.junit5.rule.KoPeMeExtension");
 
-      final ClassOrInterfaceDeclaration clazz = ParseUtil.getClass(unit);
+      for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
+         final SingleMemberAnnotationExpr extendAnnotation = new SingleMemberAnnotationExpr(new Name("ExtendWith"), new ClassExpr(new TypeParameter("KoPeMeExtension")));
+         clazz.addAnnotation(extendAnnotation);
 
-      final SingleMemberAnnotationExpr extendAnnotation = new SingleMemberAnnotationExpr(new Name("ExtendWith"), new ClassExpr(new TypeParameter("KoPeMeExtension")));
-      clazz.addAnnotation(extendAnnotation);
+         List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit5TestMethods(clazz);
+         new TestMethodHelper(config, datacollectorlist).prepareTestMethods(testMethods);
 
-      List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit5TestMethods(clazz);
-      new TestMethodHelper(config, datacollectorlist).prepareTestMethods(testMethods);
-
-      if (config.getExecutionConfig().isOnlyMeasureWorkload()) {
-         BeforeAfterTransformer.transformBefore(clazz);
-         BeforeAfterTransformer.transformAfter(clazz);
-      } else {
-         BeforeAfterTransformer.transformWithMeasurement(clazz);
+         BeforeAfterTransformer.transformBeforeAfter(clazz, config.getExecutionConfig());
       }
    }
 

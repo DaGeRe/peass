@@ -86,7 +86,7 @@ public class TraceGeneratorStarter implements Callable<Void> {
    private KiekerResultManager runTests(final String newestVersion, final TestSet tests, final PeassFolders folders, final ExecutionConfig executionConfig)
          throws IOException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException,
          InvocationTargetException, NoSuchMethodException, SecurityException {
-      KiekerResultManager resultsManager = new KiekerResultManager(folders, executionConfig, new KiekerConfig(true), new EnvironmentVariables());
+      KiekerResultManager resultsManager = new KiekerResultManager(folders, executionConfig, new KiekerConfig(true), new EnvironmentVariables(executionConfig.getProperties()));
       resultsManager.executeKoPeMeKiekerRun(tests, newestVersion, folders.getDependencyLogFolder());
       return resultsManager;
    }

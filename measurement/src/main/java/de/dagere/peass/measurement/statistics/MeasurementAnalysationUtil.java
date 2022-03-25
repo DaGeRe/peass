@@ -7,9 +7,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 import javax.xml.bind.JAXBException;
@@ -94,7 +94,7 @@ public final class MeasurementAnalysationUtil {
 	public static final double MIN_NORMED_DISTANCE = 0.5;
 	public static final double MIN_ABSOLUTE_PERCENTAGE_DISTANCE = 0.2;
 
-	private static final Random RANDOM = new Random();
+	private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
 	public static Map<File, Kopemedata> getData(final File file) throws JAXBException {
 		final Map<File, Kopemedata> data = new HashMap<>();
@@ -207,9 +207,20 @@ public final class MeasurementAnalysationUtil {
 		return isChange;
 	}
 
+	public static ConfidenceInterval getBootstrapConfidenceInterval(final double[] values, final int count, final double[] repetitionValues, final int intervalPercentage) {
+      LOG.trace("Werte: {}", values);
+      final double[] means = getMeanStatistics(values, count, repetitionValues);
+
+//    LOG.trace("Mean: {}", statistics.getMean());
+
+      final double upperBound = new Percentile(intervalPercentage).evaluate(means);
+      final double lowerBound = new Percentile(100 - intervalPercentage).evaluate(means);;
+      return new ConfidenceInterval(lowerBound, upperBound, intervalPercentage);
+   } 
+	
 	public static ConfidenceInterval getBootstrapConfidenceInterval(final double[] values, final int count, final int repetitions, final int intervalPercentage) {
 		LOG.trace("Werte: {}", values);
-		final double[] means = getMeanStatistics(values, count, repetitions);
+		final double[] means = getMeanStatistics(values, count, new double[repetitions]);
 
 //		LOG.trace("Mean: {}", statistics.getMean());
 
@@ -218,9 +229,8 @@ public final class MeasurementAnalysationUtil {
 		return new ConfidenceInterval(lowerBound, upperBound, intervalPercentage);
 	}
 
-   private static double[] getMeanStatistics(final double[] values, final int count, final int repetitions) {
-      double[] meanValues = new double[repetitions];
-		for (int i = 0; i < repetitions; i++) {
+   private static double[] getMeanStatistics(final double[] values, final int count, final double[] meanValues) {
+		for (int i = 0; i < meanValues.length; i++) {
 			final double bootstrapMean = getBootstrappedStatistics(values, count);
 			meanValues[i] = bootstrapMean;
 		}

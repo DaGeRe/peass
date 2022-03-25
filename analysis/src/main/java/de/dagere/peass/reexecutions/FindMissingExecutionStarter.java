@@ -23,7 +23,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 @Command(name = "findmissing", description = "Finds missing executions of all projects and writes them to runfiles", mixinStandardHelpOptions = true)
-public class FindMissingExecutions implements Callable<Void> {
+public class FindMissingExecutionStarter implements Callable<Void> {
 
    @Option(names = { "-data", "--data" }, description = "Path to datafolder")
    protected File data[];
@@ -33,10 +33,10 @@ public class FindMissingExecutions implements Callable<Void> {
 
    public static final String NAME = "reexecute-missing";
 
-   private static final Logger LOG = LogManager.getLogger(FindMissingExecutions.class);
+   private static final Logger LOG = LogManager.getLogger(FindMissingExecutionStarter.class);
 
    public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException, JAXBException {
-      CommandLine commandLine = new CommandLine(new FindMissingExecutions());
+      CommandLine commandLine = new CommandLine(new FindMissingExecutionStarter());
       commandLine.execute(args);
 
    }

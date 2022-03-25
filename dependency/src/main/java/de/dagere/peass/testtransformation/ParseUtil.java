@@ -23,34 +23,6 @@ public final class ParseUtil {
 
    }
 
-   /**
-    * Returns the first ClassOrInterfaceDeclaration of a CompilationUnit ATTENTION: If multiple classes are declared, the first is returned (may be the case if one class/interface
-    * is non-public).
-    * 
-    * @param unit CompilationUnit, which is searched for a class declaration
-    * @return Declration if found, else null
-    * @deprecated use TraceReadUtils.getNamedClasses instead
-    */
-   @Deprecated
-   public static ClassOrInterfaceDeclaration getClass(final CompilationUnit unit) {
-      for (final Node node : unit.getChildNodes()) {
-         if (node instanceof ClassOrInterfaceDeclaration) {
-            return (ClassOrInterfaceDeclaration) node;
-         }
-      }
-      return null;
-   }
-
-   @Deprecated
-   public static EnumDeclaration getEnum(final CompilationUnit unit) {
-      for (final Node node : unit.getChildNodes()) {
-         if (node instanceof EnumDeclaration) {
-            return (EnumDeclaration) node;
-         }
-      }
-      return null;
-   }
-
    public static List<ClassOrInterfaceDeclaration> getClasses(final CompilationUnit unit) {
       List<ClassOrInterfaceDeclaration> clazzes = new LinkedList<>();
       for (final Node node : unit.getChildNodes()) {

@@ -23,7 +23,6 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
 import de.dagere.peass.measurement.statistics.bimodal.CompareData;
 import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
-import kieker.common.record.controlflow.OperationExecutionRecord;
 
 /**
  * Saves the call tree structure and measurement data of the call tree
@@ -47,6 +46,12 @@ public class CallTreeNode extends BasicNode {
    @JsonIgnore
    protected MeasurementConfig config;
 
+   /*
+    * Levelwise measurement maps the nodes ad-hoc for each node, and complete maps the nodes at the beginning; therefore, levelwise currently requires having the otherVersionNode
+    * and the second tree structure available.
+    * 
+    * This should be refactored, so the trees are mapped in the beginning and afterwards only one tree structure is used.
+    */
    private CallTreeNode otherVersionNode;
 
    /**
@@ -89,7 +94,7 @@ public class CallTreeNode extends BasicNode {
 
    public void addMeasurement(final String version, final Long duration) {
       checkDataAddPossible(version);
-      LOG.debug("Adding measurement: {} Call: {}", version, call);
+      LOG.trace("Adding measurement: {} Call: {}", version, call);
       CallTreeStatistics callTreeStatistics = data.get(version);
       callTreeStatistics.addMeasurement(duration);
    }
@@ -139,13 +144,13 @@ public class CallTreeNode extends BasicNode {
    }
 
    private void checkDataAddPossible(final String version) {
-      if (otherVersionNode == null) {
+      if (getOtherKiekerPattern() == null) {
          throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
       }
-      if (otherVersionNode.getCall().equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersion())) {
+      if (getOtherKiekerPattern().equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersion())) {
          LOG.error("Error occured in version {}", version);
          LOG.error("Node: {}", kiekerPattern);
-         LOG.error("Other version node: {}", otherVersionNode.getCall());
+         LOG.error("Other version node: {}", getOtherKiekerPattern());
          throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
       }
       if (call.equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersionOld())) {
@@ -169,7 +174,7 @@ public class CallTreeNode extends BasicNode {
    }
 
    private void newVersion(final String version) {
-      LOG.debug("Adding version: {}", version);
+      LOG.trace("Adding version: {}", version);
       CallTreeStatistics statistics = data.get(version);
       if (statistics == null) {
          statistics = new CallTreeStatistics(config.getNodeWarmup());
@@ -205,7 +210,9 @@ public class CallTreeNode extends BasicNode {
 
    public ChangedEntity toEntity() {
       if (call.equals(CauseSearchData.ADDED)) {
-         return otherVersionNode.toEntity();
+         String otherKiekerPattern = getOtherKiekerPattern();
+         String otherCall = otherKiekerPattern.substring(otherKiekerPattern.lastIndexOf(' '), otherKiekerPattern.indexOf('('));
+         return new ChangedEntity(otherCall);
       } else {
          final int index = call.lastIndexOf(ChangedEntity.METHOD_SEPARATOR);
          String method = call.substring(index + 1);
@@ -234,7 +241,7 @@ public class CallTreeNode extends BasicNode {
          return testcaseStatistic;
       } catch (NumberIsTooSmallException t) {
          LOG.debug("Data: " + current.getN() + " " + previous.getN());
-         final String otherCall = otherVersionNode != null ? otherVersionNode.getCall() : "Not Existing";
+         final String otherCall = getOtherKiekerPattern() != null ? getOtherKiekerPattern() : "Not Existing";
          throw new RuntimeException("Could not read " + call + " Other Version: " + otherCall, t);
       }
    }
@@ -266,20 +273,6 @@ public class CallTreeNode extends BasicNode {
 
    private boolean firstHasValues(final SummaryStatistics first, final SummaryStatistics second) {
       return (second == null || second.getN() == 0) && (first != null && first.getN() > 0);
-   }
-
-   /**
-    * @deprecated use initVersions instead, and asure that the MeasurementConfig already has the correct versions
-    */
-   @Deprecated
-   @JsonIgnore
-   public void setVersions(final String version, final String predecessor) {
-      LOG.debug("Set versions: {}", version, predecessor);
-      config.getExecutionConfig().setVersion(version);
-      config.getExecutionConfig().setVersionOld(predecessor);
-      resetStatistics();
-      newVersion(version);
-      newVersion(predecessor);
    }
 
    public void initVersions() {
@@ -364,7 +357,7 @@ public class CallTreeNode extends BasicNode {
       }
       return false;
    }
-   
+
    private int getAllChildCount(String version) {
       int childs = 0;
       for (CallTreeNode child : children) {

@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsIterableContaining;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.MeasurementConfig;
@@ -36,11 +36,11 @@ public class TestSourceChangeTreeAnalyzer {
             new File("src/test/resources/sourceChangeRCATest/properties_project_3"), config);
 
       List<String> instrumentedCalls = analyzer.getMeasurementNodesPredecessor().stream().map(node -> node.getCall()).collect(Collectors.toList());
-      Assert.assertThat(instrumentedCalls, IsIterableContaining.hasItem("de.peass.MainTest#testMe"));
-      Assert.assertThat(instrumentedCalls, IsIterableContaining.hasItem("de.peass.C0_0#method0"));
-      Assert.assertThat(instrumentedCalls, IsIterableContaining.hasItem("de.peass.C1_0#method0"));
+      MatcherAssert.assertThat(instrumentedCalls, IsIterableContaining.hasItem("de.peass.MainTest#testMe"));
+      MatcherAssert.assertThat(instrumentedCalls, IsIterableContaining.hasItem("de.peass.C0_0#method0"));
+      MatcherAssert.assertThat(instrumentedCalls, IsIterableContaining.hasItem("de.peass.C1_0#method0"));
 
-      Assert.assertThat(instrumentedCalls, Matchers.not(IsIterableContaining.hasItem("de.peass.AddRandomNumbers#addSomething")));
-      Assert.assertThat(instrumentedCalls, Matchers.not(IsIterableContaining.hasItem("de.peass.C1_0#method1")));
+      MatcherAssert.assertThat(instrumentedCalls, Matchers.not(IsIterableContaining.hasItem("de.peass.AddRandomNumbers#addSomething")));
+      MatcherAssert.assertThat(instrumentedCalls, Matchers.not(IsIterableContaining.hasItem("de.peass.C1_0#method1")));
    }
 }

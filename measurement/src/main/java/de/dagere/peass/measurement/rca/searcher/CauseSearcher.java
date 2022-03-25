@@ -73,11 +73,7 @@ public abstract class CauseSearcher {
    protected Set<ChangedEntity> convertToChangedEntitites() {
       final Set<ChangedEntity> changed = new TreeSet<>();
       differingNodes.forEach(node -> {
-         if (node.getCall().equals(CauseSearchData.ADDED)) {
-            changed.add(node.getOtherVersionNode().toEntity());
-         } else {
-            changed.add(node.toEntity());
-         }
+         changed.add(node.toEntity());
       });
       return changed;
    }
@@ -95,7 +91,7 @@ public abstract class CauseSearcher {
 
       writeTreeState();
    }
-   
+
    private void addMeasurements(final List<CallTreeNode> includableNodes, final CallTreeNode parent) {
       for (CallTreeNode child : parent.getChildren()) {
          if (includableNodes.contains(child)) {
@@ -105,7 +101,6 @@ public abstract class CauseSearcher {
          }
       }
    }
-
 
    protected void writeTreeState() throws IOException, JsonGenerationException, JsonMappingException {
       persistenceManager.writeTreeState();

@@ -70,10 +70,19 @@ public class ConfidenceIntervalInterpretion {
 
       return Relation.EQUAL;
    }
+   
+   private static final int BOOTSTRAP_SIZE = 100;
+   private static ThreadLocal<double[]> threadLocalValues = new ThreadLocal<>();
 
    public static ConfidenceInterval getConfidenceInterval(final double[] valuesBefore, final int percentage) {
       // LOG.info(valuesBefore + " " + valuesBefore.length);
-      final ConfidenceInterval intervalBefore = MeasurementAnalysationUtil.getBootstrapConfidenceInterval(valuesBefore, valuesBefore.length, 100, percentage);
+      
+      double[] values = threadLocalValues.get();
+      if (values == null) {
+         values = new double[BOOTSTRAP_SIZE];
+         threadLocalValues.set(values);
+      }
+      final ConfidenceInterval intervalBefore = MeasurementAnalysationUtil.getBootstrapConfidenceInterval(valuesBefore, valuesBefore.length, values, percentage);
       return intervalBefore;
    }
 }

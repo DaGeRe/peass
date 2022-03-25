@@ -8,7 +8,6 @@ import java.util.HashSet;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
-import org.aspectj.apache.bcel.classfile.ConstantString;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,8 +21,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.analysis.changes.ProjectChanges;
-import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;

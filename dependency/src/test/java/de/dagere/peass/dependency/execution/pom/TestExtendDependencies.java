@@ -53,7 +53,7 @@ public class TestExtendDependencies {
          Assert.assertEquals("kopeme-junit", kopemeDependency.getArtifactId());
          
          Assert.assertEquals(1, kopemeDependency.getExclusions().size());
-         Assert.assertEquals(MavenPomUtil.LOG4J_ARTIFACTID, kopemeDependency.getExclusions().get(0).getArtifactId());
+         Assert.assertEquals(MavenPomUtil.LOG4J_SLF4J_IMPL_ARTIFACTID, kopemeDependency.getExclusions().get(0).getArtifactId());
          Assert.assertEquals(MavenPomUtil.LOG4J_GROUPID, kopemeDependency.getExclusions().get(0).getGroupId());
       }
    }

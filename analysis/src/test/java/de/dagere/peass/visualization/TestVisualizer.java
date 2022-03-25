@@ -9,15 +9,13 @@ import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.visualization.VisualizeRCA;
-
 public class TestVisualizer {
    
    @Test
    public void testBasicVisualization() throws Exception {
       File dataFile = new File("src/test/resources/visualization/project_3_peass");
       final File resultFolder = new File("target/current_visualization");
-      new VisualizeRCA(new File[] {dataFile}, resultFolder).call();
+      new VisualizeRCAStarter(new File[] {dataFile}, resultFolder).call();
       
       File resultfile = new File(resultFolder, "9177678d505bfacb64a95c2271fb03b1e18475a8/de.peass.MainTest_testMe.html");
       Assert.assertTrue(resultfile.exists());

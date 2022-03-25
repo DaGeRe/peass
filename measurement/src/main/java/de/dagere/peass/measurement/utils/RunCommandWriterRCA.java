@@ -2,7 +2,7 @@ package de.dagere.peass.measurement.utils;
 
 import java.io.PrintStream;
 
-import de.dagere.peass.RootCauseAnalysis;
+import de.dagere.peass.SearchCauseStarter;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.folders.ResultsFolders;
 
@@ -19,7 +19,7 @@ public class RunCommandWriterRCA extends RunCommandWriter {
 
    public void createSingleMethodCommand(final int versionIndex, final String endversion, final String testcaseName, final int warmup, final int iterations, final int repetitions,
          final int vms) {
-      goal.println("java -cp distribution/target/peass-distribution-0.1-SNAPSHOT.jar " + RootCauseAnalysis.class.getCanonicalName() + " "
+      goal.println("java -cp distribution/target/peass-distribution-0.1-SNAPSHOT.jar " + SearchCauseStarter.class.getCanonicalName() + " "
             + "-rcaStrategy COMPLETE "
             + "-test " + testcaseName + " "
             + "-warmup " + warmup + " "

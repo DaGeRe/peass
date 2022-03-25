@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.DatabindException;
 
 import de.dagere.peass.analysis.changes.Change;
 import de.dagere.peass.analysis.changes.ChangeReader;
-import de.dagere.peass.analysis.changes.Changes;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;

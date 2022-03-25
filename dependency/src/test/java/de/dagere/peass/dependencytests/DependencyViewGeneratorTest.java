@@ -12,9 +12,9 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import de.dagere.peass.TestConstants;
-import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.DependencyReader;

@@ -61,7 +61,7 @@ import de.dagere.peass.folders.PeassFolders;
  *
  */
 public class DependencyManager extends KiekerResultManager {
-
+   
    private static final Logger LOG = LogManager.getLogger(DependencyManager.class);
 
    private final TestDependencies dependencies = new TestDependencies();
@@ -106,6 +106,10 @@ public class DependencyManager extends KiekerResultManager {
       executor.loadClasses();
 
       TestSet tests = findIncludedTests(mapping);
+      if (tests.getTests().isEmpty()) {
+         LOG.error("No tests were selected - maybe the tests are all disabled or no tests meets the pattern");
+         return false;
+      }
       runTraceTests(tests, version);
 
       if (folders.getTempMeasurementFolder().exists()) {

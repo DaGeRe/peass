@@ -29,7 +29,6 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.KiekerResultReader;
 import de.dagere.peass.testtransformation.TestTransformer;
-import de.dagere.peass.utils.Constants;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**
@@ -121,8 +120,8 @@ public class CauseTester extends AdaptiveTester {
          LOG.debug("Searching other: " + version);
          includedNodes.forEach(node -> {
             LOG.trace(node);
-            if (!node.getOtherVersionNode().getKiekerPattern().equals(CauseSearchData.ADDED)) {
-               includedPattern.add(node.getOtherVersionNode().getKiekerPattern());
+            if (!node.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {
+               includedPattern.add(node.getOtherKiekerPattern());
             }
          });
       }
@@ -210,7 +209,7 @@ public class CauseTester extends AdaptiveTester {
       final MeasurementConfig config = new MeasurementConfig(15 * 1000 * 60, 15, true, version, version + "~1");
       config.setUseKieker(true);
       final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, 0.01, false, false, RCAStrategy.COMPLETE, 1);
-      final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), config, causeConfig, new EnvironmentVariables());
+      final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), config, causeConfig, new EnvironmentVariables(config.getExecutionConfig().getProperties()));
 
       final CallTreeNode node = new CallTreeNode("FileUploadTestCase#parseUpload",
             "protected java.util.List org.apache.commons.fileupload.FileUploadTestCase.parseUpload(byte[],java.lang.String)",

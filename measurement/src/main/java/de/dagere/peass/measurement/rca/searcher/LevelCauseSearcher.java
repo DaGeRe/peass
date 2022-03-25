@@ -62,6 +62,8 @@ public class LevelCauseSearcher extends CauseSearcher {
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       reader.getRootPredecessor().setOtherVersionNode(reader.getRootVersion());
       reader.getRootVersion().setOtherVersionNode(reader.getRootPredecessor());
+      reader.getRootPredecessor().setOtherKiekerPattern(reader.getRootVersion().getKiekerPattern());
+      
       LevelChildDeterminer predecessorDeterminer = new LevelChildDeterminer(Arrays.asList(new CallTreeNode[] { reader.getRootPredecessor() }), causeSearchConfig.getLevels() - 1);
       List<CallTreeNode> initialNodesPredecessor = predecessorDeterminer.getSelectedIncludingParentNodes();
       LevelChildDeterminer currentDeterminer = new LevelChildDeterminer(Arrays.asList(new CallTreeNode[] { reader.getRootVersion() }), causeSearchConfig.getLevels() - 1);

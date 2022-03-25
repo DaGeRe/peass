@@ -79,19 +79,25 @@ public class LevelCauseSearcherTest {
    @Test
    public void testMeasurement() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
       buildRoots();
-
+      
+      root1.getChildren().get(0).setOtherKiekerPattern(null);
+      root1.getChildren().get(1).setOtherKiekerPattern(null);
+      
       final LevelDifferentNodeDeterminer lcs = new LevelDifferentNodeDeterminer(Arrays.asList(new CallTreeNode[] { root1 }),
             Arrays.asList(new CallTreeNode[] { root2 }),
             TestConstants.SIMPLE_CAUSE_CONFIG,
             measurementConfig);
 
-      root1.setOtherVersionNode(root2);
-      root2.setOtherVersionNode(root1);
       builderPredecessor.buildMeasurements(builderPredecessor.getRoot());
 
       lcs.calculateDiffering();
       Assert.assertEquals(1, lcs.getLevelDifferentCurrent().size());
       Assert.assertEquals(1, lcs.getLevelDifferentPredecessor().size());
+      
+     Assert.assertEquals("public void ClassA.methodA()", root1.getChildren().get(0).getOtherKiekerPattern());
+     Assert.assertEquals("public void ClassC.methodC()", root1.getChildren().get(1).getOtherKiekerPattern());
+     
+      
 //      Assert.assertEquals(3, lcs.getMeasureNextLevelPredecessor().size());
 //      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(builderPredecessor.getA()));
 //      Assert.assertThat(lcs.getMeasureNextLevelPredecessor(), Matchers.hasItem(builderPredecessor.getC()));

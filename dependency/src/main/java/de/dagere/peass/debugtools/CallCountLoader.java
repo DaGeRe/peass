@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntityHelper;
-import de.dagere.peass.dependency.kiekerTemp.LogsReaderCompositeStage;
 import kieker.analysis.stage.DynamicEventDispatcher;
 import kieker.analysis.stage.IEventMatcher;
 import kieker.analysis.stage.ImplementsEventMatcher;
@@ -18,6 +17,7 @@ import kieker.analysis.trace.execution.ExecutionRecordTransformationStage;
 import kieker.common.record.controlflow.OperationExecutionRecord;
 import kieker.model.repository.SystemModelRepository;
 import kieker.model.system.model.Execution;
+import kieker.tools.source.LogsReaderCompositeStage;
 import teetime.framework.Configuration;
 
 class CallCountStage extends AbstractTraceProcessingStage<Execution> {
@@ -83,7 +83,7 @@ public class CallCountLoader {
       CallCountConfiguration configuration = new CallCountConfiguration();
       CallCountStage stage = configuration.prepareCallCount(loadedFile);
 
-      teetime.framework.Execution execution = new teetime.framework.Execution(configuration);
+      teetime.framework.Execution<?> execution = new teetime.framework.Execution(configuration);
       execution.executeBlocking();
 
       System.out.println("Signatures: " + stage.signatureCounts.size());

@@ -79,6 +79,9 @@ public class ExecutionConfigMixin {
    @Option(names = { "-dontRedirectToNull",
          "--dontRedirectToNull" }, description = "Activates showing the standard output of the testcase (by default, it is redirected to null)")
    protected boolean dontRedirectToNull = false;
+   
+   @Option(names = { "-properties", "--properties" }, description = "Sets the properties that should be passed to the test (e.g. \"-Dmy.var=5\")")
+   public String properties;
 
    public int getTimeout() {
       return timeout;
@@ -255,6 +258,14 @@ public class ExecutionConfigMixin {
    public void setDontRedirectToNull(final boolean dontRedirectToNull) {
       this.dontRedirectToNull = dontRedirectToNull;
    }
+   
+   public String getProperties() {
+      return properties;
+   }
+   
+   public void setProperties(final String properties) {
+      this.properties = properties;
+   }
 
    public ExecutionConfig getExecutionConfig() {
       ExecutionConfig config = new ExecutionConfig(timeout);
@@ -296,6 +307,7 @@ public class ExecutionConfigMixin {
       config.setCreateDefaultConstructor(!skipDefaultConstructor);
       config.setExecuteBeforeClassInMeasurement(executeBeforeClassInMeasurement);
       config.setKiekerWaitTime(kiekerWaitTime);
+      config.setProperties(properties);
 
       if (getClazzFolder() != null) {
          List<String> clazzFolders = ExecutionConfig.buildFolderList(getClazzFolder());
@@ -309,6 +321,10 @@ public class ExecutionConfigMixin {
       config.setExcludeLog4j(excludeLog4j);
       config.setRedirectToNull(!dontRedirectToNull);
 
+      if (config.isExecuteBeforeClassInMeasurement() && config.isOnlyMeasureWorkload()) {
+         throw new RuntimeException("executeBeforeClassInMeasurement may only be activated if onlyMeasureWorkload is deactivated!");
+      }
+      
       return config;
    }
 }

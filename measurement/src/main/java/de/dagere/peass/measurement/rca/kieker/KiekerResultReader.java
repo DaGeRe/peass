@@ -104,7 +104,7 @@ public class KiekerResultReader {
          // System.out.println(StatisticUtil.getMean(values) + " ");
          node.addAggregatedMeasurement(version, values);
       } else {
-         LOG.warn("Node {} ({}) did not find measurement values, measured methods: {}", nodeCall, node.getOtherVersionNode(), fullDataMap.entrySet().size());
+         LOG.warn("Node {} ({}) did not find measurement values, measured methods: {}", nodeCall, node.getOtherKiekerPattern(), fullDataMap.entrySet().size());
       }
    }
 

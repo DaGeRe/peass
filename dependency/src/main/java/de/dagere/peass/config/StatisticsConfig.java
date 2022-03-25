@@ -16,7 +16,7 @@ public class StatisticsConfig implements Serializable {
     */
    private double type2error = StatisticsConfigMixin.PEASS_DEFAULT_TYPE_2_ERROR;
    private double outlierFactor = DEFAULT_OUTLIER_FACTOR;
-   private ImplementedTests statisticTest = ImplementedTests.T_TEST;
+   private StatisticalTests statisticTest = StatisticalTests.T_TEST;
    
    public static final double DEFAULT_OUTLIER_FACTOR = 3.29; // Does not remove 99% of all values in gaussian distribution
 
@@ -60,11 +60,11 @@ public class StatisticsConfig implements Serializable {
       this.outlierFactor = outlierFactor;
    }
 
-   public ImplementedTests getStatisticTest() {
+   public StatisticalTests getStatisticTest() {
       return statisticTest;
    }
 
-   public void setStatisticTest(final ImplementedTests statisticTest) {
+   public void setStatisticTest(final StatisticalTests statisticTest) {
       this.statisticTest = statisticTest;
    }
 

@@ -53,7 +53,7 @@ public class TestBuildGradle {
       final String gradleFileContents = updateGradleFile(gradleFile);
 
       MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("de.dagere.kopeme:kopeme-junit"));
-      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("ext['junit-jupiter.version']='5.8.1'"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("ext['junit-jupiter.version']='5.8.2'"));
    }
 
    @Test
@@ -112,7 +112,7 @@ public class TestBuildGradle {
       final File gradleFile2 = new File(GRADLE_BUILDFILE_FOLDER, "v2.gradle");
       testUpdate(gradleFile2, true);
    }
-
+   
    @Test
    public void testAndroidLib() throws IOException {
       final File gradleFile3 = new File(GRADLE_BUILDFILE_FOLDER, "androidlib.gradle");
@@ -130,7 +130,7 @@ public class TestBuildGradle {
       MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("de.dagere.kopeme:kopeme-junit"));
    }
 
-   private File copyGradlefile(final File gradleFile) throws IOException {
+   public static File copyGradlefile(final File gradleFile) throws IOException {
       final File destFile = new File(CURRENT, "build.gradle");
       FileUtils.copyFile(gradleFile, destFile);
       return destFile;

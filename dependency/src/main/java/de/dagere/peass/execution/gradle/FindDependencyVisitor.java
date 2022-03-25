@@ -31,6 +31,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
 
    private static final Logger LOG = LogManager.getLogger(FindDependencyVisitor.class);
 
+   private int offset = 0;
    private int dependencyLine = -1;
    private int testLine = -1;
    private int integrationTestLine = -1;
@@ -39,6 +40,9 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
    private int unitTestsAll = -1;
    private int buildTools = -1;
    private int buildToolsVersion = -1;
+   private int allConfigurationsLine = -1;
+   private MethodCallExpression configurations = null;
+
    private List<Integer> excludeLines = new LinkedList<>();
    private boolean useJava = false;
    private boolean useSpringBoot = false;
@@ -52,7 +56,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       try (Stream<String> lines = Files.lines(buildfile.toPath())) {
          final AstBuilder builder = new AstBuilder();
 
-         String content = lines.filter(line -> !line.trim().startsWith("import "))
+         String content = lines.filter(line -> !line.trim().startsWith("import ") || (offset++) == -1)
                .collect(Collectors.joining("\n"));
 
          final List<ASTNode> nodes = builder.buildFromString(content);
@@ -75,17 +79,17 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
             checkPluginName(text);
          } else if (call.getMethodAsString().equals("dependencies")) {
             // System.out.println(call);
-            dependencyLine = call.getLastLineNumber();
+            dependencyLine = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("test")) {
-            testLine = call.getLastLineNumber();
+            testLine = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("android")) {
-            androidLine = call.getLastLineNumber();
+            androidLine = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("testOptions")) {
-            testOptionsAndroid = call.getLastLineNumber();
+            testOptionsAndroid = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("unitTests.all")) {
-            unitTestsAll = call.getLastLineNumber();
+            unitTestsAll = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("buildToolsVersion")) {
-            buildToolsVersion = call.getLastLineNumber();
+            buildToolsVersion = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("subprojects")) {
             parseSubprojectsSection(call);
          } else if (call.getMethodAsString().equals("task")) {
@@ -94,29 +98,41 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
             // System.out.println(call.getClass());
             parseNewTask(call);
          } else if (call.getMethodAsString().equals("exclude")) {
-            TupleExpression tuple = (TupleExpression) call.getArguments();
-            Expression expression = tuple.getExpression(0);
-            if (expression instanceof NamedArgumentListExpression) {
-               NamedArgumentListExpression argumentListExpression = (NamedArgumentListExpression) expression;
-
-               Map<String, String> map = new HashMap<>();
-               for (MapEntryExpression innerMapEntryExpression : argumentListExpression.getMapEntryExpressions()) {
-                  String key = innerMapEntryExpression.getKeyExpression().getText();
-                  String value = innerMapEntryExpression.getValueExpression().getText();
-
-                  map.put(key, value);
-               }
-               if ("junit".equals(map.get("group")) && "junit".equals(map.get("module"))) {
-                  excludeLines.add(call.getLineNumber());
-               }
-               if ("org.junit.vintage".equals(map.get("group")) && "junit-vintage-engine".equals(map.get("module"))) {
-                  excludeLines.add(call.getLineNumber());
+            parseExcludes(call);
+         } else if (call.getMethodAsString().equals("configurations")) {
+            configurations = call;
+         } else if (call.getMethodAsString().equals("all")) {
+            if (configurations != null) {
+               if (call.getLineNumber() >= configurations.getLineNumber() && call.getLineNumber() <= configurations.getLastLineNumber()) {
+                  allConfigurationsLine = call.getLineNumber();
                }
             }
          }
       }
 
       super.visitMethodCallExpression(call);
+   }
+
+   private void parseExcludes(final MethodCallExpression call) {
+      TupleExpression tuple = (TupleExpression) call.getArguments();
+      Expression expression = tuple.getExpression(0);
+      if (expression instanceof NamedArgumentListExpression) {
+         NamedArgumentListExpression argumentListExpression = (NamedArgumentListExpression) expression;
+
+         Map<String, String> map = new HashMap<>();
+         for (MapEntryExpression innerMapEntryExpression : argumentListExpression.getMapEntryExpressions()) {
+            String key = innerMapEntryExpression.getKeyExpression().getText();
+            String value = innerMapEntryExpression.getValueExpression().getText();
+
+            map.put(key, value);
+         }
+         if ("junit".equals(map.get("group")) && "junit".equals(map.get("module"))) {
+            excludeLines.add(call.getLineNumber() + offset);
+         }
+         if ("org.junit.vintage".equals(map.get("group")) && "junit-vintage-engine".equals(map.get("module"))) {
+            excludeLines.add(call.getLineNumber() + offset);
+         }
+      }
    }
 
    private void parseNewTask(final MethodCallExpression call) {
@@ -126,7 +142,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
          if (first instanceof ConstantExpression) {
             ConstantExpression expression = (ConstantExpression) first;
             if (expression.getValue().equals("integrationTest")) {
-               integrationTestLine = call.getLastLineNumber();
+               integrationTestLine = call.getLastLineNumber() + offset;
             }
          }
          if (first instanceof MethodCallExpression) {
@@ -135,7 +151,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
             if (method instanceof ConstantExpression) {
                ConstantExpression expression = (ConstantExpression) method;
                if (expression.getValue().equals("integrationTest")) {
-                  integrationTestLine = call.getLastLineNumber();
+                  integrationTestLine = call.getLastLineNumber() + offset;
                }
             }
          }
@@ -164,7 +180,8 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
          ArgumentListExpression list = (ArgumentListExpression) expression;
          for (Expression pluginExpression : list.getExpressions()) {
             ClosureExpression closurePluginExpression = (ClosureExpression) pluginExpression;
-            for (Statement statement : ((BlockStatement) closurePluginExpression.getCode()).getStatements()) {
+            BlockStatement blockStatement = (BlockStatement) closurePluginExpression.getCode();
+            for (Statement statement : blockStatement.getStatements()) {
                String text = statement.getText();
                checkPluginName(text);
             }
@@ -184,6 +201,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       if (text.contains("plugin:java") ||
             text.contains("this.id(java)") ||
             text.contains("this.id(java-library)") ||
+            text.contains("ConstantExpression[java-library]") ||
             text.contains("plugin:com.android.library") ||
             text.contains("plugin:com.android.application") ||
             text.contains("application") ||
@@ -271,29 +289,43 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
       return excludeLines;
    }
 
+   public int getAllConfigurationsLine() {
+      return allConfigurationsLine;
+   }
+
    public void addLine(final int lineIndex, final String textForAdding) {
       gradleFileContents.add(lineIndex, textForAdding);
-      if (lineIndex < dependencyLine) {
+      if (lineIndex < dependencyLine && dependencyLine != -1) {
          dependencyLine++;
       }
-      if (lineIndex < testLine) {
+      if (lineIndex < testLine && testLine != -1) {
          testLine++;
       }
-      if (lineIndex < androidLine) {
+      if (lineIndex < androidLine && androidLine != -1) {
          androidLine++;
       }
-      if (lineIndex < testOptionsAndroid) {
+      if (lineIndex < testOptionsAndroid && testOptionsAndroid != -1) {
          testOptionsAndroid++;
       }
-      if (lineIndex < unitTestsAll) {
+      if (lineIndex < unitTestsAll && unitTestsAll != -1) {
          unitTestsAll++;
       }
-      if (lineIndex < buildTools) {
+      if (lineIndex < buildTools && buildTools != -1) {
          buildTools++;
       }
-      if (lineIndex < buildToolsVersion) {
+      if (lineIndex < buildToolsVersion && buildToolsVersion != -1) {
          buildToolsVersion++;
       }
+      if (lineIndex < allConfigurationsLine && allConfigurationsLine != -1) {
+         allConfigurationsLine++;
+      }
+      List<Integer> newExcludeLines = new LinkedList<>();
+      for (Integer excludeLine : excludeLines) {
+         if (lineIndex < excludeLine) {
+            newExcludeLines.add(excludeLine + 1);
+         }
+      }
+      excludeLines = newExcludeLines;
    }
 
    public void clearLine(final Integer lineNumber) {

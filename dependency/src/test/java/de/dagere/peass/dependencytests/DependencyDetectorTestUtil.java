@@ -16,9 +16,9 @@ import org.mockito.Mockito;
 import com.github.javaparser.ParseException;
 
 import de.dagere.peass.TestConstants;
-import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.ChangeManager;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
