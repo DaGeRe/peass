@@ -86,7 +86,9 @@ For dependency and measurement, by providing `-startversion` and/or `-endversion
 
 # Funding
 
-The creation of this project was funded by a PhD scholarship of Hanns-Seidel-Stiftung (https://www.hss.de/).
+The creation of this project was funded by
+* a PhD scholarship of Hanns-Seidel-Stiftung (https://www.hss.de/) and
+* the research project "PermanEnt" by the Federal Ministry of Education and Research of Germany.
 
 # Citation
 
