@@ -1,6 +1,6 @@
 package de.dagere.peass.config.parameters;
 
-import de.dagere.peass.config.ImplementedTests;
+import de.dagere.peass.config.StatisticalTests;
 import de.dagere.peass.config.StatisticsConfig;
 import picocli.CommandLine.Option;
 
@@ -21,7 +21,7 @@ public class StatisticsConfigMixin {
    protected double type2error = PEASS_DEFAULT_TYPE_2_ERROR;
    
    @Option(names = { "-statisticTest", "--statisticTest" }, description = "Statistic test to use for comparison, default t-test", required = false)
-   private ImplementedTests statisticTest = ImplementedTests.T_TEST;
+   private StatisticalTests statisticTest = StatisticalTests.T_TEST;
 
    public double getOutlierFactor() {
       return outlierFactor;
@@ -47,11 +47,11 @@ public class StatisticsConfigMixin {
       this.type2error = type2error;
    }
 
-   public ImplementedTests getStatisticTest() {
+   public StatisticalTests getStatisticTest() {
       return statisticTest;
    }
 
-   public void setStatisticTest(final ImplementedTests statisticTest) {
+   public void setStatisticTest(final StatisticalTests statisticTest) {
       this.statisticTest = statisticTest;
    }
    

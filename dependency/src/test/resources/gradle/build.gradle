@@ -30,5 +30,7 @@ repositories {
 }
 
 dependencies {
-  testCompile 'junit:junit:4.12'
+  constraints {
+    testCompile 'junit:junit:4.13.2'
+  }
 }

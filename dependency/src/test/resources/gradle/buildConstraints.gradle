@@ -1,0 +1,31 @@
+import org.ajoberstar.grgit.Grgit
+
+plugins {
+    id 'java'
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    sourceCompatibility = projectSourceCompatibility
+    targetCompatibility = projectSourceCompatibility
+
+    dependencies {
+        constraints {
+            testCompile 'junit:junit:4.13.2'
+        }
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+    
+    configurations {
+        all {
+            exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+        }
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+}

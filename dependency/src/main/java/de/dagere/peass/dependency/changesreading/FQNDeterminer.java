@@ -54,7 +54,7 @@ public class FQNDeterminer {
          return importedType;
       }
 
-      if (JAVA_LANG_CLASSES_SET.contains(typeName)) {
+      if (JAVA_LANG_CLASSES_SET.contains(typeName) || JAVA_LANG_CLASSES_SET.contains(typeName + "<T>")) {
          return "java.lang." + typeName;
       } else {
          String packageName = unit.getPackageDeclaration().get().getNameAsString();

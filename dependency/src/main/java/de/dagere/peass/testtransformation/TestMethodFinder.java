@@ -10,8 +10,14 @@ import com.github.javaparser.ast.expr.AnnotationExpr;
 import de.dagere.kopeme.parsing.JUnitParseUtil;
 
 public class TestMethodFinder {
+
    public static List<MethodDeclaration> findJUnit5TestMethods(final ClassOrInterfaceDeclaration clazz) {
       List<MethodDeclaration> testMethods = new LinkedList<>();
+
+      if (JUnitParseUtil.isDeactivated(clazz)) {
+         return testMethods;
+      }
+
       for (final MethodDeclaration method : clazz.getMethods()) {
          boolean performanceTestFound = false;
          boolean testFound = false;
@@ -83,6 +89,11 @@ public class TestMethodFinder {
 
    public static List<MethodDeclaration> findJUnit4TestMethods(final ClassOrInterfaceDeclaration clazz) {
       List<MethodDeclaration> testMethods = new LinkedList<>();
+
+      if (JUnitParseUtil.isDeactivated(clazz)) {
+         return testMethods;
+      }
+
       for (final MethodDeclaration method : clazz.getMethods()) {
          boolean performanceTestFound = false;
          boolean testFound = false;

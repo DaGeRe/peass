@@ -19,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ExecutionConfig implements Serializable {
 
    public static final String CLASSPATH_SEPARATOR = ":";
-   
+
    private static final long serialVersionUID = -6642358125854337047L;
 
    /**
@@ -45,7 +45,8 @@ public class ExecutionConfig implements Serializable {
 
    private boolean removeSnapshots = false;
    private boolean useAlternativeBuildfile = false;
-   private boolean excludeLog4j = false;
+   private boolean excludeLog4jSlf4jImpl = false;
+   private boolean excludeLog4jToSlf4j = false;
 
    private boolean executeBeforeClassInMeasurement = false;
    private boolean onlyMeasureWorkload = false;
@@ -55,6 +56,8 @@ public class ExecutionConfig implements Serializable {
 
    private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
    private String testExecutor = "default";
+
+   private String properties;
 
    private List<String> clazzFolders = new LinkedList<>();
    {
@@ -87,7 +90,8 @@ public class ExecutionConfig implements Serializable {
       this.redirectSubprocessOutputToFile = other.isRedirectSubprocessOutputToFile();
       this.removeSnapshots = other.removeSnapshots;
       this.useAlternativeBuildfile = other.useAlternativeBuildfile;
-      this.excludeLog4j = other.excludeLog4j;
+      this.excludeLog4jSlf4jImpl = other.excludeLog4jSlf4jImpl;
+      this.excludeLog4jToSlf4j = other.excludeLog4jToSlf4j;
       this.testTransformer = other.getTestTransformer();
       this.testExecutor = other.getTestExecutor();
       this.useTieredCompilation = other.isUseTieredCompilation();
@@ -268,11 +272,19 @@ public class ExecutionConfig implements Serializable {
    }
 
    public boolean isExcludeLog4j() {
-      return excludeLog4j;
+      return excludeLog4jSlf4jImpl;
    }
 
    public void setExcludeLog4j(final boolean excludeLog4j) {
-      this.excludeLog4j = excludeLog4j;
+      this.excludeLog4jSlf4jImpl = excludeLog4j;
+   }
+
+   public boolean isExcludeLog4jToSlf4j() {
+      return excludeLog4jToSlf4j;
+   }
+
+   public void setExcludeLog4jToSlf4j(final boolean excludeLog4jToSlf4j) {
+      this.excludeLog4jToSlf4j = excludeLog4jToSlf4j;
    }
 
    public boolean isExecuteBeforeClassInMeasurement() {
@@ -338,13 +350,21 @@ public class ExecutionConfig implements Serializable {
    public void setTestClazzFolders(final List<String> testClazzFolders) {
       this.testClazzFolders = testClazzFolders;
    }
-   
-   public void setCreateDetailDebugFiles(boolean createDetailDebugFiles) {
+
+   public void setCreateDetailDebugFiles(final boolean createDetailDebugFiles) {
       this.createDetailDebugFiles = createDetailDebugFiles;
    }
-   
+
    public boolean isCreateDetailDebugFiles() {
       return createDetailDebugFiles;
+   }
+
+   public String getProperties() {
+      return properties;
+   }
+
+   public void setProperties(final String properties) {
+      this.properties = properties;
    }
 
    @JsonIgnore

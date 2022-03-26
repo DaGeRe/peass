@@ -1,5 +1,5 @@
 /**
- *     This file is part of Peass.
+ *     This file is part of PerAn.
  *
  *     PerAn is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -14,23 +14,17 @@
  *     You should have received a copy of the GNU General Public License
  *     along with PerAn.  If not, see <http://www.gnu.org/licenses/>.
  */
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-public class TestMeBeforeAfter5 {
+import de.dagere.kopeme.annotations.KoPeMeIgnore;
+import junit.framework.TestCase;
 
-   @BeforeAll
-   public void allBefore() {
-   }
-   
-   @AfterAll
-   public void allAfter() {
-   }
 
+@KoPeMeIgnore
+public class TestClassKoPeMeIgnore {
+	
    @Test
-   public void testMethod1(){
-      System.out.println("This is tested.");
-   }
+	public void testMe(){
+		System.out.println("This is a test.");
+	}
 }
-

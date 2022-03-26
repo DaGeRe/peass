@@ -50,9 +50,6 @@ public class ContinuousExecutionStarter implements Callable<Void> {
    @Option(names = { "-test", "--test" }, description = "Name of the test to execute")
    String testName;
    
-   @Option(names = { "-properties", "--properties" }, description = "Properties that should be passed to the build process")
-   String properties;
-
    @Option(names = { "-folder", "--folder" }, description = "Folder of the project that should be analyzed", required = true)
    protected File projectFolder;
    
@@ -69,7 +66,8 @@ public class ContinuousExecutionStarter implements Callable<Void> {
    public Void call() throws Exception {
       final MeasurementConfig measurementConfig = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin, new KiekerConfigMixin());
       TestSelectionConfig dependencyConfig = new TestSelectionConfig(threads, false, useViews, generateCoverageSelection);
-      final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, dependencyConfig, new EnvironmentVariables(properties != null ? properties : ""));
+      EnvironmentVariables env = new EnvironmentVariables(measurementConfig.getExecutionConfig().getProperties());
+      final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, dependencyConfig, env);
       executor.execute();
       return null;
    }

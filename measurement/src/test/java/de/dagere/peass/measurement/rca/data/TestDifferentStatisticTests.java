@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.peass.config.ImplementedTests;
+import de.dagere.peass.config.StatisticalTests;
 import de.dagere.peass.measurement.statistics.Relation;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
 import de.dagere.peass.measurement.statistics.bimodal.CompareData;
@@ -25,23 +25,23 @@ public class TestDifferentStatisticTests {
       
       CompareData cd = node.getComparableStatistics("A", "B");
       
-      TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(ImplementedTests.AGNOSTIC_T_TEST);
+      TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(StatisticalTests.AGNOSTIC_T_TEST);
       Relation relationAgnostic = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG.getStatisticsConfig());
       Assert.assertEquals(Relation.UNKOWN, relationAgnostic);
       
-      TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(ImplementedTests.T_TEST);
+      TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(StatisticalTests.T_TEST);
       Relation relationTTest = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG.getStatisticsConfig());
       Assert.assertEquals(Relation.EQUAL, relationTTest);
       
-      TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(ImplementedTests.BIMODAL_T_TEST);
+      TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(StatisticalTests.BIMODAL_T_TEST);
       Relation relation = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG.getStatisticsConfig());
       Assert.assertEquals(Relation.LESS_THAN, relation);
       
-      TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(ImplementedTests.MANN_WHITNEY_TEST);
+      TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(StatisticalTests.MANN_WHITNEY_TEST);
       Relation relationMannWhitney = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG.getStatisticsConfig());
       Assert.assertEquals(Relation.LESS_THAN, relationMannWhitney);
       
-      TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(ImplementedTests.CONFIDENCE_INTERVAL);
+      TestCallTreeStatistics.CONFIG.getStatisticsConfig().setStatisticTest(StatisticalTests.CONFIDENCE_INTERVAL);
       Relation relationConfidence = StatisticUtil.isDifferent(cd, TestCallTreeStatistics.CONFIG.getStatisticsConfig());
       Assert.assertEquals(Relation.EQUAL, relationConfidence);
    }

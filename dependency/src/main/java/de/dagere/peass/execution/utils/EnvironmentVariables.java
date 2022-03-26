@@ -13,7 +13,11 @@ public class EnvironmentVariables implements Serializable {
    private final String properties;
 
    public EnvironmentVariables(final String properties) {
-      this.properties = properties;
+      if (properties != null) {
+         this.properties = properties;
+      } else {
+         this.properties = "";
+      }
    }
 
    public EnvironmentVariables() {

@@ -2,14 +2,12 @@ package de.dagere.peass.transformation;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsIterableContaining;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -27,42 +25,17 @@ public class TestIgnoredMethodTransformation {
    @TempDir
    public static File testFolder;
 
-   private File sourcesFolder;
-   private File testFile;
-
-   @BeforeEach
-   public void initFolder() throws URISyntaxException, IOException {
-      sourcesFolder = new File(testFolder, "src/test/java");
-      FileUtils.copyFile(new File(RESOURCE_FOLDER, "../pom.xml"), new File(testFolder, "pom.xml"));
-   }
-
    @Test
    public void testJUnit4Ignore() throws IOException {
-      final File old2 = new File(RESOURCE_FOLDER, "TestMeIgnored.java");
-      testFile = new File(sourcesFolder, "TestMeIgnored.java");
-      FileUtils.copyFile(old2, testFile);
-
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfig.DEFAULT);
-      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
-      
-      ProjectModules modules = new ProjectModules(testFolder);
-      TestSet tests = tt.findModuleTests(ModuleClassMapping.SINGLE_MODULE_MAPPING, Arrays.asList(new String[]{""}), modules);
+      TestSet tests = executeTransformation("TestMeIgnored.java", testFolder);
       
       MatcherAssert.assertThat(tests.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestCase("TestMeIgnored#testMe1"))));
       MatcherAssert.assertThat(tests.getTests(), IsIterableContaining.hasItem(new TestCase("TestMeIgnored#testMe2")));
    }
-   
+
    @Test
    public void testJUnit5Disabled() throws IOException {
-      final File old2 = new File(RESOURCE_FOLDER, "TestMeDisabled.java");
-      testFile = new File(sourcesFolder, "TestMeDisabled.java");
-      FileUtils.copyFile(old2, testFile);
-
-      final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfig.DEFAULT);
-      tt.determineVersions(Arrays.asList(new File[] { testFolder }));
-      
-      ProjectModules modules = new ProjectModules(testFolder);
-      TestSet tests = tt.findModuleTests(ModuleClassMapping.SINGLE_MODULE_MAPPING, Arrays.asList(new String[]{""}), modules);
+      TestSet tests = executeTransformation("TestMeDisabled.java", testFolder);
       
       MatcherAssert.assertThat(tests.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestCase("TestMeDisabled#testMe1"))));
       MatcherAssert.assertThat(tests.getTests(), IsIterableContaining.hasItem(new TestCase("TestMeDisabled#testMe2")));
@@ -70,8 +43,17 @@ public class TestIgnoredMethodTransformation {
    
    @Test
    public void testJUnit5KoPeMeIgnore() throws IOException {
-      final File old2 = new File(RESOURCE_FOLDER, "TestMeKoPeMeIgnore.java");
-      testFile = new File(sourcesFolder, "TestMeKoPeMeIgnore.java");
+      TestSet tests = executeTransformation("TestMeKoPeMeIgnore.java", testFolder);
+      
+      MatcherAssert.assertThat(tests.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestCase("TestMeKoPeMeIgnore#testMe1"))));
+      MatcherAssert.assertThat(tests.getTests(), IsIterableContaining.hasItem(new TestCase("TestMeKoPeMeIgnore#testMe2")));
+   }
+   
+   public static TestSet executeTransformation(final String currentClassName, final File testFolder) throws IOException {
+      File sourcesFolder = initializeProject(testFolder);
+      
+      final File old2 = new File(RESOURCE_FOLDER, currentClassName);
+      File testFile = new File(sourcesFolder, currentClassName);
       FileUtils.copyFile(old2, testFile);
 
       final JUnitTestTransformer tt = new JUnitTestTransformer(testFolder, MeasurementConfig.DEFAULT);
@@ -79,8 +61,12 @@ public class TestIgnoredMethodTransformation {
       
       ProjectModules modules = new ProjectModules(testFolder);
       TestSet tests = tt.findModuleTests(ModuleClassMapping.SINGLE_MODULE_MAPPING, Arrays.asList(new String[]{""}), modules);
-      
-      MatcherAssert.assertThat(tests.getTests(), Matchers.not(IsIterableContaining.hasItem(new TestCase("TestMeKoPeMeIgnore#testMe1"))));
-      MatcherAssert.assertThat(tests.getTests(), IsIterableContaining.hasItem(new TestCase("TestMeKoPeMeIgnore#testMe2")));
+      return tests;
+   }
+
+   private static File initializeProject(final File testFolder) throws IOException {
+      File sourcesFolder = new File(testFolder, "src/test/java");
+      FileUtils.copyFile(new File(RESOURCE_FOLDER, "../pom.xml"), new File(testFolder, "pom.xml"));
+      return sourcesFolder;
    }
 }

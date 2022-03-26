@@ -33,14 +33,17 @@ import de.dagere.peass.utils.StreamGobbler;
 public class MavenPomUtil {
 
    public static final String LOG4J_GROUPID = "org.apache.logging.log4j";
-   public static final String LOG4J_ARTIFACTID = "log4j-slf4j-impl";
+   public static final String LOG4J_SLF4J_IMPL_ARTIFACTID = "log4j-slf4j-impl";
+   public static final String LOG4J_TO_SLF4J_ARTIFACTID = "log4j-to-slf4j";
    public static final String KOPEME_VERSION = "0.18.1";
    public static final String KIEKER_VERSION = "1.15.1";
    public static final String ORG_APACHE_MAVEN_PLUGINS = "org.apache.maven.plugins";
    public static final String SUREFIRE_ARTIFACTID = "maven-surefire-plugin";
    public static final String COMPILER_ARTIFACTID = "maven-compiler-plugin";
 
-   public static final String COMPILER_PLUGIN_VERSION = "3.8.1";
+   public static final String COMPILER_PLUGIN_VERSION = "3.10.1";
+   
+   public static final String JUPITER_VERSION = "5.8.2";
 
    private static final Logger LOG = LogManager.getLogger(MavenPomUtil.class);
 
@@ -64,14 +67,7 @@ public class MavenPomUtil {
    }
 
    public static void extendDependencies(final Model model, final boolean junit3, final boolean excludeLog4j) {
-      for (final Dependency dependency : model.getDependencies()) {
-         if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
-            dependency.setVersion("4.13.2");
-         }
-         if (dependency.getArtifactId().equals("junit-jupiter") && dependency.getGroupId().equals("org.junit.jupiter")) {
-            dependency.setVersion("5.8.2");
-         }
-      }
+      updateJUnit(model);
 
       final List<Dependency> dependencies = model.getDependencies();
 
@@ -82,7 +78,7 @@ public class MavenPomUtil {
             dependencies.add(0, dependency.getMavenDependency());
             if (excludeLog4j) {
                Exclusion exclusion = new Exclusion();
-               exclusion.setArtifactId(LOG4J_ARTIFACTID);
+               exclusion.setArtifactId(LOG4J_SLF4J_IMPL_ARTIFACTID);
                exclusion.setGroupId(LOG4J_GROUPID);
                dependencies.get(0).addExclusion(exclusion);
             }
@@ -90,6 +86,17 @@ public class MavenPomUtil {
             dependencies.add(dependency.getMavenDependency());
          }
 
+      }
+   }
+
+   private static void updateJUnit(final Model model) {
+      for (final Dependency dependency : model.getDependencies()) {
+         if (dependency.getArtifactId().equals("junit") && dependency.getGroupId().equals("junit")) {
+            dependency.setVersion("4.13.2");
+         }
+         if (dependency.getArtifactId().equals("junit-jupiter") && dependency.getGroupId().equals("org.junit.jupiter")) {
+            dependency.setVersion("5.8.2");
+         }
       }
    }
 

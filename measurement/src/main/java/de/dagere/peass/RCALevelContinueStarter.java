@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CausePersistenceManager;
@@ -49,13 +50,14 @@ public class RCALevelContinueStarter implements Callable<Void> {
          
          final CauseSearchFolders alternateFolders = createAlternateFolders(folders);
 
-         final BothTreeReader reader = new BothTreeReader(data.getCauseConfig(), data.getMeasurementConfig(), folders, new EnvironmentVariables());
+         MeasurementConfig measurementConfig = data.getMeasurementConfig();
+         final BothTreeReader reader = new BothTreeReader(data.getCauseConfig(), measurementConfig, folders, new EnvironmentVariables(measurementConfig.getExecutionConfig().getProperties()));
          reader.readCachedTrees();
          
          CausePersistenceManager persistenceManager = new CausePersistenceManager(data, dataFull, alternateFolders);
 
          EnvironmentVariables emptyEnv = new EnvironmentVariables();
-         final CauseTester measurer = new CauseTester(alternateFolders, data.getMeasurementConfig(), data.getCauseConfig(), emptyEnv);
+         final CauseTester measurer = new CauseTester(alternateFolders, measurementConfig, data.getCauseConfig(), emptyEnv);
          final LevelCauseSearcher tester = new LevelCauseSearcher(measurer, persistenceManager, emptyEnv);
 
          final List<CallTreeNode> currentVersionNodeList = new LinkedList<>();
