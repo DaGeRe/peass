@@ -2,9 +2,11 @@ package de.dagere.peass.dependency.traces;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -51,11 +53,11 @@ public class TraceWriter {
          final String shortVersion) throws IOException {
       final File currentTraceFile = new File(methodDir, shortVersion);
       traceFileMapping.addTraceFile(testcase, currentTraceFile);
-      Files.write(currentTraceFile.toPath(), trace.getWholeTrace().getBytes());
+      FileUtils.writeStringToFile(currentTraceFile, trace.getWholeTrace(), StandardCharsets.UTF_8);
       final File commentlessTraceFile = new File(methodDir, shortVersion + OneTraceGenerator.NOCOMMENT);
-      Files.write(commentlessTraceFile.toPath(), trace.getCommentlessTrace().getBytes());
+      FileUtils.writeStringToFile(commentlessTraceFile, trace.getCommentlessTrace(), StandardCharsets.UTF_8);
       final File methodTrace = new File(methodDir, shortVersion + OneTraceGenerator.METHOD);
-      Files.write(methodTrace.toPath(), trace.getTraceMethods().getBytes());
+      FileUtils.writeStringToFile(methodTrace, trace.getTraceMethods(), StandardCharsets.UTF_8);
       if (sizeInMB < 5) {
          final File methodExpandedTrace = new File(methodDir, shortVersion + OneTraceGenerator.METHOD_EXPANDED);
          Files.write(methodExpandedTrace.toPath(), traceMethodReader.getExpandedTrace()
