@@ -32,7 +32,7 @@ public class KiekerConfigMixin {
    public boolean enableAdaptiveInstrumentation = false;
 
    @Option(names = { "-traceSizeInMb", "--traceSizeInMb" }, description = "Sets the maximum allowed trace size in Mb (bigger traces will be ignored by Peass)")
-   public long traceSizeInMb = 100;
+   public long traceSizeInMb = KiekerConfig.DEFAULT_TRACE_SIZE_IN_MB;
 
    @Option(names = { "-kiekerQueueSize",
          "--kiekerQueueSize" }, description = "Sets the maximum queue size in Kieker (space is reserverd, consider increasing if queue entries are swallowed)")
