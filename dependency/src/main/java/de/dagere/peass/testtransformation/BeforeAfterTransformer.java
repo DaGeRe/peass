@@ -47,7 +47,7 @@ public class BeforeAfterTransformer {
          final NormalAnnotationExpr beforeNoMeasurementAnnotation = new NormalAnnotationExpr();
 
          beforeNoMeasurementAnnotation.setName(name);
-         method.setAnnotation(0, beforeNoMeasurementAnnotation);
+         method.getAnnotations().add(beforeNoMeasurementAnnotation);
          
          beforeNoMeasurementAnnotation.addPair("priority", Integer.toString(priority));
 
