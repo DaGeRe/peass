@@ -70,17 +70,18 @@ public class TestMethodFinder {
    private static List<MethodDeclaration> findAnnotation(final ClassOrInterfaceDeclaration clazz, final String[] annotations) {
       List<MethodDeclaration> annotatedMethods = new LinkedList<>();
       for (final MethodDeclaration method : clazz.getMethods()) {
-         boolean beforeFound = false;
+         AnnotationExpr foundAnnotation = null;
          for (final AnnotationExpr annotation : method.getAnnotations()) {
             final String currentName = annotation.getNameAsString();
             for (String searchedAnnotation : annotations) {
                if (currentName.equals(searchedAnnotation)) {
-                  beforeFound = true;
+                  foundAnnotation = annotation;
                }
             }
          }
 
-         if (beforeFound) {
+         if (foundAnnotation != null) {
+            method.getAnnotations().remove(foundAnnotation);
             annotatedMethods.add(method);
          }
       }

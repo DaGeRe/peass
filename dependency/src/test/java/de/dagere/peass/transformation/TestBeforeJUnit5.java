@@ -87,9 +87,11 @@ public class TestBeforeJUnit5 {
       
       MethodDeclaration beforeMethod = clazz.getMethodsByName("allBefore").get(0);
       Assert.assertNotNull(beforeMethod.getAnnotationByName("BeforeNoMeasurement").get());
+      Assert.assertFalse(beforeMethod.getAnnotationByName("BeforeAll").isPresent());
       
       MethodDeclaration afterMethod = clazz.getMethodsByName("allAfter").get(0);
       Assert.assertNotNull(afterMethod.getAnnotationByName("AfterNoMeasurement").get());
+      Assert.assertFalse(afterMethod.getAnnotationByName("AfterAll").isPresent());
    }
    
    @Test
@@ -107,9 +109,11 @@ public class TestBeforeJUnit5 {
       
       MethodDeclaration beforeMethod = clazz.getMethodsByName("allBefore").get(0);
       Assert.assertNotNull(beforeMethod.getAnnotationByName("BeforeWithMeasurement").get());
+      Assert.assertFalse(beforeMethod.getAnnotationByName("BeforeAll").isPresent());
       
       MethodDeclaration afterMethod = clazz.getMethodsByName("allAfter").get(0);
       Assert.assertNotNull(afterMethod.getAnnotationByName("AfterWithMeasurement").get());
+      Assert.assertFalse(afterMethod.getAnnotationByName("AfterAll").isPresent());
    }
    
    @Test
@@ -136,11 +140,13 @@ public class TestBeforeJUnit5 {
 //      Assert.assertEquals("1", afterAnnotation.getPairs().get(0).getValue().toString());
       
       MethodDeclaration beforeAllMethod = clazz.getMethodsByName("secondBefore").get(0);
+      Assert.assertFalse(beforeAllMethod.getAnnotationByName("BeforeAll").isPresent());
       NormalAnnotationExpr beforeAllAnnotation = (NormalAnnotationExpr) beforeAllMethod.getAnnotationByName("BeforeWithMeasurement").get();
       Assert.assertNotNull(beforeAllAnnotation);
       Assert.assertEquals("2", beforeAllAnnotation.getPairs().get(0).getValue().toString());
       
       MethodDeclaration afterAllMethod = clazz.getMethodsByName("secondAfter").get(0);
+      Assert.assertFalse(afterAllMethod.getAnnotationByName("AfterAll").isPresent());
       NormalAnnotationExpr afterAllAnnotation = (NormalAnnotationExpr) afterAllMethod.getAnnotationByName("AfterWithMeasurement").get();
       Assert.assertNotNull(afterAllAnnotation);
       Assert.assertEquals("2", afterAllAnnotation.getPairs().get(0).getValue().toString());
