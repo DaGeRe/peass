@@ -44,8 +44,8 @@ public class DependenciesOnlyStartversionIT {
       iterator.goToFirstCommit();
 
       ExecutionConfig executionConfig = new ExecutionConfig();
-      executionConfig.setVersion(iterator.getTag());
-      executionConfig.setVersionOld(iterator.getPrevious().getTag());
+      executionConfig.setCommit(iterator.getTag());
+      executionConfig.setCommitOld(iterator.getPrevious().getTag());
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, executionConfig, new KiekerConfig(true), new PeassFolders(TestConstants.CURRENT_FOLDER),
             ContinuousDependencyReaderIT.resultsFolders, new EnvironmentVariables());
       dependencies = reader.getDependencies(iterator, "");
@@ -63,8 +63,8 @@ public class DependenciesOnlyStartversionIT {
       iterator.goToNextCommit();
 
       ExecutionConfig executionConfig = new ExecutionConfig();
-      executionConfig.setVersion(iterator.getTag());
-      executionConfig.setVersionOld(iterator.getPrevious().getTag());
+      executionConfig.setCommit(iterator.getTag());
+      executionConfig.setCommitOld(iterator.getPrevious().getTag());
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_NO_VIEWS, executionConfig, new KiekerConfig(true), new PeassFolders(TestConstants.CURRENT_FOLDER),
             ContinuousDependencyReaderIT.resultsFolders, new EnvironmentVariables());
       dependencies = reader.getDependencies(iterator, "");

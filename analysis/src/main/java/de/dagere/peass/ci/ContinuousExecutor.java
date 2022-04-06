@@ -70,8 +70,8 @@ public class ContinuousExecutor {
       iterator = iteratorBuiler.getIterator();
       version = iteratorBuiler.getVersion();
       versionOld = iteratorBuiler.getVersionOld();
-      measurementConfig.getExecutionConfig().setVersion(version);
-      measurementConfig.getExecutionConfig().setVersionOld(versionOld);
+      measurementConfig.getExecutionConfig().setCommit(version);
+      measurementConfig.getExecutionConfig().setCommitOld(versionOld);
       LOG.debug("Version: {} VersionOld: {}", version, versionOld);
    }
 
@@ -85,7 +85,7 @@ public class ContinuousExecutor {
          GitUtils.reset(projectFolderLocal);
          GitUtils.clean(projectFolderLocal);
          GitUtils.pull(projectFolderLocal);
-         GitUtils.goToTag(measurementConfig.getExecutionConfig().getVersion(), projectFolderLocal);
+         GitUtils.goToTag(measurementConfig.getExecutionConfig().getCommit(), projectFolderLocal);
       }
    }
 

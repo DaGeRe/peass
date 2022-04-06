@@ -58,8 +58,8 @@ public class ContinuousDependencyReaderIT {
       iterator.goToNextCommit();
 
       ExecutionConfig executionConfig = new ExecutionConfig();
-      executionConfig.setVersion(iterator.getTag());
-      executionConfig.setVersionOld(iterator.getPrevious().getTag());
+      executionConfig.setCommit(iterator.getTag());
+      executionConfig.setCommitOld(iterator.getPrevious().getTag());
 
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfig(true),
             new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
@@ -84,8 +84,8 @@ public class ContinuousDependencyReaderIT {
       VersionIteratorGit iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
 
       ExecutionConfig executionConfig = new ExecutionConfig();
-      executionConfig.setVersion(newVersion);
-      executionConfig.setVersionOld(iterator.getPrevious().getTag());
+      executionConfig.setCommit(newVersion);
+      executionConfig.setCommitOld(iterator.getPrevious().getTag());
 
       final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig,
             new KiekerConfig(true),
@@ -110,8 +110,8 @@ public class ContinuousDependencyReaderIT {
       VersionIteratorGit iterator = new VersionIteratorGit(TestConstants.CURRENT_FOLDER);
 
       ExecutionConfig executionConfig = new ExecutionConfig();
-      executionConfig.setVersion(newVersion);
-      executionConfig.setVersionOld(iterator.getPrevious().getTag());
+      executionConfig.setCommit(newVersion);
+      executionConfig.setCommitOld(iterator.getPrevious().getTag());
 
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfig(true),
             new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());

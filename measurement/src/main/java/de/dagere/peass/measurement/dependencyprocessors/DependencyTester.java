@@ -63,16 +63,16 @@ public class DependencyTester implements KiekerResultHandler {
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
       initEvaluation(testcase);
 
-      final File logFolder = folders.getMeasureLogFolder(configuration.getExecutionConfig().getVersion(), testcase);
+      final File logFolder = folders.getMeasureLogFolder(configuration.getExecutionConfig().getCommit(), testcase);
       try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())) {
          evaluateSimple(testcase, logFolder, writer);
       }
    }
 
    protected void initEvaluation(final TestCase testcase) {
-      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getExecutionConfig().getVersionOld(),
-            configuration.getExecutionConfig().getVersion());
-      new FolderDeterminer(folders).testResultFolders(configuration.getExecutionConfig().getVersion(), configuration.getExecutionConfig().getVersionOld(), testcase);
+      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getExecutionConfig().getCommitOld(),
+            configuration.getExecutionConfig().getCommit());
+      new FolderDeterminer(folders).testResultFolders(configuration.getExecutionConfig().getCommit(), configuration.getExecutionConfig().getCommitOld(), testcase);
    }
 
    private void evaluateSimple(final TestCase testcase, final File logFolder, final ProgressWriter writer)
@@ -105,11 +105,11 @@ public class DependencyTester implements KiekerResultHandler {
 
    boolean updateExecutions(final TestCase testcase, final int vmid) throws JAXBException {
       boolean shouldBreak = false;
-      final Result versionOldResult = getLastResult(configuration.getExecutionConfig().getVersionOld(), testcase, vmid);
-      final Result versionNewResult = getLastResult(configuration.getExecutionConfig().getVersion(), testcase, vmid);
+      final Result versionOldResult = getLastResult(configuration.getExecutionConfig().getCommitOld(), testcase, vmid);
+      final Result versionNewResult = getLastResult(configuration.getExecutionConfig().getCommit(), testcase, vmid);
       if (vmid < 40) {
-         int reducedIterations = Math.min(shouldReduce(configuration.getExecutionConfig().getVersionOld(), versionOldResult),
-               shouldReduce(configuration.getExecutionConfig().getVersion(), versionNewResult));
+         int reducedIterations = Math.min(shouldReduce(configuration.getExecutionConfig().getCommitOld(), versionOldResult),
+               shouldReduce(configuration.getExecutionConfig().getCommit(), versionNewResult));
          if (reducedIterations != configuration.getIterations()) {
             LOG.error("Should originally run {} iterations, but did not succeed - reducing to {}", configuration.getIterations(), reducedIterations);
             // final int lessIterations = testTransformer.getConfig().getIterations() / 5;
@@ -199,14 +199,14 @@ public class DependencyTester implements KiekerResultHandler {
 
    private String[] getVersions() {
       String versions[] = new String[2];
-      versions[0] = configuration.getExecutionConfig().getVersionOld().equals("HEAD~1") ? configuration.getExecutionConfig().getVersion() + "~1"
-            : configuration.getExecutionConfig().getVersionOld();
-      versions[1] = configuration.getExecutionConfig().getVersion();
+      versions[0] = configuration.getExecutionConfig().getCommitOld().equals("HEAD~1") ? configuration.getExecutionConfig().getCommit() + "~1"
+            : configuration.getExecutionConfig().getCommitOld();
+      versions[1] = configuration.getExecutionConfig().getCommit();
       return versions;
    }
 
    private void runParallel(final File logFolder, final TestCase testcase, final int vmid, final String[] versions) throws InterruptedException, IOException {
-      final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getExecutionConfig().getVersion(), currentChunkStart,
+      final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getExecutionConfig().getCommit(), currentChunkStart,
             configuration.isUseKieker(),
             configuration.isSaveAll(), testcase,
             configuration.getAllIterations());
@@ -232,7 +232,7 @@ public class DependencyTester implements KiekerResultHandler {
 
    private void runSequential(final File logFolder, final TestCase testcase, final int vmid, final String versions[])
          throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      currentOrganizer = new ResultOrganizer(folders, configuration.getExecutionConfig().getVersion(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(),
+      currentOrganizer = new ResultOrganizer(folders, configuration.getExecutionConfig().getCommit(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(),
             testcase, configuration.getAllIterations());
       for (String version : versions) {
          runOnce(testcase, version, vmid, logFolder);
@@ -263,8 +263,8 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    public void setVersions(final String version, final String versionOld) {
-      configuration.getExecutionConfig().setVersion(version);
-      configuration.getExecutionConfig().setVersionOld(versionOld);
+      configuration.getExecutionConfig().setCommit(version);
+      configuration.getExecutionConfig().setCommitOld(versionOld);
    }
 
    protected boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {

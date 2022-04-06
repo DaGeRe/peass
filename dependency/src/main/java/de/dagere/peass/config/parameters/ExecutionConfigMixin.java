@@ -320,10 +320,10 @@ public class ExecutionConfigMixin {
    public ExecutionConfig getExecutionConfig() {
       ExecutionConfig config = new ExecutionConfig(timeout);
 
-      config.setVersion(getCommit());
-      config.setVersionOld(getCommitOld());
-      config.setStartversion(getStartcommit());
-      config.setEndversion(getEndversion());
+      config.setCommit(getCommit());
+      config.setCommitOld(getCommitOld());
+      config.setStartcommit(getStartcommit());
+      config.setEndcommit(getEndversion());
       config.setTestGoal(getTestGoal());
 
       if (getIncludes() != null) {

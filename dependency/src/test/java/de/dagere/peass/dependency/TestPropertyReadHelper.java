@@ -52,7 +52,7 @@ public class TestPropertyReadHelper {
       Change changeMock = Mockito.mock(Change.class);
       Mockito.when(changeMock.getMethod()).thenReturn("myTestMethod");
       ExecutionConfig config = new ExecutionConfig();
-      config.setVersion("000001");
+      config.setCommit("000001");
       
       File projectFolder = new File("target/current");
       Files.touch(new File(projectFolder, "pom.xml"));

@@ -192,8 +192,8 @@ public class ReadProperties implements Callable<Void> {
          changeProperties.getProperties().put(testclazz, properties);
          for (final Change testcaseChange : changes.getValue()) {
             ExecutionConfig config = new ExecutionConfig();
-            config.setVersion(version);
-            config.setVersionOld(predecessor);
+            config.setCommit(version);
+            config.setCommitOld(predecessor);
             ChangedEntity entity = new ChangedEntity(testclazz, module);
             final PropertyReadHelper reader = new PropertyReadHelper(config, entity, testcaseChange, projectFolder, viewFolder,
                   methodFolder, null);

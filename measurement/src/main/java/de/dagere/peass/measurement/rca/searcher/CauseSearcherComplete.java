@@ -108,7 +108,7 @@ public class CauseSearcherComplete extends CauseSearcher {
 
    private List<CallTreeNode> getAnalysableNodes(final List<CallTreeNode> predecessorNodeList)
          throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
-      final MeasurementConfig config = new MeasurementConfig(1, measurementConfig.getExecutionConfig().getVersion(), measurementConfig.getExecutionConfig().getVersionOld());
+      final MeasurementConfig config = new MeasurementConfig(1, measurementConfig.getExecutionConfig().getCommit(), measurementConfig.getExecutionConfig().getCommitOld());
       config.setIterations(measurementConfig.getIterations());
       config.setRepetitions(measurementConfig.getRepetitions());
       config.setWarmup(measurementConfig.getWarmup());

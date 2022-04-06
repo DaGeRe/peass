@@ -27,8 +27,8 @@ public class TestDependencyIteratorBuilder {
          gitUtil.when(() -> GitUtils.getName(Mockito.any(), Mockito.any())).thenReturn(VERSION_2);
          
          ExecutionConfig config = new ExecutionConfig();
-         config.setVersionOld(SIMPLE_PREDECESSOR);
-         config.setVersion("HEAD");
+         config.setCommitOld(SIMPLE_PREDECESSOR);
+         config.setCommit("HEAD");
 
          StaticTestSelection dependencies = buildVersionDependencies(LAST_RUNNING_VERSION);
          
@@ -45,8 +45,8 @@ public class TestDependencyIteratorBuilder {
          gitUtil.when(() -> GitUtils.getName(Mockito.any(), Mockito.any())).thenReturn(VERSION_2);
          
          ExecutionConfig config = new ExecutionConfig();
-         config.setVersionOld(null);
-         config.setVersion("HEAD");
+         config.setCommitOld(null);
+         config.setCommit("HEAD");
 
          StaticTestSelection dependencies = buildVersionDependencies();
          
@@ -64,8 +64,8 @@ public class TestDependencyIteratorBuilder {
          gitUtil.when(() -> GitUtils.getName(Mockito.any(), Mockito.any())).thenReturn(VERSION_2);
          
          ExecutionConfig config = new ExecutionConfig();
-         config.setVersionOld(null);
-         config.setVersion("HEAD");
+         config.setCommitOld(null);
+         config.setCommit("HEAD");
 
          StaticTestSelection dependencies = buildVersionDependencies(SIMPLE_PREDECESSOR);
          dependencies.getVersions().get(SIMPLE_PREDECESSOR).setRunning(false);
@@ -84,8 +84,8 @@ public class TestDependencyIteratorBuilder {
          gitUtil.when(() -> GitUtils.getName(Mockito.any(), Mockito.any())).thenReturn(VERSION_2);
          
          ExecutionConfig config = new ExecutionConfig();
-         config.setVersionOld(null);
-         config.setVersion("HEAD");
+         config.setCommitOld(null);
+         config.setCommit("HEAD");
 
          StaticTestSelection dependencies = buildVersionDependencies(SIMPLE_PREDECESSOR, VERSION_2);
          
@@ -103,8 +103,8 @@ public class TestDependencyIteratorBuilder {
          gitUtil.when(() -> GitUtils.getName(Mockito.any(), Mockito.any())).thenReturn(VERSION_2);
          
          ExecutionConfig config = new ExecutionConfig();
-         config.setVersionOld(null);
-         config.setVersion("HEAD");
+         config.setCommitOld(null);
+         config.setCommit("HEAD");
          
          StaticTestSelection dependencies = buildVersionDependencies(LAST_RUNNING_VERSION);
 
@@ -122,8 +122,8 @@ public class TestDependencyIteratorBuilder {
          gitUtil.when(() -> GitUtils.getName("HEAD~1", TEMPORARY_FOLDER)).thenReturn(SIMPLE_PREDECESSOR);
          
          ExecutionConfig config = new ExecutionConfig();
-         config.setVersionOld(null);
-         config.setVersion("HEAD");
+         config.setCommitOld(null);
+         config.setCommit("HEAD");
 
          VersionIteratorGit iterator = new DependencyIteratorBuilder(config, null, new PeassFolders(TEMPORARY_FOLDER)).getIterator();
          Assert.assertEquals(2, iterator.getSize());

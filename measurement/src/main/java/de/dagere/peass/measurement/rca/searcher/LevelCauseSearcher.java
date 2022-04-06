@@ -50,11 +50,11 @@ public class LevelCauseSearcher extends CauseSearcher {
       super(reader, causeSearchConfig, measurer, measurementConfig, folders, env);
       persistenceManager = new CausePersistenceManager(causeSearchConfig, measurementConfig, folders);
 
-      final File potentialOldFolder = new File(folders.getArchiveResultFolder(measurementConfig.getExecutionConfig().getVersion(), causeSearchConfig.getTestCase()), "0");
+      final File potentialOldFolder = new File(folders.getArchiveResultFolder(measurementConfig.getExecutionConfig().getCommit(), causeSearchConfig.getTestCase()), "0");
       if (potentialOldFolder.exists()) {
          throw new RuntimeException("Old measurement folder " + potentialOldFolder.getAbsolutePath() + " exists - please cleanup!");
       }
-      new FolderDeterminer(folders).testResultFolders(measurementConfig.getExecutionConfig().getVersion(), measurementConfig.getExecutionConfig().getVersionOld(), causeSearchConfig.getTestCase());
+      new FolderDeterminer(folders).testResultFolders(measurementConfig.getExecutionConfig().getCommit(), measurementConfig.getExecutionConfig().getCommitOld(), causeSearchConfig.getTestCase());
    }
 
    @Override

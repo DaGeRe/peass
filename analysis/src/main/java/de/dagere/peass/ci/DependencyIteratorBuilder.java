@@ -28,7 +28,7 @@ public class DependencyIteratorBuilder {
    private final VersionIteratorGit iterator;
 
    public DependencyIteratorBuilder(final ExecutionConfig executionConfig, final StaticTestSelection dependencies, final PeassFolders folders) {
-      version = GitUtils.getName(executionConfig.getVersion() != null ? executionConfig.getVersion() : "HEAD", folders.getProjectFolder());
+      version = GitUtils.getName(executionConfig.getCommit() != null ? executionConfig.getCommit() : "HEAD", folders.getProjectFolder());
 
       String newestAnalyzedVersionName = dependencies != null ? dependencies.getNewestVersion() : null;
 
@@ -72,8 +72,8 @@ public class DependencyIteratorBuilder {
 
    private static GitCommit getOldVersionCommit(final ExecutionConfig executionConfig, final String newestRunningVersionName, final PeassFolders folders) {
       String oldVersion;
-      if (executionConfig.getVersionOld() != null) {
-         oldVersion = executionConfig.getVersionOld();
+      if (executionConfig.getCommitOld() != null) {
+         oldVersion = executionConfig.getCommitOld();
       } else if (newestRunningVersionName != null) {
          oldVersion = newestRunningVersionName;
       } else {

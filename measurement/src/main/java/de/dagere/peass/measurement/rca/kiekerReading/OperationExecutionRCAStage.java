@@ -60,7 +60,7 @@ public class OperationExecutionRCAStage extends AbstractTraceProcessingStage<Exe
          int eoi = node.getEoi(version);
          int ess = node.getEss();
          String currentPattern;
-         if (node.getConfig().getExecutionConfig().getVersionOld().equals(version)) {
+         if (node.getConfig().getExecutionConfig().getCommitOld().equals(version)) {
             currentPattern = node.getKiekerPattern();
          } else {
             currentPattern = node.getOtherKiekerPattern();

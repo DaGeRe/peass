@@ -30,10 +30,10 @@ public class ExecutionConfig implements Serializable {
    private List<String> includes = new LinkedList<>();
    private List<String> excludes = new LinkedList<>();
 
-   private String version = "HEAD";
-   private String versionOld = "HEAD~1";
-   protected String startversion;
-   protected String endversion;
+   private String commit = "HEAD";
+   private String commitOld = "HEAD~1";
+   protected String startcommit;
+   protected String endcommit;
    private String pl;
    private boolean createDefaultConstructor = true;
    private int kiekerWaitTime = 10;
@@ -81,10 +81,10 @@ public class ExecutionConfig implements Serializable {
       this.timeout = other.getTimeout();
       this.testGoal = other.getTestGoal();
       this.includes = other.getIncludes();
-      this.version = other.getVersion();
-      this.versionOld = other.getVersionOld();
-      this.startversion = other.getStartversion();
-      this.endversion = other.getEndversion();
+      this.commit = other.getCommit();
+      this.commitOld = other.getCommitOld();
+      this.startcommit = other.getStartcommit();
+      this.endcommit = other.getEndcommit();
       this.createDefaultConstructor = other.isCreateDefaultConstructor();
       this.kiekerWaitTime = other.kiekerWaitTime;
       this.redirectSubprocessOutputToFile = other.isRedirectSubprocessOutputToFile();
@@ -173,38 +173,38 @@ public class ExecutionConfig implements Serializable {
       return timeout / 1000;
    }
 
-   public String getVersion() {
-      return version;
+   public String getCommit() {
+      return commit;
    }
 
-   public void setVersion(final String version) {
-      this.version = version;
+   public void setCommit(String commit) {
+      this.commit = commit;
    }
 
-   public String getVersionOld() {
-      return versionOld;
+   public String getCommitOld() {
+      return commitOld;
    }
 
-   public void setVersionOld(final String versionOld) {
-      this.versionOld = versionOld;
-   }
-
-   @JsonInclude(JsonInclude.Include.NON_NULL)
-   public String getStartversion() {
-      return startversion;
-   }
-
-   public void setStartversion(final String startversion) {
-      this.startversion = startversion;
+   public void setCommitOld(String commitOld) {
+      this.commitOld = commitOld;
    }
 
    @JsonInclude(JsonInclude.Include.NON_NULL)
-   public String getEndversion() {
-      return endversion;
+   public String getStartcommit() {
+      return startcommit;
    }
 
-   public void setEndversion(final String endversion) {
-      this.endversion = endversion;
+   public void setStartcommit(final String startversion) {
+      this.startcommit = startversion;
+   }
+
+   @JsonInclude(JsonInclude.Include.NON_NULL)
+   public String getEndcommit() {
+      return endcommit;
+   }
+
+   public void setEndcommit(final String endversion) {
+      this.endcommit = endversion;
    }
 
    public boolean isCreateDefaultConstructor() {

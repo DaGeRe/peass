@@ -18,8 +18,8 @@ public class ChangedTreeBuilder {
    public ChangedTreeBuilder() {
       MeasurementConfig config = new MeasurementConfig(2);
       config.setWarmup(0);
-      config.getExecutionConfig().setVersion(VERSION1);
-      config.getExecutionConfig().setVersionOld(VERSION0);
+      config.getExecutionConfig().setCommit(VERSION1);
+      config.getExecutionConfig().setCommitOld(VERSION0);
       root = new CallTreeNode("de.dagere.peass.Test#test", "public void de.dagere.peass.Test.test()", "public void de.dagere.peass.Test.test()",
             config);
       CallTreeNode otherRoot = new CallTreeNode("de.dagere.peass.Test#test", "public void de.dagere.peass.Test.test()", "public void de.dagere.peass.Test.test()",
