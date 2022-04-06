@@ -97,7 +97,7 @@
     <dependency>
       <groupId>de.dagere.kieker</groupId>
       <artifactId>kieker-source-instrumentation-library</artifactId>
-      <version>1.15.10</version>
+      <version>1.15.10-SNAPSHOT</version>
     </dependency>
 
     <!-- We need to exclude teetimes guava version and use the latest to avoid security problems (which are unlikely to cause problems in a quality assurance tool, but better safe than sorry)-->
