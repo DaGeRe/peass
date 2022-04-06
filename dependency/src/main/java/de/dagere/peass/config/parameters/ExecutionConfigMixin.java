@@ -16,18 +16,36 @@ public class ExecutionConfigMixin {
    @Option(names = { "-excludes", "--excludes" }, description = "Testcases for exclusion (default: empty, excludes no test)")
    protected String[] excludes;
 
-   @Option(names = { "-version", "--version" }, description = "Newer version for regression test selection / measurement. Do not use together with startversion / endversion.")
+   @Deprecated
+   @Option(names = { "-version", "--version" }, description = "Newer version for regression test selection / measurement. Do not use together with startversion / endversion. (Deprecated. Use commit instead)")
    protected String version;
-
+   
+   @Deprecated
    @Option(names = { "-versionOld", "--versionOld" }, description = "Older version for regression test selection / measurement" +
-         "If used, please always specify version; only the difference of both will be analyzed, intermediary versions will be ignored. Do not use together with startversion / endversion.")
+         "If used, please always specify version; only the difference of both will be analyzed, intermediary versions will be ignored. Do not use together with startversion / endversion.  (Deprecated. Use oldCommit instead)")
    protected String versionOld;
+   
+   @Option(names = { "-commit", "--commit" }, description = "Newer commit for regression test selection / measurement. Do not use together with startcommit / endcommit.")
+   protected String commit;
+   
+   @Option(names = { "-commitOld", "--commitOld" }, description = "Older commit for regression test selection / measurement" +
+         "If used, please always specify commit; only the difference of both will be analyzed, intermediary commits will be ignored. Do not use together with startcommit / endcommit.  (Deprecated. Use oldCommit instead)")
+   protected String commitOld;
+   
 
+   @Deprecated
    @Option(names = { "-startversion", "--startversion" }, description = "First version that should be analysed - do not use together with version and versionOld!")
    protected String startversion;
 
+   @Deprecated
    @Option(names = { "-endversion", "--endversion" }, description = "Last version that should be analysed - do not use together with version and versionOld! ")
    protected String endversion;
+   
+   @Option(names = { "-startcommit", "--startcommit" }, description = "First commit that should be analysed - do not use together with commit and commitOld!")
+   protected String startcommit;
+
+   @Option(names = { "-endcommit", "--endcommit" }, description = "Last commit that should be analysed - do not use together with commit and commitOld! ")
+   protected String endcommit;
 
    @Option(names = { "-testGoal", "--testGoal" }, description = "Test goal that should be used; default testRelease for Android projects and test for all others. "
          + "If you want to use test<VariantName> for Android, please specify a goal (i.e. task name) here."
@@ -137,6 +155,38 @@ public class ExecutionConfigMixin {
 
    public void setEndversion(final String endversion) {
       this.endversion = endversion;
+   }
+
+   public String getCommit() {
+      return commit != null ? commit : version;
+   }
+
+   public void setCommit(String commit) {
+      this.commit = commit;
+   }
+
+   public String getCommitOld() {
+      return commitOld != null ? commitOld : versionOld;
+   }
+
+   public void setCommitOld(String commitOld) {
+      this.commitOld = commitOld;
+   }
+
+   public String getStartcommit() {
+      return startcommit != null ? startcommit : startversion;
+   }
+
+   public void setStartcommit(String startcommit) {
+      this.startcommit = startcommit;
+   }
+
+   public String getEndcommit() {
+      return endcommit != null ? endcommit : endversion;
+   }
+
+   public void setEndcommit(String endcommit) {
+      this.endcommit = endcommit;
    }
 
    public void setPl(final String pl) {
@@ -270,9 +320,9 @@ public class ExecutionConfigMixin {
    public ExecutionConfig getExecutionConfig() {
       ExecutionConfig config = new ExecutionConfig(timeout);
 
-      config.setVersion(version);
-      config.setVersionOld(versionOld);
-      config.setStartversion(getStartversion());
+      config.setVersion(getCommit());
+      config.setVersionOld(getCommitOld());
+      config.setStartversion(getStartcommit());
       config.setEndversion(getEndversion());
       config.setTestGoal(getTestGoal());
 

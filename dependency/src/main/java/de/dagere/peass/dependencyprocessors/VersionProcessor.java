@@ -77,9 +77,9 @@ public abstract class VersionProcessor implements Callable<Void> {
 
    public VersionProcessor() {
       if (executionMixin != null) {
-         startversion = executionMixin.getStartversion();
-         endversion = executionMixin.getEndversion();
-         version = executionMixin.getVersion();
+         startversion = executionMixin.getStartcommit();
+         endversion = executionMixin.getEndcommit();
+         version = executionMixin.getCommit();
       }
    }
 
@@ -116,9 +116,9 @@ public abstract class VersionProcessor implements Callable<Void> {
 
    protected void initVersionProcessor() throws IOException, JsonParseException, JsonMappingException {
       if (executionMixin != null) {
-         startversion = executionMixin.getStartversion();
-         endversion = executionMixin.getEndversion();
-         version = executionMixin.getVersion();
+         startversion = executionMixin.getStartcommit();
+         endversion = executionMixin.getEndcommit();
+         version = executionMixin.getCommit();
       }
       
       if (staticSelectionFile != null) {
@@ -143,7 +143,7 @@ public abstract class VersionProcessor implements Callable<Void> {
          LOG.info("Version: " + startversion + " - " + endversion);
       }
 
-      if (executionMixin.getVersionOld() != null && startversion == null) {
+      if (executionMixin.getCommitOld() != null && startversion == null) {
          throw new RuntimeException("If versionOld is specified, always specify version!");
       }
 

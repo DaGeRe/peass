@@ -93,7 +93,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
       final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, StaticTestSelection.class);
       VersionComparator.setVersions(GitUtils.getCommits(projectFolder, false));
 
-      String previousVersion = getPreviousVersion(executionConfigMixin.getStartversion(), projectFolder, dependencies);
+      String previousVersion = getPreviousVersion(executionConfigMixin.getStartcommit(), projectFolder, dependencies);
 
       final int timeout = executionConfigMixin.getTimeout();
 
@@ -161,7 +161,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
    }
 
    private VersionIterator createIterator(final TestSelectionConfigMixin config, final String previousVersion) {
-      final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartversion(), executionConfigMixin.getEndversion(), config.getProjectFolder());
+      final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder());
       commits.add(0, new GitCommit(previousVersion, "", "", ""));
       final GitCommit previous = new GitCommit(previousVersion, "", "", "");
       final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previous);

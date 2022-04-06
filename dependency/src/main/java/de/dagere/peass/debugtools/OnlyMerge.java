@@ -36,7 +36,7 @@ public class OnlyMerge implements Callable<Void>{
    @Override
    public Void call() throws Exception {
       final File projectFolder = config.getProjectFolder();
-      final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartversion(), executionConfigMixin.getEndversion(), projectFolder);
+      final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), projectFolder);
       VersionComparator.setVersions(commits);
       
       final File[] files = config.getResultBaseFolder().listFiles((FilenameFilter) new WildcardFileFilter("deps*.json"));
