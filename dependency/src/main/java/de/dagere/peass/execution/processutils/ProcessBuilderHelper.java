@@ -88,8 +88,12 @@ public class ProcessBuilderHelper {
          final Process process = new ProcessBuilder(new String[] { "bash", "-c", "ps -e -T | wc -l" }).start();
          final String result = StreamGobbler.getFullProcess(process, false).replaceAll("\n", "").replace("\r", "");
          count = Integer.parseInt(result.trim());
-      } catch (IOException | NumberFormatException e) {
-
+      } catch (NumberFormatException e) {
+         // This is expected on systems without ps and will not be logged
+         if (!e.getMessage().equals("For input string: \"bash: line 1: ps: command not found0\"")) {
+            e.printStackTrace();
+         }
+      } catch (IOException e) {
          e.printStackTrace();
       }
       return count;
