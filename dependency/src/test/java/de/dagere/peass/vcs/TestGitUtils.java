@@ -108,13 +108,13 @@ public class TestGitUtils {
          List<GitCommit> secondExample = buildExampleList();
          GitUtils.filterList("000005", "000003", secondExample);
       });
-      Assert.assertEquals("Startversion 000005 after endversion 000003", thrown1.getMessage());
+      Assert.assertEquals("Startcommit 000005 after endcommit 000003", thrown1.getMessage());
       
       RuntimeException thrown2 = Assert.assertThrows(RuntimeException.class, () -> {
          List<GitCommit> secondExample = buildExampleList();
          GitUtils.filterList("00000A", "000003", secondExample);
       });
-      Assert.assertEquals("Startversion 00000A not found at all, but endversion 000003 found", thrown2.getMessage());
+      Assert.assertEquals("Startcommit 00000A not found at all, but endcommit 000003 found", thrown2.getMessage());
    }
 
    private List<GitCommit> buildExampleList() {
