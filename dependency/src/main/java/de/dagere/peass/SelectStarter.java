@@ -41,7 +41,7 @@ import picocli.CommandLine.Mixin;
  * @author reichelt
  *
  */
-@Command(description = "Executes the regression test selection. Creates the executionfile, which defines the tests-version-pairs that need to be executed in each version", name = "select")
+@Command(description = "Executes the regression test selection. Creates the executionfile, which defines the tests-commit-pairs that need to be executed in each commit", name = "select")
 public class SelectStarter implements Callable<Void>{
 
    private static final Logger LOG = LogManager.getLogger(SelectStarter.class);
