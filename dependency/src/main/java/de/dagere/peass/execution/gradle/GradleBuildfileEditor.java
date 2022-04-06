@@ -36,7 +36,7 @@ public class GradleBuildfileEditor {
       FindDependencyVisitor visitor = null;
       try {
          LOG.debug("Editing buildfile: {}", buildfile.getAbsolutePath());
-         visitor = GradleParseUtil.parseBuildfile(buildfile);
+         visitor = GradleParseUtil.parseBuildfile(buildfile, testTransformer.getConfig().getExecutionConfig());
          if (visitor.isUseJava() == true) {
             editGradlefileContents(tempFolder, visitor);
          } else {
@@ -57,13 +57,13 @@ public class GradleBuildfileEditor {
       return visitor;
    }
 
-   private static boolean isParentUseJava(final File buildfile, final ProjectModules modules) throws IOException, FileNotFoundException {
+   private boolean isParentUseJava(final File buildfile, final ProjectModules modules) throws IOException, FileNotFoundException {
       List<File> parentProjects = modules.getParents(buildfile.getParentFile());
       boolean isUseJava = false;
       for (File parentProject : parentProjects) {
          File parentBuildfile = GradleParseHelper.findGradleFile(parentProject);
          LOG.debug("Reading " + parentBuildfile);
-         FindDependencyVisitor parentVisitor = GradleParseUtil.parseBuildfile(parentBuildfile);
+         FindDependencyVisitor parentVisitor = GradleParseUtil.parseBuildfile(parentBuildfile, testTransformer.getConfig().getExecutionConfig());
          if (parentVisitor.isSubprojectJava()) {
             isUseJava = true;
          }

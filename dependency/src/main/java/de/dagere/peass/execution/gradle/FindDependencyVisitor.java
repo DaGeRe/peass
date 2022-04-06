@@ -27,6 +27,8 @@ import org.codehaus.groovy.ast.expr.TupleExpression;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 
+import de.dagere.peass.config.ExecutionConfig;
+
 public class FindDependencyVisitor extends CodeVisitorSupport {
 
    private static final Logger LOG = LogManager.getLogger(FindDependencyVisitor.class);
@@ -49,8 +51,11 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
    private boolean hasVersion = true;
    private boolean subprojectJava = false;
    private List<String> gradleFileContents;
+   
+   private final ExecutionConfig config;
 
-   public FindDependencyVisitor(final File buildfile) throws IOException {
+   public FindDependencyVisitor(final File buildfile, ExecutionConfig config) throws IOException {
+      this.config = config;
       gradleFileContents = Files.readAllLines(Paths.get(buildfile.toURI()));
 
       try (Stream<String> lines = Files.lines(buildfile.toPath())) {
@@ -205,7 +210,8 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
             text.contains("plugin:com.android.library") ||
             text.contains("plugin:com.android.application") ||
             text.contains("application") ||
-            text.contains("com.android.application")) {
+            text.contains("com.android.application") ||
+            text.contains(config.getGradleJavaPluginName())) {
          return true;
       } else {
          return false;

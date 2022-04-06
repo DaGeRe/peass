@@ -13,6 +13,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 
 public class GradleParseUtil {
@@ -36,12 +37,12 @@ public class GradleParseUtil {
       }
    }
 
-   public static FindDependencyVisitor setAndroidTools(final File buildfile) {
+   public static FindDependencyVisitor setAndroidTools(final File buildfile, ExecutionConfig config) {
       FindDependencyVisitor visitor = null;
       try {
          LOG.debug("Editing: {}", buildfile);
 
-         visitor = parseBuildfile(buildfile);
+         visitor = parseBuildfile(buildfile, config);
          final List<String> gradleFileContents = Files.readAllLines(Paths.get(buildfile.toURI()));
 
          if (visitor.getBuildTools() != -1) {
@@ -65,8 +66,8 @@ public class GradleParseUtil {
       }
    }
 
-   public static FindDependencyVisitor parseBuildfile(final File buildfile) throws IOException, FileNotFoundException {
-      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile);
+   public static FindDependencyVisitor parseBuildfile(final File buildfile, ExecutionConfig config) throws IOException, FileNotFoundException {
+      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile, config);
       return visitor;
 
    }

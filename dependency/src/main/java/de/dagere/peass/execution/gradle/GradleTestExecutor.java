@@ -167,7 +167,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
          boolean isAndroid = false;
          for (final File module : getModules().getModules()) {
             final File buildfile = GradleParseHelper.findGradleFile(module);
-            final FindDependencyVisitor visitor = GradleParseUtil.setAndroidTools(buildfile);
+            final FindDependencyVisitor visitor = GradleParseUtil.setAndroidTools(buildfile, testTransformer.getConfig().getExecutionConfig());
             if (visitor.isAndroid()) {
                isAndroid = true;
                if (!visitor.hasVersion()) {

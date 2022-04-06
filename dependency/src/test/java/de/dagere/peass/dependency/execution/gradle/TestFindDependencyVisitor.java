@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.execution.gradle.FindDependencyVisitor;
 
 public class TestFindDependencyVisitor {
@@ -19,7 +20,7 @@ public class TestFindDependencyVisitor {
       File buildfile = new File("target/build.gradle");
       FileUtils.copyFile(withApplyPlugins, buildfile);
       
-      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile);
+      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile, new ExecutionConfig());
       Assert.assertTrue(visitor.isUseJava());
    }
    
@@ -29,7 +30,7 @@ public class TestFindDependencyVisitor {
       File buildfile = new File("target/build.gradle");
       FileUtils.copyFile(withApplyPlugins, buildfile);
       
-      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile);
+      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile, new ExecutionConfig());
       Assert.assertTrue(visitor.isUseJava());
    }
    
@@ -39,7 +40,7 @@ public class TestFindDependencyVisitor {
       File buildfile = new File("target/build.gradle");
       FileUtils.copyFile(withApplyPlugins, buildfile);
       
-      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile);
+      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile, new ExecutionConfig());
       Assert.assertTrue(visitor.isUseJava());
    }
    
@@ -49,7 +50,7 @@ public class TestFindDependencyVisitor {
       File buildfile = new File("target/build.gradle");
       FileUtils.copyFile(withApplyPlugins, buildfile);
       
-      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile);
+      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile, new ExecutionConfig());
       Assert.assertTrue(visitor.isUseJava());
    }
 }

@@ -54,6 +54,8 @@ public class ExecutionConfig implements Serializable {
 
    private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
    private String testExecutor = "default";
+   
+   private String gradleJavaPluginName = "java";
 
    private String properties;
 
@@ -309,6 +311,7 @@ public class ExecutionConfig implements Serializable {
       this.redirectToNull = redirectToNull;
    }
 
+   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
    public String getTestTransformer() {
       return testTransformer;
    }
@@ -317,6 +320,7 @@ public class ExecutionConfig implements Serializable {
       this.testTransformer = testTransformer;
    }
 
+   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
    public String getTestExecutor() {
       return testExecutor;
    }
@@ -355,6 +359,15 @@ public class ExecutionConfig implements Serializable {
 
    public void setProperties(final String properties) {
       this.properties = properties;
+   }
+   
+   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+   public String getGradleJavaPluginName() {
+      return gradleJavaPluginName;
+   }
+   
+   public void setGradleJavaPluginName(String gradleJavaPluginName) {
+      this.gradleJavaPluginName = gradleJavaPluginName;
    }
 
    @JsonIgnore
