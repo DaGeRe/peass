@@ -16,30 +16,12 @@ public class ExecutionConfigMixin {
    @Option(names = { "-excludes", "--excludes" }, description = "Testcases for exclusion (default: empty, excludes no test)")
    protected String[] excludes;
 
-   @Deprecated
-   @Option(names = { "-version", "--version" }, description = "Newer version for regression test selection / measurement. Do not use together with startversion / endversion. (Deprecated. Use commit instead)")
-   protected String version;
-   
-   @Deprecated
-   @Option(names = { "-versionOld", "--versionOld" }, description = "Older version for regression test selection / measurement" +
-         "If used, please always specify version; only the difference of both will be analyzed, intermediary versions will be ignored. Do not use together with startversion / endversion.  (Deprecated. Use oldCommit instead)")
-   protected String versionOld;
-   
    @Option(names = { "-commit", "--commit" }, description = "Newer commit for regression test selection / measurement. Do not use together with startcommit / endcommit.")
    protected String commit;
    
    @Option(names = { "-commitOld", "--commitOld" }, description = "Older commit for regression test selection / measurement" +
          "If used, please always specify commit; only the difference of both will be analyzed, intermediary commits will be ignored. Do not use together with startcommit / endcommit.  (Deprecated. Use oldCommit instead)")
    protected String commitOld;
-   
-
-   @Deprecated
-   @Option(names = { "-startversion", "--startversion" }, description = "First version that should be analysed - do not use together with version and versionOld!")
-   protected String startversion;
-
-   @Deprecated
-   @Option(names = { "-endversion", "--endversion" }, description = "Last version that should be analysed - do not use together with version and versionOld! ")
-   protected String endversion;
    
    @Option(names = { "-startcommit", "--startcommit" }, description = "First commit that should be analysed - do not use together with commit and commitOld!")
    protected String startcommit;
@@ -117,22 +99,6 @@ public class ExecutionConfigMixin {
       return includes;
    }
 
-   public String getVersion() {
-      return version;
-   }
-
-   public void setVersion(final String version) {
-      this.version = version;
-   }
-
-   public String getVersionOld() {
-      return versionOld;
-   }
-
-   public void setVersionOld(final String versionOld) {
-      this.versionOld = versionOld;
-   }
-
    public void setTestGoal(final String testGoal) {
       this.testGoal = testGoal;
    }
@@ -141,24 +107,8 @@ public class ExecutionConfigMixin {
       return testGoal;
    }
 
-   public String getStartversion() {
-      return startversion;
-   }
-
-   public void setStartversion(final String startversion) {
-      this.startversion = startversion;
-   }
-
-   public String getEndversion() {
-      return endversion;
-   }
-
-   public void setEndversion(final String endversion) {
-      this.endversion = endversion;
-   }
-
    public String getCommit() {
-      return commit != null ? commit : version;
+      return commit;
    }
 
    public void setCommit(String commit) {
@@ -166,7 +116,7 @@ public class ExecutionConfigMixin {
    }
 
    public String getCommitOld() {
-      return commitOld != null ? commitOld : versionOld;
+      return commitOld;
    }
 
    public void setCommitOld(String commitOld) {
@@ -174,7 +124,7 @@ public class ExecutionConfigMixin {
    }
 
    public String getStartcommit() {
-      return startcommit != null ? startcommit : startversion;
+      return startcommit ;
    }
 
    public void setStartcommit(String startcommit) {
@@ -182,7 +132,7 @@ public class ExecutionConfigMixin {
    }
 
    public String getEndcommit() {
-      return endcommit != null ? endcommit : endversion;
+      return endcommit ;
    }
 
    public void setEndcommit(String endcommit) {
@@ -323,7 +273,7 @@ public class ExecutionConfigMixin {
       config.setCommit(getCommit());
       config.setCommitOld(getCommitOld());
       config.setStartcommit(getStartcommit());
-      config.setEndcommit(getEndversion());
+      config.setEndcommit(getEndcommit());
       config.setTestGoal(getTestGoal());
 
       if (getIncludes() != null) {
