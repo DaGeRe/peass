@@ -108,11 +108,12 @@ public class ClazzFileFinder {
          try {
             final CompilationUnit cu = JavaParserProvider.parse(clazzFile);
             for (final Node node : cu.getChildNodes()) {
-               final List<String> nodeChildClazzes = ClazzFinder.getClazzes(node, packageName, ".");
+               final List<String> nodeChildClazzes = ClazzFinder.getEntities(node, packageName, ".");
                clazzes.addAll(nodeChildClazzes);
             }
          } catch (final ParseProblemException e) {
-            throw new RuntimeException("Problem parsing " + clazz + " from " + clazzFile.getAbsolutePath() + " Existing: " + clazzFile.exists(), e);
+            LOG.error("Problem parsing " + clazz + " from " + clazzFile.getAbsolutePath() + " Existing: " + clazzFile.exists());
+            //throw new RuntimeException("Problem parsing " + clazz + " from " + clazzFile.getAbsolutePath() + " Existing: " + clazzFile.exists(), e);
          } catch (final FileNotFoundException e) {
             e.printStackTrace();
          }

@@ -52,7 +52,7 @@ public class ClazzFinder {
       return declaration;
    }
    
-   public static List<String> getClazzes(final Node node, final String parent, final String clazzSeparator) {
+   public static List<String> getEntities(final Node node, final String parent, final String clazzSeparator) {
       final List<String> clazzes = new LinkedList<>();
       if (node instanceof ClassOrInterfaceDeclaration) {
          addClazzesOrInterfaces(node, parent, clazzSeparator, clazzes);
@@ -60,7 +60,7 @@ public class ClazzFinder {
          addEnums(node, parent, clazzSeparator, clazzes);
       } else {
          for (final Node child : node.getChildNodes()) {
-            clazzes.addAll(getClazzes(child, parent, ChangedEntity.CLAZZ_SEPARATOR));
+            clazzes.addAll(getEntities(child, parent, ChangedEntity.CLAZZ_SEPARATOR));
          }
       }
       return clazzes;
@@ -71,7 +71,7 @@ public class ClazzFinder {
       final String enumName = parent.length() > 0 ? parent + clazzSeparator + enumDecl.getName().getIdentifier() : enumDecl.getName().getIdentifier();
       clazzes.add(enumName);
       for (final Node child : node.getChildNodes()) {
-         clazzes.addAll(getClazzes(child, enumName, ChangedEntity.CLAZZ_SEPARATOR));
+         clazzes.addAll(getEntities(child, enumName, ChangedEntity.CLAZZ_SEPARATOR));
       }
    }
 
@@ -80,14 +80,14 @@ public class ClazzFinder {
       final String clazzname = parent.length() > 0 ? parent + clazzSeparator + clazz.getName().getIdentifier() : clazz.getName().getIdentifier();
       clazzes.add(clazzname);
       for (final Node child : node.getChildNodes()) {
-         clazzes.addAll(getClazzes(child, clazzname, ChangedEntity.CLAZZ_SEPARATOR));
+         clazzes.addAll(getEntities(child, clazzname, ChangedEntity.CLAZZ_SEPARATOR));
       }
    }
 
    public static List<String> getClazzes(final CompilationUnit cu) {
       final List<String> clazzes = new LinkedList<>();
       for (final Node node : cu.getChildNodes()) {
-         clazzes.addAll(getClazzes(node, "", "$"));
+         clazzes.addAll(getEntities(node, "", "$"));
       }
       return clazzes;
    }
