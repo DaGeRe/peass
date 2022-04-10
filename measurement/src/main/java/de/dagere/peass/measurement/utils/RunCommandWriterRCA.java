@@ -19,7 +19,7 @@ public class RunCommandWriterRCA extends RunCommandWriter {
 
    public void createSingleMethodCommand(final int versionIndex, final String endversion, final String testcaseName, final int warmup, final int iterations, final int repetitions,
          final int vms) {
-      goal.println("java -cp distribution/target/peass-distribution-0.1-SNAPSHOT.jar " + SearchCauseStarter.class.getCanonicalName() + " "
+      /*goal.println("java -cp distribution/target/peass-distribution-0.1-SNAPSHOT.jar " + SearchCauseStarter.class.getCanonicalName() + " "
             + "-rcaStrategy COMPLETE "
             + "-test " + testcaseName + " "
             + "-warmup " + warmup + " "
@@ -34,7 +34,10 @@ public class RunCommandWriterRCA extends RunCommandWriter {
             + "-folder ../projects/" + name + "/ "
             + "-dependencyfile $PEASS_REPOS/dependencies-final/" + ResultsFolders.STATIC_SELECTION_PREFIX + name + ".json &> measurement_" + endversion.substring(0, 6) + "_"
             + testcaseName
-            + ".txt");
+            + ".txt");*/
+      goal.println("./peasstomcat searchcauseParameterized "
+              + endversion + " "
+              + testcaseName);
    }
 
 }
