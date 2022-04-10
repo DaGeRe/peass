@@ -249,6 +249,7 @@ public class DependencyManager extends KiekerResultManager {
       if (forbiddenMethodCalled(allCalledClasses)) {
          testExcluded = true;
          ForbiddenMethodsLogger.logTestContainingForbiddenMethod(testcase);
+         fakeConfig.getExecutionConfig().getExcludes().add(testcase.getExecutable());
       }
 
       long traceeSizeInMB = getTraceSize(kiekerResultFolders);
@@ -263,8 +264,7 @@ public class DependencyManager extends KiekerResultManager {
    }
    
    private boolean forbiddenMethodCalled(final Map<ChangedEntity, Set<String>> allCalledClasses) {
-      ExecutionConfig executionConfig = testTransformer.getConfig().getExecutionConfig();
-      List<String> forbiddenMethods = executionConfig.getForbiddenMethods();
+      List<String> forbiddenMethods = fakeConfig.getExecutionConfig().getForbiddenMethods();
       
       for (String forbiddenMethod : forbiddenMethods) {
          if (traceContainsMethod(allCalledClasses, forbiddenMethod)) {
