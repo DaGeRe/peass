@@ -369,6 +369,11 @@ public class ExecutionConfig implements Serializable {
    public void setGradleJavaPluginName(String gradleJavaPluginName) {
       this.gradleJavaPluginName = gradleJavaPluginName;
    }
+   
+   @JsonIgnore
+   public String[] getGradleJavaPluginNames() {
+      return gradleJavaPluginName.split(";");
+   }
 
    @JsonIgnore
    public List<String> getAllClazzFolders() {

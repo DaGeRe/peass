@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -203,6 +204,9 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    }
 
    private boolean isJavaPlugin(final String text) {
+      boolean containsCustomPluginName = Arrays.stream(config.getGradleJavaPluginNames())
+            .anyMatch(javaPluginName -> text.contains(javaPluginName));
+      
       if (text.contains("plugin:java") ||
             text.contains("this.id(java)") ||
             text.contains("this.id(java-library)") ||
@@ -211,7 +215,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             text.contains("plugin:com.android.application") ||
             text.contains("application") ||
             text.contains("com.android.application") ||
-            text.contains(config.getGradleJavaPluginName())) {
+            containsCustomPluginName) {
          return true;
       } else {
          return false;
