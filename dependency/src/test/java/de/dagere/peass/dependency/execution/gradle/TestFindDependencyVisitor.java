@@ -25,6 +25,18 @@ public class TestFindDependencyVisitor {
    }
    
    @Test
+   public void testCustomJavaPlugin() throws IOException {
+      File withApplyPlugins = new File(GRADLE_FOLDER, "build_customJavaPlugin.gradle");
+      File buildfile = new File("target/build.gradle");
+      FileUtils.copyFile(withApplyPlugins, buildfile);
+      
+      ExecutionConfig config = new ExecutionConfig();
+      config.setGradleJavaPluginName("abc.java;abc.jaxb");
+      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, config);
+      Assert.assertTrue(visitor.isUseJava());
+   }
+   
+   @Test
    public void testApplication() throws IOException {
       File withApplyPlugins = new File(GRADLE_FOLDER, "build-application.gradle");
       File buildfile = new File("target/build.gradle");
