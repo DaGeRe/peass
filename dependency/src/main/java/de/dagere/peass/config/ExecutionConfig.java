@@ -56,6 +56,7 @@ public class ExecutionConfig implements Serializable {
    private String testExecutor = "default";
    
    private String gradleJavaPluginName = "java";
+   private String gradleSpringBootPluginName = "org.springframework.boot";
 
    private String properties;
 
@@ -373,6 +374,20 @@ public class ExecutionConfig implements Serializable {
    @JsonIgnore
    public String[] getGradleJavaPluginNames() {
       return gradleJavaPluginName.split(";");
+   }
+   
+   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+   public String getGradleSpringBootPluginName() {
+      return gradleSpringBootPluginName;
+   }
+   
+   public void setGradleSpringBootPluginName(String gradleSpringBootPluginName) {
+      this.gradleSpringBootPluginName = gradleSpringBootPluginName;
+   }
+   
+   @JsonIgnore
+   public String[] getGradleSpringBootPluginNames() {
+      return gradleSpringBootPluginName.split(";");
    }
 
    @JsonIgnore

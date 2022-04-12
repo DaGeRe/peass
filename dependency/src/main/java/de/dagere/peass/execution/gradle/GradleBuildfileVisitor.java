@@ -52,7 +52,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private boolean hasVersion = true;
    private boolean subprojectJava = false;
    private List<String> gradleFileContents;
-   
+
    private final ExecutionConfig config;
 
    public GradleBuildfileVisitor(final File buildfile, ExecutionConfig config) throws IOException {
@@ -198,15 +198,26 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private void checkPluginName(final String text) {
       if (isJavaPlugin(text)) {
          useJava = true;
-      } else if (text.contains("org.springframework.boot")) {
+      } else if (isSpringBootPlugin(text)) {
          useSpringBoot = true;
+      }
+   }
+
+   private boolean isSpringBootPlugin(final String text) {
+      boolean containsCustomPluginName = Arrays.stream(config.getGradleSpringBootPluginNames())
+            .anyMatch(javaPluginName -> text.contains(javaPluginName));
+
+      if (containsCustomPluginName || text.contains("org.springframework.boot")) {
+         return true;
+      } else {
+         return false;
       }
    }
 
    private boolean isJavaPlugin(final String text) {
       boolean containsCustomPluginName = Arrays.stream(config.getGradleJavaPluginNames())
             .anyMatch(javaPluginName -> text.contains(javaPluginName));
-      
+
       if (text.contains("plugin:java") ||
             text.contains("this.id(java)") ||
             text.contains("this.id(java-library)") ||
