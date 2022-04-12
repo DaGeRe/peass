@@ -205,7 +205,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
    private boolean isSpringBootPlugin(final String text) {
       boolean containsCustomPluginName = Arrays.stream(config.getGradleSpringBootPluginNames())
-            .anyMatch(javaPluginName -> text.contains(javaPluginName));
+            .anyMatch(springBootPluginName -> text.contains(springBootPluginName));
 
       if (containsCustomPluginName || text.contains("org.springframework.boot")) {
          return true;

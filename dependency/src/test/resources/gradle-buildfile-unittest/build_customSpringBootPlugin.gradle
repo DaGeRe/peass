@@ -1,0 +1,9 @@
+plugins {
+    id 'abc.grpc'
+    id 'abc.spring-boot'
+}
+
+dependencies {
+    testImplementation libs.bundles.jackson
+    testImplementation libs.bundles.test
+}

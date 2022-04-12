@@ -105,6 +105,9 @@ public class ExecutionConfig implements Serializable {
 
       this.clazzFolders = other.clazzFolders;
       this.testClazzFolders = other.testClazzFolders;
+      
+      this.gradleJavaPluginName = other.gradleJavaPluginName;
+      this.gradleSpringBootPluginName = other.gradleSpringBootPluginName;
    }
 
    public ExecutionConfig(final long timeoutInMinutes) {

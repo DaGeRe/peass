@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.execution.gradle.GradleBuildfileVisitor;
 
-public class TestFindDependencyVisitor {
+public class TestGradleBuildfileVisitor {
    
    public static final File GRADLE_FOLDER = new File("src/test/resources/gradle-buildfile-unittest");
    
@@ -34,6 +34,18 @@ public class TestFindDependencyVisitor {
       config.setGradleJavaPluginName("abc.java;abc.jaxb");
       GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, config);
       Assert.assertTrue(visitor.isUseJava());
+   }
+   
+   @Test
+   public void testCustomSpringBootPlugin() throws IOException {
+      File withApplyPlugins = new File(GRADLE_FOLDER, "build_customSpringBootPlugin.gradle");
+      File buildfile = new File("target/build.gradle");
+      FileUtils.copyFile(withApplyPlugins, buildfile);
+      
+      ExecutionConfig config = new ExecutionConfig();
+      config.setGradleSpringBootPluginName("abc.spring-boot");
+      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, config);
+      Assert.assertTrue(visitor.isUseSpringBoot());
    }
    
    @Test

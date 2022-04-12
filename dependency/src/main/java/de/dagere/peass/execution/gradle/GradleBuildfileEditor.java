@@ -81,7 +81,10 @@ public class GradleBuildfileEditor {
       }
 
       if (visitor.isUseSpringBoot()) {
+         LOG.info("Adding spring boot ext");
          GradleParseUtil.addJUnitVersionSpringBoot(visitor);
+      } else {
+         LOG.info("Did not find spring boot");
       }
 
       GradleParseUtil.removeExclusions(visitor);
