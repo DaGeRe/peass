@@ -204,6 +204,10 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    }
 
    private boolean isSpringBootPlugin(final String text) {
+      LOG.debug("Checking plugin name " + text);
+      LOG.debug("Names: {}", config.getGradleSpringBootPluginNames());
+      
+      
       boolean containsCustomPluginName = Arrays.stream(config.getGradleSpringBootPluginNames())
             .anyMatch(springBootPluginName -> text.contains(springBootPluginName));
 
