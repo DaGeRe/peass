@@ -32,8 +32,8 @@ public class GradleBuildfileEditor {
       this.modules = modules;
    }
 
-   public FindDependencyVisitor addDependencies(final File tempFolder) {
-      FindDependencyVisitor visitor = null;
+   public GradleBuildfileVisitor addDependencies(final File tempFolder) {
+      GradleBuildfileVisitor visitor = null;
       try {
          LOG.debug("Editing buildfile: {}", buildfile.getAbsolutePath());
          visitor = GradleParseUtil.parseBuildfile(buildfile, testTransformer.getConfig().getExecutionConfig());
@@ -63,7 +63,7 @@ public class GradleBuildfileEditor {
       for (File parentProject : parentProjects) {
          File parentBuildfile = GradleParseHelper.findGradleFile(parentProject);
          LOG.debug("Reading " + parentBuildfile);
-         FindDependencyVisitor parentVisitor = GradleParseUtil.parseBuildfile(parentBuildfile, testTransformer.getConfig().getExecutionConfig());
+         GradleBuildfileVisitor parentVisitor = GradleParseUtil.parseBuildfile(parentBuildfile, testTransformer.getConfig().getExecutionConfig());
          if (parentVisitor.isSubprojectJava()) {
             isUseJava = true;
          }
@@ -71,7 +71,7 @@ public class GradleBuildfileEditor {
       return isUseJava;
    }
 
-   private void editGradlefileContents(final File tempFolder, final FindDependencyVisitor visitor) {
+   private void editGradlefileContents(final File tempFolder, final GradleBuildfileVisitor visitor) {
       if (visitor.getBuildTools() != -1) {
          GradleParseUtil.updateBuildTools(visitor);
       }
@@ -91,7 +91,7 @@ public class GradleBuildfileEditor {
       addKiekerLine(tempFolder, visitor);
    }
 
-   private void addDependencies(final FindDependencyVisitor visitor) {
+   private void addDependencies(final GradleBuildfileVisitor visitor) {
       boolean isAddJunit3 = testTransformer.isJUnit3();
       boolean isExcludeLog4j = testTransformer.getConfig().getExecutionConfig().isExcludeLog4j();
       if (visitor.getDependencyLine() != -1) {
@@ -120,7 +120,7 @@ public class GradleBuildfileEditor {
       }
    }
 
-   public void addKiekerLine(final File tempFolder, final FindDependencyVisitor visitor) {
+   public void addKiekerLine(final File tempFolder, final GradleBuildfileVisitor visitor) {
       if (testTransformer.getConfig().isUseKieker()) {
          final String javaagentArgument = new ArgLineBuilder(testTransformer, buildfile.getParentFile()).buildArglineGradle(tempFolder);
          addArgLine(visitor, javaagentArgument);
@@ -131,7 +131,7 @@ public class GradleBuildfileEditor {
       }
    }
 
-   private void addArgLine(final FindDependencyVisitor visitor, final String javaagentArgument) {
+   private void addArgLine(final GradleBuildfileVisitor visitor, final String javaagentArgument) {
       if (visitor.getAndroidLine() != -1) {
          if (visitor.getUnitTestsAll() != -1) {
             visitor.addLine(visitor.getUnitTestsAll() - 1, javaagentArgument);

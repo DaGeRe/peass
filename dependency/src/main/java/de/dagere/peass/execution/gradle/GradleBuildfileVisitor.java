@@ -29,9 +29,9 @@ import org.codehaus.groovy.ast.stmt.Statement;
 
 import de.dagere.peass.config.ExecutionConfig;
 
-public class FindDependencyVisitor extends CodeVisitorSupport {
+public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
-   private static final Logger LOG = LogManager.getLogger(FindDependencyVisitor.class);
+   private static final Logger LOG = LogManager.getLogger(GradleBuildfileVisitor.class);
 
    private int offset = 0;
    private int dependencyLine = -1;
@@ -54,7 +54,7 @@ public class FindDependencyVisitor extends CodeVisitorSupport {
    
    private final ExecutionConfig config;
 
-   public FindDependencyVisitor(final File buildfile, ExecutionConfig config) throws IOException {
+   public GradleBuildfileVisitor(final File buildfile, ExecutionConfig config) throws IOException {
       this.config = config;
       gradleFileContents = Files.readAllLines(Paths.get(buildfile.toURI()));
 

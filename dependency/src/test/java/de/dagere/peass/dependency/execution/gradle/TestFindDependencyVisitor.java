@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.ExecutionConfig;
-import de.dagere.peass.execution.gradle.FindDependencyVisitor;
+import de.dagere.peass.execution.gradle.GradleBuildfileVisitor;
 
 public class TestFindDependencyVisitor {
    
@@ -20,7 +20,7 @@ public class TestFindDependencyVisitor {
       File buildfile = new File("target/build.gradle");
       FileUtils.copyFile(withApplyPlugins, buildfile);
       
-      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile, new ExecutionConfig());
+      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, new ExecutionConfig());
       Assert.assertTrue(visitor.isUseJava());
    }
    
@@ -30,7 +30,7 @@ public class TestFindDependencyVisitor {
       File buildfile = new File("target/build.gradle");
       FileUtils.copyFile(withApplyPlugins, buildfile);
       
-      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile, new ExecutionConfig());
+      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, new ExecutionConfig());
       Assert.assertTrue(visitor.isUseJava());
    }
    
@@ -40,7 +40,7 @@ public class TestFindDependencyVisitor {
       File buildfile = new File("target/build.gradle");
       FileUtils.copyFile(withApplyPlugins, buildfile);
       
-      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile, new ExecutionConfig());
+      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, new ExecutionConfig());
       Assert.assertTrue(visitor.isUseJava());
    }
    
@@ -50,7 +50,7 @@ public class TestFindDependencyVisitor {
       File buildfile = new File("target/build.gradle");
       FileUtils.copyFile(withApplyPlugins, buildfile);
       
-      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile, new ExecutionConfig());
+      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, new ExecutionConfig());
       Assert.assertTrue(visitor.isUseJava());
    }
 }
