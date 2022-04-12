@@ -67,11 +67,6 @@ public class FakeVersionIterator extends VersionIterator {
    }
    
    @Override
-   public boolean goToNextCommitSoft() {
-      throw new RuntimeException("Not implemented on purpose - this is only a testing mock with limited functionality.");
-   }
-   
-   @Override
    public VersionDiff getChangedClasses(final File projectFolder2, final List<File> genericModules, final String lastVersion, final ExecutionConfig config) {
       throw new RuntimeException("Not implemented on purpose - this is only a testing mock with limited functionality.");
    }

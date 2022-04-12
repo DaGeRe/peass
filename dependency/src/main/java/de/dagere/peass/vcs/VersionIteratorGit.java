@@ -88,14 +88,6 @@ public class VersionIteratorGit extends VersionIterator {
    }
 
    @Override
-   public boolean goToNextCommitSoft() {
-      tagid++;
-      final String nextTag = entries.get(tagid).getTag();
-      GitUtils.goToTagSoft(nextTag, projectFolder);
-      return true;
-   }
-
-   @Override
    public boolean goToPreviousCommit() {
       if (tagid > 0) {
          tagid--;

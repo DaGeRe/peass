@@ -443,31 +443,6 @@ public final class GitUtils {
       return worked;
    }
 
-   public static void goToTagSoft(final String tag, final File projectFolder) {
-      try {
-         synchronized (projectFolder) {
-            LOG.debug("Going to tag {} folder: {}", tag, projectFolder.getAbsolutePath());
-            final Process pReset = Runtime.getRuntime().exec("git reset --hard", new String[0], projectFolder);
-            final String out = StreamGobbler.getFullProcess(pReset, false);
-            pReset.waitFor();
-
-            final String gitCommand = "git checkout " + tag;
-            LOG.trace(gitCommand);
-            final Process pCheckout = Runtime.getRuntime().exec(gitCommand, new String[0], projectFolder);
-            final String outCheckout = StreamGobbler.getFullProcess(pCheckout, false);
-            pCheckout.waitFor();
-
-            System.out.println(out);
-            System.out.println(outCheckout);
-            LOG.trace("Ausführung beendet");
-         }
-      } catch (final IOException e) {
-         e.printStackTrace();
-      } catch (final InterruptedException e) {
-         e.printStackTrace();
-      }
-   }
-
    public static String getURL(final File projectFolder) {
       try {
          final Process process = Runtime.getRuntime().exec("git config --get remote.origin.url", new String[0], projectFolder);
