@@ -10,8 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.kopeme.datastorage.ParamNameHelper;
-import de.dagere.kopeme.junit.rule.KoPeMeRule;
-import de.dagere.kopeme.junit.rule.KoPeMeStandardRuleStatement;
+import de.dagere.kopeme.junit.rule.annotations.KoPeMeConstants;
 import de.dagere.peass.execution.utils.CommandConcatenator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
@@ -39,7 +38,7 @@ public class ProcessBuilderHelper {
       overwriteEnvVars(pb);
 
       if (chosenIndex != -1) {
-         pb.environment().put(KoPeMeStandardRuleStatement.KOPEME_CHOSEN_PARAMETER_INDEX, Integer.toString(chosenIndex));
+         pb.environment().put(KoPeMeConstants.KOPEME_CHOSEN_PARAMETER_INDEX, Integer.toString(chosenIndex));
       }
 
       pb.directory(currentFolder);
@@ -119,7 +118,7 @@ public class ProcessBuilderHelper {
 
    public void parseParams(String params) {
       if (params != null) {
-         if (params.matches(KoPeMeRule.JUNIT_PARAMETERIZED + ParamNameHelper.PARAM_VALUE_SEPARATOR + "[0-9]+")) {
+         if (params.matches(KoPeMeConstants.JUNIT_PARAMETERIZED + ParamNameHelper.PARAM_VALUE_SEPARATOR + "[0-9]+")) {
             String indexString = params.substring(params.indexOf(ParamNameHelper.PARAM_VALUE_SEPARATOR) + 1);
             chosenIndex = Integer.parseInt(indexString);
          }
