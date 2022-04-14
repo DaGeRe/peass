@@ -146,7 +146,12 @@
       the develop branch; in the main branch, releases should be used -->
     <dependency>
       <groupId>de.dagere.kopeme</groupId>
-      <artifactId>kopeme-junit</artifactId>
+      <artifactId>kopeme-junit5</artifactId>
+      <version>${kopeme.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>de.dagere.kopeme</groupId>
+      <artifactId>kopeme-junit4</artifactId>
       <version>${kopeme.version}</version>
     </dependency>
     <dependency>
