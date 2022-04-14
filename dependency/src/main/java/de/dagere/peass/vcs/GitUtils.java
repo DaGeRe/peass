@@ -440,6 +440,9 @@ public final class GitUtils {
       final String outCheckout = StreamGobbler.getFullProcess(pCheckout, false);
       int worked = pCheckout.waitFor();
       System.out.println(outCheckout);
+      if (outCheckout.toLowerCase().contains("smudge filter lfs failed")) {
+         throw new RuntimeException("Checkout did not work. Smudge filter lfs failed");
+      }
       return worked;
    }
 
