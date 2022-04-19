@@ -84,10 +84,10 @@ public class ExecutionConfigMixin {
    public String properties;
 
    @Option(names = { "-gradleJavaPluginName", "--gradleJavaPluginName" }, description = "Sets a custom gradle Java Plugin name")
-   public String gradleJavaPluginName;
+   public String gradleJavaPluginName = ExecutionConfig.GRADLE_JAVA_DEFAULT_NAME;
 
    @Option(names = { "-gradleSpringBootPluginName", "--gradleSpringBootPluginName" }, description = "Sets a custom gradle SpringBoot Plugin name")
-   public String gradleSpringBootPluginName;
+   public String gradleSpringBootPluginName = ExecutionConfig.GRADLE_SPRING_DEFAULT_NAME;
 
    public String getGradleJavaPluginName() {
       return gradleJavaPluginName;

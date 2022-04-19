@@ -18,6 +18,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ExecutionConfig implements Serializable {
 
+   public static final String GRADLE_JAVA_DEFAULT_NAME = "java";
+
+   public static final String GRADLE_SPRING_DEFAULT_NAME = "org.springframework.boot";
+
    public static final String CLASSPATH_SEPARATOR = ":";
 
    private static final long serialVersionUID = -6642358125854337047L;
@@ -55,8 +59,8 @@ public class ExecutionConfig implements Serializable {
    private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
    private String testExecutor = "default";
    
-   private String gradleJavaPluginName = "java";
-   private String gradleSpringBootPluginName = "org.springframework.boot";
+   private String gradleJavaPluginName = GRADLE_JAVA_DEFAULT_NAME;
+   private String gradleSpringBootPluginName = GRADLE_SPRING_DEFAULT_NAME;
 
    private String properties;
 
