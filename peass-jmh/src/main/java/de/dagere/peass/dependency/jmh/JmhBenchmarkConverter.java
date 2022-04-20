@@ -3,7 +3,7 @@ package de.dagere.peass.dependency.jmh;
 import java.io.File;
 import java.util.Iterator;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 

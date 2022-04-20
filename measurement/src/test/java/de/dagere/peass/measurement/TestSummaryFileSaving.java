@@ -2,7 +2,7 @@ package de.dagere.peass.measurement;
 
 import java.io.File;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.aspectj.util.FileUtil;
 import org.junit.Assert;

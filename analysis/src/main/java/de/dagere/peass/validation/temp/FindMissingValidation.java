@@ -3,7 +3,7 @@ package de.dagere.peass.validation.temp;
 import java.io.File;
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

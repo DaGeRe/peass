@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 

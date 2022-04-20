@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map.Entry;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

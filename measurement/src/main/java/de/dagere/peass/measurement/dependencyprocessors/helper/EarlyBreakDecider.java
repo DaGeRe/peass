@@ -1,6 +1,6 @@
 package de.dagere.peass.measurement.dependencyprocessors.helper;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.logging.log4j.LogManager;

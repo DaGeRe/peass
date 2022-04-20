@@ -7,7 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.apache.commons.io.FileUtils;
 

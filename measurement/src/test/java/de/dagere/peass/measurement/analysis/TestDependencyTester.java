@@ -2,7 +2,7 @@ package de.dagere.peass.measurement.analysis;
 
 import java.io.File;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.junit.Assert;
 import org.junit.Rule;
