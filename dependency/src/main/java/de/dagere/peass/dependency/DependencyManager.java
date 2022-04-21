@@ -336,15 +336,8 @@ public class DependencyManager extends KiekerResultManager {
    }
 
    public File getTestclazzFolder(final Entry<TestCase, Set<String>> entry) throws FileNotFoundException, IOException, XmlPullParserException {
-      final File testclazzFolder;
-      if (entry.getKey().getModule().equals("")) {
-         final File xmlFileFolder = getXMLFileFolder(folders.getProjectFolder());
-         testclazzFolder = new File(xmlFileFolder, entry.getKey().getClazz());
-      } else {
-         final File moduleFolder = new File(folders.getProjectFolder(), entry.getKey().getModule());
-         final File xmlFileFolder = getXMLFileFolder(moduleFolder);
-         testclazzFolder = new File(xmlFileFolder, entry.getKey().getClazz());
-      }
+      File moduleResultFolder = KiekerFolderUtil.getModuleResultFolder(folders, entry.getKey());
+      File testclazzFolder = new File(moduleResultFolder, entry.getKey().getClazz());
       return testclazzFolder;
    }
 
