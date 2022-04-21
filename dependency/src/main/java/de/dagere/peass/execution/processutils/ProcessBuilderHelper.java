@@ -89,7 +89,8 @@ public class ProcessBuilderHelper {
          count = Integer.parseInt(result.trim());
       } catch (NumberFormatException e) {
          // This is expected on systems without ps and will not be logged
-         if (!e.getMessage().equals("For input string: \"bash: line 1: ps: command not found0\"")) {
+         if (!e.getMessage().equals("For input string: \"bash: line 1: ps: command not found0\"")
+               && !e.getMessage().equals("For input string: \"0bash: line 1: ps: command not found\"")) {
             e.printStackTrace();
          }
       } catch (IOException e) {
