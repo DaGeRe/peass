@@ -42,7 +42,7 @@ public class MavenPomUtil {
    public static final String COMPILER_ARTIFACTID = "maven-compiler-plugin";
 
    public static final String COMPILER_PLUGIN_VERSION = "3.10.1";
-   
+
    public static final String JUPITER_VERSION = "5.8.2";
 
    private static final Logger LOG = LogManager.getLogger(MavenPomUtil.class);
@@ -132,7 +132,7 @@ public class MavenPomUtil {
     * @throws IOException
     */
    public static List<String> getDependentModules(final File projectFolder, final String pl) throws IOException {
-      ProcessBuilder pb = new ProcessBuilder(EnvironmentVariables.fetchMavenCallGeneric(), 
+      ProcessBuilder pb = new ProcessBuilder(EnvironmentVariables.fetchMavenCallGeneric(),
             "-B", "pre-clean", "-pl", pl, "-am");
       pb.directory(projectFolder);
       String output = StreamGobbler.getFullProcess(pb.start(), false);

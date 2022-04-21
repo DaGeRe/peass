@@ -103,5 +103,10 @@ public class GradleParseUtil {
 
    public static void addJUnitVersionSpringBoot(final GradleBuildfileVisitor visitor) {
       visitor.getLines().add("ext['junit-jupiter.version']='" + MavenPomUtil.JUPITER_VERSION + "'");
+      
+      // This is only a temporary solution; KoPeMe should use JSON instead XML as measurement data representation format
+      visitor.getLines().add("ext['glassfish-jaxb.version']='3.0.2'");
+      visitor.getLines().add("ext['jakarta-xml-bind.version']='3.0.1'");
+      visitor.getLines().add("ext['jakarta-activation.version']='2.0.1'");
    }
 }
