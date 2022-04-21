@@ -56,7 +56,9 @@ public class KiekerResultManager {
 
    public KiekerResultManager(final PeassFolders folders, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       this.folders = folders;
-      fakeConfig = new MeasurementConfig(1, executionConfig, kiekerConfig);
+      ExecutionConfig fakeExecutionConfig = new ExecutionConfig(executionConfig);
+      KiekerConfig fakeKiekerConfig = new KiekerConfig(kiekerConfig);
+      fakeConfig = new MeasurementConfig(1, fakeExecutionConfig, fakeKiekerConfig);
       fakeConfig.setIterations(1);
       fakeConfig.setWarmup(0);
       // Structure discovery runs never need adaptive monitoring
