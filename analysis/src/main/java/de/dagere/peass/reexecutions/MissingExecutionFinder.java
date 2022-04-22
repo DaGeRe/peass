@@ -21,7 +21,6 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.measurement.utils.CreateScriptStarter;
-import jakarta.xml.bind.JAXBException;
 
 public class MissingExecutionFinder {
 
@@ -40,7 +39,7 @@ public class MissingExecutionFinder {
    }
 
    public void findMissing(final File[] dataFolders)
-         throws JAXBException, FileNotFoundException, IOException {
+         throws FileNotFoundException, IOException {
 
       int countAll = tests.getAllExecutions();
 
@@ -52,7 +51,7 @@ public class MissingExecutionFinder {
             LOG.error("Datafolder {} does not exist - adding ALL executions", dataFolder);
          }
       }
-      
+
       System.out.println();
       System.out.println("Missing Tests");
 
@@ -66,12 +65,12 @@ public class MissingExecutionFinder {
 
    }
 
-   public void removeFinishedExecutions(final File folder) throws JAXBException {
+   public void removeFinishedExecutions(final File folder) {
       removeSlurmExecutions(folder);
       removeXMLExecutions(folder);
    }
 
-   private void removeXMLExecutions(final File folder) throws JAXBException {
+   private void removeXMLExecutions(final File folder) {
       for (final File measurementFile : folder.listFiles()) {
          if (measurementFile.getName().endsWith(".json")) {
             LOG.info("File:" + measurementFile);
@@ -91,7 +90,7 @@ public class MissingExecutionFinder {
       }
    }
 
-   private void removeSlurmExecutions(final File folder) throws JAXBException {
+   private void removeSlurmExecutions(final File folder) {
       ChangeReader reader = new ChangeReader(folder.getName(), tests);
       reader.readFile(folder);
       for (Entry<String, TestcaseData> entry : reader.getAllData().getData().entrySet()) {

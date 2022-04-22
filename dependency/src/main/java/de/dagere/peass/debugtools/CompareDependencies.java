@@ -15,14 +15,13 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.utils.Constants;
-import jakarta.xml.bind.JAXBException;
 /**
  * Compares two dependency files in order to find whether one is missing some testcases
  * @author reichelt
  *
  */
 public class CompareDependencies {
-	public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
+	public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
 		final File oldDependenciesFile = new File(args[0]);
 		final File newDependenciesFile = new File(args[1]);
 

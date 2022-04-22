@@ -18,7 +18,6 @@ import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.measurement.utils.RunCommandWriter;
 import de.dagere.peass.measurement.utils.RunCommandWriterRCA;
 import de.dagere.peass.utils.Constants;
-import jakarta.xml.bind.JAXBException;
 
 /**
  * If a measurement is disturbed, e.g. by operation system tasks, it is likely to identify two executions as changed. Therefore, it is safer to re-execute the same measurements
@@ -31,7 +30,7 @@ public class FindChangeExecutions {
 
    private static final String NAME = "reexecute-change";
 
-   public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final RepoFolders folders = new RepoFolders();
       final File reexecuteFolder = new File(folders.getResultsFolder(), NAME);
       reexecuteFolder.mkdirs();
@@ -48,7 +47,7 @@ public class FindChangeExecutions {
    }
 
    public static void findProjectExecutions(final File reexecuteFolder, final String project, final File projectChangeFile, final File executionFile)
-         throws FileNotFoundException, JAXBException, IOException, JsonParseException, JsonMappingException {
+         throws FileNotFoundException, IOException, JsonParseException, JsonMappingException {
       System.out.println("Reading: " + project);
       final File reexecuteProject = new File(reexecuteFolder, "reexecute-change-" + project + ".sh");
       final PrintStream goal = new PrintStream(new FileOutputStream(reexecuteProject));

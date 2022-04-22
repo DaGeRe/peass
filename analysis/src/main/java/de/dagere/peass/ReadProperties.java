@@ -37,7 +37,6 @@ import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.measurement.dataloading.VersionSorter;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
-import jakarta.xml.bind.JAXBException;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -82,7 +81,7 @@ public class ReadProperties implements Callable<Void> {
       out = resultFile;
    }
 
-   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException, JAXBException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final CommandLine commandLine = new CommandLine(new ReadProperties());
       System.exit(commandLine.execute(args));
    }

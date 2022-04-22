@@ -15,7 +15,6 @@ import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.config.parameters.MeasurementConfigurationMixin;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
-import jakarta.xml.bind.JAXBException;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -55,7 +54,7 @@ public class ContinuousExecutionStarter implements Callable<Void> {
    private final boolean useViews = true;
    private final boolean generateCoverageSelection = true;
 
-   public static void main(final String[] args) throws InterruptedException, IOException, JAXBException {
+   public static void main(final String[] args) throws InterruptedException, IOException {
       final ContinuousExecutionStarter command = new ContinuousExecutionStarter();
       final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);

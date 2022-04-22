@@ -2,7 +2,6 @@ package de.dagere.peass.analysis.data;
 
 import java.io.File;
 
-import jakarta.xml.bind.JAXBException;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -14,7 +13,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 public class TestCaseTest {
    
    @Test
-   public void testConstructionWithChunk() throws JAXBException {
+   public void testConstructionWithChunk() {
       File dataFile = new File("src/test/resources/testcaseTest/ExampleTest_test(JUNIT_PARAMETERIZED-0).xml");
       Kopemedata kopemedata = JSONDataLoader.loadData(dataFile);
       

@@ -17,7 +17,6 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
-import jakarta.xml.bind.JAXBException;
 
 /**
  * The goal was to derive patterns from simple properties. This did not work out, therefore this class will be removed in the future
@@ -28,7 +27,7 @@ import jakarta.xml.bind.JAXBException;
 public class ReadAllProperties {
    public static final boolean readAll = System.getenv("read_all") != null ? Boolean.parseBoolean(System.getenv("read_all")) : false;
 
-   public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, JsonGenerationException, IOException, InterruptedException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, JsonGenerationException, IOException, InterruptedException {
       final RepoFolders folders = new RepoFolders();
       
       final ExecutorService service = Executors.newFixedThreadPool(9);
@@ -59,7 +58,7 @@ public class ReadAllProperties {
    }
 
    static void getProperties(final RepoFolders folders, final String project)
-         throws JAXBException, IOException, JsonParseException, JsonMappingException, JsonGenerationException {
+         throws IOException, JsonParseException, JsonMappingException, JsonGenerationException {
       final File viewFolder = new File(folders.getAllViewFolder(), "views_" + project);
 
       final File executionFile = new File(folders.getDependencyFolder(), ResultsFolders.TRACE_SELECTION_PREFIX + project + ".json");

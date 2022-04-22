@@ -23,7 +23,6 @@ import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
 import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
-import jakarta.xml.bind.JAXBException;
 
 /**
  * Read the overall data of the specified testcase (i.e. the values from the KoPeMe outside-measurement, no the Kieker in-method-measurement)
@@ -37,7 +36,7 @@ public class KoPeMeTreeConverter {
    private final DescriptiveStatistics statisticsCurrent = new DescriptiveStatistics();
    private final DescriptiveStatistics statisticsOld = new DescriptiveStatistics();
 
-   public KoPeMeTreeConverter(final CauseSearchFolders folders, final String version, final TestCase testcase) throws JAXBException {
+   public KoPeMeTreeConverter(final CauseSearchFolders folders, final String version, final TestCase testcase) {
       node = new GraphNode("overall", "public overall.overall()", "public overall.overall()");
       node.setVmValues(new MeasuredValues());
       node.setVmValuesPredecessor(new MeasuredValues());
@@ -45,11 +44,11 @@ public class KoPeMeTreeConverter {
       readStatistics(folders, version, testcase);
    }
 
-   public KoPeMeTreeConverter(final PeassFolders folders, final String version, final TestCase testcase) throws JAXBException {
+   public KoPeMeTreeConverter(final PeassFolders folders, final String version, final TestCase testcase) {
       this(folders.getDetailResultFolder(), version, testcase);
    }
 
-   public KoPeMeTreeConverter(final File detailResultFolder, final String version, final TestCase testcase) throws JAXBException {
+   public KoPeMeTreeConverter(final File detailResultFolder, final String version, final TestCase testcase) {
       File versionFolder = new File(detailResultFolder, testcase.getClazz() + File.separator + version);
       if (versionFolder.exists()) {
          node = new GraphNode("overall", "public overall.overall()", "public overall.overall()");
@@ -68,7 +67,7 @@ public class KoPeMeTreeConverter {
       }
    }
 
-   private void readStatistics(final CauseSearchFolders folders, final String version, final TestCase testcase) throws JAXBException {
+   private void readStatistics(final CauseSearchFolders folders, final String version, final TestCase testcase) {
       for (File versionFolder : folders.getArchiveResultFolder(version, testcase).listFiles()) {
          File levelFolder = new File(versionFolder, "0"); // For the beginning, just analyze topmost KoPeMe-measurement
          for (File kopemeFile : levelFolder.listFiles((FilenameFilter) new WildcardFileFilter(testcase.getMethod() + "*.xml"))) {
@@ -83,8 +82,7 @@ public class KoPeMeTreeConverter {
       node.setValuesPredecessor(statisticsOld.getValues());
    }
 
-   private void readFile(final String version, final TestCase testcase, final String currentVersion, final File kopemeFile)
-         throws JAXBException {
+   private void readFile(final String version, final TestCase testcase, final String currentVersion, final File kopemeFile) {
       String stringIndex = kopemeFile.getName().substring(testcase.getMethodWithParams().length() + 1, kopemeFile.getName().lastIndexOf('_'));
       if (!stringIndex.matches("[0-9]+")) {
          LOG.error("Could not read file: {}", kopemeFile);

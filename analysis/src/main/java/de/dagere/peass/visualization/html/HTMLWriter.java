@@ -17,7 +17,6 @@ import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.visualization.GraphNode;
 import de.dagere.peass.visualization.NodeDashboardWriter;
 import de.dagere.peass.visualization.RCAGenerator;
-import jakarta.xml.bind.JAXBException;
 
 public class HTMLWriter {
    
@@ -34,7 +33,7 @@ public class HTMLWriter {
       this.kopemeConvertedData = kopemeConvertedData;
    }
 
-   public void writeHTML() throws IOException, JsonProcessingException, FileNotFoundException, JAXBException {
+   public void writeHTML() throws IOException, JsonProcessingException, FileNotFoundException {
       final File output = getOutputHTML(data);
       final String jsName = output.getName().replace(".html", ".js").replaceAll("#", "_");
 

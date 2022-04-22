@@ -13,13 +13,12 @@ import de.dagere.peass.analysis.all.RepoFolders;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.reexecutions.MissingExecutionFinder;
 import de.dagere.peass.utils.Constants;
-import jakarta.xml.bind.JAXBException;
 
 public class FindMissingValidation {
 
    private static final Logger LOG = LogManager.getLogger(FindMissingValidation.class);
 
-   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException, JAXBException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final RepoFolders folders = new RepoFolders();
 
       File reexecuteFolder = new File("results/reexecute-validation");

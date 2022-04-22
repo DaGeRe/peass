@@ -16,7 +16,6 @@ import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
-import jakarta.xml.bind.JAXBException;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -34,13 +33,13 @@ public class FindMissingExecutionStarter implements Callable<Void> {
 
    private static final Logger LOG = LogManager.getLogger(FindMissingExecutionStarter.class);
 
-   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException, JAXBException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       CommandLine commandLine = new CommandLine(new FindMissingExecutionStarter());
       commandLine.execute(args);
 
    }
 
-   private void findMissing(final String project, final File reexecuteFolder, final RepoFolders folders) throws IOException, JsonParseException, JsonMappingException, JAXBException {
+   private void findMissing(final String project, final File reexecuteFolder, final RepoFolders folders) throws IOException, JsonParseException, JsonMappingException {
       final File staticSelectionFile = new File(folders.getDependencyFolder(), ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
       final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
       VersionComparator.setDependencies(dependencies);

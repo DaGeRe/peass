@@ -23,7 +23,6 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.utils.Constants;
-import jakarta.xml.bind.JAXBException;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
@@ -49,7 +48,7 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
    @Option(names = { "-executionFile", "--executionFile" }, description = "executionFile")
    File executionFile;
 
-   public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final CommandLine commandLine = new CommandLine(new DependencyStatisticAnalyzer());
       commandLine.execute(args);
    }
