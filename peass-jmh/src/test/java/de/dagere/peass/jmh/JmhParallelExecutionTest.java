@@ -51,7 +51,7 @@ public class JmhParallelExecutionTest {
       waitForResult(threads);
 
       for (int i = 0; i < 2; i++) {
-         File expectedFile = new File(BASE_FOLDER, "jmh-" + i + "_peass/measurementsTemp/de.dagere.peass/example/de.dagere.peass/testMethod.xml");
+         File expectedFile = new File(BASE_FOLDER, "jmh-" + i + "_peass/measurementsTemp/de.dagere.peass/example/de.dagere.peass/testMethod.json");
          MatcherAssert.assertThat(expectedFile, FileMatchers.anExistingFile());
       }
    }

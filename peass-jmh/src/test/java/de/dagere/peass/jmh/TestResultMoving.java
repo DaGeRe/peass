@@ -44,7 +44,7 @@ public class TestResultMoving {
       new JmhResultMover(folders, new MeasurementConfig(1)).moveToMethodFolder(testcase, jsonResultFile);
 
       // TODO Assert correct file and fix JmhResultMover
-      File expectedXMLFile = new File(folders.getTempMeasurementFolder(), "de.dagere.peass/example/de.dagere.peass.ExampleBenchmark/testMethod.xml");
+      File expectedXMLFile = new File(folders.getTempMeasurementFolder(), "de.dagere.peass/example/de.dagere.peass.ExampleBenchmark/testMethod.json");
       Assert.assertTrue(expectedXMLFile.exists());
 
       final File moduleResultsFolder = KiekerFolderUtil.getModuleResultFolder(folders, testcase);
