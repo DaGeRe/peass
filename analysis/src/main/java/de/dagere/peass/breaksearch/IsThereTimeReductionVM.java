@@ -14,9 +14,11 @@ import org.apache.commons.math3.stat.inference.TestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.VMResult;
+import de.dagere.kopeme.kopemedata.VMResultChunk;
+
 
 public class IsThereTimeReductionVM {
 
@@ -49,19 +51,18 @@ public class IsThereTimeReductionVM {
 
    private static void checkFolder(final File contentFolder) throws JAXBException {
       for (final File xmlFile : contentFolder.listFiles()) {
-         if (xmlFile.getName().endsWith(".xml")) {
+         if (xmlFile.getName().endsWith(".json")) {
 
-            final XMLDataLoader loader = new XMLDataLoader(xmlFile);
-            
-            for (Chunk chunk : loader.getFullData().getTestcases().getTestcase().get(0).getDatacollector().get(0).getChunk()) {
-               final Map<String, List<Result>> data = new HashMap<>();
-               String version = chunk.getResult().get(1).getVersion().getGitversion();
-               String versionOld = chunk.getResult().get(0).getVersion().getGitversion();
-               for (Result r : chunk.getResult()) {
-                  List<Result> current = data.get(r.getVersion().getGitversion());
+            Kopemedata kopemedata = JSONDataLoader.loadData(xmlFile);
+            for (VMResultChunk chunk : kopemedata.getChunks()) {
+               final Map<String, List<VMResult>> data = new HashMap<>();
+               String version = chunk.getResults().get(1).getCommit();
+               String versionOld = chunk.getResults().get(0).getCommit();
+               for (VMResult r : chunk.getResults()) {
+                  List<VMResult> current = data.get(r.getCommit());
                   if (current == null) {
                      current = new LinkedList<>();
-                     data.put(r.getVersion().getGitversion(), current);
+                     data.put(r.getCommit(), current);
                   }
                   current.add(r);
                   vms++;
@@ -74,7 +75,7 @@ public class IsThereTimeReductionVM {
    }
 
 
-   private static void testSpeedup(final File xmlFile, final Map<String, List<Result>> data, final String versionOld, final String version) {
+   private static void testSpeedup(final File xmlFile, final Map<String, List<VMResult>> data, final String versionOld, final String version) {
       count++;
       final int executionCount = data.get(version).size();
       if (executionCount > 3) {
@@ -123,7 +124,7 @@ public class IsThereTimeReductionVM {
       }
    }
 
-   private static boolean getTValue(final Map<String, List<Result>> data, final String versionOld, final String version) {
+   private static boolean getTValue(final Map<String, List<VMResult>> data, final String versionOld, final String version) {
       final List<Double> before = data.get(versionOld).stream().map(value -> value.getValue()).collect(Collectors.toList());
       final List<Double> after = data.get(version).stream().map(value -> value.getValue()).collect(Collectors.toList());
 

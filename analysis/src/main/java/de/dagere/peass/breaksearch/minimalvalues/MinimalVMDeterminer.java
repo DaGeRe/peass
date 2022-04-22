@@ -9,29 +9,29 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.breaksearch.FindLowestPossibleIterations;
 
 public class MinimalVMDeterminer extends MinimalValueDeterminer {
 	private static final Logger LOG = LogManager.getLogger(MinimalValueDeterminer.class);
 
 	@Override
-	int getSize(final List<Result> results) {
+	int getSize(final List<VMResult> results) {
 		return results.size();
 	}
 
 	@Override
-	int getMin(final List<Result> results) {
+	int getMin(final List<VMResult> results) {
 		return 2;
 	}
 
 	@Override
-	int getChange(final List<Result> results) {
+	int getChange(final List<VMResult> results) {
 		return 1;
 	}
 
 	@Override
-	int analyzeMeasurement(final int oldResult, final List<Result> current, final List<Result> before) {
+	int analyzeMeasurement(final int oldResult, final List<VMResult> current, final List<VMResult> before) {
 		final List<Double> allStatistics = getValues(current);
 		final List<Double> allStatisticsBefore = getValues(before);
 

@@ -2,6 +2,7 @@ package de.dagere.peass.dependency.jmh;
 
 import java.io.File;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -10,15 +11,13 @@ import jakarta.xml.bind.JAXBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.datastorage.JSONDataStorer;
 import de.dagere.kopeme.datastorage.ParamNameHelper;
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Params;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
-import de.dagere.kopeme.generated.Versioninfo;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.VMResult;
+import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.config.MeasurementConfig;
 
 public class ExternalJmhDataConverter {
@@ -44,25 +43,25 @@ public class ExternalJmhDataConverter {
 
       for (File resultFile : allResultFiles) {
          LOG.debug("Handling " + resultFile);
-         Kopemedata data = XMLDataLoader.loadData(resultFile);
+         Kopemedata data = JSONDataLoader.loadData(resultFile);
          mergeDoubleChunks(data);
-         XMLDataStorer.storeData(resultFile, data);
+         JSONDataStorer.storeData(resultFile, data);
       }
    }
 
    private static void mergeDoubleChunks(final Kopemedata data) {
-      Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
-      for (Iterator<Chunk> iterator = datacollector.getChunk().iterator(); iterator.hasNext();) {
-         Chunk currentChunk = iterator.next();
-         String paramString = ParamNameHelper.paramsToString(currentChunk.getResult().get(0).getParams());
-         for (Iterator<Chunk> innerIterator = datacollector.getChunk().iterator(); innerIterator.hasNext();) {
-            Chunk innerChunk = innerIterator.next();
+      DatacollectorResult datacollector = data.getFirstMethodResult().getDatacollectorResults().get(0);
+      for (Iterator<VMResultChunk> iterator = datacollector.getChunks().iterator(); iterator.hasNext();) {
+         VMResultChunk currentChunk = iterator.next();
+         String paramString = ParamNameHelper.paramsToString(currentChunk.getResults().get(0).getParameters());
+         for (Iterator<VMResultChunk> innerIterator = datacollector.getChunks().iterator(); innerIterator.hasNext();) {
+            VMResultChunk innerChunk = innerIterator.next();
             if (currentChunk != innerChunk) {
-               String innerParamString = ParamNameHelper.paramsToString(innerChunk.getResult().get(0).getParams());
+               String innerParamString = ParamNameHelper.paramsToString(innerChunk.getResults().get(0).getParameters());
                if (paramString.equals(innerParamString)) {
                   LOG.debug("Removing " + innerParamString);
                   iterator.remove();
-                  innerChunk.getResult().addAll(currentChunk.getResult());
+                  innerChunk.getResults().addAll(currentChunk.getResults());
                   break;
                }
             }
@@ -83,29 +82,28 @@ public class ExternalJmhDataConverter {
    private static void createChunks(final Set<File> resultFiles, final String currentVersion) throws JAXBException {
       for (File resultFile : resultFiles) {
          LOG.info("Handling " + resultFile);
-         Kopemedata data = XMLDataLoader.loadData(resultFile);
-         Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
+         Kopemedata data = JSONDataLoader.loadData(resultFile);
+         DatacollectorResult datacollector = data.getFirstMethodResult().getDatacollectorResults().get(0);
          Set<String> allParams = getParams(datacollector);
          for (String params : allParams) {
-            Chunk addedChunk = new Chunk();
-            datacollector.getResult().forEach(result -> {
-               if (params != null && ParamNameHelper.paramsToString(result.getParams()).equals(params)) {
-                  addedChunk.getResult().add(result);
-                  result.setVersion(new Versioninfo());
-                  result.getVersion().setGitversion(currentVersion);
+            VMResultChunk addedChunk = new VMResultChunk();
+            datacollector.getResults().forEach(result -> {
+               if (params != null && ParamNameHelper.paramsToString(result.getParameters()).equals(params)) {
+                  addedChunk.getResults().add(result);
+                  result.setCommit(currentVersion);
                }
             });
-            datacollector.getChunk().add(addedChunk);
+            datacollector.getChunks().add(addedChunk);
          }
-         datacollector.getResult().clear();
-         XMLDataStorer.storeData(resultFile, data);
+         datacollector.getResults().clear();
+         JSONDataStorer.storeData(resultFile, data);
       }
    }
 
-   private static Set<String> getParams(final Datacollector datacollector) {
+   private static Set<String> getParams(final DatacollectorResult datacollector) {
       Set<String> allParams = new LinkedHashSet<>();
-      for (Result result : datacollector.getResult()) {
-         Params params = result.getParams();
+      for (VMResult result : datacollector.getResults()) {
+         LinkedHashMap<String, String> params = result.getParameters();
          allParams.add(ParamNameHelper.paramsToString(params));
       }
       LOG.info("Params: {}", allParams);

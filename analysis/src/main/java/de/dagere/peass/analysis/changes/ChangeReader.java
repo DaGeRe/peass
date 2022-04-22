@@ -12,11 +12,11 @@ import jakarta.xml.bind.JAXBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.TestMethod;
+import de.dagere.kopeme.kopemedata.VMResult;
+import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.analysis.helper.read.VersionData;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.config.StatisticsConfig;
@@ -166,18 +166,18 @@ public class ChangeReader {
    }
 
    private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File file) throws JAXBException {
-      final Kopemedata data = new XMLDataLoader(file).getFullData();
-      for (final TestcaseType testcaseMethod : data.getTestcases().getTestcase()) {
+      final Kopemedata data = new JSONDataLoader(file).getFullData();
+      for (final TestMethod testcaseMethod : data.getMethods()) {
          LOG.info(file.getAbsolutePath());
          readTestcase(measurementFolder.getName(), data, testcaseMethod, changes, info);
-         measurements += testcaseMethod.getDatacollector().get(0).getChunk().size();
+         measurements += testcaseMethod.getDatacollectorResults().get(0).getChunks().size();
          testcases++;
       }
    }
 
-   private int readTestcase(final String fileName, final Kopemedata data, final TestcaseType testcaseMethod, final ProjectChanges changeKnowledge,
+   private int readTestcase(final String fileName, final Kopemedata data, final TestMethod testcaseMethod, final ProjectChanges changeKnowledge,
          final ProjectStatistics info) {
-      for (final Chunk chunk : testcaseMethod.getDatacollector().get(0).getChunk()) {
+      for (final VMResultChunk chunk : testcaseMethod.getDatacollectorResults().get(0).getChunks()) {
          folderMeasurements++;
          final String[] versions = KoPeMeDataHelper.getVersions(chunk, selectedTests);
          LOG.debug(versions[1]);
@@ -188,7 +188,7 @@ public class ChangeReader {
       return folderMeasurements;
    }
 
-   private void readChunk(final String fileName, final Kopemedata data, final ProjectChanges changeKnowledge, final ProjectStatistics info, final Chunk chunk,
+   private void readChunk(final String fileName, final Kopemedata data, final ProjectChanges changeKnowledge, final ProjectStatistics info, final VMResultChunk chunk,
          final String[] versions) {
       final DescribedChunk describedChunk = new DescribedChunk(chunk, versions[0], versions[1]);
       describedChunk.removeOutliers();
@@ -203,7 +203,7 @@ public class ChangeReader {
 
    public void getIsChange(final String fileName, final Kopemedata data, final ProjectChanges changeKnowledge, final ProjectStatistics info,
          final String[] versions, final DescribedChunk describedChunk) {
-      LOG.debug(data.getTestcases().getClazz());
+      LOG.debug(data.getClazz());
       final TestcaseStatistic statistic = describedChunk.getStatistic(config);
       statistic.setPredecessor(versions[0]);
       // if (! (statistic.getTvalue() == Double.NaN)){
@@ -230,7 +230,7 @@ public class ChangeReader {
    }
 
    private TestCase getTestcase(final Kopemedata data, final String[] versions, final DescribedChunk describedChunk) {
-      TestCase testcase = new TestCase(data.getTestcases());
+      TestCase testcase = new TestCase(data);
       if (tests != null) {
          TestSet testsOfThisVersion = tests.get(versions[1]);
          for (TestCase test : testsOfThisVersion.getTests()) {
@@ -254,7 +254,7 @@ public class ChangeReader {
 
    private void writeRunCommands(final String[] versions, final DescribedChunk describedChunk, final TestCase testcase) {
       if (runCommandWriter != null) {
-         final Result exampleResult = describedChunk.getCurrent().get(0);
+         final VMResult exampleResult = describedChunk.getCurrent().get(0);
          final int iterations = (int) exampleResult.getIterations();
          final int repetitions = (int) exampleResult.getRepetitions();
          final int vms = describedChunk.getCurrent().size();

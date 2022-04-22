@@ -2,21 +2,20 @@ package de.dagere.peass.measurement.analysis;
 
 import java.io.File;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.datastorage.JSONDataStorer;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.dataloading.MeasurementFileFinder;
 
 public class TestMearementFileFinder {
    
    @Test
-   public void testFileFinding() throws JAXBException {
+   public void testFileFinding() {
       File temp = new File("target/tmp");
       temp.mkdirs();
       
@@ -24,30 +23,30 @@ public class TestMearementFileFinder {
       String longerPackageName = "de.peass.otherPackage.Test";
       
       MeasurementFileFinder finderBasic = new MeasurementFileFinder(temp, new TestCase(shortPackageName, "testMe"));
-      finderBasic.getDataCollector().getChunk().add(new Chunk());
-      XMLDataStorer.storeData(finderBasic.getMeasurementFile(), finderBasic.getOneResultData());
+      finderBasic.getDataCollector().getChunks().add(new VMResultChunk());
+      JSONDataStorer.storeData(finderBasic.getMeasurementFile(), finderBasic.getOneResultData());
       testClazzName(shortPackageName, finderBasic);
       
       MeasurementFileFinder finderSame = new MeasurementFileFinder(temp, new TestCase(shortPackageName, "testMe"));
-      XMLDataStorer.storeData(finderSame.getMeasurementFile(), finderSame.getOneResultData());
+      JSONDataStorer.storeData(finderSame.getMeasurementFile(), finderSame.getOneResultData());
       testClazzName(shortPackageName, finderSame);
       
       MeasurementFileFinder finderOtherPackage = new MeasurementFileFinder(temp, new TestCase(longerPackageName, "testMe"));
-      finderOtherPackage.getDataCollector().getChunk().add(new Chunk());
-      XMLDataStorer.storeData(finderOtherPackage.getMeasurementFile(), finderOtherPackage.getOneResultData());
+      finderOtherPackage.getDataCollector().getChunks().add(new VMResultChunk());
+      JSONDataStorer.storeData(finderOtherPackage.getMeasurementFile(), finderOtherPackage.getOneResultData());
       testClazzName(longerPackageName, finderOtherPackage);
       
       MeasurementFileFinder finderSamePackage = new MeasurementFileFinder(temp, new TestCase(shortPackageName, "testMe"));
-      XMLDataStorer.storeData(finderSamePackage.getMeasurementFile(), finderSamePackage.getOneResultData());
+      JSONDataStorer.storeData(finderSamePackage.getMeasurementFile(), finderSamePackage.getOneResultData());
       testClazzName(shortPackageName, finderSamePackage);
       
       MeasurementFileFinder finderOtherPackage2 = new MeasurementFileFinder(temp, new TestCase(longerPackageName, "testMe"));
-      XMLDataStorer.storeData(finderOtherPackage2.getMeasurementFile(), finderOtherPackage2.getOneResultData());
+      JSONDataStorer.storeData(finderOtherPackage2.getMeasurementFile(), finderOtherPackage2.getOneResultData());
       testClazzName(longerPackageName, finderOtherPackage2);
    }
 
-   public void testClazzName(String expectedName, MeasurementFileFinder finderOtherPackage) throws JAXBException {
-      XMLDataLoader loader = new XMLDataLoader(finderOtherPackage.getMeasurementFile());
-      Assert.assertEquals(loader.getFullData().getTestcases().getClazz(), expectedName);
+   public void testClazzName(String expectedName, MeasurementFileFinder finderOtherPackage) {
+      Kopemedata data = JSONDataLoader.loadData(finderOtherPackage.getMeasurementFile()            );
+      Assert.assertEquals(data.getClazz(), expectedName);
    }
 }

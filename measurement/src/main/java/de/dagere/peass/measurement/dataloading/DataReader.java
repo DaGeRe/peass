@@ -12,8 +12,8 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.statistics.data.TestData;
 
@@ -91,34 +91,29 @@ public final class DataReader {
    }
 
    private static void readMeasurementFile(final Map<String, TestData> currentMeasurement, final File versionOfPair, final File versionCurrent, final File measurementFile) {
-      try {
-         final Kopemedata resultData = new XMLDataLoader(measurementFile).getFullData();
-         final String testclazz = resultData.getTestcases().getClazz();
-         TestCase testcase = new TestCase(resultData.getTestcases());
-         TestData testData = currentMeasurement.get(testcase.getMethodWithParams());
-         if (testData == null) {
-            final File originFile = measurementFile.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
-            testData = new TestData(testcase, originFile);
-            currentMeasurement.put(testcase.getMethodWithParams(), testData);
-         }
-         
-         String predecessor = null;
-         final File versionFiles[] = versionOfPair.listFiles();
-         for (final File version : versionFiles) {
-            if (!version.getName().equals(versionOfPair.getName())){
-               predecessor = version.getName();
-            }
-         }
-         
-         if (predecessor != null) {
-            testData.addMeasurement(versionOfPair.getName(), versionCurrent.getName(), predecessor, resultData);
-         }else {
-            LOG.error("No predecessor data for {} {} {} {}", versionCurrent.getName(), predecessor, testclazz, testcase.getMethodWithParams());
-         }
-        
-      } catch (final JAXBException e) {
-         LOG.error("An exception occured during reading the measurement results");
-         e.printStackTrace();
+      final Kopemedata resultData = JSONDataLoader.loadData(measurementFile);
+      final String testclazz = resultData.getClazz();
+      TestCase testcase = new TestCase(resultData);
+      TestData testData = currentMeasurement.get(testcase.getMethodWithParams());
+      if (testData == null) {
+         final File originFile = measurementFile.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
+         testData = new TestData(testcase, originFile);
+         currentMeasurement.put(testcase.getMethodWithParams(), testData);
       }
+
+      String predecessor = null;
+      final File versionFiles[] = versionOfPair.listFiles();
+      for (final File version : versionFiles) {
+         if (!version.getName().equals(versionOfPair.getName())) {
+            predecessor = version.getName();
+         }
+      }
+
+      if (predecessor != null) {
+         testData.addMeasurement(versionOfPair.getName(), versionCurrent.getName(), predecessor, resultData);
+      } else {
+         LOG.error("No predecessor data for {} {} {} {}", versionCurrent.getName(), predecessor, testclazz, testcase.getMethodWithParams());
+      }
+
    }
 }

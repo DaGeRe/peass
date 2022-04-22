@@ -13,9 +13,9 @@ import org.apache.commons.math3.stat.inference.TTest;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Fulldata;
-import de.dagere.kopeme.generated.Result.Fulldata.Value;
+import de.dagere.kopeme.kopemedata.Fulldata;
+import de.dagere.kopeme.kopemedata.MeasuredValue;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.measurement.statistics.bimodal.BimodalityTester;
 import de.dagere.peass.measurement.statistics.bimodal.CompareData;
@@ -38,7 +38,7 @@ public class StatisticUtil {
       }
    }
 
-   public static boolean isBimodal(final List<Result> valuesPrev, final List<Result> valuesVersion) {
+   public static boolean isBimodal(final List<VMResult> valuesPrev, final List<VMResult> valuesVersion) {
       CompareData data = new CompareData(valuesPrev, valuesVersion);
       final BimodalityTester tester = new BimodalityTester(data);
       return tester.isBimodal();
@@ -138,11 +138,11 @@ public class StatisticUtil {
       }
    }
 
-   public static Result shortenResult(final Result result, final int start, final int end) {
-      final Result resultShort = copyResultBasics(result);
+   public static VMResult shortenResult(final VMResult result, final int start, final int end) {
+      final VMResult resultShort = copyResultBasics(result);
       final DescriptiveStatistics statistics = new DescriptiveStatistics();
       // LOG.debug("Size: " + result.getFulldata().getValue().size());
-      final int size = (Math.min(end, result.getFulldata().getValue().size()));
+      final int size = (Math.min(end, result.getFulldata().getValues().size()));
       if (start > size) {
          throw new RuntimeException("Start (" + start + ") is after end of data (" + size + ").");
       }
@@ -151,9 +151,9 @@ public class StatisticUtil {
       }
       // LOG.debug("Size: {}", j);
       for (int i = start; i < size; i++) {
-         final Value value = result.getFulldata().getValue().get(i);
+         final MeasuredValue value = result.getFulldata().getValues().get(i);
          final Fulldata fulldata = resultShort.getFulldata();
-         fulldata.getValue().add(value);
+         fulldata.getValues().add(value);
          statistics.addValue(value.getValue());
       }
       resultShort.setValue(statistics.getMean());
@@ -161,12 +161,12 @@ public class StatisticUtil {
       resultShort.setIterations(end - start);
       resultShort.setWarmup(start);
       resultShort.setRepetitions(result.getRepetitions());
-      resultShort.setParams(result.getParams());
+      resultShort.setParameters(result.getParameters());
       return resultShort;
    }
 
-   private static Result copyResultBasics(final Result result) {
-      final Result resultShort = new Result();
+   private static VMResult copyResultBasics(final VMResult result) {
+      final VMResult resultShort = new VMResult();
       resultShort.setCpu(result.getCpu());
       resultShort.setDate(result.getDate());
       resultShort.setMemory(result.getMemory());
@@ -174,20 +174,20 @@ public class StatisticUtil {
       return resultShort;
    }
 
-   public static Result shortenResult(final Result result) {
-      final int start = result.getFulldata().getValue().size() / 2;
-      final int end = result.getFulldata().getValue().size();
-      final Result resultShort = shortenResult(result, start, end);
+   public static VMResult shortenResult(final VMResult result) {
+      final int start = result.getFulldata().getValues().size() / 2;
+      final int end = result.getFulldata().getValues().size();
+      final VMResult resultShort = shortenResult(result, start, end);
       return resultShort;
    }
 
-   public static List<Result> shortenValues(final List<Result> values, final int start, final int end) {
-      final List<Result> shortenedValues = new ArrayList<>(values.size());
+   public static List<VMResult> shortenValues(final List<VMResult> values, final int start, final int end) {
+      final List<VMResult> shortenedValues = new ArrayList<>(values.size());
       int index = 0;
-      for (final Result result : values) {
+      for (final VMResult result : values) {
          index++;
          try {
-            final Result resultShort = shortenResult(result, start, end);
+            final VMResult resultShort = shortenResult(result, start, end);
             shortenedValues.add(resultShort);
          } catch (RuntimeException e) {
             throw new RuntimeException("Error in result " + index, e);
@@ -196,10 +196,10 @@ public class StatisticUtil {
       return shortenedValues;
    }
 
-   public static List<Result> shortenValues(final List<Result> values) {
-      final List<Result> shortenedValues = new ArrayList<>(values.size());
-      for (final Result result : values) {
-         final Result resultShort = StatisticUtil.shortenResult(result);
+   public static List<VMResult> shortenValues(final List<VMResult> values) {
+      final List<VMResult> shortenedValues = new ArrayList<>(values.size());
+      for (final VMResult result : values) {
+         final VMResult resultShort = StatisticUtil.shortenResult(result);
          shortenedValues.add(resultShort);
       }
       return shortenedValues;
@@ -225,7 +225,7 @@ public class StatisticUtil {
       }
    }
 
-   public static Relation isDifferent(final List<Result> valuesPrev, final List<Result> valuesVersion, final StatisticsConfig statisticsConfig) {
+   public static Relation isDifferent(final List<VMResult> valuesPrev, final List<VMResult> valuesVersion, final StatisticsConfig statisticsConfig) {
       CompareData data = new CompareData(valuesPrev, valuesVersion);
       return isDifferent(data, statisticsConfig);
    }

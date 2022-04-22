@@ -4,20 +4,19 @@ import java.io.File;
 import java.util.List;
 
 import jakarta.xml.bind.JAXBException;
-
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class MeasurementFileFinder {
 
    private final File measurementFile;
    private final Kopemedata oneResultData;
-   private final Datacollector datacollector;
+   private final DatacollectorResult datacollector;
 
-   public MeasurementFileFinder(final File folder, TestCase testcase) throws JAXBException {
+   public MeasurementFileFinder(final File folder, TestCase testcase) {
       String clazz = testcase.getClazz();
       String methodWithParams = testcase.getMethodWithParams();
       final String shortClazz = clazz.substring(clazz.lastIndexOf('.') + 1);
@@ -26,7 +25,7 @@ public class MeasurementFileFinder {
          final File candidateShort = new File(folder, shortClazz + "_" + methodWithParams + ".xml");
          final Kopemedata oneResultData2 = loadData(candidateShort);
          if (candidateShort.exists()) {
-            final String otherFullClazz = oneResultData2.getTestcases().getClazz();
+            final String otherFullClazz = oneResultData2.getClazz();
             if (!otherFullClazz.equals(clazz)) {
                measurementFile = candidateFull;
                oneResultData = loadData(measurementFile);
@@ -42,15 +41,14 @@ public class MeasurementFileFinder {
          measurementFile = candidateFull;
          oneResultData = loadData(measurementFile);
       }
-      oneResultData.getTestcases().setClazz(clazz);
+      oneResultData.setClazz(clazz);
       
-      final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
+      final List<TestMethod> testcaseList = oneResultData.getMethods();
       datacollector = getDataCollector(testcase.getMethod(), testcaseList);
    }
 
-   public Kopemedata loadData(final File file) throws JAXBException {
-      final XMLDataLoader xdl2 = new XMLDataLoader(file);
-      final Kopemedata oneResultData2 = xdl2.getFullData();
+   public Kopemedata loadData(final File file) {
+      final Kopemedata oneResultData2 = JSONDataLoader.loadData(file);
       return oneResultData2;
    }
    
@@ -62,23 +60,22 @@ public class MeasurementFileFinder {
       return oneResultData;
    }
    
-   public Datacollector getDataCollector() {
+   public DatacollectorResult getDataCollector() {
       return datacollector;
    }
    
-   public static Datacollector getDataCollector(final String method, final List<TestcaseType> testcaseList) {
-      Datacollector datacollector = null;
-      for (final TestcaseType testcase : testcaseList) {
-         if (testcase.getName().equals(method)) {
-            datacollector = testcase.getDatacollector().get(0);
+   public static DatacollectorResult getDataCollector(final String method, final List<TestMethod> testcaseList) {
+      DatacollectorResult datacollector = null;
+      for (final TestMethod testcase : testcaseList) {
+         if (testcase.getMethod().equals(method)) {
+            datacollector = testcase.getDatacollectorResults().get(0);
          }
       }
       if (datacollector == null) {
-         final TestcaseType testcase = new TestcaseType();
+         final TestMethod testcase = new TestMethod(method);
          testcaseList.add(testcase);
-         testcase.setName(method);
-         datacollector = new Datacollector();
-         testcase.getDatacollector().add(datacollector);
+         datacollector = new DatacollectorResult("");
+         testcase.getDatacollectorResults().add(datacollector);
       }
       return datacollector;
    }

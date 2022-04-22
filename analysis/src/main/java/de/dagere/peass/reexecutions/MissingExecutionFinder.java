@@ -12,11 +12,11 @@ import jakarta.xml.bind.JAXBException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.TestMethod;
+import de.dagere.kopeme.kopemedata.VMResult;
+import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.analysis.changes.ChangeReader;
 import de.dagere.peass.analysis.helper.read.TestcaseData;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -74,17 +74,17 @@ public class MissingExecutionFinder {
 
    private void removeXMLExecutions(final File folder) throws JAXBException {
       for (final File measurementFile : folder.listFiles()) {
-         if (measurementFile.getName().endsWith(".xml")) {
+         if (measurementFile.getName().endsWith(".json")) {
             LOG.info("File:" + measurementFile);
-            final Kopemedata data = new XMLDataLoader(measurementFile).getFullData();
-            for (final TestcaseType testcase : data.getTestcases().getTestcase()) {
-               final String testmethod = testcase.getName();
-               for (final Chunk c : testcase.getDatacollector().get(0).getChunk()) {
+            final Kopemedata data = new JSONDataLoader(measurementFile).getFullData();
+            for (final TestMethod testcase : data.getMethods()) {
+               final String testmethod = testcase.getMethod();
+               for (final VMResultChunk c : testcase.getDatacollectorResults().get(0).getChunks()) {
                   final String version = findVersion(c);
                   LOG.debug("Removing {}", version);
                   final TestSet versionsTests = tests.getVersions().get(version);
                   if (versionsTests != null) {
-                     removeTestFromTestSet(data.getTestcases().getClazz(), testmethod, versionsTests);
+                     removeTestFromTestSet(data.getClazz(), testmethod, versionsTests);
                   }
                }
             }
@@ -112,10 +112,10 @@ public class MissingExecutionFinder {
       LOG.debug(versionsTests.classCount());
    }
 
-   public static String findVersion(final Chunk c) {
-      final int size = c.getResult().size();
-      final Result r = c.getResult().get(size - 1);
-      final String version = r.getVersion().getGitversion();
+   public static String findVersion(final VMResultChunk c) {
+      final int size = c.getResults().size();
+      final VMResult r = c.getResults().get(size - 1);
+      final String version = r.getCommit();
       LOG.trace("Version: " + version);
       return version;
    }

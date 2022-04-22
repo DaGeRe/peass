@@ -15,11 +15,11 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummaryValues;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.MeasuredValue;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.folders.PeassFolders;
@@ -91,20 +91,20 @@ public class KoPeMeTreeConverter {
          LOG.error("Could not read file: {}", kopemeFile);
       } else {
          int index = Integer.parseInt(stringIndex);
-         Kopemedata data = XMLDataLoader.loadData(kopemeFile);
-         final Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
-         if (datacollector.getChunk().size() > 0) {
-            for (Result result : datacollector.getChunk().get(0).getResult()) {
+         Kopemedata data = JSONDataLoader.loadData(kopemeFile);
+         final DatacollectorResult datacollector = data.getFirstMethodResult().getDatacollectorResults().get(0);
+         if (datacollector.getChunks().size() > 0) {
+            for (VMResult result : datacollector.getChunks().get(0).getResults()) {
                readResult(version, currentVersion, result, index);
             }
          }
-         for (Result result : datacollector.getResult()) {
+         for (VMResult result : datacollector.getResults()) {
             readResult(version, currentVersion, result, index);
          }
       }
    }
 
-   private void readResult(final String version, final String currentVersion, final Result result, final int index) {
+   private void readResult(final String version, final String currentVersion, final VMResult result, final int index) {
       if (currentVersion.equals(version)) {
          statisticsCurrent.addValue(result.getValue() / result.getRepetitions());
          calls += result.getIterations();
@@ -120,9 +120,9 @@ public class KoPeMeTreeConverter {
       }
    }
 
-   private List<StatisticalSummary> getCourse(final Result result) {
+   private List<StatisticalSummary> getCourse(final VMResult result) {
       List<StatisticalSummary> course = new LinkedList<>();
-      for (Value value : result.getFulldata().getValue()) {
+      for (MeasuredValue value : result.getFulldata().getValues()) {
          double mean = ((double) value.getValue()) / result.getRepetitions();
          final StatisticalSummaryValues statistic = new StatisticalSummaryValues(mean, 0, result.getRepetitions(), mean, mean, mean * result.getRepetitions());
          course.add(statistic);

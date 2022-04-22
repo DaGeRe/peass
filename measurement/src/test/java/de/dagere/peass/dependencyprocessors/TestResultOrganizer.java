@@ -14,10 +14,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result.Fulldata;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
+import de.dagere.kopeme.kopemedata.Fulldata;
+import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.folders.PeassFolders;
@@ -73,9 +73,9 @@ public class TestResultOrganizer {
 
    private void testXMLFileIsCorrect() throws JAXBException {
       File kopemefile = new File(getVersionMeasurementFolder(), searchedTest.getMethod() + "_0_" + VERSION_NAME + ".xml");
-      Kopemedata data = XMLDataLoader.loadData(kopemefile);
-      final Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
-      final Fulldata fulldata = datacollector.getResult().get(0).getFulldata();
+      Kopemedata data = JSONDataLoader.loadData(kopemefile);
+      final DatacollectorResult datacollector = data.getFirstMethodResult().getDatacollectorResults().get(0);
+      final Fulldata fulldata = datacollector.getResults().get(0).getFulldata();
       Assert.assertNotNull(fulldata.getFileName());
       File fulldataFile = new File(getVersionMeasurementFolder(), fulldata.getFileName());
       Assert.assertTrue(fulldataFile.exists());

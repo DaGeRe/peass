@@ -8,7 +8,7 @@ import java.text.NumberFormat;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
 /**
@@ -20,8 +20,8 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 public class EvaluationPair {
 
    private final String previousVersion, currentVersion;
-   private final List<Result> previous = new LinkedList<>();
-   private final List<Result> current = new LinkedList<>();
+   private final List<VMResult> previous = new LinkedList<>();
+   private final List<VMResult> current = new LinkedList<>();
    private final TestCase testcase;
 
    public EvaluationPair(final String currentVersion, final String previousVersion, final TestCase testcase) {
@@ -40,11 +40,11 @@ public class EvaluationPair {
       return testcase;
    }
 
-   public List<Result> getPrevius() {
+   public List<VMResult> getPrevius() {
       return previous;
    }
 
-   public List<Result> getCurrent() {
+   public List<VMResult> getCurrent() {
       return current;
    }
 
@@ -59,9 +59,9 @@ public class EvaluationPair {
       FORMAT.setGroupingUsed(false);
    }
    
-   private void printMeans(final File current, final List<Result> results) {
+   private void printMeans(final File current, final List<VMResult> results) {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(current))){
-         for (final Result result : results) {
+         for (final VMResult result : results) {
             final double value = result.getValue();
             writer.write(FORMAT.format(value)+"\n");
          }
@@ -77,8 +77,8 @@ public class EvaluationPair {
          isComplete &= previous.get(0).getFulldata() != null;
          isComplete &= current.get(0).getFulldata() != null;
          if (isComplete) {
-            isComplete &= previous.get(0).getFulldata().getValue().size() > 0;
-            isComplete &= current.get(0).getFulldata().getValue().size() > 0;
+            isComplete &= previous.get(0).getFulldata().getValues().size() > 0;
+            isComplete &= current.get(0).getFulldata().getValues().size() > 0;
          }
       }
       return isComplete;

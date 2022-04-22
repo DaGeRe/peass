@@ -7,8 +7,8 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.kopeme.kopemedata.VMResult;
+import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
@@ -19,24 +19,24 @@ public class DescribedChunk {
    private final DescriptiveStatistics descPrev = new DescriptiveStatistics();
    private final DescriptiveStatistics descCurrent = new DescriptiveStatistics();
 
-   private final List<Result> previous = new LinkedList<>();
-   private final List<Result> current = new LinkedList<>();
+   private final List<VMResult> previous = new LinkedList<>();
+   private final List<VMResult> current = new LinkedList<>();
 
-   public DescribedChunk(final Chunk chunk, final String versionPrevious, final String versionCurrent) {
-      long minRepetitions = MultipleVMTestUtil.getMinRepetitionCount(chunk.getResult());
-      long minIterations = MultipleVMTestUtil.getMinIterationCount(chunk.getResult());
+   public DescribedChunk(final VMResultChunk chunk, final String versionPrevious, final String versionCurrent) {
+      long minRepetitions = MultipleVMTestUtil.getMinRepetitionCount(chunk.getResults());
+      long minIterations = MultipleVMTestUtil.getMinIterationCount(chunk.getResults());
 
       LOG.info("Repetitions: " + minRepetitions + " Iterations: " + minIterations);
 
-      for (final Result result : chunk.getResult()) {
+      for (final VMResult result : chunk.getResults()) {
          if (!Double.isNaN(result.getValue()) &&
                result.getIterations() == minIterations &&
                result.getRepetitions() == minRepetitions) {
-            if (result.getVersion().getGitversion().equals(versionPrevious)) {
+            if (result.getCommit().equals(versionPrevious)) {
                descPrev.addValue(result.getValue());
                previous.add(result);
             }
-            if (result.getVersion().getGitversion().equals(versionCurrent)) {
+            if (result.getCommit().equals(versionCurrent)) {
                descCurrent.addValue(result.getValue());
                current.add(result);
             }
@@ -59,11 +59,11 @@ public class DescribedChunk {
       return descCurrent;
    }
 
-   public List<Result> getPrevious() {
+   public List<VMResult> getPrevious() {
       return previous;
    }
 
-   public List<Result> getCurrent() {
+   public List<VMResult> getCurrent() {
       return current;
    }
 

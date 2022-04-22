@@ -10,7 +10,7 @@ import jakarta.xml.bind.JAXBException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
-import de.dagere.kopeme.datastorage.XMLDataStorer;
+import de.dagere.kopeme.datastorage.JSONDataStorer;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.utils.Constants;
@@ -50,7 +50,7 @@ public class JmhKoPeMeConverter {
                JmhBenchmarkConverter converter = new JmhBenchmarkConverter(testcase, clazzResultFolder, measurementConfig);
                converter.convertData(rawData, benchmark, scoreUnit);
 
-               XMLDataStorer.storeData(converter.getKoPeMeFile(), converter.getTransformed());
+               JSONDataStorer.storeData(converter.getKoPeMeFile(), converter.getTransformed());
                results.add(converter.getKoPeMeFile());
             }
          }

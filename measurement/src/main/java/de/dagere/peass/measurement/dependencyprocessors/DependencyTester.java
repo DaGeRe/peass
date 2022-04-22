@@ -10,9 +10,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.ExecutorCreator;
@@ -105,8 +105,8 @@ public class DependencyTester implements KiekerResultHandler {
 
    boolean updateExecutions(final TestCase testcase, final int vmid) throws JAXBException {
       boolean shouldBreak = false;
-      final Result versionOldResult = getLastResult(configuration.getExecutionConfig().getCommitOld(), testcase, vmid);
-      final Result versionNewResult = getLastResult(configuration.getExecutionConfig().getCommit(), testcase, vmid);
+      final VMResult versionOldResult = getLastResult(configuration.getExecutionConfig().getCommitOld(), testcase, vmid);
+      final VMResult versionNewResult = getLastResult(configuration.getExecutionConfig().getCommit(), testcase, vmid);
       if (vmid < 40) {
          int reducedIterations = Math.min(shouldReduce(configuration.getExecutionConfig().getCommitOld(), versionOldResult),
                shouldReduce(configuration.getExecutionConfig().getCommit(), versionNewResult));
@@ -120,7 +120,7 @@ public class DependencyTester implements KiekerResultHandler {
       return shouldBreak;
    }
 
-   private int shouldReduce(final String version, final Result result) {
+   private int shouldReduce(final String version, final VMResult result) {
       final int reducedIterations;
       if (result == null) {
          reducedIterations = configuration.getIterations() / 2;
@@ -156,11 +156,11 @@ public class DependencyTester implements KiekerResultHandler {
       return shouldBreak;
    }
 
-   public Result getLastResult(final String version, final TestCase testcase, final int vmid) throws JAXBException {
+   public VMResult getLastResult(final String version, final TestCase testcase, final int vmid) throws JAXBException {
       final File resultFile = getCurrentOrganizer().getResultFile(testcase, vmid, version);
       if (resultFile.exists()) {
-         final Kopemedata data = new XMLDataLoader(resultFile).getFullData();
-         final Result lastResult = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);
+         final Kopemedata data = JSONDataLoader.loadData(resultFile);
+         final VMResult lastResult = data.getFirstResult();
          return lastResult;
       } else {
          LOG.debug("Resultfile {} does not exist", resultFile);

@@ -12,7 +12,7 @@ import org.hamcrest.io.FileMatchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
+import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.generated.Kopemedata;
 import de.dagere.kopeme.generated.TestcaseType;
 import de.dagere.peass.dependencyprocessors.VersionComparator;

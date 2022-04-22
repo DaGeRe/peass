@@ -10,10 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result.Fulldata;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
+import de.dagere.kopeme.kopemedata.Fulldata;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
@@ -67,9 +68,10 @@ public class TestResultOrganizerParallel {
 
    private void testXMLFileIsCorrect() throws JAXBException {
       File kopemefile = new File(getVersionMeasurementFolder(TestResultOrganizer.VERSION_NAME, PARALLEL_VERSION), TestResultOrganizer.searchedTest.getMethod() + "_0_" + PARALLEL_VERSION + ".xml");
-      Kopemedata data = XMLDataLoader.loadData(kopemefile);
-      final Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
-      final Fulldata fulldata = datacollector.getResult().get(0).getFulldata();
+      final Kopemedata data = JSONDataLoader.loadData(kopemefile);
+      final DatacollectorResult collector = data.getFirstMethodResult().getDatacollectorResults().get(0);
+      final VMResultChunk chunk = collector.getChunks().get(0);
+      final Fulldata fulldata = chunk.getResults().get(0).getFulldata();
       Assert.assertNotNull(fulldata.getFileName());
       File fulldataFile = new File(getVersionMeasurementFolder(TestResultOrganizer.VERSION_NAME, PARALLEL_VERSION), fulldata.getFileName());
       Assert.assertTrue(fulldataFile.exists());

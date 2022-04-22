@@ -6,6 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.measurement.statistics.bimodal.IsBimodal;
 
 public class TestIsBimodal {
@@ -101,12 +102,12 @@ public class TestIsBimodal {
    }
 
    private void buildData(final double val, final double val2) {
-      List<Result> before = BimodalTestUtil.buildValues(val,val2);
+      List<VMResult> before = BimodalTestUtil.buildValues(val,val2);
       
       stat = new SummaryStatistics();
       data = new double[before.size()];
       int index = 0;
-      for (Result result : before) {
+      for (VMResult result : before) {
          data[index] = result.getValue();
          stat.addValue(data[index]);
          index++;

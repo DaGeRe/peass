@@ -8,7 +8,7 @@ import org.apache.commons.math3.stat.inference.TestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
 import de.dagere.peass.measurement.dataloading.ResultLoader;
@@ -34,8 +34,8 @@ public class TestStatistic {
    }
 
    public TestStatistic(final EvaluationPair data, final ProjectStatistics info, final double type1error) {
-      List<Result> previous = ResultLoader.removeResultsWithWrongConfiguration(data.getPrevius());
-      List<Result> current = ResultLoader.removeResultsWithWrongConfiguration(data.getCurrent());
+      List<VMResult> previous = ResultLoader.removeResultsWithWrongConfiguration(data.getPrevius());
+      List<VMResult> current = ResultLoader.removeResultsWithWrongConfiguration(data.getCurrent());
 
       checkData(data, previous, current);
 
@@ -82,7 +82,7 @@ public class TestStatistic {
       }
    }
 
-   private void checkData(final EvaluationPair data, final List<Result> previous, final List<Result> current) {
+   private void checkData(final EvaluationPair data, final List<VMResult> previous, final List<VMResult> current) {
       if (previous.size() == 0 || current.size() == 0) {
          LOG.error("Data empty: {} {}", data.getVersion());
          if (previous.size() == 0) {

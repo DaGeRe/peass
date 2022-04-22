@@ -15,14 +15,14 @@ import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.datastorage.JSONDataStorer;
 import de.dagere.kopeme.datastorage.ParamNameHelper;
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Fulldata;
-import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
+import de.dagere.kopeme.kopemedata.Fulldata;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.TestMethod;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
@@ -66,32 +66,26 @@ public class ResultOrganizer {
       final File folder = getTempResultsFolder(version);
       if (folder != null) {
          final String methodname = testcase.getMethodWithParams();
-         final File oneResultFile = new File(folder, methodname + ".xml");
-         try {
-            if (!oneResultFile.exists()) {
-               success = false;
-               LOG.error("Result file {} does not exist - probably timeout", oneResultFile);
-            } else {
-               LOG.debug("Reading: {}", oneResultFile);
-               XMLDataLoader xdl = new XMLDataLoader(oneResultFile);
-               final Kopemedata oneResultData = xdl.getFullData();
-               final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
-               if (testcaseList.size() > 0) {
-                  Result result = oneResultData.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);
-                  if (result.getIterations() == expectedIterations) {
-                     success = true;
-                  } else {
-                     success = false;
-                     LOG.error("Wrong execution count: {} Expected: {}", result.getIterations(), expectedIterations);
-                  }
-               } else {
-                  LOG.error("Testcase not found in XML");
-                  success = false;
-               }
-            }
-         } catch (JAXBException e) {
-            e.printStackTrace();
+         final File oneResultFile = new File(folder, methodname + ".json");
+         if (!oneResultFile.exists()) {
             success = false;
+            LOG.error("Result file {} does not exist - probably timeout", oneResultFile);
+         } else {
+            LOG.debug("Reading: {}", oneResultFile);
+            final Kopemedata oneResultData = JSONDataLoader.loadData(oneResultFile);
+            final List<TestMethod> testcaseList = oneResultData.getMethods();
+            if (testcaseList.size() > 0) {
+               VMResult result = oneResultData.getFirstResult();
+               if (result.getIterations() == expectedIterations) {
+                  success = true;
+               } else {
+                  success = false;
+                  LOG.error("Wrong execution count: {} Expected: {}", result.getIterations(), expectedIterations);
+               }
+            } else {
+               LOG.error("Testcase not found in XML");
+               success = false;
+            }
          }
       } else {
          LOG.error("Folder {} does not exist", folder);
@@ -113,9 +107,8 @@ public class ResultOrganizer {
                success = false;
             } else {
                LOG.debug("Reading: {}", oneResultFile);
-               final XMLDataLoader xdl = new XMLDataLoader(oneResultFile);
-               final Kopemedata oneResultData = xdl.getFullData();
-               final List<TestcaseType> testcaseList = oneResultData.getTestcases().getTestcase();
+               final Kopemedata oneResultData = JSONDataLoader.loadData(oneResultFile);
+               final List<TestMethod> testcaseList = oneResultData.getMethods();
                if (testcaseList.size() > 0) {
                   saveResults(version, vmid, oneResultFile, oneResultData, testcaseList);
 
@@ -147,15 +140,15 @@ public class ResultOrganizer {
       }
    }
 
-   private void saveResults(final String version, final int vmid, final File oneResultFile, final Kopemedata oneResultData, final List<TestcaseType> testcaseList)
+   private void saveResults(final String version, final int vmid, final File oneResultFile, final Kopemedata oneResultData, final List<TestMethod> testcaseList)
          throws JAXBException, IOException {
-      final TestcaseType oneRundata = testcaseList.get(0);
-      Datacollector timeDataCollector = MultipleVMTestUtil.getTimeDataCollector(oneRundata);
+      final TestMethod oneRundata = testcaseList.get(0);
+      DatacollectorResult timeDataCollector = oneResultData.getFirstTimeDataCollector();
 
       saveSummaryFile(version, timeDataCollector, oneResultFile);
 
-      for (Result result : timeDataCollector.getResult()) {
-         String paramString = ParamNameHelper.paramsToString(result.getParams());
+      for (VMResult result : timeDataCollector.getResults()) {
+         String paramString = ParamNameHelper.paramsToString(result.getParameters());
          TestCase concreteTestcase = new TestCase(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
 
          final File destFile = folders.getResultFile(concreteTestcase, vmid, version, mainVersion);
@@ -166,12 +159,12 @@ public class ResultOrganizer {
             if (fulldata.getFileName() != null) {
                saveFulldataFile(vmid, oneResultFile, destFile, fulldata);
             }
-            Kopemedata copiedData = XMLDataStorer.clone(oneResultData);
-            Datacollector copiedTimeDataCollector = MultipleVMTestUtil.getTimeDataCollector(copiedData);
-            copiedTimeDataCollector.getResult().clear();
-            copiedTimeDataCollector.getResult().add(result);
+            Kopemedata copiedData = JSONDataStorer.clone(oneResultData);
+            DatacollectorResult copiedTimeDataCollector = copiedData.getFirstTimeDataCollector();
+            copiedTimeDataCollector.getResults().clear();
+            copiedTimeDataCollector.getResults().add(result);
 
-            XMLDataStorer.storeData(destFile, copiedData);
+            JSONDataStorer.storeData(destFile, copiedData);
             oneResultFile.delete();
 
          } else {
@@ -188,9 +181,9 @@ public class ResultOrganizer {
       fulldata.setFileName(destFileName);
    }
 
-   public void saveSummaryFile(final String version, final Datacollector timeDataCollector, final File oneResultFile) throws JAXBException {
-      for (Result result : timeDataCollector.getResult()) {
-         String paramString = ParamNameHelper.paramsToString(result.getParams());
+   public void saveSummaryFile(final String version, final DatacollectorResult timeDataCollector, final File oneResultFile) throws JAXBException {
+      for (VMResult result : timeDataCollector.getResults()) {
+         String paramString = ParamNameHelper.paramsToString(result.getParameters());
          TestCase concreteTestcase = new TestCase(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);
 
          final File summaryResultFile = folders.getSummaryFile(concreteTestcase);

@@ -9,11 +9,12 @@ import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
 import de.dagere.peass.measurement.statistics.data.OutlierRemover;
 
 public class OutlierRemoverBimodal {
-   public OutlierRemoverBimodal(final List<Result> results) {
+   public OutlierRemoverBimodal(final List<VMResult> results) {
       final IsBimodal isBimodal = new IsBimodal(results);
       if (isBimodal.isBimodal()) {
          removeFromLeftDistribution(results, isBimodal);
@@ -23,10 +24,10 @@ public class OutlierRemoverBimodal {
       }
    }
 
-   private void removeUnimodal(final List<Result> results) {
+   private void removeUnimodal(final List<VMResult> results) {
       SummaryStatistics statistics = MultipleVMTestUtil.getStatistic(results);
-      for (Iterator<Result> iterator = results.iterator(); iterator.hasNext();) {
-         Result r = iterator.next();
+      for (Iterator<VMResult> iterator = results.iterator(); iterator.hasNext();) {
+         VMResult r = iterator.next();
          double zscore = Math.abs(r.getValue() - statistics.getMean()) / statistics.getStandardDeviation();
          if (zscore > OutlierRemover.Z_SCORE) {
             iterator.remove();
@@ -34,10 +35,10 @@ public class OutlierRemoverBimodal {
       }
    }
 
-   private void removeFromRightDistribution(final List<Result> results, final IsBimodal isBimodal) {
+   private void removeFromRightDistribution(final List<VMResult> results, final IsBimodal isBimodal) {
       SummaryStatistics stat2 = isBimodal.getStat2();
-      for (Iterator<Result> iterator = results.iterator(); iterator.hasNext();) {
-         Result r = iterator.next();
+      for (Iterator<VMResult> iterator = results.iterator(); iterator.hasNext();) {
+         VMResult r = iterator.next();
          if (r.getValue() >= isBimodal.getAvgValue()) {
             double zscore = Math.abs(r.getValue() - stat2.getMean()) / stat2.getStandardDeviation();
             if (zscore > OutlierRemover.Z_SCORE) {
@@ -47,10 +48,10 @@ public class OutlierRemoverBimodal {
       }
    }
 
-   private void removeFromLeftDistribution(final List<Result> results, final IsBimodal isBimodal) {
+   private void removeFromLeftDistribution(final List<VMResult> results, final IsBimodal isBimodal) {
       SummaryStatistics stat1 = isBimodal.getStat1();
-      for (Iterator<Result> iterator = results.iterator(); iterator.hasNext();) {
-         Result r = iterator.next();
+      for (Iterator<VMResult> iterator = results.iterator(); iterator.hasNext();) {
+         VMResult r = iterator.next();
          if (r.getValue() < isBimodal.getAvgValue()) {
             double zscore = Math.abs(r.getValue() - stat1.getMean()) / stat1.getStandardDeviation();
             if (zscore > OutlierRemover.Z_SCORE) {

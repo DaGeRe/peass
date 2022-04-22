@@ -2,6 +2,7 @@ package de.dagere.peass.jmh;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import jakarta.xml.bind.JAXBException;
@@ -12,9 +13,9 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.jmh.JmhKoPeMeConverter;
@@ -39,13 +40,13 @@ public class TestResultConversion {
       MatcherAssert.assertThat(resultFiles, Matchers.hasSize(1));
       
       File resultFile = resultFiles.iterator().next();
-      Kopemedata data = XMLDataLoader.loadData(resultFile);
+      Kopemedata data = JSONDataLoader.loadData(resultFile);
       
-      List<Result> results = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
+      List<VMResult> results = data.getFirstDatacollectorContent();
       MatcherAssert.assertThat(results, Matchers.hasSize(1));
-      Result result = results.get(0);
+      VMResult result = results.get(0);
       Assert.assertEquals(result.getValue(), 1101075.0, 0.01);
-      Assert.assertEquals(result.getFulldata().getValue().get(0).getValue(), 1101075);
+      Assert.assertEquals(result.getFulldata().getValues().get(0).getValue(), 1101075);
    }
    
    @Test
@@ -57,11 +58,11 @@ public class TestResultConversion {
       MatcherAssert.assertThat(resultFiles, Matchers.hasSize(1));
       
       File resultFile = resultFiles.iterator().next();
-      Kopemedata data = XMLDataLoader.loadData(resultFile);
+      Kopemedata data = JSONDataLoader.loadData(resultFile);
       
-      List<Result> results = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
+      List<VMResult> results = data.getFirstDatacollectorContent();
       MatcherAssert.assertThat(results, Matchers.hasSize(2));
-      Result result = results.get(0);
+      VMResult result = results.get(0);
       Assert.assertEquals(10, result.getIterations());
       Assert.assertEquals(0, result.getWarmup());
       System.out.println(result.getRepetitions());
@@ -76,13 +77,13 @@ public class TestResultConversion {
       MatcherAssert.assertThat(resultFiles, Matchers.hasSize(1));
       
       File resultFile = resultFiles.iterator().next();
-      Kopemedata data = XMLDataLoader.loadData(resultFile);
+      Kopemedata data = JSONDataLoader.loadData(resultFile);
       
-      List<Result> results = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
+      List<VMResult> results = data.getFirstDatacollectorContent();
       MatcherAssert.assertThat(results, Matchers.hasSize(5));
-      Result result = results.get(0);
+      VMResult result = results.get(0);
       Assert.assertEquals(result.getValue(), 1064297.5, 0.01);
-      Assert.assertEquals(result.getFulldata().getValue().get(0).getValue(), 1063790.0, 0.01);
+      Assert.assertEquals(result.getFulldata().getValues().get(0).getValue(), 1063790.0, 0.01);
    }
    
    @Test
@@ -94,13 +95,13 @@ public class TestResultConversion {
       MatcherAssert.assertThat(resultFiles, Matchers.hasSize(1));
       
       File resultFile = resultFiles.iterator().next();
-      Kopemedata data = XMLDataLoader.loadData(resultFile);
+      Kopemedata data = JSONDataLoader.loadData(resultFile);
       
-      List<Result> results = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
+      List<VMResult> results = data.getFirstDatacollectorContent();
       MatcherAssert.assertThat(results, Matchers.hasSize(3));
-      Result result = results.get(0);
+      VMResult result = results.get(0);
       Assert.assertEquals(result.getValue(), 1.0286803E7, 0.01);
-      Assert.assertEquals(result.getFulldata().getValue().get(0).getValue(), 10386085);
+      Assert.assertEquals(result.getFulldata().getValues().get(0).getValue(), 10386085);
    }
    
    @Test
@@ -112,13 +113,14 @@ public class TestResultConversion {
       MatcherAssert.assertThat(resultFiles, Matchers.hasSize(1));
       
       File resultFile = resultFiles.iterator().next();
-      Kopemedata data = XMLDataLoader.loadData(resultFile);
+      Kopemedata data = JSONDataLoader.loadData(resultFile);
       
-      List<Result> results = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
+      List<VMResult> results = data.getFirstDatacollectorContent();
       MatcherAssert.assertThat(results, Matchers.hasSize(3));
-      Result result = results.get(0);
-      Assert.assertEquals(result.getParams().getParam().get(0).getKey(), "TEST_PARAM");
-      Assert.assertEquals(result.getParams().getParam().get(0).getValue(), "val1");
+      VMResult result = results.get(0);
+      Entry<String, String> parameter = result.getParameters().entrySet().iterator().next();
+      Assert.assertEquals(parameter.getKey(), "TEST_PARAM");
+      Assert.assertEquals(parameter.getValue(), "val1");
    }
    
    private Set<File> convert(final File jmhFile) {
