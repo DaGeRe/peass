@@ -167,12 +167,12 @@ public class DependencyManager extends KiekerResultManager {
    }
 
    private boolean readInitialResultFiles(final ModuleClassMapping mapping) {
-      final Collection<File> xmlFiles = FileUtils.listFiles(folders.getTempMeasurementFolder(), new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE);
+      final Collection<File> xmlFiles = FileUtils.listFiles(folders.getTempMeasurementFolder(), new WildcardFileFilter("*.json"), TrueFileFilter.INSTANCE);
       LOG.debug("Initial test execution finished, starting result collection, analyzing {} files", xmlFiles.size());
       for (final File testResultFile : xmlFiles) {
          final File parent = testResultFile.getParentFile();
          final String testClassName = parent.getName();
-         final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - 4); // remove
+         final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - ".json".length()); // remove
          // .xml
          final String moduleOfClass = mapping.getModuleOfClass(testClassName);
          if (moduleOfClass == null) {
@@ -344,7 +344,7 @@ public class DependencyManager extends KiekerResultManager {
    void updateMethods(final ModuleClassMapping mapping, final TestExistenceChanges changes, final Entry<TestCase, Set<String>> entry, final File testclazzFolder) {
       final Set<String> notFound = new TreeSet<>();
       notFound.addAll(entry.getValue());
-      for (final File testResultFile : testclazzFolder.listFiles((FileFilter) new WildcardFileFilter("*.xml"))) {
+      for (final File testResultFile : testclazzFolder.listFiles((FileFilter) new WildcardFileFilter("*.json"))) {
          final String testClassName2 = testResultFile.getParentFile().getName();
          if (!testClassName2.equals(entry.getKey().getClazz())) {
             LOG.error("Testclass " + entry.getKey().getClazz() + " != " + testClassName2);
