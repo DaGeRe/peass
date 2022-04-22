@@ -7,7 +7,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 
-import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.analysis.measurement.statistics.MeanCoVData;
 import de.dagere.peass.analysis.measurement.statistics.MeanHistogramData;
