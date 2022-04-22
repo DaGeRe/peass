@@ -350,7 +350,7 @@ public class DependencyManager extends KiekerResultManager {
             LOG.error("Testclass " + entry.getKey().getClazz() + " != " + testClassName2);
          }
          final File parent = testResultFile.getParentFile();
-         final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - 4);
+         final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - ".json".length());
          final String module = mapping.getModuleOfClass(entry.getKey().getClazz());
          updateDependenciesOnce(new TestCase(entry.getKey().getClazz(), testMethodName, module), parent, mapping);
          notFound.remove(testMethodName);
