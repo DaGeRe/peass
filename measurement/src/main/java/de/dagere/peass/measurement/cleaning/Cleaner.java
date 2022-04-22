@@ -5,8 +5,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,7 +14,6 @@ import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.kopeme.datastorage.JSONDataStorer;
-import de.dagere.kopeme.generated.Versioninfo;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
 import de.dagere.peass.measurement.dataloading.MeasurementFileFinder;

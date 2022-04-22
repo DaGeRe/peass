@@ -6,7 +6,6 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.measurement.statistics.bimodal.CompareData;
 

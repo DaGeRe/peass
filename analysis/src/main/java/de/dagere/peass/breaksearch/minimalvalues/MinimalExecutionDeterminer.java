@@ -6,7 +6,6 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.breaksearch.FindLowestPossibleIterations;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
@@ -39,9 +38,9 @@ public class MinimalExecutionDeterminer extends MinimalValueDeterminer {
 
 	
 	
-	public static DescriptiveStatistics getStatistic(final List<Result> values) {
+	public static DescriptiveStatistics getStatistic(final List<VMResult> values) {
 	   DescriptiveStatistics statistics = new DescriptiveStatistics();
-	   for (Result r : values) {
+	   for (VMResult r : values) {
 	      statistics.addValue(r.getValue());
 	   }
 	   return statistics;

@@ -4,7 +4,6 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.measurement.statistics.bimodal.BimodalityTester;
 import de.dagere.peass.measurement.statistics.bimodal.CompareData;

@@ -7,7 +7,6 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.kopemedata.VMResult;
 
 public class IsBimodal {

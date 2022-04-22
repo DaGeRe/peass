@@ -4,7 +4,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import de.dagere.kopeme.generated.Result;
 import de.dagere.kopeme.kopemedata.VMResult;
 
 /**
