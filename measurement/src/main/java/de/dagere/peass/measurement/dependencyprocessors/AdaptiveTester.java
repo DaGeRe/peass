@@ -3,8 +3,6 @@ package de.dagere.peass.measurement.dependencyprocessors;
 import java.io.File;
 import java.io.IOException;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +15,7 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dataloading.ResultLoader;
 import de.dagere.peass.measurement.dependencyprocessors.helper.EarlyBreakDecider;
 import de.dagere.peass.measurement.dependencyprocessors.helper.ProgressWriter;
+import jakarta.xml.bind.JAXBException;
 
 public class AdaptiveTester extends DependencyTester {
 

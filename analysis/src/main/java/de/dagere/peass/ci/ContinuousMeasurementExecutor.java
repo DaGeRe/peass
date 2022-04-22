@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +15,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dependencyprocessors.AdaptiveTester;
+import jakarta.xml.bind.JAXBException;
 
 public class ContinuousMeasurementExecutor {
 

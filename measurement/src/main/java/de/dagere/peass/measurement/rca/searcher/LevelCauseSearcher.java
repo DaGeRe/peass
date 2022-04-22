@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -24,6 +22,7 @@ import de.dagere.peass.measurement.rca.CauseTester;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
+import jakarta.xml.bind.JAXBException;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class LevelCauseSearcher extends CauseSearcher {

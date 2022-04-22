@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map.Entry;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -23,6 +21,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.measurement.utils.CreateScriptStarter;
+import jakarta.xml.bind.JAXBException;
 
 public class MissingExecutionFinder {
 

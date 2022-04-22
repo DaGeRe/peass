@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -39,6 +37,7 @@ import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.measurement.dataloading.VersionSorter;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
+import jakarta.xml.bind.JAXBException;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;

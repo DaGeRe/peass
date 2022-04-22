@@ -3,7 +3,6 @@ package de.dagere.peass.dependency.analysis.data;
 import java.io.File;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
-import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;

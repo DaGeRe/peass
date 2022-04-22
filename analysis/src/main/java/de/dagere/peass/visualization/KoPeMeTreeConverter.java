@@ -6,8 +6,6 @@ import java.io.FilenameFilter;
 import java.util.LinkedList;
 import java.util.List;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
@@ -25,6 +23,7 @@ import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.rca.serialization.MeasuredValues;
 import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
+import jakarta.xml.bind.JAXBException;
 
 /**
  * Read the overall data of the specified testcase (i.e. the values from the KoPeMe outside-measurement, no the Kieker in-method-measurement)

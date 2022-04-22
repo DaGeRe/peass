@@ -2,8 +2,6 @@ package de.dagere.peass;
 
 import java.io.IOException;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,6 +24,7 @@ import de.dagere.peass.measurement.rca.searcher.CauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.CauseSearcherComplete;
 import de.dagere.peass.measurement.rca.searcher.LevelCauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.TreeAnalyzerCreator;
+import jakarta.xml.bind.JAXBException;
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;

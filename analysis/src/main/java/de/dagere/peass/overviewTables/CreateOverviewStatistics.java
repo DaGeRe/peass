@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.List;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import com.fasterxml.jackson.core.JsonParseException;
@@ -22,6 +20,7 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
+import jakarta.xml.bind.JAXBException;
 
 /**
  * Creates overview-table for ESEC-paper

@@ -3,7 +3,6 @@ package de.dagere.peass.measurement.dataloading;
 import java.io.File;
 import java.util.List;
 
-import jakarta.xml.bind.JAXBException;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Kopemedata;

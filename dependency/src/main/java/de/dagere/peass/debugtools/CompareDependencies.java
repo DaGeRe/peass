@@ -7,16 +7,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import jakarta.xml.bind.JAXBException;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.InitialDependency;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.utils.Constants;
+import jakarta.xml.bind.JAXBException;
 /**
  * Compares two dependency files in order to find whether one is missing some testcases
  * @author reichelt

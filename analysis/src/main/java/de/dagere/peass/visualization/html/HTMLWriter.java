@@ -7,8 +7,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.commons.io.FileUtils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,6 +17,7 @@ import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.visualization.GraphNode;
 import de.dagere.peass.visualization.NodeDashboardWriter;
 import de.dagere.peass.visualization.RCAGenerator;
+import jakarta.xml.bind.JAXBException;
 
 public class HTMLWriter {
    

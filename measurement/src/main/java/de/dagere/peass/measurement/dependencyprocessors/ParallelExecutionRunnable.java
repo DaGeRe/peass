@@ -3,14 +3,13 @@ package de.dagere.peass.measurement.dependencyprocessors;
 import java.io.File;
 import java.io.IOException;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
+import jakarta.xml.bind.JAXBException;
 
 public class ParallelExecutionRunnable implements Runnable {
    

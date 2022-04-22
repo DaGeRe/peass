@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,7 +81,7 @@ public abstract class VersionProcessor implements Callable<Void> {
       }
    }
 
-   public void processCommandline() throws JAXBException {
+   public void processCommandline() {
       LOG.debug("Processing initial");
       processInitialVersion(staticTestSelection.getInitialversion());
 

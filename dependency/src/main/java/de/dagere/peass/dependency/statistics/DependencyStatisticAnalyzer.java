@@ -10,8 +10,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,10 +19,11 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.utils.Constants;
+import jakarta.xml.bind.JAXBException;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
@@ -79,7 +78,7 @@ public class DependencyStatisticAnalyzer implements Callable<Void> {
    }
 
    public static DependencyStatistics getChangeStatistics(final File dependenciesFile, final ExecutionData changedTests)
-         throws JAXBException, JsonParseException, JsonMappingException, IOException {
+         throws JsonParseException, JsonMappingException, IOException {
       final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependenciesFile, StaticTestSelection.class);
       final Map<String, VersionStaticSelection> versions = dependencies.getVersions();
 

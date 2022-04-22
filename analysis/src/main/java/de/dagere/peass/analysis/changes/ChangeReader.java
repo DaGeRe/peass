@@ -7,8 +7,6 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Map;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -59,7 +57,7 @@ public class ChangeReader {
    private final RunCommandWriterRCA runCommandWriter;
    private final RunCommandWriterSlurmRCA runCommandWriterSlurm;
    private final SelectedTests selectedTests;
-   
+
    private Map<String, TestSet> tests;
 
    public ChangeReader(final ResultsFolders resultsFolders, final SelectedTests selectedTests) throws FileNotFoundException {
@@ -77,7 +75,8 @@ public class ChangeReader {
       }
    }
 
-   public ChangeReader(final ResultsFolders resultsFolders, final RunCommandWriterRCA runCommandWriter, final RunCommandWriterSlurmRCA runCommandWriterSlurm, final SelectedTests selectedTests) throws FileNotFoundException {
+   public ChangeReader(final ResultsFolders resultsFolders, final RunCommandWriterRCA runCommandWriter, final RunCommandWriterSlurmRCA runCommandWriterSlurm,
+         final SelectedTests selectedTests) throws FileNotFoundException {
       this.resultsFolders = resultsFolders;
       this.runCommandWriter = runCommandWriter;
       this.runCommandWriterSlurm = runCommandWriterSlurm;
@@ -99,12 +98,12 @@ public class ChangeReader {
    public void setConfig(StatisticsConfig config) {
       this.config = config;
    }
-   
+
    public StatisticsConfig getConfig() {
       return config;
    }
 
-   public ProjectChanges readFile(final File measurementFolder) throws JAXBException {
+   public ProjectChanges readFile(final File measurementFolder) {
       final ProjectChanges changes = new ProjectChanges(config);
       final ProjectStatistics info = new ProjectStatistics();
       LOG.debug("Reading from " + measurementFolder.getAbsolutePath());
@@ -117,7 +116,7 @@ public class ChangeReader {
       return changes;
    }
 
-   private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info) throws JAXBException {
+   private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info) {
       if (measurementFolder.isDirectory()) {
          for (final File file : measurementFolder.listFiles()) {
             if (file.getName().matches("[0-9]+_[0-9]+")) {
@@ -125,22 +124,22 @@ public class ChangeReader {
                readCleanFolder(measurementFolder, changes, info, slurmCleanFolder);
             } else if (file.getName().equals("clean")) {
                readCleanFolder(measurementFolder, changes, info, file);
-            } else if (file.getName().endsWith(".xml")) {
+            } else if (file.getName().endsWith(".json") || file.getName().endsWith(".xml")) {
                readFile(measurementFolder, changes, info, file);
             }
          }
       } else {
-         if (measurementFolder.getName().endsWith(".xml")) {
+         if (measurementFolder.getName().endsWith(".json") || measurementFolder.getName().endsWith(".xml")) {
             readFile(measurementFolder, changes, info, measurementFolder);
          }
       }
    }
 
-   private void readCleanFolder(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File cleanParentFolder) throws JAXBException {
+   private void readCleanFolder(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File cleanParentFolder) {
       LOG.info("Handling: {}", cleanParentFolder);
       for (File cleanedFolder : cleanParentFolder.listFiles()) {
          for (File childFile : cleanedFolder.listFiles()) {
-            if (childFile.getName().endsWith(".xml")) {
+            if (childFile.getName().endsWith(".json") || childFile.getName().endsWith(".xml")) {
                readFile(measurementFolder, changes, info, childFile);
             }
          }
@@ -165,7 +164,7 @@ public class ChangeReader {
       }
    }
 
-   private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File file) throws JAXBException {
+   private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File file) {
       final Kopemedata data = new JSONDataLoader(file).getFullData();
       for (final TestMethod testcaseMethod : data.getMethods()) {
          LOG.info(file.getAbsolutePath());
@@ -247,8 +246,8 @@ public class ChangeReader {
    private boolean paramsEqual(final String paramString, final TestCase test) {
       boolean bothNull = test.getParams() == paramString && test.getParams() == null;
       boolean stringEmptyAndParamsNull = "".equals(paramString) && test.getParams() == null;
-      return bothNull 
-            || stringEmptyAndParamsNull 
+      return bothNull
+            || stringEmptyAndParamsNull
             || (test.getParams() != null && test.getParams().equals(paramString)); // last should only be evaluated if both are not null
    }
 
@@ -260,7 +259,7 @@ public class ChangeReader {
          final int vms = describedChunk.getCurrent().size();
 
          final int versionIndex = Arrays.binarySearch(selectedTests.getVersionNames(), versions[1]);
-         
+
          runCommandWriter.createSingleMethodCommand(versionIndex, versions[1], testcase.getExecutable(),
                (int) exampleResult.getWarmup(), iterations, repetitions, vms);
 

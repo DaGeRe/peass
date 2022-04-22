@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -29,6 +27,7 @@ import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
 import de.dagere.peass.measurement.statistics.data.TestData;
 import de.dagere.peass.testtransformation.TestTransformer;
+import jakarta.xml.bind.JAXBException;
 
 /**
  * Runs a PeASS with only running the tests where a changed class is present.

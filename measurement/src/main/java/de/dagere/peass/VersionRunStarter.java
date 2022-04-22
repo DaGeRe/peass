@@ -2,8 +2,6 @@ package de.dagere.peass;
 
 import java.io.IOException;
 
-import jakarta.xml.bind.JAXBException;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -11,6 +9,7 @@ import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.VersionProcessor;
 import de.dagere.peass.utils.StreamGobbler;
 import de.dagere.peass.vcs.GitUtils;
+import jakarta.xml.bind.JAXBException;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 

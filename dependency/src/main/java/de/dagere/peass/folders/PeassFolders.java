@@ -213,9 +213,19 @@ public class PeassFolders {
       final String shortClazzName = testcase.getShortClazz();
       final File fullResultFile;
       if (testcase.getParams() != null) {
-         fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + "(" + testcase.getParams() + ").xml");
+         File fullResultFileJSON = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + "(" + testcase.getParams() + ").json");
+         if (fullResultFileJSON.exists()) {
+            fullResultFile = fullResultFileJSON;
+         } else {
+            fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + "(" + testcase.getParams() + ").xml");
+         }
       } else {
-         fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".xml");
+         File fullResultFileJSON = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".json");
+         if (fullResultFileJSON.exists()) {
+            fullResultFile = fullResultFileJSON;
+         } else {
+            fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".xml");
+         }
       }
       return fullResultFile;
    }
@@ -250,9 +260,9 @@ public class PeassFolders {
    private static String getXMLFileName(final TestCase testcase, final String commit, final int vmid) {
       String filename;
       if (testcase.getParams() != null) {
-         filename = testcase.getMethod() + "(" + testcase.getParams() + ")_" + vmid + "_" + commit + ".xml";
+         filename = testcase.getMethod() + "(" + testcase.getParams() + ")_" + vmid + "_" + commit + ".json";
       } else {
-         filename = testcase.getMethod() + "_" + vmid + "_" + commit + ".xml";
+         filename = testcase.getMethod() + "_" + vmid + "_" + commit + ".json";
       }
       return filename;
    }
