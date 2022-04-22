@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.xml.bind.JAXBException;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 
@@ -54,7 +52,7 @@ public class JmhKoPeMeConverter {
                results.add(converter.getKoPeMeFile());
             }
          }
-      } catch (IOException | JAXBException e) {
+      } catch (IOException e) {
          throw new RuntimeException(e);
       }
       return results;

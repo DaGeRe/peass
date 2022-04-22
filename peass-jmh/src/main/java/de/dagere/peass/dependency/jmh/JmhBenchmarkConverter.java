@@ -4,8 +4,6 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
-import jakarta.xml.bind.JAXBException;
-
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -31,9 +29,9 @@ public class JmhBenchmarkConverter {
    private final DatacollectorResult timeCollector;
    private final MeasurementConfig measurementConfig;
 
-   public JmhBenchmarkConverter(final TestCase testcase, final File clazzResultFolder, final MeasurementConfig measurementConfig) throws JAXBException {
+   public JmhBenchmarkConverter(final TestCase testcase, final File clazzResultFolder, final MeasurementConfig measurementConfig) {
       this.measurementConfig = measurementConfig;
-      File koPeMeFileTry = new File(clazzResultFolder, testcase.getMethod() + ".xml");
+      File koPeMeFileTry = new File(clazzResultFolder, testcase.getMethod() + ".json");
 
       if (koPeMeFileTry.exists()) {
          Kopemedata transformedTry = JSONDataLoader.loadData(koPeMeFileTry);
@@ -42,7 +40,7 @@ public class JmhBenchmarkConverter {
             transformed = transformedTry;
             koPeMeFile = koPeMeFileTry;
          } else {
-            koPeMeFile = new File(clazzResultFolder, testcase.getShortClazz() + "_" + testcase.getMethod() + ".xml");
+            koPeMeFile = new File(clazzResultFolder, testcase.getShortClazz() + "_" + testcase.getMethod() + ".json");
             transformed = JSONDataLoader.loadData(koPeMeFileTry);
          }
          timeCollector = transformed.getFirstTimeDataCollector();
