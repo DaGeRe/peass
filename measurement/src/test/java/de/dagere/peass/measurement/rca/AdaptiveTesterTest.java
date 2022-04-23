@@ -16,6 +16,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -53,12 +54,12 @@ public class AdaptiveTesterTest {
          Mockito.doReturn(false).when(tester2).checkIsDecidable(Mockito.eq(testcase), Mockito.anyInt());
 
          for (int i = 0; i < vms; i++) {
-            final Result result1 = new Result();
+            final VMResult result1 = new VMResult();
             result1.setValue(15);
             result1.setIterations(40);
             Mockito.doReturn(result1).when(tester2).getLastResult("A", testcase, i);
 
-            final Result result2 = new Result();
+            final VMResult result2 = new VMResult();
             result2.setValue(17);
             result2.setIterations(40);
             Mockito.doReturn(result2).when(tester2).getLastResult("B", testcase, i);
@@ -114,12 +115,12 @@ public class AdaptiveTesterTest {
 
    private void createEarlyBreakData(final AdaptiveTester tester2) throws JAXBException {
       for (int i = 0; i < 100; i++) {
-         final Result result1 = new Result();
+         final VMResult result1 = new VMResult();
          result1.setValue(15);
          result1.setIterations(40);
          Mockito.doReturn(result1).when(tester2).getLastResult("A", testcase, i);
 
-         final Result result2 = new Result();
+         final VMResult result2 = new VMResult();
          result2.setValue(15);
          result2.setIterations(40);
          Mockito.doReturn(result2).when(tester2).getLastResult("B", testcase, i);
