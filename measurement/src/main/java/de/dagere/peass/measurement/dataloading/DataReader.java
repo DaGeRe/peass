@@ -77,6 +77,11 @@ public final class DataReader {
       for (final File versionOfPair : clazzFile.listFiles()) {
          if (versionOfPair.isDirectory()) {
             for (final File versionCurrent : versionOfPair.listFiles()) {
+               for (final File measurementFile : versionCurrent.listFiles((FileFilter) new WildcardFileFilter("*.json"))) {
+                  readMeasurementFile(currentMeasurement, versionOfPair, versionCurrent, measurementFile);
+               }
+               
+               // For compatibility with reading old xml result data, this needs to stay in the code
                for (final File measurementFile : versionCurrent.listFiles((FileFilter) new WildcardFileFilter("*.xml"))) {
                   readMeasurementFile(currentMeasurement, versionOfPair, versionCurrent, measurementFile);
                }
