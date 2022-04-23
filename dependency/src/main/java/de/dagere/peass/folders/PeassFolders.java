@@ -213,18 +213,18 @@ public class PeassFolders {
       final String shortClazzName = testcase.getShortClazz();
       final File fullResultFile;
       if (testcase.getParams() != null) {
-         File fullResultFileJSON = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + "(" + testcase.getParams() + ").json");
-         if (fullResultFileJSON.exists()) {
-            fullResultFile = fullResultFileJSON;
+         File fullResultFileXML = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + "(" + testcase.getParams() + ").xml");
+         if (fullResultFileXML.exists()) {
+            fullResultFile = fullResultFileXML;
          } else {
-            fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + "(" + testcase.getParams() + ").xml");
+            fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + "(" + testcase.getParams() + ").json");
          }
       } else {
-         File fullResultFileJSON = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".json");
-         if (fullResultFileJSON.exists()) {
-            fullResultFile = fullResultFileJSON;
+         File fullResultFileXML = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".xml");
+         if (fullResultFileXML.exists()) {
+            fullResultFile = fullResultFileXML;
          } else {
-            fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".xml");
+            fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".json");
          }
       }
       return fullResultFile;

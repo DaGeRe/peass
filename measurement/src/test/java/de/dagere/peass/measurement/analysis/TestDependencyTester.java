@@ -4,6 +4,8 @@ import java.io.File;
 
 import jakarta.xml.bind.JAXBException;
 
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
@@ -56,7 +58,7 @@ public class TestDependencyTester {
 
    public static void checkResult(final PeassFolders folders) throws JAXBException {
       final File expectedSummaryResultFile = folders.getSummaryFile(EXAMPLE_TESTCASE);
-      Assert.assertTrue(expectedSummaryResultFile.exists());
+      Assert.assertTrue(expectedSummaryResultFile + " should exist", expectedSummaryResultFile.exists());
 
       final Kopemedata data = JSONDataLoader.loadData(expectedSummaryResultFile);
       final DatacollectorResult collector = data.getFirstMethodResult().getDatacollectorResults().get(0);

@@ -100,7 +100,7 @@ public class ResultOrganizer {
          final File folder = getTempResultsFolder(version);
          if (folder != null) {
             final String methodname = testcase.getMethodWithParams();
-            final File oneResultFile = new File(folder, methodname + ".xml");
+            final File oneResultFile = new File(folder, methodname + ".json");
             if (!oneResultFile.exists()) {
                LOG.debug("File {} does not exist.", oneResultFile.getAbsolutePath());
                success = false;
