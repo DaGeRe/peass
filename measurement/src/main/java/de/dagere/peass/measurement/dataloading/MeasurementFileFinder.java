@@ -19,29 +19,47 @@ public class MeasurementFileFinder {
       String clazz = testcase.getClazz();
       String methodWithParams = testcase.getMethodWithParams();
       final String shortClazz = clazz.substring(clazz.lastIndexOf('.') + 1);
-      final File candidateFull = new File(folder, clazz + "_" + methodWithParams + ".xml");
-      if (!candidateFull.exists()) {
-         final File candidateShort = new File(folder, shortClazz + "_" + methodWithParams + ".xml");
-         final Kopemedata oneResultData2 = loadData(candidateShort);
-         if (candidateShort.exists()) {
-            final String otherFullClazz = oneResultData2.getClazz();
-            if (!otherFullClazz.equals(clazz)) {
-               measurementFile = candidateFull;
-               oneResultData = loadData(measurementFile);
-            } else {
-               measurementFile = candidateShort;
-               oneResultData = oneResultData2;
-            }
+      File xmlCandidateFull = new File(folder, clazz + "_" + methodWithParams + ".xml");
+      final File xmlCandidateShort = new File(folder, shortClazz + "_" + methodWithParams + ".xml");
+      if (xmlCandidateFull.exists()) {
+         measurementFile = xmlCandidateFull;
+         oneResultData = loadData(measurementFile);
+      } else if (xmlCandidateShort.exists()) {
+         final Kopemedata oneResultData2 = loadData(xmlCandidateShort);
+         final String otherFullClazz = oneResultData2.getClazz();
+         if (!otherFullClazz.equals(clazz)) {
+            measurementFile = xmlCandidateFull;
+            oneResultData = loadData(measurementFile);
          } else {
-            measurementFile = candidateShort;
+            measurementFile = xmlCandidateShort;
             oneResultData = oneResultData2;
          }
       } else {
-         measurementFile = candidateFull;
-         oneResultData = loadData(measurementFile);
+         final File jsonCandidateFull = new File(folder, clazz + "_" + methodWithParams + ".json");
+         if (!jsonCandidateFull.exists()) {
+            final File jsonCandidateShort = new File(folder, shortClazz + "_" + methodWithParams + ".json");
+            if (jsonCandidateShort.exists()) {
+               final Kopemedata oneResultData2 = loadData(jsonCandidateShort);
+               final String otherFullClazz = oneResultData2.getClazz();
+               if (!otherFullClazz.equals(clazz)) {
+                  measurementFile = jsonCandidateShort;
+                  oneResultData = loadData(measurementFile);
+               } else {
+                  measurementFile = jsonCandidateShort;
+                  oneResultData = oneResultData2;
+               }
+            } else {
+               measurementFile = jsonCandidateShort;
+               oneResultData = new Kopemedata(clazz);
+            }
+         } else {
+            measurementFile = jsonCandidateFull;
+            oneResultData = loadData(measurementFile);
+         }
       }
-      oneResultData.setClazz(clazz);
       
+      oneResultData.setClazz(clazz);
+
       final List<TestMethod> testcaseList = oneResultData.getMethods();
       datacollector = getDataCollector(testcase.getMethod(), testcaseList);
    }
@@ -50,7 +68,7 @@ public class MeasurementFileFinder {
       final Kopemedata oneResultData2 = JSONDataLoader.loadData(file);
       return oneResultData2;
    }
-   
+
    public File getMeasurementFile() {
       return measurementFile;
    }
@@ -58,11 +76,11 @@ public class MeasurementFileFinder {
    public Kopemedata getOneResultData() {
       return oneResultData;
    }
-   
+
    public DatacollectorResult getDataCollector() {
       return datacollector;
    }
-   
+
    public static DatacollectorResult getDataCollector(final String method, final List<TestMethod> testcaseList) {
       DatacollectorResult datacollector = null;
       for (final TestMethod testcase : testcaseList) {

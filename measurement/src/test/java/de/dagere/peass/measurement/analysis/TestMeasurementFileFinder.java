@@ -12,7 +12,7 @@ import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.dataloading.MeasurementFileFinder;
 
-public class TestMearementFileFinder {
+public class TestMeasurementFileFinder {
    
    @Test
    public void testFileFinding() {
