@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -124,34 +125,49 @@ public class GradleBuildfileEditor {
    }
 
    public void addKiekerLine(final File tempFolder, final GradleBuildfileVisitor visitor) {
-      if (testTransformer.getConfig().isUseKieker()) {
-         final String javaagentArgument = new ArgLineBuilder(testTransformer, buildfile.getParentFile()).buildArglineGradle(tempFolder);
-         addArgLine(visitor, javaagentArgument);
-      } else {
-         PeassFolders folders = new PeassFolders(testTransformer.getProjectFolder());
-         String argLine = "jvmArgs=[\"" + ArgLineBuilder.TEMP_DIR + "=" + folders.getTempDir().getAbsolutePath() + "\"]";
-         addArgLine(visitor, argLine);
-      }
+      ArgLineBuilder argLineBuilder = new ArgLineBuilder(testTransformer, buildfile.getParentFile());
+      addArgLine(visitor, argLineBuilder, tempFolder);
    }
 
-   private void addArgLine(final GradleBuildfileVisitor visitor, final String javaagentArgument) {
+   private void addArgLine(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder, File tempFolder) {
       if (visitor.getAndroidLine() != -1) {
          if (visitor.getUnitTestsAll() != -1) {
-            visitor.addLine(visitor.getUnitTestsAll() - 1, javaagentArgument);
+            visitor.addLine(visitor.getUnitTestsAll() - 1, argLineBuilder.buildArglineGradle(tempFolder));
          } else if (visitor.getTestOptionsAndroid() != -1) {
-            visitor.addLine(visitor.getTestOptionsAndroid() - 1, "unitTests.all{" + javaagentArgument + "}");
+            visitor.addLine(visitor.getTestOptionsAndroid() - 1, "unitTests.all{" + argLineBuilder.buildArglineGradle(tempFolder) + "}");
          } else {
-            visitor.addLine(visitor.getAndroidLine() - 1, "testOptions{ unitTests.all{" + javaagentArgument + "} }");
+            visitor.addLine(visitor.getAndroidLine() - 1, "testOptions{ unitTests.all{" + argLineBuilder.buildArglineGradle(tempFolder) + "} }");
          }
       } else {
          if (visitor.getTestLine() != -1) {
-            visitor.addLine(visitor.getTestLine() - 1, javaagentArgument);
+            if (visitor.getTestSystemPropertiesLine() == -1) {
+               visitor.addLine(visitor.getTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
+            } else {
+               for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
+                  visitor.addLine(visitor.getTestSystemPropertiesLine(), "  '" + entry.getKey() + "'             : '" + entry.getValue() + "',");
+               }
+               if (argLineBuilder.getJVMArgs() != null) {
+                  visitor.addLine(visitor.getIntegrationTestLine(), argLineBuilder.getJVMArgs());
+               }
+
+            }
+
          } else {
-            visitor.getLines().add("test { " + javaagentArgument + "}");
+            visitor.getLines().add("test { " + argLineBuilder.buildArglineGradle(tempFolder) + "}");
          }
       }
       if (visitor.getIntegrationTestLine() != -1) {
-         visitor.addLine(visitor.getIntegrationTestLine() - 1, javaagentArgument);
+         if (visitor.getIntegrationTestSystemPropertiesLine() == -1) {
+            visitor.addLine(visitor.getIntegrationTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
+         } else {
+            for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
+               visitor.addLine(visitor.getIntegrationTestSystemPropertiesLine(), "  '" + entry.getKey() + "'             : '" + entry.getValue() + "',");
+            }
+            if (argLineBuilder.getJVMArgs() != null) {
+               visitor.addLine(visitor.getIntegrationTestLine(), argLineBuilder.getJVMArgs());
+            }
+         }
+
       }
    }
 }

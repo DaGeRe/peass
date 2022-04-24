@@ -1,6 +1,8 @@
 package de.dagere.peass.execution.kieker;
 
 import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,7 +11,7 @@ import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.testtransformation.TestTransformer;
 
 public class ArgLineBuilder {
-   
+
    private static final Logger LOG = LogManager.getLogger(ArgLineBuilder.class);
 
    public static final String TEMP_DIR_PURE = "java.io.tmpdir";
@@ -86,14 +88,42 @@ public class ArgLineBuilder {
          String configFilePath = modulePath.getAbsolutePath().replace('\\', '/') + MONITORING_PROPERTIES_PATH;
          argLine += "  systemProperty \"" + KIEKER_CONFIGURATION_PURE + "\", \"" + configFilePath + "\"" + System.lineSeparator();
          if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
-            argLine += "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\"]" + System.lineSeparator();
+            argLine += getJVMArgs() + System.lineSeparator();
          }
-         
+
          LOG.debug("Created gradle argLine: {}", argLine);
-         
+
          return argLine;
       } else {
          return "";
+      }
+   }
+
+   public Map<String, String> getGradleSystemProperties(final File tempFolder) {
+      Map<String, String> properties = new LinkedHashMap<>();
+      if (testTransformer.getConfig().isUseKieker()) {
+         String tempPathNoEscapes = tempFolder.getAbsolutePath().replace('\\', '/');
+         properties.put(TEMP_DIR_PURE, tempPathNoEscapes);
+
+         String configFilePath = modulePath.getAbsolutePath().replace('\\', '/') + MONITORING_PROPERTIES_PATH;
+         properties.put(KIEKER_CONFIGURATION_PURE, configFilePath);
+
+         if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
+            properties.put("jvmArgs", "[\"" + KIEKER_ARG_LINE_GRADLE + "\"]");
+         }
+
+      } else {
+         String tempPathNoEscapes = tempFolder.getAbsolutePath().replace('\\', '/');
+         properties.put(TEMP_DIR_PURE, tempPathNoEscapes);
+      }
+      return properties;
+   }
+
+   public String getJVMArgs() {
+      if (!testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() || testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
+         return "  jvmArgs=[\"" + KIEKER_ARG_LINE_GRADLE + "\"]";
+      } else {
+         return null;
       }
    }
 }

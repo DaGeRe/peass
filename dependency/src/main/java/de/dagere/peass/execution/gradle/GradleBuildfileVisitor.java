@@ -22,10 +22,12 @@ import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.MapEntryExpression;
+import org.codehaus.groovy.ast.expr.MapExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.expr.NamedArgumentListExpression;
 import org.codehaus.groovy.ast.expr.TupleExpression;
 import org.codehaus.groovy.ast.stmt.BlockStatement;
+import org.codehaus.groovy.ast.stmt.ExpressionStatement;
 import org.codehaus.groovy.ast.stmt.Statement;
 
 import de.dagere.peass.config.ExecutionConfig;
@@ -37,7 +39,10 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private int offset = 0;
    private int dependencyLine = -1;
    private int testLine = -1;
+   private int testSystemPropertiesLine = -1;
    private int integrationTestLine = -1;
+   private int integrationTestSystemPropertiesLine = -1;
+
    private int androidLine = -1;
    private int testOptionsAndroid = -1;
    private int unitTestsAll = -1;
@@ -88,6 +93,11 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             dependencyLine = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("test")) {
             testLine = call.getLastLineNumber() + offset;
+            if (call.getArguments() instanceof ArgumentListExpression) {
+               ArgumentListExpression arguments = (ArgumentListExpression) call.getArguments();
+               int propertiesLine = parseTaskWithPotentialSystemProperties(arguments);
+               testSystemPropertiesLine = propertiesLine;
+            }
          } else if (call.getMethodAsString().equals("android")) {
             androidLine = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("testOptions")) {
@@ -117,6 +127,53 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       }
 
       super.visitMethodCallExpression(call);
+   }
+
+   private int parseTaskWithPotentialSystemProperties(ArgumentListExpression arguments) {
+      int propertiesLine = -1;
+      for (Expression argument : arguments.getExpressions()) {
+         if (argument instanceof ClosureExpression) {
+            ClosureExpression closure = (ClosureExpression) argument;
+            BlockStatement blockStatement = (BlockStatement) closure.getCode();
+            for (Statement statement : blockStatement.getStatements()) {
+               if (statement instanceof ExpressionStatement) {
+                  ExpressionStatement potentialSystemProperties = (ExpressionStatement) statement;
+                  if (potentialSystemProperties.getExpression() instanceof MethodCallExpression) {
+                     MethodCallExpression methodCallExpression = (MethodCallExpression) potentialSystemProperties.getExpression();
+
+                     if (methodCallExpression.getMethodAsString().equals("systemProperties")) {
+                        // TODO The following implementation would be better to assure usability with non-standard format (instead of manipulating string lines)
+                        // since I currently did not find a reliable way for reserialization, I leave it this way
+
+                        // ArgumentListExpression propertiesArguments = (ArgumentListExpression) methodCallExpression.getArguments();
+                        // MapExpression map = (MapExpression) propertiesArguments.getExpression(0);
+                        // for (MapEntryExpression expression : map.getMapEntryExpressions()) {
+                        // System.out.println(expression.getKeyExpression());
+                        // System.out.println(expression.getValueExpression());
+                        // }
+                        //
+                        // ConstantExpression keyExpression = new ConstantExpression("TEMP_DIR_PURE");
+                        // ConstantExpression valueExpression = new ConstantExpression("asdasd");
+                        // map.addMapEntryExpression(keyExpression, valueExpression);
+
+                        propertiesLine = methodCallExpression.getLineNumber() + offset;
+                     }
+                  }
+               }
+            }
+         } else {
+            if (argument instanceof MethodCallExpression) {
+               MethodCallExpression expression = (MethodCallExpression) argument;
+               System.out.println(expression.getArguments());
+               if (expression.getArguments() instanceof ArgumentListExpression) {
+                  ArgumentListExpression innerArguments = (ArgumentListExpression) expression.getArguments();
+                  return parseTaskWithPotentialSystemProperties(innerArguments);
+               }
+            }
+         }
+
+      }
+      return propertiesLine;
    }
 
    private void parseExcludes(final MethodCallExpression call) {
@@ -161,6 +218,9 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
                }
             }
          }
+
+         int propertiesLine = parseTaskWithPotentialSystemProperties(list);
+         integrationTestSystemPropertiesLine = propertiesLine;
       }
    }
 
@@ -318,7 +378,18 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       return allConfigurationsLine;
    }
 
+   public int getTestSystemPropertiesLine() {
+      return testSystemPropertiesLine;
+   }
+
+   public int getIntegrationTestSystemPropertiesLine() {
+      return integrationTestSystemPropertiesLine;
+   }
+
    public void addLine(final int lineIndex, final String textForAdding) {
+      System.out.println("Adding: " + lineIndex + " " + textForAdding);
+      System.out.println("integrationtest: " + integrationTestSystemPropertiesLine);
+
       gradleFileContents.add(lineIndex, textForAdding);
       if (lineIndex < dependencyLine && dependencyLine != -1) {
          dependencyLine++;
@@ -326,6 +397,17 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       if (lineIndex < testLine && testLine != -1) {
          testLine++;
       }
+      if (lineIndex < testSystemPropertiesLine && testSystemPropertiesLine != -1) {
+         testSystemPropertiesLine++;
+      }
+
+      if (lineIndex < integrationTestLine && integrationTestLine != -1) {
+         integrationTestLine++;
+      }
+      if (lineIndex < integrationTestSystemPropertiesLine && integrationTestSystemPropertiesLine != -1) {
+         integrationTestSystemPropertiesLine++;
+      }
+
       if (lineIndex < androidLine && androidLine != -1) {
          androidLine++;
       }

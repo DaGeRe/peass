@@ -89,5 +89,26 @@ public class TestBuildGradleExclusions {
       
       MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("exclude group: 'org.apache.logging.log4j', module: 'log4j-to-slf4j'"));
    }
+   
+   
+   @Test
+   public void testAlreadyExistingSystemProperties() throws IOException {
+      final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "buildProperties.gradle");
+
+      final File destFile = TestBuildGradle.copyGradlefile(gradleFile);
+
+      GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
+      editor.addDependencies(new File("xyz"));
+
+      final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
+
+      System.out.println(gradleFileContents);
+      
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("'de.dagere.kopeme:kopeme-junit"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("kieker.monitoring.configuration"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("java.io.tmpdir"));
+      MatcherAssert.assertThat(gradleFileContents, Matchers.not(Matchers.containsString("systemProperty")));
+      
+   }
 
 }
