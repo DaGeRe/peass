@@ -39,15 +39,15 @@ public class TestCleaner {
       
       cleaner.processDataFolder(measurementsFolder);
       
-      File expectedCleanedFolder_1 = new File(goalFolder, "ExampleTest_test(JUNIT_PARAMETERIZED-0).xml");
+      File expectedCleanedFolder_1 = new File(goalFolder, "ExampleTest_test(JUNIT_PARAMETERIZED-0).json");
       MatcherAssert.assertThat(expectedCleanedFolder_1, FileMatchers.anExistingFile());
       
       Kopemedata data = JSONDataLoader.loadData(expectedCleanedFolder_1);
       TestMethod testcase1 = data.getFirstMethodResult();
       Assert.assertEquals("test", testcase1.getMethod());
-      Assert.assertEquals(data.getFirstDatacollectorContent().size(), 10);
+      Assert.assertEquals(10, testcase1.getDatacollectorResults().get(0).getChunks().get(0).getResults().size());
       
-      File expectedCleanedFolder_2 = new File(goalFolder, "ExampleTest_test(JUNIT_PARAMETERIZED-1).xml");
+      File expectedCleanedFolder_2 = new File(goalFolder, "ExampleTest_test(JUNIT_PARAMETERIZED-1).json");
       MatcherAssert.assertThat(expectedCleanedFolder_2, FileMatchers.anExistingFile());
    }
 }
