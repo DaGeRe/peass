@@ -86,6 +86,7 @@ public class ExecutionConfig implements Serializable {
       this.timeout = other.getTimeout();
       this.testGoal = other.getTestGoal();
       this.includes = other.getIncludes();
+      this.excludes = other.getExcludes();
       this.commit = other.getCommit();
       this.commitOld = other.getCommitOld();
       this.startcommit = other.getStartcommit();
