@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import jakarta.xml.bind.JAXBException;
+
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -32,7 +32,7 @@ public class TestResultConversion {
    }
    
    @Test
-   public void testDefaultConversion() throws JAXBException {
+   public void testDefaultConversion()  {
       File jmhFile = new File(CONVERSION_FOLDER, "testMethod.json");
       
       Set<File> resultFiles = convert(jmhFile);
@@ -50,7 +50,7 @@ public class TestResultConversion {
    }
    
    @Test
-   public void testIterations() throws JAXBException {
+   public void testIterations()  {
       File jmhFile = new File(CONVERSION_FOLDER, "test.json");
       
       Set<File> resultFiles = convert(jmhFile);
@@ -69,7 +69,7 @@ public class TestResultConversion {
    }
    
    @Test
-   public void testThroughputConversion() throws JAXBException {
+   public void testThroughputConversion()  {
       File jmhFile = new File(CONVERSION_FOLDER, "testMethod_throughput.json");
       
       Set<File> resultFiles = convert(jmhFile);
@@ -87,7 +87,7 @@ public class TestResultConversion {
    }
    
    @Test
-   public void testOriginalJmhConversion() throws JAXBException {
+   public void testOriginalJmhConversion()  {
       File jmhFile = new File(CONVERSION_FOLDER, "example.json");
       
       Set<File> resultFiles = convert(jmhFile);
@@ -105,7 +105,7 @@ public class TestResultConversion {
    }
    
    @Test
-   public void testOriginalJmhConversionParams() throws JAXBException {
+   public void testOriginalJmhConversionParams()  {
       File jmhFile = new File(CONVERSION_FOLDER, "example-with-params.json");
       
       Set<File> resultFiles = convert(jmhFile);

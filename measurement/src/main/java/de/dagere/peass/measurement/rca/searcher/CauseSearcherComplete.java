@@ -22,7 +22,7 @@ import de.dagere.peass.measurement.rca.analyzer.TreeAnalyzer;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
-import jakarta.xml.bind.JAXBException;
+
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**
@@ -78,7 +78,7 @@ public class CauseSearcherComplete extends CauseSearcher {
 
    @Override
    protected Set<ChangedEntity> searchCause()
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       final TreeAnalyzer analyzer = creator.getAnalyzer(reader, causeSearchConfig);
       final List<CallTreeNode> predecessorNodeList = analyzer.getMeasurementNodesPredecessor();
       final List<CallTreeNode> includableNodes = getIncludableNodes(predecessorNodeList);
@@ -93,7 +93,7 @@ public class CauseSearcherComplete extends CauseSearcher {
    }
 
    private List<CallTreeNode> getIncludableNodes(final List<CallTreeNode> predecessorNodeList)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       final List<CallTreeNode> includableNodes;
       if (causeSearchConfig.useCalibrationRun()) {
          includableNodes = getAnalysableNodes(predecessorNodeList);
@@ -106,7 +106,7 @@ public class CauseSearcherComplete extends CauseSearcher {
    }
 
    private List<CallTreeNode> getAnalysableNodes(final List<CallTreeNode> predecessorNodeList)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       final MeasurementConfig config = new MeasurementConfig(1, measurementConfig.getExecutionConfig().getCommit(), measurementConfig.getExecutionConfig().getCommitOld());
       config.setIterations(measurementConfig.getIterations());
       config.setRepetitions(measurementConfig.getRepetitions());

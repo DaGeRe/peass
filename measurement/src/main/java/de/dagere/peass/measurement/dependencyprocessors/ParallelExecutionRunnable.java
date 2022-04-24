@@ -9,7 +9,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
-import jakarta.xml.bind.JAXBException;
+
 
 public class ParallelExecutionRunnable implements Runnable {
    
@@ -37,7 +37,7 @@ public class ParallelExecutionRunnable implements Runnable {
          final TestExecutor testExecutor = tester.getExecutor(temporaryFolders, version);
          final OnceRunner runner = new OnceRunner(temporaryFolders, testExecutor, organizer, tester);
          runner.runOnce(testcase, version, vmid, logFolder);
-      } catch (IOException | InterruptedException | JAXBException | XmlPullParserException e) {
+      } catch (IOException | InterruptedException  | XmlPullParserException e) {
          e.printStackTrace();
       }
    }

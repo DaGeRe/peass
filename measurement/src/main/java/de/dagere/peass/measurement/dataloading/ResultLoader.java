@@ -17,7 +17,7 @@ import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.folders.PeassFolders;
-import jakarta.xml.bind.JAXBException;
+
 
 public class ResultLoader {
 
@@ -32,7 +32,7 @@ public class ResultLoader {
       this.config = config;
    }
 
-   public void loadData(PeassFolders folders, final TestCase testcase, final long currentChunkStart) throws JAXBException {
+   public void loadData(PeassFolders folders, final TestCase testcase, final long currentChunkStart)  {
       final File kopemeFile = folders.getSummaryFile(testcase);
       final Kopemedata data = JSONDataLoader.loadData(kopemeFile);
       if (data.getMethods().size() > 0) {

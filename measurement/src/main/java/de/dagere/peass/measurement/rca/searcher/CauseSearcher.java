@@ -25,7 +25,7 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
-import jakarta.xml.bind.JAXBException;
+
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public abstract class CauseSearcher {
@@ -58,7 +58,7 @@ public abstract class CauseSearcher {
    }
 
    public Set<ChangedEntity> search()
-         throws IOException, XmlPullParserException, InterruptedException, IllegalStateException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, IllegalStateException, AnalysisConfigurationException, ViewNotFoundException {
       reader.readTrees();
 
       LOG.info("Tree size: {}", reader.getRootPredecessor().getTreeSize());
@@ -67,7 +67,7 @@ public abstract class CauseSearcher {
    }
 
    protected abstract Set<ChangedEntity> searchCause()
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException;
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException;
 
    protected Set<ChangedEntity> convertToChangedEntitites() {
       final Set<ChangedEntity> changed = new TreeSet<>();
@@ -78,7 +78,7 @@ public abstract class CauseSearcher {
    }
 
    protected void measureDefinedTree(final List<CallTreeNode> includableNodes) throws IOException, XmlPullParserException, InterruptedException,
-         ViewNotFoundException, AnalysisConfigurationException, JAXBException, JsonGenerationException, JsonMappingException {
+         ViewNotFoundException, AnalysisConfigurationException,  JsonGenerationException, JsonMappingException {
       final AllDifferingDeterminer allSearcher = new AllDifferingDeterminer(includableNodes, causeSearchConfig, measurementConfig);
       measurer.measureVersion(includableNodes);
       allSearcher.calculateDiffering();

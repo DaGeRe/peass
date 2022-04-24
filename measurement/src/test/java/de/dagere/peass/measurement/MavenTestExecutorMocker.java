@@ -2,7 +2,7 @@ package de.dagere.peass.measurement;
 
 import java.io.File;
 
-import jakarta.xml.bind.JAXBException;
+
 
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -38,7 +38,7 @@ public class MavenTestExecutorMocker {
       Mockito.when(mockedExecutor.getTestTransformer()).thenReturn(new JUnitTestTransformer(folders.getProjectFolder(), config));
    }
 
-   public synchronized static void writeValue(final PeassFolders folders, final int average) throws JAXBException {
+   public synchronized static void writeValue(final PeassFolders folders, final int average)  {
       final File measurementFile = new File(folders.getTempMeasurementFolder(), "de.peass.MyTest");
       measurementFile.mkdirs();
       final JSONDataStorer storer = new JSONDataStorer(measurementFile, "de.peass.MyTest", "test");

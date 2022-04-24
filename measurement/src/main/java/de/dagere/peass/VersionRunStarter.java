@@ -9,7 +9,7 @@ import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.VersionProcessor;
 import de.dagere.peass.utils.StreamGobbler;
 import de.dagere.peass.vcs.GitUtils;
-import jakarta.xml.bind.JAXBException;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 
@@ -24,7 +24,7 @@ import picocli.CommandLine.Command;
       " control system can operate locally).", name = "downloadDependencies")
 public class VersionRunStarter extends VersionProcessor {
 
-   public VersionRunStarter() throws JAXBException, JsonParseException, JsonMappingException, IOException {
+   public VersionRunStarter() throws  JsonParseException, JsonMappingException, IOException {
       super();
    }
 
@@ -41,7 +41,7 @@ public class VersionRunStarter extends VersionProcessor {
 
    }
 
-   public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws  JsonParseException, JsonMappingException, IOException {
       VersionRunStarter command = new VersionRunStarter();
       CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);

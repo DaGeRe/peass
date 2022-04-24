@@ -15,13 +15,13 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
-import jakarta.xml.bind.JAXBException;
+
 
 public class DivideAllVersions {
 
    private static final Logger LOG = LogManager.getLogger(DivideAllVersions.class);
 
-   public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws  JsonParseException, JsonMappingException, IOException {
       String repoName = System.getenv(Constants.PEASS_REPOS);
       File repos = new File(repoName);
       if (!repos.exists()) {

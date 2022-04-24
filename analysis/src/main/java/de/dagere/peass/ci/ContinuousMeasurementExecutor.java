@@ -15,7 +15,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dependencyprocessors.AdaptiveTester;
-import jakarta.xml.bind.JAXBException;
+
 
 public class ContinuousMeasurementExecutor {
 
@@ -32,7 +32,7 @@ public class ContinuousMeasurementExecutor {
       this.env = env;
    }
 
-   public File executeMeasurements(final Set<TestCase> tests, final File fullResultsVersion, final File logFile) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   public File executeMeasurements(final Set<TestCase> tests, final File fullResultsVersion, final File logFile) throws IOException, InterruptedException,  XmlPullParserException {
       if (!fullResultsVersion.exists()) {
          if (measurementConfig.getExecutionConfig().isRedirectSubprocessOutputToFile()) {
             LOG.info("Executing measurement - Log goes to {}", logFile.getAbsolutePath());
@@ -50,7 +50,7 @@ public class ContinuousMeasurementExecutor {
       return measurementFolder;
    }
 
-   private void doMeasurement(final Set<TestCase> tests, final File fullResultsVersion) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   private void doMeasurement(final Set<TestCase> tests, final File fullResultsVersion) throws IOException, InterruptedException, XmlPullParserException {
       cleanTemporaryFolders();
       
       for (final TestCase test : tests) {

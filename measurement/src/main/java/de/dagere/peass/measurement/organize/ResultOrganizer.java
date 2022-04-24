@@ -24,7 +24,6 @@ import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
-import jakarta.xml.bind.JAXBException;
 
 public class ResultOrganizer {
 
@@ -94,7 +93,7 @@ public class ResultOrganizer {
    }
 
    public void saveResultFiles(final String version, final int vmid)
-         throws JAXBException, IOException {
+         throws IOException {
       // Saving and merging result files should not be executed in parallel, therefore, this needs to be synchronized over the class (not the instance)
       synchronized (ResultOrganizer.class) {
          final File folder = getTempResultsFolder(version);
@@ -140,7 +139,7 @@ public class ResultOrganizer {
    }
 
    private void saveResults(final String version, final int vmid, final File oneResultFile, final Kopemedata oneResultData, final List<TestMethod> testcaseList)
-         throws JAXBException, IOException {
+         throws IOException {
       final TestMethod oneRundata = testcaseList.get(0);
       DatacollectorResult timeDataCollector = oneResultData.getFirstTimeDataCollector();
 
@@ -180,7 +179,7 @@ public class ResultOrganizer {
       fulldata.setFileName(destFileName);
    }
 
-   public void saveSummaryFile(final String version, final DatacollectorResult timeDataCollector, final File oneResultFile) throws JAXBException {
+   public void saveSummaryFile(final String version, final DatacollectorResult timeDataCollector, final File oneResultFile) {
       for (VMResult result : timeDataCollector.getResults()) {
          String paramString = ParamNameHelper.paramsToString(result.getParameters());
          TestCase concreteTestcase = new TestCase(testcase.getClazz(), testcase.getMethod(), testcase.getModule(), paramString);

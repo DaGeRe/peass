@@ -2,7 +2,7 @@ package de.dagere.peass.measurement.analysis;
 
 import java.io.File;
 
-import jakarta.xml.bind.JAXBException;
+
 
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -56,7 +56,7 @@ public class TestDependencyTester {
       
    }
 
-   public static void checkResult(final PeassFolders folders) throws JAXBException {
+   public static void checkResult(final PeassFolders folders)  {
       final File expectedSummaryResultFile = folders.getSummaryFile(EXAMPLE_TESTCASE);
       Assert.assertTrue(expectedSummaryResultFile + " should exist", expectedSummaryResultFile.exists());
 

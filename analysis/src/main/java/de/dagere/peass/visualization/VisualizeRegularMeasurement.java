@@ -23,7 +23,7 @@ import de.dagere.peass.measurement.dataloading.KoPeMeDataHelper;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.visualization.html.HTMLWriter;
-import jakarta.xml.bind.JAXBException;
+
 
 public class VisualizeRegularMeasurement {
    
@@ -35,7 +35,7 @@ public class VisualizeRegularMeasurement {
       this.resultFolder = resultFolder;
    }
 
-   public void analyzeFile(final File peassFolder) throws JAXBException, JsonProcessingException, FileNotFoundException, IOException {
+   public void analyzeFile(final File peassFolder) throws  JsonProcessingException, FileNotFoundException, IOException {
       PeassFolders folders = new PeassFolders(peassFolder);
       for (File kopemeFile : folders.getFullMeasurementFolder().listFiles((FilenameFilter) new WildcardFileFilter("*xml"))) {
          LOG.debug("Visualizing: {}", kopemeFile);
@@ -56,7 +56,7 @@ public class VisualizeRegularMeasurement {
       }
    }
 
-   private void visualizeNode(final List<String> versions, final TestCase testcase, final GraphNode node) throws IOException, JsonProcessingException, FileNotFoundException, JAXBException {
+   private void visualizeNode(final List<String> versions, final TestCase testcase, final GraphNode node) throws IOException, JsonProcessingException, FileNotFoundException {
       File destFolder = new File(resultFolder, versions.get(0));
       GraphNode emptyNode = new GraphNode(testcase.getExecutable(), "void " + testcase.getExecutable().replace("#", ".") + "()", CauseSearchData.ADDED);
       emptyNode.setName(testcase.getExecutable());

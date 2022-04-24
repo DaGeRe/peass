@@ -23,7 +23,7 @@ import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 import de.dagere.peass.vcs.VersionIteratorGit;
-import jakarta.xml.bind.JAXBException;
+
 
 public class ContinuousExecutor {
 
@@ -99,7 +99,7 @@ public class ContinuousExecutor {
       try {
          File measurementFolder = executeMeasurement(tests);
          analyzeMeasurements(measurementFolder);
-      } catch (IOException | InterruptedException | JAXBException | XmlPullParserException e) {
+      } catch (IOException | InterruptedException  | XmlPullParserException e) {
          throw new RuntimeException(e);
       }
    }
@@ -121,7 +121,7 @@ public class ContinuousExecutor {
       return tests;
    }
 
-   protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException,  XmlPullParserException {
       final File fullResultsVersion = resultsFolders.getVersionFullResultsFolder(version, versionOld);
       File logFile = resultsFolders.getMeasurementLogFile(version, versionOld);
       final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(folders, measurementConfig, env);
@@ -130,7 +130,7 @@ public class ContinuousExecutor {
    }
 
    private void analyzeMeasurements(final File measurementFolder)
-         throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, JAXBException {
+         throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
       StaticTestSelection selectedTests = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
       ChangeReader changeReader = new ChangeReader(resultsFolders, selectedTests);
       changeReader.readFile(measurementFolder.getParentFile());

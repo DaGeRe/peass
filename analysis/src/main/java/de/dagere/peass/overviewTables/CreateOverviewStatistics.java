@@ -20,7 +20,7 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
-import jakarta.xml.bind.JAXBException;
+
 
 /**
  * Creates overview-table for ESEC-paper
@@ -43,7 +43,7 @@ public class CreateOverviewStatistics {
       }
    }
 
-   public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws  JsonParseException, JsonMappingException, IOException {
       File dependencyFolder;
       final File repos;
       if (System.getenv(Constants.PEASS_REPOS) != null) {

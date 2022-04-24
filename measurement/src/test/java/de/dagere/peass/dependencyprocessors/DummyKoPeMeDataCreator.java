@@ -3,7 +3,7 @@ package de.dagere.peass.dependencyprocessors;
 import java.io.File;
 import java.io.IOException;
 
-import jakarta.xml.bind.JAXBException;
+
 
 import de.dagere.kopeme.datacollection.DataCollector;
 import de.dagere.kopeme.datacollection.TestResult;
@@ -17,7 +17,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class DummyKoPeMeDataCreator {
    
-   public static void initDummyTestfile(final File methodFolder, final int iterations, final TestCase testcase) throws JAXBException {
+   public static void initDummyTestfile(final File methodFolder, final int iterations, final TestCase testcase)  {
       JSONDataStorer storer = new JSONDataStorer(methodFolder, testcase.getClazz(), testcase.getMethod());
 
       final VMResult result = new VMResult();

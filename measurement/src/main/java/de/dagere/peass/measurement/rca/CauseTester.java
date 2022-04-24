@@ -27,7 +27,7 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.KiekerResultReader;
 import de.dagere.peass.testtransformation.TestTransformer;
-import jakarta.xml.bind.JAXBException;
+
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**
@@ -56,7 +56,7 @@ public class CauseTester extends AdaptiveTester {
    }
 
    public void measureVersion(final List<CallTreeNode> nodes)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       includedNodes = prepareNodes(nodes);
       evaluate(causeConfig.getTestCase());
       if (!getCurrentOrganizer().isSuccess()) {
@@ -82,7 +82,7 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, XmlPullParserException {
       LOG.debug("Adaptive execution: " + includedNodes);
       
       initEvaluation(testcase);
@@ -127,7 +127,7 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   public boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {
+   public boolean checkIsDecidable(final TestCase testcase, final int vmid) {
       try {
          getDurationsVersion(configuration.getExecutionConfig().getCommit());
          getDurationsVersion(configuration.getExecutionConfig().getCommitOld());
@@ -143,7 +143,7 @@ public class CauseTester extends AdaptiveTester {
       }
    }
 
-   private boolean checkLevelDecidable(final int vmid, final boolean allDecidable, final CallTreeNode includedNode) throws JAXBException {
+   private boolean checkLevelDecidable(final int vmid, final boolean allDecidable, final CallTreeNode includedNode) {
       final SummaryStatistics statisticsOld = includedNode.getStatistics(configuration.getExecutionConfig().getCommitOld());
       final SummaryStatistics statistics = includedNode.getStatistics(configuration.getExecutionConfig().getCommit());
       final EarlyBreakDecider decider = new EarlyBreakDecider(configuration, statisticsOld, statistics);
@@ -200,7 +200,7 @@ public class CauseTester extends AdaptiveTester {
       includedNodes.forEach(node -> node.createStatistics(version));
    }
 
-   public static void main(final String[] args) throws IOException, XmlPullParserException, InterruptedException, JAXBException, ClassNotFoundException {
+   public static void main(final String[] args) throws IOException, XmlPullParserException, InterruptedException,  ClassNotFoundException {
       final File projectFolder = new File("../../projekte/commons-fileupload");
       final String version = "4ed6e923cb2033272fcb993978d69e325990a5aa";
       final TestCase test = new TestCase("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");

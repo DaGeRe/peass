@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import jakarta.xml.bind.JAXBException;
+
 
 import org.codehaus.plexus.util.FileUtils;
 import org.hamcrest.MatcherAssert;
@@ -49,7 +49,7 @@ public class TestResultOrganizerParams {
    }
 
    @Test
-   public void testReading() throws JAXBException, IOException {
+   public void testReading() throws  IOException {
       TestCase testcase = new TestCase("de.dagere.peass.ExampleBenchmarkClazz#calleeMethod");
 
       PeassFolders folders = mockFolders(testcase);

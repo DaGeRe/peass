@@ -20,7 +20,7 @@ import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.utils.Constants;
-import jakarta.xml.bind.JAXBException;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -81,7 +81,7 @@ public class VisualizeRCAStarter implements Callable<Void> {
       return null;
    }
 
-   private void analyzeFile(final File peassFolder) throws JAXBException, JsonProcessingException, FileNotFoundException, IOException {
+   private void analyzeFile(final File peassFolder) throws  JsonProcessingException, FileNotFoundException, IOException {
       VisualizeRegularMeasurement measurementVisualizer = new VisualizeRegularMeasurement(resultFolder);
       measurementVisualizer.analyzeFile(peassFolder);
    }
@@ -99,7 +99,7 @@ public class VisualizeRCAStarter implements Callable<Void> {
    }
 
    private void analyzeFile(final File versionResultFolder, final File treeFile)
-         throws JsonParseException, JsonMappingException, IOException, JsonProcessingException, FileNotFoundException, JAXBException {
+         throws JsonParseException, JsonMappingException, IOException, JsonProcessingException, FileNotFoundException {
       final CauseSearchFolders folders = getCauseSearchFolders(treeFile);
 
       final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, versionResultFolder, folders);

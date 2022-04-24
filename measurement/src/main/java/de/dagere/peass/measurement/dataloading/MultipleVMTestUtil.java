@@ -25,7 +25,6 @@ import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
-import jakarta.xml.bind.JAXBException;
 
 /**
  * Provides utilities for reading KoPeMe-data from multiple runs which should be summarized into one file.
@@ -36,17 +35,17 @@ import jakarta.xml.bind.JAXBException;
 public class MultipleVMTestUtil {
    private static final Logger LOG = LogManager.getLogger(MultipleVMTestUtil.class);
 
-   public static void main(final String[] args) throws JAXBException {
+   public static void main(final String[] args) {
       final File resultFile = new File(args[0]);
       analyseOneRun(resultFile);
    }
 
-   public static void analyseOneRun(final File resultFile) throws JAXBException {
+   public static void analyseOneRun(final File resultFile) {
       final DescriptiveStatistics st = getStatistics(resultFile);
       LOG.info("Durchschnitt: " + st.getMean());
    }
 
-   public static DescriptiveStatistics getStatistics(final File resultFile) throws JAXBException {
+   public static DescriptiveStatistics getStatistics(final File resultFile) {
       final Kopemedata fullResultData = JSONDataLoader.loadData(resultFile);
             
       final DatacollectorResult oneRunDatacollector = fullResultData.getFirstTimeDataCollector();
@@ -63,11 +62,10 @@ public class MultipleVMTestUtil {
     * @param summaryResultFile
     * @param oneRunData
     * @param version
-    * @throws JAXBException
+    * @
     */
    public static void saveSummaryData(final File summaryResultFile, final File oneResultFile, final VMResult oneResult, final TestCase testcase, final String version,
-         final long currentChunkStart, final String datacollectorName)
-         throws JAXBException {
+         final long currentChunkStart, final String datacollectorName) {
       LOG.info("Writing to merged result file: {}", summaryResultFile);
       final Kopemedata summaryData = initKopemeData(summaryResultFile, testcase);
       VMResultChunk summaryChunk = findChunk(currentChunkStart, summaryData, datacollectorName);
@@ -113,7 +111,7 @@ public class MultipleVMTestUtil {
       return st;
    }
 
-   public static Kopemedata initKopemeData(final File summaryResultFile, final TestCase testcase) throws JAXBException {
+   public static Kopemedata initKopemeData(final File summaryResultFile, final TestCase testcase) {
       final Kopemedata fullResultData = JSONDataLoader.loadData(summaryResultFile);
       if (fullResultData.getMethods().size() == 0) {
          fullResultData.setClazz(testcase.getClassWithModule());

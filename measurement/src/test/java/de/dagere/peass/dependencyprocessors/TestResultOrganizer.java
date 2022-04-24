@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import jakarta.xml.bind.JAXBException;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,7 +48,7 @@ public class TestResultOrganizer {
    }
 
    @Test
-   public void testNormalSaving() throws JAXBException, IOException {
+   public void testNormalSaving() throws  IOException {
       organizer = new ResultOrganizer(folders, VERSION_NAME, 1, false, false, searchedTest, 3);
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, searchedTest);
@@ -61,7 +61,7 @@ public class TestResultOrganizer {
    }
 
    @Test
-   public void testKoPeMeFileSaving() throws JAXBException, IOException {
+   public void testKoPeMeFileSaving() throws  IOException {
       organizer = new ResultOrganizer(folders, VERSION_NAME, 1, false, false, searchedTest, 1);
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, TestResult.BOUNDARY_SAVE_FILE * 2, searchedTest);
@@ -71,7 +71,7 @@ public class TestResultOrganizer {
       testXMLFileIsCorrect();
    }
 
-   private void testXMLFileIsCorrect() throws JAXBException {
+   private void testXMLFileIsCorrect()  {
       File kopemefile = new File(getVersionMeasurementFolder(), searchedTest.getMethod() + "_0_" + VERSION_NAME + ".xml");
       Kopemedata data = JSONDataLoader.loadData(kopemefile);
       final DatacollectorResult datacollector = data.getFirstMethodResult().getDatacollectorResults().get(0);
@@ -82,7 +82,7 @@ public class TestResultOrganizer {
    }
    
    @Test
-   public void testKiekerSavingDeletion() throws JAXBException, IOException {
+   public void testKiekerSavingDeletion() throws  IOException {
       organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true, searchedTest, 1);
       organizer.getCompressor().setThresholdForZippingInMB(1);
       organizer.getCompressor().setThresholdForDeletingInMB(2);
@@ -103,7 +103,7 @@ public class TestResultOrganizer {
    }
 
    @Test
-   public void testKiekerSavingTar() throws JAXBException, IOException {
+   public void testKiekerSavingTar() throws  IOException {
       organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true, searchedTest, 1);
       organizer.getCompressor().setThresholdForZippingInMB(1);
 
@@ -121,7 +121,7 @@ public class TestResultOrganizer {
    }
 
    @Test
-   public void testKiekerSavingNoTar() throws JAXBException, IOException {
+   public void testKiekerSavingNoTar() throws  IOException {
       organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true, searchedTest, 1);
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, searchedTest);

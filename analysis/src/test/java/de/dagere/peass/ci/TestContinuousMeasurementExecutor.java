@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.xml.bind.JAXBException;
+
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -54,7 +54,7 @@ public class TestContinuousMeasurementExecutor {
    }
 
    @Test
-   public void testConfigurationChange() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   public void testConfigurationChange() throws IOException, InterruptedException,  XmlPullParserException {
       try (MockedStatic<ExecutorCreator> executorCreatorMock = Mockito.mockStatic(ExecutorCreator.class)) {
 
          mockExecutorCreation();

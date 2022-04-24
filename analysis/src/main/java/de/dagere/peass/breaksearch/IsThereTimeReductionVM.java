@@ -16,7 +16,7 @@ import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
-import jakarta.xml.bind.JAXBException;
+
 
 
 public class IsThereTimeReductionVM {
@@ -29,7 +29,7 @@ public class IsThereTimeReductionVM {
    static int komisch = 0;
    static int vms = 0;
 
-   public static void main(final String[] args) throws JAXBException {
+   public static void main(final String[] args)  {
       final File folder = new File(args[0]);
       if (new File(folder, "measurementsFull").exists()) {
          checkFolder(new File(folder, "measurementsFull"));
@@ -48,7 +48,7 @@ public class IsThereTimeReductionVM {
       System.out.println("VMs: " + vms);
    }
 
-   private static void checkFolder(final File contentFolder) throws JAXBException {
+   private static void checkFolder(final File contentFolder)  {
       for (final File xmlFile : contentFolder.listFiles()) {
          if (xmlFile.getName().endsWith(".json")) {
 

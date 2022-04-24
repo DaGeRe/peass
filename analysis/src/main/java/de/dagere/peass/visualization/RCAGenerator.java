@@ -17,7 +17,7 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.visualization.html.HTMLWriter;
-import jakarta.xml.bind.JAXBException;
+
 
 public class RCAGenerator {
 
@@ -30,7 +30,7 @@ public class RCAGenerator {
 
    private CallTreeNode rootPredecessor, rootVersion;
 
-   public RCAGenerator(final File source, final File destFolder, final CauseSearchFolders folders) throws JsonParseException, JsonMappingException, IOException, JAXBException {
+   public RCAGenerator(final File source, final File destFolder, final CauseSearchFolders folders) throws JsonParseException, JsonMappingException, IOException {
       this.source = source;
       this.destFolder = destFolder;
       this.folders = folders;
@@ -42,7 +42,7 @@ public class RCAGenerator {
       this.propertyFolder = propertyFolder;
    }
 
-   public void createVisualization() throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException, JAXBException {
+   public void createVisualization() throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException {
       LOG.info("Visualizing " + data.getTestcase());
       final NodePreparator preparator = new NodePreparator(rootPredecessor, rootVersion, data);
       preparator.prepare();

@@ -15,7 +15,7 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.utils.Constants;
-import jakarta.xml.bind.JAXBException;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -44,7 +44,7 @@ public class CreateScriptStarter implements Callable<Void> {
    private StaticTestSelection dependencies;
    private ExecutionData executionData;
    
-   public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws  JsonParseException, JsonMappingException, IOException {
       final CreateScriptStarter command = new CreateScriptStarter();
       final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);

@@ -3,7 +3,7 @@ package de.dagere.peass.dependencyprocessors;
 import java.io.File;
 import java.io.IOException;
 
-import jakarta.xml.bind.JAXBException;
+
 
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,7 +38,7 @@ public class TestResultOrganizerParallel {
    }
 
    @Test
-   public void testParallelSaving() throws JAXBException, IOException {
+   public void testParallelSaving() throws  IOException {
       organizer = new ResultOrganizerParallel(folders, TestResultOrganizer.VERSION_NAME, 1, false, false, TestResultOrganizer.searchedTest, 3);
 
       PeassFolders parallelProjectFolders = initFolders();
@@ -51,7 +51,7 @@ public class TestResultOrganizerParallel {
    }
 
    @Test
-   public void testKoPeMeFileSaving() throws JAXBException, IOException {
+   public void testKoPeMeFileSaving() throws  IOException {
       organizer = new ResultOrganizerParallel(folders, TestResultOrganizer.VERSION_NAME, 1, false, false, TestResultOrganizer.searchedTest, TestResult.BOUNDARY_SAVE_FILE * 2);
 
       PeassFolders parallelProjectFolders = initFolders();
@@ -66,7 +66,7 @@ public class TestResultOrganizerParallel {
       testXMLFileIsCorrect();
    }
 
-   private void testXMLFileIsCorrect() throws JAXBException {
+   private void testXMLFileIsCorrect()  {
       File kopemefile = new File(getVersionMeasurementFolder(TestResultOrganizer.VERSION_NAME, PARALLEL_VERSION), TestResultOrganizer.searchedTest.getMethod() + "_0_" + PARALLEL_VERSION + ".xml");
       final Kopemedata data = JSONDataLoader.loadData(kopemefile);
       final DatacollectorResult collector = data.getFirstMethodResult().getDatacollectorResults().get(0);

@@ -27,7 +27,7 @@ import de.dagere.kopeme.kopemedata.DatacollectorResult;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.kopeme.kopemedata.VMResult;
-import jakarta.xml.bind.JAXBException;
+
 
 
 public final class MeasurementAnalysationUtil {
@@ -96,7 +96,7 @@ public final class MeasurementAnalysationUtil {
 
 	private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
-	public static Map<File, Kopemedata> getData(final File file) throws JAXBException {
+	public static Map<File, Kopemedata> getData(final File file)  {
 		final Map<File, Kopemedata> data = new HashMap<>();
 		LOG.debug("Analysiere: {}", file);
 		if (file.isDirectory()) {

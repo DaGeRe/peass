@@ -2,7 +2,7 @@ package de.dagere.peass.measurement;
 
 import java.io.File;
 
-import jakarta.xml.bind.JAXBException;
+
 
 import org.aspectj.util.FileUtil;
 import org.junit.Assert;
@@ -33,7 +33,7 @@ public class TestSummaryFileSaving {
    }
    
    @Test
-   public void testSummaryFileSaving() throws JAXBException {
+   public void testSummaryFileSaving()  {
       DummyKoPeMeDataCreator.initDummyTestfile(testFolder, TestResult.BOUNDARY_SAVE_FILE  / 2, testcase);
       
       TestMethod oneRunData = loadTestcase();
@@ -46,7 +46,7 @@ public class TestSummaryFileSaving {
    }
    
    @Test
-   public void testSummaryFileSavingExternalFile() throws JAXBException {
+   public void testSummaryFileSavingExternalFile()  {
       DummyKoPeMeDataCreator.initDummyTestfile(testFolder, TestResult.BOUNDARY_SAVE_FILE * 2, testcase);
       
       TestMethod oneRunData = loadTestcase();
@@ -59,7 +59,7 @@ public class TestSummaryFileSaving {
    }
    
    @Test
-   public void testSummaryFileSavingWithModule() throws JAXBException {
+   public void testSummaryFileSavingWithModule()  {
       TestCase testcase = new TestCase("myModule§myPackage.Test#test");
       DummyKoPeMeDataCreator.initDummyTestfile(testFolder, TestResult.BOUNDARY_SAVE_FILE * 2, testcase);
       
@@ -76,7 +76,7 @@ public class TestSummaryFileSaving {
       
    }
 
-   private TestMethod loadTestcase() throws JAXBException {
+   private TestMethod loadTestcase()  {
       Kopemedata oneRunFullData = JSONDataLoader.loadData(oneResultFile);
       TestMethod oneRunData = oneRunFullData.getFirstMethodResult();
       return oneRunData;

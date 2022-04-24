@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import jakarta.xml.bind.JAXBException;
+
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -45,7 +45,7 @@ public class JmhIterationTest {
    }
    
    @Test
-   public void testVersionReading() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JAXBException {
+   public void testVersionReading() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       FileUtils.copyDirectory(JmhTestConstants.BASIC_VERSION, TestConstants.CURRENT_FOLDER);
       
       MeasurementConfig measurementConfig = new MeasurementConfig(VMS);

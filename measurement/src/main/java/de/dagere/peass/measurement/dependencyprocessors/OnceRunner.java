@@ -15,7 +15,7 @@ import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
-import jakarta.xml.bind.JAXBException;
+
 
 public class OnceRunner {
 
@@ -39,7 +39,7 @@ public class OnceRunner {
    }
 
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
-         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+         throws IOException, InterruptedException, XmlPullParserException {
       if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");
       } else {

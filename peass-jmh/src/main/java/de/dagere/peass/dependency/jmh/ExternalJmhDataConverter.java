@@ -6,7 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import jakarta.xml.bind.JAXBException;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -24,7 +24,7 @@ public class ExternalJmhDataConverter {
 
    private static final Logger LOG = LogManager.getLogger(ExternalJmhDataConverter.class);
 
-   public static void main(final String[] args) throws JAXBException {
+   public static void main(final String[] args)  {
       Set<File> allResultFiles = new LinkedHashSet<>();
       for (String input : args) {
          File inputFile = new File(input);
@@ -69,7 +69,7 @@ public class ExternalJmhDataConverter {
       }
    }
 
-   private static Set<File> convertFileNoData(final File child) throws JAXBException {
+   private static Set<File> convertFileNoData(final File child)  {
       JmhKoPeMeConverter converter = new JmhKoPeMeConverter(new MeasurementConfig(-1));
       Set<File> resultFiles = converter.convertToXMLData(child, child.getParentFile());
 
@@ -79,7 +79,7 @@ public class ExternalJmhDataConverter {
       return resultFiles;
    }
 
-   private static void createChunks(final Set<File> resultFiles, final String currentVersion) throws JAXBException {
+   private static void createChunks(final Set<File> resultFiles, final String currentVersion)  {
       for (File resultFile : resultFiles) {
          LOG.info("Handling " + resultFile);
          Kopemedata data = JSONDataLoader.loadData(resultFile);

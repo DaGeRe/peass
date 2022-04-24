@@ -22,7 +22,7 @@ import de.dagere.peass.measurement.rca.CauseTester;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
-import jakarta.xml.bind.JAXBException;
+
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class LevelCauseSearcher extends CauseSearcher {
@@ -58,7 +58,7 @@ public class LevelCauseSearcher extends CauseSearcher {
 
    @Override
    protected Set<ChangedEntity> searchCause()
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       reader.getRootPredecessor().setOtherVersionNode(reader.getRootVersion());
       reader.getRootVersion().setOtherVersionNode(reader.getRootPredecessor());
       reader.getRootPredecessor().setOtherKiekerPattern(reader.getRootVersion().getKiekerPattern());
@@ -74,7 +74,7 @@ public class LevelCauseSearcher extends CauseSearcher {
    }
 
    public void isLevelDifferent(final List<CallTreeNode> currentPredecessorNodeList, final List<CallTreeNode> currentVersionNodeList)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       final LevelDifferentNodeDeterminer levelDifferentNodeDeterminer = new LevelDifferentNodeDeterminer(currentPredecessorNodeList, currentVersionNodeList, causeSearchConfig, measurementConfig);
 
       final List<CallTreeNode> measurePredecessor = levelDifferentNodeDeterminer.getMeasurePredecessor();
@@ -96,7 +96,7 @@ public class LevelCauseSearcher extends CauseSearcher {
    }
 
    private void measureLevel(final LevelDifferentNodeDeterminer levelDifferentNodeDeterminer, final List<CallTreeNode> measuredPredecessor)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       measurer.measureVersion(measuredPredecessor);
       levelDifferentNodeDeterminer.calculateDiffering();
 

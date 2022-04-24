@@ -20,7 +20,7 @@ import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.PairProcessor;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.measurement.dependencyprocessors.DependencyTester;
-import jakarta.xml.bind.JAXBException;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;
@@ -191,7 +191,7 @@ public class MeasureStarter extends PairProcessor {
             }
             lastTestcaseCalls.put(testcase, version);
          }
-      } catch (IOException | InterruptedException | JAXBException | XmlPullParserException e) {
+      } catch (IOException | InterruptedException  | XmlPullParserException e) {
          e.printStackTrace();
       }
    }
@@ -232,7 +232,7 @@ public class MeasureStarter extends PairProcessor {
       return executeThisTest;
    }
 
-   public static void main(final String[] args) throws JAXBException, IOException {
+   public static void main(final String[] args) throws  IOException {
       final MeasureStarter command = new MeasureStarter();
       final CommandLine commandLine = new CommandLine(command);
       System.exit(commandLine.execute(args));

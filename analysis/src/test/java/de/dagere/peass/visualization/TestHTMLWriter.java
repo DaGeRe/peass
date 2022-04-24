@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import jakarta.xml.bind.JAXBException;
+
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import de.dagere.peass.visualization.html.HTMLWriter;
 public class TestHTMLWriter {
    
    @Test
-   public void testRegularWriting() throws JsonProcessingException, FileNotFoundException, IOException, JAXBException {
+   public void testRegularWriting() throws JsonProcessingException, FileNotFoundException, IOException {
       GraphNode rootNode = new GraphNode("Test#test", "public void Test.test()", "public void Test.test()");
       rootNode.setName("Test#test");
       GraphNode kopemeConvertedData = new GraphNode("Test#test", "public void Test.test()", "public void Test.test()");
@@ -43,7 +43,7 @@ public class TestHTMLWriter {
    }
    
    @Test
-   public void testParameterizedWriting() throws JsonProcessingException, FileNotFoundException, IOException, JAXBException {
+   public void testParameterizedWriting() throws JsonProcessingException, FileNotFoundException, IOException {
       GraphNode rootNode = new GraphNode("Test#test", "public void Test.test(int)", "public void Test.test(int)");
       rootNode.setName("Test#test");
       GraphNode kopemeConvertedData = new GraphNode("Test#test", "public void Test.test(int)", "public void Test.test(int)");
