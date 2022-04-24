@@ -38,10 +38,10 @@ public class KiekerFolderUtil {
          if (methodResult.listFiles().length > 0) {
             return methodResult.listFiles();
          } else {
-            throw new RuntimeException("Folder " + methodResult + " is no Kieker result folder!");
+            throw new RuntimeException("Folder " + methodResult + " is no Kieker result folder; folder is empty!");
          }
       } else {
-         throw new RuntimeException("Folder " + methodResult + " is no Kieker result folder!");
+         throw new RuntimeException("Folder " + methodResult + " is no Kieker result folder; does not exist or is no directory!");
       }
    }
 
