@@ -5,20 +5,26 @@ import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import picocli.CommandLine.Option;
 
 public class MeasurementConfigurationMixin {
+   public static final int DEFAULT_VMS = 30;
+   public static final int DEFAULT_ITERATIONS = 5;
+   public static final int DEFAULT_WARMUP = 5;
+   public static final int DEFAULT_REPETITIONS = 1000000;
+   public static final int DEFAULT_TIMEOUT = 5;
+
    @Option(names = { "-vms", "--vms" }, description = "Number of VMs to start")
-   int vms = 30;
+   int vms = DEFAULT_VMS;
 
    @Option(names = { "-iterations", "--iterations" }, description = "Number of iterations")
-   int iterations = 5;
+   int iterations = DEFAULT_ITERATIONS;
    
    @Option(names = { "-warmup", "--warmup" }, description = "Number of warmup iterations")
-   int warmup = 5;
+   int warmup = DEFAULT_WARMUP;
    
    @Option(names = { "-repetitions", "--repetitions" }, description = "Last version that should be analysed")
-   int repetitions = 1000000;
+   int repetitions = DEFAULT_REPETITIONS;
    
    @Option(names = { "-processTimeout", "--processTimeout" }, description = "Timeout that the overall measurement process has - if one VM measurement takes so long that this timeout will be hit, the overall process is stopped (only recommended for calibration runs)")
-   protected int processTimeout = 5;
+   protected int processTimeout = DEFAULT_TIMEOUT;
    
    @Option(names = { "-duration", "--duration" }, description = "Which duration to use - if duration is specified, warmup and iterations are ignored")
    int duration = 0;
