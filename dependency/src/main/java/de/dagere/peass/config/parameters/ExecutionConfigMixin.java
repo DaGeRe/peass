@@ -20,7 +20,7 @@ public class ExecutionConfigMixin {
    protected String commit;
    
    @Option(names = { "-commitOld", "--commitOld" }, description = "Older commit for regression test selection / measurement" +
-         "If used, please always specify commit; only the difference of both will be analyzed, intermediary commits will be ignored. Do not use together with startcommit / endcommit.  (Deprecated. Use oldCommit instead)")
+         "If used, please always specify commit; only the difference of both will be analyzed, intermediary commits will be ignored. Do not use together with startcommit / endcommit.")
    protected String commitOld;
    
    @Option(names = { "-startcommit", "--startcommit" }, description = "First commit that should be analysed - do not use together with commit and commitOld!")
@@ -80,6 +80,9 @@ public class ExecutionConfigMixin {
          "--dontRedirectToNull" }, description = "Activates showing the standard output of the testcase (by default, it is redirected to null)")
    protected boolean dontRedirectToNull = false;
 
+   @Option(names = { "-onlyMeasureWorkload", "--onlyMeasureWorkload" }, description = "Only measure workload (no @Before/@After)")
+   protected boolean onlyMeasureWorkload = false;
+   
    @Option(names = { "-properties", "--properties" }, description = "Sets the properties that should be passed to the test (e.g. \"-Dmy.var=5\")")
    public String properties;
 
@@ -281,6 +284,14 @@ public class ExecutionConfigMixin {
       this.dontRedirectToNull = dontRedirectToNull;
    }
    
+   public boolean isOnlyMeasureWorkload() {
+      return onlyMeasureWorkload;
+   }
+   
+   public void setOnlyMeasureWorkload(boolean onlyMeasureWorkload) {
+      this.onlyMeasureWorkload = onlyMeasureWorkload;
+   }
+   
    public String getProperties() {
       return properties;
    }
@@ -344,7 +355,8 @@ public class ExecutionConfigMixin {
 
       config.setExcludeLog4j(excludeLog4j);
       config.setRedirectToNull(!dontRedirectToNull);
-
+      config.setOnlyMeasureWorkload(onlyMeasureWorkload);
+      
       if (config.isExecuteBeforeClassInMeasurement() && config.isOnlyMeasureWorkload()) {
          throw new RuntimeException("executeBeforeClassInMeasurement may only be activated if onlyMeasureWorkload is deactivated!");
       }
