@@ -73,8 +73,11 @@ public class ExecutionConfigMixin {
    @Option(names = { "-testClassFolder", "--testClassFolder" }, description = "Folder that contains test classes")
    protected String testClazzFolder;
 
-   @Option(names = { "-excludeLog4j", "--excludeLog4j" }, description = "Exclude log4j (required, if other logging implementation should be used)")
-   protected boolean excludeLog4j = false;
+   @Option(names = { "-excludeLog4jToSlf4j", "--excludeLog4jToSlf4j" }, description = "Exclude log4j-to-slf4j (required, if other logging implementation should be used)")
+   protected boolean excludeLog4jToSlf4j = false;
+   
+   @Option(names = { "-excludeLog4jSlf4jImpl", "--excludeLog4jSlf4jImpl" }, description = "Exclude log4j-slf4j-impl (required, if other logging implementation should be used)")
+   protected boolean excludeLog4jSlf4jImpl = false;
 
    @Option(names = { "-dontRedirectToNull",
          "--dontRedirectToNull" }, description = "Activates showing the standard output of the testcase (by default, it is redirected to null)")
@@ -267,13 +270,21 @@ public class ExecutionConfigMixin {
    public void setTestClazzFolder(final String testClazzFolder) {
       this.testClazzFolder = testClazzFolder;
    }
-
-   public boolean isExcludeLog4j() {
-      return excludeLog4j;
+   
+   public boolean isExcludeLog4jSlf4jImpl() {
+      return excludeLog4jSlf4jImpl;
    }
-
-   public void setExcludeLog4j(final boolean excludeLog4j) {
-      this.excludeLog4j = excludeLog4j;
+   
+   public void setExcludeLog4jSlf4jImpl(boolean excludeLog4jSlf4jImpl) {
+      this.excludeLog4jSlf4jImpl = excludeLog4jSlf4jImpl;
+   }
+   
+   public boolean isExcludeLog4jToSlf4j() {
+      return excludeLog4jToSlf4j;
+   }
+   
+   public void setExcludeLog4jToSlf4j(boolean excludeLog4jToSlf4j) {
+      this.excludeLog4jToSlf4j = excludeLog4jToSlf4j;
    }
 
    public boolean isDontRedirectToNull() {
@@ -353,7 +364,8 @@ public class ExecutionConfigMixin {
          config.setTestClazzFolders(testClazzFolders);
       }
 
-      config.setExcludeLog4j(excludeLog4j);
+      config.setExcludeLog4jSlf4jImpl(excludeLog4jSlf4jImpl);
+      config.setExcludeLog4jToSlf4j(excludeLog4jToSlf4j);
       config.setRedirectToNull(!dontRedirectToNull);
       config.setOnlyMeasureWorkload(onlyMeasureWorkload);
       

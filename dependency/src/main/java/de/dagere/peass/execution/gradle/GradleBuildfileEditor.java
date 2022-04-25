@@ -97,7 +97,7 @@ public class GradleBuildfileEditor {
 
    private void addDependencies(final GradleBuildfileVisitor visitor) {
       boolean isAddJunit3 = testTransformer.isJUnit3();
-      boolean isExcludeLog4j = testTransformer.getConfig().getExecutionConfig().isExcludeLog4j();
+      boolean isExcludeLog4j = testTransformer.getConfig().getExecutionConfig().isExcludeLog4jSlf4jImpl();
       if (visitor.getDependencyLine() != -1) {
          for (RequiredDependency dependency : RequiredDependency.getAll(isAddJunit3)) {
             final String dependencyGradle;

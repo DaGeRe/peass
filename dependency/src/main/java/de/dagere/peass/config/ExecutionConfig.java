@@ -272,12 +272,12 @@ public class ExecutionConfig implements Serializable {
       this.useAlternativeBuildfile = useAlternativeBuildfile;
    }
 
-   public boolean isExcludeLog4j() {
+   public boolean isExcludeLog4jSlf4jImpl() {
       return excludeLog4jSlf4jImpl;
    }
 
-   public void setExcludeLog4j(final boolean excludeLog4j) {
-      this.excludeLog4jSlf4jImpl = excludeLog4j;
+   public void setExcludeLog4jSlf4jImpl(boolean excludeLog4jSlf4jImpl) {
+      this.excludeLog4jSlf4jImpl = excludeLog4jSlf4jImpl;
    }
 
    public boolean isExcludeLog4jToSlf4j() {

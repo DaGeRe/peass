@@ -35,7 +35,7 @@ public class TestBuildGradleExclusions {
       final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "build.gradle");
 
       final File destFile = TestBuildGradle.copyGradlefile(gradleFile);
-      mockedTransformer.getConfig().getExecutionConfig().setExcludeLog4j(true);
+      mockedTransformer.getConfig().getExecutionConfig().setExcludeLog4jSlf4jImpl(true);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
       editor.addDependencies(new File("xyz"));
@@ -51,7 +51,7 @@ public class TestBuildGradleExclusions {
       final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "buildConstraints.gradle");
 
       final File destFile = TestBuildGradle.copyGradlefile(gradleFile);
-      mockedTransformer.getConfig().getExecutionConfig().setExcludeLog4j(true);
+      mockedTransformer.getConfig().getExecutionConfig().setExcludeLog4jSlf4jImpl(true);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
       editor.addDependencies(new File("xyz"));
