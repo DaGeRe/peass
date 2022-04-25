@@ -14,7 +14,7 @@ public class TestCaseTest {
    
    @Test
    public void testConstructionWithChunk() {
-      File dataFile = new File("src/test/resources/testcaseTest/ExampleTest_test(JUNIT_PARAMETERIZED-0).xml");
+      File dataFile = new File("src/test/resources/testcaseTest/ExampleTest_test(JUNIT_PARAMETERIZED-0).json");
       Kopemedata kopemedata = JSONDataLoader.loadData(dataFile);
       
       TestCase test = new TestCase(kopemedata);
