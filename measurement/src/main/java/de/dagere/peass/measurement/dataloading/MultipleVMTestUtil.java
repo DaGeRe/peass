@@ -13,7 +13,7 @@ import org.apache.commons.math3.stat.inference.TestUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datacollection.tempfile.WrittenResultReader;
+import de.dagere.kopeme.datacollection.tempfile.WrittenResultReaderBin;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.datastorage.JSONDataStorer;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
@@ -103,7 +103,7 @@ public class MultipleVMTestUtil {
 
    private static SummaryStatistics getExternalFileStatistics(final File oneResultFile, final String dataCollectorName, final VMResult oneResult) {
       final File resultFile = new File(oneResultFile.getParentFile(), oneResult.getFulldata().getFileName());
-      WrittenResultReader reader = new WrittenResultReader(resultFile);
+      WrittenResultReaderBin reader = new WrittenResultReaderBin(resultFile);
       Set<String> keys = new HashSet<>();
       keys.add(dataCollectorName);
       reader.read(null, keys);

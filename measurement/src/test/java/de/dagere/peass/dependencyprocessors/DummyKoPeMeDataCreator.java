@@ -8,7 +8,7 @@ import java.io.IOException;
 import de.dagere.kopeme.datacollection.DataCollector;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
-import de.dagere.kopeme.datacollection.tempfile.ResultTempWriter;
+import de.dagere.kopeme.datacollection.tempfile.ResultTempWriterBin;
 import de.dagere.kopeme.datastorage.JSONDataStorer;
 import de.dagere.kopeme.kopemedata.Fulldata;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
@@ -34,7 +34,7 @@ public class DummyKoPeMeDataCreator {
       value.setValue(15);
       if (count > TestResult.BOUNDARY_SAVE_FILE) {
          try {
-            ResultTempWriter writer = new ResultTempWriter(false);
+            ResultTempWriterBin writer = new ResultTempWriterBin(false);
             
             writeToDisk(count, writer);
             result.getFulldata().setFileName(writer.getTempFile().getAbsolutePath());
@@ -48,7 +48,7 @@ public class DummyKoPeMeDataCreator {
       }
    }
 
-   private static void writeToDisk(final int count, final ResultTempWriter writer) {
+   private static void writeToDisk(final int count, final ResultTempWriterBin writer) {
       DataCollector[] collectors = new DataCollector[] {new DataCollector() {
          @Override
          public void stopCollection() {
