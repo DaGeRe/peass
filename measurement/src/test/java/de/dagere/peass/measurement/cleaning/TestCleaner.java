@@ -13,7 +13,6 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datastorage.JSONDataLoader;
-import de.dagere.kopeme.datastorage.xml.XMLDataLoader;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.TestMethod;
 import de.dagere.peass.dependencyprocessors.VersionComparator;

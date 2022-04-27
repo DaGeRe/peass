@@ -22,7 +22,6 @@ import org.codehaus.groovy.ast.expr.ClosureExpression;
 import org.codehaus.groovy.ast.expr.ConstantExpression;
 import org.codehaus.groovy.ast.expr.Expression;
 import org.codehaus.groovy.ast.expr.MapEntryExpression;
-import org.codehaus.groovy.ast.expr.MapExpression;
 import org.codehaus.groovy.ast.expr.MethodCallExpression;
 import org.codehaus.groovy.ast.expr.NamedArgumentListExpression;
 import org.codehaus.groovy.ast.expr.TupleExpression;
@@ -266,7 +265,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
    private boolean isSpringBootPlugin(final String text) {
       LOG.debug("Checking plugin name " + text);
-      LOG.debug("Names: {}", config.getGradleSpringBootPluginNames());
+      LOG.debug("Names: {}", (Object[]) config.getGradleSpringBootPluginNames());
 
       boolean containsCustomPluginName = Arrays.stream(config.getGradleSpringBootPluginNames())
             .anyMatch(springBootPluginName -> text.contains(springBootPluginName));

@@ -124,7 +124,7 @@ public class MeasuredNode extends BasicNode {
 
    @JsonIgnore
    public boolean isChange(final double type2error) {
-      final double tValue = TestUtils.t(statistic.getStatisticsCurrent(), statistic.getStatisticsOld());
+//      final double tValue = TestUtils.t(statistic.getStatisticsCurrent(), statistic.getStatisticsOld());
       // System.out.println(tValue);
       final boolean value = TestUtils.tTest(statistic.getStatisticsCurrent(), statistic.getStatisticsOld(), type2error);
       return value;
