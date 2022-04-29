@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import javax.xml.bind.JAXBException;
+
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -81,7 +81,7 @@ public class TestContinuousExecutor {
    }
 
 
-   private void mockMeasurement(final ContinuousExecutor executor, final ContinuousExecutor spied) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   private void mockMeasurement(final ContinuousExecutor executor, final ContinuousExecutor spied) throws IOException, InterruptedException,  XmlPullParserException {
       Mockito.doAnswer(new Answer<File>() {
 
          @Override

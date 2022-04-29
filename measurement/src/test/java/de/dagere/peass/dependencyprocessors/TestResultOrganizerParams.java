@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
+
 
 import org.codehaus.plexus.util.FileUtils;
 import org.hamcrest.MatcherAssert;
@@ -17,9 +17,9 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizer;
@@ -48,7 +48,7 @@ public class TestResultOrganizerParams {
    }
 
    @Test
-   public void testReading() throws JAXBException, IOException {
+   public void testReading() throws  IOException {
       TestCase testcase = new TestCase("de.dagere.peass.ExampleBenchmarkClazz#calleeMethod");
 
       PeassFolders folders = mockFolders(testcase);
@@ -65,17 +65,17 @@ public class TestResultOrganizerParams {
       Assert.assertTrue(expectedResultFile1.exists());
       Assert.assertTrue(expectedResultFile2.exists());
       
-      Kopemedata data = XMLDataLoader.loadData(expectedResultFile1);
-      List<Result> results = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getChunk().get(0).getResult();
+      Kopemedata data = JSONDataLoader.loadData(expectedResultFile1);
+      List<VMResult> results = data.getFirstMethodResult().getDatacollectorResults().get(0).getResults();
       MatcherAssert.assertThat(results, IsIterableWithSize.iterableWithSize(2));
       
       File expectedFulldataFile = new File(TEMP_FULL_DIR, "calleeMethod(parameter-2)_0_d77cb2ff2a446c65f0a63fd0359f9ba4dbfdb9d9.xml");
-      Kopemedata fulldata = XMLDataLoader.loadData(expectedFulldataFile);
-      Assert.assertEquals(1, fulldata.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().size());
+      Kopemedata fulldata = JSONDataLoader.loadData(expectedFulldataFile);
+      Assert.assertEquals(1, fulldata.getFirstMethodResult().getDatacollectorResults().get(0).getResults().size());
       
       File expectedFulldataFile1 = new File(TEMP_FULL_DIR, "calleeMethod(parameter-1)_2_d77cb2ff2a446c65f0a63fd0359f9ba4dbfdb9d9.xml");
-      Kopemedata fulldata1 = XMLDataLoader.loadData(expectedFulldataFile1);
-      Assert.assertEquals(1, fulldata1.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().size());
+      Kopemedata fulldata1 = JSONDataLoader.loadData(expectedFulldataFile1);
+      Assert.assertEquals(1, fulldata1.getFirstMethodResult().getDatacollectorResults().get(0).getResults().size());
    }
 
    private PeassFolders mockFolders(final TestCase testcase) {

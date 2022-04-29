@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,6 +18,7 @@ import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.visualization.html.HTMLWriter;
 
+
 public class RCAGenerator {
 
    private static final Logger LOG = LogManager.getLogger(RCAGenerator.class);
@@ -31,7 +30,7 @@ public class RCAGenerator {
 
    private CallTreeNode rootPredecessor, rootVersion;
 
-   public RCAGenerator(final File source, final File destFolder, final CauseSearchFolders folders) throws JsonParseException, JsonMappingException, IOException, JAXBException {
+   public RCAGenerator(final File source, final File destFolder, final CauseSearchFolders folders) throws JsonParseException, JsonMappingException, IOException {
       this.source = source;
       this.destFolder = destFolder;
       this.folders = folders;
@@ -43,12 +42,12 @@ public class RCAGenerator {
       this.propertyFolder = propertyFolder;
    }
 
-   public void createVisualization() throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException, JAXBException {
+   public void createVisualization() throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException {
       LOG.info("Visualizing " + data.getTestcase());
       final NodePreparator preparator = new NodePreparator(rootPredecessor, rootVersion, data);
       preparator.prepare();
       final GraphNode rootNode = preparator.getRootNode();
-      KoPeMeTreeConverter kopemeTreeConverter = new KoPeMeTreeConverter(folders, data.getMeasurementConfig().getExecutionConfig().getVersion(), new TestCase(data.getTestcase()));
+      KoPeMeTreeConverter kopemeTreeConverter = new KoPeMeTreeConverter(folders, data.getMeasurementConfig().getExecutionConfig().getCommit(), new TestCase(data.getTestcase()));
       HTMLWriter writer = new HTMLWriter(rootNode, data, destFolder, propertyFolder, kopemeTreeConverter.getData());
       writer.writeHTML();;
 //      writeHTML(rootNode, data);

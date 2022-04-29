@@ -58,8 +58,8 @@ public class CauseSearchFolders extends PeassFolders {
       return levelFolder;
    }
 
-   public File getArchiveResultFolder(final String version, final TestCase testcase) {
-      final File folder = new File(archivedFolder, version + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
+   public File getArchiveResultFolder(final String commit, final TestCase testcase) {
+      final File folder = new File(archivedFolder, commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
       if (!folder.exists()) {
          folder.mkdirs();
       }
@@ -78,25 +78,25 @@ public class CauseSearchFolders extends PeassFolders {
       return rcaFolder;
    }
 
-   public File getRcaTreeFolder(final String version, final TestCase testcase) {
-      final File treeDataFolder = new File(treeFolder, version + File.separator + testcase.getShortClazz());
+   public File getRcaTreeFolder(final String commit, final TestCase testcase) {
+      final File treeDataFolder = new File(treeFolder, commit + File.separator + testcase.getShortClazz());
       return treeDataFolder;
    }
 
-   public File getRcaTreeFile(final String version, final TestCase testcase) {
-      final File treeDataFolder = getRcaTreeFolder(version, testcase);
+   public File getRcaTreeFile(final String commit, final TestCase testcase) {
+      final File treeDataFolder = getRcaTreeFolder(commit, testcase);
       File treeFile = new File(treeDataFolder, testcase.getMethodWithParams() + ".json");
       return treeFile;
    }
 
-   public File getRcaTreeFileDetails(final String version, final TestCase testcase) {
-      final File treeDataFolder = getRcaTreeFolder(version, testcase);
+   public File getRcaTreeFileDetails(final String commit, final TestCase testcase) {
+      final File treeDataFolder = getRcaTreeFolder(commit, testcase);
       File treeFile = new File(treeDataFolder, "details" + File.separator + testcase.getMethodWithParams() + ".json");
       return treeFile;
    }
 
-   public File getTreeCacheFolder(final String version, final TestCase testcase) {
-      final File folder = new File(treeCacheFolder, version + File.separator + testcase.getClazz() + File.separator + testcase.getMethodWithParams());
+   public File getTreeCacheFolder(final String commit, final TestCase testcase) {
+      final File folder = new File(treeCacheFolder, commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethodWithParams());
       folder.mkdirs();
       return folder;
    }

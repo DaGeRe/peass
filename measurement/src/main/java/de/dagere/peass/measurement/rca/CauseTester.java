@@ -7,8 +7,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
@@ -29,6 +27,7 @@ import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.KiekerResultReader;
 import de.dagere.peass.testtransformation.TestTransformer;
+
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**
@@ -57,7 +56,7 @@ public class CauseTester extends AdaptiveTester {
    }
 
    public void measureVersion(final List<CallTreeNode> nodes)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       includedNodes = prepareNodes(nodes);
       evaluate(causeConfig.getTestCase());
       if (!getCurrentOrganizer().isSuccess()) {
@@ -83,12 +82,12 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, XmlPullParserException {
       LOG.debug("Adaptive execution: " + includedNodes);
       
       initEvaluation(testcase);
 
-      final File logFolder = folders.getRCALogFolder(configuration.getExecutionConfig().getVersion(), testcase, levelId);
+      final File logFolder = folders.getRCALogFolder(configuration.getExecutionConfig().getCommit(), testcase, levelId);
       
       try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())){
          evaluateWithAdaption(testcase, logFolder, writer);
@@ -108,7 +107,7 @@ public class CauseTester extends AdaptiveTester {
 
    private void generatePatternSet(final String version) {
       includedPattern = new HashSet<>();
-      if (configuration.getExecutionConfig().getVersionOld().equals(version)) {
+      if (configuration.getExecutionConfig().getCommitOld().equals(version)) {
          includedNodes.forEach(node -> {
             LOG.trace(node);
             if (!node.getKiekerPattern().equals(CauseSearchData.ADDED)) {
@@ -128,10 +127,10 @@ public class CauseTester extends AdaptiveTester {
    }
 
    @Override
-   public boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {
+   public boolean checkIsDecidable(final TestCase testcase, final int vmid) {
       try {
-         getDurationsVersion(configuration.getExecutionConfig().getVersion());
-         getDurationsVersion(configuration.getExecutionConfig().getVersionOld());
+         getDurationsVersion(configuration.getExecutionConfig().getCommit());
+         getDurationsVersion(configuration.getExecutionConfig().getCommitOld());
          boolean allDecidable = super.checkIsDecidable(testcase, vmid);
          LOG.debug("Super decidable: {}", allDecidable);
          for (final CallTreeNode includedNode : includedNodes) {
@@ -144,9 +143,9 @@ public class CauseTester extends AdaptiveTester {
       }
    }
 
-   private boolean checkLevelDecidable(final int vmid, final boolean allDecidable, final CallTreeNode includedNode) throws JAXBException {
-      final SummaryStatistics statisticsOld = includedNode.getStatistics(configuration.getExecutionConfig().getVersionOld());
-      final SummaryStatistics statistics = includedNode.getStatistics(configuration.getExecutionConfig().getVersion());
+   private boolean checkLevelDecidable(final int vmid, final boolean allDecidable, final CallTreeNode includedNode) {
+      final SummaryStatistics statisticsOld = includedNode.getStatistics(configuration.getExecutionConfig().getCommitOld());
+      final SummaryStatistics statistics = includedNode.getStatistics(configuration.getExecutionConfig().getCommit());
       final EarlyBreakDecider decider = new EarlyBreakDecider(configuration, statisticsOld, statistics);
       final boolean nodeDecidable = decider.isBreakPossible(vmid);
       LOG.debug("{} decideable: {}", includedNode.getKiekerPattern(), allDecidable);
@@ -160,7 +159,7 @@ public class CauseTester extends AdaptiveTester {
       if (getCurrentOrganizer().testSuccess(version)) {
          LOG.info("Did succeed in measurement - analyse values");
          
-         boolean isOtherVersion = version.equals(configuration.getExecutionConfig().getVersion());
+         boolean isOtherVersion = version.equals(configuration.getExecutionConfig().getCommit());
          final KiekerResultReader kiekerResultReader = new KiekerResultReader(configuration.getKiekerConfig().isUseAggregation(), configuration.getKiekerConfig().getRecord(), includedNodes, version, testcase,
                isOtherVersion);
          kiekerResultReader.setConsiderNodePosition(!configuration.getKiekerConfig().isUseAggregation());
@@ -178,13 +177,13 @@ public class CauseTester extends AdaptiveTester {
 
    public void getDurations(final int levelId)
          throws FileNotFoundException, IOException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
-      getDurationsVersion(configuration.getExecutionConfig().getVersion());
-      getDurationsVersion(configuration.getExecutionConfig().getVersionOld());
+      getDurationsVersion(configuration.getExecutionConfig().getCommit());
+      getDurationsVersion(configuration.getExecutionConfig().getCommitOld());
    }
 
    public void cleanup(final int levelId) throws IOException {
-      organizeMeasurements(levelId, configuration.getExecutionConfig().getVersion(), configuration.getExecutionConfig().getVersion());
-      organizeMeasurements(levelId, configuration.getExecutionConfig().getVersion(), configuration.getExecutionConfig().getVersionOld());
+      organizeMeasurements(levelId, configuration.getExecutionConfig().getCommit(), configuration.getExecutionConfig().getCommit());
+      organizeMeasurements(levelId, configuration.getExecutionConfig().getCommit(), configuration.getExecutionConfig().getCommitOld());
    }
 
    private void organizeMeasurements(final int levelId, final String mainVersion, final String version) throws IOException {
@@ -201,7 +200,7 @@ public class CauseTester extends AdaptiveTester {
       includedNodes.forEach(node -> node.createStatistics(version));
    }
 
-   public static void main(final String[] args) throws IOException, XmlPullParserException, InterruptedException, JAXBException, ClassNotFoundException {
+   public static void main(final String[] args) throws IOException, XmlPullParserException, InterruptedException,  ClassNotFoundException {
       final File projectFolder = new File("../../projekte/commons-fileupload");
       final String version = "4ed6e923cb2033272fcb993978d69e325990a5aa";
       final TestCase test = new TestCase("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");
@@ -224,8 +223,8 @@ public class CauseTester extends AdaptiveTester {
    }
 
    public void setCurrentVersion(final String version) {
-      configuration.getExecutionConfig().setVersion(version);
-      configuration.getExecutionConfig().setVersionOld(version + "~1");
+      configuration.getExecutionConfig().setCommit(version);
+      configuration.getExecutionConfig().setCommitOld(version + "~1");
    }
 
 }

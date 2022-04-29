@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,7 +39,7 @@ import picocli.CommandLine.Mixin;
  * @author reichelt
  *
  */
-@Command(description = "Executes the regression test selection. Creates the executionfile, which defines the tests-version-pairs that need to be executed in each version", name = "select")
+@Command(description = "Executes the regression test selection. Creates the executionfile, which defines the tests-commit-pairs that need to be executed in each commit", name = "select")
 public class SelectStarter implements Callable<Void>{
 
    private static final Logger LOG = LogManager.getLogger(SelectStarter.class);
@@ -68,14 +66,14 @@ public class SelectStarter implements Callable<Void>{
    public Void call() throws Exception {
       final String project = config.getProjectFolder().getName();
       
-      final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartversion(), executionConfigMixin.getEndversion(), config.getProjectFolder());
+      final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder());
       VersionComparator.setVersions(commits);
       
       readExecutions(project, commits);
       return null;
    }
 
-   public void readExecutions(final String project, final List<GitCommit> commits) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, JAXBException {
+   public void readExecutions(final String project, final List<GitCommit> commits) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException {
       KiekerConfig kiekerConfig = kiekerConfigMixin.getKiekerConfig();
       ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
       

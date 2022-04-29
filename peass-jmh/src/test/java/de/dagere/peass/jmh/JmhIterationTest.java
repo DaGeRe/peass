@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
+
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -16,10 +16,10 @@ import org.junit.jupiter.api.Test;
 
 import com.github.javaparser.ParseException;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.TestcaseType;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.TestMethod;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.TestConstants;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
@@ -45,7 +45,7 @@ public class JmhIterationTest {
    }
    
    @Test
-   public void testVersionReading() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException, JAXBException {
+   public void testVersionReading() throws IOException, InterruptedException, XmlPullParserException, ParseException, ViewNotFoundException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
       FileUtils.copyDirectory(JmhTestConstants.BASIC_VERSION, TestConstants.CURRENT_FOLDER);
       
       MeasurementConfig measurementConfig = new MeasurementConfig(VMS);
@@ -64,19 +64,19 @@ public class JmhIterationTest {
       }
       
       File clazzFolder = folders.findTempClazzFolder(testcase).get(0);
-      Kopemedata data = XMLDataLoader.loadData(new File(clazzFolder, testcase.getMethod() + ".xml"));
+      Kopemedata data = JSONDataLoader.loadData(new File(clazzFolder, testcase.getMethod() + ".json"));
       
-      TestcaseType testcaseData = data.getTestcases().getTestcase().get(0);
-      Assert.assertEquals("de.dagere.peass.ExampleBenchmark", data.getTestcases().getClazz());
-      Assert.assertEquals("testMethod", testcaseData.getName());
+      TestMethod testcaseData = data.getMethods().get(0);
+      Assert.assertEquals("de.dagere.peass.ExampleBenchmark", data.getClazz());
+      Assert.assertEquals("testMethod", testcaseData.getMethod());
       
-      Assert.assertEquals(VMS, testcaseData.getDatacollector().get(0).getResult().size());
-      List<Result> results = testcaseData.getDatacollector().get(0).getResult();
-      Assert.assertEquals(ITERATIONS + WARMUP, results.get(0).getFulldata().getValue().size());
+      Assert.assertEquals(VMS, testcaseData.getDatacollectorResults().get(0).getResults().size());
+      List<VMResult> results = testcaseData.getDatacollectorResults().get(0).getResults();
+      Assert.assertEquals(ITERATIONS + WARMUP, results.get(0).getFulldata().getValues().size());
       
-      for (Result result : results) {
+      for (VMResult result : results) {
          DescriptiveStatistics statistics = new DescriptiveStatistics();
-         result.getFulldata().getValue().forEach(value -> statistics.addValue(value.getValue()));
+         result.getFulldata().getValues().forEach(value -> statistics.addValue(value.getValue()));
          
          Assert.assertEquals(statistics.getMean(), result.getValue(), 0.01);
          Assert.assertEquals(statistics.getStandardDeviation(), result.getDeviation(), 0.01);

@@ -13,6 +13,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 
 public class GradleParseUtil {
@@ -36,12 +37,12 @@ public class GradleParseUtil {
       }
    }
 
-   public static FindDependencyVisitor setAndroidTools(final File buildfile) {
-      FindDependencyVisitor visitor = null;
+   public static GradleBuildfileVisitor setAndroidTools(final File buildfile, ExecutionConfig config) {
+      GradleBuildfileVisitor visitor = null;
       try {
          LOG.debug("Editing: {}", buildfile);
 
-         visitor = parseBuildfile(buildfile);
+         visitor = parseBuildfile(buildfile, config);
          final List<String> gradleFileContents = Files.readAllLines(Paths.get(buildfile.toURI()));
 
          if (visitor.getBuildTools() != -1) {
@@ -59,19 +60,19 @@ public class GradleParseUtil {
       return visitor;
    }
    
-   public static void removeExclusions(final FindDependencyVisitor visitor) {
+   public static void removeExclusions(final GradleBuildfileVisitor visitor) {
       for (Integer lineNumber : visitor.getExcludeLines()) {
          visitor.clearLine(lineNumber);
       }
    }
 
-   public static FindDependencyVisitor parseBuildfile(final File buildfile) throws IOException, FileNotFoundException {
-      FindDependencyVisitor visitor = new FindDependencyVisitor(buildfile);
+   public static GradleBuildfileVisitor parseBuildfile(final File buildfile, ExecutionConfig config) throws IOException, FileNotFoundException {
+      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, config);
       return visitor;
 
    }
 
-   public static void updateBuildTools(final FindDependencyVisitor visitor) {
+   public static void updateBuildTools(final GradleBuildfileVisitor visitor) {
       final int lineIndex = visitor.getBuildTools() - 1;
       final String versionLine = visitor.getLines().get(lineIndex).trim().replaceAll("'", "").replace("\"", "");
       final String versionString = versionLine.split(":")[1].trim();
@@ -85,7 +86,7 @@ public class GradleParseUtil {
       }
    }
 
-   public static void updateBuildToolsVersion(final FindDependencyVisitor visitor) {
+   public static void updateBuildToolsVersion(final GradleBuildfileVisitor visitor) {
       final int lineIndex = visitor.getBuildToolsVersion() - 1;
       final String versionLine = visitor.getLines().get(lineIndex).trim().replaceAll("'", "").replace("\"", "");
       final String versionString = versionLine.split(" ")[1].trim();
@@ -100,7 +101,7 @@ public class GradleParseUtil {
       }
    }
 
-   public static void addJUnitVersionSpringBoot(final FindDependencyVisitor visitor) {
+   public static void addJUnitVersionSpringBoot(final GradleBuildfileVisitor visitor) {
       visitor.getLines().add("ext['junit-jupiter.version']='" + MavenPomUtil.JUPITER_VERSION + "'");
    }
 }

@@ -5,8 +5,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -15,6 +13,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
+
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**
@@ -32,7 +31,7 @@ public class LevelDifferentNodeDeterminer extends DifferentNodeDeterminer {
    public LevelDifferentNodeDeterminer(final List<CallTreeNode> currentPredecessorNodeList, final List<CallTreeNode> currentVersionNodeList,
          final CauseSearcherConfig causeSearchConfig,
          final MeasurementConfig measurementConfig)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       super(causeSearchConfig, measurementConfig);
       final Iterator<CallTreeNode> predecessorIterator = currentPredecessorNodeList.iterator();
       final Iterator<CallTreeNode> currentIterator = currentVersionNodeList.iterator();

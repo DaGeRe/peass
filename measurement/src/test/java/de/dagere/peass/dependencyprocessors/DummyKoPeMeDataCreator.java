@@ -3,24 +3,24 @@ package de.dagere.peass.dependencyprocessors;
 import java.io.File;
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
+
 
 import de.dagere.kopeme.datacollection.DataCollector;
 import de.dagere.kopeme.datacollection.TestResult;
 import de.dagere.kopeme.datacollection.TimeDataCollector;
-import de.dagere.kopeme.datacollection.tempfile.ResultTempWriter;
-import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Fulldata;
-import de.dagere.kopeme.generated.Result.Fulldata.Value;
+import de.dagere.kopeme.datacollection.tempfile.ResultTempWriterBin;
+import de.dagere.kopeme.datastorage.JSONDataStorer;
+import de.dagere.kopeme.kopemedata.Fulldata;
+import de.dagere.kopeme.kopemedata.MeasuredValue;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class DummyKoPeMeDataCreator {
    
-   public static void initDummyTestfile(final File methodFolder, final int iterations, final TestCase testcase) throws JAXBException {
-      XMLDataStorer storer = new XMLDataStorer(methodFolder, testcase.getClazz(), testcase.getMethod());
+   public static void initDummyTestfile(final File methodFolder, final int iterations, final TestCase testcase)  {
+      JSONDataStorer storer = new JSONDataStorer(methodFolder, testcase.getClazz(), testcase.getMethod());
 
-      final Result result = new Result();
+      final VMResult result = new VMResult();
       result.setValue(15);
       result.setIterations(iterations);
       initDummyFulldata(result, iterations);
@@ -28,13 +28,13 @@ public class DummyKoPeMeDataCreator {
       storer.storeValue(result, testcase.getExecutable(), TimeDataCollector.class.getName());
    }
    
-   private static void initDummyFulldata(final Result result, final int count) {
+   private static void initDummyFulldata(final VMResult result, final int count) {
       result.setFulldata(new Fulldata());
-      final Value value = new Value();
+      final MeasuredValue value = new MeasuredValue();
       value.setValue(15);
       if (count > TestResult.BOUNDARY_SAVE_FILE) {
          try {
-            ResultTempWriter writer = new ResultTempWriter(false);
+            ResultTempWriterBin writer = new ResultTempWriterBin(false);
             
             writeToDisk(count, writer);
             result.getFulldata().setFileName(writer.getTempFile().getAbsolutePath());
@@ -43,12 +43,12 @@ public class DummyKoPeMeDataCreator {
          }
       } else {
          for (int i = 0; i < count; i++) {
-            result.getFulldata().getValue().add(value);
+            result.getFulldata().getValues().add(value);
          }
       }
    }
 
-   private static void writeToDisk(final int count, final ResultTempWriter writer) {
+   private static void writeToDisk(final int count, final ResultTempWriterBin writer) {
       DataCollector[] collectors = new DataCollector[] {new DataCollector() {
          @Override
          public void stopCollection() {

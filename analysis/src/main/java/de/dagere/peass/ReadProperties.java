@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -83,7 +81,7 @@ public class ReadProperties implements Callable<Void> {
       out = resultFile;
    }
 
-   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException, JAXBException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final CommandLine commandLine = new CommandLine(new ReadProperties());
       System.exit(commandLine.execute(args));
    }
@@ -192,8 +190,8 @@ public class ReadProperties implements Callable<Void> {
          changeProperties.getProperties().put(testclazz, properties);
          for (final Change testcaseChange : changes.getValue()) {
             ExecutionConfig config = new ExecutionConfig();
-            config.setVersion(version);
-            config.setVersionOld(predecessor);
+            config.setCommit(version);
+            config.setCommitOld(predecessor);
             ChangedEntity entity = new ChangedEntity(testclazz, module);
             final PropertyReadHelper reader = new PropertyReadHelper(config, entity, testcaseChange, projectFolder, viewFolder,
                   methodFolder, null);

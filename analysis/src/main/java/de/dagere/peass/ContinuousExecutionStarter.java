@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -56,7 +54,7 @@ public class ContinuousExecutionStarter implements Callable<Void> {
    private final boolean useViews = true;
    private final boolean generateCoverageSelection = true;
 
-   public static void main(final String[] args) throws InterruptedException, IOException, JAXBException {
+   public static void main(final String[] args) throws InterruptedException, IOException {
       final ContinuousExecutionStarter command = new ContinuousExecutionStarter();
       final CommandLine commandLine = new CommandLine(command);
       commandLine.execute(args);

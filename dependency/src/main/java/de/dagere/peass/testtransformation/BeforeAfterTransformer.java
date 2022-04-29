@@ -42,12 +42,12 @@ public class BeforeAfterTransformer {
       transformMethodAnnotations(afterAllMethods, "de.dagere.kopeme.junit.rule.annotations.AfterNoMeasurement", 2);
    }
 
-   private static void transformMethodAnnotations(final List<MethodDeclaration> beforeMethods, final String name, final int priority) {
-      for (MethodDeclaration method : beforeMethods) {
+   private static void transformMethodAnnotations(final List<MethodDeclaration> transformableMethods, final String name, final int priority) {
+      for (MethodDeclaration method : transformableMethods) {
          final NormalAnnotationExpr beforeNoMeasurementAnnotation = new NormalAnnotationExpr();
 
          beforeNoMeasurementAnnotation.setName(name);
-         method.setAnnotation(0, beforeNoMeasurementAnnotation);
+         method.getAnnotations().add(beforeNoMeasurementAnnotation);
          
          beforeNoMeasurementAnnotation.addPair("priority", Integer.toString(priority));
 

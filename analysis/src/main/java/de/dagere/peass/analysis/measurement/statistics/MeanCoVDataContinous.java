@@ -6,9 +6,9 @@ import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.dagere.kopeme.generated.TestcaseType;
+import de.dagere.kopeme.kopemedata.MeasuredValue;
+import de.dagere.kopeme.kopemedata.TestMethod;
+import de.dagere.kopeme.kopemedata.VMResult;
 
 /**
  * Saves all data, its means and its coefficient of variation (CoV) for different executions of one test in one version.
@@ -26,17 +26,17 @@ public class MeanCoVDataContinous extends MeanCoVData {
       return allCoVs;
    }
 
-   public MeanCoVDataContinous(final TestcaseType testcase, int avg_count) {
+   public MeanCoVDataContinous(final TestMethod testcase, int avg_count) {
       super(testcase, avg_count);
    }
 
    @Override
    protected void addTestcaseData() {
-      for (final Result result : results) {
-         for (int startindex = 0; startindex < result.getFulldata().getValue().size(); startindex++) {
+      for (final VMResult result : results) {
+         for (int startindex = 0; startindex < result.getFulldata().getValues().size(); startindex++) {
             DescriptiveStatistics lastMean = new DescriptiveStatistics();
             for (int covIndex = 0; covIndex < Math.min(avgCount, startindex); covIndex++) {
-               Value currentValueObject = result.getFulldata().getValue().get(startindex - covIndex);
+               MeasuredValue currentValueObject = result.getFulldata().getValues().get(startindex - covIndex);
                double currentValue = currentValueObject.getValue();
                lastMean.addValue(currentValue);
             }

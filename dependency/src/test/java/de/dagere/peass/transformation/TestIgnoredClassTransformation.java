@@ -22,12 +22,9 @@ public class TestIgnoredClassTransformation {
    @TempDir
    public static File testFolder;
 
-   private File sourcesFolder;
-   private File testFile;
 
    @BeforeEach
    public void initFolder() throws URISyntaxException, IOException {
-      sourcesFolder = new File(testFolder, "src/test/java");
       FileUtils.copyFile(new File(RESOURCE_FOLDER, "../pom.xml"), new File(testFolder, "pom.xml"));
    }
 

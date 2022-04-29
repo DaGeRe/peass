@@ -32,7 +32,7 @@ public class TestExtendDependencies {
 
          Dependency kopemeDependency = model.getDependencies().get(0);
 
-         Assert.assertEquals("kopeme-junit", kopemeDependency.getArtifactId());
+         Assert.assertEquals("kopeme-junit4", kopemeDependency.getArtifactId());
       }
    }
    
@@ -50,7 +50,7 @@ public class TestExtendDependencies {
          MavenPomUtil.extendDependencies(model, false, true);
 
          Dependency kopemeDependency = model.getDependencies().get(0);
-         Assert.assertEquals("kopeme-junit", kopemeDependency.getArtifactId());
+         Assert.assertEquals("kopeme-junit4", kopemeDependency.getArtifactId());
          
          Assert.assertEquals(1, kopemeDependency.getExclusions().size());
          Assert.assertEquals(MavenPomUtil.LOG4J_SLF4J_IMPL_ARTIFACTID, kopemeDependency.getExclusions().get(0).getArtifactId());

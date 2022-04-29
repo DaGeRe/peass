@@ -57,8 +57,8 @@ public class MeasurementConfig implements Serializable {
       executionConfig = new ExecutionConfig(20);
       kiekerConfig = new KiekerConfig();
       this.vms = vms;
-      executionConfig.setVersion(version);
-      executionConfig.setVersionOld(versionOld);
+      executionConfig.setCommit(version);
+      executionConfig.setCommitOld(versionOld);
    }
 
    public MeasurementConfig(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin, 
@@ -92,8 +92,8 @@ public class MeasurementConfig implements Serializable {
    public MeasurementConfig(final int timeout, final int vms, final boolean earlyStop, final String version, final String versionOld) {
       executionConfig = new ExecutionConfig();
       executionConfig.setTimeout(timeout);
-      executionConfig.setVersion(version);
-      executionConfig.setVersionOld(versionOld);
+      executionConfig.setCommit(version);
+      executionConfig.setCommitOld(versionOld);
       kiekerConfig = new KiekerConfig();
       this.vms = vms;
       this.earlyStop = earlyStop;

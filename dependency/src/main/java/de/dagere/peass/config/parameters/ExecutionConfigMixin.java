@@ -16,18 +16,18 @@ public class ExecutionConfigMixin {
    @Option(names = { "-excludes", "--excludes" }, description = "Testcases for exclusion (default: empty, excludes no test)")
    protected String[] excludes;
 
-   @Option(names = { "-version", "--version" }, description = "Newer version for regression test selection / measurement. Do not use together with startversion / endversion.")
-   protected String version;
+   @Option(names = { "-commit", "--commit" }, description = "Newer commit for regression test selection / measurement. Do not use together with startcommit / endcommit.")
+   protected String commit;
+   
+   @Option(names = { "-commitOld", "--commitOld" }, description = "Older commit for regression test selection / measurement" +
+         "If used, please always specify commit; only the difference of both will be analyzed, intermediary commits will be ignored. Do not use together with startcommit / endcommit.")
+   protected String commitOld;
+   
+   @Option(names = { "-startcommit", "--startcommit" }, description = "First commit that should be analysed - do not use together with commit and commitOld!")
+   protected String startcommit;
 
-   @Option(names = { "-versionOld", "--versionOld" }, description = "Older version for regression test selection / measurement" +
-         "If used, please always specify version; only the difference of both will be analyzed, intermediary versions will be ignored. Do not use together with startversion / endversion.")
-   protected String versionOld;
-
-   @Option(names = { "-startversion", "--startversion" }, description = "First version that should be analysed - do not use together with version and versionOld!")
-   protected String startversion;
-
-   @Option(names = { "-endversion", "--endversion" }, description = "Last version that should be analysed - do not use together with version and versionOld! ")
-   protected String endversion;
+   @Option(names = { "-endcommit", "--endcommit" }, description = "Last commit that should be analysed - do not use together with commit and commitOld! ")
+   protected String endcommit;
 
    @Option(names = { "-testGoal", "--testGoal" }, description = "Test goal that should be used; default testRelease for Android projects and test for all others. "
          + "If you want to use test<VariantName> for Android, please specify a goal (i.e. task name) here."
@@ -73,18 +73,46 @@ public class ExecutionConfigMixin {
    @Option(names = { "-testClassFolder", "--testClassFolder" }, description = "Folder that contains test classes")
    protected String testClazzFolder;
 
-   @Option(names = { "-excludeLog4j", "--excludeLog4j" }, description = "Exclude log4j (required, if other logging implementation should be used)")
-   protected boolean excludeLog4j = false;
+   @Option(names = { "-excludeLog4jToSlf4j", "--excludeLog4jToSlf4j" }, description = "Exclude log4j-to-slf4j (required, if other logging implementation should be used)")
+   protected boolean excludeLog4jToSlf4j = false;
+   
+   @Option(names = { "-excludeLog4jSlf4jImpl", "--excludeLog4jSlf4jImpl" }, description = "Exclude log4j-slf4j-impl (required, if other logging implementation should be used)")
+   protected boolean excludeLog4jSlf4jImpl = false;
 
    @Option(names = { "-dontRedirectToNull",
          "--dontRedirectToNull" }, description = "Activates showing the standard output of the testcase (by default, it is redirected to null)")
    protected boolean dontRedirectToNull = false;
+
+   @Option(names = { "-onlyMeasureWorkload", "--onlyMeasureWorkload" }, description = "Only measure workload (no @Before/@After)")
+   protected boolean onlyMeasureWorkload = false;
    
    @Option(names = { "-properties", "--properties" }, description = "Sets the properties that should be passed to the test (e.g. \"-Dmy.var=5\")")
    public String properties;
 
    @Option(names = { "-forbiddenMethods", "--forbiddenMethods" }, description = "Unit tests, that call one of the methods, are excluded")
    protected String[] forbiddenMethods;
+
+   @Option(names = { "-gradleJavaPluginName", "--gradleJavaPluginName" }, description = "Sets a custom gradle Java Plugin name")
+   public String gradleJavaPluginName = ExecutionConfig.GRADLE_JAVA_DEFAULT_NAME;
+
+   @Option(names = { "-gradleSpringBootPluginName", "--gradleSpringBootPluginName" }, description = "Sets a custom gradle SpringBoot Plugin name")
+   public String gradleSpringBootPluginName = ExecutionConfig.GRADLE_SPRING_DEFAULT_NAME;
+
+   public String getGradleJavaPluginName() {
+      return gradleJavaPluginName;
+   }
+
+   public void setGradleJavaPluginName(String gradleJavaPluginName) {
+      this.gradleJavaPluginName = gradleJavaPluginName;
+   }
+
+   public String getGradleSpringBootPluginName() {
+      return gradleSpringBootPluginName;
+   }
+
+   public void setGradleSpringBootPluginName(String gradleSpringBootPluginName) {
+      this.gradleSpringBootPluginName = gradleSpringBootPluginName;
+   }
 
    public int getTimeout() {
       return timeout;
@@ -102,22 +130,6 @@ public class ExecutionConfigMixin {
       return includes;
    }
 
-   public String getVersion() {
-      return version;
-   }
-
-   public void setVersion(final String version) {
-      this.version = version;
-   }
-
-   public String getVersionOld() {
-      return versionOld;
-   }
-
-   public void setVersionOld(final String versionOld) {
-      this.versionOld = versionOld;
-   }
-
    public void setTestGoal(final String testGoal) {
       this.testGoal = testGoal;
    }
@@ -126,20 +138,36 @@ public class ExecutionConfigMixin {
       return testGoal;
    }
 
-   public String getStartversion() {
-      return startversion;
+   public String getCommit() {
+      return commit;
    }
 
-   public void setStartversion(final String startversion) {
-      this.startversion = startversion;
+   public void setCommit(String commit) {
+      this.commit = commit;
    }
 
-   public String getEndversion() {
-      return endversion;
+   public String getCommitOld() {
+      return commitOld;
    }
 
-   public void setEndversion(final String endversion) {
-      this.endversion = endversion;
+   public void setCommitOld(String commitOld) {
+      this.commitOld = commitOld;
+   }
+
+   public String getStartcommit() {
+      return startcommit ;
+   }
+
+   public void setStartcommit(String startcommit) {
+      this.startcommit = startcommit;
+   }
+
+   public String getEndcommit() {
+      return endcommit ;
+   }
+
+   public void setEndcommit(String endcommit) {
+      this.endcommit = endcommit;
    }
 
    public void setPl(final String pl) {
@@ -245,13 +273,21 @@ public class ExecutionConfigMixin {
    public void setTestClazzFolder(final String testClazzFolder) {
       this.testClazzFolder = testClazzFolder;
    }
-
-   public boolean isExcludeLog4j() {
-      return excludeLog4j;
+   
+   public boolean isExcludeLog4jSlf4jImpl() {
+      return excludeLog4jSlf4jImpl;
    }
-
-   public void setExcludeLog4j(final boolean excludeLog4j) {
-      this.excludeLog4j = excludeLog4j;
+   
+   public void setExcludeLog4jSlf4jImpl(boolean excludeLog4jSlf4jImpl) {
+      this.excludeLog4jSlf4jImpl = excludeLog4jSlf4jImpl;
+   }
+   
+   public boolean isExcludeLog4jToSlf4j() {
+      return excludeLog4jToSlf4j;
+   }
+   
+   public void setExcludeLog4jToSlf4j(boolean excludeLog4jToSlf4j) {
+      this.excludeLog4jToSlf4j = excludeLog4jToSlf4j;
    }
 
    public boolean isDontRedirectToNull() {
@@ -260,6 +296,14 @@ public class ExecutionConfigMixin {
 
    public void setDontRedirectToNull(final boolean dontRedirectToNull) {
       this.dontRedirectToNull = dontRedirectToNull;
+   }
+   
+   public boolean isOnlyMeasureWorkload() {
+      return onlyMeasureWorkload;
+   }
+   
+   public void setOnlyMeasureWorkload(boolean onlyMeasureWorkload) {
+      this.onlyMeasureWorkload = onlyMeasureWorkload;
    }
    
    public String getProperties() {
@@ -281,10 +325,10 @@ public class ExecutionConfigMixin {
    public ExecutionConfig getExecutionConfig() {
       ExecutionConfig config = new ExecutionConfig(timeout);
 
-      config.setVersion(version);
-      config.setVersionOld(versionOld);
-      config.setStartversion(getStartversion());
-      config.setEndversion(getEndversion());
+      config.setCommit(getCommit());
+      config.setCommitOld(getCommitOld());
+      config.setStartcommit(getStartcommit());
+      config.setEndcommit(getEndcommit());
       config.setTestGoal(getTestGoal());
 
       if (getIncludes() != null) {
@@ -319,6 +363,8 @@ public class ExecutionConfigMixin {
       config.setExecuteBeforeClassInMeasurement(executeBeforeClassInMeasurement);
       config.setKiekerWaitTime(kiekerWaitTime);
       config.setProperties(properties);
+      config.setGradleJavaPluginName(gradleJavaPluginName);
+      config.setGradleSpringBootPluginName(gradleSpringBootPluginName);
 
       if (getClazzFolder() != null) {
          List<String> clazzFolders = ExecutionConfig.buildFolderList(getClazzFolder());
@@ -329,9 +375,11 @@ public class ExecutionConfigMixin {
          config.setTestClazzFolders(testClazzFolders);
       }
 
-      config.setExcludeLog4j(excludeLog4j);
+      config.setExcludeLog4jSlf4jImpl(excludeLog4jSlf4jImpl);
+      config.setExcludeLog4jToSlf4j(excludeLog4jToSlf4j);
       config.setRedirectToNull(!dontRedirectToNull);
-
+      config.setOnlyMeasureWorkload(onlyMeasureWorkload);
+      
       if (config.isExecuteBeforeClassInMeasurement() && config.isOnlyMeasureWorkload()) {
          throw new RuntimeException("executeBeforeClassInMeasurement may only be activated if onlyMeasureWorkload is deactivated!");
       }

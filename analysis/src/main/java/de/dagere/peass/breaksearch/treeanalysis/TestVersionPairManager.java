@@ -12,10 +12,10 @@ class TestVersionPairManager {
    private Map<String, Map<String, TestVersionPair>> data = new HashMap<>();
 
    public void addData(final CauseSearchData data2) {
-      Map<String, TestVersionPair> versionData = data.get(data2.getMeasurementConfig().getExecutionConfig().getVersion());
+      Map<String, TestVersionPair> versionData = data.get(data2.getMeasurementConfig().getExecutionConfig().getCommit());
       if (versionData == null) {
          versionData = new HashMap<String, TestVersionPair>();
-         data.put(data2.getMeasurementConfig().getExecutionConfig().getVersion(), versionData);
+         data.put(data2.getMeasurementConfig().getExecutionConfig().getCommit(), versionData);
       }
       TestVersionPair tvp = versionData.get(data2.getTestcase());
       if (tvp == null) {

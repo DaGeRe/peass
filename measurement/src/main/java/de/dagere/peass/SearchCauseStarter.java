@@ -2,8 +2,6 @@ package de.dagere.peass;
 
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,6 +24,7 @@ import de.dagere.peass.measurement.rca.searcher.CauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.CauseSearcherComplete;
 import de.dagere.peass.measurement.rca.searcher.LevelCauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.TreeAnalyzerCreator;
+
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
@@ -42,13 +41,13 @@ public class SearchCauseStarter extends MeasureStarter {
    @Mixin
    private KiekerConfigMixin kiekerConfigMixin;
 
-   public static void main(final String[] args) throws JAXBException, IOException {
+   public static void main(final String[] args) throws  IOException {
       final SearchCauseStarter command = new SearchCauseStarter();
       final CommandLine commandLine = new CommandLine(command);
       System.exit(commandLine.execute(args));
    }
 
-   public SearchCauseStarter() throws JAXBException, IOException {
+   public SearchCauseStarter() throws  IOException {
       super();
    }
 
@@ -99,8 +98,8 @@ public class SearchCauseStarter extends MeasureStarter {
    private MeasurementConfig getConfiguration(final String predecessor) {
       final MeasurementConfig measurementConfiguration = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin, kiekerConfigMixin);
       measurementConfiguration.setUseKieker(true);
-      measurementConfiguration.getExecutionConfig().setVersion(version);
-      measurementConfiguration.getExecutionConfig().setVersionOld(predecessor);
+      measurementConfiguration.getExecutionConfig().setCommit(version);
+      measurementConfiguration.getExecutionConfig().setCommitOld(predecessor);
 
       if (causeSearchConfigMixin.getStrategy().equals(RCAStrategy.COMPLETE)) {
          measurementConfiguration.getKiekerConfig().setEnableAdaptiveMonitoring(false);

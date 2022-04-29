@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.utils.Constants;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
 
@@ -28,7 +27,7 @@ public class FindLowestVMCountStarter  implements Callable<Void> {
    @Option(names = { "-data", "--data" }, description = "Internal only")
    private File[] data;
    
-   public static void main(final String[] args) throws JAXBException, InterruptedException, JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws  InterruptedException, JsonParseException, JsonMappingException, IOException {
       try {
          final CommandLine commandLine = new CommandLine(new FindLowestVMCountStarter());
          commandLine.execute(args);

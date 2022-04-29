@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
+
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,7 @@ public class TestChangeReader {
    private static final File ORDER_PROBLEM_FOLDER = new File(TestAnalyseFullData.DATA_READING_FOLDER, "changeReader-orderProblem");
 
    @Test
-   public void testBasicUsage() throws JAXBException, JsonProcessingException {
+   public void testBasicUsage() throws  JsonProcessingException {
       ChangeReader reader = new ChangeReader("android-example-correct", new ExecutionData());
       ProjectChanges changes = reader.readFile(TestAnalyseFullData.REGULAR_DATA_FOLDER.getParentFile());
 
@@ -41,7 +41,7 @@ public class TestChangeReader {
    }
 
    @Test
-   public void testParameterizedUsage() throws JAXBException, JsonProcessingException {
+   public void testParameterizedUsage() throws  JsonProcessingException {
       ChangeReader reader = new ChangeReader("demo-parameterized", new ExecutionData());
       ProjectChanges changes = reader.readFile(TestAnalyseFullData.PARAM_DATA_FOLDER);
 
@@ -52,7 +52,7 @@ public class TestChangeReader {
    }
 
    @Test
-   public void testOrderOfResults() throws StreamReadException, DatabindException, IOException, JAXBException {
+   public void testOrderOfResults() throws StreamReadException, DatabindException, IOException {
       File staticTestSelectionFile = new File(ORDER_PROBLEM_FOLDER, "staticTestSelection_commons-fileupload3.json");
       File measurementsFolder = new File(ORDER_PROBLEM_FOLDER, "measurement_4ed6e923cb2033272fcb993978d69e325990a5aa_fdf011a5f9a15826771b19cdd6795b247b0bc3e4");
       StaticTestSelection staticTestSelection = Constants.OBJECTMAPPER.readValue(staticTestSelectionFile, StaticTestSelection.class);

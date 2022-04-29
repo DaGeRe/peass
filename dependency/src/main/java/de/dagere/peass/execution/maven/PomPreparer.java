@@ -75,7 +75,7 @@ public class PomPreparer {
          if (model.getDependencies() == null) {
             model.setDependencies(new LinkedList<Dependency>());
          }
-         MavenPomUtil.extendDependencies(model, testTransformer.isJUnit3(), testTransformer.getConfig().getExecutionConfig().isExcludeLog4j());
+         MavenPomUtil.extendDependencies(model, testTransformer.isJUnit3(), testTransformer.getConfig().getExecutionConfig().isExcludeLog4jSlf4jImpl());
 
          try (FileWriter fileWriter = new FileWriter(pomFile)) {
             final MavenXpp3Writer writer = new MavenXpp3Writer();

@@ -7,7 +7,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 
 public class OutlierRemover {
 
@@ -68,9 +68,9 @@ public class OutlierRemover {
       }
    }
 
-   private void removeByValue(DescriptiveStatistics statistics, List<Result> results, double value) {
-      for (Iterator<Result> it = results.iterator(); it.hasNext();) {
-         Result result = it.next();
+   private void removeByValue(DescriptiveStatistics statistics, List<VMResult> results, double value) {
+      for (Iterator<VMResult> it = results.iterator(); it.hasNext();) {
+         VMResult result = it.next();
          if (result.getValue() == value) {
             LOG.debug("Removing Value: {}", result.getValue());
             it.remove();
@@ -81,7 +81,7 @@ public class OutlierRemover {
    }
 
 
-   private RemoveInformation removeOutliers(DescriptiveStatistics statistics, List<Result> results) {
+   private RemoveInformation removeOutliers(DescriptiveStatistics statistics, List<VMResult> results) {
       final RemoveInformation removals = new RemoveInformation();
       final double max = statistics.getMean() + Z_SCORE * statistics.getStandardDeviation();
       final double min = statistics.getMean() - Z_SCORE * statistics.getStandardDeviation();
@@ -96,9 +96,9 @@ public class OutlierRemover {
       return removals;
    }
 
-   private void removeFromList(List<Result> results, RemoveInformation removals, final double max, final double min) {
-      for (Iterator<Result> it = results.iterator(); it.hasNext();) {
-         Result result = it.next();
+   private void removeFromList(List<VMResult> results, RemoveInformation removals, final double max, final double min) {
+      for (Iterator<VMResult> it = results.iterator(); it.hasNext();) {
+         VMResult result = it.next();
          if (result.getValue() > max) {
             LOG.debug("Removing: {}", result.getValue());
             it.remove();
@@ -112,9 +112,9 @@ public class OutlierRemover {
       }
    }
 
-   private int countOutliers(List<Result> results, final double max, final double min) {
+   private int countOutliers(List<VMResult> results, final double max, final double min) {
       int outliers = 0;
-      for (Result result : results) {
+      for (VMResult result : results) {
          if (result.getValue() > max || result.getValue() < min) {
             outliers++;
          }
@@ -122,9 +122,9 @@ public class OutlierRemover {
       return outliers;
    }
 
-   private void rebuildStatistics(DescriptiveStatistics statistics, List<Result> results) {
+   private void rebuildStatistics(DescriptiveStatistics statistics, List<VMResult> results) {
       statistics.clear();
-      for (Result result : results) {
+      for (VMResult result : results) {
          statistics.addValue(result.getValue());
       }
    }

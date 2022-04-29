@@ -3,8 +3,7 @@
   by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. PerAn is distributed in the hope that it will be useful, 
   but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details. 
   You should have received a copy of the GNU General Public License along with PerAn. If not, see <http://www.gnu.org/licenses />. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <artifactId>dependency</artifactId>
   <name>peass-dependency</name>
@@ -14,7 +13,7 @@
   <parent>
     <groupId>de.dagere.peass</groupId>
     <artifactId>peass-parent</artifactId>
-    <version>0.1.13-SNAPSHOT</version>
+    <version>0.2.1-SNAPSHOT</version>
   </parent>
 
   <build>
@@ -97,25 +96,13 @@
     <dependency>
       <groupId>de.dagere.kieker</groupId>
       <artifactId>kieker-source-instrumentation-library</artifactId>
-      <version>1.15.9</version>
+      <version>1.15.12</version>
     </dependency>
 
-    <!-- We need to exclude teetimes guava version and use the latest to avoid security problems (which are unlikely to cause problems in a quality assurance tool, but better safe than sorry)-->
     <dependency>
-      <groupId>net.sourceforge.teetime</groupId>
+      <groupId>de.cau.cs.se.teetime</groupId>
       <artifactId>teetime</artifactId>
-      <version>3.0</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.google.guava</groupId>
-          <artifactId>guava</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency> 
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>31.1-jre</version>
+      <version>3.1.0</version>
     </dependency>
 
     <dependency>
@@ -147,7 +134,12 @@
       the develop branch; in the main branch, releases should be used -->
     <dependency>
       <groupId>de.dagere.kopeme</groupId>
-      <artifactId>kopeme-junit</artifactId>
+      <artifactId>kopeme-junit5</artifactId>
+      <version>${kopeme.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>de.dagere.kopeme</groupId>
+      <artifactId>kopeme-junit4</artifactId>
       <version>${kopeme.version}</version>
     </dependency>
     <dependency>

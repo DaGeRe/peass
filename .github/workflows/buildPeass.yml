@@ -43,8 +43,9 @@ jobs:
         restore-keys: ${{ runner.os }}-m2
     - name: Build Peass all (for version compatibility check)
       run: ./mvnw -B package -DskipTests -P buildStarter --file pom.xml && ls ~/.m2/repository/ && ls ~/.m2/repository/de/dagere/kopeme/kopeme-core
+      #      run: rm ~/.m2/repository/de/dagere/kopeme/ -r && ./mvnw -B package -DskipTests -P buildStarter --file pom.xml && ls ~/.m2/repository/ && ls ~/.m2/repository/de/dagere/kopeme/kopeme-core
     - name: Build Peass dependency, measurement and analysis
-      run: ./mvnw -B install --file pom.xml && ls ~/.m2/repository/ && ls ~/.m2/repository/de/dagere/kopeme/kopeme-core
+      run: ./mvnw -B install --file pom.xml
     - name: Publish Test Report ${{ matrix.java }} OS ${{ matrix.os }}
       if: ${{ always() }}
       uses: scacap/action-surefire-report@v1

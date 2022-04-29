@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,10 +14,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.kopeme.datacollection.TestResult;
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result.Fulldata;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
+import de.dagere.kopeme.kopemedata.Fulldata;
+import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.folders.PeassFolders;
@@ -48,7 +48,7 @@ public class TestResultOrganizer {
    }
 
    @Test
-   public void testNormalSaving() throws JAXBException, IOException {
+   public void testNormalSaving() throws  IOException {
       organizer = new ResultOrganizer(folders, VERSION_NAME, 1, false, false, searchedTest, 3);
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, searchedTest);
@@ -61,7 +61,7 @@ public class TestResultOrganizer {
    }
 
    @Test
-   public void testKoPeMeFileSaving() throws JAXBException, IOException {
+   public void testKoPeMeFileSaving() throws  IOException {
       organizer = new ResultOrganizer(folders, VERSION_NAME, 1, false, false, searchedTest, 1);
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, TestResult.BOUNDARY_SAVE_FILE * 2, searchedTest);
@@ -71,18 +71,18 @@ public class TestResultOrganizer {
       testXMLFileIsCorrect();
    }
 
-   private void testXMLFileIsCorrect() throws JAXBException {
+   private void testXMLFileIsCorrect()  {
       File kopemefile = new File(getVersionMeasurementFolder(), searchedTest.getMethod() + "_0_" + VERSION_NAME + ".xml");
-      Kopemedata data = XMLDataLoader.loadData(kopemefile);
-      final Datacollector datacollector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
-      final Fulldata fulldata = datacollector.getResult().get(0).getFulldata();
+      Kopemedata data = JSONDataLoader.loadData(kopemefile);
+      final DatacollectorResult datacollector = data.getFirstMethodResult().getDatacollectorResults().get(0);
+      final Fulldata fulldata = datacollector.getResults().get(0).getFulldata();
       Assert.assertNotNull(fulldata.getFileName());
       File fulldataFile = new File(getVersionMeasurementFolder(), fulldata.getFileName());
       Assert.assertTrue(fulldataFile.exists());
    }
    
    @Test
-   public void testKiekerSavingDeletion() throws JAXBException, IOException {
+   public void testKiekerSavingDeletion() throws  IOException {
       organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true, searchedTest, 1);
       organizer.getCompressor().setThresholdForZippingInMB(1);
       organizer.getCompressor().setThresholdForDeletingInMB(2);
@@ -103,7 +103,7 @@ public class TestResultOrganizer {
    }
 
    @Test
-   public void testKiekerSavingTar() throws JAXBException, IOException {
+   public void testKiekerSavingTar() throws  IOException {
       organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true, searchedTest, 1);
       organizer.getCompressor().setThresholdForZippingInMB(1);
 
@@ -121,7 +121,7 @@ public class TestResultOrganizer {
    }
 
    @Test
-   public void testKiekerSavingNoTar() throws JAXBException, IOException {
+   public void testKiekerSavingNoTar() throws  IOException {
       organizer = new ResultOrganizer(folders, VERSION_NAME, 1, true, true, searchedTest, 1);
 
       DummyKoPeMeDataCreator.initDummyTestfile(methodFolder, 3, searchedTest);

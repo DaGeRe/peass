@@ -1,0 +1,194 @@
+{
+  "clazz" : "de.dagere.peass.ExampleTest",
+  "methods" : [ {
+    "method" : "test",
+    "datacollectorResults" : [ {
+      "name" : null,
+      "chunks" : [ {
+        "chunkStartTime" : 0,
+        "results" : [ {
+          "value" : 5300553.4,
+          "deviation" : 5583.491721136515,
+          "warmup" : 5,
+          "iterations" : 5,
+          "repetitions" : 5,
+          "commit" : "49f75e8877c2e9b7cf6b56087121a35fdd73ff8b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "cpu" : "model name : AMD Ryzen 3 3100 4-Core Processor",
+          "memory" : "MemTotal: 32868076 kB",
+          "date" : 1644748835656,
+          "fulldata" : {
+            "fileName" : null,
+            "values" : [ ]
+          }
+        }, {
+          "value" : 5293407.8,
+          "deviation" : 7900.906985909909,
+          "warmup" : 5,
+          "iterations" : 5,
+          "repetitions" : 5,
+          "commit" : "49f75e8877c2e9b7cf6b56087121a35fdd73ff8b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "cpu" : "model name : AMD Ryzen 3 3100 4-Core Processor",
+          "memory" : "MemTotal: 32868076 kB",
+          "date" : 1644748811732,
+          "fulldata" : {
+            "fileName" : null,
+            "values" : [ ]
+          }
+        }, {
+          "value" : 5305466.4,
+          "deviation" : 4205.124290672037,
+          "warmup" : 5,
+          "iterations" : 5,
+          "repetitions" : 5,
+          "commit" : "49f75e8877c2e9b7cf6b56087121a35fdd73ff8b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "cpu" : "model name : AMD Ryzen 3 3100 4-Core Processor",
+          "memory" : "MemTotal: 32868076 kB",
+          "date" : 1644748823732,
+          "fulldata" : {
+            "fileName" : null,
+            "values" : [ ]
+          }
+        }, {
+          "value" : 5288858.6,
+          "deviation" : 1564.0796974579011,
+          "warmup" : 5,
+          "iterations" : 5,
+          "repetitions" : 5,
+          "commit" : "49f75e8877c2e9b7cf6b56087121a35fdd73ff8b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "cpu" : "model name : AMD Ryzen 3 3100 4-Core Processor",
+          "memory" : "MemTotal: 32868076 kB",
+          "date" : 1644748859734,
+          "fulldata" : {
+            "fileName" : null,
+            "values" : [ ]
+          }
+        }, {
+          "value" : 5295169.8,
+          "deviation" : 16927.03890820837,
+          "warmup" : 5,
+          "iterations" : 5,
+          "repetitions" : 5,
+          "commit" : "49f75e8877c2e9b7cf6b56087121a35fdd73ff8b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "cpu" : "model name : AMD Ryzen 3 3100 4-Core Processor",
+          "memory" : "MemTotal: 32868076 kB",
+          "date" : 1644748847732,
+          "fulldata" : {
+            "fileName" : null,
+            "values" : [ ]
+          }
+        }, {
+          "value" : 5302759.4,
+          "deviation" : 3189.8994184770154,
+          "warmup" : 5,
+          "iterations" : 5,
+          "repetitions" : 5,
+          "commit" : "a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "cpu" : "model name : AMD Ryzen 3 3100 4-Core Processor",
+          "memory" : "MemTotal: 32868076 kB",
+          "date" : 1644748841148,
+          "fulldata" : {
+            "fileName" : null,
+            "values" : [ ]
+          }
+        }, {
+          "value" : 5300136.4,
+          "deviation" : 5762.108754614061,
+          "warmup" : 5,
+          "iterations" : 5,
+          "repetitions" : 5,
+          "commit" : "a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "cpu" : "model name : AMD Ryzen 3 3100 4-Core Processor",
+          "memory" : "MemTotal: 32868076 kB",
+          "date" : 1644748865425,
+          "fulldata" : {
+            "fileName" : null,
+            "values" : [ ]
+          }
+        }, {
+          "value" : 5303934.4,
+          "deviation" : 8854.023226759686,
+          "warmup" : 5,
+          "iterations" : 5,
+          "repetitions" : 5,
+          "commit" : "a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "cpu" : "model name : AMD Ryzen 3 3100 4-Core Processor",
+          "memory" : "MemTotal: 32868076 kB",
+          "date" : 1644748817331,
+          "fulldata" : {
+            "fileName" : null,
+            "values" : [ ]
+          }
+        }, {
+          "value" : 5300429.0,
+          "deviation" : 3254.346324532778,
+          "warmup" : 5,
+          "iterations" : 5,
+          "repetitions" : 5,
+          "commit" : "a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "cpu" : "model name : AMD Ryzen 3 3100 4-Core Processor",
+          "memory" : "MemTotal: 32868076 kB",
+          "date" : 1644748829100,
+          "fulldata" : {
+            "fileName" : null,
+            "values" : [ ]
+          }
+        }, {
+          "value" : 5305858.2,
+          "deviation" : 2416.3071410729226,
+          "warmup" : 5,
+          "iterations" : 5,
+          "repetitions" : 5,
+          "commit" : "a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b",
+          "vmRunConfiguration" : { },
+          "parameters" : {
+            "JUNIT_PARAMETERIZED" : "0"
+          },
+          "cpu" : "model name : AMD Ryzen 3 3100 4-Core Processor",
+          "memory" : "MemTotal: 32868076 kB",
+          "date" : 1644748853223,
+          "fulldata" : {
+            "fileName" : null,
+            "values" : [ ]
+          }
+        } ]
+      } ],
+      "results" : [ ]
+    } ]
+  } ]
+}

@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
+
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -22,14 +22,14 @@ import de.dagere.peass.visualization.html.HTMLWriter;
 public class TestHTMLWriter {
    
    @Test
-   public void testRegularWriting() throws JsonProcessingException, FileNotFoundException, IOException, JAXBException {
+   public void testRegularWriting() throws JsonProcessingException, FileNotFoundException, IOException {
       GraphNode rootNode = new GraphNode("Test#test", "public void Test.test()", "public void Test.test()");
       rootNode.setName("Test#test");
       GraphNode kopemeConvertedData = new GraphNode("Test#test", "public void Test.test()", "public void Test.test()");
       CauseSearchData data = new CauseSearchData();
       data.setCauseConfig(new CauseSearcherConfig(new TestCase("Test", "test"), new CauseSearcherConfigMixin()));
       data.setConfig(new MeasurementConfig(10));
-      data.getMeasurementConfig().getExecutionConfig().setVersion("1");
+      data.getMeasurementConfig().getExecutionConfig().setCommit("1");
       
       HTMLWriter writer = new HTMLWriter(rootNode, data, TestConstants.CURRENT_FOLDER, null, kopemeConvertedData);
       writer.writeHTML();
@@ -43,14 +43,14 @@ public class TestHTMLWriter {
    }
    
    @Test
-   public void testParameterizedWriting() throws JsonProcessingException, FileNotFoundException, IOException, JAXBException {
+   public void testParameterizedWriting() throws JsonProcessingException, FileNotFoundException, IOException {
       GraphNode rootNode = new GraphNode("Test#test", "public void Test.test(int)", "public void Test.test(int)");
       rootNode.setName("Test#test");
       GraphNode kopemeConvertedData = new GraphNode("Test#test", "public void Test.test(int)", "public void Test.test(int)");
       CauseSearchData data = new CauseSearchData();
       data.setCauseConfig(new CauseSearcherConfig(new TestCase("Test", "test", "", "int"), new CauseSearcherConfigMixin()));
       data.setConfig(new MeasurementConfig(10));
-      data.getMeasurementConfig().getExecutionConfig().setVersion("1");
+      data.getMeasurementConfig().getExecutionConfig().setCommit("1");
       
       HTMLWriter writer = new HTMLWriter(rootNode, data, TestConstants.CURRENT_FOLDER, null, kopemeConvertedData);
       writer.writeHTML();

@@ -80,7 +80,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    }
 
    private void editOneBuildfile(final File gradleFile, final ProjectModules modules) {
-      final FindDependencyVisitor visitor;
+      final GradleBuildfileVisitor visitor;
       GradleBuildfileEditor editor = new GradleBuildfileEditor(testTransformer, gradleFile, modules);
       visitor = editor.addDependencies(lastTmpFile);
       if (visitor.isAndroid()) {
@@ -167,7 +167,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
          boolean isAndroid = false;
          for (final File module : getModules().getModules()) {
             final File buildfile = GradleParseHelper.findGradleFile(module);
-            final FindDependencyVisitor visitor = GradleParseUtil.setAndroidTools(buildfile);
+            final GradleBuildfileVisitor visitor = GradleParseUtil.setAndroidTools(buildfile, testTransformer.getConfig().getExecutionConfig());
             if (visitor.isAndroid()) {
                isAndroid = true;
                if (!visitor.hasVersion()) {

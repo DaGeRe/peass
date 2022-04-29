@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -132,7 +130,7 @@ public class AnalyseFullData extends DataAnalyser {
       return currentTest;
    }
 
-   public static void main(final String[] args) throws InterruptedException, JAXBException, JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws InterruptedException, JsonParseException, JsonMappingException, IOException {
       final File folder = new File(args[0]);
       if (!folder.getName().equals("measurements")) {
          throw new RuntimeException("Can only be executed with measurements-folder! For searching folders, use FolderSearcher");

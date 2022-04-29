@@ -36,10 +36,10 @@ public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
       File methodSourceFolder = new File(sourceFolder, "methods");
       final Set<CallTreeNode> includeNodes = new HashSet<>();
       for (CallTreeNode node : includableNodes) {
-         File mainSourceFile = MethodChangeReader.getMethodMainFile(methodSourceFolder, config.getExecutionConfig().getVersion(), node.toEntity());
-         File oldSourceFile = MethodChangeReader.getMethodOldFile(methodSourceFolder, config.getExecutionConfig().getVersion(), node.toEntity());
+         File mainSourceFile = MethodChangeReader.getMethodMainFile(methodSourceFolder, config.getExecutionConfig().getCommit(), node.toEntity());
+         File oldSourceFile = MethodChangeReader.getMethodOldFile(methodSourceFolder, config.getExecutionConfig().getCommit(), node.toEntity());
          if (!mainSourceFile.exists() && !oldSourceFile.exists()) {
-            File diffSourceFile = MethodChangeReader.getMethodDiffFile(methodSourceFolder, config.getExecutionConfig().getVersion(), node.toEntity());
+            File diffSourceFile = MethodChangeReader.getMethodDiffFile(methodSourceFolder, config.getExecutionConfig().getCommit(), node.toEntity());
             if (diffSourceFile.exists()) {
                LOG.trace("Node {} has no change", node);
             } else {

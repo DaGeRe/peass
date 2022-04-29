@@ -33,7 +33,7 @@ public class JUnit4Helper {
       unit.addImport("de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation");
       unit.addImport("org.junit.rules.TestRule");
       unit.addImport("org.junit.Rule");
-      unit.addImport("de.dagere.kopeme.junit.rule.KoPeMeRule");
+      unit.addImport("de.dagere.kopeme.junit4.rule.KoPeMeRule");
 
       final ClassOrInterfaceDeclaration clazz = ParseUtil.getClasses(unit).get(0);
 

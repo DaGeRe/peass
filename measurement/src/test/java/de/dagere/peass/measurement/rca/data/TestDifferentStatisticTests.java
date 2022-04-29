@@ -13,8 +13,8 @@ public class TestDifferentStatisticTests {
    
    @BeforeEach
    public void init() {
-      TestCallTreeStatistics.CONFIG.getExecutionConfig().setVersionOld("B");
-      TestCallTreeStatistics.CONFIG.getExecutionConfig().setVersion("A");
+      TestCallTreeStatistics.CONFIG.getExecutionConfig().setCommitOld("B");
+      TestCallTreeStatistics.CONFIG.getExecutionConfig().setCommit("A");
    }
    
    @Test

@@ -3,7 +3,7 @@ package de.dagere.peass.measurement.rca;
 import java.io.IOException;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
+
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.mockito.Mockito;
@@ -18,7 +18,7 @@ import kieker.analysis.exception.AnalysisConfigurationException;
 public class CauseTesterMockUtil {
 
    public static void mockMeasurement(final CauseTester measurer, final TreeBuilder builderPredecessor)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       Mockito.doAnswer(new Answer<Void>() {
          @Override
          public Void answer(final InvocationOnMock invocation) throws Throwable {

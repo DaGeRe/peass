@@ -129,11 +129,6 @@ public class FakeFileIterator extends VersionIterator {
    }
 
    @Override
-   public boolean goToNextCommitSoft() {
-      throw new RuntimeException("Not implemented on purpose.");
-   }
-
-   @Override
    public VersionDiff getChangedClasses(final File projectFolder, final List<File> genericModules, final String lastVersion, final ExecutionConfig config) {
       throw new RuntimeException("Not implemented yet.");
    }

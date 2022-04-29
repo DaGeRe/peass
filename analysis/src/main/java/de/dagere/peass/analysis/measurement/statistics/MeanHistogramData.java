@@ -6,19 +6,19 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 
 
 public class MeanHistogramData {
-   private final List<Result> values;
+   private final List<VMResult> values;
 
-   public MeanHistogramData(List<Result> values) {
+   public MeanHistogramData(List<VMResult> values) {
       this.values = values;
    }
 
    public void printHistData(File file) {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
-         for (final Result result : values) {
+         for (final VMResult result : values) {
             final double value = result.getValue();
             writer.write(MeanCoVData.FORMAT.format(value) + "\n");
          }
@@ -31,7 +31,7 @@ public class MeanHistogramData {
    public double getSpan() {
       double min = Double.MAX_VALUE;
       double max = Double.MIN_VALUE;
-      for (final Result r : values) {
+      for (final VMResult r : values) {
          if (r.getValue() < min) {
             min = r.getValue();
          }

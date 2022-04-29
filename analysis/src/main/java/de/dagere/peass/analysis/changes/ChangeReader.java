@@ -7,16 +7,14 @@ import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Map;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.TestMethod;
+import de.dagere.kopeme.kopemedata.VMResult;
+import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.analysis.helper.read.VersionData;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;
 import de.dagere.peass.config.StatisticsConfig;
@@ -59,7 +57,7 @@ public class ChangeReader {
    private final RunCommandWriterRCA runCommandWriter;
    private final RunCommandWriterSlurmRCA runCommandWriterSlurm;
    private final SelectedTests selectedTests;
-   
+
    private Map<String, TestSet> tests;
 
    public ChangeReader(final ResultsFolders resultsFolders, final SelectedTests selectedTests) throws FileNotFoundException {
@@ -77,7 +75,8 @@ public class ChangeReader {
       }
    }
 
-   public ChangeReader(final ResultsFolders resultsFolders, final RunCommandWriterRCA runCommandWriter, final RunCommandWriterSlurmRCA runCommandWriterSlurm, final SelectedTests selectedTests) throws FileNotFoundException {
+   public ChangeReader(final ResultsFolders resultsFolders, final RunCommandWriterRCA runCommandWriter, final RunCommandWriterSlurmRCA runCommandWriterSlurm,
+         final SelectedTests selectedTests) throws FileNotFoundException {
       this.resultsFolders = resultsFolders;
       this.runCommandWriter = runCommandWriter;
       this.runCommandWriterSlurm = runCommandWriterSlurm;
@@ -99,12 +98,12 @@ public class ChangeReader {
    public void setConfig(StatisticsConfig config) {
       this.config = config;
    }
-   
+
    public StatisticsConfig getConfig() {
       return config;
    }
 
-   public ProjectChanges readFile(final File measurementFolder) throws JAXBException {
+   public ProjectChanges readFile(final File measurementFolder) {
       final ProjectChanges changes = new ProjectChanges(config);
       final ProjectStatistics info = new ProjectStatistics();
       LOG.debug("Reading from " + measurementFolder.getAbsolutePath());
@@ -117,7 +116,7 @@ public class ChangeReader {
       return changes;
    }
 
-   private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info) throws JAXBException {
+   private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info) {
       if (measurementFolder.isDirectory()) {
          for (final File file : measurementFolder.listFiles()) {
             if (file.getName().matches("[0-9]+_[0-9]+")) {
@@ -125,22 +124,22 @@ public class ChangeReader {
                readCleanFolder(measurementFolder, changes, info, slurmCleanFolder);
             } else if (file.getName().equals("clean")) {
                readCleanFolder(measurementFolder, changes, info, file);
-            } else if (file.getName().endsWith(".xml")) {
+            } else if (file.getName().endsWith(".json") || file.getName().endsWith(".xml")) {
                readFile(measurementFolder, changes, info, file);
             }
          }
       } else {
-         if (measurementFolder.getName().endsWith(".xml")) {
+         if (measurementFolder.getName().endsWith(".json") || measurementFolder.getName().endsWith(".xml")) {
             readFile(measurementFolder, changes, info, measurementFolder);
          }
       }
    }
 
-   private void readCleanFolder(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File cleanParentFolder) throws JAXBException {
+   private void readCleanFolder(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File cleanParentFolder) {
       LOG.info("Handling: {}", cleanParentFolder);
       for (File cleanedFolder : cleanParentFolder.listFiles()) {
          for (File childFile : cleanedFolder.listFiles()) {
-            if (childFile.getName().endsWith(".xml")) {
+            if (childFile.getName().endsWith(".json") || childFile.getName().endsWith(".xml")) {
                readFile(measurementFolder, changes, info, childFile);
             }
          }
@@ -165,19 +164,19 @@ public class ChangeReader {
       }
    }
 
-   private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File file) throws JAXBException {
-      final Kopemedata data = new XMLDataLoader(file).getFullData();
-      for (final TestcaseType testcaseMethod : data.getTestcases().getTestcase()) {
+   private void readFile(final File measurementFolder, final ProjectChanges changes, final ProjectStatistics info, final File file) {
+      final Kopemedata data = new JSONDataLoader(file).getFullData();
+      for (final TestMethod testcaseMethod : data.getMethods()) {
          LOG.info(file.getAbsolutePath());
          readTestcase(measurementFolder.getName(), data, testcaseMethod, changes, info);
-         measurements += testcaseMethod.getDatacollector().get(0).getChunk().size();
+         measurements += testcaseMethod.getDatacollectorResults().get(0).getChunks().size();
          testcases++;
       }
    }
 
-   private int readTestcase(final String fileName, final Kopemedata data, final TestcaseType testcaseMethod, final ProjectChanges changeKnowledge,
+   private int readTestcase(final String fileName, final Kopemedata data, final TestMethod testcaseMethod, final ProjectChanges changeKnowledge,
          final ProjectStatistics info) {
-      for (final Chunk chunk : testcaseMethod.getDatacollector().get(0).getChunk()) {
+      for (final VMResultChunk chunk : testcaseMethod.getDatacollectorResults().get(0).getChunks()) {
          folderMeasurements++;
          final String[] versions = KoPeMeDataHelper.getVersions(chunk, selectedTests);
          LOG.debug(versions[1]);
@@ -188,7 +187,7 @@ public class ChangeReader {
       return folderMeasurements;
    }
 
-   private void readChunk(final String fileName, final Kopemedata data, final ProjectChanges changeKnowledge, final ProjectStatistics info, final Chunk chunk,
+   private void readChunk(final String fileName, final Kopemedata data, final ProjectChanges changeKnowledge, final ProjectStatistics info, final VMResultChunk chunk,
          final String[] versions) {
       final DescribedChunk describedChunk = new DescribedChunk(chunk, versions[0], versions[1]);
       describedChunk.removeOutliers();
@@ -203,7 +202,7 @@ public class ChangeReader {
 
    public void getIsChange(final String fileName, final Kopemedata data, final ProjectChanges changeKnowledge, final ProjectStatistics info,
          final String[] versions, final DescribedChunk describedChunk) {
-      LOG.debug(data.getTestcases().getClazz());
+      LOG.debug(data.getClazz());
       final TestcaseStatistic statistic = describedChunk.getStatistic(config);
       statistic.setPredecessor(versions[0]);
       // if (! (statistic.getTvalue() == Double.NaN)){
@@ -230,7 +229,7 @@ public class ChangeReader {
    }
 
    private TestCase getTestcase(final Kopemedata data, final String[] versions, final DescribedChunk describedChunk) {
-      TestCase testcase = new TestCase(data.getTestcases());
+      TestCase testcase = new TestCase(data);
       if (tests != null) {
          TestSet testsOfThisVersion = tests.get(versions[1]);
          for (TestCase test : testsOfThisVersion.getTests()) {
@@ -247,20 +246,20 @@ public class ChangeReader {
    private boolean paramsEqual(final String paramString, final TestCase test) {
       boolean bothNull = test.getParams() == paramString && test.getParams() == null;
       boolean stringEmptyAndParamsNull = "".equals(paramString) && test.getParams() == null;
-      return bothNull 
-            || stringEmptyAndParamsNull 
+      return bothNull
+            || stringEmptyAndParamsNull
             || (test.getParams() != null && test.getParams().equals(paramString)); // last should only be evaluated if both are not null
    }
 
    private void writeRunCommands(final String[] versions, final DescribedChunk describedChunk, final TestCase testcase) {
       if (runCommandWriter != null) {
-         final Result exampleResult = describedChunk.getCurrent().get(0);
+         final VMResult exampleResult = describedChunk.getCurrent().get(0);
          final int iterations = (int) exampleResult.getIterations();
          final int repetitions = (int) exampleResult.getRepetitions();
          final int vms = describedChunk.getCurrent().size();
 
          final int versionIndex = Arrays.binarySearch(selectedTests.getVersionNames(), versions[1]);
-         
+
          runCommandWriter.createSingleMethodCommand(versionIndex, versions[1], testcase.getExecutable(),
                (int) exampleResult.getWarmup(), iterations, repetitions, vms);
 

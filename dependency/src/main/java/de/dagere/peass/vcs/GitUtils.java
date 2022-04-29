@@ -131,31 +131,31 @@ public final class GitUtils {
    /**
     * Removes all commits from a list that are before the given start version or after the given end version.
     * 
-    * @param startversion Version to start
-    * @param endversion Version to end
+    * @param startcommit Version to start
+    * @param endcommit Version to end
     * @param commits List of commits for filtering, sorted from older to newer
     */
-   public static void filterList(final String startversion, final String endversion, final List<GitCommit> commits) {
+   public static void filterList(final String startcommit, final String endcommit, final List<GitCommit> commits) {
       LOG.info("Count of Commits: {}", commits.size());
-      boolean beforeStart = startversion == null ? false : true;
+      boolean beforeStart = startcommit == null ? false : true;
       boolean afterEnd = false;
       final List<GitCommit> notRelevantCommits = new LinkedList<>();
       for (final GitCommit commit : commits) {
          LOG.debug("Processing " + commit.getTag() + " " + commit.getDate() + " " + beforeStart + " " + afterEnd);
-         if (startversion != null && commit.getTag().startsWith(startversion)) {
+         if (startcommit != null && commit.getTag().startsWith(startcommit)) {
             beforeStart = false;
          }
          if (beforeStart || afterEnd) {
             notRelevantCommits.add(commit);
          }
-         if (endversion != null && commit.getTag().startsWith(endversion)) {
+         if (endcommit != null && commit.getTag().startsWith(endcommit)) {
             afterEnd = true;
             if (beforeStart == true) {
-               boolean startversionExists = commits.stream().anyMatch(potentialStart -> potentialStart.getTag().startsWith(startversion));
-               if (startversionExists) {
-                  throw new RuntimeException("Startversion " + startversion + " after endversion " + endversion);
+               boolean startCommitExists = commits.stream().anyMatch(potentialStart -> potentialStart.getTag().startsWith(startcommit));
+               if (startCommitExists) {
+                  throw new RuntimeException("Startcommit " + startcommit + " after endcommit " + endcommit);
                } else {
-                  throw new RuntimeException("Startversion " + startversion + " not found at all, but endversion " + endversion + " found");
+                  throw new RuntimeException("Startcommit " + startcommit + " not found at all, but endcommit " + endcommit + " found");
                }
             }
          }
@@ -164,9 +164,9 @@ public final class GitUtils {
       commits.removeAll(notRelevantCommits);
    }
 
-   public static List<GitCommit> getCommits(final File folder, final String startversion, final String endversion) {
+   public static List<GitCommit> getCommits(final File folder, final String startcommit, final String endcommit) {
       final List<GitCommit> commits = getCommits(folder, true);
-      GitUtils.filterList(startversion, endversion, commits);
+      GitUtils.filterList(startcommit, endcommit, commits);
       return commits;
    }
 
@@ -440,32 +440,10 @@ public final class GitUtils {
       final String outCheckout = StreamGobbler.getFullProcess(pCheckout, false);
       int worked = pCheckout.waitFor();
       System.out.println(outCheckout);
-      return worked;
-   }
-
-   public static void goToTagSoft(final String tag, final File projectFolder) {
-      try {
-         synchronized (projectFolder) {
-            LOG.debug("Going to tag {} folder: {}", tag, projectFolder.getAbsolutePath());
-            final Process pReset = Runtime.getRuntime().exec("git reset --hard", new String[0], projectFolder);
-            final String out = StreamGobbler.getFullProcess(pReset, false);
-            pReset.waitFor();
-
-            final String gitCommand = "git checkout " + tag;
-            LOG.trace(gitCommand);
-            final Process pCheckout = Runtime.getRuntime().exec(gitCommand, new String[0], projectFolder);
-            final String outCheckout = StreamGobbler.getFullProcess(pCheckout, false);
-            pCheckout.waitFor();
-
-            System.out.println(out);
-            System.out.println(outCheckout);
-            LOG.trace("Ausführung beendet");
-         }
-      } catch (final IOException e) {
-         e.printStackTrace();
-      } catch (final InterruptedException e) {
-         e.printStackTrace();
+      if (outCheckout.toLowerCase().contains("smudge filter lfs failed")) {
+         throw new RuntimeException("Checkout did not work. Smudge filter lfs failed");
       }
+      return worked;
    }
 
    public static String getURL(final File projectFolder) {
@@ -494,10 +472,10 @@ public final class GitUtils {
       return getName(gitCommit + "~1", projectFolder);
    }
 
-   public static String getCommitText(final File projectFolder, final String version) {
+   public static String getCommitText(final File projectFolder, final String commit) {
       String text = "";
       try {
-         final String[] args2 = new String[] { "git", "log", "--pretty=format:%s %b", "-n", "1", version };
+         final String[] args2 = new String[] { "git", "log", "--pretty=format:%s %b", "-n", "1", commit };
          final Process process = Runtime.getRuntime().exec(args2, new String[0], projectFolder);
          text = StreamGobbler.getFullProcess(process, false).replace("\n", "");
       } catch (final IOException e) {
@@ -506,10 +484,10 @@ public final class GitUtils {
       return text;
    }
 
-   public static String getCommitter(final File projectFolder, final String version) {
+   public static String getCommitter(final File projectFolder, final String commit) {
       String comitter = "";
       try {
-         final String[] args2 = new String[] { "git", "log", "--pretty=format:%aE %aN", "-n", "1", version };
+         final String[] args2 = new String[] { "git", "log", "--pretty=format:%aE %aN", "-n", "1", commit };
          final Process process = Runtime.getRuntime().exec(args2, new String[0], projectFolder);
          comitter = StreamGobbler.getFullProcess(process, false).replace("\n", "");
       } catch (final IOException e) {

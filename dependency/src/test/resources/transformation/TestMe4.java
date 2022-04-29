@@ -22,7 +22,7 @@ import de.dagere.kopeme.annotations.Assertion;
 import de.dagere.kopeme.annotations.MaximalRelativeStandardDeviation;
 import org.junit.rules.TestRule;
 import org.junit.Rule;
-import de.dagere.kopeme.junit.rule.KoPeMeRule;
+import de.dagere.kopeme.junit4.rule.KoPeMeRule;
 
 public class TestMe4 {
 

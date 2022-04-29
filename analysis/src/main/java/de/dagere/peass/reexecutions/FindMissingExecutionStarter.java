@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,13 +33,13 @@ public class FindMissingExecutionStarter implements Callable<Void> {
 
    private static final Logger LOG = LogManager.getLogger(FindMissingExecutionStarter.class);
 
-   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException, JAXBException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       CommandLine commandLine = new CommandLine(new FindMissingExecutionStarter());
       commandLine.execute(args);
 
    }
 
-   private void findMissing(final String project, final File reexecuteFolder, final RepoFolders folders) throws IOException, JsonParseException, JsonMappingException, JAXBException {
+   private void findMissing(final String project, final File reexecuteFolder, final RepoFolders folders) throws IOException, JsonParseException, JsonMappingException {
       final File staticSelectionFile = new File(folders.getDependencyFolder(), ResultsFolders.STATIC_SELECTION_PREFIX + project + ".json");
       final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
       VersionComparator.setDependencies(dependencies);

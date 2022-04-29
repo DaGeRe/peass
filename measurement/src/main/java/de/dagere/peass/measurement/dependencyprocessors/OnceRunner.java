@@ -3,8 +3,6 @@ package de.dagere.peass.measurement.dependencyprocessors;
 import java.io.File;
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +15,7 @@ import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
+
 
 public class OnceRunner {
 
@@ -40,7 +39,7 @@ public class OnceRunner {
    }
 
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
-         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+         throws IOException, InterruptedException, XmlPullParserException {
       if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");
       } else {

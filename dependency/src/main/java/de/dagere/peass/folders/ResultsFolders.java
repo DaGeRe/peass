@@ -72,21 +72,21 @@ public class ResultsFolders {
       return folder;
    }
 
-   public File getDependencyLogFile(final String version, final String versionOld) {
+   public File getDependencyLogFile(final String commit, final String commitOld) {
       File folder = getRtsLogFolder();
       if (!folder.exists()) {
          folder.mkdirs();
       }
-      File logFile = new File(folder, version + "_" + versionOld + ".txt");
+      File logFile = new File(folder, commit + "_" + commitOld + ".txt");
       return logFile;
    }
 
-   public File getSourceReadLogFile(final String version, final String versionOld) {
+   public File getSourceReadLogFile(final String commit, final String commitOld) {
       File folder = getSourceReadLogFolder();
       if (!folder.exists()) {
          folder.mkdirs();
       }
-      File logFile = new File(folder, version + "_" + versionOld + ".txt");
+      File logFile = new File(folder, commit + "_" + commitOld + ".txt");
       return logFile;
    }
 
@@ -95,12 +95,12 @@ public class ResultsFolders {
       return folder;
    }
 
-   public File getMeasurementLogFile(final String version, final String versionOld) {
+   public File getMeasurementLogFile(final String commit, final String commitOld) {
       File folder = getMeasurementLogFolder();
       if (!folder.exists()) {
          folder.mkdirs();
       }
-      File logFile = new File(folder, version + "_" + versionOld + ".txt");
+      File logFile = new File(folder, commit + "_" + commitOld + ".txt");
       return logFile;
    }
 
@@ -109,23 +109,23 @@ public class ResultsFolders {
       return folder;
    }
 
-   public File getRCALogFile(final String version, final String versionOld) {
+   public File getRCALogFile(final String commit, final String commitOld) {
       File folder = getRCALogFolder();
       if (!folder.exists()) {
          folder.mkdirs();
       }
-      File logFile = new File(folder, version + "_" + versionOld + ".txt");
+      File logFile = new File(folder, commit + "_" + commitOld + ".txt");
       return logFile;
    }
 
-   public File getVersionFullResultsFolder(final String version, final String versionOld) {
-      if (version == null) {
-         throw new RuntimeException("Version must not be null!");
+   public File getVersionFullResultsFolder(final String commit, final String commitOld) {
+      if (commit == null) {
+         throw new RuntimeException("Commit must not be null!");
       }
-      if (versionOld == null) {
-         throw new RuntimeException("VersionOld must not be null!");
+      if (commitOld == null) {
+         throw new RuntimeException("CommitOld must not be null!");
       }
-      final File fullResultsVersion = new File(resultFolder, MEASUREMENT_PREFIX + version + "_" + versionOld);
+      final File fullResultsVersion = new File(resultFolder, MEASUREMENT_PREFIX + commit + "_" + commitOld);
       return fullResultsVersion;
    }
 
@@ -139,20 +139,20 @@ public class ResultsFolders {
       return new File(getPropertiesFolder(), "properties.json");
    }
 
-   public File getVersionDiffFolder(final String version) {
-      File diffsFolder = new File(getVersionViewFolder(version), "diffs");
+   public File getVersionDiffFolder(final String commit) {
+      File diffsFolder = new File(getCommitViewFolder(commit), "diffs");
       diffsFolder.mkdirs();
       return diffsFolder;
    }
 
-   public File getVersionViewFolder(final String version) {
-      File versionViewFolder = new File(getViewFolder(), "view_" + version);
-      versionViewFolder.mkdirs();
-      return versionViewFolder;
+   public File getCommitViewFolder(final String commit) {
+      File commitViewFolder = new File(getViewFolder(), "view_" + commit);
+      commitViewFolder.mkdirs();
+      return commitViewFolder;
    }
 
-   public File getViewMethodDir(final String version, final TestCase testcase) {
-      final File methodDir = new File(getClazzDir(version, testcase), testcase.getMethodWithParams());
+   public File getViewMethodDir(final String commit, final TestCase testcase) {
+      final File methodDir = new File(getClazzDir(commit, testcase), testcase.getMethodWithParams());
       if (!methodDir.exists()) {
          boolean create = methodDir.mkdirs();
          LOG.debug("Created directory {} Success: {}", methodDir.getAbsolutePath(), create);
@@ -162,8 +162,8 @@ public class ResultsFolders {
       return methodDir;
    }
 
-   public File getClazzDir(final String version, final TestCase testcase) {
-      final File viewResultsFolder = new File(getViewFolder(), "view_" + version);
+   public File getClazzDir(final String commit, final TestCase testcase) {
+      final File viewResultsFolder = new File(getViewFolder(), "view_" + commit);
       if (!viewResultsFolder.exists()) {
          viewResultsFolder.mkdir();
       }
@@ -183,7 +183,7 @@ public class ResultsFolders {
    }
 
    public File getVersionFullResultsFolder(final MeasurementConfig measurementConfig) {
-      return getVersionFullResultsFolder(measurementConfig.getExecutionConfig().getVersion(), measurementConfig.getExecutionConfig().getVersionOld());
+      return getVersionFullResultsFolder(measurementConfig.getExecutionConfig().getCommit(), measurementConfig.getExecutionConfig().getCommitOld());
    }
 
    /**

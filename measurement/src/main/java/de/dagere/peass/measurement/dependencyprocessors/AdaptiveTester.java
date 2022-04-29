@@ -3,8 +3,6 @@ package de.dagere.peass.measurement.dependencyprocessors;
 import java.io.File;
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,10 +28,10 @@ public class AdaptiveTester extends DependencyTester {
    }
 
    @Override
-   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, XmlPullParserException {
       initEvaluation(testcase);
 
-      final File logFolder = folders.getMeasureLogFolder(configuration.getExecutionConfig().getVersion(), testcase);
+      final File logFolder = folders.getMeasureLogFolder(configuration.getExecutionConfig().getCommit(), testcase);
       
       try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())){
          evaluateWithAdaption(testcase, logFolder, writer);
@@ -41,7 +39,7 @@ public class AdaptiveTester extends DependencyTester {
    }
 
    protected void evaluateWithAdaption(final TestCase testcase, final File logFolder, final ProgressWriter writer)
-         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+         throws IOException, InterruptedException, XmlPullParserException {
       currentChunkStart = System.currentTimeMillis();
       for (finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
          long comparisonStart = System.currentTimeMillis();
@@ -71,7 +69,7 @@ public class AdaptiveTester extends DependencyTester {
    }
 
    @Override
-   public boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {
+   public boolean checkIsDecidable(final TestCase testcase, final int vmid) {
       final boolean savelyDecidable;
       if (configuration.isEarlyStop()) {
          final ResultLoader loader = new ResultLoader(configuration);

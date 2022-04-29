@@ -30,7 +30,9 @@ public class RequiredDependency {
       if (isJUnit3) {
          all.add(new RequiredDependency("de.dagere.kopeme", "kopeme-junit3", MavenPomUtil.KOPEME_VERSION, "", null));
       }
-      all.add(new RequiredDependency("de.dagere.kopeme", "kopeme-junit", MavenPomUtil.KOPEME_VERSION, "", null));
+      all.add(new RequiredDependency("de.dagere.kopeme", "kopeme-junit5", MavenPomUtil.KOPEME_VERSION, "", null));
+      all.add(new RequiredDependency("de.dagere.kopeme", "kopeme-junit4", MavenPomUtil.KOPEME_VERSION, "", null));
+      
 
       all.add(new RequiredDependency("net.kieker-monitoring", "kieker", MavenPomUtil.KIEKER_VERSION, "", null));
       all.add(new RequiredDependency("net.kieker-monitoring", "kieker", MavenPomUtil.KIEKER_VERSION, "", "aspectj"));

@@ -1,0 +1,15 @@
+plugins {
+	id 'java'
+    id 'jacoco'
+    id 'org.sonarqube'
+}
+
+configurations {
+    all {
+        exclude group: 'junit', module: 'junit'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -5,9 +5,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
-import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.InitialDependency;
 import de.dagere.peass.dependency.persistence.InitialVersion;
+import de.dagere.peass.dependency.persistence.StaticTestSelection;
 
 /**
  * Base for processing pair of potentially changed testcases, which are given by a static selection file or execution file.

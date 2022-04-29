@@ -5,8 +5,8 @@ import java.util.List;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Fulldata.Value;
+import de.dagere.kopeme.kopemedata.MeasuredValue;
+import de.dagere.kopeme.kopemedata.VMResult;
 
 public class MeanCoVReader {
    
@@ -21,9 +21,9 @@ public class MeanCoVReader {
       this.allCoVs = allCoVs;
    }
 
-   public void addTestcaseData(List<Result> results, int avgCount) {
-      for (final Result result : results) {
-         for (final Value value : result.getFulldata().getValue()) {
+   public void addTestcaseData(List<VMResult> results, int avgCount) {
+      for (final VMResult result : results) {
+         for (final MeasuredValue value : result.getFulldata().getValues()) {
             // writer.write(value.getValue() + "\n");
             statistics.addValue(value.getValue());
             if (statistics.getN() == avgCount) {

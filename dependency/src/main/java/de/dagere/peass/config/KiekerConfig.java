@@ -9,6 +9,7 @@ public class KiekerConfig implements Serializable {
    
    public static final int DEFAULT_WRITE_INTERVAL = 5000;
    public static final int DEFAULT_KIEKER_QUEUE_SIZE = 10000000;
+   public static final int DEFAULT_TRACE_SIZE_IN_MB = 100;
    
    private static final long serialVersionUID = 3129231099963995908L;
 
@@ -23,7 +24,7 @@ public class KiekerConfig implements Serializable {
    private AllowedKiekerRecord record = AllowedKiekerRecord.DURATION;
    private boolean onlyOneCallRecording = false;
    private boolean extractMethod = false;
-   private long traceSizeInMb = 100;
+   private long traceSizeInMb = DEFAULT_TRACE_SIZE_IN_MB;
    private long kiekerQueueSize = DEFAULT_KIEKER_QUEUE_SIZE;
    
    // We want a set that preserves insertion order, so we require a LinkedHashSet

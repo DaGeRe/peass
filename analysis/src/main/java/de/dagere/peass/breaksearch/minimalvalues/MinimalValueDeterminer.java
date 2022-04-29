@@ -7,7 +7,7 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
 import de.dagere.peass.measurement.statistics.data.EvaluationPair;
 import de.dagere.peass.measurement.statistics.data.TestData;
@@ -27,13 +27,13 @@ abstract class MinimalValueDeterminer {
 	private int minNeccessaryValue;
 	private final List<Integer> values = new LinkedList<>();
 
-	abstract int getSize(List<Result> results);
+	abstract int getSize(List<VMResult> results);
 
-	abstract int getMin(List<Result> results); 
+	abstract int getMin(List<VMResult> results); 
 
-	abstract int getChange(List<Result> results);
+	abstract int getChange(List<VMResult> results);
  
-	abstract int analyzeMeasurement(int oldResult, List<Result> current, List<Result> before);
+	abstract int analyzeMeasurement(int oldResult, List<VMResult> current, List<VMResult> before);
 
 	public void processTestdata(final TestData measurementEntry) {
 		LOG.debug(measurementEntry.getTestCase());
@@ -59,9 +59,9 @@ abstract class MinimalValueDeterminer {
 		}
 	}
 
-	List<Double> getValues(final List<Result> current) {
+	List<Double> getValues(final List<VMResult> current) {
 		final List<Double> values = new LinkedList<>();
-		for (final Result r : current) {
+		for (final VMResult r : current) {
 			values.add(r.getValue());
 		}
 		return values;

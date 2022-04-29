@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.JAXBException;
+
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -96,7 +96,7 @@ public class CauseSearcherCompleteTest {
    }
 
    private Set<ChangedEntity> getChanges(final CallTreeNode rootPredecessor, final CallTreeNode rootVersion)
-         throws InterruptedException, IOException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
+         throws InterruptedException, IOException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
       final File folder = new File("target/test/");
       folder.mkdir();
 

@@ -4,15 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.ExecutorCreator;
@@ -29,6 +27,7 @@ import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
 import de.dagere.peass.measurement.statistics.data.TestData;
 import de.dagere.peass.testtransformation.TestTransformer;
+
 
 /**
  * Runs a PeASS with only running the tests where a changed class is present.
@@ -60,23 +59,23 @@ public class DependencyTester implements KiekerResultHandler {
     * @param testcase Testcase to test
     * @throws XmlPullParserException
     */
-   public void evaluate(final TestCase testcase) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   public void evaluate(final TestCase testcase) throws IOException, InterruptedException,  XmlPullParserException {
       initEvaluation(testcase);
 
-      final File logFolder = folders.getMeasureLogFolder(configuration.getExecutionConfig().getVersion(), testcase);
+      final File logFolder = folders.getMeasureLogFolder(configuration.getExecutionConfig().getCommit(), testcase);
       try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())) {
          evaluateSimple(testcase, logFolder, writer);
       }
    }
 
    protected void initEvaluation(final TestCase testcase) {
-      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getExecutionConfig().getVersionOld(),
-            configuration.getExecutionConfig().getVersion());
-      new FolderDeterminer(folders).testResultFolders(configuration.getExecutionConfig().getVersion(), configuration.getExecutionConfig().getVersionOld(), testcase);
+      LOG.info("Executing test " + testcase.getClazz() + " " + testcase.getMethod() + " in versions {} and {}", configuration.getExecutionConfig().getCommitOld(),
+            configuration.getExecutionConfig().getCommit());
+      new FolderDeterminer(folders).testResultFolders(configuration.getExecutionConfig().getCommit(), configuration.getExecutionConfig().getCommitOld(), testcase);
    }
 
    private void evaluateSimple(final TestCase testcase, final File logFolder, final ProgressWriter writer)
-         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+         throws IOException, InterruptedException,  XmlPullParserException {
       currentChunkStart = System.currentTimeMillis();
       for (int finishedVMs = 0; finishedVMs < configuration.getVms(); finishedVMs++) {
          long comparisonStart = System.currentTimeMillis();
@@ -103,13 +102,13 @@ public class DependencyTester implements KiekerResultHandler {
       Thread.sleep(configuration.getWaitTimeBetweenVMs());
    }
 
-   boolean updateExecutions(final TestCase testcase, final int vmid) throws JAXBException {
+   boolean updateExecutions(final TestCase testcase, final int vmid)  {
       boolean shouldBreak = false;
-      final Result versionOldResult = getLastResult(configuration.getExecutionConfig().getVersionOld(), testcase, vmid);
-      final Result versionNewResult = getLastResult(configuration.getExecutionConfig().getVersion(), testcase, vmid);
+      final VMResult versionOldResult = getLastResult(configuration.getExecutionConfig().getCommitOld(), testcase, vmid);
+      final VMResult versionNewResult = getLastResult(configuration.getExecutionConfig().getCommit(), testcase, vmid);
       if (vmid < 40) {
-         int reducedIterations = Math.min(shouldReduce(configuration.getExecutionConfig().getVersionOld(), versionOldResult),
-               shouldReduce(configuration.getExecutionConfig().getVersion(), versionNewResult));
+         int reducedIterations = Math.min(shouldReduce(configuration.getExecutionConfig().getCommitOld(), versionOldResult),
+               shouldReduce(configuration.getExecutionConfig().getCommit(), versionNewResult));
          if (reducedIterations != configuration.getIterations()) {
             LOG.error("Should originally run {} iterations, but did not succeed - reducing to {}", configuration.getIterations(), reducedIterations);
             // final int lessIterations = testTransformer.getConfig().getIterations() / 5;
@@ -120,7 +119,7 @@ public class DependencyTester implements KiekerResultHandler {
       return shouldBreak;
    }
 
-   private int shouldReduce(final String version, final Result result) {
+   private int shouldReduce(final String version, final VMResult result) {
       final int reducedIterations;
       if (result == null) {
          reducedIterations = configuration.getIterations() / 2;
@@ -156,11 +155,11 @@ public class DependencyTester implements KiekerResultHandler {
       return shouldBreak;
    }
 
-   public Result getLastResult(final String version, final TestCase testcase, final int vmid) throws JAXBException {
+   public VMResult getLastResult(final String version, final TestCase testcase, final int vmid)  {
       final File resultFile = getCurrentOrganizer().getResultFile(testcase, vmid, version);
       if (resultFile.exists()) {
-         final Kopemedata data = new XMLDataLoader(resultFile).getFullData();
-         final Result lastResult = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);
+         final Kopemedata data = JSONDataLoader.loadData(resultFile);
+         final VMResult lastResult = data.getFirstResult();
          return lastResult;
       } else {
          LOG.debug("Resultfile {} does not exist", resultFile);
@@ -185,7 +184,7 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    public void runOneComparison(final File logFolder, final TestCase testcase, final int vmid)
-         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+         throws IOException, InterruptedException, XmlPullParserException {
       String[] versions = getVersions();
 
       if (configuration.getMeasurementStrategy().equals(MeasurementStrategy.SEQUENTIAL)) {
@@ -199,14 +198,14 @@ public class DependencyTester implements KiekerResultHandler {
 
    private String[] getVersions() {
       String versions[] = new String[2];
-      versions[0] = configuration.getExecutionConfig().getVersionOld().equals("HEAD~1") ? configuration.getExecutionConfig().getVersion() + "~1"
-            : configuration.getExecutionConfig().getVersionOld();
-      versions[1] = configuration.getExecutionConfig().getVersion();
+      versions[0] = configuration.getExecutionConfig().getCommitOld().equals("HEAD~1") ? configuration.getExecutionConfig().getCommit() + "~1"
+            : configuration.getExecutionConfig().getCommitOld();
+      versions[1] = configuration.getExecutionConfig().getCommit();
       return versions;
    }
 
    private void runParallel(final File logFolder, final TestCase testcase, final int vmid, final String[] versions) throws InterruptedException, IOException {
-      final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getExecutionConfig().getVersion(), currentChunkStart,
+      final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getExecutionConfig().getCommit(), currentChunkStart,
             configuration.isUseKieker(),
             configuration.isSaveAll(), testcase,
             configuration.getAllIterations());
@@ -231,8 +230,8 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    private void runSequential(final File logFolder, final TestCase testcase, final int vmid, final String versions[])
-         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
-      currentOrganizer = new ResultOrganizer(folders, configuration.getExecutionConfig().getVersion(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(),
+         throws IOException, InterruptedException, XmlPullParserException {
+      currentOrganizer = new ResultOrganizer(folders, configuration.getExecutionConfig().getCommit(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(),
             testcase, configuration.getAllIterations());
       for (String version : versions) {
          runOnce(testcase, version, vmid, logFolder);
@@ -240,7 +239,7 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
-         throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+         throws IOException, InterruptedException, XmlPullParserException {
       final TestExecutor testExecutor = getExecutor(folders, version);
       final OnceRunner runner = new OnceRunner(folders, testExecutor, getCurrentOrganizer(), this);
       runner.runOnce(testcase, version, vmid, logFolder);
@@ -263,11 +262,11 @@ public class DependencyTester implements KiekerResultHandler {
    }
 
    public void setVersions(final String version, final String versionOld) {
-      configuration.getExecutionConfig().setVersion(version);
-      configuration.getExecutionConfig().setVersionOld(versionOld);
+      configuration.getExecutionConfig().setCommit(version);
+      configuration.getExecutionConfig().setCommitOld(versionOld);
    }
 
-   protected boolean checkIsDecidable(final TestCase testcase, final int vmid) throws JAXBException {
+   protected boolean checkIsDecidable(final TestCase testcase, final int vmid) {
       return false;
    }
 

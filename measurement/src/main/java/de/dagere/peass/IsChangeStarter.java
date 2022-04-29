@@ -8,9 +8,9 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.measurement.dataloading.KoPeMeDataHelper;
 import de.dagere.peass.measurement.statistics.data.DescribedChunk;
@@ -39,11 +39,11 @@ public class IsChangeStarter implements Callable<Integer> {
    @Override
    public Integer call() throws Exception {
       LOG.debug("Checking: {}", dataFolder);
-      final File xmlFile = dataFolder.listFiles((FilenameFilter) new WildcardFileFilter("*.xml"))[0];
+      final File xmlFile = dataFolder.listFiles((FilenameFilter) new WildcardFileFilter("*.json"))[0];
 
-      final Kopemedata data = new XMLDataLoader(xmlFile).getFullData();
+      final Kopemedata data = JSONDataLoader.loadData(xmlFile);
 
-      final Chunk chunk = data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getChunk().get(0);
+      final VMResultChunk chunk = data.getFirstMethodResult().getDatacollectorResults().get(0).getChunks().get(0);
 
       final String[] versions = KoPeMeDataHelper.getVersions(chunk);
       LOG.debug(versions[1]);

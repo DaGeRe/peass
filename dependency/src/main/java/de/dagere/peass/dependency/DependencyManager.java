@@ -164,12 +164,12 @@ public class DependencyManager extends KiekerResultManager {
    }
 
    private boolean readInitialResultFiles(final ModuleClassMapping mapping) {
-      final Collection<File> xmlFiles = FileUtils.listFiles(folders.getTempMeasurementFolder(), new WildcardFileFilter("*.xml"), TrueFileFilter.INSTANCE);
+      final Collection<File> xmlFiles = FileUtils.listFiles(folders.getTempMeasurementFolder(), new WildcardFileFilter("*.json"), TrueFileFilter.INSTANCE);
       LOG.debug("Initial test execution finished, starting result collection, analyzing {} files", xmlFiles.size());
       for (final File testResultFile : xmlFiles) {
          final File parent = testResultFile.getParentFile();
          final String testClassName = parent.getName();
-         final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - 4); // remove
+         final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - ".json".length()); // remove
          // .xml
          final String moduleOfClass = mapping.getModuleOfClass(testClassName);
          if (moduleOfClass == null) {
@@ -379,44 +379,35 @@ public class DependencyManager extends KiekerResultManager {
       final TestExistenceChanges changes = new TestExistenceChanges();
 
       for (final Entry<TestCase, Set<String>> entry : testsToUpdate.entrySet()) {
-         final String testClassName = entry.getKey().getClazz();
          final File testclazzFolder = getTestclazzFolder(entry);
          LOG.debug("Suche in {} Existiert: {} Ordner: {} Tests: {} ", testclazzFolder.getAbsolutePath(), testclazzFolder.exists(), testclazzFolder.isDirectory(), entry.getValue());
          if (testclazzFolder.exists()) {
-            updateMethods(mapping, changes, entry, testClassName, testclazzFolder);
+            updateMethods(mapping, changes, entry, testclazzFolder);
          } else {
-            checkRemoved(oldDepdendencies, changes, entry, testClassName, testclazzFolder);
+            checkRemoved(oldDepdendencies, changes, entry, testclazzFolder);
          }
       }
       return changes;
    }
 
    public File getTestclazzFolder(final Entry<TestCase, Set<String>> entry) throws FileNotFoundException, IOException, XmlPullParserException {
-      final File testclazzFolder;
-      if (entry.getKey().getModule().equals("")) {
-         final File xmlFileFolder = getXMLFileFolder(folders.getProjectFolder());
-         testclazzFolder = new File(xmlFileFolder, entry.getKey().getClazz());
-      } else {
-         final File moduleFolder = new File(folders.getProjectFolder(), entry.getKey().getModule());
-         final File xmlFileFolder = getXMLFileFolder(moduleFolder);
-         testclazzFolder = new File(xmlFileFolder, entry.getKey().getClazz());
-      }
+      File moduleResultFolder = KiekerFolderUtil.getModuleResultFolder(folders, entry.getKey());
+      File testclazzFolder = new File(moduleResultFolder, entry.getKey().getClazz());
       return testclazzFolder;
    }
 
-   void updateMethods(final ModuleClassMapping mapping, final TestExistenceChanges changes, final Entry<TestCase, Set<String>> entry, final String testClassName,
-         final File testclazzFolder) {
+   void updateMethods(final ModuleClassMapping mapping, final TestExistenceChanges changes, final Entry<TestCase, Set<String>> entry, final File testclazzFolder) {
       final Set<String> notFound = new TreeSet<>();
       notFound.addAll(entry.getValue());
-      for (final File testResultFile : testclazzFolder.listFiles((FileFilter) new WildcardFileFilter("*.xml"))) {
+      for (final File testResultFile : testclazzFolder.listFiles((FileFilter) new WildcardFileFilter("*.json"))) {
          final String testClassName2 = testResultFile.getParentFile().getName();
-         if (!testClassName2.equals(testClassName)) {
-            LOG.error("Testclass " + testClassName + " != " + testClassName2);
+         if (!testClassName2.equals(entry.getKey().getClazz())) {
+            LOG.error("Testclass " + entry.getKey().getClazz() + " != " + testClassName2);
          }
          final File parent = testResultFile.getParentFile();
-         final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - 4);
-         final String module = mapping.getModuleOfClass(testClassName);
-         updateDependenciesOnce(new TestCase(testClassName, testMethodName, module), parent, mapping);
+         final String testMethodName = testResultFile.getName().substring(0, testResultFile.getName().length() - ".json".length());
+         final String module = mapping.getModuleOfClass(entry.getKey().getClazz());
+         updateDependenciesOnce(new TestCase(entry.getKey().getClazz(), testMethodName, module), parent, mapping);
          notFound.remove(testMethodName);
       }
       LOG.debug("Removed tests: {}", notFound);
@@ -424,14 +415,14 @@ public class DependencyManager extends KiekerResultManager {
          final TestCase entity = new TestCase(entry.getKey().getClazz(), testMethodName, entry.getKey().getModule());
          dependencies.removeTest(entity);
          // testsToUpdate.removeTest(entry.getKey(), testMethodName);
-         changes.addRemovedTest(new TestCase(testClassName, testMethodName, entry.getKey().getModule()));
+         changes.addRemovedTest(new TestCase(entry.getKey().getClazz(), testMethodName, entry.getKey().getModule()));
       }
    }
 
    void checkRemoved(final Map<TestCase, Map<ChangedEntity, Set<String>>> oldDepdendencies, final TestExistenceChanges changes, final Entry<TestCase, Set<String>> entry,
-         final String testClassName, final File testclazzFolder) {
+         final File testclazzFolder) {
       LOG.error("Testclass {} does not exist anymore or does not create results. Folder: {}", entry.getKey(), testclazzFolder);
-      final TestCase testclass = new TestCase(testClassName, "", entry.getKey().getModule());
+      final TestCase testclass = new TestCase(entry.getKey().getClazz(), "", entry.getKey().getModule());
       boolean oldContained = false;
       for (final TestCase oldTest : oldDepdendencies.keySet()) {
          if (testclass.getClazz().equals(oldTest.getClazz()) && testclass.getModule().equals(oldTest.getModule())) {

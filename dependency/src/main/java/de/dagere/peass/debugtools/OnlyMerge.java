@@ -7,8 +7,8 @@ import java.util.concurrent.Callable;
 
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 
-import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
+import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.vcs.CommitUtil;
@@ -36,7 +36,7 @@ public class OnlyMerge implements Callable<Void>{
    @Override
    public Void call() throws Exception {
       final File projectFolder = config.getProjectFolder();
-      final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartversion(), executionConfigMixin.getEndversion(), projectFolder);
+      final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), projectFolder);
       VersionComparator.setVersions(commits);
       
       final File[] files = config.getResultBaseFolder().listFiles((FilenameFilter) new WildcardFileFilter("deps*.json"));

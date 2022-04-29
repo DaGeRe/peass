@@ -38,10 +38,10 @@ public class KiekerFolderUtil {
          if (methodResult.listFiles().length > 0) {
             return methodResult.listFiles();
          } else {
-            throw new RuntimeException("Folder " + methodResult + " is no Kieker result folder!");
+            throw new RuntimeException("Folder " + methodResult + " is no Kieker result folder; folder is empty!");
          }
       } else {
-         throw new RuntimeException("Folder " + methodResult + " is no Kieker result folder!");
+         throw new RuntimeException("Folder " + methodResult + " is no Kieker result folder; does not exist or is no directory!");
       }
    }
 
@@ -72,13 +72,14 @@ public class KiekerFolderUtil {
    }
 
    public static File getModuleResultFolder(final PeassFolders folders, final TestCase testcase) {
-      File moduleFolder;
       if (testcase.getModule() != null) {
          File rawModuleFolder = new File(folders.getProjectFolder(), testcase.getModule());
-         moduleFolder = KiekerResultManager.getXMLFileFolder(folders, rawModuleFolder);
-      } else {
-         moduleFolder = KiekerResultManager.getXMLFileFolder(folders, folders.getProjectFolder());
-      }
-      return moduleFolder;
+         File moduleResultsFolder = KiekerResultManager.getXMLFileFolder(folders, rawModuleFolder);
+         if (moduleResultsFolder.exists()) {
+            return moduleResultsFolder;
+         }
+      } 
+      File projectResultsFolder = KiekerResultManager.getXMLFileFolder(folders, folders.getProjectFolder());
+      return projectResultsFolder;
    }
 }

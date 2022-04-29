@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
+
 
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
@@ -34,7 +34,7 @@ public class TestLevelDifferentNodeDeterminer {
    }
 
    private LevelDifferentNodeDeterminer getDiff(final CallTreeNode rootOld, final CallTreeNode rootMain)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       final List<CallTreeNode> currentPredecessorNodeList = Arrays.asList(new CallTreeNode[] { rootOld });
       final List<CallTreeNode> currentVersionNodeList = Arrays.asList(new CallTreeNode[] { rootMain });
       final LevelDifferentNodeDeterminer determiner = new LevelDifferentNodeDeterminer(currentPredecessorNodeList, currentVersionNodeList,

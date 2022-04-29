@@ -2,7 +2,7 @@ package de.dagere.peass.measurement;
 
 import java.io.File;
 
-import javax.xml.bind.JAXBException;
+
 
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -10,10 +10,10 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import de.dagere.kopeme.datacollection.TimeDataCollector;
-import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Fulldata;
-import de.dagere.kopeme.generated.Result.Fulldata.Value;
+import de.dagere.kopeme.datastorage.JSONDataStorer;
+import de.dagere.kopeme.kopemedata.Fulldata;
+import de.dagere.kopeme.kopemedata.MeasuredValue;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -38,11 +38,11 @@ public class MavenTestExecutorMocker {
       Mockito.when(mockedExecutor.getTestTransformer()).thenReturn(new JUnitTestTransformer(folders.getProjectFolder(), config));
    }
 
-   public synchronized static void writeValue(final PeassFolders folders, final int average) throws JAXBException {
+   public synchronized static void writeValue(final PeassFolders folders, final int average)  {
       final File measurementFile = new File(folders.getTempMeasurementFolder(), "de.peass.MyTest");
       measurementFile.mkdirs();
-      final XMLDataStorer storer = new XMLDataStorer(measurementFile, "de.peass.MyTest", "test");
-      Result result = buildResult(average);
+      final JSONDataStorer storer = new JSONDataStorer(measurementFile, "de.peass.MyTest", "test");
+      VMResult result = buildResult(average);
       buildFulldata(average, result);
 
       System.out.println("Measurement file exists: " + measurementFile.exists());
@@ -50,20 +50,20 @@ public class MavenTestExecutorMocker {
       System.out.println("Storing success");
    }
 
-   private static void buildFulldata(final int average, final Result result) {
+   private static void buildFulldata(final int average, final VMResult result) {
       final Fulldata values = new Fulldata();
       for (long i = average - 10; i <= average + 10; i++) {
-         Value value = new Value();
-         value.setStart(i);
+         MeasuredValue value = new MeasuredValue();
+         value.setStartTime(i);
          value.setValue(i);
-         values.getValue().add(value);
+         values.getValues().add(value);
          // values.put(i, i);
       }
       result.setFulldata(values);
    }
 
-   private static Result buildResult(final int average) {
-      Result result = new Result();
+   private static VMResult buildResult(final int average) {
+      VMResult result = new VMResult();
       result.setValue(average);
       result.setDeviation(1);
       result.setMin(0D);

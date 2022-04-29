@@ -1,0 +1,49 @@
+{
+  "clazz" : "com.example.android_example.ExampleUnitTest",
+  "methods" : [ {
+    "method" : "test_TestMe",
+    "datacollectorResults" : [ {
+      "name" : "de.dagere.kopeme.datacollection.TimeDataCollectorNoGC",
+      "chunks" : [ ],
+      "results" : [ {
+        "value" : 806501.0,
+        "deviation" : 0.060113342055371576,
+        "min" : 781927.0,
+        "max" : 892997.0,
+        "warmup" : 5,
+        "iterations" : 5,
+        "repetitions" : 10,
+        "commit" : null,
+        "vmRunConfiguration" : {
+          "showStart" : false,
+          "redirectToTemp" : false,
+          "redirectToNull" : true
+        },
+        "parameters" : null,
+        "javaVersion" : "1.8.0_275",
+        "cpu" : "model name : AMD Ryzen 3 3100 4-Core Processor",
+        "memory" : "MemTotal: 32894904 kB",
+        "date" : 1612275419613,
+        "fulldata" : {
+          "fileName" : null,
+          "values" : [ {
+            "startTime" : 1612275419476,
+            "value" : 790707
+          }, {
+            "startTime" : 1612275419477,
+            "value" : 784667
+          }, {
+            "startTime" : 1612275419477,
+            "value" : 781927
+          }, {
+            "startTime" : 1612275419478,
+            "value" : 892997
+          }, {
+            "startTime" : 1612275419479,
+            "value" : 782207
+          } ]
+        }
+      } ]
+    } ]
+  } ]
+}

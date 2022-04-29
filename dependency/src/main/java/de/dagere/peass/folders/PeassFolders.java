@@ -113,12 +113,12 @@ public class PeassFolders {
       return logFolders.getDependencyLogFolder();
    }
 
-   public File getDependencyLogSuccessRunFile(final String version) {
-      final File versionFolder = new File(getDependencyLogFolder(), version);
-      if (!versionFolder.exists()) {
-         versionFolder.mkdir();
+   public File getDependencyLogSuccessRunFile(final String commit) {
+      final File commitFolder = new File(getDependencyLogFolder(), commit);
+      if (!commitFolder.exists()) {
+         commitFolder.mkdir();
       }
-      return new File(versionFolder, "testRunning.log");
+      return new File(commitFolder, "testRunning.log");
    }
 
    public File getMeasureLogFolder() {
@@ -133,8 +133,8 @@ public class PeassFolders {
       return logFolders.getRCALogFolder();
    }
 
-   public File getExistingMeasureLogFolder(final String version, final TestCase testcase) {
-      File testLogFolder = new File(getMeasureLogFolder(), version + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
+   public File getExistingMeasureLogFolder(final String commit, final TestCase testcase) {
+      File testLogFolder = new File(getMeasureLogFolder(), commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
       if (testLogFolder.exists()) {
          return testLogFolder;
       } else {
@@ -142,19 +142,19 @@ public class PeassFolders {
       }
    }
 
-   public File getMeasureLogFolder(final String version, final TestCase testcase) {
-      File testLogFolder = new File(getMeasureLogFolder(), version + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
+   public File getMeasureLogFolder(final String commit, final TestCase testcase) {
+      File testLogFolder = new File(getMeasureLogFolder(), commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
       testLogFolder.mkdirs();
       return testLogFolder;
    }
 
-   public File getExistingRCALogFolder(final String version, final TestCase testcase, final int level) {
-      File testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getClazz() + File.separator + testcase.getMethod() + File.separator + level);
+   public File getExistingRCALogFolder(final String commit, final TestCase testcase, final int level) {
+      File testLogFolder = new File(getRCALogFolder(), commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethod() + File.separator + level);
       return testLogFolder;
    }
 
-   public File getRCALogFolder(final String version, final TestCase testcase, final int level) {
-      File testLogFolder = new File(getRCALogFolder(), version + File.separator + testcase.getClazz() + File.separator + testcase.getMethod() + File.separator + level);
+   public File getRCALogFolder(final String commit, final TestCase testcase, final int level) {
+      File testLogFolder = new File(getRCALogFolder(), commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethod() + File.separator + level);
       testLogFolder.mkdirs();
       return testLogFolder;
    }
@@ -213,46 +213,56 @@ public class PeassFolders {
       final String shortClazzName = testcase.getShortClazz();
       final File fullResultFile;
       if (testcase.getParams() != null) {
-         fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + "(" + testcase.getParams() + ").xml");
+         File fullResultFileXML = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + "(" + testcase.getParams() + ").xml");
+         if (fullResultFileXML.exists()) {
+            fullResultFile = fullResultFileXML;
+         } else {
+            fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + "(" + testcase.getParams() + ").json");
+         }
       } else {
-         fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".xml");
+         File fullResultFileXML = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".xml");
+         if (fullResultFileXML.exists()) {
+            fullResultFile = fullResultFileXML;
+         } else {
+            fullResultFile = new File(fullResultFolder, shortClazzName + "_" + testcase.getMethod() + ".json");
+         }
       }
       return fullResultFile;
    }
 
-   public File getFullResultFolder(final TestCase testcase, final String mainVersion, final String version) {
+   public File getFullResultFolder(final TestCase testcase, final String mainVersion, final String commit) {
       final File destFolder = new File(getDetailResultFolder(), testcase.getClazz());
       LOG.debug("Creating: " + destFolder + " " + mainVersion + " " + testcase.getClazz());
       final File currentVersionFolder = new File(destFolder, mainVersion);
       if (!currentVersionFolder.exists()) {
          currentVersionFolder.mkdir();
       }
-      final File compareVersionFolder = new File(currentVersionFolder, version);
+      final File compareVersionFolder = new File(currentVersionFolder, commit);
       if (!compareVersionFolder.exists()) {
          compareVersionFolder.mkdir();
       }
       return compareVersionFolder;
    }
 
-   public File getResultFile(final TestCase testcase, final int vmid, final String version, final String mainVersion) {
-      final File compareVersionFolder = getFullResultFolder(testcase, mainVersion, version);
-      String xmlFileName = getXMLFileName(testcase, version, vmid);
+   public File getResultFile(final TestCase testcase, final int vmid, final String commit, final String mainVersion) {
+      final File compareVersionFolder = getFullResultFolder(testcase, mainVersion, commit);
+      String xmlFileName = getXMLFileName(testcase, commit, vmid);
       final File destFile = new File(compareVersionFolder, xmlFileName);
       return destFile;
    }
 
-   public static String getRelativeFullResultPath(final TestCase testcase, final String mainVersion, final String version, final int vmid) {
-      String filename = getXMLFileName(testcase, version, vmid);
-      String start = testcase.getClazz() + File.separator + mainVersion + File.separator + version + File.separator + filename;
+   public static String getRelativeFullResultPath(final TestCase testcase, final String mainCommit, final String commit, final int vmid) {
+      String filename = getXMLFileName(testcase, commit, vmid);
+      String start = testcase.getClazz() + File.separator + mainCommit + File.separator + commit + File.separator + filename;
       return start;
    }
 
-   private static String getXMLFileName(final TestCase testcase, final String version, final int vmid) {
+   private static String getXMLFileName(final TestCase testcase, final String commit, final int vmid) {
       String filename;
       if (testcase.getParams() != null) {
-         filename = testcase.getMethod() + "(" + testcase.getParams() + ")_" + vmid + "_" + version + ".xml";
+         filename = testcase.getMethod() + "(" + testcase.getParams() + ")_" + vmid + "_" + commit + ".json";
       } else {
-         filename = testcase.getMethod() + "_" + vmid + "_" + version + ".xml";
+         filename = testcase.getMethod() + "_" + vmid + "_" + commit + ".json";
       }
       return filename;
    }

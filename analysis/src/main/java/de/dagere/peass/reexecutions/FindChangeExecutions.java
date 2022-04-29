@@ -8,8 +8,6 @@ import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -32,7 +30,7 @@ public class FindChangeExecutions {
 
    private static final String NAME = "reexecute-change";
 
-   public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final RepoFolders folders = new RepoFolders();
       final File reexecuteFolder = new File(folders.getResultsFolder(), NAME);
       reexecuteFolder.mkdirs();
@@ -49,7 +47,7 @@ public class FindChangeExecutions {
    }
 
    public static void findProjectExecutions(final File reexecuteFolder, final String project, final File projectChangeFile, final File executionFile)
-         throws FileNotFoundException, JAXBException, IOException, JsonParseException, JsonMappingException {
+         throws FileNotFoundException, IOException, JsonParseException, JsonMappingException {
       System.out.println("Reading: " + project);
       final File reexecuteProject = new File(reexecuteFolder, "reexecute-change-" + project + ".sh");
       final PrintStream goal = new PrintStream(new FileOutputStream(reexecuteProject));

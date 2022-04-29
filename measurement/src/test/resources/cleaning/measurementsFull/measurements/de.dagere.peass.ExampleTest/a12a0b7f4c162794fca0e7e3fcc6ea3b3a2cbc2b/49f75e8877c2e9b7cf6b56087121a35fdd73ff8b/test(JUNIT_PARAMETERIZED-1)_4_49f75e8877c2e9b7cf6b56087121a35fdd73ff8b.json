@@ -1,0 +1,67 @@
+{
+  "clazz" : "de.dagere.peass.ExampleTest",
+  "methods" : [ {
+    "method" : "test",
+    "datacollectorResults" : [ {
+      "name" : "de.dagere.kopeme.datacollection.TimeDataCollectorNoGC",
+      "chunks" : [ ],
+      "results" : [ {
+        "value" : 1.03508229E7,
+        "deviation" : 0.012085873611602405,
+        "min" : 1.0284225E7,
+        "max" : 1.0643402E7,
+        "warmup" : 0,
+        "iterations" : 10,
+        "repetitions" : 5,
+        "commit" : null,
+        "vmRunConfiguration" : {
+          "showStart" : false,
+          "executeBeforeClassInMeasurement" : false,
+          "redirectToTemp" : false,
+          "redirectToNull" : true
+        },
+        "parameters" : {
+          "JUNIT_PARAMETERIZED" : "1"
+        },
+        "javaVersion" : "11.0.13",
+        "cpu" : "model name : AMD Ryzen 3 3100 4-Core Processor",
+        "memory" : "MemTotal: 32868076 kB",
+        "date" : 1644748924056,
+        "fulldata" : {
+          "fileName" : null,
+          "values" : [ {
+            "startTime" : 1644748923836,
+            "value" : 10643402
+          }, {
+            "startTime" : 1644748923846,
+            "value" : 10294066
+          }, {
+            "startTime" : 1644748923857,
+            "value" : 10287685
+          }, {
+            "startTime" : 1644748923867,
+            "value" : 10519264
+          }, {
+            "startTime" : 1644748923877,
+            "value" : 10295375
+          }, {
+            "startTime" : 1644748923888,
+            "value" : 10284225
+          }, {
+            "startTime" : 1644748923898,
+            "value" : 10287735
+          }, {
+            "startTime" : 1644748923908,
+            "value" : 10295685
+          }, {
+            "startTime" : 1644748923919,
+            "value" : 10305336
+          }, {
+            "startTime" : 1644748923929,
+            "value" : 10295456
+          } ]
+        }
+      } ]
+    } ]
+  } ]
+}

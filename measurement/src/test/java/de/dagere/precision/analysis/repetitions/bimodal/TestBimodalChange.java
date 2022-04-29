@@ -4,7 +4,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.measurement.statistics.bimodal.BimodalityTester;
 import de.dagere.peass.measurement.statistics.bimodal.CompareData;
 
@@ -12,8 +12,8 @@ public class TestBimodalChange {
    
    @Test
    public void testIsBimodalChange() {
-      List<Result> before = BimodalTestUtil.buildValues(50,100);
-      List<Result> after = BimodalTestUtil.buildValues(51,101);
+      List<VMResult> before = BimodalTestUtil.buildValues(50,100);
+      List<VMResult> after = BimodalTestUtil.buildValues(51,101);
       CompareData data = new CompareData(before, after);
       
       final BimodalityTester tester = new BimodalityTester(data);
@@ -23,8 +23,8 @@ public class TestBimodalChange {
    
    @Test
    public void testIsBimodalEqual() {
-      List<Result> before = BimodalTestUtil.buildValues(50,100);
-      List<Result> after = BimodalTestUtil.buildValues(50,100.5);
+      List<VMResult> before = BimodalTestUtil.buildValues(50,100);
+      List<VMResult> after = BimodalTestUtil.buildValues(50,100.5);
       CompareData data = new CompareData(before, after);
       
       final BimodalityTester tester = new BimodalityTester(data);
@@ -34,8 +34,8 @@ public class TestBimodalChange {
    
    @Test
    public void testIsUnimodalChange() {
-      List<Result> before = BimodalTestUtil.buildValues(50,50);
-      List<Result> after = BimodalTestUtil.buildValues(51,51.5);
+      List<VMResult> before = BimodalTestUtil.buildValues(50,50);
+      List<VMResult> after = BimodalTestUtil.buildValues(51,51.5);
       CompareData data = new CompareData(before, after);
       
       final BimodalityTester tester = new BimodalityTester(data);
@@ -45,8 +45,8 @@ public class TestBimodalChange {
    
    @Test
    public void testIsUnimodalEqual() {
-      List<Result> before = BimodalTestUtil.buildValues(50,50);
-      List<Result> after = BimodalTestUtil.buildValues(50,50.001);
+      List<VMResult> before = BimodalTestUtil.buildValues(50,50);
+      List<VMResult> after = BimodalTestUtil.buildValues(50,50.001);
       CompareData data = new CompareData(before, after);
       
       final BimodalityTester tester = new BimodalityTester(data);

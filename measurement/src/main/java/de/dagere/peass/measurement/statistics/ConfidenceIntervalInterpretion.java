@@ -6,14 +6,14 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.measurement.statistics.bimodal.CompareData;
 
 public class ConfidenceIntervalInterpretion {
 
    private static final Logger LOG = LogManager.getLogger(ConfidenceIntervalInterpretion.class);
 
-   public static DescriptiveStatistics getStatistics(final List<Result> results) {
+   public static DescriptiveStatistics getStatistics(final List<VMResult> results) {
       final DescriptiveStatistics ds = new DescriptiveStatistics();
       results.forEach(result -> ds.addValue(result.getValue()));
       return ds;

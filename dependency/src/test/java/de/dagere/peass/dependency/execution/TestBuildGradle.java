@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfig;
-import de.dagere.peass.dependency.execution.gradle.TestFindDependencyVisitor;
+import de.dagere.peass.dependency.execution.gradle.TestGradleBuildfileVisitor;
 import de.dagere.peass.execution.gradle.GradleBuildfileEditor;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
@@ -78,7 +78,7 @@ public class TestBuildGradle {
    
    @Test
    public void testIntegrationtest() throws IOException {
-      final File gradleFile = new File(TestFindDependencyVisitor.GRADLE_FOLDER, "build-integrationtest.gradle");
+      final File gradleFile = new File(TestGradleBuildfileVisitor.GRADLE_FOLDER, "build-integrationtest.gradle");
 
       final String gradleFileContents = updateGradleFile(gradleFile);
 
@@ -92,7 +92,7 @@ public class TestBuildGradle {
    
    @Test
    public void testIntegrationtestVariant2() throws IOException {
-      final File gradleFile = new File(TestFindDependencyVisitor.GRADLE_FOLDER, "build-integrationtest2.gradle");
+      final File gradleFile = new File(TestGradleBuildfileVisitor.GRADLE_FOLDER, "build-integrationtest2.gradle");
 
       final String gradleFileContents = updateGradleFile(gradleFile);
 

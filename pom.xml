@@ -4,7 +4,7 @@
   <groupId>de.dagere.peass</groupId>
   <artifactId>peass-parent</artifactId>
   <packaging>pom</packaging>
-  <version>0.1.13-SNAPSHOT</version>
+  <version>0.2.1-SNAPSHOT</version>
   <name>PeASS - Parent</name>
   <description>Tool for Analysing the Performance Changes in a Project</description>
   <url>https://github.com/DaGeRe/peass/</url>
@@ -131,9 +131,9 @@
   </build>
 
   <properties>
-    <mockito.version>4.4.0</mockito.version>
+    <mockito.version>4.5.1</mockito.version>
     <kieker.version>1.15.1</kieker.version>
-    <kopeme.version>0.18.1</kopeme.version>
+    <kopeme.version>1.1.1</kopeme.version>
     <project.organization.name>DaGeRe</project.organization.name>
     <license.licenseName>agpl_v3</license.licenseName>
   </properties>

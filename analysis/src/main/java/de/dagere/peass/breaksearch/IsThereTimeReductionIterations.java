@@ -9,8 +9,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.inference.TestUtils;
 
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Fulldata.Value;
+import de.dagere.kopeme.kopemedata.MeasuredValue;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.analysis.measurement.TestStatistic;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
 import de.dagere.peass.measurement.dataloading.DataReader;
@@ -87,12 +87,12 @@ public class IsThereTimeReductionIterations extends DataAnalyser {
       }
    }
 
-   private List<double[]> getMeasurements(final List<Result> previusValues) {
+   private List<double[]> getMeasurements(final List<VMResult> previusValues) {
       final List<double[]> beforeMeasurements = new LinkedList<>();
-      for (final Result result : previusValues) {
-         final double[] vals = new double[result.getFulldata().getValue().size()];
+      for (final VMResult result : previusValues) {
+         final double[] vals = new double[result.getFulldata().getValues().size()];
          int index = 0;
-         for (final Value value : result.getFulldata().getValue()) {
+         for (final MeasuredValue value : result.getFulldata().getValues()) {
             vals[index] = value.getValue();
             index++;
          }

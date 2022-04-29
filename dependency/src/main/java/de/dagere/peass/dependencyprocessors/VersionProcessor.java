@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -77,13 +75,13 @@ public abstract class VersionProcessor implements Callable<Void> {
 
    public VersionProcessor() {
       if (executionMixin != null) {
-         startversion = executionMixin.getStartversion();
-         endversion = executionMixin.getEndversion();
-         version = executionMixin.getVersion();
+         startversion = executionMixin.getStartcommit();
+         endversion = executionMixin.getEndcommit();
+         version = executionMixin.getCommit();
       }
    }
 
-   public void processCommandline() throws JAXBException {
+   public void processCommandline() {
       LOG.debug("Processing initial");
       processInitialVersion(staticTestSelection.getInitialversion());
 
@@ -116,9 +114,9 @@ public abstract class VersionProcessor implements Callable<Void> {
 
    protected void initVersionProcessor() throws IOException, JsonParseException, JsonMappingException {
       if (executionMixin != null) {
-         startversion = executionMixin.getStartversion();
-         endversion = executionMixin.getEndversion();
-         version = executionMixin.getVersion();
+         startversion = executionMixin.getStartcommit();
+         endversion = executionMixin.getEndcommit();
+         version = executionMixin.getCommit();
       }
       
       if (staticSelectionFile != null) {
@@ -143,7 +141,7 @@ public abstract class VersionProcessor implements Callable<Void> {
          LOG.info("Version: " + startversion + " - " + endversion);
       }
 
-      if (executionMixin.getVersionOld() != null && startversion == null) {
+      if (executionMixin.getCommitOld() != null && startversion == null) {
          throw new RuntimeException("If versionOld is specified, always specify version!");
       }
 

@@ -20,7 +20,7 @@ public class TestMethodChangeLongMethodName {
    public static final String VERSION = "000001";
    public static final ExecutionConfig TEST_CONFIG = new ExecutionConfig();
    static {
-      TEST_CONFIG.setVersion(VERSION);
+      TEST_CONFIG.setCommit(VERSION);
    }
 
    public void method(final int a) {

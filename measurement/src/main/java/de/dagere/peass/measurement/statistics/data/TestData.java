@@ -8,8 +8,8 @@ import java.util.TreeMap;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 
@@ -44,13 +44,13 @@ public class TestData {
          LOG.debug("Version: {} Predecessor: {}", versionOfPair, predecessor);
          // TODO Workaround if data are incomplete, e.g. because of build error
          if (versionOfPair != null){
-            currentPair = new EvaluationPair(versionOfPair, predecessor, new TestCase(resultData.getTestcases()));
+            currentPair = new EvaluationPair(versionOfPair, predecessor, new TestCase(resultData));
             data.put(versionOfPair, currentPair);
          }
       } 
 
       if (currentPair != null){
-         final Result result = resultData.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult().get(0);
+         final VMResult result = resultData.getFirstResult();
          if (versionOfPair.equals(currentVersion)) {
             currentPair.getCurrent().add(result);
          } else {

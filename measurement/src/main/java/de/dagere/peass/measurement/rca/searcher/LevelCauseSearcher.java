@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -24,6 +22,7 @@ import de.dagere.peass.measurement.rca.CauseTester;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
+
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class LevelCauseSearcher extends CauseSearcher {
@@ -50,16 +49,16 @@ public class LevelCauseSearcher extends CauseSearcher {
       super(reader, causeSearchConfig, measurer, measurementConfig, folders, env);
       persistenceManager = new CausePersistenceManager(causeSearchConfig, measurementConfig, folders);
 
-      final File potentialOldFolder = new File(folders.getArchiveResultFolder(measurementConfig.getExecutionConfig().getVersion(), causeSearchConfig.getTestCase()), "0");
+      final File potentialOldFolder = new File(folders.getArchiveResultFolder(measurementConfig.getExecutionConfig().getCommit(), causeSearchConfig.getTestCase()), "0");
       if (potentialOldFolder.exists()) {
          throw new RuntimeException("Old measurement folder " + potentialOldFolder.getAbsolutePath() + " exists - please cleanup!");
       }
-      new FolderDeterminer(folders).testResultFolders(measurementConfig.getExecutionConfig().getVersion(), measurementConfig.getExecutionConfig().getVersionOld(), causeSearchConfig.getTestCase());
+      new FolderDeterminer(folders).testResultFolders(measurementConfig.getExecutionConfig().getCommit(), measurementConfig.getExecutionConfig().getCommitOld(), causeSearchConfig.getTestCase());
    }
 
    @Override
    protected Set<ChangedEntity> searchCause()
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       reader.getRootPredecessor().setOtherVersionNode(reader.getRootVersion());
       reader.getRootVersion().setOtherVersionNode(reader.getRootPredecessor());
       reader.getRootPredecessor().setOtherKiekerPattern(reader.getRootVersion().getKiekerPattern());
@@ -75,7 +74,7 @@ public class LevelCauseSearcher extends CauseSearcher {
    }
 
    public void isLevelDifferent(final List<CallTreeNode> currentPredecessorNodeList, final List<CallTreeNode> currentVersionNodeList)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       final LevelDifferentNodeDeterminer levelDifferentNodeDeterminer = new LevelDifferentNodeDeterminer(currentPredecessorNodeList, currentVersionNodeList, causeSearchConfig, measurementConfig);
 
       final List<CallTreeNode> measurePredecessor = levelDifferentNodeDeterminer.getMeasurePredecessor();
@@ -97,7 +96,7 @@ public class LevelCauseSearcher extends CauseSearcher {
    }
 
    private void measureLevel(final LevelDifferentNodeDeterminer levelDifferentNodeDeterminer, final List<CallTreeNode> measuredPredecessor)
-         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       measurer.measureVersion(measuredPredecessor);
       levelDifferentNodeDeterminer.calculateDiffering();
 

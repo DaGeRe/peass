@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.bind.JAXBException;
+
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
@@ -20,11 +20,10 @@ import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
-import de.dagere.kopeme.datastorage.XMLDataStorer;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Kopemedata.Testcases;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.kopeme.datastorage.JSONDataStorer;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -55,7 +54,7 @@ public class TestContinuousMeasurementExecutor {
    }
 
    @Test
-   public void testConfigurationChange() throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   public void testConfigurationChange() throws IOException, InterruptedException,  XmlPullParserException {
       try (MockedStatic<ExecutorCreator> executorCreatorMock = Mockito.mockStatic(ExecutorCreator.class)) {
 
          mockExecutorCreation();
@@ -103,8 +102,8 @@ public class TestContinuousMeasurementExecutor {
 
    private MeasurementConfig createMeasurementConfig() {
       MeasurementConfig measurementConfig = new MeasurementConfig(5);
-      measurementConfig.getExecutionConfig().setVersion("000001");
-      measurementConfig.getExecutionConfig().setVersionOld("000000");
+      measurementConfig.getExecutionConfig().setCommit("000001");
+      measurementConfig.getExecutionConfig().setCommitOld("000000");
       measurementConfig.setIterations(ITERATIONS);
       measurementConfig.setCallSyncBetweenVMs(false);
       measurementConfig.setWaitTimeBetweenVMs(0);
@@ -153,17 +152,16 @@ public class TestContinuousMeasurementExecutor {
             System.out.println("Running test " + testcase + " for version " + version + " and vmId " + vmId);
 
             if (testcase.equals(TEST1) || testcase.equals(TEST3)) {
-               Kopemedata data = new Kopemedata();
-               data.setTestcases(new Testcases());
-               Datacollector dataCollector = MeasurementFileFinder.getDataCollector(testcase.getMethod(), data.getTestcases().getTestcase());
-               Result result = new Result();
+               Kopemedata data = new Kopemedata("");
+               DatacollectorResult dataCollector = MeasurementFileFinder.getDataCollector(testcase.getMethod(), data.getMethods());
+               VMResult result = new VMResult();
                result.setValue(50);
                result.setIterations(ITERATIONS);
-               dataCollector.getResult().add(result);
+               dataCollector.getResults().add(result);
 
                File resultFile = folders.getResultFile(testcase, vmId, version, "000001");
                resultFile.getParentFile().mkdirs();
-               XMLDataStorer.storeData(resultFile, data);
+               JSONDataStorer.storeData(resultFile, data);
             }
             return null;
          }

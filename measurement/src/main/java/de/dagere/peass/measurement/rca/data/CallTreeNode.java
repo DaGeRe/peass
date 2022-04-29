@@ -147,13 +147,13 @@ public class CallTreeNode extends BasicNode {
       if (getOtherKiekerPattern() == null) {
          throw new RuntimeException("Other version node needs to be defined before measurement! Node: " + call);
       }
-      if (getOtherKiekerPattern().equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersion())) {
+      if (getOtherKiekerPattern().equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getCommit())) {
          LOG.error("Error occured in version {}", version);
          LOG.error("Node: {}", kiekerPattern);
          LOG.error("Other version node: {}", getOtherKiekerPattern());
          throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
       }
-      if (call.equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getVersionOld())) {
+      if (call.equals(CauseSearchData.ADDED) && version.equals(config.getExecutionConfig().getCommitOld())) {
          throw new RuntimeException("Added methods may not contain data, trying to add data for " + version);
       }
    }
@@ -230,10 +230,10 @@ public class CallTreeNode extends BasicNode {
 
    @JsonIgnore
    public TestcaseStatistic getTestcaseStatistic() {
-      LOG.debug("Creating statistics for {} {} Keys: {}", config.getExecutionConfig().getVersion(), config.getExecutionConfig().getVersionOld(), data.keySet());
-      final CallTreeStatistics currentVersionStatistics = data.get(config.getExecutionConfig().getVersion());
+      LOG.debug("Creating statistics for {} {} Keys: {}", config.getExecutionConfig().getCommit(), config.getExecutionConfig().getCommitOld(), data.keySet());
+      final CallTreeStatistics currentVersionStatistics = data.get(config.getExecutionConfig().getCommit());
       final SummaryStatistics current = currentVersionStatistics.getStatistics();
-      final CallTreeStatistics previousVersionStatistics = data.get(config.getExecutionConfig().getVersionOld());
+      final CallTreeStatistics previousVersionStatistics = data.get(config.getExecutionConfig().getCommitOld());
       final SummaryStatistics previous = previousVersionStatistics.getStatistics();
       try {
          final TestcaseStatistic testcaseStatistic = new TestcaseStatistic(previous, current,
@@ -248,9 +248,9 @@ public class CallTreeNode extends BasicNode {
 
    @JsonIgnore
    public TestcaseStatistic getPartialTestcaseStatistic() {
-      final CallTreeStatistics currentVersionStatistics = data.get(config.getExecutionConfig().getVersion());
+      final CallTreeStatistics currentVersionStatistics = data.get(config.getExecutionConfig().getCommit());
       final SummaryStatistics current = currentVersionStatistics.getStatistics();
-      final CallTreeStatistics previousVersionStatistics = data.get(config.getExecutionConfig().getVersionOld());
+      final CallTreeStatistics previousVersionStatistics = data.get(config.getExecutionConfig().getCommitOld());
       final SummaryStatistics previous = previousVersionStatistics.getStatistics();
 
       if (firstHasValues(current, previous)) {
@@ -276,10 +276,10 @@ public class CallTreeNode extends BasicNode {
    }
 
    public void initVersions() {
-      LOG.debug("Init versions: {}", config.getExecutionConfig().getVersion(), config.getExecutionConfig().getVersionOld());
+      LOG.debug("Init versions: {}", config.getExecutionConfig().getCommit(), config.getExecutionConfig().getCommitOld());
       resetStatistics();
-      newVersion(config.getExecutionConfig().getVersionOld());
-      newVersion(config.getExecutionConfig().getVersion());
+      newVersion(config.getExecutionConfig().getCommitOld());
+      newVersion(config.getExecutionConfig().getCommit());
    }
 
    @JsonIgnore
@@ -348,11 +348,11 @@ public class CallTreeNode extends BasicNode {
 
    private boolean isAdded(String version) {
       ExecutionConfig executionConfig = config.getExecutionConfig();
-      if (executionConfig.getVersionOld().equals(version) && call.equals(CauseSearchData.ADDED)) {
+      if (executionConfig.getCommit().equals(version) && call.equals(CauseSearchData.ADDED)) {
          return true;
       }
       String otherKiekerPattern = getOtherKiekerPattern();
-      if (executionConfig.getVersion().equals(version) && CauseSearchData.ADDED.equals(otherKiekerPattern)) {
+      if (executionConfig.getCommit().equals(version) && CauseSearchData.ADDED.equals(otherKiekerPattern)) {
          return true;
       }
       return false;

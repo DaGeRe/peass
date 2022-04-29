@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Callable;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -55,7 +53,7 @@ public class RegressionTestSelectionSummarizer implements Callable<Void> {
       return null;
    }
 
-   private void getSimpleTable(final File folder) throws IOException, JsonParseException, JsonMappingException, JAXBException {
+   private void getSimpleTable(final File folder) throws IOException, JsonParseException, JsonMappingException {
       System.out.println("Project & Versions & Tests & SIC & TIC\\");
       for (final File xmlFile : FileUtils.listFiles(folder, new WildcardFileFilter(ResultsFolders.STATIC_SELECTION_PREFIX +"*.json"), TrueFileFilter.INSTANCE)) {
          final String projektName = xmlFile.getName().replace(ResultsFolders.STATIC_SELECTION_PREFIX, "").replace(".xml", "");
@@ -75,7 +73,7 @@ public class RegressionTestSelectionSummarizer implements Callable<Void> {
       }
    }
 
-   private void getExtendedTable(final File folder) throws IOException, JsonParseException, JsonMappingException, JAXBException {
+   private void getExtendedTable(final File folder) throws IOException, JsonParseException, JsonMappingException {
       System.out.println("Project;Versions;Normal-Tests;SIC;TIC; Tests once changed; Tests multiple times changed");
       for (final File xmlFile : FileUtils.listFiles(folder, new WildcardFileFilter(ResultsFolders.STATIC_SELECTION_PREFIX +"*.json"), TrueFileFilter.INSTANCE)) {
          final String projektName = xmlFile.getName().replace(ResultsFolders.STATIC_SELECTION_PREFIX, "").replace(".xml", "");

@@ -6,7 +6,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.breaksearch.FindLowestPossibleIterations;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
 
@@ -19,13 +19,13 @@ public class MinimalExecutionDeterminer extends MinimalValueDeterminer {
 	private static final Logger LOG = LogManager.getLogger(MinimalExecutionDeterminer.class);
 
 	@Override
-	int analyzeMeasurement(final int oldResult, final List<Result> current, final List<Result> before) {
-		int localMinValue = current.get(0).getFulldata().getValue().size();
+	int analyzeMeasurement(final int oldResult, final List<VMResult> current, final List<VMResult> before) {
+		int localMinValue = current.get(0).getFulldata().getValues().size();
 
 		executionloop: for (; localMinValue > 1000; localMinValue -= 500) {
 			final boolean significant;
-			final List<Result> reduced = StatisticUtil.shortenValues(current, 0, localMinValue);
-			final List<Result> reducedBefore = StatisticUtil.shortenValues(before, 0, localMinValue);
+			final List<VMResult> reduced = StatisticUtil.shortenValues(current, 0, localMinValue);
+			final List<VMResult> reducedBefore = StatisticUtil.shortenValues(before, 0, localMinValue);
 			significant = FindLowestPossibleIterations.isStillSignificant(getValues(reduced), getValues(reducedBefore), oldResult);
 			// final boolean significant = isStillSignificant(statistics.subList(start, start + localMinVmTry), statisticsBefore.subList(start, start + localMinVmTry), oldResult);
 			if (!significant) {
@@ -38,26 +38,26 @@ public class MinimalExecutionDeterminer extends MinimalValueDeterminer {
 
 	
 	
-	public static DescriptiveStatistics getStatistic(final List<Result> values) {
+	public static DescriptiveStatistics getStatistic(final List<VMResult> values) {
 	   DescriptiveStatistics statistics = new DescriptiveStatistics();
-	   for (Result r : values) {
+	   for (VMResult r : values) {
 	      statistics.addValue(r.getValue());
 	   }
 	   return statistics;
 	}
 
 	@Override
-	int getSize(final List<Result> results) {
+	int getSize(final List<VMResult> results) {
 		return results.size();
 	}
 
 	@Override
-	int getMin(final List<Result> results) {
+	int getMin(final List<VMResult> results) {
 		return 2;
 	}
 
 	@Override
-	int getChange(final List<Result> results) {
+	int getChange(final List<VMResult> results) {
 		return 1;
 	}
 

@@ -1,7 +1,5 @@
 package de.dagere.peass.measurement.dependencyprocessors.helper;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.statistics.Relation;
 import de.dagere.peass.measurement.statistics.StatisticUtil;
+
 
 public class EarlyBreakDecider {
 
@@ -20,7 +19,7 @@ public class EarlyBreakDecider {
    private final double type1error;
    private final double type2error;
 
-   public EarlyBreakDecider(final MeasurementConfig config, final StatisticalSummary statisticsBefore, final StatisticalSummary statisticsAfter) throws JAXBException {
+   public EarlyBreakDecider(final MeasurementConfig config, final StatisticalSummary statisticsBefore, final StatisticalSummary statisticsAfter)  {
       this.type1error = config.getStatisticsConfig().getType1error();
       this.type2error = config.getStatisticsConfig().getType2error();
       this.statisticsBefore = statisticsBefore;

@@ -2,7 +2,7 @@ package de.dagere.peass.measurement.analysis;
 
 import java.io.File;
 
-import javax.xml.bind.JAXBException;
+
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -11,10 +11,10 @@ import org.junit.rules.TemporaryFolder;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector.Chunk;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -54,17 +54,17 @@ public class TestDependencyTester {
       
    }
 
-   public static void checkResult(final PeassFolders folders) throws JAXBException {
+   public static void checkResult(final PeassFolders folders)  {
       final File expectedSummaryResultFile = folders.getSummaryFile(EXAMPLE_TESTCASE);
-      Assert.assertTrue(expectedSummaryResultFile.exists());
+      Assert.assertTrue(expectedSummaryResultFile + " should exist", expectedSummaryResultFile.exists());
 
-      final Kopemedata data = XMLDataLoader.loadData(expectedSummaryResultFile);
-      final Datacollector collector = data.getTestcases().getTestcase().get(0).getDatacollector().get(0);
-      final Chunk chunk = collector.getChunk().get(0);
-      Assert.assertEquals(105, chunk.getResult().get(0).getValue(), 0.1);
-      Assert.assertEquals(5, chunk.getResult().get(0).getRepetitions());
-      Assert.assertEquals(11, chunk.getResult().get(0).getIterations());
-      Assert.assertEquals(10, chunk.getResult().get(0).getWarmup());
+      final Kopemedata data = JSONDataLoader.loadData(expectedSummaryResultFile);
+      final DatacollectorResult collector = data.getFirstMethodResult().getDatacollectorResults().get(0);
+      final VMResultChunk chunk = collector.getChunks().get(0);
+      Assert.assertEquals(105, chunk.getResults().get(0).getValue(), 0.1);
+      Assert.assertEquals(5, chunk.getResults().get(0).getRepetitions());
+      Assert.assertEquals(11, chunk.getResults().get(0).getIterations());
+      Assert.assertEquals(10, chunk.getResults().get(0).getWarmup());
    }
    
 }

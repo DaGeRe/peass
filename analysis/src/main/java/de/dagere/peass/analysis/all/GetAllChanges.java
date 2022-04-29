@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
@@ -18,7 +16,7 @@ import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 
 public class GetAllChanges {
-   public static void main(final String[] args) throws JAXBException, JsonParseException, JsonMappingException, IOException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final RepoFolders folders = new RepoFolders();
       
       // for (final String project : new String[] { "commons-compress", "commons-csv", "commons-dbcp", "commons-fileupload", "commons-jcs",
@@ -35,7 +33,7 @@ public class GetAllChanges {
       }
    }
 
-   public static void getChangesForProject(final RepoFolders folders, final String project, final StaticTestSelection dependencies) throws JAXBException, FileNotFoundException {
+   public static void getChangesForProject(final RepoFolders folders, final String project, final StaticTestSelection dependencies) throws FileNotFoundException {
       final File projectFolder = new File(folders.getCleanDataFolder(), project);
       if (projectFolder.exists()) {
          File cleanFolder = new File(projectFolder, "clean");
@@ -54,7 +52,7 @@ public class GetAllChanges {
       }
    }
 
-   public static void getChangesForMeasurementfolder(final RepoFolders folders, final String project, final File cleanFolder, final StaticTestSelection dependencies) throws JAXBException, FileNotFoundException {
+   public static void getChangesForMeasurementfolder(final RepoFolders folders, final String project, final File cleanFolder, final StaticTestSelection dependencies) throws FileNotFoundException {
       ResultsFolders resultsFolders = new ResultsFolders(folders.getProjectStatisticsFolder(project), project);
       final ChangeReader reader = new ChangeReader(resultsFolders, dependencies);
       final ProjectChanges changes = reader.readFile(cleanFolder);

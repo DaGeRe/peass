@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,7 +16,6 @@ import de.dagere.peass.execution.kieker.ArgLineBuilder;
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.execution.utils.RequiredDependency;
-import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class GradleBuildfileEditor {
@@ -32,11 +32,11 @@ public class GradleBuildfileEditor {
       this.modules = modules;
    }
 
-   public FindDependencyVisitor addDependencies(final File tempFolder) {
-      FindDependencyVisitor visitor = null;
+   public GradleBuildfileVisitor addDependencies(final File tempFolder) {
+      GradleBuildfileVisitor visitor = null;
       try {
          LOG.debug("Editing buildfile: {}", buildfile.getAbsolutePath());
-         visitor = GradleParseUtil.parseBuildfile(buildfile);
+         visitor = GradleParseUtil.parseBuildfile(buildfile, testTransformer.getConfig().getExecutionConfig());
          if (visitor.isUseJava() == true) {
             editGradlefileContents(tempFolder, visitor);
          } else {
@@ -57,13 +57,13 @@ public class GradleBuildfileEditor {
       return visitor;
    }
 
-   private static boolean isParentUseJava(final File buildfile, final ProjectModules modules) throws IOException, FileNotFoundException {
+   private boolean isParentUseJava(final File buildfile, final ProjectModules modules) throws IOException, FileNotFoundException {
       List<File> parentProjects = modules.getParents(buildfile.getParentFile());
       boolean isUseJava = false;
       for (File parentProject : parentProjects) {
          File parentBuildfile = GradleParseHelper.findGradleFile(parentProject);
          LOG.debug("Reading " + parentBuildfile);
-         FindDependencyVisitor parentVisitor = GradleParseUtil.parseBuildfile(parentBuildfile);
+         GradleBuildfileVisitor parentVisitor = GradleParseUtil.parseBuildfile(parentBuildfile, testTransformer.getConfig().getExecutionConfig());
          if (parentVisitor.isSubprojectJava()) {
             isUseJava = true;
          }
@@ -71,7 +71,7 @@ public class GradleBuildfileEditor {
       return isUseJava;
    }
 
-   private void editGradlefileContents(final File tempFolder, final FindDependencyVisitor visitor) {
+   private void editGradlefileContents(final File tempFolder, final GradleBuildfileVisitor visitor) {
       if (visitor.getBuildTools() != -1) {
          GradleParseUtil.updateBuildTools(visitor);
       }
@@ -81,7 +81,10 @@ public class GradleBuildfileEditor {
       }
 
       if (visitor.isUseSpringBoot()) {
+         LOG.info("Adding spring boot ext");
          GradleParseUtil.addJUnitVersionSpringBoot(visitor);
+      } else {
+         LOG.info("Did not find spring boot");
       }
 
       GradleParseUtil.removeExclusions(visitor);
@@ -91,9 +94,9 @@ public class GradleBuildfileEditor {
       addKiekerLine(tempFolder, visitor);
    }
 
-   private void addDependencies(final FindDependencyVisitor visitor) {
+   private void addDependencies(final GradleBuildfileVisitor visitor) {
       boolean isAddJunit3 = testTransformer.isJUnit3();
-      boolean isExcludeLog4j = testTransformer.getConfig().getExecutionConfig().isExcludeLog4j();
+      boolean isExcludeLog4j = testTransformer.getConfig().getExecutionConfig().isExcludeLog4jSlf4jImpl();
       if (visitor.getDependencyLine() != -1) {
          for (RequiredDependency dependency : RequiredDependency.getAll(isAddJunit3)) {
             final String dependencyGradle;
@@ -120,35 +123,50 @@ public class GradleBuildfileEditor {
       }
    }
 
-   public void addKiekerLine(final File tempFolder, final FindDependencyVisitor visitor) {
-      if (testTransformer.getConfig().isUseKieker()) {
-         final String javaagentArgument = new ArgLineBuilder(testTransformer, buildfile.getParentFile()).buildArglineGradle(tempFolder);
-         addArgLine(visitor, javaagentArgument);
-      } else {
-         PeassFolders folders = new PeassFolders(testTransformer.getProjectFolder());
-         String argLine = "jvmArgs=[\"" + ArgLineBuilder.TEMP_DIR + "=" + folders.getTempDir().getAbsolutePath() + "\"]";
-         addArgLine(visitor, argLine);
-      }
+   public void addKiekerLine(final File tempFolder, final GradleBuildfileVisitor visitor) {
+      ArgLineBuilder argLineBuilder = new ArgLineBuilder(testTransformer, buildfile.getParentFile());
+      addArgLine(visitor, argLineBuilder, tempFolder);
    }
 
-   private void addArgLine(final FindDependencyVisitor visitor, final String javaagentArgument) {
+   private void addArgLine(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder, File tempFolder) {
       if (visitor.getAndroidLine() != -1) {
          if (visitor.getUnitTestsAll() != -1) {
-            visitor.addLine(visitor.getUnitTestsAll() - 1, javaagentArgument);
+            visitor.addLine(visitor.getUnitTestsAll() - 1, argLineBuilder.buildArglineGradle(tempFolder));
          } else if (visitor.getTestOptionsAndroid() != -1) {
-            visitor.addLine(visitor.getTestOptionsAndroid() - 1, "unitTests.all{" + javaagentArgument + "}");
+            visitor.addLine(visitor.getTestOptionsAndroid() - 1, "unitTests.all{" + argLineBuilder.buildArglineGradle(tempFolder) + "}");
          } else {
-            visitor.addLine(visitor.getAndroidLine() - 1, "testOptions{ unitTests.all{" + javaagentArgument + "} }");
+            visitor.addLine(visitor.getAndroidLine() - 1, "testOptions{ unitTests.all{" + argLineBuilder.buildArglineGradle(tempFolder) + "} }");
          }
       } else {
          if (visitor.getTestLine() != -1) {
-            visitor.addLine(visitor.getTestLine() - 1, javaagentArgument);
+            if (visitor.getTestSystemPropertiesLine() == -1) {
+               visitor.addLine(visitor.getTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
+            } else {
+               for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
+                  visitor.addLine(visitor.getTestSystemPropertiesLine(), "  '" + entry.getKey() + "'             : '" + entry.getValue() + "',");
+               }
+               if (argLineBuilder.getJVMArgs() != null) {
+                  visitor.addLine(visitor.getIntegrationTestLine(), argLineBuilder.getJVMArgs());
+               }
+
+            }
+
          } else {
-            visitor.getLines().add("test { " + javaagentArgument + "}");
+            visitor.getLines().add("test { " + argLineBuilder.buildArglineGradle(tempFolder) + "}");
          }
       }
       if (visitor.getIntegrationTestLine() != -1) {
-         visitor.addLine(visitor.getIntegrationTestLine() - 1, javaagentArgument);
+         if (visitor.getIntegrationTestSystemPropertiesLine() == -1) {
+            visitor.addLine(visitor.getIntegrationTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
+         } else {
+            for (Map.Entry<String, String> entry : argLineBuilder.getGradleSystemProperties(tempFolder).entrySet()) {
+               visitor.addLine(visitor.getIntegrationTestSystemPropertiesLine(), "  '" + entry.getKey() + "'             : '" + entry.getValue() + "',");
+            }
+            if (argLineBuilder.getJVMArgs() != null) {
+               visitor.addLine(visitor.getIntegrationTestLine(), argLineBuilder.getJVMArgs());
+            }
+         }
+
       }
    }
 }

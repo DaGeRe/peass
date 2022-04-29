@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -21,6 +19,7 @@ import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.searcher.LevelCauseSearcher;
+
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class LevelCauseSearchExperimentalStarter {
@@ -28,7 +27,7 @@ public class LevelCauseSearchExperimentalStarter {
    private static final Logger LOG = LogManager.getLogger(LevelCauseSearchExperimentalStarter.class);
    
    public static void main(final String[] args)
-         throws IOException, XmlPullParserException, InterruptedException, IllegalStateException, AnalysisConfigurationException, ViewNotFoundException, JAXBException {
+         throws IOException, XmlPullParserException, InterruptedException, IllegalStateException, AnalysisConfigurationException, ViewNotFoundException {
       final File projectFolder = new File("../../projekte/commons-fileupload");
       final String version = "4ed6e923cb2033272fcb993978d69e325990a5aa";
       final TestCase test = new TestCase("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");

@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,6 +20,7 @@ import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.utils.Constants;
+
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -82,15 +81,15 @@ public class VisualizeRCAStarter implements Callable<Void> {
       return null;
    }
 
-   private void analyzeFile(final File peassFolder) throws JAXBException, JsonProcessingException, FileNotFoundException, IOException {
+   private void analyzeFile(final File peassFolder) throws  JsonProcessingException, FileNotFoundException, IOException {
       VisualizeRegularMeasurement measurementVisualizer = new VisualizeRegularMeasurement(resultFolder);
       measurementVisualizer.analyzeFile(peassFolder);
    }
 
    private void getFullTree(final RCAGenerator rcaGenerator, final CauseSearchData data, final File treeFolder) throws IOException, JsonParseException, JsonMappingException {
       if (treeFolder.exists()) {
-         final File potentialCacheFileOld = new File(treeFolder, data.getMeasurementConfig().getExecutionConfig().getVersionOld());
-         final File potentialCacheFile = new File(treeFolder, data.getMeasurementConfig().getExecutionConfig().getVersion());
+         final File potentialCacheFileOld = new File(treeFolder, data.getMeasurementConfig().getExecutionConfig().getCommitOld());
+         final File potentialCacheFile = new File(treeFolder, data.getMeasurementConfig().getExecutionConfig().getCommit());
 
          final CallTreeNode rootPredecessor = Constants.OBJECTMAPPER.readValue(potentialCacheFileOld, CallTreeNode.class);
          final CallTreeNode rootVersion = Constants.OBJECTMAPPER.readValue(potentialCacheFile, CallTreeNode.class);
@@ -100,7 +99,7 @@ public class VisualizeRCAStarter implements Callable<Void> {
    }
 
    private void analyzeFile(final File versionResultFolder, final File treeFile)
-         throws JsonParseException, JsonMappingException, IOException, JsonProcessingException, FileNotFoundException, JAXBException {
+         throws JsonParseException, JsonMappingException, IOException, JsonProcessingException, FileNotFoundException {
       final CauseSearchFolders folders = getCauseSearchFolders(treeFile);
 
       final RCAGenerator rcaGenerator = new RCAGenerator(treeFile, versionResultFolder, folders);
@@ -110,7 +109,7 @@ public class VisualizeRCAStarter implements Callable<Void> {
       if (visualizeFull) {
          final CauseSearchData data = rcaGenerator.getData();
 
-         final File treeFolder = folders.getTreeCacheFolder(data.getMeasurementConfig().getExecutionConfig().getVersion(), data.getCauseConfig().getTestCase());
+         final File treeFolder = folders.getTreeCacheFolder(data.getMeasurementConfig().getExecutionConfig().getCommit(), data.getCauseConfig().getTestCase());
          getFullTree(rcaGenerator, data, treeFolder);
       }
       rcaGenerator.createVisualization();

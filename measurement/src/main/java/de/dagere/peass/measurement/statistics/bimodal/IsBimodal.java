@@ -7,7 +7,7 @@ import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 
 public class IsBimodal {
 
@@ -32,11 +32,11 @@ public class IsBimodal {
       isBimodal = testBimodal();
    }
 
-   public IsBimodal(final List<Result> fastShortened) {
+   public IsBimodal(final List<VMResult> fastShortened) {
       double[] values = new double[fastShortened.size()];
       SummaryStatistics originalStat = new SummaryStatistics();
       int i = 0;
-      for (Result result : fastShortened) {
+      for (VMResult result : fastShortened) {
          values[i++] = result.getValue();
          originalStat.addValue(result.getValue());
       }

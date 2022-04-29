@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Set;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -25,6 +23,7 @@ import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 import de.dagere.peass.vcs.VersionIteratorGit;
+
 
 public class ContinuousExecutor {
 
@@ -70,8 +69,8 @@ public class ContinuousExecutor {
       iterator = iteratorBuiler.getIterator();
       version = iteratorBuiler.getVersion();
       versionOld = iteratorBuiler.getVersionOld();
-      measurementConfig.getExecutionConfig().setVersion(version);
-      measurementConfig.getExecutionConfig().setVersionOld(versionOld);
+      measurementConfig.getExecutionConfig().setCommit(version);
+      measurementConfig.getExecutionConfig().setCommitOld(versionOld);
       LOG.debug("Version: {} VersionOld: {}", version, versionOld);
    }
 
@@ -85,7 +84,7 @@ public class ContinuousExecutor {
          GitUtils.reset(projectFolderLocal);
          GitUtils.clean(projectFolderLocal);
          GitUtils.pull(projectFolderLocal);
-         GitUtils.goToTag(measurementConfig.getExecutionConfig().getVersion(), projectFolderLocal);
+         GitUtils.goToTag(measurementConfig.getExecutionConfig().getCommit(), projectFolderLocal);
       }
    }
 
@@ -100,7 +99,7 @@ public class ContinuousExecutor {
       try {
          File measurementFolder = executeMeasurement(tests);
          analyzeMeasurements(measurementFolder);
-      } catch (IOException | InterruptedException | JAXBException | XmlPullParserException e) {
+      } catch (IOException | InterruptedException  | XmlPullParserException e) {
          throw new RuntimeException(e);
       }
    }
@@ -122,7 +121,7 @@ public class ContinuousExecutor {
       return tests;
    }
 
-   protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException,  XmlPullParserException {
       final File fullResultsVersion = resultsFolders.getVersionFullResultsFolder(version, versionOld);
       File logFile = resultsFolders.getMeasurementLogFile(version, versionOld);
       final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(folders, measurementConfig, env);
@@ -131,7 +130,7 @@ public class ContinuousExecutor {
    }
 
    private void analyzeMeasurements(final File measurementFolder)
-         throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, JAXBException {
+         throws InterruptedException, IOException, JsonGenerationException, JsonMappingException, XmlPullParserException {
       StaticTestSelection selectedTests = Constants.OBJECTMAPPER.readValue(resultsFolders.getStaticTestSelectionFile(), StaticTestSelection.class);
       ChangeReader changeReader = new ChangeReader(resultsFolders, selectedTests);
       changeReader.readFile(measurementFolder.getParentFile());

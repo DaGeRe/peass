@@ -83,8 +83,8 @@ public class PropertyReadHelper {
       final File projectFolder2 = new File("../../projekte/commons-fileupload");
       final File viewFolder2 = new File("/home/reichelt/daten3/diss/repos/preprocessing/4/commons-fileupload/views_commons-fileupload/");
       ExecutionConfig demoConfig = new ExecutionConfig();
-      demoConfig.setVersion("96f8f56556a8592bfed25c82acedeffc4872ac1f");
-      demoConfig.setVersionOld("09d16c");
+      demoConfig.setCommit("96f8f56556a8592bfed25c82acedeffc4872ac1f");
+      demoConfig.setCommitOld("09d16c");
 
       final PropertyReadHelper propertyReadHelper = new PropertyReadHelper(demoConfig, ce, change, projectFolder2, viewFolder2,
             new File("/tmp/"), null);
@@ -93,8 +93,8 @@ public class PropertyReadHelper {
 
    public PropertyReadHelper(final ExecutionConfig config, final ChangedEntity clazz,
          final Change change, final File projectFolder, final File viewFolder, final File methodSourceFolder, final ExecutionData changedTests) {
-      this.version = config.getVersion();
-      this.versionOld = config.getVersionOld();
+      this.version = config.getCommit();
+      this.versionOld = config.getCommitOld();
       this.config = config;
       if (clazz.getMethod() != null) {
          throw new RuntimeException("Method must not be set!");

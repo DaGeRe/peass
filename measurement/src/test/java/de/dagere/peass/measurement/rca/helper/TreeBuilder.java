@@ -34,8 +34,8 @@ public class TreeBuilder {
 
    public TreeBuilder(final MeasurementConfig config, final boolean useFullLogAPI) {
       this.config = config;
-      config.getExecutionConfig().setVersionOld(VERSION_OLD);
-      config.getExecutionConfig().setVersion(VERSION);
+      config.getExecutionConfig().setCommitOld(VERSION_OLD);
+      config.getExecutionConfig().setCommit(VERSION);
       
       this.useFullLogAPI = useFullLogAPI;
 

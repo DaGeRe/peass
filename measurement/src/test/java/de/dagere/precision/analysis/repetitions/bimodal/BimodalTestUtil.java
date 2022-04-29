@@ -4,7 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 
 /**
  * Provides demo data for testing bimodality; by calling the main method, the diff[] data can be regenerated (e.g. if new size is needed).
@@ -25,16 +25,16 @@ public class BimodalTestUtil {
 
    
 
-   public static List<Result> buildValues(final double first, final double second) {
-      List<Result> before = new LinkedList<>();
+   public static List<VMResult> buildValues(final double first, final double second) {
+      List<VMResult> before = new LinkedList<>();
       addValues(before, first);
       addValues(before, second);
       return before;
    }
 
-   private static void addValues(final List<Result> before, final double mean) {
+   private static void addValues(final List<VMResult> before, final double mean) {
       for (int i = 0; i < 100; i++) {
-         Result r = new Result();
+         VMResult r = new VMResult();
          r.setValue(mean + diffs[i]);
          before.add(r);
       }

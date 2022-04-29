@@ -5,14 +5,14 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.measurement.statistics.bimodal.OutlierRemoverBimodal;
 
 public class TestOutlierRemoval {
    
    @Test
    public void testNoRemovalUnimodal() {
-      List<Result> basicValues = BimodalTestUtil.buildValues(50, 50);
+      List<VMResult> basicValues = BimodalTestUtil.buildValues(50, 50);
       new OutlierRemoverBimodal(basicValues);
       Assert.assertEquals(200, basicValues.size());
       
@@ -25,7 +25,7 @@ public class TestOutlierRemoval {
 
    @Test
    public void testRemovalUnimodal() {
-      List<Result> basicValues = BimodalTestUtil.buildValues(50, 50);
+      List<VMResult> basicValues = BimodalTestUtil.buildValues(50, 50);
       addValue(basicValues, 58);
       new OutlierRemoverBimodal(basicValues);
       Assert.assertEquals(200, basicValues.size());
@@ -34,7 +34,7 @@ public class TestOutlierRemoval {
    
    @Test
    public void testNoRemovalBimodal() {
-      List<Result> basicValues = BimodalTestUtil.buildValues(50, 100);
+      List<VMResult> basicValues = BimodalTestUtil.buildValues(50, 100);
       new OutlierRemoverBimodal(basicValues);
       Assert.assertEquals(200, basicValues.size());
 
@@ -46,7 +46,7 @@ public class TestOutlierRemoval {
 
    @Test
    public void testRemovalBimodal() {
-      List<Result> basicValues = BimodalTestUtil.buildValues(50, 100);
+      List<VMResult> basicValues = BimodalTestUtil.buildValues(50, 100);
       addValue(basicValues, 58);
       addValue(basicValues, 108);
       addValue(basicValues, 42);
@@ -56,8 +56,8 @@ public class TestOutlierRemoval {
       
    }
    
-   private void addValue(final List<Result> basicValues, final double value) {
-      final Result result2 = new Result();
+   private void addValue(final List<VMResult> basicValues, final double value) {
+      final VMResult result2 = new VMResult();
       result2.setValue(value);
       basicValues.add(result2);
    }

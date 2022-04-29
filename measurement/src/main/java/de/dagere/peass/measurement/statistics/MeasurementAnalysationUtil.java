@@ -12,8 +12,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.FalseFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -24,11 +22,13 @@ import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.dagere.kopeme.datastorage.XMLDataLoader;
-import de.dagere.kopeme.generated.Kopemedata;
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.TestcaseType;
-import de.dagere.kopeme.generated.TestcaseType.Datacollector;
+import de.dagere.kopeme.datastorage.JSONDataLoader;
+import de.dagere.kopeme.kopemedata.DatacollectorResult;
+import de.dagere.kopeme.kopemedata.Kopemedata;
+import de.dagere.kopeme.kopemedata.TestMethod;
+import de.dagere.kopeme.kopemedata.VMResult;
+
+
 
 public final class MeasurementAnalysationUtil {
 
@@ -96,32 +96,32 @@ public final class MeasurementAnalysationUtil {
 
 	private static final ThreadLocalRandom RANDOM = ThreadLocalRandom.current();
 
-	public static Map<File, Kopemedata> getData(final File file) throws JAXBException {
+	public static Map<File, Kopemedata> getData(final File file)  {
 		final Map<File, Kopemedata> data = new HashMap<>();
 		LOG.debug("Analysiere: {}", file);
 		if (file.isDirectory()) {
-			final Collection<File> fileList = FileUtils.listFiles(file, new WildcardFileFilter("*.xml"), FalseFileFilter.INSTANCE);
-			for (final File xmlFile : fileList) {
-				LOG.trace("Datei: {}", xmlFile);
-				final XMLDataLoader xdl = new XMLDataLoader(xmlFile);
-				data.put(xmlFile, xdl.getFullData());
+			final Collection<File> fileList = FileUtils.listFiles(file, new WildcardFileFilter("*.json"), FalseFileFilter.INSTANCE);
+			for (final File jsonFile : fileList) {
+				LOG.trace("Datei: {}", jsonFile);
+				final Kopemedata currentData = JSONDataLoader.loadData(jsonFile);
+				data.put(jsonFile, currentData);
 			}
 		}
 		return data;
 	}
 
 	public static List<PerformanceChange> analyzeKopemeData(final Kopemedata data) {
-		final Map<String, List<Result>> results = new LinkedHashMap<>();
+		final Map<String, List<VMResult>> results = new LinkedHashMap<>();
 		int maxResultSize = 0;
-		final TestcaseType currentTestcase = data.getTestcases().getTestcase().get(0);
-		final String clazz = data.getTestcases().getClazz();
-		final String method = currentTestcase.getName();
-		final List<Datacollector> datacollectors = currentTestcase.getDatacollector();
+		final TestMethod currentTestcase = data.getFirstMethodResult();
+		final String clazz = data.getClazz();
+		final String method = currentTestcase.getMethod();
+		final List<DatacollectorResult> datacollectors = currentTestcase.getDatacollectorResults();
 		if (datacollectors.size() != 1) {
 			LOG.warn("Mehr als ein DataCollector bei: {}", method);
 		}
-		for (final Result result : datacollectors.get(0).getResult()) {
-			final String gitversion = result.getVersion().getGitversion();
+		for (final VMResult result : datacollectors.get(0).getResults()) {
+			final String gitversion = result.getCommit();
 			if (!results.containsKey(gitversion)) {
 				results.put(gitversion, new LinkedList<>());
 			}
@@ -137,7 +137,7 @@ public final class MeasurementAnalysationUtil {
 
 		final ExecutorService service = Executors.newFixedThreadPool(4);
 
-		for (final Map.Entry<String, List<Result>> entry : results.entrySet()) {
+		for (final Map.Entry<String, List<VMResult>> entry : results.entrySet()) {
 			final double[] values = getAveragesArrayFromResults(entry.getValue());
 			final ConfidenceInterval interval = getBootstrapConfidenceInterval(values, 20, 1000, 96);
 			LOG.trace("{}-Konfidenzintervall: {} - {}", interval.getPercentage(), interval.getMin(), interval.getMax());
@@ -148,7 +148,7 @@ public final class MeasurementAnalysationUtil {
 				service.execute(new Runnable() {
 					@Override
 					public void run() {
-						final String currentVersion = entry.getValue().get(0).getVersion().getGitversion();
+						final String currentVersion = entry.getValue().get(0).getCommit();
 						final PerformanceChange change = new PerformanceChange(previousConfidenceInterval, interval, clazz, method, previousVersion2, currentVersion);
 						final boolean isChange = analysePotentialChange(change, previousConfidenceInterval, entry, interval);
 						if (isChange) {
@@ -169,21 +169,17 @@ public final class MeasurementAnalysationUtil {
 		return changes;
 	}
 
-	public static double[] getAveragesArrayFromResults(final List<Result> results) {
+	public static double[] getAveragesArrayFromResults(final List<VMResult> results) {
 		final double[] values = new double[results.size()];
 		int i = 0;
-		for (final Result result : results) {
+		for (final VMResult result : results) {
 			final double value = result.getValue();
 			values[i++] = value;
 		}
 		return values;
 	}
 
-	public static List<Result> getResult(final Kopemedata data) {
-		return data.getTestcases().getTestcase().get(0).getDatacollector().get(0).getResult();
-	}
-
-	private static boolean analysePotentialChange(final PerformanceChange change, final ConfidenceInterval previous, final Map.Entry<String, List<Result>> entry, final ConfidenceInterval interval) {
+	private static boolean analysePotentialChange(final PerformanceChange change, final ConfidenceInterval previous, final Map.Entry<String, List<VMResult>> entry, final ConfidenceInterval interval) {
 		LOG.trace("Vergleiche: {} {} Version: {}", change.getTestClass(), change.getTestMethod(), change.getRevisionOld());
 		boolean isChange = false;
 		final double diff = change.getDifference();

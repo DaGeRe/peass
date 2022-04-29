@@ -3,8 +3,6 @@ package de.dagere.peass.validation.temp;
 import java.io.File;
 import java.io.IOException;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +18,7 @@ public class FindMissingValidation {
 
    private static final Logger LOG = LogManager.getLogger(FindMissingValidation.class);
 
-   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException, JAXBException {
+   public static void main(final String[] args) throws JsonParseException, JsonMappingException, IOException {
       final RepoFolders folders = new RepoFolders();
 
       File reexecuteFolder = new File("results/reexecute-validation");

@@ -10,9 +10,9 @@ import java.util.List;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-import de.dagere.kopeme.generated.Result;
-import de.dagere.kopeme.generated.Result.Fulldata.Value;
-import de.dagere.kopeme.generated.TestcaseType;
+import de.dagere.kopeme.kopemedata.MeasuredValue;
+import de.dagere.kopeme.kopemedata.TestMethod;
+import de.dagere.kopeme.kopemedata.VMResult;
 
 /**
  * Saves all data, its means and its coefficient of variation (CoV) for different executions of one test in one version.
@@ -42,18 +42,18 @@ public class MeanCoVData {
    }
 
    protected final String testMethodName;
-   protected final List<Result> results;
+   protected final List<VMResult> results;
    // final TestcaseType testcase;
 
-   public MeanCoVData(final TestcaseType testcase, int avg_count) {
-      this(testcase.getName(), testcase.getDatacollector().get(0).getResult(), avg_count);
+   public MeanCoVData(final TestMethod testcase, int avg_count) {
+      this(testcase.getMethod(), testcase.getDatacollectorResults().get(0).getResults(), avg_count);
    }
 
-   public MeanCoVData(final String name, final List<Result> results) {
+   public MeanCoVData(final String name, final List<VMResult> results) {
       this(name, results, 10);
    }
    
-   public MeanCoVData(final String name, final List<Result> results, int avg_count) {
+   public MeanCoVData(final String name, final List<VMResult> results, int avg_count) {
       this.testMethodName = name;
       this.results = results;
       avgCount = avg_count;
@@ -86,17 +86,17 @@ public class MeanCoVData {
    
 
    public void printTestcaseData(final File folder) throws IOException {
-      for (final Result result : results) {
+      for (final VMResult result : results) {
          final File csvFile = new File(folder, "result_" + testMethodName + "_" + result.getDate() + ".csv");
          printResult(result, csvFile);
       }
       System.out.println();
    }
 
-   protected void printResult(final Result result, final File csvFile) throws IOException {
+   protected void printResult(final VMResult result, final File csvFile) throws IOException {
       try (BufferedWriter writer = new BufferedWriter(new FileWriter(csvFile))) {
          DescriptiveStatistics statistics = new DescriptiveStatistics();
-         for (final Value value : result.getFulldata().getValue()) {
+         for (final MeasuredValue value : result.getFulldata().getValues()) {
             statistics.addValue(value.getValue());
             if (statistics.getValues().length == avgCount) {
                final double cov = statistics.getVariance() / statistics.getMean();

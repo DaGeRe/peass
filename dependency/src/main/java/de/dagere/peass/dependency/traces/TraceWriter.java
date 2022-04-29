@@ -1,7 +1,14 @@
 package de.dagere.peass.dependency.traces;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.WritableByteChannel;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.stream.Collectors;
 
@@ -23,7 +30,7 @@ public class TraceWriter {
    private final TestCase testcase;
    private final ResultsFolders resultsFolders;
    private final TraceFileMapping traceFileMapping;
-   
+
    public TraceWriter(final String version, final TestCase testcase, final ResultsFolders resultsFolders, final TraceFileMapping traceFileMapping) {
       this.version = version;
       this.testcase = testcase;
@@ -51,11 +58,11 @@ public class TraceWriter {
          final String shortVersion) throws IOException {
       final File currentTraceFile = new File(methodDir, shortVersion);
       traceFileMapping.addTraceFile(testcase, currentTraceFile);
-      //Files.write(currentTraceFile.toPath(), trace.getWholeTrace().getBytes());
+      //writeStringToFile(currentTraceFile, trace.getWholeTrace(), StandardCharsets.UTF_8);
       final File commentlessTraceFile = new File(methodDir, shortVersion + OneTraceGenerator.NOCOMMENT);
-      Files.write(commentlessTraceFile.toPath(), trace.getCommentlessTrace().getBytes());
+      writeStringToFile(commentlessTraceFile, trace.getCommentlessTrace(), StandardCharsets.UTF_8);
       final File methodTrace = new File(methodDir, shortVersion + OneTraceGenerator.METHOD);
-      Files.write(methodTrace.toPath(), trace.getTraceMethods().getBytes());
+      writeStringToFile(methodTrace, trace.getTraceMethods(), StandardCharsets.UTF_8);
       if (sizeInMB < 5) {
          final File methodExpandedTrace = new File(methodDir, shortVersion + OneTraceGenerator.METHOD_EXPANDED);
          Files.write(methodExpandedTrace.toPath(), traceMethodReader.getExpandedTrace()
@@ -69,5 +76,14 @@ public class TraceWriter {
       TraceCallSummary traceSummary = TraceSummaryTransformer.transform(testcase, traceMethodReader.getExpandedTrace());
       Constants.OBJECTMAPPER.writeValue(summaryFile, traceSummary);
       return methodTrace;
+   }
+
+   public void writeStringToFile(final File goalFile, final String trace, final Charset charset) throws FileNotFoundException, IOException {
+      ByteBuffer bytebuffer = charset.encode(trace);
+
+      try (FileOutputStream outputStream = new FileOutputStream(goalFile);
+            WritableByteChannel channel = Channels.newChannel(outputStream)) {
+         channel.write(bytebuffer);
+      }
    }
 }

@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.bind.JAXBException;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -72,7 +72,7 @@ public class AdaptiveExecutorTest {
    }
 
    @Test
-   public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+   public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
             MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
          VCSTestUtils.mockGetVCS(mockedVCS);
@@ -93,7 +93,7 @@ public class AdaptiveExecutorTest {
    }
 
    @Test
-   public void testConstructorExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+   public void testConstructorExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
             MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
          VCSTestUtils.mockGetVCS(mockedVCS);
@@ -111,7 +111,7 @@ public class AdaptiveExecutorTest {
       }
    }
    
-   private void measureNode(final CallTreeNode nodeWithDuration) throws IOException, InterruptedException, JAXBException, XmlPullParserException {
+   private void measureNode(final CallTreeNode nodeWithDuration) throws IOException, InterruptedException,  XmlPullParserException {
       final Set<CallTreeNode> included = new HashSet<>();
       nodeWithDuration.setOtherVersionNode(nodeWithDuration);
       included.add(nodeWithDuration);

@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.xml.bind.JAXBException;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.aspectj.util.FileUtil;
@@ -61,7 +59,7 @@ public class AdaptiveExecutorMoreParameterIT {
    }
 
    private void testSuccessfull()
-         throws IOException, InterruptedException, JAXBException, FileNotFoundException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
+         throws IOException, InterruptedException, FileNotFoundException, XmlPullParserException, AnalysisConfigurationException, ViewNotFoundException {
       LOG.debug("Executor: {}", executor);
       final Set<CallTreeNode> included = new HashSet<>();
       final String kiekerPattern = "public void defaultpackage.NormalDependency.child1(int[],double,java.lang.String)";
@@ -81,7 +79,7 @@ public class AdaptiveExecutorMoreParameterIT {
    }
 
    @Test
-   public void testFullMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+   public void testFullMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
             MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
          VCSTestUtils.mockGetVCS(mockedVCS);
@@ -93,7 +91,7 @@ public class AdaptiveExecutorMoreParameterIT {
    }
 
    @Test
-   public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException, JAXBException {
+   public void testOneMethodExecution() throws IOException, XmlPullParserException, InterruptedException, ViewNotFoundException, AnalysisConfigurationException {
       try (MockedStatic<VersionControlSystem> mockedVCS = Mockito.mockStatic(VersionControlSystem.class);
             MockedStatic<GitUtils> mockedGitUtils = Mockito.mockStatic(GitUtils.class)) {
          VCSTestUtils.mockGetVCS(mockedVCS);

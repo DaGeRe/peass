@@ -7,7 +7,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.io.FileUtils;
 
-import de.dagere.kopeme.generated.Result;
+import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.analysis.measurement.statistics.MeanCoVData;
 import de.dagere.peass.analysis.measurement.statistics.MeanHistogramData;
 import de.dagere.peass.measurement.statistics.data.EvaluationPair;
@@ -41,8 +41,8 @@ public class PngWriter {
    public File generatePlots(final TestData measurementEntry, final Entry<String, EvaluationPair> entry, final boolean change) {
       // final List<Result> currentValues = ConfidenceInterval.getWarmupData(entry.getValue().getCurrent());
       // final List<Result> previousValues = ConfidenceInterval.getWarmupData(entry.getValue().getPrevius());
-      final List<Result> currentValues = entry.getValue().getCurrent();
-      final List<Result> previousValues = entry.getValue().getPrevius();
+      final List<VMResult> currentValues = entry.getValue().getCurrent();
+      final List<VMResult> previousValues = entry.getValue().getPrevius();
 
       final MeanCoVData data = new MeanCoVData(measurementEntry.getTestMethod(), currentValues);
       final MeanCoVData dataPrev = new MeanCoVData(measurementEntry.getTestMethod(), previousValues);
