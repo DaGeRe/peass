@@ -157,6 +157,9 @@ public class ClazzFileFinder {
    }
    
    public File getClazzFile(final File module, final ChangedEntity entity) {
+      if (!module.exists()) {
+         throw new RuntimeException("Module folder " + module.getAbsolutePath() + " did not exist");
+      }
       LOG.debug("Searching: {} in {}", entity, module.getAbsolutePath());
       final String clazzName = getOuterClass(entity.getClazz());
       final String clazzFileName = clazzName.endsWith(".java") ? clazzName : clazzName.replace('.', File.separatorChar) + ".java";
