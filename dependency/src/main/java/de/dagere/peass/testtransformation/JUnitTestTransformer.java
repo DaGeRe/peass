@@ -344,10 +344,18 @@ public class JUnitTestTransformer implements TestTransformer {
             LOG.warn("Clazz {} has no JUnit version", clazzFile);
          }
       } else {
-         /**
-          * By default, the dependency selection adds all changed clazzes as tests (since a class not containing a test may contain a new test), so this is mostly not a real error
-          */
-         LOG.error("Did not find {} for {} - class not loaded (since it is not a test class?)", clazzFile, clazzname);
+         printSearchDebugInfos(clazzname, clazzFile);
+      }
+
+      return methods;
+   }
+
+   private void printSearchDebugInfos(final TestCase clazzname, final File clazzFile) {
+      /**
+       * By default, the dependency selection adds all changed clazzes as tests (since a class not containing a test may contain a new test), so this is mostly not a real error
+       */
+      LOG.error("Did not find {} for {} - class not loaded (since it is not a test class?)", clazzFile, clazzname);
+      if (clazzFile != null && clazzFile.getParentFile() != null) {
          if (clazzFile.getParentFile().exists()) {
             LOG.debug("Parent folder {} exists", clazzFile.getParentFile());
             for (File file : clazzFile.getParentFile().listFiles()) {
@@ -356,9 +364,9 @@ public class JUnitTestTransformer implements TestTransformer {
          } else {
             LOG.debug("Parent folder {} does not exist", clazzFile.getParentFile());
          }
+      } else {
+         LOG.debug("File is null");
       }
-
-      return methods;
    }
 
    private void addTestMethodNames(final TestCase clazzname, final List<TestCase> methods, final Integer junit, final ClassOrInterfaceDeclaration clazz) {
