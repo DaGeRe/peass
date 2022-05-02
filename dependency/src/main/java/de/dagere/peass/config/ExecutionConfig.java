@@ -34,6 +34,8 @@ public class ExecutionConfig implements Serializable {
    private List<String> includes = new LinkedList<>();
    private List<String> excludes = new LinkedList<>();
 
+   private List<String> forbiddenMethods = new LinkedList<>();
+
    private String commit = "HEAD";
    private String commitOld = "HEAD~1";
    protected String startcommit;
@@ -86,6 +88,7 @@ public class ExecutionConfig implements Serializable {
       this.testGoal = other.getTestGoal();
       this.includes = other.getIncludes();
       this.excludes = other.getExcludes();
+      this.forbiddenMethods = other.getForbiddenMethods();
       this.commit = other.getCommit();
       this.commitOld = other.getCommitOld();
       this.startcommit = other.getStartcommit();
@@ -173,6 +176,14 @@ public class ExecutionConfig implements Serializable {
 
    public void setExcludes(final List<String> excludes) {
       this.excludes = excludes;
+   }
+
+   public List<String> getForbiddenMethods() {
+      return forbiddenMethods;
+   }
+
+   public void setForbiddenMethods(List<String> forbiddenMethods) {
+      this.forbiddenMethods = forbiddenMethods;
    }
 
    @JsonIgnore
