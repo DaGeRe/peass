@@ -160,7 +160,7 @@ public class ExecutionConfig implements Serializable {
       this.testGoal = testGoal;
    }
 
-   @JsonInclude(Include.NON_NULL)
+   @JsonInclude(Include.NON_EMPTY)
    public List<String> getIncludes() {
       return includes;
    }
@@ -169,7 +169,7 @@ public class ExecutionConfig implements Serializable {
       this.includes = includes;
    }
 
-   @JsonInclude(Include.NON_NULL)
+   @JsonInclude(Include.NON_EMPTY)
    public List<String> getExcludes() {
       return excludes;
    }
@@ -178,11 +178,12 @@ public class ExecutionConfig implements Serializable {
       this.excludes = excludes;
    }
 
+   @JsonInclude(Include.NON_EMPTY)
    public List<String> getForbiddenMethods() {
       return forbiddenMethods;
    }
 
-   public void setForbiddenMethods(List<String> forbiddenMethods) {
+   public void setForbiddenMethods(final List<String> forbiddenMethods) {
       this.forbiddenMethods = forbiddenMethods;
    }
 
