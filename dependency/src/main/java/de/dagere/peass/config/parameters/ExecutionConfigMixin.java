@@ -16,6 +16,9 @@ public class ExecutionConfigMixin {
    @Option(names = { "-excludes", "--excludes" }, description = "Testcases for exclusion (default: empty, excludes no test)")
    protected String[] excludes;
 
+   @Option(names = { "-forbiddenMethods", "--forbiddenMethods" }, description = "Testcases that call one of these methods are excluded")
+   protected String[] forbiddenMethods;
+
    @Option(names = { "-commit", "--commit" }, description = "Newer commit for regression test selection / measurement. Do not use together with startcommit / endcommit.")
    protected String commit;
    
@@ -195,6 +198,14 @@ public class ExecutionConfigMixin {
       this.excludes = excludes;
    }
 
+   public String[] getForbiddenMethods() {
+      return forbiddenMethods;
+   }
+
+   public void setForbiddenMethods(String[] forbiddenMethods) {
+      this.forbiddenMethods = forbiddenMethods;
+   }
+
    public WorkloadType getWorkloadType() {
       return workloadType;
    }
@@ -318,6 +329,13 @@ public class ExecutionConfigMixin {
             config.getExcludes().add(exclude);
          }
       }
+
+      if (getForbiddenMethods() != null) {
+         for (String forbiddenMethod : getForbiddenMethods()) {
+            config.getForbiddenMethods().add(forbiddenMethod);
+         }
+      }
+      
       if (getPl() != null) {
          config.setPl(pl);
       }

@@ -243,29 +243,76 @@ public class DependencyManager extends KiekerResultManager {
 
       LOG.debug("Test: {} ", testcase);
       LOG.debug("Dependencies: {}", allCalledClasses.size());
-      dependencies.setDependencies(testcase, allCalledClasses);
+      
+      boolean testExcluded = false;
+
+      if (forbiddenMethodCalled(allCalledClasses)) {
+         testExcluded = true;
+         fakeConfig.getExecutionConfig().getExcludes().add(testcase.getExecutable());
+      }
+      
+      if (getTraceSize(kiekerResultFolders) > fakeConfig.getKiekerConfig().getTraceSizeInMb()) {
+         testExcluded = true;
+      }
+
+      if (!testExcluded) {
+         dependencies.setDependencies(testcase, allCalledClasses);
+      }
+   }
+
+   private boolean forbiddenMethodCalled(final Map<ChangedEntity, Set<String>> allCalledClasses) {
+      List<String> forbiddenMethods = fakeConfig.getExecutionConfig().getForbiddenMethods();
+
+      for (String forbiddenMethod : forbiddenMethods) {
+         if (traceContainsMethod(allCalledClasses, forbiddenMethod)) {
+            return true;
+         }
+      }
+
+      return false;
+   }
+
+   private boolean traceContainsMethod(final Map<ChangedEntity, Set<String>> allCalledClasses, final String methodToFind) {
+      String[] classAndMethod = methodToFind.split("#");
+
+      for (Entry<ChangedEntity, Set<String>> calledClass : allCalledClasses.entrySet()) {
+         if (calledClass.getKey().getClazz().equals(classAndMethod[0])) {
+            Set<String> calledMethods = calledClass.getValue();
+            if (calledMethods.contains(classAndMethod[1])) {
+               return true;
+            }
+         }
+      }
+
+      return false;
+   }
+
+   private long getTraceSize(final File[] kiekerResultFolders) {
+      long overallSizeInMB = 0;
+      for (File kiekerResultFolder : kiekerResultFolders) {
+         final long size = FileUtils.sizeOfDirectory(kiekerResultFolder);
+         final long sizeInMB = size / (1024 * 1024);
+         overallSizeInMB += sizeInMB;
+
+         LOG.debug("Size: {} Folder: {}", sizeInMB, kiekerResultFolder);
+      }
+
+      return overallSizeInMB;
    }
 
    private Map<ChangedEntity, Set<String>> getCalledMethods(final ModuleClassMapping mapping, final File[] kiekerResultFolders) {
       final Map<ChangedEntity, Set<String>> allCalledClasses = new LinkedHashMap<ChangedEntity, Set<String>>();
       for (File kiekerResultFolder : kiekerResultFolders) {
-         final long size = FileUtils.sizeOfDirectory(kiekerResultFolder);
-         final long sizeInMB = size / (1024 * 1024);
-
-         LOG.debug("Size: {} Folder: {}", sizeInMB, kiekerResultFolder);
-         if (sizeInMB > fakeConfig.getKiekerConfig().getTraceSizeInMb()) {
-            LOG.error("Trace too big!");
-         } else {
-            LOG.debug("Reading Kieker folder: {}", kiekerResultFolder.getAbsolutePath());
-            CalledMethodLoader calledMethodLoader = new CalledMethodLoader(kiekerResultFolder, mapping, fakeConfig.getKiekerConfig());
-            final Map<ChangedEntity, Set<String>> calledMethods = calledMethodLoader.getCalledMethods();
-            for (Map.Entry<ChangedEntity, Set<String>> calledMethod : calledMethods.entrySet()) {
-               if (!allCalledClasses.containsKey(calledMethod.getKey())) {
-                  allCalledClasses.put(calledMethod.getKey(), calledMethod.getValue());
-               } else {
-                  Set<String> alreadyKnownCalledClasses = allCalledClasses.get(calledMethod.getKey());
-                  alreadyKnownCalledClasses.addAll(calledMethod.getValue());
-               }
+         LOG.debug("Reading Kieker folder: {}", kiekerResultFolder.getAbsolutePath());
+         
+         CalledMethodLoader calledMethodLoader = new CalledMethodLoader(kiekerResultFolder, mapping, fakeConfig.getKiekerConfig());
+         final Map<ChangedEntity, Set<String>> calledMethods = calledMethodLoader.getCalledMethods();
+         for (Map.Entry<ChangedEntity, Set<String>> calledMethod : calledMethods.entrySet()) {
+            if (!allCalledClasses.containsKey(calledMethod.getKey())) {
+               allCalledClasses.put(calledMethod.getKey(), calledMethod.getValue());
+            } else {
+               Set<String> alreadyKnownCalledClasses = allCalledClasses.get(calledMethod.getKey());
+               alreadyKnownCalledClasses.addAll(calledMethod.getValue());
             }
          }
       }
