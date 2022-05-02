@@ -41,9 +41,13 @@ public class KiekerConfigMixin {
    @Option(names = { "-onlyOneCallRecording",
          "--onlyOneCallRecording" }, description = "Only record calls once (ONLY allowed for regression test selection)")
    public boolean onlyOneCallRecording = false;
-   
+
    @Option(names = { "-excludeForTracing", "--excludeForTracing" }, description = "Methods that are excluded for tracing in RTS and RCA (default: empty, excludes no method)")
    protected String[] excludeForTracing;
+
+   @Option(names = { "-skipDefaultConstructor",
+         "--skipDefaultConstructor" }, description = "Deactivates creation of the default constructor (required if Lombok is used)")
+   protected boolean skipDefaultConstructor = false;
 
    public int getWriteInterval() {
       return writeInterval;
@@ -60,7 +64,7 @@ public class KiekerConfigMixin {
    public boolean isNotUseSelectiveInstrumentation() {
       return notUseSelectiveInstrumentation;
    }
-   
+
    public boolean isNotUseAggregation() {
       return notUseAggregation;
    }
@@ -81,6 +85,14 @@ public class KiekerConfigMixin {
       this.traceSizeInMb = traceSizeInMb;
    }
 
+   public boolean isSkipDefaultConstructor() {
+      return skipDefaultConstructor;
+   }
+
+   public void setSkipDefaultConstructor(final boolean skipDefaultConstructor) {
+      this.skipDefaultConstructor = skipDefaultConstructor;
+   }
+
    public KiekerConfig getKiekerConfig() {
       KiekerConfig kiekerConfig = new KiekerConfig(true);
       kiekerConfig.setUseCircularQueue(useCircularQueue);
@@ -92,6 +104,7 @@ public class KiekerConfigMixin {
       kiekerConfig.setKiekerQueueSize(kiekerQueueSize);
       kiekerConfig.setTraceSizeInMb(traceSizeInMb);
       kiekerConfig.setOnlyOneCallRecording(onlyOneCallRecording);
+      kiekerConfig.setCreateDefaultConstructor(!skipDefaultConstructor);
       if (excludeForTracing != null) {
          LinkedHashSet<String> excludedForTracing = new LinkedHashSet<>();
          for (String exclude : excludeForTracing) {

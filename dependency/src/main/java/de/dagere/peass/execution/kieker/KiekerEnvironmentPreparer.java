@@ -66,7 +66,7 @@ public class KiekerEnvironmentPreparer {
 
    private void instrumentSources(final MeasurementConfig config) throws IOException {
       final InstrumentKiekerSource instrumentKiekerSource;
-      LOG.debug("Create default constructor: {}", config.getExecutionConfig().isCreateDefaultConstructor());
+      LOG.debug("Create default constructor: {}", config.getKiekerConfig().isCreateDefaultConstructor());
       final LinkedHashSet<String> excludedPatterns = config.getKiekerConfig().getExcludeForTracing();
       
       buildJettyExclusion(excludedPatterns);
@@ -82,7 +82,7 @@ public class KiekerEnvironmentPreparer {
       final InstrumentKiekerSource instrumentKiekerSource;
 
       AllowedKiekerRecord record = config.getKiekerConfig().getRecord();
-      boolean createDefaultConstructor = config.getExecutionConfig().isCreateDefaultConstructor();
+      boolean createDefaultConstructor = config.getKiekerConfig().isCreateDefaultConstructor();
       boolean adaptiveInstrumentation = config.getKiekerConfig().isAdaptiveInstrumentation();
       int repetitions = config.getRepetitions();
       boolean extractMethod = config.getKiekerConfig().isExtractMethod();

@@ -39,7 +39,6 @@ public class ExecutionConfig implements Serializable {
    protected String startcommit;
    protected String endcommit;
    private String pl;
-   private boolean createDefaultConstructor = true;
    private int kiekerWaitTime = 10;
 
    private boolean redirectSubprocessOutputToFile = true;
@@ -91,7 +90,6 @@ public class ExecutionConfig implements Serializable {
       this.commitOld = other.getCommitOld();
       this.startcommit = other.getStartcommit();
       this.endcommit = other.getEndcommit();
-      this.createDefaultConstructor = other.isCreateDefaultConstructor();
       this.kiekerWaitTime = other.kiekerWaitTime;
       this.redirectSubprocessOutputToFile = other.isRedirectSubprocessOutputToFile();
       this.removeSnapshots = other.removeSnapshots;
@@ -186,7 +184,7 @@ public class ExecutionConfig implements Serializable {
       return commit;
    }
 
-   public void setCommit(String commit) {
+   public void setCommit(final String commit) {
       this.commit = commit;
    }
 
@@ -194,7 +192,7 @@ public class ExecutionConfig implements Serializable {
       return commitOld;
    }
 
-   public void setCommitOld(String commitOld) {
+   public void setCommitOld(final String commitOld) {
       this.commitOld = commitOld;
    }
 
@@ -214,14 +212,6 @@ public class ExecutionConfig implements Serializable {
 
    public void setEndcommit(final String endversion) {
       this.endcommit = endversion;
-   }
-
-   public boolean isCreateDefaultConstructor() {
-      return createDefaultConstructor;
-   }
-
-   public void setCreateDefaultConstructor(final boolean createDefaultConstructor) {
-      this.createDefaultConstructor = createDefaultConstructor;
    }
 
    public int getKiekerWaitTime() {
@@ -276,7 +266,7 @@ public class ExecutionConfig implements Serializable {
       return excludeLog4jSlf4jImpl;
    }
 
-   public void setExcludeLog4jSlf4jImpl(boolean excludeLog4jSlf4jImpl) {
+   public void setExcludeLog4jSlf4jImpl(final boolean excludeLog4jSlf4jImpl) {
       this.excludeLog4jSlf4jImpl = excludeLog4jSlf4jImpl;
    }
 
@@ -375,7 +365,7 @@ public class ExecutionConfig implements Serializable {
       return gradleJavaPluginName;
    }
    
-   public void setGradleJavaPluginName(String gradleJavaPluginName) {
+   public void setGradleJavaPluginName(final String gradleJavaPluginName) {
       this.gradleJavaPluginName = gradleJavaPluginName;
    }
    
@@ -389,7 +379,7 @@ public class ExecutionConfig implements Serializable {
       return gradleSpringBootPluginName;
    }
    
-   public void setGradleSpringBootPluginName(String gradleSpringBootPluginName) {
+   public void setGradleSpringBootPluginName(final String gradleSpringBootPluginName) {
       this.gradleSpringBootPluginName = gradleSpringBootPluginName;
    }
    
