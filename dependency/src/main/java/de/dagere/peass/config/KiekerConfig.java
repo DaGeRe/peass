@@ -26,7 +26,7 @@ public class KiekerConfig implements Serializable {
    private boolean extractMethod = false;
    private long traceSizeInMb = DEFAULT_TRACE_SIZE_IN_MB;
    private long kiekerQueueSize = DEFAULT_KIEKER_QUEUE_SIZE;
-   private boolean createDefaultConstructor;
+   private boolean createDefaultConstructor = true;
    
    // We want a set that preserves insertion order, so we require a LinkedHashSet
    private LinkedHashSet<String> excludeForTracing = new LinkedHashSet<>();
