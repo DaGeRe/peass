@@ -250,6 +250,7 @@ public class TestCase implements Comparable<TestCase>, Serializable {
       return result;
    }
 
+   @JsonIgnore
    public String getPackage() {
       int lastDotIndex = clazz.lastIndexOf('.');
       if (lastDotIndex != -1) {
