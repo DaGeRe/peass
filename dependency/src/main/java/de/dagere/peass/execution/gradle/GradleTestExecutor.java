@@ -24,7 +24,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
 
    private static final Logger LOG = LogManager.getLogger(GradleTestExecutor.class);
 
-   private final File gradleHome;
+   protected final File gradleHome;
 
    public GradleTestExecutor(final PeassFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
       super(folders, testTransformer, env);

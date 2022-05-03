@@ -1,0 +1,82 @@
+package de.dagere.peass.execution.gradle;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+
+import de.dagere.kopeme.parsing.GradleParseHelper;
+import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
+import de.dagere.peass.execution.processutils.ProcessSuccessTester;
+import de.dagere.peass.execution.utils.CommandConcatenator;
+import de.dagere.peass.execution.utils.EnvironmentVariables;
+import de.dagere.peass.execution.utils.KoPeMeExecutor;
+import de.dagere.peass.execution.utils.ProjectModules;
+import de.dagere.peass.folders.PeassFolders;
+import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.utils.StreamGobbler;
+
+public class AnboxTestExecutor extends GradleTestExecutor {
+
+   private static final Logger LOG = LogManager.getLogger(AnboxTestExecutor.class);
+
+   public AnboxTestExecutor(final PeassFolders folders, final JUnitTestTransformer testTransformer, final EnvironmentVariables env) {
+      super(folders, testTransformer, env);
+   }
+
+   @Override
+   public void prepareKoPeMeExecution(final File logFile) throws IOException, XmlPullParserException, InterruptedException {
+      super.prepareKoPeMeExecution(logFile);
+
+      compileSources();
+   }
+
+   private void compileSources() throws IOException {
+      String wrapper = new File(folders.getProjectFolder(), env.fetchGradleCall()).getAbsolutePath();
+
+      ProcessBuilder builder = new ProcessBuilder(wrapper, "installDebug", "installDebugAndroidTest");
+      builder.directory(folders.getProjectFolder());
+
+      Process process = builder.start();
+      StreamGobbler.showFullProcess(process);
+   }
+
+   /**
+    * Executes the Gradle process; since gradle is run inside the module folder, different parameters than for the maven execution are required
+    */
+   private Process buildGradleProcess(final File moduleFolder, final File logFile, TestCase test)
+         throws IOException, XmlPullParserException, InterruptedException {
+
+      String[] anboxOriginals = new String[] { "adb", "shell", "am", "instrument", "-w", "-e", "class" };
+
+      final String[] vars = CommandConcatenator.concatenateCommandArrays(anboxOriginals,
+            new String[] { test.getExecutable(), "com.example.android_example.test/androidx.test.runner.AndroidJUnitRunner" });
+      ProcessBuilderHelper processBuilderHelper = new ProcessBuilderHelper(env, folders);
+      processBuilderHelper.parseParams(test.getParams());
+
+      LOG.debug("Executing gradle test in moduleFolder: {}", moduleFolder);
+      return processBuilderHelper.buildFolderProcess(moduleFolder, logFile, vars);
+   }
+
+   /**
+    * Runs the given test and saves the results to the result folder.
+    * 
+    * @param specialResultFolder Folder for saving the results
+    * @param testname Name of the test that should be run
+    */
+   @Override
+   protected void runTest(final File moduleFolder, final File logFile, TestCase test, final String testname, final long timeout) {
+      try {
+         final Process process = buildGradleProcess(moduleFolder, logFile, test);
+         execute(testname, timeout, process);
+      } catch (final InterruptedException | IOException | XmlPullParserException e) {
+         e.printStackTrace();
+      }
+   }
+
+}
