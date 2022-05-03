@@ -2,21 +2,15 @@ package de.dagere.peass.execution.gradle;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
-import de.dagere.peass.execution.processutils.ProcessSuccessTester;
 import de.dagere.peass.execution.utils.CommandConcatenator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
-import de.dagere.peass.execution.utils.KoPeMeExecutor;
-import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.utils.StreamGobbler;
@@ -55,7 +49,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       String[] anboxOriginals = new String[] { "adb", "shell", "am", "instrument", "-w", "-e", "class" };
 
       final String[] vars = CommandConcatenator.concatenateCommandArrays(anboxOriginals,
-            new String[] { test.getExecutable(), "com.example.android_example.test/androidx.test.runner.AndroidJUnitRunner" });
+            new String[] { test.getExecutable(), test.getPackage() + "/androidx.test.runner.AndroidJUnitRunner" });
       ProcessBuilderHelper processBuilderHelper = new ProcessBuilderHelper(env, folders);
       processBuilderHelper.parseParams(test.getParams());
 
