@@ -1,10 +1,14 @@
 package de.dagere.peass.folders;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 
@@ -76,6 +80,18 @@ public class CauseSearchFolders extends PeassFolders {
    
    public File getRcaFolder() {
       return rcaFolder;
+   }
+   
+   public List<File> getRcaMethodFiles(){
+      List<File> rcaMethodFiles = new LinkedList<>();
+      for (File commitFile : treeFolder.listFiles()) {
+         for (File testclazzFile : commitFile.listFiles()) {
+            for (File methodFile : testclazzFile.listFiles((FileFilter) new WildcardFileFilter("*.json"))) {
+               rcaMethodFiles.add(methodFile);
+            }
+         }
+      }
+      return rcaMethodFiles;
    }
 
    public File getRcaTreeFolder(final String commit, final TestCase testcase) {
