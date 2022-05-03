@@ -18,12 +18,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ExecutionConfig implements Serializable {
 
+   
+
    public static final String GRADLE_JAVA_DEFAULT_NAME = "java";
 
    public static final String GRADLE_SPRING_DEFAULT_NAME = "org.springframework.boot";
 
    public static final String CLASSPATH_SEPARATOR = ":";
 
+   public static final String DEFAULT_TEST_TRANSFORMER = "de.dagere.peass.testtransformation.JUnitTestTransformer";
+   public static final String DEFAULT_TEST_EXECUTOR = "default";
+
+   private static final String SRC_MAIN = "src/main";
+   private static final String SRC_MAIN_JAVA = "src/main/java";
+   
+   private static final String SRC_TEST_JAVA = "src/test/java";
+   private static final String SRC_TEST = "src/test";
+   private static final String SRC_ANDROID_TEST_JAVA = "src/androidTest/java/";
+   
    private static final long serialVersionUID = -6642358125854337047L;
 
    /**
@@ -57,9 +69,9 @@ public class ExecutionConfig implements Serializable {
    private boolean redirectToNull = true;
    private boolean createDetailDebugFiles = true;
 
-   private String testTransformer = "de.dagere.peass.testtransformation.JUnitTestTransformer";
-   private String testExecutor = "default";
-   
+   private String testTransformer = DEFAULT_TEST_TRANSFORMER;
+   private String testExecutor = DEFAULT_TEST_EXECUTOR;
+
    private String gradleJavaPluginName = GRADLE_JAVA_DEFAULT_NAME;
    private String gradleSpringBootPluginName = GRADLE_SPRING_DEFAULT_NAME;
 
@@ -67,14 +79,14 @@ public class ExecutionConfig implements Serializable {
 
    private List<String> clazzFolders = new LinkedList<>();
    {
-      clazzFolders.add("src/main/java");
-      clazzFolders.add("src/main");
+      clazzFolders.add(SRC_MAIN_JAVA);
+      clazzFolders.add(SRC_MAIN);
    }
    private List<String> testClazzFolders = new LinkedList<>();
    {
-      testClazzFolders.add("src/test/java");
-      testClazzFolders.add("src/test");
-      testClazzFolders.add("src/androidTest/java/");
+      testClazzFolders.add(SRC_TEST_JAVA);
+      testClazzFolders.add(SRC_TEST);
+      testClazzFolders.add(SRC_ANDROID_TEST_JAVA);
    }
 
    public ExecutionConfig() {
@@ -111,7 +123,7 @@ public class ExecutionConfig implements Serializable {
 
       this.clazzFolders = other.clazzFolders;
       this.testClazzFolders = other.testClazzFolders;
-      
+
       this.gradleJavaPluginName = other.gradleJavaPluginName;
       this.gradleSpringBootPluginName = other.gradleSpringBootPluginName;
    }
@@ -234,6 +246,7 @@ public class ExecutionConfig implements Serializable {
       this.kiekerWaitTime = kiekerWaitTime;
    }
 
+   @JsonInclude(JsonInclude.Include.NON_NULL)
    public String getPl() {
       return pl;
    }
@@ -322,7 +335,7 @@ public class ExecutionConfig implements Serializable {
       this.redirectToNull = redirectToNull;
    }
 
-   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+   @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = TestTransformerFilter.class)
    public String getTestTransformer() {
       return testTransformer;
    }
@@ -331,7 +344,7 @@ public class ExecutionConfig implements Serializable {
       this.testTransformer = testTransformer;
    }
 
-   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+   @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = TestExecutorFilter.class)
    public String getTestExecutor() {
       return testExecutor;
    }
@@ -340,6 +353,7 @@ public class ExecutionConfig implements Serializable {
       this.testExecutor = testExecutor;
    }
 
+   @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = ClazzFoldersFilter.class)
    public List<String> getClazzFolders() {
       return clazzFolders;
    }
@@ -348,6 +362,7 @@ public class ExecutionConfig implements Serializable {
       this.clazzFolders = clazzFolders;
    }
 
+   @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = TestClazzFoldersFilter.class)
    public List<String> getTestClazzFolders() {
       return testClazzFolders;
    }
@@ -364,6 +379,7 @@ public class ExecutionConfig implements Serializable {
       return createDetailDebugFiles;
    }
 
+   @JsonInclude(JsonInclude.Include.NON_NULL)
    public String getProperties() {
       return properties;
    }
@@ -371,30 +387,30 @@ public class ExecutionConfig implements Serializable {
    public void setProperties(final String properties) {
       this.properties = properties;
    }
-   
-   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+
+   @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = GradleJavaPluginNameFilter.class)
    public String getGradleJavaPluginName() {
       return gradleJavaPluginName;
    }
-   
+
    public void setGradleJavaPluginName(final String gradleJavaPluginName) {
       this.gradleJavaPluginName = gradleJavaPluginName;
    }
-   
+
    @JsonIgnore
    public String[] getGradleJavaPluginNames() {
       return gradleJavaPluginName.split(";");
    }
-   
-   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+
+   @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = SpringBootPluginNameFilter.class)
    public String getGradleSpringBootPluginName() {
       return gradleSpringBootPluginName;
    }
-   
+
    public void setGradleSpringBootPluginName(final String gradleSpringBootPluginName) {
       this.gradleSpringBootPluginName = gradleSpringBootPluginName;
    }
-   
+
    @JsonIgnore
    public String[] getGradleSpringBootPluginNames() {
       return gradleSpringBootPluginName.split(";");
@@ -406,5 +422,77 @@ public class ExecutionConfig implements Serializable {
       allFolders.addAll(clazzFolders);
       allFolders.addAll(testClazzFolders);
       return allFolders;
+   }
+
+   /**
+    * The following boilerplate classes are not very nice; since we want to save most values and eventually change the default values, we cannot
+    * use JsonInclude(NON_DEFAULT) at class level; therefore, we need to use custom filters. 
+    * @author DaGeRe
+    *
+    */
+   private static final class TestExecutorFilter {
+      @Override
+      public boolean equals(Object obj) {
+         if (obj instanceof String && DEFAULT_TEST_EXECUTOR.equals(obj)) {
+            return true;
+         }
+         return super.equals(obj);
+      }
+   }
+
+   private static final class TestTransformerFilter {
+      @Override
+      public boolean equals(Object obj) {
+         if (obj instanceof String && DEFAULT_TEST_TRANSFORMER.equals(obj)) {
+            return true;
+         }
+         return super.equals(obj);
+      }
+   }
+
+   private static final class GradleJavaPluginNameFilter {
+      @Override
+      public boolean equals(Object obj) {
+         if (obj instanceof String && GRADLE_JAVA_DEFAULT_NAME.equals(obj)) {
+            return true;
+         }
+         return super.equals(obj);
+      }
+   }
+
+   private static final class SpringBootPluginNameFilter {
+      @Override
+      public boolean equals(Object obj) {
+         if (obj instanceof String && GRADLE_SPRING_DEFAULT_NAME.equals(obj)) {
+            return true;
+         }
+         return super.equals(obj);
+      }
+   }
+   
+   private static final class ClazzFoldersFilter {
+      @Override
+      public boolean equals(Object obj) {
+         if (obj instanceof List) {
+            List list = (List) obj;
+            if (list.size() == 2 && list.get(0).equals(SRC_MAIN_JAVA) && list.get(1).equals(SRC_MAIN)) {
+               return true;
+            }
+         }
+         return super.equals(obj);
+      }
+   }
+   
+   private static final class TestClazzFoldersFilter {
+      @Override
+      public boolean equals(Object obj) {
+         if (obj instanceof List) {
+            List list = (List) obj;
+            if (list.size() == 3 && list.get(0).equals(SRC_TEST_JAVA) && list.get(1).equals(SRC_TEST) && list.get(2).equals(SRC_ANDROID_TEST_JAVA)) {
+               return true;
+            }
+         }
+         return super.equals(obj);
+      }
    }
 }
