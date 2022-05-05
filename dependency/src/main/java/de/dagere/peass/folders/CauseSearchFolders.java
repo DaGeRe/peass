@@ -63,7 +63,7 @@ public class CauseSearchFolders extends PeassFolders {
    }
 
    public File getArchiveResultFolder(final String commit, final TestCase testcase) {
-      final File folder = new File(archivedFolder, commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethod());
+      final File folder = new File(archivedFolder, commit + File.separator + testcase.getClazz() + File.separator + testcase.getMethodWithParams());
       if (!folder.exists()) {
          folder.mkdirs();
       }

@@ -55,7 +55,7 @@ public class KoPeMeTreeConverter {
          node.setVmValues(new MeasuredValues());
          node.setVmValuesPredecessor(new MeasuredValues());
          for (File measuredVersionFolder : versionFolder.listFiles()) {
-            for (File xmlFolder : measuredVersionFolder.listFiles((FileFilter) new WildcardFileFilter(testcase.getMethod() + "*xml"))) {
+            for (File xmlFolder : measuredVersionFolder.listFiles((FileFilter) new WildcardFileFilter(testcase.getMethodWithParams() + "*xml"))) {
 
                readFile(version, testcase, measuredVersionFolder.getName(), xmlFolder);
             }
