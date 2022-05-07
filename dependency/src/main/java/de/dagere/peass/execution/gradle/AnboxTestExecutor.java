@@ -54,7 +54,7 @@ public class AnboxTestExecutor extends GradleTestExecutor {
       String[] anboxOriginals = new String[] { "adb", "shell", "am", "instrument", "-w", "-e", "class" };
 
       final String[] vars = CommandConcatenator.concatenateCommandArrays(anboxOriginals,
-            new String[] { test.getExecutable(), test.getPackage() + "/androidx.test.runner.AndroidJUnitRunner" });
+            new String[] { test.getExecutable(), test.getPackage() + ".test" + "/androidx.test.runner.AndroidJUnitRunner" });
       ProcessBuilderHelper processBuilderHelper = new ProcessBuilderHelper(env, folders);
       processBuilderHelper.parseParams(test.getParams());
 
