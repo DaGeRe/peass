@@ -106,7 +106,7 @@ public final class GitUtils {
       if (projectFolderDest.exists()) {
          throw new RuntimeException("Can not clone to existing folder: " + projectFolderDest.getAbsolutePath());
       }
-      final ProcessBuilder builder = new ProcessBuilder("git", "clone", clonedProject, goalFolder);
+      final ProcessBuilder builder = new ProcessBuilder("git", "clone", "file://" + clonedProject, goalFolder);
       builder.directory(projectFolderDest.getParentFile());
       StreamGobbler.showFullProcess(builder.start());
    }

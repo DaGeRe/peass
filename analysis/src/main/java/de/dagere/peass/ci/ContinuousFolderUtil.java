@@ -39,7 +39,7 @@ public enum ContinuousFolderUtil {
       File originalVcsFolder = VersionControlSystem.findVCSFolder(cloneProjectFolder);
       if (originalVcsFolder != null && originalVcsFolder.exists()) {
          LOG.info("Cloning using git clone");
-         final ProcessBuilder builder = new ProcessBuilder("git", "clone", originalVcsFolder.getAbsolutePath());
+         final ProcessBuilder builder = new ProcessBuilder("git", "clone", "file://" + originalVcsFolder.getAbsolutePath());
          builder.directory(localFolder);
          Process process = builder.start();
          StreamGobbler.showFullProcess(process);
