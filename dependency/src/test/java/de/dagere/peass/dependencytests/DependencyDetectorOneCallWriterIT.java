@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +37,8 @@ public class DependencyDetectorOneCallWriterIT {
 
    @Test
    public void testNormalChange() throws Exception {
-
+      Assume.assumeFalse(EnvironmentVariables.isWindows());
+      
       final ChangeManager changeManager = DependencyDetectorTestUtil.defaultChangeManager();
 
       final VersionIterator fakeIterator = new FakeFileIterator(DependencyTestConstants.CURRENT, Arrays.asList(DependencyTestConstants.NORMAL_CHANGE));

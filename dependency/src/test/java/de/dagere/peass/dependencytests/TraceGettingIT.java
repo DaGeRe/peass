@@ -17,6 +17,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.jupiter.api.Test;
 
 import com.github.javaparser.ParseException;
@@ -82,6 +83,8 @@ public class TraceGettingIT {
 
    @Test
    public void testRepetitionRepetition() throws ParseException, IOException, ViewNotFoundException, XmlPullParserException, InterruptedException, ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+      Assume.assumeFalse(EnvironmentVariables.isWindows());
+      
       final File project = REPETITION_REPETITION;
       final String githash = "5";
       executeTraceGetting(project, githash);
