@@ -43,7 +43,7 @@ public class OnceRunner {
       if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");
       } else {
-         if (!GitUtils.getName("HEAD", folders.getProjectFolder()).equals(version)) {
+         if (GitUtils.getName("HEAD", folders.getProjectFolder()) == null || !GitUtils.getName("HEAD", folders.getProjectFolder()).equals(version)) {
             GitUtils.goToTag(version, folders.getProjectFolder());
          }
       }
