@@ -55,6 +55,7 @@ public class TestPropertyReadHelper {
       config.setCommit("000001");
       
       File projectFolder = new File("target/current");
+      projectFolder.mkdirs();
       Files.touch(new File(projectFolder, "pom.xml"));
       PropertyReadHelper helper = new PropertyReadHelper(config, new ChangedEntity("Test"), changeMock, projectFolder, null, null, null);
       ChangeProperty emptyProperty = helper.read();
