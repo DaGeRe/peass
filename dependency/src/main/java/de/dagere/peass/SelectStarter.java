@@ -84,9 +84,6 @@ public class SelectStarter implements Callable<Void>{
       LOG.debug("Files: {}", outFiles);
 
       ResultsFolders mergedFolders = new ResultsFolders(config.getResultBaseFolder(), project);
-      
-      final File out = mergedFolders.getStaticTestSelectionFile();
-      final StaticTestSelection all = PartialDependenciesMerger.mergeVersions(out, outFiles);
 
       final PeassFolders folders = new PeassFolders(config.getProjectFolder());
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");
