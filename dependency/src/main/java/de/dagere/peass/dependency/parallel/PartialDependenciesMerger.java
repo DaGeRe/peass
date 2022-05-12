@@ -37,12 +37,12 @@ public class PartialDependenciesMerger {
       return merged;
    }
 
-   public static StaticTestSelection mergeVersions(final File out, final ResultsFolders[] partFolders) throws IOException, JsonGenerationException, JsonMappingException {
+   public static void mergeVersions(final File out, final ResultsFolders[] partFolders) throws IOException, JsonGenerationException, JsonMappingException {
       File[] partFiles = new File[partFolders.length];
       for (int i = 0; i < partFolders.length; i++) {
          partFiles[i] = partFolders[i].getStaticTestSelectionFile();
       }
-      return mergeVersions(out, partFiles);
+      mergeVersions(out, partFiles);
    }
 
    static List<StaticTestSelection> readDependencies(final File[] partFiles) {
