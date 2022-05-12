@@ -18,7 +18,7 @@ public class InitialVersion {
    private int jdk = 8;
 
    @JsonDeserialize(keyUsing = TestcaseKeyDeserializer.class)
-   private Map<TestCase, InitialDependency> initialDependencies = new TreeMap<>();
+   private Map<TestCase, InitialCallList> initialDependencies = new TreeMap<>();
 
    public String getVersion() {
       return version;
@@ -28,11 +28,11 @@ public class InitialVersion {
       this.version = version;
    }
 
-   public Map<TestCase, InitialDependency> getInitialDependencies() {
+   public Map<TestCase, InitialCallList> getInitialDependencies() {
       return initialDependencies;
    }
 
-   public void setInitialDependencies(final Map<TestCase, InitialDependency> initialDependencies) {
+   public void setInitialDependencies(final Map<TestCase, InitialCallList> initialDependencies) {
       this.initialDependencies = initialDependencies;
    }
 
@@ -45,9 +45,9 @@ public class InitialVersion {
    }
    
    public void addDependency(final TestCase testcase, final ChangedEntity callee) {
-      InitialDependency dependency = initialDependencies.get(testcase);  
+      InitialCallList dependency = initialDependencies.get(testcase);  
       if (dependency == null) {
-         dependency = new InitialDependency();  
+         dependency = new InitialCallList();  
          initialDependencies.put(testcase, dependency);
       }
       dependency.getEntities().add(callee);

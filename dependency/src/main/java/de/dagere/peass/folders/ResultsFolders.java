@@ -72,7 +72,7 @@ public class ResultsFolders {
       return folder;
    }
 
-   public File getDependencyLogFile(final String commit, final String commitOld) {
+   public File getRTSLogFile(final String commit, final String commitOld) {
       File folder = getRtsLogFolder();
       if (!folder.exists()) {
          folder.mkdirs();

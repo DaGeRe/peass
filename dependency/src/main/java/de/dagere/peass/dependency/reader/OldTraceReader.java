@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.InitialDependency;
+import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
@@ -46,7 +46,7 @@ public class OldTraceReader {
    }
 
    private void addInitialVersion() {
-      for (Entry<TestCase, InitialDependency> classDependency : dependencyResult.getInitialversion().getInitialDependencies().entrySet()) {
+      for (Entry<TestCase, InitialCallList> classDependency : dependencyResult.getInitialversion().getInitialDependencies().entrySet()) {
          TestCase testcase = classDependency.getKey();
          String initialVersion = dependencyResult.getInitialversion().getVersion();
          addPotentialTracefile(testcase, initialVersion);

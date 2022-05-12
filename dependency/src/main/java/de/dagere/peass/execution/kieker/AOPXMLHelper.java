@@ -12,6 +12,7 @@ import de.dagere.peass.execution.maven.pom.MavenTestExecutor;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.TestTransformer;
+import kieker.monitoring.writer.filesystem.BinaryLogStreamHandler;
 
 public class AOPXMLHelper {
 

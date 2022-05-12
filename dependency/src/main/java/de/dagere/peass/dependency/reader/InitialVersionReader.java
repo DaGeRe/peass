@@ -17,7 +17,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.InitialDependency;
+import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.InitialVersion;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
@@ -112,7 +112,7 @@ public class InitialVersionReader {
    }
 
    private void fillInitialTestDependencies() {
-      for (final Entry<TestCase, InitialDependency> dependency : dependencyResult.getInitialversion().getInitialDependencies().entrySet()) {
+      for (final Entry<TestCase, InitialCallList> dependency : dependencyResult.getInitialversion().getInitialDependencies().entrySet()) {
          for (final ChangedEntity dependentClass : dependency.getValue().getEntities()) {
             TestCase testClassName = dependency.getKey();
             addDependencies(testClassName, dependentClass);

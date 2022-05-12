@@ -145,7 +145,7 @@ public class ContinuousDependencyReader {
 
    private void executePartialRTS(final StaticTestSelection dependencies, final VersionIterator newIterator) throws FileNotFoundException {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
-         File logFile = resultsFolders.getDependencyLogFile(newIterator.getTag(), newIterator.getPredecessor());
+         File logFile = resultsFolders.getRTSLogFile(newIterator.getTag(), newIterator.getPredecessor());
          LOG.info("Executing regression test selection update - Log goes to {}", logFile.getAbsolutePath());
          try (LogRedirector director = new LogRedirector(logFile)) {
             doPartialRCS(dependencies, newIterator);
@@ -187,7 +187,7 @@ public class ContinuousDependencyReader {
    private StaticTestSelection fullyLoadDependencies(final String url, final VersionIterator iterator, final VersionKeeper nonChanges)
          throws Exception {
       if (executionConfig.isRedirectSubprocessOutputToFile()) {
-         File logFile = resultsFolders.getDependencyLogFile(iterator.getTag(), iterator.getPredecessor());
+         File logFile = resultsFolders.getRTSLogFile(iterator.getTag(), iterator.getPredecessor());
          LOG.info("Executing regression test selection - Log goes to {}", logFile.getAbsolutePath());
 
          try (LogRedirector director = new LogRedirector(logFile)) {

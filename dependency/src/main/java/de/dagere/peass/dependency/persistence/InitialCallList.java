@@ -5,7 +5,7 @@ import java.util.List;
 
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 
-public class InitialDependency {
+public class InitialCallList {
    private List<ChangedEntity> entities = new LinkedList<>();
 
    public List<ChangedEntity> getEntities() {
