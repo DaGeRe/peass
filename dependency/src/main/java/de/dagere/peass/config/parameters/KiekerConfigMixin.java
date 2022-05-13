@@ -14,7 +14,7 @@ public class KiekerConfigMixin {
    public boolean notUseSourceInstrumentation = false;
 
    @Option(names = { "-useCircularQueue", "--useCircularQueue" }, description = "Use circular queue (default false - LinkedBlockingQueue is used)")
-   public boolean useCircularQueue = false;
+   public boolean useCircularQueue = KiekerConfig.USE_CIRCULAR_QUEUE_DEFAULT;
 
    @Option(names = { "-notUseSelectiveInstrumentation",
          "--notUseSelectiveInstrumentation" }, description = "Use selective instrumentation (only selected methods / classes are instrumented) - is activated by default is source instrumentation is activated")

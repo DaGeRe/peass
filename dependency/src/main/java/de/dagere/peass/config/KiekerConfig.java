@@ -7,6 +7,8 @@ import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class KiekerConfig implements Serializable {
    
+   public static final boolean USE_CIRCULAR_QUEUE_DEFAULT = false;
+   
    public static final int DEFAULT_WRITE_INTERVAL = 5000;
    public static final int DEFAULT_KIEKER_QUEUE_SIZE = 10000000;
    public static final int DEFAULT_TRACE_SIZE_IN_MB = 100;
@@ -17,7 +19,7 @@ public class KiekerConfig implements Serializable {
    private boolean useSourceInstrumentation = true;
    private boolean useSelectiveInstrumentation = true;
    private boolean useAggregation = true;
-   private boolean useCircularQueue = true;
+   private boolean useCircularQueue = USE_CIRCULAR_QUEUE_DEFAULT;
    private boolean enableAdaptiveMonitoring = false;
    private boolean adaptiveInstrumentation = false;
    private int kiekerAggregationInterval = DEFAULT_WRITE_INTERVAL;
