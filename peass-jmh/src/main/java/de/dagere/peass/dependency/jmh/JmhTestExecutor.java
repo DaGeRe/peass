@@ -87,7 +87,7 @@ public class JmhTestExecutor extends TestExecutor {
 
    private String[] buildParameterString(final TestCase test, final File jsonResultFile) {
       String[] basicParameters;
-      if (testTransformer.getConfig().isUseKieker()) {
+      if (testTransformer.getConfig().getKiekerConfig().isUseKieker()) {
          basicParameters = buildKiekerParameters(test);
       } else {
          basicParameters = new String[] { "java" };

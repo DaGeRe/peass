@@ -52,7 +52,7 @@ public class ArgLineBuilder {
    // TODO Since Gradle requires different argument specification with systemProperty, this is not realy generic anymore - or maybe in the future again for sbt?
    protected String buildGenericArgline(final File tempFolder, final String valueSeparator, final String entrySeparator, final String kiekerLine) {
       String argline = getTieredCompilationArglinePart(entrySeparator);
-      if (testTransformer.getConfig().isUseKieker()) {
+      if (testTransformer.getConfig().getKiekerConfig().isUseKieker()) {
          final String tempFolderPath = "'" + tempFolder.getAbsolutePath() + "'";
          if (testTransformer.getConfig().getKiekerConfig().isUseSourceInstrumentation() && !testTransformer.getConfig().getKiekerConfig().isOnlyOneCallRecording()) {
             argline += TEMP_DIR + valueSeparator + tempFolderPath;
@@ -82,7 +82,7 @@ public class ArgLineBuilder {
 
    public String buildArglineGradle(final File tempFolder) {
       // final String argline = buildGenericArgline(tempFolder, ":", "\",\"", KIEKER_ARG_LINE_GRADLE);
-      if (testTransformer.getConfig().isUseKieker()) {
+      if (testTransformer.getConfig().getKiekerConfig().isUseKieker()) {
          String tempPathNoEscapes = tempFolder.getAbsolutePath().replace('\\', '/');
          String argLine = "  systemProperty \"" + TEMP_DIR_PURE + "\", \"" + tempPathNoEscapes + "\"" + System.lineSeparator();
          String configFilePath = modulePath.getAbsolutePath().replace('\\', '/') + MONITORING_PROPERTIES_PATH;
@@ -101,7 +101,7 @@ public class ArgLineBuilder {
 
    public Map<String, String> getGradleSystemProperties(final File tempFolder) {
       Map<String, String> properties = new LinkedHashMap<>();
-      if (testTransformer.getConfig().isUseKieker()) {
+      if (testTransformer.getConfig().getKiekerConfig().isUseKieker()) {
          String tempPathNoEscapes = tempFolder.getAbsolutePath().replace('\\', '/');
          properties.put(TEMP_DIR_PURE, tempPathNoEscapes);
 

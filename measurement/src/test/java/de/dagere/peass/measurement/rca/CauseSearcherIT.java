@@ -69,7 +69,7 @@ public class CauseSearcherIT {
          mockEnvironment(mockedVCS, mockedGitUtils);
          
          final MeasurementConfig measurementConfiguration = new MeasurementConfig(5, VERSION, "000001~1");
-         measurementConfiguration.setUseKieker(true);
+         measurementConfiguration.getKiekerConfig().setUseKieker(true);
          measurementConfiguration.getKiekerConfig().setUseAggregation(true);
          final CauseSearcherConfig causeSearcherConfig = CAUSE_CONFIG_TESTME_COMPLETE;
 

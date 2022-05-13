@@ -75,7 +75,7 @@ public class ContinuousMeasurementExecutor {
 
    private MeasurementConfig createCopiedConfiguration() {
       MeasurementConfig copied = new MeasurementConfig(measurementConfig);
-      copied.setUseKieker(false);
+      copied.getKiekerConfig().setUseKieker(false);
       return copied;
    }
 }

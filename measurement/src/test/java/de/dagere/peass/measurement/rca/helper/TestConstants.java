@@ -22,7 +22,7 @@ public class TestConstants {
    public final static MeasurementConfig SIMPLE_MEASUREMENT_CONFIG_KIEKER = new MeasurementConfig(2, V2, V1);
   
    static {
-      SIMPLE_MEASUREMENT_CONFIG_KIEKER.setUseKieker(true);
+      SIMPLE_MEASUREMENT_CONFIG_KIEKER.getKiekerConfig().setUseKieker(true);
    }
    
    public static final File CURRENT_FOLDER = new File(new File("target"), "current");

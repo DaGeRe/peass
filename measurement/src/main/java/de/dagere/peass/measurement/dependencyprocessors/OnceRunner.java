@@ -48,7 +48,7 @@ public class OnceRunner {
 
       final File vmidFolder = initVMFolder(version, vmid, logFolder);
 
-      if (testTransformer.getConfig().isUseKieker()) {
+      if (testTransformer.getConfig().getKiekerConfig().isUseKieker()) {
          testExecutor.loadClasses();
       }
       testExecutor.prepareKoPeMeExecution(new File(logFolder, "clean.txt"));

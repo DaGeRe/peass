@@ -111,7 +111,7 @@ public class CauseSearcherComplete extends CauseSearcher {
       config.setIterations(measurementConfig.getIterations());
       config.setRepetitions(measurementConfig.getRepetitions());
       config.setWarmup(measurementConfig.getWarmup());
-      config.setUseKieker(true);
+      config.getKiekerConfig().setUseKieker(true);
       final CauseTester calibrationMeasurer = new CauseTester(folders, config, causeSearchConfig, env);
       final AllDifferingDeterminer calibrationRunner = new AllDifferingDeterminer(predecessorNodeList, causeSearchConfig, config);
       calibrationMeasurer.measureVersion(predecessorNodeList);

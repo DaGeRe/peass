@@ -97,7 +97,7 @@ public class SearchCauseStarter extends MeasureStarter {
 
    private MeasurementConfig getConfiguration(final String predecessor) {
       final MeasurementConfig measurementConfiguration = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin, kiekerConfigMixin);
-      measurementConfiguration.setUseKieker(true);
+      measurementConfiguration.getKiekerConfig().setUseKieker(true);
       measurementConfiguration.getExecutionConfig().setCommit(version);
       measurementConfiguration.getExecutionConfig().setCommitOld(predecessor);
 

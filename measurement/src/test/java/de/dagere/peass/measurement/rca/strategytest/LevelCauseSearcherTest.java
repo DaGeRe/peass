@@ -44,7 +44,7 @@ public class LevelCauseSearcherTest {
    private MeasurementConfig measurementConfig = new MeasurementConfig(2, TestConstants.V2, TestConstants.V1);
    private final File folder = new File("target/test_peass/");
    {
-      measurementConfig.setUseKieker(true);
+      measurementConfig.getKiekerConfig().setUseKieker(true);
    }
 
    //Environment

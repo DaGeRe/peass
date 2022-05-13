@@ -26,7 +26,7 @@ public class TestBuildGradleExclusions {
    public void setupTransformer() {
       mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
       MeasurementConfig config = new MeasurementConfig(2);
-      config.setUseKieker(true);
+      config.getKiekerConfig().setUseKieker(true);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
    }
 

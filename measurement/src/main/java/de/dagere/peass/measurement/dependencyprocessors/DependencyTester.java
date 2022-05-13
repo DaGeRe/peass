@@ -206,7 +206,7 @@ public class DependencyTester implements KiekerResultHandler {
 
    private void runParallel(final File logFolder, final TestCase testcase, final int vmid, final String[] versions) throws InterruptedException, IOException {
       final ResultOrganizerParallel organizer = new ResultOrganizerParallel(folders, configuration.getExecutionConfig().getCommit(), currentChunkStart,
-            configuration.isUseKieker(),
+            configuration.getKiekerConfig().isUseKieker(),
             configuration.isSaveAll(), testcase,
             configuration.getAllIterations());
       currentOrganizer = organizer;
@@ -231,7 +231,7 @@ public class DependencyTester implements KiekerResultHandler {
 
    private void runSequential(final File logFolder, final TestCase testcase, final int vmid, final String versions[])
          throws IOException, InterruptedException, XmlPullParserException {
-      currentOrganizer = new ResultOrganizer(folders, configuration.getExecutionConfig().getCommit(), currentChunkStart, configuration.isUseKieker(), configuration.isSaveAll(),
+      currentOrganizer = new ResultOrganizer(folders, configuration.getExecutionConfig().getCommit(), currentChunkStart, configuration.getKiekerConfig().isUseKieker(), configuration.isSaveAll(),
             testcase, configuration.getAllIterations());
       for (String version : versions) {
          runOnce(testcase, version, vmid, logFolder);

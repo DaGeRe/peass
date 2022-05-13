@@ -69,7 +69,7 @@ public class MeasurementConfig implements Serializable {
       statisticsConfig = statisticMixin.getStasticsConfig();
       this.vms = mixin.getVms();
       setEarlyStop(mixin.isEarlyStop());
-      setUseKieker(mixin.isUseKieker());
+      getKiekerConfig().setUseKieker(mixin.isUseKieker());
       setIterations(mixin.getIterations());
       setWarmup(mixin.getWarmup());
       setRepetitions(mixin.getRepetitions());
@@ -210,6 +210,7 @@ public class MeasurementConfig implements Serializable {
       this.logFullData = logFullData;
    }
 
+   @JsonIgnore
    public boolean isUseKieker() {
       return kiekerConfig.isUseKieker();
    }

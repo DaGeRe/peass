@@ -431,7 +431,7 @@ public class JUnitTestTransformer implements TestTransformer {
             addMethod(clazz, "getWarmup", "return " + 0 + ";", PrimitiveType.intType());
             addMethod(clazz, "getIterations", "return " + config.getAllIterations() + ";", PrimitiveType.intType());
             addMethod(clazz, "logFullData", "return " + config.isLogFullData() + ";", PrimitiveType.booleanType());
-            addMethod(clazz, "useKieker", "return " + config.isUseKieker() + ";", PrimitiveType.booleanType());
+            addMethod(clazz, "useKieker", "return " + config.getKiekerConfig().isUseKieker() + ";", PrimitiveType.booleanType());
             addMethod(clazz, "getMaximalTime", "return " + config.getExecutionConfig().getTimeout() + ";", PrimitiveType.longType());
             addMethod(clazz, "getRepetitions", "return " + config.getRepetitions() + ";", PrimitiveType.intType());
             addMethod(clazz, "redirectToNull", "return " + config.getExecutionConfig().isRedirectToNull() + ";", PrimitiveType.booleanType());

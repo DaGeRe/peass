@@ -49,7 +49,7 @@ public class JmhTestTransformer implements TestTransformer {
       measurementConfig = new MeasurementConfig(1, executionConfig, kiekerConfig);
       measurementConfig.setIterations(1);
       measurementConfig.setWarmup(0);
-      measurementConfig.setUseKieker(true);
+      measurementConfig.getKiekerConfig().setUseKieker(true);
    }
 
    @Override

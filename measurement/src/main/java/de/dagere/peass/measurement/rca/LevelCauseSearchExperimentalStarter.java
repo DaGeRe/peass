@@ -33,7 +33,7 @@ public class LevelCauseSearchExperimentalStarter {
       final TestCase test = new TestCase("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");
 
       final MeasurementConfig measurementConfiguration = new MeasurementConfig(15 * 1000 * 60, 5, true, version, version + "~1");
-      measurementConfiguration.setUseKieker(true);
+      measurementConfiguration.getKiekerConfig().setUseKieker(true);
       final CauseSearcherConfig causeSearcherConfig = new CauseSearcherConfig(test, false, 0.1, false, false, RCAStrategy.COMPLETE, 1);
       final CauseSearchFolders folders2 = new CauseSearchFolders(projectFolder);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders2, new EnvironmentVariables());

@@ -17,7 +17,7 @@ public class TestArgLineBuilder {
    public void testKieker() {
       JUnitTestTransformer mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
       MeasurementConfig config = new MeasurementConfig(2);
-      config.setUseKieker(true);
+      config.getKiekerConfig().setUseKieker(true);
       config.getKiekerConfig().setUseSourceInstrumentation(false);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
 
@@ -35,7 +35,7 @@ public class TestArgLineBuilder {
    public void testNoKieker() {
       JUnitTestTransformer mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
       MeasurementConfig config = new MeasurementConfig(2);
-      config.setUseKieker(false);
+      config.getKiekerConfig().setUseKieker(false);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
 
       ArgLineBuilder builder = new ArgLineBuilder(mockedTransformer, new File("/tmp/asd"));
@@ -51,7 +51,7 @@ public class TestArgLineBuilder {
    public void testAggregatedWriter() {
       JUnitTestTransformer mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
       MeasurementConfig config = new MeasurementConfig(2);
-      config.setUseKieker(true);
+      config.getKiekerConfig().setUseKieker(true);
       config.getKiekerConfig().setUseSourceInstrumentation(true);
       config.getKiekerConfig().setEnableAdaptiveMonitoring(true);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);

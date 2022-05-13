@@ -61,7 +61,7 @@ public class AdaptiveExecutorTest {
          FileUtil.copyDir(SOURCE_DIR, projectFolder);
 
          config = new MeasurementConfig(2, VERSION1, VERSION0);
-         config.setUseKieker(true);
+         config.getKiekerConfig().setUseKieker(true);
          config.setIterations(2);
          config.setRepetitions(2);
          executor = new CauseTester(new CauseSearchFolders(projectFolder), config, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME, new EnvironmentVariables());
