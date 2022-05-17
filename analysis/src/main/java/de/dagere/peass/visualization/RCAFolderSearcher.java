@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.folders.PeassFolders;
 
 public class RCAFolderSearcher {
@@ -30,7 +31,7 @@ public class RCAFolderSearcher {
          if (source.isDirectory()) {
             if (source.getName().endsWith(PeassFolders.PEASS_POSTFIX)) {
                peassFilesToHandle.add(source);
-            } 
+            }
          }
       }
       return peassFilesToHandle;
@@ -87,7 +88,7 @@ public class RCAFolderSearcher {
 
    private List<File> handlePeassFolder(final File source) throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException {
       List<File> rcaFiles = new LinkedList<>();
-      final File rcaFolder = new File(source, "rca" + File.separator + "tree");
+      final File rcaFolder = new File(source, "rca" + File.separator + CauseSearchFolders.RCA_RESULT_FOLDERNAME);
       if (rcaFolder.exists()) {
          for (final File versionFolder : rcaFolder.listFiles()) {
             for (final File testcaseFolder : versionFolder.listFiles()) {

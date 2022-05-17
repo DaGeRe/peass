@@ -14,6 +14,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 
 public class CauseSearchFolders extends PeassFolders {
 
+   public static final String RCA_RESULT_FOLDERNAME = "treeMeasurementResults";
    private final File levelFolder;
    private final File archivedFolder;
    private final File treeFolder;
@@ -33,7 +34,7 @@ public class CauseSearchFolders extends PeassFolders {
       if (candidate.exists()) {
          treeFolder = candidate;
       } else {
-         treeFolder = new File(rcaFolder, "treeMeasurementResults");
+         treeFolder = new File(rcaFolder, RCA_RESULT_FOLDERNAME);
          treeFolder.mkdir();
       }
       
