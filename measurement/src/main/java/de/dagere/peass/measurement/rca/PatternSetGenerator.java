@@ -45,8 +45,9 @@ public class PatternSetGenerator {
    }
 
    private void addIncludedPattern(CallTreeNode node, String addPattern, Set<String> includedPattern) {
-      if (node.getCall().equals(testcase.getExecutable()) && !addPattern.startsWith("public ")) {
-         includedPattern.add("public " + addPattern);
+      if (node.getCall().equals(testcase.getExecutable()) && addPattern.startsWith("public ")) {
+         includedPattern.add(addPattern.substring("public ".length()));
+         includedPattern.add(addPattern);
       } else {
          includedPattern.add(addPattern);
       }
