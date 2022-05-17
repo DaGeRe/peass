@@ -27,10 +27,25 @@ public class CauseSearchFolders extends PeassFolders {
       levelFolder.mkdir();
       archivedFolder = new File(rcaFolder, "archived");
       archivedFolder.mkdir();
-      treeFolder = new File(rcaFolder, "tree");
-      treeFolder.mkdir();
-      treeCacheFolder = new File(rcaFolder, "treeCache");
-      treeCacheFolder.mkdir();
+      
+      // Due to renaming tree to treeMeasurementResults (for understandability), we need to try whether a folder with the old name exists
+      File candidate = new File(rcaFolder, "tree");
+      if (candidate.exists()) {
+         treeFolder = candidate;
+      } else {
+         treeFolder = new File(rcaFolder, "treeMeasurementResults");
+         treeFolder.mkdir();
+      }
+      
+
+      // Due to renaming tree to treeStructureCache (for understandability), we need to try whether a folder with the old name exists
+      File cacheCandidate = new File(rcaFolder, "treeCache");
+      if (cacheCandidate.exists()) {
+         treeCacheFolder = cacheCandidate;
+      } else {
+         treeCacheFolder = new File(rcaFolder, "treeStructureCache");
+         treeCacheFolder.mkdir();
+      }
 
       copyScripts();
    }
@@ -42,7 +57,7 @@ public class CauseSearchFolders extends PeassFolders {
          FileUtils.copyURLToFile(getProgressScript, getProgressFile);
          getProgressFile.setExecutable(true);
 
-         final URL clearRcaScript = CauseSearchFolders.class.getClassLoader().getResource("copy/clearRCA.sh");
+         final URL clearRcaScript = CauseSearchFolders.class.getClassLoader().getResource("copy/clearRCAMeasurement.sh");
          final File clearRcaFile = new File(peassFolder, "clearRCA.sh");
          FileUtils.copyURLToFile(clearRcaScript, clearRcaFile);
          clearRcaFile.setExecutable(true);
@@ -77,12 +92,12 @@ public class CauseSearchFolders extends PeassFolders {
    public File getRcaTreeFolder() {
       return treeFolder;
    }
-   
+
    public File getRcaFolder() {
       return rcaFolder;
    }
-   
-   public List<File> getRcaMethodFiles(){
+
+   public List<File> getRcaMethodFiles() {
       List<File> rcaMethodFiles = new LinkedList<>();
       for (File commitFile : treeFolder.listFiles()) {
          for (File testclazzFile : commitFile.listFiles()) {
