@@ -7,7 +7,6 @@ import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsIterableContaining;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.MeasurementConfig;
