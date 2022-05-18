@@ -275,6 +275,17 @@ public class TestCase implements Comparable<TestCase>, Serializable {
    }
 
    @JsonIgnore
+   public String getPureClazz() {
+      String shortClazz = getShortClazz();
+      int innerSeparator = shortClazz.indexOf(ChangedEntity.CLAZZ_SEPARATOR);
+      if (innerSeparator != -1) {
+         return shortClazz.substring(innerSeparator + 1, shortClazz.length());
+      } else {
+         return shortClazz;
+      }
+   }
+
+   @JsonIgnore
    public String getLinkUsable() {
       return toString().replace("#", "_");
    }

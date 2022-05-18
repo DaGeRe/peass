@@ -338,7 +338,16 @@ public class JUnitTestTransformer implements TestTransformer {
          final Integer junit = junitVersions.get(clazzFile);
          if (junit != null) {
             for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
-               addTestMethodNames(clazzname, methods, junit, clazz);
+               
+               /**
+                * This could not work if there is ClazzA$ClazzB$ClazzC and ClazzA$ClazzC; 
+                * in the unlikely event of this happening, please refactor the code accordingly
+                * to also check for parent clazz names matching
+                */
+               String pureClazzName = clazz.getName().toString();
+               if (pureClazzName.equals(clazzname.getPureClazz())) {
+                  addTestMethodNames(clazzname, methods, junit, clazz);
+               }
             }
          } else {
             LOG.warn("Clazz {} has no JUnit version", clazzFile);
