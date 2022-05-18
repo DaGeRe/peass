@@ -12,10 +12,10 @@ public class ExampleTest {
       final ExampleClass exampleClazz = new ExampleClass();
       exampleClazz.calleeMethod();
       assertNotNull(exampleClazz);
-      assertEquals(5, senselessClazz.staticMethod());
+      assertEquals(5, SenselessClazz.staticMethod());
    }
 
-   public static class senselessClazz {
+   public static class SenselessClazz {
       private static int senselessInt = 5;
 
       public static int staticMethod() {
