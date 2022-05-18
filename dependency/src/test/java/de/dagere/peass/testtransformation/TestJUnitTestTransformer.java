@@ -7,7 +7,6 @@ import java.util.List;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.hamcrest.core.IsIterableContaining;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.MeasurementConfig;
@@ -25,9 +24,9 @@ public class TestJUnitTestTransformer {
       System.out.println("Outer: " + testMethodNamesOuter);
       MatcherAssert.assertThat(testMethodNamesOuter, IsIterableContaining.hasItem(new TestCase("demo.project.gradle.ExampleTest#test")));
 
-      List<TestCase> testMethodNamesInner = transformer.getTestMethodNames(projectFolder, new TestCase("demo.project.gradle.ExampleTest$senselessClazz"));
+      List<TestCase> testMethodNamesInner = transformer.getTestMethodNames(projectFolder, new TestCase("demo.project.gradle.ExampleTest$SenselessClazz"));
       System.out.println("Inner: " + testMethodNamesInner);
-      MatcherAssert.assertThat(testMethodNamesInner, Matchers.not(IsIterableContaining.hasItem(new TestCase("demo.project.gradle.ExampleTest$senselessClazz#test"))));
+      MatcherAssert.assertThat(testMethodNamesInner, Matchers.not(IsIterableContaining.hasItem(new TestCase("demo.project.gradle.ExampleTest$SenselessClazz#test"))));
       
    }
 }
