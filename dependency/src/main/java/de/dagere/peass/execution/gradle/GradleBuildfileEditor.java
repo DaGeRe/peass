@@ -169,7 +169,7 @@ public class GradleBuildfileEditor {
                visitor.addLine(visitor.getTestSystemPropertiesLine(), "  '" + entry.getKey() + "'             : '" + entry.getValue() + "',");
             }
             if (argLineBuilder.getJVMArgs() != null) {
-               visitor.addLine(visitor.getIntegrationTestLine(), argLineBuilder.getJVMArgs());
+               visitor.addLine(visitor.getTestLine(), argLineBuilder.getJVMArgs());
             }
 
          }
