@@ -84,12 +84,12 @@ public class CauseTester extends AdaptiveTester {
    @Override
    public void evaluate(final TestCase testcase) throws IOException, InterruptedException, XmlPullParserException {
       LOG.debug("Adaptive execution: " + includedNodes);
-      
+
       initEvaluation(testcase);
 
       final File logFolder = folders.getRCALogFolder(configuration.getExecutionConfig().getCommit(), testcase, levelId);
-      
-      try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())){
+
+      try (ProgressWriter writer = new ProgressWriter(folders.getProgressFile(), configuration.getVms())) {
          evaluateWithAdaption(testcase, logFolder, writer);
       }
    }
@@ -99,31 +99,11 @@ public class CauseTester extends AdaptiveTester {
       final TestExecutor testExecutor = super.getExecutor(temporaryFolders, version);
       TestTransformer testTransformer = testExecutor.getTestTransformer();
       testTransformer.setIgnoreEOIs(causeConfig.isIgnoreEOIs());
-      generatePatternSet(version);
+      PatternSetGenerator patternSetGenerator = new PatternSetGenerator(configuration.getExecutionConfig(), testcase);
+      includedPattern = patternSetGenerator.generatePatternSet(includedNodes, version);
       final HashSet<String> includedMethodPattern = new HashSet<>(includedPattern);
       testExecutor.setIncludedMethods(includedMethodPattern);
       return testExecutor;
-   }
-
-   private void generatePatternSet(final String version) {
-      includedPattern = new HashSet<>();
-      if (configuration.getExecutionConfig().getCommitOld().equals(version)) {
-         includedNodes.forEach(node -> {
-            LOG.trace(node);
-            if (!node.getKiekerPattern().equals(CauseSearchData.ADDED)) {
-               includedPattern.add(node.getKiekerPattern());
-            }
-
-         });
-      } else {
-         LOG.debug("Searching other: " + version);
-         includedNodes.forEach(node -> {
-            LOG.trace(node);
-            if (!node.getOtherKiekerPattern().equals(CauseSearchData.ADDED)) {
-               includedPattern.add(node.getOtherKiekerPattern());
-            }
-         });
-      }
    }
 
    @Override
@@ -158,12 +138,13 @@ public class CauseTester extends AdaptiveTester {
    public void handleKiekerResults(final String version, final File versionResultFolder) {
       if (getCurrentOrganizer().testSuccess(version)) {
          LOG.info("Did succeed in measurement - analyse values");
-         
+
          boolean isOtherVersion = version.equals(configuration.getExecutionConfig().getCommit());
-         final KiekerResultReader kiekerResultReader = new KiekerResultReader(configuration.getKiekerConfig().isUseAggregation(), configuration.getKiekerConfig().getRecord(), includedNodes, version, testcase,
+         final KiekerResultReader kiekerResultReader = new KiekerResultReader(configuration.getKiekerConfig().isUseAggregation(), configuration.getKiekerConfig().getRecord(),
+               includedNodes, version, testcase,
                isOtherVersion);
          kiekerResultReader.setConsiderNodePosition(!configuration.getKiekerConfig().isUseAggregation());
-         
+
          kiekerResultReader.readResults(versionResultFolder);
       } else {
          LOG.info("Did not success in measurement");
@@ -200,7 +181,7 @@ public class CauseTester extends AdaptiveTester {
       includedNodes.forEach(node -> node.createStatistics(version));
    }
 
-   public static void main(final String[] args) throws IOException, XmlPullParserException, InterruptedException,  ClassNotFoundException {
+   public static void main(final String[] args) throws IOException, XmlPullParserException, InterruptedException, ClassNotFoundException {
       final File projectFolder = new File("../../projekte/commons-fileupload");
       final String version = "4ed6e923cb2033272fcb993978d69e325990a5aa";
       final TestCase test = new TestCase("org.apache.commons.fileupload.ServletFileUploadTest", "testFoldedHeaders");
@@ -208,7 +189,8 @@ public class CauseTester extends AdaptiveTester {
       final MeasurementConfig config = new MeasurementConfig(15 * 1000 * 60, 15, true, version, version + "~1");
       config.getKiekerConfig().setUseKieker(true);
       final CauseSearcherConfig causeConfig = new CauseSearcherConfig(test, false, 0.01, false, false, RCAStrategy.COMPLETE, 1);
-      final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), config, causeConfig, new EnvironmentVariables(config.getExecutionConfig().getProperties()));
+      final CauseTester manager = new CauseTester(new CauseSearchFolders(projectFolder), config, causeConfig,
+            new EnvironmentVariables(config.getExecutionConfig().getProperties()));
 
       final CallTreeNode node = new CallTreeNode("FileUploadTestCase#parseUpload",
             "protected java.util.List org.apache.commons.fileupload.FileUploadTestCase.parseUpload(byte[],java.lang.String)",
