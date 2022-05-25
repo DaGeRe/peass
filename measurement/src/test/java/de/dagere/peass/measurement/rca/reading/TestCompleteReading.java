@@ -24,13 +24,14 @@ import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 
 public class TestCompleteReading {
 
-   private void writeFakeMeasurements(final File kiekerTraceFolder) throws IOException {
+   private void writeFakeMeasurements(final File kiekerTraceFolder, boolean hasModifier) throws IOException {
       final Configuration configuration = new Configuration();
       configuration.setProperty(AggregatedTreeWriter.CONFIG_PATH, kiekerTraceFolder.getAbsolutePath());
       // configuration.setProperty(AggregatedTreeWriter.CONFIG_WARMUP, 0);
       final AggregatedTreeWriter writer = new AggregatedTreeWriter(configuration);
       writer.onStarting();
-      writer.writeMonitoringRecord(new OperationExecutionRecord("public void A.parent()", "1", 1, 1000, 2000, "xyz", 0, 0));
+      String operationSignature = hasModifier ? "public void A.parent()" : "void A.parent()";
+      writer.writeMonitoringRecord(new OperationExecutionRecord(operationSignature, "1", 1, 1000, 2000, "xyz", 0, 0));
       for (int i = 0; i < 100; i++) {
          writer.writeMonitoringRecord(new OperationExecutionRecord("public void A.child1()", "1", 1, 1000, 2000, "xyz", 1, 1));
          writer.writeMonitoringRecord(new OperationExecutionRecord("public void A.child2()", "1", 1, 1000, 2000, "xyz", 2, 1));
@@ -56,21 +57,50 @@ public class TestCompleteReading {
       return includedNodes;
    }
 
-   @Test
-   public void testReading() throws AnalysisConfigurationException, JsonParseException, JsonMappingException, IOException {
+   private File getKiekerTraceFolder() throws IOException {
       final File kiekerTraceFolder = new File("target/kiekerreading");
       if (kiekerTraceFolder.exists()) {
          FileUtils.deleteDirectory(kiekerTraceFolder);
       }
       kiekerTraceFolder.mkdirs();
+      return kiekerTraceFolder;
+   }
 
-      writeFakeMeasurements(kiekerTraceFolder);
+   @Test
+   public void testReading() throws AnalysisConfigurationException, JsonParseException, JsonMappingException, IOException {
+      final File kiekerTraceFolder = getKiekerTraceFolder();
+
+      writeFakeMeasurements(kiekerTraceFolder, true);
 
       final Set<CallTreeNode> includedNodes = buildTree();
 
       final TestCase testcase = new TestCase("A", "parent");
       final KiekerResultReader reader = new KiekerResultReader(false, AllowedKiekerRecord.OPERATIONEXECUTION, includedNodes, "0", testcase, false);
-//      reader.setConsiderNodePosition(true);
+      //      reader.setConsiderNodePosition(true);
+      final File kiekerFolder = kiekerTraceFolder.listFiles()[0];
+      reader.readAggregatedData(kiekerFolder);
+
+      for (final CallTreeNode node : includedNodes) {
+         node.createStatistics("0");
+         Assert.assertEquals(node.getCall() + " not found", 1, node.getStatistics("0").getN());
+      }
+
+      for (final CallTreeNode node : root.getChildren()) {
+         Assert.assertEquals(node.getCall() + " has wrong executions", 100, node.getCallCount("0"));
+      }
+   }
+
+   @Test
+   public void testReadingNoModifier() throws AnalysisConfigurationException, JsonParseException, JsonMappingException, IOException {
+      final File kiekerTraceFolder = getKiekerTraceFolder();
+
+      writeFakeMeasurements(kiekerTraceFolder, false);
+
+      final Set<CallTreeNode> includedNodes = buildTree();
+
+      final TestCase testcase = new TestCase("A", "parent");
+      final KiekerResultReader reader = new KiekerResultReader(false, AllowedKiekerRecord.OPERATIONEXECUTION, includedNodes, "0", testcase, false);
+      //      reader.setConsiderNodePosition(true);
       final File kiekerFolder = kiekerTraceFolder.listFiles()[0];
       reader.readAggregatedData(kiekerFolder);
 
