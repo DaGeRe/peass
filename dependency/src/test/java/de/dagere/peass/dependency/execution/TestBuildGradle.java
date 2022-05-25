@@ -34,7 +34,9 @@ public class TestBuildGradle {
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
       Mockito.when(mockedTransformer.getProjectFolder()).thenReturn(CURRENT);
       
-      FileUtils.cleanDirectory(CURRENT);
+      if (CURRENT.exists()) {
+         FileUtils.cleanDirectory(CURRENT);
+      }
    }
 
    @Test
