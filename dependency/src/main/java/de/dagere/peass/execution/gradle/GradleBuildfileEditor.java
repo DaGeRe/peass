@@ -37,9 +37,9 @@ public class GradleBuildfileEditor {
       try {
          LOG.debug("Editing buildfile: {}", buildfile.getAbsolutePath());
          visitor = GradleParseUtil.parseBuildfile(buildfile, testTransformer.getConfig().getExecutionConfig());
-         
+
          GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile(), testTransformer.getProjectFolder());
-         
+
          if (executor.isUseJava()) {
             editGradlefileContents(tempFolder, visitor, executor);
          } else {
@@ -74,7 +74,7 @@ public class GradleBuildfileEditor {
       return isUseJava;
    }
 
-   private void editGradlefileContents(final File tempFolder, final GradleBuildfileVisitor visitor, GradleTaskAnalyzer executor) {
+   private void editGradlefileContents(final File tempFolder, final GradleBuildfileVisitor visitor, GradleTaskAnalyzer taskAnalyzer) {
       if (visitor.getBuildTools() != -1) {
          GradleParseUtil.updateBuildTools(visitor);
       }
@@ -83,7 +83,7 @@ public class GradleBuildfileEditor {
          GradleParseUtil.updateBuildToolsVersion(visitor);
       }
 
-      if (executor.isUseSpringBoot()) {
+      if (taskAnalyzer.isUseSpringBoot()) {
          LOG.info("Adding spring boot ext");
          GradleParseUtil.addJUnitVersionSpringBoot(visitor);
       } else {
@@ -94,7 +94,7 @@ public class GradleBuildfileEditor {
 
       addDependencies(visitor);
 
-      addKiekerLine(tempFolder, visitor);
+      addKiekerLine(tempFolder, visitor, taskAnalyzer);
    }
 
    private void addDependencies(final GradleBuildfileVisitor visitor) {
@@ -126,12 +126,12 @@ public class GradleBuildfileEditor {
       }
    }
 
-   public void addKiekerLine(final File tempFolder, final GradleBuildfileVisitor visitor) {
+   public void addKiekerLine(final File tempFolder, final GradleBuildfileVisitor visitor, GradleTaskAnalyzer taskAnalyzer) {
       ArgLineBuilder argLineBuilder = new ArgLineBuilder(testTransformer, buildfile.getParentFile());
-      addArgLine(visitor, argLineBuilder, tempFolder);
+      addArgLine(visitor, argLineBuilder, tempFolder, taskAnalyzer);
    }
 
-   private void addArgLine(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder, File tempFolder) {
+   private void addArgLine(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder, File tempFolder, GradleTaskAnalyzer taskAnalyzer) {
       if (visitor.getAndroidLine() != -1) {
          if (visitor.getUnitTestsAll() != -1) {
             visitor.addLine(visitor.getUnitTestsAll() - 1, argLineBuilder.buildArglineGradle(tempFolder));
@@ -143,11 +143,11 @@ public class GradleBuildfileEditor {
       } else {
          enhanceTestTask(visitor, argLineBuilder, tempFolder);
       }
-      enhanceIntegrationTestTask(visitor, argLineBuilder, tempFolder);
+      enhanceIntegrationTestTask(visitor, argLineBuilder, tempFolder, taskAnalyzer);
    }
 
    private void enhanceIntegrationTestTask(final GradleBuildfileVisitor visitor, final ArgLineBuilder argLineBuilder,
-         File tempFolder) {
+         File tempFolder, GradleTaskAnalyzer taskAnalyzer) {
       if (visitor.getIntegrationTestLine() != -1) {
          if (visitor.getIntegrationTestSystemPropertiesLine() == -1) {
             visitor.addLine(visitor.getIntegrationTestLine() - 1, argLineBuilder.buildArglineGradle(tempFolder));
@@ -159,6 +159,8 @@ public class GradleBuildfileEditor {
                visitor.addLine(visitor.getIntegrationTestLine(), argLineBuilder.getJVMArgs());
             }
          }
+      } else if (taskAnalyzer.isIntegrationTest()) {
+         visitor.getLines().add("integrationTest { " + argLineBuilder.buildArglineGradle(tempFolder) + "}");
       }
    }
 
