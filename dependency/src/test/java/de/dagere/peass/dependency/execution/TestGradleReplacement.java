@@ -30,10 +30,12 @@ public class TestGradleReplacement {
    @BeforeEach
    public void prepareFolder() throws IOException {
       FileUtils.deleteDirectory(TestBuildGradle.CURRENT);
-      FileUtils.deleteDirectory(new File(TestBuildGradle.CURRENT.getParentFile(), TestBuildGradle.CURRENT.getName() +"_peass"));
-      
+      FileUtils.deleteDirectory(new File(TestBuildGradle.CURRENT.getParentFile(), TestBuildGradle.CURRENT.getName() + "_peass"));
+
       File src = new File("src/test/resources/gradle-multimodule-example");
       FileUtils.copyDirectory(src, TestBuildGradle.CURRENT);
+      GradleTestUtil.initWrapper(TestBuildGradle.CURRENT);
+
       List<File> modules = SettingsFileParser.getModules(TestBuildGradle.CURRENT).getModules();
       for (File module : modules) {
          File alternativeGradle = new File(module, GradleParseHelper.ALTERNATIVE_NAME);
@@ -41,13 +43,15 @@ public class TestGradleReplacement {
             writer.write(ALTERNATIVE_FILE_CONTENT);
          }
       }
-      
+
    }
+
    
+
    @Test
    public void testReplacement() throws IOException, XmlPullParserException, InterruptedException {
       prepareBuildfiles(true);
-      
+
       List<File> modules = SettingsFileParser.getModules(TestBuildGradle.CURRENT).getModules();
       for (File module : modules) {
          final File gradleFile = GradleParseHelper.findGradleFile(module);
@@ -55,11 +59,11 @@ public class TestGradleReplacement {
          MatcherAssert.assertThat(fileContent, Matchers.containsString(ALTERNATIVE_FILE_CONTENT));
       }
    }
-   
+
    @Test
    public void testNoReplacement() throws IOException, XmlPullParserException, InterruptedException {
       prepareBuildfiles(false);
-      
+
       List<File> modules = SettingsFileParser.getModules(TestBuildGradle.CURRENT).getModules();
       for (File module : modules) {
          final File gradleFile = GradleParseHelper.findGradleFile(module);
@@ -71,17 +75,16 @@ public class TestGradleReplacement {
    private void prepareBuildfiles(final boolean replace) throws IOException, XmlPullParserException, InterruptedException {
       JUnitTestTransformer mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
       MeasurementConfig config = new MeasurementConfig(2);
-      
+
       config.getExecutionConfig().setUseAlternativeBuildfile(replace);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
-      
+
       PeassFolders folders = new PeassFolders(TestBuildGradle.CURRENT);
       Mockito.when(mockedTransformer.getProjectFolder()).thenReturn(TestBuildGradle.CURRENT);
-      
+
       GradleTestExecutor gte = new GradleTestExecutor(folders, mockedTransformer, new EnvironmentVariables());
-      
+
       gte.prepareKoPeMeExecution(new File(TestBuildGradle.CURRENT, "out.txt"));
    }
 
-   
 }

@@ -8,7 +8,9 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.ExecutionConfig;
+import de.dagere.peass.dependency.execution.GradleTestUtil;
 import de.dagere.peass.execution.gradle.GradleBuildfileVisitor;
+import de.dagere.peass.execution.gradle.GradleTaskAnalyzer;
 
 public class TestGradleBuildfileVisitor {
    
@@ -17,65 +19,38 @@ public class TestGradleBuildfileVisitor {
    @Test
    public void testWithPlugins() throws IOException {
       File withApplyPlugins = new File(GRADLE_FOLDER, "with-apply.gradle");
-      File buildfile = new File("target/build.gradle");
-      FileUtils.copyFile(withApplyPlugins, buildfile);
+      File buildfile = GradleTestUtil.initProject(withApplyPlugins);
       
-      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, new ExecutionConfig());
-      Assert.assertTrue(visitor.isUseJava());
-   }
-   
-   @Test
-   public void testCustomJavaPlugin() throws IOException {
-      File withApplyPlugins = new File(GRADLE_FOLDER, "build_customJavaPlugin.gradle");
-      File buildfile = new File("target/build.gradle");
-      FileUtils.copyFile(withApplyPlugins, buildfile);
-      
-      ExecutionConfig config = new ExecutionConfig();
-      config.setGradleJavaPluginName("abc.java;abc.jaxb");
-      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, config);
-      Assert.assertTrue(visitor.isUseJava());
-   }
-   
-   @Test
-   public void testCustomSpringBootPlugin() throws IOException {
-      File withApplyPlugins = new File(GRADLE_FOLDER, "build_customSpringBootPlugin.gradle");
-      File buildfile = new File("target/build.gradle");
-      FileUtils.copyFile(withApplyPlugins, buildfile);
-      
-      ExecutionConfig config = new ExecutionConfig();
-      config.setGradleSpringBootPluginName("abc.spring-boot");
-      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, config);
-      Assert.assertTrue(visitor.isUseSpringBoot());
+//      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, new ExecutionConfig());
+      GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile());
+      Assert.assertTrue(executor.isUseJava());
    }
    
    @Test
    public void testApplication() throws IOException {
       File withApplyPlugins = new File(GRADLE_FOLDER, "build-application.gradle");
-      File buildfile = new File("target/build.gradle");
-      FileUtils.copyFile(withApplyPlugins, buildfile);
+      File buildfile = GradleTestUtil.initProject(withApplyPlugins);
       
-      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, new ExecutionConfig());
-      Assert.assertTrue(visitor.isUseJava());
+      GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile());
+      Assert.assertTrue(executor.isUseJava());
    }
    
    @Test
    public void testPluginsSection() throws IOException {
       File withApplyPlugins = new File(GRADLE_FOLDER, "with-plugins-section.gradle");
-      File buildfile = new File("target/build.gradle");
-      FileUtils.copyFile(withApplyPlugins, buildfile);
+      File buildfile = GradleTestUtil.initProject(withApplyPlugins);
       
-      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, new ExecutionConfig());
-      Assert.assertTrue(visitor.isUseJava());
+      GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile());
+      Assert.assertTrue(executor.isUseJava());
    }
    
    @Test
    public void testImportGrgit() throws IOException {
       File withApplyPlugins = new File(GRADLE_FOLDER, "build_grgit.gradle");
-      File buildfile = new File("target/build.gradle");
-      FileUtils.copyFile(withApplyPlugins, buildfile);
+      File buildfile = GradleTestUtil.initProject(withApplyPlugins);
       
-      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, new ExecutionConfig());
-      Assert.assertTrue(visitor.isUseJava());
+      GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile());
+      Assert.assertTrue(executor.isUseJava());
    }
    
    @Test

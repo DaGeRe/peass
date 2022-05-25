@@ -27,18 +27,21 @@ public class TestBuildGradle {
    private JUnitTestTransformer mockedTransformer;
 
    @BeforeEach
-   public void setupTransformer() {
+   public void setupTransformer() throws IOException {
       mockedTransformer = Mockito.mock(JUnitTestTransformer.class);
       MeasurementConfig config = new MeasurementConfig(2);
       config.getKiekerConfig().setUseKieker(true);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
+      Mockito.when(mockedTransformer.getProjectFolder()).thenReturn(CURRENT);
+      
+      FileUtils.cleanDirectory(CURRENT);
    }
 
    @Test
    public void testNoUpdate() throws IOException {
       final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "differentPlugin.gradle");
 
-      final File destFile = copyGradlefile(gradleFile);
+      final File destFile = GradleTestUtil.initProject(gradleFile, CURRENT);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(CURRENT));
       editor.addDependencies(new File("xyz"));
@@ -104,21 +107,7 @@ public class TestBuildGradle {
       MatcherAssert.assertThat(integrationTestTask, Matchers.containsString("systemProperty \"kieker.monitoring.configuration\""));
    }
 
-   @Test
-   public void testBuildtoolUpdate() throws IOException {
-      final File gradleFile = new File(GRADLE_BUILDFILE_FOLDER, "build.gradle");
-      testUpdate(gradleFile, true);
-
-      final File gradleFile2 = new File(GRADLE_BUILDFILE_FOLDER, "v2.gradle");
-      testUpdate(gradleFile2, true);
-   }
    
-   @Test
-   public void testAndroidLib() throws IOException {
-      final File gradleFile3 = new File(GRADLE_BUILDFILE_FOLDER, "androidlib.gradle");
-      testUpdate(gradleFile3, false);
-   }
-
    public void testUpdate(final File gradleFile, final boolean buildtools) throws IOException {
       final String gradleFileContents = updateGradleFile(gradleFile);
 
@@ -130,14 +119,8 @@ public class TestBuildGradle {
       MatcherAssert.assertThat(gradleFileContents, Matchers.containsString("de.dagere.kopeme:kopeme-junit"));
    }
 
-   public static File copyGradlefile(final File gradleFile) throws IOException {
-      final File destFile = new File(CURRENT, "build.gradle");
-      FileUtils.copyFile(gradleFile, destFile);
-      return destFile;
-   }
-   
    private String updateGradleFile(final File gradleFile) throws IOException {
-      final File destFile = copyGradlefile(gradleFile);
+      final File destFile = GradleTestUtil.initProject(gradleFile, CURRENT);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(CURRENT));
       editor.addDependencies(new File("xyz"));

@@ -51,8 +51,6 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private MethodCallExpression configurations = null;
 
    private List<Integer> excludeLines = new LinkedList<>();
-   private boolean useJava = false;
-   private boolean useSpringBoot = false;
    private boolean hasVersion = true;
    private boolean subprojectJava = false;
    private List<String> gradleFileContents;
@@ -82,12 +80,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       LOG.trace("Call: {}", call.getMethodAsString());
       if (call != null && call.getMethodAsString() != null) {
          // System.out.println(call.getMethodAsString());
-         if (call.getMethodAsString().equals("plugins")) {
-            parsePluginsSection(call);
-         } else if (call.getMethodAsString().equals("apply")) {
-            final String text = call.getArguments().getText();
-            checkPluginName(text);
-         } else if (call.getMethodAsString().equals("dependencies")) {
+         if (call.getMethodAsString().equals("dependencies")) {
             // System.out.println(call);
             dependencyLine = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("test")) {
@@ -239,44 +232,6 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
       }
    }
 
-   private void parsePluginsSection(final MethodCallExpression call) {
-      Expression expression = call.getArguments();
-      if (expression instanceof ArgumentListExpression) {
-         ArgumentListExpression list = (ArgumentListExpression) expression;
-         for (Expression pluginExpression : list.getExpressions()) {
-            ClosureExpression closurePluginExpression = (ClosureExpression) pluginExpression;
-            BlockStatement blockStatement = (BlockStatement) closurePluginExpression.getCode();
-            for (Statement statement : blockStatement.getStatements()) {
-               String text = statement.getText();
-               checkPluginName(text);
-            }
-         }
-      }
-   }
-
-   private void checkPluginName(final String text) {
-      if (isSpringBootPlugin(text)) {
-         useSpringBoot = true;
-         useJava = true;
-      } else if (isJavaPlugin(text)) {
-         useJava = true;
-      }
-   }
-
-   private boolean isSpringBootPlugin(final String text) {
-      LOG.debug("Checking plugin name " + text);
-      LOG.debug("Names: {}", (Object[]) config.getGradleSpringBootPluginNames());
-
-      boolean containsCustomPluginName = Arrays.stream(config.getGradleSpringBootPluginNames())
-            .anyMatch(springBootPluginName -> text.contains(springBootPluginName));
-
-      if (containsCustomPluginName || text.contains("org.springframework.boot")) {
-         return true;
-      } else {
-         return false;
-      }
-   }
-
    private boolean isJavaPlugin(final String text) {
       boolean containsCustomPluginName = Arrays.stream(config.getGradleJavaPluginNames())
             .anyMatch(javaPluginName -> text.contains(javaPluginName));
@@ -327,14 +282,6 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
    public int getIntegrationTestLine() {
       return integrationTestLine;
-   }
-
-   public boolean isUseJava() {
-      return useJava;
-   }
-
-   public boolean isUseSpringBoot() {
-      return useSpringBoot;
    }
 
    public boolean isHasVersion() {

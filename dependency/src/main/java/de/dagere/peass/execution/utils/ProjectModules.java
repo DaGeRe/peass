@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ProjectModules {
+   
    private final List<File> modules;
    private final Map<File, String> artifactIds = new HashMap<>();
 

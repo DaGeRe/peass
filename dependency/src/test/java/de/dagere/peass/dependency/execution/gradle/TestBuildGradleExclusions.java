@@ -12,7 +12,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import de.dagere.peass.TestConstants;
+import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.dependency.execution.GradleTestUtil;
 import de.dagere.peass.dependency.execution.TestBuildGradle;
 import de.dagere.peass.execution.gradle.GradleBuildfileEditor;
 import de.dagere.peass.execution.utils.ProjectModules;
@@ -28,13 +31,16 @@ public class TestBuildGradleExclusions {
       MeasurementConfig config = new MeasurementConfig(2);
       config.getKiekerConfig().setUseKieker(true);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
+      Mockito.when(mockedTransformer.getProjectFolder()).thenReturn(TestBuildGradle.CURRENT);
+      
+      TestUtil.deleteContents(TestBuildGradle.CURRENT);
    }
 
    @Test
    public void testLog4jSlf4jImplExclusion() throws IOException {
       final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "build.gradle");
 
-      final File destFile = TestBuildGradle.copyGradlefile(gradleFile);
+      final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
       mockedTransformer.getConfig().getExecutionConfig().setExcludeLog4jSlf4jImpl(true);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
@@ -50,7 +56,7 @@ public class TestBuildGradleExclusions {
    public void testLog4jSlf4jImplExclusionWithConstraints() throws IOException {
       final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "buildConstraints.gradle");
 
-      final File destFile = TestBuildGradle.copyGradlefile(gradleFile);
+      final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
       mockedTransformer.getConfig().getExecutionConfig().setExcludeLog4jSlf4jImpl(true);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
@@ -73,7 +79,7 @@ public class TestBuildGradleExclusions {
    public void testLog4jToSlf4jExclusion() throws IOException {
       final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "buildConstraints.gradle");
 
-      final File destFile = TestBuildGradle.copyGradlefile(gradleFile);
+      final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
       mockedTransformer.getConfig().getExecutionConfig().setExcludeLog4jToSlf4j(true);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
@@ -95,7 +101,7 @@ public class TestBuildGradleExclusions {
    public void testAlreadyExistingSystemProperties() throws IOException {
       final File gradleFile = new File(TestBuildGradle.GRADLE_BUILDFILE_FOLDER, "buildProperties.gradle");
 
-      final File destFile = TestBuildGradle.copyGradlefile(gradleFile);
+      final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
       editor.addDependencies(new File("xyz"));

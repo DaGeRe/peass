@@ -1,18 +1,29 @@
 buildscript {
     repositories {
-	jcenter()
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:4.2.1"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
         mavenCentral()
     }
 }
+
+
+apply plugin: 'eclipse'
+apply plugin: 'com.android.application'
+
 
 android {
   compileSdkVersion 19
   buildToolsVersion '19.0.3'
 }
-
-
-apply plugin: 'java'
-apply plugin: 'eclipse'
 
 sourceCompatibility = 1.8
 version = '2.13'
@@ -26,5 +37,5 @@ repositories {
 }
 
 dependencies {
-  testCompile 'junit:junit:4.12'
+  testImplementation 'junit:junit:4.12'
 }

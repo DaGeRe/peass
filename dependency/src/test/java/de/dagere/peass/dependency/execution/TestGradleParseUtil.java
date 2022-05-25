@@ -52,6 +52,7 @@ public class TestGradleParseUtil {
    public void testSubprojectInstrumentation() throws IOException, XmlPullParserException, InterruptedException {
       FileUtils.deleteDirectory(TestConstants.CURRENT_FOLDER);
       FileUtils.copyDirectory(new File("src/test/resources/gradle-multimodule-subprojectexample/"), TestConstants.CURRENT_FOLDER);
+      GradleTestUtil.initWrapper(TestConstants.CURRENT_FOLDER);
 
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
       JUnitTestTransformer transformerMock = Mockito.mock(JUnitTestTransformer.class);
@@ -59,6 +60,8 @@ public class TestGradleParseUtil {
       measurementConfig.getKiekerConfig().setUseKieker(true);
       measurementConfig.getKiekerConfig().setUseSourceInstrumentation(false);
       Mockito.when(transformerMock.getConfig()).thenReturn(measurementConfig);
+      Mockito.when(transformerMock.getProjectFolder()).thenReturn(TestConstants.CURRENT_FOLDER);
+      
       GradleTestExecutor gradleTestExecutor = new GradleTestExecutor(folders, transformerMock, new EnvironmentVariables());
       gradleTestExecutor.setIncludedMethods(new HashSet<String>());
 

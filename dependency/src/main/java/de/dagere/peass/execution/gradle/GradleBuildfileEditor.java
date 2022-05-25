@@ -37,13 +37,16 @@ public class GradleBuildfileEditor {
       try {
          LOG.debug("Editing buildfile: {}", buildfile.getAbsolutePath());
          visitor = GradleParseUtil.parseBuildfile(buildfile, testTransformer.getConfig().getExecutionConfig());
-         if (visitor.isUseJava() == true) {
-            editGradlefileContents(tempFolder, visitor);
+         
+         GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile(), testTransformer.getProjectFolder());
+         
+         if (executor.isUseJava()) {
+            editGradlefileContents(tempFolder, visitor, executor);
          } else {
             LOG.debug("Buildfile itself does not contain Java plugin, checking parent projects");
             boolean isUseJava = isParentUseJava(buildfile, modules);
             if (isUseJava) {
-               editGradlefileContents(tempFolder, visitor);
+               editGradlefileContents(tempFolder, visitor, executor);
             } else {
                LOG.info("Parent buildfile did not contain java; not changing buildfile");
             }
@@ -71,7 +74,7 @@ public class GradleBuildfileEditor {
       return isUseJava;
    }
 
-   private void editGradlefileContents(final File tempFolder, final GradleBuildfileVisitor visitor) {
+   private void editGradlefileContents(final File tempFolder, final GradleBuildfileVisitor visitor, GradleTaskAnalyzer executor) {
       if (visitor.getBuildTools() != -1) {
          GradleParseUtil.updateBuildTools(visitor);
       }
@@ -80,7 +83,7 @@ public class GradleBuildfileEditor {
          GradleParseUtil.updateBuildToolsVersion(visitor);
       }
 
-      if (visitor.isUseSpringBoot()) {
+      if (executor.isUseSpringBoot()) {
          LOG.info("Adding spring boot ext");
          GradleParseUtil.addJUnitVersionSpringBoot(visitor);
       } else {
