@@ -8,6 +8,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
@@ -17,6 +19,7 @@ import org.mockito.Mockito;
 
 import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.execution.gradle.GradleTaskAnalyzer;
 import de.dagere.peass.execution.gradle.GradleTestExecutor;
 import de.dagere.peass.execution.gradle.SettingsFileParser;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -24,6 +27,8 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
 public class TestGradleReplacement {
+   
+   private static final Logger LOG = LogManager.getLogger(TestGradleReplacement.class);
 
    private static final String ALTERNATIVE_FILE_CONTENT = "This is an alternative buildfile";
 
@@ -39,14 +44,12 @@ public class TestGradleReplacement {
       List<File> modules = SettingsFileParser.getModules(TestBuildGradle.CURRENT).getModules();
       for (File module : modules) {
          File alternativeGradle = new File(module, GradleParseHelper.ALTERNATIVE_NAME);
+         LOG.debug("Creating alternative buildfile: {}", alternativeGradle);
          try (BufferedWriter writer = new BufferedWriter(new FileWriter(alternativeGradle))) {
             writer.write(ALTERNATIVE_FILE_CONTENT);
          }
       }
-
    }
-
-   
 
    @Test
    public void testReplacement() throws IOException, XmlPullParserException, InterruptedException {
