@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.execution.utils.CommandConcatenator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.utils.StreamGobbler;
 
@@ -20,7 +21,7 @@ import de.dagere.peass.utils.StreamGobbler;
  *
  */
 public class GradleTaskAnalyzer {
-   
+
    private static final Logger LOG = LogManager.getLogger(GradleTaskAnalyzer.class);
 
    private final boolean isJava;
@@ -30,17 +31,22 @@ public class GradleTaskAnalyzer {
 
    public GradleTaskAnalyzer(File moduleFolder, File projectFolder, EnvironmentVariables env) throws IOException {
       String wrapper = new File(projectFolder, EnvironmentVariables.fetchGradleCall()).getAbsolutePath();
-      ProcessBuilder processBuilder = new ProcessBuilder(wrapper, "tasks", "--all");
+
+      String[] envPropertyArray = env.getProperties().length() > 0 ? env.getProperties().split(" ") : new String[0];
+      final String[] varsWithProperties = CommandConcatenator.concatenateCommandArrays(new String[] { wrapper, "tasks", "--all" }, envPropertyArray);
+      LOG.debug("Command: {}", Arrays.toString(varsWithProperties));
+
+      ProcessBuilder processBuilder = new ProcessBuilder(varsWithProperties);
       processBuilder.directory(moduleFolder);
 
       for (Map.Entry<String, String> entry : env.getEnvironmentVariables().entrySet()) {
          LOG.trace("Environment: {} = {}", entry.getKey(), entry.getValue());
          processBuilder.environment().put(entry.getKey(), entry.getValue());
       }
-      
+
       Process process = processBuilder.start();
       String processOutput = StreamGobbler.getFullProcess(process, true);
-      
+
       LOG.debug(processOutput);
 
       List<String> taskLines = Arrays.stream(processOutput.split("\n"))
@@ -57,7 +63,7 @@ public class GradleTaskAnalyzer {
       isIntegrationTest = taskLines.stream().anyMatch(line -> line.startsWith("integrationTest "));
 
    }
-   
+
    public GradleTaskAnalyzer(File moduleFolder, EnvironmentVariables env) throws IOException {
       this(moduleFolder, moduleFolder, env);
    }
