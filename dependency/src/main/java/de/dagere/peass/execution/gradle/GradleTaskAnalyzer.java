@@ -24,7 +24,7 @@ public class GradleTaskAnalyzer {
 
    public GradleTaskAnalyzer(File moduleFolder, File projectFolder) throws IOException {
       String wrapper = new File(projectFolder, EnvironmentVariables.fetchGradleCall()).getAbsolutePath();
-      ProcessBuilder processBuilder = new ProcessBuilder(wrapper, "tasks");
+      ProcessBuilder processBuilder = new ProcessBuilder(wrapper, "tasks", "--all");
       processBuilder.directory(moduleFolder);
 
       Process process = processBuilder.start();
