@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.execution.kieker.ArgLineBuilder;
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
+import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.execution.utils.RequiredDependency;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
@@ -32,13 +33,13 @@ public class GradleBuildfileEditor {
       this.modules = modules;
    }
 
-   public GradleBuildfileVisitor addDependencies(final File tempFolder) {
+   public GradleBuildfileVisitor addDependencies(final File tempFolder, EnvironmentVariables env) {
       GradleBuildfileVisitor visitor = null;
       try {
          LOG.debug("Editing buildfile: {}", buildfile.getAbsolutePath());
          visitor = GradleParseUtil.parseBuildfile(buildfile, testTransformer.getConfig().getExecutionConfig());
 
-         GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile(), testTransformer.getProjectFolder());
+         GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile(), testTransformer.getProjectFolder(), env);
 
          if (executor.isUseJava()) {
             editGradlefileContents(tempFolder, visitor, executor);

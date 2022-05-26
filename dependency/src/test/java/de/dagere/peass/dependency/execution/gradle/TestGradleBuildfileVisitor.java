@@ -11,6 +11,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.execution.GradleTestUtil;
 import de.dagere.peass.execution.gradle.GradleBuildfileVisitor;
 import de.dagere.peass.execution.gradle.GradleTaskAnalyzer;
+import de.dagere.peass.execution.utils.EnvironmentVariables;
 
 public class TestGradleBuildfileVisitor {
    
@@ -22,7 +23,7 @@ public class TestGradleBuildfileVisitor {
       File buildfile = GradleTestUtil.initProject(withApplyPlugins);
       
 //      GradleBuildfileVisitor visitor = new GradleBuildfileVisitor(buildfile, new ExecutionConfig());
-      GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile());
+      GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile(), new EnvironmentVariables());
       Assert.assertTrue(executor.isUseJava());
    }
    
@@ -31,7 +32,7 @@ public class TestGradleBuildfileVisitor {
       File withApplyPlugins = new File(GRADLE_FOLDER, "build-application.gradle");
       File buildfile = GradleTestUtil.initProject(withApplyPlugins);
       
-      GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile());
+      GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile(), new EnvironmentVariables());
       Assert.assertTrue(executor.isUseJava());
    }
    
@@ -40,7 +41,7 @@ public class TestGradleBuildfileVisitor {
       File withApplyPlugins = new File(GRADLE_FOLDER, "with-plugins-section.gradle");
       File buildfile = GradleTestUtil.initProject(withApplyPlugins);
       
-      GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile());
+      GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile(), new EnvironmentVariables());
       Assert.assertTrue(executor.isUseJava());
    }
    
@@ -49,7 +50,7 @@ public class TestGradleBuildfileVisitor {
       File withApplyPlugins = new File(GRADLE_FOLDER, "build_grgit.gradle");
       File buildfile = GradleTestUtil.initProject(withApplyPlugins);
       
-      GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile());
+      GradleTaskAnalyzer executor = new GradleTaskAnalyzer(buildfile.getParentFile(), new EnvironmentVariables());
       Assert.assertTrue(executor.isUseJava());
    }
    

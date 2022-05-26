@@ -82,7 +82,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    private void editOneBuildfile(final File gradleFile, final ProjectModules modules) {
       final GradleBuildfileVisitor visitor;
       GradleBuildfileEditor editor = new GradleBuildfileEditor(testTransformer, gradleFile, modules);
-      visitor = editor.addDependencies(lastTmpFile);
+      visitor = editor.addDependencies(lastTmpFile, env);
       if (visitor.isAndroid()) {
          isAndroid = true;
       }

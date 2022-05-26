@@ -53,6 +53,7 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private List<Integer> excludeLines = new LinkedList<>();
    private boolean hasVersion = true;
    private boolean subprojectJava = false;
+   private boolean insideBuildscript = false;
    private List<String> gradleFileContents;
 
    private final ExecutionConfig config;
@@ -83,6 +84,8 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
          if (call.getMethodAsString().equals("dependencies")) {
             // System.out.println(call);
             dependencyLine = call.getLastLineNumber() + offset;
+         } else if (call.getMethodAsString().equals("buildscript")) {
+            return; // never change buildscript entries
          } else if (call.getMethodAsString().equals("test")) {
             testLine = call.getLastLineNumber() + offset;
             if (call.getArguments() instanceof ArgumentListExpression) {

@@ -15,6 +15,7 @@ import org.mockito.Mockito;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.execution.gradle.TestGradleBuildfileVisitor;
 import de.dagere.peass.execution.gradle.GradleBuildfileEditor;
+import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
@@ -46,7 +47,7 @@ public class TestBuildGradle {
       final File destFile = GradleTestUtil.initProject(gradleFile, CURRENT);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(CURRENT));
-      editor.addDependencies(new File("xyz"));
+      editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       Assert.assertTrue(FileUtils.contentEquals(gradleFile, destFile));
    }
@@ -125,7 +126,7 @@ public class TestBuildGradle {
       final File destFile = GradleTestUtil.initProject(gradleFile, CURRENT);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(CURRENT));
-      editor.addDependencies(new File("xyz"));
+      editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
       return gradleFileContents;

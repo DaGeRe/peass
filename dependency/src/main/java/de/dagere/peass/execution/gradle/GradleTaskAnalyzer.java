@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
@@ -27,11 +28,16 @@ public class GradleTaskAnalyzer {
    private final boolean isIntegrationTest;
    private final boolean isAndroid;
 
-   public GradleTaskAnalyzer(File moduleFolder, File projectFolder) throws IOException {
+   public GradleTaskAnalyzer(File moduleFolder, File projectFolder, EnvironmentVariables env) throws IOException {
       String wrapper = new File(projectFolder, EnvironmentVariables.fetchGradleCall()).getAbsolutePath();
       ProcessBuilder processBuilder = new ProcessBuilder(wrapper, "tasks", "--all");
       processBuilder.directory(moduleFolder);
 
+      for (Map.Entry<String, String> entry : env.getEnvironmentVariables().entrySet()) {
+         LOG.trace("Environment: {} = {}", entry.getKey(), entry.getValue());
+         processBuilder.environment().put(entry.getKey(), entry.getValue());
+      }
+      
       Process process = processBuilder.start();
       String processOutput = StreamGobbler.getFullProcess(process, true);
       
@@ -52,8 +58,8 @@ public class GradleTaskAnalyzer {
 
    }
    
-   public GradleTaskAnalyzer(File moduleFolder) throws IOException {
-      this(moduleFolder, moduleFolder);
+   public GradleTaskAnalyzer(File moduleFolder, EnvironmentVariables env) throws IOException {
+      this(moduleFolder, moduleFolder, env);
    }
 
    public boolean isUseJava() {

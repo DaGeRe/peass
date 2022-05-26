@@ -18,6 +18,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.execution.GradleTestUtil;
 import de.dagere.peass.dependency.execution.TestBuildGradle;
 import de.dagere.peass.execution.gradle.GradleBuildfileEditor;
+import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
@@ -44,7 +45,7 @@ public class TestBuildGradleExclusions {
       mockedTransformer.getConfig().getExecutionConfig().setExcludeLog4jSlf4jImpl(true);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
-      editor.addDependencies(new File("xyz"));
+      editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
 
@@ -60,7 +61,7 @@ public class TestBuildGradleExclusions {
       mockedTransformer.getConfig().getExecutionConfig().setExcludeLog4jSlf4jImpl(true);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
-      editor.addDependencies(new File("xyz"));
+      editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
 
@@ -83,7 +84,7 @@ public class TestBuildGradleExclusions {
       mockedTransformer.getConfig().getExecutionConfig().setExcludeLog4jToSlf4j(true);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
-      editor.addDependencies(new File("xyz"));
+      editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
 
@@ -104,7 +105,7 @@ public class TestBuildGradleExclusions {
       final File destFile = GradleTestUtil.initProject(gradleFile, TestBuildGradle.CURRENT);
 
       GradleBuildfileEditor editor = new GradleBuildfileEditor(mockedTransformer, destFile, new ProjectModules(TestBuildGradle.CURRENT));
-      editor.addDependencies(new File("xyz"));
+      editor.addDependencies(new File("xyz"), new EnvironmentVariables());
 
       final String gradleFileContents = FileUtils.readFileToString(destFile, Charset.defaultCharset());
 
