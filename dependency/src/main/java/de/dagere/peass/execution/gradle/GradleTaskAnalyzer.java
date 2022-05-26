@@ -6,6 +6,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.utils.StreamGobbler;
 
@@ -16,6 +19,8 @@ import de.dagere.peass.utils.StreamGobbler;
  *
  */
 public class GradleTaskAnalyzer {
+   
+   private static final Logger LOG = LogManager.getLogger(GradleTaskAnalyzer.class);
 
    private final boolean isJava;
    private final boolean isSpring;
@@ -29,6 +34,8 @@ public class GradleTaskAnalyzer {
 
       Process process = processBuilder.start();
       String processOutput = StreamGobbler.getFullProcess(process, true);
+      
+      LOG.debug(processOutput);
 
       List<String> taskLines = Arrays.stream(processOutput.split("\n"))
             .filter(line -> line.contains(" - "))
