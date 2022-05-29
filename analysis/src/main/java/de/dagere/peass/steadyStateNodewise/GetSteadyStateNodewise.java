@@ -14,6 +14,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.serialization.MeasuredNode;
 import de.dagere.peass.utils.Constants;
@@ -79,7 +80,7 @@ public class GetSteadyStateNodewise implements Callable<Void> {
    }
 
    private void handlePeassFolder(final File source) throws IOException, JsonParseException, JsonMappingException, JsonProcessingException, FileNotFoundException {
-      final File rcaFolder = new File(source, "rca" + File.separator + "tree");
+      final File rcaFolder = new File(source, "rca" + File.separator + CauseSearchFolders.RCA_RESULT_FOLDERNAME);
       if (rcaFolder.exists()) {
          for (final File versionFolder : rcaFolder.listFiles()) {
             final File versionResultFolder = new File(resultFolder, versionFolder.getName());

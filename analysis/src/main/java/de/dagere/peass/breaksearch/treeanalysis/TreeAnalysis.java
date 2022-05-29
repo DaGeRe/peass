@@ -10,6 +10,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.utils.Constants;
 
@@ -37,8 +38,8 @@ public class TreeAnalysis {
 
    private static void getAllTreeData(final File treesFolder, final TestVersionPairManager manager) throws IOException, JsonParseException, JsonMappingException {
       for (final File resultFolder : treesFolder.listFiles()) {
-         File treeFolder = new File(resultFolder, "peass" + File.separator + "rca" + File.separator + "tree");
-         final File treeFolder2 = new File(resultFolder, File.separator + "rca" + File.separator + "tree");
+         File treeFolder = new File(resultFolder, "peass" + File.separator + "rca" + File.separator + CauseSearchFolders.RCA_RESULT_FOLDERNAME);
+         final File treeFolder2 = new File(resultFolder, File.separator + "rca" + File.separator + CauseSearchFolders.RCA_RESULT_FOLDERNAME);
          if (treeFolder2.isDirectory()) {
             treeFolder = treeFolder2;
          }
