@@ -16,6 +16,8 @@ import de.dagere.peass.visualization.GraphNode;
 
 public class JavascriptDataWriter {
 
+   private static final int CHARACTER_SIZE = 7;
+
    private static final Logger LOG = LogManager.getLogger(JavascriptDataWriter.class);
 
    private final File propertyFolder;
@@ -66,16 +68,16 @@ public class JavascriptDataWriter {
 
    private void writeTreeDivSizes(final BufferedWriter fileWriter) throws IOException {
       final int nodeHeight = getHeight(root);
-      final int nodeDepth = getDepth(root);
+      final int nodeDepthWidth = getDepth(root);
 
-      final int width = 500 * (nodeDepth + 1);
+//      final int width = 500 * (nodeDepthWidth + 1);
       final int height = 35 * (nodeHeight + 1);
-      final int left = 10 * root.getName().length();
+      final int left = CHARACTER_SIZE * root.getName().length();
       fileWriter.write("// ************** Generate the tree diagram   *****************\n" +
             "var margin = {top: 20, right: 120, bottom: 20, left: " + left + "},\n" +
-            "   width = " + width + "- margin.right - margin.left,\n" +
+            "   width = " + nodeDepthWidth + "- margin.right - margin.left,\n" +
             "   height = " + height + " - margin.top - margin.bottom;\n");
-      LOG.info("Width: {} Height: {} Left: {}", width, height, left);
+      LOG.info("Width: {} Height: {} Left: {}", nodeDepthWidth, height, left);
    }
 
    private void writeColoredTree(final BufferedWriter fileWriter) throws IOException, JsonProcessingException {
@@ -85,11 +87,12 @@ public class JavascriptDataWriter {
    }
 
    private int getDepth(final GraphNode root) {
-      int depth = 0;
+      int thisNodeLength = 60 + root.getCall().length() * CHARACTER_SIZE;
+      int currentMaxLength = thisNodeLength;
       for (final GraphNode child : root.getChildren()) {
-         depth = Math.max(depth, getDepth(child)) + 1;
+         currentMaxLength = Math.max(currentMaxLength, getDepth(child) + thisNodeLength);
       }
-      return depth;
+      return currentMaxLength;
    }
 
    private int getHeight(final GraphNode root) {
