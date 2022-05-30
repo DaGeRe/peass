@@ -60,7 +60,7 @@ public class GradleTaskAnalyzer {
             || isAndroid
             || isSpring;
 
-      isIntegrationTest = taskLines.stream().anyMatch(line -> line.startsWith("integrationTest "));
+      isIntegrationTest = taskLines.stream().anyMatch(line -> line.startsWith("integrationTest"));
 
    }
 
