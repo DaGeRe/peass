@@ -88,28 +88,6 @@ public class ExecutionConfigMixin {
    @Option(names = { "-properties", "--properties" }, description = "Sets the properties that should be passed to the test (e.g. \"-Dmy.var=5\")")
    public String properties;
 
-   @Option(names = { "-gradleJavaPluginName", "--gradleJavaPluginName" }, description = "Sets a custom gradle Java Plugin name")
-   public String gradleJavaPluginName = ExecutionConfig.GRADLE_JAVA_DEFAULT_NAME;
-
-   @Option(names = { "-gradleSpringBootPluginName", "--gradleSpringBootPluginName" }, description = "Sets a custom gradle SpringBoot Plugin name")
-   public String gradleSpringBootPluginName = ExecutionConfig.GRADLE_SPRING_DEFAULT_NAME;
-
-   public String getGradleJavaPluginName() {
-      return gradleJavaPluginName;
-   }
-
-   public void setGradleJavaPluginName(String gradleJavaPluginName) {
-      this.gradleJavaPluginName = gradleJavaPluginName;
-   }
-
-   public String getGradleSpringBootPluginName() {
-      return gradleSpringBootPluginName;
-   }
-
-   public void setGradleSpringBootPluginName(String gradleSpringBootPluginName) {
-      this.gradleSpringBootPluginName = gradleSpringBootPluginName;
-   }
-
    public int getTimeout() {
       return timeout;
    }
@@ -357,8 +335,6 @@ public class ExecutionConfigMixin {
       config.setExecuteBeforeClassInMeasurement(executeBeforeClassInMeasurement);
       config.setKiekerWaitTime(kiekerWaitTime);
       config.setProperties(properties);
-      config.setGradleJavaPluginName(gradleJavaPluginName);
-      config.setGradleSpringBootPluginName(gradleSpringBootPluginName);
 
       if (getClazzFolder() != null) {
          List<String> clazzFolders = ExecutionConfig.buildFolderList(getClazzFolder());

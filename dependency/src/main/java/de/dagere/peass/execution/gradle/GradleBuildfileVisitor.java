@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,7 +52,6 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
    private List<Integer> excludeLines = new LinkedList<>();
    private boolean hasVersion = true;
    private boolean subprojectJava = false;
-   private boolean insideBuildscript = false;
    private List<String> gradleFileContents;
 
    private final ExecutionConfig config;
@@ -101,8 +99,6 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
             unitTestsAll = call.getLastLineNumber() + offset;
          } else if (call.getMethodAsString().equals("buildToolsVersion")) {
             buildToolsVersion = call.getLastLineNumber() + offset;
-         } else if (call.getMethodAsString().equals("subprojects")) {
-            parseSubprojectsSection(call);
          } else if (call.getMethodAsString().equals("task")) {
             parseNewTask(call);
          } else if (call.getMethodAsString().equals("register")) {
@@ -216,41 +212,6 @@ public class GradleBuildfileVisitor extends CodeVisitorSupport {
 
          int propertiesLine = parseTaskWithPotentialSystemProperties(list);
          integrationTestSystemPropertiesLine = propertiesLine;
-      }
-   }
-
-   private void parseSubprojectsSection(final MethodCallExpression call) {
-      Expression expression = call.getArguments();
-      if (expression instanceof ArgumentListExpression) {
-         ArgumentListExpression list = (ArgumentListExpression) expression;
-         for (Expression pluginExpression : list.getExpressions()) {
-            ClosureExpression closurePluginExpression = (ClosureExpression) pluginExpression;
-            for (Statement statement : ((BlockStatement) closurePluginExpression.getCode()).getStatements()) {
-               String text = statement.getText();
-               if (isJavaPlugin(text)) {
-                  subprojectJava = true;
-               }
-            }
-         }
-      }
-   }
-
-   private boolean isJavaPlugin(final String text) {
-      boolean containsCustomPluginName = Arrays.stream(config.getGradleJavaPluginNames())
-            .anyMatch(javaPluginName -> text.contains(javaPluginName));
-
-      if (text.contains("plugin:java") ||
-            text.contains("this.id(java)") ||
-            text.contains("this.id(java-library)") ||
-            text.contains("ConstantExpression[java-library]") ||
-            text.contains("plugin:com.android.library") ||
-            text.contains("plugin:com.android.application") ||
-            text.contains("application") ||
-            text.contains("com.android.application") ||
-            containsCustomPluginName) {
-         return true;
-      } else {
-         return false;
       }
    }
 

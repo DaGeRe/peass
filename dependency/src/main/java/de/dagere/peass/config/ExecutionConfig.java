@@ -18,8 +18,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public class ExecutionConfig implements Serializable {
 
-   
-
    public static final String GRADLE_JAVA_DEFAULT_NAME = "java";
 
    public static final String GRADLE_SPRING_DEFAULT_NAME = "org.springframework.boot";
@@ -31,11 +29,11 @@ public class ExecutionConfig implements Serializable {
 
    private static final String SRC_MAIN = "src/main";
    private static final String SRC_MAIN_JAVA = "src/main/java";
-   
+
    private static final String SRC_TEST_JAVA = "src/test/java";
    private static final String SRC_TEST = "src/test";
    private static final String SRC_ANDROID_TEST_JAVA = "src/androidTest/java/";
-   
+
    private static final long serialVersionUID = -6642358125854337047L;
 
    /**
@@ -71,9 +69,6 @@ public class ExecutionConfig implements Serializable {
 
    private String testTransformer = DEFAULT_TEST_TRANSFORMER;
    private String testExecutor = DEFAULT_TEST_EXECUTOR;
-
-   private String gradleJavaPluginName = GRADLE_JAVA_DEFAULT_NAME;
-   private String gradleSpringBootPluginName = GRADLE_SPRING_DEFAULT_NAME;
 
    private String properties;
 
@@ -123,9 +118,6 @@ public class ExecutionConfig implements Serializable {
 
       this.clazzFolders = other.clazzFolders;
       this.testClazzFolders = other.testClazzFolders;
-
-      this.gradleJavaPluginName = other.gradleJavaPluginName;
-      this.gradleSpringBootPluginName = other.gradleSpringBootPluginName;
    }
 
    public ExecutionConfig(final long timeoutInMinutes) {
@@ -388,32 +380,20 @@ public class ExecutionConfig implements Serializable {
       this.properties = properties;
    }
 
-   @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = GradleJavaPluginNameFilter.class)
+   @JsonInclude(value = JsonInclude.Include.NON_NULL)
    public String getGradleJavaPluginName() {
-      return gradleJavaPluginName;
+      return null;
    }
 
    public void setGradleJavaPluginName(final String gradleJavaPluginName) {
-      this.gradleJavaPluginName = gradleJavaPluginName;
    }
 
-   @JsonIgnore
-   public String[] getGradleJavaPluginNames() {
-      return gradleJavaPluginName.split(";");
-   }
-
-   @JsonInclude(value = JsonInclude.Include.CUSTOM, valueFilter = SpringBootPluginNameFilter.class)
+   @JsonInclude(value = JsonInclude.Include.NON_NULL)
    public String getGradleSpringBootPluginName() {
-      return gradleSpringBootPluginName;
+      return null;
    }
 
    public void setGradleSpringBootPluginName(final String gradleSpringBootPluginName) {
-      this.gradleSpringBootPluginName = gradleSpringBootPluginName;
-   }
-
-   @JsonIgnore
-   public String[] getGradleSpringBootPluginNames() {
-      return gradleSpringBootPluginName.split(";");
    }
 
    @JsonIgnore
@@ -425,8 +405,9 @@ public class ExecutionConfig implements Serializable {
    }
 
    /**
-    * The following boilerplate classes are not very nice; since we want to save most values and eventually change the default values, we cannot
-    * use JsonInclude(NON_DEFAULT) at class level; therefore, we need to use custom filters. 
+    * The following boilerplate classes are not very nice; since we want to save most values and eventually change the default values, we cannot use JsonInclude(NON_DEFAULT) at
+    * class level; therefore, we need to use custom filters.
+    * 
     * @author DaGeRe
     *
     */
@@ -469,7 +450,7 @@ public class ExecutionConfig implements Serializable {
          return super.equals(obj);
       }
    }
-   
+
    private static final class ClazzFoldersFilter {
       @Override
       public boolean equals(Object obj) {
@@ -482,7 +463,7 @@ public class ExecutionConfig implements Serializable {
          return super.equals(obj);
       }
    }
-   
+
    private static final class TestClazzFoldersFilter {
       @Override
       public boolean equals(Object obj) {
