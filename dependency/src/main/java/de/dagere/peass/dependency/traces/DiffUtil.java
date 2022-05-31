@@ -126,7 +126,7 @@ public class DiffUtil {
       return patch;
    }
 
-   private static List<String> getText(File file) throws IOException {
+   public static List<String> getText(File file) throws IOException {
       if (file.getName().endsWith(TraceFileManager.TXT_ENDING)) {
          List<String> filetext = FileUtils.readLines(file, StandardCharsets.UTF_8)
                .stream()
