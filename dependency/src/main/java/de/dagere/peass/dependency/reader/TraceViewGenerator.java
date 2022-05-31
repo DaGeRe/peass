@@ -13,6 +13,7 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.DependencyManager;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -33,15 +34,18 @@ public class TraceViewGenerator {
    private final PeassFolders folders;
    private final String version;
    private final TraceFileMapping traceFileMapping;
+   
    private final KiekerConfig kiekerConfig;
+   private final TestSelectionConfig testSelectionConfig;
 
    public TraceViewGenerator(final DependencyManager dependencyManager, final PeassFolders folders, final String version, final TraceFileMapping mapping, 
-         final KiekerConfig kiekerConfig) {
+         final KiekerConfig kiekerConfig, TestSelectionConfig testSelectionConfig) {
       this.dependencyManager = dependencyManager;
       this.folders = folders;
       this.version = version;
       this.traceFileMapping = mapping;
       this.kiekerConfig = kiekerConfig;
+      this.testSelectionConfig = testSelectionConfig;
    }
 
    public boolean generateViews(final ResultsFolders resultsFolders, final TestSet examinedTests)
@@ -54,7 +58,7 @@ public class TraceViewGenerator {
       ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), modules, executionConfig);
       List<File> classpathFolders = getClasspathFolders(modules);
       for (TestCase testcase : examinedTests.getTests()) {
-         final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(resultsFolders, folders, testcase, traceFileMapping, version, classpathFolders, mapping, kiekerConfig);
+         final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(resultsFolders, folders, testcase, traceFileMapping, version, classpathFolders, mapping, kiekerConfig, testSelectionConfig);
          final boolean workedLocal = oneViewGenerator.generateTrace(version);
          allWorked &= workedLocal;
       }

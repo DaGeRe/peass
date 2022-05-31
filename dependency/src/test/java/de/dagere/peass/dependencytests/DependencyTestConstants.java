@@ -16,9 +16,9 @@ public class DependencyTestConstants {
    public static final File BASIC_STATE_PARAMETERS = new File(VERSIONS_FOLDER, "state_with_parameters");
    public static final File NORMAL_CHANGE_PARAMETERS  = new File(VERSIONS_FOLDER, "state_with_parameters_changed");
    
-   public static final TestSelectionConfig DEFAULT_CONFIG_NO_VIEWS = new TestSelectionConfig(1, false, false, false);
-   public static final TestSelectionConfig DEFAULT_CONFIG_WITH_VIEWS = new TestSelectionConfig(1, false, true, false);
-   public static final TestSelectionConfig DEFAULT_CONFIG_WITH_COVERAGE = new TestSelectionConfig(1, false, true, true);
+   public static final TestSelectionConfig DEFAULT_CONFIG_NO_VIEWS = new TestSelectionConfig(1, false, false, false, true);
+   public static final TestSelectionConfig DEFAULT_CONFIG_WITH_VIEWS = new TestSelectionConfig(1, false, true, false, true);
+   public static final TestSelectionConfig DEFAULT_CONFIG_WITH_COVERAGE = new TestSelectionConfig(1, false, true, true, true);
    
    public static final File CURRENT = new File(new File("target"), "current");
    

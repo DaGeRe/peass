@@ -63,7 +63,7 @@ public class ContinuousExecutionStarter implements Callable<Void> {
    @Override
    public Void call() throws Exception {
       final MeasurementConfig measurementConfig = new MeasurementConfig(measurementConfigMixin, executionMixin, statisticConfigMixin, new KiekerConfigMixin());
-      TestSelectionConfig dependencyConfig = new TestSelectionConfig(threads, false, useViews, generateCoverageSelection);
+      TestSelectionConfig dependencyConfig = new TestSelectionConfig(threads, false, useViews, generateCoverageSelection, true);
       EnvironmentVariables env = new EnvironmentVariables(measurementConfig.getExecutionConfig().getProperties());
       final ContinuousExecutor executor = new ContinuousExecutor(projectFolder, measurementConfig, dependencyConfig, env);
       executor.execute();

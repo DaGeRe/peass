@@ -60,7 +60,7 @@ public class JmhDependencyReaderMultiParamTest {
 
          ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
 
-         TestSelectionConfig dependencyConfig = new TestSelectionConfig(1, false, true, false);
+         TestSelectionConfig dependencyConfig = new TestSelectionConfig(1, false, true, false, true);
 
          ExecutionConfig jmhConfig = new ExecutionConfig();
          jmhConfig.setTestTransformer("de.dagere.peass.dependency.jmh.JmhTestTransformer");

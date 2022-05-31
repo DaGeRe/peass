@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.KiekerConfig;
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.CalledMethodLoader;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -35,9 +36,10 @@ public class OneTraceGenerator {
    private final List<File> classpathFolders;
    private final ModuleClassMapping moduleClassMapping;
    private final KiekerConfig kiekerConfig;
+   private final TestSelectionConfig testSelectionConfig;
 
    public OneTraceGenerator(final ResultsFolders resultsFolders, final PeassFolders folders, final TestCase testcase, final TraceFileMapping traceFileMapping, final String version,
-         final List<File> classpathFolders, final ModuleClassMapping mapping, final KiekerConfig kiekerConfig) {
+         final List<File> classpathFolders, final ModuleClassMapping mapping, final KiekerConfig kiekerConfig, TestSelectionConfig testSelectionConfig) {
       this.resultsFolders = resultsFolders;
       this.folders = folders;
       this.testcase = testcase;
@@ -45,7 +47,9 @@ public class OneTraceGenerator {
       this.version = version;
       this.classpathFolders = classpathFolders;
       this.moduleClassMapping = mapping;
+      
       this.kiekerConfig = kiekerConfig;
+      this.testSelectionConfig = testSelectionConfig;
    }
 
    public boolean generateTrace(final String versionCurrent)
@@ -108,7 +112,7 @@ public class OneTraceGenerator {
    }
 
    private void writeTrace(final String versionCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace) throws IOException {
-      TraceWriter traceWriter = new TraceWriter(version, testcase, resultsFolders, traceFileMapping);
+      TraceWriter traceWriter = new TraceWriter(version, testcase, resultsFolders, traceFileMapping, testSelectionConfig);
       traceWriter.writeTrace(versionCurrent, sizeInMB, traceMethodReader, trace);
    }
 }

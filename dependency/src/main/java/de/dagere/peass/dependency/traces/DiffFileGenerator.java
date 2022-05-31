@@ -22,12 +22,12 @@ public class DiffFileGenerator {
       this.diffFolder = diffFolder;
    }
 
-   public void generateAllDiffs(final String version, final VersionStaticSelection newVersionInfo, final DiffFileGenerator diffGenerator, final TraceFileMapping mapping,
+   public void generateAllDiffs(final String version, final VersionStaticSelection newVersionInfo, final TraceFileMapping mapping,
          final ExecutionData executionResult) throws IOException {
       for (TestCase testcase : newVersionInfo.getTests().getTests()) {
          boolean tracesChanged = tracesChanged(testcase, mapping);
          if (tracesChanged) {
-            diffGenerator.generateDiffFiles(testcase, mapping);
+            generateDiffFiles(testcase, mapping);
             executionResult.addCall(version, testcase);
          }
       }
@@ -38,8 +38,16 @@ public class DiffFileGenerator {
       if (traceFiles != null) {
          LOG.debug("Trace-Files: {}", traceFiles);
          if (traceFiles.size() > 1) {
-            File oldFile = new File(traceFiles.get(0).getAbsolutePath() + OneTraceGenerator.NOCOMMENT);
-            File newFile = new File(traceFiles.get(1).getAbsolutePath() + OneTraceGenerator.NOCOMMENT);
+            String firstName = getNameFromFile(traceFiles.get(0));
+            File oldFile = new File(firstName + OneTraceGenerator.NOCOMMENT + TraceFileManager.TXT_ENDING);
+            if (!oldFile.exists()) {
+               oldFile = new File(firstName + OneTraceGenerator.NOCOMMENT + TraceFileManager.ZIP_ENDING);
+            }
+            String secondName = getNameFromFile(traceFiles.get(1));
+            File newFile = new File(secondName + OneTraceGenerator.NOCOMMENT + TraceFileManager.TXT_ENDING);
+            if (!newFile.exists()) {
+               newFile = new File(secondName + OneTraceGenerator.NOCOMMENT + TraceFileManager.ZIP_ENDING);
+            }
             final boolean isDifferent = DiffUtil.isDifferentDiff(oldFile, newFile);
             if (isDifferent) {
                LOG.info("Trace changed.");
@@ -56,6 +64,12 @@ public class DiffFileGenerator {
          LOG.info("Traces not existing: {}", testcase);
          return false;
       }
+   }
+
+   public static String getNameFromFile(File file) {
+      return file.getAbsolutePath()
+            .replace(TraceFileManager.TXT_ENDING, "")
+            .replace(TraceFileManager.ZIP_ENDING, "");
    }
 
    /**
@@ -77,11 +91,22 @@ public class DiffFileGenerator {
 
    private void createAllDiffs(final TestCase testcase, final List<File> traceFiles) throws IOException {
       final String testcaseName = testcase.getShortClazz() + "#" + testcase.getMethod();
-      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + ".txt"), traceFiles, "");
-      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD), traceFiles, OneTraceGenerator.METHOD);
-      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.NOCOMMENT), traceFiles,
+
+      String firstFile = traceFiles.get(1).getName();
+      String ending;
+      if (firstFile.endsWith(TraceFileManager.TXT_ENDING)) {
+         ending = TraceFileManager.TXT_ENDING;
+      } else if (firstFile.endsWith(TraceFileManager.ZIP_ENDING)) {
+         ending = TraceFileManager.ZIP_ENDING;
+      } else {
+         throw new RuntimeException("Unexpected ending: " + firstFile);
+      }
+
+      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + ending), traceFiles, "");
+      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD + ending), traceFiles, OneTraceGenerator.METHOD);
+      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.NOCOMMENT + ending), traceFiles,
             OneTraceGenerator.NOCOMMENT);
-      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD_EXPANDED), traceFiles,
+      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD_EXPANDED + ending), traceFiles,
             OneTraceGenerator.METHOD_EXPANDED);
    }
 }

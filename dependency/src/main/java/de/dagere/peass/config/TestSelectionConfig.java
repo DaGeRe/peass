@@ -11,6 +11,7 @@ public class TestSelectionConfig implements Serializable {
    private final boolean generateTraces;
    private final boolean generateCoverageSelection;
    private final boolean skipProcessSuccessRuns;
+   private final boolean writeAsZip;
 
    public TestSelectionConfig(final int threads, final boolean doNotUpdateDependencies) {
       this.threads = threads;
@@ -24,23 +25,26 @@ public class TestSelectionConfig implements Serializable {
          generateCoverageSelection = true; 
       }
       skipProcessSuccessRuns = false;
+      writeAsZip = false;
    }
 
-   public TestSelectionConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateViews, final boolean generateCoverageSelection) {
+   public TestSelectionConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateViews, final boolean generateCoverageSelection, boolean writeAsZip) {
       this.threads = threads;
       this.doNotUpdateDependencies = doNotUpdateDependencies;
       this.generateTraces = generateViews;
       this.generateCoverageSelection = generateCoverageSelection;
+      this.writeAsZip = writeAsZip;
       skipProcessSuccessRuns = false;
       check();
    }
    
-   public TestSelectionConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateTraces, final boolean generateCoverageSelection, final boolean skipProcessSuccessRuns) {
+   public TestSelectionConfig(final int threads, final boolean doNotUpdateDependencies, final boolean generateTraces, final boolean generateCoverageSelection, final boolean skipProcessSuccessRuns, boolean writeAsZip) {
       this.threads = threads;
       this.doNotUpdateDependencies = doNotUpdateDependencies;
       this.generateTraces = generateTraces;
       this.generateCoverageSelection = generateCoverageSelection;
       this.skipProcessSuccessRuns = skipProcessSuccessRuns;
+      this.writeAsZip = writeAsZip;
       check();
    }
 
@@ -73,5 +77,9 @@ public class TestSelectionConfig implements Serializable {
    
    public boolean isSkipProcessSuccessRuns() {
       return skipProcessSuccessRuns;
+   }
+   
+   public boolean isWriteAsZip() {
+      return writeAsZip;
    }
 }

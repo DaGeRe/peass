@@ -30,6 +30,9 @@ public class TestSelectionConfigMixin {
    @Option(names = {"-doNotGenerateProperties", "--doNotGenerateProperties"}, description = "Disables properties generation. By default, properties will be generated.")
    public boolean doNotGenerateProperties = false;
    
+   @Option(names = {"-dontWriteAsZip", "--dontWriteAsZip"}, description = "Write traces as txt files (ZIP saves HDD spaces, but slows down processing)")
+   public boolean dontWriteAsZip = false;
+   
    public File getProjectFolder() {
       return projectFolder;
    }
@@ -61,6 +64,6 @@ public class TestSelectionConfigMixin {
       }
       boolean generateTraces = !doNotGenerateTraces;
       boolean generateCoverageSelection = !doNotGenerateCoverageSelection;
-      return new TestSelectionConfig(threads, doNotUpdateDependencies, generateTraces, generateCoverageSelection, skipProcessSuccessRuns);
+      return new TestSelectionConfig(threads, doNotUpdateDependencies, generateTraces, generateCoverageSelection, skipProcessSuccessRuns, dontWriteAsZip);
    }
 }

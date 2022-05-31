@@ -52,7 +52,7 @@ public class TraceWithMethods {
 		return elements.size();
 	}
 
-	public String getCommentlessTrace() {
+	public String getNocommentTrace() {
 		final Map<TraceElementContent, String> currentSource = methodsWithoutComment;
 		return getTraceString(currentSource);
 	}

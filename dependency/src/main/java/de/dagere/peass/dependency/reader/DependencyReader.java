@@ -43,7 +43,7 @@ public class DependencyReader {
 
    private static final Logger LOG = LogManager.getLogger(DependencyReader.class);
 
-   private final TestSelectionConfig dependencyConfig;
+   private final TestSelectionConfig testSelectionConfig;
    protected final StaticTestSelection dependencyResult = new StaticTestSelection();
    private final ExecutionData executionResult = new ExecutionData();
    private final ExecutionData coverageBasedSelection = new ExecutionData();
@@ -71,7 +71,7 @@ public class DependencyReader {
    public DependencyReader(final TestSelectionConfig dependencyConfig, final PeassFolders folders,
          final ResultsFolders resultsFolders, final String url, final VersionIterator iterator,
          final ChangeManager changeManager, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
-      this.dependencyConfig = dependencyConfig;
+      this.testSelectionConfig = dependencyConfig;
       this.resultsFolders = resultsFolders;
       this.iterator = iterator;
       this.folders = folders;
@@ -107,7 +107,7 @@ public class DependencyReader {
    public DependencyReader(final TestSelectionConfig dependencyConfig, final PeassFolders folders, final ResultsFolders resultsFolders, final String url,
          final VersionIterator iterator,
          final VersionKeeper skippedNoChange, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
-      this.dependencyConfig = dependencyConfig;
+      this.testSelectionConfig = dependencyConfig;
       this.resultsFolders = resultsFolders;
       this.iterator = iterator;
       this.folders = folders;
@@ -150,9 +150,9 @@ public class DependencyReader {
    public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final int tests = analyseVersion(changeManager);
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
-      if (dependencyConfig.isGenerateTraces()) {
+      if (testSelectionConfig.isGenerateTraces()) {
          Constants.OBJECTMAPPER.writeValue(resultsFolders.getTraceTestSelectionFile(), executionResult);
-         if (dependencyConfig.isGenerateCoverageSelection()) {
+         if (testSelectionConfig.isGenerateCoverageSelection()) {
             Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageSelectionFile(), coverageBasedSelection);
             Constants.OBJECTMAPPER.writeValue(resultsFolders.getCoverageInfoFile(), coverageSelectionInfo);
          }
@@ -183,7 +183,7 @@ public class DependencyReader {
     */
    public int analyseVersion(final ChangeManager changeManager) throws IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final String version = iterator.getTag();
-      if (!dependencyConfig.isSkipProcessSuccessRuns()) {
+      if (!testSelectionConfig.isSkipProcessSuccessRuns()) {
          if (!dependencyManager.getExecutor().isVersionRunning(iterator.getTag())) {
             documentFailure(version);
             return 0;
@@ -215,7 +215,7 @@ public class DependencyReader {
       emptyVersion.setRunning(true);
       emptyVersion.setPredecessor(input.getPredecessor());
       dependencyResult.getVersions().put(version, emptyVersion);
-      if (dependencyConfig.isGenerateTraces()) {
+      if (testSelectionConfig.isGenerateTraces()) {
          executionResult.addEmptyVersion(version, null);
          coverageBasedSelection.addEmptyVersion(version, null);
       }
@@ -226,20 +226,20 @@ public class DependencyReader {
          throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final VersionStaticSelection newVersionInfo = staticChangeHandler.handleStaticAnalysisChanges(version, input);
 
-      if (!dependencyConfig.isDoNotUpdateDependencies()) {
+      if (!testSelectionConfig.isDoNotUpdateDependencies()) {
          TraceChangeHandler traceChangeHandler = new TraceChangeHandler(dependencyManager, folders, executionConfig, version);
          traceChangeHandler.handleTraceAnalysisChanges(newVersionInfo);
 
-         if (dependencyConfig.isGenerateTraces()) {
+         if (testSelectionConfig.isGenerateTraces()) {
             executionResult.addEmptyVersion(version, newVersionInfo.getPredecessor());
             coverageBasedSelection.addEmptyVersion(version, newVersionInfo.getPredecessor());
-            TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, mapping, kiekerConfig);
+            TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, mapping, kiekerConfig, testSelectionConfig);
             traceViewGenerator.generateViews(resultsFolders, newVersionInfo.getTests());
 
             DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getVersionDiffFolder(version));
-            diffGenerator.generateAllDiffs(version, newVersionInfo, diffGenerator, mapping, executionResult);
+            diffGenerator.generateAllDiffs(version, newVersionInfo, mapping, executionResult);
 
-            if (dependencyConfig.isGenerateCoverageSelection()) {
+            if (testSelectionConfig.isGenerateCoverageSelection()) {
                TestSet dynamicallySelected = executionResult.getVersions().get(version);
                coverageExecutor.generateCoverageBasedSelection(version, newVersionInfo, dynamicallySelected);
             }
@@ -281,7 +281,7 @@ public class DependencyReader {
          DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
          lastRunningVersion = iterator.getTag();
 
-         if (dependencyConfig.isGenerateTraces()) {
+         if (testSelectionConfig.isGenerateTraces()) {
             generateInitialViews();
          }
          dependencyManager.cleanResultFolder();
@@ -293,7 +293,7 @@ public class DependencyReader {
 
    private void generateInitialViews() throws IOException, XmlPullParserException, ParseException, ViewNotFoundException, InterruptedException {
       TestSet initialTests = dependencyResult.getInitialversion().getInitialTests();
-      TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), mapping, kiekerConfig);
+      TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), mapping, kiekerConfig, testSelectionConfig);
       traceViewGenerator.generateViews(resultsFolders, initialTests);
 
       executionResult.getVersions().put(iterator.getTag(), new TestSet());

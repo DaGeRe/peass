@@ -11,10 +11,14 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.traces.coverage.TraceCallSummary;
 import de.dagere.peass.dependency.traces.coverage.TraceSummaryTransformer;
@@ -31,11 +35,15 @@ public class TraceWriter {
    private final ResultsFolders resultsFolders;
    private final TraceFileMapping traceFileMapping;
 
-   public TraceWriter(final String version, final TestCase testcase, final ResultsFolders resultsFolders, final TraceFileMapping traceFileMapping) {
+   private final TestSelectionConfig testSelectionConfig;
+
+   public TraceWriter(final String version, final TestCase testcase, final ResultsFolders resultsFolders, final TraceFileMapping traceFileMapping,
+         TestSelectionConfig testSelectionConfig) {
       this.version = version;
       this.testcase = testcase;
       this.resultsFolders = resultsFolders;
       this.traceFileMapping = traceFileMapping;
+      this.testSelectionConfig = testSelectionConfig;
    }
 
    public void writeTrace(final String versionCurrent, final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace)
@@ -56,34 +64,62 @@ public class TraceWriter {
 
    private File writeTraces(final long sizeInMB, final TraceMethodReader traceMethodReader, final TraceWithMethods trace, final File methodDir,
          final String shortVersion) throws IOException {
-      final File currentTraceFile = new File(methodDir, shortVersion);
-      traceFileMapping.addTraceFile(testcase, currentTraceFile);
-      writeStringToFile(currentTraceFile, trace.getWholeTrace(), StandardCharsets.UTF_8);
-      final File commentlessTraceFile = new File(methodDir, shortVersion + OneTraceGenerator.NOCOMMENT);
-      writeStringToFile(commentlessTraceFile, trace.getCommentlessTrace(), StandardCharsets.UTF_8);
-      final File methodTrace = new File(methodDir, shortVersion + OneTraceGenerator.METHOD);
-      writeStringToFile(methodTrace, trace.getTraceMethods(), StandardCharsets.UTF_8);
+      TraceFileManager fileManager = new TraceFileManager(methodDir, shortVersion, testSelectionConfig);
+
+      traceFileMapping.addTraceFile(testcase, fileManager.getWholeTraceFile());
+
+      writeStringToFile(fileManager.getWholeTraceFile(), trace.getWholeTrace(), StandardCharsets.UTF_8);
+      writeStringToFile(fileManager.getNocommentTraceFile(), trace.getNocommentTrace(), StandardCharsets.UTF_8);
+      writeStringToFile(fileManager.getMethodTraceFile(), trace.getTraceMethods(), StandardCharsets.UTF_8);
+
       if (sizeInMB < 5) {
-         final File methodExpandedTrace = new File(methodDir, shortVersion + OneTraceGenerator.METHOD_EXPANDED);
-         Files.write(methodExpandedTrace.toPath(), traceMethodReader.getExpandedTrace()
-               .stream()
-               .filter(value -> !(value instanceof RuleContent))
-               .map(value -> value.toString()).collect(Collectors.toList()));
+         writeExpandedTrace(traceMethodReader, fileManager);
       } else {
          LOG.debug("Do not write expanded trace - size: {} MB", sizeInMB);
       }
       File summaryFile = new File(methodDir, shortVersion + OneTraceGenerator.SUMMARY);
       TraceCallSummary traceSummary = TraceSummaryTransformer.transform(testcase, traceMethodReader.getExpandedTrace());
       Constants.OBJECTMAPPER.writeValue(summaryFile, traceSummary);
-      return methodTrace;
+      return fileManager.getMethodTraceFile();
+   }
+
+   private void writeExpandedTrace(final TraceMethodReader traceMethodReader, TraceFileManager fileManager) throws IOException, FileNotFoundException {
+      try (ZipOutputStream zipStream = new ZipOutputStream(new FileOutputStream(fileManager.getMethodExpandedTraceFile()));
+            WritableByteChannel channel = Channels.newChannel(zipStream)) {
+         ZipEntry entry = new ZipEntry("trace.txt");
+         zipStream.putNextEntry(entry);
+         traceMethodReader.getExpandedTrace()
+               .stream()
+               .filter(value -> !(value instanceof RuleContent))
+               .map(value -> value.toString())
+               .forEach(line -> {
+                  ByteBuffer bytebuffer = StandardCharsets.UTF_8.encode(line);
+                  try {
+                     channel.write(bytebuffer);
+                  } catch (IOException e) {
+                     e.printStackTrace();
+                  }
+               });
+      }
    }
 
    public void writeStringToFile(final File goalFile, final String trace, final Charset charset) throws FileNotFoundException, IOException {
-      ByteBuffer bytebuffer = charset.encode(trace);
+      if (goalFile.getName().endsWith(TraceFileManager.ZIP_ENDING)) {
+         ByteBuffer bytebuffer = charset.encode(trace);
 
-      try (FileOutputStream outputStream = new FileOutputStream(goalFile);
-            WritableByteChannel channel = Channels.newChannel(outputStream)) {
-         channel.write(bytebuffer);
+         try (ZipOutputStream zipStream = new ZipOutputStream(new FileOutputStream(goalFile));
+               WritableByteChannel channel = Channels.newChannel(zipStream)) {
+            ZipEntry entry = new ZipEntry("trace.txt");
+            zipStream.putNextEntry(entry);
+            channel.write(bytebuffer);
+         }
+      } else {
+         ByteBuffer bytebuffer = charset.encode(trace);
+
+         try (FileOutputStream outputStream = new FileOutputStream(goalFile);
+               WritableByteChannel channel = Channels.newChannel(outputStream)) {
+            channel.write(bytebuffer);
+         }
       }
    }
 }
