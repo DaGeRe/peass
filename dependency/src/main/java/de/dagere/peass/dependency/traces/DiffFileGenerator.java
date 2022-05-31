@@ -92,15 +92,8 @@ public class DiffFileGenerator {
    private void createAllDiffs(final TestCase testcase, final List<File> traceFiles) throws IOException {
       final String testcaseName = testcase.getShortClazz() + "#" + testcase.getMethod();
 
-      String firstFile = traceFiles.get(1).getName();
-      String ending;
-      if (firstFile.endsWith(TraceFileManager.TXT_ENDING)) {
-         ending = TraceFileManager.TXT_ENDING;
-      } else if (firstFile.endsWith(TraceFileManager.ZIP_ENDING)) {
-         ending = TraceFileManager.ZIP_ENDING;
-      } else {
-         throw new RuntimeException("Unexpected ending: " + firstFile);
-      }
+      File firstFile = traceFiles.get(1);
+      String ending = getEndingFromFile(firstFile);
 
       DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + ending), traceFiles, "");
       DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD + ending), traceFiles, OneTraceGenerator.METHOD);
@@ -108,5 +101,17 @@ public class DiffFileGenerator {
             OneTraceGenerator.NOCOMMENT);
       DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD_EXPANDED + ending), traceFiles,
             OneTraceGenerator.METHOD_EXPANDED);
+   }
+
+   public static String getEndingFromFile(File firstFile) {
+      String ending;
+      if (firstFile.getName().endsWith(TraceFileManager.TXT_ENDING)) {
+         ending = TraceFileManager.TXT_ENDING;
+      } else if (firstFile.getName().endsWith(TraceFileManager.ZIP_ENDING)) {
+         ending = TraceFileManager.ZIP_ENDING;
+      } else {
+         throw new RuntimeException("Unexpected ending: " + firstFile);
+      }
+      return ending;
    }
 }

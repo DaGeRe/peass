@@ -77,7 +77,7 @@ public class TraceWriter {
       } else {
          LOG.debug("Do not write expanded trace - size: {} MB", sizeInMB);
       }
-      File summaryFile = new File(methodDir, shortVersion + OneTraceGenerator.SUMMARY);
+      File summaryFile = new File(methodDir, shortVersion + OneTraceGenerator.SUMMARY + ".json");
       TraceCallSummary traceSummary = TraceSummaryTransformer.transform(testcase, traceMethodReader.getExpandedTrace());
       Constants.OBJECTMAPPER.writeValue(summaryFile, traceSummary);
       return fileManager.getMethodTraceFile();
