@@ -49,6 +49,7 @@ public class JmhDependencyReaderMultiParamTest {
    @BeforeEach
    public void clearCurrent() throws IOException {
       TestUtil.deleteContents(TestConstants.CURRENT_FOLDER);
+      TestUtil.deleteContents(new File("target/view_it"));
    }
 
    @Test
@@ -60,7 +61,7 @@ public class JmhDependencyReaderMultiParamTest {
 
          ResultsFolders resultsFolders = new ResultsFolders(TraceGettingIT.VIEW_IT_PROJECTFOLDER, "test");
 
-         TestSelectionConfig dependencyConfig = new TestSelectionConfig(1, false, true, false, true);
+         TestSelectionConfig dependencyConfig = new TestSelectionConfig(1, false, true, false, false);
 
          ExecutionConfig jmhConfig = new ExecutionConfig();
          jmhConfig.setTestTransformer("de.dagere.peass.dependency.jmh.JmhTestTransformer");
@@ -94,7 +95,7 @@ public class JmhDependencyReaderMultiParamTest {
 
       TestCase changedBenchmark = new TestCase("de.dagere.peass.ExampleBenchmark#testMethod");
       File viewFolder = resultsFolders.getViewMethodDir("000001", changedBenchmark);
-      File methodOrderFile = new File(viewFolder, "000001_method");
+      File methodOrderFile = new File(viewFolder, "000001_method.txt");
       String allMethods = FileUtils.readFileToString(methodOrderFile, StandardCharsets.UTF_8);
       MatcherAssert.assertThat(allMethods, Matchers.containsString("de.dagere.peass.ExampleBenchmark#someCalledMethod"));
       MatcherAssert.assertThat(allMethods, Matchers.containsString("de.dagere.peass.ExampleBenchmark#otherCalledMethod"));
