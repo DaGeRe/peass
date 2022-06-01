@@ -27,6 +27,8 @@ import de.dagere.peass.dependency.analysis.data.EntityUtil;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.traces.OneTraceGenerator;
+import de.dagere.peass.dependency.traces.TraceFileManager;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
@@ -141,8 +143,8 @@ public class PropertyReadHelper {
 
    public void getSourceInfos(final ChangeProperty property) throws FileNotFoundException, IOException {
       final File folder = new File(viewFolder, "view_" + version + File.separator + testClazz + File.separator + property.getMethod());
-      final File traceFileCurrent = new File(folder, version.substring(0, 6) + "_method");
-      File traceFileOld = new File(folder, getShortPrevVersion() + "_method");
+      final File traceFileCurrent = new File(folder, version.substring(0, 6) + OneTraceGenerator.METHOD + TraceFileManager.TXT_ENDING);
+      File traceFileOld = new File(folder, getShortPrevVersion() + OneTraceGenerator.METHOD + TraceFileManager.TXT_ENDING);
       if (changedTests != null) {
          traceFileOld = searchOldTraceFile(property, traceFileOld);
       }
@@ -188,7 +190,7 @@ public class PropertyReadHelper {
          File versionFolder = new File(viewFolder, "view_" + tryVersion);
          File predecessorFolder = new File(versionFolder, testClazz + File.separator + property.getMethod());
          String tryVersionShort = tryVersion.substring(0, 6);
-         traceFileOld = new File(predecessorFolder, tryVersionShort + "_method");
+         traceFileOld = new File(predecessorFolder, tryVersionShort + OneTraceGenerator.METHOD + TraceFileManager.TXT_ENDING);
          LOG.debug("Trying file " + traceFileOld.getAbsolutePath());
          index--;
       }
