@@ -22,7 +22,7 @@ import de.dagere.peass.folders.ResultsFolders;
 public class OneTraceGenerator {
 
    public static final String METHOD = "_method";
-   static final String METHOD_EXPANDED = "_method_expanded";
+   public static final String METHOD_EXPANDED = "_method_expanded";
    public static final String NOCOMMENT = "_nocomment";
    public static final String SUMMARY = "_summary";
 

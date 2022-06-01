@@ -125,7 +125,7 @@ public class DiffUtil {
       Patch<String> patch = DiffUtils.diff(file1text, file2text);
       return patch;
    }
-
+   
    public static List<String> getText(File file) throws IOException {
       if (file.getName().endsWith(TraceFileManager.TXT_ENDING)) {
          List<String> filetext = FileUtils.readLines(file, StandardCharsets.UTF_8)
