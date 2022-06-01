@@ -61,4 +61,20 @@ public class TraceFileManager {
          return txtCandidate;
       }
    }
+   
+   public static File getExistingTraceFile(File methodDir, String shortVersion, String variant) {
+      File zipCandidate = new File(methodDir, shortVersion + variant + ZIP_ENDING);
+      if (zipCandidate.exists()) {
+         return zipCandidate;
+      }
+      File txtCandidate = new File(methodDir, shortVersion + variant + TXT_ENDING);
+      if (txtCandidate.exists()) {
+         return txtCandidate;
+      }
+      File noEndingCandidate = new File(methodDir, shortVersion + variant);
+      if (noEndingCandidate.exists()) {
+         return noEndingCandidate;
+      }
+      return zipCandidate;
+   }
 }

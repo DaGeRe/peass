@@ -64,6 +64,6 @@ public class TestSelectionConfigMixin {
       }
       boolean generateTraces = !doNotGenerateTraces;
       boolean generateCoverageSelection = !doNotGenerateCoverageSelection;
-      return new TestSelectionConfig(threads, doNotUpdateDependencies, generateTraces, generateCoverageSelection, skipProcessSuccessRuns, dontWriteAsZip);
+      return new TestSelectionConfig(threads, doNotUpdateDependencies, generateTraces, generateCoverageSelection, skipProcessSuccessRuns, !dontWriteAsZip);
    }
 }

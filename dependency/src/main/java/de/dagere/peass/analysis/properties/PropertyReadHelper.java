@@ -143,8 +143,8 @@ public class PropertyReadHelper {
 
    public void getSourceInfos(final ChangeProperty property) throws FileNotFoundException, IOException {
       final File folder = new File(viewFolder, "view_" + version + File.separator + testClazz + File.separator + property.getMethod());
-      final File traceFileCurrent = new File(folder, version.substring(0, 6) + OneTraceGenerator.METHOD + TraceFileManager.TXT_ENDING);
-      File traceFileOld = new File(folder, getShortPrevVersion() + OneTraceGenerator.METHOD + TraceFileManager.TXT_ENDING);
+      final File traceFileCurrent = TraceFileManager.getExistingTraceFile(folder, version.substring(0, 6), OneTraceGenerator.METHOD);
+      File traceFileOld = TraceFileManager.getExistingTraceFile(folder, getShortPrevVersion(), OneTraceGenerator.METHOD); 
       if (changedTests != null) {
          traceFileOld = searchOldTraceFile(property, traceFileOld);
       }
@@ -190,7 +190,7 @@ public class PropertyReadHelper {
          File versionFolder = new File(viewFolder, "view_" + tryVersion);
          File predecessorFolder = new File(versionFolder, testClazz + File.separator + property.getMethod());
          String tryVersionShort = tryVersion.substring(0, 6);
-         traceFileOld = new File(predecessorFolder, tryVersionShort + OneTraceGenerator.METHOD + TraceFileManager.TXT_ENDING);
+         traceFileOld = TraceFileManager.getExistingTraceFile(predecessorFolder, tryVersionShort, OneTraceGenerator.METHOD);
          LOG.debug("Trying file " + traceFileOld.getAbsolutePath());
          index--;
       }
