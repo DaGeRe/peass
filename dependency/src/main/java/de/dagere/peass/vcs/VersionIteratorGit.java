@@ -35,13 +35,13 @@ public class VersionIteratorGit extends VersionIterator {
 
    private static final Logger LOG = LogManager.getLogger(VersionIteratorGit.class);
 
-   private final List<GitCommit> entries;
-   private final GitCommit previous;
+   private final List<String> entries;
+   private final String previous;
    private final int previousIndex;
 
    public VersionIteratorGit(final File projectFolder) {
       super(projectFolder);
-      previous = new GitCommit(GitUtils.getName("HEAD~1", projectFolder), "", "", "");
+      previous = GitUtils.getName("HEAD~1", projectFolder);
       entries = GitUtils.getCommits(projectFolder, false);
       previousIndex = entries.indexOf(previous);
    }
@@ -53,17 +53,17 @@ public class VersionIteratorGit extends VersionIterator {
     * @param entries List of commits
     * @param previousCommit Previous commit before start (NO_BEFORE, if it is the first one)
     */
-   public VersionIteratorGit(final File projectFolder, final List<GitCommit> entries, final GitCommit previousCommit) {
+   public VersionIteratorGit(final File projectFolder, final List<String> entries, final String previousCommit) {
       super(projectFolder);
       this.entries = entries;
       this.previous = previousCommit;
       int index = -1;
       if (previousCommit != null) {
          for (int i = 0; i < entries.size(); i++) {
-            String testedTag = entries.get(i).getTag();
+            String testedTag = entries.get(i);
             LOG.debug("Trying " + testedTag);
-            if (testedTag.equals(previousCommit.getTag())) {
-               LOG.debug("{} equals {}, setting start index to {}", testedTag, previousCommit.getTag(), i);
+            if (testedTag.equals(previousCommit)) {
+               LOG.debug("{} equals {}, setting start index to {}", testedTag, previousCommit, i);
                index = i;
             }
          }
@@ -75,14 +75,14 @@ public class VersionIteratorGit extends VersionIterator {
    @Override
    public boolean goToFirstCommit() {
       tagid = 0;
-      GitUtils.goToTag(entries.get(0).getTag(), projectFolder);
+      GitUtils.goToTag(entries.get(0), projectFolder);
       return true;
    }
 
    @Override
    public boolean goToNextCommit() {
       tagid++;
-      final String nextTag = entries.get(tagid).getTag();
+      final String nextTag = entries.get(tagid);
       GitUtils.goToTag(nextTag, projectFolder);
       return true;
    }
@@ -91,7 +91,7 @@ public class VersionIteratorGit extends VersionIterator {
    public boolean goToPreviousCommit() {
       if (tagid > 0) {
          tagid--;
-         final String nextTag = entries.get(tagid).getTag();
+         final String nextTag = entries.get(tagid);
          GitUtils.goToTag(nextTag, projectFolder);
          return true;
       } else {
@@ -106,15 +106,11 @@ public class VersionIteratorGit extends VersionIterator {
 
    @Override
    public String getTag() {
-      return entries.get(tagid).getTag();
+      return entries.get(tagid);
    }
    
    @Override
    public String getPredecessor() {
-      return previous.getTag();
-   }
-   
-   public GitCommit getPrevious() {
       return previous;
    }
 
@@ -131,7 +127,7 @@ public class VersionIteratorGit extends VersionIterator {
    @Override
    public boolean goTo0thCommit() {
       if (previousIndex != -1) {
-         GitUtils.goToTag(previous.getTag(), projectFolder);
+         GitUtils.goToTag(previous, projectFolder);
          tagid = previousIndex;
          return true;
       } else {
@@ -141,7 +137,7 @@ public class VersionIteratorGit extends VersionIterator {
 
    @Override
    public boolean isPredecessor(final String lastRunningVersion) {
-      return entries.get(tagid - 1).getTag().equals(lastRunningVersion);
+      return entries.get(tagid - 1).equals(lastRunningVersion);
    }
    
    @Override
@@ -151,7 +147,7 @@ public class VersionIteratorGit extends VersionIterator {
    }
    
    @Override
-   public List<GitCommit> getCommits() {
+   public List<String> getCommits() {
       return entries;
    }
 

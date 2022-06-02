@@ -66,14 +66,14 @@ public class SelectStarter implements Callable<Void>{
    public Void call() throws Exception {
       final String project = config.getProjectFolder().getName();
       
-      final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder());
+      final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder());
       VersionComparator.setVersions(commits);
       
       readExecutions(project, commits);
       return null;
    }
 
-   public void readExecutions(final String project, final List<GitCommit> commits) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException {
+   public void readExecutions(final String project, final List<String> commits) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException {
       KiekerConfig kiekerConfig = kiekerConfigMixin.getKiekerConfig();
       ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
       

@@ -16,9 +16,9 @@ import de.dagere.peass.vcs.VersionIterator;
  */
 public class FakeVersionIterator extends VersionIterator {
 
-   List<GitCommit> commits;
+   List<String> commits;
 
-   public FakeVersionIterator(final File folder, final List<GitCommit> commits) {
+   public FakeVersionIterator(final File folder, final List<String> commits) {
       super(folder);
       this.commits = commits;
    }
@@ -32,7 +32,7 @@ public class FakeVersionIterator extends VersionIterator {
 
    @Override
    public String getTag() {
-      return commits.get(tag).getTag();
+      return commits.get(tag);
    }
 
    @Override
@@ -78,7 +78,7 @@ public class FakeVersionIterator extends VersionIterator {
    }
 
    @Override
-   public List<GitCommit> getCommits() {
+   public List<String> getCommits() {
       return new LinkedList<>();
    }
 }

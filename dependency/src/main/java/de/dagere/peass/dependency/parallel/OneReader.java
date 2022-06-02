@@ -20,12 +20,12 @@ public final class OneReader implements Runnable {
 
    private static final Logger LOG = LogManager.getLogger(OneReader.class);
 
-   private final GitCommit minimumCommit;
+   private final String minimumCommit;
    private final VersionIterator reserveIterator;
    final FirstRunningVersionFinder firstRunningVersionFinder;
    private final DependencyReader reader;
 
-   public OneReader(final GitCommit minimumCommit, final VersionIterator reserveIterator, final DependencyReader reader,
+   public OneReader(final String minimumCommit, final VersionIterator reserveIterator, final DependencyReader reader,
          final FirstRunningVersionFinder firstRunningVersionFinder) {
       this.minimumCommit = minimumCommit;
       this.reserveIterator = reserveIterator;
@@ -56,7 +56,7 @@ public final class OneReader implements Runnable {
    private void readRemaining(final DependencyReader reader) throws FileNotFoundException, IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       String newest = reader.getDependencies().getNewestVersion();
       reader.setIterator(reserveIterator);
-      while (reserveIterator.hasNextCommit() && VersionComparator.isBefore(newest, minimumCommit.getTag())) {
+      while (reserveIterator.hasNextCommit() && VersionComparator.isBefore(newest, minimumCommit)) {
          reserveIterator.goToNextCommit();
          LOG.debug("Remaining: {} This: {}", reserveIterator.getTag(), this);
          reader.readVersion();

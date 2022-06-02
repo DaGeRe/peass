@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 
-
-
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
@@ -51,12 +49,11 @@ public class TestContinuousExecutor {
          TestUtil.deleteContents(fullPeassFolder);
       }
    }
-   
-   
+
    @Test
    public void testChangeIdentification() throws Exception {
       initRepo();
-      
+
       TestSelectionConfig dependencyConfig = new TestSelectionConfig(1, false);
       MeasurementConfig measurementConfig = new MeasurementConfig(2);
       ContinuousExecutor executor = new ContinuousExecutor(DependencyTestConstants.CURRENT, measurementConfig, dependencyConfig, new EnvironmentVariables());
@@ -66,22 +63,20 @@ public class TestContinuousExecutor {
       mockMeasurement(executor, spied);
 
       spied.execute();
-      
+
       checkChangesJson();
    }
-
 
    private void checkChangesJson() throws IOException, JsonParseException, JsonMappingException {
       File changeFile = new File(fullPeassFolder, "changes.json");
       ProjectChanges changes = Constants.OBJECTMAPPER.readValue(changeFile, ProjectChanges.class);
-      
+
       String changedTestClass = changes.getVersion(NEWER_VERSION).getTestcaseChanges().keySet().iterator().next();
       TestCase tc = new TestCase(changedTestClass);
       Assert.assertEquals("de.test.CalleeTest", tc.getClazz());
    }
 
-
-   private void mockMeasurement(final ContinuousExecutor executor, final ContinuousExecutor spied) throws IOException, InterruptedException,  XmlPullParserException {
+   private void mockMeasurement(final ContinuousExecutor executor, final ContinuousExecutor spied) throws IOException, InterruptedException, XmlPullParserException {
       Mockito.doAnswer(new Answer<File>() {
 
          @Override
@@ -89,15 +84,14 @@ public class TestContinuousExecutor {
 
             File measurementFolder = new File(fullPeassFolder, executor.getLatestVersion() + "_" + executor.getVersionOld());
             measurementFolder.mkdirs();
-            
+
             File measurementRawData = new File("src/test/resources/continuousExecutorTest");
             FileUtils.copyDirectory(measurementRawData, measurementFolder);
-            
+
             return new File(measurementFolder, "measurements");
          }
       }).when(spied).executeMeasurement(Mockito.anySet());
    }
-
 
    private void mockRegressionTestSelection(final ContinuousExecutor spied) throws Exception {
       HashSet<TestCase> tests = new HashSet<TestCase>();
@@ -115,18 +109,15 @@ public class TestContinuousExecutor {
             return mockedResult;
          }
       }).when(spied).executeRegressionTestSelection(Mockito.anyString());
-      
-//      Mockito.doReturn(mockedResult).when(spied).executeRegressionTestSelection(Mockito.anyString());
-//      Mockito.when(spied.executeRegressionTestSelection(Mockito.anyString())).thenReturn(mockedResult);
-   }
 
+      // Mockito.doReturn(mockedResult).when(spied).executeRegressionTestSelection(Mockito.anyString());
+      // Mockito.when(spied.executeRegressionTestSelection(Mockito.anyString())).thenReturn(mockedResult);
+   }
 
    private void initRepo() throws ZipException {
       ZipFile file = new ZipFile(new File("src/test/resources/simple-test-1.zip"));
       file.extractAll(DependencyTestConstants.CURRENT.getAbsolutePath());
-      VersionComparator.setVersions(Arrays.asList(new GitCommit[] {
-            new GitCommit("33ce17c04b5218c25c40137d4d09f40fbb3e4f0f", null, null, null),
-            new GitCommit(NEWER_VERSION, null, null, null)}));
+      VersionComparator.setVersions(Arrays.asList(new String[] { "33ce17c04b5218c25c40137d4d09f40fbb3e4f0f", NEWER_VERSION }));
    }
 
    public void buildRepo() throws InterruptedException, IOException {
@@ -138,5 +129,4 @@ public class TestContinuousExecutor {
       ProjectBuilderHelper.commit(DependencyTestConstants.CURRENT, "Version 1");
    }
 
-   
 }

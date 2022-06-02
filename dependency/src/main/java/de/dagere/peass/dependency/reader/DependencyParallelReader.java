@@ -30,7 +30,7 @@ public class DependencyParallelReader {
    private final String url;
    private final VersionKeeper nonRunning;
    private final VersionKeeper nonChanges;
-   private final List<GitCommit> commits;
+   private final List<String> commits;
    private final PeassFolders folders;
    private final int sizePerThread;
    private final ResultsFolders[] outFolders;
@@ -40,7 +40,7 @@ public class DependencyParallelReader {
    private final KiekerConfig kiekerConfig;
    private final EnvironmentVariables env;
 
-   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<GitCommit> commits,
+   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<String> commits,
          final TestSelectionConfig dependencyConfig, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       url = GitUtils.getURL(projectFolder);
       this.dependencyConfig = dependencyConfig;
@@ -111,17 +111,17 @@ public class DependencyParallelReader {
       final int min = outfileIndex * sizePerThread;
       final int max = Math.min((outfileIndex + 1) * sizePerThread + 1, commits.size());
       LOG.debug("Min: {} Max: {} Size: {}", min, max, commits.size());
-      final List<GitCommit> currentCommits = commits.subList(min, max);
-      final List<GitCommit> reserveCommits = commits.subList(max - 1, commits.size());
-      final GitCommit minimumCommit = commits.get(Math.min(max, commits.size() - 1));
+      final List<String> currentCommits = commits.subList(min, max);
+      final List<String> reserveCommits = commits.subList(max - 1, commits.size());
+      final String minimumCommit = commits.get(Math.min(max, commits.size() - 1));
 
       if (currentCommits.size() > 0) {
          processCommits(currentOutFolders, service, foldersTemp, currentCommits, reserveCommits, minimumCommit);
       }
    }
 
-   void processCommits(final ResultsFolders currentOutFolders, final ExecutorService service, final PeassFolders foldersTemp, final List<GitCommit> currentCommits,
-         final List<GitCommit> reserveCommits, final GitCommit minimumCommit) throws InterruptedException {
+   void processCommits(final ResultsFolders currentOutFolders, final ExecutorService service, final PeassFolders foldersTemp, final List<String> currentCommits,
+         final List<String> reserveCommits, final String minimumCommit) throws InterruptedException {
       LOG.debug("Start: {} End: {}", currentCommits.get(0), currentCommits.get(currentCommits.size() - 1));
       LOG.debug(currentCommits);
       final VersionIterator iterator = new VersionIteratorGit(foldersTemp.getProjectFolder(), currentCommits, null);

@@ -67,7 +67,7 @@ public final class GitUtils {
          File candidate = new File(System.getenv(Constants.PEASS_PROJECTS), project);
          if (candidate.exists()) {
             repoFound = true;
-            final List<GitCommit> commits = GitUtils.getCommits(candidate, false);
+            final List<String> commits = GitUtils.getCommits(candidate, false);
             VersionComparator.setVersions(commits);
          }
       }
@@ -88,7 +88,7 @@ public final class GitUtils {
       if (!repoFound) {
          final File tempDir = Files.createTempDirectory("gitTemp").toFile();
          GitUtils.downloadProject(url, tempDir);
-         final List<GitCommit> commits = GitUtils.getCommits(tempDir, false);
+         final List<String> commits = GitUtils.getCommits(tempDir, false);
          VersionComparator.setVersions(commits);
          FileUtils.deleteDirectory(tempDir);
       }
@@ -135,23 +135,23 @@ public final class GitUtils {
     * @param endcommit Version to end
     * @param commits List of commits for filtering, sorted from older to newer
     */
-   public static void filterList(final String startcommit, final String endcommit, final List<GitCommit> commits) {
+   public static void filterList(final String startcommit, final String endcommit, final List<String> commits) {
       LOG.info("Count of Commits: {}", commits.size());
       boolean beforeStart = startcommit == null ? false : true;
       boolean afterEnd = false;
-      final List<GitCommit> notRelevantCommits = new LinkedList<>();
-      for (final GitCommit commit : commits) {
-         LOG.debug("Processing " + commit.getTag() + " " + commit.getDate() + " " + beforeStart + " " + afterEnd);
-         if (startcommit != null && commit.getTag().startsWith(startcommit)) {
+      final List<String> notRelevantCommits = new LinkedList<>();
+      for (final String commit : commits) {
+         LOG.debug("Processing " + commit + " " + beforeStart + " " + afterEnd);
+         if (startcommit != null && commit.startsWith(startcommit)) {
             beforeStart = false;
          }
          if (beforeStart || afterEnd) {
             notRelevantCommits.add(commit);
          }
-         if (endcommit != null && commit.getTag().startsWith(endcommit)) {
+         if (endcommit != null && commit.startsWith(endcommit)) {
             afterEnd = true;
             if (beforeStart == true) {
-               boolean startCommitExists = commits.stream().anyMatch(potentialStart -> potentialStart.getTag().startsWith(startcommit));
+               boolean startCommitExists = commits.stream().anyMatch(potentialStart -> potentialStart.startsWith(startcommit));
                if (startCommitExists) {
                   throw new RuntimeException("Startcommit " + startcommit + " after endcommit " + endcommit);
                } else {
@@ -164,14 +164,14 @@ public final class GitUtils {
       commits.removeAll(notRelevantCommits);
    }
 
-   public static List<GitCommit> getCommits(final File folder, final String startcommit, final String endcommit) {
-      final List<GitCommit> commits = getCommits(folder, true);
+   public static List<String> getCommits(final File folder, final String startcommit, final String endcommit) {
+      final List<String> commits = getCommits(folder, true);
       GitUtils.filterList(startcommit, endcommit, commits);
       return commits;
    }
 
-   public static List<GitCommit> getCommits(final File folder, final boolean includeAllBranches) {
-      return getCommits(folder, includeAllBranches, true, false);
+   public static List<String> getCommits(final File folder, final boolean includeAllBranches) {
+      return getCommits(folder, includeAllBranches, true);
    }
 
    /**
@@ -180,7 +180,7 @@ public final class GitUtils {
     * @param folder
     * @return
     */
-   public static List<GitCommit> getCommits(final File folder, final boolean includeAllBranches, final boolean linearizeHistory, final boolean getMetadata) {
+   public static List<String> getCommits(final File folder, final boolean includeAllBranches, final boolean linearizeHistory) {
       try {
          final List<String> commitNames;
          if (!linearizeHistory) {
@@ -188,18 +188,15 @@ public final class GitUtils {
          } else {
             commitNames = getLinearCommitNames(folder);
          }
-         final List<GitCommit> commits;
-         if (getMetadata) {
-            commits = getCommitsMetadata(folder, commitNames);
-         } else {
-            commits = new LinkedList<>();
-            commitNames.forEach(tag -> commits.add(new GitCommit(tag, null, null, null)));
-         }
-         return commits;
+         return commitNames;
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
-
+   }
+   
+   public static List<GitCommit> getCommitMetadata(File folder, List<String> commitNames) throws IOException{
+      List<GitCommit> commits = getCommitsMetadata(folder, commitNames);
+      return commits;
    }
 
    private static List<String> getLinearCommitNames(final File folder) {

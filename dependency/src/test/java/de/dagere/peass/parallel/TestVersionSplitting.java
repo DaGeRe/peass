@@ -74,7 +74,7 @@ public class TestVersionSplitting {
 
    @Test
    public void testSplittingNonRunning() throws IOException {
-      List<GitCommit> commits = ParallelTestUtil.getCommits();
+      List<String> commits = ParallelTestUtil.getCommits();
       int count = 3;
       int size = commits.size() > 2 * count ? commits.size() / count : 2;
 
@@ -104,7 +104,7 @@ public class TestVersionSplitting {
 
    @Test
    public void testSplitting() throws IOException {
-      List<GitCommit> commits = ParallelTestUtil.getCommits();
+      List<String> commits = ParallelTestUtil.getCommits();
 
       int count = 3;
       int size = commits.size() > 2 * count ? commits.size() / count : 2;
@@ -123,7 +123,7 @@ public class TestVersionSplitting {
 
    @Test
    public void testSplittingStrangeDistribution() throws IOException {
-      List<GitCommit> commits = ParallelTestUtil.getCommits();
+      List<String> commits = ParallelTestUtil.getCommits();
 
       List<StaticTestSelection> dependencies = new LinkedList<>();
       readUntilMax(commits, dependencies, 0, 0, 6);
@@ -136,16 +136,16 @@ public class TestVersionSplitting {
       Assert.assertEquals(7, merged.getVersions().size());
    }
 
-   private void readUntilMax(final List<GitCommit> commits, final List<StaticTestSelection> dependencies, final int i, final int min, final int max) throws IOException {
-      final List<GitCommit> currentCommits = commits.subList(min, max);
-      final List<GitCommit> reserveCommits = commits.subList(max - 1, commits.size());
-      final GitCommit minimumCommit = commits.get(Math.min(max, commits.size() - 1));
-      System.out.println("Minimum: " + minimumCommit.getTag());
+   private void readUntilMax(final List<String> commits, final List<StaticTestSelection> dependencies, final int i, final int min, final int max) throws IOException {
+      final List<String> currentCommits = commits.subList(min, max);
+      final List<String> reserveCommits = commits.subList(max - 1, commits.size());
+      final String minimumCommit = commits.get(Math.min(max, commits.size() - 1));
+      System.out.println("Minimum: " + minimumCommit);
       readDummyDependencies(dependencies, i, currentCommits, reserveCommits, minimumCommit);
    }
 
-   private void readDummyDependencies(final List<StaticTestSelection> dependencies, final int i, final List<GitCommit> currentCommits, final List<GitCommit> reserveCommits,
-         final GitCommit minimumCommit)
+   private void readDummyDependencies(final List<StaticTestSelection> dependencies, final int i, final List<String> currentCommits, final List<String> reserveCommits,
+         final String minimumCommit)
          throws IOException {
       File dummyFolder = new File(TestConstants.CURRENT_FOLDER, "part_" + i);
       dummyFolder.mkdir();
@@ -166,7 +166,7 @@ public class TestVersionSplitting {
       };
       
       DummyReader dummy = new DummyReader(dummyFolder, fakeIterator, changeManager);
-      System.out.println(minimumCommit.getTag());
+      System.out.println(minimumCommit);
       final VersionIterator reserveIterator = new FakeVersionIterator(dummyFolder, reserveCommits);
       OneReader reader = new OneReader(minimumCommit, reserveIterator, dummy, finder);
       reader.run();

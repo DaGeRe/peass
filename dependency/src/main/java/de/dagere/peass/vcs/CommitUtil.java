@@ -10,8 +10,8 @@ public class CommitUtil {
    
    private static final Logger LOG = LogManager.getLogger(CommitUtil.class);
    
-   public static List<GitCommit> getGitCommits(final String startcommit, final String endcommit, final File projectFolder) {
-      final List<GitCommit> commits = GitUtils.getCommits(projectFolder, false);
+   public static List<String> getGitCommits(final String startcommit, final String endcommit, final File projectFolder) {
+      final List<String> commits = GitUtils.getCommits(projectFolder, false);
 
       LOG.info("Processing git repo, commits: {}", commits.size());
       // LOG.debug("First Commits: {}", commits.subList(0, 10));

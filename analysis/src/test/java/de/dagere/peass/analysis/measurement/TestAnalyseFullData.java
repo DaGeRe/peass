@@ -1,6 +1,7 @@
 package de.dagere.peass.analysis.measurement;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -32,10 +33,7 @@ public class TestAnalyseFullData {
    
    @Test
    public void testReading() throws InterruptedException {
-      
-      LinkedList<GitCommit> versions = new LinkedList<GitCommit>();
-      versions.add(new GitCommit("946e4318267b56838aa35da0a2a4e5c0528bfe04", "", "", ""));
-      versions.add(new GitCommit("fd79b2039667c09167c721b2823425629fad6d11", "", "", ""));
+      List<String> versions = Arrays.asList(new String[] {"946e4318267b56838aa35da0a2a4e5c0528bfe04","fd79b2039667c09167c721b2823425629fad6d11" });
       VersionComparator.setVersions(versions);
       
       File baseFolder = new File(DATA_READING_FOLDER, "android-example-correct");
@@ -53,9 +51,7 @@ public class TestAnalyseFullData {
    @Test
    public void testReadingWithParams() throws InterruptedException {
       
-      LinkedList<GitCommit> versions = new LinkedList<GitCommit>();
-      versions.add(new GitCommit("49f75e8877c2e9b7cf6b56087121a35fdd73ff8b", "", "", ""));
-      versions.add(new GitCommit("a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b", "", "", ""));
+      List<String> versions = Arrays.asList(new String[] {"49f75e8877c2e9b7cf6b56087121a35fdd73ff8b","a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b" });
       VersionComparator.setVersions(versions);
       
       ModuleClassMapping mapping = Mockito.mock(ModuleClassMapping.class);

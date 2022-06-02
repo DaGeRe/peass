@@ -219,9 +219,8 @@ public class PropertyReadHelper {
    }
 
    private Map<ChangedEntity, ClazzChangeData> getChanges(final PeassFolders folders) {
-      GitCommit firstCommit = new GitCommit(versionOld, null, null, null);
-      List<GitCommit> commits = Arrays.asList(new GitCommit[] { new GitCommit(version, null, null, null), firstCommit });
-      final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, commits, firstCommit);
+      List<String> commits = Arrays.asList(new String[] { version, versionOld });
+      final VersionIteratorGit iterator = new VersionIteratorGit(projectFolder, commits, versionOld);
       final ChangeManager changeManager = new ChangeManager(folders, iterator, config, testExecutor);
       final Map<ChangedEntity, ClazzChangeData> changes = changeManager.getChanges(versionOld, version);
       return changes;

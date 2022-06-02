@@ -15,19 +15,19 @@ import de.dagere.peass.vcs.GitCommit;
 public class TestMerging {
    @Test
    public void testMerging() {
-      List<GitCommit> commits = ParallelTestUtil.getCommits();
+      List<String> commits = ParallelTestUtil.getCommits();
 
       VersionComparator.setVersions(commits);
       StaticTestSelection deps1 = new StaticTestSelection(), deps2 = new StaticTestSelection();
       deps1.setInitialversion(new InitialVersion());
       deps1.getInitialversion().setVersion("0");
-      for (GitCommit commit : commits.subList(1, 6)) {
-         deps1.getVersions().put(commit.getTag(), null);
+      for (String commit : commits.subList(1, 6)) {
+         deps1.getVersions().put(commit, null);
       }
       deps2.setInitialversion(new InitialVersion());
       deps2.getInitialversion().setVersion("5");
-      for (GitCommit commit : commits.subList(5, 10)) {
-         deps2.getVersions().put(commit.getTag(), null);
+      for (String commit : commits.subList(5, 10)) {
+         deps2.getVersions().put(commit, null);
       }
       StaticTestSelection merged = DependencyReaderUtil.mergeDependencies(deps1, deps2);
       Assert.assertEquals(9, merged.getVersions().size());
@@ -35,19 +35,19 @@ public class TestMerging {
 
    @Test
    public void testMergingStrangeDistribution() {
-      List<GitCommit> commits = ParallelTestUtil.getCommits();
+      List<String> commits = ParallelTestUtil.getCommits();
 
       VersionComparator.setVersions(commits);
       StaticTestSelection deps1 = new StaticTestSelection(), deps2 = new StaticTestSelection();
       deps1.setInitialversion(new InitialVersion());
       deps1.getInitialversion().setVersion("0");
-      for (GitCommit commit : commits.subList(1, 8)) {
-         deps1.getVersions().put(commit.getTag(), null);
+      for (String commit : commits.subList(1, 8)) {
+         deps1.getVersions().put(commit, null);
       }
       deps2.setInitialversion(new InitialVersion());
       deps2.getInitialversion().setVersion("7");
-      for (GitCommit commit : commits.subList(8, 10)) {
-         deps2.getVersions().put(commit.getTag(), null);
+      for (String commit : commits.subList(8, 10)) {
+         deps2.getVersions().put(commit, null);
       }
       StaticTestSelection merged = DependencyReaderUtil.mergeDependencies(deps1, deps2);
       Assert.assertEquals(9, merged.getVersions().size());
@@ -55,13 +55,13 @@ public class TestMerging {
 
    @Test
    public void testAlphabetic() {
-      List<GitCommit> commits = new LinkedList<>();
-      commits.add(new GitCommit("A", "", "", ""));
-      commits.add(new GitCommit("C", "", "", ""));
-      commits.add(new GitCommit("B", "", "", ""));
-      commits.add(new GitCommit("G", "", "", ""));
-      commits.add(new GitCommit("E", "", "", ""));
-      commits.add(new GitCommit("F", "", "", ""));
+      List<String> commits = new LinkedList<>();
+      commits.add("A");
+      commits.add("C");
+      commits.add("B");
+      commits.add("G");
+      commits.add("E");
+      commits.add("F");
       VersionComparator.setVersions(commits);
       StaticTestSelection deps1 = new StaticTestSelection(), deps2 = new StaticTestSelection();
       deps1.setInitialversion(new InitialVersion());

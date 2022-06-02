@@ -16,13 +16,12 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.vcs.GitCommit;
 
 public class TestChangedTraceTestSerialisation {
    
    @BeforeEach
    public void initializeComparator() {
-      VersionComparator.setVersions(Arrays.asList(new GitCommit("v1", "", "", ""), new GitCommit("v2", "", "", "")));
+      VersionComparator.setVersions(Arrays.asList("v1","v2"));
    }
    
    @Test

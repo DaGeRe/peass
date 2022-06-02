@@ -69,8 +69,9 @@ public class GetValidationExecutionFile {
       selected.setUrl(changedTests.getUrl());
 
       File projectFolder = new File(projectsFolder, project);
-      List<GitCommit> commits = GitUtils.getCommits(projectFolder, false);
-      VersionComparator.setVersions(commits);
+      List<String> commitNames = GitUtils.getCommits(projectFolder, false);
+      VersionComparator.setVersions(commitNames);
+      List<GitCommit> commits = GitUtils.getCommitMetadata(projectFolder, commitNames);
 
       Map<String, String> projectCommits = new LinkedHashMap<>();
       projectsCommits.put(project, projectCommits);

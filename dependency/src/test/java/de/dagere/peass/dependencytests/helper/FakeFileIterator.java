@@ -141,7 +141,7 @@ public class FakeFileIterator extends VersionIterator {
    }
    
    @Override
-   public List<GitCommit> getCommits() {
+   public List<String> getCommits() {
       return new LinkedList<>();
    }
 }

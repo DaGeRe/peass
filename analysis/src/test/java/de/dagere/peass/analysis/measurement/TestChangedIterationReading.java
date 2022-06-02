@@ -20,8 +20,7 @@ public class TestChangedIterationReading {
    @Test
    public void testChangedIterationReading() throws InterruptedException {
       VersionComparator.setVersions(Arrays.asList(
-            new GitCommit("a23e385264c31def8dcda86c3cf64faa698c62d8", null, null, null),
-            new GitCommit("33ce17c04b5218c25c40137d4d09f40fbb3e4f0f", null, null, null)));
+            "a23e385264c31def8dcda86c3cf64faa698c62d8", "33ce17c04b5218c25c40137d4d09f40fbb3e4f0f"));
 
       ProjectStatistics statistics = new ProjectStatistics();
       AnalyseFullData afd = new AnalyseFullData(new File("target/changes.json"), statistics, null, new StatisticsConfig());
@@ -32,7 +31,7 @@ public class TestChangedIterationReading {
 
       System.out.println(testcaseStatistic.getDeviationCurrent());
       System.out.println(testcaseStatistic.getDeviationOld());
-      
+
       MatcherAssert.assertThat(testcaseStatistic.getDeviationCurrent(), Matchers.lessThan(800000d));
       MatcherAssert.assertThat(testcaseStatistic.getDeviationOld(), Matchers.lessThan(800000d));
    }

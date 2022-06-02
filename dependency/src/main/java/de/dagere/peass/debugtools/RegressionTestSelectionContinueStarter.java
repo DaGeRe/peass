@@ -161,10 +161,9 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
    }
 
    private VersionIterator createIterator(final TestSelectionConfigMixin config, final String previousVersion) {
-      final List<GitCommit> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder());
-      commits.add(0, new GitCommit(previousVersion, "", "", ""));
-      final GitCommit previous = new GitCommit(previousVersion, "", "", "");
-      final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previous);
+      final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder());
+      commits.add(0, previousVersion);
+      final VersionIterator iterator = new VersionIteratorGit(config.getProjectFolder(), commits, previousVersion);
       return iterator;
    }
 

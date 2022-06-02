@@ -32,14 +32,14 @@ public class DependencyIteratorBuilder {
 
       String newestAnalyzedVersionName = dependencies != null ? dependencies.getNewestVersion() : null;
 
-      GitCommit oldVersionCommit = getOldVersionCommit(executionConfig, newestAnalyzedVersionName, folders);
+      String oldVersionCommit = getOldVersionCommit(executionConfig, newestAnalyzedVersionName, folders);
 
       if (version.equals(newestAnalyzedVersionName)) {
          LOG.info("Version {} is equal to newest version, not executing RTS", version);
          iterator = null;
          versionOld = getPrePredecessor(dependencies);
-      } else if (oldVersionCommit.getTag().equals(version)) {
-         LOG.error("Version {} is equal to predecessing version {}, some error occured - not executing RTS", version, oldVersionCommit.getTag());
+      } else if (oldVersionCommit.equals(version)) {
+         LOG.error("Version {} is equal to predecessing version {}, some error occured - not executing RTS", version, oldVersionCommit);
          iterator = null;
          versionOld = dependencies.getNewestRunningVersion();
       } else {
@@ -50,12 +50,12 @@ public class DependencyIteratorBuilder {
             iterator = null;
          } else {
             GitCommit currentCommit = new GitCommit(version, "", "", "");
-            List<GitCommit> commits = new LinkedList<>();
+            List<String> commits = new LinkedList<>();
             commits.add(oldVersionCommit);
-            commits.add(currentCommit);
+            commits.add(version);
             LOG.info("Analyzing {} - {}", oldVersionCommit, currentCommit);
             iterator = new VersionIteratorGit(folders.getProjectFolder(), commits, oldVersionCommit);
-            versionOld = oldVersionCommit.getTag();
+            versionOld = oldVersionCommit;
          }
       }
    }
@@ -70,7 +70,7 @@ public class DependencyIteratorBuilder {
       }
    }
 
-   private static GitCommit getOldVersionCommit(final ExecutionConfig executionConfig, final String newestRunningVersionName, final PeassFolders folders) {
+   private static String getOldVersionCommit(final ExecutionConfig executionConfig, final String newestRunningVersionName, final PeassFolders folders) {
       String oldVersion;
       if (executionConfig.getCommitOld() != null) {
          oldVersion = executionConfig.getCommitOld();
@@ -79,8 +79,7 @@ public class DependencyIteratorBuilder {
       } else {
          oldVersion = GitUtils.getName("HEAD~1", folders.getProjectFolder());
       }
-      GitCommit oldVersionCommit = new GitCommit(oldVersion, "", "", "");
-      return oldVersionCommit;
+      return oldVersion;
    }
 
    public String getVersion() {

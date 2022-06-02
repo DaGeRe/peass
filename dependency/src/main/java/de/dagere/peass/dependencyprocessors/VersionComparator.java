@@ -48,9 +48,9 @@ public class VersionComparator implements Comparator<String> {
       dependencies2.getVersions().keySet().stream().forEach(version -> versions.add(version));
    }
 
-   public static void setVersions(final List<GitCommit> commits) {
+   public static void setVersions(final List<String> commits) {
       versions = new LinkedList<>();
-      commits.forEach(version -> versions.add(version.getTag()));
+      commits.forEach(version -> versions.add(version));
    }
 
    public static int getVersionIndex(final String version) {

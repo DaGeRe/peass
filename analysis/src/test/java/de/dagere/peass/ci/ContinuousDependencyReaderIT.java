@@ -59,7 +59,7 @@ public class ContinuousDependencyReaderIT {
 
       ExecutionConfig executionConfig = new ExecutionConfig();
       executionConfig.setCommit(iterator.getTag());
-      executionConfig.setCommitOld(iterator.getPrevious().getTag());
+      executionConfig.setCommitOld(iterator.getPredecessor());
 
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfig(true),
             new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
@@ -85,7 +85,7 @@ public class ContinuousDependencyReaderIT {
 
       ExecutionConfig executionConfig = new ExecutionConfig();
       executionConfig.setCommit(newVersion);
-      executionConfig.setCommitOld(iterator.getPrevious().getTag());
+      executionConfig.setCommitOld(iterator.getPredecessor());
 
       final ContinuousDependencyReader spiedReader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig,
             new KiekerConfig(true),
@@ -111,7 +111,7 @@ public class ContinuousDependencyReaderIT {
 
       ExecutionConfig executionConfig = new ExecutionConfig();
       executionConfig.setCommit(newVersion);
-      executionConfig.setCommitOld(iterator.getPrevious().getTag());
+      executionConfig.setCommitOld(iterator.getPredecessor());
 
       ContinuousDependencyReader reader = new ContinuousDependencyReader(DependencyTestConstants.DEFAULT_CONFIG_WITH_VIEWS, executionConfig, new KiekerConfig(true),
             new PeassFolders(TestConstants.CURRENT_FOLDER), resultsFolders, new EnvironmentVariables());
