@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -141,6 +142,6 @@ public class FakeFileIterator extends VersionIterator {
    
    @Override
    public List<GitCommit> getCommits() {
-      throw new RuntimeException("Not implemented yet.");
+      return new LinkedList<>();
    }
 }

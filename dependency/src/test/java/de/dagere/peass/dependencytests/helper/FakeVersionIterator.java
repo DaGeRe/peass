@@ -1,6 +1,7 @@
 package de.dagere.peass.dependencytests.helper;
 
 import java.io.File;
+import java.util.LinkedList;
 import java.util.List;
 
 import de.dagere.peass.config.ExecutionConfig;
@@ -78,6 +79,6 @@ public class FakeVersionIterator extends VersionIterator {
 
    @Override
    public List<GitCommit> getCommits() {
-      throw new RuntimeException("Not implemented yet.");
+      return new LinkedList<>();
    }
 }
