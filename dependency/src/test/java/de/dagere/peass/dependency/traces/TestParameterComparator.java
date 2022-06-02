@@ -9,6 +9,7 @@ import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
+import com.github.javaparser.ast.body.EnumDeclaration;
 
 public class TestParameterComparator {
 
@@ -38,6 +39,20 @@ public class TestParameterComparator {
       TraceElementContent traceElementConstructorWrong = new TraceElementContent("Clazz$MyInner", "<init>", new String[] { "Clazz" }, 0);
       boolean isEqualConstructorWrong = new ParameterComparator(clazz).parametersEqual(traceElementConstructorWrong, method);
       Assert.assertTrue(isEqualConstructorWrong);
+   }
+   
+   @Test
+   public void testStaticInnerConstructor() {
+      String methodSource = "class Clazz{ static class MyInner{ public MyInner(int a){} } }";
+      CompilationUnit declaration = new JavaParser().parse(new ByteArrayInputStream(methodSource.getBytes())).getResult().get();
+
+      ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) declaration.getChildNodes().get(0);
+      ClassOrInterfaceDeclaration myInner = clazz.findAll(ClassOrInterfaceDeclaration.class).get(1);
+      CallableDeclaration<?> method = myInner.findAll(CallableDeclaration.class).get(0);
+
+      TraceElementContent traceElementConstructorWrong = new TraceElementContent("Clazz$MyInner", "<init>", new String[] { }, 0);
+      boolean isEqualConstructor = new ParameterComparator(clazz).parametersEqual(traceElementConstructorWrong, method);
+      Assert.assertFalse(isEqualConstructor);
    }
 
    @Test
@@ -99,5 +114,21 @@ public class TestParameterComparator {
       TraceElementContent traceElementMethodWrong = new TraceElementContent("Clazz$MyInner", "doStuff", new String[] { "Clazz", "int" }, 0);
       boolean isEqualMethodWrong = new ParameterComparator(clazz).parametersEqual(traceElementMethodWrong, method);
       Assert.assertFalse(isEqualMethodWrong);
+   }
+   
+   @Test
+   public void testEnumMethodComparison() {
+      String methodSource = "class Clazz{ enum MyInner{ A, B; public void doStuff(int a){ } } }";
+      CompilationUnit declaration = new JavaParser().parse(new ByteArrayInputStream(methodSource.getBytes())).getResult().get();
+
+      System.out.println(declaration);
+      
+      ClassOrInterfaceDeclaration clazz = (ClassOrInterfaceDeclaration) declaration.getChildNodes().get(0);
+      EnumDeclaration myInner = clazz.findAll(EnumDeclaration.class).get(0);
+      CallableDeclaration<?> method = myInner.findAll(CallableDeclaration.class).get(0);
+
+      TraceElementContent traceElementMethodWrong = new TraceElementContent("Clazz$MyInner", "doStuff", new String[] { "int" }, 0);
+      boolean isEqualMethodWrong = new ParameterComparator(clazz).parametersEqual(traceElementMethodWrong, method);
+      Assert.assertTrue(isEqualMethodWrong);
    }
 }

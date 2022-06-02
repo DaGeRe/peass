@@ -5,6 +5,7 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.github.javaparser.ast.Node;
 import com.github.javaparser.ast.body.CallableDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.Parameter;
@@ -29,18 +30,14 @@ public class ParameterComparator {
          return false;
       }
 
-      String[] traceParameterTypes;
-      if (method.isConstructorDeclaration()) {
-         traceParameterTypes = getCleanedTraceParameters(traceElement);
-         if (traceParameterTypes.length == 0 && method.getParameters().size() == 0) {
-            return true;
-         } else if (method.getParameters().size() == 0) {
-            return false;
-         }
-      } else {
-         traceParameterTypes = traceElement.getParameterTypes();
+      String[] traceParameterTypes = getTraceParameterTypes(traceElement, method);
+      if (traceParameterTypes.length == 0 && method.getParameters().size() == 0) {
+         return true;
+      } else if (method.getParameters().size() == 0) {
+         return false;
       }
-
+      
+      
       final List<Parameter> parameters = method.getParameters();
       int parameterIndex = 0;
       LOG.trace("Length: {} vs {}", traceParameterTypes.length, parameters.size());
@@ -73,6 +70,27 @@ public class ParameterComparator {
       }
 
       return true;
+   }
+
+   private String[] getTraceParameterTypes(final TraceElementContent traceElement, final CallableDeclaration<?> method) {
+      String[] traceParameterTypes;
+      if (method.isConstructorDeclaration()) {
+         Node parentNode = method.getParentNode().get();
+         if (parentNode instanceof ClassOrInterfaceDeclaration) {
+            ClassOrInterfaceDeclaration parentClass = (ClassOrInterfaceDeclaration) parentNode;
+            if (!parentClass.isStatic()) {
+               traceParameterTypes = getCleanedTraceParameters(traceElement);
+            } else {
+               traceParameterTypes = traceElement.getParameterTypes();
+            }
+         } else {
+            traceParameterTypes = getCleanedTraceParameters(traceElement);
+            
+         }
+      } else {
+         traceParameterTypes = traceElement.getParameterTypes();
+      }
+      return traceParameterTypes;
    }
 
    private String[] getCleanedTraceParameters(final TraceElementContent te) {
