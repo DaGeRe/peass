@@ -75,4 +75,9 @@ public class FakeVersionIterator extends VersionIterator {
    public String getPredecessor() {
       throw new RuntimeException("Not implemented yet.");
    }
+
+   @Override
+   public List<GitCommit> getCommits() {
+      throw new RuntimeException("Not implemented yet.");
+   }
 }

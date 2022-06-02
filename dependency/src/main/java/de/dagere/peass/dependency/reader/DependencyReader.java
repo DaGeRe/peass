@@ -149,6 +149,7 @@ public class DependencyReader {
 
    public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final int tests = analyseVersion(changeManager);
+      Constants.OBJECTMAPPER.writeValue(resultsFolders.getCommitMetadataFile(), iterator.getCommits());
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
       if (testSelectionConfig.isGenerateTraces()) {
          Constants.OBJECTMAPPER.writeValue(resultsFolders.getTraceTestSelectionFile(), executionResult);

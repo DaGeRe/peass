@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
+import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.VersionIterator;
 
 class CopyFileVisitor extends SimpleFileVisitor<Path> {
@@ -135,6 +136,11 @@ public class FakeFileIterator extends VersionIterator {
 
    @Override
    public String getPredecessor() {
+      throw new RuntimeException("Not implemented yet.");
+   }
+   
+   @Override
+   public List<GitCommit> getCommits() {
       throw new RuntimeException("Not implemented yet.");
    }
 }

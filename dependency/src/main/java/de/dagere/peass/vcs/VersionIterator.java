@@ -90,6 +90,6 @@ public abstract class VersionIterator {
 
    public abstract VersionDiff getChangedClasses(File projectFolder, List<File> genericModules, String lastVersion, ExecutionConfig config);
 
-   
+   public abstract List<GitCommit> getCommits();
 
 }

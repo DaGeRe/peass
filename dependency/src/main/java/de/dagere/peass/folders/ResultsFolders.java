@@ -53,6 +53,10 @@ public class ResultsFolders {
    public File getCoverageInfoFile() {
       return new File(resultFolder, "coverageInfo_" + projectName + ".json");
    }
+   
+   public File getCommitMetadataFile() {
+      return new File(resultFolder, "commits.json");
+   }
 
    public File getStatisticsFile() {
       return new File(resultFolder, "statistics.json");

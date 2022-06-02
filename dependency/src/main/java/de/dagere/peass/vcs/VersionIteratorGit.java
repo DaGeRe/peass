@@ -149,5 +149,10 @@ public class VersionIteratorGit extends VersionIterator {
       VersionDiff diff = GitUtils.getChangedClasses(projectFolder, genericModules, lastVersion, config);
       return diff;
    }
+   
+   @Override
+   public List<GitCommit> getCommits() {
+      return entries;
+   }
 
 }
