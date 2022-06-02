@@ -237,7 +237,7 @@ public final class GitUtils {
    private static List<GitCommit> getCommitsMetadata(final File folder, final List<String> commitNames) throws IOException {
       final List<GitCommit> commits = new LinkedList<>();
       for (String commit : commitNames) {
-         ProcessBuilder readCommitProcessBuilder = new ProcessBuilder("git", "log", "-n", "1", commit);
+         ProcessBuilder readCommitProcessBuilder = new ProcessBuilder("git", "log", "--date=iso", "-n", "1", commit);
          readCommitProcessBuilder.directory(folder);
          final Process readCommitProcess = readCommitProcessBuilder.start();
          try (final BufferedReader readCommitInput = new BufferedReader(new InputStreamReader(readCommitProcess.getInputStream()))) {
