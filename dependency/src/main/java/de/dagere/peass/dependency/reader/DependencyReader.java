@@ -3,6 +3,7 @@ package de.dagere.peass.dependency.reader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,6 +32,8 @@ import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
+import de.dagere.peass.vcs.GitCommit;
+import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionIterator;
 
 /**
@@ -149,7 +152,8 @@ public class DependencyReader {
 
    public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final int tests = analyseVersion(changeManager);
-      Constants.OBJECTMAPPER.writeValue(resultsFolders.getCommitMetadataFile(), iterator.getCommits());
+      List<GitCommit> commitMetadata = GitUtils.getCommitMetadata(folders.getProjectFolder(), iterator.getCommits());
+      Constants.OBJECTMAPPER.writeValue(resultsFolders.getCommitMetadataFile(), commitMetadata);
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
       if (testSelectionConfig.isGenerateTraces()) {
          Constants.OBJECTMAPPER.writeValue(resultsFolders.getTraceTestSelectionFile(), executionResult);
