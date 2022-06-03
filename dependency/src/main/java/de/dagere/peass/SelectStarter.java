@@ -98,8 +98,10 @@ public class SelectStarter implements Callable<Void>{
       
       if (!config.isDoNotGenerateProperties()) {
          ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), project);
-         final PropertyReader propertyReader = new PropertyReader(resultsFolders, config.getProjectFolder(), executionData, executionConfig);
+         PeassFolders propertyFolder = folders.getTempFolder("propertyReadFolder");
+         final PropertyReader propertyReader = new PropertyReader(resultsFolders, propertyFolder.getProjectFolder(), executionData, executionConfig);
          propertyReader.readAllTestsProperties();
+         FileUtils.forceDelete(propertyFolder.getProjectFolder());
       }
    }
 
