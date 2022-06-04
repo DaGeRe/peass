@@ -10,6 +10,9 @@ import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.exc.StreamReadException;
+import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.github.javaparser.ParseException;
 
@@ -33,6 +36,7 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitCommit;
+import de.dagere.peass.vcs.GitCommitWriter;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionIterator;
 
@@ -152,8 +156,7 @@ public class DependencyReader {
 
    public void readVersion() throws IOException, FileNotFoundException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       final int tests = analyseVersion(changeManager);
-      List<GitCommit> commitMetadata = GitUtils.getCommitMetadata(folders.getProjectFolder(), iterator.getCommits());
-      Constants.OBJECTMAPPER.writeValue(resultsFolders.getCommitMetadataFile(), commitMetadata);
+      GitCommitWriter.writeCurrentCommits(folders, iterator.getCommits(), resultsFolders);
       DependencyReaderUtil.write(dependencyResult, resultsFolders.getStaticTestSelectionFile());
       if (testSelectionConfig.isGenerateTraces()) {
          Constants.OBJECTMAPPER.writeValue(resultsFolders.getTraceTestSelectionFile(), executionResult);

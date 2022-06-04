@@ -16,6 +16,9 @@
  */
 package de.dagere.peass.vcs;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 /**
  * Holds data of a git commit.
  * 
@@ -26,8 +29,11 @@ public class GitCommit {
 	private String tag, comitter;
 	private String date, message;
 
-	public GitCommit(final String tag, final String comitter, final String date, final String message) {
-		super();
+	@JsonCreator
+	public GitCommit(@JsonProperty("tag") final String tag, 
+	      @JsonProperty("comitter") final String comitter, 
+	      @JsonProperty("date") final String date, 
+	      @JsonProperty("message") final String message) {
 		this.tag = tag;
 		this.comitter = comitter;
 		this.date = date;
