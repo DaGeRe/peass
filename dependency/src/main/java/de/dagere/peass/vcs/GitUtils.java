@@ -374,7 +374,7 @@ public final class GitUtils {
             pullProcess.waitFor();
             LOG.debug(out);
          } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
          }
       }
    }
@@ -409,10 +409,8 @@ public final class GitUtils {
                }
             }
          }
-      } catch (final IOException e) {
-         e.printStackTrace();
-      } catch (final InterruptedException e) {
-         e.printStackTrace();
+      } catch (final IOException | InterruptedException e) {
+         throw new RuntimeException(e);
       }
    }
 
@@ -423,11 +421,15 @@ public final class GitUtils {
       System.out.println(outClean);
    }
 
-   public static void reset(final File projectFolder) throws IOException, InterruptedException {
-      final Process pReset = Runtime.getRuntime().exec("git reset --hard", new String[0], projectFolder);
-      final String outReset = StreamGobbler.getFullProcess(pReset, false);
-      pReset.waitFor();
-      System.out.println(outReset);
+   public static void reset(final File projectFolder) {
+      try {
+         Process pReset = Runtime.getRuntime().exec("git reset --hard", new String[0], projectFolder);
+         final String outReset = StreamGobbler.getFullProcess(pReset, false);
+         pReset.waitFor();
+         System.out.println(outReset);
+      } catch (IOException | InterruptedException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    private static int checkout(final String tag, final File projectFolder) throws IOException, InterruptedException {
