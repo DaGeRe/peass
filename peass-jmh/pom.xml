@@ -140,14 +140,6 @@
     <tag>HEAD</tag>
   </scm>
 
-  <licenses>
-    <license>
-      <name>GNU General Public License (GPL) version 2.0</name>
-      <url>https://www.gnu.org/licenses/gpl-2.0.html</url>
-      <comments>License can be found in misc/gpl-2.0.txt</comments>
-    </license>
-  </licenses>
-
   <repositories>
     <repository>
       <id>snapshots-repo</id>
