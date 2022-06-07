@@ -6,6 +6,7 @@ import java.io.FilenameFilter;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.io.filefilter.OrFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
@@ -55,9 +56,9 @@ public class KoPeMeTreeConverter {
          node.setVmValues(new MeasuredValues());
          node.setVmValuesPredecessor(new MeasuredValues());
          for (File measuredVersionFolder : versionFolder.listFiles()) {
-            for (File xmlFolder : measuredVersionFolder.listFiles((FileFilter) new WildcardFileFilter(testcase.getMethodWithParams() + "*xml"))) {
-
-               readFile(version, testcase, measuredVersionFolder.getName(), xmlFolder);
+            for (File kopemeFile : measuredVersionFolder.listFiles((FileFilter) new OrFileFilter(new WildcardFileFilter(testcase.getMethod() + "*.json"),
+                  new WildcardFileFilter(testcase.getMethod() + "*.xml")))) {
+               readFile(version, testcase, measuredVersionFolder.getName(), kopemeFile);
             }
          }
          final TestcaseStatistic overallStatistic = new TestcaseStatistic(statisticsOld, statisticsCurrent, callsOld, calls);
@@ -70,7 +71,8 @@ public class KoPeMeTreeConverter {
    private void readStatistics(final CauseSearchFolders folders, final String version, final TestCase testcase) {
       for (File versionFolder : folders.getArchiveResultFolder(version, testcase).listFiles()) {
          File levelFolder = new File(versionFolder, "0"); // For the beginning, just analyze topmost KoPeMe-measurement
-         for (File kopemeFile : levelFolder.listFiles((FilenameFilter) new WildcardFileFilter(testcase.getMethod() + "*.xml"))) {
+         for (File kopemeFile : levelFolder.listFiles((FileFilter) new OrFileFilter(new WildcardFileFilter(testcase.getMethod() + "*.json"),
+               new WildcardFileFilter(testcase.getMethod() + "*.xml")))) {
             readFile(version, testcase, versionFolder.getName(), kopemeFile);
          }
       }
