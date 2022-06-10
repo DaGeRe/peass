@@ -71,7 +71,7 @@ public class DiffUtil {
                ZipEntry entry = new ZipEntry("trace.txt");
                zipStream.putNextEntry(entry);
 
-               System.out.println(result);
+//               System.out.println(result);
                ByteBuffer bytebuffer = StandardCharsets.UTF_8.encode(result);
                channel.write(bytebuffer);
             }
