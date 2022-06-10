@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -138,7 +138,7 @@ public class DiffUtil {
             ZipInputStream zip = new ZipInputStream(input);
             ZipEntry entry = zip.getNextEntry();
 
-            List<String> lines = new LinkedList<>();
+            List<String> lines = new ArrayList<>();
             Scanner sc = new Scanner(zip);
             while (sc.hasNextLine()) {
                lines.add(sc.nextLine());
