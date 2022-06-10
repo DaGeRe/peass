@@ -59,6 +59,9 @@ public class TestFQNDeterminer {
 
       String fqn2 = FQNDeterminer.getParameterFQN(unit, "double");
       Assert.assertEquals("double", fqn2);
+      
+      String simpleTypeFQNArray = FQNDeterminer.getParameterFQN(unit, "double[]");
+      Assert.assertEquals("double[]", simpleTypeFQNArray);
    }
 
    @Test

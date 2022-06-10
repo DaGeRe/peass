@@ -36,14 +36,19 @@ public class FQNDeterminer {
          "SuppressWarnings" };
    private static final Set<String> JAVA_LANG_CLASSES_SET = new HashSet<>(Arrays.asList(JAVA_LANG_CLASSES));
 
-   private static final String[] PRIMITIVE_NAMES = new String[]{"boolean","byte","char","short","int","long","float","double"};
+   private static final String[] PRIMITIVE_NAMES = new String[] { "boolean", "byte", "char", "short", "int", "long", "float", "double" };
    private static final Set<String> PRIMITIVE_NAMES_SET = new HashSet<>(Arrays.asList(PRIMITIVE_NAMES));
 
    public static String getParameterFQN(final CompilationUnit unit, final String typeName) {
       if (PRIMITIVE_NAMES_SET.contains(typeName)) {
          return typeName;
       }
-      
+      for (String primitiveType : PRIMITIVE_NAMES) {
+         if (typeName.startsWith(primitiveType) && typeName.substring(primitiveType.length()).matches("[\\[\\]]*")) {
+            return typeName;
+         }
+      }
+
       String localDeclaration = checkLocallyDeclaredType(unit, typeName);
       if (localDeclaration != null) {
          return localDeclaration;
