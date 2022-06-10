@@ -7,6 +7,9 @@ import de.dagere.peass.config.WorkloadType;
 import picocli.CommandLine.Option;
 
 public class ExecutionConfigMixin {
+   public final static String CLAZZ_FOLDERS_DEFAULT = ExecutionConfig.SRC_MAIN_JAVA + ":" + ExecutionConfig.SRC_JAVA;
+   public final static String TEST_FOLDERS_DEFAULT = ExecutionConfig.SRC_TEST_JAVA + ":" + ExecutionConfig.SRC_TEST + ":" + ExecutionConfig.SRC_ANDROID_TEST_JAVA;
+   
    @Option(names = { "-timeout", "--timeout" }, description = "Timeout in minutes for each VM start")
    protected int timeout = 5;
    
@@ -67,10 +70,10 @@ public class ExecutionConfigMixin {
    protected int kiekerWaitTime = 5;
 
    @Option(names = { "-classFolder", "--classFolder" }, description = "Folder that contains java classes")
-   protected String clazzFolder;
+   protected String clazzFolder = CLAZZ_FOLDERS_DEFAULT;
 
    @Option(names = { "-testClassFolder", "--testClassFolder" }, description = "Folder that contains test classes")
-   protected String testClazzFolder;
+   protected String testClazzFolder = TEST_FOLDERS_DEFAULT;
 
    @Option(names = { "-excludeLog4jToSlf4j", "--excludeLog4jToSlf4j" }, description = "Exclude log4j-to-slf4j (required, if other logging implementation should be used)")
    protected boolean excludeLog4jToSlf4j = false;

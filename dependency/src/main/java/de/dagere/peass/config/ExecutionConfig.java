@@ -27,12 +27,12 @@ public class ExecutionConfig implements Serializable {
    public static final String DEFAULT_TEST_TRANSFORMER = "de.dagere.peass.testtransformation.JUnitTestTransformer";
    public static final String DEFAULT_TEST_EXECUTOR = "default";
 
-   private static final String SRC_MAIN = "src/main";
-   private static final String SRC_MAIN_JAVA = "src/main/java";
+   public static final String SRC_JAVA = "src/java";
+   public static final String SRC_MAIN_JAVA = "src/main/java";
 
-   private static final String SRC_TEST_JAVA = "src/test/java";
-   private static final String SRC_TEST = "src/test";
-   private static final String SRC_ANDROID_TEST_JAVA = "src/androidTest/java/";
+   public static final String SRC_TEST_JAVA = "src/test/java";
+   public static final String SRC_TEST = "src/test";
+   public static final String SRC_ANDROID_TEST_JAVA = "src/androidTest/java/";
 
    private static final long serialVersionUID = -6642358125854337047L;
 
@@ -75,7 +75,7 @@ public class ExecutionConfig implements Serializable {
    private List<String> clazzFolders = new LinkedList<>();
    {
       clazzFolders.add(SRC_MAIN_JAVA);
-      clazzFolders.add(SRC_MAIN);
+      clazzFolders.add(SRC_JAVA);
    }
    private List<String> testClazzFolders = new LinkedList<>();
    {
@@ -456,7 +456,7 @@ public class ExecutionConfig implements Serializable {
       public boolean equals(Object obj) {
          if (obj instanceof List) {
             List list = (List) obj;
-            if (list.size() == 2 && list.get(0).equals(SRC_MAIN_JAVA) && list.get(1).equals(SRC_MAIN)) {
+            if (list.size() == 2 && list.get(0).equals(SRC_MAIN_JAVA) && list.get(1).equals(SRC_JAVA)) {
                return true;
             }
          }
