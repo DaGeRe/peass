@@ -72,9 +72,21 @@ public class KiekerEnvironmentPreparer {
       buildJettyExclusion(excludedPatterns);
 
       instrumentKiekerSource = buildInstrumenter(config, excludedPatterns);
-      instrumentKiekerSource.instrumentProject(folders.getProjectFolder());
+      instrumentModules(config, instrumentKiekerSource);
+      
       if (config.getKiekerConfig().isEnableAdaptiveMonitoring()) {
          writeConfig();
+      }
+   }
+
+   private void instrumentModules(final MeasurementConfig config, final InstrumentKiekerSource instrumentKiekerSource) throws IOException {
+      for (File module : modules) {
+         List<String> allClazzFolders = config.getExecutionConfig().getAllClazzFolders();
+         File[] files = new File[allClazzFolders.size()];
+         for (int i = 0; i < allClazzFolders.size(); i++) {
+            files[i] = new File(module, allClazzFolders.get(i));
+         }
+         instrumentKiekerSource.instrumentProject(files);
       }
    }
 
