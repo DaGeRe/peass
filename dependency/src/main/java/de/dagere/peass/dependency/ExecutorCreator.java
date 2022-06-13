@@ -24,8 +24,13 @@ public class ExecutorCreator {
    private static final Logger LOG = LogManager.getLogger(ExecutorCreator.class);
 
    public static boolean hasBuildfile(final PeassFolders folders, final TestTransformer testTransformer) {
-      TestExecutor dummyExecutor = createExecutor(folders, testTransformer, new EnvironmentVariables());
-      return dummyExecutor.doesBuildfileExist();
+      try {
+         TestExecutor dummyExecutor = createExecutor(folders, testTransformer, new EnvironmentVariables());
+         return dummyExecutor.doesBuildfileExist();
+      } catch (RuntimeException e) {
+         // This is expected; if this happens, no buildfile is existing
+         return false;
+      }
    }
 
    public static TestExecutor createExecutor(final PeassFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
@@ -55,8 +60,6 @@ public class ExecutorCreator {
          throw new RuntimeException("Executor creation did not work, executor name: " + executorName, e);
       }
    }
-
-   
 
    private static TestExecutor createDefaultExecutor(final PeassFolders folders, final TestTransformer testTransformer, final EnvironmentVariables env) {
       final File pom = new File(folders.getProjectFolder(), "pom.xml");
