@@ -12,6 +12,8 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.dependency.traces.diff.DiffUtilJava;
+
 public class TestDiffUtil {
    
    private static final File DIFF_FILE = new File("target/diff.txt");
@@ -23,7 +25,7 @@ public class TestDiffUtil {
       
       buildSameContents(file1, file2);
       
-      DiffUtil.generateDiffFile(DIFF_FILE, Arrays.asList(file1, file2), "");
+      DiffUtilJava.generateDiffFile(DIFF_FILE, Arrays.asList(file1, file2), "");
       
       String diff = FileUtils.readFileToString(DIFF_FILE, StandardCharsets.UTF_8);
       MatcherAssert.assertThat(diff, Matchers.not(Matchers.containsString("|")));
@@ -36,9 +38,9 @@ public class TestDiffUtil {
       
       buildDifferentContents(file1, file2);
 
-      Assert.assertTrue(DiffUtil.isDifferentDiff(file1, file2));
+      Assert.assertTrue(DiffUtilJava.isDifferentDiff(file1, file2));
       
-      DiffUtil.generateDiffFile(DIFF_FILE, Arrays.asList(file1, file2), "");
+      DiffUtilJava.generateDiffFile(DIFF_FILE, Arrays.asList(file1, file2), "");
       
       String diff = FileUtils.readFileToString(DIFF_FILE, StandardCharsets.UTF_8);
       MatcherAssert.assertThat(diff, Matchers.containsString("|"));
@@ -52,7 +54,7 @@ public class TestDiffUtil {
       
       buildSameContents(file1, file2);
       
-      DiffUtil.generateDiffFile(DIFF_FILE, Arrays.asList(file1, file2), "");
+      DiffUtilJava.generateDiffFile(DIFF_FILE, Arrays.asList(file1, file2), "");
       
       String diff = FileUtils.readFileToString(DIFF_FILE, StandardCharsets.UTF_8);
       MatcherAssert.assertThat(diff, Matchers.not(Matchers.containsString("|")));
@@ -65,7 +67,7 @@ public class TestDiffUtil {
       
       buildSameContents(file1, file2);
       
-      boolean hasDiff = DiffUtil.isDifferentDiff(file1, file2);
+      boolean hasDiff = DiffUtilJava.isDifferentDiff(file1, file2);
       
       Assert.assertFalse(hasDiff);
    }
@@ -77,7 +79,7 @@ public class TestDiffUtil {
       
       buildSameContentsWithSpace(file1, file2);
       
-      boolean hasDiff = DiffUtil.isDifferentDiff(file1, file2);
+      boolean hasDiff = DiffUtilJava.isDifferentDiff(file1, file2);
       
       Assert.assertFalse(hasDiff);
    }
@@ -90,10 +92,10 @@ public class TestDiffUtil {
       
       buildSameContentsWithAddedLine(file1, file2);
       
-      boolean hasDiff = DiffUtil.isDifferentDiff(file1, file2);
+      boolean hasDiff = DiffUtilJava.isDifferentDiff(file1, file2);
       Assert.assertTrue(hasDiff);
 
-      DiffUtil.generateDiffFile(DIFF_FILE, Arrays.asList(file1, file2), "");
+      DiffUtilJava.generateDiffFile(DIFF_FILE, Arrays.asList(file1, file2), "");
       
       String diff = FileUtils.readFileToString(DIFF_FILE, StandardCharsets.UTF_8);
       System.out.println(diff);
@@ -108,10 +110,10 @@ public class TestDiffUtil {
       
       buildAddedLineContents(file1, file2);
       
-      boolean hasDiff = DiffUtil.isDifferentDiff(file1, file2);
+      boolean hasDiff = DiffUtilJava.isDifferentDiff(file1, file2);
       Assert.assertTrue(hasDiff);
 
-      DiffUtil.generateDiffFile(DIFF_FILE, Arrays.asList(file1, file2), "");
+      DiffUtilJava.generateDiffFile(DIFF_FILE, Arrays.asList(file1, file2), "");
       
       String diff = FileUtils.readFileToString(DIFF_FILE, StandardCharsets.UTF_8);
       System.out.println(diff);

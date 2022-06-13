@@ -7,10 +7,13 @@ import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.hamcrest.MatcherAssert;
+import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +23,8 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.traces.diff.DiffFileGenerator;
+import de.dagere.peass.dependency.traces.diff.TraceFileUtil;
 
 public class TestDiffFileGenerator {
 
@@ -53,6 +58,8 @@ public class TestDiffFileGenerator {
       File expectedResultFileNoComment = new File(diffFolder, "ExampleTest#test" + OneTraceGenerator.NOCOMMENT + ".txt");
       Assert.assertTrue(expectedResultFileNoComment.exists());
 
+      checkResultDiff(expectedResultFileNoComment);
+      
       File expectedResultFileMethod = new File(diffFolder, "ExampleTest#test" + OneTraceGenerator.METHOD + ".txt");
       Assert.assertTrue(expectedResultFileMethod.exists());
 
@@ -75,6 +82,8 @@ public class TestDiffFileGenerator {
 
       File expectedResultFileNoComment = new File(diffFolder, "ExampleTest#test" + OneTraceGenerator.NOCOMMENT + ".zip");
       Assert.assertTrue(expectedResultFileNoComment.exists());
+      
+      checkResultDiff(expectedResultFileNoComment);
 
       File expectedResultFileMethod = new File(diffFolder, "ExampleTest#test" + OneTraceGenerator.METHOD + ".zip");
       Assert.assertTrue(expectedResultFileMethod.exists());
@@ -82,6 +91,13 @@ public class TestDiffFileGenerator {
       File expectedResultFileMethodExpanded = new File(diffFolder, "ExampleTest#test" + OneTraceGenerator.METHOD_EXPANDED + ".zip");
       Assert.assertTrue(expectedResultFileMethodExpanded.exists());
 
+   }
+
+   private void checkResultDiff(File expectedResultFileNoComment) throws IOException {
+      List<String> text = TraceFileUtil.getText(expectedResultFileNoComment);
+      MatcherAssert.assertThat(text.get(1), Matchers.containsString("SomeSource"));
+      MatcherAssert.assertThat(text.get(1), Matchers.containsString("ChangedSource"));
+      MatcherAssert.assertThat(text.get(1), Matchers.containsString("|"));
    }
 
    private TraceFileMapping generateFiles(TestCase test, String ending) throws IOException {

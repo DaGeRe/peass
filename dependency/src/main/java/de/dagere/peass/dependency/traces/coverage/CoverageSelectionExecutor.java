@@ -18,10 +18,11 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
-import de.dagere.peass.dependency.traces.DiffFileGenerator;
 import de.dagere.peass.dependency.traces.OneTraceGenerator;
 import de.dagere.peass.dependency.traces.TraceFileManager;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
+import de.dagere.peass.dependency.traces.diff.DiffFileGenerator;
+import de.dagere.peass.dependency.traces.diff.TraceFileUtil;
 import de.dagere.peass.utils.Constants;
 
 public class CoverageSelectionExecutor {
@@ -62,8 +63,8 @@ public class CoverageSelectionExecutor {
          List<File> traceFiles = mapping.getTestcaseMap(testcase);
          if (traceFiles != null && traceFiles.size() > 1) {
             
-            File oldFile = new File(DiffFileGenerator.getNameFromFile(traceFiles.get(0)) + OneTraceGenerator.SUMMARY + ".json");
-            File newFile = new File(DiffFileGenerator.getNameFromFile(traceFiles.get(1)) + OneTraceGenerator.SUMMARY + ".json");
+            File oldFile = new File(TraceFileUtil.getNameFromFile(traceFiles.get(0)) + OneTraceGenerator.SUMMARY + ".json");
+            File newFile = new File(TraceFileUtil.getNameFromFile(traceFiles.get(1)) + OneTraceGenerator.SUMMARY + ".json");
             TraceCallSummary oldSummary = Constants.OBJECTMAPPER.readValue(oldFile, TraceCallSummary.class);
             TraceCallSummary newSummary = Constants.OBJECTMAPPER.readValue(newFile, TraceCallSummary.class);
             summaries.add(oldSummary);

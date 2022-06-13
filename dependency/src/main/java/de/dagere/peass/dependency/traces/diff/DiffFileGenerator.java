@@ -1,4 +1,4 @@
-package de.dagere.peass.dependency.traces;
+package de.dagere.peass.dependency.traces.diff;
 
 import java.io.File;
 import java.io.IOException;
@@ -11,15 +11,20 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.traces.OneTraceGenerator;
+import de.dagere.peass.dependency.traces.TraceFileManager;
+import de.dagere.peass.dependency.traces.TraceFileMapping;
 
 public class DiffFileGenerator {
 
    private static final Logger LOG = LogManager.getLogger(DiffFileGenerator.class);
 
    private final File diffFolder;
+   private final boolean unixDiffAvailable;
 
    public DiffFileGenerator(final File diffFolder) {
       this.diffFolder = diffFolder;
+      this.unixDiffAvailable = DiffUtilUnix.isAvailable();
    }
 
    public void generateAllDiffs(final String version, final VersionStaticSelection newVersionInfo, final TraceFileMapping mapping,
@@ -38,17 +43,23 @@ public class DiffFileGenerator {
       if (traceFiles != null) {
          LOG.debug("Trace-Files: {}", traceFiles);
          if (traceFiles.size() > 1) {
-            String firstName = getNameFromFile(traceFiles.get(0));
+            String firstName = TraceFileUtil.getNameFromFile(traceFiles.get(0));
             File oldFile = new File(firstName + OneTraceGenerator.NOCOMMENT + TraceFileManager.TXT_ENDING);
             if (!oldFile.exists()) {
                oldFile = new File(firstName + OneTraceGenerator.NOCOMMENT + TraceFileManager.ZIP_ENDING);
             }
-            String secondName = getNameFromFile(traceFiles.get(1));
+            String secondName = TraceFileUtil.getNameFromFile(traceFiles.get(1));
             File newFile = new File(secondName + OneTraceGenerator.NOCOMMENT + TraceFileManager.TXT_ENDING);
             if (!newFile.exists()) {
                newFile = new File(secondName + OneTraceGenerator.NOCOMMENT + TraceFileManager.ZIP_ENDING);
             }
-            final boolean isDifferent = DiffUtil.isDifferentDiff(oldFile, newFile);
+
+            final boolean isDifferent;
+            if (unixDiffAvailable) {
+               isDifferent = DiffUtilUnix.isDifferentDiff(oldFile, newFile);
+            } else {
+               isDifferent = DiffUtilJava.isDifferentDiff(oldFile, newFile);
+            }
             if (isDifferent) {
                LOG.info("Trace changed.");
                return true;
@@ -64,12 +75,6 @@ public class DiffFileGenerator {
          LOG.info("Traces not existing: {}", testcase);
          return false;
       }
-   }
-
-   public static String getNameFromFile(File file) {
-      return file.getAbsolutePath()
-            .replace(TraceFileManager.TXT_ENDING, "")
-            .replace(TraceFileManager.ZIP_ENDING, "");
    }
 
    /**
@@ -93,25 +98,24 @@ public class DiffFileGenerator {
       final String testcaseName = testcase.getShortClazz() + "#" + testcase.getMethod();
 
       File firstFile = traceFiles.get(1);
-      String ending = getEndingFromFile(firstFile);
+      String ending = TraceFileUtil.getEndingFromFile(firstFile);
 
-      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + ending), traceFiles, "");
-      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD + ending), traceFiles, OneTraceGenerator.METHOD);
-      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.NOCOMMENT + ending), traceFiles,
-            OneTraceGenerator.NOCOMMENT);
-      DiffUtil.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD_EXPANDED + ending), traceFiles,
-            OneTraceGenerator.METHOD_EXPANDED);
-   }
-
-   public static String getEndingFromFile(File firstFile) {
-      String ending;
-      if (firstFile.getName().endsWith(TraceFileManager.TXT_ENDING)) {
-         ending = TraceFileManager.TXT_ENDING;
-      } else if (firstFile.getName().endsWith(TraceFileManager.ZIP_ENDING)) {
-         ending = TraceFileManager.ZIP_ENDING;
+      if (unixDiffAvailable && !ending.equals(TraceFileManager.ZIP_ENDING)) {
+         DiffUtilUnix.generateDiffFile(new File(diffFolder, testcaseName + ending), traceFiles, "");
+         DiffUtilUnix.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD + ending), traceFiles, OneTraceGenerator.METHOD);
+         DiffUtilUnix.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.NOCOMMENT + ending), traceFiles,
+               OneTraceGenerator.NOCOMMENT);
+         DiffUtilUnix.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD_EXPANDED + ending), traceFiles,
+               OneTraceGenerator.METHOD_EXPANDED);
       } else {
-         throw new RuntimeException("Unexpected ending: " + firstFile);
+         DiffUtilJava.generateDiffFile(new File(diffFolder, testcaseName + ending), traceFiles, "");
+         DiffUtilJava.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD + ending), traceFiles, OneTraceGenerator.METHOD);
+         DiffUtilJava.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.NOCOMMENT + ending), traceFiles,
+               OneTraceGenerator.NOCOMMENT);
+         DiffUtilJava.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD_EXPANDED + ending), traceFiles,
+               OneTraceGenerator.METHOD_EXPANDED);
       }
-      return ending;
+
    }
+
 }

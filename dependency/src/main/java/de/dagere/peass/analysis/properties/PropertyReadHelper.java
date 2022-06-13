@@ -27,10 +27,11 @@ import de.dagere.peass.dependency.analysis.data.EntityUtil;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.ExecutionData;
-import de.dagere.peass.dependency.traces.DiffFileGenerator;
-import de.dagere.peass.dependency.traces.DiffUtil;
 import de.dagere.peass.dependency.traces.OneTraceGenerator;
 import de.dagere.peass.dependency.traces.TraceFileManager;
+import de.dagere.peass.dependency.traces.diff.DiffFileGenerator;
+import de.dagere.peass.dependency.traces.diff.DiffUtilJava;
+import de.dagere.peass.dependency.traces.diff.TraceFileUtil;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
@@ -203,8 +204,8 @@ public class PropertyReadHelper {
       final PeassFolders folders = new PeassFolders(projectFolder);
       final Map<ChangedEntity, ClazzChangeData> changes = getChanges(folders);
 
-      final List<String> traceCurrent = Sequitur.getExpandedTrace(DiffUtil.getText(traceFileCurrent));
-      final List<String> traceOld = Sequitur.getExpandedTrace(DiffUtil.getText(traceFileOld));
+      final List<String> traceCurrent = Sequitur.getExpandedTrace(TraceFileUtil.getText(traceFileCurrent));
+      final List<String> traceOld = Sequitur.getExpandedTrace(TraceFileUtil.getText(traceFileOld));
       determineTraceSizeChanges(property, traceCurrent, traceOld);
 
       final Set<String> merged = getMergedCalls(traceCurrent, traceOld);

@@ -14,7 +14,7 @@ import org.apache.commons.io.FileUtils;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.changesreading.FileComparisonUtil;
-import de.dagere.peass.dependency.traces.DiffUtil;
+import de.dagere.peass.dependency.traces.diff.DiffUtilJava;
 import difflib.DiffUtils;
 import difflib.Patch;
 
@@ -47,7 +47,7 @@ public class MethodChangeReader {
 
          FileUtils.writeStringToFile(main, method, Charset.defaultCharset());
          FileUtils.writeStringToFile(old, methodOld, Charset.defaultCharset());
-         DiffUtil.generateDiffFile(goalFile, Arrays.asList(new File[] { old, main }), "");
+         DiffUtilJava.generateDiffFile(goalFile, Arrays.asList(new File[] { old, main }), "");
       } else {
          FileUtils.writeStringToFile(goalFile, method, Charset.defaultCharset());
       }

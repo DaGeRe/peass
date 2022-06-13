@@ -1,24 +1,17 @@
-package de.dagere.peass.dependency.traces;
+package de.dagere.peass.dependency.traces.diff;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,9 +20,11 @@ import com.github.difflib.patch.Patch;
 import com.github.difflib.text.DiffRow;
 import com.github.difflib.text.DiffRowGenerator;
 
-public class DiffUtil {
+import de.dagere.peass.dependency.traces.TraceFileManager;
 
-   private static final Logger LOG = LogManager.getLogger(DiffUtil.class);
+public class DiffUtilJava {
+
+   private static final Logger LOG = LogManager.getLogger(DiffUtilJava.class);
 
    /**
     * Generates a diff file for two traces
@@ -37,15 +32,15 @@ public class DiffUtil {
     * @param traceFiles assumed order: old (0), new (1)
     */
    public static void generateDiffFile(final File goalFile, final List<File> traceFiles, final String appendix) throws IOException {
-      String ending = goalFile.getName().substring(goalFile.getName().length() - 4);
-      File file1 = new File(DiffFileGenerator.getNameFromFile(traceFiles.get(0)) + appendix + ending);
-      File file2 = new File(DiffFileGenerator.getNameFromFile(traceFiles.get(1)) + appendix + ending);
+      String ending = TraceFileUtil.getEndingFromFile(goalFile); 
+      File file1 = new File(TraceFileUtil.getNameFromFile(traceFiles.get(0)) + appendix + ending);
+      File file2 = new File(TraceFileUtil.getNameFromFile(traceFiles.get(1)) + appendix + ending);
 
       if (file1.exists() && file2.exists()) {
          int length = 100;
 
-         final List<String> file1text = getText(file1);
-         final List<String> file2text = getText(file2);
+         final List<String> file1text = TraceFileUtil.getText(file1);
+         final List<String> file2text = TraceFileUtil.getText(file2);
 
          DiffRowGenerator diffRowGenerator = DiffRowGenerator.create()
                .build();
@@ -120,37 +115,9 @@ public class DiffUtil {
    }
 
    private static Patch<String> getPatch(final File file1, final File file2) throws IOException {
-      List<String> file1text = getText(file1);
-      List<String> file2text = getText(file2);
+      List<String> file1text = TraceFileUtil.getText(file1);
+      List<String> file2text = TraceFileUtil.getText(file2);
       Patch<String> patch = DiffUtils.diff(file1text, file2text);
       return patch;
-   }
-   
-   public static List<String> getText(File file) throws IOException {
-      if (file.getName().endsWith(TraceFileManager.TXT_ENDING)) {
-         List<String> filetext = FileUtils.readLines(file, StandardCharsets.UTF_8)
-               .stream()
-               .map(line -> line.trim())
-               .collect(Collectors.toList());
-         return filetext;
-      } else if (file.getName().endsWith(TraceFileManager.ZIP_ENDING)) {
-         try (InputStream input = new FileInputStream(file)) {
-            ZipInputStream zip = new ZipInputStream(input);
-            ZipEntry entry = zip.getNextEntry();
-
-            List<String> lines = new ArrayList<>();
-            Scanner sc = new Scanner(zip);
-            while (sc.hasNextLine()) {
-               lines.add(sc.nextLine());
-            }
-            return lines;
-         }
-      } else {
-         List<String> filetext = FileUtils.readLines(file, StandardCharsets.UTF_8)
-               .stream()
-               .map(line -> line.trim())
-               .collect(Collectors.toList());
-         return filetext;
-      }
    }
 }
