@@ -29,20 +29,22 @@ public class DiffUtilUnix {
          File zipFile1 = new File(TraceFileUtil.getNameFromFile(traceFiles.get(0)) + appendix + ending);
          File zipFile2 = new File(TraceFileUtil.getNameFromFile(traceFiles.get(1)) + appendix + ending);
          
-         File file1 = TraceFileUtil.unzip(zipFile1);
-         File file2 = TraceFileUtil.unzip(zipFile2);
-         
-         File interimGoalFile = new File(TraceFileUtil.getNameFromFile(goalFile) + TraceFileManager.TXT_ENDING);
-         
-         generateDiff(interimGoalFile, file1, file2);
-         
-         file1.delete();
-         file2.delete();
-         
-         String diff = FileUtils.readFileToString(interimGoalFile, StandardCharsets.UTF_8);
-         File finalGoalFile = new File(TraceFileUtil.getNameFromFile(goalFile) + TraceFileManager.ZIP_ENDING);
-         TraceFileUtil.writeZippedOutput(finalGoalFile, diff);
-         interimGoalFile.delete();
+         if (zipFile1.exists() && zipFile2.exists()) {
+            File file1 = TraceFileUtil.unzip(zipFile1);
+            File file2 = TraceFileUtil.unzip(zipFile2);
+            
+            File interimGoalFile = new File(TraceFileUtil.getNameFromFile(goalFile) + TraceFileManager.TXT_ENDING);
+            
+            generateDiff(interimGoalFile, file1, file2);
+            
+            file1.delete();
+            file2.delete();
+            
+            String diff = FileUtils.readFileToString(interimGoalFile, StandardCharsets.UTF_8);
+            File finalGoalFile = new File(TraceFileUtil.getNameFromFile(goalFile) + TraceFileManager.ZIP_ENDING);
+            TraceFileUtil.writeZippedOutput(finalGoalFile, diff);
+            interimGoalFile.delete();
+         }
       }
    }
 

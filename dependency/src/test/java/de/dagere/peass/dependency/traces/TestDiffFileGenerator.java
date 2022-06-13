@@ -44,7 +44,7 @@ public class TestDiffFileGenerator {
 
    @Test
    public void testTxtDiffGeneration() throws IOException {
-      TraceFileMapping mapping = generateFiles(test, TraceFileManager.TXT_ENDING);
+      TraceFileMapping mapping = DiffFileGeneraturTestUtil.generateFiles(rawFileFolder, test, TraceFileManager.TXT_ENDING, true);
 
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
       VersionStaticSelection staticSelection = new VersionStaticSelection();
@@ -69,7 +69,7 @@ public class TestDiffFileGenerator {
 
    @Test
    public void testZipDiffGeneration() throws IOException {
-      TraceFileMapping mapping = generateFiles(test, TraceFileManager.ZIP_ENDING);
+      TraceFileMapping mapping = DiffFileGeneraturTestUtil.generateFiles(rawFileFolder, test, TraceFileManager.ZIP_ENDING, true);
       
       DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
       VersionStaticSelection staticSelection = new VersionStaticSelection();
@@ -90,7 +90,28 @@ public class TestDiffFileGenerator {
 
       File expectedResultFileMethodExpanded = new File(diffFolder, "ExampleTest#test" + OneTraceGenerator.METHOD_EXPANDED + ".zip");
       Assert.assertTrue(expectedResultFileMethodExpanded.exists());
+   }
+   
+   @Test
+   public void testNoExpandedZipDiffGeneration() throws IOException {
+      TraceFileMapping mapping = DiffFileGeneraturTestUtil.generateFiles(rawFileFolder, test, TraceFileManager.ZIP_ENDING, false);
+      
+      DiffFileGenerator generator = new DiffFileGenerator(diffFolder);
+      VersionStaticSelection staticSelection = new VersionStaticSelection();
+      staticSelection.getChangedClazzes().put(new ChangedEntity("de.SomeClass"), new TestSet(test));
 
+      generator.generateAllDiffs("000002", staticSelection, mapping, new ExecutionData());
+
+      File expectedResultFile = new File(diffFolder, "ExampleTest#test.zip");
+      Assert.assertTrue(expectedResultFile.exists());
+
+      File expectedResultFileNoComment = new File(diffFolder, "ExampleTest#test" + OneTraceGenerator.NOCOMMENT + ".zip");
+      Assert.assertTrue(expectedResultFileNoComment.exists());
+      
+      checkResultDiff(expectedResultFileNoComment);
+
+      File expectedResultFileMethodExpanded = new File(diffFolder, "ExampleTest#test" + OneTraceGenerator.METHOD_EXPANDED + ".zip");
+      Assert.assertFalse(expectedResultFileMethodExpanded.exists());
    }
 
    private void checkResultDiff(File expectedResultFileNoComment) throws IOException {
@@ -100,40 +121,7 @@ public class TestDiffFileGenerator {
       MatcherAssert.assertThat(text.get(1), Matchers.containsString("|"));
    }
 
-   private TraceFileMapping generateFiles(TestCase test, String ending) throws IOException {
-      TraceFileMapping mapping = new TraceFileMapping();
+   
 
-      File version1trace = new File(rawFileFolder, "version1" + ending);
-      write(version1trace, "de.dagere.peass.ExampleTest#test\nSomeSource");
-      mapping.addTraceFile(test, version1trace);
-
-      File version2trace = new File(rawFileFolder, "version2" + ending);
-      write(version2trace, "de.dagere.peass.ExampleTest#test\nChangedSource");
-      mapping.addTraceFile(test, version2trace);
-
-      for (String variant : new String[] { OneTraceGenerator.NOCOMMENT, OneTraceGenerator.METHOD, OneTraceGenerator.METHOD_EXPANDED, OneTraceGenerator.SUMMARY }) {
-         File version1variantFile = new File(rawFileFolder, "version1" + variant + ending);
-         write(version1variantFile, "de.dagere.peass.ExampleTest#test\nSomeSource");
-
-         File version2variantFile = new File(rawFileFolder, "version2" + variant + ending);
-         write(version2variantFile, "de.dagere.peass.ExampleTest#test\nChangedSource");
-      }
-
-      return mapping;
-   }
-
-   private void write(File goal, String content) throws IOException {
-      if (goal.getName().endsWith(TraceFileManager.TXT_ENDING)) {
-         FileUtils.writeStringToFile(goal, content, StandardCharsets.UTF_8);
-      } else if (goal.getName().endsWith(TraceFileManager.ZIP_ENDING)) {
-         ByteBuffer bytebuffer = StandardCharsets.UTF_8.encode(content);
-
-         try (ZipOutputStream zipStream = new ZipOutputStream(new FileOutputStream(goal));
-               WritableByteChannel channel = Channels.newChannel(zipStream)) {
-            ZipEntry entry = new ZipEntry("trace.txt");
-            zipStream.putNextEntry(entry);
-            channel.write(bytebuffer);
-         }
-      }
-   }
+   
 }
