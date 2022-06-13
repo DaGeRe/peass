@@ -9,14 +9,14 @@ import picocli.CommandLine.Option;
 public class ExecutionConfigMixin {
    public final static String CLAZZ_FOLDERS_DEFAULT = ExecutionConfig.SRC_MAIN_JAVA + ":" + ExecutionConfig.SRC_JAVA;
    public final static String TEST_FOLDERS_DEFAULT = ExecutionConfig.SRC_TEST_JAVA + ":" + ExecutionConfig.SRC_TEST + ":" + ExecutionConfig.SRC_ANDROID_TEST_JAVA;
-   
+
    @Option(names = { "-timeout", "--timeout" }, description = "Timeout in minutes for each VM start")
    protected int timeout = 5;
-   
-   @Option(names = { "-includes", "--includes" }, description = "Testcases for inclusion (default: empty, includes all tests)")
+
+   @Option(names = { "-includes", "--includes" }, split=";", description = "Testcases for inclusion (default: empty, includes all tests). Example: \"my.package.Clazz#myMethod;my.otherpackage.ClazzB#*\"")
    protected String[] includes;
 
-   @Option(names = { "-excludes", "--excludes" }, description = "Testcases for exclusion (default: empty, excludes no test)")
+   @Option(names = { "-excludes", "--excludes" }, split=";", description = "Testcases for exclusion (default: empty, excludes no test). Example: \"my.package.Clazz#myMethod;my.otherpackage.ClazzB#*\"")
    protected String[] excludes;
 
    @Option(names = { "-forbiddenMethods", "--forbiddenMethods" }, description = "Testcases that call one of these methods are excluded")
@@ -24,11 +24,11 @@ public class ExecutionConfigMixin {
 
    @Option(names = { "-commit", "--commit" }, description = "Newer commit for regression test selection / measurement. Do not use together with startcommit / endcommit.")
    protected String commit;
-   
+
    @Option(names = { "-commitOld", "--commitOld" }, description = "Older commit for regression test selection / measurement" +
          "If used, please always specify commit; only the difference of both will be analyzed, intermediary commits will be ignored. Do not use together with startcommit / endcommit.")
    protected String commitOld;
-   
+
    @Option(names = { "-startcommit", "--startcommit" }, description = "First commit that should be analysed - do not use together with commit and commitOld!")
    protected String startcommit;
 
@@ -77,7 +77,7 @@ public class ExecutionConfigMixin {
 
    @Option(names = { "-excludeLog4jToSlf4j", "--excludeLog4jToSlf4j" }, description = "Exclude log4j-to-slf4j (required, if other logging implementation should be used)")
    protected boolean excludeLog4jToSlf4j = false;
-   
+
    @Option(names = { "-excludeLog4jSlf4jImpl", "--excludeLog4jSlf4jImpl" }, description = "Exclude log4j-slf4j-impl (required, if other logging implementation should be used)")
    protected boolean excludeLog4jSlf4jImpl = false;
 
@@ -87,7 +87,7 @@ public class ExecutionConfigMixin {
 
    @Option(names = { "-onlyMeasureWorkload", "--onlyMeasureWorkload" }, description = "Only measure workload (no @Before/@After)")
    protected boolean onlyMeasureWorkload = false;
-   
+
    @Option(names = { "-properties", "--properties" }, description = "Sets the properties that should be passed to the test (e.g. \"-Dmy.var=5\")")
    public String properties;
 
@@ -132,7 +132,7 @@ public class ExecutionConfigMixin {
    }
 
    public String getStartcommit() {
-      return startcommit ;
+      return startcommit;
    }
 
    public void setStartcommit(String startcommit) {
@@ -140,7 +140,7 @@ public class ExecutionConfigMixin {
    }
 
    public String getEndcommit() {
-      return endcommit ;
+      return endcommit;
    }
 
    public void setEndcommit(String endcommit) {
@@ -250,19 +250,19 @@ public class ExecutionConfigMixin {
    public void setTestClazzFolder(final String testClazzFolder) {
       this.testClazzFolder = testClazzFolder;
    }
-   
+
    public boolean isExcludeLog4jSlf4jImpl() {
       return excludeLog4jSlf4jImpl;
    }
-   
+
    public void setExcludeLog4jSlf4jImpl(boolean excludeLog4jSlf4jImpl) {
       this.excludeLog4jSlf4jImpl = excludeLog4jSlf4jImpl;
    }
-   
+
    public boolean isExcludeLog4jToSlf4j() {
       return excludeLog4jToSlf4j;
    }
-   
+
    public void setExcludeLog4jToSlf4j(boolean excludeLog4jToSlf4j) {
       this.excludeLog4jToSlf4j = excludeLog4jToSlf4j;
    }
@@ -274,19 +274,19 @@ public class ExecutionConfigMixin {
    public void setDontRedirectToNull(final boolean dontRedirectToNull) {
       this.dontRedirectToNull = dontRedirectToNull;
    }
-   
+
    public boolean isOnlyMeasureWorkload() {
       return onlyMeasureWorkload;
    }
-   
+
    public void setOnlyMeasureWorkload(boolean onlyMeasureWorkload) {
       this.onlyMeasureWorkload = onlyMeasureWorkload;
    }
-   
+
    public String getProperties() {
       return properties;
    }
-   
+
    public void setProperties(final String properties) {
       this.properties = properties;
    }
@@ -316,7 +316,7 @@ public class ExecutionConfigMixin {
             config.getForbiddenMethods().add(forbiddenMethod);
          }
       }
-      
+
       if (getPl() != null) {
          config.setPl(pl);
       }
@@ -352,11 +352,11 @@ public class ExecutionConfigMixin {
       config.setExcludeLog4jToSlf4j(excludeLog4jToSlf4j);
       config.setRedirectToNull(!dontRedirectToNull);
       config.setOnlyMeasureWorkload(onlyMeasureWorkload);
-      
+
       if (config.isExecuteBeforeClassInMeasurement() && config.isOnlyMeasureWorkload()) {
          throw new RuntimeException("executeBeforeClassInMeasurement may only be activated if onlyMeasureWorkload is deactivated!");
       }
-      
+
       return config;
    }
 }
