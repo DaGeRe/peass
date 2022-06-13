@@ -1,16 +1,9 @@
 package de.dagere.peass.dependency.traces.diff;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.WritableByteChannel;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -59,18 +52,7 @@ public class DiffUtilJava {
 
       String result = resultBuilder.toString();
       if (goalFile.getName().endsWith(TraceFileManager.ZIP_ENDING)) {
-         try (final FileWriter fw = new FileWriter(goalFile)) {
-
-            try (ZipOutputStream zipStream = new ZipOutputStream(new FileOutputStream(goalFile));
-                  WritableByteChannel channel = Channels.newChannel(zipStream)) {
-               ZipEntry entry = new ZipEntry("trace.txt");
-               zipStream.putNextEntry(entry);
-
-//               System.out.println(result);
-               ByteBuffer bytebuffer = StandardCharsets.UTF_8.encode(result);
-               channel.write(bytebuffer);
-            }
-         }
+         TraceFileUtil.writeZippedOutput(goalFile, result);
       } else {
          try (final FileWriter fw = new FileWriter(goalFile)) {
             fw.write(result);

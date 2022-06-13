@@ -100,7 +100,7 @@ public class DiffFileGenerator {
       File firstFile = traceFiles.get(1);
       String ending = TraceFileUtil.getEndingFromFile(firstFile);
 
-      if (unixDiffAvailable && !ending.equals(TraceFileManager.ZIP_ENDING)) {
+      if (unixDiffAvailable) {
          DiffUtilUnix.generateDiffFile(new File(diffFolder, testcaseName + ending), traceFiles, "");
          DiffUtilUnix.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.METHOD + ending), traceFiles, OneTraceGenerator.METHOD);
          DiffUtilUnix.generateDiffFile(new File(diffFolder, testcaseName + OneTraceGenerator.NOCOMMENT + ending), traceFiles,

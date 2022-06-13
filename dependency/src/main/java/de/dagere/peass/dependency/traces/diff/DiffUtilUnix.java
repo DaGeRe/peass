@@ -3,8 +3,12 @@ package de.dagere.peass.dependency.traces.diff;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
+
+import de.dagere.peass.dependency.traces.TraceFileManager;
 import de.dagere.peass.utils.StreamGobbler;
 
 public class DiffUtilUnix {
@@ -16,8 +20,33 @@ public class DiffUtilUnix {
     */
    public static void generateDiffFile(final File goalFile, final List<File> traceFiles, final String appendix) throws IOException {
       String ending = TraceFileUtil.getEndingFromFile(goalFile);
-      File file1 = new File(TraceFileUtil.getNameFromFile(traceFiles.get(0)) + appendix + ending);
-      File file2 = new File(TraceFileUtil.getNameFromFile(traceFiles.get(1)) + appendix + ending);
+
+      if (TraceFileManager.TXT_ENDING.equals(ending)) {
+         File file1 = new File(TraceFileUtil.getNameFromFile(traceFiles.get(0)) + appendix + ending);
+         File file2 = new File(TraceFileUtil.getNameFromFile(traceFiles.get(1)) + appendix + ending);
+         generateDiff(goalFile, file1, file2);
+      } else if (TraceFileManager.ZIP_ENDING.equals(ending)) {
+         File zipFile1 = new File(TraceFileUtil.getNameFromFile(traceFiles.get(0)) + appendix + ending);
+         File zipFile2 = new File(TraceFileUtil.getNameFromFile(traceFiles.get(1)) + appendix + ending);
+         
+         File file1 = TraceFileUtil.unzip(zipFile1);
+         File file2 = TraceFileUtil.unzip(zipFile2);
+         
+         File interimGoalFile = new File(TraceFileUtil.getNameFromFile(goalFile) + TraceFileManager.TXT_ENDING);
+         
+         generateDiff(interimGoalFile, file1, file2);
+         
+         file1.delete();
+         file2.delete();
+         
+         String diff = FileUtils.readFileToString(interimGoalFile, StandardCharsets.UTF_8);
+         File finalGoalFile = new File(TraceFileUtil.getNameFromFile(goalFile) + TraceFileManager.ZIP_ENDING);
+         TraceFileUtil.writeZippedOutput(finalGoalFile, diff);
+         interimGoalFile.delete();
+      }
+   }
+
+   private static void generateDiff(final File goalFile, File file1, File file2) throws IOException {
       final ProcessBuilder processBuilder2 = new ProcessBuilder("diff",
             "--minimal", "--ignore-all-space", "-y", "-W", "200",
             file1.getAbsolutePath(),
