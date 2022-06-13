@@ -23,6 +23,13 @@ import org.apache.commons.io.FileUtils;
 
 import de.dagere.peass.dependency.traces.TraceFileManager;
 
+/**
+ * This provides utilities for handling trace files. By convention, trace files ending with .txt are text files and .zip are zip files with exactly one file which is called
+ * trace.txt. If the .zip file is extracted, the trace.txt should be renamed to the original name.
+ * 
+ * @author DaGeRe
+ *
+ */
 public class TraceFileUtil {
    public static String getEndingFromFile(File firstFile) {
       String ending;
@@ -46,9 +53,9 @@ public class TraceFileUtil {
       try {
          byte[] buffer = new byte[1024];
          ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFile));
-         
+
          ZipEntry zipEntry = zis.getNextEntry();
-         
+
          File destDir = zipFile.getParentFile();
          File txtTraceFile = new File(destDir, zipFile.getName().replace(TraceFileManager.ZIP_ENDING, TraceFileManager.TXT_ENDING));
 
@@ -59,16 +66,16 @@ public class TraceFileUtil {
             fos.write(buffer, 0, len);
          }
          fos.close();
-         
+
          zis.closeEntry();
          zis.close();
-         
+
          return txtTraceFile;
       } catch (IOException e) {
          throw new RuntimeException(e);
       }
    }
-   
+
    public static void writeZippedOutput(final File goalFile, String result) throws IOException, FileNotFoundException {
       try (final FileWriter fw = new FileWriter(goalFile)) {
 
@@ -77,7 +84,7 @@ public class TraceFileUtil {
             ZipEntry entry = new ZipEntry("trace.txt");
             zipStream.putNextEntry(entry);
 
-//               System.out.println(result);
+            // System.out.println(result);
             ByteBuffer bytebuffer = StandardCharsets.UTF_8.encode(result);
             channel.write(bytebuffer);
          }

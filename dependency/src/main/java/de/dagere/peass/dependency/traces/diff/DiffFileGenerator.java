@@ -25,6 +25,9 @@ public class DiffFileGenerator {
    public DiffFileGenerator(final File diffFolder) {
       this.diffFolder = diffFolder;
       this.unixDiffAvailable = DiffUtilUnix.isAvailable();
+      if (!unixDiffAvailable) {
+         LOG.warn("Warning: Unix Diff tool not found! Consider installing it, since using java difflib as a replacement will significantly slow down processing.");
+      }
    }
 
    public void generateAllDiffs(final String version, final VersionStaticSelection newVersionInfo, final TraceFileMapping mapping,
