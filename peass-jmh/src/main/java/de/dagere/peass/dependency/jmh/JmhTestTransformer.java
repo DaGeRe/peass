@@ -116,7 +116,9 @@ public class JmhTestTransformer implements TestTransformer {
 
    @Override
    public JUnitVersions getJUnitVersions() {
-      return new JUnitVersions();
+      JUnitVersions jUnitVersions = new JUnitVersions();
+      jUnitVersions.setJunit4(true);
+      return jUnitVersions;
    }
 
    @Override
