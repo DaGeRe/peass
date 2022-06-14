@@ -18,6 +18,7 @@ import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.execution.utils.RequiredDependency;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.JUnitVersions;
 
 public class GradleBuildfileEditor {
 
@@ -99,10 +100,10 @@ public class GradleBuildfileEditor {
    }
 
    private void addDependencies(final GradleBuildfileVisitor visitor) {
-      boolean isAddJunit3 = testTransformer.isJUnit3();
+      JUnitVersions versions = testTransformer.getJUnitVersions();
       boolean isExcludeLog4j = testTransformer.getConfig().getExecutionConfig().isExcludeLog4jSlf4jImpl();
       if (visitor.getDependencyLine() != -1) {
-         for (RequiredDependency dependency : RequiredDependency.getAll(isAddJunit3)) {
+         for (RequiredDependency dependency : RequiredDependency.getAll(versions)) {
             final String dependencyGradle;
             if (isExcludeLog4j && dependency.getMavenDependency().getArtifactId().contains("kopeme")) {
                String excludeString = "{ exclude group: '" + MavenPomUtil.LOG4J_GROUPID + "', module: '" + MavenPomUtil.LOG4J_SLF4J_IMPL_ARTIFACTID + "' }";
@@ -114,7 +115,7 @@ public class GradleBuildfileEditor {
          }
       } else {
          visitor.getLines().add("dependencies { ");
-         for (RequiredDependency dependency : RequiredDependency.getAll(isAddJunit3)) {
+         for (RequiredDependency dependency : RequiredDependency.getAll(versions)) {
             final String dependencyGradle = "implementation '" + dependency.getGradleDependency() + "'";
             visitor.getLines().add(dependencyGradle);
          }

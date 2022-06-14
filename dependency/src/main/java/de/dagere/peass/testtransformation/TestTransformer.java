@@ -10,17 +10,17 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.execution.utils.ProjectModules;
 
 /**
- * Defines what should be done with tests; based on this class, extensions might define how to handle their tests.
- * This might include:
- * - Searching for test classes (*Test* or *Benchmark*)
- * - Definition of changes (e.g. adding specific source code to the test calls)
+ * Defines what should be done with tests; based on this class, extensions might define how to handle their tests. This might include: - Searching for test classes (*Test* or
+ * *Benchmark*) - Definition of changes (e.g. adding specific source code to the test calls)
+ * 
  * @author reichelt
  *
  */
 public interface TestTransformer {
-   
+
    /**
     * Returns a test set containing all modules of the test
+    * 
     * @param mapping
     * @param includedModules
     * @param modules
@@ -29,17 +29,17 @@ public interface TestTransformer {
    public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules);
 
    public TestSet buildTestMethodSet(final TestSet testsToUpdate, List<File> modules);
-   
+
    public void determineVersions(final List<File> modules);
-   
+
    public MeasurementConfig getConfig();
 
-   public boolean isJUnit3();
+   public JUnitVersions getJUnitVersions();
 
    public void setIgnoreEOIs(boolean ignoreEOIs);
-   
+
    public boolean isIgnoreEOIs();
 
    public List<TestCase> getTestMethodNames(File module, TestCase entity);
-   
+
 }

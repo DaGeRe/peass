@@ -102,12 +102,14 @@ public class JUnitTestTransformer implements TestTransformer {
     * @param projectFolder
     * @param timeout
     */
-   public JUnitTestTransformer(final File projectFolder, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig) {
+   public JUnitTestTransformer(final File projectFolder, final ExecutionConfig executionConfig,
+         final KiekerConfig kiekerConfig) {
       this.projectFolder = projectFolder;
       config = new MeasurementConfig(1, executionConfig, kiekerConfig);
       config.setIterations(1);
       config.setWarmup(0);
-      // For regression test selection, verbose debug output is helpful, and since it is only executed once, the performance loss is ok.
+      // For regression test selection, verbose debug output is helpful, and since it
+      // is only executed once, the performance loss is ok.
       config.getExecutionConfig().setRedirectToNull(false);
       config.setShowStart(true);
       datacollectorlist = DataCollectorList.ONLYTIME;
@@ -148,7 +150,8 @@ public class JUnitTestTransformer implements TestTransformer {
    }
 
    @Override
-   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules) {
+   public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules,
+         final ProjectModules modules) {
       determineVersions(modules.getModules());
       final TestSet allTests = new TestSet();
       for (final File module : modules.getModules()) {
@@ -159,7 +162,8 @@ public class JUnitTestTransformer implements TestTransformer {
       return allTests;
    }
 
-   private TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final File module) {
+   private TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules,
+         final File module) {
       final TestSet moduleTests = new TestSet();
       ClazzFileFinder finder = new ClazzFileFinder(config.getExecutionConfig());
       for (final String clazz : finder.getTestClazzes(module)) {
@@ -215,7 +219,9 @@ public class JUnitTestTransformer implements TestTransformer {
 
       LOG.debug("JUnit Versions Determined: {}", junitVersions.size());
       for (final Map.Entry<File, Integer> fileVersionEntry : junitVersions.entrySet()) {
-         LOG.debug("Editing test file: {} {}", fileVersionEntry.getKey(), fileVersionEntry.getValue()); // TODO change to trace
+         LOG.debug("Editing test file: {} {}", fileVersionEntry.getKey(), fileVersionEntry.getValue()); // TODO
+         // change to
+         // trace
          if (fileVersionEntry.getValue() == 3) {
             editJUnit3(fileVersionEntry.getKey());
          } else if (fileVersionEntry.getValue() == 4 || fileVersionEntry.getValue() == 34) {
@@ -244,7 +250,8 @@ public class JUnitTestTransformer implements TestTransformer {
 
    private void determineVersions(final File testFolder) {
       extensions = new HashMap<>();
-      for (final File javaFile : FileUtils.listFiles(testFolder, new WildcardFileFilter("*.java"), TrueFileFilter.INSTANCE)) {
+      for (final File javaFile : FileUtils.listFiles(testFolder, new WildcardFileFilter("*.java"),
+            TrueFileFilter.INSTANCE)) {
          try {
             File canonicalJavaFile = javaFile.getCanonicalFile();
             final CompilationUnit unit = JavaParserProvider.parse(canonicalJavaFile);
@@ -271,7 +278,9 @@ public class JUnitTestTransformer implements TestTransformer {
    private void parseExtensions(final File canonicalJavaFile, final CompilationUnit unit) {
       for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
          LOG.trace("Transforming: {}", clazz.getNameAsString());
-         // We only need to consider classes with one extends, since classes can not have multiple extends and we search for classes that may extend TestCase (indirectly)
+         // We only need to consider classes with one extends, since classes can not have
+         // multiple extends and we search for classes that may extend TestCase
+         // (indirectly)
          if (clazz.getExtendedTypes().size() == 1) {
             final ClassOrInterfaceType extend = clazz.getExtendedTypes(0);
             final String extensionName = extend.getNameAsString().intern();
@@ -287,7 +296,8 @@ public class JUnitTestTransformer implements TestTransformer {
 
    private final Map<Integer, List<String>> junitTestAnnotations = new HashMap<>();
    {
-      junitTestAnnotations.put(5, Arrays.asList("org.junit.jupiter.api.Test", "org.junit.jupiter.params.ParameterizedTest"));
+      junitTestAnnotations.put(5,
+            Arrays.asList("org.junit.jupiter.api.Test", "org.junit.jupiter.params.ParameterizedTest"));
       junitTestAnnotations.put(4, Arrays.asList("org.junit.Test"));
    }
 
@@ -312,7 +322,8 @@ public class JUnitTestTransformer implements TestTransformer {
             final Integer testVersion = junitVersions.get(foundTest);
             if (testVersion != null && testVersion == 4) {
                // 34 means mixed-junit-3-4
-               // -> A test may include @Test-tests, but still extend some JUnit 3 test, and therefore the extension hierarchy is still relevant for him
+               // -> A test may include @Test-tests, but still extend some JUnit 3 test, and
+               // therefore the extension hierarchy is still relevant for him
                junitVersions.put(foundTest, 34);
             } else if (testVersion != null && testVersion == 5) {
                junitVersions.put(foundTest, 5);
@@ -338,11 +349,10 @@ public class JUnitTestTransformer implements TestTransformer {
          final Integer junit = junitVersions.get(clazzFile);
          if (junit != null) {
             for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
-               
+
                /**
-                * This could not work if there is ClazzA$ClazzB$ClazzC and ClazzA$ClazzC; 
-                * in the unlikely event of this happening, please refactor the code accordingly
-                * to also check for parent clazz names matching
+                * This could not work if there is ClazzA$ClazzB$ClazzC and ClazzA$ClazzC; in the unlikely event of this happening, please refactor the code accordingly to also
+                * check for parent clazz names matching
                 */
                String pureClazzName = clazz.getName().toString();
                if (pureClazzName.equals(clazzname.getPureClazz())) {
@@ -378,7 +388,8 @@ public class JUnitTestTransformer implements TestTransformer {
       }
    }
 
-   private void addTestMethodNames(final TestCase clazzname, final List<TestCase> methods, final Integer junit, final ClassOrInterfaceDeclaration clazz) {
+   private void addTestMethodNames(final TestCase clazzname, final List<TestCase> methods, final Integer junit,
+         final ClassOrInterfaceDeclaration clazz) {
       if (junit == 3) {
          for (final MethodDeclaration method : clazz.getMethods()) {
             if (method.getNameAsString().toLowerCase().contains("test")) {
@@ -440,13 +451,17 @@ public class JUnitTestTransformer implements TestTransformer {
             addMethod(clazz, "getWarmup", "return " + 0 + ";", PrimitiveType.intType());
             addMethod(clazz, "getIterations", "return " + config.getAllIterations() + ";", PrimitiveType.intType());
             addMethod(clazz, "logFullData", "return " + config.isLogFullData() + ";", PrimitiveType.booleanType());
-            addMethod(clazz, "useKieker", "return " + config.getKiekerConfig().isUseKieker() + ";", PrimitiveType.booleanType());
-            addMethod(clazz, "getMaximalTime", "return " + config.getExecutionConfig().getTimeout() + ";", PrimitiveType.longType());
+            addMethod(clazz, "useKieker", "return " + config.getKiekerConfig().isUseKieker() + ";",
+                  PrimitiveType.booleanType());
+            addMethod(clazz, "getMaximalTime", "return " + config.getExecutionConfig().getTimeout() + ";",
+                  PrimitiveType.longType());
             addMethod(clazz, "getRepetitions", "return " + config.getRepetitions() + ";", PrimitiveType.intType());
-            addMethod(clazz, "redirectToNull", "return " + config.getExecutionConfig().isRedirectToNull() + ";", PrimitiveType.booleanType());
+            addMethod(clazz, "redirectToNull", "return " + config.getExecutionConfig().isRedirectToNull() + ";",
+                  PrimitiveType.booleanType());
 
             synchronized (javaParser) {
-               final ClassOrInterfaceType type = javaParser.parseClassOrInterfaceType("DataCollectorList").getResult().get();
+               final ClassOrInterfaceType type = javaParser.parseClassOrInterfaceType("DataCollectorList")
+                     .getResult().get();
                if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
                   addMethod(clazz, "getDataCollectors", "return DataCollectorList.ONLYTIME;", type);
                } else if (datacollectorlist.equals(DataCollectorList.ONLYTIME_NOGC)) {
@@ -465,7 +480,8 @@ public class JUnitTestTransformer implements TestTransformer {
     * @param source Source of the new method
     * @param type Returntype of the new method
     */
-   protected void addMethod(final ClassOrInterfaceDeclaration clazz, final String name, final String source, final Type type) {
+   protected void addMethod(final ClassOrInterfaceDeclaration clazz, final String name, final String source,
+         final Type type) {
       final List<MethodDeclaration> oldMethods = clazz.getMethodsByName(name);
       if (oldMethods.size() == 0) {
          final MethodDeclaration addedMethod = clazz.addMethod(name, Modifier.publicModifier().getKeyword());
@@ -516,7 +532,8 @@ public class JUnitTestTransformer implements TestTransformer {
       unit.addImport("de.dagere.kopeme.junit5.rule.KoPeMeExtension");
 
       for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
-         final SingleMemberAnnotationExpr extendAnnotation = new SingleMemberAnnotationExpr(new Name("ExtendWith"), new ClassExpr(new TypeParameter("KoPeMeExtension")));
+         final SingleMemberAnnotationExpr extendAnnotation = new SingleMemberAnnotationExpr(new Name("ExtendWith"),
+               new ClassExpr(new TypeParameter("KoPeMeExtension")));
          clazz.addAnnotation(extendAnnotation);
 
          List<MethodDeclaration> testMethods = TestMethodFinder.findJUnit5TestMethods(clazz);
@@ -535,14 +552,18 @@ public class JUnitTestTransformer implements TestTransformer {
    }
 
    @Override
-   public boolean isJUnit3() {
-      boolean junit3 = false;
+   public JUnitVersions getJUnitVersions() {
+      JUnitVersions versions = new JUnitVersions();
       for (final Entry<File, Integer> clazz : junitVersions.entrySet()) {
          if (clazz.getValue() == 3) {
-            junit3 = true;
+            versions.setJunit3(true);
+         } else if (clazz.getValue() == 4) {
+            versions.setJunit4(true);
+         } else if (clazz.getValue() == 5) {
+            versions.setJunit5(true);
          }
       }
-      return junit3;
+      return null;
    }
 
    @Override

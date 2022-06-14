@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.maven.model.Dependency;
 
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
-
+import de.dagere.peass.testtransformation.JUnitVersions;
 
 public class RequiredDependency {
 
@@ -24,15 +24,18 @@ public class RequiredDependency {
       this.classifier = classifier;
    }
 
-   public static List<RequiredDependency> getAll(final boolean isJUnit3) {
+   public static List<RequiredDependency> getAll(final JUnitVersions versions) {
       List<RequiredDependency> all = new LinkedList<RequiredDependency>();
 
-      if (isJUnit3) {
+      if (versions.isJunit3()) {
          all.add(new RequiredDependency("de.dagere.kopeme", "kopeme-junit3", MavenPomUtil.KOPEME_VERSION, "", null));
       }
-      all.add(new RequiredDependency("de.dagere.kopeme", "kopeme-junit5", MavenPomUtil.KOPEME_VERSION, "", null));
-      all.add(new RequiredDependency("de.dagere.kopeme", "kopeme-junit4", MavenPomUtil.KOPEME_VERSION, "", null));
-      
+      if (versions.isJunit4()) {
+         all.add(new RequiredDependency("de.dagere.kopeme", "kopeme-junit4", MavenPomUtil.KOPEME_VERSION, "", null));
+      }
+      if (versions.isJunit5()) {
+         all.add(new RequiredDependency("de.dagere.kopeme", "kopeme-junit5", MavenPomUtil.KOPEME_VERSION, "", null));
+      }
 
       all.add(new RequiredDependency("net.kieker-monitoring", "kieker", MavenPomUtil.KIEKER_VERSION, "", null));
       all.add(new RequiredDependency("net.kieker-monitoring", "kieker", MavenPomUtil.KIEKER_VERSION, "", "aspectj"));
@@ -75,5 +78,5 @@ public class RequiredDependency {
    public String getClassifier() {
       return classifier;
    }
-   
+
 }

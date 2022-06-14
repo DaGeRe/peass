@@ -14,6 +14,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.execution.maven.pom.MavenPomUtil;
+import de.dagere.peass.testtransformation.JUnitVersions;
 
 
 public class TestExtendDependencies {
@@ -28,7 +29,9 @@ public class TestExtendDependencies {
          final MavenXpp3Reader reader = new MavenXpp3Reader();
          final Model model = reader.read(inputStream);
 
-         MavenPomUtil.extendDependencies(model, false, false);
+         JUnitVersions versions = new JUnitVersions();
+         versions.setJunit4(true);
+         MavenPomUtil.extendDependencies(model, versions, false);
 
          Dependency kopemeDependency = model.getDependencies().get(0);
 
@@ -47,7 +50,9 @@ public class TestExtendDependencies {
          final MavenXpp3Reader reader = new MavenXpp3Reader();
          final Model model = reader.read(inputStream);
 
-         MavenPomUtil.extendDependencies(model, false, true);
+         JUnitVersions versions = new JUnitVersions();
+         versions.setJunit4(true);
+         MavenPomUtil.extendDependencies(model, versions, true);
 
          Dependency kopemeDependency = model.getDependencies().get(0);
          Assert.assertEquals("kopeme-junit4", kopemeDependency.getArtifactId());

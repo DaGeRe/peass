@@ -28,6 +28,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.execution.utils.RequiredDependency;
+import de.dagere.peass.testtransformation.JUnitVersions;
 import de.dagere.peass.utils.StreamGobbler;
 
 public class MavenPomUtil {
@@ -66,12 +67,12 @@ public class MavenPomUtil {
       }
    }
 
-   public static void extendDependencies(final Model model, final boolean junit3, final boolean excludeLog4j) {
+   public static void extendDependencies(final Model model, final JUnitVersions versions, final boolean excludeLog4j) {
       updateJUnit(model);
 
       final List<Dependency> dependencies = model.getDependencies();
 
-      for (RequiredDependency dependency : RequiredDependency.getAll(junit3)) {
+      for (RequiredDependency dependency : RequiredDependency.getAll(versions)) {
          if (dependency.getMavenDependency().getArtifactId().contains("slf4j-impl")) {
             addLoggingImplementationDependency(dependencies, dependency);
          } else if (dependency.getMavenDependency().getArtifactId().contains("kopeme")) {

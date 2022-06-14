@@ -26,6 +26,7 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzFinder;
 import de.dagere.peass.dependency.changesreading.JavaParserProvider;
 import de.dagere.peass.execution.utils.ProjectModules;
+import de.dagere.peass.testtransformation.JUnitVersions;
 import de.dagere.peass.testtransformation.TestTransformer;
 
 public class JmhTestTransformer implements TestTransformer {
@@ -109,13 +110,13 @@ public class JmhTestTransformer implements TestTransformer {
    }
 
    @Override
-   public boolean isJUnit3() {
-      return false;
+   public boolean isIgnoreEOIs() {
+      return ignoreEOIs;
    }
 
    @Override
-   public boolean isIgnoreEOIs() {
-      return ignoreEOIs;
+   public JUnitVersions getJUnitVersions() {
+      return new JUnitVersions();
    }
 
    @Override
