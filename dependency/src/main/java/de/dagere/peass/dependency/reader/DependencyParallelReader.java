@@ -18,7 +18,6 @@ import de.dagere.peass.dependency.parallel.OneReader;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
-import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionIterator;
 import de.dagere.peass.vcs.VersionIteratorGit;

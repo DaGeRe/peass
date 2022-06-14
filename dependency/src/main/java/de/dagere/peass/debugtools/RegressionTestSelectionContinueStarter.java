@@ -40,7 +40,6 @@ import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.CommitUtil;
-import de.dagere.peass.vcs.GitCommit;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 import de.dagere.peass.vcs.VersionIterator;

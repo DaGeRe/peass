@@ -12,7 +12,6 @@ import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.vcs.CommitUtil;
-import de.dagere.peass.vcs.GitCommit;
 import picocli.CommandLine;
 import picocli.CommandLine.Mixin;
 

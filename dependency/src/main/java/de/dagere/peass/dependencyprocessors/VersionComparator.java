@@ -12,7 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
-import de.dagere.peass.vcs.GitCommit;
 
 /**
  * Compares versions regaring their index, i.e. if version a is seen as before version b in the commit log

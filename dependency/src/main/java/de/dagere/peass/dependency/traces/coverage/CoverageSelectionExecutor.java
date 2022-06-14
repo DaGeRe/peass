@@ -19,9 +19,7 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.traces.OneTraceGenerator;
-import de.dagere.peass.dependency.traces.TraceFileManager;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
-import de.dagere.peass.dependency.traces.diff.DiffFileGenerator;
 import de.dagere.peass.dependency.traces.diff.TraceFileUtil;
 import de.dagere.peass.utils.Constants;
 
