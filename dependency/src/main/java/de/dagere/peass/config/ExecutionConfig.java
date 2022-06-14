@@ -43,6 +43,8 @@ public class ExecutionConfig implements Serializable {
    private String testGoal;
    private List<String> includes = new LinkedList<>();
    private List<String> excludes = new LinkedList<>();
+   private List<String> includeByRule = new LinkedList<>();
+   private List<String> excludeByRule = new LinkedList<>();
 
    private List<String> forbiddenMethods = new LinkedList<>();
 
@@ -180,6 +182,24 @@ public class ExecutionConfig implements Serializable {
 
    public void setExcludes(final List<String> excludes) {
       this.excludes = excludes;
+   }
+
+   @JsonInclude(Include.NON_EMPTY)
+   public List<String> getIncludeByRule() {
+      return includeByRule;
+   }
+
+   public void setIncludeByRule(List<String> includeByRule) {
+      this.includeByRule = includeByRule;
+   }
+
+   @JsonInclude(Include.NON_EMPTY)
+   public List<String> getExcludeByRule() {
+      return excludeByRule;
+   }
+
+   public void setExcludeByRule(List<String> excludeByRule) {
+      this.excludeByRule = excludeByRule;
    }
 
    @JsonInclude(Include.NON_EMPTY)
