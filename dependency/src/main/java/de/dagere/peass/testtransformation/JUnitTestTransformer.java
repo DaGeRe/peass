@@ -563,7 +563,7 @@ public class JUnitTestTransformer implements TestTransformer {
             versions.setJunit5(true);
          }
       }
-      return null;
+      return versions;
    }
 
    @Override
