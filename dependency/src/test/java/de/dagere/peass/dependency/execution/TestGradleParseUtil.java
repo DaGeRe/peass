@@ -1,5 +1,6 @@
 package de.dagere.peass.dependency.execution;
 
+import java.awt.image.AffineTransformOp;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,6 +24,7 @@ import de.dagere.peass.execution.gradle.SettingsFileParser;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.JUnitVersions;
 
 public class TestGradleParseUtil {
 
@@ -56,6 +58,10 @@ public class TestGradleParseUtil {
 
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
       JUnitTestTransformer transformerMock = Mockito.mock(JUnitTestTransformer.class);
+      JUnitVersions junitVersions = new JUnitVersions();
+      junitVersions.setJunit4(true);
+      Mockito.when(transformerMock.getJUnitVersions()).thenReturn(junitVersions);
+      
       MeasurementConfig measurementConfig = new MeasurementConfig(2);
       measurementConfig.getKiekerConfig().setUseKieker(true);
       measurementConfig.getKiekerConfig().setUseSourceInstrumentation(false);
