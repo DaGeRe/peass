@@ -41,12 +41,15 @@ public class TestFQNDeterminer {
 
    @Test
    public void testImportedClass() throws FileNotFoundException {
-      File file = new File("src/main/java/de/dagere/peass/SelectStarter.java");
-      CompilationUnit unit = JavaParserProvider.parse(file);
+      
+      File dependencyReaderFile = new File("src/main/java/de/dagere/peass/dependency/reader/DependencyReader.java");
+      CompilationUnit unit = JavaParserProvider.parse(dependencyReaderFile);
       String fqn = FQNDeterminer.getParameterFQN(unit, "StaticTestSelection");
       Assert.assertEquals("de.dagere.peass.dependency.persistence.StaticTestSelection", fqn);
 
-      String fqn2 = FQNDeterminer.getParameterFQN(unit, "CommandLine");
+      File selectFile = new File("src/main/java/de/dagere/peass/SelectStarter.java");
+      CompilationUnit selectUnit = JavaParserProvider.parse(selectFile);
+      String fqn2 = FQNDeterminer.getParameterFQN(selectUnit, "CommandLine");
       Assert.assertEquals("picocli.CommandLine", fqn2);
    }
    
