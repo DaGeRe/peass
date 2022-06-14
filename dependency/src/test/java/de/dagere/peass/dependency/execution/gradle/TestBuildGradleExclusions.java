@@ -33,6 +33,7 @@ public class TestBuildGradleExclusions {
       config.getKiekerConfig().setUseKieker(true);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
       Mockito.when(mockedTransformer.getProjectFolder()).thenReturn(TestBuildGradle.CURRENT);
+      Mockito.when(mockedTransformer.getJUnitVersions()).thenReturn(TestConstants.TEST_JUNIT_VERSIONS);
       
       TestUtil.deleteContents(TestBuildGradle.CURRENT);
    }

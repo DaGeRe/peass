@@ -58,9 +58,7 @@ public class TestGradleParseUtil {
 
       PeassFolders folders = new PeassFolders(TestConstants.CURRENT_FOLDER);
       JUnitTestTransformer transformerMock = Mockito.mock(JUnitTestTransformer.class);
-      JUnitVersions junitVersions = new JUnitVersions();
-      junitVersions.setJunit4(true);
-      Mockito.when(transformerMock.getJUnitVersions()).thenReturn(junitVersions);
+      Mockito.when(transformerMock.getJUnitVersions()).thenReturn(TestConstants.TEST_JUNIT_VERSIONS);
       
       MeasurementConfig measurementConfig = new MeasurementConfig(2);
       measurementConfig.getKiekerConfig().setUseKieker(true);
