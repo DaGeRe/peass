@@ -18,6 +18,7 @@ import de.dagere.peass.execution.gradle.GradleBuildfileEditor;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.testtransformation.JUnitVersions;
 
 public class TestBuildGradle {
 
@@ -34,6 +35,9 @@ public class TestBuildGradle {
       config.getKiekerConfig().setUseKieker(true);
       Mockito.when(mockedTransformer.getConfig()).thenReturn(config);
       Mockito.when(mockedTransformer.getProjectFolder()).thenReturn(CURRENT);
+      JUnitVersions junitVersions = new JUnitVersions();
+      junitVersions.setJunit4(true);
+      Mockito.when(mockedTransformer.getJUnitVersions()).thenReturn(junitVersions);
       
       if (CURRENT.exists()) {
          FileUtils.cleanDirectory(CURRENT);
