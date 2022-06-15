@@ -59,7 +59,7 @@ public class JmhTestTransformer implements TestTransformer {
    }
 
    @Override
-   public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules) {
+   public TestSet buildTestMethodSet(final TestSet testsToUpdate, ModuleClassMapping modules) {
       final TestSet tests = new TestSet();
       for (final TestCase clazzname : testsToUpdate.getClasses()) {
          final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);

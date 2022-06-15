@@ -28,7 +28,7 @@ public interface TestTransformer {
     */
    public TestSet findModuleTests(final ModuleClassMapping mapping, final List<String> includedModules, final ProjectModules modules);
 
-   public TestSet buildTestMethodSet(final TestSet testsToUpdate, List<File> modules);
+   public TestSet buildTestMethodSet(final TestSet testsToUpdate, ModuleClassMapping mapping);
 
    public void determineVersions(final List<File> modules);
 

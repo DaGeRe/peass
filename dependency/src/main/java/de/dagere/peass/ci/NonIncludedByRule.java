@@ -14,6 +14,7 @@ import com.github.javaparser.ast.body.FieldDeclaration;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
+import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -24,7 +25,7 @@ import de.dagere.peass.testtransformation.TestTransformer;
 
 public class NonIncludedByRule {
 
-   private static final Logger LOG = LogManager.getLogger(ClazzFileFinder.class);
+   private static final Logger LOG = LogManager.getLogger(NonIncludedByRule.class);
 
    private static class IncludeExcludeInfo {
       private final boolean included, excluded;
@@ -48,7 +49,7 @@ public class NonIncludedByRule {
 
    }
 
-   public static boolean isTestIncluded(TestCase test, JUnitTestTransformer transformer) {
+   public static boolean isTestIncluded(TestCase test, JUnitTestTransformer transformer, ModuleClassMapping mapping) {
       ExecutionConfig executionConfig = transformer.getConfig().getExecutionConfig();
       CompilationUnit unit = getUnit(test, transformer, executionConfig);
       if (unit == null) {
@@ -57,18 +58,22 @@ public class NonIncludedByRule {
       }
       IncludeExcludeInfo testInfo = getIncludeExcludeInfo(executionConfig, unit);
 
-      IncludeExcludeInfo parentInfo = getParentInfo(transformer, executionConfig, unit);
+      IncludeExcludeInfo parentInfo = getParentInfo(transformer, executionConfig, unit, mapping);
 
       return (testInfo.isSelected() && !parentInfo.isExcluded()) || (parentInfo.isIncluded() && !parentInfo.isExcluded());
    }
 
-   private static IncludeExcludeInfo getParentInfo(JUnitTestTransformer transformer, ExecutionConfig executionConfig, CompilationUnit unit) {
+   private static IncludeExcludeInfo getParentInfo(JUnitTestTransformer transformer, ExecutionConfig executionConfig, CompilationUnit unit, ModuleClassMapping mapping) {
       boolean anyParentExcluded = false;
       boolean anyParentIncluded = false;
 
-      TestCase parentTest = getParentTest(unit);
+      TestCase parentTest = getParentTest(unit, mapping);
       while (parentTest != null) {
          CompilationUnit parentUnit = getUnit(parentTest, transformer, executionConfig);
+         if (parentUnit == null) {
+            LOG.warn("Did not find {}; ignoring parent class for includeByRule-checking", parentTest);
+         }
+         
          IncludeExcludeInfo parentInfo = getIncludeExcludeInfo(executionConfig, parentUnit);
          if (parentInfo.isExcluded()) {
             anyParentExcluded = true;
@@ -77,18 +82,19 @@ public class NonIncludedByRule {
             anyParentIncluded = true;
          }
 
-         parentTest = getParentTest(parentUnit);
+         parentTest = getParentTest(parentUnit, mapping);
       }
       IncludeExcludeInfo parentInfo = new IncludeExcludeInfo(anyParentIncluded, anyParentExcluded);
       return parentInfo;
    }
 
-   private static TestCase getParentTest(CompilationUnit unit) {
+   private static TestCase getParentTest(CompilationUnit unit, ModuleClassMapping mapping) {
       for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
          if (clazz.getExtendedTypes().size() == 1) {
             String extendType = clazz.getExtendedTypes(0).getNameAsString();
             String fqn = FQNDeterminer.getParameterFQN(unit, extendType);
-            ChangedEntity entity = new ChangedEntity(fqn);
+            String module = mapping.getModuleOfClass(fqn);
+            ChangedEntity entity = new ChangedEntity(fqn, module);
             TestCase parentTest = new TestCase(entity);
             return parentTest;
          }
@@ -107,7 +113,7 @@ public class NonIncludedByRule {
    private static CompilationUnit getUnit(TestCase test, JUnitTestTransformer transformer, ExecutionConfig executionConfig) {
       ClazzFileFinder finder = new ClazzFileFinder(executionConfig);
       final File clazzFile = finder.getClazzFile(transformer.getProjectFolder(), test);
-
+      System.out.println("File: " + clazzFile);
       CompilationUnit unit = transformer.getLoadedFiles().get(clazzFile);
       return unit;
    }
@@ -142,12 +148,12 @@ public class NonIncludedByRule {
       return includedByRule;
    }
 
-   public static void removeNotIncluded(TestSet tests, TestTransformer testTransformer) {
+   public static void removeNotIncluded(TestSet tests, TestTransformer testTransformer, ModuleClassMapping mapping) {
       if (testTransformer.getConfig().getExecutionConfig().getIncludeByRule().size() > 0 && testTransformer instanceof JUnitTestTransformer) {
          JUnitTestTransformer junitTestTransformer = (JUnitTestTransformer) testTransformer;
          for (Iterator<Map.Entry<TestCase, Set<String>>> testcaseIterator = tests.getTestcases().entrySet().iterator(); testcaseIterator.hasNext();) {
             Map.Entry<TestCase, Set<String>> testcase = testcaseIterator.next();
-            if (!isTestIncluded(testcase.getKey(), junitTestTransformer)) {
+            if (!isTestIncluded(testcase.getKey(), junitTestTransformer, mapping)) {
                testcaseIterator.remove();
             }
          }

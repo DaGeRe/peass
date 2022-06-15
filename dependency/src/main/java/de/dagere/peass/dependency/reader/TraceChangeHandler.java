@@ -49,14 +49,15 @@ public class TraceChangeHandler {
          throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException {
       LOG.debug("Updating dependencies.. {}", version);
 
-      final TestSet testsToRun = getTestsToRun(newVersionInfo);
+      final ModuleClassMapping mapping = new ModuleClassMapping(dependencyManager.getExecutor());
+      final TestSet testsToRun = getTestsToRun(newVersionInfo, mapping);
 
       if (testsToRun.classCount() > 0) {
-         analyzeTests(newVersionInfo, testsToRun);
+         analyzeTests(newVersionInfo, testsToRun, mapping);
       }
    }
 
-   private TestSet getTestsToRun(final VersionStaticSelection newVersionStaticSelection) throws IOException, JsonGenerationException, JsonMappingException {
+   private TestSet getTestsToRun(final VersionStaticSelection newVersionStaticSelection, ModuleClassMapping mapping) throws IOException, JsonGenerationException, JsonMappingException {
       final TestSet testsToRun = newVersionStaticSelection.getTests() ; // contains only the tests that need to be run -> could be changeTestMap.values() und dann
                                                                                       // umwandeln
       addAddedTests(newVersionStaticSelection, testsToRun);
@@ -66,7 +67,7 @@ public class TraceChangeHandler {
       NonIncludedTestRemover.removeNotIncluded(testsToRun, executionConfig);
       
       TestTransformer testTransformer = dependencyManager.getTestTransformer();
-      NonIncludedByRule.removeNotIncluded(testsToRun, testTransformer);
+      NonIncludedByRule.removeNotIncluded(testsToRun, testTransformer, mapping);
       
       return testsToRun;
    }
@@ -81,9 +82,9 @@ public class TraceChangeHandler {
       }
    }
 
-   private void analyzeTests(final VersionStaticSelection newVersionInfo, final TestSet testsToRun)
+   private void analyzeTests(final VersionStaticSelection newVersionInfo, final TestSet testsToRun, ModuleClassMapping mapping)
          throws IOException, XmlPullParserException, InterruptedException, JsonGenerationException, JsonMappingException {
-      final ModuleClassMapping mapping = new ModuleClassMapping(dependencyManager.getExecutor());
+      
       dependencyManager.runTraceTests(testsToRun, version);
 
       handleDependencyChanges(newVersionInfo, testsToRun, mapping);

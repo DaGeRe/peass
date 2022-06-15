@@ -8,7 +8,9 @@ import java.util.Arrays;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 
+import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.jmh.JmhTestTransformer;
@@ -20,7 +22,9 @@ public class TestBenchmarkChangeDetection {
       
       TestSet originalTests = new TestSet(new TestCase("de.dagere.peass.ExampleBenchmark", (String) null, ""));
       
-      TestSet changedTests = jmhTransformer.buildTestMethodSet(originalTests, Arrays.asList(new File[] {JmhTestConstants.BASIC_VERSION}));
+      ModuleClassMapping mapping = Mockito.mock(ModuleClassMapping.class);
+      Mockito.when(mapping.getModules()).thenReturn(Arrays.asList(new File[] {JmhTestConstants.BASIC_VERSION}));
+      TestSet changedTests = jmhTransformer.buildTestMethodSet(originalTests, mapping);
       Assert.assertEquals(changedTests.getTests().size(), 1);
       
       TestCase test = changedTests.getTests().iterator().next();

@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 
@@ -29,60 +30,60 @@ public class TestNonIncludedByRule {
    public void testIncludeOneClass() {
       JUnitTestTransformer transformer = determineWithInclude(BASIC_EXAMPLE_FOLDER);
       
-      Assert.assertFalse(NonIncludedByRule.isTestIncluded(TEST_WITHOUT_RULE, transformer));
-      Assert.assertTrue(NonIncludedByRule.isTestIncluded(TEST_WITH_RULE, transformer));
+      Assert.assertFalse(NonIncludedByRule.isTestIncluded(TEST_WITHOUT_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(TEST_WITH_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
    }
 
    @Test
    public void testExcludeOneClass() {
       JUnitTestTransformer transformer = determineWithExclude(BASIC_EXAMPLE_FOLDER);
       
-      Assert.assertTrue(NonIncludedByRule.isTestIncluded(TEST_WITHOUT_RULE, transformer));
-      Assert.assertFalse(NonIncludedByRule.isTestIncluded(TEST_WITH_RULE, transformer));
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(TEST_WITHOUT_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertFalse(NonIncludedByRule.isTestIncluded(TEST_WITH_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
    }
 
    @Test
    public void testIncludeSuperClass() {
       JUnitTestTransformer transformer = determineWithInclude(SUPER_CLASS_EXAMPLE);
       
-      Assert.assertFalse(NonIncludedByRule.isTestIncluded(TEST_WITHOUT_RULE, transformer));
-      Assert.assertTrue(NonIncludedByRule.isTestIncluded(TEST_WITH_RULE, transformer));
-      Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_TEST_WITHOUT_RULE, transformer));
-      Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_TEST_OF_TEST_WITH_RULE, transformer));
+      Assert.assertFalse(NonIncludedByRule.isTestIncluded(TEST_WITHOUT_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(TEST_WITH_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_TEST_WITHOUT_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_TEST_OF_TEST_WITH_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
    }
    
    @Test
    public void testExcludeSuperClass() {
       JUnitTestTransformer transformer = determineWithExclude(SUPER_CLASS_EXAMPLE);
       
-      Assert.assertTrue(NonIncludedByRule.isTestIncluded(TEST_WITHOUT_RULE, transformer));
-      Assert.assertFalse(NonIncludedByRule.isTestIncluded(TEST_WITH_RULE, transformer));
-      Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_TEST_WITHOUT_RULE, transformer));
-      Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_TEST_OF_TEST_WITH_RULE, transformer));
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(TEST_WITHOUT_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertFalse(NonIncludedByRule.isTestIncluded(TEST_WITH_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_TEST_WITHOUT_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_TEST_OF_TEST_WITH_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
    }
    
    @Test
    public void testIncludeSuperSuperClass() {
       JUnitTestTransformer transformer = determineWithInclude(SUPER_SUPER_CLASS_EXAMPLE);
       
-      Assert.assertFalse(NonIncludedByRule.isTestIncluded(TEST_WITHOUT_RULE, transformer));
-      Assert.assertTrue(NonIncludedByRule.isTestIncluded(TEST_WITH_RULE, transformer));
-      Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_TEST_WITHOUT_RULE, transformer));
-      Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_TEST_OF_TEST_WITH_RULE, transformer));
-      Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_SUB_TEST_WITHOUT_RULE, transformer));
-      Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_SUB_TEST_OF_TEST_WITH_RULE, transformer));
+      Assert.assertFalse(NonIncludedByRule.isTestIncluded(TEST_WITHOUT_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(TEST_WITH_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_TEST_WITHOUT_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_TEST_OF_TEST_WITH_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_SUB_TEST_WITHOUT_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_SUB_TEST_OF_TEST_WITH_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
    }
    
    @Test
    public void testExcludeSuperSuperClass() {
       JUnitTestTransformer transformer = determineWithExclude(SUPER_SUPER_CLASS_EXAMPLE);
       
-      Assert.assertTrue(NonIncludedByRule.isTestIncluded(TEST_WITHOUT_RULE, transformer));
-      Assert.assertFalse(NonIncludedByRule.isTestIncluded(TEST_WITH_RULE, transformer));
-      Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_TEST_WITHOUT_RULE, transformer));
-      Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_TEST_OF_TEST_WITH_RULE, transformer));
-      Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_SUB_TEST_WITHOUT_RULE, transformer));
-      Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_SUB_TEST_OF_TEST_WITH_RULE, transformer));
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(TEST_WITHOUT_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertFalse(NonIncludedByRule.isTestIncluded(TEST_WITH_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_TEST_WITHOUT_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_TEST_OF_TEST_WITH_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_SUB_TEST_WITHOUT_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+      Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_SUB_TEST_OF_TEST_WITH_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
    }
    
    private JUnitTestTransformer determineWithInclude(File basicExampleFolder) {

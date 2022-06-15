@@ -31,6 +31,7 @@ import de.dagere.kopeme.parsing.BuildtoolProjectNameReader;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -88,9 +89,10 @@ public class KiekerResultManager {
    public void runTraceTests(final TestSet testsToUpdate, final String version) throws IOException, XmlPullParserException, InterruptedException {
       truncateKiekerResults();
       // TODO Verschieben
-
+      
       LOG.debug("Executing dependency update test, results folder: {}", folders.getTempMeasurementFolder());
-      final TestSet tests = testTransformer.buildTestMethodSet(testsToUpdate, executor.getModules().getModules());
+      ModuleClassMapping mapping = new ModuleClassMapping(executor);
+      final TestSet tests = testTransformer.buildTestMethodSet(testsToUpdate, mapping);
       executeKoPeMeKiekerRun(tests, version, folders.getDependencyLogFolder());
    }
 

@@ -54,8 +54,7 @@ public class TraceViewGenerator {
       boolean allWorked = true;
       GitUtils.reset(folders.getProjectFolder());
       ProjectModules modules = dependencyManager.getExecutor().getModules();
-      ExecutionConfig executionConfig = dependencyManager.getTestTransformer().getConfig().getExecutionConfig();
-      ModuleClassMapping mapping = new ModuleClassMapping(folders.getProjectFolder(), modules, executionConfig);
+      ModuleClassMapping mapping = new ModuleClassMapping(dependencyManager.getExecutor());
       List<File> classpathFolders = getClasspathFolders(modules);
       for (TestCase testcase : examinedTests.getTests()) {
          final OneTraceGenerator oneViewGenerator = new OneTraceGenerator(resultsFolders, folders, testcase, traceFileMapping, version, classpathFolders, mapping, kiekerConfig, testSelectionConfig);

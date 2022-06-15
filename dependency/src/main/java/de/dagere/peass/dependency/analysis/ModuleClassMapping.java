@@ -21,17 +21,20 @@ public class ModuleClassMapping {
    public static final ModuleClassMapping SINGLE_MODULE_MAPPING = new ModuleClassMapping();
 
    private ModuleClassMapping() {
+      modules = null;
    }
 
    private static final Logger LOG = LogManager.getLogger(ModuleClassMapping.class);
 
    private final Map<String, String> mapping = new HashMap<>();
+   private final List<File> modules;
 
    public ModuleClassMapping(final File baseFolder, final ProjectModules modules, final ExecutionConfig config) {
       for (final File module : modules.getModules()) {
          ClazzFileFinder finder = new ClazzFileFinder(config);
          populateModule(baseFolder, module, finder);
       }
+      this.modules = modules.getModules();
    }
    
    private void populateModule(final File baseFolder, final File module, final ClazzFileFinder finder) {
@@ -77,5 +80,9 @@ public class ModuleClassMapping {
          clazzes.add(clazz);
       }
       return clazzes;
+   }
+
+   public List<File> getModules() {
+      return modules;
    }
 }

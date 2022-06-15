@@ -170,37 +170,37 @@ public class JUnitTestTransformer implements TestTransformer {
          final List<TestCase> testMethodNames = getTestMethodNames(module, new TestCase(clazz, null, currentModule));
          for (TestCase test : testMethodNames) {
             if (includedModules == null || includedModules.contains(test.getModule())) {
-               addTestIfIncluded(moduleTests, test);
+               addTestIfIncluded(moduleTests, test, mapping);
             }
          }
       }
       return moduleTests;
    }
 
-   private void addTestIfIncluded(final TestSet moduleTests, final TestCase test) {
+   private void addTestIfIncluded(final TestSet moduleTests, final TestCase test, ModuleClassMapping mapping) {
       if (NonIncludedTestRemover.isTestIncluded(test, getConfig().getExecutionConfig())) {
-         if (NonIncludedByRule.isTestIncluded(test, this)) {
+         if (NonIncludedByRule.isTestIncluded(test, this, mapping)) {
             moduleTests.addTest(test);
          }
       }
    }
 
    @Override
-   public TestSet buildTestMethodSet(final TestSet testsToUpdate, final List<File> modules) {
+   public TestSet buildTestMethodSet(final TestSet testsToUpdate, ModuleClassMapping mapping) {
       final TestSet tests = new TestSet();
-      determineVersions(modules);
+      determineVersions(mapping.getModules());
       for (final TestCase clazzname : testsToUpdate.getClasses()) {
          final Set<String> currentClazzMethods = testsToUpdate.getMethods(clazzname);
          if (currentClazzMethods == null || currentClazzMethods.isEmpty()) {
             final File moduleFolder = new File(projectFolder, clazzname.getModule());
             final List<TestCase> methods = getTestMethodNames(moduleFolder, clazzname);
             for (final TestCase test : methods) {
-               addTestIfIncluded(tests, test);
+               addTestIfIncluded(tests, test, mapping);
             }
          } else {
             for (final String method : currentClazzMethods) {
                TestCase test = new TestCase(clazzname.getClazz(), method, clazzname.getModule());
-               addTestIfIncluded(tests, test);
+               addTestIfIncluded(tests, test, mapping);
             }
          }
       }
