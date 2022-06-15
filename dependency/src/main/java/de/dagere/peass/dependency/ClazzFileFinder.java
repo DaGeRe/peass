@@ -152,21 +152,27 @@ public class ClazzFileFinder {
       return clazzFile;
    }
 
-   public File getClazzFile(final File module, final TestCase testcase) {
-      return getClazzFile(module, testcase.toEntity());
+   /**
+    * Returns the file of the given testcase class
+    * @param moduleOrProjectFolder Folder of the module or the project overall
+    * @param testcase TestCase that should be searched; if the overall project folder is given, the module *must* be set
+    * @return File that contains the testcase source
+    */
+   public File getClazzFile(final File moduleOrProjectFolder, final TestCase testcase) {
+      return getClazzFile(moduleOrProjectFolder, testcase.toEntity());
    }
    
-   public File getClazzFile(final File module, final ChangedEntity entity) {
-      if (!module.exists()) {
-         throw new RuntimeException("Module folder " + module.getAbsolutePath() + " did not exist");
+   public File getClazzFile(final File moduleOrProjectFolder, final ChangedEntity entity) {
+      if (!moduleOrProjectFolder.exists()) {
+         throw new RuntimeException("Module folder " + moduleOrProjectFolder.getAbsolutePath() + " did not exist");
       }
-      LOG.debug("Searching: {} in {}", entity, module.getAbsolutePath());
+      LOG.debug("Searching: {} in {}", entity, moduleOrProjectFolder.getAbsolutePath());
       final String clazzName = getOuterClass(entity.getClazz());
       final String clazzFileName = clazzName.endsWith(".java") ? clazzName : clazzName.replace('.', File.separatorChar) + ".java";
-      final File naturalCandidate = new File(module, clazzFileName);
-      File potentialFile = findFile(module, clazzFileName, naturalCandidate);
+      final File naturalCandidate = new File(moduleOrProjectFolder, clazzFileName);
+      File potentialFile = findFile(moduleOrProjectFolder, clazzFileName, naturalCandidate);
       if (potentialFile == null && entity.getModule() != null && !entity.getModule().equals("")) {
-         File moduleFolder = new File(module, entity.getModule());
+         File moduleFolder = new File(moduleOrProjectFolder, entity.getModule());
          potentialFile = findFile(moduleFolder, clazzFileName, naturalCandidate);
       }
       try {
