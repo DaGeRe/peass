@@ -34,6 +34,7 @@ measurement/scripts/versions/helpers/[0-9].sh
 dependency/src/test/resources/dependencyIT/current/
 dependency/src/test/resources/dependencyIT/current_peass/
 dependency/src/test/resources/dependencyIT/ausgabe_kieker.txt
+peass-jmh/bin/
 ergebnisse/
 ergebnis*
 performanzanalyse/
