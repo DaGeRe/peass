@@ -5,6 +5,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
@@ -20,6 +23,8 @@ import de.dagere.peass.testtransformation.ParseUtil;
 import de.dagere.peass.testtransformation.TestTransformer;
 
 public class NonIncludedByRule {
+
+   private static final Logger LOG = LogManager.getLogger(ClazzFileFinder.class);
 
    private static class IncludeExcludeInfo {
       private final boolean included, excluded;
@@ -46,7 +51,10 @@ public class NonIncludedByRule {
    public static boolean isTestIncluded(TestCase test, JUnitTestTransformer transformer) {
       ExecutionConfig executionConfig = transformer.getConfig().getExecutionConfig();
       CompilationUnit unit = getUnit(test, transformer, executionConfig);
-
+      if (unit == null) {
+         LOG.info("Did not find compilation unit for {}, assuming test is not existing but was included before");
+         return true;
+      }
       IncludeExcludeInfo testInfo = getIncludeExcludeInfo(executionConfig, unit);
 
       IncludeExcludeInfo parentInfo = getParentInfo(transformer, executionConfig, unit);
@@ -68,7 +76,7 @@ public class NonIncludedByRule {
          if (parentInfo.isIncluded()) {
             anyParentIncluded = true;
          }
-         
+
          parentTest = getParentTest(parentUnit);
       }
       IncludeExcludeInfo parentInfo = new IncludeExcludeInfo(anyParentIncluded, anyParentExcluded);
