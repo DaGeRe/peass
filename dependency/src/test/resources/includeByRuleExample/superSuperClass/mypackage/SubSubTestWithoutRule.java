@@ -2,7 +2,7 @@ package mypackage;
 
 import org.junit.Test;
 
-public class SubTestOfTestWithRule extends MyTestWithRule {
+public class SubSubTestWithoutRule extends SubTestWithoutRule {
    @Test
    public void testMe() {
       
