@@ -81,6 +81,8 @@ public class JUnitTestTransformer implements TestTransformer {
    protected boolean ignoreEOIs = false;
    protected Charset charset = StandardCharsets.UTF_8;
    private Map<String, List<File>> extensions = null;
+   private Map<File, CompilationUnit> loadedFiles;
+   private Map<File, Integer> junitVersions;
 
    private final JavaParser javaParser = new JavaParser();
 
@@ -115,13 +117,9 @@ public class JUnitTestTransformer implements TestTransformer {
       datacollectorlist = DataCollectorList.ONLYTIME;
    }
 
-   private Map<File, CompilationUnit> loadedFiles;
-
    public Map<File, CompilationUnit> getLoadedFiles() {
       return loadedFiles;
    }
-
-   private Map<File, Integer> junitVersions;
 
    @Override
    public void determineVersions(final List<File> modules) {
