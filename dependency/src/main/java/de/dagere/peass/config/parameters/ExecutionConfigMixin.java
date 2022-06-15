@@ -26,7 +26,7 @@ public class ExecutionConfigMixin {
    protected String[] includeByRule;
 
    @Option(names = { "-excludeByRule",
-         "--excludeByRule" }, split = ";", description = "Rules that should be included (if defined, test classes will be excluded that use this rule, even if included by includeByRule)")
+         "--excludeByRule" }, split = ";", description = "Rules that should be included (if defined, test classes will be excluded that use this rule, even if included by includeByRule or includes)")
    protected String[] excludeByRule;
 
    @Option(names = { "-forbiddenMethods", "--forbiddenMethods" }, description = "Testcases that call one of these methods are excluded")

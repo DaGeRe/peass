@@ -54,6 +54,7 @@ import com.github.javaparser.ast.type.TypeParameter;
 
 import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.kopeme.parsing.JUnitParseUtil;
+import de.dagere.peass.ci.NonIncludedByRule;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
@@ -178,7 +179,9 @@ public class JUnitTestTransformer implements TestTransformer {
 
    private void addTestIfIncluded(final TestSet moduleTests, final TestCase test) {
       if (NonIncludedTestRemover.isTestIncluded(test, getConfig().getExecutionConfig())) {
-         moduleTests.addTest(test);
+         if (NonIncludedByRule.isTestIncluded(test, this)) {
+            moduleTests.addTest(test);
+         }
       }
    }
 

@@ -12,6 +12,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.ci.NonIncludedByRule;
 import de.dagere.peass.ci.NonIncludedTestRemover;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.DependencyManager;
@@ -22,6 +23,7 @@ import de.dagere.peass.dependency.analysis.data.TestExistenceChanges;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.folders.PeassFolders;
+import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.utils.Constants;
 
 public class TraceChangeHandler {
@@ -62,6 +64,10 @@ public class TraceChangeHandler {
       Constants.OBJECTMAPPER.writeValue(new File(folders.getDebugFolder(), "toRun_" + version + ".json"), testsToRun.entrySet());
 
       NonIncludedTestRemover.removeNotIncluded(testsToRun, executionConfig);
+      
+      TestTransformer testTransformer = dependencyManager.getTestTransformer();
+      NonIncludedByRule.removeNotIncluded(testsToRun, testTransformer);
+      
       return testsToRun;
    }
 

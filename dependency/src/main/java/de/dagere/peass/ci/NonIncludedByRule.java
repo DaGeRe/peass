@@ -1,8 +1,9 @@
 package de.dagere.peass.ci;
 
-import java.awt.image.AffineTransformOp;
 import java.io.File;
-import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
@@ -12,9 +13,11 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.FQNDeterminer;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.testtransformation.ParseUtil;
+import de.dagere.peass.testtransformation.TestTransformer;
 
 public class NonIncludedByRule {
 
@@ -129,5 +132,17 @@ public class NonIncludedByRule {
          }
       }
       return includedByRule;
+   }
+
+   public static void removeNotIncluded(TestSet tests, TestTransformer testTransformer) {
+      if (testTransformer.getConfig().getExecutionConfig().getIncludeByRule().size() > 0 && testTransformer instanceof JUnitTestTransformer) {
+         JUnitTestTransformer junitTestTransformer = (JUnitTestTransformer) testTransformer;
+         for (Iterator<Map.Entry<TestCase, Set<String>>> testcaseIterator = tests.getTestcases().entrySet().iterator(); testcaseIterator.hasNext();) {
+            Map.Entry<TestCase, Set<String>> testcase = testcaseIterator.next();
+            if (!isTestIncluded(testcase.getKey(), junitTestTransformer)) {
+               testcaseIterator.remove();
+            }
+         }
+      }
    }
 }
