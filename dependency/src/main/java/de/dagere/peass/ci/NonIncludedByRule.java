@@ -17,41 +17,80 @@ import de.dagere.peass.testtransformation.JUnitTestTransformer;
 import de.dagere.peass.testtransformation.ParseUtil;
 
 public class NonIncludedByRule {
-   
+
+   private static class IncludeExcludeInfo {
+      private final boolean included, excluded;
+
+      public IncludeExcludeInfo(boolean included, boolean excluded) {
+         this.included = included;
+         this.excluded = excluded;
+      }
+
+      public boolean isExcluded() {
+         return excluded;
+      }
+
+      public boolean isIncluded() {
+         return included;
+      }
+
+      public boolean isSelected() {
+         return included && !excluded;
+      }
+
+   }
+
    public static boolean isTestIncluded(TestCase test, JUnitTestTransformer transformer) {
       ExecutionConfig executionConfig = transformer.getConfig().getExecutionConfig();
       CompilationUnit unit = getUnit(test, transformer, executionConfig);
 
-      boolean includedByRule = isIncluded(executionConfig, unit);
+      IncludeExcludeInfo testInfo = getIncludeExcludeInfo(executionConfig, unit);
 
-      boolean excludeByRule = isExcluded(executionConfig, unit);
+      IncludeExcludeInfo parentInfo = getParentInfo(transformer, executionConfig, unit);
 
-      boolean currentTestSelected = includedByRule && !excludeByRule;
+      return (testInfo.isSelected() && !parentInfo.isExcluded()) || (parentInfo.isIncluded() && !parentInfo.isExcluded());
+   }
 
-      boolean parentExisting = false;
-      boolean parentTestIncluded = false;
-      boolean parentTestExcluded = false;
+   private static IncludeExcludeInfo getParentInfo(JUnitTestTransformer transformer, ExecutionConfig executionConfig, CompilationUnit unit) {
+      boolean anyParentExcluded = false;
+      boolean anyParentIncluded = false;
+
+      TestCase parentTest = getParentTest(unit);
+      while (parentTest != null) {
+         CompilationUnit parentUnit = getUnit(parentTest, transformer, executionConfig);
+         IncludeExcludeInfo parentInfo = getIncludeExcludeInfo(executionConfig, parentUnit);
+         if (parentInfo.isExcluded()) {
+            anyParentExcluded = true;
+         }
+         if (parentInfo.isIncluded()) {
+            anyParentIncluded = true;
+         }
+         
+         parentTest = getParentTest(parentUnit);
+      }
+      IncludeExcludeInfo parentInfo = new IncludeExcludeInfo(anyParentIncluded, anyParentExcluded);
+      return parentInfo;
+   }
+
+   private static TestCase getParentTest(CompilationUnit unit) {
       for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
          if (clazz.getExtendedTypes().size() == 1) {
-            parentExisting = true;
             String extendType = clazz.getExtendedTypes(0).getNameAsString();
             String fqn = FQNDeterminer.getParameterFQN(unit, extendType);
             ChangedEntity entity = new ChangedEntity(fqn);
             TestCase parentTest = new TestCase(entity);
-            CompilationUnit parentUnit = getUnit(parentTest, transformer, executionConfig);
-            if (isIncluded(executionConfig, parentUnit)) {
-               parentTestIncluded = true;
-            }
-            if (isExcluded(executionConfig, parentUnit)) {
-               parentTestExcluded = true;
-            }
+            return parentTest;
          }
       }
-      if (!parentExisting) {
-         return currentTestSelected;
-      } else {
-         return (currentTestSelected && !parentTestExcluded) || (parentTestIncluded && !parentTestExcluded);
-      }
+      return null;
+   }
+
+   private static IncludeExcludeInfo getIncludeExcludeInfo(ExecutionConfig executionConfig, CompilationUnit unit) {
+      boolean includedByRule = isIncluded(executionConfig, unit);
+
+      boolean excludeByRule = isExcluded(executionConfig, unit);
+
+      return new IncludeExcludeInfo(includedByRule, excludeByRule);
    }
 
    private static CompilationUnit getUnit(TestCase test, JUnitTestTransformer transformer, ExecutionConfig executionConfig) {

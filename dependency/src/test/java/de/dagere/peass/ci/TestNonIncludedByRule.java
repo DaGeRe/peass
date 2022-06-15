@@ -22,6 +22,9 @@ public class TestNonIncludedByRule {
    private static final TestCase SUB_TEST_WITHOUT_RULE = new TestCase("mypackage.SubTestWithoutRule", "testMe");
    private static final TestCase SUB_TEST_OF_TEST_WITH_RULE = new TestCase("mypackage.SubTestOfTestWithRule", "testMe");
 
+   private static final TestCase SUB_SUB_TEST_WITHOUT_RULE = new TestCase("mypackage.SubSubTestWithoutRule", "testMe");
+   private static final TestCase SUB_SUB_TEST_OF_TEST_WITH_RULE = new TestCase("mypackage.SubSubTestOfTestWithRule", "testMe");
+   
    @Test
    public void testIncludeOneClass() {
       JUnitTestTransformer transformer = determineWithInclude(BASIC_EXAMPLE_FOLDER);
@@ -66,6 +69,8 @@ public class TestNonIncludedByRule {
       Assert.assertTrue(NonIncludedByRule.isTestIncluded(TEST_WITH_RULE, transformer));
       Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_TEST_WITHOUT_RULE, transformer));
       Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_TEST_OF_TEST_WITH_RULE, transformer));
+      Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_SUB_TEST_WITHOUT_RULE, transformer));
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_SUB_TEST_OF_TEST_WITH_RULE, transformer));
    }
    
    @Test
@@ -76,6 +81,8 @@ public class TestNonIncludedByRule {
       Assert.assertFalse(NonIncludedByRule.isTestIncluded(TEST_WITH_RULE, transformer));
       Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_TEST_WITHOUT_RULE, transformer));
       Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_TEST_OF_TEST_WITH_RULE, transformer));
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_SUB_TEST_WITHOUT_RULE, transformer));
+      Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_SUB_TEST_OF_TEST_WITH_RULE, transformer));
    }
    
    private JUnitTestTransformer determineWithInclude(File basicExampleFolder) {
