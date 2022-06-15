@@ -13,11 +13,21 @@ public class ExecutionConfigMixin {
    @Option(names = { "-timeout", "--timeout" }, description = "Timeout in minutes for each VM start")
    protected int timeout = 5;
 
-   @Option(names = { "-includes", "--includes" }, split=";", description = "Testcases for inclusion (default: empty, includes all tests). Example: \"my.package.Clazz#myMethod;my.otherpackage.ClazzB#*\"")
+   @Option(names = { "-includes",
+         "--includes" }, split = ";", description = "Testcases for inclusion (default: empty, includes all tests). Example: \"my.package.Clazz#myMethod;my.otherpackage.ClazzB#*\"")
    protected String[] includes;
 
-   @Option(names = { "-excludes", "--excludes" }, split=";", description = "Testcases for exclusion (default: empty, excludes no test). Example: \"my.package.Clazz#myMethod;my.otherpackage.ClazzB#*\"")
+   @Option(names = { "-excludes",
+         "--excludes" }, split = ";", description = "Testcases for exclusion (default: empty, excludes no test). Example: \"my.package.Clazz#myMethod;my.otherpackage.ClazzB#*\"")
    protected String[] excludes;
+
+   @Option(names = { "-includeByRule",
+         "--includeByRule" }, split = ";", description = "Rules that should be included (if defined, only test classes having exactly this rule(s) will be used)")
+   protected String[] includeByRule;
+
+   @Option(names = { "-excludeByRule",
+         "--excludeByRule" }, split = ";", description = "Rules that should be included (if defined, test classes will be excluded that use this rule, even if included by includeByRule)")
+   protected String[] excludeByRule;
 
    @Option(names = { "-forbiddenMethods", "--forbiddenMethods" }, description = "Testcases that call one of these methods are excluded")
    protected String[] forbiddenMethods;
@@ -105,6 +115,22 @@ public class ExecutionConfigMixin {
 
    public String[] getIncludes() {
       return includes;
+   }
+
+   public void setIncludeByRule(String[] includeByRule) {
+      this.includeByRule = includeByRule;
+   }
+
+   public String[] getIncludeByRule() {
+      return includeByRule;
+   }
+
+   public void setExcludeByRule(String[] excludeByRule) {
+      this.excludeByRule = excludeByRule;
+   }
+
+   public String[] getExcludeByRule() {
+      return excludeByRule;
    }
 
    public void setTestGoal(final String testGoal) {
@@ -308,6 +334,16 @@ public class ExecutionConfigMixin {
       if (getExcludes() != null) {
          for (String exclude : getExcludes()) {
             config.getExcludes().add(exclude);
+         }
+      }
+      if (getIncludeByRule() != null) {
+         for (String includeByRule : getIncludeByRule()) {
+            config.getIncludeByRule().add(includeByRule);
+         }
+      }
+      if (getExcludeByRule() != null) {
+         for (String excludeByRule : getExcludeByRule()) {
+            config.getExcludeByRule().add(excludeByRule);
          }
       }
 

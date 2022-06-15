@@ -87,8 +87,6 @@ public class ExecutionConfig implements Serializable {
    }
 
    public ExecutionConfig() {
-      includes = new LinkedList<>();
-      excludes = new LinkedList<>();
       testGoal = null;
    }
 
@@ -97,6 +95,8 @@ public class ExecutionConfig implements Serializable {
       this.testGoal = other.getTestGoal();
       this.includes = other.getIncludes();
       this.excludes = other.getExcludes();
+      this.includeByRule = other.getIncludeByRule();
+      this.excludeByRule = other.getExcludeByRule();
       this.forbiddenMethods = other.getForbiddenMethods();
       this.commit = other.getCommit();
       this.commitOld = other.getCommitOld();
