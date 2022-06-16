@@ -22,6 +22,7 @@ import de.dagere.peass.vcs.VersionIterator;
 public class TestInitialVersionReader {
 
    private static final TestCase TESTCASE = new TestCase("de.dagere.peass.MyTest#test");
+   
    private static final String VERSION2 = "000002";
    private static final String VERSION1 = "000001";
 
@@ -51,6 +52,8 @@ public class TestInitialVersionReader {
             IsIterableContaining.hasItem(new ChangedEntity("de.dagere.peass.MyCallee")));
       MatcherAssert.assertThat(currentlyCalledClasses, 
             IsIterableContaining.hasItem(new ChangedEntity("de.dagere.peass.MyTest")));
+      
+      
    }
 
 }

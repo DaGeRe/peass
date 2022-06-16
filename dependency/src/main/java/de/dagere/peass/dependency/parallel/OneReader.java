@@ -11,7 +11,6 @@ import com.github.javaparser.ParseException;
 
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.vcs.VersionIterator;

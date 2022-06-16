@@ -36,7 +36,6 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.utils.Constants;
 

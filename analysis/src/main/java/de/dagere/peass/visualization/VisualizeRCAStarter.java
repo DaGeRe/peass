@@ -20,7 +20,6 @@ import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.utils.Constants;
-
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;

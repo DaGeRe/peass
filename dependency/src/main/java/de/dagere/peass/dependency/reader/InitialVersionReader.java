@@ -21,7 +21,6 @@ import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.InitialVersion;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.vcs.VersionIterator;
 

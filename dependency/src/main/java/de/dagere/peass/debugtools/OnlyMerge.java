@@ -10,7 +10,6 @@ import org.apache.commons.io.filefilter.WildcardFileFilter;
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.TestSelectionConfigMixin;
 import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.vcs.CommitUtil;
 import picocli.CommandLine;
