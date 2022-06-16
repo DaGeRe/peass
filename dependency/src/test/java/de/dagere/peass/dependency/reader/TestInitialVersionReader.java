@@ -1,13 +1,10 @@
 package de.dagere.peass.dependency.reader;
 
 import java.util.Arrays;
-import java.util.LinkedHashMap;
 import java.util.Set;
 
-import org.apache.maven.model.DependencyManagement;
 import org.hamcrest.MatcherAssert;
 import org.hamcrest.core.IsIterableContaining;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -16,7 +13,6 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestDependencies;
 import de.dagere.peass.dependency.analysis.data.TestSet;
-import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
