@@ -11,6 +11,7 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.InitialCallList;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependency.traces.TraceFileManager;
 import de.dagere.peass.dependency.traces.TraceFileMapping;
 import de.dagere.peass.dependency.traces.TraceWriter;
 import de.dagere.peass.folders.ResultsFolders;
@@ -55,10 +56,13 @@ public class OldTraceReader {
    
    private void addPotentialTracefile(final TestCase testcase, final String initialVersion) {
       String shortVersion = TraceWriter.getShortVersion(initialVersion);
-      File potentialTraceFile = new File(resultsFolders.getViewMethodDir(initialVersion, testcase), shortVersion);
-      LOG.debug("Potential trace file: " + potentialTraceFile.getAbsolutePath() + " " + potentialTraceFile.exists());
-      if (potentialTraceFile.exists()) {
-         traceFileMapping.addTraceFile(testcase, potentialTraceFile);
+      
+      for (String ending : new String[] {"", TraceFileManager.TXT_ENDING, TraceFileManager.ZIP_ENDING}) {
+         File potentialTraceFile = new File(resultsFolders.getViewMethodDir(initialVersion, testcase), shortVersion + ending);
+         LOG.debug("Potential trace file: " + potentialTraceFile.getAbsolutePath() + " " + potentialTraceFile.exists());
+         if (potentialTraceFile.exists()) {
+            traceFileMapping.addTraceFile(testcase, potentialTraceFile);
+         }
       }
    }
 
