@@ -77,7 +77,7 @@ public class SelectStarter implements Callable<Void>{
       KiekerConfig kiekerConfig = kiekerConfigMixin.getKiekerConfig();
       ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
       
-      final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, comparator.getCommits(), 
+      final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, comparator, 
             config.getDependencyConfig(), executionConfig, kiekerConfig, new EnvironmentVariables(executionConfig.getProperties()));
       final ResultsFolders[] outFiles = reader.readDependencies();
 

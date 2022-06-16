@@ -12,6 +12,7 @@ import com.github.javaparser.ParseException;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.vcs.VersionIterator;
 
@@ -23,13 +24,15 @@ public final class OneReader implements Runnable {
    private final VersionIterator reserveIterator;
    final FirstRunningVersionFinder firstRunningVersionFinder;
    private final DependencyReader reader;
+   private final VersionComparatorInstance comparator;
 
    public OneReader(final String minimumCommit, final VersionIterator reserveIterator, final DependencyReader reader,
-         final FirstRunningVersionFinder firstRunningVersionFinder) {
+         final FirstRunningVersionFinder firstRunningVersionFinder, VersionComparatorInstance comparator) {
       this.minimumCommit = minimumCommit;
       this.reserveIterator = reserveIterator;
       this.firstRunningVersionFinder = firstRunningVersionFinder;
       this.reader = reader;
+      this.comparator = comparator;
    }
 
    @Override
@@ -55,7 +58,7 @@ public final class OneReader implements Runnable {
    private void readRemaining(final DependencyReader reader) throws FileNotFoundException, IOException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
       String newest = reader.getDependencies().getNewestVersion();
       reader.setIterator(reserveIterator);
-      while (reserveIterator.hasNextCommit() && VersionComparator.isBefore(newest, minimumCommit)) {
+      while (reserveIterator.hasNextCommit() && comparator.isBefore(newest, minimumCommit)) {
          reserveIterator.goToNextCommit();
          LOG.debug("Remaining: {} This: {}", reserveIterator.getTag(), this);
          reader.readVersion();

@@ -15,6 +15,7 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.KiekerConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.parallel.OneReader;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
@@ -29,7 +30,7 @@ public class DependencyParallelReader {
    private final String url;
    private final VersionKeeper nonRunning;
    private final VersionKeeper nonChanges;
-   private final List<String> commits;
+   private final VersionComparatorInstance comparator;
    private final PeassFolders folders;
    private final int sizePerThread;
    private final ResultsFolders[] outFolders;
@@ -39,7 +40,7 @@ public class DependencyParallelReader {
    private final KiekerConfig kiekerConfig;
    private final EnvironmentVariables env;
 
-   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final List<String> commits,
+   public DependencyParallelReader(final File projectFolder, final File resultBaseFolder, final String project, final VersionComparatorInstance commits,
          final TestSelectionConfig dependencyConfig, final ExecutionConfig executionConfig, final KiekerConfig kiekerConfig, final EnvironmentVariables env) {
       url = GitUtils.getURL(projectFolder);
       this.dependencyConfig = dependencyConfig;
@@ -47,7 +48,7 @@ public class DependencyParallelReader {
       this.kiekerConfig = kiekerConfig;
       LOG.debug(url);
       folders = new PeassFolders(projectFolder);
-      this.commits = commits;
+      this.comparator = commits;
       this.project = project;
       this.env = env;
 
@@ -60,8 +61,8 @@ public class DependencyParallelReader {
       nonRunning = new VersionKeeper(new File(tempResultFolder, "nonRunning_" + project + ".json"));
       nonChanges = new VersionKeeper(new File(tempResultFolder, "nonChanges_" + project + ".json"));
 
-      sizePerThread = commits.size() > 2 * dependencyConfig.getThreads() ? commits.size() / dependencyConfig.getThreads() : 2;
-      outFolders = commits.size() > 2 * dependencyConfig.getThreads() ? new ResultsFolders[dependencyConfig.getThreads()] : new ResultsFolders[1];
+      sizePerThread = commits.getCommits().size() > 2 * dependencyConfig.getThreads() ? commits.getCommits().size() / dependencyConfig.getThreads() : 2;
+      outFolders = commits.getCommits().size() > 2 * dependencyConfig.getThreads() ? new ResultsFolders[dependencyConfig.getThreads()] : new ResultsFolders[1];
 
       LOG.debug("Threads: {} Size per Thread: {} OutFile: {}", dependencyConfig.getThreads(), sizePerThread, outFolders.length);
    }
@@ -108,11 +109,11 @@ public class DependencyParallelReader {
    public void startPartProcess(final ResultsFolders currentOutFolders, final ExecutorService service, final int outfileIndex, final PeassFolders foldersTemp)
          throws InterruptedException {
       final int min = outfileIndex * sizePerThread;
-      final int max = Math.min((outfileIndex + 1) * sizePerThread + 1, commits.size());
-      LOG.debug("Min: {} Max: {} Size: {}", min, max, commits.size());
-      final List<String> currentCommits = commits.subList(min, max);
-      final List<String> reserveCommits = commits.subList(max - 1, commits.size());
-      final String minimumCommit = commits.get(Math.min(max, commits.size() - 1));
+      final int max = Math.min((outfileIndex + 1) * sizePerThread + 1, comparator.getCommits().size());
+      LOG.debug("Min: {} Max: {} Size: {}", min, max, comparator.getCommits().size());
+      final List<String> currentCommits = comparator.getCommits().subList(min, max);
+      final List<String> reserveCommits = comparator.getCommits().subList(max - 1, comparator.getCommits().size());
+      final String minimumCommit = comparator.getCommits().get(Math.min(max, comparator.getCommits().size() - 1));
 
       if (currentCommits.size() > 0) {
          processCommits(currentOutFolders, service, foldersTemp, currentCommits, reserveCommits, minimumCommit);
@@ -127,7 +128,7 @@ public class DependencyParallelReader {
       FirstRunningVersionFinder finder = new FirstRunningVersionFinder(foldersTemp, nonRunning, iterator, executionConfig, env);
       final DependencyReader reader = new DependencyReader(dependencyConfig, foldersTemp, currentOutFolders, url, iterator, nonChanges, executionConfig, kiekerConfig, env);
       final VersionIteratorGit reserveIterator = new VersionIteratorGit(foldersTemp.getProjectFolder(), reserveCommits, null);
-      final Runnable current = new OneReader(minimumCommit, reserveIterator, reader, finder);
+      final Runnable current = new OneReader(minimumCommit, reserveIterator, reader, finder, comparator);
       service.submit(current);
       Thread.sleep(5);
    }

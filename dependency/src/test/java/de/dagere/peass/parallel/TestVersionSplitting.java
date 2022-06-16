@@ -170,7 +170,7 @@ public class TestVersionSplitting {
       DummyReader dummy = new DummyReader(dummyFolder, fakeIterator, changeManager);
       System.out.println(minimumCommit);
       final VersionIterator reserveIterator = new FakeVersionIterator(dummyFolder, reserveCommits);
-      OneReader reader = new OneReader(minimumCommit, reserveIterator, dummy, finder);
+      OneReader reader = new OneReader(minimumCommit, reserveIterator, dummy, finder, ParallelTestUtil.getCommits());
       reader.run();
 
       dependencies.add(dummy.getDependencies());
