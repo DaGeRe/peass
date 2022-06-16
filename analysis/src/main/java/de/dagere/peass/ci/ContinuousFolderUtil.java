@@ -52,6 +52,7 @@ public enum ContinuousFolderUtil {
    }
 
    private static void assureProcessFinished(Process process) throws InterruptedException {
+      Thread.sleep(10);
       while (process.isAlive()) {
          LOG.debug("Process is still alive, while it should be finished");
          Thread.sleep(10);

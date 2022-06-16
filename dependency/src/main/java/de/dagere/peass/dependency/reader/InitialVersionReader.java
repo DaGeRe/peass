@@ -22,6 +22,7 @@ import de.dagere.peass.dependency.persistence.InitialVersion;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.vcs.VersionIterator;
 
 public class InitialVersionReader {
@@ -72,7 +73,7 @@ public class InitialVersionReader {
       return initialversion;
    }
    
-   public void readCompletedVersions() {
+   public void readCompletedVersions(VersionComparatorInstance comparator) {
       fillInitialTestDependencies();
       checkCorrectness();
 
@@ -83,13 +84,12 @@ public class InitialVersionReader {
          for (final Map.Entry<String, VersionStaticSelection> version : dependencyResult.getVersions().entrySet()) {
             String tag = version.getKey();
             String startTag = iterator.getTag();
-            if (VersionComparator.isBefore(tag, startTag) || tag.equals(startTag)) {
+            if (comparator.isBefore(tag, startTag) || tag.equals(startTag)) {
                addVersionTestDependencies(version.getValue());
             }
          }
       }
       checkCorrectness();
-      
 
       LOG.debug("Analyzing {} commits", iterator.getRemainingSize());
    }

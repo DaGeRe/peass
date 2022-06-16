@@ -35,6 +35,7 @@ import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.VersionKeeper;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
@@ -90,9 +91,11 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
       final File dependencyFileIn = getDependencyInFile();
 
       final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFileIn, StaticTestSelection.class);
+      VersionComparatorInstance comparator = new VersionComparatorInstance(GitUtils.getCommits(projectFolder, false));
+      
       VersionComparator.setVersions(GitUtils.getCommits(projectFolder, false));
 
-      String previousVersion = getPreviousVersion(executionConfigMixin.getStartcommit(), projectFolder, dependencies);
+      String previousVersion = getPreviousVersion(executionConfigMixin.getStartcommit(), projectFolder, dependencies, comparator);
 
       final int timeout = executionConfigMixin.getTimeout();
 
@@ -101,7 +104,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
 
       ResultsFolders resultsFolders = new ResultsFolders(config.getResultBaseFolder(), config.getProjectFolder().getName() + "_out");
       final DependencyReader reader = createReader(config, resultsFolders, dependencies, previousVersion, timeout, vcs);
-      reader.readCompletedVersions(dependencies);
+      reader.readCompletedVersions(dependencies, comparator);
       reader.readDependencies();
 
       return null;
@@ -125,14 +128,14 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
     * @param dependencies
     * @return
     */
-   static String getPreviousVersion(final String startversion, final File projectFolder, final StaticTestSelection dependencies) {
+   static String getPreviousVersion(final String startversion, final File projectFolder, final StaticTestSelection dependencies, VersionComparatorInstance comparator) {
       String previousVersion;
       if (startversion != null) {
          String[] versionNames = dependencies.getVersionNames();
          int startVersionIndex = Arrays.asList(versionNames).indexOf(startversion);
          String versionAfterStartVersion = versionNames[startVersionIndex - 1];
          previousVersion = versionAfterStartVersion;
-         truncateVersions(startversion, dependencies.getVersions());
+         truncateVersions(startversion, dependencies.getVersions(), comparator);
       } else {
          String[] versionNames = dependencies.getVersionNames();
          String newestVersion = versionNames[versionNames.length - 1];
@@ -169,10 +172,10 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
    /**
     * Removes every version from the map that is before the given startversion
     */
-   public static void truncateVersions(final String startversion, final Map<String, VersionStaticSelection> versions) {
+   public static void truncateVersions(final String startversion, final Map<String, VersionStaticSelection> versions, VersionComparatorInstance comparator) {
       for (final java.util.Iterator<Entry<String, VersionStaticSelection>> it = versions.entrySet().iterator(); it.hasNext();) {
          final Entry<String, VersionStaticSelection> version = it.next();
-         if (VersionComparator.isBefore(startversion, version.getKey()) || version.getKey().equals(startversion)) {
+         if (comparator.isBefore(startversion, version.getKey()) || version.getKey().equals(startversion)) {
             LOG.trace("Remove: " + version.getKey() + " " + VersionComparator.isBefore(startversion, version.getKey()));
             it.remove();
          }
