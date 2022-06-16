@@ -176,7 +176,7 @@ public class RegressionTestSelectionContinueStarter implements Callable<Void> {
       for (final java.util.Iterator<Entry<String, VersionStaticSelection>> it = versions.entrySet().iterator(); it.hasNext();) {
          final Entry<String, VersionStaticSelection> version = it.next();
          if (comparator.isBefore(startversion, version.getKey()) || version.getKey().equals(startversion)) {
-            LOG.trace("Remove: " + version.getKey() + " " + VersionComparator.isBefore(startversion, version.getKey()));
+            LOG.trace("Remove: " + version.getKey() + " " + comparator.isBefore(startversion, version.getKey()));
             it.remove();
          }
       }

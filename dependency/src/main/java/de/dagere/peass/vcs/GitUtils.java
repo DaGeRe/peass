@@ -37,6 +37,7 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.VersionDiff;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
@@ -59,7 +60,8 @@ public final class GitUtils {
 
    }
 
-   public static void getCommitsForURL(final String url) throws IOException {
+   public static VersionComparatorInstance getCommitsForURL(final String url) throws IOException {
+      VersionComparatorInstance comparator = null;
       boolean repoFound = false;
       if (System.getenv(Constants.PEASS_PROJECTS) != null) {
          System.out.println(url);
@@ -68,6 +70,7 @@ public final class GitUtils {
          if (candidate.exists()) {
             repoFound = true;
             final List<String> commits = GitUtils.getCommits(candidate, false);
+            comparator = new VersionComparatorInstance(commits);
             VersionComparator.setVersions(commits);
          }
       }
@@ -81,6 +84,7 @@ public final class GitUtils {
          if (staticSelectionFile.exists()) {
             final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
             VersionComparator.setDependencies(dependencies);
+            comparator = new VersionComparatorInstance(dependencies);
             repoFound = true;
          }
       }
@@ -89,9 +93,11 @@ public final class GitUtils {
          final File tempDir = Files.createTempDirectory("gitTemp").toFile();
          GitUtils.downloadProject(url, tempDir);
          final List<String> commits = GitUtils.getCommits(tempDir, false);
+         comparator = new VersionComparatorInstance(commits);
          VersionComparator.setVersions(commits);
          FileUtils.deleteDirectory(tempDir);
       }
+      return comparator;
    }
 
    public static void clone(final PeassFolders folders, final File projectFolderTemp) throws InterruptedException, IOException {
