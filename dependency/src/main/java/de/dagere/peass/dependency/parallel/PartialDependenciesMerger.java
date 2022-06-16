@@ -17,7 +17,6 @@ import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependency.reader.DependencyReaderUtil;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
@@ -66,8 +65,8 @@ public class PartialDependenciesMerger {
       deps.sort(new Comparator<StaticTestSelection>() {
          @Override
          public int compare(final StaticTestSelection o1, final StaticTestSelection o2) {
-            final int indexOf = VersionComparator.getVersionIndex(o1.getInitialversion().getVersion());
-            final int indexOf2 = VersionComparator.getVersionIndex(o2.getInitialversion().getVersion());
+            final int indexOf = comparator.getVersionIndex(o1.getInitialversion().getVersion());
+            final int indexOf2 = comparator.getVersionIndex(o2.getInitialversion().getVersion());
             return indexOf - indexOf2;
          }
       });

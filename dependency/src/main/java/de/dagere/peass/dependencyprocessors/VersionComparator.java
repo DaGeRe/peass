@@ -52,10 +52,6 @@ public class VersionComparator implements Comparator<String> {
       commits.forEach(version -> versions.add(version));
    }
 
-   public static int getVersionIndex(final String version) {
-      return versions.indexOf(version);
-   }
-
    /**
     * Determines whether version is before version2
     * 
