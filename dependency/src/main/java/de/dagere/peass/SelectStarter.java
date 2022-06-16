@@ -22,6 +22,7 @@ import de.dagere.peass.dependency.parallel.PartialDependenciesMerger;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
@@ -66,16 +67,17 @@ public class SelectStarter implements Callable<Void>{
       
       final List<String> commits = CommitUtil.getGitCommits(executionConfigMixin.getStartcommit(), executionConfigMixin.getEndcommit(), config.getProjectFolder());
       VersionComparator.setVersions(commits);
-      
-      readExecutions(project, commits);
+
+      VersionComparatorInstance comparator = new VersionComparatorInstance(commits);
+      readExecutions(project, comparator);
       return null;
    }
 
-   public void readExecutions(final String project, final List<String> commits) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException {
+   public void readExecutions(final String project, final VersionComparatorInstance comparator) throws InterruptedException, IOException, JsonGenerationException, JsonMappingException {
       KiekerConfig kiekerConfig = kiekerConfigMixin.getKiekerConfig();
       ExecutionConfig executionConfig = executionConfigMixin.getExecutionConfig();
       
-      final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, commits, 
+      final DependencyParallelReader reader = new DependencyParallelReader(config.getProjectFolder(), config.getResultBaseFolder(), project, comparator.getCommits(), 
             config.getDependencyConfig(), executionConfig, kiekerConfig, new EnvironmentVariables(executionConfig.getProperties()));
       final ResultsFolders[] outFiles = reader.readDependencies();
 
@@ -84,7 +86,7 @@ public class SelectStarter implements Callable<Void>{
       ResultsFolders mergedFolders = new ResultsFolders(config.getResultBaseFolder(), project);
       
       final File out = mergedFolders.getStaticTestSelectionFile();
-      PartialDependenciesMerger.mergeVersions(out, outFiles);
+      PartialDependenciesMerger.mergeVersions(out, outFiles, comparator);
 
       final PeassFolders folders = new PeassFolders(config.getProjectFolder());
       final File dependencyTempFiles = new File(folders.getTempProjectFolder().getParentFile(), "dependencyTempFiles");

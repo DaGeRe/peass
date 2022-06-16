@@ -29,6 +29,8 @@ import de.dagere.peass.dependency.persistence.InitialVersion;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyReader;
 import de.dagere.peass.dependency.reader.FirstRunningVersionFinder;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.dependencytests.helper.FakeVersionIterator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -74,9 +76,9 @@ public class TestVersionSplitting {
 
    @Test
    public void testSplittingNonRunning() throws IOException {
-      List<String> commits = ParallelTestUtil.getCommits();
+      VersionComparatorInstance comparator = ParallelTestUtil.getCommits();
       int count = 3;
-      int size = commits.size() > 2 * count ? commits.size() / count : 2;
+      int size = comparator.getCommits().size() > 2 * count ? comparator.getCommits().size() / count : 2;
 
       for (int i = 1; i < 10; i++) {
          for (int j = i + 1; j < 10; j++) {
@@ -84,11 +86,11 @@ public class TestVersionSplitting {
 
             List<StaticTestSelection> dependencies = new LinkedList<>();
             for (int chunk = 0; chunk < count; chunk++) {
-               final int max = Math.min((chunk + 1) * size + 3, commits.size());// Assuming one in three commits should contain a source-change
-               readUntilMax(commits, dependencies, chunk, chunk * size, max);
+               final int max = Math.min((chunk + 1) * size + 3, comparator.getCommits().size());// Assuming one in three commits should contain a source-change
+               readUntilMax(comparator.getCommits(), dependencies, chunk, chunk * size, max);
             }
 
-            StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies);
+            StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies, comparator);
 
             System.out.println(merged.getVersions().keySet() + " " + merged.getVersions().size());
             Assert.assertEquals("Error in " + DummyReader.nonRunning, 7, merged.getVersions().size());
@@ -98,24 +100,24 @@ public class TestVersionSplitting {
    
    @Test
    public void testEmptyMerging() {
-      StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(new LinkedList<>());
+      StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(new LinkedList<>(), new VersionComparatorInstance(new LinkedList<>()));
       Assert.assertEquals(0, merged.getVersions().size());
    }
 
    @Test
    public void testSplitting() throws IOException {
-      List<String> commits = ParallelTestUtil.getCommits();
+      VersionComparatorInstance comparator = ParallelTestUtil.getCommits();
 
       int count = 3;
-      int size = commits.size() > 2 * count ? commits.size() / count : 2;
+      int size = comparator.getCommits().size() > 2 * count ? comparator.getCommits().size() / count : 2;
 
       List<StaticTestSelection> dependencies = new LinkedList<>();
       for (int chunk = 0; chunk < count; chunk++) {
-         final int max = Math.min((chunk + 1) * size + 3, commits.size());// Assuming one in three commits should contain a source-change
-         readUntilMax(commits, dependencies, chunk, chunk * size, max);
+         final int max = Math.min((chunk + 1) * size + 3, comparator.getCommits().size());// Assuming one in three commits should contain a source-change
+         readUntilMax(comparator.getCommits(), dependencies, chunk, chunk * size, max);
       }
 
-      StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies);
+      StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies, comparator);
 
       System.out.println(merged.getVersions().keySet());
       Assert.assertEquals(7, merged.getVersions().size());
@@ -123,14 +125,14 @@ public class TestVersionSplitting {
 
    @Test
    public void testSplittingStrangeDistribution() throws IOException {
-      List<String> commits = ParallelTestUtil.getCommits();
+      VersionComparatorInstance comparator  = ParallelTestUtil.getCommits();
 
       List<StaticTestSelection> dependencies = new LinkedList<>();
-      readUntilMax(commits, dependencies, 0, 0, 6);
-      readUntilMax(commits, dependencies, 1, 6, 8);
-      readUntilMax(commits, dependencies, 2, 7, 10);
+      readUntilMax(comparator.getCommits(), dependencies, 0, 0, 6);
+      readUntilMax(comparator.getCommits(), dependencies, 1, 6, 8);
+      readUntilMax(comparator.getCommits(), dependencies, 2, 7, 10);
 
-      StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies);
+      StaticTestSelection merged = PartialDependenciesMerger.mergeDependencies(dependencies, comparator);
 
       System.out.println(merged.getVersions().keySet());
       Assert.assertEquals(7, merged.getVersions().size());

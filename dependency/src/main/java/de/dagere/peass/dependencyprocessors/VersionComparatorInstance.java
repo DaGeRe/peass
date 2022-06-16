@@ -31,4 +31,8 @@ public class VersionComparatorInstance implements Comparator<String> {
       final int indexOf2 = versions.indexOf(version2);
       return indexOf < indexOf2;
    }
+
+   public List<String> getCommits() {
+      return versions;
+   }
 }

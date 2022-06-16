@@ -18,6 +18,7 @@ import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.reader.DependencyParallelReader;
 import de.dagere.peass.dependency.reader.DependencyReaderUtil;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.utils.Constants;
 
@@ -29,20 +30,20 @@ public class PartialDependenciesMerger {
 
    }
 
-   public static StaticTestSelection mergeVersions(final File out, final File[] partFiles) throws IOException, JsonGenerationException, JsonMappingException {
+   public static StaticTestSelection mergeVersions(final File out, final File[] partFiles, VersionComparatorInstance comparator) throws IOException, JsonGenerationException, JsonMappingException {
       final List<StaticTestSelection> deps = readDependencies(partFiles);
-      StaticTestSelection merged = mergeDependencies(deps);
+      StaticTestSelection merged = mergeDependencies(deps, comparator);
 
       Constants.OBJECTMAPPER.writeValue(out, merged);
       return merged;
    }
 
-   public static void mergeVersions(final File out, final ResultsFolders[] partFolders) throws IOException, JsonGenerationException, JsonMappingException {
+   public static void mergeVersions(final File out, final ResultsFolders[] partFolders, VersionComparatorInstance comparator) throws IOException, JsonGenerationException, JsonMappingException {
       File[] partFiles = new File[partFolders.length];
       for (int i = 0; i < partFolders.length; i++) {
          partFiles[i] = partFolders[i].getStaticTestSelectionFile();
       }
-      mergeVersions(out, partFiles);
+      mergeVersions(out, partFiles, comparator);
    }
 
    static List<StaticTestSelection> readDependencies(final File[] partFiles) {
@@ -60,7 +61,7 @@ public class PartialDependenciesMerger {
       return deps;
    }
 
-   public static StaticTestSelection mergeDependencies(final List<StaticTestSelection> deps) {
+   public static StaticTestSelection mergeDependencies(final List<StaticTestSelection> deps, VersionComparatorInstance comparator) {
       LOG.debug("Sorting {} dependencies", deps.size());
       deps.sort(new Comparator<StaticTestSelection>() {
          @Override
@@ -78,7 +79,7 @@ public class PartialDependenciesMerger {
                final StaticTestSelection newMergeDependencies = deps.get(i);
                LOG.debug("Merge: {} Vals: {}", i, newMergeDependencies.getVersionNames());
                if (newMergeDependencies != null) {
-                  merged = DependencyReaderUtil.mergeDependencies(merged, newMergeDependencies);
+                  merged = DependencyReaderUtil.mergeDependencies(merged, newMergeDependencies, comparator);
                }
             }
          }

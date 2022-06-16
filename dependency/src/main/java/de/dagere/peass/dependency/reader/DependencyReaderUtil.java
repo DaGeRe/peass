@@ -37,6 +37,7 @@ import de.dagere.peass.dependency.changesreading.ClazzChangeData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.utils.Constants;
 
 /**
@@ -165,10 +166,10 @@ public class DependencyReaderUtil {
       }
    }
 
-   public static StaticTestSelection mergeDependencies(final StaticTestSelection deps1, final StaticTestSelection deps2) {
+   public static StaticTestSelection mergeDependencies(final StaticTestSelection deps1, final StaticTestSelection deps2, VersionComparatorInstance comparator) {
       final StaticTestSelection merged;
       final StaticTestSelection newer;
-      if (VersionComparator.isBefore(deps1.getInitialversion().getVersion(), deps2.getInitialversion().getVersion())) {
+      if (comparator.isBefore(deps1.getInitialversion().getVersion(), deps2.getInitialversion().getVersion())) {
          merged = deps1;
          newer = deps2;
       } else {
@@ -183,7 +184,7 @@ public class DependencyReaderUtil {
       if (iterator.hasNext()) {
          final String firstOtherVersion = iterator.next();
          for (final String version : merged.getVersions().keySet()) {
-            if (merged == null && version.equals(firstOtherVersion) || VersionComparator.isBefore(firstOtherVersion, version)) {
+            if (merged == null && version.equals(firstOtherVersion) || comparator.isBefore(firstOtherVersion, version)) {
                mergeVersion = version;
             }
             if (mergeVersion != null) {

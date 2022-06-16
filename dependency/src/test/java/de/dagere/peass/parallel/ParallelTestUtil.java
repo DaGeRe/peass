@@ -3,17 +3,14 @@ package de.dagere.peass.parallel;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.vcs.GitCommit;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 
 public class ParallelTestUtil {
-   public static List<String> getCommits() {
+   public static VersionComparatorInstance getCommits() {
       List<String> commits = new LinkedList<>();
       for (int i = 0; i < 10; i++) {
-//         GitCommit commit = new GitCommit(Integer.toString(i), "Test", null, "Test " + i);
          commits.add(Integer.toString(i));
       }
-      VersionComparator.setVersions(commits);
-      return commits;
+      return new VersionComparatorInstance(commits);
    }
 }
