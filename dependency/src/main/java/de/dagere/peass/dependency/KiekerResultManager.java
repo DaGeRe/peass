@@ -85,6 +85,10 @@ public class KiekerResultManager {
    public TestTransformer getTestTransformer() {
       return testTransformer;
    }
+   
+   public ModuleClassMapping getModuleClassMapping() {
+      return new ModuleClassMapping(executor);
+   }
 
    public void runTraceTests(final TestSet testsToUpdate, final String version) throws IOException, XmlPullParserException, InterruptedException {
       truncateKiekerResults();

@@ -51,7 +51,7 @@ public class ModuleClassMapping {
       }
    }
 
-   public ModuleClassMapping(final TestExecutor executor) throws IOException, XmlPullParserException {
+   public ModuleClassMapping(final TestExecutor executor) {
       this(executor.getProjectFolder(), executor.getModules(), executor.getTestTransformer().getConfig().getExecutionConfig());
    }
 

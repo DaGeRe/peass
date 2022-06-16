@@ -68,7 +68,7 @@ public class DependencyReader {
    private StaticChangeHandler staticChangeHandler;
    
    private final DependencySizeRecorder sizeRecorder = new DependencySizeRecorder();
-   private final TraceFileMapping mapping = new TraceFileMapping();
+   private final TraceFileMapping traceFileMapping = new TraceFileMapping();
 
    public DependencyReader(final TestSelectionConfig dependencyConfig, final PeassFolders folders,
          final ResultsFolders resultsFolders, final String url, final VersionIterator iterator,
@@ -83,7 +83,7 @@ public class DependencyReader {
       this.env = env;
 
       setURLs(url);
-      coverageExecutor = new CoverageSelectionExecutor(mapping, coverageBasedSelection, coverageSelectionInfo);
+      coverageExecutor = new CoverageSelectionExecutor(traceFileMapping, coverageBasedSelection, coverageSelectionInfo);
 
       this.changeManager = changeManager;
 
@@ -119,7 +119,7 @@ public class DependencyReader {
       this.env = env;
 
       setURLs(url);
-      coverageExecutor = new CoverageSelectionExecutor(mapping, coverageBasedSelection, coverageSelectionInfo);
+      coverageExecutor = new CoverageSelectionExecutor(traceFileMapping, coverageBasedSelection, coverageSelectionInfo);
 
       if (!kiekerConfig.isUseKieker()) {
          throw new RuntimeException("Dependencies may only be read if Kieker is enabled!");
@@ -227,7 +227,7 @@ public class DependencyReader {
 
    private int analyseChanges(final String version, final DependencyReadingInput input)
          throws IOException, JsonGenerationException, JsonMappingException, XmlPullParserException, InterruptedException, ParseException, ViewNotFoundException {
-      final VersionStaticSelection newVersionInfo = staticChangeHandler.handleStaticAnalysisChanges(version, input);
+      final VersionStaticSelection newVersionInfo = staticChangeHandler.handleStaticAnalysisChanges(version, input, dependencyManager.getModuleClassMapping());
 
       if (!testSelectionConfig.isDoNotUpdateDependencies()) {
          TraceChangeHandler traceChangeHandler = new TraceChangeHandler(dependencyManager, folders, executionConfig, version);
@@ -236,11 +236,11 @@ public class DependencyReader {
          if (testSelectionConfig.isGenerateTraces()) {
             executionResult.addEmptyVersion(version, newVersionInfo.getPredecessor());
             coverageBasedSelection.addEmptyVersion(version, newVersionInfo.getPredecessor());
-            TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, mapping, kiekerConfig, testSelectionConfig);
+            TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, version, traceFileMapping, kiekerConfig, testSelectionConfig);
             traceViewGenerator.generateViews(resultsFolders, newVersionInfo.getTests());
 
             DiffFileGenerator diffGenerator = new DiffFileGenerator(resultsFolders.getVersionDiffFolder(version));
-            diffGenerator.generateAllDiffs(version, newVersionInfo, mapping, executionResult);
+            diffGenerator.generateAllDiffs(version, newVersionInfo, traceFileMapping, executionResult);
 
             if (testSelectionConfig.isGenerateCoverageSelection()) {
                TestSet dynamicallySelected = executionResult.getVersions().get(version);
@@ -296,7 +296,7 @@ public class DependencyReader {
 
    private void generateInitialViews() throws IOException, XmlPullParserException, ParseException, ViewNotFoundException, InterruptedException {
       TestSet initialTests = dependencyResult.getInitialversion().getInitialTests();
-      TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), mapping, kiekerConfig, testSelectionConfig);
+      TraceViewGenerator traceViewGenerator = new TraceViewGenerator(dependencyManager, folders, iterator.getTag(), traceFileMapping, kiekerConfig, testSelectionConfig);
       traceViewGenerator.generateViews(resultsFolders, initialTests);
 
       executionResult.getVersions().put(iterator.getTag(), new TestSet());
@@ -342,7 +342,7 @@ public class DependencyReader {
       executionResult.setUrl(executions.getUrl());
       executionResult.setVersions(executions.getVersions());
 
-      new OldTraceReader(mapping, dependencyResult, resultsFolders).addTraces();
+      new OldTraceReader(traceFileMapping, dependencyResult, resultsFolders).addTraces();
    }
 
    public void setCoverageInfo(final CoverageSelectionInfo coverageInfo) {
