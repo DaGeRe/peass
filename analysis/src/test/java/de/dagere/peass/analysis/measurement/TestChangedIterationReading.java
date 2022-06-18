@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 import de.dagere.peass.vcs.GitCommit;
@@ -22,8 +23,8 @@ public class TestChangedIterationReading {
       VersionComparator.setVersions(Arrays.asList(
             "a23e385264c31def8dcda86c3cf64faa698c62d8", "33ce17c04b5218c25c40137d4d09f40fbb3e4f0f"));
 
-      ProjectStatistics statistics = new ProjectStatistics();
-      AnalyseFullData afd = new AnalyseFullData(new File("target/changes.json"), statistics, null, new StatisticsConfig());
+      ProjectStatistics statistics = new ProjectStatistics(CommitByNameComparator.INSTANCE);
+      AnalyseFullData afd = new AnalyseFullData(new File("target/changes.json"), statistics, null, new StatisticsConfig(), CommitByNameComparator.INSTANCE);
       afd.analyseFolder(new File(DATA_FOLDER, "measurement_a23e385264c31def8dcda86c3cf64faa698c62d8_33ce17c04b5218c25c40137d4d09f40fbb3e4f0f/measurements"));
 
       TestcaseStatistic testcaseStatistic = statistics.getStatistics().get("a23e385264c31def8dcda86c3cf64faa698c62d8").get(new TestCase("de.test.CalleeTest#onlyCallMethod2"));

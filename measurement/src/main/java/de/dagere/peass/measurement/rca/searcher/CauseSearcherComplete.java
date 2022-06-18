@@ -10,6 +10,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
@@ -22,6 +23,7 @@ import de.dagere.peass.measurement.rca.analyzer.TreeAnalyzer;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
+import de.dagere.peass.vcs.GitUtils;
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**
@@ -111,7 +113,11 @@ public class CauseSearcherComplete extends CauseSearcher {
       config.setRepetitions(measurementConfig.getRepetitions());
       config.setWarmup(measurementConfig.getWarmup());
       config.getKiekerConfig().setUseKieker(true);
-      final CauseTester calibrationMeasurer = new CauseTester(folders, config, causeSearchConfig, env);
+      
+      List<String> commits = GitUtils.getCommits(folders.getProjectFolder(), true, true);
+      VersionComparatorInstance comparator = new VersionComparatorInstance(commits);
+      
+      final CauseTester calibrationMeasurer = new CauseTester(folders, config, causeSearchConfig, env, comparator);
       final AllDifferingDeterminer calibrationRunner = new AllDifferingDeterminer(predecessorNodeList, causeSearchConfig, config);
       calibrationMeasurer.measureVersion(predecessorNodeList);
       final List<CallTreeNode> includableByMinTime = calibrationRunner.getIncludableNodes();

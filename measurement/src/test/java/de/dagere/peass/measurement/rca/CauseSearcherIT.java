@@ -23,6 +23,7 @@ import org.mockito.Mockito;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
@@ -76,7 +77,7 @@ public class CauseSearcherIT {
          final CauseSearchFolders folders = new CauseSearchFolders(DependencyTestConstants.CURRENT);
          final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders, new EnvironmentVariables());
          EnvironmentVariables emptyEnv = new EnvironmentVariables();
-         final CauseTester measurer = new CauseTester(folders, measurementConfiguration, causeSearcherConfig, emptyEnv);
+         final CauseTester measurer = new CauseTester(folders, measurementConfiguration, causeSearcherConfig, emptyEnv, CommitByNameComparator.INSTANCE);
 
          final CauseSearcher searcher = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, folders, emptyEnv);
          final Set<ChangedEntity> changedEntities = searcher.search();

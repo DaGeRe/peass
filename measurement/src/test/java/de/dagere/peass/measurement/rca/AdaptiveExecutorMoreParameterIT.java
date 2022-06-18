@@ -20,6 +20,7 @@ import org.mockito.Mockito;
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
@@ -85,7 +86,7 @@ public class AdaptiveExecutorMoreParameterIT {
          VCSTestUtils.mockGetVCS(mockedVCS);
          VCSTestUtils.mockGoToTagAny(mockedGitUtils, SOURCE_DIR);
          CauseSearchFolders folders = new CauseSearchFolders(projectFolder);
-         executor = new CauseTester(folders, TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER, FULL_CASE_CONFIG, new EnvironmentVariables());
+         executor = new CauseTester(folders, TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER, FULL_CASE_CONFIG, new EnvironmentVariables(), CommitByNameComparator.INSTANCE);
          testSuccessfull();
       }
    }
@@ -97,7 +98,7 @@ public class AdaptiveExecutorMoreParameterIT {
          VCSTestUtils.mockGetVCS(mockedVCS);
          VCSTestUtils.mockGoToTagAny(mockedGitUtils, SOURCE_DIR);
          CauseSearchFolders folders = new CauseSearchFolders(projectFolder);
-         executor = new CauseTester(folders, TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME, new EnvironmentVariables());
+         executor = new CauseTester(folders, TestConstants.SIMPLE_MEASUREMENT_CONFIG_KIEKER, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME, new EnvironmentVariables(), CommitByNameComparator.INSTANCE);
          testSuccessfull();
       }
    }

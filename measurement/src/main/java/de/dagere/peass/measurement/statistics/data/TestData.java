@@ -12,6 +12,7 @@ import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 
 /**
  * Saves the measurement data of one testclass in every version and every run.
@@ -21,18 +22,17 @@ import de.dagere.peass.dependencyprocessors.VersionComparator;
  */
 public class TestData {
    
-   public static Comparator<String> comparator = VersionComparator.INSTANCE;
-
 	private static final Logger LOG = LogManager.getLogger(TestData.class);
 
 	private final TestCase testcase;
 	private final File origin;
 
-	private final SortedMap<String, EvaluationPair> data = new TreeMap<>(comparator);
+	private final SortedMap<String, EvaluationPair> data;
 
-	public TestData(final TestCase testcase, final File origin) {
+	public TestData(final TestCase testcase, final File origin, VersionComparatorInstance comparator) {
 		this.testcase = testcase;
 		this.origin = origin;
+		data = new TreeMap<>(comparator);
 	}
 	
 	public void addMeasurement(final String versionOfPair, final String currentVersion, final String predecessor, final Kopemedata resultData) {

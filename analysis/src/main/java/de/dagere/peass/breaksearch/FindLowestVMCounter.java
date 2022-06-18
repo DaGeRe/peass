@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.analysis.measurement.TestStatistic;
 import de.dagere.peass.analysis.measurement.statistics.MeanCoVData;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
 import de.dagere.peass.measurement.statistics.data.EvaluationPair;
 import de.dagere.peass.measurement.statistics.data.TestData;
@@ -20,6 +21,10 @@ public class FindLowestVMCounter extends DataAnalyser {
    
    private BufferedWriter writer;
 
+   public FindLowestVMCounter(VersionComparatorInstance comparator) {
+      super(comparator);
+   }
+   
    @Override
    public void processTestdata(final TestData measurementEntry) {
       try {

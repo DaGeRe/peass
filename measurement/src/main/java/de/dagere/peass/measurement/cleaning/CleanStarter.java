@@ -13,8 +13,11 @@ import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.persistence.ExecutionData;
+import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
+import de.dagere.peass.measurement.dataloading.VersionSorter;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.utils.Constants;
 import picocli.CommandLine;
@@ -42,7 +45,8 @@ public class CleanStarter implements Callable<Void> {
 
    @Override
    public Void call() throws Exception {
-      getVersionOrder();
+      SelectedTests tests = VersionSorter.getSelectedTests(staticSelectionFile, executionfile);
+      VersionComparatorInstance comparator = new VersionComparatorInstance(tests);
       
       for (int i = 0; i < data.length; i++) {
          File folder = data[i];
@@ -58,27 +62,11 @@ public class CleanStarter implements Callable<Void> {
          } else {
             projectFolderName.mkdirs();
          }
-         final Cleaner transformer = new Cleaner(projectFolderName);
+         final Cleaner transformer = new Cleaner(projectFolderName, comparator);
          LOG.info("Start");
          transformer.processDataFolder(folder);
          LOG.info("Finish");
       }
       return null;
-   }
-
-   private void getVersionOrder() throws IOException, StreamReadException, DatabindException {
-      StaticTestSelection dependencies = null;
-      if (staticSelectionFile != null) {
-         dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
-         VersionComparator.setDependencies(dependencies);
-      }
-      if (executionfile != null) {
-         ExecutionData executionData = Constants.OBJECTMAPPER.readValue(executionfile, ExecutionData.class);
-         dependencies = new StaticTestSelection(executionData);
-         VersionComparator.setDependencies(dependencies);
-      }
-      if (dependencies == null) {
-         throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");
-      }
    }
 }

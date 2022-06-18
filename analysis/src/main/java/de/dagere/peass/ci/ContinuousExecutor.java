@@ -2,6 +2,8 @@ package de.dagere.peass.ci;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,6 +18,8 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.TestSelectionConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.folders.ResultsFolders;
@@ -23,7 +27,6 @@ import de.dagere.peass.utils.Constants;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 import de.dagere.peass.vcs.VersionIteratorGit;
-
 
 public class ContinuousExecutor {
 
@@ -35,6 +38,7 @@ public class ContinuousExecutor {
    private final String version;
    private final String versionOld;
    private final VersionIteratorGit iterator;
+   private final VersionComparatorInstance comparator;
 
    private final File originalProjectFolder;
    private final File localFolder;
@@ -72,6 +76,9 @@ public class ContinuousExecutor {
       measurementConfig.getExecutionConfig().setCommit(version);
       measurementConfig.getExecutionConfig().setCommitOld(versionOld);
       LOG.debug("Version: {} VersionOld: {}", version, versionOld);
+
+      List<String> commits = GitUtils.getCommits(projectFolderLocal, false, true);
+      comparator = new VersionComparatorInstance(commits);
    }
 
    private void getGitRepo(final File projectFolder, final MeasurementConfig measurementConfig, final File projectFolderLocal) throws InterruptedException, IOException {
@@ -100,7 +107,7 @@ public class ContinuousExecutor {
       try {
          File measurementFolder = executeMeasurement(tests);
          analyzeMeasurements(measurementFolder);
-      } catch (IOException | InterruptedException  | XmlPullParserException e) {
+      } catch (IOException | InterruptedException | XmlPullParserException e) {
          throw new RuntimeException(e);
       }
    }
@@ -122,10 +129,10 @@ public class ContinuousExecutor {
       return tests;
    }
 
-   protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException,  XmlPullParserException {
+   protected File executeMeasurement(final Set<TestCase> tests) throws IOException, InterruptedException, XmlPullParserException {
       final File fullResultsVersion = resultsFolders.getVersionFullResultsFolder(version, versionOld);
       File logFile = resultsFolders.getMeasurementLogFile(version, versionOld);
-      final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(folders, measurementConfig, env);
+      final ContinuousMeasurementExecutor measurementExecutor = new ContinuousMeasurementExecutor(folders, measurementConfig, env, comparator);
       final File measurementFolder = measurementExecutor.executeMeasurements(tests, fullResultsVersion, logFile);
       return measurementFolder;
    }

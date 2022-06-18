@@ -13,14 +13,13 @@ import org.junit.jupiter.api.Test;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.kopeme.kopemedata.TestMethod;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
-import de.dagere.peass.vcs.GitCommit;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 
 public class TestCleaner {
 
    @Test
    public void testParameterizedDataCleaner() throws IOException {
-      VersionComparator.setVersions(Arrays.asList(new String[] { "49f75e8877c2e9b7cf6b56087121a35fdd73ff8b", "a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b" }));
+      VersionComparatorInstance comparator = new VersionComparatorInstance(Arrays.asList(new String[] { "49f75e8877c2e9b7cf6b56087121a35fdd73ff8b", "a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b" }));
 
       File measurementsFolder = new File("src/test/resources/cleaning/measurementsFull");
 
@@ -29,7 +28,7 @@ public class TestCleaner {
          FileUtils.deleteDirectory(goalFolder);
       }
       goalFolder.mkdirs();
-      Cleaner cleaner = new Cleaner(goalFolder);
+      Cleaner cleaner = new Cleaner(goalFolder, comparator);
 
       cleaner.processDataFolder(measurementsFolder);
 

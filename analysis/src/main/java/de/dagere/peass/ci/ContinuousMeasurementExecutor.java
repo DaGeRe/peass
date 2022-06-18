@@ -12,6 +12,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import de.dagere.peass.ci.logHandling.LogRedirector;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dependencyprocessors.AdaptiveTester;
@@ -24,12 +25,14 @@ public class ContinuousMeasurementExecutor {
    private final PeassFolders folders;
    private final MeasurementConfig measurementConfig;
    private final EnvironmentVariables env;
+   private final VersionComparatorInstance comparator;
 
    public ContinuousMeasurementExecutor(final PeassFolders folders, final MeasurementConfig measurementConfig,
-         final EnvironmentVariables env) {
+         final EnvironmentVariables env, VersionComparatorInstance comparator) {
       this.folders = folders;
       this.measurementConfig = measurementConfig;
       this.env = env;
+      this.comparator = comparator;
    }
 
    public File executeMeasurements(final Set<TestCase> tests, final File fullResultsVersion, final File logFile) throws IOException, InterruptedException,  XmlPullParserException {
@@ -55,7 +58,7 @@ public class ContinuousMeasurementExecutor {
       
       for (final TestCase test : tests) {
          MeasurementConfig copied = createCopiedConfiguration();
-         final AdaptiveTester tester = new AdaptiveTester(folders, copied, env);
+         final AdaptiveTester tester = new AdaptiveTester(folders, copied, env, comparator);
          tester.evaluate(test);
       }
 

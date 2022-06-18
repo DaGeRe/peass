@@ -2,7 +2,6 @@ package de.dagere.peass.analysis.measurement;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -19,10 +18,10 @@ import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
+import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.utils.Constants;
-import de.dagere.peass.vcs.GitCommit;
 
 public class TestAnalyseFullData {
    
@@ -38,7 +37,7 @@ public class TestAnalyseFullData {
       
       File baseFolder = new File(DATA_READING_FOLDER, "android-example-correct");
       ModuleClassMapping mapping = new ModuleClassMapping(baseFolder, new ProjectModules(new File(baseFolder, "app")), new ExecutionConfig());
-      AnalyseFullData afd = new AnalyseFullData(new File("target/test.json"), new ProjectStatistics(), mapping, new StatisticsConfig());
+      AnalyseFullData afd = new AnalyseFullData(new File("target/test.json"), new ProjectStatistics(CommitByNameComparator.INSTANCE), mapping, new StatisticsConfig(), CommitByNameComparator.INSTANCE);
       
       afd.analyseFolder(REGULAR_DATA_FOLDER);
       
@@ -55,8 +54,8 @@ public class TestAnalyseFullData {
       VersionComparator.setVersions(versions);
       
       ModuleClassMapping mapping = Mockito.mock(ModuleClassMapping.class);
-      ProjectStatistics statistics = new ProjectStatistics();
-      AnalyseFullData afd = new AnalyseFullData(new File("target/test.json"), statistics, mapping, new StatisticsConfig());
+      ProjectStatistics statistics = new ProjectStatistics(CommitByNameComparator.INSTANCE);
+      AnalyseFullData afd = new AnalyseFullData(new File("target/test.json"), statistics, mapping, new StatisticsConfig(), CommitByNameComparator.INSTANCE);
       
       afd.analyseFolder(new File(PARAM_DATA_FOLDER, "measurements"));
       

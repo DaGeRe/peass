@@ -17,7 +17,9 @@ import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
 import de.dagere.peass.measurement.statistics.Relation;
 import de.dagere.peass.measurement.statistics.data.EvaluationPair;
@@ -43,7 +45,8 @@ public class AnalyseFullData extends DataAnalyser {
 
    private final ProjectStatistics info;
 
-   public AnalyseFullData(final File changesFile, final ProjectStatistics info, final ModuleClassMapping mapping, final StatisticsConfig statisticConfig) {
+   public AnalyseFullData(final File changesFile, final ProjectStatistics info, final ModuleClassMapping mapping, final StatisticsConfig statisticConfig, VersionComparatorInstance comparator) {
+      super(comparator);
       this.changeFile = changesFile;
       this.mapping = mapping;
       this.info = info;
@@ -137,13 +140,8 @@ public class AnalyseFullData extends DataAnalyser {
       }
       LOG.info("Draw results: " + Constants.DRAW_RESULTS);
       
-      VersionComparator.setDependencies(new StaticTestSelection());
-//      final File dependencyFile = new File(args[1]);
-//      final Dependencies dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, Dependencies.class);
-//      VersionComparator.setDependencies(dependencies);
-//      throw new RuntimeException("adapt if needed");
-      ProjectStatistics statistics = new ProjectStatistics();
-      final AnalyseFullData analyseFullData = new AnalyseFullData(new File("results/changes.json"), statistics, null, new StatisticsConfig());
+      ProjectStatistics statistics = new ProjectStatistics(CommitByNameComparator.INSTANCE);
+      final AnalyseFullData analyseFullData = new AnalyseFullData(new File("results/changes.json"), statistics, null, new StatisticsConfig(), CommitByNameComparator.INSTANCE);
       analyseFullData.analyseFolder(folder);
       
       Constants.OBJECTMAPPER.writeValue(new File("results/statistics.json"), statistics);

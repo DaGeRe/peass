@@ -12,6 +12,8 @@ import org.apache.commons.math3.stat.inference.TestUtils;
 import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.analysis.measurement.TestStatistic;
+import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.measurement.dataloading.DataAnalyser;
 import de.dagere.peass.measurement.dataloading.DataReader;
 import de.dagere.peass.measurement.statistics.data.EvaluationPair;
@@ -34,7 +36,7 @@ public class IsThereTimeReductionIterations extends DataAnalyser {
          for (final File slaveFolder : folder.listFiles()) {
             final File fullDataFolder = new File(slaveFolder, "measurementsFull/measurements/");
             final LinkedBlockingQueue<TestData> measurements = new LinkedBlockingQueue<>();
-            DataReader.startReadVersionDataMap(fullDataFolder, measurements);
+            DataReader.startReadVersionDataMap(fullDataFolder, measurements, CommitByNameComparator.INSTANCE);
 
             TestData measurementEntry = measurements.take();
             while (measurementEntry != DataReader.POISON_PILL) {
@@ -52,6 +54,10 @@ public class IsThereTimeReductionIterations extends DataAnalyser {
 
       System.out.println("Additional: " + additionalFound + " Wrong: " + lessfound + " Speedup:" + speedup + " Tests: " + count);
       System.out.println("Average Iterations: " + avgcount / vms);
+   }
+   
+   public IsThereTimeReductionIterations(VersionComparatorInstance comparator) {
+      super(comparator);
    }
    
    @Override

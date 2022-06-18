@@ -13,6 +13,7 @@ import org.mockito.stubbing.Answer;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.ExecutorCreator;
+import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.analysis.TestDependencyTester;
@@ -58,7 +59,7 @@ public class TestParallelMeasurement {
     * @throws InterruptedException
     */
    private DependencyTester createTesterNoThreads(final PeassFolders folders, final MeasurementConfig configuration) throws IOException, InterruptedException {
-      final DependencyTester tester = new DependencyTester(folders, configuration, new EnvironmentVariables());
+      final DependencyTester tester = new DependencyTester(folders, configuration, new EnvironmentVariables(), CommitByNameComparator.INSTANCE);
       DependencyTester spiedTester = Mockito.spy(tester);
       
       Mockito.doAnswer(new Answer<Void>() {

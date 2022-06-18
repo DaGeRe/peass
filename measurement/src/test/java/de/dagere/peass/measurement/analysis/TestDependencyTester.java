@@ -18,6 +18,7 @@ import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.dependencyprocessors.DependencyTester;
@@ -45,7 +46,7 @@ public class TestDependencyTester {
          
          VCSTestUtils.mockExecutor(mockedExecutor, folders, configuration);
 
-         final DependencyTester tester = new DependencyTester(folders, configuration, new EnvironmentVariables());
+         final DependencyTester tester = new DependencyTester(folders, configuration, new EnvironmentVariables(), CommitByNameComparator.INSTANCE);
          
          tester.evaluate(EXAMPLE_TESTCASE);
 

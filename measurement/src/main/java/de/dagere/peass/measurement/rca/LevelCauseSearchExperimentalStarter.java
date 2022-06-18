@@ -13,6 +13,8 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
@@ -37,7 +39,7 @@ public class LevelCauseSearchExperimentalStarter {
       final CauseSearchFolders folders2 = new CauseSearchFolders(projectFolder);
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, folders2, new EnvironmentVariables());
 
-      final CauseTester measurer = new CauseTester(folders2, measurementConfiguration, causeSearcherConfig, new EnvironmentVariables());
+      final CauseTester measurer = new CauseTester(folders2, measurementConfiguration, causeSearcherConfig, new EnvironmentVariables(), CommitByNameComparator.INSTANCE);
       final LevelCauseSearcher searcher = new LevelCauseSearcher(reader, causeSearcherConfig, measurer, measurementConfiguration, folders2, new EnvironmentVariables());
       reader.readTrees();
 

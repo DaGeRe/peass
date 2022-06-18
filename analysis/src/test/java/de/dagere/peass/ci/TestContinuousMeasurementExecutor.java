@@ -27,6 +27,7 @@ import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
@@ -62,7 +63,7 @@ public class TestContinuousMeasurementExecutor {
          final PeassFolders folders = new PeassFolders(new File(parentFile, "project"));
 
          MeasurementConfig measurementConfig = createMeasurementConfig();
-         ContinuousMeasurementExecutor cme = new ContinuousMeasurementExecutor(folders, measurementConfig, new EnvironmentVariables());
+         ContinuousMeasurementExecutor cme = new ContinuousMeasurementExecutor(folders, measurementConfig, new EnvironmentVariables(), CommitByNameComparator.INSTANCE);
 
          Set<TestCase> tests = buildTestSet();
 

@@ -6,14 +6,20 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.measurement.statistics.data.TestData;
 
 public abstract class DataAnalyser {
    
    private boolean isFinished = false;
+   protected final VersionComparatorInstance comparator;
    
    private static final Logger LOG = LogManager.getLogger(DataAnalyser.class);
 
+   public DataAnalyser(VersionComparatorInstance comparator) {
+      this.comparator = comparator;
+   }
+   
    public void analyseFolder(final File measurementsFolder) throws InterruptedException {
       LOG.info("Loading: {}", measurementsFolder);
 
@@ -23,7 +29,7 @@ public abstract class DataAnalyser {
       }
 
       final LinkedBlockingQueue<TestData> measurements = new LinkedBlockingQueue<>();
-      final Thread readerThread = DataReader.startReadVersionDataMap(measurementsFolder, measurements);
+      final Thread readerThread = DataReader.startReadVersionDataMap(measurementsFolder, measurements, comparator);
 
       Thread processorThread = new Thread(new Runnable() {
          

@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import de.dagere.peass.breaksearch.minimalvalues.MinimalVMDeterminer;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.measurement.dataloading.DataReader;
 import de.dagere.peass.measurement.dataloading.MultipleVMTestUtil;
 import de.dagere.peass.measurement.statistics.data.TestData;
@@ -45,16 +46,7 @@ public class FindLowestPossibleIterations implements Callable<Void> {
    @Override
    public Void call() throws InterruptedException, StreamReadException, DatabindException, IOException {
       final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
-      VersionComparator.setDependencies(dependencies);
-
-      // for (File folder : data) {
-      // final File measurementFolder = new File(folder, "measurements");
-      // if (measurementFolder.exists()) {
-      // files[i] = measurementFolder;
-      // } else {
-      // files[i] = folder;
-      // }
-      // }
+      VersionComparatorInstance comparator = new VersionComparatorInstance(dependencies);
 
       for (File fullDataFolder : data) {
          LOG.info("Loading: {}", fullDataFolder);
@@ -65,7 +57,7 @@ public class FindLowestPossibleIterations implements Callable<Void> {
          }
 
          final LinkedBlockingQueue<TestData> measurements = new LinkedBlockingQueue<>();
-         DataReader.startReadVersionDataMap(fullDataFolder, measurements);
+         DataReader.startReadVersionDataMap(fullDataFolder, measurements, comparator);
 
          TestData measurementEntry = measurements.take();
 

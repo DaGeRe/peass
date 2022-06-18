@@ -9,7 +9,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.measurement.statistics.data.TestcaseStatistic;
 
 public class ProjectStatistics {
@@ -18,6 +20,14 @@ public class ProjectStatistics {
 
    public Map<String, Map<TestCase, TestcaseStatistic>> statistics = VersionComparator.hasVersions() ? new TreeMap<>(VersionComparator.INSTANCE) : new LinkedHashMap<>();
 
+   public ProjectStatistics() {
+      statistics = VersionComparator.hasVersions() ? new TreeMap<>(CommitByNameComparator.INSTANCE) : new LinkedHashMap<>();
+   }
+   
+   public ProjectStatistics(VersionComparatorInstance comparator) {
+      statistics = new TreeMap<>(comparator);
+   }
+   
    public Map<String, Map<TestCase, TestcaseStatistic>> getStatistics() {
       return statistics;
    }

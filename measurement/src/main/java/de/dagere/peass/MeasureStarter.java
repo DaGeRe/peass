@@ -18,6 +18,7 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.PairProcessor;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.measurement.dependencyprocessors.DependencyTester;
 import picocli.CommandLine;
@@ -79,7 +80,9 @@ public class MeasureStarter extends PairProcessor {
       if (measurementConfigMixin.getDuration() != 0) {
          throw new RuntimeException("Time-based running currently not supported; eventually fix commented-out code to get it running again");
       } else {
-         tester = new DependencyTester(folders, measurementConfiguration, new EnvironmentVariables(measurementConfiguration.getExecutionConfig().getProperties()));
+         EnvironmentVariables env = new EnvironmentVariables(measurementConfiguration.getExecutionConfig().getProperties());
+         VersionComparatorInstance comparator = new VersionComparatorInstance(staticTestSelection);
+         tester = new DependencyTester(folders, measurementConfiguration, env, comparator);
       }
    }
 

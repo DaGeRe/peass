@@ -15,6 +15,7 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.ExecutorCreator;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.execution.utils.TestExecutor;
@@ -44,11 +45,13 @@ public class DependencyTester implements KiekerResultHandler {
    protected final EnvironmentVariables env;
    private ResultOrganizer currentOrganizer;
    protected long currentChunkStart = 0;
+   private final VersionComparatorInstance comparator;
 
-   public DependencyTester(final PeassFolders folders, final MeasurementConfig measurementConfig, final EnvironmentVariables env) throws IOException {
+   public DependencyTester(final PeassFolders folders, final MeasurementConfig measurementConfig, final EnvironmentVariables env, VersionComparatorInstance comparator) {
       this.folders = folders;
       this.configuration = measurementConfig;
       this.env = env;
+      this.comparator = comparator;
    }
 
    /**
@@ -173,9 +176,9 @@ public class DependencyTester implements KiekerResultHandler {
          if (!cleanFolder.exists()) {
             cleanFolder.mkdirs();
          }
-         final Cleaner cleaner = new Cleaner(cleanFolder);
+         final Cleaner cleaner = new Cleaner(cleanFolder, comparator);
          for (final File clazzFile : folders.getDetailResultFolder().listFiles()) {
-            final Map<String, TestData> testdata = DataReader.readClassFolder(clazzFile);
+            final Map<String, TestData> testdata = DataReader.readClassFolder(clazzFile, comparator);
             for (final Map.Entry<String, TestData> entry : testdata.entrySet()) {
                cleaner.processTestdata(entry.getValue());
             }

@@ -1,10 +1,11 @@
 package de.dagere.peass.dependencyprocessors;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
-import de.dagere.peass.dependency.persistence.StaticTestSelection;
+import de.dagere.peass.dependency.persistence.SelectedTests;
 
 public class VersionComparatorInstance implements Comparator<String> {
    private final List<String> versions;
@@ -13,10 +14,9 @@ public class VersionComparatorInstance implements Comparator<String> {
       this.versions = versions;
    }
    
-   public VersionComparatorInstance(final StaticTestSelection dependencies2) {
+   public VersionComparatorInstance(final SelectedTests dependencies2) {
       versions = new LinkedList<>();
-      versions.add(dependencies2.getInitialversion().getVersion());
-      dependencies2.getVersions().keySet().stream().forEach(version -> versions.add(version));
+      Arrays.stream(dependencies2.getVersionNames()).forEach(version -> versions.add(version));
    }
 
    @Override

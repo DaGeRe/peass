@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.Kopemedata;
 import de.dagere.peass.dependency.analysis.data.TestCase;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.measurement.statistics.data.TestData;
 
 /**
@@ -26,21 +27,21 @@ public final class DataReader {
 
    private static final Logger LOG = LogManager.getLogger(DataReader.class);
 
-   public static final TestData POISON_PILL = new TestData(null, null);
+   public static final TestData POISON_PILL = new TestData(null, null, null);
    private static int size = 0;
 
    private DataReader() {
 
    }
 
-   public static Thread startReadVersionDataMap(final File fullDataFolder, LinkedBlockingQueue<TestData> myQueue) {
+   public static Thread startReadVersionDataMap(final File fullDataFolder, LinkedBlockingQueue<TestData> myQueue, VersionComparatorInstance comparator) {
       final Thread readerThread = new Thread(new Runnable() {
 
          @Override
          public void run() {
             size = 0;
             LOG.debug("Starting data-reading from: {}", fullDataFolder);
-            readDataToQueue(fullDataFolder, myQueue);
+            readDataToQueue(fullDataFolder, myQueue, comparator);
             myQueue.add(POISON_PILL);
             LOG.debug("Finished data-reading, testcase-changes: {}", size);
          }
@@ -50,11 +51,11 @@ public final class DataReader {
       return readerThread;
    }
 
-   private static void readDataToQueue(final File fullDataFolder, final LinkedBlockingQueue<TestData> measurements) {
+   private static void readDataToQueue(final File fullDataFolder, final LinkedBlockingQueue<TestData> measurements, VersionComparatorInstance comparator) {
       LOG.info("Loading folder: {}", fullDataFolder);
 
       for (final File clazzFile : fullDataFolder.listFiles()) {
-         final Map<String, TestData> currentMeasurement = readClassFolder(clazzFile);
+         final Map<String, TestData> currentMeasurement = readClassFolder(clazzFile, comparator);
 
          for (final TestData data : currentMeasurement.values()) {
             LOG.debug("Add: {}", data.getTestClass() + " " + data.getTestMethod());
@@ -72,18 +73,18 @@ public final class DataReader {
       }
    }
 
-   public static Map<String, TestData> readClassFolder(final File clazzFile) {
+   public static Map<String, TestData> readClassFolder(final File clazzFile, VersionComparatorInstance comparator) {
       final Map<String, TestData> currentMeasurement = new HashMap<>();
       for (final File versionOfPair : clazzFile.listFiles()) {
          if (versionOfPair.isDirectory()) {
             for (final File versionCurrent : versionOfPair.listFiles()) {
                for (final File measurementFile : versionCurrent.listFiles((FileFilter) new WildcardFileFilter("*.json"))) {
-                  readMeasurementFile(currentMeasurement, versionOfPair, versionCurrent, measurementFile);
+                  readMeasurementFile(currentMeasurement, versionOfPair, versionCurrent, measurementFile, comparator);
                }
                
                // For compatibility with reading old xml result data, this needs to stay in the code
                for (final File measurementFile : versionCurrent.listFiles((FileFilter) new WildcardFileFilter("*.xml"))) {
-                  readMeasurementFile(currentMeasurement, versionOfPair, versionCurrent, measurementFile);
+                  readMeasurementFile(currentMeasurement, versionOfPair, versionCurrent, measurementFile, comparator);
                }
             }
          } else {
@@ -93,14 +94,14 @@ public final class DataReader {
       return currentMeasurement;
    }
 
-   private static void readMeasurementFile(final Map<String, TestData> currentMeasurement, final File versionOfPair, final File versionCurrent, final File measurementFile) {
+   private static void readMeasurementFile(final Map<String, TestData> currentMeasurement, final File versionOfPair, final File versionCurrent, final File measurementFile, VersionComparatorInstance comparator) {
       final Kopemedata resultData = JSONDataLoader.loadData(measurementFile);
       final String testclazz = resultData.getClazz();
       TestCase testcase = new TestCase(resultData);
       TestData testData = currentMeasurement.get(testcase.getMethodWithParams());
       if (testData == null) {
          final File originFile = measurementFile.getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile().getParentFile();
-         testData = new TestData(testcase, originFile);
+         testData = new TestData(testcase, originFile, comparator);
          currentMeasurement.put(testcase.getMethodWithParams(), testData);
       }
 

@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.utils.Constants;
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
@@ -38,9 +39,9 @@ public class FindLowestVMCountStarter  implements Callable<Void> {
    @Override
    public Void call() throws Exception {
       final StaticTestSelection dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
-      VersionComparator.setDependencies(dependencies);
+      VersionComparatorInstance comparator = new VersionComparatorInstance(dependencies);
       
-      final FindLowestVMCounter flv = new FindLowestVMCounter();
+      final FindLowestVMCounter flv = new FindLowestVMCounter(comparator);
       for (File folder : data) {
          LOG.info("Searching in " + folder);
          flv.processDataFolder(folder);

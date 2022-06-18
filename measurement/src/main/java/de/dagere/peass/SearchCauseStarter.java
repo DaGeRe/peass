@@ -10,6 +10,7 @@ import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.persistence.VersionStaticSelection;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
@@ -119,15 +120,17 @@ public class SearchCauseStarter extends MeasureStarter {
       return measurementConfiguration;
    }
 
-   public static CauseSearcher getCauseSeacher(final MeasurementConfig measurementConfiguration,
+   public CauseSearcher getCauseSeacher(final MeasurementConfig measurementConfiguration,
          final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader) throws IOException, InterruptedException {
       if (measurementConfiguration.getKiekerConfig().isOnlyOneCallRecording()) {
          throw new RuntimeException("isOnlyOneCallRecording is not allowed to be set to true for RCA!");
       }
 
+      VersionComparatorInstance comparator = new VersionComparatorInstance(staticTestSelection);
+      
       EnvironmentVariables env = reader.getEnv();
       final CauseSearcher tester;
-      final CauseTester measurer = new CauseTester(alternateFolders, measurementConfiguration, causeSearcherConfig, env);
+      final CauseTester measurer = new CauseTester(alternateFolders, measurementConfiguration, causeSearcherConfig, env, comparator);
       if (causeSearcherConfig.getRcaStrategy() != null) {
          switch (causeSearcherConfig.getRcaStrategy()) {
          case COMPLETE:
