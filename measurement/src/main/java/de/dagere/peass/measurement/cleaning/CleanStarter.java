@@ -26,8 +26,8 @@ public class CleanStarter implements Callable<Void> {
 
    private static final Logger LOG = LogManager.getLogger(CleanStarter.class);
 
-   @Option(names = { "-dependencyfile", "--dependencyfile" }, description = "Path to the dependencyfile")
-   protected File dependencyFile;
+   @Option(names = { "-staticSelectionFile", "--staticSelectionFile" }, description = "Path to the staticSelectionFile")
+   protected File staticSelectionFile;
 
    @Option(names = { "-executionfile", "--executionfile" }, description = "Path to the executionfile")
    protected File executionfile;
@@ -68,8 +68,8 @@ public class CleanStarter implements Callable<Void> {
 
    private void getVersionOrder() throws IOException, StreamReadException, DatabindException {
       StaticTestSelection dependencies = null;
-      if (dependencyFile != null) {
-         dependencies = Constants.OBJECTMAPPER.readValue(dependencyFile, StaticTestSelection.class);
+      if (staticSelectionFile != null) {
+         dependencies = Constants.OBJECTMAPPER.readValue(staticSelectionFile, StaticTestSelection.class);
          VersionComparator.setDependencies(dependencies);
       }
       if (executionfile != null) {

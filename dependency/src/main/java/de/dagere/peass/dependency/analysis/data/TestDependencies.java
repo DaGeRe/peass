@@ -78,7 +78,7 @@ public class TestDependencies {
    }
    
    /**
-    * Since we have no information about complete dependencies when reading an old dependencyfile, just add dependencies
+    * Since we have no information about complete dependencies when reading an old static selection file, just add dependencies
     * 
     * @param testClassName
     * @param testMethodName

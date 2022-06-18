@@ -151,7 +151,7 @@ public class MeasureStarter extends PairProcessor {
                   }
                }
             }
-            LOG.debug("Version only in executionfile, next version in dependencyfile: {}", potentialStart);
+            LOG.debug("Version only in executionfile, next version in static selection file: {}", potentialStart);
             currentEndindex = versions.indexOf(potentialStart);
          }
       }

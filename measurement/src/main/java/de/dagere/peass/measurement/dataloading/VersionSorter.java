@@ -31,6 +31,6 @@ public class VersionSorter {
             return dependencies;
          }
       }
-      throw new RuntimeException("No dependencyfile provided");
+      throw new RuntimeException("No static selection file provided");
    }
 }
