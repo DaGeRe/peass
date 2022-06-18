@@ -19,7 +19,6 @@ import de.dagere.peass.folders.CauseSearchFolders;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.searcher.LevelCauseSearcher;
-
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class LevelCauseSearchExperimentalStarter {

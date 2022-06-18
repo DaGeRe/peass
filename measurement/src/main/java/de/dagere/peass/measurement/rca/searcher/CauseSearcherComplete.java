@@ -22,7 +22,6 @@ import de.dagere.peass.measurement.rca.analyzer.TreeAnalyzer;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.AllDifferingDeterminer;
-
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**

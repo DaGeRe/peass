@@ -1,7 +1,6 @@
 package de.dagere.peass.dependency.analysis;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.dependency.ClazzFileFinder;

@@ -22,7 +22,6 @@ import de.dagere.peass.measurement.rca.CauseTester;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 import de.dagere.peass.measurement.rca.kieker.BothTreeReader;
 import de.dagere.peass.measurement.rca.treeanalysis.LevelDifferentNodeDeterminer;
-
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 public class LevelCauseSearcher extends CauseSearcher {

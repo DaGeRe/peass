@@ -20,7 +20,6 @@ import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.utils.Constants;
-
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Mixin;

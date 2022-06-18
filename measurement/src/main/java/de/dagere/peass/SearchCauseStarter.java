@@ -24,7 +24,6 @@ import de.dagere.peass.measurement.rca.searcher.CauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.CauseSearcherComplete;
 import de.dagere.peass.measurement.rca.searcher.LevelCauseSearcher;
 import de.dagere.peass.measurement.rca.searcher.TreeAnalyzerCreator;
-
 import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;

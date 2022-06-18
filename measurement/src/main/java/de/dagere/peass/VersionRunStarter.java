@@ -9,7 +9,6 @@ import de.dagere.peass.dependency.persistence.VersionStaticSelection;
 import de.dagere.peass.dependencyprocessors.VersionProcessor;
 import de.dagere.peass.utils.StreamGobbler;
 import de.dagere.peass.vcs.GitUtils;
-
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 

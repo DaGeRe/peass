@@ -24,10 +24,8 @@ import de.dagere.peass.measurement.dependencyprocessors.AdaptiveTester;
 import de.dagere.peass.measurement.dependencyprocessors.helper.EarlyBreakDecider;
 import de.dagere.peass.measurement.dependencyprocessors.helper.ProgressWriter;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-import de.dagere.peass.measurement.rca.data.CauseSearchData;
 import de.dagere.peass.measurement.rca.kieker.KiekerResultReader;
 import de.dagere.peass.testtransformation.TestTransformer;
-
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**

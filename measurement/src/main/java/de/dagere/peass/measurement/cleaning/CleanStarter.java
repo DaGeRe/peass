@@ -17,7 +17,6 @@ import de.dagere.peass.dependency.persistence.StaticTestSelection;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.utils.Constants;
-
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;

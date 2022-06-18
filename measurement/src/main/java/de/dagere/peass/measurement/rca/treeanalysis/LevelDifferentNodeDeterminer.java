@@ -13,7 +13,6 @@ import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
-
 import kieker.analysis.exception.AnalysisConfigurationException;
 
 /**
