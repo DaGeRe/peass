@@ -20,6 +20,7 @@ import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.VersionComparator;
+import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.utils.Constants;
 
@@ -33,11 +34,11 @@ public class TestAnalyseFullData {
    @Test
    public void testReading() throws InterruptedException {
       List<String> versions = Arrays.asList(new String[] {"946e4318267b56838aa35da0a2a4e5c0528bfe04","fd79b2039667c09167c721b2823425629fad6d11" });
-      VersionComparator.setVersions(versions);
+      VersionComparatorInstance comparator = new VersionComparatorInstance(versions);
       
       File baseFolder = new File(DATA_READING_FOLDER, "android-example-correct");
       ModuleClassMapping mapping = new ModuleClassMapping(baseFolder, new ProjectModules(new File(baseFolder, "app")), new ExecutionConfig());
-      AnalyseFullData afd = new AnalyseFullData(new File("target/test.json"), new ProjectStatistics(CommitByNameComparator.INSTANCE), mapping, new StatisticsConfig(), CommitByNameComparator.INSTANCE);
+      AnalyseFullData afd = new AnalyseFullData(new File("target/test.json"), new ProjectStatistics(comparator), mapping, new StatisticsConfig(), comparator);
       
       afd.analyseFolder(REGULAR_DATA_FOLDER);
       
@@ -49,13 +50,12 @@ public class TestAnalyseFullData {
    
    @Test
    public void testReadingWithParams() throws InterruptedException {
-      
       List<String> versions = Arrays.asList(new String[] {"49f75e8877c2e9b7cf6b56087121a35fdd73ff8b","a12a0b7f4c162794fca0e7e3fcc6ea3b3a2cbc2b" });
-      VersionComparator.setVersions(versions);
+      VersionComparatorInstance comparator = new VersionComparatorInstance(versions);
       
       ModuleClassMapping mapping = Mockito.mock(ModuleClassMapping.class);
       ProjectStatistics statistics = new ProjectStatistics(CommitByNameComparator.INSTANCE);
-      AnalyseFullData afd = new AnalyseFullData(new File("target/test.json"), statistics, mapping, new StatisticsConfig(), CommitByNameComparator.INSTANCE);
+      AnalyseFullData afd = new AnalyseFullData(new File("target/test.json"), statistics, mapping, new StatisticsConfig(), comparator);
       
       afd.analyseFolder(new File(PARAM_DATA_FOLDER, "measurements"));
       
