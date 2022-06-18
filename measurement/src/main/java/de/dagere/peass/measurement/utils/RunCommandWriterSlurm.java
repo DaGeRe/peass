@@ -2,6 +2,7 @@ package de.dagere.peass.measurement.utils;
 
 import java.io.PrintStream;
 
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 
 public class RunCommandWriterSlurm extends RunCommandWriter {
@@ -9,22 +10,24 @@ public class RunCommandWriterSlurm extends RunCommandWriter {
    public static final String EXECUTE_MEASUREMENT = "executeTests.sh";
    public static final String EXECUTE_RCA = "executeRCA.sh";
    
+   private static final String HOME_FOLDER = "/home/sc.uni-leipzig.de/do820mize";
+   
    boolean inited = false;
    private final String script;
 
-   public RunCommandWriterSlurm(final PrintStream goal, final String experimentId, final SelectedTests dependencies) {
-      this(goal, experimentId, dependencies, EXECUTE_MEASUREMENT);
+   public RunCommandWriterSlurm(MeasurementConfig config, final PrintStream goal, final String experimentId, final SelectedTests dependencies) {
+      this(config,goal, experimentId, dependencies, EXECUTE_MEASUREMENT);
    }
 
-   public RunCommandWriterSlurm(final PrintStream goal, final String experimentId, final SelectedTests dependencies, final String script) {
-      super(goal, experimentId, dependencies);
-      slurmOutputFolder = "/nfs/user/do820mize/processlogs/" + dependencies.getName();
+   public RunCommandWriterSlurm(MeasurementConfig config, final PrintStream goal, final String experimentId, final SelectedTests dependencies, final String script) {
+      super(config, goal, experimentId, dependencies);
+      slurmOutputFolder =  HOME_FOLDER +"/processlogs/" + dependencies.getName();
       this.script = script;
    }
 
    public RunCommandWriterSlurm(final PrintStream goal, final String experimentId, final String name, final String url) {
       super(goal, experimentId, name, url);
-      slurmOutputFolder = "/nfs/user/do820mize/processlogs/" + name;
+      slurmOutputFolder = HOME_FOLDER + "/processlogs/" + name;
       script = EXECUTE_MEASUREMENT;
    }
 
@@ -45,7 +48,7 @@ public class RunCommandWriterSlurm extends RunCommandWriter {
       goal.println(
             "sbatch --partition=galaxy-low-prio --nice=" + nice + " --time=10-0 "
                   + "--output=" + slurmOutputFolder + "/" + versionIndex + "_" + simpleTestName + "_$timestamp.out "
-                  + "--export=PROJECT=" + url + ",HOME=/nfs/user/do820mize,"
+                  + "--export=PROJECT=" + url + ",HOME=" + HOME_FOLDER +","
                   + "START=" + endversion + ","
                   + "END=" + endversion + ","
                   + "INDEX=" + versionIndex + ","

@@ -21,6 +21,7 @@ import de.dagere.peass.analysis.changes.Changes;
 import de.dagere.peass.analysis.changes.ProjectChanges;
 import de.dagere.peass.analysis.properties.ChangeProperty;
 import de.dagere.peass.analysis.properties.VersionChangeProperties;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.measurement.utils.RunCommandWriter;
 import de.dagere.peass.measurement.utils.RunCommandWriterRCA;
@@ -96,8 +97,8 @@ public class ExperimentSelector implements Callable<Integer> {
       final File fileJava = new File(repoFolders.getRCAScriptFolder(), "rca-java-" + projectName + ".sh");
 
       final ExecutionData executionData = repoFolders.getExecutionData(projectName);
-      final RunCommandWriter writerSlurm = new RunCommandWriterSlurm(new PrintStream(fileSlurm), "cause1", executionData, RunCommandWriterSlurm.EXECUTE_RCA);
-      final RunCommandWriter writer = new RunCommandWriterRCA(new PrintStream(fileJava), "cause1", executionData);
+      final RunCommandWriter writerSlurm = new RunCommandWriterSlurm(new MeasurementConfig(30), new PrintStream(fileSlurm), "cause1", executionData, RunCommandWriterSlurm.EXECUTE_RCA);
+      final RunCommandWriter writer = new RunCommandWriterRCA(new MeasurementConfig(30), new PrintStream(fileJava), "cause1", executionData);
 
       properties.executeProcessor((version, testcase, change, changeProperties) -> {
          all++;

@@ -8,6 +8,7 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -23,7 +24,7 @@ public class TestCreateMeasurementExecutionScript {
 
       final ByteArrayOutputStream baos = new ByteArrayOutputStream();
       try (PrintStream ps = new PrintStream(baos)) {
-         RunCommandWriter writer = new RunCommandWriter(ps, "experiment-1", executiondata);
+         RunCommandWriter writer = new RunCommandWriter(new MeasurementConfig(30), ps, "experiment-1", executiondata);
          CreateScriptStarter.generateExecuteCommands(executiondata, "experiment-1", writer);
       }
 

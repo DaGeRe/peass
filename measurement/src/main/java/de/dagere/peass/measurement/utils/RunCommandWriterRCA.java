@@ -3,13 +3,14 @@ package de.dagere.peass.measurement.utils;
 import java.io.PrintStream;
 
 import de.dagere.peass.SearchCauseStarter;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 import de.dagere.peass.folders.ResultsFolders;
 
 public class RunCommandWriterRCA extends RunCommandWriter {
 
-   public RunCommandWriterRCA(final PrintStream goal, final String experimentId, final SelectedTests dependencies) {
-      super(goal, experimentId, dependencies);
+   public RunCommandWriterRCA(MeasurementConfig config, final PrintStream goal, final String experimentId, final SelectedTests dependencies) {
+      super(config, goal, experimentId, dependencies);
    }
 
    @Override

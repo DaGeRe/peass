@@ -17,6 +17,7 @@ import de.dagere.kopeme.kopemedata.VMResult;
 import de.dagere.kopeme.kopemedata.VMResultChunk;
 import de.dagere.peass.analysis.helper.read.VersionData;
 import de.dagere.peass.analysis.measurement.ProjectStatistics;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
@@ -66,9 +67,9 @@ public class ChangeReader {
       File statisticsFolder = resultsFolders.getStatisticsFile().getParentFile();
       if (selectedTests.getUrl() != null && !selectedTests.getUrl().isEmpty()) {
          final PrintStream runCommandPrinter = new PrintStream(new File(statisticsFolder, "run-rca-" + resultsFolders.getProjectName() + ".sh"));
-         runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", selectedTests);
+         runCommandWriter = new RunCommandWriterRCA(new MeasurementConfig(30), runCommandPrinter, "default", selectedTests);
          final PrintStream runCommandPrinterRCA = new PrintStream(new File(statisticsFolder, "run-rca-slurm-" + resultsFolders.getProjectName() + ".sh"));
-         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", selectedTests);
+         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(new MeasurementConfig(30), runCommandPrinterRCA, "default", selectedTests);
       } else {
          runCommandWriter = null;
          runCommandWriterSlurm = null;

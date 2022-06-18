@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.dagere.peass.analysis.all.RepoFolders;
 import de.dagere.peass.analysis.changes.ProjectChanges;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.folders.ResultsFolders;
 import de.dagere.peass.measurement.utils.RunCommandWriter;
@@ -53,7 +54,7 @@ public class FindChangeExecutions {
       final PrintStream goal = new PrintStream(new FileOutputStream(reexecuteProject));
       final ExecutionData executions = Constants.OBJECTMAPPER.readValue(executionFile, ExecutionData.class);
 //      RunCommandWriter writer = new RunCommandWriterSlurm(goal, NAME, dependencies);
-      final RunCommandWriter writer = new RunCommandWriterRCA(goal, NAME, executions);
+      final RunCommandWriter writer = new RunCommandWriterRCA(new MeasurementConfig(30), goal, NAME, executions);
       writer.setNice(1000);
 
       writeExecutions(projectChangeFile, executions, writer);

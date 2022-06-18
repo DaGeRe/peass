@@ -2,6 +2,7 @@ package de.dagere.peass.measurement.utils;
 
 import java.io.PrintStream;
 
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 
 public class RunCommandWriterSlurmRCA extends RunCommandWriter {
@@ -11,12 +12,12 @@ public class RunCommandWriterSlurmRCA extends RunCommandWriter {
    boolean inited = false;
    private final String script;
 
-   public RunCommandWriterSlurmRCA(final PrintStream goal, final String experimentId, final SelectedTests dependencies) {
-      this(goal, experimentId, dependencies, RunCommandWriterSlurm.EXECUTE_RCA);
+   public RunCommandWriterSlurmRCA(MeasurementConfig config, PrintStream goal, final String experimentId, final SelectedTests dependencies) {
+      this(config, goal, experimentId, dependencies, RunCommandWriterSlurm.EXECUTE_RCA);
    }
 
-   public RunCommandWriterSlurmRCA(final PrintStream goal, final String experimentId, final SelectedTests dependencies, final String script) {
-      super(goal, experimentId, dependencies);
+   public RunCommandWriterSlurmRCA(MeasurementConfig config, final PrintStream goal, final String experimentId, final SelectedTests dependencies, final String script) {
+      super(config, goal, experimentId, dependencies);
       slurmOutputFolder = "/nfs/user/do820mize/rcalogs/" + dependencies.getName();
       this.script = script;
    }

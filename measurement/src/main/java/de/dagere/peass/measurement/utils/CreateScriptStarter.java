@@ -10,6 +10,11 @@ import java.util.concurrent.Callable;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.config.parameters.ExecutionConfigMixin;
+import de.dagere.peass.config.parameters.KiekerConfigMixin;
+import de.dagere.peass.config.parameters.MeasurementConfigurationMixin;
+import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependency.analysis.data.TestSet;
 import de.dagere.peass.dependency.persistence.ExecutionData;
@@ -18,6 +23,7 @@ import de.dagere.peass.utils.Constants;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Mixin;
 import picocli.CommandLine.Option;
 
 /**
@@ -40,6 +46,9 @@ public class CreateScriptStarter implements Callable<Void> {
    
    @Option(names = { "-useSlurm", "--useSlurm" }, description = "Use slurm (if not specified, a bash script is created)")
    protected Boolean useSlurm = false;
+   
+   @Mixin
+   MeasurementConfigurationMixin measurementConfig;
 
    private StaticTestSelection dependencies;
    private ExecutionData executionData;
@@ -63,13 +72,15 @@ public class CreateScriptStarter implements Callable<Void> {
          throw new RuntimeException("Dependencyfile and executionfile not readable - one needs to be defined!");
       }
 
+      MeasurementConfig config = new MeasurementConfig(measurementConfig, new ExecutionConfigMixin(), new StatisticsConfigMixin(), new KiekerConfigMixin());
+      
       PrintStream destination = System.out;
       RunCommandWriter writer;
       if (useSlurm) {
          destination.println("timestamp=$(date +%s)");
-         writer = new RunCommandWriterSlurm(System.out, experimentId, dependencies);
+         writer = new RunCommandWriterSlurm(config, System.out, experimentId, dependencies);
       } else {
-         writer = new RunCommandWriter(destination, experimentId, dependencies);
+         writer = new RunCommandWriter(config, destination, experimentId, dependencies);
       }
 
       generateExecuteCommands(dependencies, executionData, experimentId, writer);
@@ -78,11 +89,11 @@ public class CreateScriptStarter implements Callable<Void> {
    }
 
    public static void generateExecuteCommands(final StaticTestSelection dependencies, final ExecutionData changedTests, final String experimentId, final PrintStream goal) throws IOException {
-      generateExecuteCommands(dependencies, changedTests, experimentId, new RunCommandWriterSlurm(goal, experimentId, dependencies));
+      generateExecuteCommands(dependencies, changedTests, experimentId, new RunCommandWriterSlurm(new MeasurementConfig(30), goal, experimentId, dependencies));
    }
 
    public static void generateExecuteCommands(final ExecutionData changedTests, final String experimentId, final PrintStream goal) throws IOException {
-      generateExecuteCommands(changedTests, experimentId, new RunCommandWriterSlurm(goal, experimentId, changedTests));
+      generateExecuteCommands(changedTests, experimentId, new RunCommandWriterSlurm(new MeasurementConfig(30), goal, experimentId, changedTests));
    }
 
    public static void generateExecuteCommands(final ExecutionData changedTests, final String experimentId, final RunCommandWriter writer)

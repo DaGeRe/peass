@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.analysis.changes.ChangeReader;
+import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
 import de.dagere.peass.dependency.persistence.ExecutionData;
 import de.dagere.peass.dependency.persistence.SelectedTests;
@@ -86,9 +87,9 @@ public class GetChangesStarter implements Callable<Void> {
       RunCommandWriterSlurmRCA runCommandWriterSlurm = null;
       if (selectedTests.getUrl() != null && !selectedTests.getUrl().isEmpty()) {
          final PrintStream runCommandPrinter = new PrintStream(new File(resultsFolders.getStatisticsFile().getParentFile(), "run-rca-" + selectedTests.getName() + ".sh"));
-         runCommandWriter = new RunCommandWriterRCA(runCommandPrinter, "default", selectedTests);
+         runCommandWriter = new RunCommandWriterRCA(new MeasurementConfig(30), runCommandPrinter, "default", selectedTests);
          final PrintStream runCommandPrinterRCA = new PrintStream(new File(resultsFolders.getStatisticsFile().getParentFile(), "run-rca-slurm-" + selectedTests.getName() + ".sh"));
-         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(runCommandPrinterRCA, "default", selectedTests);
+         runCommandWriterSlurm = new RunCommandWriterSlurmRCA(new MeasurementConfig(30), runCommandPrinterRCA, "default", selectedTests);
       }
      
       final ChangeReader reader = new ChangeReader(resultsFolders, runCommandWriter, runCommandWriterSlurm, selectedTests);
