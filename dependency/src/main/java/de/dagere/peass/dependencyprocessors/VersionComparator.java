@@ -34,11 +34,6 @@ public class VersionComparator implements Comparator<String> {
       return indexOf - indexOf2;
    }
 
-   public static String getPreviousVersion(final String version) {
-      final int index = versions.indexOf(version);
-      return index > 0 ? versions.get(index - 1) : NO_BEFORE;
-   }
-
    private static List<String> versions;
 
    public static void setDependencies(final StaticTestSelection dependencies2) {

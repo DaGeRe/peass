@@ -8,6 +8,9 @@ import java.util.List;
 import de.dagere.peass.dependency.persistence.SelectedTests;
 
 public class VersionComparatorInstance implements Comparator<String> {
+   
+   public static final String NO_BEFORE = "NO_BEFORE";
+   
    private final List<String> versions;
 
    public VersionComparatorInstance(List<String> versions) {
@@ -38,5 +41,10 @@ public class VersionComparatorInstance implements Comparator<String> {
 
    public int getVersionIndex(String version) {
       return versions.indexOf(version);
+   }
+
+   public String getPreviousVersion(final String version) {
+      final int index = versions.indexOf(version);
+      return index > 0 ? versions.get(index - 1) : NO_BEFORE;
    }
 }

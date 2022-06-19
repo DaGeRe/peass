@@ -119,7 +119,7 @@ public class AnalyseFullData extends DataAnalyser {
             measurementEntry.getTestMethod());
       LOG.debug("Confidence Interval Comparison: {}", teststatistic.getConfidenceResult());
 
-      System.out.println("git diff " + version + ".." + VersionComparator.getPreviousVersion(version));
+      System.out.println("git diff " + version + ".." + comparator.getPreviousVersion(version));
    }
 
    private TestCase getCurrentTestcase(final TestData measurementEntry) {
