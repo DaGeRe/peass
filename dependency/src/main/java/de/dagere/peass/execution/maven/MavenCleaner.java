@@ -24,14 +24,15 @@ public class MavenCleaner {
    }
 
    public void clean(final File logFile) throws IOException, InterruptedException {
-      if (!folders.getProjectFolder().exists()) {
-         throw new RuntimeException("Can not execute clean - folder " + folders.getProjectFolder().getAbsolutePath() + " does not exist");
-      } else {
-         LOG.debug("Folder {} exists {} and is directory - cleaning should be possible",
-               folders.getProjectFolder().getAbsolutePath(),
-               folders.getProjectFolder().exists(),
-               folders.getProjectFolder().isDirectory());
-      }
+      checkProjectFolder();
+      checkLogParent(logFile);
+      
+      final ProcessBuilder pbClean = buildProcess(logFile);
+      
+      cleanSafely(pbClean);
+   }
+
+   private ProcessBuilder buildProcess(final File logFile) {
       final String[] originalsClean = new String[] { env.fetchMavenCall(), "--batch-mode", "clean" };
       final ProcessBuilder pbClean = new ProcessBuilder(originalsClean);
       pbClean.directory(folders.getProjectFolder());
@@ -39,8 +40,27 @@ public class MavenCleaner {
          pbClean.redirectOutput(Redirect.appendTo(logFile));
          pbClean.redirectError(Redirect.appendTo(logFile));
       }
+      return pbClean;
+   }
 
-      cleanSafely(pbClean);
+   private void checkProjectFolder() {
+      if (!folders.getProjectFolder().exists()) {
+         throw new RuntimeException("Can not execute clean - folder " + folders.getProjectFolder().getAbsolutePath() + " does not exist");
+      } else {
+         LOG.debug("Folder {} exists {} and is directory {} - cleaning should be possible",
+               folders.getProjectFolder().getAbsolutePath(),
+               folders.getProjectFolder().exists(),
+               folders.getProjectFolder().isDirectory());
+      }
+   }
+
+   private void checkLogParent(final File logFile) {
+      File logParentFile = logFile.getParentFile();
+      if (!logParentFile.exists()) {
+         if (!logParentFile.mkdirs()) {
+            throw new RuntimeException("Could not create log parent directory: " + logParentFile);
+         }
+      }
    }
 
    private void cleanSafely(final ProcessBuilder pbClean) throws IOException, InterruptedException {
