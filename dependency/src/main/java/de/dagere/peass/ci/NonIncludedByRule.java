@@ -72,6 +72,7 @@ public class NonIncludedByRule {
          CompilationUnit parentUnit = getUnit(parentTest, transformer, executionConfig);
          if (parentUnit == null) {
             LOG.warn("Did not find {}; ignoring parent class for includeByRule-checking", parentTest);
+            break;
          }
          
          IncludeExcludeInfo parentInfo = getIncludeExcludeInfo(executionConfig, parentUnit);

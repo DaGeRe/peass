@@ -16,6 +16,7 @@ public class TestNonIncludedByRule {
    private static final File BASIC_EXAMPLE_FOLDER = new File("src/test/resources/includeByRuleExample/basic");
    private static final File SUPER_CLASS_EXAMPLE = new File("src/test/resources/includeByRuleExample/superClass");
    private static final File SUPER_SUPER_CLASS_EXAMPLE = new File("src/test/resources/includeByRuleExample/superSuperClass");
+   private static final File JUNIT3_EXAMPLE = new File("src/test/resources/includeByRuleExample/junit3");
    
    private static final TestCase TEST_WITHOUT_RULE = new TestCase("mypackage.MyTestWithoutRule", "testMe");
    private static final TestCase TEST_WITH_RULE = new TestCase("mypackage.MyTestWithRule", "testMe");
@@ -84,6 +85,13 @@ public class TestNonIncludedByRule {
       Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_TEST_OF_TEST_WITH_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
       Assert.assertTrue(NonIncludedByRule.isTestIncluded(SUB_SUB_TEST_WITHOUT_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
       Assert.assertFalse(NonIncludedByRule.isTestIncluded(SUB_SUB_TEST_OF_TEST_WITH_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
+   }
+   
+   @Test
+   public void testJUnit3() {
+      JUnitTestTransformer transformer = determineWithExclude(JUNIT3_EXAMPLE);
+      
+      Assert.assertTrue(NonIncludedByRule.isTestIncluded(TEST_WITHOUT_RULE, transformer, ModuleClassMapping.SINGLE_MODULE_MAPPING));
    }
    
    private JUnitTestTransformer determineWithInclude(File basicExampleFolder) {

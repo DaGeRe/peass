@@ -19,7 +19,6 @@ import de.dagere.peass.config.ExecutionConfig;
 import de.dagere.peass.config.StatisticsConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
-import de.dagere.peass.dependencyprocessors.VersionComparator;
 import de.dagere.peass.dependencyprocessors.VersionComparatorInstance;
 import de.dagere.peass.execution.utils.ProjectModules;
 import de.dagere.peass.utils.Constants;
