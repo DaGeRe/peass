@@ -89,7 +89,8 @@ public class SearchCauseStarter extends MeasureStarter {
       final CauseSearchFolders alternateFolders = new CauseSearchFolders(folders.getProjectFolder());
       final BothTreeReader reader = new BothTreeReader(causeSearcherConfig, measurementConfiguration, alternateFolders, new EnvironmentVariables(measurementConfiguration.getExecutionConfig().getProperties()));
 
-      final CauseSearcher tester = getCauseSeacher(measurementConfiguration, causeSearcherConfig, alternateFolders, reader);
+      VersionComparatorInstance comparator = new VersionComparatorInstance(staticTestSelection);
+      final CauseSearcher tester = getCauseSeacher(measurementConfiguration, causeSearcherConfig, alternateFolders, reader, comparator);
       tester.search();
 
       return null;
@@ -120,13 +121,11 @@ public class SearchCauseStarter extends MeasureStarter {
       return measurementConfiguration;
    }
 
-   public CauseSearcher getCauseSeacher(final MeasurementConfig measurementConfiguration,
-         final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader) throws IOException, InterruptedException {
+   public static CauseSearcher getCauseSeacher(final MeasurementConfig measurementConfiguration,
+         final CauseSearcherConfig causeSearcherConfig, final CauseSearchFolders alternateFolders, final BothTreeReader reader, VersionComparatorInstance comparator) throws IOException, InterruptedException {
       if (measurementConfiguration.getKiekerConfig().isOnlyOneCallRecording()) {
          throw new RuntimeException("isOnlyOneCallRecording is not allowed to be set to true for RCA!");
       }
-
-      VersionComparatorInstance comparator = new VersionComparatorInstance(staticTestSelection);
       
       EnvironmentVariables env = reader.getEnv();
       final CauseSearcher tester;
