@@ -20,6 +20,7 @@ import org.mockito.Mockito;
 
 import de.dagere.peass.TestUtil;
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
 import de.dagere.peass.dependencyprocessors.ViewNotFoundException;
@@ -65,6 +66,7 @@ public class AdaptiveExecutorTest {
          config.getKiekerConfig().setUseKieker(true);
          config.setIterations(2);
          config.setRepetitions(2);
+         config.setMeasurementStrategy(MeasurementStrategy.SEQUENTIAL); // Avoid creation of test executor for every thread
          executor = new CauseTester(new CauseSearchFolders(projectFolder), config, TestConstants.SIMPLE_CAUSE_CONFIG_TESTME, new EnvironmentVariables(), CommitByNameComparator.INSTANCE);
          LOG.debug("Executor: {}", executor);
       } catch (final IOException e) {
