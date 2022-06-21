@@ -21,6 +21,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.dependencyprocessors.CommitByNameComparator;
@@ -72,6 +73,7 @@ public class CauseSearcherIT {
          final MeasurementConfig measurementConfiguration = new MeasurementConfig(5, VERSION, "000001~1");
          measurementConfiguration.getKiekerConfig().setUseKieker(true);
          measurementConfiguration.getKiekerConfig().setUseAggregation(true);
+         measurementConfiguration.setMeasurementStrategy(MeasurementStrategy.SEQUENTIAL);
          final CauseSearcherConfig causeSearcherConfig = CAUSE_CONFIG_TESTME_COMPLETE;
 
          final CauseSearchFolders folders = new CauseSearchFolders(DependencyTestConstants.CURRENT);
