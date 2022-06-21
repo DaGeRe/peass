@@ -36,7 +36,7 @@ public class MeasurementConfig implements Serializable {
 
    private String javaVersion = System.getProperty("java.version");
 
-   private MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
+   private MeasurementStrategy measurementStrategy = MeasurementStrategy.PARALLEL;
 
    private StatisticsConfig statisticsConfig = new StatisticsConfig();
    private final ExecutionConfig executionConfig;

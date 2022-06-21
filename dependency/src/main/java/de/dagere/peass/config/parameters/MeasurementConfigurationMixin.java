@@ -44,8 +44,8 @@ public class MeasurementConfigurationMixin {
    @Option(names = { "-record", "--record" }, description = "Kieker Record type to use for monitoring ")
    protected AllowedKiekerRecord record = AllowedKiekerRecord.DURATION;
 
-   @Option(names = { "-measurementStrategy", "--measurementStrategy" }, description = "Measurement strategy (Default: SEQUENTIAL) ")
-   protected MeasurementStrategy measurementStrategy = MeasurementStrategy.SEQUENTIAL;
+   @Option(names = { "-measurementStrategy", "--measurementStrategy" }, description = "Measurement strategy (Default: PARALLEL) ")
+   protected MeasurementStrategy measurementStrategy = MeasurementStrategy.PARALLEL;
 
    @Option(names = { "-showStart",
          "--showStart" }, description = "Activates showing of start of each iteration (for debug purposes primarily)")
