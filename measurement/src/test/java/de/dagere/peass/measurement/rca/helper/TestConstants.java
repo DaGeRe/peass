@@ -3,6 +3,7 @@ package de.dagere.peass.measurement.rca.helper;
 import java.io.File;
 
 import de.dagere.peass.config.MeasurementConfig;
+import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.measurement.rca.CauseSearcherConfig;
 import de.dagere.peass.measurement.rca.RCAStrategy;
@@ -23,6 +24,7 @@ public class TestConstants {
   
    static {
       SIMPLE_MEASUREMENT_CONFIG_KIEKER.getKiekerConfig().setUseKieker(true);
+      SIMPLE_MEASUREMENT_CONFIG_KIEKER.setMeasurementStrategy(MeasurementStrategy.SEQUENTIAL);
    }
    
    public static final File CURRENT_FOLDER = new File(new File("target"), "current");
