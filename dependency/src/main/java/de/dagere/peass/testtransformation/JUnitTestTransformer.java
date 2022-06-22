@@ -530,7 +530,7 @@ public class JUnitTestTransformer implements TestTransformer {
 
    void editJUnit5(final CompilationUnit unit) {
       unit.addImport("org.junit.jupiter.api.extension.ExtendWith");
-      unit.addImport("de.dagere.kopeme.junit5.rule.KoPeMeExtension");
+      unit.addImport("de.dagere.kopeme.junit5.extension.KoPeMeExtension");
 
       for (ClassOrInterfaceDeclaration clazz : ParseUtil.getClasses(unit)) {
          final SingleMemberAnnotationExpr extendAnnotation = new SingleMemberAnnotationExpr(new Name("ExtendWith"),
