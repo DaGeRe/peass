@@ -154,7 +154,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    
    @Override
    public boolean doesBuildfileExist() {
-      final File wrapper = new File(folders.getProjectFolder(), env.fetchGradleCall());
+      final File wrapper = new File(folders.getProjectFolder(), EnvironmentVariables.fetchGradleCall());
       final File potentialBuildfile = new File(folders.getProjectFolder(), "build.gradle");
       boolean buildfileExists = wrapper.exists() && potentialBuildfile.exists();
       return buildfileExists;
@@ -180,7 +180,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
          ProjectModules modules = getModules();
          replaceAllBuildfiles(modules);
 
-         final String[] vars = new String[] { env.fetchGradleCall(), "--no-daemon", "assemble" };
+         final String[] vars = new String[] { EnvironmentVariables.fetchGradleCall(), "--no-daemon", "testClasses", "assemble" };
          ProcessSuccessTester processSuccessTester = new ProcessSuccessTester(folders, testTransformer.getConfig(), env);
          isRunning = processSuccessTester.testRunningSuccess(version, vars);
       }
