@@ -9,6 +9,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+
 import de.dagere.kopeme.parsing.GradleParseHelper;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.execution.processutils.ProcessBuilderHelper;
@@ -107,7 +109,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
       final String[] vars = CommandConcatenator.concatenateCommandArrays(originals, commandLineAddition);
       ProcessBuilderHelper processBuilderHelper = new ProcessBuilderHelper(env, folders);
       processBuilderHelper.parseParams(test.getParams());
-      
+
       LOG.debug("Executing gradle test in moduleFolder: {}", moduleFolder);
       return processBuilderHelper.buildFolderProcess(moduleFolder, logFile, vars);
    }
@@ -151,7 +153,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
          e.printStackTrace();
       }
    }
-   
+
    @Override
    public boolean doesBuildfileExist() {
       final File wrapper = new File(folders.getProjectFolder(), EnvironmentVariables.fetchGradleCall());
@@ -180,7 +182,13 @@ public class GradleTestExecutor extends KoPeMeExecutor {
          ProjectModules modules = getModules();
          replaceAllBuildfiles(modules);
 
-         final String[] vars = new String[] { EnvironmentVariables.fetchGradleCall(), "--no-daemon", "testClasses", "assemble" };
+         final String[] vars;
+         if (!isAndroid) {
+            vars = new String[] { EnvironmentVariables.fetchGradleCall(), "--no-daemon", "testClasses", "assemble" };
+         } else {
+            vars = new String[] { EnvironmentVariables.fetchGradleCall(), "--no-daemon", "assemble" };
+         }
+
          ProcessSuccessTester processSuccessTester = new ProcessSuccessTester(folders, testTransformer.getConfig(), env);
          isRunning = processSuccessTester.testRunningSuccess(version, vars);
       }
