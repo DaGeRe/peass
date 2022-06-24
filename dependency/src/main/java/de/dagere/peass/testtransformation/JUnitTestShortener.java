@@ -75,7 +75,7 @@ public class JUnitTestShortener implements AutoCloseable {
             e1.printStackTrace();
          }
       } else {
-         throw new RuntimeException("Could not find " + callee.getModule() + " " + callee.getClazz() + " java file in " + module + " - maybe package missing?");
+         throw new RuntimeException("Could not find " + callee.getModule() + "(module) " + callee.getClazz() + " java file in " + module + " - maybe package missing?");
       }
    }
 
