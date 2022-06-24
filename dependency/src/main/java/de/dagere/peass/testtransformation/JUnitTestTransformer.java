@@ -96,7 +96,11 @@ public class JUnitTestTransformer implements TestTransformer {
       LOG.debug("Test transformer for {} created", projectFolder);
       this.projectFolder = projectFolder;
       this.config = config;
-      datacollectorlist = config.isUseGC() ? DataCollectorList.ONLYTIME : DataCollectorList.ONLYTIME_NOGC;
+      if (config.isDirectlyMeasureKieker()) {
+         datacollectorlist = DataCollectorList.NONE;
+      } else {
+         datacollectorlist = config.isUseGC() ? DataCollectorList.ONLYTIME : DataCollectorList.ONLYTIME_NOGC;
+      }
    }
 
    /**
@@ -115,7 +119,11 @@ public class JUnitTestTransformer implements TestTransformer {
       // is only executed once, the performance loss is ok.
       config.getExecutionConfig().setRedirectToNull(false);
       config.setShowStart(true);
-      datacollectorlist = DataCollectorList.ONLYTIME;
+      if (config.isDirectlyMeasureKieker()) {
+         datacollectorlist = DataCollectorList.NONE;
+      } else {
+         datacollectorlist = config.isUseGC() ? DataCollectorList.ONLYTIME : DataCollectorList.ONLYTIME_NOGC;
+      }
    }
 
    public Map<File, CompilationUnit> getLoadedFiles() {
