@@ -16,16 +16,17 @@ public class MeasurementConfigurationMixin {
 
    @Option(names = { "-iterations", "--iterations" }, description = "Number of iterations")
    int iterations = DEFAULT_ITERATIONS;
-   
+
    @Option(names = { "-warmup", "--warmup" }, description = "Number of warmup iterations")
    int warmup = DEFAULT_WARMUP;
-   
+
    @Option(names = { "-repetitions", "--repetitions" }, description = "Last version that should be analysed")
    int repetitions = DEFAULT_REPETITIONS;
-   
-   @Option(names = { "-processTimeout", "--processTimeout" }, description = "Timeout that the overall measurement process has - if one VM measurement takes so long that this timeout will be hit, the overall process is stopped (only recommended for calibration runs)")
+
+   @Option(names = { "-processTimeout",
+         "--processTimeout" }, description = "Timeout that the overall measurement process has - if one VM measurement takes so long that this timeout will be hit, the overall process is stopped (only recommended for calibration runs)")
    protected int processTimeout = DEFAULT_TIMEOUT;
-   
+
    @Option(names = { "-duration", "--duration" }, description = "Which duration to use - if duration is specified, warmup and iterations are ignored")
    int duration = 0;
 
@@ -50,6 +51,10 @@ public class MeasurementConfigurationMixin {
    @Option(names = { "-showStart",
          "--showStart" }, description = "Activates showing of start of each iteration (for debug purposes primarily)")
    protected boolean showStart = false;
+
+   @Option(names = { "-directlyMeasureKieker",
+         "--directlyMeasureKieker" }, description = "Activates measurement via Kieker instead KoPeMe (only useful it repetitions = 1 and a test runner contains huge warmup)")
+   protected boolean directlyMeasureKieker = false;
 
    public int getVms() {
       return vms;
@@ -142,4 +147,13 @@ public class MeasurementConfigurationMixin {
    public MeasurementStrategy getMeasurementStrategy() {
       return measurementStrategy;
    }
+
+   public void setDirectlyMeasureKieker(boolean directlyMeasureKieker) {
+      this.directlyMeasureKieker = directlyMeasureKieker;
+   }
+
+   public boolean isDirectlyMeasureKieker() {
+      return directlyMeasureKieker;
+   }
+
 }

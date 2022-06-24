@@ -6,11 +6,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import de.dagere.peass.config.parameters.ExecutionConfigMixin;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
 import de.dagere.peass.config.parameters.MeasurementConfigurationMixin;
 import de.dagere.peass.config.parameters.StatisticsConfigMixin;
+import de.dagere.peass.utils.Constants;
 
 public class MeasurementConfig implements Serializable {
 
@@ -25,6 +27,7 @@ public class MeasurementConfig implements Serializable {
    private int repetitions = 1;
    private boolean logFullData = true;
    private boolean useGC = false;
+   private boolean directlyMeasureKieker = false;
 
    private boolean callSyncBetweenVMs = true;
    private int waitTimeBetweenVMs = 1000;
@@ -52,7 +55,7 @@ public class MeasurementConfig implements Serializable {
       this.vms = vms;
       this.kiekerConfig = new KiekerConfig(kiekerConfig);
    }
-   
+
    public MeasurementConfig(final int vms, final String version, final String versionOld) {
       executionConfig = new ExecutionConfig(20);
       kiekerConfig = new KiekerConfig();
@@ -61,7 +64,7 @@ public class MeasurementConfig implements Serializable {
       executionConfig.setCommitOld(versionOld);
    }
 
-   public MeasurementConfig(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin, 
+   public MeasurementConfig(final MeasurementConfigurationMixin mixin, final ExecutionConfigMixin executionMixin,
          final StatisticsConfigMixin statisticMixin, final KiekerConfigMixin kiekerConfigMixin) {
       executionConfig = executionMixin.getExecutionConfig();
       kiekerConfig = kiekerConfigMixin.getKiekerConfig();
@@ -76,6 +79,7 @@ public class MeasurementConfig implements Serializable {
       setUseGC(mixin.isUseGC());
       setMeasurementStrategy(mixin.getMeasurementStrategy());
       setShowStart(mixin.isShowStart());
+      this.directlyMeasureKieker = mixin.isDirectlyMeasureKieker();
 
       saveAll = !mixin.isSaveNothing();
    }
@@ -88,7 +92,7 @@ public class MeasurementConfig implements Serializable {
       this.vms = vms;
       this.earlyStop = earlyStop;
    }
-   
+
    public MeasurementConfig(final int timeout, final int vms, final boolean earlyStop, final String version, final String versionOld) {
       executionConfig = new ExecutionConfig();
       executionConfig.setTimeout(timeout);
@@ -119,6 +123,7 @@ public class MeasurementConfig implements Serializable {
       this.measurementStrategy = other.measurementStrategy;
       this.saveAll = other.saveAll;
       this.waitTimeBetweenVMs = other.waitTimeBetweenVMs;
+      this.directlyMeasureKieker = other.directlyMeasureKieker;
    }
 
    public StatisticsConfig getStatisticsConfig() {
@@ -269,6 +274,15 @@ public class MeasurementConfig implements Serializable {
 
    public void setShowStart(final boolean showStart) {
       executionConfig.setShowStart(showStart);
+   }
+
+   @JsonInclude(JsonInclude.Include.NON_DEFAULT)
+   public boolean isDirectlyMeasureKieker() {
+      return directlyMeasureKieker;
+   }
+
+   public void setDirectlyMeasureKieker(boolean directlyMeasureKieker) {
+      this.directlyMeasureKieker = directlyMeasureKieker;
    }
 
    public ExecutionConfig getExecutionConfig() {
