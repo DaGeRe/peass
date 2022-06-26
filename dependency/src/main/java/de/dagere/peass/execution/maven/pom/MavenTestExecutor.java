@@ -84,17 +84,17 @@ public class MavenTestExecutor extends KoPeMeExecutor {
    }
 
    @Override
-   protected void clean(final File logFile) throws IOException, InterruptedException {
+   protected void clean(final File logFile) {
       new MavenCleaner(folders, env).clean(logFile);
    }
 
    @Override
-   public void prepareKoPeMeExecution(final File logFile) throws IOException, InterruptedException, XmlPullParserException {
+   public void prepareKoPeMeExecution(final File logFile) {
       updateJava();
 
       clean(logFile);
       LOG.debug("Starting Test Transformation");
-      prepareKiekerSource();
+      prepareKiekerSource(); 
       transformTests();
 
       PomPreparer pomPreparer = new PomPreparer(testTransformer, getModules(), folders);
@@ -102,21 +102,26 @@ public class MavenTestExecutor extends KoPeMeExecutor {
       lastEncoding = pomPreparer.getLastEncoding();
    }
 
-   private void updateJava() throws FileNotFoundException, IOException, XmlPullParserException {
-      new MavenUpdater(folders, getModules(), testTransformer.getConfig()).updateJava();
-      final File pomFile = new File(folders.getProjectFolder(), "pom.xml");
-      LOG.info("Remove snapshots: " + testTransformer.getConfig().getExecutionConfig().isRemoveSnapshots());
-      if (testTransformer.getConfig().getExecutionConfig().isRemoveSnapshots()) {
-         SnapshotRemoveUtil.cleanSnapshotDependencies(pomFile);
-      }
-      PomJavaUpdater.fixCompilerVersion(pomFile);
-      for (File module : getModules().getModules()) {
-         final File pomFileModule = new File(module, "pom.xml");
+   private void updateJava() {
+      try {
+         new MavenUpdater(folders, getModules(), testTransformer.getConfig()).updateJava();
+         final File pomFile = new File(folders.getProjectFolder(), "pom.xml");
+         LOG.info("Remove snapshots: " + testTransformer.getConfig().getExecutionConfig().isRemoveSnapshots());
          if (testTransformer.getConfig().getExecutionConfig().isRemoveSnapshots()) {
-            SnapshotRemoveUtil.cleanSnapshotDependencies(pomFileModule);
+            SnapshotRemoveUtil.cleanSnapshotDependencies(pomFile);
          }
-         PomJavaUpdater.fixCompilerVersion(pomFileModule);
+         PomJavaUpdater.fixCompilerVersion(pomFile);
+         for (File module : getModules().getModules()) {
+            final File pomFileModule = new File(module, "pom.xml");
+            if (testTransformer.getConfig().getExecutionConfig().isRemoveSnapshots()) {
+               SnapshotRemoveUtil.cleanSnapshotDependencies(pomFileModule);
+            }
+            PomJavaUpdater.fixCompilerVersion(pomFileModule);
+         }
+      } catch (IOException | XmlPullParserException e) {
+         e.printStackTrace();
       }
+      
    }
 
    @Override

@@ -13,12 +13,12 @@ import de.dagere.kopeme.datacollection.DataCollectorList;
 import de.dagere.peass.config.MeasurementConfig;
 
 public class TestMethodHelper {
-   
+
    private static final Logger LOG = LogManager.getLogger(TestMethodHelper.class);
-   
+
    private final MeasurementConfig config;
    private final DataCollectorList datacollectorlist;
-   
+
    public TestMethodHelper(final MeasurementConfig config, final DataCollectorList datacollectorlist) {
       this.config = config;
       this.datacollectorlist = datacollectorlist;
@@ -39,7 +39,7 @@ public class TestMethodHelper {
          method.setDefault(false);
       }
    }
-   
+
    public void addAnnotation(final MethodDeclaration method) {
       for (final AnnotationExpr annotation : method.getAnnotations()) {
          if (annotation.getNameAsString().contains("PerformanceTest")) {
@@ -59,13 +59,15 @@ public class TestMethodHelper {
       performanceTestAnnotation.addPair("repetitions", "" + config.getRepetitions());
       performanceTestAnnotation.addPair("redirectToNull", "" + config.getExecutionConfig().isRedirectToNull());
       performanceTestAnnotation.addPair("showStart", "" + config.isShowStart());
-      if  (config.getExecutionConfig().getKiekerWaitTime() != 10) {
+      if (config.getExecutionConfig().getKiekerWaitTime() != 10) {
          performanceTestAnnotation.addPair("kiekerWaitTime", "" + config.getExecutionConfig().getKiekerWaitTime());
       }
       if (datacollectorlist.equals(DataCollectorList.ONLYTIME)) {
          performanceTestAnnotation.addPair("dataCollectors", "\"ONLYTIME\"");
       } else if (datacollectorlist.equals(DataCollectorList.ONLYTIME_NOGC)) {
          performanceTestAnnotation.addPair("dataCollectors", "\"ONLYTIME_NOGC\"");
+      } else if (datacollectorlist.equals(DataCollectorList.NONE)) {
+         performanceTestAnnotation.addPair("dataCollectors", "\"NONE\"");
       }
       method.addAnnotation(performanceTestAnnotation);
    }

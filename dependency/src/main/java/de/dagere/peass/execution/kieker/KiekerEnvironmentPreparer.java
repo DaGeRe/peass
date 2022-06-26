@@ -44,22 +44,26 @@ public class KiekerEnvironmentPreparer {
       this.modules = modules;
    }
 
-   public void prepareKieker() throws IOException, InterruptedException {
+   public void prepareKieker() {
       final MeasurementConfig config = testTransformer.getConfig();
       KiekerConfig kiekerConfig = config.getKiekerConfig();
-      if (kiekerConfig.isUseSourceInstrumentation() && !kiekerConfig.isOnlyOneCallRecording()) {
-         instrumentSources(config);
-      } else {
-         if (kiekerConfig.isEnableAdaptiveMonitoring()) {
-            prepareAdaptiveExecution();
-         }
-         if (kiekerConfig.isOnlyOneCallRecording()) {
-            generateAOPXML("de.dagere.kopeme.kieker.probe.OneCallAspectFull");
-         } else if (AllowedKiekerRecord.DURATION.equals(kiekerConfig.getRecord())) {
-            generateAOPXML(AllowedKiekerRecord.DURATION.getFullName());
+      try {
+         if (kiekerConfig.isUseSourceInstrumentation() && !kiekerConfig.isOnlyOneCallRecording()) {
+            instrumentSources(config);
          } else {
-            generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION.getFullName());
+            if (kiekerConfig.isEnableAdaptiveMonitoring()) {
+               prepareAdaptiveExecution();
+            }
+            if (kiekerConfig.isOnlyOneCallRecording()) {
+               generateAOPXML("de.dagere.kopeme.kieker.probe.OneCallAspectFull");
+            } else if (AllowedKiekerRecord.DURATION.equals(kiekerConfig.getRecord())) {
+               generateAOPXML(AllowedKiekerRecord.DURATION.getFullName());
+            } else {
+               generateAOPXML(AllowedKiekerRecord.OPERATIONEXECUTION.getFullName());
+            }
          }
+      } catch (IOException | InterruptedException e) {
+         throw new RuntimeException(e);
       }
       generateKiekerMonitoringProperties();
    }
@@ -68,12 +72,12 @@ public class KiekerEnvironmentPreparer {
       final InstrumentKiekerSource instrumentKiekerSource;
       LOG.debug("Create default constructor: {}", config.getKiekerConfig().isCreateDefaultConstructor());
       final LinkedHashSet<String> excludedPatterns = config.getKiekerConfig().getExcludeForTracing();
-      
+
       buildJettyExclusion(excludedPatterns);
 
       instrumentKiekerSource = buildInstrumenter(config, excludedPatterns);
       instrumentModules(config, instrumentKiekerSource);
-      
+
       if (config.getKiekerConfig().isEnableAdaptiveMonitoring()) {
          writeConfig();
       }

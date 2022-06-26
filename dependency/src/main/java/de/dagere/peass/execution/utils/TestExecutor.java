@@ -97,7 +97,7 @@ public abstract class TestExecutor {
       return clazzLogFolder;
    }
 
-   protected void prepareKiekerSource() throws IOException, XmlPullParserException, InterruptedException {
+   protected void prepareKiekerSource() {
       if (testTransformer.getConfig().getKiekerConfig().isUseKieker()) {
          final KiekerEnvironmentPreparer kiekerEnvironmentPreparer = new KiekerEnvironmentPreparer(includedMethodPattern, existingClasses, folders, testTransformer,
                getModules().getModules());

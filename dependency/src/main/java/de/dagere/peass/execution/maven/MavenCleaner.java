@@ -12,23 +12,23 @@ import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
 
 public class MavenCleaner {
-   
+
    private static final Logger LOG = LogManager.getLogger(MavenCleaner.class);
-   
+
    private final PeassFolders folders;
    private final EnvironmentVariables env;
-   
+
    public MavenCleaner(final PeassFolders folders, final EnvironmentVariables env) {
       this.folders = folders;
       this.env = env;
    }
 
-   public void clean(final File logFile) throws IOException, InterruptedException {
+   public void clean(final File logFile) {
       checkProjectFolder();
       checkLogParent(logFile);
-      
+
       final ProcessBuilder pbClean = buildProcess(logFile);
-      
+
       cleanSafely(pbClean);
    }
 
@@ -63,17 +63,22 @@ public class MavenCleaner {
       }
    }
 
-   private void cleanSafely(final ProcessBuilder pbClean) throws IOException, InterruptedException {
+   private void cleanSafely(final ProcessBuilder pbClean) {
       boolean finished = false;
       int count = 0;
       while (!finished && count < 10) {
-         final Process processClean = pbClean.start();
-         finished = processClean.waitFor(60, TimeUnit.MINUTES);
-         if (!finished) {
-            LOG.info("Clean process " + processClean + " was not finished successfully; trying again to clean");
-            processClean.destroyForcibly();
+         try {
+            Process processClean = pbClean.start();
+            finished = processClean.waitFor(60, TimeUnit.MINUTES);
+            if (!finished) {
+               LOG.info("Clean process " + processClean + " was not finished successfully; trying again to clean");
+               processClean.destroyForcibly();
+            }
+            count++;
+         } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
          }
-         count++;
+
       }
    }
 }

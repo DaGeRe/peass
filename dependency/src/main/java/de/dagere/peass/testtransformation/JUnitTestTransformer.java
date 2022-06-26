@@ -475,6 +475,8 @@ public class JUnitTestTransformer implements TestTransformer {
                   addMethod(clazz, "getDataCollectors", "return DataCollectorList.ONLYTIME;", type);
                } else if (datacollectorlist.equals(DataCollectorList.ONLYTIME_NOGC)) {
                   addMethod(clazz, "getDataCollectors", "return DataCollectorList.ONLYTIME_NOGC;", type);
+               } else if (datacollectorlist.equals(DataCollectorList.NONE)) {
+                  addMethod(clazz, "getDataCollectors", "return DataCollectorList.NONE;", type);
                }
             }
          }
