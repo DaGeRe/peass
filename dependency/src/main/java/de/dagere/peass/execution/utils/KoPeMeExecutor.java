@@ -1,6 +1,7 @@
 package de.dagere.peass.execution.utils;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,6 +12,9 @@ import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.testtransformation.JUnitTestShortener;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import net.kieker.sourceinstrumentation.AllowedKiekerRecord;
+import net.kieker.sourceinstrumentation.InstrumentationConfiguration;
+import net.kieker.sourceinstrumentation.instrument.InstrumentKiekerSource;
 
 public abstract class KoPeMeExecutor extends TestExecutor {
 
@@ -44,6 +48,16 @@ public abstract class KoPeMeExecutor extends TestExecutor {
 
    protected void runMethod(final File logFolder, final TestCase test, final File moduleFolder, final long timeout) {
       try (final JUnitTestShortener shortener = new JUnitTestShortener(testTransformer, moduleFolder, test.toEntity(), test.getMethod())) {
+         if (testTransformer.getConfig().isDirectlyMeasureKieker()) {
+            File fileToInstrument = shortener.getCalleeClazzFile();
+            
+            HashSet<String> includedPatterns = new HashSet<>();
+            includedPatterns.add("* " + test.getClazz() + "." + test.getMethod() + "()");
+            InstrumentationConfiguration configuration = new InstrumentationConfiguration(AllowedKiekerRecord.DURATION, true, false, false, includedPatterns, null, false, testTransformer.getConfig().getRepetitions(), false);
+            InstrumentKiekerSource instrumenter = new InstrumentKiekerSource(configuration);
+            instrumenter.instrument(fileToInstrument);
+         }
+         
          LOG.info("Cleaning...");
          final File cleanFile = getCleanLogFile(logFolder, test);
          clean(cleanFile);

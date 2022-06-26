@@ -33,7 +33,6 @@ public class DirectKiekerExecutionIT {
       FileUtils.copyDirectory(DependencyTestConstants.BASIC_STATE, DependencyTestConstants.CURRENT);
    }
 
-   @Disabled
    @Test
    public void testDirectKiekerExecution() {
       MeasurementConfig config = new MeasurementConfig(2);

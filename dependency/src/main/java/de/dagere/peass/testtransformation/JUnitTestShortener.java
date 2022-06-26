@@ -43,12 +43,17 @@ public class JUnitTestShortener implements AutoCloseable {
 
    private final Map<File, File> lastShortenedMap = new HashMap<>();
    private final Set<File> superclasses = new HashSet<>();
+   
+   final File calleeClazzFile;
 
    public JUnitTestShortener(final JUnitTestTransformer transformer, final File module, final ChangedEntity callee, final String method) {
       this.transformer = transformer;
       this.module = module;
       this.callee = callee;
       this.method = method;
+      
+      ClazzFileFinder finder = new ClazzFileFinder(transformer.getConfig().getExecutionConfig());
+      calleeClazzFile = finder.getClazzFile(module, callee);
       shortenTest();
    }
 
@@ -56,8 +61,7 @@ public class JUnitTestShortener implements AutoCloseable {
       if (!lastShortenedMap.isEmpty()) {
          throw new RuntimeException("Only use TestShortener once!");
       }
-      ClazzFileFinder finder = new ClazzFileFinder(transformer.getConfig().getExecutionConfig());
-      final File calleeClazzFile = finder.getClazzFile(module, callee);
+      
       if (calleeClazzFile != null) {
          try {
 
@@ -77,6 +81,10 @@ public class JUnitTestShortener implements AutoCloseable {
       } else {
          throw new RuntimeException("Could not find " + callee.getModule() + "(module) " + callee.getClazz() + " java file in " + module + " - maybe package missing?");
       }
+   }
+   
+   public File getCalleeClazzFile() {
+      return calleeClazzFile;
    }
 
    private void shortenTestClazz(final ChangedEntity callee, final File calleeClazzFile) throws IOException {
