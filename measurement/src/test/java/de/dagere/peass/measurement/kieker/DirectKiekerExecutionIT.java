@@ -1,4 +1,4 @@
-package de.dagere.peass.dependency.execution.maven;
+package de.dagere.peass.measurement.kieker;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,8 +10,9 @@ import org.hamcrest.MatcherAssert;
 import org.hamcrest.collection.IsIterableWithSize;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 
 import de.dagere.kopeme.datastorage.JSONDataLoader;
 import de.dagere.kopeme.kopemedata.DatacollectorResult;
@@ -22,7 +23,11 @@ import de.dagere.peass.dependencytests.DependencyTestConstants;
 import de.dagere.peass.execution.maven.pom.MavenTestExecutor;
 import de.dagere.peass.execution.utils.EnvironmentVariables;
 import de.dagere.peass.folders.PeassFolders;
+import de.dagere.peass.measurement.dependencyprocessors.KiekerResultHandler;
+import de.dagere.peass.measurement.dependencyprocessors.OnceRunner;
+import de.dagere.peass.measurement.organize.ResultOrganizer;
 import de.dagere.peass.testtransformation.JUnitTestTransformer;
+import de.dagere.peass.vcs.GitUtils;
 
 public class DirectKiekerExecutionIT {
 
@@ -35,18 +40,22 @@ public class DirectKiekerExecutionIT {
 
    @Test
    public void testDirectKiekerExecution() {
+      
+      
       MeasurementConfig config = new MeasurementConfig(2);
       config.setDirectlyMeasureKieker(true);
       JUnitTestTransformer testTransformer = new JUnitTestTransformer(TestConstants.CURRENT_FOLDER, config);
       PeassFolders folders = new PeassFolders(DependencyTestConstants.CURRENT);
       MavenTestExecutor executor = new MavenTestExecutor(folders, testTransformer, new EnvironmentVariables());
 
-      testTransformer.determineVersions(Arrays.asList(new File[] { DependencyTestConstants.CURRENT }));
-      testTransformer.transformTests();
+      try (MockedStatic<GitUtils> gu = Mockito.mockStatic(GitUtils.class)){
+         OnceRunner runner = new OnceRunner(folders, executor, Mockito.mock(ResultOrganizer.class), Mockito.mock(KiekerResultHandler.class));
+         
+         testTransformer.determineVersions(Arrays.asList(new File[] { DependencyTestConstants.CURRENT }));
+         testTransformer.transformTests();
 
-      executor.prepareKoPeMeExecution(new File(folders.getMeasureLogFolder(), "prepare.txt"));
-      
-      executor.executeTest(new TestCase("defaultpackage.TestMe#testMe"), folders.getMeasureLogFolder(), 60);
+         runner.runOnce(new TestCase("defaultpackage.TestMe#testMe"), "123456", 0, folders.getMeasureLogFolder());
+      }
       
       File expectedResultFile = new File(folders.getTempMeasurementFolder(), "de.peran.example/example/defaultpackage.TestMe/testMe.json");
       Assert.assertTrue(expectedResultFile.exists());
