@@ -60,7 +60,7 @@ public abstract class TestExecutor {
       return jdk_version;
    }
 
-   public abstract void prepareKoPeMeExecution(File logFile) throws IOException, InterruptedException, XmlPullParserException;
+   public abstract void prepareKoPeMeExecution(File logFile);
 
    public abstract void executeTest(final TestCase test, final File logFolder, long timeout);
 
@@ -165,9 +165,9 @@ public abstract class TestExecutor {
    public void fetchClasses(final ModuleClassMapping mapping) {
       existingClasses = new LinkedList<>();
       existingClasses.addAll(mapping.getAllClasses());
-      
+
    }
-   
+
    public void loadClasses() {
       existingClasses = new LinkedList<>();
       for (final File module : getModules().getModules()) {

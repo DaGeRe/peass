@@ -50,7 +50,7 @@ class DirectSubclass extends TestExecutor{
    }
 
    @Override
-   public void prepareKoPeMeExecution(final File logFile) throws IOException, InterruptedException, XmlPullParserException {
+   public void prepareKoPeMeExecution(final File logFile) {
    }
 
    @Override

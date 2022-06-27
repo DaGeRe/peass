@@ -37,8 +37,7 @@ public class OnceRunner {
       this.resultHandler = resultHandler;
    }
 
-   public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
-         throws IOException, InterruptedException, XmlPullParserException {
+   public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder) {
       if (vcs.equals(VersionControlSystem.SVN)) {
          throw new RuntimeException("SVN not supported currently.");
       } else {
@@ -76,11 +75,15 @@ public class OnceRunner {
       return vmidFolder;
    }
 
-   void cleanup() throws InterruptedException {
+   void cleanup() {
       emptyFolder(folders.getTempDir());
       emptyFolder(folders.getKiekerTempFolder());
       System.gc();
-      Thread.sleep(1);
+      try {
+         Thread.sleep(1);
+      } catch (InterruptedException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    public ResultOrganizer getCurrentOrganizer() {

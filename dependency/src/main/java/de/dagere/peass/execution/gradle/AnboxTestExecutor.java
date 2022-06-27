@@ -24,20 +24,25 @@ public class AnboxTestExecutor extends GradleTestExecutor {
    }
 
    @Override
-   public void prepareKoPeMeExecution(final File logFile) throws IOException, XmlPullParserException, InterruptedException {
+   public void prepareKoPeMeExecution(final File logFile) {
       super.prepareKoPeMeExecution(logFile);
 
       compileSources();
    }
 
-   private void compileSources() throws IOException {
+   private void compileSources() {
       String wrapper = new File(folders.getProjectFolder(), env.fetchGradleCall()).getAbsolutePath();
 
       ProcessBuilder builder = new ProcessBuilder(wrapper, "installDebug", "installDebugAndroidTest");
       builder.directory(folders.getProjectFolder());
 
-      Process process = builder.start();
-      StreamGobbler.showFullProcess(process);
+      try {
+         Process process = builder.start();
+         StreamGobbler.showFullProcess(process);
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
+      
    }
 
    /**

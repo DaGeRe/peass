@@ -36,7 +36,7 @@ public class GradleTestExecutor extends KoPeMeExecutor {
    }
 
    @Override
-   public void prepareKoPeMeExecution(final File logFile) throws IOException, XmlPullParserException, InterruptedException {
+   public void prepareKoPeMeExecution(final File logFile) {
       LOG.debug("Starting Test Transformation");
       prepareKiekerSource();
       transformTests();

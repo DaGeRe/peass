@@ -20,7 +20,7 @@ public class DummyExecutor extends TestExecutor{
    }
 
    @Override
-   public void prepareKoPeMeExecution(final File logFile) throws IOException, InterruptedException, XmlPullParserException {
+   public void prepareKoPeMeExecution(final File logFile) {
       // TODO Auto-generated method stub
       
    }

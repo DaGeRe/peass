@@ -92,36 +92,39 @@ public class ResultOrganizer {
       return success;
    }
 
-   public void saveResultFiles(final String version, final int vmid)
-         throws IOException {
+   public void saveResultFiles(final String version, final int vmid) {
       // Saving and merging result files should not be executed in parallel, therefore, this needs to be synchronized over the class (not the instance)
       synchronized (ResultOrganizer.class) {
-         final File folder = getTempResultsFolder(version);
-         if (folder != null) {
-            final String methodname = testcase.getMethodWithParams();
-            final File oneResultFile = new File(folder, methodname + ".json");
-            if (!oneResultFile.exists()) {
-               LOG.debug("File {} does not exist.", oneResultFile.getAbsolutePath());
-               success = false;
-            } else {
-               LOG.debug("Reading: {}", oneResultFile);
-               final Kopemedata oneResultData = JSONDataLoader.loadData(oneResultFile);
-               final List<TestMethod> testcaseList = oneResultData.getMethods();
-               if (testcaseList.size() > 0) {
-                  saveResults(version, vmid, oneResultFile, oneResultData, testcaseList);
-
-                  if (isUseKieker) {
-                     File destFolder = folders.getFullResultFolder(testcase, mainVersion, version);
-                     saveKiekerFiles(folder, destFolder);
-                  }
-               } else {
-                  LOG.error("No data - measurement failed?");
+         try {
+            final File folder = getTempResultsFolder(version);
+            if (folder != null) {
+               final String methodname = testcase.getMethodWithParams();
+               final File oneResultFile = new File(folder, methodname + ".json");
+               if (!oneResultFile.exists()) {
+                  LOG.debug("File {} does not exist.", oneResultFile.getAbsolutePath());
                   success = false;
+               } else {
+                  LOG.debug("Reading: {}", oneResultFile);
+                  final Kopemedata oneResultData = JSONDataLoader.loadData(oneResultFile);
+                  final List<TestMethod> testcaseList = oneResultData.getMethods();
+                  if (testcaseList.size() > 0) {
+                     saveResults(version, vmid, oneResultFile, oneResultData, testcaseList);
+
+                     if (isUseKieker) {
+                        File destFolder = folders.getFullResultFolder(testcase, mainVersion, version);
+                        saveKiekerFiles(folder, destFolder);
+                     }
+                  } else {
+                     LOG.error("No data - measurement failed?");
+                     success = false;
+                  }
+               }
+               for (final File file : folder.listFiles()) {
+                  FileUtils.forceDelete(file);
                }
             }
-            for (final File file : folder.listFiles()) {
-               FileUtils.forceDelete(file);
-            }
+         } catch (IOException e) {
+            throw new RuntimeException(e);
          }
       }
    }

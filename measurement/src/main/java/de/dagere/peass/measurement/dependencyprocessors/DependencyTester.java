@@ -241,8 +241,7 @@ public class DependencyTester implements KiekerResultHandler {
       }
    }
 
-   public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder)
-         throws IOException, InterruptedException, XmlPullParserException {
+   public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder) {
       final TestExecutor testExecutor = getExecutor(folders, version);
       final OnceRunner runner = new OnceRunner(folders, testExecutor, getCurrentOrganizer(), this);
       runner.runOnce(testcase, version, vmid, logFolder);

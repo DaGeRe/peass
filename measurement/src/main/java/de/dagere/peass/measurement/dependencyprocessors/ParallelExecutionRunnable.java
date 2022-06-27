@@ -10,9 +10,8 @@ import de.dagere.peass.execution.utils.TestExecutor;
 import de.dagere.peass.folders.PeassFolders;
 import de.dagere.peass.measurement.organize.ResultOrganizerParallel;
 
-
 public class ParallelExecutionRunnable implements Runnable {
-   
+
    private ResultOrganizerParallel organizer;
    private final String version;
    private final TestCase testcase;
@@ -20,8 +19,9 @@ public class ParallelExecutionRunnable implements Runnable {
    private final File logFolder;
    private final DependencyTester tester;
    private final PeassFolders temporaryFolders;
-   
-   public ParallelExecutionRunnable(final ResultOrganizerParallel organizer, final String version, final TestCase testcase, final int vmid, final File logFolder, final DependencyTester tester) throws IOException, InterruptedException {
+
+   public ParallelExecutionRunnable(final ResultOrganizerParallel organizer, final String version, final TestCase testcase, final int vmid, final File logFolder,
+         final DependencyTester tester) throws IOException, InterruptedException {
       this.organizer = organizer;
       this.version = version;
       this.testcase = testcase;
@@ -33,13 +33,9 @@ public class ParallelExecutionRunnable implements Runnable {
 
    @Override
    public void run() {
-      try {
-         final TestExecutor testExecutor = tester.getExecutor(temporaryFolders, version);
-         final OnceRunner runner = new OnceRunner(temporaryFolders, testExecutor, organizer, tester);
-         runner.runOnce(testcase, version, vmid, logFolder);
-      } catch (IOException | InterruptedException  | XmlPullParserException e) {
-         e.printStackTrace();
-      }
+      final TestExecutor testExecutor = tester.getExecutor(temporaryFolders, version);
+      final OnceRunner runner = new OnceRunner(temporaryFolders, testExecutor, organizer, tester);
+      runner.runOnce(testcase, version, vmid, logFolder);
    }
 
    private PeassFolders cloneProjectFolder() throws IOException, InterruptedException {
