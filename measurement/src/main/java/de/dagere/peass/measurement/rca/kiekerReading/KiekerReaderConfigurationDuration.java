@@ -42,6 +42,23 @@ public class KiekerReaderConfigurationDuration extends KiekerReaderConfiguration
       this.connectPorts(operationExecutionRecordMatcher.getOutputPort(), executionRecordTransformationStage.getInputPort());
    }
    
+   protected DurationMeasurementStage readReducedDurationsToList(final File kiekerTraceFolder) {
+      List<File> inputDirs = new LinkedList<File>();
+      inputDirs.add(kiekerTraceFolder);
+      LogsReaderCompositeStage logReaderStage = new LogsReaderCompositeStage(inputDirs, true, 4096);
+
+      final DurationMeasurementStage executionRecordTransformationStage = new DurationMeasurementStage(systemModelRepositoryNew);
+
+      final DynamicEventDispatcher dispatcher = new DynamicEventDispatcher(null, false, true, false);
+      final IEventMatcher<? extends DurationRecord> operationExecutionRecordMatcher = new ImplementsEventMatcher<>(DurationRecord.class, null);
+      dispatcher.registerOutput(operationExecutionRecordMatcher);
+
+      this.connectPorts(logReaderStage.getOutputPort(), dispatcher.getInputPort());
+      this.connectPorts(operationExecutionRecordMatcher.getOutputPort(), executionRecordTransformationStage.getInputPort());
+      
+      return executionRecordTransformationStage;
+   }
+   
    public TreeStage readTree(final File kiekerTraceFolder, final TestCase test, final boolean ignoreEOIs, final MeasurementConfig config, final ModuleClassMapping mapping) {
       TreeStage treeStage = new TreeStage(systemModelRepositoryNew, test, ignoreEOIs, config, mapping);
       

@@ -40,6 +40,6 @@ public class TestKiekerDataTransformation {
       List<DatacollectorResult> collectors = data.getMethods().get(0).getDatacollectorResults();
       Assert.assertEquals(1, collectors.size());
       Assert.assertEquals(10, collectors.get(0).getResults().get(0).getFulldata().getValues().size());
-      
+      Assert.assertEquals(1656326191802823160L, collectors.get(0).getResults().get(0).getDate());
    }
 }

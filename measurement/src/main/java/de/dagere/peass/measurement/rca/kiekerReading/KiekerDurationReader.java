@@ -1,8 +1,10 @@
 package de.dagere.peass.measurement.rca.kiekerReading;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
+import de.dagere.kopeme.kopemedata.MeasuredValue;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.dependency.analysis.ModuleClassMapping;
 import de.dagere.peass.dependency.analysis.data.TestCase;
@@ -26,6 +28,16 @@ public class KiekerDurationReader {
       
       Execution execution = new Execution(configuration);
       execution.executeBlocking();
+   }
+   
+   public static List<MeasuredValue> executeReducedDurationStage(final File kiekerTraceFolder) {
+      KiekerReaderConfigurationDuration configuration = new KiekerReaderConfigurationDuration();
+      DurationMeasurementStage stage = configuration.readReducedDurationsToList(kiekerTraceFolder);
+      
+      Execution execution = new Execution(configuration);
+      execution.executeBlocking();
+      
+      return stage.getValues();
    }
    
    public static TreeStage executeTreeStage(final File kiekerTraceFolder, final TestCase test, 
