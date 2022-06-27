@@ -40,8 +40,6 @@ public class DirectKiekerExecutionIT {
 
    @Test
    public void testDirectKiekerExecution() {
-      
-      
       MeasurementConfig config = new MeasurementConfig(2);
       config.setIterations(10);
       config.setDirectlyMeasureKieker(true);
@@ -49,6 +47,23 @@ public class DirectKiekerExecutionIT {
       PeassFolders folders = new PeassFolders(DependencyTestConstants.CURRENT);
       MavenTestExecutor executor = new MavenTestExecutor(folders, testTransformer, new EnvironmentVariables());
 
+      runOnce(testTransformer, folders, executor);
+      
+      File expectedResultFile = new File(folders.getTempMeasurementFolder(), "de.peran.example/example/defaultpackage.TestMe/testMe.json");
+      Assert.assertTrue(expectedResultFile.exists());
+      
+      JSONDataLoader loader = new JSONDataLoader(expectedResultFile);
+      List<DatacollectorResult> collectors = loader.getFullData().getMethods().get(0).getDatacollectorResults();
+      MatcherAssert.assertThat(collectors, IsIterableWithSize.iterableWithSize(1));
+      
+      runOnce(testTransformer, folders, executor);
+      
+      JSONDataLoader loaderSecondRun = new JSONDataLoader(expectedResultFile);
+      List<DatacollectorResult> collectorsSecondRun = loaderSecondRun.getFullData().getMethods().get(0).getDatacollectorResults();
+      MatcherAssert.assertThat(collectorsSecondRun, IsIterableWithSize.iterableWithSize(2));
+   }
+
+   private void runOnce(JUnitTestTransformer testTransformer, PeassFolders folders, MavenTestExecutor executor) {
       try (MockedStatic<GitUtils> gu = Mockito.mockStatic(GitUtils.class)){
          OnceRunner runner = new OnceRunner(folders, executor, Mockito.mock(ResultOrganizer.class), Mockito.mock(KiekerResultHandler.class));
          
@@ -57,12 +72,5 @@ public class DirectKiekerExecutionIT {
 
          runner.runOnce(new TestCase("defaultpackage.TestMe#testMe"), "123456", 0, folders.getMeasureLogFolder());
       }
-      
-      File expectedResultFile = new File(folders.getTempMeasurementFolder(), "de.peran.example/example/defaultpackage.TestMe/testMe.json");
-      Assert.assertTrue(expectedResultFile.exists());
-      
-      JSONDataLoader loader = new JSONDataLoader(expectedResultFile);
-      List<DatacollectorResult> collectors = loader.getFullData().getMethods().get(0).getDatacollectorResults();
-      MatcherAssert.assertThat(collectors, IsIterableWithSize.iterableWithSize(1));
    }
 }

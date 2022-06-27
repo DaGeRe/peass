@@ -126,6 +126,9 @@ public class SearchCauseStarter extends MeasureStarter {
       if (measurementConfiguration.getKiekerConfig().isOnlyOneCallRecording()) {
          throw new RuntimeException("isOnlyOneCallRecording is not allowed to be set to true for RCA!");
       }
+      if (measurementConfiguration.isDirectlyMeasureKieker()) {
+         throw new RuntimeException("directlyMeasureKieker is not allowed to be set to true for RCA!");
+      }
       
       EnvironmentVariables env = reader.getEnv();
       final CauseSearcher tester;

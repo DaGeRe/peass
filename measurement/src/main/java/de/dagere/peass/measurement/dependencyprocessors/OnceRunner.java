@@ -35,6 +35,12 @@ public class OnceRunner {
       this.testExecutor = testExecutor;
       this.currentOrganizer = currentOrganizer;
       this.resultHandler = resultHandler;
+      
+      try {
+         FileUtils.cleanDirectory(folders.getTempDir());
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    public void runOnce(final TestCase testcase, final String version, final int vmid, final File logFolder) {
