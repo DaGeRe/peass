@@ -1,0 +1,89 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] ----------------------< de.peran.example:example >----------------------
+[INFO] Building peran-example 0.0.1-SNAPSHOT
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] Downloading from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repositories/snapshots/de/dagere/kopeme/kopeme-core/1.1.9-SNAPSHOT/maven-metadata.xml
+[INFO] Downloaded from sonatype-nexus-snapshots: https://oss.sonatype.org/content/repositories/snapshots/de/dagere/kopeme/kopeme-core/1.1.9-SNAPSHOT/maven-metadata.xml (1.4 kB at 1.6 kB/s)
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ example ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/target/current/src/main/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.10.1:compile (default-compile) @ example ---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 2 source files to /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/target/current/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ example ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/target/current/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.10.1:testCompile (default-testCompile) @ example ---
+[INFO] Changes detected - recompiling the module!
+[WARNING] File encoding has not been set, using platform encoding UTF-8, i.e. build is platform dependent!
+[INFO] Compiling 1 source file to /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/target/current/target/test-classes
+[INFO] 
+[INFO] --- maven-surefire-plugin:3.0.0-M5:test (default-test) @ example ---
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+[INFO] Running defaultpackage.TestMe
+10:05:52.386 [main] DEBUG kieker.monitoring.core.configuration.ConfigurationFactory:59 - Searching for JVM argument 'kieker.monitoring.configuration' ...
+10:05:52.393 [main] INFO  kieker.monitoring.core.configuration.ConfigurationFactory:72 - Loading properties from properties file in classpath: 'META-INF/kieker.monitoring.properties'
+10:05:52.408 [main] INFO  kieker.monitoring.core.controller.TCPController:79 - Could not parse port for the TCPController, deactivating this option. Received string was: 
+Jun 27, 2022 10:05:52 AM de.dagere.kopeme.kieker.writer.ChangeableFolderWriter <init>
+INFORMATION: Init..
+Jun 27, 2022 10:05:52 AM de.dagere.kopeme.kieker.writer.ChangeableFolderWriter <init>
+INFORMATION: Writer: class kieker.monitoring.writer.filesystem.FileWriter
+10:05:52.447 [main] DEBUG kieker.monitoring.core.controller.WriterController:258 - Initializing Writer Controller
+10:05:52.448 [main] INFO  kieker.monitoring.core.controller.StateController:128 - Enabling monitoring
+10:05:52.448 [Thread-2] DEBUG kieker.monitoring.writer.MonitoringWriterThread:58 - kieker.monitoring.writer.MonitoringWriterThread is running.
+Jun 27, 2022 10:05:52 AM de.dagere.kopeme.kieker.writer.ChangeableFolderWriter onStarting
+INFORMATION: Initializing class de.dagere.kopeme.kieker.writer.ChangeableFolderWriter
+10:05:52.452 [main] INFO  kieker.monitoring.core.controller.MonitoringController:172 - Current State of kieker.monitoring (1.15.1) Status: 'enabled'
+	Name: 'KIEKER-KoPeMe'; Hostname: 'reichelt-desktop'; experimentID: '1'
+JMXController: JMX disabled
+TimeSource: 'kieker.monitoring.timer.SystemNanoTimer'
+	Time in nanoseconds (with nanoseconds precision) since Thu Jan 01 01:00:00 CET 1970'
+ProbeController: disabled
+WriterController:
+	Queue type: class java.util.concurrent.LinkedBlockingQueue
+	Queue capacity: 10000
+	Insert behavior (a.k.a. QueueFullBehavior): class kieker.monitoring.queue.behavior.BlockOnFailedInsertBehavior
+		numBlocked: 0
+Writer: 'de.dagere.kopeme.kieker.writer.ChangeableFolderWriter'
+	Configuration:
+		de.dagere.kopeme.kieker.writer.ChangeableFolderWriter.realwriter='FileWriter'
+		de.dagere.kopeme.kieker.writer.ChangeableFolderWriter.bufferSize='8192'
+		de.dagere.kopeme.kieker.writer.ChangeableFolderWriter.maxLogSize='-1'
+		de.dagere.kopeme.kieker.writer.ChangeableFolderWriter.QueueSize='1000000'
+		de.dagere.kopeme.kieker.writer.ChangeableFolderWriter.PrioritizedQueueSize='1000000'
+		de.dagere.kopeme.kieker.writer.ChangeableFolderWriter.customStoragePath=''
+		de.dagere.kopeme.kieker.writer.ChangeableFolderWriter.flush='true'
+		de.dagere.kopeme.kieker.writer.ChangeableFolderWriter.maxLogFiles='-1'
+		de.dagere.kopeme.kieker.writer.ChangeableFolderWriter.maxEntriesInFile='500000'
+
+	Automatic assignment of logging timestamps: 'true'
+Sampling Controller: Periodic Sensor available: Poolsize: '0'; Scheduled Tasks: '0'
+10:05:52.458 [main] DEBUG de.dagere.kopeme.runnables.TestRunnables:27 - Klasse: class defaultpackage.TestMe
+10:05:52.466 [main] DEBUG de.dagere.kopeme.parsing.BuildtoolProjectNameReader:52 - Directory: /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/target/current/.
+10:05:52.488 [main] DEBUG de.dagere.kopeme.TimeBoundExecution:100 - Waiting: 1200000
+10:05:52.555 [timebound-0] DEBUG de.dagere.kopeme.junit.rule.KoPeMeBasicStatement4:128 - Executing 1 execution 
+10:05:52.605 [timebound-0] DEBUG de.dagere.kopeme.junit.rule.KoPeMeBasicStatement4:155 - Executions: 1
+10:05:52.605 [timebound-0] INFO  de.dagere.kopeme.datacollection.tempfile.ResultTempWriterBin:79 - Flushing to /home/reichelt/nvme/workspaces/dissworkspace/release/peass/dependency/target/current_peass/temp/kopeme-5969685637918032589.bin finished
+10:05:52.820 [main] DEBUG de.dagere.kopeme.TimeBoundExecution:107 - KoPeMe-Test METHOD. Kieker: false Threads: 0
+10:05:52.821 [main] INFO  de.dagere.kopeme.junit.rule.KoPeMeRuleStatement4:88 - Test defaultpackage.TestMe beendet
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.851 s - in defaultpackage.TestMe
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.817 s
+[INFO] Finished at: 2022-06-27T10:05:52+02:00
+[INFO] ------------------------------------------------------------------------

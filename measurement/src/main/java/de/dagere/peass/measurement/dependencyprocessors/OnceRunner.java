@@ -16,7 +16,6 @@ import de.dagere.peass.testtransformation.TestTransformer;
 import de.dagere.peass.vcs.GitUtils;
 import de.dagere.peass.vcs.VersionControlSystem;
 
-
 public class OnceRunner {
 
    private static final Logger LOG = LogManager.getLogger(OnceRunner.class);
@@ -55,6 +54,11 @@ public class OnceRunner {
       final long outerTimeout = 10 + (int) (this.testTransformer.getConfig().getTimeoutInSeconds() * 1.2);
       testExecutor.executeTest(testcase, vmidFolder, outerTimeout);
 
+      if (testTransformer.getConfig().isDirectlyMeasureKieker()) {
+         DirectKiekerMeasurementTransformer measurementTransformer = new DirectKiekerMeasurementTransformer(folders);
+         measurementTransformer.transform(testcase);
+      }
+
       LOG.debug("Handling Kieker results");
       resultHandler.handleKiekerResults(version, currentOrganizer.getTempResultsFolder(version));
 
@@ -78,7 +82,7 @@ public class OnceRunner {
       System.gc();
       Thread.sleep(1);
    }
-   
+
    public ResultOrganizer getCurrentOrganizer() {
       return currentOrganizer;
    }
