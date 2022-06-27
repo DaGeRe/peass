@@ -107,18 +107,26 @@ public abstract class TestExecutor {
 
    private final List<String> aborted = new LinkedList<>();
 
-   protected void execute(final String testname, final long timeoutInSeconds, final Process process) throws InterruptedException, IOException {
+   protected void execute(final String testname, final long timeoutInSeconds, final Process process) {
       if (timeoutInSeconds == -1) {
          LOG.info("Executing without timeout!");
-         process.waitFor();
+         try {
+            process.waitFor();
+         } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+         }
       } else if (timeoutInSeconds > 0) {
-         LOG.debug("Executing: {} Timeout: {}", testname, timeoutInSeconds);
-         process.waitFor(timeoutInSeconds, TimeUnit.SECONDS);
-         if (process.isAlive()) {
-            LOG.debug("Killing: {}", testname);
-            process.destroyForcibly().waitFor();
-            aborted.add(testname);
-            FileUtils.writeStringToFile(new File(folders.getFullMeasurementFolder(), "aborted.txt"), aborted.toString(), Charset.defaultCharset());
+         try {
+            LOG.debug("Executing: {} Timeout: {}", testname, timeoutInSeconds);
+            process.waitFor(timeoutInSeconds, TimeUnit.SECONDS);
+            if (process.isAlive()) {
+               LOG.debug("Killing: {}", testname);
+               process.destroyForcibly().waitFor();
+               aborted.add(testname);
+               FileUtils.writeStringToFile(new File(folders.getFullMeasurementFolder(), "aborted.txt"), aborted.toString(), Charset.defaultCharset());
+            }
+         } catch (InterruptedException | IOException e) {
+            throw new RuntimeException(e);
          }
       } else {
          throw new RuntimeException("Illegal timeout: " + timeoutInSeconds);

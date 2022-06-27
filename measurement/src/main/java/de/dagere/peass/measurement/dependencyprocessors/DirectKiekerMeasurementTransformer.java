@@ -77,6 +77,7 @@ public class DirectKiekerMeasurementTransformer {
       MeasurementConfig config = new MeasurementConfig(0);
       config.getExecutionConfig().setCommit("dummy");
       config.getExecutionConfig().setCommitOld("neverfound");
+      config.getKiekerConfig().setUseAggregation(false);
       
       if (test.getParams() != null) {
          throw new RuntimeException("Params and directlyMeasureKieker are currently not combinable!");

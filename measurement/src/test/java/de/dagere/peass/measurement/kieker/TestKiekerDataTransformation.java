@@ -39,7 +39,7 @@ public class TestKiekerDataTransformation {
       Kopemedata data = JSONDataLoader.loadData(tempFile);
       List<DatacollectorResult> collectors = data.getMethods().get(0).getDatacollectorResults();
       Assert.assertEquals(1, collectors.size());
-      Assert.assertEquals(1, collectors.get(0).getResults().get(0).getFulldata().getValues().size());
+      Assert.assertEquals(10, collectors.get(0).getResults().get(0).getFulldata().getValues().size());
       
    }
 }

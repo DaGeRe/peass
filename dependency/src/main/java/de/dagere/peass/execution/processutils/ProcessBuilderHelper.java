@@ -29,7 +29,7 @@ public class ProcessBuilderHelper {
       this.folders = folders;
    }
 
-   public Process buildFolderProcess(final File currentFolder, final File logFile, final String[] vars) throws IOException {
+   public Process buildFolderProcess(final File currentFolder, final File logFile, final String[] vars) {
       String[] envPropertyArray = env.getProperties().length() > 0 ? env.getProperties().split(" ") : new String[0];
       final String[] varsWithProperties = CommandConcatenator.concatenateCommandArrays(vars, envPropertyArray);
       LOG.debug("Command: {}", Arrays.toString(varsWithProperties));
@@ -47,9 +47,13 @@ public class ProcessBuilderHelper {
          pb.redirectError(Redirect.appendTo(logFile));
       }
 
-      final Process process = pb.start();
-      printPIDInfo(logFile);
-      return process;
+      try {
+         Process process = pb.start();
+         printPIDInfo(logFile);
+         return process;
+      } catch (IOException e) {
+         throw new RuntimeException(e);
+      }
    }
 
    private void overwriteEnvVars(final ProcessBuilder pb) {

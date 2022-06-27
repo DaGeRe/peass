@@ -3,8 +3,6 @@ package de.dagere.peass.dependency.jmh;
 import java.io.File;
 import java.io.IOException;
 
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
 import de.dagere.peass.config.MeasurementStrategy;
 import de.dagere.peass.dependency.analysis.data.TestCase;
 import de.dagere.peass.execution.kieker.ArgLineBuilder;
@@ -37,7 +35,7 @@ public class JmhTestExecutor extends TestExecutor {
    }
 
    @Override
-   public void prepareKoPeMeExecution(final File logFile) throws IOException, InterruptedException, XmlPullParserException {
+   public void prepareKoPeMeExecution(final File logFile) {
 
       prepareKiekerSource();
       new PomPreparer(testTransformer, getModules(), folders).preparePom();
@@ -59,21 +57,16 @@ public class JmhTestExecutor extends TestExecutor {
    public void executeTest(final TestCase test, final File logFolder, final long timeoutInSeconds) {
       checkConfiguration(timeoutInSeconds);
 
-      try {
-         File jsonResultFile = new File(folders.getTempMeasurementFolder(), test.getMethod() + ".json");
-         String[] mergedParameters = buildParameterString(test, jsonResultFile);
+      File jsonResultFile = new File(folders.getTempMeasurementFolder(), test.getMethod() + ".json");
+      String[] mergedParameters = buildParameterString(test, jsonResultFile);
 
-         ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
-         File logFile = getMethodLogFile(logFolder, test);
-         Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, mergedParameters);
+      ProcessBuilderHelper builder = new ProcessBuilderHelper(env, folders);
+      File logFile = getMethodLogFile(logFolder, test);
+      Process process = builder.buildFolderProcess(folders.getProjectFolder(), logFile, mergedParameters);
 
-         execute(test.getExecutable(), transformer.getConfig().getTimeoutInSeconds(), process);
+      execute(test.getExecutable(), transformer.getConfig().getTimeoutInSeconds(), process);
 
-         new JmhResultMover(folders, transformer.getConfig()).moveToMethodFolder(test, jsonResultFile);
-
-      } catch (InterruptedException | IOException e) {
-         throw new RuntimeException(e);
-      }
+      new JmhResultMover(folders, transformer.getConfig()).moveToMethodFolder(test, jsonResultFile);
    }
 
    private void checkConfiguration(final long timeoutInSeconds) {
@@ -146,7 +139,7 @@ public class JmhTestExecutor extends TestExecutor {
       basicParameters = CommandConcatenator.concatenateCommandArrays(new String[] { "java" }, splittedArgs);
       return basicParameters;
    }
-   
+
    @Override
    public boolean doesBuildfileExist() {
       File pomFile = new File(folders.getProjectFolder(), "pom.xml");

@@ -43,6 +43,7 @@ public class DirectKiekerExecutionIT {
       
       
       MeasurementConfig config = new MeasurementConfig(2);
+      config.setIterations(10);
       config.setDirectlyMeasureKieker(true);
       JUnitTestTransformer testTransformer = new JUnitTestTransformer(TestConstants.CURRENT_FOLDER, config);
       PeassFolders folders = new PeassFolders(DependencyTestConstants.CURRENT);
