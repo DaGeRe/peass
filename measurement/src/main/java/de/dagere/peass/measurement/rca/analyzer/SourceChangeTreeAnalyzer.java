@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import de.dagere.peass.analysis.properties.ChangedMethodManager;
-import de.dagere.peass.analysis.properties.MethodChangeReader;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
 
@@ -20,23 +19,19 @@ public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
 
    private final List<CallTreeNode> includedNodes = new LinkedList<>();
    private final MeasurementConfig config;
-
-   public SourceChangeTreeAnalyzer(final CallTreeNode root, final CallTreeNode rootPredecessor, final File sourceFolder, final MeasurementConfig config) {
+   
+   public SourceChangeTreeAnalyzer(final CallTreeNode root, final CallTreeNode rootPredecessor, final ChangedMethodManager manager, final MeasurementConfig config) {
       // Only nodes with equal structure may have equal source
-      List<CallTreeNode> includableNodes = new StructureChangeTreeAnalyzer(root, rootPredecessor).getMeasurementNodesPredecessor();
+      StructureChangeTreeAnalyzer structureChangeTreeAnalyzer = new StructureChangeTreeAnalyzer(root, rootPredecessor);
+      List<CallTreeNode> includableNodes = structureChangeTreeAnalyzer.getMeasurementNodesPredecessor();
       this.config = config;
-      if (sourceFolder == null || !sourceFolder.isDirectory()) {
-         throw new RuntimeException("Source folder " + sourceFolder + " not found - source change analysis not possible!");
-      }
-
-      Set<CallTreeNode> includeNodes = calculateIncludedNodes(sourceFolder, includableNodes);
+      
+      Set<CallTreeNode> includeNodes = calculateIncludedNodes(manager, includableNodes);
       includedNodes.addAll(includeNodes);
+      includedNodes.addAll(structureChangeTreeAnalyzer.getUnequalStructureNodesPredecessor());
    }
 
-   private Set<CallTreeNode> calculateIncludedNodes(final File sourceFolder, final List<CallTreeNode> includableNodes) {
-      File methodSourceFolder = new File(sourceFolder, "methods");
-      ChangedMethodManager manager = new ChangedMethodManager(methodSourceFolder);
-      
+   private Set<CallTreeNode> calculateIncludedNodes(final ChangedMethodManager manager, final List<CallTreeNode> includableNodes) {
       final Set<CallTreeNode> includeNodes = new HashSet<>();
       for (CallTreeNode node : includableNodes) {
          File mainSourceFile = manager.getMethodMainFile(config.getExecutionConfig().getCommit(), node.toEntity());

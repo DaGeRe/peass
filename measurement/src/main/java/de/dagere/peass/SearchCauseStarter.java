@@ -1,10 +1,12 @@
 package de.dagere.peass;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.analysis.properties.ChangedMethodManager;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.config.WorkloadType;
 import de.dagere.peass.config.parameters.KiekerConfigMixin;
@@ -149,7 +151,10 @@ public class SearchCauseStarter extends MeasureStarter {
 
                @Override
                public TreeAnalyzer getAnalyzer(final BothTreeReader reader, final CauseSearcherConfig config) {
-                  return new SourceChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor(), config.getPropertyFolder(), measurementConfiguration);
+                  File propertyFolder = config.getPropertyFolder();
+                  File methodSourceFolder = new File(propertyFolder, "methods");
+                  ChangedMethodManager manager = new ChangedMethodManager(methodSourceFolder);
+                  return new SourceChangeTreeAnalyzer(reader.getRootVersion(), reader.getRootPredecessor(), manager, measurementConfiguration);
                }
             };
             tester = new CauseSearcherComplete(reader, causeSearcherConfig, measurer, measurementConfiguration, alternateFolders, creatorSource, env);

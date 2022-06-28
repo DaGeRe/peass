@@ -15,6 +15,7 @@ import de.dagere.peass.measurement.rca.treeanalysis.TreeUtil;
 public class StructureChangeTreeAnalyzer implements TreeAnalyzer {
 
    private final List<CallTreeNode> equalStructureNodes = new LinkedList<>();
+   private final List<CallTreeNode> unequalStructureNodesPredecessor = new LinkedList<>();
 
    public StructureChangeTreeAnalyzer(final CallTreeNode root, final CallTreeNode rootPredecessor) {
       root.setOtherVersionNode(rootPredecessor);
@@ -36,6 +37,8 @@ public class StructureChangeTreeAnalyzer implements TreeAnalyzer {
          if (currentChild.getKiekerPattern().equals(childPredecessor.getKiekerPattern())) {
             equalStructureNodes.add(childPredecessor);
             mapAllNodes(currentChild, childPredecessor);
+         }else {
+            unequalStructureNodesPredecessor.add(childPredecessor);
          }
       }
    }
@@ -43,5 +46,9 @@ public class StructureChangeTreeAnalyzer implements TreeAnalyzer {
    @Override
    public List<CallTreeNode> getMeasurementNodesPredecessor() {
       return equalStructureNodes;
+   }
+   
+   public List<CallTreeNode> getUnequalStructureNodesPredecessor() {
+      return unequalStructureNodesPredecessor;
    }
 }
