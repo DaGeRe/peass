@@ -11,6 +11,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.analysis.properties.ChangedMethodManager;
 import de.dagere.peass.analysis.properties.MethodChangeReader;
 import de.dagere.peass.ci.ContinuousDependencyReader;
 import de.dagere.peass.dependency.analysis.data.ChangedEntity;
@@ -24,7 +25,7 @@ public class SourceWriter {
    
    private final GraphNode root;
    private final BufferedWriter fileWriter;
-   private File methodSourceFolder;
+   private final ChangedMethodManager manager;
    private final Map<String, String> nameSourceCurrent = new HashMap<>();
    private final Map<String, String> nameSourceOld = new HashMap<>();
    private final String version;
@@ -32,7 +33,7 @@ public class SourceWriter {
    public SourceWriter(final GraphNode root, final BufferedWriter fileWriter, final File methodSourceFolder, final String version) {
       this.root = root;
       this.fileWriter = fileWriter;
-      this.methodSourceFolder = methodSourceFolder;
+      this.manager = new ChangedMethodManager(methodSourceFolder);
       this.version = version;
    }
 
@@ -75,8 +76,8 @@ public class SourceWriter {
 
       final String key = KiekerPatternConverter.getKey(currentPattern);
 
-      final File currentSourceFile = MethodChangeReader.getMethodMainFile(methodSourceFolder, version, methodEntity);
-      final File oldSourceFile = MethodChangeReader.getMethodOldFile(methodSourceFolder, version, methodEntity);
+      final File currentSourceFile = manager.getMethodMainFile(version, methodEntity);
+      final File oldSourceFile = manager.getMethodOldFile(version, methodEntity);
       if (currentSourceFile.exists() && oldSourceFile.exists()) {
          node.setHasSourceChange(true);
          final String sourceCurrent = FileUtils.readFileToString(currentSourceFile, Charset.defaultCharset());
@@ -84,7 +85,7 @@ public class SourceWriter {
          final String sourceOld = FileUtils.readFileToString(oldSourceFile, Charset.defaultCharset());
          nameSourceOld.put(key, sourceOld);
       } else {
-         final File diffSourceFile = MethodChangeReader.getMethodDiffFile(methodSourceFolder, version, methodEntity);
+         final File diffSourceFile = manager.getMethodDiffFile(version, methodEntity);
          if (diffSourceFile.exists()) {
             final String source = FileUtils.readFileToString(diffSourceFile, Charset.defaultCharset());
             nameSourceCurrent.put(key, source);

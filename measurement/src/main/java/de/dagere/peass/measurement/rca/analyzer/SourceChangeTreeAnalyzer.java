@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.dagere.peass.analysis.properties.ChangedMethodManager;
 import de.dagere.peass.analysis.properties.MethodChangeReader;
 import de.dagere.peass.config.MeasurementConfig;
 import de.dagere.peass.measurement.rca.data.CallTreeNode;
@@ -34,14 +35,16 @@ public class SourceChangeTreeAnalyzer implements TreeAnalyzer {
 
    private Set<CallTreeNode> calculateIncludedNodes(final File sourceFolder, final List<CallTreeNode> includableNodes) {
       File methodSourceFolder = new File(sourceFolder, "methods");
+      ChangedMethodManager manager = new ChangedMethodManager(methodSourceFolder);
+      
       final Set<CallTreeNode> includeNodes = new HashSet<>();
       for (CallTreeNode node : includableNodes) {
-         File mainSourceFile = MethodChangeReader.getMethodMainFile(methodSourceFolder, config.getExecutionConfig().getCommit(), node.toEntity());
-         File oldSourceFile = MethodChangeReader.getMethodOldFile(methodSourceFolder, config.getExecutionConfig().getCommit(), node.toEntity());
+         File mainSourceFile = manager.getMethodMainFile(config.getExecutionConfig().getCommit(), node.toEntity());
+         File oldSourceFile = manager.getMethodOldFile(config.getExecutionConfig().getCommit(), node.toEntity());
          if (!mainSourceFile.exists() && !oldSourceFile.exists()) {
-            File diffSourceFile = MethodChangeReader.getMethodDiffFile(methodSourceFolder, config.getExecutionConfig().getCommit(), node.toEntity());
+            File diffSourceFile = manager.getMethodDiffFile(config.getExecutionConfig().getCommit(), node.toEntity());
             if (diffSourceFile.exists()) {
-               LOG.trace("Node {} has no change", node);
+               LOG.debug("Node {} has no change", node);
             } else {
                LOG.error("Error - file {} did not exist", diffSourceFile);
             }

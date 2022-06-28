@@ -43,4 +43,9 @@ public class TestSourceChangeTreeAnalyzer {
       MatcherAssert.assertThat(instrumentedCalls, Matchers.not(IsIterableContaining.hasItem("de.peass.AddRandomNumbers#addSomething")));
       MatcherAssert.assertThat(instrumentedCalls, Matchers.not(IsIterableContaining.hasItem("de.peass.C1_0#method1")));
    }
+   
+   @Test
+   public void testNodeSelectionOnlyStructureChange() {
+      
+   }
 }

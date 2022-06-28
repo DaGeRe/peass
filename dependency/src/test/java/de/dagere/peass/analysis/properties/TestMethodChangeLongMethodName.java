@@ -17,10 +17,10 @@ import de.dagere.peass.dependency.analysis.data.ChangedEntity;
 public class TestMethodChangeLongMethodName {
 
    public static final File methodSourceFolder = new File("target" + File.separator + "current_sources");
-   public static final String VERSION = "000001";
+   public static final String COMMIT = "000001";
    public static final ExecutionConfig TEST_CONFIG = new ExecutionConfig();
    static {
-      TEST_CONFIG.setCommit(VERSION);
+      TEST_CONFIG.setCommit(COMMIT);
    }
 
    public void method(final int a) {
@@ -67,7 +67,7 @@ public class TestMethodChangeLongMethodName {
       ChangedEntity smallMethodEntity = new ChangedEntity("de.dagere.peass.analysis.properties.TestMethodChangeLongMethodName", "", "method");
       smallMethodEntity.createParameters("int");
       MethodChangeReader reader2 = new MethodChangeReader(methodSourceFolder, sourceFolder,
-            new File("."), smallMethodEntity, VERSION, TEST_CONFIG);
+            new File("."), smallMethodEntity, COMMIT, TEST_CONFIG);
       reader2.readMethodChangeData();
       return smallMethodEntity;
    }
@@ -77,7 +77,7 @@ public class TestMethodChangeLongMethodName {
       longMethodEntity.createParameters("java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,"
             + "java.lang.String,java.lang.String,java.lang.String,java.lang.String");
       MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, sourceFolder,
-            new File("."), longMethodEntity, VERSION, TEST_CONFIG);
+            new File("."), longMethodEntity, COMMIT, TEST_CONFIG);
       reader.readMethodChangeData();
       return longMethodEntity;
    }
@@ -87,7 +87,7 @@ public class TestMethodChangeLongMethodName {
       longMethodEntity.createParameters("java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,"
             + "java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String");
       MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, sourceFolder,
-            new File("."), longMethodEntity, VERSION, TEST_CONFIG);
+            new File("."), longMethodEntity, COMMIT, TEST_CONFIG);
       reader.readMethodChangeData();
       return longMethodEntity;
    }
@@ -98,34 +98,34 @@ public class TestMethodChangeLongMethodName {
             + "java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,java.lang.String,"
             + "java.lang.String,java.lang.String,int");
       MethodChangeReader reader = new MethodChangeReader(methodSourceFolder, sourceFolder,
-            new File("."), longMethodEntity, VERSION, TEST_CONFIG);
+            new File("."), longMethodEntity, COMMIT, TEST_CONFIG);
       reader.readMethodChangeData();
       return longMethodEntity;
    }
 
    private void checkSmallMethod(final File methodSourceFolder, final ChangedEntity smallEntity) throws IOException {
-      File expectedConstructorFile = MethodChangeReader.getMethodDiffFile(methodSourceFolder, VERSION, smallEntity);
+      File expectedConstructorFile = new ChangedMethodManager(methodSourceFolder).getMethodDiffFile(COMMIT, smallEntity);
       String constructorContent = FileUtils.readFileToString(expectedConstructorFile, Charset.defaultCharset());
       MatcherAssert.assertThat(constructorContent, Matchers.containsString("System.out"));
       MatcherAssert.assertThat(constructorContent, Matchers.not(Matchers.containsString("System.err")));
    }
 
    private void checkLongMethod(final File methodSourceFolder, final ChangedEntity longEntity) throws IOException {
-      File expectedInitFile = MethodChangeReader.getMethodDiffFile(methodSourceFolder, VERSION, longEntity);
+      File expectedInitFile = new ChangedMethodManager(methodSourceFolder).getMethodDiffFile(COMMIT, longEntity);
       String initContent = FileUtils.readFileToString(expectedInitFile, Charset.defaultCharset());
       MatcherAssert.assertThat(initContent, Matchers.not(Matchers.containsString("System.out")));
       MatcherAssert.assertThat(initContent, Matchers.containsString("System.err"));
    }
    
    private void checkTooLongMethod(final File methodSourceFolder, final ChangedEntity longEntity) throws IOException {
-      File expectedInitFile = MethodChangeReader.getMethodDiffFile(methodSourceFolder, VERSION, longEntity);
+      File expectedInitFile = new ChangedMethodManager(methodSourceFolder).getMethodDiffFile(COMMIT, longEntity);
       String initContent = FileUtils.readFileToString(expectedInitFile, Charset.defaultCharset());
       MatcherAssert.assertThat(initContent, Matchers.not(Matchers.containsString("System.out")));
       MatcherAssert.assertThat(initContent, Matchers.containsString("This is too long for regular serialization"));
    }
    
    private void checkOtherTooLongMethod(final File methodSourceFolder, final ChangedEntity longEntity) throws IOException {
-      File expectedInitFile = MethodChangeReader.getMethodDiffFile(methodSourceFolder, VERSION, longEntity);
+      File expectedInitFile = new ChangedMethodManager(methodSourceFolder).getMethodDiffFile(COMMIT, longEntity);
       String initContent = FileUtils.readFileToString(expectedInitFile, Charset.defaultCharset());
       MatcherAssert.assertThat(initContent, Matchers.not(Matchers.containsString("System.out")));
       MatcherAssert.assertThat(initContent, Matchers.containsString("Other too long method"));
